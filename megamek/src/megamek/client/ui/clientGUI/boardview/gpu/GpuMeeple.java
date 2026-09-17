@@ -1,6 +1,9 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -22,6 +25,7 @@ import com.badlogic.gdx.utils.Disposable;
 
 final class GpuMeeple implements Disposable {
     private static final int ALPHA_THRESHOLD = 128;
+    private static final boolean ANTIALIASING = true;
     private final Model model;
     final ModelInstance instance;
     private final BoundingBox bounds;
@@ -36,6 +40,9 @@ final class GpuMeeple implements Disposable {
         MeshPartBuilder sides = builder.part("sides", GL20.GL_TRIANGLES,
               VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
               new Material(ColorAttribute.createDiffuse(averageColor(pixels)), IntAttribute.createCullFace(GL20.GL_NONE)));
+        if (ANTIALIASING) {
+            smoothGeometry(pixels, region, mesh, sides);
+        } else {
         for (int row = 0; row < pixels.height(); row++) {
             int runStart = -1;
             for (int column = 0; column <= pixels.width(); column++) {
@@ -71,11 +78,97 @@ final class GpuMeeple implements Disposable {
                 }
             }
         }
+        }
         model = builder.end();
         instance = new ModelInstance(model);
         bounds = instance.calculateBoundingBox(new BoundingBox());
         if (!bounds.isValid()) {
             bounds.set(Vector3.Zero, Vector3.Zero);
+        }
+    }
+
+    private static void smoothGeometry(BoardScene.Pixels pixels, TextureRegion region,
+          MeshPartBuilder mesh, MeshPartBuilder sides) {
+        for (int row = -1; row < pixels.height(); row++) {
+            for (int column = -1; column < pixels.width(); column++) {
+                Vector3[] corners = {
+                      sample(pixels, column, row), sample(pixels, column + 1, row),
+                      sample(pixels, column + 1, row + 1), sample(pixels, column, row + 1)
+                };
+                int filled = 0;
+                for (Vector3 corner : corners) {
+                    if (corner.z >= ALPHA_THRESHOLD) {
+                        filled++;
+                    }
+                }
+                if (filled == 0) {
+                    continue;
+                }
+                if (filled == 4) {
+                    surface(pixels, region, mesh, List.of(corners));
+                    continue;
+                }
+                Vector3 center = new Vector3();
+                for (Vector3 corner : corners) {
+                    center.add(corner);
+                }
+                center.scl(0.25f);
+                for (int edge = 0; edge < 4; edge++) {
+                    List<Vector3> polygon = alphaContour(List.of(center, corners[edge], corners[(edge + 1) % 4]));
+                    surface(pixels, region, mesh, polygon);
+                    for (int index = 0; index < polygon.size(); index++) {
+                        Vector3 start = polygon.get(index);
+                        Vector3 end = polygon.get((index + 1) % polygon.size());
+                        if (start.z == ALPHA_THRESHOLD && end.z == ALPHA_THRESHOLD
+                              && start.dst2(end) > 0.000001f) {
+                            Vector3 normal = new Vector3(end.y - start.y, end.x - start.x, 0).nor();
+                            sides.rect(vertex(pixels, region, start.x, start.y, -0.5f, 1).setNor(normal),
+                                  vertex(pixels, region, end.x, end.y, -0.5f, 1).setNor(normal),
+                                  vertex(pixels, region, end.x, end.y, 0.5f, 1).setNor(normal),
+                                  vertex(pixels, region, start.x, start.y, 0.5f, 1).setNor(normal));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static Vector3 sample(BoardScene.Pixels pixels, int column, int row) {
+        int alpha = column < 0 || row < 0 || column >= pixels.width() || row >= pixels.height()
+              ? 0 : pixels.rgba(row * pixels.width() + column) & 0xff;
+        return new Vector3(column + 0.5f, row + 0.5f, alpha);
+    }
+
+    static List<Vector3> alphaContour(List<Vector3> triangle) {
+        List<Vector3> polygon = new ArrayList<>();
+        Vector3 previous = triangle.getLast();
+        for (Vector3 current : triangle) {
+            if ((previous.z >= ALPHA_THRESHOLD) != (current.z >= ALPHA_THRESHOLD)) {
+                Vector3 crossing = new Vector3(previous).lerp(current,
+                      (ALPHA_THRESHOLD - previous.z) / (current.z - previous.z));
+                crossing.z = ALPHA_THRESHOLD;
+                polygon.add(crossing);
+            }
+            if (current.z >= ALPHA_THRESHOLD) {
+                polygon.add(current);
+            }
+            previous = current;
+        }
+        return polygon;
+    }
+
+    private static void surface(BoardScene.Pixels pixels, TextureRegion region,
+          MeshPartBuilder mesh, List<Vector3> polygon) {
+        for (int index = 1; index + 1 < polygon.size(); index++) {
+            Vector3 first = polygon.getFirst();
+            Vector3 second = polygon.get(index);
+            Vector3 third = polygon.get(index + 1);
+            for (float depth : new float[] { -0.5f, 0.5f }) {
+                float shade = depth > 0 ? 1 : 0;
+                mesh.triangle(vertex(pixels, region, first.x, first.y, depth, shade),
+                      vertex(pixels, region, second.x, second.y, depth, shade),
+                      vertex(pixels, region, third.x, third.y, depth, shade));
+            }
         }
     }
 

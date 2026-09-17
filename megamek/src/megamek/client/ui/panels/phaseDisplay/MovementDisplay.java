@@ -834,6 +834,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean isInfantry = (selectedUnit instanceof Infantry);
         boolean isTank = (selectedUnit instanceof Tank);
         boolean isAero = selectedUnit.isAero();
+        boolean isLAM = (selectedUnit instanceof LandAirMek);
 
         setWalkEnabled(!selectedUnit.isImmobile() &&
               ((selectedUnit.getWalkMP() > 0) || (selectedUnit.getRunMP() > 0)) &&
@@ -845,7 +846,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
               !selectedUnit.isProne() &&
               (hasJumpMP() &&
                     (!selectedUnit.isConventionalInfantry() ||
-                          selectedUnit.getMovementMode().isJumpInfantry())) &&
+                          selectedUnit.getMovementMode().isJumpInfantry()) &&
+                    !(isLAM && ((LandAirMek) selectedUnit).getLAMType() == LandAirMek.LAM_STANDARD)) &&
               !(selectedUnit.isStuck() && !selectedUnit.canUnstickByJumping()));
 
         setSwimEnabled(!isAero &&

@@ -55,26 +55,29 @@ public class LAMPilot extends Crew {
 
     final private LandAirMek lam;
     private int gunneryAero;
+    private boolean hasNaturalAptitudeGunneryAero;
     private int gunneryAeroB;
     private int gunneryAeroL;
     private int gunneryAeroM;
     private int pilotingAero;
+    private boolean hasNaturalAptitudePilotingAero;
 
     public LAMPilot(LandAirMek lam) {
-        this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, 5, 4, false, 5, false, Gender.RANDOMIZE, false, null);
+        this(lam, RandomNameGenerator.UNNAMED_FULL_NAME, 4, false, 5, false, 4, false, 5, false, Gender.RANDOMIZE,
+              false, null);
     }
 
-    public LAMPilot(LandAirMek lam, String name, int gunneryMek, int pilotingMek,
-          int gunneryAero, boolean hasNaturalAptitudeGunnery, int pilotingAero,
-          boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot,
+    public LAMPilot(LandAirMek lam, String name, int gunneryMek, boolean hasNaturalAptitudeGunneryMek, int pilotingMek,
+          boolean hasNaturalAptitudePilotingMek, int gunneryAero, boolean hasNaturalAptitudeGunneryAero,
+          int pilotingAero, boolean hasNaturalAptitudePilotingAero, Gender gender, boolean clanPilot,
           Map<Integer, Map<String, String>> extraData) {
-        super(CrewType.SINGLE, name, 1, gunneryMek, hasNaturalAptitudeGunnery, pilotingMek,
-              hasNaturalAptitudePiloting, gender, clanPilot, extraData);
+        super(CrewType.SINGLE, name, 1, gunneryMek, hasNaturalAptitudeGunneryMek, pilotingMek,
+              hasNaturalAptitudePilotingMek, gender, clanPilot, extraData);
         this.lam = lam;
         this.gunneryAero = gunneryAero;
-        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+        this.hasNaturalAptitudeGunneryAero = hasNaturalAptitudeGunneryAero;
         this.pilotingAero = pilotingAero;
-        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
+        this.hasNaturalAptitudePilotingAero = hasNaturalAptitudePilotingAero;
         this.gunneryAeroB = gunneryAero;
         this.gunneryAeroL = gunneryAero;
         this.gunneryAeroM = gunneryAero;
@@ -91,7 +94,8 @@ public class LAMPilot extends Crew {
     public static LAMPilot convertToLAMPilot(LandAirMek lam, Crew crew) {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
-        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.getPiloting(), crew.getGunnery(),
+        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.isHasNaturalAptitudeGunnery(),
+              crew.getPiloting(), crew.isHasNaturalAptitudePiloting(), crew.getGunnery(),
               crew.isHasNaturalAptitudeGunnery(), crew.getPiloting(), crew.isHasNaturalAptitudePiloting(),
               crew.getGender(), crew.isClanPilot(), extraData);
         pilot.setNickname(crew.getNickname(), 0);
@@ -172,6 +176,14 @@ public class LAMPilot extends Crew {
         gunneryAero = gunnery;
     }
 
+    public boolean isHasNaturalAptitudeGunneryAero() {
+        return hasNaturalAptitudeGunneryAero;
+    }
+
+    public void setHasNaturalAptitudeGunneryAero(boolean hasNaturalAptitudeGunneryAero) {
+        this.hasNaturalAptitudeGunneryAero = hasNaturalAptitudeGunneryAero;
+    }
+
     public int getGunneryAeroB() {
         return gunneryAeroB;
     }
@@ -202,6 +214,14 @@ public class LAMPilot extends Crew {
 
     public void setPilotingAero(int piloting) {
         pilotingAero = piloting;
+    }
+
+    public boolean isHasNaturalAptitudePilotingAero() {
+        return hasNaturalAptitudePilotingAero;
+    }
+
+    public void setHasNaturalAptitudePilotingAero(boolean hasNaturalAptitudePilotingAero) {
+        this.hasNaturalAptitudePilotingAero = hasNaturalAptitudePilotingAero;
     }
 
     private boolean useAeroGunnery() {

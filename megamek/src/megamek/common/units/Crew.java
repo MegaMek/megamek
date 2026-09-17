@@ -94,9 +94,9 @@ public class Crew implements Serializable {
     private final Portrait[] portraits;
 
     private final int[] gunnery;
-    protected boolean hasNaturalAptitudeGunnery;
+    private boolean hasNaturalAptitudeGunnery;
     private final int[] piloting;
-    protected boolean hasNaturalAptitudePiloting;
+    private boolean hasNaturalAptitudePiloting;
     private final int[] hits; // hits taken
 
     private final String[] externalId;
@@ -129,6 +129,7 @@ public class Crew implements Serializable {
 
     // Separate artillery skill
     private final int[] artillery;
+    private boolean hasNaturalAptitudeArtillery;
 
     // init bonuses
     // bonus for individual initiative
@@ -219,7 +220,7 @@ public class Crew implements Serializable {
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, false, 5, false, Gender.FEMALE, false, null);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, false, false, 5, false, Gender.FEMALE, false, null);
     }
 
     /**
@@ -232,8 +233,11 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunnery, boolean hasNaturalAptitudeGunnery, int piloting, boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, hasNaturalAptitudeGunnery, piloting, hasNaturalAptitudePiloting, gender, clanPilot, extraData);
+    public Crew(CrewType crewType, String name, int size, int gunnery, boolean hasNaturalAptitudeGunnery, boolean hasNaturalAptitudeArtillery,
+          int piloting, boolean hasNaturalAptitudePiloting, Gender gender,
+          boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, hasNaturalAptitudeGunnery, hasNaturalAptitudePiloting, piloting,
+              hasNaturalAptitudeArtillery, gender, clanPilot, extraData);
     }
 
     /**
@@ -248,7 +252,9 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB, boolean hasNaturalAptitudeGunnery, int piloting, boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+          boolean hasNaturalAptitudeGunnery, boolean hasNaturalAptitudeArtillery, int piloting,
+          boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
@@ -286,6 +292,7 @@ public class Crew implements Serializable {
         this.artillery = new int[slots];
         Arrays.fill(this.artillery, avGunnery);
         this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+        this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
         this.piloting = new int[slots];
         Arrays.fill(this.piloting, piloting);
         this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
@@ -790,6 +797,10 @@ public class Crew implements Serializable {
         return artillery[pos];
     }
 
+    public boolean isHasNaturalAptitudeArtillery() {
+        return hasNaturalAptitudeArtillery;
+    }
+
     public int getPiloting() {
         return getSkillModifiers().adjustPiloting(piloting[pilotPos]);
     }
@@ -958,6 +969,10 @@ public class Crew implements Serializable {
 
     public void setArtillery(int artillery, int pos) {
         this.artillery[pos] = artillery;
+    }
+
+    public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery) {
+        this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
     }
 
     public void setPiloting(int piloting, int pos) {

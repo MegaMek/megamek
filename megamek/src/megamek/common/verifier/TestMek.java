@@ -224,6 +224,8 @@ public class TestMek extends TestEntity {
     public double getWeightCockpit() {
         return switch (mek.getCockpitType()) {
             case Mek.COCKPIT_SMALL -> 2.0;
+            // IO:AE p.63: a ton lighter than the torso-mounted cockpit it is built on
+            case Mek.COCKPIT_VRRP -> 3.0;
             case Mek.COCKPIT_TORSO_MOUNTED,
                  Mek.COCKPIT_DUAL,
                  Mek.COCKPIT_SUPERHEAVY,
@@ -313,8 +315,7 @@ public class TestMek extends TestEntity {
     }
 
     public boolean isCockpitLocation(int location) {
-        if (mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED
-              || mek.getCockpitType() == Mek.COCKPIT_VRRP) {
+        if (mek.hasTorsoMountedCockpit()) {
             return location == Mek.LOC_CENTER_TORSO;
         }
         return location == Mek.LOC_HEAD;
@@ -1125,7 +1126,7 @@ public class TestMek extends TestEntity {
             }
 
             if ((misc.hasFlag(MiscType.F_CHAIN_DRAPE_APRON) || misc.hasFlag(MiscType.F_CHAIN_DRAPE_PONCHO))
-                  && (mek.isQuadMek() || mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
+                  && (mek.isQuadMek() || mek.hasTorsoMountedCockpit())
             ) {
                 buff.append("Quad meks and meks with torso cockpits may only mount a chain drape as a Cape");
                 illegal = true;
@@ -1178,6 +1179,18 @@ public class TestMek extends TestEntity {
             // IO p.110: Interface cockpit cannot employ the Cramped Cockpit Design Quirk
             if (mek.hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
                 buff.append("Interface cockpits may not use the Cramped Cockpit quirk.\n");
+                illegal = true;
+            }
+        }
+
+        // IO:AE p.63: a VRPP cockpit cannot employ the Cramped Cockpit or Rumble Seat Design Quirks
+        if (mek.hasVirtualRealityPilotingPod()) {
+            if (mek.hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
+                buff.append("Virtual Reality Piloting Pods may not use the Cramped Cockpit quirk.\n");
+                illegal = true;
+            }
+            if (mek.hasQuirk(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)) {
+                buff.append("Virtual Reality Piloting Pods may not use the Rumble Seat quirk.\n");
                 illegal = true;
             }
         }
@@ -1542,7 +1555,7 @@ public class TestMek extends TestEntity {
         }
 
         if (mek.hasFullHeadEject()) {
-            if ((mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED)
+            if (mek.hasTorsoMountedCockpit()
                   || (mek.getCockpitType() == Mek.COCKPIT_COMMAND_CONSOLE)) {
                 buff.append("full head ejection system incompatible with cockpit type\n");
                 illegal = true;

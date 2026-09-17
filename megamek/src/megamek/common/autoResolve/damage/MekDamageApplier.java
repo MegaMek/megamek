@@ -104,8 +104,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
                   default -> 0;
               } : 0;
 
-        boolean isHeadHit = (entity.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) && (hit.getLocation()
-              == Mek.LOC_HEAD);
+        boolean isHeadHit = !entity.hasTorsoMountedCockpit() && (hit.getLocation() == Mek.LOC_HEAD);
         int hitCrew = isHeadHit ? 1 : 0;
 
         return new HitDetails(hit, dmg, setArmorValueTo, hitInternal, hitCrew);
@@ -138,7 +137,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
 
     private HitDetails destroyHead(HitDetails hitDetails) {
         entity.destroyLocation(Mek.LOC_HEAD, false);
-        if (entity.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) {
+        if (!entity.hasTorsoMountedCockpit()) {
             tryToEjectCrew(false);
             hitDetails = hitDetails.killsCrew();
             DamageApplier.setEntityDestroyed(entity);
@@ -152,7 +151,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
     }
 
     private HitDetails destroyCt(HitDetails hitDetails) {
-        if (entity.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) {
+        if (entity.hasTorsoMountedCockpit()) {
             hitDetails = hitDetails.killsCrew();
         }
         entity.destroyLocation(hitDetails.hit().getLocation());
@@ -210,7 +209,7 @@ public record MekDamageApplier(Mek entity, EntityFinalState entityFinalState) im
         return entity.getHitCriticalSlots(
               TYPE_SYSTEM,
               Mek.SYSTEM_LIFE_SUPPORT,
-              (entity.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) ? Mek.LOC_CENTER_TORSO : Mek.LOC_HEAD);
+              entity.hasTorsoMountedCockpit() ? Mek.LOC_CENTER_TORSO : Mek.LOC_HEAD);
     }
 
     @Override

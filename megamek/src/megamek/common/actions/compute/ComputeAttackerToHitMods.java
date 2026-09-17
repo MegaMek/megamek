@@ -45,6 +45,7 @@ import megamek.common.CalledShot;
 import megamek.common.LosEffects;
 import megamek.common.ToHitData;
 import megamek.common.compute.Compute;
+import megamek.common.compute.VirtualRealityPilotingPod;
 import megamek.common.enums.AimingMode;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscType;
@@ -92,7 +93,7 @@ public class ComputeAttackerToHitMods {
             toHit = new ToHitData();
         }
 
-        // if we don't have a weapon, that we are attacking with, then the rest of this is either meaningless or 
+        // if we don't have a weapon, that we are attacking with, then the rest of this is either meaningless or
         // likely to fail
         if (weaponId == WeaponType.WEAPON_NA) {
             return toHit;
@@ -465,6 +466,9 @@ public class ComputeAttackerToHitMods {
                 toHit.addModifier(-1, Messages.getString("WeaponAttackAction.Vdni"));
             }
         }
+
+        // Virtual Reality Piloting Pod (IO:AE p.63): -1 gunnery, or +2 while friendly ECCM holds off interference
+        VirtualRealityPilotingPod.addGunneryModifier(attacker, toHit);
 
         // Sensory implants: laser-sight, telescopic, or multi-modal = -1 to-hit
         // Benefits don't stack - having multiple still only gives -1

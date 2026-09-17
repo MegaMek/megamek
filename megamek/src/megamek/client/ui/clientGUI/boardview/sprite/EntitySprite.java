@@ -606,9 +606,9 @@ public class EntitySprite extends Sprite {
             if (entity instanceof Mek mek && mek.hasVirtualRealityPilotingPod()) {
                 Interference podInterference = VirtualRealityPilotingPod.getInterference(mek);
                 if (podInterference.isBlinded()) {
-                    stStr.add(new Status(GUIP.getWarningColor(), "VrppBlinded"));
+                    stStr.add(new Status(GUIP.getWarningColor(), "vrppBlinded"));
                 } else if (podInterference.state() == InterferenceState.DEGRADED) {
-                    stStr.add(new Status(GUIP.getCautionColor(), "VrppDegraded"));
+                    stStr.add(new Status(GUIP.getCautionColor(), "vrppDegraded"));
                 }
             }
 

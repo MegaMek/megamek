@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 
 import megamek.common.CriticalSlot;
 import megamek.common.MPCalculationSetting;
+import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
@@ -1186,11 +1187,11 @@ public class TestMek extends TestEntity {
         // IO:AE p.63: a VRPP cockpit cannot employ the Cramped Cockpit or Rumble Seat Design Quirks
         if (mek.hasVirtualRealityPilotingPod()) {
             if (mek.hasQuirk(OptionsConstants.QUIRK_NEG_CRAMPED_COCKPIT)) {
-                buff.append("Virtual Reality Piloting Pods may not use the Cramped Cockpit quirk.\n");
+                buff.append(Messages.getString("TestMek.vrppCrampedCockpitQuirk")).append("\n");
                 illegal = true;
             }
             if (mek.hasQuirk(OptionsConstants.QUIRK_POS_RUMBLE_SEAT)) {
-                buff.append("Virtual Reality Piloting Pods may not use the Rumble Seat quirk.\n");
+                buff.append(Messages.getString("TestMek.vrppRumbleSeatQuirk")).append("\n");
                 illegal = true;
             }
         }

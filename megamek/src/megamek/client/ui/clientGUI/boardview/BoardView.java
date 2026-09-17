@@ -311,8 +311,7 @@ public final class BoardView extends AbstractBoardView
 
     // Image to hold the complete board shadow map
     BufferedImage shadowMap;
-    private BufferedImage planarFeatureShadows;
-    private Point planarLightDirection;
+    private boolean gpuCapture;
 
     /**
      * Stores the currently deploying entity, used for highlighting deployment hexes.
@@ -1300,7 +1299,8 @@ public final class BoardView extends AbstractBoardView
         }
 
         // In iso mode, some sprites are drawn in drawHexes so they can go behind terrain; draw only the others here
-        drawSprites(graphics2D, overTerrainSprites);
+          drawSprites(graphics2D, includeMovingUnits ? overTerrainSprites : overTerrainSprites.stream()
+              .filter(sprite -> !(sprite instanceof EntitySprite) && !(sprite instanceof IsometricSprite)).toList());
 
         // draw movement, if valid
         drawSprites(graphics2D, pathSprites);
@@ -1402,7 +1402,6 @@ public final class BoardView extends AbstractBoardView
 
     public void clearShadowMap() {
         shadowMap = null;
-        planarFeatureShadows = null;
         planarHexImageCache.clear();
     }
 
@@ -2672,7 +2671,7 @@ public final class BoardView extends AbstractBoardView
         }
 
         // Add the terrain & building shadows
-        if (GUIP.getShadowMap() && (shadowMap != null)) {
+        if (!gpuCapture && GUIP.getShadowMap() && (shadowMap != null)) {
             Point p1SRC = getHexLocationLargeTile(coords.getX(), coords.getY(), 1);
             Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
             Point p2DST = new Point(hex_size.width, hex_size.height);
@@ -2712,7 +2711,7 @@ public final class BoardView extends AbstractBoardView
         }
 
         // AO Hex Shadow in this hex when a higher one is adjacent
-        if (GUIP.getAOHexShadows()) {
+        if (!gpuCapture && GUIP.getAOHexShadows()) {
             for (int dir : allDirections) {
                 Shape ShadowShape = getElevationShadowArea(coords, dir);
                 GradientPaint gpl = getElevationShadowGP(coords, dir);
@@ -3091,74 +3090,58 @@ public final class BoardView extends AbstractBoardView
         final Point hexLocation = getHexLocation(coords);
         int hexX = hexLocation.x;
         int hexY = hexLocation.y;
-
-        // Set the text color according to Preferences or Light Gray in space
-        boardGraph.setColor(GUIP.getBoardTextColor());
-        if (board.isSpace()) {
-            boardGraph.setColor(GUIP.getBoardSpaceTextColor());
-        }
-
-        // write hex coordinate unless deactivated or scale factor too small
-        if (GUIP.getCoordsEnabled() && (scale >= 0.5)) {
-            drawCenteredString(coords.getBoardNum(), hexX, hexY + (int) (12 * scale), font_hexNumber, boardGraph);
+        if (!gpuCapture) {
+            for (HexText label : hexText(coords, hex, board)) {
+                boardGraph.setColor(new Color(label.argb(), true));
+                drawCenteredString(label.text(), hexX, hexY + label.baseline(), label.font(), boardGraph);
+            }
         }
 
         if (displayInvalidHexInfo && !hex.isValid(null)) {
             Point hexCenter = new Point(hexX + (int) (HEX_W / 2.0f * scale), hexY + (int) (HEX_H / 2.0f * scale));
             invalidString.at(hexCenter).fontSize(14.0f * scale).outline(Color.WHITE, scale / 2).draw(boardGraph);
         }
+    }
 
-        // write terrain level / water depth / building height
+    public record HexText(String text, int baseline, Font font, int argb) { }
+
+    private List<HexText> hexText(Coords coords, Hex hex, Board board) {
+        List<HexText> labels = new ArrayList<>();
+        Color color = board.isSpace() ? GUIP.getBoardSpaceTextColor() : GUIP.getBoardTextColor();
+        if (GUIP.getCoordsEnabled() && scale >= 0.5) {
+            labels.add(new HexText(coords.getBoardNum(), (int) (12 * scale), font_hexNumber, color.getRGB()));
+        }
         if (scale > 0.5f) {
             int level = hex.getLevel();
             int depth = hex.depth(false);
-
             Terrain basement = hex.getTerrain(Terrains.BLDG_BASEMENT_TYPE);
             if (basement != null) {
                 depth = 0;
             }
-
             int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
             height = Math.max(height, hex.terrainLevel(Terrains.INDUSTRIAL));
-
             int yPosition = HEX_H - 2;
             if (level != 0) {
-                drawCenteredString(Messages.getString("BoardView1.LEVEL") + level,
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                labels.add(new HexText(Messages.getString("BoardView1.LEVEL") + level,
+                      (int) (yPosition * scale), font_elev, color.getRGB()));
                 yPosition -= 10;
             }
-
             if (depth != 0) {
-                drawCenteredString(Messages.getString("BoardView1.DEPTH") + depth,
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                labels.add(new HexText(Messages.getString("BoardView1.DEPTH") + depth,
+                      (int) (yPosition * scale), font_elev, color.getRGB()));
                 yPosition -= 10;
             }
-
             if (height > 0) {
-                boardGraph.setColor(GUIP.getBuildingTextColor());
-                drawCenteredString(Messages.getString("BoardView1.HEIGHT") + height,
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                labels.add(new HexText(Messages.getString("BoardView1.HEIGHT") + height,
+                      (int) (yPosition * scale), font_elev, GUIP.getBuildingTextColor().getRGB()));
                 yPosition -= 10;
             }
-
             if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
-                boardGraph.setColor(GUIP.getLowFoliageColor());
-                drawCenteredString(Messages.getString("BoardView1.LowFoliage"),
-                        hexX,
-                        hexY + (int) (yPosition * scale),
-                        font_elev,
-                        boardGraph);
+                labels.add(new HexText(Messages.getString("BoardView1.LowFoliage"),
+                      (int) (yPosition * scale), font_elev, GUIP.getLowFoliageColor().getRGB()));
             }
         }
+        return List.copyOf(labels);
     }
 
     /**
@@ -4821,7 +4804,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     /** A hex's existing terrain and tactical artwork, ready to project onto a GPU hex surface. */
-    public record PlanarHex(Coords coords, BufferedImage ground, BufferedImage tactical) { }
+    public record PlanarHex(Coords coords, BufferedImage ground, BufferedImage tactical, List<HexText> text) { }
 
     public record CenterRequest(long sequence, Coords coords) { }
     private CenterRequest centerRequest = new CenterRequest(0, null);
@@ -4881,11 +4864,22 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
-    /**
-     * Reuses the board's complete painters without rendering a second copy of moving unit artwork. All state changes
-     * here are presentation-only, confined to the event thread and restored before returning. The canvas is bounded
-     * even when the whole of a very large board is visible.
-     */
+    public BufferedImage captureUnitAnnotations(Entity entity, int part) {
+        if (!SwingUtilities.isEventDispatchThread()) {
+            throw new IllegalStateException("Unit annotations must be captured on the Swing event thread");
+        }
+        float originalScale = scale;
+        Dimension originalSize = hex_size;
+        try {
+            scale = 1;
+            hex_size = new Dimension(HEX_W, HEX_H);
+            return new EntitySprite(this, entity, part, radarBlipImage).captureAnnotations();
+        } finally {
+            scale = originalScale;
+            hex_size = originalSize;
+        }
+    }
+
     public List<PlanarHex> capturePlanarHexes(Rectangle hexArea) {
         if (!SwingUtilities.isEventDispatchThread()) {
             throw new IllegalStateException("Board layers must be captured on the Swing event thread");
@@ -4897,20 +4891,14 @@ public final class BoardView extends AbstractBoardView
         if (area.isEmpty()) {
             return List.of();
         }
-        int stepX = (int) (HEX_WC * scale);
-        int stepY = (int) (HEX_H * scale);
-        Rectangle pixels = new Rectangle(area.x * stepX, area.y * stepY,
-              (area.width - 1) * stepX + hex_size.width, area.height * stepY + hex_size.height / 2);
-        // Discrete levels keep atlas slot sizes stable while panning across a large board.
-        double resolution = Math.pow(0.5, Math.max(0,
-              Math.ceil(Math.log(Math.max(pixels.width, pixels.height) / 2048.0) / Math.log(2))));
-        int width = Math.max(1, (int) Math.ceil(pixels.width * resolution));
-        int height = Math.max(1, (int) Math.ceil(pixels.height * resolution));
-        BufferedImage ground = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        BufferedImage tactical = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                float originalScale = scale;
+        int originalZoom = zoomIndex;
+                Dimension originalSize = hex_size;
+                ImageCache<Integer, Image> originalScaledCache = scaledImageCache;
         int originalOffset = verticalOffset;
         ImageCache<Coords, HexImageCacheEntry> originalCache = hexImageCache;
         BufferedImage originalShadows = shadowMap;
+        boolean originalCapture = gpuCapture;
         Set<Sprite> prepared = new LinkedHashSet<>(allSprites);
         prepared.addAll(pathSprites);
         prepared.addAll(fpiSprites);
@@ -4924,66 +4912,80 @@ public final class BoardView extends AbstractBoardView
         prepared.addAll(isometricWreckSprites);
         prepared.addAll(List.of(cursorSprite, highlightSprite, selectedSprite, firstLOSSprite, secondLOSSprite));
         try {
+            scale = 1;
+            zoomIndex = BASE_ZOOM_INDEX;
+            updateFontSizes();
+            hex_size = new Dimension(HEX_W, HEX_H);
             verticalOffset = 0;
-            Point lightDirection = getTerrainLightDirection();
-            if (!Objects.equals(planarLightDirection, lightDirection)) {
-                planarLightDirection = lightDirection;
-                planarFeatureShadows = null;
-                planarHexImageCache.clear();
+            if (originalScale != 1) {
+                scaledImageCache = new ImageCache<>();
             }
-            if (planarFeatureShadows == null) {
-                planarFeatureShadows = shadowHelper.updateShadowMap(false);
-            }
-            // Hex elevations cast GPU shadows. Keep the shared woods/building shadows in the artwork.
-            shadowMap = planarFeatureShadows;
+            gpuCapture = true;
+            shadowMap = null;
             hexImageCache = planarHexImageCache;
-            if (originalOffset != 0) {
+            if (originalOffset != 0 || originalScale != 1) {
                 prepared.stream().filter(sprite -> !sprite.isHidden() && !(sprite instanceof IsometricSprite))
                       .forEach(Sprite::prepare);
             }
-            Graphics2D graphics = ground.createGraphics();
-            try {
-                graphics.scale(resolution, resolution);
-                graphics.translate(-pixels.x, -pixels.y);
-                graphics.setClip(pixels);
-                UIUtil.setHighQualityRendering(graphics);
-                drawHexes(graphics, pixels, false, false);
-            } finally {
-                graphics.dispose();
-            }
-            graphics = tactical.createGraphics();
-            try {
-                graphics.scale(resolution, resolution);
-                graphics.translate(-pixels.x, -pixels.y);
-                graphics.setClip(pixels);
-                UIUtil.setHighQualityRendering(graphics);
-                drawTacticalLayers(graphics, false);
-            } finally {
-                graphics.dispose();
-            }
             List<PlanarHex> result = new ArrayList<>();
-            for (int x = area.x; x < area.x + area.width; x++) {
-                for (int y = area.y; y < area.y + area.height; y++) {
-                    Coords coords = new Coords(x, y);
-                    Point point = getHexLocation(coords);
-                    int left = (int) Math.round((point.x - pixels.x) * resolution);
-                    int top = (int) Math.round((point.y - pixels.y) * resolution);
-                    int tileWidth = Math.min(width - left, Math.max(1, (int) Math.round(hex_size.width * resolution)));
-                    int tileHeight = Math.min(height - top, Math.max(1, (int) Math.round(hex_size.height * resolution)));
-                    result.add(new PlanarHex(coords, ground.getSubimage(left, top, tileWidth, tileHeight),
-                          tactical.getSubimage(left, top, tileWidth, tileHeight)));
+            for (int column = area.x; column < area.x + area.width; column += 16) {
+                for (int row = area.y; row < area.y + area.height; row += 16) {
+                    result.addAll(capturePlanarChunk(new Rectangle(column, row,
+                          Math.min(16, area.x + area.width - column), Math.min(16, area.y + area.height - row))));
                 }
             }
+            result.sort(Comparator.comparingInt((PlanarHex hex) -> hex.coords().getX())
+                  .thenComparingInt(hex -> hex.coords().getY()));
             return result;
         } finally {
+            scale = originalScale;
+            zoomIndex = originalZoom;
+            updateFontSizes();
+            hex_size = originalSize;
+            scaledImageCache = originalScaledCache;
             verticalOffset = originalOffset;
             hexImageCache = originalCache;
             shadowMap = originalShadows;
-            if (originalOffset != 0) {
+            gpuCapture = originalCapture;
+            if (originalOffset != 0 || originalScale != 1) {
                 prepared.stream().filter(sprite -> !sprite.isHidden() && !(sprite instanceof IsometricSprite))
                       .forEach(Sprite::prepare);
             }
         }
+    }
+
+    private List<PlanarHex> capturePlanarChunk(Rectangle area) {
+        Rectangle pixels = new Rectangle(area.x * HEX_WC, area.y * HEX_H,
+              (area.width - 1) * HEX_WC + HEX_W, area.height * HEX_H + HEX_H / 2);
+        BufferedImage ground = new BufferedImage(pixels.width, pixels.height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage tactical = new BufferedImage(pixels.width, pixels.height, BufferedImage.TYPE_INT_ARGB);
+        for (BufferedImage layer : List.of(ground, tactical)) {
+            Graphics2D graphics = layer.createGraphics();
+            try {
+                graphics.translate(-pixels.x, -pixels.y);
+                graphics.setClip(pixels);
+                UIUtil.setHighQualityRendering(graphics);
+                if (layer == ground) {
+                    drawHexes(graphics, pixels, false, false);
+                } else {
+                    drawTacticalLayers(graphics, false);
+                }
+            } finally {
+                graphics.dispose();
+            }
+        }
+        List<PlanarHex> result = new ArrayList<>();
+        for (int column = area.x; column < area.x + area.width; column++) {
+            for (int row = area.y; row < area.y + area.height; row++) {
+                Coords coords = new Coords(column, row);
+                Point point = getHexLocation(coords);
+                int left = point.x - pixels.x;
+                int top = point.y - pixels.y;
+                result.add(new PlanarHex(coords, ground.getSubimage(left, top, HEX_W, HEX_H),
+                        tactical.getSubimage(left, top, HEX_W, HEX_H), hexText(coords, getBoard().getHex(coords), getBoard())));
+            }
+        }
+        return result;
     }
 
     /**

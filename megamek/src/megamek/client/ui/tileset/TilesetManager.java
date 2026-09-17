@@ -329,6 +329,11 @@ public class TilesetManager implements IPreferenceChangeListener {
         return entityImage.getFacing(facing);
     }
 
+    public Image textureFor(Entity entity, int secondaryPos) {
+        EntityImage entityImage = getFromCache(entity, secondaryPos);
+        return entityImage == null ? getGenericImage(entity, secondaryPos) : entityImage.getTexture();
+    }
+
     /** Retrieves the image from the cache and loads it if not present. */
     private EntityImage getFromCache(Entity entity, int secondaryPos) {
         List<Integer> temp = new ArrayList<>();

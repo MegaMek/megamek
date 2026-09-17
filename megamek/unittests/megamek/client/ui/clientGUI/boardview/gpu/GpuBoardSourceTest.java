@@ -33,10 +33,127 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Test;
 
 class GpuBoardSourceTest {
+    @Test
+    void hexTextIsSeparateFromTerrainPixelsAndTracksPreferences() throws Exception {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        boolean coords = preferences.getCoordsEnabled();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setCoordsEnabled(true);
+                fixture.source.refresh();
+            });
+            BoardScene.Tile labeled = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
+            assertTrue(labeled.text().stream().anyMatch(label -> label.text().equals("0101")));
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setCoordsEnabled(false);
+                fixture.source.refresh();
+            });
+            BoardScene.Tile unlabeled = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
+            assertFalse(unlabeled.text().stream().anyMatch(label -> label.text().equals("0101")));
+            assertTrue(samePixels(labeled.image(), unlabeled.image()));
+        } finally {
+            SwingUtilities.invokeAndWait(() -> preferences.setCoordsEnabled(coords));
+        }
+    }
+
+    @Test
+    void gpuArtworkDoesNotIncludeClassicGeneratedShadows() throws Exception {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        boolean shadows = preferences.getShadowMap();
+        boolean ambient = preferences.getAOHexShadows();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setShadowMap(true);
+                preferences.setAOHexShadows(true);
+                fixture.source.refresh();
+            });
+            BoardScene before = fixture.source.takeFrame().scene();
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setShadowMap(false);
+                preferences.setAOHexShadows(false);
+                fixture.source.refresh();
+            });
+            BoardScene after = fixture.source.takeFrame().scene();
+            assertTrue(samePixels(before.units().getFirst().image(), after.units().getFirst().image()));
+            assertTrue(samePixels(before.tile(new Coords(0, 0)).image(), after.tile(new Coords(0, 0)).image()));
+        } finally {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setShadowMap(shadows);
+                preferences.setAOHexShadows(ambient);
+            });
+        }
+    }
+
+    @Test
+    void annotationResolutionDoesNotDependOnClassicZoom() throws Exception {
+        int originalZoom = GUIPreferences.getInstance().getMapZoomIndex();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            BoardScene.Pixels before = fixture.source.takeFrame().scene().units().getFirst().annotations();
+            BoardScene.Tile tile = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
+            assertTrue(before.height() >= 80);
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.view.getComponent();
+                fixture.view.zoomOut();
+                float scale = fixture.view.getScale();
+                Dimension size = new Dimension(fixture.view.getHexSize());
+                fixture.source.refresh();
+                assertEquals(scale, fixture.view.getScale());
+                assertEquals(size, fixture.view.getHexSize());
+            });
+            assertSame(before, fixture.source.takeFrame().scene().units().getFirst().annotations());
+            BoardScene.Tile after = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
+            assertEquals((int) BoardGeometry.WIDTH, after.image().width());
+            assertEquals((int) BoardGeometry.HEIGHT, after.image().height());
+            assertTrue(samePixels(tile.image(), after.image()));
+            assertEquals(GpuBattleView.annotationScale(1), GpuBattleView.annotationScale(0.5f));
+        } finally {
+            SwingUtilities.invokeAndWait(() -> GUIPreferences.getInstance().setMapZoomIndex(originalZoom));
+        }
+    }
+
+    @Test
+    void capturesCurrentOccupiedHeightWithoutChangingArtwork() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            BoardScene.Unit standing = fixture.source.takeFrame().scene().units().getFirst();
+            assertEquals(2, standing.height());
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.entity.setProne(true);
+                fixture.source.refresh();
+            });
+            BoardScene.Unit prone = fixture.source.takeFrame().scene().units().getFirst();
+            assertEquals(fixture.entity.height() + 1, prone.height());
+            assertEquals(1, prone.height());
+            assertSame(standing.image(), prone.image());
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.entity.setProne(false);
+                fixture.entity.setWeight(150);
+                fixture.source.refresh();
+            });
+            assertEquals(3, fixture.source.takeFrame().scene().units().getFirst().height());
+        }
+    }
+
+    @Test
+    void unitArtworkAndAnnotationsAreNotBakedIntoTiles() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords original = fixture.entity.getPosition();
+            BoardScene.Tile occupied = fixture.source.takeFrame().scene().tile(original);
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.entity.setPosition(new Coords(10, 10));
+                fixture.view.redrawEntity(fixture.entity);
+                fixture.source.refresh();
+            });
+            BoardScene.Tile empty = fixture.source.takeFrame().scene().tile(original);
+            assertTrue(samePixels(occupied.image(), empty.image()));
+            assertTrue(samePixels(occupied.tactical(), empty.tactical()));
+        }
+    }
+
     @Test
     void carriesRangeDeploymentAndStrafingPaintersAndRemovesStaleMarkings() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
@@ -202,6 +319,7 @@ class GpuBoardSourceTest {
             });
             BoardScene.Unit contact = fixture.source.takeFrame().scene().units().getFirst();
             assertTrue(contact.sensorContact());
+            assertEquals(1, contact.height());
             assertEquals(Messages.getString("BoardView1.sensorReturn"), contact.name());
             assertEquals(0, contact.location().facing());
             SwingUtilities.invokeAndWait(() -> {
@@ -266,12 +384,14 @@ class GpuBoardSourceTest {
             path.add(new UnitLocation(fixture.entity.getId(), new Coords(5, 5), 0, 0, 0));
             path.add(new UnitLocation(fixture.entity.getId(), new Coords(6, 5), 1, 0, 0));
             SwingUtilities.invokeAndWait(() -> {
+                fixture.entity.moved = EntityMovementType.MOVE_JUMP;
                 fixture.entity.setPosition(new Coords(6, 5));
                 fixture.game.fireGameEvent(new GameEntityChangeEvent(fixture.game, fixture.entity, path));
             });
             SwingUtilities.invokeAndWait(() -> { });
             GpuBoardSource.Frame frame = fixture.source.takeFrame();
             assertEquals(1, frame.movements().size());
+            assertEquals(EntityMovementType.MOVE_JUMP, frame.movements().getFirst().type());
             assertEquals(2, frame.movements().getFirst().path().size());
             assertEquals(2, path.size());
             assertEquals(new Coords(6, 5), frame.scene().units().getFirst().location().coords());

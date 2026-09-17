@@ -68,7 +68,7 @@ final class GpuTextures<K> implements Disposable {
                 pixmap.dispose();
             }
         });
-        atlas = packer.generateTextureAtlas(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest, false);
+        atlas = packer.generateTextureAtlas(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear, false);
         names.forEach((key, name) -> entries.put(key, new Entry(images.get(key), name, atlas.findRegion(name))));
         return true;
     }

@@ -33,6 +33,7 @@
 package megamek.client.ui.clientGUI.boardview.sprite;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
@@ -57,6 +58,7 @@ import megamek.common.units.*;
  * and possibly secondary facing arrows; armor and internal bars; and an identification label.
  */
 public class EntitySprite extends Sprite {
+    public static final int ANNOTATION_RESOLUTION = 4;
 
     // Statics
     private static final int SMALL = 0;
@@ -490,17 +492,54 @@ public class EntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
+        prepare(false);
+    }
+
+    public BufferedImage captureAnnotations() {
+        prepare(true);
+        BufferedImage result = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = result.createGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
+        int left = result.getWidth();
+        int top = result.getHeight();
+        int right = 0;
+        int bottom = 0;
+        for (int row = 0; row < result.getHeight(); row++) {
+            for (int column = 0; column < result.getWidth(); column++) {
+                if ((result.getRGB(column, row) >>> 24) != 0) {
+                    left = Math.min(left, column);
+                    top = Math.min(top, row);
+                    right = Math.max(right, column + 1);
+                    bottom = Math.max(bottom, row + 1);
+                }
+            }
+        }
+        return right > left ? result.getSubimage(left, top, right - left, bottom - top)
+              : new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    }
+
+    private void prepare(boolean floating) {
         final Board board = bv.getBoard();
         // recalculate bounds & label
         getBounds();
+        if (floating) {
+            int margin = 4 * (labelRect.height + 2) + 4;
+            bounds = new Rectangle(Math.max(bv.getHexSize().width, labelRect.width + 2 * margin),
+                  bv.getHexSize().height + labelRect.height + 8);
+            hexOrigin = new Point((bv.getHexSize().width - bounds.width) / 2, 0);
+            labelRect.setLocation((bv.getHexSize().width - labelRect.width) / 2, 2);
+        }
 
         // create image for buffer
         GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment()
               .getDefaultScreenDevice()
               .getDefaultConfiguration();
-        image = config.createCompatibleImage(bounds.width, bounds.height, Transparency.TRANSLUCENT);
+        int resolution = floating ? ANNOTATION_RESOLUTION : 1;
+        image = config.createCompatibleImage(bounds.width * resolution, bounds.height * resolution, Transparency.TRANSLUCENT);
         Graphics2D graph = (Graphics2D) image.getGraphics();
         UIUtil.setHighQualityRendering(graph);
+        graph.scale(resolution, resolution);
 
         // translate everything (=correction for label placement)
         graph.translate(-hexOrigin.x, -hexOrigin.y);
@@ -516,7 +555,7 @@ public class EntitySprite extends Sprite {
               || entity instanceof AbstractBuildingEntity;
         boolean isSquadron = entity instanceof FighterSquadron;
 
-        if ((isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {
+        if (!floating && (isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
@@ -729,7 +768,7 @@ public class EntitySprite extends Sprite {
 
             // Label background
             if (!getAdjShortName().isBlank()) {
-                if (criticalStatus) {
+                if (criticalStatus && (!floating || !onlyDetectedBySensors())) {
                     graph.setColor(LABEL_CRITICAL_BACK);
                 } else {
                     graph.setColor(labelBack);
@@ -796,7 +835,7 @@ public class EntitySprite extends Sprite {
 
             // draw facing
             graph.setColor(Color.white);
-            if ((entity.getFacing() != -1)
+            if (!floating && (entity.getFacing() != -1)
                   && !((entity instanceof ConvInfantry infantry)
                   && !infantry.hasFieldWeapon()
                   && !infantry.isTakingCover())
@@ -829,7 +868,9 @@ public class EntitySprite extends Sprite {
             }
 
             // highlight the active front arc for infantry that has hit the deck with a field weapon
-            drawOnDeckFrontArc(graph);
+            if (!floating) {
+                drawOnDeckFrontArc(graph);
+            }
 
             // determine secondary facing for non-meks & flipped arms
             int secFacing = entity.getFacing();
@@ -839,11 +880,11 @@ public class EntitySprite extends Sprite {
                 secFacing = (entity.getFacing() + 3) % 6;
             }
             // draw secondary facing arrow if necessary
-            if ((secFacing != -1) && (secFacing != entity.getFacing())) {
+            if (!floating && (secFacing != -1) && (secFacing != entity.getFacing())) {
                 graph.setColor(Color.GREEN);
                 graph.draw(bv.getFacingPolys()[secFacing]);
             }
-            if (entity.isAero() && this.bv.game.useVectorMove()) {
+            if (!floating && entity.isAero() && this.bv.game.useVectorMove()) {
                 for (int head : entity.getHeading()) {
                     graph.setColor(Color.GREEN);
                     graph.draw(bv.getFacingPolys()[head]);
@@ -851,6 +892,10 @@ public class EntitySprite extends Sprite {
             }
 
             // armor, internal and TMM status bars
+            if (floating) {
+                graph.translate((bv.getHexSize().width / bv.getScale() - STATUS_BAR_LENGTH) / 2.0 - STATUS_BAR_X,
+                      (labelRect.height + 6) / bv.getScale() - 6);
+            }
             double percentRemaining = entity.getArmorRemainingPercent();
             int barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
 

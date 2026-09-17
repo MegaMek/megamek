@@ -4,7 +4,10 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,34 +19,45 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
-import com.badlogic.gdx.graphics.g3d.decals.Decal;
-import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.board.Coords;
 
 /** GPU board and Scene2D controls. The source remains the sole bridge to the existing client. */
 class GpuBattleView extends ApplicationAdapter {
-    private static final double[] STEP_SECONDS = { 0.15, 0.30, 0.075, 0 };
+    private static final boolean SPREAD_UNIT_ANNOTATIONS = false;
+    private static final float UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE = -1;
+    private static final double[] PLAYBACK_SPEEDS = { 1, 0.5, 2, 0 };
     private static final String[] SPEED_LABELS = { "1x", "0.5x", "2x", Messages.getString("GpuBoard.instant") };
     private final GpuBoardSource source;
     private final GpuDisplayScale displayScale = new GpuDisplayScale();
     final BoardCamera boardCamera = new BoardCamera();
     private final Map<Integer, UnitMotion> motions = new HashMap<>();
-    private final Map<String, Decal> sprites = new HashMap<>();
+    private final Map<BoardScene.Pixels, GpuMeeple> meeples = new HashMap<>();
+    private final Map<BoardScene.Unit, Vector3> unitAnchors = new HashMap<>();
+    private final Map<String, ModelInstance> unitInstances = new HashMap<>();
     private final Map<Integer, KeyCommandBind> cameraKeys = new HashMap<>();
     private final BoardInput boardInput = new BoardInput();
     private GpuTerrain terrain;
     private GpuTextures<BoardScene.Pixels> unitTextures;
-    private CameraGroupStrategy decalStrategy;
-    private DecalBatch decals;
+    private GpuTextures<String> annotationTextures;
+    private ModelBatch unitBatch;
+    private SpriteBatch annotationBatch;
     private ShapeRenderer lines;
     private GpuBoardUi ui;
     private BoardScene scene;
@@ -67,12 +81,11 @@ class GpuBattleView extends ApplicationAdapter {
     public void create() {
         terrain = new GpuTerrain();
         unitTextures = new GpuTextures<>();
-        decalStrategy = new CameraGroupStrategy(boardCamera.camera,
-              (a, b) -> Float.compare(boardCamera.camera.direction.dot(b.getPosition()),
-                    boardCamera.camera.direction.dot(a.getPosition())));
-        decals = new DecalBatch(decalStrategy);
+        annotationTextures = new GpuTextures<>();
+        unitBatch = new ModelBatch();
+        annotationBatch = new SpriteBatch();
         lines = new ShapeRenderer();
-        ui = new GpuBoardUi(source, boardCamera, () -> speedIndex = (speedIndex + 1) % STEP_SECONDS.length);
+        ui = new GpuBoardUi(source, boardCamera, () -> speedIndex = (speedIndex + 1) % PLAYBACK_SPEEDS.length);
         Gdx.input.setInputProcessor(new InputMultiplexer(ui.stage, boardInput));
         resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
@@ -124,8 +137,19 @@ class GpuBattleView extends ApplicationAdapter {
         terrain.update(scene);
         if (unitTextures.update(scene.units().stream().map(BoardScene.Unit::image).distinct()
               .collect(Collectors.toMap(pixels -> pixels, pixels -> pixels)))) {
-            sprites.clear();
+            meeples.values().forEach(GpuMeeple::dispose);
+            meeples.clear();
         }
+        Set<BoardScene.Pixels> images = scene.units().stream().map(BoardScene.Unit::image).collect(Collectors.toSet());
+        meeples.entrySet().removeIf(entry -> {
+            if (images.contains(entry.getKey())) {
+                return false;
+            }
+            entry.getValue().dispose();
+            return true;
+        });
+        annotationTextures.update(scene.units().stream().collect(Collectors.toMap(
+              unit -> unit.id() + ":" + unit.part(), BoardScene.Unit::annotations)));
         if (!fitted) {
             boardCamera.fit(scene);
             fitted = true;
@@ -162,25 +186,32 @@ class GpuBattleView extends ApplicationAdapter {
             if (movement.boardId() == scene.boardId() && visible.contains(movement.entityId())
                   && !movement.path().isEmpty()) {
                 motions.computeIfAbsent(movement.entityId(), id -> new UnitMotion(movement.path().getFirst()))
-                      .append(movement.path());
+                      .append(movement.path(), movement.type(), movement.jumpMP());
             }
         }
         for (UnitMotion motion : motions.values()) {
-            motion.advance(Gdx.graphics.getDeltaTime(), STEP_SECONDS[speedIndex]);
+            motion.advance(Gdx.graphics.getDeltaTime(), PLAYBACK_SPEEDS[speedIndex]);
         }
+        prepareUnits();
+        terrain.renderShadows(new ArrayList<>(unitInstances.values()));
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
         HdpiUtils.glViewport(0, ui.bottomPixels(),
               (int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight);
         terrain.render(boardCamera.camera, false);
-        renderUnits();
         terrain.render(boardCamera.camera, true);
+        renderHexText();
+        renderUnits();
         renderHints();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
+        renderAnnotations();
         ui.draw();
         frames++;
     }
 
-    private void renderUnits() {
+    private void prepareUnits() {
+        unitAnchors.clear();
+        unitInstances.keySet().retainAll(scene.units().stream().map(unit -> unit.id() + ":" + unit.part())
+              .collect(Collectors.toSet()));
         for (BoardScene.Unit unit : scene.units()) {
             Vector3 position = BoardGeometry.center(unit.location().coords(), unit.location().elevation());
             float facing = unit.location().facing() * 60;
@@ -189,21 +220,161 @@ class GpuBattleView extends ApplicationAdapter {
                 position.sub(motion.destination()).add(motion.position());
                 facing = motion.facing();
             }
-            if (!boardCamera.camera.frustum.sphereInFrustum(position, BoardGeometry.WIDTH)) {
-                continue;
+            GpuMeeple meeple = meeples.computeIfAbsent(unit.image(), pixels ->
+                  new GpuMeeple(pixels, unitTextures.region(pixels)));
+            String key = unit.id() + ":" + unit.part();
+            ModelInstance instance = unitInstances.get(key);
+            if (instance == null || instance.model != meeple.instance.model) {
+                instance = new ModelInstance(meeple.instance.model);
+                unitInstances.put(key, instance);
             }
-            TextureRegion region = unitTextures.region(unit.image());
-            Decal sprite = sprites.computeIfAbsent(unit.id() + ":" + unit.part(), key ->
-                  Decal.newDecal(unit.image().width(), unit.image().height(), region, true));
-            sprite.setTextureRegion(region);
-            sprite.setDimensions(unit.image().width(), unit.image().height());
-            // The artwork lies in the hex plane in both views; the camera supplies the perspective.
-            sprite.setRotation(new Quaternion(Vector3.Z, -facing));
-            position.add(0, 0, 0.5f);
-            sprite.setPosition(position);
-            decals.add(sprite);
+            Vector3 anchor = meeple.place(instance, boardCamera.camera, position, facing, unit.height());
+            unitAnchors.put(unit, anchor);
         }
-        decals.flush();
+    }
+
+    private void renderUnits() {
+        unitBatch.begin(boardCamera.camera);
+        Vector3 position = new Vector3();
+        for (BoardScene.Unit unit : unitAnchors.keySet()) {
+            ModelInstance instance = unitInstances.get(unit.id() + ":" + unit.part());
+            instance.transform.getTranslation(position);
+            if (boardCamera.camera.frustum.sphereInFrustum(position,
+                  BoardGeometry.WIDTH + unit.height() * BoardGeometry.LEVEL)) {
+                unitBatch.render(instance, terrain.environment());
+            }
+        }
+        unitBatch.end();
+    }
+
+    private void renderAnnotations() {
+        annotationBatch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+              boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight));
+        var ordered = unitAnchors.entrySet().stream().sorted(Comparator
+              .<Map.Entry<BoardScene.Unit, Vector3>>comparingInt(entry ->
+                    entry.getKey().id() == scene.selectedId() ? 0
+                          : entry.getKey().location().coords().equals(hovered) ? 1 : 2)
+              .thenComparingDouble(entry -> boardCamera.camera.position.dst2(entry.getValue()))
+              .thenComparingInt(entry -> entry.getKey().id())
+              .thenComparingInt(entry -> entry.getKey().part()))
+              .map(entry -> Map.entry(entry.getKey(), boardCamera.camera.project(new Vector3(entry.getValue()), 0, 0,
+                  boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight)))
+              .filter(entry -> withinAnnotationDistance(entry.getValue().x, entry.getValue().y,
+                  boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight,
+                  UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE * layoutScale)).toList();
+          List<Rectangle> placed = new ArrayList<>();
+        for (Map.Entry<BoardScene.Unit, Vector3> entry : ordered) {
+            BoardScene.Unit unit = entry.getKey();
+            Vector3 point = entry.getValue();
+            TextureRegion region = annotationTextures.region(unit.id() + ":" + unit.part());
+            float scale = Math.min(annotationScale(layoutScale), boardCamera.camera.viewportWidth / region.getRegionWidth());
+            scale = Math.min(scale, boardCamera.camera.viewportHeight / region.getRegionHeight());
+            float width = region.getRegionWidth() * scale;
+            float height = region.getRegionHeight() * scale;
+            Rectangle bounds = new Rectangle(MathUtils.clamp(point.x - width / 2, 0,
+                  boardCamera.camera.viewportWidth - width), MathUtils.clamp(point.y + 6 * layoutScale,
+                        0, boardCamera.camera.viewportHeight - height), width, height);
+            placed.add(SPREAD_UNIT_ANNOTATIONS
+                  ? spreadAnnotation(bounds, placed, boardCamera.camera.viewportWidth,
+                        boardCamera.camera.viewportHeight, 2 * layoutScale)
+                  : bounds);
+        }
+        annotationBatch.begin();
+        for (int index = ordered.size() - 1; index >= 0; index--) {
+            BoardScene.Unit unit = ordered.get(index).getKey();
+            Rectangle bounds = placed.get(index);
+            annotationBatch.draw(annotationTextures.region(unit.id() + ":" + unit.part()),
+                  bounds.x, bounds.y, bounds.width, bounds.height);
+        }
+        annotationBatch.end();
+    }
+
+    static boolean withinAnnotationDistance(float screenX, float screenY, float viewportWidth,
+          float viewportHeight, float maxDistance) {
+        if (maxDistance < 0) {
+            return true;
+        }
+        float distanceX = screenX - MathUtils.clamp(screenX, 0, viewportWidth);
+        float distanceY = screenY - MathUtils.clamp(screenY, 0, viewportHeight);
+        return distanceX * distanceX + distanceY * distanceY <= maxDistance * maxDistance;
+    }
+
+    static Rectangle spreadAnnotation(Rectangle preferred, List<Rectangle> occupied,
+          float viewportWidth, float viewportHeight, float gap) {
+        float maxX = Math.max(0, viewportWidth - preferred.width);
+        float maxY = Math.max(0, viewportHeight - preferred.height);
+        Rectangle origin = new Rectangle(MathUtils.clamp(preferred.x, 0, maxX),
+              MathUtils.clamp(preferred.y, 0, maxY), preferred.width, preferred.height);
+        Rectangle result = new Rectangle(origin);
+        float nearest = Float.POSITIVE_INFINITY;
+        List<Float> columns = new ArrayList<>(List.of(origin.x, 0f, maxX));
+        for (Rectangle bounds : occupied) {
+            columns.add(MathUtils.clamp(bounds.x - gap - origin.width, 0, maxX));
+            columns.add(MathUtils.clamp(bounds.x + bounds.width + gap, 0, maxX));
+        }
+        var sorted = occupied.stream().sorted(Comparator.comparingDouble(bounds -> bounds.y)).toList();
+        for (float left : columns) {
+            float bottom = 0;
+            for (int index = 0; index <= sorted.size(); index++) {
+                Rectangle obstacle = index < sorted.size() ? sorted.get(index) : null;
+                if (obstacle != null && (left + origin.width + gap <= obstacle.x
+                      || left >= obstacle.x + obstacle.width + gap)) {
+                    continue;
+                }
+                float top = obstacle == null ? maxY : Math.min(maxY, obstacle.y - gap - origin.height);
+                if (bottom <= top) {
+                    float candidateY = MathUtils.clamp(origin.y, bottom, top);
+                    float distance = (left - origin.x) * (left - origin.x)
+                          + (candidateY - origin.y) * (candidateY - origin.y);
+                    if (distance < nearest) {
+                        nearest = distance;
+                        result.setPosition(left, candidateY);
+                    }
+                }
+                if (obstacle != null) {
+                    bottom = Math.max(bottom, obstacle.y + obstacle.height + gap);
+                }
+            }
+        }
+        return result;
+    }
+
+    private void renderHexText() {
+        BitmapFont font = ui.font();
+        float scaleX = font.getData().scaleX;
+        float scaleY = font.getData().scaleY;
+        Color color = new Color(font.getColor());
+        boolean integerPositions = font.usesIntegerPositions();
+        font.setUseIntegerPositions(false);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
+        annotationBatch.setProjectionMatrix(boardCamera.camera.combined);
+        GlyphLayout layout = new GlyphLayout();
+        annotationBatch.begin();
+        for (var group : scene.tiles().stream().filter(tile -> !tile.text().isEmpty())
+              .filter(tile -> boardCamera.camera.frustum.sphereInFrustum(
+                    BoardGeometry.center(tile.coords(), tile.elevation()), BoardGeometry.WIDTH))
+              .collect(Collectors.groupingBy(BoardScene.Tile::elevation)).entrySet()) {
+            annotationBatch.setTransformMatrix(new Matrix4().setToTranslation(0, 0, group.getKey() * BoardGeometry.LEVEL + 0.6f));
+            for (BoardScene.Tile tile : group.getValue()) {
+                for (BoardView.HexText label : tile.text()) {
+                    font.getData().setScale(label.font().getSize2D() / GpuBoardUi.FONT_RESOLUTION);
+                    font.setColor(new Color((label.argb() << 8) | ((label.argb() >>> 24) & 0xff)));
+                    layout.setText(font, label.text());
+                    font.draw(annotationBatch, layout, BoardGeometry.centerX(tile.coords()) - layout.width / 2,
+                          BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2 - label.baseline() + layout.height);
+                }
+            }
+        }
+        annotationBatch.end();
+        annotationBatch.setTransformMatrix(new Matrix4());
+        font.getData().setScale(scaleX, scaleY);
+        font.setColor(color);
+        font.setUseIntegerPositions(integerPositions);
+    }
+
+    static float annotationScale(float displayScale) {
+        return 1.4f * Math.max(1, displayScale) / EntitySprite.ANNOTATION_RESOLUTION;
     }
 
     private void renderHints() {
@@ -260,6 +431,7 @@ class GpuBattleView extends ApplicationAdapter {
         private int startX;
         private int startY;
         private int focusedUnit;
+        private boolean skipHeld;
 
         private Coords pick(int x, int y) {
             return scene == null ? null : BoardGeometry.pick(scene,
@@ -383,6 +555,11 @@ class GpuBattleView extends ApplicationAdapter {
 
         @Override
         public boolean keyDown(int key) {
+            if (key == Input.Keys.SPACE && (skipHeld || ui.acceptsCameraKeys() && isMoving())) {
+                motions.values().forEach(UnitMotion::finish);
+                skipHeld = true;
+                return true;
+            }
             if (ui.key(key, true)) {
                 return true;
             }
@@ -428,6 +605,10 @@ class GpuBattleView extends ApplicationAdapter {
 
         @Override
         public boolean keyUp(int key) {
+            if (key == Input.Keys.SPACE && skipHeld) {
+                skipHeld = false;
+                return true;
+            }
             if (cameraKeys.remove(key) != null) {
                 return true;
             }
@@ -481,6 +662,7 @@ class GpuBattleView extends ApplicationAdapter {
     @Override
     public void pause() {
         cameraKeys.clear();
+        boardInput.skipHeld = false;
         boardInput.reset();
         if (ui != null) {
             ui.releaseInput();
@@ -506,17 +688,25 @@ class GpuBattleView extends ApplicationAdapter {
         return frames;
     }
 
+    boolean isMoving() {
+        return motions.values().stream().anyMatch(UnitMotion::isMoving);
+    }
+
     @Override
     public void dispose() {
         if (ui != null) {
             ui.dispose();
         }
         source.stopKeys();
-        if (decals != null) {
-            decals.dispose();
+        meeples.values().forEach(GpuMeeple::dispose);
+        if (unitBatch != null) {
+            unitBatch.dispose();
         }
-        if (decalStrategy != null) {
-            decalStrategy.dispose();
+        if (annotationBatch != null) {
+            annotationBatch.dispose();
+        }
+        if (annotationTextures != null) {
+            annotationTextures.dispose();
         }
         if (unitTextures != null) {
             unitTextures.dispose();

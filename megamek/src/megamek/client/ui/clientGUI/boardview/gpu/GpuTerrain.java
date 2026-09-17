@@ -2,6 +2,7 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,12 @@ final class GpuTerrain implements Disposable {
     private List<BoardScene.Tile> tiles;
     private DirectionalShadowLight shadow;
     private BoardScene.Light light;
+    private final BoundingBox shadowBounds = new BoundingBox();
+    private final List<Model> shadowModels = new ArrayList<>();
+    private final List<Matrix4> shadowTransforms = new ArrayList<>();
+    private boolean shadowDirty;
+    private float shadowDiameter;
+    private int shadowMapSize;
 
     private record Chunk(Model model, ModelInstance instance, BoundingBox bounds, boolean tactical) { }
 
@@ -105,21 +112,54 @@ final class GpuTerrain implements Disposable {
             shadow = null;
         }
         light = scene.light();
+        shadowDirty = true;
         environment.shadowMap = null;
         environment.set(ColorAttribute.createAmbientLight(1, 1, 1, 1));
         if (light == null) {
             return;
         }
-        BoundingBox bounds = new BoundingBox();
-        chunks.stream().filter(chunk -> !chunk.tactical()).forEach(chunk -> bounds.ext(chunk.bounds()));
-        float diameter = bounds.getDimensions(new Vector3()).len() * 1.05f;
-        int mapSize = diameter > 2048 ? 4096 : 2048;
-        shadow = new DirectionalShadowLight(mapSize, mapSize, diameter, diameter, 1, diameter + 2);
+                shadowBounds.inf();
+                chunks.stream().filter(chunk -> !chunk.tactical()).forEach(chunk -> shadowBounds.ext(chunk.bounds()));
+                shadowDiameter = shadowBounds.getDimensions(new Vector3()).len() * 1.15f;
+                shadowMapSize = shadowDiameter > 2048 ? 4096 : 2048;
+                shadow = new DirectionalShadowLight(shadowMapSize, shadowMapSize,
+              shadowDiameter, shadowDiameter, 1, shadowDiameter + 2);
         shadow.set(0.5f, 0.5f, 0.5f, light.x(), light.y(), -BoardGeometry.LEVEL);
         shadow.getCamera().up.set(Vector3.Z);
         environment.add(shadow);
-        environment.set(ColorAttribute.createAmbientLight(0.65f, 0.65f, 0.65f, 1));
+        environment.set(ColorAttribute.createAmbientLight(0.5f, 0.5f, 0.5f, 1));
         environment.shadowMap = shadow;
+        renderShadows(List.of());
+    }
+
+    Environment environment() {
+        return environment;
+    }
+
+    void renderShadows(List<ModelInstance> units) {
+        if (shadow == null) {
+            return;
+        }
+        boolean changed = shadowDirty || units.size() != shadowModels.size();
+        for (int index = 0; !changed && index < units.size(); index++) {
+            changed = units.get(index).model != shadowModels.get(index)
+                || !Arrays.equals(units.get(index).transform.val, shadowTransforms.get(index).val);
+        }
+        if (!changed) {
+            return;
+        }
+        shadowModels.clear();
+        shadowTransforms.clear();
+        BoundingBox bounds = new BoundingBox(shadowBounds);
+        for (ModelInstance unit : units) {
+            shadowModels.add(unit.model);
+            shadowTransforms.add(new Matrix4(unit.transform));
+            bounds.ext(unit.calculateBoundingBox(new BoundingBox()).mul(unit.transform));
+        }
+        float diameter = Math.max(shadowDiameter, bounds.getDimensions(new Vector3()).len() * 1.15f);
+        shadow.getCamera().viewportWidth = diameter;
+        shadow.getCamera().viewportHeight = diameter;
+        shadow.getCamera().far = diameter + 2;
         shadow.begin(bounds.getCenter(new Vector3()), Vector3.Zero);
         depthBatch.begin(shadow.getCamera());
         for (Chunk chunk : chunks) {
@@ -127,12 +167,16 @@ final class GpuTerrain implements Disposable {
                 depthBatch.render(chunk.instance());
             }
         }
+        for (ModelInstance unit : units) {
+            depthBatch.render(unit);
+        }
         depthBatch.end();
         shadow.end();
         // Bias receiver depth by the PCF footprint on a horizontal hex. The stock shader has no shadow bias;
         // without it, adjacent depth samples incorrectly shadow the same flat surface.
         float slope = (float) Math.hypot(light.x(), light.y()) / BoardGeometry.LEVEL;
-        shadow.getProjViewTrans().val[Matrix4.M23] -= 3 * Math.max(1, slope) / mapSize;
+        shadow.getProjViewTrans().val[Matrix4.M23] -= 3 * Math.max(1, slope) / shadowMapSize;
+        shadowDirty = false;
     }
 
     private void buildChunk(BoardScene scene, int startX, int startY, float floor, boolean tactical) {

@@ -39,6 +39,7 @@ import megamek.common.board.Coords;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -112,6 +113,7 @@ class GpuBoardSmokeTest {
                             path.add(new UnitLocation(1, new Coords(6, 5), 1, 0, 0));
                             path.add(new UnitLocation(1, new Coords(7, 5), 2, 0, 0));
                             SwingUtilities.invokeAndWait(() -> {
+                                fixture.entity.moved = EntityMovementType.MOVE_JUMP;
                                 fixture.entity.setPosition(new Coords(7, 5));
                                 fixture.entity.setFacing(2);
                                 fixture.entity.setSecondaryFacing(2);
@@ -120,7 +122,13 @@ class GpuBoardSmokeTest {
                             SwingUtilities.invokeAndWait(() -> { });
                         } else if (frames() == 126) {
                             movingHash = capture("movement.png");
+                            assertTrue(isMoving());
                             assertEquals(new Coords(7, 5), fixture.entity.getPosition());
+                            Gdx.input.getInputProcessor().keyDown(Input.Keys.SPACE);
+                            Gdx.input.getInputProcessor().keyUp(Input.Keys.SPACE);
+                            assertFalse(isMoving());
+                            assertEquals(new Coords(7, 5), fixture.entity.getPosition());
+                            assertEquals(1, fixture.clicks.get(), "Skipping animation must not issue orders");
                         } else if (frames() == 160) {
                             assertNotEquals(topHash, capture("isometric.png"));
                             assertNotEquals(movingHash, capture("movement-finished.png"));
@@ -201,6 +209,13 @@ class GpuBoardSmokeTest {
                                 Gdx.input = original;
                             }
                             boardCamera.reset(fixture.source.takeFrame().scene());
+                        } else if (frames() == 240) {
+                            BoardScene.Tile tile = fixture.source.takeFrame().scene().tile(new Coords(3, 1));
+                            boardCamera.center(BoardGeometry.center(tile.coords(), tile.elevation()));
+                            boardCamera.zoom(0.01f);
+                        } else if (frames() == 250) {
+                            capture("hex-text-closeup.png");
+                            boardCamera.reset(fixture.source.takeFrame().scene());
                         } else if (frames() == 350) {
                             timing("frame-timing.txt", "16 x 17 board, one unit, deployment and range markings");
                             frameMillis.clear();
@@ -233,12 +248,13 @@ class GpuBoardSmokeTest {
                                 + "\n95th percentile frame: " + percentile95 + " ms\n", false);
                 }
 
-                private void clickHex(Coords coords) {
+                private void clickHex(Coords coords) throws Exception {
                     Vector3 point = screenPosition(coords);
                     int x = (int) point.x;
                     int y = (int) point.y;
                     Gdx.input.getInputProcessor().touchDown(x, y, 0, Input.Buttons.LEFT);
                     Gdx.input.getInputProcessor().touchUp(x, y, 0, Input.Buttons.LEFT);
+                    SwingUtilities.invokeAndWait(() -> { });
                 }
 
                 private void cameraDrag(boolean shift, int dx, int dy) {

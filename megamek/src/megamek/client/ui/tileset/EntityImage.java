@@ -173,6 +173,7 @@ public class EntityImage {
     /** True when the unit is a Battlefield Support Asset, which gets a marker-stripe overlay (from its camo). */
     private boolean isAsset;
     protected Image[] facings = new Image[6];
+    private Image texture;
     private final Image[] wreckFacings = new Image[6];
     /** The damage level, from none to crippled. */
     private final int dmgLevel;
@@ -330,10 +331,12 @@ public class EntityImage {
             // Add damage scars and smoke/fire; not to Infantry
             if (!isInfantry && GUIP.getShowDamageDecal()) {
                 fImage = applyDamageDecal(fImage);
-                // No smoke in the lobby
-                if (!isPreview) {
-                    fImage = applyDamageSmoke(fImage);
-                }
+            }
+            if (i == 0) {
+                texture = fImage;
+            }
+            if (!isInfantry && GUIP.getShowDamageDecal() && !isPreview) {
+                fImage = applyDamageSmoke(fImage);
             }
 
             // Generate rotated images for the unit and for a wreck
@@ -397,6 +400,10 @@ public class EntityImage {
 
     public Image getFacing(int facing) {
         return facings[facing];
+    }
+
+    public Image getTexture() {
+        return texture == null ? facings[0] : texture;
     }
 
     public Image getWreckFacing(int facing) {

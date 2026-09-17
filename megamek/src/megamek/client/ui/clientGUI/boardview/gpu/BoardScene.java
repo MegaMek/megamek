@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.List;
 
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.board.Coords;
+import megamek.common.units.EntityMovementType;
 
 /** A presentation snapshot. Only the Swing thread reads the game; the GPU thread owns rendering. */
 record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
@@ -34,13 +36,22 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
               ? null : tiles.get(coords.getX() * height + coords.getY());
     }
 
-    public record Tile(Coords coords, int elevation, Pixels image, Pixels tactical) {
+    public record Tile(Coords coords, int elevation, Pixels image, Pixels tactical, List<BoardView.HexText> text) {
+        public Tile {
+            text = List.copyOf(text);
+        }
+
+        public Tile(Coords coords, int elevation, Pixels image, Pixels tactical) {
+            this(coords, elevation, image, tactical, List.of());
+        }
+
         public Tile(Coords coords, int elevation, Pixels image) {
             this(coords, elevation, image, null);
         }
     }
 
-    public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact) { }
+        public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
+                    Pixels annotations, int height) { }
 
     public record Waypoint(Coords coords, float elevation, float facing) { }
 
@@ -67,7 +78,7 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
     }
 
-    public record Movement(int entityId, int boardId, List<Waypoint> path) {
+    public record Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP) {
         public Movement {
             path = List.copyOf(path);
         }

@@ -42,6 +42,7 @@ import megamek.common.board.Coords;
 
 /** Target-anchored Scene2D menus; all game actions come from the Swing command adapter. */
 final class GpuBoardUi implements Disposable {
+    static final int FONT_RESOLUTION = 60;
     private static final int MENU_BAR_HEIGHT = 32;
     static final int TOP_HEIGHT = MENU_BAR_HEIGHT + 48;
     static final int TURN_HEIGHT = 72;
@@ -251,6 +252,10 @@ final class GpuBoardUi implements Disposable {
         if (popup.isVisible()) {
             positionPopup(popup.getX(), popup.getTop());
         }
+    }
+
+    BitmapFont font() {
+        return skin.getFont("default-font");
     }
 
     float hudScale() {
@@ -682,7 +687,7 @@ final class GpuBoardUi implements Disposable {
         pixel.dispose();
         FreeTypeFontGenerator.FreeTypeFontParameter fontSettings = new FreeTypeFontGenerator.FreeTypeFontParameter();
         // Rasterize above the logical font size so DPI scaling keeps glyphs legible.
-        fontSettings.size = 60;
+        fontSettings.size = FONT_RESOLUTION;
         fontSettings.incremental = true;
         fontSettings.minFilter = Texture.TextureFilter.Linear;
         fontSettings.magFilter = Texture.TextureFilter.Linear;

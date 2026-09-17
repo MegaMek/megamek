@@ -37,6 +37,7 @@ import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.units.UnitLocation;
 
@@ -130,13 +131,16 @@ final class GpuBoardSource implements AutoCloseable {
                 // BoardView consumes the event's Vector during playback. Copy it before leaving the event callback.
                 List<UnitLocation> path = event.getMovePath() == null ? List.of() : List.copyOf(event.getMovePath());
                 int entityId = event.getEntity().getId();
+                EntityMovementType type = event.getEntity().moved;
                 Entity old = event.getOldEntity();
                 UnitLocation start = old == null || old.getPosition() == null ? null
                       : new UnitLocation(old.getId(), old.getPosition(), old.getFacing(), old.getElevation(),
                             old.getBoardId());
                 SwingUtilities.invokeLater(() -> {
                     if (GpuBoardSource.this.view == eventView) {
-                        captureMovement(entityId, start, path);
+                        Entity takeoff = old == null ? event.getEntity() : old;
+                        captureMovement(entityId, start, path, type,
+                            type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0);
                     }
                 });
             }
@@ -169,7 +173,8 @@ final class GpuBoardSource implements AutoCloseable {
         }
     }
 
-    private void captureMovement(int entityId, UnitLocation start, List<UnitLocation> path) {
+        private void captureMovement(int entityId, UnitLocation start, List<UnitLocation> path, EntityMovementType type,
+            int jumpMP) {
         if (closed || path.isEmpty()) {
             return;
         }
@@ -193,7 +198,7 @@ final class GpuBoardSource implements AutoCloseable {
         Frame next = capture();
         synchronized (this) {
             if (view == movingView) {
-                pendingMoves.add(new BoardScene.Movement(entityId, view.getBoardId(), points));
+                pendingMoves.add(new BoardScene.Movement(entityId, view.getBoardId(), points, type, jumpMP));
             }
             frame = next;
         }
@@ -246,7 +251,7 @@ final class GpuBoardSource implements AutoCloseable {
             List<BoardScene.Tile> nextTiles = new ArrayList<>();
             for (BoardView.PlanarHex hex : view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()))) {
                 nextTiles.add(new BoardScene.Tile(hex.coords(), board.getHex(hex.coords()).getLevel(),
-                      new BoardScene.Pixels(hex.ground()), new BoardScene.Pixels(hex.tactical())));
+                        new BoardScene.Pixels(hex.ground()), new BoardScene.Pixels(hex.tactical()), hex.text()));
             }
             tiles = List.copyOf(nextTiles);
             terrainDirty = false;
@@ -258,8 +263,8 @@ final class GpuBoardSource implements AutoCloseable {
             BoardScene.Tile old = tiles.get(index);
             BoardScene.Pixels ground = BoardScene.Pixels.capture(hex.ground(), old.image());
             BoardScene.Pixels tactical = BoardScene.Pixels.capture(hex.tactical(), old.tactical());
-            if (ground != old.image() || tactical != old.tactical()) {
-                painted.set(index, new BoardScene.Tile(hex.coords(), old.elevation(), ground, tactical));
+            if (ground != old.image() || tactical != old.tactical() || !hex.text().equals(old.text())) {
+                painted.set(index, new BoardScene.Tile(hex.coords(), old.elevation(), ground, tactical, hex.text()));
                 changed = true;
             }
         }
@@ -334,7 +339,7 @@ final class GpuBoardSource implements AutoCloseable {
 
     private BoardScene.Unit unit(Entity entity, int part, Coords coords, boolean sensor,
           Map<Image, Boolean> usedImages) {
-        Image image = sensor ? view.getRadarBlipImage() : view.getTileManager().imageFor(entity, 0, part);
+        Image image = sensor ? view.getRadarBlipImage() : view.getTileManager().textureFor(entity, part);
         usedImages.put(image, true);
         BoardScene.Pixels pixels = unitImages.computeIfAbsent(image, this::copyImage);
         int facing = sensor ? 0 : view.getTileManager().facingFor(entity);
@@ -344,7 +349,12 @@ final class GpuBoardSource implements AutoCloseable {
         }
         return new BoardScene.Unit(entity.getId(), part, sensor ? Messages.getString("BoardView1.sensorReturn")
               : entity.getShortName(),
-              waypoint(coords, elevation, facing), pixels, sensor);
+              waypoint(coords, elevation, facing), pixels, sensor,
+              BoardScene.Pixels.capture(view.captureUnitAnnotations(entity, part),
+                  frame == null ? null : frame.scene().units().stream()
+                      .filter(unit -> unit.id() == entity.getId() && unit.part() == part)
+                          .map(BoardScene.Unit::annotations).findFirst().orElse(null)),
+              sensor ? 1 : entity.height() + 1);
     }
 
     private BoardScene.Waypoint waypoint(Coords coords, float relativeElevation, int facing) {

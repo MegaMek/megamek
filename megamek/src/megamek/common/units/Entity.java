@@ -18629,7 +18629,7 @@ public abstract class Entity extends TurnOrdered
             // PSR
             PilotingRollData roll = entityPickingUpTarget.getBasePilotingRoll(overallMoveType);
             // roll
-            final Roll diceRoll = entityPickingUpTarget.getCrew().rollPilotingSkill();
+            final Roll diceRoll = entityPickingUpTarget.getCrew().rollPilotingSkill(this);
             Report psrToPickupReport = new Report(2185);
             psrToPickupReport.subject = entityPickingUpTarget.getId();
             psrToPickupReport.add(roll.getValueAsString());

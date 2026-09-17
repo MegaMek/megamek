@@ -6379,7 +6379,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            Roll diceRoll = getCrew().rollPilotingSkill();
+            Roll diceRoll = getCrew().rollPilotingSkill(this);
             Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
             if (diceRoll.getIntValue() < psr.getValue()) {
                 setStalled(true);
@@ -6415,7 +6415,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             vPhaseReport.add(Report.subjectReport(2285, getId()).add(psr.getValueAsString()).add(psr.getDesc()));
             vPhaseReport.add(Report.subjectReport(2290, getId()).indent().noNL().add(1).add(psr.getPlainDesc()));
 
-            Roll diceRoll = getCrew().rollPilotingSkill();
+            Roll diceRoll = getCrew().rollPilotingSkill(this);
             Report r = Report.subjectReport(2300, getId()).add(psr).add(diceRoll);
             if (diceRoll.getIntValue() < psr.getValue()) {
                 vPhaseReport.add(r.choose(false));

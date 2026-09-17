@@ -79,6 +79,7 @@ public class CrewDescriptor {
     private ForceDescriptor assignment;
     private int gunnery;
     private boolean hasNaturalAptitudeGunnery;
+    private boolean hasNaturalAptitudeArtillery;
     private int piloting;
     private boolean hasNaturalAptitudePiloting;
     private String title;
@@ -392,6 +393,14 @@ public class CrewDescriptor {
         this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
     }
 
+    public boolean isHasNaturalAptitudeArtillery() {
+        return hasNaturalAptitudeArtillery;
+    }
+
+    public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery) {
+        this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
+    }
+
     public int getPiloting() {
         return piloting;
     }
@@ -409,7 +418,8 @@ public class CrewDescriptor {
     }
 
     public Crew createCrew(CrewType crewType) {
-        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, hasNaturalAptitudeGunnery, piloting,
+        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, hasNaturalAptitudeGunnery,
+              hasNaturalAptitudeArtillery, piloting,
               hasNaturalAptitudePiloting, gender, assignment.getFactionRec().isClan(), null);
         // Randomize names and skills of crew, then assign the piloting and
         // gunnery skills generated for the unit to the correct slot.

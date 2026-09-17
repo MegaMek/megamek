@@ -6605,7 +6605,7 @@ public class TWGameManager extends AbstractGameManager {
             r.addDesc(rider);
             r.add(prd);
             r.addDesc(carrier);
-            final Roll diceRoll = carrier.getCrew().rollPilotingSkill();
+            final Roll diceRoll = carrier.getCrew().rollPilotingSkill(carrier);
             r.add(diceRoll);
 
             if (diceRoll.getIntValue() < prd.getValue()) {
@@ -9055,7 +9055,7 @@ public class TWGameManager extends AbstractGameManager {
         skillReport.add(r);
 
         // roll
-        final Roll diceRoll = entity.getCrew().rollPilotingSkill();
+        final Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
@@ -9213,7 +9213,7 @@ public class TWGameManager extends AbstractGameManager {
         skillReport.add(r);
 
         // roll
-        final Roll diceRoll = entity.getCrew().rollPilotingSkill();
+        final Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
         r = new Report(2185);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
@@ -11161,7 +11161,7 @@ public class TWGameManager extends AbstractGameManager {
             if (e.getSelfDestructInitiated() && e.hasEngine()) {
                 report = new Report(6166, Report.PUBLIC);
                 int target = e.getCrew().getPiloting();
-                Roll diceRoll = e.getCrew().rollPilotingSkill();
+                Roll diceRoll = e.getCrew().rollPilotingSkill(e);
                 report.subject = e.getId();
                 report.addDesc(e);
                 report.indent();
@@ -18059,7 +18059,7 @@ public class TWGameManager extends AbstractGameManager {
             r.add(rollTarget.getLastPlainDesc());
             vPhaseReport.add(r);
             // roll
-            Roll diceRoll = entity.getCrew().rollPilotingSkill();
+            Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
@@ -18290,7 +18290,7 @@ public class TWGameManager extends AbstractGameManager {
                 return vPhaseReport;
             }
 
-            Roll diceRoll = entity.getCrew().rollPilotingSkill();
+            Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
             r = new Report(2299);
             r.add(roll);
             r.add(diceRoll);
@@ -25324,7 +25324,7 @@ public class TWGameManager extends AbstractGameManager {
             reports.add(r);
             reports.addAll(damageCrew(entity, 1, crewPos));
         } else {
-            Roll diceRoll = entity.getCrew().rollPilotingSkill();
+            Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
             r = new Report(2325);
             r.subject = entity.getId();
             r.add(entity.getCrew().getCrewType().getRoleName(crewPos));
@@ -29678,7 +29678,7 @@ public class TWGameManager extends AbstractGameManager {
         PhysicalResult pr = new PhysicalResult();
         ToHitData toHit = new ToHitData();
         if (aaa instanceof PhysicalAttackAction && ae.getCrew() != null) {
-            pr.roll = ae.getCrew().rollPilotingSkill();
+            pr.roll = ae.getCrew().rollPilotingSkill(ae);
         } else {
             pr.roll = Compute.rollD6(2);
         }
@@ -29700,7 +29700,7 @@ public class TWGameManager extends AbstractGameManager {
                 pr.damageRight = BrushOffAttackAction.getDamageFor(ae, BrushOffAttackAction.RIGHT);
                 baa.setArm(arm);
                 if (ae.getCrew() != null) {
-                    pr.rollRight = ae.getCrew().rollPilotingSkill();
+                    pr.rollRight = ae.getCrew().rollPilotingSkill(ae);
                 } else {
                     pr.rollRight = Compute.rollD6(2);
                 }
@@ -29803,7 +29803,7 @@ public class TWGameManager extends AbstractGameManager {
                 pr.damageRight = damageRight;
                 pr.toHitRight = toHitRight;
                 if (ae.getCrew() != null) {
-                    pr.rollRight = ae.getCrew().rollPilotingSkill();
+                    pr.rollRight = ae.getCrew().rollPilotingSkill(ae);
                 } else {
                     pr.rollRight = Compute.rollD6(2);
                 }
@@ -30118,7 +30118,7 @@ public class TWGameManager extends AbstractGameManager {
             edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
             vDesc.addElement(edgeReport);
 
-            return entity.getCrew().rollPilotingSkill();
+            return entity.getCrew().rollPilotingSkill(entity);
         }
 
         return diceRoll;
@@ -30184,7 +30184,7 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 rollTarget = getEjectModifiers(game, entity, crewPos, autoEject);
                 // roll
-                Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
                 // Edge may reroll a failed ejection roll once.
                 diceRoll = applyEjectionEdge(entity, rollTarget, diceRoll, vDesc);
 
@@ -31503,7 +31503,7 @@ public class TWGameManager extends AbstractGameManager {
             addReport(r);
 
             // roll
-            final Roll diceRoll = entity.getCrew().rollPilotingSkill();
+            final Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
             r = new Report(2190);
             r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());

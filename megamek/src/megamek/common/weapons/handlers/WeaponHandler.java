@@ -1268,7 +1268,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     report.subject = attackingEntity.getId();
                     vPhaseReport.addElement(report);
                     if (null != attackingEntity.getCrew()) {
-                        roll = attackingEntity.getCrew().rollGunnerySkill();
+                        roll = attackingEntity.getCrew().rollGunnerySkill(game, weaponAttackAction);
                     } else {
                         roll = Compute.rollD6(2);
                     }
@@ -2013,7 +2013,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // is this an underwater attack on a surface naval vessel?
         underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
         if (null != attackingEntity.getCrew()) {
-            roll = attackingEntity.getCrew().rollGunnerySkill();
+            roll = attackingEntity.getCrew().rollGunnerySkill(game, weaponAttackAction);
         } else {
             roll = Compute.rollD6(2);
         }

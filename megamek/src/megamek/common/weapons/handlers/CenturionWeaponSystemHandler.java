@@ -134,7 +134,7 @@ public class CenturionWeaponSystemHandler extends EnergyWeaponHandler {
                         break;
                 }
             }
-            Roll diceRoll = entityTarget.getCrew().rollPilotingSkill();
+            Roll diceRoll = entityTarget.getCrew().rollPilotingSkill(entityTarget);
             r = new Report(5060);
             r.subject = entityTarget.getId();
             r.indent(3);

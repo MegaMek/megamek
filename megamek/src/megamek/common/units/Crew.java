@@ -45,9 +45,12 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.common.Report;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.game.Game;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -741,6 +744,9 @@ public class Crew implements Serializable {
         return usesSmallArms() ? getSmallArms(gunnerPos) : gunneryB[gunnerPos];
     }
 
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     */
     public boolean isHasNaturalAptitudeGunnery() {
         return hasNaturalAptitudeGunnery;
     }
@@ -757,6 +763,9 @@ public class Crew implements Serializable {
         return piloting[pilotPos];
     }
 
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)}  instead.
+     */
     public boolean isHasNaturalAptitudePiloting() {
         return hasNaturalAptitudePiloting;
     }
@@ -797,6 +806,9 @@ public class Crew implements Serializable {
         return artillery[pos];
     }
 
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     */
     public boolean isHasNaturalAptitudeArtillery() {
         return hasNaturalAptitudeArtillery;
     }
@@ -1519,16 +1531,16 @@ public class Crew implements Serializable {
         }
     }
 
-    public Roll rollGunnerySkill() {
-        if (hasNaturalAptitudeGunnery) {
+    public Roll rollGunnerySkill(Game game, WeaponAttackAction action) {
+        if (isUseNaturalAptitudeGunnery(game, action)) {
             return Compute.rollD6(3, 2);
         }
 
         return Compute.rollD6(2);
     }
 
-    public Roll rollPilotingSkill() {
-        if (hasNaturalAptitudePiloting) {
+    public Roll rollPilotingSkill(Entity pilotedEntity) {
+        if (isUseNaturalAptitudePiloting(pilotedEntity)) {
             return Compute.rollD6(3, 2);
         }
 
@@ -1802,4 +1814,18 @@ public class Crew implements Serializable {
         return getCrewType() != null && getCrewType().equals(CrewType.NONE);
     }
 
+    public boolean isUseNaturalAptitudeGunnery(Game game, WeaponAttackAction weaponAttackAction) {
+        boolean useArtillerySkill = game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
+        boolean useArtilleryNaturalAptitude = useArtillerySkill && weaponAttackAction instanceof ArtilleryAttackAction;
+
+        if (useArtilleryNaturalAptitude) {
+            return isHasNaturalAptitudeArtillery();
+        }
+
+        return isHasNaturalAptitudeGunnery();
+    }
+
+    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity) {
+        return this.isHasNaturalAptitudePiloting();
+    }
 }

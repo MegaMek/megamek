@@ -34,7 +34,6 @@
 package megamek.server.totalWarfare;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.MMConstants;
@@ -58,7 +57,6 @@ import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesHeat;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
-import megamek.server.ServerHelper;
 
 class HeatResolver extends AbstractTWRuleHandler {
 
@@ -1240,7 +1238,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                                     break;
                             }
                         }
-                        Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                        Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
                         report = new Report(5050);
                         report.subject = entity.getId();
                         report.addDesc(entity);

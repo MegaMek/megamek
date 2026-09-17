@@ -48,6 +48,7 @@ public record CrewRefBreak(Crew originalCrew) implements RefBreak<Crew> {
               originalCrew.getSize(),
               originalCrew.getGunnery(),
               originalCrew.isHasNaturalAptitudeGunnery(),
+              originalCrew.isHasNaturalAptitudeArtillery(),
               originalCrew.getPiloting(),
               originalCrew.isHasNaturalAptitudePiloting(),
               originalCrew.getGender(),

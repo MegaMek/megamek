@@ -23486,7 +23486,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.add(en.getLocationName(loc));
                     vDesc.addElement(r);
                     en.destroyLocation(loc, true);
-                    if ((en instanceof Mek mek) && mek.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) {
+                    if ((en instanceof Mek mek) && !mek.hasTorsoMountedCockpit()) {
                         // Don't kill a pilot multiple times.
                         if (Crew.DEATH > en.getCrew().getHits()) {
                             en.getCrew().setDoomed(true);

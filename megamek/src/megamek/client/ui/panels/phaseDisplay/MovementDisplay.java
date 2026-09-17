@@ -1118,7 +1118,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setEjectEnabled(hasLegalHex);
         } else {
             setEjectEnabled(((isMEK &&
-                              (((Mek) selectedUnit).getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)) ||
+                              !((Mek) selectedUnit).hasTorsoMountedCockpit()) ||
                              isAero) &&
                             selectedUnit.isActive() &&
                             !selectedUnit.hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT));

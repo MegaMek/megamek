@@ -56,6 +56,7 @@ import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.ArtilleryRange;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.compute.VirtualRealityPilotingPod;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
@@ -385,6 +386,12 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.CICDestroyed");
                 }
             }
+        }
+        // A Virtual Reality Piloting Pod under hostile interference is blind, as if its sensors were destroyed
+        // (IO:AE p.63)
+        String vrppBlindedReason = VirtualRealityPilotingPod.getBlindedReason(attacker);
+        if (vrppBlindedReason != null) {
+            return vrppBlindedReason;
         }
         // Are the sensors operational?
         // BattleMek sensors are destroyed after 2 hits, unless they have a

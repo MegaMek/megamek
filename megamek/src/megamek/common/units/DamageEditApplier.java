@@ -489,6 +489,12 @@ public class DamageEditApplier {
                   || (weaponJammed.getValue() == null)) {
                 continue;
             }
+            // a jam on a weapon no rule can jam would be a state nothing in play can produce or clear
+            if (!weapon.canJam()) {
+                LOGGER.warn("[EquipState] GM edit refused: {} on {} cannot jam, jammed stays {}",
+                      weapon.getName(), entity.getDisplayName(), weapon.isJammed());
+                continue;
+            }
             if (weapon.isJammed() != weaponJammed.getValue()) {
                 LOGGER.info("[EquipState] GM edit: {} on {} {}", weapon.getName(), entity.getDisplayName(),
                       weaponJammed.getValue() ? "jammed" : "jam cleared");

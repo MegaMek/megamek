@@ -164,7 +164,7 @@ class TWGameManagerDamageEditTest {
 
     @Test
     void gameMasterJamLandsOnTheServerUnit() {
-        WeaponMounted weapon = mek.getWeaponList().getFirst();
+        WeaponMounted weapon = jammableWeapon();
         DamageEditSpec spec = emptySpec();
         spec.weaponJammed.put(mek.getEquipmentNum(weapon), true);
 
@@ -175,12 +175,22 @@ class TWGameManagerDamageEditTest {
 
     @Test
     void nonGameMasterJamIsDropped() {
-        WeaponMounted weapon = mek.getWeaponList().getFirst();
+        WeaponMounted weapon = jammableWeapon();
         DamageEditSpec spec = emptySpec();
         spec.weaponJammed.put(mek.getEquipmentNum(weapon), true);
 
         sendDamageEdit(OWNER_CONNECTION_ID, spec);
 
         assertFalse(weapon.isJammed(), "A jam from a player who is not the gamemaster must not be applied");
+    }
+
+    /** A weapon of the test unit that some rule can jam, so that a jam on it is not refused for the wrong reason. */
+    private WeaponMounted jammableWeapon() {
+        for (WeaponMounted weapon : mek.getWeaponList()) {
+            if (weapon.canJam()) {
+                return weapon;
+            }
+        }
+        throw new AssertionError("The test unit must carry a weapon that can jam");
     }
 }

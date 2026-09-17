@@ -39,6 +39,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -739,29 +741,50 @@ public class UnitDamagePanelBuilder {
      * is why Fired is offered on one-shot weapons alone.</p>
      */
     private JComponent withWeaponStateSwitches(int equipmentNumber, WeaponMounted weapon, JComponent control) {
-        JComponent row = appendedToRow(control,
-              stateCheckbox("UnitEditorDialog.weaponJammed", weapon.isJammed(), controls.weaponJammed,
-                    equipmentNumber));
+        JComponent row = control;
+        // only where some rule can jam the weapon: an LRM rack or a laser has no jam to set or clear
+        if (weapon.canJam()) {
+            row = appendedToRow(row,
+                  stateSwitch("UnitEditorDialog.weaponJammed", weapon.isJammed(), controls.weaponJammed,
+                        equipmentNumber));
+        }
         if (weapon.isOneShot()) {
             row = appendedToRow(row,
-                  stateCheckbox("UnitEditorDialog.weaponFired", weapon.isFired(), controls.weaponFired,
+                  stateSwitch("UnitEditorDialog.weaponFired", weapon.isFired(), controls.weaponFired,
                         equipmentNumber));
         }
         if (weapon.hasDirectionalTorsoMount()) {
             row = appendedToRow(row,
-                  stateCheckbox("UnitEditorDialog.mountLocked", weapon.isDirectionalMountLocked(),
+                  stateSwitch("UnitEditorDialog.mountLocked", weapon.isDirectionalMountLocked(),
                         controls.directionalMountLocked, equipmentNumber));
         }
         return row;
     }
 
-    /** A labelled state checkbox with its tooltip, registered under the equipment number in the given map. */
-    private JCheckBox stateCheckbox(String labelKey, boolean selected, Map<Integer, JCheckBox> register,
+    /**
+     * A state switch for an equipment row: a bare checkbox with its name as a separate label, registered under
+     * the equipment number in the given map. The checkbox is bare on purpose - it is then the same component as
+     * the crit boxes beside it and sits on their line at every GUI scale, where a checkbox carrying its own text
+     * is taller and its box drifts below them. Clicking the label toggles the box, so nothing is lost.
+     */
+    private JComponent stateSwitch(String labelKey, boolean selected, Map<Integer, JCheckBox> register,
           int equipmentNumber) {
-        JCheckBox checkBox = new JCheckBox(Messages.getString(labelKey), selected);
-        checkBox.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(labelKey + ".tooltip")));
+        JCheckBox checkBox = new JCheckBox("", selected);
+        JLabel text = new JLabel(Messages.getString(labelKey));
+        String tooltip = UIUtil.formatSideTooltip(Messages.getString(labelKey + ".tooltip"));
+        checkBox.setToolTipText(tooltip);
+        text.setToolTipText(tooltip);
+        text.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                checkBox.doClick();
+            }
+        });
         register.put(equipmentNumber, checkBox);
-        return checkBox;
+        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(2), 0));
+        switchPanel.add(checkBox);
+        switchPanel.add(text);
+        return switchPanel;
     }
 
     /**
@@ -1000,12 +1023,8 @@ public class UnitDamagePanelBuilder {
         if (!building.isTurretMounted(weapon)) {
             return control;
         }
-        JCheckBox turretLocked = new JCheckBox(Messages.getString("UnitEditorDialog.building.turretLocked"),
-              building.isTurretLocked(weapon));
-        turretLocked.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.building.turretLocked.tooltip")));
-        controls.buildingTurretLocked.put(equipmentNumber, turretLocked);
-        return appendedToRow(control, turretLocked);
+        return appendedToRow(control, stateSwitch("UnitEditorDialog.building.turretLocked",
+              building.isTurretLocked(weapon), controls.buildingTurretLocked, equipmentNumber));
     }
 
     /** Wraps the control and the switch into one row, the switch at its right end. */

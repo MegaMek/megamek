@@ -44,6 +44,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
@@ -447,7 +448,7 @@ class DamageEditApplierTest {
 
     @Test
     void jamLandsOnTheWeaponAtOnce() {
-        Mounted<?> weapon = mek.getWeaponList().get(0);
+        WeaponMounted weapon = jammableWeapon();
         int equipmentNumber = mek.getEquipmentNum(weapon);
         assertFalse(weapon.isJammed(), "A freshly loaded weapon is not jammed");
 
@@ -461,6 +462,24 @@ class DamageEditApplierTest {
         apply(clearSpec);
         assertFalse(weapon.isJammed(), "A gamemaster must be able to clear a jam");
         assertFalse(weapon.jammedThisPhase(), "A cleared jam does not come back at the next phase");
+    }
+
+    @Test
+    void jamIsRefusedOnAWeaponThatCannotJam() {
+        WeaponMounted missileRack = null;
+        for (WeaponMounted weapon : mek.getWeaponList()) {
+            if (weapon.getType().getAmmoType() == AmmoType.AmmoTypeEnum.LRM) {
+                missileRack = weapon;
+            }
+        }
+        assertNotNull(missileRack, "The test unit carries an LRM rack");
+        assertFalse(missileRack.canJam(), "No rule jams a missile rack");
+
+        DamageEditSpec spec = emptySpec();
+        spec.weaponJammed.put(mek.getEquipmentNum(missileRack), true);
+        apply(spec);
+
+        assertFalse(missileRack.isJammed(), "A jam is refused on a weapon that cannot jam");
     }
 
     @Test
@@ -479,12 +498,12 @@ class DamageEditApplierTest {
 
     @Test
     void firedIsRefusedOnAWeaponThatIsNotOneShot() {
-        Mounted<?> autocannon = mek.getWeaponList().get(0);
-        assertFalse(autocannon.isOneShot());
+        Mounted<?> weapon = mek.getWeaponList().get(0);
+        assertFalse(weapon.isOneShot());
 
-        applyWeaponFired(mek, mek.getEquipmentNum(autocannon), true);
+        applyWeaponFired(mek, mek.getEquipmentNum(weapon), true);
 
-        assertFalse(autocannon.isFired(), "Fired is a lasting state on one-shot weapons alone");
+        assertFalse(weapon.isFired(), "Fired is a lasting state on one-shot weapons alone");
     }
 
     @Test
@@ -507,12 +526,12 @@ class DamageEditApplierTest {
 
     @Test
     void directionalMountLockIsRefusedWithoutAMount() {
-        Mounted<?> autocannon = mek.getWeaponList().get(0);
-        assertFalse(autocannon.hasDirectionalTorsoMount());
+        Mounted<?> weapon = mek.getWeaponList().get(0);
+        assertFalse(weapon.hasDirectionalTorsoMount());
 
-        applyMountLock(mek, mek.getEquipmentNum(autocannon), true);
+        applyMountLock(mek, mek.getEquipmentNum(weapon), true);
 
-        assertFalse(autocannon.isDirectionalMountLocked(), "Only a Directional Torso Mount can be locked");
+        assertFalse(weapon.isDirectionalMountLocked(), "Only a Directional Torso Mount can be locked");
     }
 
     @Test
@@ -546,6 +565,16 @@ class DamageEditApplierTest {
             }
         }
         assertTrue(allCriticalSlotsBreached(Mek.LOC_LEFT_TORSO, false));
+    }
+
+    /** A weapon of the test Mek that some rule can jam: its AC/20. */
+    private WeaponMounted jammableWeapon() {
+        for (WeaponMounted weapon : mek.getWeaponList()) {
+            if (weapon.canJam()) {
+                return weapon;
+            }
+        }
+        throw new AssertionError("The test unit must carry a weapon that can jam");
     }
 
     /** A spec holding only the given Fired state, applied to the given unit. */

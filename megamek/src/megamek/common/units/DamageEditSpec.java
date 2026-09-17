@@ -121,8 +121,9 @@ public class DamageEditSpec implements Serializable {
 
     /**
      * Whether each weapon is jammed, by its equipment number. Applies to every unit type, an Advanced Building's
-     * weapons included (TO:AR p. 119). A jam set here bites at once, without the phase turnover a jam in play waits
-     * for; a jam cleared here is cleared entirely.
+     * weapons included (TO:AR p. 119), but only to weapons some rule can jam ({@code WeaponMounted#canJam()});
+     * a jam named for any other weapon is refused. A jam set here bites at once, without the phase turnover a
+     * jam in play waits for; a jam cleared here is cleared entirely.
      */
     public final Map<Integer, Boolean> weaponJammed = new HashMap<>();
 

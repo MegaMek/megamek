@@ -57,6 +57,9 @@ import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.ComputeECM;
+import megamek.common.compute.VirtualRealityPilotingPod;
+import megamek.common.compute.VirtualRealityPilotingPod.Interference;
+import megamek.common.compute.VirtualRealityPilotingPod.InterferenceState;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.INarcPod;
@@ -440,6 +443,18 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
             } else if (ComputeECM.isAffectedByECM(en, pos, pos)) {
                 ((DefaultListModel<String>) narcList.getModel())
                       .addElement(Messages.getString("MekDisplay.InEnemyECMField"));
+            }
+
+            // Virtual Reality Piloting Pod under hostile interference (IO:AE p.63)
+            if (en instanceof Mek mek && mek.hasVirtualRealityPilotingPod()) {
+                Interference podInterference = VirtualRealityPilotingPod.getInterference(mek);
+                if (podInterference.isBlinded()) {
+                    ((DefaultListModel<String>) narcList.getModel())
+                          .addElement(Messages.getString("MekDisplay.VrppBlinded", podInterference.source()));
+                } else if (podInterference.state() == InterferenceState.DEGRADED) {
+                    ((DefaultListModel<String>) narcList.getModel())
+                          .addElement(Messages.getString("MekDisplay.VrppDegraded", podInterference.source()));
+                }
             }
 
             // Active Stealth Armor? If yes, we're under ECM

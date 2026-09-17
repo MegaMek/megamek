@@ -47,6 +47,7 @@ import java.util.Vector;
 import megamek.common.ECCMComparator;
 import megamek.common.ECMComparator;
 import megamek.common.ECMInfo;
+import megamek.common.TemporaryECMField;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
@@ -369,58 +370,26 @@ public class ComputeECM {
         Comparator<ECMInfo> ecmComparator;
         ecmComparator = new ECCMComparator();
 
-        ArrayList<ECMInfo> allEcmInfo = new ArrayList<>(entities.size());
+        ArrayList<ECMInfo> allEcmInfo = collectAllEcmInfo(entities);
         ArrayList<ECMInfo> allEccmInfo = new ArrayList<>(entities.size());
         // ECCM that counter an ECM need to get removed from allEcmInfo later
         LinkedList<ECMInfo> eccmToRemove = new LinkedList<>();
 
         Game game = null;
-        for (Entity e : entities) {
-            ECMInfo ecmInfo = e.getECMInfo();
-            if (ecmInfo != null) {
-                allEcmInfo.add(ecmInfo);
-            }
-            ECMInfo eccmInfo = e.getECCMInfo();
-            if (eccmInfo != null) {
-                allEcmInfo.add(eccmInfo);
-                allEccmInfo.add(eccmInfo);
-            }
+        for (Entity entity : entities) {
             if (game == null) {
-                game = e.getGame();
+                game = entity.getGame();
+            }
+        }
+        for (ECMInfo ecmInfo : allEcmInfo) {
+            if (ecmInfo.isECCM()) {
+                allEccmInfo.add(ecmInfo);
             }
         }
 
         // If either case is true, the rest is meaningless
         if (entities.isEmpty() || (game == null)) {
             return allEcmInfo;
-        }
-
-        // Add ECMInfo for chaff
-        for (SmokeCloud cloud : game.getSmokeCloudList()) {
-            if (cloud.getSmokeLevel() == SmokeCloud.SMOKE_CHAFF_LIGHT) {
-                for (Coords c : cloud.getCoordsList()) {
-                    ECMInfo ecmInfo = new ECMInfo(1, c, null, 1, 0);
-                    allEcmInfo.add(ecmInfo);
-                }
-            }
-        }
-
-        // Add ECMInfo for temporary ECM fields (from EMP mines, etc.)
-        for (megamek.common.TemporaryECMField tempECM : game.getTemporaryECMFields()) {
-            ECMInfo ecmInfo = tempECM.toECMInfo();
-            if (ecmInfo != null) {
-                allEcmInfo.add(ecmInfo);
-            }
-        }
-
-        // Add a hostile, single-hex ECM field over any unit currently suffering Improved Magnetic
-        // Pulse (iATM IMP) missile interference (IO IMP rules). A null owner is hostile to everyone
-        // and range 0 affects only the stricken unit's own hex, not a surrounding bubble. eccmStrength
-        // 0 keeps it pure ECM, so it can never act as ECCM as the rules require.
-        for (Entity entity : entities) {
-            if (entity.isImpEcmAffected() && (entity.getPosition() != null)) {
-                allEcmInfo.add(new ECMInfo(0, entity.getPosition(), null, 1, 0));
-            }
         }
 
         // Sort the ECM, as we need to take care of the stronger ECM/ECCM first
@@ -484,6 +453,69 @@ public class ComputeECM {
     }
 
     /**
+     * Gathers every ECM and ECCM field on the board exactly as emitted, before any ECCM is allowed to negate any ECM.
+     * This includes the fields of the supplied entities, chaff clouds, temporary fields such as EMP mines, and the
+     * single-hex field over units suffering Improved Magnetic Pulse interference. Callers that need the fields after
+     * ECCM negation use {@link #computeAllEntitiesECMInfo(List)} instead.
+     *
+     * @param entities The list of entities to compute information for
+     *
+     * @return An ECMInfo entry for each active ECM and ECCM fielded, with no ECCM negation applied
+     */
+    public static ArrayList<ECMInfo> collectAllEcmInfo(List<Entity> entities) {
+        ArrayList<ECMInfo> allEcmInfo = new ArrayList<>(entities.size());
+
+        Game game = null;
+        for (Entity entity : entities) {
+            ECMInfo ecmInfo = entity.getECMInfo();
+            if (ecmInfo != null) {
+                allEcmInfo.add(ecmInfo);
+            }
+            ECMInfo eccmInfo = entity.getECCMInfo();
+            if (eccmInfo != null) {
+                allEcmInfo.add(eccmInfo);
+            }
+            if (game == null) {
+                game = entity.getGame();
+            }
+        }
+
+        // If either case is true, the rest is meaningless
+        if (entities.isEmpty() || (game == null)) {
+            return allEcmInfo;
+        }
+
+        // Add ECMInfo for chaff
+        for (SmokeCloud cloud : game.getSmokeCloudList()) {
+            if (cloud.getSmokeLevel() == SmokeCloud.SMOKE_CHAFF_LIGHT) {
+                for (Coords chaffCoords : cloud.getCoordsList()) {
+                    ECMInfo ecmInfo = new ECMInfo(1, chaffCoords, null, 1, 0);
+                    allEcmInfo.add(ecmInfo);
+                }
+            }
+        }
+
+        // Add ECMInfo for temporary ECM fields (from EMP mines, etc.)
+        for (TemporaryECMField tempECM : game.getTemporaryECMFields()) {
+            ECMInfo ecmInfo = tempECM.toECMInfo();
+            if (ecmInfo != null) {
+                allEcmInfo.add(ecmInfo);
+            }
+        }
+
+        // Add a hostile, single-hex ECM field over any unit currently suffering Improved Magnetic
+        // Pulse (iATM IMP) missile interference (IO IMP rules). A null owner is hostile to everyone
+        // and range 0 affects only the stricken unit's own hex, not a surrounding bubble. eccmStrength
+        // 0 keeps it pure ECM, so it can never act as ECCM as the rules require.
+        for (Entity entity : entities) {
+            if (entity.isImpEcmAffected() && (entity.getPosition() != null)) {
+                allEcmInfo.add(new ECMInfo(0, entity.getPosition(), null, 1, 0));
+            }
+        }
+        return allEcmInfo;
+    }
+
+    /**
      * Returns the total ECM effects on the supplied unit.
      *
      */
@@ -511,7 +543,7 @@ public class ComputeECM {
 
         // Get intervening Coords
         ArrayList<Coords> coords = Game.rulesManager.getRulesEquipment().getECMCoordsAffected(a, b);
-        
+
         ECMInfo worstECMEffects = null;
         // Loop through intervening coords, and find the worst effects
         for (Coords c : coords) {
@@ -704,7 +736,7 @@ public class ComputeECM {
                 // Anything that's not Angel ECM
             } else if (m.getType().hasFlag(MiscType.F_ECM) && m.curMode().equals("ECCM")) {
                 int range = Game.rulesManager.getRulesEquipment().getECMRanges(m.getType());
-                
+
                 newInfo = new ECMInfo(range, 0, entity);
                 newInfo.setECCMStrength(1);
             }

@@ -108,6 +108,46 @@ public class DamageEditSpec implements Serializable {
     public final Map<Integer, Boolean> equipmentCharged = new HashMap<>();
 
     /*
+     * The weapon and location states a gamemaster can set or clear outright, as opposed to the damage that
+     * produces them in play. Only a gamemaster's editor carries these; everything else leaves them empty or
+     * {@code null}.
+     *
+     * Deliberately not carried: the turn bookkeeping on a mount. "Used this round" is what stops a weapon firing
+     * twice in one turn and is reset by the phase machinery; "AMS used" marks an anti-missile system that has
+     * already fired this round; the TSEMP downtime turn is the every-other-round rest a standard TSEMP takes. A
+     * gamemaster editing those mid-turn would fight the phase machinery for the same flag, and the next round reset
+     * wipes the edit anyway, so the editor shows none of them.
+     */
+
+    /**
+     * Whether each weapon is jammed, by its equipment number. Applies to every unit type, an Advanced Building's
+     * weapons included (TO:AR p. 119). A jam set here bites at once, without the phase turnover a jam in play waits
+     * for; a jam cleared here is cleared entirely.
+     */
+    public final Map<Integer, Boolean> weaponJammed = new HashMap<>();
+
+    /**
+     * Whether each one-shot weapon has been fired, by its equipment number. Clearing it reloads the launcher.
+     * Only one-shot weapons carry a lasting fired state; a TSEMP's fired flag is round bookkeeping and is refused.
+     */
+    public final Map<Integer, Boolean> weaponFired = new HashMap<>();
+
+    /**
+     * Whether each weapon's Directional Torso Mount is locked in its current arc, by its equipment number (BMM
+     * p.83). Refused for a weapon that is not in such a mount.
+     */
+    public final Map<Integer, Boolean> directionalMountLocked = new HashMap<>();
+
+    /**
+     * Whether each of a Mek's locations is hull-breached (TW p.122); a {@code null} element means that location
+     * was not edited, and the whole array is {@code null} for any unit that is not a Mek. Breaching a location
+     * marks every piece of equipment and every critical slot in it breached, and clearing the breach restores
+     * them; the editor only marks the state, so a breached center torso or head does not destroy the unit here
+     * the way it does in play.
+     */
+    public Boolean[] locationBreached;
+
+    /*
      * The Advanced Building critical results a gamemaster can set or take back (TO:AR p. 119). These are only
      * carried for a building; every other unit type leaves them empty or {@code null}.
      */
@@ -126,9 +166,6 @@ public class DamageEditSpec implements Serializable {
 
     /** Whether each of the building's turreted weapons is locked to the forward arc, by its equipment number. */
     public final Map<Integer, Boolean> buildingTurretLocked = new HashMap<>();
-
-    /** Whether each of the building's weapons is jammed, by its equipment number. */
-    public final Map<Integer, Boolean> buildingWeaponJammed = new HashMap<>();
 
     /**
      * Whether the building's power is switched off at the mains, or {@code null} when the unit has no such switch.

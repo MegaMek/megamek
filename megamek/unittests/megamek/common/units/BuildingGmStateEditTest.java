@@ -202,12 +202,12 @@ class BuildingGmStateEditTest {
             int equipmentNumber = building.getEquipmentNum(weapon);
 
             DamageEditSpec jamSpec = new DamageEditSpec();
-            jamSpec.buildingWeaponJammed.put(equipmentNumber, true);
+            jamSpec.weaponJammed.put(equipmentNumber, true);
             apply(building, jamSpec);
             assertTrue(weapon.isJammed());
 
             DamageEditSpec clearSpec = new DamageEditSpec();
-            clearSpec.buildingWeaponJammed.put(equipmentNumber, false);
+            clearSpec.weaponJammed.put(equipmentNumber, false);
             apply(building, clearSpec);
             assertFalse(weapon.isJammed(), "a gamemaster must be able to clear a jam");
         }

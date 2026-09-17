@@ -33,7 +33,9 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.verify;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -157,5 +160,27 @@ class TWGameManagerDamageEditTest {
         assertEquals(TRAITOR_TARGET_PLAYER_ID, mek.getTraitorId(),
               "The edit carries no ownership change, so the pending switch must survive it");
         assertEquals(5, mek.heat);
+    }
+
+    @Test
+    void gameMasterJamLandsOnTheServerUnit() {
+        WeaponMounted weapon = mek.getWeaponList().getFirst();
+        DamageEditSpec spec = emptySpec();
+        spec.weaponJammed.put(mek.getEquipmentNum(weapon), true);
+
+        sendDamageEdit(GAME_MASTER_CONNECTION_ID, spec);
+
+        assertTrue(weapon.isJammed(), "The gamemaster's jam lands on the server's copy of the unit");
+    }
+
+    @Test
+    void nonGameMasterJamIsDropped() {
+        WeaponMounted weapon = mek.getWeaponList().getFirst();
+        DamageEditSpec spec = emptySpec();
+        spec.weaponJammed.put(mek.getEquipmentNum(weapon), true);
+
+        sendDamageEdit(OWNER_CONNECTION_ID, spec);
+
+        assertFalse(weapon.isJammed(), "A jam from a player who is not the gamemaster must not be applied");
     }
 }

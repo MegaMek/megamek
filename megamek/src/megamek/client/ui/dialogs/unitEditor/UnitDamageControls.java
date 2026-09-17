@@ -148,8 +148,32 @@ public class UnitDamageControls {
     public final Map<Integer, JCheckBox> buildingGunnersKilled = new HashMap<>();
     /** Whether each of the building's turreted weapons is locked forward, by equipment number. */
     public final Map<Integer, JCheckBox> buildingTurretLocked = new HashMap<>();
-    /** Whether each of the building's weapons is jammed, by equipment number. */
-    public final Map<Integer, JCheckBox> buildingWeaponJammed = new HashMap<>();
+
+    /*
+     * The weapon and location states a gamemaster sets or clears outright; only a gamemaster's editor builds these.
+     */
+
+    /** Whether each weapon is jammed, by equipment number. */
+    public final Map<Integer, JCheckBox> weaponJammed = new HashMap<>();
+    /** Whether each one-shot weapon has been fired, by equipment number. */
+    public final Map<Integer, JCheckBox> weaponFired = new HashMap<>();
+    /** Whether each Directional Torso Mount weapon is locked in its arc, by equipment number. */
+    public final Map<Integer, JCheckBox> directionalMountLocked = new HashMap<>();
+    /** Whether each of a Mek's locations is hull-breached; {@code null} for other units, null elements unedited. */
+    public JCheckBox[] chkLocationBreached;
+
+    /**
+     * One line of the flagged-equipment summary on the general panel: the clickable label and the location whose
+     * panel it opens, so that a gamemaster can find a jammed or breached item without paging through every
+     * location.
+     *
+     * @param label    the clickable label naming the item and its state
+     * @param location the location the item sits in
+     */
+    public record EquipmentStateLink(JLabel label, int location) {}
+
+    /** The flagged-equipment summary lines, wired by the dialog to open their location on click. */
+    public final List<EquipmentStateLink> equipmentStateLinks = new ArrayList<>();
 
     /* system crits */
     public CheckCritPanel engineCrit;

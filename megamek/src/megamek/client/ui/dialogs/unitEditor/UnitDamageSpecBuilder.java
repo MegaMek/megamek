@@ -185,11 +185,32 @@ public class UnitDamageSpecBuilder {
         for (Map.Entry<Integer, JCheckBox> turretLocked : controls.buildingTurretLocked.entrySet()) {
             spec.buildingTurretLocked.put(turretLocked.getKey(), turretLocked.getValue().isSelected());
         }
-        for (Map.Entry<Integer, JCheckBox> weaponJammed : controls.buildingWeaponJammed.entrySet()) {
-            spec.buildingWeaponJammed.put(weaponJammed.getKey(), weaponJammed.getValue().isSelected());
+
+        // the weapon and location states a gamemaster sets outright
+        for (Map.Entry<Integer, JCheckBox> weaponJammed : controls.weaponJammed.entrySet()) {
+            spec.weaponJammed.put(weaponJammed.getKey(), weaponJammed.getValue().isSelected());
         }
+        for (Map.Entry<Integer, JCheckBox> weaponFired : controls.weaponFired.entrySet()) {
+            spec.weaponFired.put(weaponFired.getKey(), weaponFired.getValue().isSelected());
+        }
+        for (Map.Entry<Integer, JCheckBox> mountLocked : controls.directionalMountLocked.entrySet()) {
+            spec.directionalMountLocked.put(mountLocked.getKey(), mountLocked.getValue().isSelected());
+        }
+        spec.locationBreached = checkboxValues(controls.chkLocationBreached);
 
         return spec;
+    }
+
+    /** The states of a row of checkboxes; {@code null} for a missing row, with null elements for missing boxes. */
+    private @Nullable Boolean[] checkboxValues(@Nullable JCheckBox[] checkboxes) {
+        if (null == checkboxes) {
+            return null;
+        }
+        Boolean[] values = new Boolean[checkboxes.length];
+        for (int i = 0; i < checkboxes.length; i++) {
+            values[i] = checkboxValue(checkboxes[i]);
+        }
+        return values;
     }
 
     /** The values of a row of spinners; {@code null} for a missing row, with null elements for missing spinners. */

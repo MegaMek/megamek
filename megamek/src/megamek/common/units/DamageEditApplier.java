@@ -48,6 +48,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.logging.MMLogger;
 
 /**
@@ -429,6 +430,8 @@ public class DamageEditApplier {
         applyEquipmentActivation();
         applyStatus();
         applyBuildingCriticalState();
+        applyWeaponStates();
+        applyLocationBreaches();
         logAppliedEdits();
     }
 
@@ -458,14 +461,6 @@ public class DamageEditApplier {
                 building.setTurretLocked(weapon, turretLocked.getValue());
             }
         }
-        for (Map.Entry<Integer, Boolean> weaponJammed : spec.buildingWeaponJammed.entrySet()) {
-            // Only a weapon can jam; the editor builds the switch for weapons alone, so anything else named
-            // here is a malformed spec and is left untouched
-            if (building.getEquipment(weaponJammed.getKey()) instanceof WeaponMounted weapon) {
-                // immediately, rather than from the next phase: the gamemaster is stating the condition now
-                weapon.setJammedImmediately(weaponJammed.getValue());
-            }
-        }
 
         // The power switch stands in for the shutdown checkbox on a building: with power it runs, without power
         // it is down. Reconciled here rather than left to the next applyDamage so the switch takes effect at once,
@@ -477,6 +472,102 @@ public class DamageEditApplier {
                     + " locked {}",
               building.getShortName(), building.isPowerSwitchedOff(), building.getStunnedTurns(),
               building.allGunnersDead(), building.hasLockedTurret());
+    }
+
+    /**
+     * Writes the gamemaster's weapon states back outright: a jam on any weapon, the fired state of a one-shot
+     * launcher, and the lock on a Directional Torso Mount. The spec is network input, so each entry is checked
+     * against the weapon it names and refused, with the reason logged, where the state does not apply. The turn
+     * bookkeeping on a mount - used this round, AMS used, the TSEMP downtime turn - is deliberately not here; the
+     * note on the weapon states in {@link DamageEditSpec} says why.
+     */
+    private void applyWeaponStates() {
+        for (Map.Entry<Integer, Boolean> weaponJammed : spec.weaponJammed.entrySet()) {
+            // Only a weapon can jam; the editor builds the switch for weapons alone, so anything else named
+            // here is a malformed spec and is left untouched
+            if (!(entity.getEquipment(weaponJammed.getKey()) instanceof WeaponMounted weapon)
+                  || (weaponJammed.getValue() == null)) {
+                continue;
+            }
+            if (weapon.isJammed() != weaponJammed.getValue()) {
+                LOGGER.info("[EquipState] GM edit: {} on {} {}", weapon.getName(), entity.getDisplayName(),
+                      weaponJammed.getValue() ? "jammed" : "jam cleared");
+            }
+            // immediately, rather than from the next phase: the gamemaster is stating the condition now
+            weapon.setJammedImmediately(weaponJammed.getValue());
+        }
+        for (Map.Entry<Integer, Boolean> weaponFired : spec.weaponFired.entrySet()) {
+            if (!(entity.getEquipment(weaponFired.getKey()) instanceof WeaponMounted weapon)
+                  || (weaponFired.getValue() == null)) {
+                continue;
+            }
+            // a TSEMP's fired flag is round bookkeeping that the next round resets, not a state to hand-set
+            if (!weapon.isOneShot()) {
+                LOGGER.warn("[EquipState] GM edit refused: {} on {} is not a one-shot weapon, fired stays {}",
+                      weapon.getName(), entity.getDisplayName(), weapon.isFired());
+                continue;
+            }
+            if (weapon.isFired() != weaponFired.getValue()) {
+                LOGGER.info("[EquipState] GM edit: one-shot {} on {} {}", weapon.getName(),
+                      entity.getDisplayName(), weaponFired.getValue() ? "marked fired" : "reloaded");
+            }
+            weapon.setFired(weaponFired.getValue());
+        }
+        for (Map.Entry<Integer, Boolean> mountLocked : spec.directionalMountLocked.entrySet()) {
+            if (!(entity.getEquipment(mountLocked.getKey()) instanceof WeaponMounted weapon)
+                  || (mountLocked.getValue() == null)) {
+                continue;
+            }
+            if (!weapon.hasDirectionalTorsoMount()) {
+                LOGGER.warn("[EquipState] GM edit refused: {} on {} is not in a Directional Torso Mount",
+                      weapon.getName(), entity.getDisplayName());
+                continue;
+            }
+            if (weapon.isDirectionalMountLocked() != mountLocked.getValue()) {
+                LOGGER.info("[EquipState] GM edit: directional mount of {} on {} {}", weapon.getName(),
+                      entity.getDisplayName(), mountLocked.getValue() ? "locked" : "freed");
+            }
+            weapon.setDirectionalMountLocked(mountLocked.getValue());
+        }
+    }
+
+    /**
+     * Marks a Mek's locations hull-breached or clears the breach, the way the server's breach resolution marks
+     * them (TW p.122): the location's exposure, every piece of equipment in it and every critical slot. Only the
+     * marks are set here. A breach in play can also destroy the unit (center torso) or doom the crew (head), and
+     * that is left to the gamemaster's Destroy Unit button rather than done behind a checkbox; clearing a breach
+     * likewise only lifts the marks, it does not undo any crit the breach caused in play.
+     */
+    private void applyLocationBreaches() {
+        if ((spec.locationBreached == null) || !(entity instanceof Mek)) {
+            return;
+        }
+        for (int location = 0; location < Math.min(spec.locationBreached.length, entity.locations()); location++) {
+            Boolean breached = spec.locationBreached[location];
+            if (breached == null) {
+                continue;
+            }
+            boolean isBreached = entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED;
+            if (breached == isBreached) {
+                continue;
+            }
+            // allowChange: a breached location is otherwise pinned, which is what a gamemaster is here to undo
+            entity.setLocationStatus(location,
+                  breached ? ILocationExposureStatus.BREACHED : ILocationExposureStatus.NORMAL, true);
+            for (Mounted<?> mounted : entity.getEquipment()) {
+                if (mounted.getLocation() == location) {
+                    mounted.setBreached(breached);
+                }
+            }
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
+                CriticalSlot criticalSlot = entity.getCritical(location, slot);
+                if (criticalSlot != null) {
+                    criticalSlot.setBreached(breached);
+                }
+            }
+            LOGGER.info("[EquipState] GM edit: {} of {} {}", entity.getLocationName(location),
+                  entity.getDisplayName(), breached ? "breached" : "breach cleared");
+        }
     }
 
     /**

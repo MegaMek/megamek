@@ -43,6 +43,8 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +54,6 @@ import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
-import megamek.common.Player;
 import megamek.client.ui.dialogs.unitEditor.DamageEditorDiagram;
 import megamek.client.ui.dialogs.unitEditor.PreExistingDamageRoller;
 import megamek.client.ui.dialogs.unitEditor.UnitDamageControls;
@@ -62,6 +63,7 @@ import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.damage.PreExistingDamageApplier;
 import megamek.common.compute.damage.PreExistingDamageLevel;
@@ -184,6 +186,7 @@ public class UnitEditorDialog extends JDialog {
             // owner chooser in the middle of their column
             panelBuilder.addSkillModifiersColumn();
             diagram = new DamageEditorDiagram(entity, controls);
+            wireFlaggedEquipmentLinks();
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 0;
@@ -243,6 +246,21 @@ public class UnitEditorDialog extends JDialog {
         // out above; centering afterwards would throw the remembered position away.
         setLocationRelativeTo(parent);
         setPreferences();
+    }
+
+    /**
+     * Makes each line of the flagged-equipment summary open the panel of the location it names, so a gamemaster
+     * gets from "Rotary AC/5 (RA): Jammed" to the right arm's controls in one click.
+     */
+    private void wireFlaggedEquipmentLinks() {
+        for (UnitDamageControls.EquipmentStateLink link : controls.equipmentStateLinks) {
+            link.label().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent event) {
+                    diagram.locationSelected(link.location());
+                }
+            });
+        }
     }
 
     /**

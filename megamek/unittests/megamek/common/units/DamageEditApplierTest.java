@@ -37,15 +37,19 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.CriticalSlot;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.testUtilities.MMTestUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -439,5 +443,143 @@ class DamageEditApplierTest {
         assertTrue(ecm.isModeTurnedOff());
         assertEquals(Mounted.MODE_OFF, stealth.curMode().getName(),
               "Stealth armor cannot run without an operating ECM, so it goes down with it");
+    }
+
+    @Test
+    void jamLandsOnTheWeaponAtOnce() {
+        Mounted<?> weapon = mek.getWeaponList().get(0);
+        int equipmentNumber = mek.getEquipmentNum(weapon);
+        assertFalse(weapon.isJammed(), "A freshly loaded weapon is not jammed");
+
+        DamageEditSpec jamSpec = emptySpec();
+        jamSpec.weaponJammed.put(equipmentNumber, true);
+        apply(jamSpec);
+        assertTrue(weapon.isJammed(), "The gamemaster's jam bites at once, with no phase turnover");
+
+        DamageEditSpec clearSpec = emptySpec();
+        clearSpec.weaponJammed.put(equipmentNumber, false);
+        apply(clearSpec);
+        assertFalse(weapon.isJammed(), "A gamemaster must be able to clear a jam");
+        assertFalse(weapon.jammedThisPhase(), "A cleared jam does not come back at the next phase");
+    }
+
+    @Test
+    void firedLandsOnAOneShotLauncher() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> launcher = addEquipment(bipedMek, "ISSRM2OS", Mek.LOC_LEFT_TORSO);
+        int equipmentNumber = bipedMek.getEquipmentNum(launcher);
+        assertTrue(launcher.isOneShot(), "The test launcher must be a one-shot weapon");
+
+        applyWeaponFired(bipedMek, equipmentNumber, true);
+        assertTrue(launcher.isFired());
+
+        applyWeaponFired(bipedMek, equipmentNumber, false);
+        assertFalse(launcher.isFired(), "Clearing Fired reloads the launcher");
+    }
+
+    @Test
+    void firedIsRefusedOnAWeaponThatIsNotOneShot() {
+        Mounted<?> autocannon = mek.getWeaponList().get(0);
+        assertFalse(autocannon.isOneShot());
+
+        applyWeaponFired(mek, mek.getEquipmentNum(autocannon), true);
+
+        assertFalse(autocannon.isFired(), "Fired is a lasting state on one-shot weapons alone");
+    }
+
+    @Test
+    void directionalMountLockLandsOnAMountedWeapon() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Game game = new Game();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+        bipedMek.setGame(game);
+        Mounted<?> laser = addEquipment(bipedMek, "ISERLargeLaser", Mek.LOC_RIGHT_TORSO);
+        laser.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT).setValue(true);
+        assertTrue(laser.hasDirectionalTorsoMount(), "The test laser must sit in a Directional Torso Mount");
+        int equipmentNumber = bipedMek.getEquipmentNum(laser);
+
+        applyMountLock(bipedMek, equipmentNumber, true);
+        assertTrue(laser.isDirectionalMountLocked());
+
+        applyMountLock(bipedMek, equipmentNumber, false);
+        assertFalse(laser.isDirectionalMountLocked(), "A gamemaster must be able to free a locked mount");
+    }
+
+    @Test
+    void directionalMountLockIsRefusedWithoutAMount() {
+        Mounted<?> autocannon = mek.getWeaponList().get(0);
+        assertFalse(autocannon.hasDirectionalTorsoMount());
+
+        applyMountLock(mek, mek.getEquipmentNum(autocannon), true);
+
+        assertFalse(autocannon.isDirectionalMountLocked(), "Only a Directional Torso Mount can be locked");
+    }
+
+    @Test
+    void breachMarksTheLocationAndEverythingInIt() {
+        applyBreach(Mek.LOC_LEFT_TORSO, true);
+
+        assertEquals(ILocationExposureStatus.BREACHED, mek.getLocationStatus(Mek.LOC_LEFT_TORSO));
+        assertEquals(ILocationExposureStatus.NORMAL, mek.getLocationStatus(Mek.LOC_RIGHT_TORSO),
+              "Only the edited location is breached");
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == Mek.LOC_LEFT_TORSO) {
+                assertTrue(mounted.isBreached(), mounted.getName() + " in the breached location is out of action");
+            } else if (mounted.getLocation() == Mek.LOC_RIGHT_TORSO) {
+                assertFalse(mounted.isBreached(), mounted.getName() + " outside the breach is untouched");
+            }
+        }
+        assertTrue(allCriticalSlotsBreached(Mek.LOC_LEFT_TORSO, true));
+    }
+
+    @Test
+    void clearingABreachPutsTheLocationBackInService() {
+        applyBreach(Mek.LOC_LEFT_TORSO, true);
+
+        applyBreach(Mek.LOC_LEFT_TORSO, false);
+
+        assertEquals(ILocationExposureStatus.NORMAL, mek.getLocationStatus(Mek.LOC_LEFT_TORSO),
+              "A breached location is pinned in play, so the gamemaster's clear has to force it back");
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == Mek.LOC_LEFT_TORSO) {
+                assertFalse(mounted.isBreached(), mounted.getName() + " is back in service");
+            }
+        }
+        assertTrue(allCriticalSlotsBreached(Mek.LOC_LEFT_TORSO, false));
+    }
+
+    /** A spec holding only the given Fired state, applied to the given unit. */
+    private static void applyWeaponFired(Entity target, int equipmentNumber, boolean fired) {
+        DamageEditSpec spec = new DamageEditSpec();
+        spec.entityId = target.getId();
+        spec.weaponFired.put(equipmentNumber, fired);
+        new DamageEditApplier(target, spec).applyToEntity();
+    }
+
+    /** A spec holding only the given Directional Torso Mount lock, applied to the given unit. */
+    private static void applyMountLock(Entity target, int equipmentNumber, boolean locked) {
+        DamageEditSpec spec = new DamageEditSpec();
+        spec.entityId = target.getId();
+        spec.directionalMountLocked.put(equipmentNumber, locked);
+        new DamageEditApplier(target, spec).applyToEntity();
+    }
+
+    /** A spec breaching or sealing one location of the test Mek and nothing else. */
+    private void applyBreach(int location, boolean breached) {
+        DamageEditSpec spec = emptySpec();
+        spec.locationBreached = new Boolean[mek.locations()];
+        spec.locationBreached[location] = breached;
+        apply(spec);
+    }
+
+    /** Whether every occupied critical slot of the location carries the given breach mark. */
+    private boolean allCriticalSlotsBreached(int location, boolean breached) {
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = mek.getCritical(location, slot);
+            if ((criticalSlot != null) && (criticalSlot.isBreached() != breached)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -161,6 +161,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private Integer preferredEchelon;
 
     /**
+     * Whether {@link #preferredEchelon} is still waiting to be applied. Set whenever a host states a preference and
+     * cleared once the formation combo has been pointed at it, so the preference wins over the selection the combo
+     * was born with and loses to every choice the player makes afterwards.
+     */
+    private boolean preferredEchelonPending;
+
+    /**
      * The organisation-tree node the formation mix should describe, or {@code null} to describe the force the
      * settings above it describe.
      *
@@ -780,6 +787,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setPreferredEchelon(@Nullable Integer preferredEchelon) {
         this.preferredEchelon = preferredEchelon;
+        // The combo is filled during construction, so a host's preference always arrives after the ruleset default
+        // has already been selected. Marking it pending lets the next refresh apply it over that selection.
+        this.preferredEchelonPending = preferredEchelon != null;
     }
 
     /**
@@ -1482,7 +1492,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.warn("No echelon node found.");
         }
 
-        if (hasCurrent) {
+        // One refresh consumes the preference whether or not this faction fields it, so a preference the faction
+        // cannot honour never lingers to override a choice the player makes later.
+        String pendingEchelon = null;
+        if (preferredEchelonPending) {
+            preferredEchelonPending = false;
+            pendingEchelon = preferredEchelonItem();
+        }
+        if (pendingEchelon != null) {
+            cbFormation.setSelectedItem(pendingEchelon);
+            setFormation(pendingEchelon);
+        } else if (hasCurrent) {
             cbFormation.setSelectedItem(currentFormation);
         } else {
             String echelon = preferredEchelonItem();

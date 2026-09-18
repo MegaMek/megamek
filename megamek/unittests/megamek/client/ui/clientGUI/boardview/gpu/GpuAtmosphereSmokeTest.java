@@ -9,11 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -28,6 +30,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -202,7 +205,7 @@ class GpuAtmosphereSmokeTest {
     }
 
     private void checkParticles(GpuAtmosphere atmosphere, GpuTerrain terrain, ModelBatch batch, ModelInstance tower,
-          BoardCamera camera, BoardScene scene) {
+          BoardCamera camera, BoardScene scene) throws IOException {
         camera.setIsometric(true);
         camera.fit(scene);
         draw(atmosphere, terrain, batch, tower, camera, scene, BoardAtmosphere.DEFAULTS);
@@ -261,7 +264,7 @@ class GpuAtmosphereSmokeTest {
     }
 
     private void checkSandDensity(GpuAtmosphere atmosphere, GpuTerrain terrain, ModelBatch batch,
-          ModelInstance tower, BoardCamera camera, BoardScene scene) {
+          ModelInstance tower, BoardCamera camera, BoardScene scene) throws IOException {
         GpuWeatherParticles particles = new GpuWeatherParticles();
         draw(atmosphere, terrain, batch, tower, camera, scene, BoardAtmosphere.DEFAULTS);
         Pixmap clear = ScreenUtils.getFrameBufferPixmap(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -274,17 +277,7 @@ class GpuAtmosphereSmokeTest {
                 Pixmap dusty = ScreenUtils.getFrameBufferPixmap(0, 0, clear.getWidth(), clear.getHeight());
                 int coverage = 0;
                 try {
-                    for (int y = 0; y < clear.getHeight(); y++) {
-                        for (int x = 0; x < clear.getWidth(); x++) {
-                            int before = clear.getPixel(x, y), after = dusty.getPixel(x, y);
-                            int difference = Math.abs((before >>> 24) - (after >>> 24))
-                                  + Math.abs(((before >>> 16) & 255) - ((after >>> 16) & 255))
-                                  + Math.abs(((before >>> 8) & 255) - ((after >>> 8) & 255));
-                            if (difference > 12) {
-                                coverage++;
-                            }
-                        }
-                    }
+                    coverage = changedPixels(clear, dusty, null, 12);
                 } finally {
                     dusty.dispose();
                 }
@@ -296,11 +289,83 @@ class GpuAtmosphereSmokeTest {
                 previousCoverage = coverage;
                 GpuBoardTestUi.capture(new File(output, "weather-sand-strength-" + Math.round(strength * 100) + ".png"));
             }
+            checkSandContrast(atmosphere, terrain, batch, tower, camera, scene, particles);
             checkSandMotion(particles, scene);
         } finally {
             clear.dispose();
             particles.dispose();
         }
+    }
+
+    private void checkSandContrast(GpuAtmosphere atmosphere, GpuTerrain terrain, ModelBatch batch,
+          ModelInstance tower, BoardCamera camera, BoardScene scene, GpuWeatherParticles particles) throws IOException {
+        try {
+            for (String texture : List.of("hq_boring/sand_0.png", "desert/beige_plains_0.gif")) {
+                BoardScene.Pixels sand = new BoardScene.Pixels(ImageIO.read(new File("data/images/hexes", texture)));
+                var tiles = scene.tiles().stream().map(tile -> new BoardScene.Tile(tile.coords(), 0, -1, false, 0,
+                      BoardScene.Surface.SAND, sand, null, null, List.of(), List.of())).toList();
+                BoardScene desert = new BoardScene(0, scene.width(), scene.height(), tiles,
+                      List.of(), List.of(), -1, "", List.of());
+                terrain.update(desert);
+                for (boolean isometric : List.of(false, true)) {
+                    camera.setIsometric(isometric);
+                    for (float zoom : new float[] { 1, 1.8f }) {
+                        camera.fit(desert);
+                        camera.zoom(zoom);
+                        draw(atmosphere, terrain, batch, tower, camera, desert, BoardAtmosphere.DEFAULTS);
+                        Pixmap clear = ScreenUtils.getFrameBufferPixmap(0, 0,
+                              Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                        particles.render(camera.camera, desert, new BoardAtmosphere.Effects(0, 0, 0, 0.5f, 0, 0.4f, 60),
+                              atmosphere.lighting().ambient(), 3);
+                        Pixmap dusty = ScreenUtils.getFrameBufferPixmap(0, 0, clear.getWidth(), clear.getHeight());
+                        try {
+                            // Measure only the interior terrain: grains over the blue backdrop do not count.
+                            Coords[] corners = { new Coords(1, 1), new Coords(5, 1), new Coords(5, 5), new Coords(1, 5) };
+                            float[] vertices = new float[8];
+                            for (int index = 0; index < corners.length; index++) {
+                                Vector3 point = camera.camera.project(BoardGeometry.center(corners[index], 0));
+                                vertices[index * 2] = point.x;
+                                vertices[index * 2 + 1] = point.y;
+                            }
+                            Polygon ground = new Polygon(vertices);
+                            int visible = changedPixels(clear, dusty, ground, 45);
+                            assertTrue(visible > Math.abs(ground.area()) * 0.015f,
+                                  "Half-strength sand must contrast with " + texture + " at zoom " + zoom
+                                        + " (isometric " + isometric + "): " + visible + " / " + Math.abs(ground.area()));
+                            GpuBoardTestUi.capture(new File(output, "weather-sand-"
+                                  + (texture.startsWith("hq_boring") ? "hq" : "beige")
+                                  + (isometric ? "-iso-" : "-top-") + zoom + ".png"));
+                        } finally {
+                            clear.dispose();
+                            dusty.dispose();
+                        }
+                    }
+                }
+            }
+        } finally {
+            terrain.update(scene);
+            camera.setIsometric(true);
+            camera.fit(scene);
+        }
+    }
+
+    private static int changedPixels(Pixmap clear, Pixmap dusty, Polygon region, int threshold) {
+        int coverage = 0;
+        for (int y = 0; y < clear.getHeight(); y++) {
+            for (int x = 0; x < clear.getWidth(); x++) {
+                if (region != null && !region.contains(x + 0.5f, y + 0.5f)) {
+                    continue;
+                }
+                int before = clear.getPixel(x, y), after = dusty.getPixel(x, y);
+                int difference = Math.abs((before >>> 24) - (after >>> 24))
+                      + Math.abs(((before >>> 16) & 255) - ((after >>> 16) & 255))
+                      + Math.abs(((before >>> 8) & 255) - ((after >>> 8) & 255));
+                if (difference > threshold) {
+                    coverage++;
+                }
+            }
+        }
+        return coverage;
     }
 
     private void checkSandMotion(GpuWeatherParticles particles, BoardScene scene) {

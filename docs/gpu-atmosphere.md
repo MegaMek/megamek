@@ -104,12 +104,13 @@ so the default half-strength setting already draws 7,680 grains.
 A curved intensity response keeps light precipitation gentle and makes downpour,
 heavy snow, and heavy hail reach full density. Rain uses fine streaks; snowflakes
 are 55% of their original diameter and fall about 71% faster with less sideways sway.
-Rain has a 64% peak opacity and hail uses faster pellets. Sand uses fine grains
-with a 68% peak opacity and short trails aligned with their instantaneous motion.
+Rain has a 64% peak opacity and hail uses faster pellets. Sand uses small grains
+with an 85% peak opacity and short trails aligned with their instantaneous motion.
+Dark brown centers and pale lit edges provide contrast over desert textures and shadows.
 Its base speed ranges from 14 to 34 terrain levels per second with the wind slider;
 individual speed variation and shared crosswind gusts break up uniform movement.
 Most grains skim the lower weather layer with shallow, rapid hops, while a sparse
-layer travels higher. Subpixel grains use a filtered footprint with reduced opacity,
+layer travels higher. Grains retain a minimum filtered screen footprint and opacity when zoomed out,
 and particles fade at the weather volume's edges before wrapping.
 They draw against the restored opaque scene depth before tactical markings,
 so roofs occlude particles and UI remains sharp. Disabled effects issue no particle
@@ -134,6 +135,8 @@ checks visible fine grains at half strength and increasing coverage at 60% and
 full strength without blanketing the scene, independently of haze and sky grading.
 Isolated grain renders measure small footprints, fast motion at zero wind,
 acceleration with stronger wind, and travel in all four cardinal directions.
+Desert contrast checks use shipped HQ and beige sand hex textures in both camera
+presets and at a wider zoom, counting visible grains only over the board interior.
 It writes `atmosphere-*.png` review images and `atmosphere-timing.txt` to
 `megamek/build/gpu-board-review/`. Timing compares clear weather, maximum fog/haze,
 maximum fog/haze with shafts, each maximum precipitation type, and all precipitation

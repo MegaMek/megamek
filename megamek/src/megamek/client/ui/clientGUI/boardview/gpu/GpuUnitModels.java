@@ -20,7 +20,7 @@ import megamek.logging.MMLogger;
 /** GL-thread ownership of shared unit assets. Failed or absent assets fall back without breaking the board. */
 final class GpuUnitModels implements Disposable {
     /** Enable authored unit meshes in both GPU camera views. */
-    static final boolean ENABLED = false;
+    static final boolean ENABLED = true;
 
     private static final MMLogger LOGGER = MMLogger.create(GpuUnitModels.class);
     private final Path root = Configuration.dataDir().toPath().resolve("models").toAbsolutePath().normalize();
@@ -74,9 +74,17 @@ final class GpuUnitModels implements Disposable {
     }
 
     static String selectModel(JsonValue descriptor, String variant, int figures) {
-        JsonValue choices = descriptor.get("formation".equals(descriptor.getString("kind", ""))
-              ? "formations" : "variants");
-        String key = "formation".equals(descriptor.getString("kind", "")) ? Integer.toString(figures) : variant;
+        boolean formation = "formation".equals(descriptor.getString("kind", ""));
+        String key = formation ? Integer.toString(figures) : variant;
+        if (formation) {
+            JsonValue movements = descriptor.get("movementFormations");
+            JsonValue choices = movements == null ? null : movements.get(variant);
+            if (choices != null && choices.has(key)) {
+                return choices.getString(key);
+            }
+        }
+        // Older/custom formation descriptors and unsupported movement types retain their base poses.
+        JsonValue choices = descriptor.get(formation ? "formations" : "variants");
         return choices != null && choices.has(key) ? choices.getString(key) : descriptor.getString("fallback");
     }
 

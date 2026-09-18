@@ -22,6 +22,7 @@ final class UnitModelSelection {
         }
         // Support assets may reuse an infantry tileset entry without exposing a personnel count.
         int count = 1;
+        String variant = entity instanceof Mek ? UnitModelKey.forEntity(entity) : entity.getShortNameRaw();
         if (entity instanceof BattleArmor armor) {
             int survivors = 0;
             for (int location = 1; location < armor.locations(); location++) {
@@ -32,9 +33,11 @@ final class UnitModelSelection {
             count = figures(survivors, 4);
         } else if (entity instanceof Infantry infantry) {
             count = figures(infantry.getActiveTroopers(), 6);
+            // Formation artwork follows the unit's motive type, independently of its name or sprite.
+            variant = infantry.getMovementMode().name();
         }
         return new BoardScene.UnitModel(asset, tileset.genericModelFor(entity, part),
-              entity instanceof Mek ? UnitModelKey.forEntity(entity) : entity.getShortNameRaw(), count);
+              variant, count);
     }
 
     /** Square-root compression: 28 soldiers become six figures; five armored troopers become three. */

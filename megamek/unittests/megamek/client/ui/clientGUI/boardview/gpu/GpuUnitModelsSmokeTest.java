@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -74,6 +75,24 @@ class GpuUnitModelsSmokeTest {
                     GpuMeeple empty = library.get(new BoardScene.UnitModel("units/infantry/model.json", null, "Empty", 0));
                     assertNotNull(empty);
                     assertEquals(0, empty.instance.model.meshParts.size);
+                    for (var movement : Map.of("INF_MOTORIZED", "motorized", "TRACKED", "tracked",
+                          "WHEELED", "wheeled", "HOVER", "hover", "INF_JUMP", "jump").entrySet()) {
+                        for (int slots = 0; slots <= 6; slots++) {
+                            var selection = new BoardScene.UnitModel("units/infantry/model.json", null,
+                                  movement.getKey(), slots);
+                            GpuMeeple asset = library.get(selection);
+                            assertNotNull(asset, movement.getKey());
+                            assertSame(asset, library.get(selection));
+                            int triangles = 0;
+                            for (var part : asset.instance.model.meshParts) {
+                                triangles += part.size / 3;
+                            }
+                            String path = "infantry/" + movement.getValue() + "/squad-" + slots + ".g3dj";
+                            assertEquals(manifest.get("models").get(path).getInt("triangles"), triangles, path);
+                        }
+                    }
+                    var mobileInfantry = List.of("INF_MOTORIZED", "TRACKED", "WHEELED", "HOVER", "INF_JUMP", "INF_LEG")
+                          .stream().map(mode -> new BoardScene.UnitModel("units/infantry/model.json", null, mode, 6)).toList();
                     Environment environment = new Environment();
                     environment.set(ColorAttribute.createAmbientLight(.7f, .7f, .7f, 1));
                     environment.add(new DirectionalLight().set(.8f, .8f, .8f, -.4f, -.7f, -1));
@@ -82,39 +101,45 @@ class GpuUnitModelsSmokeTest {
                     camera.far = 1000;
                     File output = new File(System.getProperty("megamek.gpu.screenshots"));
                     assertTrue(output.isDirectory() || output.mkdirs());
-                    for (boolean top : new boolean[] { false, true }) {
-                        camera.position.set(top ? new Vector3(0, 0, 350) : new Vector3(90, 240, 190));
-                        camera.up.set(top ? Vector3.Y : Vector3.Z);
-                        camera.lookAt(0, 0, 10);
-                        camera.update();
-                        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                        Gdx.gl.glClearColor(.15f, .19f, .23f, 1);
-                        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-                        batch.begin(camera);
-                        for (int i = 0; i < selections.size(); i++) {
-                            GpuMeeple asset = library.get(selections.get(i));
-                            assertNotNull(asset, selections.get(i).asset());
-                            ModelInstance instance = new ModelInstance(asset.instance.model);
-                            Vector3 position = new Vector3(i < 4 ? (1.5f-i)*68 : (4.5f-i)*90, i < 4 ? 15 : -48, 0);
-                            asset.place(instance, camera, position, 0, i < 4 ? 2 : 1, false);
-                            batch.render(instance, environment);
-                        }
-                        batch.end();
-                        Pixmap pixels = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-                        try {
-                            int changed = 0;
-                            int background = pixels.getPixel(0, 0);
-                            for (int y = 0; y < pixels.getHeight(); y += 3) {
-                                for (int x = 0; x < pixels.getWidth(); x += 3) {
-                                    if (pixels.getPixel(x, y) != background) {
-                                        changed++;
+                    for (var page : List.of(selections, mobileInfantry)) {
+                        for (boolean top : new boolean[] { false, true }) {
+                            camera.position.set(top ? new Vector3(0, 0, 350) : new Vector3(90, 240, 190));
+                            camera.up.set(top ? Vector3.Y : Vector3.Z);
+                            camera.lookAt(0, 0, 10);
+                            camera.update();
+                            Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                            Gdx.gl.glClearColor(.15f, .19f, .23f, 1);
+                            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+                            batch.begin(camera);
+                            for (int i = 0; i < page.size(); i++) {
+                                GpuMeeple asset = library.get(page.get(i));
+                                assertNotNull(asset, page.get(i).asset());
+                                ModelInstance instance = new ModelInstance(asset.instance.model);
+                                Vector3 position = page == mobileInfantry
+                                      ? new Vector3((1 - i % 3) * 90, (0.5f - i / 3) * 65, 0)
+                                      : new Vector3(i < 4 ? (1.5f-i)*68 : (4.5f-i)*90, i < 4 ? 15 : -48, 0);
+                                asset.place(instance, camera, position, 0, page == selections && i < 4 ? 2 : 1, false);
+                                batch.render(instance, environment);
+                            }
+                            batch.end();
+                            Pixmap pixels = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                            try {
+                                int changed = 0;
+                                int background = pixels.getPixel(0, 0);
+                                for (int y = 0; y < pixels.getHeight(); y += 3) {
+                                    for (int x = 0; x < pixels.getWidth(); x += 3) {
+                                        if (pixels.getPixel(x, y) != background) {
+                                            changed++;
+                                        }
                                     }
                                 }
+                                assertTrue(changed > 1000, "Unit meshes must render visible geometry");
+                                String name = "unit-models-" + (page == mobileInfantry ? "infantry-" : "")
+                                      + (top ? "top" : "isometric") + ".png";
+                                PixmapIO.writePNG(new FileHandle(new File(output, name)), pixels, -1, true);
+                            } finally {
+                                pixels.dispose();
                             }
-                            assertTrue(changed > 1000, "Unit meshes must render visible geometry");
-                            PixmapIO.writePNG(new FileHandle(new File(output, "unit-models-" + (top ? "top" : "isometric") + ".png")), pixels, -1, true);
-                        } finally {
-                            pixels.dispose();
                         }
                     }
                     assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());

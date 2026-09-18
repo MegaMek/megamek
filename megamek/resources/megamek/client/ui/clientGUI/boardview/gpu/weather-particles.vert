@@ -38,8 +38,8 @@ void main() {
     vec2 axis = projectedLength > 0.001 ? projected / projectedLength : vec2(0.0, -1.0);
     vec3 along = u_right * axis.x + u_up * axis.y;
     vec3 across = u_right * -axis.y + u_up * axis.x;
-    float width = (rain ? 0.025 : snow ? 0.055 : sand ? 0.04 : 0.065) * u_level;
-    float trail = rain ? max(0.12 * u_level, projectedLength * 0.028) : sand ? width * 2.5 : width;
+    float width = (rain ? 0.025 : snow ? 0.055 : sand ? 0.055 : 0.065) * u_level;
+    float trail = rain ? max(0.12 * u_level, projectedLength * 0.028) : sand ? width * 3.5 : width;
     vec3 position = center + across * a_texCoord0.x * width + along * a_texCoord0.y * trail;
     v_uv = a_texCoord0;
     v_kind = u_kind;

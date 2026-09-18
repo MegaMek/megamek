@@ -105,6 +105,9 @@ Dry-facing edges have a land bank and sloping submerged shore; adjacent water
 hexes share exactly matching open mouths. Different bed depths retain their
 physical underwater steps. Each shore segment uses a bounded six-piece curve.
 A blended sandy band fades from the land into damp sand along the waterline.
+River mouths use roughly 33 of the hex edge's 42 world units at default scale;
+their sandy fade starts at the edge corners. Connected channels retain this
+width through bends, while isolated basins keep their rounded land banks.
 Hexes with exactly two nonadjacent water neighbors use a curved channel with
 consistent width instead of a bay around each hex centre. The bed remains at
 full depth beneath the hex centre, keeping grounded units on the riverbed.

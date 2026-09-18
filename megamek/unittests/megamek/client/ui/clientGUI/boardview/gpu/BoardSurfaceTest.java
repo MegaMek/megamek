@@ -138,7 +138,26 @@ class BoardSurfaceTest {
                 min = Math.min(min, offset);
                 max = Math.max(max, offset);
             }
-            assertTrue(max - min < 26 * BoardGeometry.HEX_SCALE, "The centre must stay as narrow as the river mouths");
+            int edge = Math.floorMod(1 - direction, 6);
+            Vector3 a = BoardGeometry.corner(center, 0, edge), b = BoardGeometry.corner(center, 0, edge + 1);
+            float edgeWidth = a.dst(b);
+            assertTrue(max - min > edgeWidth * 0.75f && max - min < edgeWidth * 0.85f,
+                  "The water uses most of the shared edge while leaving room for the sand fade");
+            var mouth = surface.water.stream().filter(point -> onEdge(point, a, b)).toList();
+            float mouthWidth = 0;
+            for (Vector3 first : mouth) {
+                for (Vector3 second : mouth) {
+                    mouthWidth = Math.max(mouthWidth, first.dst(second));
+                }
+            }
+            // On 84x72 hexes, diagonal mouth normals and centre-to-centre directions differ slightly.
+            assertEquals(mouthWidth, max - min, mouthWidth * 0.01f, "The channel keeps its mouth width through the hex");
+            for (Vector3 corner : List.of(a, b)) {
+                assertTrue(surface.faces.stream().filter(face -> face.finish() == BoardSurface.Finish.SHORE)
+                      .anyMatch(face -> face.a().epsilonEquals(corner, 0.01f)
+                            || face.b().epsilonEquals(corner, 0.01f) || face.c().epsilonEquals(corner, 0.01f)),
+                      "The sandy shoreline starts at the shared edge's corners");
+            }
             assertEquals(-BoardGeometry.LEVEL, surface.height(BoardGeometry.centerX(center), BoardGeometry.centerY(center)), 0.01f);
         }
     }

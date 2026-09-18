@@ -222,8 +222,10 @@ final class BoardSurface {
             if (inset[edge] == 0) {
                 int next = (edge + 1) % 6;
                 float length = corners[edge].dst(corners[next]);
-                float from = inset[(edge + 5) % 6] * 1.1547005f / length;
-                float to = inset[next] * 1.1547005f / length;
+                // Open mouths use four units less land on each side than a rounded basin bank.
+                // The wider channel occupies the old water-and-shore width; its sand fade reaches the corners.
+                float from = Math.max(0, inset[(edge + 5) % 6] - 4 * BoardGeometry.HEX_SCALE) * 1.1547005f / length;
+                float to = Math.max(0, inset[next] - 4 * BoardGeometry.HEX_SCALE) * 1.1547005f / length;
                 result[edge].set(corners[edge]).lerp(corners[next], from).z = z;
                 result[next].set(corners[next]).lerp(corners[edge], to).z = z;
             }

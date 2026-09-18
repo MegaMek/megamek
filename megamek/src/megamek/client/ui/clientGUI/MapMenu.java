@@ -33,7 +33,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -44,14 +44,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
@@ -89,18 +82,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorDamage;
 import megamek.common.compute.TurretFacing;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentActivation;
-import megamek.common.equipment.EquipmentFlag;
-import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.ICarryable;
-import megamek.common.equipment.MinefieldTarget;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.ObjectiveMarker;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -172,7 +154,11 @@ public class MapMenu extends JPopupMenu {
                     if (getComponentCount() > 0) {
                         addSeparator();
                     }
-                    addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    if (myEntity.getPosition() != null) {
+                        addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    } else {
+                        addIfNotEmpty(createMovementMenu(false));
+                    }
                     addIfNotEmpty(createTurnMenu());
                     addIfNotEmpty(createStandMenu());
                     addIfNotEmpty(createConvertMenu());

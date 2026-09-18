@@ -1052,8 +1052,7 @@ public class WeaponFireInfo {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                 if (Mek.LOC_CENTER_TORSO == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
-                } else if ((Mek.LOC_HEAD == hitLocation) &&
-                      (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {
+                } else if ((Mek.LOC_HEAD == hitLocation) && !targetMek.hasTorsoMountedCockpit()) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 }
 

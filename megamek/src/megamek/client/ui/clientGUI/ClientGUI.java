@@ -256,6 +256,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_ZOOM_RESET = "viewZoomReset";
     public static final String VIEW_ZOOM_OVERVIEW_TOGGLE = "viewZoomOverviewToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
     public static final String VIEW_TOGGLE_HEX_COORDS = "viewToggleHexCoords";
@@ -969,6 +970,8 @@ public class ClientGUI extends AbstractClientGUI
         FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
         DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
         RubbleClearSpriteHandler rubbleClearSpriteHandler = new RubbleClearSpriteHandler(this, client.getGame());
+        CraneOperationSpriteHandler craneOperationSpriteHandler = new CraneOperationSpriteHandler(this,
+              client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
@@ -985,7 +988,8 @@ public class ClientGUI extends AbstractClientGUI
               fleeZoneSpriteHandler,
               fortifyBuildSpriteHandler,
               dugInSpriteHandler,
-              rubbleClearSpriteHandler));
+              rubbleClearSpriteHandler,
+              craneOperationSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -1527,6 +1531,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
+                break;
+            case VIEW_ZOOM_RESET:
+                boardViews.get(0).zoomReset();
                 break;
             case VIEW_ZOOM_OVERVIEW_TOGGLE:
                 boardViews.get(0).zoomOverviewToggle();

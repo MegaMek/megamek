@@ -768,7 +768,7 @@ public class TWDamageManager implements IDamageManager {
           ModsInfo mods) {
         // This is good for shields if a shield absorbs the hit it shouldn't affect the pilot. TC SRM's that hit the
         // head do external and internal damage, but it's one hit and shouldn't cause 2 hits to the pilot.
-        mods.isHeadHit = ((mek.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
+        mods.isHeadHit = (!mek.hasTorsoMountedCockpit() &&
               (hit.getLocation() == Mek.LOC_HEAD) &&
               ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS));
         int entityId = mek.getId();

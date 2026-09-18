@@ -10,7 +10,10 @@ import com.badlogic.gdx.math.Vector3;
 /** One orbit camera with top/isometric presets and shared geometry for every orientation. */
 final class BoardCamera {
     private static final float ISOMETRIC_TILT = 54.73561f;
-    static final float MAX_TILT = 75;
+    // Manual orthographic zoom limits: smaller values zoom in, larger values zoom out.
+    private static final float MIN_ZOOM = 0.1f;
+    private static final float MAX_ZOOM = 20f;
+    static final float MAX_TILT = 80;
     final OrthographicCamera camera = new OrthographicCamera();
     final Vector3 focus = new Vector3();
     private float azimuth;
@@ -84,7 +87,7 @@ final class BoardCamera {
 
     void zoom(float factor) {
         fitToWindow = false;
-        camera.zoom = MathUtils.clamp(camera.zoom * factor, 0.2f, 20);
+        camera.zoom = MathUtils.clamp(camera.zoom * factor, MIN_ZOOM, MAX_ZOOM);
         update();
     }
 

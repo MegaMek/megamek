@@ -18,7 +18,7 @@ preview changes; opening another board captures that board's starting conditions
 | Exposure (EV) | Brighten or darken the scene by up to two stops; neutral daylight includes a +0.65-stop lift, fading to no lift at night |
 | Light shafts | Optionally add directional scattering through fog and haze; off by default |
 | Rain / Snow / Hail / Blowing sand / Lightning | Buttons toggle each effect; adjacent sliders adjust intensity (zero is off). Turning an effect back on sets it to half strength |
-| Wind strength / Wind direction | Set particle drift; blowing sand adds 0.4 to the 0–1 wind strength, giving it an effective range of 0.4–1.4. Direction is clockwise from north, toward where particles travel |
+| Wind strength / Wind direction | Set particle drift; blowing sand maintains a fast base flow even at zero wind, and stronger wind accelerates it. Direction is clockwise from north, toward where particles travel |
 | Defaults | Restore geometry defaults and the scenario atmosphere captured when this board opened |
 
 Settings are visual previews owned by the GPU window. They do not update the
@@ -46,7 +46,7 @@ The clock values below are representative visual starting points.
 | Light / Heavy hail | Increasing ice-pellet intensity; heavy hail uses the maximum slider value |
 | Lightning storm | Rain and a visible illumination strike within half a second of enabling; repeat at seven-second intervals with a short attack and longer decay |
 | None / Light / Heavy fog | No fog or progressively denser ground fog, always subject to the readability cap |
-| Blowing sand | Low drifting sand and warm haze, only when the game's `isBlowingSandActive()` says it is effective |
+| Blowing sand | Fine, fast gusts of sand close to the ground and warm haze, only when the game's `isBlowingSandActive()` says it is effective |
 | Calm / Light gale / Moderate gale / Strong gale / Storm / Tornado F1–F3 / Tornado F4 | Increasing wind drift, capped at storm-scale visual motion for tornadoes; no tornado funnel geometry |
 | Six wind directions / Random | Use the game's resolved direction; unresolved Random adds no invented wind direction or random game rolls |
 | Vacuum / Trace / Thin / Standard / High / Very high pressure | Vacuum disables atmospheric weather and wind. Trace and thin suppress precipitation and fog, matching the scenario editor. Standard and denser atmospheres permit them; clear weather stays clear |
@@ -97,15 +97,21 @@ outlines draw sharply afterward with correct occlusion. Screen annotations
 and Scene2D controls then draw in screen space.
 Buffers resize with the board viewport and are disposed with the GPU view.
 
-Precipitation uses a lazily allocated, shared pool of 9,216 GPU-animated quads,
+Precipitation uses a lazily allocated, shared pool of 15,360 GPU-animated quads,
 drawn in at most four calls. Maximum rain and snow each draw 4,608 particles,
-hail draws 3,072, and blowing sand draws all 9,216.
+hail draws 3,072, and blowing sand draws all 15,360. Sand density scales linearly,
+so the default half-strength setting already draws 7,680 grains.
 A curved intensity response keeps light precipitation gentle and makes downpour,
 heavy snow, and heavy hail reach full density. Rain uses fine streaks; snowflakes
 are 55% of their original diameter and fall about 71% faster with less sideways sway.
-Rain has a 64% peak opacity; sand uses smaller grains with a 60% peak opacity
-and soft edges. Hail uses faster pellets, and sand stays close to the
-ground. They draw against the restored opaque scene depth before tactical markings,
+Rain has a 64% peak opacity and hail uses faster pellets. Sand uses fine grains
+with a 68% peak opacity and short trails aligned with their instantaneous motion.
+Its base speed ranges from 14 to 34 terrain levels per second with the wind slider;
+individual speed variation and shared crosswind gusts break up uniform movement.
+Most grains skim the lower weather layer with shallow, rapid hops, while a sparse
+layer travels higher. Subpixel grains use a filtered footprint with reduced opacity,
+and particles fade at the weather volume's edges before wrapping.
+They draw against the restored opaque scene depth before tactical markings,
 so roofs occlude particles and UI remains sharp. Disabled effects issue no particle
 draw calls and require no additional depth framebuffer. The weather volume is
 bounded by the board and camera footprint; changing its extent can redistribute
@@ -123,7 +129,11 @@ exercises actual shaders, fog at different heights, contrast under maximum fog,
 bright moonlight and twilight, shadow resource reuse, live controls, and resizing.
 It also checks particle visibility, animation, immediate removal, opaque-depth
 occlusion, scenario initialization, Defaults, rain/snow toggle input, and prompt,
-visible lightning that stops immediately when disabled.
+visible lightning that stops immediately when disabled. A fixed-time sand render
+checks visible fine grains at half strength and increasing coverage at 60% and
+full strength without blanketing the scene, independently of haze and sky grading.
+Isolated grain renders measure small footprints, fast motion at zero wind,
+acceleration with stronger wind, and travel in all four cardinal directions.
 It writes `atmosphere-*.png` review images and `atmosphere-timing.txt` to
 `megamek/build/gpu-board-review/`. Timing compares clear weather, maximum fog/haze,
 maximum fog/haze with shafts, each maximum precipitation type, and all precipitation

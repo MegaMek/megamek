@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -83,16 +84,19 @@ final class GpuWeatherParticles implements Disposable {
             shader.setUniformf("u_up", camera.up);
             shader.setUniformf("u_clock", clock);
             shader.setUniformf("u_level", BoardGeometry.LEVEL);
+            // Give subpixel sand a filtered footprint without turning distant grains into large flakes.
+            shader.setUniformf("u_pixelSize", camera.frustum.planePoints[0].dst(camera.frustum.planePoints[1])
+                  / Math.max(1, HdpiUtils.toBackBufferX((int) camera.viewportWidth)));
             shader.setUniformf("u_light", Math.min(1, light.r + 0.25f), Math.min(1, light.g + 0.25f),
                   Math.min(1, light.b + 0.25f));
             float[] strengths = { effects.rain(), effects.snow(), effects.hail(), effects.sand() };
             for (int kind = 0; kind < strengths.length; kind++) {
                 if (strengths[kind] > 0) {
                     shader.setUniformf("u_kind", kind);
-                    // Blowing sand carries its own wind, including when the shared wind slider is at zero.
-                    float wind = effects.wind() + (kind == 3 ? 0.4f : 0);
-                    shader.setUniformf("u_wind", MathUtils.sinDeg(effects.windDirection()) * wind * 5,
-                          MathUtils.cosDeg(effects.windDirection()) * wind * 5);
+                    // Sand needs a fast horizontal stream even when the shared wind slider is at zero.
+                    float wind = kind == 3 ? 14 + effects.wind() * 20 : effects.wind() * 5;
+                    shader.setUniformf("u_wind", MathUtils.sinDeg(effects.windDirection()) * wind,
+                          MathUtils.cosDeg(effects.windDirection()) * wind);
                     // Blowing sand needs a continuous drift even at the normal half-strength setting.
                     // Keep the curved response for light rain, snow and hail.
                     float strength = strengths[kind];

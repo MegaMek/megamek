@@ -42,6 +42,12 @@ courses retain fixed story spacing. Fuel tanks and industry use the same exact
 roof pipeline. Blank tileset sections stay blank. There are no generic
 replacement building shapes or runtime terrain-image extrusion.
 
+Buildings also get simple square interior struts and floor sheets at each game
+level. Floors reuse the roof triangles, preserving courtyards and disconnected
+sections; struts are sparse, untextured boxes inside that footprint. Interior
+models are shared by asset and story count. Fuel tanks and industrial terrain
+do not receive building interiors.
+
 The asset directory also contains bridge-arm, crop-row, sixteen tree models and
 six rubble rock models; all 24 are at or below 480 triangles.
 Runtime only loads models
@@ -158,7 +164,8 @@ textures the top and its alpha-weighted color shades the sides. Camouflage and
 damage markings remain; classic generated drop shadows and smoke are omitted
 from the meeple texture.
 
-Footprint size uses `UNIT_SCALE` independently of hex scale. Thickness is the
+Single-hex footprint size uses `UNIT_SCALE` independently of hex scale. Multi-hex
+unit sections always use unit scale 1 so their artwork stays joined. Thickness is the
 game's occupied height multiplied by `LEVEL * UNIT_HEIGHT_SCALE`, including
 stance. Sensor contacts retain anonymous artwork and a generic height.
 Visibility is resolved by the existing client before the snapshot is published.
@@ -174,11 +181,38 @@ labels, and stay clamped to the viewport edge when their unit is offscreen.
 Normal game visibility still applies. Crowded views prioritize selected and
 hovered labels; extreme crowding can still overlap.
 
-A visible unit intersecting a feature's bounds fades the features in that hex
-to 24% opacity. Occupancy follows animated transforms, including movement and
-flight height. Faded instances do not write depth or cast an opaque shadow;
-normal opacity and shadows return when the unit leaves. This uses conservative
+A visible unit intersecting a feature's bounds fades the features in that hex.
+Trees default to 75% opacity, buildings and other props to 50%. The separate
+**Tuning > Building opacity** and **Tree opacity** sliders change this live from
+0% to 100% in 5% steps, including when the unit is already inside. Building
+floors follow the same opacity; interior struts always remain opaque, write
+depth and cast shadows. Buildings and trees cast their full, solid shadows at
+every opacity, including 0%. At 100%, features also retain their normal depth.
+Occupancy follows animated transforms, including movement and flight height.
+Faded surfaces do not write camera depth; normal opacity and depth return when
+the unit leaves. This uses conservative
 bounding boxes, not mesh collision, and never exposes hidden game entities.
+
+**Tuning > See-through** is an independent occlusion highlight, enabled at 75%
+by default. A thin team-colored outline, dark outer edge and faint filled silhouette
+identify the portions of a unit hidden behind higher terrain or other opaque
+geometry. It works with building and tree opacity at 100%. The slider scales
+the outline and fill together from 0% (off) to 100%; normally exposed parts of
+the unit keep their original appearance. The effect does not change terrain,
+shadows, picking or game visibility. Colors follow the existing own/allied/enemy
+preferences, or player colors when team coloring is disabled. Sensor contacts
+retain anonymous geometry and a neutral gray highlight; units omitted by the
+client's visibility rules are never drawn.
+
+The highlight compares the nearest unit surface against the rendered scene's
+depth, using the same animated model instances in every camera view. This avoids
+highlighting a unit's own rear surfaces or overlapping limbs. Superimposed units
+share the nearest surface at each pixel. Surfaces already made transparent by
+the opacity controls use their existing see-through rendering. The highlight
+is drawn after atmosphere/weather and before tactical annotations, with an
+outline sized in screen pixels. It shares camera-depth capture with fog when
+available and adds a depth pass when needed on a clear board. Its unit-depth
+and color buffers are reused until the viewport changes; 0% skips the highlight work.
 
 ## Controls and presentation
 
@@ -197,7 +231,7 @@ bounding boxes, not mesh collision, and never exposes hidden game entities.
 | Tab, then Enter | Cycle visible units and inspect |
 | Up/down, then Enter in a menu | Navigate enabled choices and activate |
 | Orders / Clear orders / Done or Skip | Inspect, clear, or explicitly commit through the original handlers |
-| Tuning / F9 | Adjust geometry, time of day, clouds, fog, haze, and exposure |
+| Tuning / F9 | Adjust geometry, overlap opacity, see-through intensity, time of day, clouds, fog, haze, and exposure |
 | Speed / Space during playback | Change playback rate / finish queued animation |
 
 The HUD and context menus reuse the configured MegaMek skin and its original
@@ -207,7 +241,9 @@ navigation skips disabled actions. Camera rotation, fitting, and menu interactio
 do not issue game orders.
 
 Tuning defaults are hex scale 1, unit scale 0.6, unit height scale 0.87, level
-height 18, and grid shade 0.8. A single tuning record updates all derived
+height 18, grid shade 0.8, building opacity 50%, tree opacity 75%, and see-through
+intensity 75%. Opacity is local to the GPU window and changes materials without
+rebuilding terrain. Defaults restores these values. A single geometry tuning record updates all derived
 dimensions on the render thread. No geometry tuning requires a second artwork
 capture or an alternate renderer.
 
@@ -259,8 +295,9 @@ on the roof footprint. Other hex labels retain their terrain anchors.
   and authored-mesh intersection code.
 - The draw order is opaque terrain/features, flat decals, units, transparent
   water/faded features, tactical marks, and screen annotations/UI.
-  Tactical marks, including deployment borders, follow the ground and road
-  approaches one-third of a level above the surface (above water in rivers).
+  Tactical marks, including deployment borders, use a flat plane one-third of
+  a level above each hex's surface (above water in rivers). Road approaches do
+  not bend their outlines.
   They test opaque depth without writing it, so buildings and higher terrain
   occlude them. Border colors and existing translucent fills are retained.
 - One 2048-pixel directional shadow map includes terrain, opaque features, and
@@ -340,7 +377,8 @@ Updating a copied roof silhouette requires rerunning the offline asset build.
 
 Transparency uses bounding boxes and normal
 alpha sorting, not volumetric water or order-independent transparency. Terrain
-still occludes units behind banks; screen annotations remain available.
+still hides the normal unit material behind banks; the separate see-through
+highlight reveals the occluded silhouette, and screen annotations remain available.
 
 The automated checks do not establish an end-to-end human playthrough of every
 aerospace, artillery, transport, multi-map, bridge, or special-equipment

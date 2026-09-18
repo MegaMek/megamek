@@ -118,14 +118,14 @@ void main() {
 
         center.z =
             u_origin.z
-            + u_level * 0.06
+            + u_level * 0.10
             + seed.z
                 * seed.z
                 * u_extent.z
-                * 0.20
+                * 0.32
             + (0.5 + 0.5 * sin(hop))
                 * u_level
-                * 0.12;
+                * 0.16;
 
         velocity =
             vec3(

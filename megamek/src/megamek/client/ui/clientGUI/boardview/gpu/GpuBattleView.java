@@ -586,9 +586,16 @@ class GpuBattleView extends ApplicationAdapter {
     }
 
     private void ring(Coords coords, float elevation) {
+        // The outline stays inside the hex: on the shared edge it lies in the terrain's plane there, and the part
+        // that spills onto a neighbour reads at that neighbour's level.
+        Vector3 center = BoardGeometry.center(coords, elevation);
+        Vector3 first = new Vector3();
+        Vector3 second = new Vector3();
         for (int edge = 0; edge < 6; edge++) {
-            lines.line(BoardGeometry.corner(coords, elevation, edge).add(0, 0, 0.5f),
-                  BoardGeometry.corner(coords, elevation, edge + 1).add(0, 0, 0.5f));
+            lines.line(BoardGeometry.markerPoint(BoardGeometry.corner(first, coords, elevation, edge), center)
+                        .add(0, 0, 0.5f),
+                  BoardGeometry.markerPoint(BoardGeometry.corner(second, coords, elevation, edge + 1), center)
+                        .add(0, 0, 0.5f));
         }
     }
 

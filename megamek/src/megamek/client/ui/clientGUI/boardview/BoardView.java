@@ -1272,8 +1272,13 @@ public final class BoardView extends AbstractBoardView
         drawArtilleryHexes(graphics2D);
         drawOrbitalBombardmentHexes(graphics2D);
 
-        // draw highlight border
-        drawSprite(graphics2D, highlightSprite);
+        // The GPU capture draws selection, hover and acting-unit outlines natively. Capturing the classic flat
+        // hex cursors as well would render them on each hex's raised marking plane, split across neighbouring
+        // levels wherever the hexes differ in elevation.
+        if (includeUnits) {
+            // draw highlight border
+            drawSprite(graphics2D, highlightSprite);
+        }
 
         // draw entity hex highlights (Nova CEWS network dialog)
         drawEntityHexHighlights(graphics2D);
@@ -1282,8 +1287,10 @@ public final class BoardView extends AbstractBoardView
         drawDemolitionChargeHighlights(graphics2D);
 
         // draw cursors
-        drawSprite(graphics2D, cursorSprite);
-        drawSprite(graphics2D, selectedSprite);
+        if (includeUnits) {
+            drawSprite(graphics2D, cursorSprite);
+            drawSprite(graphics2D, selectedSprite);
+        }
         drawSprite(graphics2D, firstLOSSprite);
         drawSprite(graphics2D, secondLOSSprite);
 

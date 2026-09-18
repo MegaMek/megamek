@@ -835,7 +835,17 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         Set<OffBoardDirection> homeEdges = homeEdgesOf(owner.getStartingPos());
         OffBoardDirection fledOver = unit.getRetreatedDirection();
         boolean directionUnknown = (fledOver == null) || (fledOver == OffBoardDirection.NONE);
-        return homeEdges.isEmpty() || directionUnknown || homeEdges.contains(fledOver);
+        boolean noHomeEdge = homeEdges.isEmpty();
+        boolean countsAsHome = noHomeEdge || directionUnknown || homeEdges.contains(fledOver);
+        // At INFO because this is the line that answers "why did that score?" in a playtest log, and it is
+        // written once per unit that leaves the battlefield.
+        LOGGER.info("[Scan] {} left over {}; {} start position {} gives home edge(s) {}; counted as home: {}{}",
+              unit.getShortName(), directionUnknown ? "an unknown edge" : fledOver, owner.getName(),
+              owner.getStartingPos(), noHomeEdge ? "none" : homeEdges, countsAsHome,
+              countsAsHome && (noHomeEdge || directionUnknown)
+                    ? (noHomeEdge ? " (no home edge set, so any edge counts)" : " (edge unknown, so it counts)")
+                    : "");
+        return countsAsHome;
     }
 
     /**

@@ -1134,6 +1134,20 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     //
     // GameListener
     //
+    /**
+     * The server owns whether a scan order stands, and it tells us by sending the unit back. Refreshing the buttons
+     * here is what moves the Scan button to Cancel Scan once the order is accepted, and back again once it is
+     * withdrawn, without the client guessing ahead of the server.
+     */
+    @Override
+    public void gameEntityChange(megamek.common.event.entity.GameEntityChangeEvent event) {
+        super.gameEntityChange(event);
+        boolean isTheSelectedUnit = (event.getEntity() != null) && (event.getEntity().getId() == currentEntity);
+        if (isTheSelectedUnit && isMyTurn()) {
+            updateButtons();
+        }
+    }
+
     @Override
     public void gameTurnChange(megamek.common.event.GameTurnChangeEvent e) {
         if (isIgnoringEvents()) {

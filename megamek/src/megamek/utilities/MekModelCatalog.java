@@ -34,9 +34,15 @@ public final class MekModelCatalog {
           boolean rear, boolean omniPod, String family, double tonnage, int rackSize) {
     }
 
+    /**
+     * One catalogued variant.
+     *
+     * @param hands     the arms that have a hand actuator; an arm without one carries its weapon at the wrist
+     * @param lowerArms the arms that have a lower arm actuator; an arm without one carries its weapon at the elbow
+     */
     public record Unit(String name, String chassis, String model, String variantKey, String configuration, boolean omni,
           double mass, String sprite, boolean genericSprite, String source, String sourceSha256,
-          List<String> hands, List<Mount> equipment) {
+          List<String> hands, List<String> lowerArms, List<Mount> equipment) {
     }
 
     /** Reads the loose mm-data source tree, including custom Meks; no second MTF or tileset parser. */
@@ -74,15 +80,10 @@ public final class MekModelCatalog {
                     }
                     String hash = HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256")
                           .digest(Files.readAllBytes(source)));
-                    List<String> hands = new ArrayList<>();
-                    for (int loc : new int[] { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM }) {
-                        if (mek.hasSystem(Mek.ACTUATOR_HAND, loc)) {
-                            hands.add(mek.getLocationAbbr(loc));
-                        }
-                    }
                     catalog.add(new Unit(mek.getShortNameRaw(), mek.getFullChassis(), mek.getModel(), UnitModelKey.forEntity(mek),
                           mek.getClass().getSimpleName(), mek.isOmni(), mek.getWeight(), sprite,
-                          entry == tileset.genericFor(mek, -1), relative, hash, hands, mounts(mek)));
+                          entry == tileset.genericFor(mek, -1), relative, hash,
+                          armsWith(mek, Mek.ACTUATOR_HAND), armsWith(mek, Mek.ACTUATOR_LOWER_ARM), mounts(mek)));
                 } catch (Exception ex) {
                     failures.add(Map.of("source", relative, "error", String.valueOf(ex.getMessage())));
                 }
@@ -98,6 +99,17 @@ public final class MekModelCatalog {
         if (!failures.isEmpty()) {
             throw new IOException("Catalog contains failures; inspect its failures array before building assets");
         }
+    }
+
+    /** Returns the abbreviations of the arms that have the given actuator, left arm first. */
+    static List<String> armsWith(Mek mek, int actuator) {
+        List<String> arms = new ArrayList<>();
+        for (int location : new int[] { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM }) {
+            if (mek.hasSystem(actuator, location)) {
+                arms.add(mek.getLocationAbbr(location));
+            }
+        }
+        return arms;
     }
 
     static List<Mount> mounts(Mek mek) {

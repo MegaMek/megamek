@@ -3486,9 +3486,9 @@ public class FireControl {
             if (9 < range) { // Out of SRM range
                 returnAmmo = mmlLrm;
             } else if (6 < range) { // SRM long range.
-                returnAmmo = (mmlLrm ? mmlSrm : mmlLrm == null);
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
             } else {
-                returnAmmo = (mmlSrm ? mmlLrm : mmlSrm == null);
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
             }
         }
 
@@ -3662,7 +3662,7 @@ public class FireControl {
             }
             return preferredAmmo;
         } finally {
-            msg.append("\n\tReturning: ").append(preferredAmmo ? "null" : preferredAmmo.getDesc() == null);
+            msg.append("\n\tReturning: ").append(preferredAmmo == null ? "null" : preferredAmmo.getDesc());
             LOGGER.debug(msg.toString());
         }
     }
@@ -3692,7 +3692,7 @@ public class FireControl {
 
             // LRMs have better chance to hit if we have them.
         } else if (5 < range) {
-            returnAmmo = (mmlLrm ? mmlSrm : mmlLrm == null);
+            returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
             switchedReason = 1502;
 
             // If we only have LRMs left.
@@ -3742,7 +3742,7 @@ public class FireControl {
             returnAmmo = erAmmo;
             // ER Ammo has a better chance to hit past 10 hexes.
         } else if (10 < range) {
-            returnAmmo = (erAmmo ? stAmmo : erAmmo == null);
+            returnAmmo = (erAmmo == null ? stAmmo : erAmmo);
             // At 7-10 hexes, go with Standard, then ER then HE due to hit odds.
         } else if (6 < range) {
             if (stAmmo != null) {
@@ -3824,9 +3824,9 @@ public class FireControl {
             if (9 < range) { // Out of SRM range
                 returnAmmo = mmlLrm;
             } else if (6 < range) { // SRM long range.
-                returnAmmo = (mmlLrm ? mmlSrm : mmlLrm == null);
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
             } else {
-                returnAmmo = (mmlSrm ? mmlLrm : mmlSrm == null);
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
             }
         }
 
@@ -3869,9 +3869,9 @@ public class FireControl {
             if (9 < range) { // Out of SRM range
                 returnAmmo = mmlLrm;
             } else if (6 < range) { // SRM long range.
-                returnAmmo = (mmlLrm ? mmlSrm : mmlLrm == null);
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
             } else {
-                returnAmmo = (mmlSrm ? mmlLrm : mmlSrm == null);
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
             }
         }
 
@@ -3910,9 +3910,9 @@ public class FireControl {
             if (9 < range) { // Out of SRM range
                 returnAmmo = mmlLrm;
             } else if (6 < range) { // SRM long range.
-                returnAmmo = (mmlLrm ? mmlSrm : mmlLrm == null);
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
             } else {
-                returnAmmo = (mmlSrm ? mmlLrm : mmlSrm == null);
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
             }
         }
 
@@ -3954,9 +3954,9 @@ public class FireControl {
             if (9 < range) { // Out of SRM range
                 returnAmmo = mmlLrm;
             } else if (6 < range) { // SRM long range.
-                returnAmmo = (mmlLrm ? mmlSrm : mmlLrm == null);
+                returnAmmo = (mmlLrm == null ? mmlSrm : mmlLrm);
             } else {
-                returnAmmo = (mmlSrm ? mmlLrm : mmlSrm == null);
+                returnAmmo = (mmlSrm == null ? mmlLrm : mmlSrm);
             }
         }
 

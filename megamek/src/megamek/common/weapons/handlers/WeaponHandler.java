@@ -326,7 +326,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // We need to know how much heat has been assigned to offensive weapons fire by
         // the defender this round
         int weaponHeat = getLargeCraftHeat(entityTarget) + entityTarget.heatBuildup;
-        if (null != lCounters) {
+        if (lCounters != null) {
             for (WeaponMounted counter : lCounters) {
                 // Point defenses only fire vs attacks against the arc they protect
                 Entity pdEnt = counter.getEntity();
@@ -1267,7 +1267,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     report.indent();
                     report.subject = attackingEntity.getId();
                     vPhaseReport.addElement(report);
-                    if (null != attackingEntity.getCrew()) {
+                    if (attackingEntity.getCrew() != null){
                         roll = attackingEntity.getCrew().rollGunnerySkill();
                     } else {
                         roll = Compute.rollD6(2);
@@ -2012,7 +2012,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         // is this an underwater attack on a surface naval vessel?
         underWater = toHit.getHitTable() == ToHitData.HIT_UNDERWATER;
-        if (null != attackingEntity.getCrew()) {
+        if (attackingEntity.getCrew() != null){
             roll = attackingEntity.getCrew().rollGunnerySkill();
         } else {
             roll = Compute.rollD6(2);
@@ -2328,7 +2328,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             nMissilesModifier -= 2;
         }
 
-        if (null != attackingEntity.getCrew()) {
+        if (attackingEntity.getCrew() != null){
             if (attackingEntity.hasAbility(OptionsConstants.GUNNERY_SANDBLASTER, weaponType.getName())) {
                 if (nRange > ranges[RangeType.RANGE_MEDIUM]) {
                     nMissilesModifier += 2;

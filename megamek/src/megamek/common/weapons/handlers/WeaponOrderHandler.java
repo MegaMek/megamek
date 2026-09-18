@@ -73,7 +73,7 @@ public class WeaponOrderHandler {
         public boolean equals(Object obj) {
             if (this == obj) {
                 return true;
-            } else if ((null == obj) || (getClass() != obj.getClass())) {
+            } else if ((obj == null) || (getClass() != obj.getClass())) {
                 return false;
             } else {
                 final WeaponOrder other = (WeaponOrder) obj;
@@ -271,7 +271,7 @@ public class WeaponOrderHandler {
      */
     @Nullable
     public static synchronized WeaponOrder getWeaponOrder(String chassis, String model) {
-        if (!initialized.get() || (null == weaponOrderMap)) {
+        if (!initialized.get() || (weaponOrderMap == null)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);
@@ -309,7 +309,7 @@ public class WeaponOrderHandler {
      */
     public synchronized static void setWeaponOrder(String chassis, String model, WeaponSortOrder type,
           Map<Integer, Integer> customWeaponOrder) {
-        if (!initialized.get() || (null == weaponOrderMap)) {
+        if (!initialized.get() || (weaponOrderMap == null)) {
             try {
                 weaponOrderMap = loadWeaponOrderFile();
                 initialized.set(true);

@@ -32,13 +32,10 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
-import java.awt.Component;
-import java.awt.Container;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JCheckBox;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
+import javax.swing.*;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.damage.CritAssignment;
@@ -46,11 +43,11 @@ import megamek.common.compute.damage.PreExistingDamageApplier;
 import megamek.common.compute.damage.PreExistingDamageLevel;
 import megamek.common.compute.damage.PreExistingDamageResult;
 import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.QuadVee;
-import megamek.common.units.Entity;
 import megamek.common.units.VTOL;
 
 /**
@@ -80,13 +77,13 @@ public class PreExistingDamageRoller {
         snapshotRear = new int[entity.locations()];
         snapshotInternal = new int[entity.locations()];
         for (int location = 0; location < entity.locations(); location++) {
-            if (null != controls.spnArmor[location]) {
+            if (controls.spnArmor[location] != null) {
                 snapshotArmor[location] = (Integer) controls.spnArmor[location].getValue();
             }
-            if (null != controls.spnRear[location]) {
+            if (controls.spnRear[location] != null) {
                 snapshotRear[location] = (Integer) controls.spnRear[location].getValue();
             }
-            if (null != controls.spnInternal[location]) {
+            if (controls.spnInternal[location] != null) {
                 snapshotInternal[location] = (Integer) controls.spnInternal[location].getValue();
             }
         }
@@ -106,13 +103,13 @@ public class PreExistingDamageRoller {
 
     private void restoreSnapshot() {
         for (int location = 0; location < entity.locations(); location++) {
-            if (null != controls.spnArmor[location]) {
+            if (controls.spnArmor[location] != null) {
                 controls.spnArmor[location].setValue(snapshotArmor[location]);
             }
-            if (null != controls.spnRear[location]) {
+            if (controls.spnRear[location] != null) {
                 controls.spnRear[location].setValue(snapshotRear[location]);
             }
-            if (null != controls.spnInternal[location]) {
+            if (controls.spnInternal[location] != null) {
                 controls.spnInternal[location].setValue(snapshotInternal[location]);
             }
         }
@@ -126,25 +123,25 @@ public class PreExistingDamageRoller {
      */
     public void roll(@Nullable PreExistingDamageLevel level) {
         restoreSnapshot();
-        if ((null == level) || (level == PreExistingDamageLevel.NONE)) {
+        if ((level == null) || (level == PreExistingDamageLevel.NONE)) {
             return;
         }
         PreExistingDamageResult result = PreExistingDamageApplier.simulate(entity, level);
         for (int location = 0; location < entity.locations(); location++) {
-            if (null != controls.spnArmor[location]) {
+            if (controls.spnArmor[location] != null) {
                 controls.spnArmor[location].setValue(result.armor()[location]);
             }
-            if (null != controls.spnRear[location]) {
+            if (controls.spnRear[location] != null) {
                 controls.spnRear[location].setValue(result.rearArmor()[location]);
             }
         }
         if (entity instanceof Aero) {
-            if (null != controls.spnInternal[0]) {
+            if (controls.spnInternal[0] != null) {
                 controls.spnInternal[0].setValue(result.structuralIntegrity());
             }
         } else {
             for (int location = 0; location < entity.locations(); location++) {
-                if (null != controls.spnInternal[location]) {
+                if (controls.spnInternal[location] != null) {
                     controls.spnInternal[location].setValue(result.internal()[location]);
                 }
             }
@@ -163,7 +160,7 @@ public class PreExistingDamageRoller {
         snapshotCritHits.keySet().forEach(critPanel -> critPanel.setHits(0));
         // heat and crew hits are damage counting up, not health counting down, so a repaired unit has none of them
         setSpinnerToZero(controls.spnHeat);
-        if (null != controls.spnCrewHits) {
+        if (controls.spnCrewHits != null) {
             for (JSpinner crewHits : controls.spnCrewHits) {
                 setSpinnerToZero(crewHits);
             }
@@ -180,10 +177,10 @@ public class PreExistingDamageRoller {
 
     /** Puts one modifier's duration controls back to their fresh state: the default rounds, not permanent. */
     private void resetModifierDuration(JSpinner roundsSpinner, JCheckBox permanentCheckbox) {
-        if (null != roundsSpinner) {
+        if (roundsSpinner != null) {
             roundsSpinner.setValue(UnitDamagePanelBuilder.DEFAULT_MODIFIER_ROUNDS);
         }
-        if (null != permanentCheckbox) {
+        if (permanentCheckbox != null) {
             permanentCheckbox.setSelected(false);
         }
     }
@@ -200,7 +197,7 @@ public class PreExistingDamageRoller {
     }
 
     private void setSpinnerToZero(@Nullable JSpinner spinner) {
-        if (null != spinner) {
+        if (spinner != null) {
             spinner.setValue(0);
         }
     }
@@ -270,7 +267,7 @@ public class PreExistingDamageRoller {
             case STABILIZER -> {
                 if ((entity instanceof VTOL) && (location == VTOL.LOC_ROTOR)) {
                     incrementCrit(controls.flightStabilizerCrit);
-                } else if ((null != controls.stabilizerCrits) && (location >= 0) && (location < controls.stabilizerCrits.length)) {
+                } else if ((controls.stabilizerCrits != null) && (location >= 0) && (location < controls.stabilizerCrits.length)) {
                     incrementCrit(controls.stabilizerCrits[location]);
                 }
             }
@@ -288,7 +285,7 @@ public class PreExistingDamageRoller {
     }
 
     private void incrementCrit(@Nullable CheckCritPanel critPanel) {
-        if (null != critPanel) {
+        if (critPanel != null) {
             critPanel.setHits(critPanel.getHits() + 1);
         }
     }

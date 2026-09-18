@@ -34,7 +34,7 @@ package megamek.client.ratgenerator;
 
 import static megamek.utilities.ImageUtilities.addTintToImageIcon;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -44,11 +44,12 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.swing.ImageIcon;
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 
 import megamek.client.ratgenerator.FactionRecord.TechCategory;
@@ -1800,7 +1801,7 @@ public class RATGenerator {
 
                     AvailabilityRating ar = new AvailabilityRating(chassisKey, era, code);
                     FactionRecord chassisFaction = getFaction(ar.getFaction());
-                    if (null != chassisFaction || code.startsWith("General")) {
+                    if (chassisFaction != null || code.startsWith("General")) {
 
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
@@ -1876,7 +1877,7 @@ public class RATGenerator {
 
                     AvailabilityRating ar = new AvailabilityRating(modelRecord.getKey(), era, code);
                     FactionRecord modelFaction = getFaction(ar.getFaction());
-                    if (null != modelFaction || code.startsWith("General")) {
+                    if (modelFaction != null || code.startsWith("General")) {
                         // If it provides availability values based on equipment ratings,
                         // generate index values in addition to letter values
                         if (ar.hasMultipleRatings()) {

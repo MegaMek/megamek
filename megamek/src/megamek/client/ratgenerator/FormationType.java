@@ -522,7 +522,7 @@ public class FormationType {
         }
 
         final GroupingConstraint useGrouping;
-        if (null == groupingCriteria) {
+        if (groupingCriteria == null) {
             useGrouping = null;
         } else {
             useGrouping = groupingCriteria.copy();
@@ -2519,7 +2519,7 @@ public class FormationType {
      */
     private static boolean checkUnitMatch(final MekSummary ms0, final MekSummary ms1) {
         final ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms0.getName());
-        if (null != mRec && mRec.isOmni()) {
+        if (mRec != null && mRec.isOmni()) {
             return ms0.getChassis().equals(ms1.getChassis());
         } else {
             return ms0.getName().equals(ms1.getName());

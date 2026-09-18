@@ -130,13 +130,13 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                 // weapon in the bay,
                 // so we'll track ammo normally and need to resolve attacks for all bay weapons.
                 for (int i = 0; i < shots; i++) {
-                    if (null == bayWAmmo
-                          || bayWAmmo.getUsableShotsLeft() < 1) {
+                    if (bayWAmmo == null
+                        || bayWAmmo.getUsableShotsLeft() < 1) {
                         // try loading something else
                         attackingEntity.loadWeaponWithSameAmmo(bayW);
                         bayWAmmo = bayW.getLinkedAmmo();
                     }
-                    if (null != bayWAmmo) {
+                    if (bayWAmmo != null) {
                         bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                     }
                 }
@@ -232,7 +232,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
         final AmmoType ammoType = (AmmoType) ammoUsed.getType();
 
         // Are there any valid spotters?
-        if ((null != spottersBefore) && !isFlak) {
+        if ((spottersBefore != null) && !isFlak) {
             // fetch possible spotters now
             Iterator<Entity> spottersAfter = game.getSelectedEntities(new EntitySelector() {
                 public final int player = playerId;
@@ -273,7 +273,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
         }
 
         // If at least one valid spotter, then get the benefits thereof.
-        if (null != bestSpotter) {
+        if (bestSpotter != null) {
             int foMod = 0;
             if (bestSpotter.hasAbility(OptionsConstants.MISC_FORWARD_OBSERVER)) {
                 foMod = -2;
@@ -298,7 +298,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
             // fire will hit the hex automatically.
             if (roll.getIntValue() >= toHit.getValue()) {
                 attackingEntity.aTracker.setModifier(TargetRoll.AUTOMATIC_SUCCESS, targetPos);
-            } else if (null != bestSpotter) {
+            } else if (bestSpotter != null) {
                 // If the shot missed, but was adjusted by a spotter, future shots are more likely to hit. Note:
                 // Because artillery fire is adjusted on a per-unit basis, this can result in a unit firing multiple
                 // artillery weapons at the same hex getting this bonus more than once per turn. Since the Artillery

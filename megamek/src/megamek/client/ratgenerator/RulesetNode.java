@@ -357,7 +357,7 @@ public class RulesetNode {
                     break;
                 case "formation":
                     FormationType ft = FormationType.getFormationType(property);
-                    if (null != ft) {
+                    if (ft != null) {
                         fd.setFormationType(ft);
                     } else {
                         logger.warn("Could not parse formation type {}", property);

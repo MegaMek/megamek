@@ -143,7 +143,7 @@ public class BattleArmorTROView extends TROView {
     private Map<String, Object> formatManipulatorRow(int mountLoc, Mounted<?> manipulator) {
         final Map<String, Object> retVal = new HashMap<>();
         retVal.put("locName", BattleArmor.getBaMountLocName(mountLoc));
-        if (null == manipulator) {
+        if (manipulator == null) {
             retVal.put("eqName", Messages.getString("TROView.None"));
             retVal.put("eqMass", 0);
         } else {

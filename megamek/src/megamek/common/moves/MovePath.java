@@ -382,7 +382,7 @@ public class MovePath implements Cloneable,
         // If the new step is legal and is a different position than
         // the previous step, then update the older steps, letting
         // them know that they are no longer the end of the path.
-        if (step.isLegal(this) && (null != prev) && !land.equals(prev.getPosition())) {
+        if (step.isLegal(this) && (prev != null) && !land.equals(prev.getPosition())) {
             // Loop through the steps from back to front.
             // Stop looping when the step says to, or we run out of steps.
             int index = steps.size() - 2;
@@ -757,9 +757,9 @@ public class MovePath implements Cloneable,
                 step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
             } else if (step.hasNoCost()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
-            } else if (null != step.getMinefield()) {
+            } else if (step.getMinefield() != null){
                 step = new MoveStep(this, step.getType(), step.getMinefield());
-            } else if (null != step.getAdditionalData() && !step.getAdditionalData().isEmpty()) {
+            } else if (step.getAdditionalData() != null &&!step.getAdditionalData().isEmpty()){
                 step = new MoveStep(this, step.getType(), step.getAdditionalData());
             } else {
                 step = new MoveStep(this, step.getType());

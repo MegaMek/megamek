@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -607,8 +607,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // end my turn, then.
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isPhysical() &&
-              (null != next) &&
-              (null != currentEntity()) &&
+            (next != null) &&
+            (currentEntity() != null) &&
               (next.getOwnerId() != currentEntity().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
@@ -1371,7 +1371,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * Club that target!
      */
     public void club(MiscMounted club) {
-        if (null == club) {
+        if (club == null) {
             return;
         }
         if (currentEntity() == null) {

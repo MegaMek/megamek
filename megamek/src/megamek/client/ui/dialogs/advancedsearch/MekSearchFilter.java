@@ -32,16 +32,7 @@
  */
 package megamek.client.ui.dialogs.advancedsearch;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import megamek.common.Messages;
@@ -1038,7 +1029,7 @@ public class MekSearchFilter {
 
                     int currQty = qtyIter.next();
 
-                    if (null == currEq) {
+                    if (currEq == null) {
                         LOGGER.debug("List<String> currEq is null");
                         return false;
                     }

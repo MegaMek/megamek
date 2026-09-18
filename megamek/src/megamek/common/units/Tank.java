@@ -399,7 +399,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
             mp = Math.max(0, mp - getCargoMpReduction(this));
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -438,7 +438,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         }
 
         // If the unit is towing trailers, the load slows it down (TM, Tractors).
-        if (!mpCalculationSetting.ignoreCargo() && (null != game) && !getAllTowedUnits().isEmpty()) {
+        if (!mpCalculationSetting.ignoreCargo() && (game != null) && !getAllTowedUnits().isEmpty()) {
             double trailerWeight = 0;
             for (int id : getAllTowedUnits()) {
                 Entity towedUnit = game.getEntity(id);
@@ -1418,7 +1418,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
         // are we wheeled and in light snow?
         Hex hex = game.getHex(getPosition(), getBoardId());
-        if ((null != hex) &&
+        if ((hex != null) &&
               (getMovementMode() == EntityMovementMode.WHEELED) &&
               (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");

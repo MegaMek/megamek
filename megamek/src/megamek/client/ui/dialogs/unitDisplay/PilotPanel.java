@@ -32,14 +32,10 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.io.Serial;
 import java.util.Enumeration;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JToggleButton;
+import javax.swing.*;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.widget.BackGroundDrawer;
@@ -80,7 +76,7 @@ class PilotPanel extends PicMap {
         gbc.gridy = 1;
         add(btnSwapRoles, gbc);
         btnSwapRoles.addActionListener(e -> {
-            if (null != entity) {
+            if (entity != null) {
                 entity.getCrew().setSwapConsoleRoles(btnSwapRoles.isSelected());
                 unitDisplayPanel.getClientGUI().getClient().sendUpdateEntity(entity);
                 updateSwapButtonText();
@@ -145,7 +141,7 @@ class PilotPanel extends PicMap {
     }
 
     private void selectCrewSlot() {
-        if (null != entity && cbCrewSlot.getSelectedIndex() >= 0) {
+        if (entity != null && cbCrewSlot.getSelectedIndex() >= 0) {
             pilotMapSet.setEntity(entity, cbCrewSlot.getSelectedIndex());
             onResize();
             update();

@@ -289,7 +289,7 @@ public class BehaviorSettings implements Serializable {
      *                      resets to {@link CombatPosture#AUTO}
      */
     public void setCombatPosture(@Nullable CombatPosture combatPosture) {
-        this.combatPosture = (null == combatPosture) ? CombatPosture.AUTO : combatPosture;
+        this.combatPosture = (combatPosture == null) ? CombatPosture.AUTO : combatPosture;
     }
 
     public void setCombatPosture(String combatPosture) {
@@ -740,7 +740,7 @@ public class BehaviorSettings implements Serializable {
      * @param destinationEdge The {@link CardinalEdge} princess should flee to.
      */
     public void setDestinationEdge(final @Nullable CardinalEdge destinationEdge) {
-        if (null == destinationEdge) {
+        if (destinationEdge == null) {
             return;
         }
 
@@ -789,7 +789,7 @@ public class BehaviorSettings implements Serializable {
      * @param retreatEdge The {@link CardinalEdge} princess should flee to.
      */
     public void setRetreatEdge(final @Nullable CardinalEdge retreatEdge) {
-        if (null == retreatEdge) {
+        if (retreatEdge == null) {
             return;
         }
 

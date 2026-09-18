@@ -122,7 +122,7 @@ public class CrewDescriptor {
         boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
 
         int experience;
-        if (null == assignment.getExperience()) {
+        if (assignment.getExperience() == null){
             experience = randomExperienceLevel();
         } else {
             experience = SKILL_GREEN + assignment.getExperience();

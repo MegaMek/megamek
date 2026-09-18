@@ -33,11 +33,7 @@
 
 package megamek.common.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.io.File;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -1388,7 +1384,7 @@ public class RATGeneratorEditor extends JFrame {
                 } else {
                     factionRec.setWeightDistribution(era, unitType, null);
                 }
-            } else if (null != value) {
+            } else if (value != null) {
                 int rating = (row - 1) % factionRec.getRatingLevels().size();
                 switch ((row - 1) / factionRec.getRatingLevels().size()) {
                     case CAT_OMNI_PCT:

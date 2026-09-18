@@ -465,7 +465,7 @@ public class BattleArmor extends Infantry {
             }
         }
 
-        if ((!mpCalculationSetting.ignoreWeather()) && (null != game)) {
+        if ((!mpCalculationSetting.ignoreWeather()) && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -526,7 +526,7 @@ public class BattleArmor extends Infantry {
             return 0;
         }
 
-        if (null != game) {
+        if (game != null) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (!mpCalculationSetting.ignoreWeather()
                   && conditions.getWind().isStrongerThan(Wind.STRONG_GALE)) {

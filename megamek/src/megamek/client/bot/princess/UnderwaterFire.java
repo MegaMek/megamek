@@ -117,10 +117,10 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
 
         Entity targetEntity = (target instanceof Entity entity) ? entity : null;
         int targetBottom = targetState.getElevation();
-        int targetTop = targetBottom + ((null == targetEntity) ? 0 : targetEntity.height());
+        int targetTop = targetBottom + ((targetEntity == null) ? 0 : targetEntity.height());
         boolean targetInPartialWater = false;
         boolean targetUnderwater = false;
-        if ((null != targetEntity) && (null != targetHex)
+        if ((targetEntity != null) && (targetHex != null)
               && targetHex.containsTerrain(Terrains.WATER) && (targetBottom < 0)) {
             if (targetTop >= 0) {
                 targetInPartialWater = true;
@@ -130,12 +130,12 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
         }
 
         // A naval unit on the surface can be attacked from above or below.
-        if ((null != targetEntity) && (0 == targetBottom) && (UnitType.NAVAL == targetEntity.getUnitType())) {
+        if ((targetEntity != null) && (0 == targetBottom) && (UnitType.NAVAL == targetEntity.getUnitType())) {
             targetInPartialWater = true;
         }
 
         WeaponType weaponType = weapon.getType();
-        boolean torpedo = (null != weaponType.getAmmoType()) && weaponType.getAmmoType().isTorpedo();
+        boolean torpedo = (weaponType.getAmmoType() != null) &&weaponType.getAmmoType().isTorpedo();
 
         // Naval units may target underwater units - torpedo tubes are mounted underwater.
         if ((targetUnderwater || torpedo) && (UnitType.NAVAL == shooter.getUnitType())) {
@@ -156,7 +156,7 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
         // their surface ranges, and multi-purpose missiles are the one exception allowed to hit dry targets.
         int[] ranges = weaponType.getWRanges();
         boolean multiPurposeMissile = false;
-        if ((null != firingAmmo) && (firingAmmo.getType() instanceof AmmoType ammoType)
+        if ((firingAmmo != null) && (firingAmmo.getType() instanceof AmmoType ammoType)
               && isTorpedoCapableLauncher(weaponType.getAmmoType())) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_TORPEDO)) {
                 ranges = weaponType.getRanges(weapon);
@@ -174,7 +174,7 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
         }
         // A Mek standing in depth 1 only has its leg weapons underwater, and those cannot reach a vessel
         // sitting on the surface above them.
-        if ((null != targetEntity) && (UnitType.NAVAL == targetEntity.getUnitType())
+        if ((targetEntity != null) && (UnitType.NAVAL == targetEntity.getUnitType())
               && (shooter instanceof Mek) && (shooter.height() > 0) && (-1 == shooterState.getElevation())) {
             return new UnderwaterFire(TH_LEG_WEAPONS_AT_SURFACE_NAVAL, null);
         }
@@ -197,7 +197,7 @@ public record UnderwaterFire(@Nullable TargetRollModifier blocked, @Nullable int
      */
     static boolean isWeaponUnderwater(Entity shooter, EntityState shooterState, @Nullable Hex shooterHex,
           WeaponMounted weapon) {
-        if ((null == shooterHex) || !shooterHex.containsTerrain(Terrains.WATER)) {
+        if ((shooterHex == null) || !shooterHex.containsTerrain(Terrains.WATER)) {
             return false;
         }
         int depth = shooterHex.terrainLevel(Terrains.WATER);

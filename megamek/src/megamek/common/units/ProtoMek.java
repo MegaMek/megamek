@@ -1015,7 +1015,7 @@ public class ProtoMek extends Entity {
     @Override
     public void setCrew(Crew p) {
         super.setCrew(p);
-        if (null != p) {
+        if (p != null) {
             getCrew().setPiloting(5, 0);
         }
     }

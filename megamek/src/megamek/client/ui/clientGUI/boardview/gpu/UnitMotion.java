@@ -151,6 +151,29 @@ final class UnitMotion {
         return position;
     }
 
+    /** Grounded road travel follows the rendered cut/ramp without changing the game path. */
+    public Vector3 surfacePosition(BoardScene scene) {
+        if (!isMoving() || remaining.getFirst().jump() != null) {
+            return position;
+        }
+        Playback playback = remaining.getFirst();
+        int index = Math.min((int) (elapsed / playback.duration() * (playback.path().size() - 1)), playback.path().size() - 2);
+        BoardScene.Waypoint from = playback.path().get(index), to = playback.path().get(index + 1);
+        BoardScene.Tile start = scene.tile(from.coords()), end = scene.tile(to.coords());
+        if (start == null || end == null || start.water() || end.water()
+              || from.elevation() != start.elevation() || to.elevation() != end.elevation()) {
+            return position;
+        }
+        for (int direction = 0; direction < 6; direction++) {
+            if (from.coords().translated(direction).equals(to.coords())
+                  && BoardSurface.roadReachesEdge(start, end, direction)) {
+                BoardScene.Tile tile = BoardGeometry.contains(from.coords(), position.x, position.y) ? start : end;
+                return new Vector3(position.x, position.y, new BoardSurface(scene, tile).height(position.x, position.y));
+            }
+        }
+        return position;
+    }
+
     public Vector3 destination() {
         BoardScene.Waypoint last = isMoving() ? remaining.getLast().path().getLast() : null;
         return last == null ? new Vector3(position) : BoardGeometry.center(last.coords(), last.elevation());

@@ -42,7 +42,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
@@ -87,6 +89,8 @@ public class HexTileset implements BoardListener {
     private final List<HexEntry> superimposed = new ArrayList<>();
     private final List<HexEntry> orthographic = new ArrayList<>();
     private final Set<String> themes = new TreeSet<>();
+    private final File imageRoot;
+    private final Map<Image, String> imageSources = new IdentityHashMap<>();
     private ImageCache<Hex, Image> basesCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> superimposedCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> orthographicCache = new ImageCache<>();
@@ -95,6 +99,12 @@ public class HexTileset implements BoardListener {
      * Creates new HexTileset
      */
     public HexTileset(IGame game) {
+        this(game, Configuration.hexesDir());
+    }
+
+    /** A separate artwork root lets the 3D board keep its own editable tileset. */
+    public HexTileset(IGame game, File imageRoot) {
+        this.imageRoot = imageRoot;
         // The Board and Game listeners
         // The HexTileSet caches images with the hex object as key. Therefore, it must listen to Board events to
         // clear changed (but not replaced) hexes from the cache. It must listen to Game events to catch when a board
@@ -343,7 +353,7 @@ public class HexTileset implements BoardListener {
     public void loadFromFile(String filename) throws IOException {
         long startTime = java.lang.System.currentTimeMillis();
         // make input stream for board
-        Reader r = new BufferedReader(new FileReader(new MegaMekFile(Configuration.hexesDir(), filename).getFile()));
+        Reader r = new BufferedReader(new FileReader(new MegaMekFile(imageRoot, filename).getFile()));
         // read board, looking for "size"
         StreamTokenizer st = new StreamTokenizer(r);
         st.eolIsSignificant(true);
@@ -585,7 +595,11 @@ public class HexTileset implements BoardListener {
         return elevation * terrain * theme;
     }
 
-    private static class HexEntry {
+    public synchronized String imageSource(Image image) {
+        return imageSources.getOrDefault(image, "");
+    }
+
+    private class HexEntry {
         private final Hex hex;
         private Vector<Image> images;
         private final Vector<String> filenames;
@@ -616,10 +630,11 @@ public class HexTileset implements BoardListener {
         public void loadImage() {
             images = new Vector<>();
             for (String filename : filenames) {
-                File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
+                File imgFile = new MegaMekFile(imageRoot, filename).getFile();
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if (null != image) {
                     images.add(image);
+                    imageSources.put(image, filename);
                 } else {
                     logger.error("Received null image from ImageUtil.loadImageFromFile! File: {}", imgFile);
                 }

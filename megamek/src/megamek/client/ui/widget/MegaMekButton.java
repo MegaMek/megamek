@@ -177,6 +177,9 @@ public class MegaMekButton extends JButton implements MouseListener {
         SkinSpecification skinSpec = SkinXMLHandler.getSkin(component, defaultToPlain, true);
         if (!skinSpec.noBorder) {
             setBorder(new MegaMekBorder(skinSpec));
+        } else if (skinSpec.hasBackgrounds()) {
+            // The artwork supplies its own frame; a look-and-feel border can fill its transparent corners.
+            setBorderPainted(false);
         }
         loadIcon(skinSpec);
         isBGTiled = skinSpec.tileBackground;
@@ -210,6 +213,8 @@ public class MegaMekButton extends JButton implements MouseListener {
      */
     public void loadIcon(SkinSpecification spec) {
         iconsLoaded = true;
+        bgBuffer = null;
+        bgPressedBuffer = null;
         // If there were no background paths loaded, there's nothing to do
         if (!spec.hasBackgrounds()) {
             iconsLoaded = false;
@@ -217,12 +222,14 @@ public class MegaMekButton extends JButton implements MouseListener {
         }
         // Setting this to false helps with transparent images
         setContentAreaFilled(false);
+        setOpaque(false);
         // Otherwise, try to load in all the images.
         try {
             if (spec.backgrounds.size() < 2) {
                 logger.error(
                       "Skin specification for a MegamekButton does not contain at least 2 background images!");
                 iconsLoaded = false;
+                return;
             }
             java.net.URI imgURL = new MegaMekFile(Configuration.widgetsDir(),
                   spec.backgrounds.getFirst()).getFile().toURI();

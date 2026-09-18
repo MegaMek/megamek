@@ -36,49 +36,36 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
               ? null : tiles.get(coords.getX() * height + coords.getY());
     }
 
-    /**
-     * {@code base} is the ground artwork the padding continues around the hex; {@code water} marks a water
-     * surface, so a water side joins with water and its land sides with a bank; {@code features} holds the
-     * tileset's other terrain layers on transparent pixels, drawn over hex and padding alike.
-     */
-    public record Tile(Coords coords, int elevation, Pixels image, Pixels base, boolean water, Pixels features,
-          Pixels tactical, List<BoardView.HexText> text) {
-        public Tile {
-            text = List.copyOf(text);
-        }
+    /** A material family determines the exposed geology and the overhanging surface cover. */
+    enum Surface {
+        GRASS("dirt"), DIRT("dirt"), SAND("sand"), ROCK("rock"), CONCRETE("concrete"), SNOW("rock");
 
-        public Tile(Coords coords, int elevation, Pixels image, Pixels base, boolean water) {
-            this(coords, elevation, image, base, water, null, null, List.of());
-        }
+        final String wall;
 
-        public Tile(Coords coords, int elevation, Pixels image, Pixels base, Pixels tactical,
-              List<BoardView.HexText> text) {
-            this(coords, elevation, image, base, false, null, tactical, text);
-        }
-
-        public Tile(Coords coords, int elevation, Pixels image, Pixels base, Pixels tactical) {
-            this(coords, elevation, image, base, false, null, tactical, List.of());
-        }
-
-        public Tile(Coords coords, int elevation, Pixels image, Pixels tactical, List<BoardView.HexText> text) {
-            this(coords, elevation, image, image, false, null, tactical, text);
-        }
-
-        public Tile(Coords coords, int elevation, Pixels image, Pixels tactical) {
-            this(coords, elevation, image, image, false, null, tactical, List.of());
-        }
-
-        public Tile(Coords coords, int elevation, Pixels image) {
-            this(coords, elevation, image, image, false, null, null, List.of());
+        Surface(String wall) {
+            this.wall = wall;
         }
     }
 
-        /**
-         * {@code location} is the meeple's stand or flight height, {@code height} its own occupied levels and
-         * {@code airborne} true while it floats at that flight height instead of standing on the tile.
-         */
-        public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
-                    Pixels annotations, int height, boolean airborne) { }
+    /** Shared authored model, placement in tile pixels, and height in game levels. */
+    record Feature(String asset, float x, float y, float rotation, float scale, float height, float elevation) { }
+
+    /** Water depth -1 means dry. Ground and decals are independent from solid feature geometry. */
+    record Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground, Pixels decals,
+          Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
+        Tile {
+            features = List.copyOf(features);
+            text = List.copyOf(text);
+        }
+
+        boolean water() {
+            return waterDepth >= 0;
+        }
+    }
+
+    /** Stand/flight elevation and occupied levels come from the game, including the unit's current stance. */
+    public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
+          Pixels annotations, int height, boolean airborne) { }
 
     public record Waypoint(Coords coords, float elevation, float facing) { }
 
@@ -124,6 +111,9 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
 
         public static Pixels capture(BufferedImage image, Pixels previous) {
+            if (image == null) {
+                return null;
+            }
             Pixels next = new Pixels(image);
             return previous != null && next.width == previous.width && next.height == previous.height
                   && Arrays.equals(next.argb, previous.argb) ? previous : next;

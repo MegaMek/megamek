@@ -2,10 +2,13 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.PixmapPacker;
@@ -15,12 +18,21 @@ import com.badlogic.gdx.utils.Disposable;
 
 /** Shared atlas ownership. Pixel changes update existing slots without invalidating mesh UVs. */
 final class GpuTextures<K> implements Disposable {
-    private static final int PADDING = 2;
+    private static final int ATLAS_BLEED = 2;
     private record Entry(BoardScene.Pixels pixels, String name, TextureRegion region) { }
 
     private final Map<K, Entry> entries = new HashMap<>();
+    private final boolean mipmaps;
     private PixmapPacker packer;
     private TextureAtlas atlas;
+
+    GpuTextures() {
+        this(false);
+    }
+
+    GpuTextures(boolean mipmaps) {
+        this.mipmaps = mipmaps;
+    }
 
     /** Returns true only when the atlas layout changes. Must run on the GL thread. */
     boolean update(Map<K, BoardScene.Pixels> images) {
@@ -30,6 +42,7 @@ final class GpuTextures<K> implements Disposable {
                   return old.width() == item.getValue().width() && old.height() == item.getValue().height();
               });
         if (sameLayout) {
+            Set<Texture> updated = new HashSet<>();
             images.forEach((key, pixels) -> {
                 Entry old = entries.get(key);
                 if (old.pixels() != pixels) {
@@ -45,19 +58,26 @@ final class GpuTextures<K> implements Disposable {
                               pixmap.getWidth(), pixmap.getHeight(), pixmap.getGLFormat(), pixmap.getGLType(),
                               pixmap.getPixels());
                         entries.put(key, new Entry(pixels, old.name(), region));
+                        updated.add(region.getTexture());
                     } finally {
                         pixmap.dispose();
                     }
                 }
             });
+            if (mipmaps) {
+                updated.forEach(texture -> {
+                    texture.bind();
+                    Gdx.gl.glGenerateMipmap(GL20.GL_TEXTURE_2D);
+                });
+            }
             return false;
         }
         dispose();
         Map<K, String> names = new HashMap<>();
         // Guillotine packing reserves two outer margins AND one margin on each packed rectangle.
-        int width = Math.max(2048, images.values().stream().mapToInt(BoardScene.Pixels::width).max().orElse(0) + 3 * PADDING);
-        int height = Math.max(2048, images.values().stream().mapToInt(BoardScene.Pixels::height).max().orElse(0) + 3 * PADDING);
-        packer = new PixmapPacker(width, height, Pixmap.Format.RGBA8888, PADDING, true);
+        int width = Math.max(2048, images.values().stream().mapToInt(BoardScene.Pixels::width).max().orElse(0) + 3 * ATLAS_BLEED);
+        int height = Math.max(2048, images.values().stream().mapToInt(BoardScene.Pixels::height).max().orElse(0) + 3 * ATLAS_BLEED);
+        packer = new PixmapPacker(width, height, Pixmap.Format.RGBA8888, ATLAS_BLEED, true);
         images.forEach((key, pixels) -> {
             Pixmap pixmap = pixmap(pixels);
             try {
@@ -68,7 +88,15 @@ final class GpuTextures<K> implements Disposable {
                 pixmap.dispose();
             }
         });
-        atlas = packer.generateTextureAtlas(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear, false);
+        atlas = packer.generateTextureAtlas(mipmaps ? Texture.TextureFilter.MipMapLinearLinear : Texture.TextureFilter.Linear,
+              Texture.TextureFilter.Linear, mipmaps);
+        if (mipmaps) {
+            for (Texture texture : atlas.getTextures()) {
+                texture.bind();
+                // Keep the sampling footprint inside the artwork margin and duplicated atlas border.
+                Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAX_LEVEL, 2);
+            }
+        }
         names.forEach((key, name) -> entries.put(key, new Entry(images.get(key), name, atlas.findRegion(name))));
         return true;
     }

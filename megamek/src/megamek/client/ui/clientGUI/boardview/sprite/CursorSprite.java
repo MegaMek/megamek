@@ -33,8 +33,7 @@
 package megamek.client.ui.clientGUI.boardview.sprite;
 
 import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
@@ -64,24 +63,18 @@ public class CursorSprite extends Sprite {
 
     @Override
     public void prepare() {
-        // create image for buffer
-        Image tempImage = new BufferedImage(bounds.width, bounds.height,
-              BufferedImage.TYPE_INT_ARGB);
-        Graphics graph = tempImage.getGraphics();
-        UIUtil.setHighQualityRendering(graph);
-
-        // fill with key color
-        graph.setColor(new Color(0, 0, 0, 0));
-        graph.fillRect(0, 0, bounds.width, bounds.height);
-        // draw attack poly
-        graph.setColor(color);
-        graph.drawPolygon(BoardView.getHexPoly());
-
-        // create final image
-        image = bv.getScaledImage(bv.getPanel().createImage(tempImage.getSource()), false);
-
-        graph.dispose();
-        tempImage.flush();
+        Rectangle size = getBounds();
+        BufferedImage rendered = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graph = rendered.createGraphics();
+        try {
+            UIUtil.setHighQualityRendering(graph);
+            graph.scale(bv.getScale(), bv.getScale());
+            graph.setColor(color);
+            graph.drawPolygon(BoardView.getHexPoly());
+        } finally {
+            graph.dispose();
+        }
+        image = rendered;
     }
 
     public void setOffScreen() {
@@ -100,8 +93,7 @@ public class CursorSprite extends Sprite {
 
     @Override
     public Rectangle getBounds() {
-        bounds = new Rectangle(BoardView.getHexPoly().getBounds().width + 1,
-              BoardView.getHexPoly().getBounds().height + 1);
+        bounds = new Rectangle(bv.getHexSize());
         bounds.setLocation(bv.getHexLocation(hexLoc));
 
         return bounds;

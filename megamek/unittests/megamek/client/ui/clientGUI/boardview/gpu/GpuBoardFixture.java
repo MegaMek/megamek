@@ -13,10 +13,12 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 
 /** Shared integration fixture with the shipped board and unit artwork, without opening a Swing window. */
 final class GpuBoardFixture implements AutoCloseable {
@@ -53,6 +55,16 @@ final class GpuBoardFixture implements AutoCloseable {
         FutureTask<GpuBoardFixture> task = new FutureTask<>(GpuBoardFixture::new);
         SwingUtilities.invokeAndWait(task);
         return task.get();
+    }
+
+    void addEcm() throws Exception {
+        FutureTask<Void> task = new FutureTask<>(() -> {
+            entity.addEquipment(EquipmentType.get("ISGuardianECMSuite"), Mek.LOC_LEFT_ARM);
+            view.updateEcmList();
+            return null;
+        });
+        SwingUtilities.invokeAndWait(task);
+        task.get();
     }
 
     @Override

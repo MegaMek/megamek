@@ -74,6 +74,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricWreckSprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
 import megamek.client.ui.dialogs.phaseDisplay.EntityChoiceDialog;
+import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.client.ui.util.FontHandler;
@@ -293,6 +294,7 @@ public final class BoardView extends AbstractBoardView
     private final ArrayList<FlyOverSprite> flyOverSprites = new ArrayList<>();
 
     TilesetManager tileManager;
+    private HexTileset gpuTileset;
 
     // polygons for a few things
     private static final Polygon HEX_POLY;
@@ -417,7 +419,6 @@ public final class BoardView extends AbstractBoardView
      * the hex paints, the same ground without its water, and the features drawn over both.
      */
     private final Map<Coords, BufferedImage> groundArtwork = new HashMap<>();
-    private final Map<Coords, BufferedImage> bankArtwork = new HashMap<>();
     private final Map<Coords, BufferedImage> featureArtwork = new HashMap<>();
 
     private boolean showLobbyPlayerDeployment = false;
@@ -1423,7 +1424,6 @@ public final class BoardView extends AbstractBoardView
         shadowMap = null;
         planarHexImageCache.clear();
         groundArtwork.clear();
-        bankArtwork.clear();
         featureArtwork.clear();
     }
 
@@ -2538,16 +2538,12 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
-    /**
-     * Draws the hex's base terrain artwork, leaving out superposed and orthographic features, so a hex's
-     * padding can continue its terrain: grassland stays grassland even when the hex also holds trees. The
-     * GPU board uses this artwork outside the hex surface, where the feature artwork does not reach.
-     */
+    /** Draws base terrain independently of superposed and orthographic feature artwork. */
     private void drawBaseTerrain(Hex hex, Graphics2D graphics2D) {
         if (hex == null) {
             return;
         }
-        Image baseImage = tileManager.baseFor(hex);
+        Image baseImage = gpuCapture ? gpuTileset.getBase(hex) : tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage, true);
 
         // check if this is a standard tile image 84x72 or something different
@@ -2665,7 +2661,7 @@ public final class BoardView extends AbstractBoardView
         int level = hex.getLevel();
 
         // get the base tile image
-        Image baseImage = tileManager.baseFor(hex);
+        Image baseImage = gpuCapture ? gpuTileset.getBase(hex) : tileManager.baseFor(hex);
         Image scaledImage = getScaledImage(baseImage, true);
 
         // Some hex images shouldn't be cached, like if they are animated
@@ -2700,53 +2696,23 @@ public final class BoardView extends AbstractBoardView
         Graphics2D graphics2D = (Graphics2D) (hexImage.getGraphics());
         UIUtil.setHighQualityRendering(graphics2D);
 
-        drawBaseTerrain(hex, graphics2D);
+        if (!gpuCapture) {
+            drawBaseTerrain(hex, graphics2D);
 
-        // To place roads under the shadow map, some supers have to be drawn before the shadow map, otherwise the
-        // supers are drawn after. Unfortunately the supers images themselves can't be checked for roads.
-        List<Image> supers = tileManager.supersFor(hex);
-        boolean supersUnderShadow = false;
-        if (hex.containsTerrain(Terrains.ROAD)
-              || hex.containsTerrain(Terrains.WATER)
-              || hex.containsTerrain(Terrains.PAVEMENT)
-              || hex.containsTerrain(Terrains.GROUND_FLUFF)
-              || hex.containsTerrain(Terrains.ROUGH)
-              || hex.containsTerrain(Terrains.RUBBLE)
-              || hex.containsTerrain(Terrains.SNOW)) {
-            supersUnderShadow = true;
-            if (supers != null) {
-                for (Image image : supers) {
-                    if (animatedImages.contains(image.hashCode())) {
-                        dontCache = true;
-                    }
-                    scaledImage = getScaledImage(image, true);
-                    graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
-                }
-            }
-        }
-
-        // Add the terrain & building shadows
-        if (!gpuCapture && GUIP.getShadowMap() && (shadowMap != null)) {
-            Point p1SRC = getHexLocationLargeTile(coords.getX(), coords.getY(), 1);
-            Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
-            Point p2DST = new Point(hex_size.width, hex_size.height);
-
-            Composite svComp = graphics2D.getComposite();
-            if (conditions.getLight().isDay()) {
-                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.55f));
-            } else {
-                graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.45f));
-            }
-
-            // paint the right slice from the big pic
-            graphics2D.drawImage(shadowMap, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y, p2SRC.x, p2SRC.y, null);
-            graphics2D.setComposite(svComp);
-        }
-
-        if (!supersUnderShadow) {
-            if (supers != null) {
-                for (Image image : supers) {
-                    if (null != image) {
+            // To place roads under the shadow map, some supers have to be drawn before the shadow map, otherwise the
+            // supers are drawn after. Unfortunately the supers images themselves can't be checked for roads.
+            List<Image> supers = tileManager.supersFor(hex);
+            boolean supersUnderShadow = false;
+            if (hex.containsTerrain(Terrains.ROAD)
+                  || hex.containsTerrain(Terrains.WATER)
+                  || hex.containsTerrain(Terrains.PAVEMENT)
+                  || hex.containsTerrain(Terrains.GROUND_FLUFF)
+                  || hex.containsTerrain(Terrains.ROUGH)
+                  || hex.containsTerrain(Terrains.RUBBLE)
+                  || hex.containsTerrain(Terrains.SNOW)) {
+                supersUnderShadow = true;
+                if (supers != null) {
+                    for (Image image : supers) {
                         if (animatedImages.contains(image.hashCode())) {
                             dontCache = true;
                         }
@@ -2755,34 +2721,66 @@ public final class BoardView extends AbstractBoardView
                     }
                 }
             }
-        }
 
-        // Check for buildings and woods buried under their own shadows.
-        if ((supers != null) && supersUnderShadow && (hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(
-              Terrains.WOODS))) {
-            Image lastSuper = supers.getLast();
-            scaledImage = getScaledImage(lastSuper, true);
-            graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
-        }
+            // Add the terrain & building shadows
+            if (!gpuCapture && GUIP.getShadowMap() && (shadowMap != null)) {
+                Point p1SRC = getHexLocationLargeTile(coords.getX(), coords.getY(), 1);
+                Point p2SRC = new Point(p1SRC.x + HEX_W, p1SRC.y + HEX_H);
+                Point p2DST = new Point(hex_size.width, hex_size.height);
 
-        // AO Hex Shadow in this hex when a higher one is adjacent
-        if (!gpuCapture && GUIP.getAOHexShadows()) {
-            for (int dir : allDirections) {
-                Shape ShadowShape = getElevationShadowArea(coords, dir);
-                GradientPaint gpl = getElevationShadowGP(coords, dir);
-                if ((ShadowShape != null) && (gpl != null)) {
-                    graphics2D.setPaint(gpl);
-                    graphics2D.fill(getElevationShadowArea(coords, dir));
+                Composite svComp = graphics2D.getComposite();
+                if (conditions.getLight().isDay()) {
+                    graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.55f));
+                } else {
+                    graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, 0.45f));
+                }
+
+                // paint the right slice from the big pic
+                graphics2D.drawImage(shadowMap, 0, 0, p2DST.x, p2DST.y, p1SRC.x, p1SRC.y, p2SRC.x, p2SRC.y, null);
+                graphics2D.setComposite(svComp);
+            }
+
+            if (!supersUnderShadow) {
+                if (supers != null) {
+                    for (Image image : supers) {
+                        if (null != image) {
+                            if (animatedImages.contains(image.hashCode())) {
+                                dontCache = true;
+                            }
+                            scaledImage = getScaledImage(image, true);
+                            graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+                        }
+                    }
                 }
             }
-        }
 
-        // Orthographic = bridges
-        List<Image> orthogonalImages = tileManager.orthographicFor(hex);
-        if (orthogonalImages != null) {
-            for (Image image : orthogonalImages) {
-                if (animatedImages.contains(image.hashCode())) {
-                    dontCache = true;
+            // Check for buildings and woods buried under their own shadows.
+            if ((supers != null) && supersUnderShadow && (hex.containsTerrain(Terrains.BUILDING) || hex.containsTerrain(
+                  Terrains.WOODS))) {
+                Image lastSuper = supers.getLast();
+                scaledImage = getScaledImage(lastSuper, true);
+                graphics2D.drawImage(scaledImage, 0, 0, boardPanel);
+            }
+
+            // AO Hex Shadow in this hex when a higher one is adjacent
+            if (!gpuCapture && GUIP.getAOHexShadows()) {
+                for (int dir : allDirections) {
+                    Shape ShadowShape = getElevationShadowArea(coords, dir);
+                    GradientPaint gpl = getElevationShadowGP(coords, dir);
+                    if ((ShadowShape != null) && (gpl != null)) {
+                        graphics2D.setPaint(gpl);
+                        graphics2D.fill(getElevationShadowArea(coords, dir));
+                    }
+                }
+            }
+
+            // Orthographic = bridges
+            List<Image> orthogonalImages = tileManager.orthographicFor(hex);
+            if (orthogonalImages != null) {
+                for (Image image : orthogonalImages) {
+                    if (animatedImages.contains(image.hashCode())) {
+                        dontCache = true;
+                    }
                 }
             }
         }
@@ -2984,51 +2982,53 @@ public final class BoardView extends AbstractBoardView
         Point p7 = new Point(0, s36);
         Point p8 = new Point(0, s35);
 
-        graphics2D.setColor(Color.black);
-        graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        if (!gpuCapture) {
+            graphics2D.setColor(Color.black);
+            graphics2D.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-        // draw elevation borders
-        if (drawElevationLine(coords, 0)) {
-            drawIsometricElevation(coords, Color.GRAY, p1, p2, 0, graphics2D);
-            if (GUIP.getLevelHighlight()) {
-                graphics2D.drawLine(s21, 0, s62, 0);
-            }
-        }
-
-        if (drawElevationLine(coords, 1)) {
-            drawIsometricElevation(coords, Color.DARK_GRAY, p3, p1, 1, graphics2D);
-            if (GUIP.getLevelHighlight()) {
-                graphics2D.drawLine(s62, 0, s83, s35);
-            }
-        }
-
-        if (drawElevationLine(coords, 2)) {
-            drawIsometricElevation(coords, Color.LIGHT_GRAY, p4, p5, 2, graphics2D);
-            if (GUIP.getLevelHighlight()) {
-                graphics2D.drawLine(s83, s36, s62, s71);
-            }
-        }
-
-        if (drawElevationLine(coords, 3)) {
-            drawIsometricElevation(coords, Color.GRAY, p6, p5, 3, graphics2D);
-            if (GUIP.getLevelHighlight()) {
-                graphics2D.drawLine(s62, s71, s21, s71);
-            }
-        }
-
-        if (drawElevationLine(coords, 4)) {
-            drawIsometricElevation(coords, Color.DARK_GRAY, p7, p6, 4, graphics2D);
-            if (GUIP.getLevelHighlight()) {
-                graphics2D.drawLine(s21, s71, 0, s36);
-            }
-        }
-
-        if (drawElevationLine(coords, 5)) {
-            drawIsometricElevation(coords, Color.LIGHT_GRAY, p8, p2, 5, graphics2D);
-            if (GUIP.getLevelHighlight()) {
-                graphics2D.drawLine(0, s35, s21, 0);
+            // draw elevation borders
+            if (drawElevationLine(coords, 0)) {
+                drawIsometricElevation(coords, Color.GRAY, p1, p2, 0, graphics2D);
+                if (GUIP.getLevelHighlight()) {
+                    graphics2D.drawLine(s21, 0, s62, 0);
+                }
             }
 
+            if (drawElevationLine(coords, 1)) {
+                drawIsometricElevation(coords, Color.DARK_GRAY, p3, p1, 1, graphics2D);
+                if (GUIP.getLevelHighlight()) {
+                    graphics2D.drawLine(s62, 0, s83, s35);
+                }
+            }
+
+            if (drawElevationLine(coords, 2)) {
+                drawIsometricElevation(coords, Color.LIGHT_GRAY, p4, p5, 2, graphics2D);
+                if (GUIP.getLevelHighlight()) {
+                    graphics2D.drawLine(s83, s36, s62, s71);
+                }
+            }
+
+            if (drawElevationLine(coords, 3)) {
+                drawIsometricElevation(coords, Color.GRAY, p6, p5, 3, graphics2D);
+                if (GUIP.getLevelHighlight()) {
+                    graphics2D.drawLine(s62, s71, s21, s71);
+                }
+            }
+
+            if (drawElevationLine(coords, 4)) {
+                drawIsometricElevation(coords, Color.DARK_GRAY, p7, p6, 4, graphics2D);
+                if (GUIP.getLevelHighlight()) {
+                    graphics2D.drawLine(s21, s71, 0, s36);
+                }
+            }
+
+            if (drawElevationLine(coords, 5)) {
+                drawIsometricElevation(coords, Color.LIGHT_GRAY, p8, p2, 5, graphics2D);
+                if (GUIP.getLevelHighlight()) {
+                    graphics2D.drawLine(0, s35, s21, 0);
+                }
+
+            }
         }
 
         // When the board image is saved, it shouldn't be spoiled by drawing LOS effects
@@ -3168,14 +3168,14 @@ public final class BoardView extends AbstractBoardView
      * ({@code fromTop}), where the glyphs rise from the offset instead: those are anchored by their top, so their
      * baseline cannot be put at the offset without pushing them into the tile's top border.
      */
-    public record HexText(String text, int baseline, Font font, int argb, boolean fromTop) { }
+    public record HexText(String text, int baseline, Font font, int argb, boolean fromTop, int elevation) { }
 
     private List<HexText> hexText(Coords coords, Hex hex, Board board) {
         List<HexText> labels = new ArrayList<>();
         Color color = board.isSpace() ? GUIP.getBoardSpaceTextColor() : GUIP.getBoardTextColor();
         if (GUIP.getCoordsEnabled() && scale >= 0.5) {
             labels.add(new HexText(coords.getBoardNum(), (int) (HEX_TEXT_MARGIN * scale), font_hexNumber,
-                  color.getRGB(), true));
+                  color.getRGB(), true, 0));
         }
         if (scale > 0.5f) {
             int level = hex.getLevel();
@@ -3189,22 +3189,22 @@ public final class BoardView extends AbstractBoardView
             int yPosition = HEX_H - HEX_TEXT_MARGIN;
             if (level != 0) {
                 labels.add(new HexText(Messages.getString("BoardView1.LEVEL") + level,
-                      (int) (yPosition * scale), font_elev, color.getRGB(), false));
+                      (int) (yPosition * scale), font_elev, color.getRGB(), false, 0));
                 yPosition -= 10;
             }
             if (depth != 0) {
                 labels.add(new HexText(Messages.getString("BoardView1.DEPTH") + depth,
-                      (int) (yPosition * scale), font_elev, color.getRGB(), false));
+                      (int) (yPosition * scale), font_elev, color.getRGB(), false, 0));
                 yPosition -= 10;
             }
             if (height > 0) {
                 labels.add(new HexText(Messages.getString("BoardView1.HEIGHT") + height,
-                      (int) (yPosition * scale), font_elev, GUIP.getBuildingTextColor().getRGB(), false));
+                      (int) (yPosition * scale), font_elev, GUIP.getBuildingTextColor().getRGB(), false, height));
                 yPosition -= 10;
             }
             if (hex.terrainLevel(Terrains.FOLIAGE_ELEV) == 1) {
                 labels.add(new HexText(Messages.getString("BoardView1.LowFoliage"),
-                      (int) (yPosition * scale), font_elev, GUIP.getLowFoliageColor().getRGB(), false));
+                      (int) (yPosition * scale), font_elev, GUIP.getLowFoliageColor().getRGB(), false, 0));
             }
         }
         return List.copyOf(labels);
@@ -4869,15 +4869,11 @@ public final class BoardView extends AbstractBoardView
         return radarBlipImage;
     }
 
-    /**
-     * A hex's layers for the GPU board. {@code terrain} is the ground the hex paints, with the surfaces that
-     * continue across hex edges — roads, pavement and water — baked in. {@code bank} is that ground without
-     * its water, for the padding along the land sides of a water hex. {@code features} holds the remaining
-     * terrain layers, trees, rubble, bridges, buildings and the like, on transparent pixels: the GPU board
-     * draws them over hex and padding alike so their artwork can reach past the hex edge.
-     */
-    public record PlanarHex(Coords coords, BufferedImage terrain, BufferedImage bank, BufferedImage features,
-          boolean water, BufferedImage tactical, List<HexText> text) { }
+    /** Flat terrain and decals; solid feature models are captured separately from the Hex. */
+    public record PlanarHex(Coords coords, BufferedImage terrain, BufferedImage decals,
+          BufferedImage tactical, List<HexText> text, String buildingModel) { }
+
+    private static final int GPU_MARKING_SCALE = 3;
 
     public record CenterRequest(long sequence, Coords coords) { }
     private CenterRequest centerRequest = new CenterRequest(0, null);
@@ -4954,16 +4950,16 @@ public final class BoardView extends AbstractBoardView
     }
 
     public List<PlanarHex> capturePlanarHexes(Rectangle hexArea) {
-        return capturePlanarHexes(hexArea, true);
-    }
-
-    /**
-     * @param paddingArt capture the featureless padding artwork as well; the GPU board blends it at level
-     *                   steps and water banks in every mode.
-     */
-    public List<PlanarHex> capturePlanarHexes(Rectangle hexArea, boolean paddingArt) {
         if (!SwingUtilities.isEventDispatchThread()) {
             throw new IllegalStateException("Board layers must be captured on the Swing event thread");
+        }
+        if (gpuTileset == null) {
+            gpuTileset = new HexTileset(game, new File(Configuration.dataDir(), "models/board/tileset"));
+            try {
+                gpuTileset.loadFromFile("saxarba.tileset");
+            } catch (IOException exception) {
+                throw new IllegalStateException("Cannot load the 3D board's Saxarba tileset", exception);
+            }
         }
         if (!tileManager.isStarted()) {
             tileManager.loadNeededImages(game);
@@ -4972,10 +4968,10 @@ public final class BoardView extends AbstractBoardView
         if (area.isEmpty()) {
             return List.of();
         }
-                float originalScale = scale;
+        float originalScale = scale;
         int originalZoom = zoomIndex;
-                Dimension originalSize = hex_size;
-                ImageCache<Integer, Image> originalScaledCache = scaledImageCache;
+        Dimension originalSize = hex_size;
+        ImageCache<Integer, Image> originalScaledCache = scaledImageCache;
         int originalOffset = verticalOffset;
         ImageCache<Coords, HexImageCacheEntry> originalCache = hexImageCache;
         BufferedImage originalShadows = shadowMap;
@@ -5004,7 +5000,22 @@ public final class BoardView extends AbstractBoardView
             gpuCapture = true;
             shadowMap = null;
             hexImageCache = planarHexImageCache;
-            if (originalOffset != 0 || originalScale != 1) {
+            Map<Coords, PlanarHex> artwork = new HashMap<>();
+            for (int column = area.x; column < area.x + area.width; column++) {
+                for (int row = area.y; row < area.y + area.height; row++) {
+                    Coords coords = new Coords(column, row);
+                    Hex hex = getBoard().getHex(coords);
+                    artwork.put(coords, new PlanarHex(coords, captureGroundArtwork(coords), captureDecals(coords),
+                          null, hexText(coords, hex, getBoard()), buildingModel(hex)));
+                }
+            }
+            // Repaint the shared paths, borders and symbols at their destination
+            // resolution. Enlarging an already-captured 84px sprite blurs its edges.
+            scale = GPU_MARKING_SCALE;
+            hex_size = new Dimension(HEX_W * GPU_MARKING_SCALE, HEX_H * GPU_MARKING_SCALE);
+            scaledImageCache = new ImageCache<>();
+            font_minefield = font_minefield.deriveFont(font_minefield.getSize2D() * GPU_MARKING_SCALE);
+            if (originalOffset != 0 || originalScale != GPU_MARKING_SCALE) {
                 prepared.stream().filter(sprite -> !sprite.isHidden() && !(sprite instanceof IsometricSprite))
                       .forEach(Sprite::prepare);
             }
@@ -5012,8 +5023,7 @@ public final class BoardView extends AbstractBoardView
             for (int column = area.x; column < area.x + area.width; column += 16) {
                 for (int row = area.y; row < area.y + area.height; row += 16) {
                     result.addAll(capturePlanarChunk(new Rectangle(column, row,
-                          Math.min(16, area.x + area.width - column), Math.min(16, area.y + area.height - row)),
-                          paddingArt));
+                          Math.min(16, area.x + area.width - column), Math.min(16, area.y + area.height - row)), artwork));
                 }
             }
             result.sort(Comparator.comparingInt((PlanarHex hex) -> hex.coords().getX())
@@ -5029,30 +5039,37 @@ public final class BoardView extends AbstractBoardView
             hexImageCache = originalCache;
             shadowMap = originalShadows;
             gpuCapture = originalCapture;
-            if (originalOffset != 0 || originalScale != 1) {
+            if (originalOffset != 0 || originalScale != GPU_MARKING_SCALE) {
                 prepared.stream().filter(sprite -> !sprite.isHidden() && !(sprite instanceof IsometricSprite))
                       .forEach(Sprite::prepare);
             }
         }
     }
 
-    private List<PlanarHex> capturePlanarChunk(Rectangle area, boolean paddingArt) {
-        Rectangle pixels = new Rectangle(area.x * HEX_WC, area.y * HEX_H,
-              (area.width - 1) * HEX_WC + HEX_W, area.height * HEX_H + HEX_H / 2);
+    private List<PlanarHex> capturePlanarChunk(Rectangle area, Map<Coords, PlanarHex> artwork) {
+        Rectangle pixels = new Rectangle(area.x * HEX_WC * GPU_MARKING_SCALE, area.y * HEX_H * GPU_MARKING_SCALE,
+              ((area.width - 1) * HEX_WC + HEX_W) * GPU_MARKING_SCALE,
+              (area.height * HEX_H + HEX_H / 2) * GPU_MARKING_SCALE);
         BufferedImage tactical = new BufferedImage(pixels.width, pixels.height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = tactical.createGraphics();
         try {
             graphics.translate(-pixels.x, -pixels.y);
             graphics.setClip(pixels);
             UIUtil.setHighQualityRendering(graphics);
-            drawTacticalLayers(graphics, false);
-            // A capture does not run drawHexes, which is where terrain-hidden hex sprites such as the
-            // movement envelope are painted for the interactive board, so the captured layer carries them.
+            // drawHex omits physical terrain during GPU capture but retains the shared ECM, FoV,
+            // special markers, map boundaries and plugin painters. No rules are copied here.
             for (int column = area.x; column < area.x + area.width; column++) {
                 for (int row = area.y; row < area.y + area.height; row++) {
-                    drawHexSpritesForHex(new Coords(column, row), graphics, behindTerrainHexSprites, false);
+                    Coords coords = new Coords(column, row);
+                    drawHex(coords, graphics, false);
+                    if (GUIP.getShowWrecks()) {
+                        drawIsometricWreckSpritesForHex(coords, graphics, isometricWreckSprites, false);
+                        drawIsometricWreckSpritesForHex(coords, graphics, isometricWreckSprites, true);
+                    }
+                    drawHexSpritesForHex(coords, graphics, behindTerrainHexSprites, false);
                 }
             }
+            drawTacticalLayers(graphics, false);
         } finally {
             graphics.dispose();
         }
@@ -5063,65 +5080,88 @@ public final class BoardView extends AbstractBoardView
                 Point point = getHexLocation(coords);
                 int left = point.x - pixels.x;
                 int top = point.y - pixels.y;
-                Hex hex = getBoard().getHex(coords);
-                BufferedImage terrain = captureGroundArtwork(coords, true);
-                result.add(new PlanarHex(coords, terrain,
-                      paddingArt ? captureGroundArtwork(coords, false) : terrain,
-                      captureFeatureArtwork(coords),
-                      hex != null && hex.containsTerrain(Terrains.WATER),
-                      tactical.getSubimage(left, top, HEX_W, HEX_H), hexText(coords, hex, getBoard())));
+                PlanarHex art = artwork.get(coords);
+                result.add(new PlanarHex(coords, art.terrain(), art.decals(),
+                      markingImage(tactical, left, top), art.text(), art.buildingModel()));
             }
         }
         return result;
     }
 
-    /**
-     * The ground artwork a GPU hex paints, cached per hex: the base terrain with its roads, pavement and —
-     * unless this is the bank artwork — its water surface. Features stay out, so hex and padding can draw them
-     * once, on top, without repeating them across the gap between hexes.
-     */
-    private BufferedImage captureGroundArtwork(Coords coords, boolean withWater) {
-        Map<Coords, BufferedImage> cache = withWater ? groundArtwork : bankArtwork;
-        BufferedImage cached = cache.get(coords);
-        if (cached != null) {
-            return cached;
+    private static BufferedImage markingImage(BufferedImage layer, int x, int y) {
+        int width = HEX_W * GPU_MARKING_SCALE, height = HEX_H * GPU_MARKING_SCALE;
+        int[] pixels = layer.getRGB(x, y, width, height, null, 0, width);
+        for (int pixel : pixels) {
+            if ((pixel >>> 24) != 0) {
+                // Copy just this marked hex; do not retain the whole capture chunk.
+                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                image.setRGB(0, 0, width, height, pixels, 0, width);
+                return image;
+            }
         }
-        BufferedImage image = new BufferedImage(HEX_W, HEX_H, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = image.createGraphics();
-        try {
-            UIUtil.setHighQualityRendering(graphics);
-            Hex ground = groundHex(coords, withWater);
-            drawBaseTerrain(ground, graphics);
-            drawSupers(ground, graphics);
-        } finally {
-            graphics.dispose();
-        }
-        cache.put(coords, image);
-        return image;
+        return null;
     }
 
-    /**
-     * The feature artwork a GPU hex draws over its ground, cached per hex: the terrain layers the ground
-     * artwork leaves out, plus the bridge images, on transparent pixels. It keeps the tileset's own placement,
-     * so a tree or a building may reach past the hex edge and spill over the padding.
-     */
-    private BufferedImage captureFeatureArtwork(Coords coords) {
-        BufferedImage cached = featureArtwork.get(coords);
-        if (cached != null) {
-            return cached;
+    private String buildingModel(Hex hex) {
+        if (hex.containsTerrain(Terrains.BUILDING)) {
+            List<Image> images = new ArrayList<>(gpuTileset.getSupers(hex));
+            images.add(gpuTileset.getBase(hex));
+            for (Image image : images) {
+                String source = gpuTileset.imageSource(image).replace('\\', '/');
+                int extension = source.lastIndexOf('.');
+                if (extension > 0) {
+                    String model = "buildings/" + source.substring(0, extension);
+                    if (new File(Configuration.dataDir(), "models/board/" + model + ".g3dj").isFile()) {
+                        return model;
+                    }
+                }
+            }
         }
-        BufferedImage image = new BufferedImage(HEX_W, HEX_H, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = image.createGraphics();
-        try {
-            UIUtil.setHighQualityRendering(graphics);
-            Hex features = featureHex(coords);
-            drawSupers(features, graphics);
-            drawOrthographic(features, graphics);
-        } finally {
-            graphics.dispose();
-        }
-        featureArtwork.put(coords, image);
-        return image;
+        return "";
+    }
+
+    private BufferedImage captureGroundArtwork(Coords coords) {
+        return groundArtwork.computeIfAbsent(coords, key -> {
+            Hex ground = game.getBoard(boardId).getHex(key).duplicate();
+            ground.removeAllTerrains();
+            Hex source = game.getBoard(boardId).getHex(key);
+            for (int terrain : GROUND_TERRAINS) {
+                if (source.containsTerrain(terrain)) {
+                    ground.addTerrain(source.getTerrain(terrain));
+                }
+            }
+            BufferedImage image = new BufferedImage(HEX_W, HEX_H, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = image.createGraphics();
+            try {
+                UIUtil.setHighQualityRendering(graphics);
+                drawBaseTerrain(ground, graphics);
+                drawSupers(ground, graphics);
+            } finally {
+                graphics.dispose();
+            }
+            return image;
+        });
+    }
+
+    private BufferedImage captureDecals(Coords coords) {
+        return featureArtwork.computeIfAbsent(coords, key -> {
+            Hex flat = game.getBoard(boardId).getHex(key).duplicate();
+            for (int terrain : GROUND_TERRAINS) {
+                flat.removeTerrain(terrain);
+            }
+            for (int terrain : MODEL_TERRAINS) {
+                flat.removeTerrain(terrain);
+            }
+            BufferedImage image = new BufferedImage(HEX_W, HEX_H, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = image.createGraphics();
+            try {
+                UIUtil.setHighQualityRendering(graphics);
+                drawSupers(flat, graphics);
+            } finally {
+                graphics.dispose();
+            }
+            return image;
+        });
     }
 
     /** Draws the tileset's super images for a hex, which it layers over the base terrain. */
@@ -5129,7 +5169,7 @@ public final class BoardView extends AbstractBoardView
         if (hex == null) {
             return;
         }
-        List<Image> supers = tileManager.supersFor(hex);
+        List<Image> supers = gpuTileset.getSupers(hex);
         if (supers == null) {
             return;
         }
@@ -5140,57 +5180,17 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
-    /** Draws the tileset's bridge images for a hex. */
-    private void drawOrthographic(Hex hex, Graphics2D graphics) {
-        if (hex == null) {
-            return;
-        }
-        List<Image> images = tileManager.orthographicFor(hex);
-        if (images == null) {
-            return;
-        }
-        for (Image image : images) {
-            if (image != null) {
-                graphics.drawImage(getScaledImage(image, true), 0, 0, boardPanel);
-            }
-        }
-    }
+    private static final int[] GROUND_TERRAINS = { Terrains.ROAD, Terrains.ROAD_FLUFF, Terrains.PAVEMENT, Terrains.SAND,
+          Terrains.SNOW, Terrains.TUNDRA, Terrains.MUD, Terrains.ICE, Terrains.MAGMA, Terrains.FIELDS };
 
-    /** Terrains the GPU ground artwork bakes in: the surfaces that continue across hex edges. */
-    private static final int[] GROUND_TERRAINS = { Terrains.WATER, Terrains.ROAD, Terrains.PAVEMENT };
-
-    /**
-     * The hex's ground layers: its base terrain plus the surfaces that continue across hex edges. Features and
-     * structures stay out. Water can be dropped for the bank artwork the land sides of a water hex pad with,
-     * so two water hexes join with water while their banks keep the shore.
-     */
-    private Hex groundHex(Coords coords, boolean withWater) {
-        Hex hex = game.getBoard(boardId).getHex(coords);
-        if (hex == null) {
-            return null;
-        }
-        Hex ground = hex.duplicate();
-        ground.removeAllTerrains();
-        for (int terrain : GROUND_TERRAINS) {
-            if (hex.containsTerrain(terrain) && (withWater || terrain != Terrains.WATER)) {
-                ground.addTerrain(hex.getTerrain(terrain));
-            }
-        }
-        return ground;
-    }
-
-    /** The hex's feature layers: everything the ground artwork leaves out. */
-    private Hex featureHex(Coords coords) {
-        Hex hex = game.getBoard(boardId).getHex(coords);
-        if (hex == null) {
-            return null;
-        }
-        Hex features = hex.duplicate();
-        for (int terrain : GROUND_TERRAINS) {
-            features.removeTerrain(terrain);
-        }
-        return features;
-    }
+    /** These have geometry in 3D; painted cliffs and slopes would duplicate the actual faces. */
+    private static final int[] MODEL_TERRAINS = { Terrains.WATER, Terrains.WATER_FLUFF,
+          Terrains.BUILDING, Terrains.BLDG_CF, Terrains.BLDG_ELEV, Terrains.BLDG_FLUFF, Terrains.BLDG_ARMOR,
+          Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN,
+          Terrains.BRIDGE, Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_REPAIRED,
+          Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV, Terrains.INDUSTRIAL,
+          Terrains.CLIFF_TOP, Terrains.CLIFF_BOTTOM, Terrains.INCLINE_TOP, Terrains.INCLINE_BOTTOM,
+          Terrains.INCLINE_HIGH_TOP, Terrains.INCLINE_HIGH_BOTTOM };
 
     /**
      * @param lastCursor The lastCursor to set.
@@ -6093,7 +6093,8 @@ public final class BoardView extends AbstractBoardView
             return null;
         }
 
-        if (zoomIndex == BASE_ZOOM_INDEX) {
+        // Captures can use a different raster scale from the classic view's zoom setting.
+        if (scale == 1) {
             return base;
         }
 
@@ -6214,7 +6215,6 @@ public final class BoardView extends AbstractBoardView
         hexImageCache.clear();
         planarHexImageCache.clear();
         groundArtwork.clear();
-        bankArtwork.clear();
         featureArtwork.clear();
     }
 
@@ -6228,7 +6228,6 @@ public final class BoardView extends AbstractBoardView
             hexImageCache.remove(coords);
             planarHexImageCache.remove(coords);
             groundArtwork.remove(coords);
-            bankArtwork.remove(coords);
             featureArtwork.remove(coords);
         }
     }

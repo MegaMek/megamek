@@ -262,6 +262,7 @@ tasks.register('stageData', Sync) {
     description = "Syncs all remaining loose data from mm-data"
     group = 'build'
     from("${mmDataDir}/data") {
+        include "models/**/*.*"
         include "css/**/*.*"
         include "forcegenerator/**/*.*"
         include "mapgen/**/*.*"

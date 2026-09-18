@@ -40,16 +40,23 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Terrains;
 import megamek.common.units.UnitLocation;
 
 /** Thin Swing adapter. Reuses MegaMek's tileset, visibility checks, movement path, and actual phase buttons. */
 final class GpuBoardSource implements AutoCloseable {
-    public record UiPreferences(int hintMode, int hintKey, float scale) { }
-    private static final String HINT_MODE = "GpuBoardHintMode";
-    private static final String HINT_KEY = "GpuBoardHintKey";
+    public record UiPreferences(float scale) { }
     public record Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
           List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
-          BoardView.CenterRequest centerRequest, long boardGeneration, String actorName) { }
+          BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
+          BoardAtmosphere.Settings scenarioAtmosphere) {
+        Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
+              List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
+              BoardView.CenterRequest centerRequest, long boardGeneration, String actorName) {
+            this(scene, movements, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
+                  BoardAtmosphere.DEFAULTS);
+        }
+    }
 
     private volatile BoardView view;
     private final Supplier<JComponent> phasePanel;
@@ -64,8 +71,7 @@ final class GpuBoardSource implements AutoCloseable {
         if (ClientPreferences.MAP_TILESET.equals(event.getName())) {
             dirtyTerrain();
         } else if (GUIPreferences.GUI_SCALE.equals(event.getName())) {
-            uiPreferences = new UiPreferences(uiPreferences.hintMode(), uiPreferences.hintKey(),
-                  GUIPreferences.getInstance().getGUIScale());
+            uiPreferences = new UiPreferences(GUIPreferences.getInstance().getGUIScale());
         }
     };
     private Board board;
@@ -106,8 +112,7 @@ final class GpuBoardSource implements AutoCloseable {
         this.view = view;
         this.phasePanel = phasePanel;
         GUIPreferences preferences = GUIPreferences.getInstance();
-        uiPreferences = new UiPreferences(preferences.getInt(HINT_MODE), preferences.getInt(HINT_KEY),
-              preferences.getGUIScale());
+        uiPreferences = new UiPreferences(preferences.getGUIScale());
         actions = new GpuBoardActions(view, phasePanel, () -> closed || this.view != view, this::refresh);
         boardListener = new BoardListenerAdapter() {
             @Override
@@ -221,20 +226,10 @@ final class GpuBoardSource implements AutoCloseable {
         }
     }
 
-    /**
-     * Recaptures the tile artwork on the event thread. Tuning the board can change which artwork the tiles
-     * need — the padding bands read the bank artwork, which a tight tiling never captures.
-     */
-    public void invalidateArtwork() {
-        SwingUtilities.invokeLater(() -> {
-            terrainDirty = true;
-            refresh();
-        });
-    }
-
     public synchronized Frame takeFrame() {
         Frame result = new Frame(frame.scene(), List.copyOf(pendingMoves), frame.context(), frame.globalCommands(),
-              frame.hud(), frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName());
+              frame.hud(), frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
+              frame.scenarioAtmosphere());
         pendingMoves.clear();
         return result;
     }
@@ -266,31 +261,21 @@ final class GpuBoardSource implements AutoCloseable {
             terrainDirty = true;
         }
         if (terrainDirty) {
-            // The waterless bank artwork is captured in every mode: faces and bands blend the lowered tile's
-            // bank art, so land never takes on water over a shore, and a water join blends the water instead.
             List<BoardScene.Tile> nextTiles = new ArrayList<>();
-            for (BoardView.PlanarHex hex : view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()),
-                  true)) {
-                nextTiles.add(new BoardScene.Tile(hex.coords(), board.getHex(hex.coords()).getLevel(),
-                        new BoardScene.Pixels(hex.terrain()), new BoardScene.Pixels(hex.bank()), hex.water(),
-                        new BoardScene.Pixels(hex.features()), new BoardScene.Pixels(hex.tactical()), hex.text()));
+            for (BoardView.PlanarHex hex : view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()))) {
+                nextTiles.add(tile(hex, null));
             }
             tiles = List.copyOf(nextTiles);
             terrainDirty = false;
         }
         List<BoardScene.Tile> painted = new ArrayList<>(tiles);
         boolean changed = false;
-        for (BoardView.PlanarHex hex : view.capturePlanarHexes(visibleArea, true)) {
+        for (BoardView.PlanarHex hex : view.capturePlanarHexes(visibleArea)) {
             int index = hex.coords().getX() * board.getHeight() + hex.coords().getY();
             BoardScene.Tile old = tiles.get(index);
-            BoardScene.Pixels ground = BoardScene.Pixels.capture(hex.terrain(), old.image());
-            BoardScene.Pixels base = BoardScene.Pixels.capture(hex.bank(), old.base());
-            BoardScene.Pixels features = BoardScene.Pixels.capture(hex.features(), old.features());
-            BoardScene.Pixels tactical = BoardScene.Pixels.capture(hex.tactical(), old.tactical());
-            if (ground != old.image() || base != old.base() || features != old.features()
-                  || tactical != old.tactical() || !hex.text().equals(old.text())) {
-                painted.set(index, new BoardScene.Tile(hex.coords(), old.elevation(), ground, base, hex.water(),
-                      features, tactical, hex.text()));
+            BoardScene.Tile next = tile(hex, old);
+            if (!next.equals(old)) {
+                painted.set(index, next);
                 changed = true;
             }
         }
@@ -351,12 +336,26 @@ final class GpuBoardSource implements AutoCloseable {
         boolean knownActor = actor != null && (actor.getOwner().equals(view.getLocalPlayer())
               || visible(actor) && !sensorContact(actor));
         return new Frame(scene, List.of(), nextContext, List.copyOf(nextGlobal), nextHud, nextTooltip,
-              view.getCenterRequest(), boardGeneration, knownActor ? actor.getShortName() : "");
+              view.getCenterRequest(), boardGeneration, knownActor ? actor.getShortName() : "",
+              BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()));
     }
 
     private boolean visible(Entity entity) {
         return entity.getPosition() != null && entity.getBoardId() == view.getBoardId()
               && EntityVisibilityUtils.detectedOrHasVisual(view.getLocalPlayer(), view.game, entity);
+    }
+
+    private BoardScene.Tile tile(BoardView.PlanarHex pixels, BoardScene.Tile previous) {
+        Hex hex = board.getHex(pixels.coords());
+        return new BoardScene.Tile(pixels.coords(), hex.getLevel(),
+              hex.containsTerrain(Terrains.WATER) ? Math.max(0, hex.terrainLevel(Terrains.WATER)) : -1,
+              hex.containsTerrain(Terrains.ICE),
+              hex.containsTerrain(Terrains.ROAD) ? hex.getTerrain(Terrains.ROAD).getExits() & 63 : 0,
+              BoardFeatures.surface(hex),
+              BoardScene.Pixels.capture(pixels.terrain(), previous == null ? null : previous.ground()),
+              BoardScene.Pixels.capture(pixels.decals(), previous == null ? null : previous.decals()),
+              BoardScene.Pixels.capture(pixels.tactical(), previous == null ? null : previous.tactical()),
+              BoardFeatures.capture(hex, pixels.coords(), pixels.buildingModel()), pixels.text());
     }
 
     private boolean sensorContact(Entity entity) {
@@ -446,13 +445,6 @@ final class GpuBoardSource implements AutoCloseable {
         });
     }
 
-    void saveHints(int mode, int key) {
-        SwingUtilities.invokeLater(() -> {
-            GUIPreferences.getInstance().setValue(HINT_MODE, mode);
-            GUIPreferences.getInstance().setValue(HINT_KEY, key);
-        });
-    }
-
     public void overlayInput(int event, int x, int y, Runnable unhandled) {
         SwingUtilities.invokeLater(() -> {
             if (closed) {
@@ -469,6 +461,9 @@ final class GpuBoardSource implements AutoCloseable {
             }
             if (!handled) {
                 unhandled.run();
+            } else {
+                // Publish overlay selection and camera requests together, without waiting for the HUD timer.
+                refresh();
             }
         });
     }

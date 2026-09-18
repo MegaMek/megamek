@@ -1,105 +1,291 @@
-# Experimental GPU battle view
+# GPU battle view
 
-The Java client has a libGDX/LWJGL3 battle window with shared top and isometric views, smooth movement, and contextual Scene2D controls. From deployment onward, choose **View > GPU Battle View (Experimental)**. Both interfaces have a visible menu bar with the existing File, Game, Board, View, and Help menus. The GPU interface also exposes map selection through Maps.
+The Java client has a libGDX/LWJGL3 board with one 3D scene, an orthographic orbit
+camera, animated unit meeples, and contextual Scene2D controls. From deployment
+onward, choose **View > GPU Battle View (Experimental)**. Launch this checkout with
+`.\gradlew.bat :megamek:run` on Windows or `./gradlew :megamek:run` elsewhere.
 
-The two board interfaces are exclusive: the classic window hides once the first 3D frame is ready. Choose **View > Classic Board** in the GPU window to return, or close the GPU window. Its native window and renderer are disposed before the original client is shown again. Switching preserves the existing game, phase controls, orders, and classic window; reopening 3D creates a fresh renderer. Startup failure leaves the classic interface available, and shutting down the game never restores a disposed client.
+The classic window hides after the first GPU frame. **View > Classic Board**, or
+closing the GPU window, disposes the renderer and restores the existing client.
+The game, pending orders, and phase controls remain the same. Startup failure
+leaves the classic interface available; closing the game does not reopen it.
 
-Launch from this checkout with `./gradlew :megamek:run` (`.\gradlew.bat :megamek:run` on Windows). The build includes the GPU and FreeType native dependencies. One GPU window can be open at a time; it follows the client's selected map.
+## Terrain and assets
 
-## Controls
+Hexes tile edge to edge, with exposed walls where their surfaces stand above
+neighbors. `BoardSurface` supplies the same triangles to rendering and picking.
+Roads reaching an edge carve a corridor into the upper hex and raise a ramp from
+the lower hex, meeting at a shared edge height. An exit from either dry hex is
+enough: a road ending against unpaved ground still has a continuous approach.
+Grounded movement follows that surface. Other terrain retains its actual level
+step. There are no gaps, global inset/interpolation settings, or stretched top
+textures on walls.
+
+The GPU board always uses its own Saxarba tileset at
+`mm-data/data/models/board/tileset/saxarba.tileset`, independently of the classic
+board preference. Its 7,269 copied files include the recursive include tree and
+referenced art outside the Saxarba directory. They are ordinary independent
+files, so editing them does not change the 2D board.
+
+Buildings use the exact image selected by that tileset, including theme, fluff,
+and connected-section variants. Offline outline simplification and Blender
+triangulation produce 3,015 indexed building models with original roof UVs and
+pixels, straight wall edges, and retained courtyards/disconnected parts. The
+largest is 499 triangles. Windowed facades repeat per story and inherit a tint
+from the roof palette. Blank tileset sections stay blank. There are no generic
+replacement building shapes or runtime terrain-image extrusion.
+
+The asset directory also contains tank, factory, bridge-arm, crop-row, sixteen
+tree models and six rubble rock models; all 26 are at or below 480 triangles.
+Runtime only loads models
+actually used by the board. Roof and wall picking uses their actual triangles.
+
+`BoardFeatures` copies model placement and each feature's own height from the
+hex on the Swing thread. Buildings, fuel tanks, industrial structures, foliage,
+and bridge decks retain their respective game heights. Forest density controls
+tree count: light uses three trees, heavy nine, and ultra-heavy sixteen. Light
+woods spread their trees around the centre with a small variation in radius. Dense
+woods and jungle use an equal-area spiral across the hex; deterministic positions
+do not change between snapshots. Snow
+terrain or a snow theme selects snow trees. Jungle and desert/sandy woods select
+palms unless snow is present; paving does not change the desert tree selection.
+Other woodland mixes broad/slender common trees, birch, willow and pine
+silhouettes; jungle uses two palm shapes. Rubble scatters three rock shapes
+at 0.16–0.265 of a level, with separate snow-covered models. Props sit on the
+actual ground surface, including road approaches.
+
+Bridge decks and rails use the copied Saxarba `bridges/bridge_09.png` artwork,
+oriented along each bridge arm. Deck and rail tops retain the plan-view UVs;
+vertical rail and fascia faces unwrap the original guardrail strip, including
+its bars and supports. The 36-triangle arm has no trim crossing the roadway at
+hex boundaries. A 0.16-world-unit deck clearance at default scale
+separates zero-elevation bridges from the riverbank and its road decals, avoiding
+coplanar depth flicker without changing the game's bridge elevation.
+
+Exposed grassland faces use dirt; sand uses sandstone; rough/rubble and rocky
+themes use rock; pavement uses concrete. Snow has rock beneath snow cover.
+World-scaled UVs repeat the wall material once per 96 world units, with a stable
+world-space phase instead of restarting each face. Repeating materials sample
+at no more than 128 texels across, matching the original board artwork more
+closely; editable source images retain their resolution. Window spacing is
+eight windows per 128 world units. A ragged cover strip descends 12–18 world
+units from the upper edge, clipped to the exposed face and faded at its lower
+boundary. Its profile varies continuously in world space. Grass retains its
+authored cover texture. Other surfaces fold a strip of the hex's actual ground
+artwork down the face at the original texel density, so desert, volcanic, lunar,
+Martian, concrete and snow edges inherit their top surface's colour and detail.
+The fade is independent of the UVs and blends into the geology below; samples
+meet at corners and follow atlas updates when the ground artwork changes.
+
+The copied `High_Incline` south-edge (`08`) artwork adds top detail along exposed
+sides at its original scale. Grass, snow, sand and rocky/earth materials use
+their corresponding art; concrete uses the neutral rocky edge. Each patch is
+oriented to its actual edge and clipped around road approaches. All orientations
+use the same source instead of alternating baked bright `01` and dark `08`
+variants. The original small-scale shading remains in the artwork, blended
+over the ground; scene lighting and shadows remain dynamic.
+
+Blender source, reproducible exporter, texture prompts, model counts, and
+Quaternius CC0 attribution are recorded in the asset directory's README and
+`mm-data/tools/`. Runtime loads indexed G3DJ files and requires no Blender
+installation. The Gradle data-staging task includes these models and textures.
+
+## Water
+
+A water hex's solid surface is its riverbed. Positive depth lowers it by
+`depth * LEVEL`. Depth zero makes a two-world-unit recess at default scale,
+with the water one unit below the surrounding top, so grounded meeples only wet
+their feet. Positive-depth water sits just below the hex's surface elevation.
+Water of every depth sits one world unit below the nominal surface so changing
+depth does not introduce a water-surface step. Rounded, slightly irregular
+shorelines follow the water-neighbor pattern, inspired by `Structured_Water`.
+Dry-facing edges have a land bank and sloping submerged shore; adjacent water
+hexes share exactly matching open mouths. Different bed depths retain their
+physical underwater steps. Each shore segment uses a bounded six-piece curve.
+A blended sandy band fades from the land into damp sand along the waterline.
+Hexes with exactly two nonadjacent water neighbors use a curved channel with
+consistent width instead of a bay around each hex centre. The bed remains at
+full depth beneath the hex centre, keeping grounded units on the riverbed.
+Concave channels are triangulated from their outline for both rendering and
+picking. Junctions, adjacent openings and isolated pools retain the bay contours.
+
+An open mouth leading to a lower, unfrozen water hex generates one vertical
+waterfall from the upper surface to the lower surface. It uses the upper hex's
+animated water artwork with vertically repeating UVs scrolling downward, at
+80% opacity. Water artwork extends into the GIF's transparent hex corners so
+scrolling changes only the flow pattern, never the waterfall's width. Its fixed
+edges match the river mouth. Equal surface levels and frozen connections do not generate falls.
+These are lightweight animated surfaces, not a fluid simulation.
+
+The renderer composes offset/transparent GIF patches into complete frames and
+decodes the supplied Saxarba `anim_water_0.gif` through
+`anim_water_4.gif`, respecting frame delays and sharing frames between hexes
+of equal depth. Depth two uses the depth-two animation. Depths greater than four
+keep their actual bed depth and use the deepest supplied artwork.
+
+Water renders after units with 48% opacity, depth testing, and no depth writes.
+The bed remains opaque, so underwater units are visible through water without
+showing objects through solid terrain. Ice preserves the underlying riverbed
+and draws an opaque captured ice surface at the game's surface elevation.
+
+## Units, visibility, and animation
+
+Only unit meeples use sprite-alpha extrusion. `GpuCutout` triangulates their
+silhouette and merges cap runs; it is never used for terrain models. The sprite
+textures the top and its alpha-weighted color shades the sides. Camouflage and
+damage markings remain; classic generated drop shadows and smoke are omitted
+from the meeple texture.
+
+Footprint size uses `UNIT_SCALE` independently of hex scale. Thickness is the
+game's occupied height multiplied by `LEVEL * UNIT_HEIGHT_SCALE`, including
+stance. Sensor contacts retain anonymous artwork and a generic height.
+Visibility is resolved by the existing client before the snapshot is published.
+
+Walking/running paths, jump arcs, facing, labels, and shadows use the same
+`UnitMotion` timeline in every camera view. Airborne units retain their flight
+height and have a subtle independent wobble plus a tether to their hex when
+stationary. Animation and skipping never change game state.
+
+Annotations use the existing entity painter, rasterized at higher resolution
+and drawn in screen space. They follow the animated unit, spread around nearby
+labels, and stay clamped to the viewport edge when their unit is offscreen.
+Normal game visibility still applies. Crowded views prioritize selected and
+hovered labels; extreme crowding can still overlap.
+
+A visible unit intersecting a feature's bounds fades the features in that hex
+to 24% opacity. Occupancy follows animated transforms, including movement and
+flight height. Faded instances do not write depth or cast an opaque shadow;
+normal opacity and shadows return when the unit leaves. This uses conservative
+bounding boxes, not mesh collision, and never exposes hidden game entities.
+
+## Controls and presentation
 
 | Control | Action |
 | --- | --- |
-| View > GPU Battle View / Classic Board | Switch interfaces; only the active board window remains visible |
-| Top view / Isometric | Restore the preset angle and bearing while retaining focus and zoom |
-| Fit board | Frame the entire board, including cliffs, at the current angle |
-| +/-; mouse wheel | Zoom; the wheel anchors zoom to the pointer on the camera's focus plane |
-| Right or middle drag | Pan along the board plane |
-| Shift + right/middle drag | Rotate through 360 degrees and adjust tilt |
-| Camera | Step rotation/tilt, or reset to the isometric preset and fit the board |
-| Click a hex or unit; right-click | Open choices anchored beside that location |
-| Plot movement here, or a movement mode in All actions | Enter the existing board tool; subsequent clicks plot directly |
-| Escape | Close choices or leave the active board tool |
-| Ctrl-click, or Measure line of sight | Use the existing two-hex LOS tool |
-| All actions / F10 | Search the current phase's commands across every former button page |
-| Tab on the board; Enter | Cycle visible units and inspect the focused hex |
-| Up/down in a menu; Enter | Navigate choices and activate the focused row |
-| Orders; Clear orders; Done/Skip | Inspect the existing order summary, clear through the phase handler, or explicitly commit |
-| Hints | Choose Smart, Hold, or Always; remap the hold key (default Space) |
-| Speed | Cycle 1x, 0.5x, 2x, and instant movement playback |
-| Space during playback, outside menus | Finish all active and queued unit animations without issuing game orders |
+| Top view / Isometric | Restore a camera preset, retaining focus and zoom |
+| Fit board | Frame terrain, water, and feature heights |
+| Mouse wheel / +/- | Zoom |
+| Right or middle drag | Pan |
+| Shift + right/middle drag | Orbit and tilt |
+| Click / short right-click | Inspect a hex or visible unit |
+| Plot movement here / movement mode | Enter the existing persistent board tool |
+| Escape | Dismiss a menu or leave the board tool |
+| Ctrl-click / Measure line of sight | Existing two-hex LOS tool |
+| All actions / F10 | Search the current phase's commands |
+| Tab, then Enter | Cycle visible units and inspect |
+| Up/down, then Enter in a menu | Navigate enabled choices and activate |
+| Orders / Clear orders / Done or Skip | Inspect, clear, or explicitly commit through the original handlers |
+| Tuning / F9 | Adjust geometry, time of day, clouds, fog, haze, and exposure |
+| Speed / Space during playback | Change playback rate / finish queued animation |
 
-Existing scroll, zoom, and overview key bindings control the GPU camera. Other game shortcuts dispatch through the existing client controller. Detailed dialogs remain Swing dialogs. See [contextual-ui.md](contextual-ui.md) for interaction behavior and limits.
+The HUD and context menus reuse the configured MegaMek skin and its original
+button artwork. Context menus have readable action rows, expandable groups,
+search, scrolling, disabled explanations, and viewport clamping. Keyboard
+navigation skips disabled actions. Camera rotation, fitting, and menu interaction
+do not issue game orders.
 
-The GPU interface reads the current monitor's DPI and window dimensions automatically, including when moved between monitors. Larger windows scale up controls; smaller windows limit scaling so menus remain usable. The existing GUI-scale preference remains an additional adjustment. Text uses a higher-resolution font atlas, and the shared HUD uses the same display scale for drawing and mouse input. Fit board continues fitting during resize; after panning, zooming, or centering a unit, resizing preserves that camera focus and adjusts zoom for DPI changes.
+Tuning defaults are hex scale 1, unit scale 0.6, unit height scale 0.87, level
+height 18, and grid shade 0.8. A single tuning record updates all derived
+dimensions on the render thread. No geometry tuning requires a second artwork
+capture or an alternate renderer.
 
-Rotation and tilt use one orthographic orbit camera. Tilt ranges from directly overhead to 15 degrees above the board, keeping the horizon and picking stable. Panning retains the pivot's elevation. Modifier keys choose the gesture when dragging starts; releasing Shift during an orbit does not unexpectedly switch to pan. A short unmodified right-click still opens the hex's contextual menu, while dragging away and back never issues a context click. Losing window focus cancels the gesture. Camera controls do not issue game orders or rebuild terrain/shadow meshes.
+Scene2D reads monitor DPI and window size. Font rasterization and UI scaling
+keep controls usable from small windows to 4K. Menus and board input consume
+complete gestures independently. Detailed dialogs and chat entry still use the
+Swing client. See [contextual-ui.md](contextual-ui.md).
 
-## Board capability migration
+Time, lighting, weather presets, and their limits are documented in
+[gpu-atmosphere.md](gpu-atmosphere.md). Daylight is calibrated for the tileset's
+LDR artwork; its postprocessing does not add another filmic contrast curve.
+Tactical markings and hex text draw after atmosphere compositing with restored
+opaque depth. HEIGHT labels are raised to the building/feature height and fit
+on the roof footprint. Other hex labels retain their terrain anchors.
 
-Both renderers now call the same terrain and tactical painters. The GPU adapter captures their output on the Swing event thread and projects it onto the corresponding hex surfaces. This preserves existing visibility, preferences, sprite handlers, and calculations without reimplementing them.
+## Ownership and rendering
 
-| Existing source | Content carried into the GPU board |
-| --- | --- |
-| `BoardView.drawHexes` | Terrain/feature artwork, shadows, field-of-view shading, hex text, wrecks, special hex artwork, deployment markings, and the behind-terrain sprite collection |
-| Existing behind/over-terrain sprite collections | Movement envelopes, firing arcs and solutions, sensor ranges, ECM and other area highlights, objectives, collapse warnings, and other registered sprite handlers |
-| Shared `drawTacticalLayers` | Minefields, demolition charges, artillery/orbital markers, selection and LOS cursors, deployment areas, C3 links, flyover/VTOL paths, ghost sprites, attack arrows, artillery drift, vector movement, strafing, movement paths, flight indicators, and ruler |
-| Existing `IDisplayable` overlays | Screen-anchored board widgets and their mouse hit/drag/release handlers |
-| Existing tooltip provider | Hex/unit details, available from the contextual Details action |
-| Existing phase displays and `MapMenu` | Deployment, movement, targeting, firing, physical attacks, and special contextual operations through their original handlers |
+- `GpuBoardSource` reads game objects, visibility, tile artwork, and existing
+  commands on Swing's event thread and publishes immutable presentation frames.
+- `BoardView.capturePlanarHexes` separates ground, flat decals, and tactical
+  pixels in bounded chunks. It repaints the existing paths, borders and symbols
+  at three times terrain resolution, retains ECM, FoV, special-hex, deployment,
+  and plugin painters, and restores classic view state. Empty marking images
+  are omitted. Ground has limited mip filtering; markings use exact UVs and
+  independent textures. Changing a marking does not rebuild terrain geometry.
+  Capture raster scale is independent of the classic zoom index, including
+  image-backed ECM shading. Measurement cursors rasterize at that same scale.
+- `BoardGeometry` owns dimensions and terrain picking; `BoardSurface` defines
+  the physical roads, banks, beds and exposed sides.
+- `GpuAssets` owns shared feature meshes, repeating textures, and water frames.
+- `GpuTerrain` batches terrain and opaque features in 8 by 8 chunks. Changes to
+  a tile's height/material/features rebuild its chunk and affected neighbors;
+  atlas-layout, board-size, floor, and tuning changes rebuild the required
+  scene. Pixel-only changes update texture slots. Camera changes reuse meshes.
+- Chunk bounds cull offscreen terrain and include water and feature heights.
+  Unit bounds first reject unrelated chunks before testing feature occupancy.
+- The draw order is opaque terrain/features, flat decals, units, transparent
+  water/faded features, tactical marks, and screen annotations/UI.
+- One 2048-pixel directional shadow map includes terrain, opaque features, and
+  units. It refreshes when geometry, light, occupancy, or unit transforms change;
+  camera-only changes reuse it. Large boards have lower shadow resolution.
+- GL resources are created and disposed on the render thread. Shared assets own
+  their textures; instance material changes do not transfer ownership.
+- `GpuBoardActions` adapts real phase buttons, menus, weapon lists, and ammunition
+  models. Callbacks return to Swing and recheck the panel, phase, turn, actor,
+  target, and current availability. There is no second rules engine.
 
-Actual unit artwork and annotations are excluded from captured tile layers. Units are flat, alpha-shaped extruded tokens: the supplied sprite textures the top, and the sides use its alpha-weighted average visible color. Generated unit drop shadows and smoke are excluded from these textures, preserving the unit silhouette. Camouflage and damage marks remain. Surface normals light the top and sides.
+## Verification
 
-Token thickness is `(entity.height() + 1) * BoardGeometry.LEVEL`, so one occupied height level equals one terrain elevation level. This uses the existing zero-based LOS height convention, including current stance. The present game implementation reports prone superheavy Meks as one occupied level, not two; the renderer does not override that rule. Sensor contacts always use a generic one-level token and reveal no actual height or unit status.
-
-Labels, armor/internal bars, and status indicators reuse the existing entity painter but float above the animated token in screen space. Text is rasterized at four times its logical resolution, independently of classic-board zoom, and stays at a minimum size equivalent to a 14-pixel label font before display scaling. Overlapping labels move to nearby free screen space, with selected and hovered units placed first. `SPREAD_UNIT_ANNOTATIONS` in `GpuBattleView` enables this layout by default; disabling it keeps labels at their anchors without suppressing overlaps. Labels stay within the viewport and remain drawn even when it is too crowded to separate every label; selected and hovered labels are drawn on top. Both views render to the native framebuffer; texture sampling is linear. Source artwork remains raster art, so extreme close-ups cannot reveal detail absent from the shipped images.
-
-Known units outside the camera view retain their annotations, clamped to the left, right, top, or bottom edge of the board viewport. `UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE` in `GpuBattleView` controls when to drop them: `-1` (default) disables dropping, `0` drops annotations as soon as their projected anchor leaves the viewport, and positive values allow that many logical screen pixels beyond the viewport, multiplied by display scaling. Distance is measured to the nearest viewport point before clamping or spreading, including diagonally at corners. Model culling does not remove labels; normal game visibility still controls which units are available to the renderer.
-
-Hex coordinates and level/depth/building-height/foliage labels are not baked into tile artwork. The shared board code publishes their text, color, font size, and baseline; the GPU draws them on the hex surface using the high-resolution native font atlas. This keeps those labels sharp at maximum zoom and prevents them from being stretched onto cliff walls. `hex-text-closeup.png` records the native close-up check. Other legacy tactical symbols and the invalid-hex marker still use captured pixels.
-
-`UnitMotion` allocates a fixed playback budget per event path: `WALK_SECONDS = 1.2`, `RUN_SECONDS = 0.8`, and `JUMP_SECONDS = 1.0`. Longer walking/running paths traverse more steps within the same budget and therefore move faster. Speed controls scale elapsed playback time. Jumping follows a single parabolic takeoff-to-landing arc, with clearance derived from the copied path and `JUMP_MIN_LEVELS` / `JUMP_LEVELS_PER_HEX`. Positions, facing, labels, and real shadows follow that same timeline. Playback and skipping never modify authoritative entity state.
-
-Hex elevations and exposed cliff faces are mesh geometry. Buildings, woods, and bridge artwork remain projected tile artwork; buildings and bridge decks are not separately extruded objects and cannot cast volumetric shadows. This matters for the appearance of units at roof or bridge elevation. Their former generated 2D shadows are no longer baked into GPU captures. Shading already painted into source assets cannot be removed automatically.
-
-Terrain and unit tokens cast and receive the same GPU shadow map in both camera views, including off-screen casters. The depth pass updates when terrain, lighting, visible unit geometry, or animated transforms change; camera-only changes reuse it. Surface normals provide directional lighting and a receiver-depth bias limits self-shadowing artifacts. Light direction and the shadow preference come from the existing terrain-shadow helper. GPU captures omit classic generated drop shadows and hex ambient-occlusion shading. The map covers the whole board at 2048 or 4096 pixels; very large boards have less shadow detail.
-
-## One source of truth
-
-- `GpuBoardSource` reads the selected `BoardView`, game, visibility helpers, tileset, phase controls, and planned movement on the Swing event thread. It atomically publishes immutable presentation frames. No game objects are read by the rendering thread.
-- `BoardView.capturePlanarHexes` captures native-resolution artwork in bounded 16 x 16-hex chunks, independent of classic zoom. It restores classic scale, zoom index, dimensions, caches, shadows, fonts, and sprite preparation afterward. Visible hexes refresh at approximately 10 Hz; large boards are no longer downsampled to a single 2048-pixel canvas.
-- `BoardGeometry` supplies terrain coordinates, cliff edges, and picking for both cameras. `UnitMotion` interpolates copied event paths using elapsed time; it never changes the authoritative entity position or movement path.
-- `GpuTextures` owns the shared atlas implementation for terrain, tactical layers, units, and the HUD. Pixel-only changes update existing texture slots. `GpuTerrain` remeshes only when geometry or atlas layout changes and culls terrain chunks outside the camera. `GpuMeeple` caches alpha-shaped meshes per artwork, while each displayed unit part owns its transform; stance changes scale those meshes without rebuilding them.
-- `GpuBoardActions` describes the actual phase buttons, menu entries, weapon list, and ammunition models. It creates no duplicate buttons or legality rules. Callbacks recheck the owning panel, phase, turn, actor, and live target/control availability.
-- `GpuBoardUi` presents those descriptions through Scene2D. The global and contextual menus, search, explicit completion controls, and hints have no independent game state.
-
-This is a hybrid renderer: Java2D still produces shared layer pixels; OpenGL handles projection, batched drawing, camera changes, and unit interpolation. Layer refresh cost and initial image loading can still stall presentation. It is not a native GPU rewrite of every annotation primitive. Development rules are in [AGENTS.md](../AGENTS.md).
-
-## Critical review and verification
-
-Review fixes included read-only menu construction, acting-versus-inspected unit confusion, stale targets, wrong-board input dispatch, incorrect drag/click constants, menu clicks leaking to the board, keyboard/search navigation, focus-loss cleanup, sensor-contact disclosure, classic isometric state restoration, atomic frame publication, atlas churn, and duplicated movement-path drawing.
-
-The resize failure was an atlas packing boundary error: libGDX's guillotine packer requires three padding margins beyond the largest image dimension. The shared atlas now reserves that space for all users, including large HUD images. Resize handling ignores zero-size windows and updates the UI, camera, HUD capture dimensions, and input transform together.
-
-Run the focused checks from the checkout root:
+Run from the checkout root:
 
 ```text
-./gradlew :megamek:test --tests 'megamek.client.ui.clientGUI.boardview.gpu.*' --tests 'megamek.client.ui.clientGUI.boardview.LOS*' :megamek:checkstyleMain :megamek:checkstyleTest :megamek:spotlessCheck
-./gradlew :megamek:gpuBoardSmoke
+.\gradlew.bat :megamek:test --tests "megamek.client.ui.clientGUI.boardview.gpu.*Test" --offline
+.\gradlew.bat :megamek:gpuBoardSmoke --offline
 ```
 
-The regular tests cover motion and picking through a full rotation and the tilt limits, grounded panning, pointer-anchored zoom, fitting cliff geometry at low angles, camera reset, DPI/resolution scaling, responsive camera fitting and focus preservation, visibility and sensor contacts, immutable image reuse, layer appearance and clearing, classic projection restoration, overlay input consumption, command expiry, stacked targets, off-page commands, and the original weapon/ammunition models. Existing LOS calculation regressions are included in the review command.
+Regular tests cover geometry/picking, one-ended road ramps in all six directions,
+scale independence, complete animated GIF frame composition, water and ice depth,
+snow selection, feature heights/exits, movement and jump playback, visibility,
+sensor contacts, snapshot reuse, classic state restoration, shared tactical
+markers, full-hex friendly/enemy deployment ECM and measurement outlines,
+input consumption, stale commands, stacked targets, hidden-page
+commands, and weapon/ammunition integration.
 
-The native smoke tests require desktop OpenGL. They render shipped terrain and unit sprites, exercise actual Scene2D input and keyboard search, verify movement while the game already holds the final position, and check OpenGL errors. They also render deployment/range markings and a 48 x 51 board with 36 units, ranges, an attack line, and cursor updates. Window lifecycle checks cover repeated resizing from 900 x 600 through 3840 x 2160, scaled HUD input, exclusive visibility, shared menu switching, GPU menu zoom, reopening, native close, and client disposal. Atlas tests cross the original 2043-pixel failure boundary in both axes and upload a 3840 x 2160 image. Shadow tests sample rendered pixels to verify that reversing the light moves the shadow, lowering the caster removes it, and disabling shadows clears the map. Screenshots and timing files are saved to `megamek/build/gpu-board-review/`.
+Native tests require desktop OpenGL. They exercise actual Scene2D input,
+camera gestures, movement playback, exclusive-window switching, reopening,
+resize through 3840 by 2160, and the atlas packing boundary. Rendered-pixel
+checks verify unit lighting/shadows, translucent water at depths 0/1/2,
+occupied-feature fading, and opacity restoration. Representative building
+families and all 26 other models are loaded natively; GIF frames must advance.
+`mm-data/tools/validate_board_assets.py` checks every exported model's budget,
+indices, roof winding/pixel fidelity, and independent texture dependencies.
 
-On Windows with Intel Iris Xe at 1280 x 800, the large workload with hex shadows averaged approximately **60 FPS after warm-up** at the current 60 FPS/vsync cap. The recorded 95th-percentile frame time was **20.0 ms**. Initial loading and resize transitions are excluded. There is no classic-renderer baseline, so this does not establish a speedup. Linux, macOS, and physical transitions between monitors with different DPI have not been tested; the scale calculation has regression coverage for those pixel ratios.
+`GpuAssetCatalogSmokeTest` renders actual Saxarba ground with the authored
+catalog, connected buildings at unequal heights, snow trees, bridges, ice,
+water depths, road level changes, and material-specific exposed walls. Images and measured frame
+times are written to `megamek/build/gpu-board-review/`.
+`GpuTacticalSmokeTest` captures friendly and enemy deployment ECM and a distance
+measurement outline over elevated terrain.
+`GpuRiverSmokeTest` captures straight/bent channels, textured elevation drops,
+mixed woodland, snow variants, low rubble and a zero-elevation textured bridge
+over the riverbank in both camera views. A pixel sample on the vertical waterfall
+verifies that the fall itself animates.
 
-The camera interaction test drives Shift-drag and plain drag through the native input processor, selects a raised hex after orbiting, exercises the Camera menu and reset, and verifies that a drag returning to its start or losing focus does not issue orders. `orbit.png`, `orbit-context.png`, and `camera-menu.png` show those checks.
+## Scope and limits
 
-Additional checks cover shadow-free GPU texture capture, zoom-independent high-resolution labels and terrain, current entity heights, alpha-weighted side colors, fixed path budgets, queued movement, jump clearance and exact landing, and Space-to-skip through native input. Native pixel tests verify that a meeple casts a shadow, reversing the light moves it and changes side brightness, and moving the token clears its old shadow. `meeple-shadow.png` records the controlled lighting scene.
+This is a 3D board renderer with native contextual controls. Shared Java2D
+painters still supply tactical pixels, annotations, and existing HUD widgets.
+Their refresh and initial image loading can still stall presentation. Tactical
+capture is polled on Swing; it is not an entirely native vector HUD. Roof
+illustrations retain their original resolution and baked rooftop detail.
+Updating a copied roof silhouette requires rerunning the offline asset build.
 
-## Remaining validation
+Transparency uses bounding boxes and normal
+alpha sorting, not volumetric water or order-independent transparency. Terrain
+still occludes units behind banks; screen annotations remain available.
 
-The shared painter path covers the existing board layers; it does not constitute a human playthrough of every aerospace, artillery, transport, multi-map, bridge, and special-equipment workflow. The native view remains experimental while those combinations are exercised. Screen widgets are shared, but chat text entry and detailed dialogs still use the Swing client. Some disabled legacy commands supply only a generic availability reason. Hover previews and an editable per-order ledger are not implemented.
-
-The original client stays alive while hidden. Closing the source board disposes the GPU window and its resources without bringing the old interface back.
+The automated checks do not establish an end-to-end human playthrough of every
+aerospace, artillery, transport, multi-map, bridge, or special-equipment
+workflow. Windows desktop OpenGL has been exercised; other platforms and
+physical monitor transitions need validation. Measured frame times are from
+a capped/vsync workload and establish neither an uncapped performance limit
+nor a speedup over the classic renderer.

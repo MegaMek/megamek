@@ -87,7 +87,7 @@ class GpuBoardSmokeTest {
                             assertEquals(0, boardClicks.get());
                             boardCamera.fit(fixture.source.takeFrame().scene());
                         } else if (frames() == 92) {
-                            // Closeup of the water hexes so their padding joins can be reviewed.
+                            // Closeup of the connected riverbeds and curved shorelines.
                             BoardScene scene = fixture.source.takeFrame().scene();
                             BoardScene.Tile water = scene.tile(new Coords(3, 2));
                             boardCamera.setIsometric(true);
@@ -97,7 +97,7 @@ class GpuBoardSmokeTest {
                             capture("water-closeup.png");
                             boardCamera.reset(fixture.source.takeFrame().scene());
                         } else if (frames() == 98) {
-                            // The tuning panel drives the geometry values the padding and steps are built from.
+                            // The tuning panel drives the shared terrain and unit dimensions.
                             click("tuning");
                         } else if (frames() == 102) {
                             capture("tuning-panel.png");
@@ -152,6 +152,9 @@ class GpuBoardSmokeTest {
                         } else if (frames() == 165) {
                             clickHex(new Coords(4, 4));
                         } else if (frames() == 175) {
+                            SwingUtilities.invokeAndWait(() -> { });
+                        } else if (frames() == 177) {
+                            // The GL view needs a subsequent frame to consume the context published by Swing.
                             assertEquals(new Coords(4, 4), fixture.source.takeFrame().context().coords());
                             assertEquals(0, boardClicks.get(), "Opening a context must not edit orders");
                             capture("target-context.png");
@@ -180,6 +183,8 @@ class GpuBoardSmokeTest {
                                   .max(java.util.Comparator.comparingInt(BoardScene.Tile::elevation)).orElseThrow().coords();
                             clickHex(orbitTarget);
                         } else if (frames() == 226) {
+                            SwingUtilities.invokeAndWait(() -> { });
+                            assertTrue(fixture.source.takeFrame().context() != null, "Orbit click must open a context menu");
                             assertEquals(orbitTarget, fixture.source.takeFrame().context().coords());
                             assertEquals(2, boardClicks.get(), "Inspection after orbit must not issue orders");
                             capture("orbit-context.png");

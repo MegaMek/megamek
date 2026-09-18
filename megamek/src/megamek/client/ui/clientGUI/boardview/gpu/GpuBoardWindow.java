@@ -83,6 +83,9 @@ public final class GpuBoardWindow {
         try {
             // Prepare a complete frame before replacing the visible UI.
             Lwjgl3ApplicationConfiguration configuration = configuration(false);
+            // Fill the desktop work area while keeping the normal title bar and window controls.
+            configuration.setDecorated(true);
+            configuration.setMaximized(true);
             new Lwjgl3Application(new GpuBattleView(source) {
                 private boolean presentationRequested;
 

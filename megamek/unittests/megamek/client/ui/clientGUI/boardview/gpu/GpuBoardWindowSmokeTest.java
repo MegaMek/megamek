@@ -6,6 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -27,6 +30,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 import com.badlogic.gdx.Application;
@@ -34,13 +38,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.math.Vector3;
 import megamek.client.Client;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommonMenuBar;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
+import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import org.junit.jupiter.api.Tag;
@@ -50,7 +59,8 @@ import org.lwjgl.glfw.GLFW;
 /** Exercises the real Swing/native window handoff and the shared menu through Scene2D input. */
 @Tag("on-demand")
 class GpuBoardWindowSmokeTest {
-    private record ClientWindow(JFrame frame, CommonMenuBar menus, BoardView view, JMenuItem gpuChoice) { }
+    private record ClientWindow(JFrame frame, CommonMenuBar menus, BoardView view, JMenuItem gpuChoice,
+          UnitOverviewOverlay overview) { }
 
     @Test
     void switchesExclusiveWindowsThroughMenusAndRestoresClassicOnNativeClose() throws Exception {
@@ -58,10 +68,21 @@ class GpuBoardWindowSmokeTest {
             ClientWindow ui = onSwing(() -> createClientWindow(fixture));
             Coords position = fixture.entity.getPosition();
             AtomicInteger overlayClicks = new AtomicInteger();
+            AtomicInteger unitClicks = new AtomicInteger();
             GUIPreferences preferences = GUIPreferences.getInstance();
             float originalScale = preferences.getGUIScale();
+            boolean originalOverview = preferences.getShowUnitOverview();
             try {
                 onSwing(() -> {
+                    preferences.setShowUnitOverview(true);
+                    ui.view().addOverlay(ui.overview());
+                    ui.view().addBoardViewListener(new BoardViewListenerAdapter() {
+                        @Override
+                        public void unitSelected(BoardViewEvent event) {
+                            assertEquals(fixture.entity.getId(), event.getEntityId());
+                            unitClicks.incrementAndGet();
+                        }
+                    });
                     ui.view().addOverlay(new IDisplayable() {
                         private Rectangle bounds() {
                             float scale = preferences.getGUIScale();
@@ -85,14 +106,18 @@ class GpuBoardWindowSmokeTest {
                             return false;
                         }
                     });
+                    ui.view().centerOnHex(position);
                     ui.gpuChoice().doClick(0);
                     assertTrue(ui.frame().isVisible(), "Keep the original UI until the first GPU frame is ready");
                     return null;
                 });
                 await(() -> onSwing(() -> !ui.frame().isVisible()));
-                await(() -> onGl(() -> GLFW.glfwGetWindowAttrib(
-                      ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle(), GLFW.GLFW_VISIBLE) == GLFW.GLFW_TRUE));
+                awaitMaximizedWindow();
                 await(() -> onGl(() -> ((GpuBattleView) Gdx.app.getApplicationListener()).frames() >= 5));
+                onGl(() -> {
+                    assertTrue(unitIsCentered(fixture), "A focus request before opening the GPU view must survive its initial fit");
+                    return null;
+                });
                 assertTrue(onSwing(() -> ui.frame().isDisplayable()), "Switching must preserve the original client");
                 // The classic window is hidden, so a client dialog must be raised above the native window.
                 JDialog probe = onSwing(() -> {
@@ -103,6 +128,7 @@ class GpuBoardWindowSmokeTest {
                 });
                 await(() -> onSwing(probe::isAlwaysOnTop));
                 onSwing(() -> { probe.dispose(); return null; });
+                input(() -> ((Lwjgl3Graphics) Gdx.graphics).getWindow().restoreWindow());
                 for (int[] size : new int[][] { { 900, 600 }, { 2043, 1200 }, { 2560, 1600 }, { 3840, 2160 }, { 1280, 800 } }) {
                     onSwing(() -> { preferences.setValue(GUIPreferences.GUI_SCALE, size[0] == 2560 ? 1.5f : 1f); return null; });
                     input(() -> assertTrue(Gdx.graphics.setWindowedMode(size[0], size[1])));
@@ -122,7 +148,30 @@ class GpuBoardWindowSmokeTest {
                         assertEquals(previousClicks + 1, overlayClicks.get(), "Scaled HUD input must match the painted widget");
                         return null;
                     });
+                    // Exercise the actual sidebar, independently of any phase selection handler.
+                    float zoom = onGl(() -> {
+                        GpuBattleView battle = (GpuBattleView) Gdx.app.getApplicationListener();
+                        battle.boardCamera.setIsometric(size[0] != 900);
+                        battle.boardCamera.pan(140, -100);
+                        assertFalse(unitIsCentered(fixture));
+                        return battle.boardCamera.camera.zoom;
+                    });
+                    Vector3 direction = onGl(() -> new Vector3(((GpuBattleView) Gdx.app.getApplicationListener()).boardCamera.camera.direction));
+                    int previousUnitClicks = unitClicks.get();
+                    input(() -> {
+                        float scale = Gdx.graphics.getWidth() / GpuBoardTestUi.stage().getWidth();
+                        float overlayScale = scale / (size[0] == 2560 ? 1.5f : 1f);
+                        int x = Math.round(Gdx.graphics.getWidth() - 33 * overlayScale);
+                        int y = Math.round(GpuBoardUi.TOP_HEIGHT * scale + 29 * overlayScale);
+                        Gdx.input.getInputProcessor().touchDown(x, y, 0, Input.Buttons.LEFT);
+                        Gdx.input.getInputProcessor().touchUp(x, y, 0, Input.Buttons.LEFT);
+                    });
+                    await(() -> onGl(() -> unitIsCentered(fixture)));
+                    assertEquals(previousUnitClicks + 1, unitClicks.get(), "Sidebar centering must retain the existing selection event");
                     onGl(() -> {
+                        GpuBattleView battle = (GpuBattleView) Gdx.app.getApplicationListener();
+                        assertEquals(zoom, battle.boardCamera.camera.zoom, 0.001f, "Centering preserves zoom");
+                        assertTrue(direction.epsilonEquals(battle.boardCamera.camera.direction, 0.001f), "Centering preserves the view angle");
                         assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
                         File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
                         assertTrue(output.isDirectory() || output.mkdirs());
@@ -162,6 +211,7 @@ class GpuBoardWindowSmokeTest {
                 // Reopen through the same classic menu, then exercise the native window's close operation.
                 onSwing(() -> { ui.gpuChoice().doClick(0); return null; });
                 await(() -> onSwing(() -> !ui.frame().isVisible()));
+                awaitMaximizedWindow();
                 onGl(() -> { ((Lwjgl3Graphics) Gdx.graphics).getWindow().closeWindow(); return null; });
                 await(() -> onSwing(() -> ui.frame().isVisible()));
 
@@ -183,6 +233,8 @@ class GpuBoardWindowSmokeTest {
             } finally {
                 onSwing(() -> {
                     preferences.setValue(GUIPreferences.GUI_SCALE, originalScale);
+                    preferences.setShowUnitOverview(originalOverview);
+                    preferences.removePreferenceChangeListener(ui.overview());
                     GpuBoardWindow.closeFor(ui.view());
                     ui.frame().dispose();
                     ui.menus().die();
@@ -192,6 +244,27 @@ class GpuBoardWindowSmokeTest {
                       .noneMatch(thread -> thread.getName().equals("MegaMek-GPU-board")));
             }
         }
+    }
+
+    private static void awaitMaximizedWindow() throws Exception {
+        await(() -> onGl(() -> {
+            long handle = ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle();
+            return GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_VISIBLE) == GLFW.GLFW_TRUE
+                  && GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_MAXIMIZED) == GLFW.GLFW_TRUE;
+        }));
+        onGl(() -> {
+            long handle = ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle();
+            assertEquals(GLFW.GLFW_TRUE, GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_DECORATED),
+                  "The maximized board must retain its title bar and window controls");
+            assertFalse(Gdx.graphics.isFullscreen(), "The board must remain a normal desktop window");
+            return null;
+        });
+    }
+
+    private static boolean unitIsCentered(GpuBoardFixture fixture) {
+        Coords position = fixture.entity.getPosition();
+        Vector3 expected = BoardGeometry.center(position, fixture.game.getBoard().getHex(position).getLevel());
+        return ((GpuBattleView) Gdx.app.getApplicationListener()).boardCamera.focus.epsilonEquals(expected, 0.01f);
     }
 
     private ClientWindow createClientWindow(GpuBoardFixture fixture) {
@@ -211,6 +284,18 @@ class GpuBoardWindowSmokeTest {
         when(gui.getMenuBar()).thenReturn(menus);
         when(gui.getCurrentBoardView()).thenReturn(Optional.of(view));
         when(gui.boardViews()).thenReturn(List.of(view));
+        when(gui.getBoardView()).thenReturn(view);
+        when(gui.getBoardView(any(BoardLocation.class))).thenReturn(view);
+        when(gui.getMainPanel()).thenReturn(new JPanel());
+        doCallRealMethod().when(gui).centerOnUnit(any());
+        doAnswer(invocation -> {
+            BoardLocation location = invocation.getArgument(0);
+            if (fixture.game.hasBoardLocation(location)) {
+                view.centerOnHex(location.coords());
+            }
+            return null;
+        }).when(gui).centerOnHex(any());
+        UnitOverviewOverlay overview = new UnitOverviewOverlay(gui);
         menus.addActionListener(event -> {
             if (event.getActionCommand().equals(ClientGUI.VIEW_GPU_BOARD)) {
                 GpuBoardWindow.open(view, () -> fixture.panel);
@@ -228,7 +313,7 @@ class GpuBoardWindowSmokeTest {
               .filter(component -> component instanceof JMenuItem item
                     && ClientGUI.VIEW_GPU_BOARD.equals(item.getActionCommand()))
               .map(JMenuItem.class::cast).findFirst().orElseThrow();
-        return new ClientWindow(frame, menus, view, gpuChoice);
+        return new ClientWindow(frame, menus, view, gpuChoice, overview);
     }
 
     private static <T> T onSwing(Callable<T> action) throws Exception {

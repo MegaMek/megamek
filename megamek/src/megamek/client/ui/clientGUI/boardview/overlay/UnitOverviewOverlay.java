@@ -271,6 +271,8 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             if ((y > yOffset) && (y < yOffset + ICON_HEIGHT)) {
                 clientgui.getBoardView().processBoardViewEvent(new BoardViewEvent(
                       clientgui.getBoardView(), BoardViewEvent.SELECT_UNIT, unitIds[i]));
+                // Navigation must work even when this phase cannot select the clicked unit to act.
+                clientgui.centerOnUnit(clientgui.getClient().getGame().getEntity(unitIds[i]));
                 isHit = true;
                 return true;
             }

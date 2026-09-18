@@ -25,7 +25,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
@@ -40,7 +39,7 @@ import megamek.common.board.Coords;
 
 /** GPU board and Scene2D controls. The source remains the sole bridge to the existing client. */
 class GpuBattleView extends ApplicationAdapter {
-    private static final boolean SPREAD_UNIT_ANNOTATIONS = false;
+    private static final boolean SPREAD_UNIT_ANNOTATIONS = true;
     private static final float UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE = -1;
     /** Airborne meeples hover: one full wave cycle lasts this long. */
     static final float HOVER_PERIOD_SECONDS = 2.6f;
@@ -63,6 +62,7 @@ class GpuBattleView extends ApplicationAdapter {
     private final BoardInput boardInput = new BoardInput();
     private final List<Hover> hover = new ArrayList<>();
     private GpuTerrain terrain;
+    private GpuAtmosphere atmosphere;
     private GpuTextures<BoardScene.Pixels> unitTextures;
     private GpuTextures<String> annotationTextures;
     private ModelBatch unitBatch;
@@ -90,6 +90,7 @@ class GpuBattleView extends ApplicationAdapter {
     @Override
     public void create() {
         terrain = new GpuTerrain();
+        atmosphere = new GpuAtmosphere();
         unitTextures = new GpuTextures<>();
         annotationTextures = new GpuTextures<>();
         unitBatch = new ModelBatch();
@@ -145,6 +146,8 @@ class GpuBattleView extends ApplicationAdapter {
         boardGeneration = frame.boardGeneration();
         ui.update(frame, Messages.getString("GpuBoard.speed", SPEED_LABELS[speedIndex]));
         terrain.update(scene);
+        atmosphere.configure(ui.atmosphere());
+        terrain.setAtmosphere(atmosphere.lighting());
         if (unitTextures.update(scene.units().stream().map(BoardScene.Unit::image).distinct()
               .collect(Collectors.toMap(pixels -> pixels, pixels -> pixels)))) {
             meeples.values().forEach(GpuMeeple::dispose);
@@ -163,7 +166,8 @@ class GpuBattleView extends ApplicationAdapter {
         if (!fitted) {
             boardCamera.fit(scene);
             fitted = true;
-            centerSequence = frame.centerRequest().sequence();
+            // A unit-list click can switch boards. Do not consume its pending focus request while fitting.
+            centerSequence = 0;
         }
         if (centerSequence != frame.centerRequest().sequence()) {
             centerSequence = frame.centerRequest().sequence();
@@ -204,17 +208,23 @@ class GpuBattleView extends ApplicationAdapter {
         }
         hoverClock += Gdx.graphics.getDeltaTime();
         prepareUnits();
-        terrain.renderShadows(new ArrayList<>(unitInstances.values()));
-        ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
-        HdpiUtils.glViewport(0, ui.bottomPixels(),
-              (int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight);
-        terrain.render(boardCamera.camera, false);
-        terrain.render(boardCamera.camera, true);
-        renderHexText();
         applyHover();
+        List<ModelInstance> units = new ArrayList<>(unitInstances.values());
+        terrain.animate(Gdx.graphics.getDeltaTime(), units);
+        terrain.renderShadows(units);
+        ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
+        atmosphere.begin((int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight,
+              Gdx.graphics.getDeltaTime());
+        terrain.render(boardCamera.camera, false);
         renderUnits();
         renderTethers();
-        renderHints();
+        terrain.renderTransparent(boardCamera.camera);
+        atmosphere.end(boardCamera.camera, terrain, units, scene, ui.bottomPixels());
+        atmosphere.restoreDepth(boardCamera.camera, terrain, units);
+        atmosphere.renderWeather(boardCamera.camera, scene);
+        terrain.render(boardCamera.camera, true);
+        renderHexText();
+        renderSelectionOutlines();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         renderAnnotations();
         ui.draw();
@@ -231,8 +241,13 @@ class GpuBattleView extends ApplicationAdapter {
             float facing = unit.location().facing() * 60;
             UnitMotion motion = motions.get(unit.id());
             if (motion != null && motion.isMoving()) {
-                position.sub(motion.destination()).add(motion.position());
+                position.sub(motion.destination()).add(unit.airborne() ? motion.position() : motion.surfacePosition(scene));
                 facing = motion.facing();
+            }
+            BoardScene.Tile tile = scene.tile(unit.location().coords());
+            if (tile != null && tile.waterDepth() == 0 && !tile.frozen() && !unit.airborne()
+                  && MathUtils.isEqual(position.z, tile.elevation() * BoardGeometry.LEVEL)) {
+                position.z = BoardGeometry.groundZ(tile);
             }
             GpuMeeple meeple = meeples.computeIfAbsent(unit.image(), pixels ->
                   new GpuMeeple(pixels, unitTextures.region(pixels)));
@@ -255,11 +270,7 @@ class GpuBattleView extends ApplicationAdapter {
     /** One floating meeple's drift for the current frame: a draw-time offset, never part of the game state. */
     private record Hover(ModelInstance instance, float offset) { }
 
-    /**
-     * Drifts the floating meeples for drawing. This runs after the shadow pass so that the drift cannot invalidate the
-     * shadow depth map every frame, which costs far more than the wave is worth; the tokens' real shadows are cast
-     * from their flight heights.
-     */
+    /** Apply the same hover transform before drawing, feature fading, and shadow capture. */
     private void applyHover() {
         for (Hover drifting : hover) {
             Vector3 center = drifting.instance().transform.getTranslation(new Vector3());
@@ -430,24 +441,39 @@ class GpuBattleView extends ApplicationAdapter {
         annotationBatch.setProjectionMatrix(boardCamera.camera.combined);
         GlyphLayout layout = new GlyphLayout();
         annotationBatch.begin();
-        for (var group : scene.tiles().stream().filter(tile -> !tile.text().isEmpty())
-              .filter(tile -> boardCamera.camera.frustum.sphereInFrustum(
-                    BoardGeometry.center(tile.coords(), tile.elevation()), BoardGeometry.WIDTH))
-              .collect(Collectors.groupingBy(BoardScene.Tile::elevation)).entrySet()) {
-            annotationBatch.setTransformMatrix(new Matrix4().setToTranslation(0, 0, group.getKey() * BoardGeometry.LEVEL + 0.6f));
-            for (BoardScene.Tile tile : group.getValue()) {
-                for (BoardView.HexText label : tile.text()) {
-                    font.getData().setScale(label.font().getSize2D() / GpuBoardUi.FONT_RESOLUTION);
-                    font.setColor(new Color((label.argb() << 8) | ((label.argb() >>> 24) & 0xff)));
-                    layout.setText(font, label.text());
-                    // Offsets are hex artwork pixels, so they scale with the hex surface like its artwork does. The
-                    // level/depth/height/foliage stack hangs from its baselines; the coordinates hang from the tile's
-                    // top edge by their glyphs, so they keep the margin at that edge instead of at a baseline.
-                    float baseline = BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2
-                          - label.baseline() * BoardGeometry.HEX_SCALE;
-                    font.draw(annotationBatch, layout, BoardGeometry.centerX(tile.coords()) - layout.width / 2,
-                          label.fromTop() ? baseline : baseline + layout.height);
+        record LabelAt(BoardScene.Tile tile, BoardView.HexText label) { }
+        Map<Integer, List<LabelAt>> heights = new java.util.TreeMap<>();
+        for (BoardScene.Tile tile : scene.tiles()) {
+            for (BoardView.HexText label : tile.text()) {
+                int elevation = tile.elevation() + label.elevation();
+                if (boardCamera.camera.frustum.sphereInFrustum(
+                      BoardGeometry.center(tile.coords(), elevation), BoardGeometry.WIDTH)) {
+                    heights.computeIfAbsent(elevation, key -> new ArrayList<>()).add(new LabelAt(tile, label));
                 }
+            }
+        }
+        for (var group : heights.entrySet()) {
+            annotationBatch.setTransformMatrix(new Matrix4().setToTranslation(0, 0,
+                  group.getKey() * BoardGeometry.LEVEL + 0.6f));
+            for (LabelAt at : group.getValue()) {
+                BoardScene.Tile tile = at.tile();
+                BoardView.HexText label = at.label();
+                font.getData().setScale(label.font().getSize2D() / GpuBoardUi.FONT_RESOLUTION);
+                font.setColor(new Color((label.argb() << 8) | ((label.argb() >>> 24) & 0xff)));
+                layout.setText(font, label.text());
+                float x = BoardGeometry.centerX(tile.coords());
+                float baseline = BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2
+                      - label.baseline() * BoardGeometry.HEX_SCALE;
+                var roof = label.elevation() > 0 ? terrain.roofBounds(tile.coords()) : null;
+                if (roof != null) {
+                    float fit = Math.min(1, Math.max(8, roof.getWidth() - 4 * BoardGeometry.HEX_SCALE) / layout.width);
+                    font.getData().setScale(font.getData().scaleX * fit);
+                    layout.setText(font, label.text());
+                    x = roof.getCenterX();
+                    baseline = roof.getCenterY() - layout.height / 2;
+                }
+                font.draw(annotationBatch, layout, x - layout.width / 2,
+                      label.fromTop() ? baseline : baseline + layout.height);
             }
         }
         annotationBatch.end();
@@ -461,22 +487,12 @@ class GpuBattleView extends ApplicationAdapter {
         return 1.4f * Math.max(1, displayScale) / EntitySprite.ANNOTATION_RESOLUTION;
     }
 
-    private void renderHints() {
+    private void renderSelectionOutlines() {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         lines.setProjectionMatrix(boardCamera.camera.combined);
         lines.begin(ShapeRenderer.ShapeType.Line);
-        if (ui.allHints()) {
-            lines.setColor(Color.valueOf("386B78"));
-            for (BoardScene.Tile tile : scene.tiles()) {
-                if (boardCamera.camera.frustum.sphereInFrustum(BoardGeometry.center(tile.coords(), tile.elevation()),
-                      BoardGeometry.WIDTH)) {
-                    ring(tile.coords(), tile.elevation());
-                }
-            }
-        }
-        lines.setColor(Color.valueOf("55E1CF"));
         for (BoardScene.Unit unit : scene.units()) {
-            if (ui.hintsFor(unit, hovered)) {
+            if (unit.id() == scene.selectedId() || unit.location().coords().equals(hovered)) {
                 lines.setColor(unit.sensorContact() ? Color.ORANGE : unit.id() == scene.selectedId()
                       ? Color.CYAN : Color.WHITE);
                 ring(unit.location().coords(), unit.location().elevation());
@@ -518,7 +534,7 @@ class GpuBattleView extends ApplicationAdapter {
         private boolean skipHeld;
 
         private Coords pick(int x, int y) {
-            return scene == null ? null : BoardGeometry.pick(scene,
+            return scene == null ? null : terrain.pick(scene,
                   boardCamera.camera.getPickRay(x, y, 0, ui.bottomPixels(),
                         boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight));
         }
@@ -748,9 +764,6 @@ class GpuBattleView extends ApplicationAdapter {
         cameraKeys.clear();
         boardInput.skipHeld = false;
         boardInput.reset();
-        if (ui != null) {
-            ui.releaseInput();
-        }
         source.stopKeys();
     }
 
@@ -797,6 +810,9 @@ class GpuBattleView extends ApplicationAdapter {
         }
         if (terrain != null) {
             terrain.dispose();
+        }
+        if (atmosphere != null) {
+            atmosphere.dispose();
         }
         if (lines != null) {
             lines.dispose();

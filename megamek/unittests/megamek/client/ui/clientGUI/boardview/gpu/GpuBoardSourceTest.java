@@ -27,16 +27,20 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.CursorSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
+import megamek.client.ui.tileset.HexTileset;
+import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.options.OptionsConstants;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -46,6 +50,98 @@ import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Test;
 
 class GpuBoardSourceTest {
+    @Test
+    void deploymentEcmFillsTheWholeHexForFriendlyAndEnemyUnits() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            fixture.addEcm();
+            Player enemy = new Player(1, "Enemy deployment");
+            enemy.setTeam(2);
+            for (Player owner : List.of(fixture.player, enemy)) {
+                SwingUtilities.invokeAndWait(() -> {
+                    if (owner == enemy) {
+                        fixture.game.addPlayer(enemy.getId(), enemy);
+                    }
+                    fixture.entity.setOwner(owner);
+                    owner.setStartingPos(Board.START_ANY);
+                    fixture.game.setPhase(GamePhase.DEPLOYMENT);
+                    fixture.view.markDeploymentHexesFor(fixture.entity);
+                    fixture.view.updateEcmList();
+                    fixture.source.refresh();
+                });
+                BoardScene.Pixels markings = fixture.source.takeFrame().scene().tile(new Coords(4, 4)).tactical();
+                assertTrue(markings != null);
+                for (Point point : List.of(new Point(42, 36), new Point(42, 12), new Point(42, 60),
+                      new Point(14, 36), new Point(70, 36))) {
+                    int x = point.x * markings.width() / 84;
+                    int y = point.y * markings.height() / 72;
+                    assertTrue((markings.rgba(y * markings.width() + x) & 255) > 0,
+                          "ECM must cover the entire hex, not an unscaled corner patch: " + owner.getName() + " at " + point);
+                }
+            }
+        }
+    }
+
+    @Test
+    void measurementOutlineMatchesTheMarkedHexAtCaptureResolution() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords coords = new Coords(4, 4);
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.view.checkLOS(coords);
+                fixture.source.refresh();
+            });
+            BoardScene.Pixels markings = fixture.source.takeFrame().scene().tile(coords).tactical();
+            Rectangle outline = null;
+            for (int y = 0; y < markings.height(); y++) {
+                for (int x = 0; x < markings.width(); x++) {
+                    int pixel = markings.rgba(y * markings.width() + x);
+                    if ((pixel >>> 24) > 220 && ((pixel >>> 16) & 255) < 40
+                          && ((pixel >>> 8) & 255) < 40 && (pixel & 255) > 0) {
+                        if (outline == null) {
+                            outline = new Rectangle(x, y, 1, 1);
+                        } else {
+                            outline.add(x, y);
+                        }
+                    }
+                }
+            }
+            assertTrue(outline != null, "The measurement cursor must be captured");
+            assertTrue(outline.width >= markings.width() - 6, "The red cursor must reach both sides of the marked hex");
+            assertTrue(outline.height >= markings.height() - 6, "The red cursor must reach the top and bottom edges");
+        }
+    }
+
+    @Test
+    void buildingRoofUsesTheIndependentSaxarbaSelectionAndItsHeightLabelIsRaised() throws Exception {
+        var preferences = PreferenceManager.getClientPreferences();
+        String originalTileset = preferences.getMapTileset();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setMapTileset("classic.tileset");
+                Coords coords = new Coords(2, 2);
+                Hex hex = new Hex(0);
+                hex.addTerrain(new Terrain(Terrains.BUILDING, 4, true, 0));
+                hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, 3));
+                hex.addTerrain(new Terrain(Terrains.BLDG_CF, 100));
+                fixture.game.getBoard().setHex(coords, hex);
+                fixture.source.refresh();
+                var tile = fixture.source.takeFrame().scene().tile(coords);
+                HexTileset tileset = new HexTileset(fixture.game, new File(Configuration.dataDir(), "models/board/tileset"));
+                try {
+                    tileset.loadFromFile("saxarba.tileset");
+                } catch (java.io.IOException error) {
+                    throw new IllegalStateException(error);
+                }
+                var sources = tileset.getSupers(fixture.game.getBoard().getHex(coords)).stream()
+                      .map(tileset::imageSource).map(path -> "buildings/" + path.substring(0, path.lastIndexOf('.'))).toList();
+                assertEquals(1, tile.features().size());
+                assertTrue(sources.contains(tile.features().getFirst().asset()));
+                assertTrue(tile.text().stream().anyMatch(label -> label.elevation() == 3));
+            });
+        } finally {
+            SwingUtilities.invokeAndWait(() -> preferences.setMapTileset(originalTileset));
+        }
+    }
+
     @Test
     void hexTextIsSeparateFromTerrainPixelsAndTracksPreferences() throws Exception {
         GUIPreferences preferences = GUIPreferences.getInstance();
@@ -63,7 +159,7 @@ class GpuBoardSourceTest {
             });
             BoardScene.Tile unlabeled = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
             assertFalse(unlabeled.text().stream().anyMatch(label -> label.text().equals("0101")));
-            assertTrue(samePixels(labeled.image(), unlabeled.image()));
+            assertTrue(samePixels(labeled.ground(), unlabeled.ground()));
         } finally {
             SwingUtilities.invokeAndWait(() -> preferences.setCoordsEnabled(coords));
         }
@@ -88,7 +184,7 @@ class GpuBoardSourceTest {
             });
             BoardScene after = fixture.source.takeFrame().scene();
             assertTrue(samePixels(before.units().getFirst().image(), after.units().getFirst().image()));
-            assertTrue(samePixels(before.tile(new Coords(0, 0)).image(), after.tile(new Coords(0, 0)).image()));
+            assertTrue(samePixels(before.tile(new Coords(0, 0)).ground(), after.tile(new Coords(0, 0)).ground()));
         } finally {
             SwingUtilities.invokeAndWait(() -> {
                 preferences.setShadowMap(shadows);
@@ -115,9 +211,9 @@ class GpuBoardSourceTest {
             });
             assertSame(before, fixture.source.takeFrame().scene().units().getFirst().annotations());
             BoardScene.Tile after = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
-            assertEquals((int) BoardGeometry.TILE_WIDTH, after.image().width());
-            assertEquals((int) BoardGeometry.TILE_HEIGHT, after.image().height());
-            assertTrue(samePixels(tile.image(), after.image()));
+            assertEquals((int) BoardGeometry.TILE_WIDTH, after.ground().width());
+            assertEquals((int) BoardGeometry.TILE_HEIGHT, after.ground().height());
+            assertTrue(samePixels(tile.ground(), after.ground()));
             assertEquals(GpuBattleView.annotationScale(1), GpuBattleView.annotationScale(0.5f));
         } finally {
             SwingUtilities.invokeAndWait(() -> GUIPreferences.getInstance().setMapZoomIndex(originalZoom));
@@ -282,7 +378,7 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile empty = fixture.source.takeFrame().scene().tile(original);
-            assertTrue(samePixels(occupied.image(), empty.image()));
+            assertTrue(samePixels(occupied.ground(), empty.ground()));
             assertTrue(samePixels(occupied.tactical(), empty.tactical()));
         }
     }
@@ -304,7 +400,7 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile after = fixture.source.takeFrame().scene().tile(destination);
-            assertTrue(samePixels(before.image(), after.image()),
+            assertTrue(samePixels(before.ground(), after.ground()),
                   "The classic moving-unit ghost must not be baked into the captured terrain");
             assertTrue(samePixels(before.tactical(), after.tactical()),
                   "The classic moving-unit ghost must not be baked into the captured layers");
@@ -324,7 +420,7 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile ranged = fixture.source.takeFrame().scene().tile(coords);
-            assertTrue(before.image() != ranged.image() || before.tactical() != ranged.tactical());
+            assertTrue(before.ground() != ranged.ground() || before.tactical() != ranged.tactical());
             SwingUtilities.invokeAndWait(() -> {
                 fixture.view.removeSprites(List.of(range));
                 fixture.player.setStartingPos(Board.START_ANY);
@@ -347,7 +443,7 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile cleared = fixture.source.takeFrame().scene().tile(coords);
-            assertTrue(samePixels(before.image(), cleared.image()));
+            assertTrue(samePixels(before.ground(), cleared.ground()));
             assertTrue(samePixels(before.tactical(), cleared.tactical()));
         }
     }
@@ -361,15 +457,21 @@ class GpuBoardSourceTest {
                 preferences.setIsometricEnabled(true);
                 Coords coords = new Coords(7, 5);
                 MovementEnvelopeSprite range = new MovementEnvelopeSprite(fixture.view, Color.CYAN, coords, 63);
-                fixture.view.addSprites(List.of(range));
+                CursorSprite cursor = new CursorSprite(fixture.view, Color.RED);
+                cursor.setHexLocation(coords);
+                fixture.view.addSprites(List.of(range, cursor));
                 range.prepare();
+                cursor.prepare();
                 Rectangle before = new Rectangle(range.getBounds());
+                Rectangle cursorBefore = new Rectangle(cursor.getBounds());
                 int offset = fixture.view.getVerticalOffset();
                 Point location = fixture.view.getHexLocation(coords);
                 fixture.view.capturePlanarHexes(new Rectangle(0, 0, 16, 17));
                 assertEquals(offset, fixture.view.getVerticalOffset());
                 assertEquals(location, fixture.view.getHexLocation(coords));
                 assertEquals(before, range.getBounds());
+                assertEquals(cursorBefore, cursor.getBounds());
+                assertEquals(fixture.view.getHexSize(), cursor.getBounds().getSize());
             });
         } finally {
             SwingUtilities.invokeAndWait(() -> preferences.setIsometricEnabled(original));
@@ -393,6 +495,7 @@ class GpuBoardSourceTest {
                     public boolean isHit(Point point, Dimension size) {
                         if (new Rectangle(20, 30, 80, 40).contains(point)) {
                             hit.incrementAndGet();
+                            fixture.view.centerOnHex(fixture.entity.getPosition());
                             return true;
                         }
                         return false;
@@ -408,6 +511,8 @@ class GpuBoardSourceTest {
             SwingUtilities.invokeAndWait(() -> { });
             assertEquals(1, hit.get());
             assertEquals(0, board.get());
+            assertEquals(fixture.view.getCenterRequest(), fixture.source.takeFrame().centerRequest(),
+                  "An overlay focus request must be published immediately with its handled input");
             fixture.source.overlayInput(MouseEvent.MOUSE_PRESSED, 150, 80, board::incrementAndGet);
             SwingUtilities.invokeAndWait(() -> { });
             assertEquals(1, board.get());
@@ -415,7 +520,7 @@ class GpuBoardSourceTest {
     }
 
     @Test
-    void paddingGroundIgnoresLooseSurfaceFeatures() throws Exception {
+    void groundIgnoresLooseSurfaceDecals() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             Coords coords = new Coords(0, 16);
             AtomicReference<BufferedImage> plain = new AtomicReference<>();
@@ -425,50 +530,130 @@ class GpuBoardSourceTest {
                 Hex hex = fixture.game.getBoard().getHex(coords);
                 hex.setTheme("desert");
                 fixture.view.clearHexImageCache();
-                plain.set(paddingArt(fixture, coords));
+                plain.set(groundArt(fixture, coords));
                 hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
                 fixture.view.clearHexImageCache();
-                rough.set(paddingArt(fixture, coords));
+                rough.set(groundArt(fixture, coords));
                 hex.removeTerrain(Terrains.ROUGH);
                 hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
                 fixture.view.clearHexImageCache();
-                rubble.set(paddingArt(fixture, coords));
+                rubble.set(groundArt(fixture, coords));
                 hex.removeTerrain(Terrains.RUBBLE);
             });
             assertTrue(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rough.get())),
-                  "Loose rock must not reach the padding artwork");
+                  "Loose rock must not reach the ground artwork");
             assertTrue(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rubble.get())),
-                  "Rubble must not reach the padding artwork");
+                  "Rubble must not reach the ground artwork");
         }
+    }
+
+    @Test
+    void waterDepthIsCopiedWithoutBakingTheWaterIntoTheGround() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords coords = new Coords(3, 2);
+            SwingUtilities.invokeAndWait(fixture.source::refresh);
+            BoardScene.Tile tile = fixture.source.takeFrame().scene().tile(coords);
+            assertTrue(tile.water());
+            assertEquals(fixture.game.getBoard().getHex(coords).terrainLevel(Terrains.WATER), tile.waterDepth());
+            float bed = BoardGeometry.groundZ(tile);
+            SwingUtilities.invokeAndWait(() -> {
+                Hex hex = fixture.game.getBoard().getHex(coords).duplicate();
+                hex.addTerrain(new Terrain(Terrains.ICE, 1));
+                fixture.game.getBoard().setHex(coords, hex);
+                fixture.source.refresh();
+            });
+            BoardScene.Tile frozen = fixture.source.takeFrame().scene().tile(coords);
+            assertTrue(frozen.frozen());
+            assertEquals(tile.waterDepth(), frozen.waterDepth(), "Ice must preserve the riverbed");
+            assertEquals(bed, BoardGeometry.groundZ(frozen));
+            assertEquals(frozen.elevation() * BoardGeometry.LEVEL, BoardGeometry.surfaceZ(frozen));
+        }
+    }
+
+    @Test
+    void specialHexMarkersRemainTacticalAndClearWithoutChangingTheTerrain() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords coords = new Coords(3, 4);
+            BoardScene.Tile before = fixture.source.takeFrame().scene().tile(coords);
+            SpecialHexDisplay marker = SpecialHexDisplay.createArtyAutoHit(fixture.player);
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.game.getBoard().addSpecialHexDisplay(coords, marker, true);
+                fixture.source.refresh();
+            });
+            BoardScene.Tile marked = fixture.source.takeFrame().scene().tile(coords);
+            assertTrue(samePixels(before.ground(), marked.ground()));
+            assertFalse(samePixels(before.tactical(), marked.tactical()));
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.game.getBoard().removeSpecialHexDisplay(coords, marker, true);
+                fixture.source.refresh();
+            });
+            assertTrue(samePixels(before.tactical(), fixture.source.takeFrame().scene().tile(coords).tactical()));
+        }
+    }
+
+    private static BufferedImage groundArt(GpuBoardFixture fixture, Coords coords) {
+        Rectangle area = new Rectangle(coords.getX(), coords.getY(), 1, 1);
+        return fixture.view.capturePlanarHexes(area).getFirst().terrain();
     }
 
     /**
-     * A water hex pads its water sides from the tile artwork and its land sides from the waterless base
-     * artwork, so the scene has to offer both. The tileset draws the water surface as a super image, which is
-     * why the base terrain artwork alone is the waterless bank image.
+     * Feature heights belong to the feature that carries them: a building's stories and a woods canopy raise
+     * their own models, while painted incline and cliff shading is replaced by actual terrain faces.
      */
     @Test
-    void waterHexOffersWaterAndBankPaddingArtwork() throws Exception {
+    void featuresUseAuthoredModelsAndTheirOwnHeights() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
-            Coords coords = new Coords(3, 2);
-            assertTrue(fixture.game.getBoard().getHex(coords).containsTerrain(Terrains.WATER),
-                  "The fixture must hold water here");
-            AtomicReference<BoardView.PlanarHex> captured = new AtomicReference<>();
-            SwingUtilities.invokeAndWait(() -> captured.set(fixture.view
-                  .capturePlanarHexes(new Rectangle(coords.getX(), coords.getY(), 1, 1)).getFirst()));
-            assertTrue(captured.get().water(), "The captured water hex must be marked as water");
-            assertFalse(samePixels(new BoardScene.Pixels(captured.get().terrain()),
-                  new BoardScene.Pixels(captured.get().bank())),
-                  "A water hex must offer its water surface and its waterless bank artwork");
+            Coords building = new Coords(0, 0);
+            Coords woods = new Coords(1, 0);
+            Coords cliff = new Coords(2, 0);
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.game.getBoard().setHex(building, hexWith(fixture, building,
+                      new Terrain(Terrains.BUILDING, 1), new Terrain(Terrains.BLDG_ELEV, 3),
+                      new Terrain(Terrains.BLDG_CF, 15)));
+                fixture.game.getBoard().setHex(woods, hexWith(fixture, woods, new Terrain(Terrains.WOODS, 2),
+                      new Terrain(Terrains.FOLIAGE_ELEV, 2)));
+                fixture.game.getBoard().setHex(cliff, new Hex(2));
+                fixture.source.refresh();
+            });
+            assertTrue(fixture.game.getBoard().getHex(cliff).containsAnyTerrainOf(Terrains.INCLINE_TOP,
+                  Terrains.INCLINE_BOTTOM, Terrains.INCLINE_HIGH_TOP, Terrains.INCLINE_HIGH_BOTTOM,
+                  Terrains.CLIFF_BOTTOM), "The board must shade the hex beside a drop by itself");
+            BoardScene scene = fixture.source.takeFrame().scene();
+            assertTrue(scene.tile(cliff).features().isEmpty());
+            assertFalse(hasOpaque(scene.tile(cliff).decals()), "Painted slopes must not duplicate the 3D faces");
+            assertTrue(scene.tile(building).features().stream()
+                  .allMatch(feature -> feature.asset().startsWith("building") && feature.height() == 3));
+            assertTrue(scene.tile(woods).features().size() >= 4);
+            assertTrue(scene.tile(woods).features().stream()
+                  .allMatch(feature -> feature.height() <= 2 && feature.height() > 1));
         }
     }
 
-    private static BufferedImage paddingArt(GpuBoardFixture fixture, Coords coords) {
-        Rectangle area = new Rectangle(coords.getX(), coords.getY(), 1, 1);
-        return fixture.view.capturePlanarHexes(area).getFirst().bank();
+    private static boolean hasOpaque(BoardScene.Pixels pixels) {
+        if (pixels == null) {
+            return false;
+        }
+        for (int index = 0; index < pixels.width() * pixels.height(); index++) {
+            if ((pixels.rgba(index) & 0xff) > 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** The hex's own terrain plus the given layers, so the capture sees them without a board listener. */
+    private static Hex hexWith(GpuBoardFixture fixture, Coords coords, Terrain... terrains) {
+        Hex hex = fixture.game.getBoard().getHex(coords).duplicate();
+        for (Terrain terrain : terrains) {
+            hex.addTerrain(terrain);
+        }
+        return hex;
     }
 
     private static boolean samePixels(BoardScene.Pixels first, BoardScene.Pixels second) {
+        if (first == null || second == null) {
+            return first == second;
+        }
         if (first.width() != second.width() || first.height() != second.height()) {
             return false;
         }

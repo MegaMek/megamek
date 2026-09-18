@@ -196,13 +196,12 @@ public class Princess extends BotClient {
     // path rankers and fire controls, organized by their explicitly given types to avoid confusion
     private HashMap<PathRankerType, IPathRanker> pathRankers;
     private HashMap<FireControlType, FireControl> fireControls;
-    private UnitBehavior unitBehaviorTracker;
     private FireControlState fireControlState;
     private PathRankerState pathRankerState;
     private ArtilleryTargetingControl atc;
 
-    private List<HeatMap> enemyHeatMaps;
-    private HeatMap friendlyHeatMap;
+    // What the bot has learned or decided and needs on a later turn. Reach it through getMemory().
+    private BotMemory memory;
 
     private Integer spinUpThreshold = null;
 
@@ -225,11 +224,8 @@ public class Princess extends BotClient {
     private AerospaceGroundOrder aerospaceGroundOrder = AerospaceGroundOrder.AUTO;
     private boolean shootAndScoot = false;
     private Coords shootAndScootHex = null;
-    private final Set<Integer> unitsScootingToHex = new HashSet<>();
     private final Set<Integer> designatedTagTargets = new HashSet<>();
     private final MoraleUtil moraleUtil = new MoraleUtil();
-    private final Set<Integer> attackedWhileFleeing = Collections.newSetFromMap(new ConcurrentHashMap<>());
-    private final Set<Integer> crippledUnits = new HashSet<>();
     private final ArtilleryCommandAndControl artilleryCommandAndControl = new ArtilleryCommandAndControl();
     // Track entities that fired an AMS manually this round
     private List<Integer> manualAMSIds;
@@ -240,13 +236,11 @@ public class Princess extends BotClient {
     // Limits types of units Princess will target and attack with enhanced targeting
     private List<Integer> enhancedTargetingTargetTypes;
     private List<Integer> enhancedTargetingAttackerTypes;
-    private SwarmContext swarmContext;
     // Controls whether Princess will use called shots on immobile targets
     private boolean useCalledShotsOnImmobileTarget;
 
     // Controls whether Princess will use enhanced targeting on targets that have partial cover
     private boolean allowCoverEnhancedTargeting;
-    private EnemyTracker enemyTracker;
     private CoverageValidator coverageValidator;
     private SwarmCenterManager swarmCenterManager;
 
@@ -545,7 +539,7 @@ public class Princess extends BotClient {
         this.shootAndScoot = shootAndScoot;
         if (!shootAndScoot) {
             shootAndScootHex = null;
-            unitsScootingToHex.clear();
+            getMemory().forgetAllScooting();
         }
     }
 
@@ -567,7 +561,7 @@ public class Princess extends BotClient {
     public void setShootAndScootHex(final @Nullable Coords shootAndScootHex) {
         LOGGER.info("{}: setting shoot and scoot hex to {}", getName(), shootAndScootHex);
         this.shootAndScootHex = shootAndScootHex;
-        unitsScootingToHex.clear();
+        getMemory().forgetAllScooting();
         if (shootAndScootHex != null) {
             shootAndScoot = true;
         }
@@ -689,14 +683,14 @@ public class Princess extends BotClient {
         if (shootAndScootHex != null) {
             if (shootAndScootHex.equals(entity.getPosition())) {
                 // arrived at the fallback hex - hold and fire from here
-                unitsScootingToHex.remove(entity.getId());
+                getMemory().forgetScooting(entity.getId());
                 LOGGER.info("{}: {} shoot-and-scoot: reached fallback hex {} - holding and firing",
                       getName(), entity.getDisplayName(), shootAndScootHex);
                 return getHoldPositionPath(entity);
             }
             // once threatened, keep heading to the fallback hex until it arrives, even if the threat recedes
-            if (threatened || unitsScootingToHex.contains(entity.getId())) {
-                unitsScootingToHex.add(entity.getId());
+            if (threatened || getMemory().isScooting(entity.getId())) {
+                getMemory().rememberScooting(entity.getId());
                 LOGGER.info("{}: {} shoot-and-scoot: scooting toward fallback hex {}",
                       getName(), entity.getDisplayName(), shootAndScootHex);
                 sendChat(Messages.getString("Princess.shootAndScoot.movingToHex",
@@ -972,11 +966,18 @@ public class Princess extends BotClient {
         return fireControls.get(fireControlType);
     }
 
-    public UnitBehavior getUnitBehaviorTracker() {
-        if (unitBehaviorTracker == null) {
-            unitBehaviorTracker = new UnitBehavior();
+    /**
+     * @return what this bot has learned or decided and needs again on a later turn
+     */
+    public BotMemory getMemory() {
+        if (memory == null) {
+            memory = new BotMemory();
         }
-        return unitBehaviorTracker;
+        return memory;
+    }
+
+    public UnitBehavior getUnitBehaviorTracker() {
+        return getMemory().getUnitBehaviorTracker();
     }
 
     double getDamageAlreadyAssigned(final Targetable target) {
@@ -1527,7 +1528,7 @@ public class Princess extends BotClient {
                     if (shooter.getSwarmTargetId() != Entity.NONE) {
                         msg.append("\n\tBut will need to stop swarming before fleeing.");
                         skipFiring = true;
-                    } else if (attackedWhileFleeing.contains(shooter.getId())) {
+                    } else if (getMemory().wasAttackedWhileFleeing(shooter.getId())) {
                         msg.append("\n\tBut I was fired on, so I will return fire.");
                     } else if (hasNoRetreatPath(shooter)) {
                         msg.append("\n\tBut I have no path to my retreat edge, so I will fight on.");
@@ -2804,13 +2805,28 @@ public class Princess extends BotClient {
             MovePath path = continueMovementFor(getEntityToMove());
             // Update the friendly heat map with movement of ground units
             if (path != null && path.getEntity().isGround()) {
-                friendlyHeatMap.updateTrackers(path);
+                getMemory().getFriendlyHeatMap().updateTrackers(path);
             }
+            rememberChosenMove(path);
             return path;
         } catch (Exception ignored) {
             LOGGER.error("Error while calculating movement");
             return null;
         }
+    }
+
+    /**
+     * Writes the move just chosen for a unit into the bot memory, so later turns can ask what the unit did.
+     *
+     * @param path the chosen path, or {@code null} if no move was found
+     */
+    private void rememberChosenMove(@Nullable MovePath path) {
+        if (path == null) {
+            return;
+        }
+        // The cached label only: asking for a fresh one here could pin a behaviour the bot has not reached yet.
+        BehaviorType behavior = getUnitBehaviorTracker().getCachedBehaviorType(path.getEntity());
+        getMemory().rememberMove(path, getGame().getCurrentRound(), behavior);
     }
 
     @Override
@@ -2825,7 +2841,7 @@ public class Princess extends BotClient {
             if (getForcedWithdrawal() && attacker.isCrippled(true)) {
                 final StringBuilder msg = new StringBuilder(attacker.getDisplayName()).append(
                       " is crippled and withdrawing.");
-                if (attackedWhileFleeing.contains(attacker.getId())) {
+                if (getMemory().wasAttackedWhileFleeing(attacker.getId())) {
                     msg.append("\n\tBut I was fired on, so I will hit back.");
                 } else if (hasNoRetreatPath(attacker)) {
                     msg.append("\n\tBut I have no path to my retreat edge, so I will fight on.");
@@ -3117,7 +3133,7 @@ public class Princess extends BotClient {
      * @return Whether or not this entity can shoot while falling back.
      */
     boolean canShootWhileFallingBack(Entity entity) {
-        return attackedWhileFleeing.contains(entity.getId());
+        return getMemory().wasAttackedWhileFleeing(entity.getId());
     }
 
     boolean mustFleeBoard(final Entity entity) {
@@ -3546,7 +3562,7 @@ public class Princess extends BotClient {
 
         BehaviorType behavior = forceMoveToContact ?
               BehaviorType.MoveToContact :
-              unitBehaviorTracker.getBehaviorType(mover, this);
+              getUnitBehaviorTracker().getBehaviorType(mover, this);
         // during the movement phase, it is technically necessary to clear this data between each unit
         // as the state of the board may have changed due to crashes etc.
         // generating movable clusters is a relatively cheap operation, so it's not a big deal
@@ -3661,7 +3677,7 @@ public class Princess extends BotClient {
 
                 // Is my unit trying to withdraw as per forced withdrawal rules?
                 // shortcut: we already check for forced withdrawal above, so need to do that here
-                final boolean fleeing = crippledUnits.contains(mine.getId());
+                final boolean fleeing = getMemory().isCrippled(mine.getId());
 
                 for (final int id : attackedBy) {
                     final Entity entity = getGame().getEntity(id);
@@ -3693,7 +3709,7 @@ public class Princess extends BotClient {
                               .append(mine.getDisplayName())
                               .append(").");
                         getHonorUtil().setEnemyDishonored(entity.getOwnerId());
-                        attackedWhileFleeing.add(mine.getId());
+                        getMemory().rememberAttackedWhileFleeing(mine.getId());
                     }
                 }
             }
@@ -3731,9 +3747,9 @@ public class Princess extends BotClient {
         try {
             initialize();
             checkMorale();
-            unitBehaviorTracker.clear();
-            swarmContext.assignClusters(getEntitiesOwned());
-            enemyTracker.updateThreatAssessment(swarmContext.getCurrentCenter());
+            getUnitBehaviorTracker().clear();
+            getSwarmContext().assignClusters(getEntitiesOwned());
+            getEnemyTracker().updateThreatAssessment(getSwarmContext().getCurrentCenter());
             // reset strategic targets
             fireControlState.setAdditionalTargets(new ArrayList<>());
             for (final Coords strategicTarget : getStrategicBuildingTargets()) {
@@ -3812,7 +3828,7 @@ public class Princess extends BotClient {
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
-            unitBehaviorTracker = new UnitBehavior();
+            getMemory().resetUnitBehaviorTracker();
             boardClusterTracker = new BoardClusterTracker();
 
             // Set up heat mapping
@@ -3860,9 +3876,10 @@ public class Princess extends BotClient {
      * Initialize the experimental features.
      */
     private void initExperimentalFeatures() {
-        enemyTracker = new EnemyTracker(this);
+        getMemory().setEnemyTracker(new EnemyTracker(this));
         coverageValidator = new CoverageValidator(this);
-        swarmContext = new SwarmContext();
+        SwarmContext swarmContext = new SwarmContext();
+        getMemory().setSwarmContext(swarmContext);
         swarmCenterManager = new SwarmCenterManager(this);
         int quadrantSize = Math.min(getGame().getBoard().getWidth(), Math.min(getGame().getBoard().getHeight(), 11));
         swarmContext.initializeStrategicGoals(getGame().getBoard(), quadrantSize, quadrantSize);
@@ -4055,13 +4072,13 @@ public class Princess extends BotClient {
 
         // this approach is a little bit inefficient, but the running time is only O(n) where n is the number
         // of princess owned units, so it shouldn't be a big deal.
-        crippledUnits.clear();
-
-        for (Entity e : getEntitiesOwned()) {
-            if (e.isCrippled(true)) {
-                crippledUnits.add(e.getId());
+        Set<Integer> crippledUnitIds = new HashSet<>();
+        for (Entity entity : getEntitiesOwned()) {
+            if (entity.isCrippled(true)) {
+                crippledUnitIds.add(entity.getId());
             }
         }
+        getMemory().setCrippledUnits(crippledUnitIds);
     }
 
     private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
@@ -4182,7 +4199,7 @@ public class Princess extends BotClient {
         // Taken before refreshCrippledUnits folds in this turn's damage. Both checkForDishonoredEnemies and
         // updateReturnFirePermission judge this turn's attacks against who was visibly crippled when those
         // attacks were declared, not against who is crippled now.
-        final Set<Integer> unitsWithdrawingAtStartOfTurn = Set.copyOf(crippledUnits);
+        final Set<Integer> unitsWithdrawingAtStartOfTurn = getMemory().crippledUnitIds();
         checkForDishonoredEnemies();
         checkForBrokenEnemies();
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
@@ -4193,6 +4210,7 @@ public class Princess extends BotClient {
         updateEnemyHeatMaps();
         updateFriendlyHeatMap();
         updateExperimentalFeatures();
+        getMemory().forgetUnitsNoLongerInGame(getGame());
     }
 
     /**
@@ -4219,7 +4237,7 @@ public class Princess extends BotClient {
             if (!wasAlreadyWithdrawing || !wasAttackedThisTurn) {
                 continue;
             }
-            if (attackedWhileFleeing.add(ownedEntity.getId())) {
+            if (getMemory().rememberAttackedWhileFleeing(ownedEntity.getId())) {
                 LOGGER.info("[ForcedWithdrawal] {} was attacked while already crippled and withdrawing; may "
                       + "return fire from now on.", ownedEntity.getDisplayName());
             }
@@ -4233,6 +4251,8 @@ public class Princess extends BotClient {
     }
 
     private void updateSwarmContext() {
+        SwarmContext swarmContext = getSwarmContext();
+        EnemyTracker enemyTracker = getEnemyTracker();
         if (swarmContext == null || enemyTracker == null || coverageValidator == null || swarmCenterManager == null) {
             return;
         }
@@ -4929,7 +4949,7 @@ public class Princess extends BotClient {
      */
     public List<Coords> getEnemyHotSpots() {
         List<Coords> accumulatedHotSpots = new ArrayList<>();
-        for (HeatMap curMap : enemyHeatMaps) {
+        for (HeatMap curMap : getMemory().getEnemyHeatMaps()) {
             List<Coords> mapHotSpots = curMap.getHotSpots();
             if (mapHotSpots != null) {
                 for (Coords curPosition : mapHotSpots) {
@@ -4950,13 +4970,14 @@ public class Princess extends BotClient {
      */
     @Deprecated(since = "0.51.0", forRemoval = true)
     public Coords getFriendlyHotSpot() {
-        return friendlyHeatMap.getHotSpot();
+        return getMemory().getFriendlyHeatMap().getHotSpot();
     }
 
     /**
      * Get the nearest top-rated hot spot for friendly units
      */
     public Coords getFriendlyHotSpot(Coords testPosition) {
+        HeatMap friendlyHeatMap = getMemory().getFriendlyHeatMap();
         return friendlyHeatMap == null ? null : friendlyHeatMap.getHotSpot(testPosition, true);
     }
 
@@ -4964,7 +4985,7 @@ public class Princess extends BotClient {
      * Set up heat maps to track enemy unit positions over time
      */
     protected void initEnemyHeatMaps() {
-        enemyHeatMaps = new ArrayList<>();
+        List<HeatMap> enemyHeatMaps = new ArrayList<>();
         int princessTeamId = getGame().getTeamForPlayer(getLocalPlayer()).getId();
         for (Team curTeam : getGame().getTeams()) {
             if (curTeam.getId() != princessTeamId) {
@@ -4974,17 +4995,19 @@ public class Princess extends BotClient {
                 enemyHeatMaps.add(newMap);
             }
         }
+        getMemory().setEnemyHeatMaps(enemyHeatMaps);
     }
 
     /**
      * Set up heat map to track friendly units over time
      */
     protected void initFriendlyHeatMap() {
-        friendlyHeatMap = new HeatMap(getGame().getTeamForPlayer(getLocalPlayer()).getId());
+        HeatMap friendlyHeatMap = new HeatMap(getGame().getTeamForPlayer(getLocalPlayer()).getId());
         friendlyHeatMap.setMovementWeightValue(5);
         friendlyHeatMap.setMapTrimThreshold(0.6);
         friendlyHeatMap.setActivityDecay(-200);
         friendlyHeatMap.setIsTrackingFriendlyTeam(true);
+        getMemory().setFriendlyHeatMap(friendlyHeatMap);
     }
 
     /**
@@ -4998,7 +5021,7 @@ public class Princess extends BotClient {
               .collect(Collectors.toList());
 
         // Process entities into each heat map, then age it
-        for (HeatMap curMap : enemyHeatMaps) {
+        for (HeatMap curMap : getMemory().getEnemyHeatMaps()) {
             if (!trackedEntities.isEmpty()) {
                 curMap.updateTrackers(trackedEntities);
             }
@@ -5011,6 +5034,7 @@ public class Princess extends BotClient {
      * they move), then apply decay
      */
     protected void updateFriendlyHeatMap() {
+        HeatMap friendlyHeatMap = getMemory().getFriendlyHeatMap();
 
         List<Entity> trackedEntities = getGame().inGameTWEntities()
               .stream()
@@ -5065,11 +5089,11 @@ public class Princess extends BotClient {
     }
 
     public SwarmContext getSwarmContext() {
-        return swarmContext;
+        return getMemory().getSwarmContext();
     }
 
     public EnemyTracker getEnemyTracker() {
-        return enemyTracker;
+        return getMemory().getEnemyTracker();
     }
 
     public CoverageValidator getCoverageValidator() {

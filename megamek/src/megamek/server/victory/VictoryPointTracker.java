@@ -91,7 +91,17 @@ public class VictoryPointTracker implements Serializable {
         /** The sensor check failed. */
         FAILED,
         /** The check passed but there was nothing at the target worth reporting. */
-        NOTHING_FOUND
+        NOTHING_FOUND,
+        /** The unit carried its readings off the battlefield by its own home edge and they were paid. */
+        CARRIED_HOME,
+        /** The unit left before the turn readings may be taken home, so they were lost. */
+        LOST_EARLY,
+        /** The unit left over an edge that is not its side's home edge, so its readings were lost. */
+        LOST_WRONG_EDGE,
+        /** The unit was destroyed or captured while still carrying readings. */
+        LOST_WITH_UNIT,
+        /** Points paid at the moment of a scan were taken back because the scout did not survive. */
+        POINTS_TAKEN_BACK
     }
 
     /**
@@ -104,7 +114,9 @@ public class VictoryPointTracker implements Serializable {
      * @param scannerName          the scanning unit's short name at the time of the scan
      * @param scannerOwnerId       the id of the player who owned the scanning unit
      * @param outcome              how the scan ended
-     * @param targetName           the objective's name, the unit's name, or the hex, as the report named it
+     * @param targetName           for a scan, the objective's name, the unit's name or the hex as the report named
+     *                             it; for one of the later outcomes, what it concerns, such as the number of
+     *                             readings or the edge the unit left by
      * @param targetBoardNum       the hex that was scanned, as a board number, or an empty string if it had none
      * @param targetUnitId         the scanned unit's id, or {@link megamek.common.units.Entity#NONE} for a hex
      * @param wasObjective         {@code true} when what was found was an objective of the scanner's own side

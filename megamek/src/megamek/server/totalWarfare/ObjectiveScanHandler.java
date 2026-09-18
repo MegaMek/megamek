@@ -104,6 +104,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
     static final int REPORT_POINTS_HELD_WHILE_ALIVE = 7154;
     static final int REPORT_SCAN_RECORD_HEADER = 7155;
     static final int REPORT_SCAN_RECORD_LINE = 7156;
+    static final int REPORT_SCAN_RECORD_OUTCOME_LINE = 7157;
     /** Says a successful scan needs no line of its own beyond the scoring line above it. */
     static final int NO_PLAIN_LINE = 0;
     static final int REPORT_SCAN_REVEALS = 7151;
@@ -397,11 +398,17 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         }
         addReport(new Report(REPORT_SCAN_RECORD_HEADER, Report.PUBLIC));
         for (ScanRecord record : scanLog) {
-            Report line = new Report(REPORT_SCAN_RECORD_LINE, Report.PUBLIC);
+            boolean isTheScanItself = (record.outcome() == ScanOutcome.SUCCEEDED)
+                  || (record.outcome() == ScanOutcome.FAILED)
+                  || (record.outcome() == ScanOutcome.NOTHING_FOUND);
+            Report line = new Report(isTheScanItself ? REPORT_SCAN_RECORD_LINE : REPORT_SCAN_RECORD_OUTCOME_LINE,
+                  Report.PUBLIC);
             line.indent();
             line.add(record.gameRound());
             line.add(record.scannerName());
-            line.add(record.targetName());
+            if (isTheScanItself) {
+                line.add(record.targetName());
+            }
             line.add(outcomeWording(record));
             addReport(line);
         }
@@ -419,6 +426,13 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             case SUCCEEDED -> (record.victoryPointsAwarded() > 0)
                   ? Messages.getString("ObjectiveScan.record.scored", record.victoryPointsAwarded())
                   : Messages.getString("ObjectiveScan.record.read");
+            case CARRIED_HOME -> Messages.getString("ObjectiveScan.record.carriedHome", record.targetName(),
+                  record.victoryPointsAwarded());
+            case LOST_EARLY -> Messages.getString("ObjectiveScan.record.lostEarly", record.targetName());
+            case LOST_WRONG_EDGE -> Messages.getString("ObjectiveScan.record.lostWrongEdge", record.targetName());
+            case LOST_WITH_UNIT -> Messages.getString("ObjectiveScan.record.lostWithUnit", record.targetName());
+            case POINTS_TAKEN_BACK -> Messages.getString("ObjectiveScan.record.takenBack",
+                  -record.victoryPointsAwarded(), record.targetName());
         };
     }
 
@@ -489,6 +503,21 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         gameManager.sendServerChat(Messages.getString(
               wanted ? "ObjectiveScan.designated" : "ObjectiveScan.undesignated",
               sender.getName(), unit.getShortName()));
+    }
+
+    /**
+     * Adds what became of a unit's readings to the after-action record, so the end of mission report says how each
+     * scan ended rather than stopping at the moment it was made.
+     *
+     * @param unit       the unit carrying the readings
+     * @param outcome    what happened to them
+     * @param concerning the detail the line needs: the number of readings, or the edge the unit left by
+     * @param points     victory points paid, or taken back as a negative number, or 0
+     */
+    private void recordReadingOutcome(Entity unit, ScanOutcome outcome, String concerning, int points) {
+        VictoryPointTracker.getTracker(getGame())
+              .recordScan(new ScanRecord(getGame().getCurrentRound(), unit.getId(), unit.getShortName(),
+                    unit.getOwnerId(), outcome, concerning, "", Entity.NONE, false, points));
     }
 
     /**
@@ -591,6 +620,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                     report.addDesc(unit);
                     report.add(unpaidReadings);
                     addReport(report);
+                    recordReadingOutcome(unit, ScanOutcome.LOST_WITH_UNIT, String.valueOf(unpaidReadings), 0);
                 }
                 continue;
             }
@@ -609,6 +639,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                 report.add(exitTurn);
                 report.add(readings);
                 addReport(report);
+                recordReadingOutcome(unit, ScanOutcome.LOST_EARLY, String.valueOf(readings), 0);
                 continue;
             }
             if (!leftOverHomeEdge(unit)) {
@@ -619,6 +650,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                 report.add(String.valueOf(unit.getRetreatedDirection()).toLowerCase(java.util.Locale.ROOT));
                 report.add(readings);
                 addReport(report);
+                recordReadingOutcome(unit, ScanOutcome.LOST_WRONG_EDGE,
+                      String.valueOf(unit.getRetreatedDirection()).toLowerCase(java.util.Locale.ROOT), 0);
                 continue;
             }
             payOutReadings(unit);
@@ -669,6 +702,7 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             report.add(points);
             report.add(scanPoint.generalName());
             addReport(report);
+            recordReadingOutcome(unit, ScanOutcome.POINTS_TAKEN_BACK, scanPoint.generalName(), -points);
         }
         gameManager.sendGroundObjectUpdate();
     }
@@ -723,6 +757,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         report.add(pointsAwarded);
         report.addDesc(unit);
         addReport(report);
+        recordReadingOutcome(unit, ScanOutcome.CARRIED_HOME, String.valueOf(countUnpaidReadings(unit)),
+              pointsAwarded);
     }
 
     /**

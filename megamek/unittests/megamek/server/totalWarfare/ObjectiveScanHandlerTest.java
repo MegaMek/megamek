@@ -342,6 +342,27 @@ class ObjectiveScanHandlerTest {
         assertEquals("Piloting skill 5, +3 scanning, -2 active probe level 2", ObjectiveScanHandler.breakdownOf(roll));
     }
 
+    @Test
+    void testTheRecordSaysWhenReadingsWereCarriedHomeAndPaid() {
+        ObjectiveMarker scanPoint = scanPointOf(alice, ScanPayout.ON_EXIT);
+        alice.setStartingPos(Board.START_N);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        scout.bankScan(BankedScan.ofObjective(3, POINT_HEX, scanPoint.generalName()));
+        scout.setRetreatedDirection(OffBoardDirection.NORTH);
+        leaveOverTheHomeEdge(scout, 5);
+
+        handler.resolveScans();
+
+        assertEquals(POINT_VALUE, VictoryPointTracker.getTracker(game).getTeamVictoryPoints(1));
+        assertTrue(scanLogOutcomes().contains(ScanOutcome.CARRIED_HOME));
+        assertFalse(scanLogOutcomes().contains(ScanOutcome.LOST_WRONG_EDGE), "it went home the right way");
+    }
+
+    /** @return the outcomes in the after-action scan record, in the order they were written */
+    private List<ScanOutcome> scanLogOutcomes() {
+        return VictoryPointTracker.getTracker(game).getScanLog().stream().map(ScanRecord::outcome).toList();
+    }
+
     // --- the after-action scan log ---
 
     @Test
@@ -492,9 +513,10 @@ class ObjectiveScanHandlerTest {
 
         handler.resolveScans();
 
-        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()));
+        assertEquals(0, VictoryPointTracker.getTracker(game).getTeamVictoryPoints(1), "nothing is scored");
         assertFalse(scanPoint.getScoringScheme().isDecided());
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READINGS_LOST_EARLY_EXIT));
+        assertTrue(scanLogOutcomes().contains(ScanOutcome.LOST_EARLY), "the record says why they were lost");
         assertTrue(scout.isBankedScansRedeemed(), "settled once, never again");
     }
 
@@ -509,8 +531,11 @@ class ObjectiveScanHandlerTest {
 
         handler.resolveScans();
 
-        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()), "east is not the north side's home");
+        assertEquals(0, VictoryPointTracker.getTracker(game).getTeamVictoryPoints(1),
+              "east is not the north side's home");
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READINGS_LOST_WRONG_EDGE));
+        assertTrue(scanLogOutcomes().contains(ScanOutcome.LOST_WRONG_EDGE),
+              "the end of mission record says the readings were lost, not carried home");
 
         // a side deployed anywhere has no single home edge, so any edge counts
         alice.setStartingPos(Board.START_ANY);
@@ -541,9 +566,10 @@ class ObjectiveScanHandlerTest {
 
         handler.resolveScans();
 
-        assertNull(VictoryPointTracker.findTracker(game.getVictoryContext()), "the defender's counterplay");
+        assertEquals(0, VictoryPointTracker.getTracker(game).getTeamVictoryPoints(1), "the defender's counterplay");
         assertFalse(scanPoint.getScoringScheme().isDecided());
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READINGS_LOST_WITH_UNIT));
+        assertTrue(scanLogOutcomes().contains(ScanOutcome.LOST_WITH_UNIT), "the record says where they went");
     }
 
     // --- fixture ---

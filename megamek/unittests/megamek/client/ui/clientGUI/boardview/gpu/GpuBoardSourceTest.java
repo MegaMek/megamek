@@ -30,6 +30,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.CursorSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
 import megamek.client.ui.tileset.HexTileset;
+import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -173,11 +174,11 @@ class GpuBoardSourceTest {
                       .filter(image -> tileset.imageHasTerrain(image, Terrains.BUILDING))
                       .map(tileset::imageSource).map(path -> "buildings/" + path.substring(0, path.lastIndexOf('.'))).toList();
                 assertTrue(tile.features().stream().anyMatch(feature -> buildingSources.contains(feature.asset())
-                      && feature.height() == 4));
+                      && feature.height() == 4 && feature.kind() == BoardScene.FeatureKind.BUILDING));
                 assertTrue(tile.features().stream().anyMatch(feature -> feature.asset().contains("/fuel_tanks/fuel_tank_medium_")
-                      && feature.height() == 2));
+                      && feature.height() == 2 && feature.kind() == BoardScene.FeatureKind.PROP));
                 assertTrue(tile.features().stream().anyMatch(feature -> feature.asset().contains("/misc/heavy_industrial_")
-                      && feature.height() == 3));
+                      && feature.height() == 3 && feature.kind() == BoardScene.FeatureKind.PROP));
             });
         }
     }
@@ -669,7 +670,8 @@ class GpuBoardSourceTest {
                   .allMatch(feature -> feature.asset().startsWith("building") && feature.height() == 3));
             assertTrue(scene.tile(woods).features().size() >= 4);
             assertTrue(scene.tile(woods).features().stream()
-                  .allMatch(feature -> feature.height() <= 2 && feature.height() > 1));
+                  .allMatch(feature -> feature.height() <= 2 && feature.height() > 1
+                        && feature.kind() == BoardScene.FeatureKind.TREE));
         }
     }
 
@@ -744,6 +746,37 @@ class GpuBoardSourceTest {
     }
 
     @Test
+    void unitOutlinesFollowTeamAndPlayerColorPreferences() throws Exception {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        boolean teamColoring = preferences.getTeamColoring();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                Player ally = new Player(1, "Ally");
+                ally.setTeam(fixture.player.getTeam());
+                Player enemy = new Player(2, "Enemy");
+                enemy.setTeam(2);
+                enemy.setColour(PlayerColour.RED);
+                fixture.game.addPlayer(ally.getId(), ally);
+                fixture.game.addPlayer(enemy.getId(), enemy);
+                preferences.setTeamColoring(true);
+                for (Player owner : List.of(fixture.player, ally, enemy)) {
+                    fixture.entity.setOwner(owner);
+                    fixture.source.refresh();
+                    Color expected = owner == fixture.player ? preferences.getMyUnitColor()
+                          : owner == ally ? preferences.getAllyUnitColor() : preferences.getEnemyUnitColor();
+                    assertEquals(expected.getRGB(), fixture.source.takeFrame().scene().units().getFirst().outlineRgb());
+                }
+                preferences.setTeamColoring(false);
+                fixture.source.refresh();
+                assertEquals(enemy.getColour().getColour(false).getRGB(),
+                      fixture.source.takeFrame().scene().units().getFirst().outlineRgb());
+            });
+        } finally {
+            SwingUtilities.invokeAndWait(() -> preferences.setTeamColoring(teamColoring));
+        }
+    }
+
+    @Test
     void hiddenEnemiesAndSensorContactsUseExistingVisibilityRules() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             SwingUtilities.invokeAndWait(() -> {
@@ -765,6 +798,7 @@ class GpuBoardSourceTest {
             assertEquals(1, contact.height());
             assertEquals(Messages.getString("BoardView1.sensorReturn"), contact.name());
             assertEquals(0, contact.location().facing());
+            assertEquals(Color.LIGHT_GRAY.getRGB(), contact.outlineRgb(), "Sensor contacts must not reveal team colors");
             SwingUtilities.invokeAndWait(() -> {
                 fixture.game.getOptions().getOption(OptionsConstants.ADVANCED_HIDDEN_UNITS).setValue(true);
                 fixture.entity.setHidden(true);

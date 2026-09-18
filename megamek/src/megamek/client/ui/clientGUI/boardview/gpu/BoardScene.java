@@ -18,7 +18,13 @@ import megamek.common.units.EntityMovementType;
 
 /** A presentation snapshot. Only the Swing thread reads the game; the GPU thread owns rendering. */
 record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
-      List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light) {
+      List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light,
+      List<FiringLine> firingLines, List<RangeBorder> rangeBorders) {
+
+    BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
+          List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light) {
+        this(boardId, width, height, tiles, units, plannedPath, selectedId, phase, commands, light, List.of(), List.of());
+    }
 
     BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
           List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands) {
@@ -36,7 +42,15 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         units = List.copyOf(units);
         plannedPath = List.copyOf(plannedPath);
         commands = List.copyOf(commands);
+        firingLines = List.copyOf(firingLines);
+        rangeBorders = List.copyOf(rangeBorders);
     }
+
+    /** Absolute endpoint levels and displayed attack modes, copied from the existing visible attack sprites. */
+    record FiringLine(Waypoint source, Waypoint target, int rgb, boolean indirect) { }
+
+    /** The weapon handler already determines these edges, brackets and colours. No range rules live in the renderer. */
+    record RangeBorder(Coords coords, int edges, int rgb) { }
 
     public Tile tile(Coords coords) {
         return coords.getX() < 0 || coords.getY() < 0 || coords.getX() >= width || coords.getY() >= height
@@ -57,8 +71,15 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
     }
 
-    /** Shared authored model, placement in tile pixels, and height in game levels. */
-    record Feature(String asset, float x, float y, float rotation, float scale, float height, float elevation) { }
+    enum FeatureKind { PROP, BUILDING, TREE }
+
+    /** Shared authored model, placement in tile pixels, and height/type copied from game terrain. */
+    record Feature(String asset, float x, float y, float rotation, float scale, float height, float elevation,
+          FeatureKind kind) {
+        Feature(String asset, float x, float y, float rotation, float scale, float height, float elevation) {
+            this(asset, x, y, rotation, scale, height, elevation, FeatureKind.PROP);
+        }
+    }
 
     /** Water depth -1 means dry. Ground and decals are independent from solid feature geometry. */
     record Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground, Pixels decals,
@@ -75,7 +96,15 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     /** Stand/flight elevation and occupied levels come from the game, including the unit's current stance. */
     public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
-          Pixels annotations, int height, boolean airborne) { }
+          Pixels annotations, int height, boolean airborne, UnitModel model, int outlineRgb) {
+        Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
+              Pixels annotations, int height, boolean airborne) {
+            this(id, part, name, location, image, sensorContact, annotations, height, airborne, null, 0xFFC0C0C0);
+        }
+    }
+
+    /** Derived on Swing after visibility filtering; the render thread never reads an Entity. */
+    record UnitModel(String asset, String fallback, String variant, int figures) { }
 
     public record Waypoint(Coords coords, float elevation, float facing) { }
 
@@ -99,6 +128,14 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
     public record Context(Coords coords, List<Command> commands) {
         public Context {
             commands = List.copyOf(commands);
+        }
+    }
+
+    /** Swing owns attack selection and calculations; the GL thread receives only their presentation. */
+    public record Attack(String targetName, String weaponDetails, String targetDetails, int selectedWeapon,
+          List<String> orders) {
+        public Attack {
+            orders = List.copyOf(orders);
         }
     }
 

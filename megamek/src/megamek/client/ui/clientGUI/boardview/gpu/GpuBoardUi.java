@@ -49,6 +49,7 @@ final class GpuBoardUi implements Disposable {
     private final GpuBoardSource source;
     private final BoardCamera camera;
     private final GpuBoardTuning tuning;
+    private final GpuAttackPanel attackPanel;
     private final GpuBoardSkin theme = new GpuBoardSkin();
     private final Skin skin = theme.skin;
     private final GpuTextures<String> hudTextures = new GpuTextures<>();
@@ -99,6 +100,17 @@ final class GpuBoardUi implements Disposable {
         this.source = source;
         this.camera = camera;
         stage = new Stage(new ScreenViewport()) {
+            @Override
+            public boolean mouseMoved(int x, int y) {
+                Vector2 point = screenToStageCoordinates(new Vector2(x, y));
+                Actor hovered = hit(point.x, point.y, true);
+                while (hovered != null && !(hovered instanceof ScrollPane)) {
+                    hovered = hovered.getParent();
+                }
+                setScrollFocus(hovered);
+                return super.mouseMoved(x, y);
+            }
+
             @Override
             public boolean scrolled(float x, float y) {
                 return GpuBoardUi.this.hit(Gdx.input.getX(), Gdx.input.getY()) && super.scrolled(x, y);
@@ -261,6 +273,14 @@ final class GpuBoardUi implements Disposable {
         details = new Label("", skin, "small");
         details.setWrap(true);
         popup.setVisible(false);
+        attackPanel = new GpuAttackPanel(skin, this::executeCommand, id -> {
+            open("all", "Weapons and ammunition", 16, stage.getHeight() - TOP_HEIGHT - 12);
+            path.add("weapons");
+            path.add(id);
+            updateMenu();
+        }, () -> open("all", "Attack controls", 16, stage.getHeight() - TOP_HEIGHT - 12),
+              () -> open("orders", "Planned orders", 16, stage.getHeight() - TOP_HEIGHT - 12));
+        stage.addActor(attackPanel.panel());
         stage.addActor(popup);
         tuning = new GpuBoardTuning(skin);
         tuning.panel().setVisible(false);
@@ -326,6 +346,7 @@ final class GpuBoardUi implements Disposable {
         hudScale = scale / source.uiPreferences.scale();
         ((ScreenViewport) stage.getViewport()).setUnitsPerPixel(1 / scale);
         stage.getViewport().update(width, height, true);
+        attackPanel.resize(stage.getWidth(), stage.getHeight());
         // Match the integer board viewport so native HUD pixels are not resampled at fractional edges.
         hud.setBounds(0, bottomPixels() / scale, stage.getWidth(),
               Math.max(1, height - topPixels() - bottomPixels()) / scale);
@@ -353,6 +374,18 @@ final class GpuBoardUi implements Disposable {
         return tuning.atmosphere();
     }
 
+    float buildingOpacity() {
+        return tuning.buildingOpacity();
+    }
+
+    float treeOpacity() {
+        return tuning.treeOpacity();
+    }
+
+    float seeThrough() {
+        return tuning.seeThrough();
+    }
+
     float hudScale() {
         // Existing overlay painters already apply the user's GUI-scale preference themselves.
         return hudScale;
@@ -376,6 +409,7 @@ final class GpuBoardUi implements Disposable {
             plotting = false;
         }
         frame = next;
+        attackPanel.update(frame);
         updateMenuBar();
         if (frame.hud() != null) {
             hudTextures.update(Map.of("hud", frame.hud()));
@@ -638,12 +672,17 @@ final class GpuBoardUi implements Disposable {
 
     private String orderSummary() {
         List<String> information = new ArrayList<>();
+        if (frame.attack() != null) {
+            information.addAll(frame.attack().orders());
+        }
         if (frame.scene().plannedPath().size() > 1) {
             information.add((frame.scene().plannedPath().size() - 1) + " movement steps; destination "
                   + frame.scene().plannedPath().getLast().coords().getBoardNum());
         }
-        frame.scene().commands().stream().filter(BoardScene.Command::commit).filter(BoardScene.Command::enabled)
-              .map(BoardScene.Command::detail).filter(detail -> !detail.isBlank()).distinct().forEach(information::add);
+        if (frame.attack() == null) {
+            frame.scene().commands().stream().filter(BoardScene.Command::commit).filter(BoardScene.Command::enabled)
+                  .map(BoardScene.Command::detail).filter(detail -> !detail.isBlank()).distinct().forEach(information::add);
+        }
         return information.isEmpty() ? "No planned orders to display." : String.join("\n\n", information);
     }
 
@@ -706,12 +745,16 @@ final class GpuBoardUi implements Disposable {
         if (menu.equals("global") && cameraCommand(command)) {
             return;
         }
+        executeCommand(command);
+        // Weapon and target menus stay open for salvos. Board plotting remains an explicit tool choice.
+    }
+
+    private void executeCommand(BoardScene.Command command) {
         command.action().run();
         if (command.boardTool()) {
             plotting = true;
             closeMenu();
         }
-        // Weapon and target menus stay open for salvos. Board plotting remains an explicit tool choice.
     }
 
     private boolean cameraCommand(BoardScene.Command command) {
@@ -728,7 +771,7 @@ final class GpuBoardUi implements Disposable {
         return true;
     }
 
-    private static BoardScene.Command find(List<BoardScene.Command> commands, String id) {
+    static BoardScene.Command find(List<BoardScene.Command> commands, String id) {
         for (BoardScene.Command command : commands) {
             if (command.id().equals(id)) {
                 return command;
@@ -786,7 +829,8 @@ final class GpuBoardUi implements Disposable {
         popup.validate();
         float height = Math.min(popup.getPrefHeight(), Math.min(620, Math.max(1, upperEdge - TURN_HEIGHT - 16)));
         popup.setSize(menuWidth(), height);
-        popup.setPosition(MathUtils.clamp(x, 8, stage.getWidth() - menuWidth() - 8),
+        float right = attackPanel.panel().isVisible() ? attackPanel.panel().getX() - 8 : stage.getWidth();
+        popup.setPosition(MathUtils.clamp(x, 8, Math.max(8, right - menuWidth() - 8)),
               MathUtils.clamp(top - height, TURN_HEIGHT + 8, upperEdge - height - 8));
         popup.validate();
     }

@@ -39,6 +39,7 @@ final class GpuAtmosphere implements Disposable {
     private BoardAtmosphere.Lighting lighting;
     private float clock;
     private float stormClock;
+    private boolean captureDepth;
 
     GpuAtmosphere() {
         fogShader = shader("atmosphere-fog.frag");
@@ -48,10 +49,7 @@ final class GpuAtmosphere implements Disposable {
             fogShader.dispose();
             throw failure;
         }
-        quad = new Mesh(true, 4, 6, VertexAttribute.Position(), VertexAttribute.TexCoords(0));
-        quad.setVertices(new float[] { -1, -1, 0, 0, 0, 1, -1, 0, 1, 0,
-              1, 1, 0, 1, 1, -1, 1, 0, 0, 1 });
-        quad.setIndices(new short[] { 0, 1, 2, 0, 2, 3 });
+        quad = screenQuad();
         DepthShader.Config depthConfig = new DepthShader.Config();
         // Shadow shaders cull front faces by default. Camera depth must use the visible front surface.
         depthConfig.defaultCullFace = GL20.GL_BACK;
@@ -59,7 +57,7 @@ final class GpuAtmosphere implements Disposable {
         configure(BoardAtmosphere.DEFAULTS);
     }
 
-    private static ShaderProgram shader(String fragment) {
+    static ShaderProgram shader(String fragment) {
         ShaderProgram result = new ShaderProgram(Gdx.files.classpath(SHADERS + "atmosphere.vert"),
               Gdx.files.classpath(SHADERS + fragment));
         if (!result.isCompiled()) {
@@ -67,6 +65,15 @@ final class GpuAtmosphere implements Disposable {
             result.dispose();
             throw new IllegalStateException("GPU atmosphere shader " + fragment + ": " + log);
         }
+        return result;
+    }
+
+    /** Shared screen-space geometry; the caller owns the returned mesh. */
+    static Mesh screenQuad() {
+        Mesh result = new Mesh(true, 4, 6, VertexAttribute.Position(), VertexAttribute.TexCoords(0));
+        result.setVertices(new float[] { -1, -1, 0, 0, 0, 1, -1, 0, 1, 0,
+              1, 1, 0, 1, 1, -1, 1, 0, 0, 1 });
+        result.setIndices(new short[] { 0, 1, 2, 0, 2, 3 });
         return result;
     }
 
@@ -85,14 +92,21 @@ final class GpuAtmosphere implements Disposable {
     }
 
     void begin(int width, int height, float delta) {
+        begin(width, height, delta, false);
+    }
+
+    void begin(int width, int height, float delta, boolean unitVisibility) {
+        captureDepth = hasFog() || unitVisibility;
         int pixelsWide = Math.max(1, HdpiUtils.toBackBufferX(width));
         int pixelsHigh = Math.max(1, HdpiUtils.toBackBufferY(height));
         if (sceneColor == null || sceneColor.getWidth() != pixelsWide || sceneColor.getHeight() != pixelsHigh) {
             disposeBuffers();
             sceneColor = buffer(pixelsWide, pixelsHigh, true);
         }
-        if (hasFog() && sceneDepth == null) {
+        if (captureDepth && sceneDepth == null) {
             sceneDepth = buffer(pixelsWide, pixelsHigh, true);
+        }
+        if (hasFog() && fog == null) {
             fog = buffer(Math.max(1, pixelsWide / 4), Math.max(1, pixelsHigh / 4), false);
         }
         clock = (clock + Math.min(delta, 0.1f)) % 3600;
@@ -103,7 +117,7 @@ final class GpuAtmosphere implements Disposable {
         ScreenUtils.clear(lighting.sky().r, lighting.sky().g, lighting.sky().b, 0, true);
     }
 
-    private static FrameBuffer buffer(int width, int height, boolean depth) {
+    static FrameBuffer buffer(int width, int height, boolean depth) {
         GLFrameBuffer.FrameBufferBuilder builder = new GLFrameBuffer.FrameBufferBuilder(width, height);
         builder.addBasicColorTextureAttachment(Pixmap.Format.RGBA8888);
         if (depth) {
@@ -118,8 +132,15 @@ final class GpuAtmosphere implements Disposable {
     /** Ends scene capture, derives depth using the same geometry, then composites only the board viewport. */
     void end(Camera camera, GpuTerrain terrain, List<ModelInstance> units, BoardScene board, int bottom) {
         sceneColor.end();
+        if (captureDepth) {
+            sceneDepth.begin();
+            Gdx.gl.glDepthMask(true);
+            ScreenUtils.clear(1, 1, 1, 1, true);
+            terrain.renderDepth(camera, units, depthBatch);
+            sceneDepth.end();
+        }
         if (hasFog()) {
-            renderFog(camera, terrain, units, board);
+            renderFog(camera, terrain, board);
         }
         HdpiUtils.glViewport(0, bottom, (int) camera.viewportWidth, (int) camera.viewportHeight);
         screenState();
@@ -150,6 +171,11 @@ final class GpuAtmosphere implements Disposable {
         Gdx.gl.glDepthMask(true);
     }
 
+    /** Borrowed packed camera depth, valid after end() when fog or unit visibility requested it. */
+    Texture depthTexture() {
+        return captureDepth ? sceneDepth.getColorBufferTexture() : null;
+    }
+
     private boolean hasFog() {
         return settings.fog() > 0 || settings.haze() > 0;
     }
@@ -175,13 +201,7 @@ final class GpuAtmosphere implements Disposable {
         }
     }
 
-    private void renderFog(Camera camera, GpuTerrain terrain, List<ModelInstance> units, BoardScene board) {
-        sceneDepth.begin();
-        Gdx.gl.glDepthMask(true);
-        ScreenUtils.clear(1, 1, 1, 1, true);
-        terrain.renderDepth(camera, units, depthBatch);
-        sceneDepth.end();
-
+    private void renderFog(Camera camera, GpuTerrain terrain, BoardScene board) {
         float base = board.tiles().stream().mapToInt(BoardScene.Tile::elevation).min().orElse(0) * BoardGeometry.LEVEL;
         float height = settings.fogHeight() * BoardGeometry.LEVEL;
         fog.begin();

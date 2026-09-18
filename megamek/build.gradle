@@ -787,6 +787,18 @@ tasks.register('mekCacheCSVTool', JavaExec) {
     mainClass = 'megamek.utilities.MekCacheCSVTool'
 }
 
+tasks.register('exportMekModelCatalog', JavaExec) {
+    dependsOn classes
+    description = 'Export authoritative Mek equipment and sprite references for offline 3D asset generation.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.MekModelCatalog'
+    workingDir = projectDir
+    def modelDataDir = project.findProperty('unitModelDataRoot') ?: mmDataDir
+    args "${modelDataDir}/data", "${modelDataDir}/.work/mek-models/catalog.json"
+    jvmArgs = ['-Xmx2048m', '-Djava.awt.headless=true']
+}
+
 tasks.register('nameChangesValidator', JavaExec) {
     dependsOn jar
     description = 'Checks for issues related to name changes.'

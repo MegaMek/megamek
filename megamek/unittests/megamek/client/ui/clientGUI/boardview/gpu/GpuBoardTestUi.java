@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 /** Shared native UI input and artwork assertions; all calls run on the GL thread. */
@@ -51,6 +52,15 @@ final class GpuBoardTestUi {
 
     private static void clickActor(Actor actor) {
         assertTrue(actor != null, "Missing UI action");
+        // Controls can move below the fold as the tuning panel grows. Scroll them into view before real input.
+        for (Actor parent = actor.getParent(); parent != null; parent = parent.getParent()) {
+            if (parent instanceof ScrollPane scroll) {
+                Vector2 position = actor.localToAscendantCoordinates(scroll.getWidget(), new Vector2());
+                scroll.scrollTo(position.x, position.y, actor.getWidth(), actor.getHeight(), false, true);
+                scroll.updateVisualScroll();
+                stage().draw();
+            }
+        }
         Vector2 point = actor.localToStageCoordinates(new Vector2(actor.getWidth() / 2, actor.getHeight() / 2));
         stage().stageToScreenCoordinates(point);
         Gdx.input.getInputProcessor().touchDown((int) point.x, (int) point.y, 0, Input.Buttons.LEFT);

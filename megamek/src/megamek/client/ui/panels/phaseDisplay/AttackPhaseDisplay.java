@@ -74,6 +74,11 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
         attacks = new EntityActionLog(game);
     }
 
+    /** Presentation of the pending orders, shared with alternative board displays. Read on the Swing thread. */
+    public List<String> getAttackDescriptions() {
+        return List.copyOf(attacks.getDescriptions());
+    }
+
     /**
      * called by updateDonePanel to populate the label text of the Done button. Usually wraps a call to
      * Messages.getString(...Fire) but can be extended to add more details.

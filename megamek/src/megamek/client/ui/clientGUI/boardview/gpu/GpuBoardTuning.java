@@ -45,6 +45,11 @@ final class GpuBoardTuning {
           new Knob("Exposure (EV)", -2, 2, 0.1f, "%+.1f"),
           new Knob("Light shafts", 0, 1, 0.05f, "%.2f"));
 
+    private static final List<Knob> VISIBILITY_KNOBS = List.of(
+          new Knob("Building opacity", 0, 100, 5, "%.0f%%"),
+          new Knob("Tree opacity", 0, 100, 5, "%.0f%%"),
+          new Knob("See-through", 0, 100, 5, "%.0f%%"));
+
     private static final List<Knob> EFFECT_KNOBS = List.of(
           new Knob("Rain", 0, 1, 0.05f, "%.2f"),
           new Knob("Snow", 0, 1, 0.05f, "%.2f"),
@@ -58,6 +63,7 @@ final class GpuBoardTuning {
     private final Table rows = new Table();
     private final ScrollPane scroll;
     private final List<Control> geometry;
+    private final List<Control> visibility;
     private final List<Control> weather;
     private final List<Control> effects;
     private BoardAtmosphere.Settings atmosphere = BoardAtmosphere.DEFAULTS;
@@ -74,6 +80,9 @@ final class GpuBoardTuning {
         rows.top().defaults().pad(3);
         rows.add(new Label("Geometry", skin, "heading")).colspan(3).left().row();
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
+        rows.add(new Label("Unit visibility", skin, "heading")).colspan(3).left().padTop(12).row();
+        visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
+        rows.add(new Label("See-through: occluded unit outline + fill (0% off)", skin)).colspan(3).left().row();
         rows.add(new Label("Daylight & atmosphere", skin, "heading")).colspan(3).left().padTop(12).row();
         rows.add(new Label("Visual preview - game conditions stay unchanged", skin))
               .colspan(3).left().padBottom(6).row();
@@ -190,6 +199,9 @@ final class GpuBoardTuning {
               defaults.levelHeight(), defaults.gridShade() };
         setValues(geometry, values);
         applyGeometry();
+        setValues(visibility, new float[] { GpuTerrain.DEFAULT_BUILDING_OPACITY * 100,
+              GpuTerrain.DEFAULT_TREE_OPACITY * 100, GpuUnitVisibility.DEFAULT_INTENSITY * 100 });
+        updateReadings(visibility);
         setAtmosphere(scenarioDefaults == null ? BoardAtmosphere.DEFAULTS : scenarioDefaults);
     }
 
@@ -203,6 +215,18 @@ final class GpuBoardTuning {
 
     BoardAtmosphere.Settings atmosphere() {
         return atmosphere;
+    }
+
+    float buildingOpacity() {
+        return value(visibility, 0) / 100;
+    }
+
+    float treeOpacity() {
+        return value(visibility, 1) / 100;
+    }
+
+    float seeThrough() {
+        return value(visibility, 2) / 100;
     }
 
     /** Capture once per opened board; routine frame publication must not overwrite a user's preview. */
@@ -226,6 +250,10 @@ final class GpuBoardTuning {
         BoardGeometry.tune(new BoardGeometry.Tuning(value(geometry, 0), value(geometry, 1), value(geometry, 2),
               Math.round(value(geometry, 3)), value(geometry, 4)));
         updateReadings(geometry);
+    }
+
+    private void applyVisibility() {
+        updateReadings(visibility);
     }
 
     private void applyAtmosphere() {

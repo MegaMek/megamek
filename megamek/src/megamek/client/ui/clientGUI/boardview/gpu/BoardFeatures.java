@@ -46,7 +46,9 @@ final class BoardFeatures {
                 case Terrains.FUEL_TANK -> Terrains.FUEL_TANK_ELEV;
                 default -> Terrains.INDUSTRIAL;
             };
-            add(result, structure.getValue(), Math.max(1, hex.terrainLevel(heightTerrain)), 0, 0);
+            result.add(new BoardScene.Feature(structure.getValue(), 0, 0, 0, 1,
+                  Math.max(1, hex.terrainLevel(heightTerrain)), 0, structure.getKey() == Terrains.BUILDING
+                        ? BoardScene.FeatureKind.BUILDING : BoardScene.FeatureKind.PROP));
         }
         if (hex.containsTerrain(Terrains.FIELDS)) {
             add(result, "field", 1, 0, 0);
@@ -84,7 +86,7 @@ final class BoardFeatures {
                 }
                 result.add(new BoardScene.Feature(tree, (float) Math.cos(angle) * radius,
                       (float) Math.sin(angle) * radius, index * 137.5f, 0.8f + (index % 3) * 0.1f,
-                      height * (0.8f + (index % 3) * 0.1f), 0));
+                      height * (0.8f + (index % 3) * 0.1f), 0, BoardScene.FeatureKind.TREE));
             }
         }
         if (hex.containsTerrain(Terrains.RUBBLE)) {

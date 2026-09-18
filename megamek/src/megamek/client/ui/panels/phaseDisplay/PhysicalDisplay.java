@@ -1845,6 +1845,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         updateTarget();
     }
 
+    public Targetable getTarget() {
+        return target;
+    }
+
     /**
      * Targets an entity
      */

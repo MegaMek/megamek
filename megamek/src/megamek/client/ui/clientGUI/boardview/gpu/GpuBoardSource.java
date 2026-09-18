@@ -1,6 +1,7 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -25,8 +26,14 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.MegaMekGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
+import megamek.client.ui.tileset.MMStaticDirectoryManager;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.event.GameListenerAdapter;
@@ -41,6 +48,7 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.units.UnitLocation;
 
@@ -50,7 +58,15 @@ final class GpuBoardSource implements AutoCloseable {
     public record Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
           List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
           BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
-          BoardAtmosphere.Settings scenarioAtmosphere) {
+          BoardAtmosphere.Settings scenarioAtmosphere, BoardScene.Attack attack) {
+        Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
+              List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
+              BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
+              BoardAtmosphere.Settings scenarioAtmosphere) {
+            this(scene, movements, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
+                  scenarioAtmosphere, null);
+        }
+
         Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
               List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
               BoardView.CenterRequest centerRequest, long boardGeneration, String actorName) {
@@ -236,7 +252,7 @@ final class GpuBoardSource implements AutoCloseable {
     public synchronized Frame takeFrame() {
         Frame result = new Frame(frame.scene(), List.copyOf(pendingMoves), frame.context(), frame.globalCommands(),
               frame.hud(), frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
-              frame.scenarioAtmosphere());
+              frame.scenarioAtmosphere(), frame.attack());
         pendingMoves.clear();
         return result;
     }
@@ -355,18 +371,60 @@ final class GpuBoardSource implements AutoCloseable {
         Point light = view.getTerrainLightDirection();
         BoardScene scene = new BoardScene(view.getBoardId(), board.getWidth(), board.getHeight(), tiles, units, planned,
               actions.actorId(), view.game.getPhase().localizedName(), commands,
-              light == null || light.x == 0 && light.y == 0 ? null : new BoardScene.Light(light.x, -light.y));
+              light == null || light.x == 0 && light.y == 0 ? null : new BoardScene.Light(light.x, -light.y),
+              firingLines(), view.getWeaponRangeSprites().stream().map(sprite -> new BoardScene.RangeBorder(
+                    sprite.getPosition(), sprite.getBorders(),
+                    FieldOfFireSprite.getFieldOfFireColor(sprite.getRangeBracket()).getRGB())).toList());
         Entity actor = view.game.getEntity(actions.actorId());
         boolean knownActor = actor != null && (actor.getOwner().equals(view.getLocalPlayer())
               || visible(actor) && !sensorContact(actor));
         return new Frame(scene, List.of(), nextContext, List.copyOf(nextGlobal), nextHud, nextTooltip,
               view.getCenterRequest(), boardGeneration, knownActor ? actor.getShortName() : "",
-              BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()));
+              BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()), actions.attackState());
     }
 
     private boolean visible(Entity entity) {
         return entity.getPosition() != null && entity.getBoardId() == view.getBoardId()
               && EntityVisibilityUtils.detectedOrHasVisual(view.getLocalPlayer(), view.game, entity);
+    }
+
+    private List<BoardScene.FiringLine> firingLines() {
+        List<BoardScene.FiringLine> result = new ArrayList<>();
+        for (var sprite : view.getAttackSprites()) {
+            Entity attacker = sprite.getAttackingEntity();
+            Targetable target = sprite.getTargetedEntity();
+            if (sprite.isHidden() || attacker.getPosition() == null || target.getPosition() == null
+                  || !board.contains(attacker.getPosition()) || !board.contains(target.getPosition())) {
+                continue;
+            }
+            for (EntityAction action : sprite.getActions()) {
+                // ArtilleryAttackAction also represents direct artillery declared in the firing phase.
+                boolean indirect = action instanceof ArtilleryAttackAction && switch (view.game.getPhase()) {
+                    case TARGETING, TARGETING_REPORT, OFFBOARD, OFFBOARD_REPORT -> true;
+                    default -> false;
+                };
+                if (action instanceof WeaponAttackAction weaponAttack) {
+                    Entity weaponEntity = view.game.getEntity(action.getEntityId());
+                    var weapon = weaponEntity == null ? null : weaponEntity.getEquipment(weaponAttack.getWeaponId());
+                    indirect |= weapon != null && weapon.curMode().isIndirect();
+                }
+                result.add(new BoardScene.FiringLine(firingEndpoint(attacker), firingEndpoint(target),
+                      attacker.getOwner().getColour().getColour().getRGB(), indirect));
+            }
+        }
+        // Multiple weapons on one target share a trace, but direct and indirect fire remain distinct.
+        return result.stream().distinct().toList();
+    }
+
+    private BoardScene.Waypoint firingEndpoint(Targetable target) {
+        Coords coords = target.getPosition();
+        if (target instanceof Entity entity) {
+            if (sensorContact(entity)) {
+                return waypoint(coords, 0.5f, 0);
+            }
+            return new BoardScene.Waypoint(coords, flightLevel(entity, coords) + (entity.height() + 1) * 0.5f, 0);
+        }
+        return waypoint(coords, target.getElevation() + Math.max(0.15f, target.getHeight() * 0.5f), 0);
     }
 
     private BoardScene.Tile tile(BoardView.PlanarHex pixels, BoardScene.Tile previous) {
@@ -396,6 +454,10 @@ final class GpuBoardSource implements AutoCloseable {
         BoardScene.Waypoint location = airborne
               ? new BoardScene.Waypoint(coords, flightLevel(entity, coords), facing)
               : waypoint(coords, sensor ? 0 : entity.getElevation(), facing);
+        Color outline = sensor ? Color.LIGHT_GRAY
+              : GUIPreferences.getInstance().getTeamColoring() && view.getLocalPlayer() != null
+                    ? UIUtil.teamColor(entity.getOwner(), view.getLocalPlayer())
+                    : entity.getOwner().getColour().getColour(false);
         return new BoardScene.Unit(entity.getId(), part, sensor ? Messages.getString("BoardView1.sensorReturn")
               : entity.getShortName(),
               location, pixels, sensor,
@@ -403,7 +465,10 @@ final class GpuBoardSource implements AutoCloseable {
                   frame == null ? null : frame.scene().units().stream()
                       .filter(unit -> unit.id() == entity.getId() && unit.part() == part)
                           .map(BoardScene.Unit::annotations).findFirst().orElse(null)),
-              sensor ? 1 : entity.height() + 1, airborne);
+              sensor ? 1 : entity.height() + 1, airborne,
+              GpuUnitModels.ENABLED
+                    ? UnitModelSelection.capture(entity, part, sensor, MMStaticDirectoryManager.getMekTileset()) : null,
+              outline.getRGB());
     }
 
     private BoardScene.Waypoint waypoint(Coords coords, float relativeElevation, int facing) {

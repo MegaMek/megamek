@@ -3,6 +3,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
@@ -220,6 +221,47 @@ class GpuBoardActionsTest {
     private static List<BoardScene.Command> flatten(List<BoardScene.Command> commands) {
         return commands.stream().flatMap(command -> java.util.stream.Stream.concat(java.util.stream.Stream.of(command),
               flatten(command.children()).stream())).toList();
+    }
+
+    @Test
+    void attackSnapshotUsesTheActingUnitsPresentationAndPendingOrders() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Controls controls = controls(fixture);
+            SwingUtilities.invokeAndWait(() -> {
+                when(controls.weapons().getTargetName()).thenReturn("Target Test");
+                when(controls.weapons().getWeaponSummary()).thenReturn("Laser<br>Heat 3  Damage 5");
+                when(controls.weapons().getFiringSolution()).thenReturn("Range: 4<br>To Hit: 7 (58%)");
+                when(controls.phase().getAttackDescriptions()).thenReturn(List.of("Laser &gt; Target Test"));
+                controls.weapons().weaponList.setSelectedIndex(1);
+                BoardScene.Attack state = controls.actions().attackState();
+                assertEquals("Target Test", state.targetName());
+                assertEquals("Laser\nHeat 3  Damage 5", state.weaponDetails());
+                assertEquals("Range: 4\nTo Hit: 7 (58%)", state.targetDetails());
+                assertEquals(1, state.selectedWeapon());
+                assertEquals(List.of("Laser > Target Test"), state.orders());
+                when(controls.weapons().getSelectedEntityId()).thenReturn(controls.target().getId());
+                assertEquals("", controls.actions().attackState().weaponDetails(),
+                      "Inspecting another unit must not put its weapons in the acting unit's panel");
+                when(controls.phase().currentEntity()).thenReturn(null);
+                assertNull(controls.actions().attackState());
+            });
+        }
+    }
+
+    @Test
+    void ammunitionCannotApplyToAWeaponSelectedAfterTheSnapshot() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Controls controls = controls(fixture);
+            AtomicReference<BoardScene.Command> ammunition = new AtomicReference<>();
+            SwingUtilities.invokeAndWait(() -> {
+                controls.weapons().weaponList.setSelectedIndex(0);
+                ammunition.set(find(controls.actions().phaseCommands(), "Special"));
+                controls.weapons().weaponList.setSelectedIndex(1);
+            });
+            ammunition.get().action().run();
+            SwingUtilities.invokeAndWait(() ->
+                  assertEquals(0, controls.weapons().getAmmoSelector().getSelectedIndex()));
+        }
     }
 
     private static BoardScene.Command find(List<BoardScene.Command> commands, String label) {

@@ -654,10 +654,9 @@ public class ForceGeneratorViewUi implements ActionListener {
         CarrierLoadingConfigurator.configure(generatedForce, modelChosen::hasEntity);
         localClient.sendAddEntity(entities);
 
-        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
-              + owner.getName()
-              + " [" + entities.size() + " units]";
-        clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+        String chatMessage = Messages.getString("RandomArmyDialog.loadedUnitsChat",
+              localClient.getLocalPlayer(), owner.getName(), entities.size());
+        localClient.sendServerChat(Player.PLAYER_NONE, chatMessage);
 
         modelChosen.clearData();
     }

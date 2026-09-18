@@ -173,9 +173,9 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     /**
      * Sends the chosen units of the tab on show to the game for the named player and empties that list; on the Force
-     * Generator tab the generated force is cleared with it, since it is now in the game. The Okay button does this
-     * for whoever the chooser names; changing the chooser while units are waiting can do it for the player they were
-     * waiting for.
+     * Generator tab the generated force is cleared with it when any units went, since it is now in the game. The Okay
+     * button does this for whoever the chooser names; changing the chooser while units are waiting can do it for the
+     * player they were waiting for.
      *
      * @param chosenName the chooser entry the units are for, or {@code null} when the chooser is empty, which gives
      *                   them to the local player
@@ -186,14 +186,20 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     private boolean commitChosenUnits(@Nullable String chosenName) {
         Player owner = permittedPlayerNamed(chosenName);
         if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+            boolean hasChosenUnits = !forceGeneratorPanel.getChosenUnits().isEmpty();
             forceGeneratorPanel.addChosenUnits(owner, clientGui);
             // The Force Generator knows more about what it rolled than any other tab, so it records
             // the same context as the rest rather than being the one source that reports nothing.
             recordGenerationContext(owner);
-            // Cleared last, because the context above is read from the tree. The command has gone into the game as
-            // this player's force; left on show, the next roll would be folded into it and its units, which are
-            // the very objects just sent, could be picked and sent a second time.
-            forceGeneratorPanel.clearForce();
+            if (hasChosenUnits) {
+                // Cleared last, because the context above is read from the tree. The command has gone into the game
+                // as this player's force; left on show, the next roll would be folded into it and its units, which
+                // are the very objects just sent, could be picked and sent a second time.
+                forceGeneratorPanel.clearForce();
+            } else {
+                LOGGER.debug("[GMAddUnit] no Force Generator units were chosen, so there was nothing to add for {} "
+                      + "and the generated force is left on show", owner.getName());
+            }
             return true;
         }
 

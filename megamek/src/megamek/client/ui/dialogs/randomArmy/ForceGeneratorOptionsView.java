@@ -153,6 +153,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private Integer preferredEchelon;
 
     /**
+     * Whether {@link #preferredEchelon} is still waiting to be applied. Set whenever a host states a preference and
+     * cleared once the formation combo has been pointed at it, so the preference wins over the selection the combo
+     * was born with and loses to every choice the player makes afterwards.
+     */
+    private boolean preferredEchelonPending;
+
+    /**
      * The organisation-tree node the formation mix should describe, or {@code null} to describe the force the
      * settings above it describe.
      *
@@ -772,6 +779,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setPreferredEchelon(@Nullable Integer preferredEchelon) {
         this.preferredEchelon = preferredEchelon;
+        // The combo is filled during construction, so a host's preference always arrives after the ruleset default
+        // has already been selected. Marking it pending lets the next refresh apply it over that selection.
+        this.preferredEchelonPending = preferredEchelon != null;
     }
 
     /**
@@ -822,6 +832,42 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
         return modifiedMatch;
+    }
+
+    /**
+     * What a refresh of the formation combo should select, and whether that selection is a new one.
+     *
+     * @param formation    the formation code to select, or {@code null} when neither a preference nor the previous
+     *                     selection applies and the caller falls back on the ruleset default
+     * @param applyToForce whether the selection is a new choice that {@code setFormation} has to be told about
+     */
+    record FormationChoice(@Nullable String formation, boolean applyToForce) {
+    }
+
+    /**
+     * Decides what a refresh of the formation combo does with a stated echelon preference.
+     *
+     * <p>A pending preference outranks the formation already showing, which is the point of stating one: a host
+     * that asks for a company gets a company even though the combo was filled with the ruleset default before the
+     * preference arrived. When the preference has no match and no previous selection survives, the caller falls
+     * back on the ruleset default.</p>
+     *
+     * @param preferenceIsPending whether a preference has been stated and not yet consumed by a refresh
+     * @param preferredFormation  the code matching the preference, or {@code null} when this faction fields no
+     *                            such echelon
+     * @param currentFormation    the code the combo already showed and still offers, or {@code null} otherwise
+     *
+     * @return the formation to select and whether to apply it, never {@code null}
+     */
+    static FormationChoice formationChoice(boolean preferenceIsPending, @Nullable String preferredFormation,
+          @Nullable String currentFormation) {
+        if (preferenceIsPending && (preferredFormation != null)) {
+            return new FormationChoice(preferredFormation, true);
+        }
+        if (currentFormation != null) {
+            return new FormationChoice(currentFormation, false);
+        }
+        return new FormationChoice(null, false);
     }
 
     /**
@@ -1474,8 +1520,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.warn("No echelon node found.");
         }
 
-        if (hasCurrent) {
-            cbFormation.setSelectedItem(currentFormation);
+        // One refresh consumes the preference whether or not this faction fields it, so a preference the faction
+        // cannot honour never lingers to override a choice the player makes later.
+        String pendingFormation = preferredEchelonPending ? preferredEchelonItem() : null;
+        preferredEchelonPending = false;
+        FormationChoice choice = formationChoice(pendingFormation != null, pendingFormation,
+              hasCurrent ? currentFormation : null);
+        if (choice.formation() != null) {
+            cbFormation.setSelectedItem(choice.formation());
+            if (choice.applyToForce()) {
+                setFormation(choice.formation());
+            }
         } else {
             String echelon = preferredEchelonItem();
             if (echelon == null) {

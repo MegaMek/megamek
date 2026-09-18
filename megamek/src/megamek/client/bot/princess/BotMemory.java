@@ -226,7 +226,9 @@ public class BotMemory {
      *                 that out this round
      */
     void rememberMove(MovePath path, int round, @Nullable BehaviorType behavior) {
-        MoveRecord move = new MoveRecord(round, path.getStartCoords(), path.getFinalCoords(), behavior);
+        // The hex the unit stands in, not the path's own start: a path reports the hex of its first step, which
+        // is already one hex on for a walking unit and nothing at all for a unit that stays put.
+        MoveRecord move = new MoveRecord(round, path.getEntity().getPosition(), path.getFinalCoords(), behavior);
         unit(path.getEntity().getId()).rememberMove(move);
         LOGGER.debug("[BotMemory] round {}: {} moved {} to {} while {}", round, path.getEntity().getDisplayName(),
               move.from(), move.to(), behavior);

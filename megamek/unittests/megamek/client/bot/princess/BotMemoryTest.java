@@ -68,13 +68,14 @@ class BotMemoryTest {
         memory = new BotMemory();
     }
 
+    /** A path whose own start is left unset, as it is for a unit that stays put: the move starts where the unit is. */
     private static MovePath pathFor(int unitId, Coords from, Coords to) {
         Entity entity = mock(Entity.class);
         when(entity.getId()).thenReturn(unitId);
         when(entity.getDisplayName()).thenReturn("Unit " + unitId);
+        when(entity.getPosition()).thenReturn(from);
         MovePath path = mock(MovePath.class);
         when(path.getEntity()).thenReturn(entity);
-        when(path.getStartCoords()).thenReturn(from);
         when(path.getFinalCoords()).thenReturn(to);
         return path;
     }

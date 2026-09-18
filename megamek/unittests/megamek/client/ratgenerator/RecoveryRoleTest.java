@@ -52,6 +52,11 @@ import org.junit.jupiter.api.Test;
  * theatres and a repair vehicle carries a Mobile Field Base, but the BattleMek Recovery Vehicle carries only a cargo
  * bay, so in the data it looked exactly like a flatbed truck. These tests pin the two halves that matter - that the
  * role parses from the year files, and that asking for it does not hand back the cargo haulers it used to.</p>
+ *
+ * <p>The chassis names below use the Mek spelling because checkstyle forbids the trademarked form in Java source
+ * (config/checkstyle/checkstyle.xml). The force generator data spells the same chassis with the trademarked form,
+ * which is why the strings here differ from mm-data by that one letter. Nothing here looks a unit up by name, so the
+ * spelling has no effect on what is tested.</p>
  */
 class RecoveryRoleTest {
     /** Availability and strictness are arbitrary here; only whether a unit survives the filter is under test. */

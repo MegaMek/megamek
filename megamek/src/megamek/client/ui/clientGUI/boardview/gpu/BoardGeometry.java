@@ -19,7 +19,7 @@ final class BoardGeometry {
           float bandNormalFlatness, float unitScale, float unitHeightScale, int baseLevelHeight,
           float hexFrameShade) { }
 
-    static final Tuning DEFAULTS = new Tuning(0.1f, 1f, 0.0f, 0.1f, 0.5f, 0.6f, 0.87f, 18, 0.8f);
+    static final Tuning DEFAULTS = new Tuning(0f, 1f, 0.0f, 0.1f, 0.5f, 0.6f, 0.87f, 18, 0.8f);
 
     /** Fraction of the hex width left as padding between two neighboring hexes; must be positive. */
     public static float PADDING = DEFAULTS.padding();

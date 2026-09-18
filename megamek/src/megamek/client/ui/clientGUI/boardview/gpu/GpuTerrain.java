@@ -15,6 +15,8 @@ import java.util.function.Consumer;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,6 +26,8 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelCache;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.Renderable;
+import com.badlogic.gdx.graphics.g3d.RenderableProvider;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
@@ -34,16 +38,19 @@ import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import megamek.common.board.Coords;
 
 /** Chunked solid hex columns, flat decals and authored features; owns all GL resources it creates. */
 final class GpuTerrain implements Disposable {
-    private static final int CHUNK_SIZE = 8;
+    static final int CHUNK_SIZE = 16;
+    static final int SHADOW_RESOLUTION = 2048;
     private static final long ATTRIBUTES = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal
           | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.ColorPacked;
     private final GpuAssets assets = new GpuAssets();
@@ -59,6 +66,7 @@ final class GpuTerrain implements Disposable {
     private final Map<Model, BoundingBox> unitBounds = new HashMap<>();
     private final Map<Model, List<Vector3>> featureTriangles = new HashMap<>();
     private final BoundingBox shadowBounds = new BoundingBox();
+    private final Matrix4 shadowView = new Matrix4();
     private List<BoardScene.Tile> tiles;
     private BoardScene.Light light;
     private BoardAtmosphere.Lighting atmosphere;
@@ -67,6 +75,7 @@ final class GpuTerrain implements Disposable {
     private int tuning = -1;
     private float clock;
     private float floor;
+    private int chunkRows;
 
     private record Prop(Coords coords, ModelInstance instance, BoundingBox bounds) { }
     private record WaterSurface(Material material, int depth, boolean falling) { }
@@ -78,23 +87,52 @@ final class GpuTerrain implements Disposable {
         final List<WaterSurface> waterMaterials = new ArrayList<>();
         final List<ModelInstance> tactical = new ArrayList<>();
         final List<Prop> props = new ArrayList<>();
-        final ModelCache solidProps = new ModelCache();
-        final BoundingBox bounds = new BoundingBox();
+        final Array<Renderable> propRenderables = new Array<>();
+        final RenderableProvider solidProps = (out, pool) -> {
+            for (Renderable renderable : propRenderables) {
+                renderable.shader = null;
+                renderable.environment = null;
+            }
+            out.addAll(propRenderables);
+        };
+        final BoundingBox bounds = new BoundingBox().inf();
         Set<Coords> faded = Set.of();
 
         void cacheProps() {
-            solidProps.begin();
-            for (Prop prop : props) {
-                if (!faded.contains(prop.coords())) {
-                    solidProps.add(prop.instance());
+            disposePropMeshes();
+            // ModelCache's default pool reserves 65,536 vertices per chunk. Its mesh builder also retains
+            // scratch arrays after end(). Use tight meshes, and transfer those static meshes to this chunk
+            // so the temporary builder and sorting/pooling buffers can be collected after each build.
+            ModelCache.TightMeshPool meshes = new ModelCache.TightMeshPool();
+            ModelCache builder = new ModelCache(new ModelCache.Sorter(), meshes);
+            try {
+                builder.begin();
+                for (Prop prop : props) {
+                    if (!faded.contains(prop.coords())) {
+                        builder.add(prop.instance());
+                    }
                 }
+                builder.end();
+                builder.getRenderables(propRenderables, null);
+            } catch (RuntimeException | Error failure) {
+                meshes.dispose();
+                propRenderables.clear();
+                throw failure;
             }
-            solidProps.end();
+        }
+
+        private void disposePropMeshes() {
+            Set<Mesh> meshes = new HashSet<>();
+            for (Renderable renderable : propRenderables) {
+                meshes.add(renderable.meshPart.mesh);
+            }
+            meshes.forEach(Mesh::dispose);
+            propRenderables.clear();
         }
 
         @Override
         public void dispose() {
-            solidProps.dispose();
+            disposePropMeshes();
             for (List<ModelInstance> layer : List.of(opaque, overlays, water, tactical)) {
                 layer.forEach(instance -> instance.model.dispose());
             }
@@ -147,6 +185,10 @@ final class GpuTerrain implements Disposable {
             }
             if (!rebuildAll) {
                 BoardScene.Tile before = tiles.get(index);
+                // Rim vertex colors come from the selected ground artwork, not the atlas texture.
+                if (!before.ground().equals(tile.ground())) {
+                    dirtyChunk(changedChunks, tile.coords());
+                }
                 if (!before.coords().equals(tile.coords())) {
                     rebuildAll = true;
                 } else if (before.elevation() != tile.elevation()
@@ -175,6 +217,7 @@ final class GpuTerrain implements Disposable {
             chunks.clear();
         }
         int chunkIndex = 0;
+        chunkRows = (scene.height() + CHUNK_SIZE - 1) / CHUNK_SIZE;
         for (int x = 0; x < scene.width(); x += CHUNK_SIZE) {
             for (int y = 0; y < scene.height(); y += CHUNK_SIZE) {
                 if (rebuildAll) {
@@ -210,12 +253,20 @@ final class GpuTerrain implements Disposable {
                 for (BoardSurface.Face face : surface.faces) {
                     boolean artwork = face.finish() == BoardSurface.Finish.TOP || face.finish() == BoardSurface.Finish.ICE
                           || face.finish() == BoardSurface.Finish.SHORE;
-                    Texture texture = artwork ? top.getTexture()
-                          : assets.material(face.finish() == BoardSurface.Finish.BED ? "bed" : tile.water() ? "sand" : tile.surface().wall);
-                    solid.add(material(texture, false), mesh -> surface(mesh, tile.coords(), face, artwork ? top : null, 0));
+                    BoardScene.Tile land = face.landEdge() < 0 ? null
+                          : scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(face.landEdge())));
+                    if (land != null && !land.water()) {
+                        TextureRegion bankArt = ground.region(land.coords());
+                        solid.add(material(bankArt.getTexture(), false),
+                              mesh -> bank(mesh, tile.coords(), face, land.coords(), bankArt));
+                    } else {
+                        Texture texture = artwork ? top.getTexture()
+                              : assets.material(face.finish() == BoardSurface.Finish.BED ? "bed" : tile.water() ? "terrain/sand" : tile.surface().wall);
+                        solid.add(material(texture, false), mesh -> surface(mesh, tile.coords(), face, artwork ? top : null, 0));
+                    }
                     chunk.bounds.ext(face.a()).ext(face.b()).ext(face.c());
                     if (face.finish() == BoardSurface.Finish.SHORE) {
-                        overlay.add(material(assets.material("sand"), true), mesh -> shore(mesh, tile, face));
+                        overlay.add(material(assets.material("terrain/sand"), true), mesh -> shore(mesh, tile, face));
                     }
                     if (tile.decals() != null && artwork) {
                         TextureRegion art = decals.region(tile.coords());
@@ -231,8 +282,7 @@ final class GpuTerrain implements Disposable {
                     solid.add(material(wall, false), mesh -> wall(mesh, side));
                     chunk.bounds.ext(side.a().x, side.a().y, side.lowA()).ext(side.b().x, side.b().y, side.lowB());
                     if (!tile.water()) {
-                        Texture rim = tile.surface() == BoardScene.Surface.GRASS ? assets.material("grass-rim") : top.getTexture();
-                        overlay.add(material(rim, true), mesh -> cornice(mesh, tile, side, top));
+                        overlay.add(material(assets.material(tile.surface().rim), true), mesh -> cornice(mesh, tile, side));
                         Material incline = material(assets.incline(tile.surface()), true);
                         incline.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.62f));
                         overlay.add(incline, mesh -> incline(mesh, surface, side));
@@ -285,6 +335,8 @@ final class GpuTerrain implements Disposable {
         solid.finish(chunk.opaque);
         overlay.finish(chunk.overlays);
         liquid.finish(chunk.water);
+        // The floating markings remain visible when only their raised edge enters the viewport.
+        chunk.bounds.max.z += BoardGeometry.LEVEL / 3;
         buildMarkings(scene, chunk, startX, startY);
         // ModelInstance copies materials; animate those owned by the rendered instances.
         for (ModelInstance instance : chunk.water) {
@@ -309,8 +361,13 @@ final class GpuTerrain implements Disposable {
                 }
                 TextureRegion art = tactical.region(tile.coords());
                 Material mark = material(art.getTexture(), true);
-                mark.set(new DepthTestAttribute(GL20.GL_ALWAYS, false));
-                marks.add(mark, mesh -> hex(mesh, tile.coords(), BoardGeometry.surfaceZ(tile) + 0.15f, art));
+                // The shared blended material tests opaque depth without hiding later annotations.
+                // Reuse the terrain triangles so road approaches cannot bury a flat marking plane.
+                BoardSurface surface = new BoardSurface(scene, tile);
+                for (BoardSurface.Face face : surface.faces) {
+                    marks.add(mark, mesh -> mesh.triangle(markingVertex(face.a(), tile, art),
+                          markingVertex(face.b(), tile, art), markingVertex(face.c(), tile, art)));
+                }
             }
         }
         marks.finish(chunk.tactical);
@@ -338,23 +395,15 @@ final class GpuTerrain implements Disposable {
               region.getV() + v * (region.getV2() - region.getV()), color);
     }
 
-    private static MeshPartBuilder.VertexInfo markingVertex(Vector3 point, Coords coords, TextureRegion region) {
+    private static MeshPartBuilder.VertexInfo markingVertex(Vector3 point, BoardScene.Tile tile, TextureRegion region) {
+        Coords coords = tile.coords();
         float u = 0.5f + (point.x - BoardGeometry.centerX(coords)) / BoardGeometry.WIDTH;
         float v = 0.5f - (point.y - BoardGeometry.centerY(coords)) / BoardGeometry.HEIGHT;
-        return vertex(point, Vector3.Z, region.getU() + u * (region.getU2() - region.getU()),
+        // Keep river markings above the water, following the banks and dry road ramps elsewhere.
+        float base = tile.water() ? Math.max(point.z, BoardGeometry.surfaceZ(tile)) : point.z;
+        Vector3 raised = new Vector3(point.x, point.y, base + BoardGeometry.LEVEL / 3);
+        return vertex(raised, Vector3.Z, region.getU() + u * (region.getU2() - region.getU()),
               region.getV() + v * (region.getV2() - region.getV()), Color.WHITE);
-    }
-
-    private static void hex(MeshPartBuilder mesh, Coords coords, float z, TextureRegion region) {
-        Vector3 center = BoardGeometry.center(coords, 0);
-        center.z = z;
-        for (int edge = 0; edge < 6; edge++) {
-            Vector3 a = BoardGeometry.corner(coords, 0, edge);
-            Vector3 b = BoardGeometry.corner(coords, 0, edge + 1);
-            a.z = b.z = z;
-            mesh.triangle(markingVertex(center, coords, region), markingVertex(a, coords, region),
-                  markingVertex(b, coords, region));
-        }
     }
 
     private static void surface(MeshPartBuilder mesh, Coords coords, BoardSurface.Face face,
@@ -392,8 +441,8 @@ final class GpuTerrain implements Disposable {
               vertex(b, normal, endU, -b.z / repeat, Color.WHITE));
     }
 
-    /** A deeper, irregular cover edge. The shared world-space profile meets at hex corners. */
-    private static void cornice(MeshPartBuilder mesh, BoardScene.Tile tile, BoardSurface.Side side, TextureRegion top) {
+    /** Cover geometry clips a fixed-scale material; changing its depth never stretches the texture. */
+    static void cornice(MeshPartBuilder mesh, BoardScene.Tile tile, BoardSurface.Side side) {
         Vector3 direction = new Vector3(side.b()).sub(side.a());
         direction.z = 0;
         float length = direction.len();
@@ -401,47 +450,41 @@ final class GpuTerrain implements Disposable {
         Vector3 normal = new Vector3(direction).crs(Vector3.Z);
         float repeat = 96 * BoardGeometry.HEX_SCALE;
         float u = side.a().dot(direction) / repeat;
-        int segments = Math.max(1, (int) Math.ceil(length / (8 * BoardGeometry.HEX_SCALE)));
+        float fade = 1.5f * BoardGeometry.HEX_SCALE;
+        int segments = Math.max(1, (int) Math.ceil(length / (6 * BoardGeometry.HEX_SCALE)));
         for (int segment = 0; segment < segments; segment++) {
             float from = segment / (float) segments, to = (segment + 1f) / segments;
             Vector3 a = new Vector3(side.a()).lerp(side.b(), from);
             Vector3 b = new Vector3(side.a()).lerp(side.b(), to);
             float lowA = side.lowA() + (side.lowB() - side.lowA()) * from;
             float lowB = side.lowA() + (side.lowB() - side.lowA()) * to;
-            float depthA = corniceDepth(a), depthB = corniceDepth(b);
+            float depthA = corniceDepth(tile.surface(), a), depthB = corniceDepth(tile.surface(), b);
             lowA = Math.max(lowA, a.z - depthA);
             lowB = Math.max(lowB, b.z - depthB);
-            if (tile.surface() != BoardScene.Surface.GRASS) {
-                // Fold a strip of this hex's ground art down the face at its original texel density.
-                // Vertex alpha controls the ragged fade independently of the texture coordinates.
-                for (int band = 0; band < 2; band++) {
-                    float start = band == 0 ? 0 : 0.65f;
-                    float end = band == 0 ? 0.65f : 1;
-                    float startA = Math.min(a.z - lowA, depthA * start), endA = Math.min(a.z - lowA, depthA * end);
-                    float startB = Math.min(b.z - lowB, depthB * start), endB = Math.min(b.z - lowB, depthB * end);
-                    if (endA > startA || endB > startB) {
-                        mesh.rect(corniceVertex(a, startA, depthA, normal, tile.coords(), top),
-                              corniceVertex(a, endA, depthA, normal, tile.coords(), top),
-                              corniceVertex(b, endB, depthB, normal, tile.coords(), top),
-                              corniceVertex(b, startB, depthB, normal, tile.coords(), top));
-                    }
-                }
-                continue;
-            }
-            a.mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
-            b.mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
+            Color colorA = corniceColor(tile, a), colorB = corniceColor(tile, b);
             float startU = u + length * from / repeat, endU = u + length * to / repeat;
-            mesh.rect(vertex(a, normal, startU, 0, Color.WHITE),
-                  vertex(new Vector3(a.x, a.y, lowA), normal, startU, (a.z - lowA) / depthA, Color.WHITE),
-                  vertex(new Vector3(b.x, b.y, lowB), normal, endU, (b.z - lowB) / depthB, Color.WHITE),
-                  vertex(b, normal, endU, 0, Color.WHITE));
+            for (int band = 0; band < 2; band++) {
+                float startA = band == 0 ? 0 : Math.min(a.z - lowA, depthA - fade);
+                float startB = band == 0 ? 0 : Math.min(b.z - lowB, depthB - fade);
+                float endA = Math.min(a.z - lowA, band == 0 ? depthA - fade : depthA);
+                float endB = Math.min(b.z - lowB, band == 0 ? depthB - fade : depthB);
+                if (endA > startA || endB > startB) {
+                    mesh.rect(corniceVertex(a, startA, depthA, normal, startU, colorA),
+                          corniceVertex(a, endA, depthA, normal, startU, colorA),
+                          corniceVertex(b, endB, depthB, normal, endU, colorB),
+                          corniceVertex(b, startB, depthB, normal, endU, colorB));
+                }
+            }
         }
     }
 
-    private static float corniceDepth(Vector3 point) {
+    private static float corniceDepth(BoardScene.Surface surface, Vector3 point) {
+        if (surface == BoardScene.Surface.CONCRETE) {
+            return 9 * BoardGeometry.HEX_SCALE;
+        }
         float x = point.x / BoardGeometry.HEX_SCALE, y = point.y / BoardGeometry.HEX_SCALE;
-        return (15 + 2 * (float) Math.sin(x * 0.09f + y * 0.05f)
-              + (float) Math.sin(y * 0.18f - x * 0.14f)) * BoardGeometry.HEX_SCALE;
+        return (9 + 2 * (float) Math.sin(x * 0.09f + y * 0.05f)
+              + 3 * (float) Math.sin(y * 0.65f - x * 0.43f)) * BoardGeometry.HEX_SCALE;
     }
 
     /** Orient one material's 08 edge patch on each exposed segment, leaving road mouths open. */
@@ -474,13 +517,32 @@ final class GpuTerrain implements Disposable {
     }
 
     private static MeshPartBuilder.VertexInfo corniceVertex(Vector3 edge, float depth, float fullDepth,
-          Vector3 normal, Coords coords, TextureRegion top) {
-        // Moving toward the centre keeps samples inside the hex and agrees at shared face corners.
-        Vector3 sample = new Vector3(BoardGeometry.centerX(coords) - edge.x, BoardGeometry.centerY(coords) - edge.y, 0)
-              .nor().scl(depth).add(edge);
+          Vector3 normal, float u, Color color) {
         Vector3 point = new Vector3(edge).add(0, 0, -depth).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
-        float alpha = Math.min(1, (fullDepth - depth) / (fullDepth * 0.35f));
-        return topVertex(sample, coords, top, Color.WHITE).setPos(point).setNor(normal).setCol(1, 1, 1, alpha);
+        float alpha = Math.clamp((fullDepth - depth) / (1.5f * BoardGeometry.HEX_SCALE), 0, 1);
+        return vertex(point, normal, u, -point.z / (96 * BoardGeometry.HEX_SCALE), color)
+              .setCol(color.r, color.g, color.b, alpha);
+    }
+
+    /** Pale neutral rim detail takes its palette from opaque pixels just inside the selected hex's edge. */
+    private static Color corniceColor(BoardScene.Tile tile, Vector3 edge) {
+        BoardScene.Pixels pixels = tile.ground();
+        float u = 0.5f + (edge.x - BoardGeometry.centerX(tile.coords())) / BoardGeometry.WIDTH * 0.9f;
+        float v = 0.5f - (edge.y - BoardGeometry.centerY(tile.coords())) / BoardGeometry.HEIGHT * 0.9f;
+        int centerX = Math.round(u * (pixels.width() - 1)), centerY = Math.round(v * (pixels.height() - 1));
+        float red = 0, green = 0, blue = 0, weight = 0;
+        for (int y = centerY - 1; y <= centerY + 1; y++) {
+            for (int x = centerX - 1; x <= centerX + 1; x++) {
+                int rgba = pixels.rgba(Math.clamp(y, 0, pixels.height() - 1) * pixels.width()
+                      + Math.clamp(x, 0, pixels.width() - 1));
+                float alpha = (rgba & 255) / 255f;
+                red += (rgba >>> 24) * alpha;
+                green += ((rgba >>> 16) & 255) * alpha;
+                blue += ((rgba >>> 8) & 255) * alpha;
+                weight += 255 * alpha;
+            }
+        }
+        return weight == 0 ? new Color(Color.WHITE) : new Color(red / weight, green / weight, blue / weight, 1);
     }
 
     private static void waterfall(MeshPartBuilder mesh, BoardSurface.Side drop) {
@@ -523,6 +585,22 @@ final class GpuTerrain implements Disposable {
         float u = 0.25f + offset.dot(along) / (2 * length);
         float v = 1 - offset.dot(inward) / BoardGeometry.HEIGHT;
         return vertex(new Vector3(point).add(0, 0, 0.1f * BoardGeometry.HEX_SCALE), normal, u, v, Color.WHITE);
+    }
+
+    /** Continue the neighboring land's selected artwork across the edge, beneath the existing sand fade. */
+    private static void bank(MeshPartBuilder mesh, Coords water, BoardSurface.Face face, Coords land, TextureRegion art) {
+        Vector3 a = BoardGeometry.corner(water, 0, face.landEdge());
+        Vector3 outward = BoardGeometry.corner(water, 0, face.landEdge() + 1).sub(a).crs(Vector3.Z).nor();
+        Vector3 normal = new Vector3(face.b()).sub(face.a()).crs(new Vector3(face.c()).sub(face.a())).nor();
+        mesh.triangle(bankVertex(face.a(), land, art, normal, a, outward),
+              bankVertex(face.b(), land, art, normal, a, outward), bankVertex(face.c(), land, art, normal, a, outward));
+    }
+
+    private static MeshPartBuilder.VertexInfo bankVertex(Vector3 point, Coords land, TextureRegion art,
+          Vector3 normal, Vector3 edge, Vector3 outward) {
+        // Mirror only the texture sample into the neighbor: geometry and the waterline stay unchanged.
+        Vector3 sample = new Vector3(point).mulAdd(outward, -2 * new Vector3(point).sub(edge).dot(outward));
+        return topVertex(sample, land, art, Color.WHITE).setPos(point).setNor(normal);
     }
 
     private static void shore(MeshPartBuilder mesh, BoardScene.Tile tile, BoardSurface.Face face) {
@@ -611,12 +689,14 @@ final class GpuTerrain implements Disposable {
 
     BoundingBox roofBounds(Coords coords) {
         BoundingBox result = null;
-        for (Chunk chunk : chunks) {
-            for (Prop prop : chunk.props) {
-                if (prop.coords().equals(coords)
-                      && (result == null || prop.bounds().max.z > result.max.z)) {
-                    result = prop.bounds();
-                }
+        int index = (coords.getX() / CHUNK_SIZE) * chunkRows + coords.getY() / CHUNK_SIZE;
+        if (index < 0 || index >= chunks.size()) {
+            return null;
+        }
+        for (Prop prop : chunks.get(index).props) {
+            if (prop.coords().equals(coords)
+                  && (result == null || prop.bounds().max.z > result.max.z)) {
+                result = prop.bounds();
             }
         }
         return result;
@@ -624,13 +704,23 @@ final class GpuTerrain implements Disposable {
 
     /** Roofs, courtyard openings and walls use the authored mesh, not a bounding-box proxy. */
     Coords pick(BoardScene scene, Ray ray) {
-        BoardGeometry.Hit groundHit = BoardGeometry.hit(scene, ray);
-        Coords result = groundHit == null ? null : groundHit.coords();
-        float nearest = groundHit == null ? Float.POSITIVE_INFINITY : groundHit.distance();
+        Coords result = null;
+        float nearest = Float.POSITIVE_INFINITY;
+        List<BoardScene.Tile> candidates = new ArrayList<>();
         Vector3 hit = new Vector3();
-        for (Chunk chunk : chunks) {
+        for (int index = 0; index < chunks.size(); index++) {
+            Chunk chunk = chunks.get(index);
             if (!Intersector.intersectRayBoundsFast(ray, chunk.bounds)) {
                 continue;
+            }
+            // Reuse render bounds before invoking the shared surface picker; a pointer event must not
+            // inspect six neighbors and allocate geometry bounds for every hex of a 40,000-hex board.
+            int startX = (index / chunkRows) * CHUNK_SIZE;
+            int startY = (index % chunkRows) * CHUNK_SIZE;
+            for (int x = startX; x < Math.min(startX + CHUNK_SIZE, scene.width()); x++) {
+                for (int y = startY; y < Math.min(startY + CHUNK_SIZE, scene.height()); y++) {
+                    candidates.add(scene.tile(new Coords(x, y)));
+                }
             }
             for (Prop prop : chunk.props) {
                 if (!Intersector.intersectRayBoundsFast(ray, prop.bounds())) {
@@ -649,7 +739,8 @@ final class GpuTerrain implements Disposable {
                 }
             }
         }
-        return result;
+        BoardGeometry.Hit groundHit = BoardGeometry.hit(scene, ray, candidates, floor);
+        return groundHit != null && groundHit.distance() <= nearest ? groundHit.coords() : result;
     }
 
     private static List<Vector3> triangles(Model model) {
@@ -740,9 +831,7 @@ final class GpuTerrain implements Disposable {
             return;
         }
         if (shadow == null) {
-            float diameter = shadowBounds.getDimensions(new Vector3()).len() * 1.15f;
-            shadow = new DirectionalShadowLight(2048, 2048, diameter, diameter, 1, diameter + 2);
-            shadow.getCamera().up.set(Vector3.Z);
+            shadow = new DirectionalShadowLight(SHADOW_RESOLUTION, SHADOW_RESOLUTION, 1, 1, 1, 2);
             environment.add(shadow);
             environment.shadowMap = shadow;
         }
@@ -770,10 +859,15 @@ final class GpuTerrain implements Disposable {
     }
 
     void renderShadows(List<ModelInstance> units) {
+        renderShadows(null, units);
+    }
+
+    void renderShadows(OrthographicCamera view, List<ModelInstance> units) {
         if (shadow == null) {
             return;
         }
-        boolean changed = shadowDirty || units.size() != shadowModels.size();
+        boolean changed = shadowDirty || units.size() != shadowModels.size()
+              || (view != null && !Arrays.equals(view.combined.val, shadowView.val));
         for (int index = 0; !changed && index < units.size(); index++) {
             changed = units.get(index).model != shadowModels.get(index)
                   || !Arrays.equals(units.get(index).transform.val, shadowTransforms.get(index).val);
@@ -789,22 +883,77 @@ final class GpuTerrain implements Disposable {
             shadowTransforms.add(new Matrix4(unit.transform));
             bounds.ext(unitBounds(unit));
         }
-        float diameter = bounds.getDimensions(new Vector3()).len() * 1.15f;
-        shadow.getCamera().viewportWidth = diameter;
-        shadow.getCamera().viewportHeight = diameter;
-        shadow.getCamera().far = diameter + 2;
-        // Position from the current bounds: DirectionalShadowLight caches the constructor's half-depth.
-        shadow.getCamera().position.set(bounds.getCenter(new Vector3())).mulAdd(shadow.direction, -diameter / 2);
-        shadow.getCamera().direction.set(shadow.direction);
-        shadow.getCamera().up.set(Vector3.Z);
-        shadow.getCamera().normalizeUp();
-        shadow.getCamera().update();
+        fitShadowCamera(view, shadow.getCamera(), bounds, shadow.direction);
+        if (view != null) {
+            shadowView.set(view.combined);
+        }
         shadow.begin();
         renderDepth(shadow.getCamera(), units, depthBatch);
         shadow.end();
         float slope = (float) Math.hypot(shadow.direction.x, shadow.direction.y) / Math.abs(shadow.direction.z);
-        shadow.getProjViewTrans().val[Matrix4.M23] -= 3 * Math.max(1, slope) / 2048;
+        Camera lightCamera = shadow.getCamera();
+        float texel = Math.max(lightCamera.viewportWidth, lightCamera.viewportHeight) / SHADOW_RESOLUTION;
+        shadow.getProjViewTrans().val[Matrix4.M23] -= 3 * Math.max(1, slope) * texel
+              / (lightCamera.far - lightCamera.near);
         shadowDirty = false;
+    }
+
+    /** Focus texels on visible receivers, retaining the full light depth for offscreen shadow casters. */
+    static void fitShadowCamera(OrthographicCamera view, Camera target, BoundingBox bounds, Vector3 direction) {
+        BoundingBox receivers = new BoundingBox(bounds);
+        if (view != null) {
+            receivers.inf();
+            Vector3 right = new Vector3(view.direction).crs(view.up).nor();
+            for (int x : new int[] { -1, 1 }) {
+                for (int y : new int[] { -1, 1 }) {
+                    Vector3 origin = new Vector3(view.position)
+                          .mulAdd(right, x * view.viewportWidth * view.zoom / 2)
+                          .mulAdd(view.up, y * view.viewportHeight * view.zoom / 2);
+                    for (float z : new float[] { bounds.min.z, bounds.max.z }) {
+                        receivers.ext(new Vector3(origin).mulAdd(view.direction, (z - origin.z) / view.direction.z));
+                    }
+                }
+            }
+            receivers.min.x = MathUtils.clamp(receivers.min.x, bounds.min.x, bounds.max.x);
+            receivers.min.y = MathUtils.clamp(receivers.min.y, bounds.min.y, bounds.max.y);
+            receivers.max.x = MathUtils.clamp(receivers.max.x, bounds.min.x, bounds.max.x);
+            receivers.max.y = MathUtils.clamp(receivers.max.y, bounds.min.y, bounds.max.y);
+            receivers.min.z = bounds.min.z;
+            receivers.max.z = bounds.max.z;
+            receivers.update();
+        }
+        target.direction.set(direction).nor();
+        Vector3 right = new Vector3(target.direction)
+              .crs(Math.abs(target.direction.z) > 0.99f ? Vector3.Y : Vector3.Z).nor();
+        target.up.set(right).crs(target.direction).nor();
+        BoundingBox lightSpace = new BoundingBox().inf();
+        float near = Float.POSITIVE_INFINITY;
+        float far = Float.NEGATIVE_INFINITY;
+        for (int corner = 0; corner < 8; corner++) {
+            Vector3 point = new Vector3((corner & 1) == 0 ? receivers.min.x : receivers.max.x,
+                  (corner & 2) == 0 ? receivers.min.y : receivers.max.y,
+                  (corner & 4) == 0 ? receivers.min.z : receivers.max.z);
+            lightSpace.ext(point.dot(right), point.dot(target.up), 0);
+            point.set((corner & 1) == 0 ? bounds.min.x : bounds.max.x,
+                  (corner & 2) == 0 ? bounds.min.y : bounds.max.y,
+                  (corner & 4) == 0 ? bounds.min.z : bounds.max.z);
+            float depth = point.dot(target.direction);
+            near = Math.min(near, depth);
+            far = Math.max(far, depth);
+        }
+        // Leave a filtering border, and align the light grid to texels to avoid crawling edges while panning.
+        float border = 1 + 4f / SHADOW_RESOLUTION;
+        target.viewportWidth = Math.max(1, lightSpace.getWidth()) * border;
+        target.viewportHeight = Math.max(1, lightSpace.getHeight()) * border;
+        float texelX = target.viewportWidth / SHADOW_RESOLUTION;
+        float texelY = target.viewportHeight / SHADOW_RESOLUTION;
+        Vector3 center = lightSpace.getCenter(new Vector3());
+        center.x = Math.round(center.x / texelX) * texelX;
+        center.y = Math.round(center.y / texelY) * texelY;
+        target.position.set(right).scl(center.x).mulAdd(target.up, center.y).mulAdd(target.direction, near - 1);
+        target.near = 1;
+        target.far = far - near + 2;
+        target.update();
     }
 
     @Override

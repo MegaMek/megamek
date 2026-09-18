@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Map;
+
 import megamek.common.Hex;
 import megamek.common.board.Coords;
 import megamek.common.units.Terrain;
@@ -18,14 +20,14 @@ class BoardFeaturesTest {
         hex.addTerrain(new Terrain(Terrains.JUNGLE, 2));
         hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
         Coords coords = new Coords(1, 1);
-        assertTrue(BoardFeatures.capture(hex, coords, "").stream().allMatch(feature -> feature.asset().startsWith("palm")));
+        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().allMatch(feature -> feature.asset().startsWith("palm")));
         hex.addTerrain(new Terrain(Terrains.SNOW, 1));
-        assertTrue(BoardFeatures.capture(hex, coords, "").stream().allMatch(feature -> feature.asset().endsWith("-snow")));
+        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().allMatch(feature -> feature.asset().endsWith("-snow")));
         hex.removeTerrain(Terrains.SNOW);
         hex.setTheme("snow");
-        assertTrue(BoardFeatures.capture(hex, coords, "").stream().allMatch(feature -> feature.asset().endsWith("-snow")));
+        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().allMatch(feature -> feature.asset().endsWith("-snow")));
         hex.setTheme("");
-        assertFalse(BoardFeatures.capture(hex, coords, "").stream().anyMatch(feature -> feature.asset().endsWith("-snow")));
+        assertFalse(BoardFeatures.capture(hex, coords, Map.of()).stream().anyMatch(feature -> feature.asset().endsWith("-snow")));
     }
 
     @Test
@@ -36,18 +38,18 @@ class BoardFeaturesTest {
             hex.addTerrain(new Terrain(Terrains.WOODS, density));
             hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
             hex.setTheme("Desert");
-            var themed = BoardFeatures.capture(hex, coords, "");
+            var themed = BoardFeatures.capture(hex, coords, Map.of());
             assertFalse(themed.isEmpty());
             assertTrue(themed.stream().allMatch(feature -> feature.asset().equals("palm")
                   || feature.asset().equals("palm-bent")), "Desert woodland must retain palm silhouettes");
             hex.addTerrain(new Terrain(Terrains.PAVEMENT, 1));
-            assertEquals(themed, BoardFeatures.capture(hex, coords, ""), "Ground paving must not change the biome's trees");
+            assertEquals(themed, BoardFeatures.capture(hex, coords, Map.of()), "Ground paving must not change the biome's trees");
             hex.removeTerrain(Terrains.PAVEMENT);
             hex.setTheme("");
             hex.addTerrain(new Terrain(Terrains.SAND, 1));
-            assertEquals(themed, BoardFeatures.capture(hex, coords, ""), "Sandy woods use the same palm selection");
+            assertEquals(themed, BoardFeatures.capture(hex, coords, Map.of()), "Sandy woods use the same palm selection");
             hex.addTerrain(new Terrain(Terrains.SNOW, 1));
-            assertTrue(BoardFeatures.capture(hex, coords, "").stream().allMatch(feature -> feature.asset().endsWith("-snow")),
+            assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().allMatch(feature -> feature.asset().endsWith("-snow")),
                   "Snow retains the existing winter variants");
         }
     }
@@ -58,17 +60,17 @@ class BoardFeaturesTest {
         Coords coords = new Coords(3, 2);
         hex.addTerrain(new Terrain(Terrains.WOODS, 2));
         hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
-        assertTrue(BoardFeatures.capture(hex, coords, "").stream().map(BoardScene.Feature::asset).distinct().count() >= 5);
+        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().map(BoardScene.Feature::asset).distinct().count() >= 5);
         hex.removeAllTerrains();
         hex.addTerrain(new Terrain(Terrains.RUBBLE, 4));
-        var rubble = BoardFeatures.capture(hex, coords, "");
+        var rubble = BoardFeatures.capture(hex, coords, Map.of());
         assertEquals(8, rubble.size());
         assertTrue(rubble.stream().allMatch(feature -> feature.asset().startsWith("rock-")
               && feature.height() > 0 && feature.height() < 1f / 3 && feature.elevation() == 0));
         assertEquals(3, rubble.stream().map(BoardScene.Feature::asset).distinct().count());
-        assertEquals(rubble, BoardFeatures.capture(hex, coords, ""));
+        assertEquals(rubble, BoardFeatures.capture(hex, coords, Map.of()));
         hex.setTheme("snow");
-        assertTrue(BoardFeatures.capture(hex, coords, "").stream().allMatch(feature -> feature.asset().endsWith("-snow")));
+        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().allMatch(feature -> feature.asset().endsWith("-snow")));
     }
 
     @Test
@@ -80,12 +82,14 @@ class BoardFeaturesTest {
         hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, 2));
         hex.addTerrain(new Terrain(Terrains.INDUSTRIAL, 3));
         String selectedRoof = "buildings/saxarba/building_hard/building_hard_09";
-        var features = BoardFeatures.capture(hex, new Coords(2, 2), selectedRoof);
+        String industrialRoof = "buildings/saxarba/misc/heavy_industrial_a";
+        var models = Map.of(Terrains.BUILDING, selectedRoof, Terrains.INDUSTRIAL, industrialRoof);
+        var features = BoardFeatures.capture(hex, new Coords(2, 2), models);
         assertTrue(features.stream().anyMatch(feature -> feature.asset().equals(selectedRoof) && feature.height() == 4));
         assertEquals(2, features.stream().filter(feature -> feature.asset().equals("bridge") && feature.elevation() == 2).count());
-        assertTrue(features.stream().anyMatch(feature -> feature.asset().equals("industrial") && feature.height() == 3));
-        assertEquals(features, BoardFeatures.capture(hex, new Coords(2, 2), selectedRoof), "Placement must remain stable across snapshots");
-        assertFalse(BoardFeatures.capture(hex, new Coords(2, 2), "").stream()
+        assertTrue(features.stream().anyMatch(feature -> feature.asset().equals(industrialRoof) && feature.height() == 3));
+        assertEquals(features, BoardFeatures.capture(hex, new Coords(2, 2), models), "Placement must remain stable across snapshots");
+        assertFalse(BoardFeatures.capture(hex, new Coords(2, 2), Map.of()).stream()
               .anyMatch(feature -> feature.asset().startsWith("building")), "Blank tileset artwork must stay blank");
     }
 
@@ -101,7 +105,7 @@ class BoardFeaturesTest {
         assertEquals(BoardScene.Surface.ROCK, BoardFeatures.surface(hex));
         hex.removeAllTerrains();
         hex.addTerrain(new Terrain(Terrains.FIELDS, 1));
-        assertTrue(BoardFeatures.capture(hex, new Coords(0, 0), "").stream()
+        assertTrue(BoardFeatures.capture(hex, new Coords(0, 0), Map.of()).stream()
               .anyMatch(feature -> feature.asset().equals("field") && feature.height() == 1));
     }
 }

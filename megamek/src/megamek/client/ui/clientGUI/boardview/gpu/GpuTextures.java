@@ -1,8 +1,11 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,34 +39,48 @@ final class GpuTextures<K> implements Disposable {
 
     /** Returns true only when the atlas layout changes. Must run on the GL thread. */
     boolean update(Map<K, BoardScene.Pixels> images) {
+        if (images.isEmpty()) {
+            boolean changed = !entries.isEmpty();
+            dispose();
+            return changed;
+        }
+        Map<Entry, BoardScene.Pixels> replacements = new IdentityHashMap<>();
         boolean sameLayout = atlas != null && entries.keySet().equals(images.keySet())
               && images.entrySet().stream().allMatch(item -> {
-                  BoardScene.Pixels old = entries.get(item.getKey()).pixels();
-                  return old.width() == item.getValue().width() && old.height() == item.getValue().height();
+                  Entry old = entries.get(item.getKey());
+                  BoardScene.Pixels pixels = item.getValue();
+                  BoardScene.Pixels shared = replacements.putIfAbsent(old, pixels);
+                  // A shared slot can change in place only if all of its users still agree.
+                  return old.pixels().width() == pixels.width() && old.pixels().height() == pixels.height()
+                        && (shared == null || shared.equals(pixels));
               });
+        // Previously different images may become identical after an edit; merge those slots too.
+        sameLayout &= new HashSet<>(replacements.values()).size() == replacements.size();
         if (sameLayout) {
             Set<Texture> updated = new HashSet<>();
-            images.forEach((key, pixels) -> {
-                Entry old = entries.get(key);
-                if (old.pixels() != pixels) {
-                    Pixmap pixmap = pixmap(pixels);
+            Map<Entry, Entry> next = new IdentityHashMap<>();
+            replacements.forEach((old, pixels) -> {
+                if (!old.pixels().equals(pixels)) {
+                    // PixmapPacker duplicates one edge pixel. Refresh it as well as the interior when a slot changes.
+                    Pixmap pixmap = pixmap(pixels, 1);
                     try {
                         TextureRegion region = old.region();
                         // Keep the managed backing image in sync for context restoration as well.
                         Pixmap page = packer.getPage(old.name()).getPixmap();
                         page.setBlending(Pixmap.Blending.None);
-                        page.drawPixmap(pixmap, region.getRegionX(), region.getRegionY());
+                        page.drawPixmap(pixmap, region.getRegionX() - 1, region.getRegionY() - 1);
                         region.getTexture().bind();
-                        Gdx.gl.glTexSubImage2D(GL20.GL_TEXTURE_2D, 0, region.getRegionX(), region.getRegionY(),
+                        Gdx.gl.glTexSubImage2D(GL20.GL_TEXTURE_2D, 0, region.getRegionX() - 1, region.getRegionY() - 1,
                               pixmap.getWidth(), pixmap.getHeight(), pixmap.getGLFormat(), pixmap.getGLType(),
                               pixmap.getPixels());
-                        entries.put(key, new Entry(pixels, old.name(), region));
+                        next.put(old, new Entry(pixels, old.name(), region));
                         updated.add(region.getTexture());
                     } finally {
                         pixmap.dispose();
                     }
                 }
             });
+            entries.replaceAll((key, old) -> next.getOrDefault(old, old));
             if (mipmaps) {
                 updated.forEach(texture -> {
                     texture.bind();
@@ -73,17 +90,27 @@ final class GpuTextures<K> implements Disposable {
             return false;
         }
         dispose();
-        Map<K, String> names = new HashMap<>();
+        Map<BoardScene.Pixels, String> names = new HashMap<>();
+        Set<BoardScene.Pixels> unique = new HashSet<>(images.values());
+        long area = unique.stream().mapToLong(pixels ->
+              (long) (pixels.width() + ATLAS_BLEED) * (pixels.height() + ATLAS_BLEED)).sum();
+        int side = 128;
+        while (side < 2048 && side * (long) side < area * 1.3) {
+            side *= 2;
+        }
         // Guillotine packing reserves two outer margins AND one margin on each packed rectangle.
-        int width = Math.max(2048, images.values().stream().mapToInt(BoardScene.Pixels::width).max().orElse(0) + 3 * ATLAS_BLEED);
-        int height = Math.max(2048, images.values().stream().mapToInt(BoardScene.Pixels::height).max().orElse(0) + 3 * ATLAS_BLEED);
+        int width = Math.max(side, unique.stream().mapToInt(BoardScene.Pixels::width).max().orElse(0) + 3 * ATLAS_BLEED);
+        int height = Math.max(side, unique.stream().mapToInt(BoardScene.Pixels::height).max().orElse(0) + 3 * ATLAS_BLEED);
         packer = new PixmapPacker(width, height, Pixmap.Format.RGBA8888, ATLAS_BLEED, true);
         images.forEach((key, pixels) -> {
-            Pixmap pixmap = pixmap(pixels);
+            if (names.containsKey(pixels)) {
+                return;
+            }
+            Pixmap pixmap = pixmap(pixels, 0);
             try {
                 String name = "image" + names.size();
                 packer.pack(name, pixmap);
-                names.put(key, name);
+                names.put(pixels, name);
             } finally {
                 pixmap.dispose();
             }
@@ -97,16 +124,21 @@ final class GpuTextures<K> implements Disposable {
                 Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL30.GL_TEXTURE_MAX_LEVEL, 2);
             }
         }
-        names.forEach((key, name) -> entries.put(key, new Entry(images.get(key), name, atlas.findRegion(name))));
+        Map<BoardScene.Pixels, Entry> shared = new HashMap<>();
+        names.forEach((pixels, name) -> shared.put(pixels, new Entry(pixels, name, atlas.findRegion(name))));
+        images.forEach((key, pixels) -> entries.put(key, shared.get(pixels)));
         return true;
     }
 
-    private static Pixmap pixmap(BoardScene.Pixels image) {
-        Pixmap result = new Pixmap(image.width(), image.height(), Pixmap.Format.RGBA8888);
+    private static Pixmap pixmap(BoardScene.Pixels image, int border) {
+        Pixmap result = new Pixmap(image.width() + 2 * border, image.height() + 2 * border, Pixmap.Format.RGBA8888);
         result.setBlending(Pixmap.Blending.None);
-        for (int y = 0; y < image.height(); y++) {
-            for (int x = 0; x < image.width(); x++) {
-                result.drawPixel(x, y, image.rgba(y * image.width() + x));
+        // One direct-buffer write loop instead of one JNI call per pixel. RGBA bytes have fixed order.
+        ByteBuffer buffer = result.getPixels().duplicate().order(ByteOrder.BIG_ENDIAN);
+        for (int y = -border; y < image.height() + border; y++) {
+            int row = Math.clamp(y, 0, image.height() - 1) * image.width();
+            for (int x = -border; x < image.width() + border; x++) {
+                buffer.putInt(image.rgba(row + Math.clamp(x, 0, image.width() - 1)));
             }
         }
         return result;

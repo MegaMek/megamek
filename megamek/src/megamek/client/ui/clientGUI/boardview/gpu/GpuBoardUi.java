@@ -65,6 +65,7 @@ final class GpuBoardUi implements Disposable {
     private final Label subtitle;
     private final Label section;
     private final Label status;
+    private final Label fps;
     private final Label phase;
     private final Label actor;
     private final Label actorMeta;
@@ -175,7 +176,14 @@ final class GpuBoardUi implements Disposable {
         turn.add(completion).right().row();
         help = new Label("", skin, "small");
         help.setEllipsis(true);
-        turn.add(help).colspan(5).minWidth(0).growX().height(16).padTop(4).left();
+        Table footer = new Table();
+        footer.add(help).minWidth(0).growX().left();
+        fps = new Label("", skin, "small");
+        fps.setName("fps");
+        fps.setAlignment(Align.right);
+        fps.setTouchable(Touchable.disabled);
+        footer.add(fps).width(76).padLeft(8).right();
+        turn.add(footer).colspan(5).minWidth(0).growX().height(16).padTop(4);
         root.add(turn).height(TURN_HEIGHT).growX();
 
         popup.setBackground(skin.getDrawable("panel"));
@@ -318,7 +326,9 @@ final class GpuBoardUi implements Disposable {
         hudScale = scale / source.uiPreferences.scale();
         ((ScreenViewport) stage.getViewport()).setUnitsPerPixel(1 / scale);
         stage.getViewport().update(width, height, true);
-        hud.setBounds(0, TURN_HEIGHT, stage.getWidth(), Math.max(1, stage.getHeight() - TOP_HEIGHT - TURN_HEIGHT));
+        // Match the integer board viewport so native HUD pixels are not resampled at fractional edges.
+        hud.setBounds(0, bottomPixels() / scale, stage.getWidth(),
+              Math.max(1, height - topPixels() - bottomPixels()) / scale);
         if (popup.isVisible()) {
             menuSignature = List.of();
             updateMenu();
@@ -846,6 +856,7 @@ final class GpuBoardUi implements Disposable {
     }
 
     void draw() {
+        fps.setText(Gdx.graphics.getFramesPerSecond() + " FPS");
         stage.getViewport().apply();
         stage.act(Math.min(Gdx.graphics.getDeltaTime(), 0.1f));
         stage.draw();

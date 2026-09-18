@@ -96,3 +96,5 @@ units.cache
 # Local design / issue notes (working docs, not part of the repo)
 /docs/issues/
 /docs/Princess/
+/.work
+/.tmp

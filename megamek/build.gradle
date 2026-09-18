@@ -584,6 +584,25 @@ test {
     finalizedBy jacocoTestReport
 }
 
+// Explicit opt-in: the constrained heap makes whole-board raster retention a reproducible failure.
+tasks.register('gpuBoardLargeMapTest', Test) {
+    description = 'Captures a 200x200 GPU board at full resolution with a constrained Java heap'
+    group = 'verification'
+    dependsOn testClasses, stageDataFiles
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    useJUnitPlatform { includeTags 'on-demand' }
+    filter {
+        includeTestsMatching 'megamek.client.ui.clientGUI.boardview.gpu.GpuLargeMapTest'
+        includeTestsMatching 'megamek.client.ui.clientGUI.boardview.gpu.GpuLargeMapSmokeTest'
+    }
+    minHeapSize = '128m'
+    maxHeapSize = '512m'
+    jacoco.enabled = false
+    systemProperty 'java.awt.headless', 'false'
+    systemProperty 'megamek.gpu.screenshots', layout.buildDirectory.dir('gpu-board-review').get().asFile.absolutePath
+}
+
 // Explicit opt-in: requires an actual desktop OpenGL context, unlike the regular geometry/source tests.
 tasks.register('gpuBoardSmoke', Test) {
     description = 'Renders the GPU battle view with shipped artwork and saves top/isometric screenshots'

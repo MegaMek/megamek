@@ -45,6 +45,7 @@ class GpuResourcesSmokeTest {
                 try {
                     checkAtlas();
                     checkAssets();
+                    checkChunkPicking();
                     checkFeatureAndWaterTransparency();
                     checkMeepleShadows();
                     assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
@@ -79,6 +80,38 @@ class GpuResourcesSmokeTest {
             }
         } finally {
             assets.dispose();
+        }
+    }
+
+    private void checkChunkPicking() {
+        BoardScene.Pixels art = hexPixels(java.awt.Color.GREEN);
+        List<BoardScene.Tile> tiles = new ArrayList<>();
+        for (int x = 0; x < 17; x++) {
+            for (int y = 0; y < 17; y++) {
+                tiles.add(new BoardScene.Tile(new Coords(x, y), x == 8 ? 3 : 0, -1, false, 0,
+                      BoardScene.Surface.GRASS, art, null, null, List.of(), List.of()));
+            }
+        }
+        BoardScene scene = new BoardScene(0, 17, 17, tiles, List.of(), List.of(), -1, "", List.of());
+        GpuTerrain terrain = new GpuTerrain();
+        BoardCamera camera = new BoardCamera();
+        camera.resize(1000, 700);
+        try {
+            terrain.update(scene);
+            for (boolean isometric : new boolean[] { false, true }) {
+                camera.setIsometric(isometric);
+                for (int x : new int[] { 0, 7, 8, 15, 16 }) {
+                    for (int y : new int[] { 0, 7, 8, 15, 16 }) {
+                        Coords coords = new Coords(x, y);
+                        Vector3 target = BoardGeometry.center(coords, scene.tile(coords).elevation());
+                        Ray ray = new Ray(new Vector3(target).mulAdd(camera.camera.direction, -1000), camera.camera.direction);
+                        assertEquals(BoardGeometry.pick(scene, ray), terrain.pick(scene, ray),
+                              "Chunk rejection must preserve surface picking at edges, cliffs and partial chunks");
+                    }
+                }
+            }
+        } finally {
+            terrain.dispose();
         }
     }
 
@@ -162,6 +195,19 @@ class GpuResourcesSmokeTest {
     private void checkAtlas() {
         GpuTextures<String> atlas = new GpuTextures<>();
         try {
+            BoardScene.Pixels grass = hexPixels(java.awt.Color.GREEN);
+            BoardScene.Pixels matchingGrass = hexPixels(java.awt.Color.GREEN);
+            BoardScene.Pixels sand = hexPixels(java.awt.Color.YELLOW);
+            assertTrue(atlas.update(Map.of("one", grass, "two", matchingGrass)));
+            assertSame(atlas.region("one"), atlas.region("two"), "Identical artwork must occupy one atlas slot");
+            assertFalse(atlas.update(Map.of("one", sand, "two", sand)), "Shared slots can update together");
+            assertSame(atlas.region("one"), atlas.region("two"));
+            assertTrue(atlas.update(Map.of("one", sand, "two", grass)), "Diverging aliases must split before upload");
+            assertNotSame(atlas.region("one"), atlas.region("two"));
+            assertTrue(atlas.update(Map.of("one", grass, "two", matchingGrass)), "Converging images must merge again");
+            assertSame(atlas.region("one"), atlas.region("two"));
+            assertTrue(atlas.update(Map.of()));
+            assertFalse(atlas.update(Map.of()), "An empty layer must not allocate an atlas every frame");
             for (int[] size : new int[][] { { 2042, 8 }, { 2043, 8 }, { 2048, 8 }, { 8, 2043 },
                   { 3840, 2160 }, { 1280, 800 } }) {
                 BoardScene.Pixels pixels = new BoardScene.Pixels(new BufferedImage(size[0], size[1], BufferedImage.TYPE_INT_ARGB));
@@ -222,7 +268,7 @@ class GpuResourcesSmokeTest {
                 assertEquals(24 * BoardGeometry.UNIT_SCALE, bounds.getWidth(), 0.01f);
                 assertEquals(24 * BoardGeometry.UNIT_SCALE, bounds.getHeight(), 0.01f,
                       "Token size must follow its artwork, not the hex scale");
-                terrain.renderShadows(List.of(unit));
+                terrain.renderShadows(camera.camera, List.of(unit));
                 drawMeeple(terrain, camera, batch, unit);
                 int left = brightness(camera, -35);
                 int right = brightness(camera, 35);
@@ -242,7 +288,7 @@ class GpuResourcesSmokeTest {
             assertEquals(BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE,
                   unit.calculateBoundingBox(new BoundingBox()).mul(unit.transform).getDepth(), 0.001f);
             meeple.place(unit, camera.camera, new Vector3(position).add(0, -100, 0), 0, 2);
-            terrain.renderShadows(List.of(unit));
+            terrain.renderShadows(camera.camera, List.of(unit));
             drawMeeple(terrain, camera, batch, unit);
             assertEquals(brightness(camera, -35), brightness(camera, 35), 3,
                   "Moving a meeple must clear its old shadow");
@@ -255,7 +301,7 @@ class GpuResourcesSmokeTest {
             int index = 0;
             for (float direction : new float[] { 38, -38 }) {
                 terrain.update(shadowScene(floor, 0, new BoardScene.Light(direction, 0)));
-                terrain.renderShadows(List.of(unit));
+                terrain.renderShadows(camera.camera, List.of(unit));
                 drawMeeple(terrain, camera, batch, unit);
                 sideBrightness[index++] = brightness(camera, new Vector3(position).add(12, 0, BoardGeometry.LEVEL));
             }

@@ -48,6 +48,8 @@ import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class GpuBoardSourceTest {
     @Test
@@ -139,6 +141,44 @@ class GpuBoardSourceTest {
             });
         } finally {
             SwingUtilities.invokeAndWait(() -> preferences.setMapTileset(originalTileset));
+        }
+    }
+
+    @Test
+    void coexistingStructuresUseTheirSelectedSaxarbaArtworkAndOwnHeights() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                Coords coords = new Coords(2, 2);
+                Hex hex = new Hex(0);
+                hex.addTerrain(new Terrain(Terrains.BUILDING, 4, true, 0));
+                hex.addTerrain(new Terrain(Terrains.BLDG_ELEV, 4));
+                hex.addTerrain(new Terrain(Terrains.BLDG_CF, 100));
+                hex.addTerrain(new Terrain(Terrains.FUEL_TANK, 2, true, 0));
+                hex.addTerrain(new Terrain(Terrains.FUEL_TANK_ELEV, 2));
+                hex.addTerrain(new Terrain(Terrains.FUEL_TANK_CF, 40));
+                hex.addTerrain(new Terrain(Terrains.FUEL_TANK_MAGN, 100));
+                hex.addTerrain(new Terrain(Terrains.INDUSTRIAL, 3));
+                fixture.game.getBoard().setHex(coords, hex);
+                fixture.source.refresh();
+                var tile = fixture.source.takeFrame().scene().tile(coords);
+                assertEquals(3, tile.features().size());
+                // Default single-hex buildings may select a prefab rather than the connected-building family.
+                HexTileset tileset = new HexTileset(fixture.game, new File(Configuration.dataDir(), "models/board/tileset"));
+                try {
+                    tileset.loadFromFile("saxarba.tileset");
+                } catch (java.io.IOException error) {
+                    throw new IllegalStateException(error);
+                }
+                var buildingSources = tileset.getSupers(fixture.game.getBoard().getHex(coords)).stream()
+                      .filter(image -> tileset.imageHasTerrain(image, Terrains.BUILDING))
+                      .map(tileset::imageSource).map(path -> "buildings/" + path.substring(0, path.lastIndexOf('.'))).toList();
+                assertTrue(tile.features().stream().anyMatch(feature -> buildingSources.contains(feature.asset())
+                      && feature.height() == 4));
+                assertTrue(tile.features().stream().anyMatch(feature -> feature.asset().contains("/fuel_tanks/fuel_tank_medium_")
+                      && feature.height() == 2));
+                assertTrue(tile.features().stream().anyMatch(feature -> feature.asset().contains("/misc/heavy_industrial_")
+                      && feature.height() == 3));
+            });
         }
     }
 
@@ -478,8 +518,9 @@ class GpuBoardSourceTest {
         }
     }
 
-    @Test
-    void screenOverlayCapturesPixelsAndConsumesTheWholeClickGesture() throws Exception {
+    @ParameterizedTest
+    @ValueSource(doubles = { 1, 1.5, 2 })
+    void screenOverlayCapturesNativePixelsAndConsumesTheWholeClickGesture(double density) throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             AtomicInteger hit = new AtomicInteger();
             AtomicInteger board = new AtomicInteger();
@@ -501,11 +542,14 @@ class GpuBoardSourceTest {
                         return false;
                     }
                 });
-                fixture.source.setViewport(200, 100);
+                fixture.source.setViewport(200, 100, (int) (200 * density), (int) (100 * density));
                 fixture.source.refresh();
             });
             BoardScene.Pixels hud = fixture.source.takeFrame().hud();
-            assertEquals(0x00ffffff, hud.rgba(40 * hud.width() + 40));
+            assertEquals((int) (200 * density), hud.width());
+            assertEquals((int) (100 * density), hud.height());
+            assertEquals(0x00ffffff, hud.rgba((int) (40 * density) * hud.width() + (int) (40 * density)));
+            assertEquals(0, hud.rgba((int) (20 * density) * hud.width() + (int) (40 * density)));
             fixture.source.overlayInput(MouseEvent.MOUSE_PRESSED, 40, 40, board::incrementAndGet);
             fixture.source.overlayInput(MouseEvent.MOUSE_RELEASED, 40, 40, board::incrementAndGet);
             SwingUtilities.invokeAndWait(() -> { });

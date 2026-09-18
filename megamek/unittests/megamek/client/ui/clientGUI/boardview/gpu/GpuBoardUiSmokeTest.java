@@ -148,6 +148,11 @@ class GpuBoardUiSmokeTest {
                 }
 
                 private void assertBounds() {
+                    Label fps = controls.stage.getRoot().findActor("fps");
+                    assertEquals(Gdx.graphics.getFramesPerSecond() + " FPS", fps.getText().toString());
+                    Vector2 corner = fps.localToStageCoordinates(new Vector2());
+                    assertTrue(corner.x > controls.stage.getWidth() - 110 && corner.y < GpuBoardUi.TURN_HEIGHT,
+                          "FPS must remain visible in the bottom-right corner, including small windows");
                     Table menu = controls.stage.getRoot().findActor("tactical-menu");
                     assertTrue(menu.getX() >= 0 && menu.getRight() <= controls.stage.getWidth());
                     assertTrue(menu.getY() >= GpuBoardUi.TURN_HEIGHT);

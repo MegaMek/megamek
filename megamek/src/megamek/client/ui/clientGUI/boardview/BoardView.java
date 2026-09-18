@@ -46,11 +46,15 @@ import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -992,6 +996,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     private final RedrawWorker redrawWorker = new RedrawWorker();
+    private final AtomicBoolean redrawPending = new AtomicBoolean();
 
     /**
      * this should only be called once!! this will cause a timer to schedule constant screen updates every 20
@@ -1001,10 +1006,7 @@ public final class BoardView extends AbstractBoardView
         final TimerTask redraw = new TimerTask() {
             @Override
             public void run() {
-                try {
-                    SwingUtilities.invokeLater(redrawWorker);
-                } catch (Exception ignored) {
-                }
+                scheduleRedraw();
             }
         };
         TimerSingleton.getInstance().schedule(redraw, 20, 20);
@@ -1012,14 +1014,25 @@ public final class BoardView extends AbstractBoardView
     }
 
     private void scheduleRedraw() {
+        if (!redrawPending.compareAndSet(false, true)) {
+            return;
+        }
         try {
-            SwingUtilities.invokeLater(redrawWorker);
+            SwingUtilities.invokeLater(() -> {
+                try {
+                    redrawWorker.run();
+                } finally {
+                    redrawPending.set(false);
+                }
+            });
         } catch (Exception ignored) {
+            redrawPending.set(false);
         }
     }
 
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
+        invalidatePlanarCapture();
         switch (e.getName()) {
             case GUIPreferences.SHOW_DEPLOY_ZONES_ARTY_AUTO:
                 showAllDeployment = (boolean) e.getNewValue();
@@ -2660,31 +2673,26 @@ public final class BoardView extends AbstractBoardView
 
         int level = hex.getLevel();
 
-        // get the base tile image
-        Image baseImage = gpuCapture ? gpuTileset.getBase(hex) : tileManager.baseFor(hex);
-        Image scaledImage = getScaledImage(baseImage, true);
-
-        // Some hex images shouldn't be cached, like if they are animated
-        boolean dontCache = animatedImages.contains(baseImage.hashCode());
-
-        int imgWidth = scaledImage.getWidth(null);
-        int imgHeight = scaledImage.getHeight(null);
-
-        imgWidth = Math.min(imgWidth, (int) (HEX_W * scale));
-        imgHeight = Math.min(imgHeight, (int) (HEX_H * scale));
-
-        int largestLevelDiff = 0;
-        for (int dir : allDirections) {
-            Hex adjHex = game.getBoard(boardId).getHexInDir(coords, dir);
-            if (adjHex == null) {
-                continue;
+        Image scaledImage;
+        boolean dontCache = false;
+        int imgWidth = (int) (HEX_W * scale);
+        int imgHeight = (int) (HEX_H * scale);
+        if (!gpuCapture) {
+            // Tactical capture does not draw the base tile or raised classic sides.
+            Image baseImage = tileManager.baseFor(hex);
+            scaledImage = getScaledImage(baseImage, true);
+            dontCache = animatedImages.contains(baseImage.hashCode());
+            imgWidth = Math.min(imgWidth, scaledImage.getWidth(null));
+            imgHeight = Math.min(imgHeight, scaledImage.getHeight(null));
+            int largestLevelDiff = 0;
+            for (int dir : allDirections) {
+                Hex adjHex = game.getBoard(boardId).getHexInDir(coords, dir);
+                if (adjHex != null) {
+                    largestLevelDiff = Math.max(largestLevelDiff, Math.abs(level - adjHex.getLevel()));
+                }
             }
-            int levelDiff = Math.abs(level - adjHex.getLevel());
-            if (levelDiff > largestLevelDiff) {
-                largestLevelDiff = levelDiff;
-            }
+            imgHeight += (int) (verticalOffset * scale * largestLevelDiff);
         }
-        imgHeight += (int) (verticalOffset * scale * largestLevelDiff);
         // If the base image isn't ready, we should signal a repaint and stop
         if ((imgWidth < 0) || (imgHeight < 0)) {
             boardPanel.repaint();
@@ -2959,6 +2967,7 @@ public final class BoardView extends AbstractBoardView
         } catch (Exception e) {
             LOGGER.error(e, "Exception, probably can't load file.");
             drawCenteredString("Loading Error", 0, (int) (50 * scale), font_note, graphics2D);
+            graphics2D.dispose();
             return;
         }
 
@@ -3088,6 +3097,7 @@ public final class BoardView extends AbstractBoardView
         for (var plugin : hexDrawPlugins) {
             plugin.draw(graphics2D, hex, game, coords, this);
         }
+        graphics2D.dispose();
 
         cacheEntry = new HexImageCacheEntry(hexImage);
         if (!dontCache) {
@@ -4271,6 +4281,7 @@ public final class BoardView extends AbstractBoardView
 
     public void addStrafingCoords(Coords coords) {
         strafingCoords.add(coords);
+        repaint();
     }
 
     public void setStrafingCoords(Collection<Coords> coords) {
@@ -4281,6 +4292,7 @@ public final class BoardView extends AbstractBoardView
 
     public void clearStrafingCoords() {
         strafingCoords.clear();
+        repaint();
     }
 
     public ClientGUI getClientgui() {
@@ -4871,9 +4883,29 @@ public final class BoardView extends AbstractBoardView
 
     /** Flat terrain and decals; solid feature models are captured separately from the Hex. */
     public record PlanarHex(Coords coords, BufferedImage terrain, BufferedImage decals,
-          BufferedImage tactical, List<HexText> text, String buildingModel) { }
+          BufferedImage tactical, List<HexText> text, Map<Integer, String> structureModels) { }
 
     private static final int GPU_MARKING_SCALE = 3;
+    private BufferedImage planarChunkImage;
+    private final AtomicLong planarRevision = new AtomicLong();
+
+    void invalidatePlanarCapture() {
+        if (!gpuCapture || !SwingUtilities.isEventDispatchThread()) {
+            planarRevision.incrementAndGet();
+        }
+    }
+
+    public long getPlanarRevision() {
+        return planarRevision.get();
+    }
+
+    /** Releases capture-only working memory when the native view closes or switches boards. */
+    public void releasePlanarCapture() {
+        planarChunkImage = null;
+        planarHexImageCache.clear();
+        groundArtwork.clear();
+        featureArtwork.clear();
+    }
 
     public record CenterRequest(long sequence, Coords coords) { }
     private CenterRequest centerRequest = new CenterRequest(0, null);
@@ -4883,11 +4915,14 @@ public final class BoardView extends AbstractBoardView
     }
 
     /** Screen-anchored board widgets use their existing painters and input handlers in either window. */
-    public BufferedImage captureOverlayImage(Dimension size) {
-        BufferedImage image = new BufferedImage(Math.max(1, size.width), Math.max(1, size.height),
+    public BufferedImage captureOverlayImage(Dimension size, Dimension pixels) {
+        BufferedImage image = new BufferedImage(Math.max(1, pixels.width), Math.max(1, pixels.height),
               BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = image.createGraphics();
         try {
+            // Keep painter layout and hit coordinates logical, but rasterize at the display's native density.
+            graphics.scale(image.getWidth() / (double) Math.max(1, size.width),
+                  image.getHeight() / (double) Math.max(1, size.height));
             UIUtil.setHighQualityRendering(graphics);
             for (IDisplayable overlay : overlays) {
                 overlay.draw(graphics, new Rectangle(size));
@@ -4898,10 +4933,10 @@ public final class BoardView extends AbstractBoardView
         return image;
     }
 
-    public boolean overlayInput(int event, Point point, Dimension size) {
+    public boolean overlayInput(int event, Point point, Dimension size, Dimension pixels) {
         // Drawing establishes widget bounds for this viewport before hit testing.
         if (event != MouseEvent.MOUSE_MOVED) {
-            captureOverlayImage(size);
+            captureOverlayImage(size, pixels);
         }
         for (IDisplayable overlay : overlays) {
             boolean handled = switch (event) {
@@ -4950,6 +4985,33 @@ public final class BoardView extends AbstractBoardView
     }
 
     public List<PlanarHex> capturePlanarHexes(Rectangle hexArea) {
+        List<PlanarHex> result = new ArrayList<>();
+        capturePlanarHexes(hexArea, true, hex -> {
+            BufferedImage marking = hex.tactical();
+            if (marking != null) {
+                BufferedImage copy = new BufferedImage(marking.getWidth(), marking.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                copy.setData(marking.getData());
+                marking = copy;
+            }
+            result.add(new PlanarHex(hex.coords(), hex.terrain(), hex.decals(), marking, hex.text(), hex.structureModels()));
+        });
+        result.sort(Comparator.comparingInt((PlanarHex hex) -> hex.coords().getX())
+              .thenComparingInt(hex -> hex.coords().getY()));
+        return result;
+    }
+
+    /** The consumer must copy pixels before returning: tactical images borrow the reusable capture buffer. */
+    public void capturePlanarHexes(Rectangle hexArea, boolean includeTactical, Consumer<PlanarHex> consumer) {
+        capturePlanarHexes(hexArea, true, includeTactical, consumer);
+    }
+
+    /** Refreshes markings and text without regenerating unchanged terrain artwork or feature models. */
+    public void capturePlanarTactical(Rectangle hexArea, Consumer<PlanarHex> consumer) {
+        capturePlanarHexes(hexArea, false, true, consumer);
+    }
+
+    private void capturePlanarHexes(Rectangle hexArea, boolean includeArtwork, boolean includeTactical,
+          Consumer<PlanarHex> consumer) {
         if (!SwingUtilities.isEventDispatchThread()) {
             throw new IllegalStateException("Board layers must be captured on the Swing event thread");
         }
@@ -4966,7 +5028,7 @@ public final class BoardView extends AbstractBoardView
         }
         Rectangle area = hexArea.intersection(new Rectangle(0, 0, getBoard().getWidth(), getBoard().getHeight()));
         if (area.isEmpty()) {
-            return List.of();
+            return;
         }
         float originalScale = scale;
         int originalZoom = zoomIndex;
@@ -5000,35 +5062,57 @@ public final class BoardView extends AbstractBoardView
             gpuCapture = true;
             shadowMap = null;
             hexImageCache = planarHexImageCache;
-            Map<Coords, PlanarHex> artwork = new HashMap<>();
-            for (int column = area.x; column < area.x + area.width; column++) {
-                for (int row = area.y; row < area.y + area.height; row++) {
-                    Coords coords = new Coords(column, row);
-                    Hex hex = getBoard().getHex(coords);
-                    artwork.put(coords, new PlanarHex(coords, captureGroundArtwork(coords), captureDecals(coords),
-                          null, hexText(coords, hex, getBoard()), buildingModel(hex)));
-                }
-            }
+            ImageCache<Integer, Image> artworkScaledCache = scaledImageCache;
             // Repaint the shared paths, borders and symbols at their destination
             // resolution. Enlarging an already-captured 84px sprite blurs its edges.
             scale = GPU_MARKING_SCALE;
             hex_size = new Dimension(HEX_W * GPU_MARKING_SCALE, HEX_H * GPU_MARKING_SCALE);
             scaledImageCache = new ImageCache<>();
             font_minefield = font_minefield.deriveFont(font_minefield.getSize2D() * GPU_MARKING_SCALE);
-            if (originalOffset != 0 || originalScale != GPU_MARKING_SCALE) {
+            if (includeTactical && (originalOffset != 0 || originalScale != GPU_MARKING_SCALE)) {
                 prepared.stream().filter(sprite -> !sprite.isHidden() && !(sprite instanceof IsometricSprite))
                       .forEach(Sprite::prepare);
             }
-            List<PlanarHex> result = new ArrayList<>();
+            ImageCache<Integer, Image> markingScaledCache = scaledImageCache;
             for (int column = area.x; column < area.x + area.width; column += 16) {
                 for (int row = area.y; row < area.y + area.height; row += 16) {
-                    result.addAll(capturePlanarChunk(new Rectangle(column, row,
-                          Math.min(16, area.x + area.width - column), Math.min(16, area.y + area.height - row)), artwork));
+                    // ImageCache's MAX_SIZE sets its initial capacity, not an eviction limit.
+                    // Keep at most two chunks even when the camera shows the entire board.
+                    if (planarHexImageCache.size() > 256) {
+                        planarHexImageCache.clear();
+                    }
+                    if (groundArtwork.size() > 256) {
+                        groundArtwork.clear();
+                        featureArtwork.clear();
+                    }
+                    Rectangle chunk = new Rectangle(column, row, Math.min(16, area.x + area.width - column),
+                          Math.min(16, area.y + area.height - row));
+                    scale = 1;
+                    hex_size = new Dimension(HEX_W, HEX_H);
+                    scaledImageCache = artworkScaledCache;
+                    Map<Coords, PlanarHex> artwork = new HashMap<>();
+                    for (int x = chunk.x; x < chunk.x + chunk.width; x++) {
+                        for (int y = chunk.y; y < chunk.y + chunk.height; y++) {
+                            Coords coords = new Coords(x, y);
+                            Hex hex = getBoard().getHex(coords);
+                            PlanarHex art = new PlanarHex(coords, includeArtwork ? captureGroundArtwork(coords) : null,
+                                  includeArtwork ? captureDecals(coords) : null, null, hexText(coords, hex, getBoard()),
+                                  includeArtwork ? structureModels(hex) : Map.of());
+                            if (includeTactical) {
+                                artwork.put(coords, art);
+                            } else {
+                                consumer.accept(art);
+                            }
+                        }
+                    }
+                    if (includeTactical) {
+                        scale = GPU_MARKING_SCALE;
+                        hex_size = new Dimension(HEX_W * GPU_MARKING_SCALE, HEX_H * GPU_MARKING_SCALE);
+                        scaledImageCache = markingScaledCache;
+                        capturePlanarChunk(chunk, artwork, consumer);
+                    }
                 }
             }
-            result.sort(Comparator.comparingInt((PlanarHex hex) -> hex.coords().getX())
-                  .thenComparingInt(hex -> hex.coords().getY()));
-            return result;
         } finally {
             scale = originalScale;
             zoomIndex = originalZoom;
@@ -5039,20 +5123,26 @@ public final class BoardView extends AbstractBoardView
             hexImageCache = originalCache;
             shadowMap = originalShadows;
             gpuCapture = originalCapture;
-            if (originalOffset != 0 || originalScale != GPU_MARKING_SCALE) {
+            if (includeTactical && (originalOffset != 0 || originalScale != GPU_MARKING_SCALE)) {
                 prepared.stream().filter(sprite -> !sprite.isHidden() && !(sprite instanceof IsometricSprite))
                       .forEach(Sprite::prepare);
             }
         }
     }
 
-    private List<PlanarHex> capturePlanarChunk(Rectangle area, Map<Coords, PlanarHex> artwork) {
+    private void capturePlanarChunk(Rectangle area, Map<Coords, PlanarHex> artwork, Consumer<PlanarHex> consumer) {
         Rectangle pixels = new Rectangle(area.x * HEX_WC * GPU_MARKING_SCALE, area.y * HEX_H * GPU_MARKING_SCALE,
               ((area.width - 1) * HEX_WC + HEX_W) * GPU_MARKING_SCALE,
               (area.height * HEX_H + HEX_H / 2) * GPU_MARKING_SCALE);
-        BufferedImage tactical = new BufferedImage(pixels.width, pixels.height, BufferedImage.TYPE_INT_ARGB);
+        if (planarChunkImage == null || planarChunkImage.getWidth() < pixels.width || planarChunkImage.getHeight() < pixels.height) {
+            planarChunkImage = new BufferedImage(pixels.width, pixels.height, BufferedImage.TYPE_INT_ARGB);
+        }
+        BufferedImage tactical = planarChunkImage;
         Graphics2D graphics = tactical.createGraphics();
         try {
+            graphics.setComposite(AlphaComposite.Clear);
+            graphics.fillRect(0, 0, tactical.getWidth(), tactical.getHeight());
+            graphics.setComposite(AlphaComposite.SrcOver);
             graphics.translate(-pixels.x, -pixels.y);
             graphics.setClip(pixels);
             UIUtil.setHighQualityRendering(graphics);
@@ -5073,7 +5163,6 @@ public final class BoardView extends AbstractBoardView
         } finally {
             graphics.dispose();
         }
-        List<PlanarHex> result = new ArrayList<>();
         for (int column = area.x; column < area.x + area.width; column++) {
             for (int row = area.y; row < area.y + area.height; row++) {
                 Coords coords = new Coords(column, row);
@@ -5081,29 +5170,29 @@ public final class BoardView extends AbstractBoardView
                 int left = point.x - pixels.x;
                 int top = point.y - pixels.y;
                 PlanarHex art = artwork.get(coords);
-                result.add(new PlanarHex(coords, art.terrain(), art.decals(),
-                      markingImage(tactical, left, top), art.text(), art.buildingModel()));
+                consumer.accept(new PlanarHex(coords, art.terrain(), art.decals(),
+                      markingImage(tactical, left, top), art.text(), art.structureModels()));
             }
         }
-        return result;
     }
 
     private static BufferedImage markingImage(BufferedImage layer, int x, int y) {
         int width = HEX_W * GPU_MARKING_SCALE, height = HEX_H * GPU_MARKING_SCALE;
-        int[] pixels = layer.getRGB(x, y, width, height, null, 0, width);
-        for (int pixel : pixels) {
-            if ((pixel >>> 24) != 0) {
-                // Copy just this marked hex; do not retain the whole capture chunk.
-                BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                image.setRGB(0, 0, width, height, pixels, 0, width);
-                return image;
+        int[] pixels = ((DataBufferInt) layer.getRaster().getDataBuffer()).getData();
+        for (int row = y; row < y + height; row++) {
+            int start = row * layer.getWidth() + x;
+            for (int index = start; index < start + width; index++) {
+                if ((pixels[index] >>> 24) != 0) {
+                    return layer.getSubimage(x, y, width, height);
+                }
             }
         }
         return null;
     }
 
-    private String buildingModel(Hex hex) {
-        if (hex.containsTerrain(Terrains.BUILDING)) {
+    private Map<Integer, String> structureModels(Hex hex) {
+        Map<Integer, String> models = new HashMap<>();
+        if (hex.containsAnyTerrainOf(Terrains.BUILDING, Terrains.FUEL_TANK, Terrains.INDUSTRIAL)) {
             List<Image> images = new ArrayList<>(gpuTileset.getSupers(hex));
             images.add(gpuTileset.getBase(hex));
             for (Image image : images) {
@@ -5112,12 +5201,16 @@ public final class BoardView extends AbstractBoardView
                 if (extension > 0) {
                     String model = "buildings/" + source.substring(0, extension);
                     if (new File(Configuration.dataDir(), "models/board/" + model + ".g3dj").isFile()) {
-                        return model;
+                        for (int terrain : new int[] { Terrains.BUILDING, Terrains.FUEL_TANK, Terrains.INDUSTRIAL }) {
+                            if (hex.containsTerrain(terrain) && gpuTileset.imageHasTerrain(image, terrain)) {
+                                models.putIfAbsent(terrain, model);
+                            }
+                        }
                     }
                 }
             }
         }
-        return "";
+        return Map.copyOf(models);
     }
 
     private BufferedImage captureGroundArtwork(Coords coords) {
@@ -5138,6 +5231,8 @@ public final class BoardView extends AbstractBoardView
                 drawSupers(ground, graphics);
             } finally {
                 graphics.dispose();
+                // Filtered hexes are temporary, not board-owned tileset cache keys.
+                gpuTileset.clearHex(ground);
             }
             return image;
         });
@@ -5159,6 +5254,7 @@ public final class BoardView extends AbstractBoardView
                 drawSupers(flat, graphics);
             } finally {
                 graphics.dispose();
+                gpuTileset.clearHex(flat);
             }
             return image;
         });
@@ -6212,6 +6308,7 @@ public final class BoardView extends AbstractBoardView
     }
 
     public void clearHexImageCache() {
+        invalidatePlanarCapture();
         hexImageCache.clear();
         planarHexImageCache.clear();
         groundArtwork.clear();
@@ -6224,6 +6321,7 @@ public final class BoardView extends AbstractBoardView
      * @param setCoords Set of {@link Coords} to remove
      */
     public void clearHexImageCache(Set<Coords> setCoords) {
+        invalidatePlanarCapture();
         for (Coords coords : setCoords) {
             hexImageCache.remove(coords);
             planarHexImageCache.remove(coords);
@@ -6464,6 +6562,7 @@ public final class BoardView extends AbstractBoardView
 
     public void addHexDrawPlugin(HexDrawPlugin plugin) {
         hexDrawPlugins.add(plugin);
+        invalidatePlanarCapture();
     }
 
     /**

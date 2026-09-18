@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,7 @@ final class GpuBoardSource implements AutoCloseable {
     private GpuBoardActions actions;
     volatile UiPreferences uiPreferences;
     private final Map<Image, BoardScene.Pixels> unitImages = new IdentityHashMap<>();
+    private final BoardScene.PixelPool terrainImages = new BoardScene.PixelPool();
     private final List<BoardScene.Movement> pendingMoves = new ArrayList<>();
     private final Timer timer;
     private final GameListenerAdapter gameListener;
@@ -80,19 +82,24 @@ final class GpuBoardSource implements AutoCloseable {
     private volatile boolean closed;
     private Frame frame;
     private Coords contextCoords;
-    private volatile Dimension viewport = new Dimension(1, 1);
+    /** The GL thread publishes layout and raster sizes together; Swing owns overlay painting and hit testing. */
+    private record OverlayViewport(Dimension size, Dimension pixels) { }
+    private volatile OverlayViewport viewport = new OverlayViewport(new Dimension(1, 1), new Dimension(1, 1));
     private volatile Coords hoverCoords;
     private boolean overlayGesture;
     private volatile Point pointer = new Point(-1, -1);
     private long boardGeneration;
     private volatile Rectangle visibleArea = new Rectangle(0, 0, 16, 16);
+    private Rectangle capturedArea;
+    private long capturedRevision = -1;
 
     public void setVisibleArea(Rectangle area) {
         visibleArea = new Rectangle(area);
     }
 
-    public void setViewport(int width, int height) {
-        viewport = new Dimension(Math.max(1, width), Math.max(1, height));
+    public void setViewport(int width, int height, int pixelWidth, int pixelHeight) {
+        viewport = new OverlayViewport(new Dimension(Math.max(1, width), Math.max(1, height)),
+              new Dimension(Math.max(1, pixelWidth), Math.max(1, pixelHeight)));
     }
 
     public void setHover(Coords coords) {
@@ -239,6 +246,7 @@ final class GpuBoardSource implements AutoCloseable {
             BoardView selectedView = view.getClientgui().getCurrentBoardView()
                   .filter(BoardView.class::isInstance).map(BoardView.class::cast).orElse(view);
             if (selectedView != view) {
+                view.releasePlanarCapture();
                 view = selectedView;
                 actions = new GpuBoardActions(selectedView, phasePanel,
                       () -> closed || view != selectedView, this::refresh);
@@ -260,27 +268,41 @@ final class GpuBoardSource implements AutoCloseable {
             board.addBoardListener(boardListener);
             terrainDirty = true;
         }
+        boolean changedTerrain = terrainDirty;
         if (terrainDirty) {
-            List<BoardScene.Tile> nextTiles = new ArrayList<>();
-            for (BoardView.PlanarHex hex : view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()))) {
-                nextTiles.add(tile(hex, null));
-            }
+            List<BoardScene.Tile> nextTiles = new ArrayList<>(Collections.nCopies(board.getWidth() * board.getHeight(), null));
+            view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()), false,
+                  hex -> nextTiles.set(hex.coords().getX() * board.getHeight() + hex.coords().getY(), tile(hex, null)));
             tiles = List.copyOf(nextTiles);
             terrainDirty = false;
         }
-        List<BoardScene.Tile> painted = new ArrayList<>(tiles);
-        boolean changed = false;
-        for (BoardView.PlanarHex hex : view.capturePlanarHexes(visibleArea)) {
-            int index = hex.coords().getX() * board.getHeight() + hex.coords().getY();
-            BoardScene.Tile old = tiles.get(index);
-            BoardScene.Tile next = tile(hex, old);
-            if (!next.equals(old)) {
-                painted.set(index, next);
-                changed = true;
+        Rectangle area = visibleArea;
+        long revision = view.getPlanarRevision();
+        if (changedTerrain || revision != capturedRevision || !area.equals(capturedArea)) {
+            List<BoardScene.Tile> painted = new ArrayList<>(tiles);
+            for (int index = 0; index < tiles.size(); index++) {
+                BoardScene.Tile old = tiles.get(index);
+                if (old.tactical() != null && !area.contains(old.coords().getX(), old.coords().getY())) {
+                    painted.set(index, new BoardScene.Tile(old.coords(), old.elevation(), old.waterDepth(), old.frozen(),
+                          old.roadExits(), old.surface(), old.ground(), old.decals(), null, old.features(), old.text()));
+                }
             }
-        }
-        if (changed) {
-            tiles = List.copyOf(painted);
+            view.capturePlanarTactical(area, hex -> {
+                int index = hex.coords().getX() * board.getHeight() + hex.coords().getY();
+                BoardScene.Tile old = tiles.get(index);
+                BoardScene.Tile next = new BoardScene.Tile(old.coords(), old.elevation(), old.waterDepth(), old.frozen(),
+                      old.roadExits(), old.surface(), old.ground(), old.decals(),
+                      terrainImages.capture(hex.tactical(), old.tactical()), old.features(), hex.text());
+                if (!next.equals(old)) {
+                    painted.set(index, next);
+                }
+            });
+            if (!painted.equals(tiles)) {
+                tiles = List.copyOf(painted);
+            }
+            terrainImages.retain(tiles);
+            capturedArea = area;
+            capturedRevision = revision;
         }
         List<BoardScene.Unit> units = new ArrayList<>();
         Map<Image, Boolean> usedImages = new IdentityHashMap<>();
@@ -313,8 +335,10 @@ final class GpuBoardSource implements AutoCloseable {
                   }))).toList();
             nextGlobal.add(new BoardScene.Command("boards", "Maps", "", true, false, boards, () -> { }));
         }
-        view.overlayInput(MouseEvent.MOUSE_MOVED, pointer, viewport);
-        BoardScene.Pixels nextHud = BoardScene.Pixels.capture(view.captureOverlayImage(viewport), frame == null ? null : frame.hud());
+        OverlayViewport overlayViewport = viewport;
+        view.overlayInput(MouseEvent.MOUSE_MOVED, pointer, overlayViewport.size(), overlayViewport.pixels());
+        BoardScene.Pixels nextHud = BoardScene.Pixels.capture(
+              view.captureOverlayImage(overlayViewport.size(), overlayViewport.pixels()), frame == null ? null : frame.hud());
         String nextTooltip = GpuBoardActions.plainText(view.getHexTooltip(contextCoords == null ? hoverCoords : contextCoords));
         List<BoardScene.Waypoint> planned = new ArrayList<>();
         if (panel instanceof MovementDisplay movement) {
@@ -352,10 +376,10 @@ final class GpuBoardSource implements AutoCloseable {
               hex.containsTerrain(Terrains.ICE),
               hex.containsTerrain(Terrains.ROAD) ? hex.getTerrain(Terrains.ROAD).getExits() & 63 : 0,
               BoardFeatures.surface(hex),
-              BoardScene.Pixels.capture(pixels.terrain(), previous == null ? null : previous.ground()),
-              BoardScene.Pixels.capture(pixels.decals(), previous == null ? null : previous.decals()),
-              BoardScene.Pixels.capture(pixels.tactical(), previous == null ? null : previous.tactical()),
-              BoardFeatures.capture(hex, pixels.coords(), pixels.buildingModel()), pixels.text());
+              terrainImages.capture(pixels.terrain(), previous == null ? null : previous.ground()),
+              terrainImages.captureOverlay(pixels.decals(), previous == null ? null : previous.decals()),
+              terrainImages.capture(pixels.tactical(), previous == null ? null : previous.tactical()),
+              BoardFeatures.capture(hex, pixels.coords(), pixels.structureModels()), pixels.text());
     }
 
     private boolean sensorContact(Entity entity) {
@@ -450,7 +474,8 @@ final class GpuBoardSource implements AutoCloseable {
             if (closed) {
                 return;
             }
-            boolean handled = view.overlayInput(event, new Point(x, y), viewport);
+            OverlayViewport overlayViewport = viewport;
+            boolean handled = view.overlayInput(event, new Point(x, y), overlayViewport.size(), overlayViewport.pixels());
             if (event == MouseEvent.MOUSE_PRESSED) {
                 overlayGesture = handled;
             } else {
@@ -525,5 +550,11 @@ final class GpuBoardSource implements AutoCloseable {
             board.removeBoardListener(boardListener);
         }
         unitImages.clear();
+        terrainImages.clear();
+        tiles = List.of();
+        view.releasePlanarCapture();
+        synchronized (this) {
+            pendingMoves.clear();
+        }
     }
 }

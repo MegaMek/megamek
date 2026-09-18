@@ -9,6 +9,7 @@ The classic window hides after the first GPU frame. **View > Classic Board**, or
 closing the GPU window, disposes the renderer and restores the existing client.
 The game, pending orders, and phase controls remain the same. Startup failure
 leaves the classic interface available; closing the game does not reopen it.
+The bottom-right corner shows the measured rendering FPS, refreshed once per second.
 
 ## Terrain and assets
 
@@ -31,14 +32,18 @@ files, so editing them does not change the 2D board.
 
 Buildings use the exact image selected by that tileset, including theme, fluff,
 and connected-section variants. Offline outline simplification and Blender
-triangulation produce 3,015 indexed building models with original roof UVs and
+triangulation produce 3,295 indexed structure models with original roof UVs and
 pixels, straight wall edges, and retained courtyards/disconnected parts. The
-largest is 499 triangles. Windowed facades repeat per story and inherit a tint
-from the roof palette. Blank tileset sections stay blank. There are no generic
+largest is 499 triangles. Facades follow the selected artwork's family and roof
+palette: light windows, medium concrete, hard reinforced concrete, heavy armor,
+sci-fi fortress walls, hangar shutters, tank metal and industrial service panels.
+Hangar doors and fortress buttresses span the complete wall height; ordinary
+courses retain fixed story spacing. Fuel tanks and industry use the same exact
+roof pipeline. Blank tileset sections stay blank. There are no generic
 replacement building shapes or runtime terrain-image extrusion.
 
-The asset directory also contains tank, factory, bridge-arm, crop-row, sixteen
-tree models and six rubble rock models; all 26 are at or below 480 triangles.
+The asset directory also contains bridge-arm, crop-row, sixteen tree models and
+six rubble rock models; all 24 are at or below 480 triangles.
 Runtime only loads models
 actually used by the board. Roof and wall picking uses their actual triangles.
 
@@ -69,15 +74,22 @@ themes use rock; pavement uses concrete. Snow has rock beneath snow cover.
 World-scaled UVs repeat the wall material once per 96 world units, with a stable
 world-space phase instead of restarting each face. Repeating materials sample
 at no more than 128 texels across, matching the original board artwork more
-closely; editable source images retain their resolution. Window spacing is
-eight windows per 128 world units. A ragged cover strip descends 12–18 world
-units from the upper edge, clipped to the exposed face and faded at its lower
-boundary. Its profile varies continuously in world space. Grass retains its
-authored cover texture. Other surfaces fold a strip of the hex's actual ground
-artwork down the face at the original texel density, so desert, volcanic, lunar,
-Martian, concrete and snow edges inherit their top surface's colour and detail.
-The fade is independent of the UVs and blends into the geology below; samples
-meet at corners and follow atlas updates when the ground artwork changes.
+closely. Building facades and geology ship as 128 by 128 PNGs under
+`textures/buildings/` and `textures/terrain/`; untouched originals live in each
+folder's `full-resolution/` subdirectory. `tools/prepare_board_textures.py`
+rebuilds those runtime copies. Light-building window spacing is
+eight windows per 128 world units. Six 128 by 128 rim maps add material-specific
+turf, soil, sand, rock, concrete and snow detail, tinted from opaque pixels just
+inside the selected hex's ground artwork. This keeps desert, volcanic, lunar,
+Martian and snow palettes tied to the actual tileset. A shared irregular mesh
+profile descends 4–14 world units and fades over its final 1.5 units.
+World-scaled UVs repeat once per 96 units in both directions, independently of
+rim depth. Short and sloping walls clip the rim instead of squeezing or stretching
+its texture. The profile meets at corners, and changed ground pixels refresh
+the affected chunk's rim colors.
+Concrete retains its rim and incline overlay, including between paved hexes.
+Its rim has a straight lower edge at a constant nine-world-unit depth; all
+other materials keep the irregular profile.
 
 The copied `High_Incline` south-edge (`08`) artwork adds top detail along exposed
 sides at its original scale. Grass, snow, sand and rocky/earth materials use
@@ -104,7 +116,12 @@ shorelines follow the water-neighbor pattern, inspired by `Structured_Water`.
 Dry-facing edges have a land bank and sloping submerged shore; adjacent water
 hexes share exactly matching open mouths. Different bed depths retain their
 physical underwater steps. Each shore segment uses a bounded six-piece curve.
+A separate 128 by 128 bed map supplies silt, sand and small pebble detail at
+the same fixed material scale; it contains no baked water-surface reflections.
 A blended sandy band fades from the land into damp sand along the waterline.
+Each bank continues the adjoining dry hex's selected terrain artwork into that
+fade, so sand, snow and other terrain retain their own shoreline palette.
+Banks at the board boundary use the water hex's own ground artwork.
 River mouths use roughly 33 of the hex edge's 42 world units at default scale;
 their sandy fade starts at the edge corners. Connected channels retain this
 width through bends, while isolated basins keep their rounded land banks.
@@ -195,7 +212,9 @@ dimensions on the render thread. No geometry tuning requires a second artwork
 capture or an alternate renderer.
 
 Scene2D reads monitor DPI and window size. Font rasterization and UI scaling
-keep controls usable from small windows to 4K. Menus and board input consume
+keep controls usable from small windows to 4K. The shared overlay painters and
+their text caches rasterize at the framebuffer's native pixel density while
+retaining logical coordinates for layout and input. Menus and board input consume
 complete gestures independently. Detailed dialogs and chat entry still use the
 Swing client. See [contextual-ui.md](contextual-ui.md).
 
@@ -218,20 +237,37 @@ on the roof footprint. Other hex labels retain their terrain anchors.
   independent textures. Changing a marking does not rebuild terrain geometry.
   Capture raster scale is independent of the classic zoom index, including
   image-backed ECM shading. Measurement cursors rasterize at that same scale.
+  One reusable chunk buffer and bounded raster caches keep the working set
+  independent of board area. Identical immutable images share pixel storage
+  and atlas slots; diverging images split, and matching images merge again.
+  Repaints, board changes and camera coverage invalidate tactical capture;
+  unchanged frames reuse it, and offscreen markings are released.
 - `BoardGeometry` owns dimensions and terrain picking; `BoardSurface` defines
   the physical roads, banks, beds and exposed sides.
 - `GpuAssets` owns shared feature meshes, repeating textures, and water frames.
-- `GpuTerrain` batches terrain and opaque features in 8 by 8 chunks. Changes to
+- `GpuTerrain` batches terrain and opaque features in 16 by 16 chunks. Changes to
   a tile's height/material/features rebuild its chunk and affected neighbors;
   atlas-layout, board-size, floor, and tuning changes rebuild the required
-  scene. Pixel-only changes update texture slots. Camera changes reuse meshes.
+  scene. Pixel-only changes update texture slots; ground color changes also
+  rebuild their chunk to refresh rim tints. Camera changes reuse meshes.
+  Opaque batches use tightly sized meshes and release mesh-builder scratch
+  storage after each chunk. Label glyph geometry shares the font atlas, is
+  cached by chunk/elevation, and refreshes when labels or geometry tuning change.
 - Chunk bounds cull offscreen terrain and include water and feature heights.
   Unit bounds first reject unrelated chunks before testing feature occupancy.
+  Pointer picking rejects unrelated chunks before running the shared surface
+  and authored-mesh intersection code.
 - The draw order is opaque terrain/features, flat decals, units, transparent
   water/faded features, tactical marks, and screen annotations/UI.
+  Tactical marks, including deployment borders, follow the ground and road
+  approaches one-third of a level above the surface (above water in rivers).
+  They test opaque depth without writing it, so buildings and higher terrain
+  occlude them. Border colors and existing translucent fills are retained.
 - One 2048-pixel directional shadow map includes terrain, opaque features, and
-  units. It refreshes when geometry, light, occupancy, or unit transforms change;
-  camera-only changes reuse it. Large boards have lower shadow resolution.
+  units. Its coverage follows the camera's visible receivers, keeping closeup
+  detail independent of map size while including offscreen shadow casters.
+  The light grid aligns to texels to stabilize panning. Geometry, lighting,
+  occupancy, unit transforms and camera changes invalidate the cached map.
 - GL resources are created and disposed on the render thread. Shared assets own
   their textures; instance material changes do not transfer ownership.
 - `GpuBoardActions` adapts real phase buttons, menus, weapon lists, and ammunition
@@ -245,6 +281,7 @@ Run from the checkout root:
 ```text
 .\gradlew.bat :megamek:test --tests "megamek.client.ui.clientGUI.boardview.gpu.*Test" --offline
 .\gradlew.bat :megamek:gpuBoardSmoke --offline
+.\gradlew.bat :megamek:gpuBoardLargeMapTest --offline
 ```
 
 Regular tests cover geometry/picking, one-ended road ramps in all six directions,
@@ -260,20 +297,37 @@ camera gestures, movement playback, exclusive-window switching, reopening,
 resize through 3840 by 2160, and the atlas packing boundary. Rendered-pixel
 checks verify unit lighting/shadows, translucent water at depths 0/1/2,
 occupied-feature fading, and opacity restoration. Representative building
-families and all 26 other models are loaded natively; GIF frames must advance.
+families and all 24 other models are loaded natively; GIF frames must advance.
 `mm-data/tools/validate_board_assets.py` checks every exported model's budget,
 indices, roof winding/pixel fidelity, and independent texture dependencies.
+
+`gpuBoardLargeMapTest` captures and renders 40,000 hexes with a 512 MiB Java heap,
+using the shipped Grassland 2 terrain repeated into a 200 by 200 board. It checks
+full-resolution artwork, exact image sharing, marking eviction, board edits,
+both camera views and offscreen chunk culling. It records overview/closeup
+frame times and screenshots without coverage instrumentation. This constrains
+the Java heap, not total process memory or GPU memory; results depend on the
+board content, hardware and display settings.
 
 `GpuAssetCatalogSmokeTest` renders actual Saxarba ground with the authored
 catalog, connected buildings at unequal heights, snow trees, bridges, ice,
 water depths, road level changes, and material-specific exposed walls. Images and measured frame
 times are written to `megamek/build/gpu-board-review/`.
+`GpuBuildingMaterialsSmokeTest` renders construction strengths, fortress and
+hangar classes, circular fuel-tank roofs, and industrial structures selected by
+the real tileset. It verifies facade families, shared texture ownership, repeat
+wrapping, and 128 by 128 building/geology uploads, and captures facade closeups.
 `GpuTacticalSmokeTest` captures friendly and enemy deployment ECM and a distance
 measurement outline over elevated terrain.
 `GpuRiverSmokeTest` captures straight/bent channels, textured elevation drops,
 mixed woodland, snow variants, low rubble and a zero-elevation textured bridge
 over the riverbank in both camera views. A pixel sample on the vertical waterfall
 verifies that the fall itself animates.
+`GpuTerrainRimTest` checks fixed texel scale on sloping and clipped rims at
+three board scales. `GpuTerrainMaterialsSmokeTest` renders all six 128 by 128
+rim materials with the actual Saxarba themes and shallow/deep water. It also
+checks that a ground-pixel change refreshes a rendered rim's color without an
+atlas layout change. Its screenshots are named `terrain-*-rim.png`.
 
 ## Scope and limits
 

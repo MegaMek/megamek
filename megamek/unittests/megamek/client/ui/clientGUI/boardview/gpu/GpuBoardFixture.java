@@ -32,8 +32,16 @@ final class GpuBoardFixture implements AutoCloseable {
     JComponent panel = new JPanel();
 
     private GpuBoardFixture() throws Exception {
+        this(loadBoard());
+    }
+
+    private static Board loadBoard() {
         Board board = new Board();
         board.load(new File("data/boards/AGoAC Maps/16x17 Grassland 2.board"));
+        return board;
+    }
+
+    private GpuBoardFixture(Board board) throws Exception {
         game.setBoard(board);
         game.setPhase(GamePhase.MOVEMENT);
         player.setTeam(1);
@@ -53,6 +61,12 @@ final class GpuBoardFixture implements AutoCloseable {
 
     static GpuBoardFixture create() throws Exception {
         FutureTask<GpuBoardFixture> task = new FutureTask<>(GpuBoardFixture::new);
+        SwingUtilities.invokeAndWait(task);
+        return task.get();
+    }
+
+    static GpuBoardFixture create(Board board) throws Exception {
+        FutureTask<GpuBoardFixture> task = new FutureTask<>(() -> new GpuBoardFixture(board));
         SwingUtilities.invokeAndWait(task);
         return task.get();
     }

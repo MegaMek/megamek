@@ -2,8 +2,15 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.awt.image.Raster;
+import java.awt.image.SinglePixelPackedSampleModel;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.board.Coords;
@@ -38,12 +45,15 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     /** A material family determines the exposed geology and the overhanging surface cover. */
     enum Surface {
-        GRASS("dirt"), DIRT("dirt"), SAND("sand"), ROCK("rock"), CONCRETE("concrete"), SNOW("rock");
+        GRASS("terrain/dirt", "grass-rim"), DIRT("terrain/dirt", "dirt-rim"), SAND("terrain/sand", "sand-rim"),
+        ROCK("terrain/rock", "rock-rim"), CONCRETE("terrain/concrete", "concrete-rim"), SNOW("terrain/rock", "snow-rim");
 
         final String wall;
+        final String rim;
 
-        Surface(String wall) {
+        Surface(String wall, String rim) {
             this.wall = wall;
+            this.rim = rim;
         }
     }
 
@@ -103,11 +113,36 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         private final int width;
         private final int height;
         private final int[] argb;
+        private final int hash;
 
         public Pixels(BufferedImage image) {
-            width = image.getWidth();
-            height = image.getHeight();
-            argb = image.getRGB(0, 0, width, height, null, 0, width);
+            this(image.getWidth(), image.getHeight(), read(image, null));
+        }
+
+        private static int[] read(BufferedImage image, int[] target) {
+            int width = image.getWidth();
+            int height = image.getHeight();
+            if (image.getType() != BufferedImage.TYPE_INT_ARGB) {
+                return image.getRGB(0, 0, width, height, target, 0, width);
+            }
+            int[] result = target == null ? new int[width * height] : target;
+            Raster raster = image.getRaster();
+            DataBufferInt data = (DataBufferInt) raster.getDataBuffer();
+            SinglePixelPackedSampleModel sample = (SinglePixelPackedSampleModel) raster.getSampleModel();
+            int offset = data.getOffset() + sample.getOffset(raster.getMinX() - raster.getSampleModelTranslateX(),
+                  raster.getMinY() - raster.getSampleModelTranslateY());
+            int[] source = data.getData();
+            for (int row = 0; row < height; row++) {
+                System.arraycopy(source, offset + row * sample.getScanlineStride(), result, row * width, width);
+            }
+            return result;
+        }
+
+        private Pixels(int width, int height, int[] argb) {
+            this.width = width;
+            this.height = height;
+            this.argb = argb;
+            hash = 31 * (31 * width + height) + Arrays.hashCode(argb);
         }
 
         public static Pixels capture(BufferedImage image, Pixels previous) {
@@ -115,8 +150,18 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
                 return null;
             }
             Pixels next = new Pixels(image);
-            return previous != null && next.width == previous.width && next.height == previous.height
-                  && Arrays.equals(next.argb, previous.argb) ? previous : next;
+            return next.equals(previous) ? previous : next;
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return this == other || other instanceof Pixels pixels && width == pixels.width && height == pixels.height
+                  && hash == pixels.hash && Arrays.equals(argb, pixels.argb);
         }
 
         public int width() {
@@ -129,6 +174,51 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
         public int rgba(int index) {
             return (argb[index] << 8) | ((argb[index] >>> 24) & 0xff);
+        }
+    }
+
+    /** Exact sharing, owned by the Swing source. Only artwork still referenced by the current scene is retained. */
+    static final class PixelPool {
+        private final Map<Pixels, Pixels> images = new HashMap<>();
+        private final Map<Integer, int[]> buffers = new HashMap<>();
+
+        Pixels capture(BufferedImage image, Pixels previous) {
+            if (image == null) {
+                return null;
+            }
+            int[] buffer = buffers.computeIfAbsent(image.getWidth() * image.getHeight(), size -> new int[size]);
+            Pixels.read(image, buffer);
+            Pixels lookup = new Pixels(image.getWidth(), image.getHeight(), buffer);
+            if (lookup.equals(previous)) {
+                return previous;
+            }
+            Pixels shared = images.get(lookup);
+            if (shared != null) {
+                return shared;
+            }
+            Pixels owned = new Pixels(lookup.width, lookup.height, buffer.clone());
+            images.put(owned, owned);
+            return owned;
+        }
+
+        Pixels captureOverlay(BufferedImage image, Pixels previous) {
+            Pixels pixels = capture(image, previous);
+            return pixels == null || Arrays.stream(pixels.argb).allMatch(pixel -> (pixel >>> 24) == 0) ? null : pixels;
+        }
+
+        void retain(List<Tile> tiles) {
+            Set<Pixels> used = new HashSet<>();
+            for (Tile tile : tiles) {
+                used.add(tile.ground());
+                used.add(tile.decals());
+                used.add(tile.tactical());
+            }
+            images.keySet().retainAll(used);
+        }
+
+        void clear() {
+            images.clear();
+            buffers.clear();
         }
     }
 }

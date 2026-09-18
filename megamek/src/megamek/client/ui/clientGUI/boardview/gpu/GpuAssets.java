@@ -81,7 +81,8 @@ final class GpuAssets implements Disposable {
         return materials.computeIfAbsent(file.file().toPath().normalize().toString(), key -> {
             Texture texture = new Texture(file, true);
             texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
-            boolean repeating = file.parent().name().equals("textures");
+            boolean repeating = file.file().toPath().toAbsolutePath().normalize()
+                  .startsWith(new File(root, "textures").toPath().toAbsolutePath().normalize());
             Texture.TextureWrap wrap = repeating ? Texture.TextureWrap.Repeat : Texture.TextureWrap.ClampToEdge;
             texture.setWrap(wrap, wrap);
             if (repeating) {

@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.ApplicationAdapter;
@@ -20,6 +21,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -30,6 +32,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -39,7 +42,7 @@ import megamek.common.board.Coords;
 
 /** GPU board and Scene2D controls. The source remains the sole bridge to the existing client. */
 class GpuBattleView extends ApplicationAdapter {
-    private static final boolean SPREAD_UNIT_ANNOTATIONS = true;
+    private static final boolean SPREAD_UNIT_ANNOTATIONS = false;
     private static final float UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE = -1;
     /** Airborne meeples hover: one full wave cycle lasts this long. */
     static final float HOVER_PERIOD_SECONDS = 2.6f;
@@ -70,6 +73,10 @@ class GpuBattleView extends ApplicationAdapter {
     private ShapeRenderer lines;
     private GpuBoardUi ui;
     private BoardScene scene;
+    private record HexTextChunk(BitmapFontCache glyphs, BoundingBox bounds) { }
+    private final Map<Integer, List<HexTextChunk>> hexTextByHeight = new TreeMap<>();
+    private List<BoardScene.Tile> textTiles;
+    private int textTuning = -1;
     private Coords hovered;
     private int speedIndex;
     private boolean fitted;
@@ -79,6 +86,8 @@ class GpuBattleView extends ApplicationAdapter {
     private long centerSequence;
     private int layoutWidth;
     private int layoutHeight;
+    private int layoutPixelWidth;
+    private int layoutPixelHeight;
     private float layoutScale;
     private float layoutPreference;
     private long hoverCameraRevision;
@@ -108,17 +117,23 @@ class GpuBattleView extends ApplicationAdapter {
         }
         float preference = source.uiPreferences.scale();
         float scale = displayScale.read(preference);
-        if (width == layoutWidth && height == layoutHeight && scale == layoutScale && preference == layoutPreference) {
+        int pixelWidth = Gdx.graphics.getBackBufferWidth();
+        int pixelHeight = Gdx.graphics.getBackBufferHeight();
+        if (width == layoutWidth && height == layoutHeight && scale == layoutScale && preference == layoutPreference
+              && pixelWidth == layoutPixelWidth && pixelHeight == layoutPixelHeight) {
             return;
         }
         layoutWidth = width;
         layoutHeight = height;
+        layoutPixelWidth = pixelWidth;
+        layoutPixelHeight = pixelHeight;
         layoutScale = scale;
         layoutPreference = preference;
         ui.resize(width, height, scale);
         int boardHeight = Math.max(1, height - ui.topPixels() - ui.bottomPixels());
         boardCamera.resize(width, boardHeight, scene, scale);
-        source.setViewport(Math.round(width / ui.hudScale()), Math.round(boardHeight / ui.hudScale()));
+        source.setViewport(Math.round(width / ui.hudScale()), Math.round(boardHeight / ui.hudScale()),
+              pixelWidth, Math.round(boardHeight * (pixelHeight / (float) height)));
     }
 
     @Override
@@ -142,6 +157,7 @@ class GpuBattleView extends ApplicationAdapter {
             hovered = null;
             fitted = false;
         }
+        boolean changedTiles = scene == null || scene.tiles() != frame.scene().tiles();
         scene = frame.scene();
         boardGeneration = frame.boardGeneration();
         ui.update(frame, Messages.getString("GpuBoard.speed", SPEED_LABELS[speedIndex]));
@@ -188,11 +204,13 @@ class GpuBattleView extends ApplicationAdapter {
                 }
             }
         }
+        if (changedTiles || hoverCameraRevision != boardCamera.revision()) {
+            source.setVisibleArea(boardCamera.visibleArea(scene));
+        }
         if (hoverCameraRevision != boardCamera.revision()) {
             hoverCameraRevision = boardCamera.revision();
             boardInput.mouseMoved(Gdx.input.getX(), Gdx.input.getY());
         }
-        source.setVisibleArea(boardCamera.visibleArea(scene));
         Set<Integer> visible = scene.units().stream().filter(unit -> !unit.sensorContact())
               .map(BoardScene.Unit::id).collect(Collectors.toSet());
         motions.keySet().retainAll(visible);
@@ -211,7 +229,7 @@ class GpuBattleView extends ApplicationAdapter {
         applyHover();
         List<ModelInstance> units = new ArrayList<>(unitInstances.values());
         terrain.animate(Gdx.graphics.getDeltaTime(), units);
-        terrain.renderShadows(units);
+        terrain.renderShadows(boardCamera.camera, units);
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
         atmosphere.begin((int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight,
               Gdx.graphics.getDeltaTime());
@@ -430,57 +448,73 @@ class GpuBattleView extends ApplicationAdapter {
     }
 
     private void renderHexText() {
-        BitmapFont font = ui.boldFont();
-        float scaleX = font.getData().scaleX;
-        float scaleY = font.getData().scaleY;
-        Color color = new Color(font.getColor());
-        boolean integerPositions = font.usesIntegerPositions();
-        font.setUseIntegerPositions(false);
+        if (textTiles != scene.tiles() || textTuning != BoardGeometry.revision()) {
+            cacheHexText();
+        }
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
         annotationBatch.setProjectionMatrix(boardCamera.camera.combined);
-        GlyphLayout layout = new GlyphLayout();
         annotationBatch.begin();
-        record LabelAt(BoardScene.Tile tile, BoardView.HexText label) { }
-        Map<Integer, List<LabelAt>> heights = new java.util.TreeMap<>();
-        for (BoardScene.Tile tile : scene.tiles()) {
-            for (BoardView.HexText label : tile.text()) {
-                int elevation = tile.elevation() + label.elevation();
-                if (boardCamera.camera.frustum.sphereInFrustum(
-                      BoardGeometry.center(tile.coords(), elevation), BoardGeometry.WIDTH)) {
-                    heights.computeIfAbsent(elevation, key -> new ArrayList<>()).add(new LabelAt(tile, label));
-                }
-            }
-        }
-        for (var group : heights.entrySet()) {
+        for (var group : hexTextByHeight.entrySet()) {
             annotationBatch.setTransformMatrix(new Matrix4().setToTranslation(0, 0,
                   group.getKey() * BoardGeometry.LEVEL + 0.6f));
-            for (LabelAt at : group.getValue()) {
-                BoardScene.Tile tile = at.tile();
-                BoardView.HexText label = at.label();
-                font.getData().setScale(label.font().getSize2D() / GpuBoardUi.FONT_RESOLUTION);
-                font.setColor(new Color((label.argb() << 8) | ((label.argb() >>> 24) & 0xff)));
-                layout.setText(font, label.text());
-                float x = BoardGeometry.centerX(tile.coords());
-                float baseline = BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2
-                      - label.baseline() * BoardGeometry.HEX_SCALE;
-                var roof = label.elevation() > 0 ? terrain.roofBounds(tile.coords()) : null;
-                if (roof != null) {
-                    float fit = Math.min(1, Math.max(8, roof.getWidth() - 4 * BoardGeometry.HEX_SCALE) / layout.width);
-                    font.getData().setScale(font.getData().scaleX * fit);
-                    layout.setText(font, label.text());
-                    x = roof.getCenterX();
-                    baseline = roof.getCenterY() - layout.height / 2;
+            for (HexTextChunk chunk : group.getValue()) {
+                if (boardCamera.camera.frustum.boundsInFrustum(chunk.bounds())) {
+                    chunk.glyphs().draw(annotationBatch);
                 }
-                font.draw(annotationBatch, layout, x - layout.width / 2,
-                      label.fromTop() ? baseline : baseline + layout.height);
             }
         }
         annotationBatch.end();
         annotationBatch.setTransformMatrix(new Matrix4());
-        font.getData().setScale(scaleX, scaleY);
-        font.setColor(color);
-        font.setUseIntegerPositions(integerPositions);
+    }
+
+    /** Immutable label vertices share the font atlas and are reused in both views until their source changes. */
+    private void cacheHexText() {
+        BitmapFont font = ui.boldFont();
+        float scaleX = font.getData().scaleX;
+        float scaleY = font.getData().scaleY;
+        Color color = new Color(font.getColor());
+        Map<Integer, Map<Coords, HexTextChunk>> groups = new TreeMap<>();
+        try {
+            for (BoardScene.Tile tile : scene.tiles()) {
+                for (BoardView.HexText label : tile.text()) {
+                    int height = tile.elevation() + label.elevation();
+                    Coords cell = new Coords(tile.coords().getX() / GpuTerrain.CHUNK_SIZE,
+                          tile.coords().getY() / GpuTerrain.CHUNK_SIZE);
+                    HexTextChunk chunk = groups.computeIfAbsent(height, key -> new HashMap<>())
+                          .computeIfAbsent(cell, key -> new HexTextChunk(new BitmapFontCache(font, false), new BoundingBox().inf()));
+                    float centerX = BoardGeometry.centerX(tile.coords());
+                    float centerY = BoardGeometry.centerY(tile.coords());
+                    float z = height * BoardGeometry.LEVEL;
+                    chunk.bounds().ext(centerX - BoardGeometry.WIDTH, centerY - BoardGeometry.WIDTH, z - 1)
+                          .ext(centerX + BoardGeometry.WIDTH, centerY + BoardGeometry.WIDTH, z + 1);
+                    font.getData().setScale(label.font().getSize2D() / GpuBoardUi.FONT_RESOLUTION);
+                    int argb = label.argb();
+                    font.setColor(((argb >>> 16) & 255) / 255f, ((argb >>> 8) & 255) / 255f,
+                          (argb & 255) / 255f, ((argb >>> 24) & 255) / 255f);
+                    GlyphLayout layout = new GlyphLayout(font, label.text());
+                    float x = centerX;
+                    float baseline = centerY + BoardGeometry.HEIGHT / 2 - label.baseline() * BoardGeometry.HEX_SCALE;
+                    var roof = label.elevation() > 0 ? terrain.roofBounds(tile.coords()) : null;
+                    if (roof != null) {
+                        float fit = Math.min(1, Math.max(8, roof.getWidth() - 4 * BoardGeometry.HEX_SCALE) / layout.width);
+                        font.getData().setScale(font.getData().scaleX * fit);
+                        layout.setText(font, label.text());
+                        x = roof.getCenterX();
+                        baseline = roof.getCenterY() - layout.height / 2;
+                    }
+                    chunk.glyphs().addText(layout, x - layout.width / 2,
+                          label.fromTop() ? baseline : baseline + layout.height);
+                }
+            }
+        } finally {
+            font.getData().setScale(scaleX, scaleY);
+            font.setColor(color);
+        }
+        hexTextByHeight.clear();
+        groups.forEach((height, chunks) -> hexTextByHeight.put(height, List.copyOf(chunks.values())));
+        textTiles = scene.tiles();
+        textTuning = BoardGeometry.revision();
     }
 
     static float annotationScale(float displayScale) {
@@ -791,6 +825,8 @@ class GpuBattleView extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        hexTextByHeight.clear();
+        textTiles = null;
         if (ui != null) {
             ui.dispose();
         }

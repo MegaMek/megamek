@@ -12,7 +12,12 @@ import com.badlogic.gdx.math.Vector3;
 final class BoardSurface {
     private static final int SHORE_SEGMENTS = 6;
     enum Finish { TOP, SHORE, BED, BANK, ICE }
-    record Face(Vector3 a, Vector3 b, Vector3 c, Finish finish) { }
+    /** landEdge identifies the adjoining dry hex for bank artwork; other faces use -1. */
+    record Face(Vector3 a, Vector3 b, Vector3 c, Finish finish, int landEdge) {
+        Face(Vector3 a, Vector3 b, Vector3 c, Finish finish) {
+            this(a, b, c, finish, -1);
+        }
+    }
     record Side(Vector3 a, Vector3 b, float lowA, float lowB, int edge) { }
 
     final BoardScene.Tile tile;
@@ -92,8 +97,8 @@ final class BoardSurface {
                 Vector3 b = new Vector3(corners[edge]).lerp(corners[(edge + 1) % 6], (segment + 1f) / SHORE_SEGMENTS);
                 Vector3 lipA = shoreLip(waterline[index], a);
                 Vector3 lipB = shoreLip(waterline[next], b);
-                quad(a, b, lipB, lipA, Finish.TOP);
-                quad(lipA, lipB, waterline[next], waterline[index], Finish.SHORE);
+                quad(a, b, lipB, lipA, Finish.TOP, edge);
+                quad(lipA, lipB, waterline[next], waterline[index], Finish.SHORE, edge);
                 quad(waterline[index], waterline[next], bed[next], bed[index], Finish.BANK);
             }
         }
@@ -271,13 +276,21 @@ final class BoardSurface {
     }
 
     private void quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Finish finish) {
-        triangle(a, b, c, finish);
-        triangle(a, c, d, finish);
+        quad(a, b, c, d, finish, -1);
+    }
+
+    private void quad(Vector3 a, Vector3 b, Vector3 c, Vector3 d, Finish finish, int landEdge) {
+        triangle(a, b, c, finish, landEdge);
+        triangle(a, c, d, finish, landEdge);
     }
 
     private void triangle(Vector3 a, Vector3 b, Vector3 c, Finish finish) {
+        triangle(a, b, c, finish, -1);
+    }
+
+    private void triangle(Vector3 a, Vector3 b, Vector3 c, Finish finish, int landEdge) {
         if (new Vector3(b).sub(a).crs(new Vector3(c).sub(a)).len2() > 0.000001f) {
-            faces.add(new Face(new Vector3(a), new Vector3(b), new Vector3(c), finish));
+            faces.add(new Face(new Vector3(a), new Vector3(b), new Vector3(c), finish, landEdge));
         }
     }
 
@@ -294,8 +307,17 @@ final class BoardSurface {
             }
             float u = ((b.y - c.y) * (x - c.x) + (c.x - b.x) * (y - c.y)) / denominator;
             float v = ((c.y - a.y) * (x - c.x) + (a.x - c.x) * (y - c.y)) / denominator;
-            if (u >= -0.00001f && v >= -0.00001f && u + v <= 1.00001f) {
-                height = Math.max(height, u * a.z + v * b.z + (1 - u - v) * c.z);
+            float w = 1 - u - v;
+            // World-space tolerance keeps rounded edge samples on thin bank triangles even far from the origin.
+            // A fixed barycentric tolerance can miss the bank and drop the exposed wall to the riverbed.
+            float tolerance = 0.001f * BoardGeometry.HEX_SCALE / Math.abs(denominator);
+            if (u >= -tolerance * Math.hypot(b.x - c.x, b.y - c.y)
+                  && v >= -tolerance * Math.hypot(c.x - a.x, c.y - a.y)
+                  && w >= -tolerance * Math.hypot(a.x - b.x, a.y - b.y)) {
+                u = Math.max(0, u);
+                v = Math.max(0, v);
+                w = Math.max(0, w);
+                height = Math.max(height, (u * a.z + v * b.z + w * c.z) / (u + v + w));
             }
         }
         return Float.isFinite(height) ? height : BoardGeometry.groundZ(tile);

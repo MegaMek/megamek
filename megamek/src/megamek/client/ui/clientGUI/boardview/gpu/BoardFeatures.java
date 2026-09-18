@@ -4,6 +4,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import megamek.common.Hex;
 import megamek.common.board.Coords;
@@ -36,17 +37,16 @@ final class BoardFeatures {
         return BoardScene.Surface.GRASS;
     }
 
-    static List<BoardScene.Feature> capture(Hex hex, Coords coords, String buildingModel) {
+    static List<BoardScene.Feature> capture(Hex hex, Coords coords, Map<Integer, String> structureModels) {
         List<BoardScene.Feature> result = new ArrayList<>();
         int variant = Math.floorMod(coords.getX() * 31 + coords.getY() * 17, 4);
-        if (hex.containsTerrain(Terrains.BUILDING) && !buildingModel.isEmpty()) {
-            add(result, buildingModel, Math.max(1, hex.terrainLevel(Terrains.BLDG_ELEV)), 0, 0);
-        }
-        if (hex.containsTerrain(Terrains.FUEL_TANK)) {
-            add(result, "tank", Math.max(1, hex.terrainLevel(Terrains.FUEL_TANK_ELEV)), 0, 0);
-        }
-        if (hex.containsTerrain(Terrains.INDUSTRIAL)) {
-            add(result, "industrial", Math.max(1, hex.terrainLevel(Terrains.INDUSTRIAL)), 0, 0);
+        for (var structure : structureModels.entrySet()) {
+            int heightTerrain = switch (structure.getKey()) {
+                case Terrains.BUILDING -> Terrains.BLDG_ELEV;
+                case Terrains.FUEL_TANK -> Terrains.FUEL_TANK_ELEV;
+                default -> Terrains.INDUSTRIAL;
+            };
+            add(result, structure.getValue(), Math.max(1, hex.terrainLevel(heightTerrain)), 0, 0);
         }
         if (hex.containsTerrain(Terrains.FIELDS)) {
             add(result, "field", 1, 0, 0);

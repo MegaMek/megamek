@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import com.badlogic.gdx.math.collision.Ray;
 import megamek.common.board.Coords;
 import megamek.common.units.EntityMovementType;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class BoardSurfaceTest {
     private static final Coords FIRST = new Coords(1, 1);
@@ -197,6 +200,75 @@ class BoardSurfaceTest {
     }
 
     @Test
+    void waterAndBanksStayInsideTheirHexForEveryNeighborPattern() {
+        Coords center = new Coords(7, 33);
+        for (int mask = 0; mask < 64; mask++) {
+            BoardScene scene = riverScene(center, mask);
+            BoardSurface surface = new BoardSurface(scene, scene.tile(center));
+            List<BoardSurface.Face> faces = new ArrayList<>(surface.faces);
+            faces.addAll(surface.waterFaces);
+            for (BoardSurface.Face face : faces) {
+                for (Vector3 point : List.of(face.a(), face.b(), face.c())) {
+                    for (int edge = 0; edge < 6; edge++) {
+                        Vector3 a = BoardGeometry.corner(center, 0, edge);
+                        Vector3 b = BoardGeometry.corner(center, 0, edge + 1);
+                        Vector3 outward = new Vector3(b).sub(a).crs(Vector3.Z).nor();
+                        float outside = new Vector3(point).sub(a).dot(outward);
+                        assertTrue(outside <= 0.01f * BoardGeometry.HEX_SCALE,
+                              "Water neighbor mask " + mask + ", " + face.finish() + " outside edge " + edge + ": " + point);
+                    }
+                }
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(floats = { 0.5f, 1, 2 })
+    void dryRiverEdgesRetainTheirFullHeight(float scale) {
+        BoardGeometry.Tuning original = BoardGeometry.tuning();
+        try {
+            BoardGeometry.tune(new BoardGeometry.Tuning(scale, 0.6f, 0.87f, 18, 0.8f));
+            Coords center = new Coords(7, 33);
+            for (int mask = 0; mask < 64; mask++) {
+                BoardScene scene = riverScene(center, mask);
+                BoardSurface surface = new BoardSurface(scene, scene.tile(center));
+                float top = scene.tile(center).elevation() * BoardGeometry.LEVEL;
+                for (int edge = 0; edge < 6; edge++) {
+                    if ((mask & (1 << BoardGeometry.edgeDirection(edge))) != 0) {
+                        continue;
+                    }
+                    Vector3 a = BoardGeometry.corner(center, 0, edge);
+                    Vector3 b = BoardGeometry.corner(center, 0, edge + 1);
+                    for (int sample = 1; sample < 100; sample++) {
+                        Vector3 point = new Vector3(a).lerp(b, sample / 100f);
+                        assertEquals(top, surface.height(point.x, point.y), 0.01f * scale,
+                              "Water neighbor mask " + mask + ", dry edge " + edge + ", sample " + sample);
+                    }
+                }
+                for (BoardSurface.Side side : surface.sides(scene, BoardGeometry.floor(scene))) {
+                    if ((mask & (1 << BoardGeometry.edgeDirection(side.edge()))) == 0) {
+                        assertEquals(top, side.a().z, 0.01f * scale, "The cliff must close beneath the dry bank");
+                        assertEquals(top, side.b().z, 0.01f * scale, "The cliff must close beneath the dry bank");
+                    }
+                }
+            }
+        } finally {
+            BoardGeometry.tune(original);
+        }
+    }
+
+    private static BoardScene riverScene(Coords center, int mask) {
+        Map<Coords, Integer> levels = new HashMap<>();
+        levels.put(center, 2);
+        for (int direction = 0; direction < 6; direction++) {
+            if ((mask & (1 << direction)) != 0) {
+                levels.put(center.translated(direction), 0);
+            }
+        }
+        return riverScene(levels, false);
+    }
+
+    @Test
     void waterfallsJoinTheUpperAndLowerWaterSurfacesOnlyOnceAndArePickable() {
         Coords high = new Coords(2, 2);
         for (int direction = 0; direction < 6; direction++) {
@@ -220,14 +292,16 @@ class BoardSurfaceTest {
     private static BoardScene riverScene(Map<Coords, Integer> levels, boolean frozen) {
         var art = new BoardScene.Pixels(new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB));
         List<BoardScene.Tile> tiles = new ArrayList<>();
-        for (int x = 0; x < 5; x++) {
-            for (int y = 0; y < 5; y++) {
+        int width = Math.max(5, levels.keySet().stream().mapToInt(Coords::getX).max().orElseThrow() + 2);
+        int height = Math.max(5, levels.keySet().stream().mapToInt(Coords::getY).max().orElseThrow() + 2);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
                 Coords coords = new Coords(x, y);
                 tiles.add(new BoardScene.Tile(coords, levels.getOrDefault(coords, 0), levels.containsKey(coords) ? 1 : -1,
                       frozen && levels.containsKey(coords), 0, BoardScene.Surface.GRASS, art, null, null, List.of(), List.of()));
             }
         }
-        return new BoardScene(0, 5, 5, tiles, List.of(), List.of(), -1, "", List.of());
+        return new BoardScene(0, width, height, tiles, List.of(), List.of(), -1, "", List.of());
     }
 
     private static BoardScene scene(boolean river) {

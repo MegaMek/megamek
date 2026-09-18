@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,10 +92,21 @@ public class HexTileset implements BoardListener {
     private final List<HexEntry> orthographic = new ArrayList<>();
     private final Set<String> themes = new TreeSet<>();
     private final File imageRoot;
-    private final Map<Image, String> imageSources = new IdentityHashMap<>();
+    private record ImageSource(String filename, Hex terrain) { }
+    private final Map<Image, ImageSource> imageSources = new IdentityHashMap<>();
     private ImageCache<Hex, Image> basesCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> superimposedCache = new ImageCache<>();
     private ImageCache<Hex, List<Image>> orthographicCache = new ImageCache<>();
+    private record TerrainMatch(int type, int level, int exits) { }
+    private record MatchKey(int level, String theme, List<TerrainMatch> terrains) {
+        static MatchKey of(Hex hex) {
+            return new MatchKey(hex.getLevel(), hex.getTheme(), Arrays.stream(hex.getTerrainTypes()).sorted()
+                  .mapToObj(type -> new TerrainMatch(type, hex.terrainLevel(type), hex.getTerrain(type).getExits()))
+                  .toList());
+        }
+    }
+    private record Match(HexEntry base, List<HexEntry> supers, List<HexEntry> orthographic) { }
+    private final Map<MatchKey, Match> matches = new HashMap<>();
 
     /**
      * Creates new HexTileset
@@ -152,15 +165,43 @@ public class HexTileset implements BoardListener {
      * best image is used.
      */
     public synchronized Object[] assignMatch(Hex hex) {
-        Hex hexCopy = hex.duplicate();
-        List<Image> orthographic = orthographicFor(hexCopy);
-        List<Image> superimposed = superimposedFor(hexCopy);
-        Image base = baseFor(hexCopy);
+        MatchKey key = MatchKey.of(hex);
+        Match match = matches.get(key);
+        if (match == null) {
+            // Match rules depend on terrain, elevation and theme; image variants still depend on coordinates.
+            // Bound this small metadata cache independently of the number of hexes or subsequent board edits.
+            if (matches.size() >= 4096) {
+                matches.clear();
+            }
+            Hex hexCopy = hex.duplicate();
+            List<HexEntry> orthographic = orthographicFor(hexCopy);
+            List<HexEntry> supers = superimposedFor(hexCopy);
+            match = new Match(baseFor(hexCopy), supers, orthographic);
+            matches.put(key, match);
+        }
+        int seed = hex.getCoords().hashCode();
+        List<Image> orthographic = images(match.orthographic(), seed);
+        List<Image> superimposed = images(match.supers(), seed);
+        Random random = new Random(seed);
+        Image base = image(match.base(), Math.abs(random.nextInt() * random.nextInt()));
         Object[] pair = new Object[] { base, superimposed, orthographic };
         basesCache.put(hex, base);
         superimposedCache.put(hex, superimposed);
         orthographicCache.put(hex, orthographic);
         return pair;
+    }
+
+    private List<Image> images(List<HexEntry> entries, int seed) {
+        List<Image> result = new ArrayList<>(entries.size());
+        for (HexEntry entry : entries) {
+            result.add(image(entry, seed));
+        }
+        return result;
+    }
+
+    private Image image(HexEntry entry, int seed) {
+        Image image = entry == null ? null : entry.getImage(seed);
+        return image == null ? ImageUtil.createAcceleratedImage(HEX_W, HEX_H) : image;
     }
 
     /**
@@ -248,18 +289,13 @@ public class HexTileset implements BoardListener {
      * such a match is achieved, all terrain elements from the tileset hex are removed from the hex. Thus, you want to
      * pass a copy of the original to this function.
      */
-    private List<Image> orthographicFor(Hex hex) {
-        ArrayList<Image> matches = new ArrayList<>();
+    private List<HexEntry> orthographicFor(Hex hex) {
+        ArrayList<HexEntry> matches = new ArrayList<>();
 
         // find orthographic image matches
         for (HexEntry entry : orthographic) {
             if (orthographicMatch(hex, entry.getHex()) >= 1.0) {
-                Image img = entry.getImage(hex.getCoords().hashCode());
-                if (img != null) {
-                    matches.add(img);
-                } else {
-                    matches.add(ImageUtil.createAcceleratedImage(HEX_W, HEX_H));
-                }
+                matches.add(entry);
                 // remove involved terrain from consideration
                 for (int terr : entry.getHex().getTerrainTypes()) {
                     if (entry.getHex().containsTerrain(terr)) {
@@ -276,18 +312,13 @@ public class HexTileset implements BoardListener {
      * match is achieved, all terrain elements from the tileset hex are removed from the hex. Thus, you want to pass a
      * copy of the original to this function.
      */
-    private List<Image> superimposedFor(Hex hex) {
-        ArrayList<Image> matches = new ArrayList<>();
+    private List<HexEntry> superimposedFor(Hex hex) {
+        ArrayList<HexEntry> matches = new ArrayList<>();
 
         // find superimposed image matches
         for (HexEntry entry : superimposed) {
             if (superMatch(hex, entry.getHex()) >= 1.0) {
-                Image img = entry.getImage(hex.getCoords().hashCode());
-                if (img != null) {
-                    matches.add(img);
-                } else {
-                    matches.add(ImageUtil.createAcceleratedImage(HEX_W, HEX_H));
-                }
+                matches.add(entry);
                 // remove involved terrain from consideration
                 for (int terr : entry.getHex().getTerrainTypes()) {
                     if (entry.getHex().containsTerrain(terr)) {
@@ -303,7 +334,7 @@ public class HexTileset implements BoardListener {
      * Returns the best matching base image for this hex. This works best if any terrain with a "super" image is
      * removed.
      */
-    private Image baseFor(Hex hex) {
+    private HexEntry baseFor(Hex hex) {
         HexEntry bestMatch = null;
         double match = -1;
 
@@ -328,18 +359,7 @@ public class HexTileset implements BoardListener {
             }
         }
 
-        Random random = new Random(hex.getCoords().hashCode());
-        Image img = null;
-
-        if (bestMatch != null) {
-            img = bestMatch.getImage(Math.abs(random.nextInt() * random.nextInt()));
-        }
-
-        if (img == null) {
-            img = ImageUtil.createAcceleratedImage(HEX_W, HEX_H);
-        }
-
-        return img;
+        return bestMatch;
     }
 
     // perfect match
@@ -351,6 +371,7 @@ public class HexTileset implements BoardListener {
     public int incDepth = 0;
 
     public void loadFromFile(String filename) throws IOException {
+        matches.clear();
         long startTime = java.lang.System.currentTimeMillis();
         // make input stream for board
         Reader r = new BufferedReader(new FileReader(new MegaMekFile(imageRoot, filename).getFile()));
@@ -596,7 +617,14 @@ public class HexTileset implements BoardListener {
     }
 
     public synchronized String imageSource(Image image) {
-        return imageSources.getOrDefault(image, "");
+        ImageSource source = imageSources.get(image);
+        return source == null ? "" : source.filename();
+    }
+
+    /** Terrain described by the selected artwork, so coexisting structures retain their own model and height. */
+    public synchronized boolean imageHasTerrain(Image image, int terrain) {
+        ImageSource source = imageSources.get(image);
+        return source != null && source.terrain().containsTerrain(terrain);
     }
 
     private class HexEntry {
@@ -634,7 +662,7 @@ public class HexTileset implements BoardListener {
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString());
                 if (null != image) {
                     images.add(image);
-                    imageSources.put(image, filename);
+                    imageSources.put(image, new ImageSource(filename, hex));
                 } else {
                     logger.error("Received null image from ImageUtil.loadImageFromFile! File: {}", imgFile);
                 }

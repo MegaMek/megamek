@@ -34,13 +34,13 @@ package megamek.client.ui.clientGUI.boardview.overlay;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,6 +83,8 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     private boolean hasContents = false;
     /** The cached image for this Display. */
     private Image displayImage;
+    private double imageScaleX;
+    private double imageScaleY;
     /** The current game phase. */
     protected GamePhase currentPhase;
     protected final Game currentGame;
@@ -143,10 +145,14 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
             return;
         }
 
-        // At startup, phase and turn change and when the Planetary Conditions change,
-        // the cached image is (re)created
-        if (dirty) {
+        AffineTransform transform = ((Graphics2D) graph).getTransform();
+        double scaleX = Math.hypot(transform.getScaleX(), transform.getShearY());
+        double scaleY = Math.hypot(transform.getShearX(), transform.getScaleY());
+        // The cached text must also be redrawn when display density changes, even if its contents do not.
+        if (dirty || scaleX != imageScaleX || scaleY != imageScaleY) {
             dirty = false;
+            imageScaleX = scaleX;
+            imageScaleY = scaleY;
 
             List<String> allLines = assembleTextLines();
             hasContents = !allLines.isEmpty();
@@ -160,43 +166,57 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
                 overlayWidth = r.width;
                 overlayHeight = r.height;
 
-                displayImage = ImageUtil.createAcceleratedImage(r.width, r.height);
-                Graphics intGraph = displayImage.getGraphics();
-                UIUtil.setHighQualityRendering(intGraph);
+                if (displayImage != null) {
+                    displayImage.flush();
+                }
+                displayImage = ImageUtil.createAcceleratedImage(Math.max(1, (int) Math.ceil(r.width * scaleX)),
+                      Math.max(1, (int) Math.ceil(r.height * scaleY)));
+                Graphics2D intGraph = (Graphics2D) displayImage.getGraphics();
+                try {
+                    intGraph.scale(scaleX, scaleY);
+                    UIUtil.setHighQualityRendering(intGraph);
 
-                // draw a semi-transparent background rectangle
-                Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
-                intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(),
-                      GUIP.getPlanetaryConditionsBackgroundTransparency()));
-                intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_Y);
+                    // draw a semi-transparent background rectangle
+                    Color colorBG = GUIP.getPlanetaryConditionsColorBackground();
+                    intGraph.setColor(new Color(colorBG.getRed(), colorBG.getGreen(), colorBG.getBlue(),
+                          GUIP.getPlanetaryConditionsBackgroundTransparency()));
+                    intGraph.fillRoundRect(0, 0, r.width, r.height, PADDING_X, PADDING_Y);
 
-                // The coordinates to write the texts to
-                int y = PADDING_Y + fm.getAscent();
+                    // The coordinates to write the texts to
+                    int y = PADDING_Y + fm.getAscent();
 
-                // write the strings
-                for (String line : allLines) {
-                    new StringDrawer(cleanedLine(line)).at(PADDING_X, y).font(font).fontSize(fontSize)
-                          .color(lineColor(line)).draw(intGraph);
-                    y += fm.getHeight();
+                    // write the strings
+                    for (String line : allLines) {
+                        new StringDrawer(cleanedLine(line)).at(PADDING_X, y).font(font).fontSize(fontSize)
+                              .color(lineColor(line)).draw(intGraph);
+                        y += fm.getHeight();
+                    }
+                } finally {
+                    intGraph.dispose();
                 }
             }
         }
 
         if (hasContents) {
-            // draw the cached image to the boardview
-            // uses Composite to draw the image with variable transparency
             int distSide = getDistSide(clipBounds, overlayWidth);
             int distTop = getDistTop(clipBounds, overlayHeight);
-
-            if (alpha < 1) {
-                // Save the former composite and set an alpha blending composite
-                Composite saveComp = ((Graphics2D) graph).getComposite();
-                int type = AlphaComposite.SRC_OVER;
-                ((Graphics2D) graph).setComposite(AlphaComposite.getInstance(type, alpha));
-                graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + distTop, null);
-                ((Graphics2D) graph).setComposite(saveComp);
-            } else {
-                graph.drawImage(displayImage, clipBounds.x + distSide, clipBounds.y + distTop, null);
+            // Blit at native density on whole device pixels. Resizing the rounded cache dimensions or
+            // placing it between pixels would resample the glyphs at fractional display scales.
+            AffineTransform imageTransform = new AffineTransform(transform);
+            imageTransform.translate(clipBounds.x + distSide, clipBounds.y + distTop);
+            imageTransform.scale(1 / imageScaleX, 1 / imageScaleY);
+            imageTransform.setTransform(imageTransform.getScaleX(), imageTransform.getShearY(),
+                  imageTransform.getShearX(), imageTransform.getScaleY(),
+                  Math.rint(imageTransform.getTranslateX()), Math.rint(imageTransform.getTranslateY()));
+            Graphics2D imageGraph = (Graphics2D) graph.create();
+            try {
+                imageGraph.setTransform(imageTransform);
+                if (alpha < 1) {
+                    imageGraph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
+                }
+                imageGraph.drawImage(displayImage, 0, 0, null);
+            } finally {
+                imageGraph.dispose();
             }
         }
     }

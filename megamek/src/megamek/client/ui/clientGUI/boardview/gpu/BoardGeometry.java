@@ -130,11 +130,14 @@ final class BoardGeometry {
 
     /** Intersect the same triangles used to draw carved roads, banks, beds and exposed sides. */
     static Hit hit(BoardScene scene, Ray ray) {
+        return hit(scene, ray, scene.tiles(), floor(scene));
+    }
+
+    static Hit hit(BoardScene scene, Ray ray, Iterable<BoardScene.Tile> candidates, float floor) {
         Coords result = null;
         float nearest = Float.POSITIVE_INFINITY;
-        float floor = floor(scene);
         Vector3 hit = new Vector3();
-        for (BoardScene.Tile tile : scene.tiles()) {
+        for (BoardScene.Tile tile : candidates) {
             float high = tile.elevation() * LEVEL;
             for (int direction = 0; direction < 6; direction++) {
                 BoardScene.Tile neighbor = scene.tile(tile.coords().translated(direction));

@@ -31,6 +31,77 @@ import org.junit.jupiter.api.Test;
 @Tag("on-demand")
 class GpuRiverSmokeTest {
     @Test
+    void rendersClosedRiverbanksAtTheBoardBoundary() throws Exception {
+        Hex[] hexes = new Hex[10 * 34];
+        for (int y = 0; y < 34; y++) {
+            for (int x = 0; x < 10; x++) {
+                Hex hex = new Hex(0);
+                if (x == 7 && y >= 31) {
+                    hex.addTerrain(new Terrain(Terrains.WATER, 1));
+                }
+                hexes[y * 10 + x] = hex;
+            }
+        }
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create(new Board(10, 34, hexes))) {
+            SwingUtilities.invokeAndWait(fixture.source::refresh);
+            BoardScene scene = fixture.source.takeFrame().scene();
+            new Lwjgl3Application(new ApplicationAdapter() {
+                GpuTerrain terrain;
+                BoardCamera camera;
+
+                @Override
+                public void create() {
+                    terrain = new GpuTerrain();
+                    terrain.update(scene);
+                    camera = new BoardCamera();
+                    camera.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+                    camera.setIsometric(true);
+                    camera.center(BoardGeometry.center(new Coords(7, 33), 0));
+                    camera.zoom(0.2f);
+                }
+
+                @Override
+                public void render() {
+                    try {
+                        terrain.renderShadows(List.of());
+                        ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
+                        terrain.render(camera.camera, false);
+                        terrain.renderTransparent(camera.camera);
+                        File output = new File(System.getProperty("megamek.gpu.screenshots"));
+                        GpuBoardTestUi.capture(new File(output, "river-board-edge.png"));
+                        Pixmap pixels = ScreenUtils.getFrameBufferPixmap(0, 0,
+                              Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
+                        try {
+                            int background = pixels.getPixel(0, 0);
+                            Vector3 a = BoardGeometry.corner(new Coords(7, 33), -0.5f, 4);
+                            Vector3 b = BoardGeometry.corner(new Coords(7, 33), -0.5f, 5);
+                            for (int sample = 1; sample < 100; sample++) {
+                                Vector3 screen = camera.camera.project(new Vector3(a).lerp(b, sample / 100f));
+                                assertNotEquals(background, pixels.getPixel((int) screen.x, (int) screen.y),
+                                      "The exposed riverbank wall must not have holes: sample " + sample);
+                            }
+                        } finally {
+                            pixels.dispose();
+                        }
+                        assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
+                    } catch (Throwable error) {
+                        failure.set(error);
+                    } finally {
+                        Gdx.app.exit();
+                    }
+                }
+
+                @Override
+                public void dispose() {
+                    terrain.dispose();
+                }
+            }, GpuBoardWindow.configuration(false));
+        }
+        assertNull(failure.get(), () -> String.valueOf(failure.get()));
+    }
+
+    @Test
     void rendersContinuousChannelsAnimatedDropsAndNatureVariants() throws Exception {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {

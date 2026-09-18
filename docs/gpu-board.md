@@ -186,9 +186,13 @@ bounding boxes, not mesh collision, and never exposes hidden game entities.
 | --- | --- |
 | Top view / Isometric | Restore a camera preset, retaining focus and zoom |
 | Fit board | Frame terrain, water, and feature heights |
-| Mouse wheel / +/- | Zoom |
+| Mouse wheel / numpad +/- | Zoom |
 | Right or middle drag | Pan |
 | Shift + right/middle drag | Orbit and tilt |
+| Q / E | Turn the camera one hex side (60 degrees); hold to keep turning |
+| Page Up / Page Down | Tilt toward overhead / lower the viewing angle while held |
+| Home / End | Reset camera and fit board / fit board at the current angle |
+| T / Z | Toggle the isometric preset / toggle the overview zoom |
 | Click / short right-click | Inspect a hex or visible unit |
 | Plot movement here / movement mode | Enter the existing persistent board tool |
 | Escape | Dismiss a menu or leave the board tool |

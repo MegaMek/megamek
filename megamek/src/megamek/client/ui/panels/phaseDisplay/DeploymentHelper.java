@@ -54,6 +54,7 @@ import megamek.common.board.DeploymentElevationType;
 import megamek.common.board.ElevationOption;
 import megamek.common.board.FacingOption;
 import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
@@ -221,6 +222,9 @@ public class DeploymentHelper {
                                                                     Set<ElevationOption> lastHexDeploymentOptions,
                                                                     ElevationOption lastDeploymentOption) {
         currentEntity = entity;
+        if (board.isSpace()) {
+            return spaceDeploymentPosition(entity, coords, lastDeploymentOption);
+        }
         int finalElevation;
         int finalFacing = entity.getFacing();
         var deploymentHelper = new AllowedDeploymentHelper(entity, coords, board,
@@ -261,6 +265,50 @@ public class DeploymentHelper {
         }
 
         return new DeploymentPosition(finalElevation, finalFacing, lastDeploymentOption);
+    }
+
+    /**
+     * A space map has no elevations or altitudes to choose between, so the unit deploys exactly as it stands: the
+     * height and facing it already carries are kept and the player is asked nothing. The elevation lookup must not be
+     * consulted here; it refuses space boards outright (#9015).
+     *
+     * @param entity               The entity being deployed
+     * @param coords               The coordinates where deployment is attempted
+     * @param lastDeploymentOption The elevation choice made for the previous hex, carried through unchanged; may be
+     *                             {@code null}
+     * @return The deployment position holding the unit's current height and facing
+     */
+    private DeploymentPosition spaceDeploymentPosition(Entity entity, Coords coords,
+                                                       @Nullable ElevationOption lastDeploymentOption) {
+        int currentHeight = entity.isAero() ? entity.getAltitude() : entity.getElevation();
+        logger.debug("[Deployment] {} at {}: space map, no elevation choice; keeping height {} and facing {}",
+                     entity.getShortName(), coords.getBoardNum(), currentHeight, entity.getFacing());
+        return new DeploymentPosition(currentHeight, entity.getFacing(), lastDeploymentOption);
+    }
+
+    /**
+     * Puts the unit at the elevation or altitude chosen for its deployment. An aerospace unit at altitude 0 is landed,
+     * which also stops it dead and switches it to ground movement, so that only happens on a map that has ground. On
+     * a space map the unit always stays in flight and keeps the velocity set in the lobby, matching what the server
+     * does when it processes the deployment.
+     *
+     * @param entity    The entity being deployed
+     * @param board     The board the entity is deploying onto
+     * @param elevation The chosen elevation, or altitude for an aerospace unit
+     */
+    void applyDeploymentElevation(Entity entity, Board board, int elevation) {
+        // entity.isAero will check if a unit is a LAM in Fighter mode
+        if (!(entity instanceof IAero aero) || !entity.isAero()) {
+            entity.setElevation(elevation);
+            return;
+        }
+        entity.setAltitude(elevation);
+        boolean isLandingOnGround = (elevation == 0) && !board.isSpace();
+        if (isLandingOnGround) {
+            aero.land();
+        } else {
+            aero.liftOff(elevation);
+        }
     }
 
     private @Nullable ElevationOption showElevationChoiceDialog(List<ElevationOption> elevationOptions) {

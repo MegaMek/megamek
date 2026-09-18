@@ -2894,17 +2894,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         coords,
                         boardId,
                         elevation)) {
-                    // entity.isAero will check if a unit is a LAM in Fighter mode
-                    if ((currentlySelectedEntity instanceof IAero aero) && (currentlySelectedEntity.isAero())) {
-                        currentlySelectedEntity.setAltitude(elevation);
-                        if (elevation == 0) {
-                            aero.land();
-                        } else {
-                            aero.liftOff(elevation);
-                        }
-                    } else {
-                        currentlySelectedEntity.setElevation(elevation);
-                    }
+                    deploymentHelper.applyDeploymentElevation(currentlySelectedEntity,
+                                                              game.getBoard(boardId),
+                                                              elevation);
                     currentlySelectedEntity.setPosition(coords);
                     currentlySelectedEntity.setBoardId(boardId);
                     currentlySelectedEntity.setFacing(facing);

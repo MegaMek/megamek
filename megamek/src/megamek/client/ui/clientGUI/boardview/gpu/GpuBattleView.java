@@ -721,7 +721,8 @@ class GpuBattleView extends ApplicationAdapter {
                 return true;
             }
             // Enter with a modifier is a bound command such as Done, which must reach the phase display.
-            if (key == Input.Keys.ENTER && hovered != null && modifiers() == 0) {
+            boolean isPlainEnter = (key == Input.Keys.ENTER) && (modifiers() == 0);
+            if (isPlainEnter && (hovered != null)) {
                 Vector3 point = screenPosition(hovered);
                 ui.inspect(hovered, (int) point.x, (int) point.y);
                 return true;

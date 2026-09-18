@@ -244,6 +244,26 @@ public class MekTileset {
         return genericFor(entity, secondaryPos);
     }
 
+    /** Optional 3D descriptor, relative to data/models. Sprite-only overrides inherit the chassis model. */
+    public String modelFor(Entity entity, int secondaryPos) {
+        String suffix = entity.getTilesetModeString().toUpperCase(Locale.ROOT)
+              + (secondaryPos == -1 ? "" : "_" + secondaryPos);
+        MekEntry entry = exact.get(entity.getShortNameRaw().toUpperCase(Locale.ROOT) + suffix);
+        if (entry != null && entry.getModelFile() != null) {
+            return entry.getModelFile();
+        }
+        entry = chassis.get(entity.getFullChassis().toUpperCase(Locale.ROOT) + suffix);
+        if (entry != null && entry.getModelFile() != null) {
+            return entry.getModelFile();
+        }
+        return genericModelFor(entity, secondaryPos);
+    }
+
+    public String genericModelFor(Entity entity, int secondaryPos) {
+        MekEntry entry = genericFor(entity, secondaryPos);
+        return entry == null ? null : entry.getModelFile();
+    }
+
     public MekEntry genericFor(Entity entity, int secondaryPos) {
         if (entity instanceof BattlefieldSupportAsset asset) {
             return assetGenericFor(asset);
@@ -393,9 +413,11 @@ public class MekTileset {
                             LOGGER.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.getFirst().equals(CHASSIS_KEY)) {
-                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
+                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT),
+                              new MekEntry(tokens.get(2), tokens.size() == 4 ? tokens.get(3) : null));
                     } else {
-                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
+                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT),
+                              new MekEntry(tokens.get(2), tokens.size() == 4 ? tokens.get(3) : null));
                     }
                 } else {
                     LOGGER.warn("Malformed line in {}: {}", filename, tokens.toString());
@@ -469,10 +491,16 @@ public class MekTileset {
      */
     public class MekEntry {
         private final String imageFile;
+        private final String modelFile;
         private Image image;
 
         public MekEntry(String imageFile) {
+            this(imageFile, null);
+        }
+
+        public MekEntry(String imageFile, String modelFile) {
             this.imageFile = imageFile;
+            this.modelFile = modelFile;
             image = null;
         }
 
@@ -490,6 +518,10 @@ public class MekTileset {
 
         public String getImageFile() {
             return imageFile;
+        }
+
+        public String getModelFile() {
+            return modelFile;
         }
 
     }

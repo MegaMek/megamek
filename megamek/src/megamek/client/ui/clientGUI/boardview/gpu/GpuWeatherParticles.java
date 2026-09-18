@@ -18,7 +18,8 @@ import com.badlogic.gdx.utils.Disposable;
 /** A bounded, GPU-animated particle pool. Shares the world's depth buffer and never covers the tactical UI. */
 final class GpuWeatherParticles implements Disposable {
     private static final int BASE_PARTICLES = 768;
-    private static final int MAX_DENSITY = 12;
+    // 61,440 vertices keeps the shared pool within unsigned-short mesh indices.
+    private static final int MAX_DENSITY = 20;
     private static final int[] DENSITY_MULTIPLIERS = { 6, 6, 4, MAX_DENSITY };
     private static final int PARTICLES = BASE_PARTICLES * MAX_DENSITY;
     private final ShaderProgram shader;
@@ -92,9 +93,11 @@ final class GpuWeatherParticles implements Disposable {
                     float wind = effects.wind() + (kind == 3 ? 0.4f : 0);
                     shader.setUniformf("u_wind", MathUtils.sinDeg(effects.windDirection()) * wind * 5,
                           MathUtils.cosDeg(effects.windDirection()) * wind * 5);
-                    // Keep light weather gentle while the high end reaches downpour/blizzard densities.
+                    // Blowing sand needs a continuous drift even at the normal half-strength setting.
+                    // Keep the curved response for light rain, snow and hail.
                     float strength = strengths[kind];
-                    float density = strength * (1 + (DENSITY_MULTIPLIERS[kind] - 1) * strength * strength);
+                    float density = kind == 3 ? strength * MAX_DENSITY
+                          : strength * (1 + (DENSITY_MULTIPLIERS[kind] - 1) * strength * strength);
                     int count = Math.max(1, Math.round(BASE_PARTICLES * density));
                     mesh.render(shader, GL20.GL_TRIANGLES, 0, count * 6);
                 }

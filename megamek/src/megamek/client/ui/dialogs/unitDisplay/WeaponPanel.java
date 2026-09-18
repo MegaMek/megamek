@@ -1170,7 +1170,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     }
 
     public int getSelectedEntityId() {
-        return entity.getId();
+        return entity == null ? Entity.NONE : entity.getId();
     }
 
     /**
@@ -1221,7 +1221,52 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
 
     /** Existing target and to-hit presentation for alternative board UIs. */
     public String getTargetSummary() {
-        return wTargetInfo.getText() + "<br>" + toHitText.getText();
+        return wTargetInfo.getText() + "<br>" + getFiringSolution();
+    }
+
+    public String getTargetName() {
+        return target == null ? Messages.getString("MekDisplay.NoTarget") : target.getDisplayName();
+    }
+
+    public String getFiringSolution() {
+        return Messages.getString("MekDisplay.Range") + " " + wRangeR.getText() + "<br>"
+              + toHitText.getText() + "<br>" + wTargetExtraInfo.getText();
+    }
+
+    /** Already-computed weapon statistics, including special infantry and aerospace presentations. */
+    public String getWeaponSummary() {
+        StringBuilder summary = new StringBuilder(wNameR.getText());
+        appendWeaponStat(summary, Messages.getString("MekDisplay.Heat"), wHeatR);
+        appendWeaponStat(summary, Messages.getString("MekDisplay.Damage"), wDamR);
+        appendWeaponStat(summary, wArcHeatL.getText(), wArcHeatR);
+        appendWeaponStat(summary, wDamageTrooperL.getText(), wDamageTrooperR);
+        summary.append("<br>");
+        appendWeaponStat(summary, wMinL.getText(), wMinR);
+        appendWeaponStat(summary, wShortL.getText(), wShortR);
+        appendWeaponStat(summary, wMedL.getText(), wMedR);
+        appendWeaponStat(summary, wLongL.getText(), wLongR);
+        appendWeaponStat(summary, wExtL.getText(), wExtR);
+        if (wAVL.isVisible()) {
+            summary.append("<br>").append(wAVL.getText());
+            appendWeaponStat(summary, wShortL.getText(), wShortAVR);
+            appendWeaponStat(summary, wMedL.getText(), wMedAVR);
+            appendWeaponStat(summary, wLongL.getText(), wLongAVR);
+            appendWeaponStat(summary, wExtL.getText(), wExtAVR);
+        }
+        appendWeaponStat(summary, wInfantryRange0L.getText(), wInfantryRange0R);
+        appendWeaponStat(summary, wInfantryRange1L.getText(), wInfantryRange1R);
+        appendWeaponStat(summary, wInfantryRange2L.getText(), wInfantryRange2R);
+        appendWeaponStat(summary, wInfantryRange3L.getText(), wInfantryRange3R);
+        appendWeaponStat(summary, wInfantryRange4L.getText(), wInfantryRange4R);
+        appendWeaponStat(summary, wInfantryRange5L.getText(), wInfantryRange5R);
+        return summary.append("<br>").append(Messages.getString("MekDisplay.HeatBuildup"))
+              .append(" ").append(currentHeatBuildupR.getText()).toString();
+    }
+
+    private static void appendWeaponStat(StringBuilder summary, String label, JLabel value) {
+        if (value.isVisible()) {
+            summary.append("  ").append(label).append(" ").append(value.getText());
+        }
     }
 
     public JComboBox<String> getAmmoSelector() {

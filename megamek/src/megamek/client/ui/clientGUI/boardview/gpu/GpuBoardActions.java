@@ -26,6 +26,7 @@ import megamek.client.ui.panels.phaseDisplay.ActionPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.AttackPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
+import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
 import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
@@ -106,13 +107,36 @@ final class GpuBoardActions {
         return result;
     }
 
-    private BoardScene.Command weaponCommands(Turn owner) {
+    BoardScene.Attack attackState() {
+        Turn owner = turn();
+        if (!(owner.panel() instanceof AttackPhaseDisplay attack) || owner.actor() == Entity.NONE) {
+            return null;
+        }
+        WeaponPanel weapons = weaponPanel(owner);
+        String target = Messages.getString("MekDisplay.NoTarget");
+        if (weapons != null) {
+            target = weapons.getTargetName();
+        } else if (attack instanceof PhysicalDisplay physical && physical.getTarget() != null) {
+            target = physical.getTarget().getDisplayName();
+        }
+        return new BoardScene.Attack(target, weapons == null ? "" : plainText(weapons.getWeaponSummary()),
+              weapons == null ? "" : plainText(weapons.getFiringSolution()),
+              weapons == null ? -1 : weapons.weaponList.getSelectedIndex(),
+              attack.getAttackDescriptions().stream().map(GpuBoardActions::plainText).toList());
+    }
+
+    private WeaponPanel weaponPanel(Turn owner) {
         if (view.getClientgui() == null || !(owner.panel() instanceof FiringDisplay
               || owner.panel() instanceof TargetingPhaseDisplay)) {
             return null;
         }
         WeaponPanel weapons = view.getClientgui().getUnitDisplay().wPan;
-        if (weapons.getSelectedEntityId() != owner.actor()) {
+        return weapons.getSelectedEntityId() == owner.actor() && owner.actor() != Entity.NONE ? weapons : null;
+    }
+
+    private BoardScene.Command weaponCommands(Turn owner) {
+        WeaponPanel weapons = weaponPanel(owner);
+        if (weapons == null) {
             return null;
         }
         var model = weapons.weaponList.getModel();
@@ -131,22 +155,31 @@ final class GpuBoardActions {
                       }
                   })));
         }
-        addAmmoChoices(choices, weapons.getAmmoSelector(), "Ammunition", owner);
-        addAmmoChoices(choices, weapons.m_chBayWeapon, "Bay weapon", owner);
+        addAmmoChoices(choices, weapons.getAmmoSelector(), "Ammunition", owner, weapons);
+        addAmmoChoices(choices, weapons.m_chBayWeapon, "Bay weapon", owner, weapons);
         return new BoardScene.Command("weapons", "Weapons and ammunition", plainText(weapons.getTargetSummary()),
               true, false, choices, () -> { });
     }
 
-    private void addAmmoChoices(List<BoardScene.Command> choices, JComboBox<String> selector, String title, Turn owner) {
+    private void addAmmoChoices(List<BoardScene.Command> choices, JComboBox<String> selector, String title, Turn owner,
+          WeaponPanel weapons) {
+        if (!selector.isVisible()) {
+            return;
+        }
         List<BoardScene.Command> items = new ArrayList<>();
         var model = selector.getModel();
+        var selectedWeapon = weapons.getSelectedWeapon();
+        int selectedIndex = weapons.weaponList.getSelectedIndex();
         for (int i = 0; i < model.getSize(); i++) {
             int index = i;
             String label = model.getElementAt(index);
             items.add(new BoardScene.Command(title + ":" + index,
                   (selector.getSelectedIndex() == index ? "* " : "") + plainText(label), "", selector.isEnabled(),
                   false, List.of(), dispatch(() -> {
-                      if (current(owner) && selector.isEnabled() && selector.getModel() == model
+                      if (current(owner) && selector.isEnabled() && selector.isVisible() && selector.getModel() == model
+                            && weapons.getSelectedEntityId() == owner.actor()
+                            && weapons.weaponList.getSelectedIndex() == selectedIndex
+                            && weapons.getSelectedWeapon() == selectedWeapon
                             && index < model.getSize() && Objects.equals(label, model.getElementAt(index))) {
                           selector.setSelectedIndex(index);
                       }
@@ -266,7 +299,8 @@ final class GpuBoardActions {
     private BoardScene.Command describe(String id, AbstractButton button, boolean commit,
           List<BoardScene.Command> children, Runnable action) {
         return new BoardScene.Command(id, plainText(button.getText()), plainText(button.getToolTipText()),
-              button.isEnabled(), commit, MOVEMENT_COMMANDS.contains(button.getActionCommand()), children, dispatch(action));
+              button.isEnabled(), commit, MOVEMENT_COMMANDS.contains(button.getActionCommand())
+                    || Set.of("fireTwist", "fireStrafe").contains(button.getActionCommand()), children, dispatch(action));
     }
 
     private Runnable dispatch(Runnable action) {

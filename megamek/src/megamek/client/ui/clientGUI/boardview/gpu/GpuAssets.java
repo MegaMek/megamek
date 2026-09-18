@@ -31,8 +31,11 @@ import megamek.common.Configuration;
 final class GpuAssets implements Disposable {
     private final File root = new File(Configuration.dataDir(), "models/board");
     private final Map<String, Model> models = new HashMap<>();
+    private final Map<Interior, Model> interiors = new HashMap<>();
     private final Map<String, Texture> materials = new HashMap<>();
     private final Map<Integer, Water> water = new HashMap<>();
+
+    private record Interior(String asset, int levels) { }
 
     private record Water(List<Texture> frames, float[] ends, float duration) {
         Texture at(float time) {
@@ -199,6 +202,12 @@ final class GpuAssets implements Disposable {
         return new BoardScene.Pixels(frame);
     }
 
+    /** Interior meshes share the shell's local coordinates; geometry tuning only changes their instance transform. */
+    Model interior(String asset, int levels) {
+        return interiors.computeIfAbsent(new Interior(asset, levels),
+              key -> GpuBuildingInterior.build(model(key.asset()), key.levels()));
+    }
+
     private static org.w3c.dom.Node child(org.w3c.dom.Node parent, String name) {
         for (var node = parent.getFirstChild(); node != null; node = node.getNextSibling()) {
             if (node.getNodeName().equals(name)) {
@@ -214,6 +223,8 @@ final class GpuAssets implements Disposable {
 
     @Override
     public void dispose() {
+        interiors.values().forEach(Model::dispose);
+        interiors.clear();
         models.values().forEach(Model::dispose);
         materials.values().forEach(Texture::dispose);
         water.values().forEach(animation -> animation.frames().forEach(Texture::dispose));

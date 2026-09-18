@@ -27,6 +27,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
@@ -62,13 +63,17 @@ class GpuBattleView extends ApplicationAdapter {
     final BoardCamera boardCamera = new BoardCamera();
     private final Map<Integer, UnitMotion> motions = new HashMap<>();
     private final Map<BoardScene.Pixels, GpuMeeple> meeples = new HashMap<>();
+    private final GpuUnitModels unitModels = GpuUnitModels.ENABLED ? new GpuUnitModels() : null;
     private final Map<BoardScene.Unit, Vector3> unitAnchors = new HashMap<>();
     private final Map<String, ModelInstance> unitInstances = new HashMap<>();
+    private final Map<String, BoardScene.Pixels> unitTints = new HashMap<>();
     private final Map<Integer, KeyCommandBind> cameraKeys = new HashMap<>();
     private final BoardInput boardInput = new BoardInput();
     private final List<Hover> hover = new ArrayList<>();
     private GpuTerrain terrain;
+    private GpuFireControl fireControl;
     private GpuAtmosphere atmosphere;
+    private GpuUnitVisibility unitVisibility;
     private GpuTextures<BoardScene.Pixels> unitTextures;
     private GpuTextures<String> annotationTextures;
     private ModelBatch unitBatch;
@@ -102,7 +107,9 @@ class GpuBattleView extends ApplicationAdapter {
     @Override
     public void create() {
         terrain = new GpuTerrain();
+        fireControl = new GpuFireControl();
         atmosphere = new GpuAtmosphere();
+        unitVisibility = new GpuUnitVisibility();
         unitTextures = new GpuTextures<>();
         annotationTextures = new GpuTextures<>();
         unitBatch = new ModelBatch();
@@ -165,6 +172,7 @@ class GpuBattleView extends ApplicationAdapter {
         boardGeneration = frame.boardGeneration();
         ui.update(frame, Messages.getString("GpuBoard.speed", SPEED_LABELS[speedIndex]));
         terrain.update(scene);
+        fireControl.update(scene);
         atmosphere.configure(ui.atmosphere());
         terrain.setAtmosphere(atmosphere.lighting());
         if (unitTextures.update(scene.units().stream().map(BoardScene.Unit::image).distinct()
@@ -237,11 +245,12 @@ class GpuBattleView extends ApplicationAdapter {
         prepareUnits();
         applyHover();
         List<ModelInstance> units = new ArrayList<>(unitInstances.values());
-        terrain.animate(Gdx.graphics.getDeltaTime(), units);
+        float seeThrough = ui.seeThrough();
+        terrain.animate(Gdx.graphics.getDeltaTime(), units, ui.buildingOpacity(), ui.treeOpacity());
         terrain.renderShadows(boardCamera.camera, units);
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
         atmosphere.begin((int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight,
-              Gdx.graphics.getDeltaTime());
+              Gdx.graphics.getDeltaTime(), seeThrough > 0 && !units.isEmpty());
         terrain.render(boardCamera.camera, false);
         renderUnits();
         renderTethers();
@@ -249,7 +258,9 @@ class GpuBattleView extends ApplicationAdapter {
         atmosphere.end(boardCamera.camera, terrain, units, scene, ui.bottomPixels());
         atmosphere.restoreDepth(boardCamera.camera, terrain, units);
         atmosphere.renderWeather(boardCamera.camera, scene);
+        unitVisibility.render(boardCamera.camera, units, atmosphere.depthTexture(), ui.bottomPixels(), seeThrough, layoutScale);
         terrain.render(boardCamera.camera, true);
+        fireControl.render(boardCamera.camera);
         renderHexText();
         renderSelectionOutlines();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
@@ -263,6 +274,7 @@ class GpuBattleView extends ApplicationAdapter {
         unitAnchors.clear();
         unitInstances.keySet().retainAll(scene.units().stream().map(unit -> unit.id() + ":" + unit.part())
               .collect(Collectors.toSet()));
+        unitTints.keySet().retainAll(unitInstances.keySet());
         for (BoardScene.Unit unit : scene.units()) {
             Vector3 position = BoardGeometry.center(unit.location().coords(), unit.location().elevation());
             float facing = unit.location().facing() * 60;
@@ -276,15 +288,39 @@ class GpuBattleView extends ApplicationAdapter {
                   && MathUtils.isEqual(position.z, tile.elevation() * BoardGeometry.LEVEL)) {
                 position.z = BoardGeometry.groundZ(tile);
             }
-            GpuMeeple meeple = meeples.computeIfAbsent(unit.image(), pixels ->
-                  new GpuMeeple(pixels, unitTextures.region(pixels)));
+            GpuMeeple meeple = unitModels == null || unit.sensorContact() ? null : unitModels.get(unit.model());
+            boolean authored = meeple != null;
+            if (meeple == null) {
+                meeple = meeples.computeIfAbsent(unit.image(), pixels ->
+                      new GpuMeeple(pixels, unitTextures.region(pixels)));
+            }
             String key = unit.id() + ":" + unit.part();
             ModelInstance instance = unitInstances.get(key);
             if (instance == null || instance.model != meeple.instance.model) {
                 instance = new ModelInstance(meeple.instance.model);
                 unitInstances.put(key, instance);
+                unitTints.remove(key);
             }
-            Vector3 anchor = meeple.place(instance, boardCamera.camera, position, facing, unit.height());
+            // Presentation-only color for the see-through pass; the normal model materials retain their artwork.
+            if (!(instance.userData instanceof Color)) {
+                instance.userData = new Color();
+            }
+            Color.rgb888ToColor((Color) instance.userData, unit.outlineRgb());
+            if (authored && !unit.image().equals(unitTints.get(key))) {
+                Color tint = GpuCutout.averageColor(unit.image());
+                float brightest = Math.max(tint.r, Math.max(tint.g, tint.b));
+                if (brightest > 0.01f) {
+                    tint.mul(1 / brightest);
+                    tint.a = 1;
+                }
+                for (var material : instance.materials) {
+                    if ("paint".equals(material.id)) {
+                        material.set(ColorAttribute.createDiffuse(tint));
+                    }
+                }
+                unitTints.put(key, unit.image());
+            }
+            Vector3 anchor = meeple.place(instance, boardCamera.camera, position, facing, unit.height(), unit.part() >= 0);
             if (unit.airborne()) {
                 float offset = hoverOffset(hoverClock, unit.id(), unit.part());
                 hover.add(new Hover(instance, offset));
@@ -879,6 +915,9 @@ class GpuBattleView extends ApplicationAdapter {
         }
         source.stopKeys();
         meeples.values().forEach(GpuMeeple::dispose);
+        if (unitModels != null) {
+            unitModels.dispose();
+        }
         if (unitBatch != null) {
             unitBatch.dispose();
         }
@@ -894,8 +933,14 @@ class GpuBattleView extends ApplicationAdapter {
         if (terrain != null) {
             terrain.dispose();
         }
+        if (fireControl != null) {
+            fireControl.dispose();
+        }
         if (atmosphere != null) {
             atmosphere.dispose();
+        }
+        if (unitVisibility != null) {
+            unitVisibility.dispose();
         }
         if (lines != null) {
             lines.dispose();

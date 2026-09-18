@@ -1467,7 +1467,7 @@ public final class BoardView extends AbstractBoardView
         Rectangle view = graphics2D.getClipBounds();
 
         for (HexSprite sprite : spriteArrayList) {
-            if (!includeUnits && sprite instanceof IsometricSprite) {
+            if ((!includeUnits && sprite instanceof IsometricSprite) || (gpuCapture && hasNativeVolume(sprite))) {
                 continue;
             }
             Coords spritePosition = sprite.getPosition();
@@ -1537,6 +1537,9 @@ public final class BoardView extends AbstractBoardView
      * Draws a sprite, if it is in the current view
      */
     private void drawSprite(Graphics2D graphics2D, Sprite sprite) {
+        if (gpuCapture && hasNativeVolume(sprite)) {
+            return;
+        }
         Rectangle view = graphics2D.getClipBounds();
 
         // This can potentially be an expensive operation
@@ -6468,6 +6471,16 @@ public final class BoardView extends AbstractBoardView
 
     public ArrayList<AttackSprite> getAttackSprites() {
         return attackSprites;
+    }
+
+    private static boolean hasNativeVolume(Sprite sprite) {
+        return sprite instanceof AttackSprite || sprite instanceof FieldOfFireSprite field && field.isWeaponRange();
+    }
+
+    /** Existing handler output, including its arc, range and preference filtering. Swing thread only. */
+    public List<FieldOfFireSprite> getWeaponRangeSprites() {
+        return allSprites.stream().filter(FieldOfFireSprite.class::isInstance).map(FieldOfFireSprite.class::cast)
+              .filter(sprite -> sprite.isWeaponRange() && !sprite.isHidden()).toList();
     }
 
     @Override

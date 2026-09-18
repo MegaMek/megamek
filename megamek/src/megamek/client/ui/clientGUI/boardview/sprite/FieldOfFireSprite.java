@@ -187,8 +187,17 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         oldZoom = f;
     }
 
-    protected int getRangeBracket() {
+    public int getRangeBracket() {
         return rangeBracket;
+    }
+
+    /** Sensor ranges and objective zones keep their own planar presentation. */
+    public boolean isWeaponRange() {
+        return getClass() == FieldOfFireSprite.class && !usesOwnColor;
+    }
+
+    public int getBorders() {
+        return borders;
     }
 
     protected Stroke getLineStroke() {

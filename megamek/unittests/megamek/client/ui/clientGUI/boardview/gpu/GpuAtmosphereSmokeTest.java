@@ -230,6 +230,7 @@ class GpuAtmosphereSmokeTest {
             Gdx.gl.glClearDepthf(1);
             assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
         }
+        checkSandDensity(atmosphere, terrain, batch, tower, camera, scene);
         camera.setIsometric(false);
         camera.fit(scene);
         var calmRain = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0, 0,
@@ -257,6 +258,46 @@ class GpuAtmosphereSmokeTest {
         draw(atmosphere, terrain, batch, tower, camera, scene, BoardAtmosphere.DEFAULTS);
         assertEquals(darkest, luminance(sample(camera, BoardGeometry.center(new Coords(1, 3), 0))), 0.005f,
               "Disabling lightning must immediately restore normal exposure");
+    }
+
+    private void checkSandDensity(GpuAtmosphere atmosphere, GpuTerrain terrain, ModelBatch batch,
+          ModelInstance tower, BoardCamera camera, BoardScene scene) {
+        GpuWeatherParticles particles = new GpuWeatherParticles();
+        draw(atmosphere, terrain, batch, tower, camera, scene, BoardAtmosphere.DEFAULTS);
+        Pixmap clear = ScreenUtils.getFrameBufferPixmap(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        try {
+            int previousCoverage = 0;
+            for (float strength : new float[] { 0.5f, 0.6f, 1 }) {
+                draw(atmosphere, terrain, batch, tower, camera, scene, BoardAtmosphere.DEFAULTS);
+                particles.render(camera.camera, scene, new BoardAtmosphere.Effects(0, 0, 0, strength, 0, 0.4f, 60),
+                      Color.WHITE, 3);
+                Pixmap dusty = ScreenUtils.getFrameBufferPixmap(0, 0, clear.getWidth(), clear.getHeight());
+                int coverage = 0;
+                try {
+                    for (int y = 0; y < clear.getHeight(); y++) {
+                        for (int x = 0; x < clear.getWidth(); x++) {
+                            int before = clear.getPixel(x, y), after = dusty.getPixel(x, y);
+                            int difference = Math.abs((before >>> 24) - (after >>> 24))
+                                  + Math.abs(((before >>> 16) & 255) - ((after >>> 16) & 255))
+                                  + Math.abs(((before >>> 8) & 255) - ((after >>> 8) & 255));
+                            if (difference > 40) {
+                                coverage++;
+                            }
+                        }
+                    }
+                } finally {
+                    dusty.dispose();
+                }
+                assertTrue(coverage > clear.getWidth() * clear.getHeight() * 0.08,
+                      "Even half-strength sand must cover a visible portion of the scene: " + coverage);
+                assertTrue(coverage > previousCoverage, "Increasing sand strength must increase visible coverage");
+                previousCoverage = coverage;
+                GpuBoardTestUi.capture(new File(output, "weather-sand-strength-" + Math.round(strength * 100) + ".png"));
+            }
+        } finally {
+            clear.dispose();
+            particles.dispose();
+        }
     }
 
     private Color sample(BoardCamera camera, Vector3 point) {

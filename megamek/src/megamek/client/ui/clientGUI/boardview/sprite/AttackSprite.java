@@ -38,6 +38,7 @@ import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
+import java.util.List;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -288,6 +289,19 @@ public class AttackSprite extends Sprite {
 
     public int getTargetId() {
         return targetId;
+    }
+
+    /** Presentation inputs for the native board; read only on the Swing event thread. */
+    public Entity getAttackingEntity() {
+        return attackingEntity;
+    }
+
+    public Targetable getTargetedEntity() {
+        return targetedEntity;
+    }
+
+    public List<EntityAction> getActions() {
+        return attacks.stream().toList();
     }
 
     @Override

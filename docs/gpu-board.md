@@ -15,8 +15,10 @@ leaves the classic interface available; closing the game does not reopen it.
 Hexes tile edge to edge, with exposed walls where their surfaces stand above
 neighbors. `BoardSurface` supplies the same triangles to rendering and picking.
 Roads reaching an edge carve a corridor into the upper hex and raise a ramp from
-the lower hex, meeting at a shared edge height. An exit from either dry hex is
-enough: a road ending against unpaved ground still has a continuous approach.
+the lower hex, meeting at a shared edge height. Across a difference of at most
+two levels, an exit from either dry hex gives a road end a continuous approach
+onto unpaved ground. Larger differences require connecting road exits on both
+sides; otherwise the road ends flat and the cliff remains intact.
 Grounded movement follows that surface. Other terrain retains its actual level
 step. There are no gaps, global inset/interpolation settings, or stretched top
 textures on walls.

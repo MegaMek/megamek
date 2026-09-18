@@ -33,7 +33,7 @@ final class BoardSurface {
         int exits = 0;
         for (int direction = 0; direction < 6; direction++) {
             BoardScene.Tile neighbor = scene.tile(tile.coords().translated(direction));
-            if (roadReachesEdge(tile, neighbor, direction) && tile.elevation() != neighbor.elevation()) {
+            if (hasRoadApproach(tile, neighbor, direction) && tile.elevation() != neighbor.elevation()) {
                 exits |= 1 << direction;
             }
         }
@@ -47,11 +47,15 @@ final class BoardSurface {
         }
     }
 
-    /** Presentation only: an exit from either side needs a continuous approach, even on unpaved ground. */
-    static boolean roadReachesEdge(BoardScene.Tile tile, BoardScene.Tile neighbor, int direction) {
-        return neighbor != null && !tile.water() && !neighbor.water()
-              && ((tile.roadExits() & (1 << direction)) != 0
-                    || (neighbor.roadExits() & (1 << ((direction + 3) % 6))) != 0);
+    /** Presentation only: a road end can meet unpaved ground across at most two levels. */
+    static boolean hasRoadApproach(BoardScene.Tile tile, BoardScene.Tile neighbor, int direction) {
+        if (neighbor == null || tile.water() || neighbor.water()) {
+            return false;
+        }
+        boolean exit = (tile.roadExits() & (1 << direction)) != 0;
+        boolean continuation = (neighbor.roadExits() & (1 << ((direction + 3) % 6))) != 0;
+        return (exit && continuation)
+              || ((exit || continuation) && Math.abs(tile.elevation() - neighbor.elevation()) <= 2);
     }
 
     private void river(BoardScene scene) {

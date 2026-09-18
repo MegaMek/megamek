@@ -46,7 +46,7 @@ class BoardSurfaceTest {
     void aRoadEndingAtTheEdgeStillCutsAndFillsBothApproachesInEveryDirection() {
         for (int direction = 0; direction < 6; direction++) {
             for (boolean roadOnHighSide : List.of(true, false)) {
-                BoardScene scene = scene(false, direction, roadOnHighSide, !roadOnHighSide);
+                BoardScene scene = scene(false, direction, roadOnHighSide, !roadOnHighSide, 2);
                 Coords neighbor = FIRST.translated(direction);
                 BoardSurface high = new BoardSurface(scene, scene.tile(FIRST));
                 BoardSurface low = new BoardSurface(scene, scene.tile(neighbor));
@@ -70,7 +70,7 @@ class BoardSurfaceTest {
                 assertEquals(low.height(moving.x, moving.y), moving.z, 0.01f);
             }
         }
-        BoardScene scene = scene(false, 1, false, false);
+        BoardScene scene = scene(false, 1, false, false, 2);
         BoardSurface high = new BoardSurface(scene, scene.tile(FIRST));
         assertEquals(0, high.ramps, "Ground without an edge-reaching road retains the cliff");
         assertEquals(6, high.faces.size(), "Ordinary flat hexes do not need road subdivisions");
@@ -96,6 +96,31 @@ class BoardSurfaceTest {
 
     private static boolean onEdge(Vector3 p, Vector3 a, Vector3 b) {
         return Math.abs((b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x)) < 0.01f;
+    }
+
+    @Test
+    void largeCliffsLeaveRoadEndsFlatUnlessBothRoadExitsConnect() {
+        for (int direction = 0; direction < 6; direction++) {
+            Coords neighbor = FIRST.translated(direction);
+            Vector3 gate = BoardGeometry.center(FIRST, 0).lerp(BoardGeometry.center(neighbor, 0), 0.5f);
+            for (int elevation : new int[] { -3, 3 }) {
+                for (boolean roadOnFirstSide : List.of(true, false)) {
+                    BoardScene scene = scene(false, direction, roadOnFirstSide, !roadOnFirstSide, elevation);
+                    BoardSurface first = new BoardSurface(scene, scene.tile(FIRST));
+                    BoardSurface second = new BoardSurface(scene, scene.tile(neighbor));
+                    assertEquals(elevation * BoardGeometry.LEVEL, first.height(gate.x, gate.y), 0.01f,
+                          "A road end at a large cliff must retain its own elevation");
+                    assertEquals(0, second.height(gate.x, gate.y), 0.01f,
+                          "The adjacent hex must also retain its flat surface");
+                }
+                BoardScene connected = scene(false, direction, true, true, elevation);
+                BoardSurface first = new BoardSurface(connected, connected.tile(FIRST));
+                BoardSurface second = new BoardSurface(connected, connected.tile(neighbor));
+                assertEquals(elevation * BoardGeometry.LEVEL / 2, first.height(gate.x, gate.y), 0.01f);
+                assertEquals(first.height(gate.x, gate.y), second.height(gate.x, gate.y), 0.01f,
+                      "An actual connecting road still meets at the shared ramp height");
+            }
+        }
     }
 
     @Test
@@ -187,17 +212,17 @@ class BoardSurfaceTest {
     }
 
     private static BoardScene scene(boolean river) {
-        return scene(river, 1, true, true);
+        return scene(river, 1, true, true, 2);
     }
 
-    private static BoardScene scene(boolean river, int direction, boolean firstRoad, boolean secondRoad) {
+    private static BoardScene scene(boolean river, int direction, boolean firstRoad, boolean secondRoad, int elevation) {
         var art = new BoardScene.Pixels(new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB));
         List<BoardScene.Tile> tiles = new ArrayList<>();
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
                 Coords coords = new Coords(x, y);
                 boolean first = coords.equals(FIRST), second = coords.equals(FIRST.translated(direction));
-                tiles.add(new BoardScene.Tile(coords, !river && first ? 2 : 0,
+                tiles.add(new BoardScene.Tile(coords, !river && first ? elevation : 0,
                       river && (first || second) ? 2 : -1, false,
                       river ? 0 : first && firstRoad ? 1 << direction
                             : second && secondRoad ? 1 << ((direction + 3) % 6) : 0, BoardScene.Surface.GRASS,

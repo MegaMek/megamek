@@ -166,7 +166,7 @@ final class UnitMotion {
         }
         for (int direction = 0; direction < 6; direction++) {
             if (from.coords().translated(direction).equals(to.coords())
-                  && BoardSurface.roadReachesEdge(start, end, direction)) {
+                  && BoardSurface.hasRoadApproach(start, end, direction)) {
                 BoardScene.Tile tile = BoardGeometry.contains(from.coords(), position.x, position.y) ? start : end;
                 return new Vector3(position.x, position.y, new BoardSurface(scene, tile).height(position.x, position.y));
             }

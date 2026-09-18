@@ -179,6 +179,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private boolean forceGenerated;
 
     private JButton btnGenerate;
+    private JButton btnAddToGame;
+    private Runnable onAddToGame;
     private JButton btnExportMUL;
     private JButton btnClear;
 
@@ -589,6 +591,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panGenerateOptions.add(btnFormationMix);
         lblFormationMixSummary = new JLabel(" ");
         panGenerateOptions.add(lblFormationMixSummary);
+        // Lives in this strip rather than a grid column of its own: every row above is laid out on the same four
+        // columns, so a fifth would push all of them about. Hidden until a host says what it does.
+        btnAddToGame = new JButton(Messages.getString("ForceGeneratorDialog.addToGame"));
+        btnAddToGame.setToolTipText(Messages.getString("ForceGeneratorDialog.addToGame.tooltip"));
+        btnAddToGame.addActionListener(event -> addToGameClicked());
+        btnAddToGame.setEnabled(false);
+        btnAddToGame.setVisible(false);
+        panGenerateOptions.add(btnAddToGame);
         constraints.gridx = 1;
         constraints.gridy = row;
         add(panGenerateOptions, constraints);
@@ -1119,6 +1129,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         });
         task.execute();
+    }
+
+    /**
+     * Does what the Clear Force button does: discards the generated force and leaves the panel ready for a fresh
+     * roll. A host calls this when the force on show has been dealt with and the next roll must not be folded into
+     * it, for example after its units were added to the game for one player and the next roll is for another.
+     */
+    public void clearGeneratedForce() {
+        clearForce();
+        btnExportMUL.setEnabled(false);
+        btnClear.setEnabled(false);
     }
 
     private void clearForce() {
@@ -1730,9 +1751,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 exportMUL(forceDesc);
             }
         } else if (ev.getSource() == btnClear) {
-            clearForce();
-            btnExportMUL.setEnabled(false);
-            btnClear.setEnabled(false);
+            clearGeneratedForce();
         }
 
         if (changesFormationOffer(ev.getSource())) {
@@ -1783,6 +1802,35 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setClearButtonVisible(boolean visible) {
         btnClear.setVisible(visible);
+    }
+
+    /**
+     * Says what the Add to Game button does, and shows it. The button belongs to this strip, but what is selected
+     * lives in the host's force tree, so the host supplies the action. A host that commits the tree some other way
+     * (MekHQ's Command Designer builds a TOE from it) passes {@code null} and the button stays hidden.
+     *
+     * @param handler run when the button is pressed, or {@code null} to hide the button
+     */
+    public void setOnAddToGame(@Nullable Runnable handler) {
+        this.onAddToGame = handler;
+        btnAddToGame.setVisible(handler != null);
+    }
+
+    /**
+     * Enables the Add to Game button while there is something selected for it to add.
+     *
+     * @param enabled {@code true} when the host's force tree has a selection
+     */
+    public void setAddToGameEnabled(boolean enabled) {
+        btnAddToGame.setEnabled(enabled);
+    }
+
+    private void addToGameClicked() {
+        if (onAddToGame == null) {
+            logger.debug("[ForceGen] Add to Game pressed with no handler set; nothing to do");
+            return;
+        }
+        onAddToGame.run();
     }
 
     /**

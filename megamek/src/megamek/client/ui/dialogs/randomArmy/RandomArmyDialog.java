@@ -36,13 +36,14 @@ package megamek.client.ui.dialogs.randomArmy;
 
 import java.awt.FlowLayout;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Arrays;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
@@ -93,6 +94,19 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
 
     private final JComboBox<String> playerChooser = new JComboBox<>();
 
+    /**
+     * The player the chooser named before its latest change, or {@code null} before the chooser is first filled.
+     * Chosen units wait for whoever was named when they were picked, and by the time the chooser reports a change it
+     * has already moved on, so the name has to be kept here.
+     */
+    private String previousPlayerChoice;
+
+    /**
+     * {@code true} while this dialog is filling or resetting the chooser itself, so that only a change made by the
+     * person using the dialog asks what to do with waiting units.
+     */
+    private boolean isAdjustingPlayerChooser;
+
     private final JButton okButton = new JButton(Messages.getString("Okay"));
     private final JButton cancelButton = new JButton(Messages.getString("Cancel"));
     private final JButton skillsButton = new JButton(Messages.getString("SkillGenerationDialog.title"));
@@ -112,6 +126,7 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         tabbedPane.addChangeListener(
               ev -> skillsButton.setEnabled(tabbedPane.getSelectedIndex() != TAB_FORCE_GENERATOR));
         forceGeneratorPanel.setHostLiftSupplier(this::liftAlreadyInGame);
+        playerChooser.addActionListener(event -> playerChoiceChanged());
     }
 
     /**
@@ -150,46 +165,165 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     }
 
     private void okAction() {
+        boolean isCommitted = commitChosenUnits((String) playerChooser.getSelectedItem());
+        if (isCommitted) {
+            setVisible(false);
+        }
+    }
+
+    /**
+     * Sends the chosen units of the tab on show to the game for the named player and empties that list; on the Force
+     * Generator tab the generated force is cleared with it, since it is now in the game. The Okay button does this
+     * for whoever the chooser names; changing the chooser while units are waiting can do it for the player they were
+     * waiting for.
+     *
+     * @param chosenName the chooser entry the units are for, or {@code null} when the chooser is empty, which gives
+     *                   them to the local player
+     *
+     * @return {@code true} when the units were sent; {@code false} when one of them could not be loaded, in which
+     *       case nothing was sent and the list is left as it was
+     */
+    private boolean commitChosenUnits(@Nullable String chosenName) {
+        Player owner = permittedPlayerNamed(chosenName);
         if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
-            forceGeneratorPanel.addChosenUnits(selectedPlayer(), clientGui);
+            forceGeneratorPanel.addChosenUnits(owner, clientGui);
             // The Force Generator knows more about what it rolled than any other tab, so it records
             // the same context as the rest rather than being the one source that reports nothing.
-            recordGenerationContext(selectedPlayer());
-        } else {
-            ArrayList<Entity> entities = new ArrayList<>(chosenUnitsModel.getAllUnits().size());
-            Client selectedClient = selectedClient();
-            Player owner = selectedPlayer();
             recordGenerationContext(owner);
-            for (MekSummary ms : chosenUnitsModel.getAllUnits()) {
-                try {
-                    Entity entity = new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-
-                    // skills still come from the chosen bot's own generator where there is one; only who owns
-                    // the unit has moved, because a remote player has no client here to generate from
-                    autoSetSkillsAndName(entity, selectedClient);
-                    entity.setOwner(owner);
-                    if (!client.getGame().getPhase().isLounge()) {
-                        entity.setDeployRound(client.getGame().getRoundCount() + 1);
-                        entity.setGame(client.getGame());
-                        // Set these to true, otherwise units reinforced in the movement turn are considered selectable
-                        entity.setDone(true);
-                        entity.setUnloaded(true);
-                    }
-                    entities.add(entity);
-                } catch (EntityLoadingException ex) {
-                    LOGGER.error(ex, "Unable to load Mek: %s: %s".formatted(ms.getSourceFile(), ms.getEntryName()));
-                    return;
-                }
-            }
-            // sent over this machine's own connection whoever the units are for
-            client.sendAddEntity(entities);
-            String msg = "%s loaded Units from Random Army for player: %s [%d units]"
-                  .formatted(client.getLocalPlayer(), owner.getName(), entities.size());
-            client.sendServerChat(Player.PLAYER_NONE, msg);
-            clearData();
+            // Cleared last, because the context above is read from the tree. The command has gone into the game as
+            // this player's force; left on show, the next roll would be folded into it and its units, which are
+            // the very objects just sent, could be picked and sent a second time.
+            forceGeneratorPanel.clearForce();
+            return true;
         }
 
-        setVisible(false);
+        ArrayList<Entity> entities = new ArrayList<>(chosenUnitsModel.getAllUnits().size());
+        Client skillsClient = clientNamed(chosenName);
+        recordGenerationContext(owner);
+        for (MekSummary unitSummary : chosenUnitsModel.getAllUnits()) {
+            try {
+                Entity entity = new MekFileParser(unitSummary.getSourceFile(), unitSummary.getEntryName()).getEntity();
+
+                // skills still come from the chosen bot's own generator where there is one; only who owns
+                // the unit has moved, because a remote player has no client here to generate from
+                autoSetSkillsAndName(entity, skillsClient, chosenName);
+                entity.setOwner(owner);
+                if (!client.getGame().getPhase().isLounge()) {
+                    entity.setDeployRound(client.getGame().getRoundCount() + 1);
+                    entity.setGame(client.getGame());
+                    // Set these to true, otherwise units reinforced in the movement turn are considered selectable
+                    entity.setDone(true);
+                    entity.setUnloaded(true);
+                }
+                entities.add(entity);
+            } catch (EntityLoadingException exception) {
+                LOGGER.error(exception, "Unable to load Mek: %s: %s".formatted(unitSummary.getSourceFile(),
+                      unitSummary.getEntryName()));
+                return false;
+            }
+        }
+        // sent over this machine's own connection whoever the units are for
+        client.sendAddEntity(entities);
+        String chatMessage = Messages.getString("RandomArmyDialog.loadedUnitsChat",
+              client.getLocalPlayer(), owner.getName(), entities.size());
+        client.sendServerChat(Player.PLAYER_NONE, chatMessage);
+        clearData();
+        return true;
+    }
+
+    /**
+     * Called whenever the player chooser changes. Chosen units are not marked with the player they were picked for:
+     * the whole list goes to whoever the chooser names when Okay is pressed. So four units picked for one player,
+     * followed by four picked for another, would all reach the second player. When the person using the dialog
+     * changes the chooser while units are waiting, they are asked whether those units go to the player they were
+     * picked for now, or move to the new player, rather than the move happening in silence.
+     */
+    private void playerChoiceChanged() {
+        if (isAdjustingPlayerChooser) {
+            return;
+        }
+        String newChoice = (String) playerChooser.getSelectedItem();
+        if ((newChoice == null) || newChoice.equals(previousPlayerChoice)) {
+            return;
+        }
+        int waitingUnitCount = waitingUnitCount();
+        if ((waitingUnitCount == 0) || (previousPlayerChoice == null)) {
+            LOGGER.debug("[GMAddUnit] chooser moved from {} to {} with no chosen units waiting, so nothing to ask",
+                  previousPlayerChoice, newChoice);
+            previousPlayerChoice = newChoice;
+            return;
+        }
+
+        String addNowChoice = Messages.getString("RandomArmyDialog.switchPlayer.addNow", previousPlayerChoice);
+        String moveChoice = Messages.getString("RandomArmyDialog.switchPlayer.moveToNew", newChoice);
+        String cancelChoice = Messages.getString("Cancel");
+        Object[] choices = { addNowChoice, moveChoice, cancelChoice };
+        int answer = JOptionPane.showOptionDialog(this,
+              Messages.getString("RandomArmyDialog.switchPlayer.message", waitingUnitCount, previousPlayerChoice,
+                    newChoice),
+              Messages.getString("RandomArmyDialog.switchPlayer.title"),
+              JOptionPane.DEFAULT_OPTION,
+              JOptionPane.QUESTION_MESSAGE,
+              null,
+              choices,
+              addNowChoice);
+
+        boolean isAddNow = (answer == 0);
+        boolean isMove = (answer == 1);
+        if (isAddNow) {
+            addWaitingUnitsBeforeSwitching(waitingUnitCount, newChoice);
+        } else if (isMove) {
+            LOGGER.info("[GMAddUnit] {} chosen unit(s) picked for {} were moved to {} by choice",
+                  waitingUnitCount, previousPlayerChoice, newChoice);
+            previousPlayerChoice = newChoice;
+        } else {
+            LOGGER.debug("[GMAddUnit] switch from {} to {} cancelled; {} chosen unit(s) stay waiting for {}",
+                  previousPlayerChoice, newChoice, waitingUnitCount, previousPlayerChoice);
+            selectWithoutAsking(previousPlayerChoice);
+        }
+    }
+
+    /**
+     * Sends the waiting units to the player they were picked for, then lets the chooser move on. If the units cannot
+     * be sent, the chooser goes back to the player they wait for.
+     *
+     * @param waitingUnitCount how many units are waiting, for the log
+     * @param newChoice        the chooser entry being switched to
+     */
+    private void addWaitingUnitsBeforeSwitching(int waitingUnitCount, String newChoice) {
+        boolean isCommitted = commitChosenUnits(previousPlayerChoice);
+        if (!isCommitted) {
+            LOGGER.warn("[GMAddUnit] the {} chosen unit(s) for {} could not be added, so the chooser stays on {}",
+                  waitingUnitCount, previousPlayerChoice, previousPlayerChoice);
+            selectWithoutAsking(previousPlayerChoice);
+            return;
+        }
+        LOGGER.info("[GMAddUnit] {} chosen unit(s) were added for {} before the chooser moved to {}",
+              waitingUnitCount, previousPlayerChoice, newChoice);
+        previousPlayerChoice = newChoice;
+    }
+
+    /** @return how many chosen units the Okay button would send right now, which depends on the tab on show */
+    private int waitingUnitCount() {
+        if (tabbedPane.getSelectedIndex() == TAB_FORCE_GENERATOR) {
+            return forceGeneratorPanel.getChosenUnits().size();
+        }
+        return chosenUnitsModel.getAllUnits().size();
+    }
+
+    /**
+     * Points the chooser at the given entry without {@link #playerChoiceChanged()} treating it as a change made by
+     * the person using the dialog.
+     *
+     * @param playerName the chooser entry to select
+     */
+    private void selectWithoutAsking(String playerName) {
+        isAdjustingPlayerChooser = true;
+        try {
+            playerChooser.setSelectedItem(playerName);
+        } finally {
+            isAdjustingPlayerChooser = false;
+        }
     }
 
     /**
@@ -203,8 +337,18 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
      * @return the player who will own the units
      */
     private Player selectedPlayer() {
+        return permittedPlayerNamed((String) playerChooser.getSelectedItem());
+    }
+
+    /**
+     * The player a chooser entry stands for, under the rule described at {@link #selectedPlayer()}.
+     *
+     * @param chosenName the chooser entry, or {@code null} when the chooser is empty
+     *
+     * @return the named player when the local player may add units to them, otherwise the local player
+     */
+    private Player permittedPlayerNamed(@Nullable String chosenName) {
         Player localPlayer = client.getLocalPlayer();
-        String chosenName = (String) playerChooser.getSelectedItem();
         Player chosen = client.getGame()
               .getPlayersList()
               .stream()
@@ -227,10 +371,14 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         return chosen;
     }
 
-    /** @return the client the generated units belong to: a chosen local bot, or this player */
-    private Client selectedClient() {
-        if (playerChooser.getSelectedIndex() > 0) {
-            Client botClient = (Client) clientGui.getLocalBots().get((String) playerChooser.getSelectedItem());
+    /**
+     * @param chosenName the chooser entry the units are for, or {@code null} when the chooser is empty
+     *
+     * @return the client the generated units belong to: the local bot of that name, or this player
+     */
+    private Client clientNamed(@Nullable String chosenName) {
+        if (chosenName != null) {
+            Client botClient = (Client) clientGui.getLocalBots().get(chosenName);
             if (botClient != null) {
                 return botClient;
             }
@@ -277,6 +425,17 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
     }
 
     private void updatePlayerChoice(String selectionName) {
+        // refilling the chooser fires the same change events as a person picking from it
+        isAdjustingPlayerChooser = true;
+        try {
+            refillPlayerChooser(selectionName);
+        } finally {
+            isAdjustingPlayerChooser = false;
+        }
+        previousPlayerChoice = (String) playerChooser.getSelectedItem();
+    }
+
+    private void refillPlayerChooser(String selectionName) {
         playerChooser.setEnabled(false);
         playerChooser.removeAllItems();
         List<Player> offered = UnitRecipients.availableTo(client.getLocalPlayer(),
@@ -384,21 +543,29 @@ public class RandomArmyDialog extends AbstractRandomArmyDialog {
         client.getGame().addGameListener(gameListener);
     }
 
-    private void autoSetSkillsAndName(Entity e, Client client) {
-        ClientPreferences cs = PreferenceManager.getClientPreferences();
+    /**
+     * Rolls a new unit's skills and crew names, where the client preferences ask for them.
+     *
+     * @param entity       the unit to give skills and crew names
+     * @param skillsClient the client whose skill generator rolls the skills
+     * @param chosenName   the chooser entry the unit is for, which the name generator is keyed on; passed in rather
+     *                     than read from the chooser, which may already name somebody else
+     */
+    private void autoSetSkillsAndName(Entity entity, Client skillsClient, @Nullable String chosenName) {
+        ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
 
-        Arrays.fill(e.getCrew().getClanPilots(), e.isClan());
-        if (cs.useAverageSkills()) {
-            client.getSkillGenerator().setRandomSkills(e);
+        Arrays.fill(entity.getCrew().getClanPilots(), entity.isClan());
+        if (clientPreferences.useAverageSkills()) {
+            skillsClient.getSkillGenerator().setRandomSkills(entity);
         }
 
-        String faction = (String) playerChooser.getSelectedItem();
-        for (int i = 0; i < e.getCrew().getSlotCount(); i++) {
-            if (cs.generateNames()) {
+        for (int slot = 0; slot < entity.getCrew().getSlotCount(); slot++) {
+            if (clientPreferences.generateNames()) {
                 Gender gender = RandomGenderGenerator.generate();
-                e.getCrew().setGender(gender, i);
-                String name = RandomNameGenerator.getInstance().generate(gender, e.getCrew().isClanPilot(i), faction);
-                e.getCrew().setName(name, i);
+                entity.getCrew().setGender(gender, slot);
+                String name = RandomNameGenerator.getInstance()
+                      .generate(gender, entity.getCrew().isClanPilot(slot), chosenName);
+                entity.getCrew().setName(name, slot);
             }
         }
     }

@@ -229,6 +229,10 @@ public class ForceGeneratorViewUi implements ActionListener {
         // Selecting a lance points the formation mix at it, so the palette offers that lance's formations rather
         // than whatever the settings above it are left on. Deselecting hands it back to the settings.
         forceTree.addTreeSelectionListener(event -> panControls.setFormationMixContext(selectedForceNode()));
+        // The Add to Game button acts on the selection, so it is only live while there is one.
+        forceTree.addTreeSelectionListener(
+              event -> panControls.setAddToGameEnabled(forceTree.getSelectionCount() > 0));
+        panControls.setOnAddToGame(this::addSelectionToChosenUnits);
 
         rightPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -403,6 +407,29 @@ public class ForceGeneratorViewUi implements ActionListener {
      */
     public void setToeExclusionMode(boolean enabled) {
         this.toeExclusionMode = enabled;
+        // the Add to Game button goes the same way as the menu item of that name
+        panControls.setOnAddToGame(enabled ? null : this::addSelectionToChosenUnits);
+    }
+
+    /**
+     * Puts whatever is selected in the force tree on the chosen units list, as the right-click "Add to Game" does for
+     * the node under the pointer. A formation brings everything inside it; excluded nodes are skipped, and a unit
+     * already on the list is not added twice.
+     */
+    private void addSelectionToChosenUnits() {
+        TreePath[] selectedPaths = forceTree.getSelectionPaths();
+        if ((selectedPaths == null) || (selectedPaths.length == 0)) {
+            logger.debug("[ForceGen] Add to Game pressed with nothing selected in the force tree; nothing added");
+            return;
+        }
+        int chosenBefore = modelChosen.getRowCount();
+        for (TreePath selectedPath : selectedPaths) {
+            if (selectedPath.getLastPathComponent() instanceof ForceDescriptor selectedNode) {
+                modelChosen.addEntities(selectedNode);
+            }
+        }
+        logger.debug("[ForceGen] Add to Game button: {} tree node(s) selected, {} unit(s) added to the chosen list",
+              selectedPaths.length, modelChosen.getRowCount() - chosenBefore);
     }
 
     /**
@@ -632,6 +659,18 @@ public class ForceGeneratorViewUi implements ActionListener {
               + " [" + entities.size() + " units]";
         clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
 
+        modelChosen.clearData();
+    }
+
+    /**
+     * Discards the generated force and the accumulated Command Model, as the Clear Force button does, and empties
+     * the chosen units along with them. A command is sent to the game as one player's force, so a host calls this
+     * once a command has gone to its owner and the next roll is for somebody else - otherwise that roll would be
+     * folded into the command the first player already received.
+     */
+    public void clearForce() {
+        logger.debug("[ForceGen] host asked for the generated force to be cleared");
+        panControls.clearGeneratedForce();
         modelChosen.clearData();
     }
 
@@ -1024,7 +1063,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     }
 
                     if (!toeExclusionMode) {
-                        JMenuItem addItem = new JMenuItem("Add to game");
+                        JMenuItem addItem = new JMenuItem(Messages.getString("ForceGeneratorDialog.addToGame"));
                         addItem.addActionListener(actionEvent -> modelChosen.addEntities(fd));
                         menu.add(addItem);
                     }

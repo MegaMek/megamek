@@ -843,6 +843,42 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
+     * What a refresh of the formation combo should select, and whether that selection is a new one.
+     *
+     * @param formation    the formation code to select, or {@code null} when neither a preference nor the previous
+     *                     selection applies and the caller falls back on the ruleset default
+     * @param applyToForce whether the selection is a new choice that {@code setFormation} has to be told about
+     */
+    record FormationChoice(@Nullable String formation, boolean applyToForce) {
+    }
+
+    /**
+     * Decides what a refresh of the formation combo does with a stated echelon preference.
+     *
+     * <p>A pending preference outranks the formation already showing, which is the point of stating one: a host
+     * that asks for a company gets a company even though the combo was filled with the ruleset default before the
+     * preference arrived. When the preference has no match and no previous selection survives, the caller falls
+     * back on the ruleset default.</p>
+     *
+     * @param preferenceIsPending whether a preference has been stated and not yet consumed by a refresh
+     * @param preferredFormation  the code matching the preference, or {@code null} when this faction fields no
+     *                            such echelon
+     * @param currentFormation    the code the combo already showed and still offers, or {@code null} otherwise
+     *
+     * @return the formation to select and whether to apply it, never {@code null}
+     */
+    static FormationChoice formationChoice(boolean preferenceIsPending, @Nullable String preferredFormation,
+          @Nullable String currentFormation) {
+        if (preferenceIsPending && (preferredFormation != null)) {
+            return new FormationChoice(preferredFormation, true);
+        }
+        if (currentFormation != null) {
+            return new FormationChoice(currentFormation, false);
+        }
+        return new FormationChoice(null, false);
+    }
+
+    /**
      * Points the formation mix at a node of the organisation tree, so the palette describes that node.
      *
      * <p>Without this the palette describes whatever the settings above it describe, which is right until a force
@@ -1494,16 +1530,15 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         // One refresh consumes the preference whether or not this faction fields it, so a preference the faction
         // cannot honour never lingers to override a choice the player makes later.
-        String pendingEchelon = null;
-        if (preferredEchelonPending) {
-            preferredEchelonPending = false;
-            pendingEchelon = preferredEchelonItem();
-        }
-        if (pendingEchelon != null) {
-            cbFormation.setSelectedItem(pendingEchelon);
-            setFormation(pendingEchelon);
-        } else if (hasCurrent) {
-            cbFormation.setSelectedItem(currentFormation);
+        String pendingFormation = preferredEchelonPending ? preferredEchelonItem() : null;
+        preferredEchelonPending = false;
+        FormationChoice choice = formationChoice(pendingFormation != null, pendingFormation,
+              hasCurrent ? currentFormation : null);
+        if (choice.formation() != null) {
+            cbFormation.setSelectedItem(choice.formation());
+            if (choice.applyToForce()) {
+                setFormation(choice.formation());
+            }
         } else {
             String echelon = preferredEchelonItem();
             if (echelon == null) {

@@ -869,17 +869,10 @@ public class UnitDamagePanelBuilder {
         return offerGameMasterTools && (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
     }
 
-    /** Appends a burst fire checkbox to a machine gun's row, prefilled with the gun's current setting. */
+    /** Appends a burst fire switch to a machine gun's row, prefilled with the gun's current setting. */
     private JComponent withMgBurstCheckbox(int equipmentNumber, Mounted<?> machineGun, JComponent control) {
-        JCheckBox burstCheckbox = new JCheckBox(Messages.getString("UnitEditorDialog.mgBurst"),
-              machineGun.isRapidFire());
-        burstCheckbox.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.mgBurst.tooltip")));
-        controls.mgBurst.put(equipmentNumber, burstCheckbox);
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        row.add(control);
-        row.add(burstCheckbox);
-        return row;
+        return appendedToRow(control, stateSwitch("UnitEditorDialog.mgBurst", machineGun.isRapidFire(),
+              controls.mgBurst, equipmentNumber));
     }
 
     /**
@@ -1135,12 +1128,8 @@ public class UnitDamagePanelBuilder {
         control.add(new JLabel(Messages.getString("UnitEditorDialog.shots")));
         if (offersEquipmentSettings() && ammoBin.getType().hasFlag(AmmoType.F_HOTLOAD)
               && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
-            JCheckBox hotLoadCheckbox = new JCheckBox(Messages.getString("UnitEditorDialog.hotLoad"),
-                  ammoBin.isHotLoaded());
-            hotLoadCheckbox.setToolTipText(UIUtil.formatSideTooltip(
-                  Messages.getString("UnitEditorDialog.hotLoad.tooltip")));
-            controls.hotLoadedAmmo.put(equipmentNumber, hotLoadCheckbox);
-            control.add(hotLoadCheckbox);
+            control.add(stateSwitch("UnitEditorDialog.hotLoad", ammoBin.isHotLoaded(), controls.hotLoadedAmmo,
+                  equipmentNumber));
         }
         return control;
     }

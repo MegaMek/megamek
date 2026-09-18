@@ -27,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -50,8 +51,11 @@ final class GpuBoardUi implements Disposable {
     private static final String[] HINT_MODES = { "Smart", "Hold", "Always" };
     private final GpuBoardSource source;
     private final BoardCamera camera;
+    private final GpuBoardTuning tuning;
     private final FreeTypeFontGenerator fontGenerator = new FreeTypeFontGenerator(
           new FileHandle(new File(Configuration.fontsDir(), "Noto Sans/NotoSans-Regular.ttf")));
+    private final FreeTypeFontGenerator boldFontGenerator = new FreeTypeFontGenerator(
+          new FileHandle(new File(Configuration.fontsDir(), "Noto Sans/NotoSans-Bold.ttf")));
     private final Skin skin = createSkin();
     private final GpuTextures<String> hudTextures = new GpuTextures<>();
     final Stage stage;
@@ -92,6 +96,7 @@ final class GpuBoardUi implements Disposable {
     private float hudScale = 1;
     private float anchorX;
     private float anchorTop;
+    private boolean bankArtwork = BoardGeometry.GAP > 0;
 
     GpuBoardUi(GpuBoardSource source, BoardCamera camera, Runnable changeSpeed) {
         this.source = source;
@@ -134,6 +139,7 @@ final class GpuBoardUi implements Disposable {
         toolbar.add(namedButton("speed", "", changeSpeed)).width(94);
         hints = button("", () -> open("hints", "Interaction hints", 500, stage.getHeight() - TOP_HEIGHT));
         toolbar.add(hints).width(118);
+        toolbar.add(namedButton("tuning", "Tuning", this::toggleTuning)).width(80);
         toolbar.add().expandX();
         status = new Label("", skin);
         status.setEllipsis(true);
@@ -194,6 +200,9 @@ final class GpuBoardUi implements Disposable {
         details.setWrap(true);
         popup.setVisible(false);
         stage.addActor(popup);
+        tuning = new GpuBoardTuning(skin, this::tuningApplied);
+        tuning.panel().setVisible(false);
+        stage.addActor(tuning.panel());
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int key) {
@@ -252,10 +261,32 @@ final class GpuBoardUi implements Disposable {
         if (popup.isVisible()) {
             positionPopup(popup.getX(), popup.getTop());
         }
+        if (tuning.visible()) {
+            tuning.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT);
+        }
     }
 
-    BitmapFont font() {
-        return skin.getFont("default-font");
+    private void toggleTuning() {
+        if (!tuning.visible()) {
+            tuning.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT);
+        }
+        tuning.toggle();
+    }
+
+    /**
+     * A tuning change rebuilds the board around the camera and can change which artwork the capture holds,
+     * so the tiles are recaptured when the padding appears. The camera keeps its zoom and focus, so the
+     * value being judged is seen at the same distance instead of being refitted to the whole board.
+     */
+    private void tuningApplied() {
+        if (BoardGeometry.GAP > 0 != bankArtwork) {
+            bankArtwork = BoardGeometry.GAP > 0;
+            source.invalidateArtwork();
+        }
+    }
+
+    BitmapFont boldFont() {
+        return skin.getFont("bold-font");
     }
 
     float hudScale() {
@@ -638,6 +669,10 @@ final class GpuBoardUi implements Disposable {
             open("all", "All actions", 16, 480);
             return true;
         }
+        if (down && key == Input.Keys.F9) {
+            toggleTuning();
+            return true;
+        }
         if (down && key == Input.Keys.ESCAPE) {
             plotting = false;
             closeMenu();
@@ -685,15 +720,12 @@ final class GpuBoardUi implements Disposable {
         pixel.fill();
         result.add("white", new Texture(pixel));
         pixel.dispose();
-        FreeTypeFontGenerator.FreeTypeFontParameter fontSettings = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        // Rasterize above the logical font size so DPI scaling keeps glyphs legible.
-        fontSettings.size = FONT_RESOLUTION;
-        fontSettings.incremental = true;
-        fontSettings.minFilter = Texture.TextureFilter.Linear;
-        fontSettings.magFilter = Texture.TextureFilter.Linear;
-        BitmapFont font = fontGenerator.generateFont(fontSettings);
+        BitmapFont font = createFont(fontGenerator);
         font.getData().setScale(0.25f);
         result.add("default-font", font);
+        BitmapFont bold = createFont(boldFontGenerator);
+        bold.getData().setScale(0.25f);
+        result.add("bold-font", bold);
         result.add("default", new Label.LabelStyle(font, Color.valueOf("E4EAF2")));
         TextButton.TextButtonStyle button = new TextButton.TextButtonStyle();
         button.font = font;
@@ -719,9 +751,28 @@ final class GpuBoardUi implements Disposable {
         field.background.setLeftWidth(8);
         field.background.setRightWidth(8);
         result.add("default", field);
+        Slider.SliderStyle slider = new Slider.SliderStyle();
+        slider.background = result.newDrawable("white", Color.valueOf("0D1720"));
+        slider.background.setMinHeight(6);
+        slider.knobBefore = result.newDrawable("white", Color.valueOf("156A77"));
+        slider.knobBefore.setMinHeight(6);
+        slider.knob = result.newDrawable("white", Color.valueOf("E4EAF2"));
+        slider.knob.setMinWidth(12);
+        slider.knob.setMinHeight(18);
+        result.add("default", slider);
         result.add("default", new TextTooltip.TextTooltipStyle(result.get(Label.LabelStyle.class),
               result.newDrawable("white", Color.valueOf("111B26"))));
         return result;
+    }
+
+    private static BitmapFont createFont(FreeTypeFontGenerator generator) {
+        FreeTypeFontGenerator.FreeTypeFontParameter fontSettings = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        // Rasterize above the logical font size so DPI scaling keeps glyphs legible.
+        fontSettings.size = FONT_RESOLUTION;
+        fontSettings.incremental = true;
+        fontSettings.minFilter = Texture.TextureFilter.Linear;
+        fontSettings.magFilter = Texture.TextureFilter.Linear;
+        return generator.generateFont(fontSettings);
     }
 
     @Override
@@ -729,6 +780,7 @@ final class GpuBoardUi implements Disposable {
         stage.dispose();
         skin.dispose();
         fontGenerator.dispose();
+        boldFontGenerator.dispose();
         hudTextures.dispose();
     }
 }

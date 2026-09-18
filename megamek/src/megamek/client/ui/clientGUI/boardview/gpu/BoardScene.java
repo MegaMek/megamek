@@ -36,22 +36,49 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
               ? null : tiles.get(coords.getX() * height + coords.getY());
     }
 
-    public record Tile(Coords coords, int elevation, Pixels image, Pixels tactical, List<BoardView.HexText> text) {
+    /**
+     * {@code base} is the ground artwork the padding continues around the hex; {@code water} marks a water
+     * surface, so a water side joins with water and its land sides with a bank; {@code features} holds the
+     * tileset's other terrain layers on transparent pixels, drawn over hex and padding alike.
+     */
+    public record Tile(Coords coords, int elevation, Pixels image, Pixels base, boolean water, Pixels features,
+          Pixels tactical, List<BoardView.HexText> text) {
         public Tile {
             text = List.copyOf(text);
         }
 
+        public Tile(Coords coords, int elevation, Pixels image, Pixels base, boolean water) {
+            this(coords, elevation, image, base, water, null, null, List.of());
+        }
+
+        public Tile(Coords coords, int elevation, Pixels image, Pixels base, Pixels tactical,
+              List<BoardView.HexText> text) {
+            this(coords, elevation, image, base, false, null, tactical, text);
+        }
+
+        public Tile(Coords coords, int elevation, Pixels image, Pixels base, Pixels tactical) {
+            this(coords, elevation, image, base, false, null, tactical, List.of());
+        }
+
+        public Tile(Coords coords, int elevation, Pixels image, Pixels tactical, List<BoardView.HexText> text) {
+            this(coords, elevation, image, image, false, null, tactical, text);
+        }
+
         public Tile(Coords coords, int elevation, Pixels image, Pixels tactical) {
-            this(coords, elevation, image, tactical, List.of());
+            this(coords, elevation, image, image, false, null, tactical, List.of());
         }
 
         public Tile(Coords coords, int elevation, Pixels image) {
-            this(coords, elevation, image, null);
+            this(coords, elevation, image, image, false, null, null, List.of());
         }
     }
 
+        /**
+         * {@code location} is the meeple's stand or flight height, {@code height} its own occupied levels and
+         * {@code airborne} true while it floats at that flight height instead of standing on the tile.
+         */
         public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
-                    Pixels annotations, int height) { }
+                    Pixels annotations, int height, boolean airborne) { }
 
     public record Waypoint(Coords coords, float elevation, float facing) { }
 

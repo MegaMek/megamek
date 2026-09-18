@@ -23,6 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -93,6 +94,15 @@ class GpuBoardWindowSmokeTest {
                       ((Lwjgl3Graphics) Gdx.graphics).getWindow().getWindowHandle(), GLFW.GLFW_VISIBLE) == GLFW.GLFW_TRUE));
                 await(() -> onGl(() -> ((GpuBattleView) Gdx.app.getApplicationListener()).frames() >= 5));
                 assertTrue(onSwing(() -> ui.frame().isDisplayable()), "Switching must preserve the original client");
+                // The classic window is hidden, so a client dialog must be raised above the native window.
+                JDialog probe = onSwing(() -> {
+                    JDialog dialog = new JDialog(ui.frame(), "GPU dialog probe", false);
+                    dialog.setSize(160, 90);
+                    dialog.setVisible(true);
+                    return dialog;
+                });
+                await(() -> onSwing(probe::isAlwaysOnTop));
+                onSwing(() -> { probe.dispose(); return null; });
                 for (int[] size : new int[][] { { 900, 600 }, { 2043, 1200 }, { 2560, 1600 }, { 3840, 2160 }, { 1280, 800 } }) {
                     onSwing(() -> { preferences.setValue(GUIPreferences.GUI_SCALE, size[0] == 2560 ? 1.5f : 1f); return null; });
                     input(() -> assertTrue(Gdx.graphics.setWindowedMode(size[0], size[1])));

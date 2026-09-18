@@ -1,8 +1,13 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.awt.AWTEvent;
+import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.Window;
+import java.awt.event.AWTEventListener;
+import java.awt.event.WindowEvent;
 import java.util.function.Supplier;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -25,6 +30,18 @@ public final class GpuBoardWindow {
     private final BoardView view;
     private final GpuBoardSource source;
     private final Window classicWindow;
+    /**
+     * The classic window hides while the GPU view runs, so a Swing dialog owned by it (deployment elevation choices,
+     * alerts, item pickers) would open behind the native window. Every client dialog that opens while the GPU window is
+     * presented is raised above it instead.
+     */
+    private final AWTEventListener dialogListener = event -> {
+        if ((event instanceof WindowEvent windowEvent) && (windowEvent.getID() == WindowEvent.WINDOW_OPENED)
+              && (windowEvent.getWindow() instanceof Dialog dialog) && belongsToClassicWindow(dialog)) {
+            dialog.setAlwaysOnTop(true);
+            dialog.toFront();
+        }
+    };
     private volatile Lwjgl3Application application;
     private volatile boolean closing;
     private volatile boolean presented;
@@ -103,10 +120,22 @@ public final class GpuBoardWindow {
             classicWindow.setVisible(false);
         }
         presented = true;
+        Toolkit.getDefaultToolkit().addAWTEventListener(dialogListener, AWTEvent.WINDOW_EVENT_MASK);
         focus();
     }
 
+    /** True when the window is the classic window itself or a dialog chain owned by it. */
+    private boolean belongsToClassicWindow(Window window) {
+        for (Window current = window; current != null; current = current.getOwner()) {
+            if (current == classicWindow) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void finish(Throwable failure) {
+        Toolkit.getDefaultToolkit().removeAWTEventListener(dialogListener);
         synchronized (GpuBoardWindow.class) {
             if (active != this) {
                 return;

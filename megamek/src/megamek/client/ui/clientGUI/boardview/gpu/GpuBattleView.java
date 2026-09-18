@@ -42,6 +42,14 @@ import megamek.common.board.Coords;
 class GpuBattleView extends ApplicationAdapter {
     private static final boolean SPREAD_UNIT_ANNOTATIONS = false;
     private static final float UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE = -1;
+    /** Airborne meeples hover: one full wave cycle lasts this long. */
+    static final float HOVER_PERIOD_SECONDS = 2.6f;
+    /** Height of that wave in terrain levels, so a floating token drifts off its flight height. */
+    static final float HOVER_LEVELS = 0.2f;
+    /** Fraction of a cycle between neighboring units, so floating units do not bob in lockstep. */
+    private static final float HOVER_PHASE_STEP = 0.381966f;
+    /** Floating meeples are tied to their hex with this faint solid stem; solid, so it needs no blending state. */
+    private static final Color TETHER_COLOR = Color.valueOf("A9B8B8");
     private static final double[] PLAYBACK_SPEEDS = { 1, 0.5, 2, 0 };
     private static final String[] SPEED_LABELS = { "1x", "0.5x", "2x", Messages.getString("GpuBoard.instant") };
     private final GpuBoardSource source;
@@ -53,6 +61,7 @@ class GpuBattleView extends ApplicationAdapter {
     private final Map<String, ModelInstance> unitInstances = new HashMap<>();
     private final Map<Integer, KeyCommandBind> cameraKeys = new HashMap<>();
     private final BoardInput boardInput = new BoardInput();
+    private final List<Hover> hover = new ArrayList<>();
     private GpuTerrain terrain;
     private GpuTextures<BoardScene.Pixels> unitTextures;
     private GpuTextures<String> annotationTextures;
@@ -65,6 +74,7 @@ class GpuBattleView extends ApplicationAdapter {
     private int speedIndex;
     private boolean fitted;
     private long frames;
+    private float hoverClock;
     private long boardGeneration;
     private long centerSequence;
     private int layoutWidth;
@@ -192,6 +202,7 @@ class GpuBattleView extends ApplicationAdapter {
         for (UnitMotion motion : motions.values()) {
             motion.advance(Gdx.graphics.getDeltaTime(), PLAYBACK_SPEEDS[speedIndex]);
         }
+        hoverClock += Gdx.graphics.getDeltaTime();
         prepareUnits();
         terrain.renderShadows(new ArrayList<>(unitInstances.values()));
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
@@ -200,7 +211,9 @@ class GpuBattleView extends ApplicationAdapter {
         terrain.render(boardCamera.camera, false);
         terrain.render(boardCamera.camera, true);
         renderHexText();
+        applyHover();
         renderUnits();
+        renderTethers();
         renderHints();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         renderAnnotations();
@@ -209,6 +222,7 @@ class GpuBattleView extends ApplicationAdapter {
     }
 
     private void prepareUnits() {
+        hover.clear();
         unitAnchors.clear();
         unitInstances.keySet().retainAll(scene.units().stream().map(unit -> unit.id() + ":" + unit.part())
               .collect(Collectors.toSet()));
@@ -229,8 +243,73 @@ class GpuBattleView extends ApplicationAdapter {
                 unitInstances.put(key, instance);
             }
             Vector3 anchor = meeple.place(instance, boardCamera.camera, position, facing, unit.height());
+            if (unit.airborne()) {
+                float offset = hoverOffset(hoverClock, unit.id(), unit.part());
+                hover.add(new Hover(instance, offset));
+                anchor.add(0, 0, offset);
+            }
             unitAnchors.put(unit, anchor);
         }
+    }
+
+    /** One floating meeple's drift for the current frame: a draw-time offset, never part of the game state. */
+    private record Hover(ModelInstance instance, float offset) { }
+
+    /**
+     * Drifts the floating meeples for drawing. This runs after the shadow pass so that the drift cannot invalidate the
+     * shadow depth map every frame, which costs far more than the wave is worth; the tokens' real shadows are cast
+     * from their flight heights.
+     */
+    private void applyHover() {
+        for (Hover drifting : hover) {
+            Vector3 center = drifting.instance().transform.getTranslation(new Vector3());
+            drifting.instance().transform.setTranslation(center.add(0, 0, drifting.offset()));
+        }
+    }
+
+    /**
+     * Vertical hover offset in world units for an airborne meeple at the current animation time: a slow sine wave that
+     * each unit starts at a different phase, so the floating tokens drift as a loose wave instead of rising and
+     * falling together. A grounded unit (elevation or altitude 0) never gets an offset. This only moves the rendered
+     * token; no game state changes.
+     */
+    static float hoverOffset(float seconds, int id, int part) {
+        float phase = MathUtils.PI2 * HOVER_PHASE_STEP * (id + part);
+        return HOVER_LEVELS * BoardGeometry.LEVEL
+              * MathUtils.sin(MathUtils.PI2 * seconds / HOVER_PERIOD_SECONDS + phase);
+    }
+
+    /** Level a floating meeple's stem ends at, or NaN when no stem is drawn for this token at this time. */
+    static float tetherGround(BoardScene.Unit unit, int tileElevation, Vector3 center, boolean moving) {
+        float ground = tileElevation * BoardGeometry.LEVEL;
+        return unit.airborne() && !moving && center.z > ground ? ground : Float.NaN;
+    }
+
+    /**
+     * Faint stems from each floating meeple's center down to the center of the hex it occupies, so an airborne token
+     * beside a hill or another raised tile still reads as belonging to the hex under it. A grounded token already
+     * covers its hex, and a moving token is between hexes, so neither gets a stem.
+     */
+    private void renderTethers() {
+        Vector3 center = new Vector3();
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        lines.setProjectionMatrix(boardCamera.camera.combined);
+        lines.begin(ShapeRenderer.ShapeType.Line);
+        lines.setColor(TETHER_COLOR);
+        for (BoardScene.Unit unit : scene.units()) {
+            BoardScene.Tile tile = scene.tile(unit.location().coords());
+            ModelInstance instance = unitInstances.get(unit.id() + ":" + unit.part());
+            UnitMotion motion = motions.get(unit.id());
+            if (tile == null || instance == null) {
+                continue;
+            }
+            instance.transform.getTranslation(center);
+            float ground = tetherGround(unit, tile.elevation(), center, motion != null && motion.isMoving());
+            if (!Float.isNaN(ground)) {
+                lines.line(center.x, center.y, center.z, center.x, center.y, ground);
+            }
+        }
+        lines.end();
     }
 
     private void renderUnits() {
@@ -340,7 +419,7 @@ class GpuBattleView extends ApplicationAdapter {
     }
 
     private void renderHexText() {
-        BitmapFont font = ui.font();
+        BitmapFont font = ui.boldFont();
         float scaleX = font.getData().scaleX;
         float scaleY = font.getData().scaleY;
         Color color = new Color(font.getColor());
@@ -361,8 +440,13 @@ class GpuBattleView extends ApplicationAdapter {
                     font.getData().setScale(label.font().getSize2D() / GpuBoardUi.FONT_RESOLUTION);
                     font.setColor(new Color((label.argb() << 8) | ((label.argb() >>> 24) & 0xff)));
                     layout.setText(font, label.text());
+                    // Offsets are hex artwork pixels, so they scale with the hex surface like its artwork does. The
+                    // level/depth/height/foliage stack hangs from its baselines; the coordinates hang from the tile's
+                    // top edge by their glyphs, so they keep the margin at that edge instead of at a baseline.
+                    float baseline = BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2
+                          - label.baseline() * BoardGeometry.HEX_SCALE;
                     font.draw(annotationBatch, layout, BoardGeometry.centerX(tile.coords()) - layout.width / 2,
-                          BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2 - label.baseline() + layout.height);
+                          label.fromTop() ? baseline : baseline + layout.height);
                 }
             }
         }

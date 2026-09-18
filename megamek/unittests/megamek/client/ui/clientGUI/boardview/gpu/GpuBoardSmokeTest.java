@@ -65,6 +65,7 @@ class GpuBoardSmokeTest {
                 private long movingHash;
                 private long previousFrame;
                 private Coords orbitTarget;
+
                 private final List<Double> frameMillis = new ArrayList<>();
 
                 @Override
@@ -85,6 +86,22 @@ class GpuBoardSmokeTest {
                             SwingUtilities.invokeAndWait(() -> { });
                             assertEquals(0, boardClicks.get());
                             boardCamera.fit(fixture.source.takeFrame().scene());
+                        } else if (frames() == 92) {
+                            // Closeup of the water hexes so their padding joins can be reviewed.
+                            BoardScene scene = fixture.source.takeFrame().scene();
+                            BoardScene.Tile water = scene.tile(new Coords(3, 2));
+                            boardCamera.setIsometric(true);
+                            boardCamera.center(BoardGeometry.center(water.coords(), water.elevation()));
+                            boardCamera.zoom(0.035f);
+                        } else if (frames() == 96) {
+                            capture("water-closeup.png");
+                            boardCamera.reset(fixture.source.takeFrame().scene());
+                        } else if (frames() == 98) {
+                            // The tuning panel drives the geometry values the padding and steps are built from.
+                            click("tuning");
+                        } else if (frames() == 102) {
+                            capture("tuning-panel.png");
+                            click("tuning");
                         } else if (frames() == 105) {
                             click("all-actions");
                             for (char character : "zzz".toCharArray()) {
@@ -227,7 +244,7 @@ class GpuBoardSmokeTest {
                             SwingUtilities.invokeLater(() -> fixture.view.cursor(new Coords(x, 20)));
                         }
                         if (frames() == 550) {
-                            timing("large-frame-timing.txt", "48 x 51 board, 36 units, ranges, attack line and cursor updates");
+                            timing("large-frame-timing.txt", "48 x 51 board, 36 units, a hovering VTOL, ranges, attack line and cursor updates");
                             Gdx.app.exit();
                         }
                     } catch (Throwable error) {
@@ -309,6 +326,15 @@ class GpuBoardSmokeTest {
                 fixture.game.addEntity(entity, false);
                 fixture.view.addSprites(List.of(new MovementEnvelopeSprite(fixture.view, Color.CYAN, entity.getPosition(), 63)));
             }
+            // A hovering unit exercises airborne tokens and their hex stems in the native render.
+            Entity hovering = new MekFileParser(
+                  new File("testresources/megamek/common/units/Cobra Transport VTOL.blk")).getEntity();
+            hovering.setId(37);
+            hovering.setOwner(fixture.player);
+            hovering.setDeployed(true);
+            hovering.setPosition(new Coords(4, 5));
+            hovering.setElevation(6);
+            fixture.game.addEntity(hovering, false);
             fixture.view.redrawAllEntities();
             fixture.view.addAttack(new WeaponAttackAction(1, 2,
                   fixture.entity.getEquipmentNum(fixture.entity.getWeaponList().getFirst())));

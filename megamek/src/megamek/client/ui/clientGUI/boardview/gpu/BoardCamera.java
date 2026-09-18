@@ -99,8 +99,8 @@ final class BoardCamera {
 
     void fit(BoardScene scene) {
         fitToWindow = true;
-        focus.set(scene.width() * BoardGeometry.WIDTH * 0.375f,
-              -(scene.height() + 0.5f) * BoardGeometry.HEIGHT / 2, 0);
+        focus.set(scene.width() * BoardGeometry.CELL_WIDTH * 0.375f,
+              -(scene.height() + 0.5f) * BoardGeometry.CELL_HEIGHT / 2, 0);
         update();
         Vector3 right = new Vector3(camera.direction).crs(camera.up).nor();
         float minX = Float.POSITIVE_INFINITY;
@@ -111,7 +111,7 @@ final class BoardCamera {
         for (BoardScene.Tile tile : scene.tiles()) {
             for (int corner = 0; corner < 6; corner++) {
                 for (float elevation : new float[] { tile.elevation(), floor }) {
-                    Vector3 point = BoardGeometry.corner(tile.coords(), elevation, corner).sub(focus);
+                    Vector3 point = BoardGeometry.cellCorner(tile.coords(), elevation, corner).sub(focus);
                     float x = point.dot(right);
                     float y = point.dot(camera.up);
                     minX = Math.min(minX, x);
@@ -189,10 +189,10 @@ final class BoardCamera {
                 }
             }
         }
-        int left = Math.max(0, (int) Math.floor(minX / (BoardGeometry.WIDTH * 0.75f)) - 2);
-        int top = Math.max(0, (int) Math.floor(minY / BoardGeometry.HEIGHT) - 2);
-        int rightHex = Math.min(scene.width(), (int) Math.ceil(maxX / (BoardGeometry.WIDTH * 0.75f)) + 2);
-        int bottom = Math.min(scene.height(), (int) Math.ceil(maxY / BoardGeometry.HEIGHT) + 2);
+        int left = Math.max(0, (int) Math.floor(minX / (BoardGeometry.CELL_WIDTH * 0.75f)) - 2);
+        int top = Math.max(0, (int) Math.floor(minY / BoardGeometry.CELL_HEIGHT) - 2);
+        int rightHex = Math.min(scene.width(), (int) Math.ceil(maxX / (BoardGeometry.CELL_WIDTH * 0.75f)) + 2);
+        int bottom = Math.min(scene.height(), (int) Math.ceil(maxY / BoardGeometry.CELL_HEIGHT) + 2);
         return new Rectangle(left, top, Math.max(0, rightHex - left), Math.max(0, bottom - top));
     }
 

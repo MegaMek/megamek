@@ -205,9 +205,10 @@ final class GpuMeeple implements Disposable {
     }
 
     Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, int height) {
-        float thickness = height * BoardGeometry.LEVEL;
+        float thickness = height * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE;
         placed.transform.set(ground, new Quaternion(Vector3.Z, -facing))
-              .translate(0, 0, thickness / 2 + 0.5f).scale(1, 1, thickness);
+              .translate(0, 0, thickness / 2 + 0.5f)
+              .scale(BoardGeometry.UNIT_SCALE, BoardGeometry.UNIT_SCALE, thickness);
         float top = -Float.MAX_VALUE;
         for (float horizontal : new float[] { bounds.min.x, bounds.max.x }) {
             for (float vertical : new float[] { bounds.min.y, bounds.max.y }) {

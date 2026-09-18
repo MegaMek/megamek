@@ -36,6 +36,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
@@ -136,11 +137,12 @@ final class GpuBoardSource implements AutoCloseable {
                 UnitLocation start = old == null || old.getPosition() == null ? null
                       : new UnitLocation(old.getId(), old.getPosition(), old.getFacing(), old.getElevation(),
                             old.getBoardId());
+                int startAltitude = old == null ? 0 : old.getAltitude();
                 SwingUtilities.invokeLater(() -> {
                     if (GpuBoardSource.this.view == eventView) {
                         Entity takeoff = old == null ? event.getEntity() : old;
                         captureMovement(entityId, start, path, type,
-                            type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0);
+                            type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0, startAltitude);
                     }
                 });
             }
@@ -174,7 +176,7 @@ final class GpuBoardSource implements AutoCloseable {
     }
 
         private void captureMovement(int entityId, UnitLocation start, List<UnitLocation> path, EntityMovementType type,
-            int jumpMP) {
+            int jumpMP, int startAltitude) {
         if (closed || path.isEmpty()) {
             return;
         }
@@ -185,11 +187,16 @@ final class GpuBoardSource implements AutoCloseable {
             return;
         }
         List<BoardScene.Waypoint> points = new ArrayList<>();
+        // An airborne meeple plays at the altitude the unit has now, and at the altitude it started the move at for
+        // its first point and when it has just landed, so flying stays on the board through climbs and landings.
+        int flightAltitude = entity.getAltitude() > 0 ? entity.getAltitude() : startAltitude;
         if (start != null && start.boardId() == view.getBoardId()) {
-            points.add(waypoint(start.coords(), start.elevation(), start.facing()));
+            points.add(pathWaypoint(entity, start.coords(), start.elevation(), start.facing(),
+                  startAltitude > 0 ? startAltitude : flightAltitude));
         }
         for (UnitLocation location : path) {
-            BoardScene.Waypoint point = waypoint(location.coords(), location.elevation(), location.facing());
+            BoardScene.Waypoint point = pathWaypoint(entity, location.coords(), location.elevation(),
+                  location.facing(), flightAltitude);
             if (points.isEmpty() || !points.getLast().equals(point)) {
                 points.add(point);
             }
@@ -212,6 +219,17 @@ final class GpuBoardSource implements AutoCloseable {
                 frame = next;
             }
         }
+    }
+
+    /**
+     * Recaptures the tile artwork on the event thread. Tuning the board can change which artwork the tiles
+     * need — the padding bands read the bank artwork, which a tight tiling never captures.
+     */
+    public void invalidateArtwork() {
+        SwingUtilities.invokeLater(() -> {
+            terrainDirty = true;
+            refresh();
+        });
     }
 
     public synchronized Frame takeFrame() {
@@ -248,23 +266,31 @@ final class GpuBoardSource implements AutoCloseable {
             terrainDirty = true;
         }
         if (terrainDirty) {
+            // The waterless bank artwork is captured in every mode: faces and bands blend the lowered tile's
+            // bank art, so land never takes on water over a shore, and a water join blends the water instead.
             List<BoardScene.Tile> nextTiles = new ArrayList<>();
-            for (BoardView.PlanarHex hex : view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()))) {
+            for (BoardView.PlanarHex hex : view.capturePlanarHexes(new Rectangle(0, 0, board.getWidth(), board.getHeight()),
+                  true)) {
                 nextTiles.add(new BoardScene.Tile(hex.coords(), board.getHex(hex.coords()).getLevel(),
-                        new BoardScene.Pixels(hex.ground()), new BoardScene.Pixels(hex.tactical()), hex.text()));
+                        new BoardScene.Pixels(hex.terrain()), new BoardScene.Pixels(hex.bank()), hex.water(),
+                        new BoardScene.Pixels(hex.features()), new BoardScene.Pixels(hex.tactical()), hex.text()));
             }
             tiles = List.copyOf(nextTiles);
             terrainDirty = false;
         }
         List<BoardScene.Tile> painted = new ArrayList<>(tiles);
         boolean changed = false;
-        for (BoardView.PlanarHex hex : view.capturePlanarHexes(visibleArea)) {
+        for (BoardView.PlanarHex hex : view.capturePlanarHexes(visibleArea, true)) {
             int index = hex.coords().getX() * board.getHeight() + hex.coords().getY();
             BoardScene.Tile old = tiles.get(index);
-            BoardScene.Pixels ground = BoardScene.Pixels.capture(hex.ground(), old.image());
+            BoardScene.Pixels ground = BoardScene.Pixels.capture(hex.terrain(), old.image());
+            BoardScene.Pixels base = BoardScene.Pixels.capture(hex.bank(), old.base());
+            BoardScene.Pixels features = BoardScene.Pixels.capture(hex.features(), old.features());
             BoardScene.Pixels tactical = BoardScene.Pixels.capture(hex.tactical(), old.tactical());
-            if (ground != old.image() || tactical != old.tactical() || !hex.text().equals(old.text())) {
-                painted.set(index, new BoardScene.Tile(hex.coords(), old.elevation(), ground, tactical, hex.text()));
+            if (ground != old.image() || base != old.base() || features != old.features()
+                  || tactical != old.tactical() || !hex.text().equals(old.text())) {
+                painted.set(index, new BoardScene.Tile(hex.coords(), old.elevation(), ground, base, hex.water(),
+                      features, tactical, hex.text()));
                 changed = true;
             }
         }
@@ -343,23 +369,59 @@ final class GpuBoardSource implements AutoCloseable {
         usedImages.put(image, true);
         BoardScene.Pixels pixels = unitImages.computeIfAbsent(image, this::copyImage);
         int facing = sensor ? 0 : view.getTileManager().facingFor(entity);
-        float elevation = sensor ? 0 : entity.getElevation();
-        if (!sensor && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
-            elevation = Math.max(2, elevation);
-        }
+        boolean airborne = !sensor && airborne(entity);
+        BoardScene.Waypoint location = airborne
+              ? new BoardScene.Waypoint(coords, flightLevel(entity, coords), facing)
+              : waypoint(coords, sensor ? 0 : entity.getElevation(), facing);
         return new BoardScene.Unit(entity.getId(), part, sensor ? Messages.getString("BoardView1.sensorReturn")
               : entity.getShortName(),
-              waypoint(coords, elevation, facing), pixels, sensor,
+              location, pixels, sensor,
               BoardScene.Pixels.capture(view.captureUnitAnnotations(entity, part),
                   frame == null ? null : frame.scene().units().stream()
                       .filter(unit -> unit.id() == entity.getId() && unit.part() == part)
                           .map(BoardScene.Unit::annotations).findFirst().orElse(null)),
-              sensor ? 1 : entity.height() + 1);
+              sensor ? 1 : entity.height() + 1, airborne);
     }
 
     private BoardScene.Waypoint waypoint(Coords coords, float relativeElevation, int facing) {
         Hex hex = board == null ? null : board.getHex(coords);
         return new BoardScene.Waypoint(coords, relativeElevation + (hex == null ? 0 : hex.getLevel()), facing);
+    }
+
+    /**
+     * True while the unit is flying. Aerospace units carry an altitude; a parked aerodyne keeps its AERODYNE movement
+     * mode, so {@code isAirborne()} alone would call it airborne, but the altitude decides. VTOLs and WiGEs hover on
+     * their hex-relative elevation and are landed at elevation 0.
+     */
+    private static boolean airborne(Entity entity) {
+        return entity.getAltitude() > 0 || entity.isAirborneVTOLorWIGE();
+    }
+
+    /**
+     * Absolute level a flying meeple floats at, with its token staying its own height above it. Aerospace altitude is
+     * already absolute above the board, exactly as the LOS height conversion treats it, and is the only height
+     * available for it because {@code Aero.getElevation()} reports the airborne sentinel while flying. VTOL and WiGE
+     * elevation is relative to the hex below them.
+     */
+    private float flightLevel(Entity entity, Coords coords) {
+        if (entity.getAltitude() > 0) {
+            return entity.getAltitude();
+        }
+        Hex hex = board == null ? null : board.getHex(coords);
+        return entity.getElevation() + (hex == null ? 0 : hex.getLevel());
+    }
+
+    /**
+     * Playback position of one movement path point. An aerospace reports the airborne elevation sentinel (999) in
+     * every step it takes while flying instead of a real level; those steps play at the given flight altitude, while a
+     * step carrying a real elevation (an aerospace taxiing, or set down on its landing hex) keeps it. Every other unit
+     * keeps its own per-step elevation, so VTOL and WiGE climbs and descents still animate.
+     */
+    private BoardScene.Waypoint pathWaypoint(Entity entity, Coords coords, float elevation, int facing,
+          int flightAltitude) {
+        return entity.isAero() && elevation >= Aero.AERO_EFFECTIVE_ELEVATION && flightAltitude > 0
+              ? new BoardScene.Waypoint(coords, flightAltitude, facing)
+              : waypoint(coords, elevation, facing);
     }
 
     private BoardScene.Pixels copyImage(Image source) {

@@ -13,6 +13,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -25,6 +27,7 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -32,8 +35,13 @@ import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.loaders.MekFileParser;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Aero;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Test;
 
@@ -107,8 +115,8 @@ class GpuBoardSourceTest {
             });
             assertSame(before, fixture.source.takeFrame().scene().units().getFirst().annotations());
             BoardScene.Tile after = fixture.source.takeFrame().scene().tile(new Coords(0, 0));
-            assertEquals((int) BoardGeometry.WIDTH, after.image().width());
-            assertEquals((int) BoardGeometry.HEIGHT, after.image().height());
+            assertEquals((int) BoardGeometry.TILE_WIDTH, after.image().width());
+            assertEquals((int) BoardGeometry.TILE_HEIGHT, after.image().height());
             assertTrue(samePixels(tile.image(), after.image()));
             assertEquals(GpuBattleView.annotationScale(1), GpuBattleView.annotationScale(0.5f));
         } finally {
@@ -139,6 +147,131 @@ class GpuBoardSourceTest {
     }
 
     @Test
+    void airborneMeeplesFloatAtTheirFlightHeight() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Entity vtol = new MekFileParser(new File("testresources/megamek/common/units/Cobra Transport VTOL.blk"))
+                  .getEntity();
+            Entity fighter = new MekFileParser(new File("testresources/megamek/common/units/Cheetah F-11.blk"))
+                  .getEntity();
+            vtol.setId(2);
+            fighter.setId(3);
+            SwingUtilities.invokeAndWait(() -> {
+                for (Entity entity : List.of(vtol, fighter)) {
+                    entity.setOwner(fixture.player);
+                    entity.setDeployed(true);
+                    fixture.game.addEntity(entity, false);
+                }
+                vtol.setPosition(new Coords(4, 4));
+                vtol.setElevation(3);
+                fighter.setPosition(new Coords(6, 6));
+                fighter.setAltitude(5);
+                fixture.source.refresh();
+            });
+            BoardScene scene = fixture.source.takeFrame().scene();
+            BoardScene.Unit flyingVtol = unit(scene, 2);
+            assertTrue(flyingVtol.airborne(), "A VTOL at elevation 3 flies");
+            assertEquals(1, flyingVtol.height(), "A flying VTOL keeps its own one-level token");
+            assertEquals(3 + fixture.game.getBoard().getHex(new Coords(4, 4)).getLevel(),
+                  flyingVtol.location().elevation(), 0.001f, "A VTOL floats on its hex-relative elevation");
+            BoardScene.Unit flyingFighter = unit(scene, 3);
+            assertTrue(flyingFighter.airborne(), "A fighter at altitude 5 flies");
+            assertEquals(1, flyingFighter.height());
+            assertEquals(5, flyingFighter.location().elevation(), 0.001f,
+                  "Aerospace altitude is absolute; the airborne elevation sentinel is never drawn");
+
+            SwingUtilities.invokeAndWait(() -> {
+                vtol.setElevation(0);
+                ((Aero) fighter).land();
+                fixture.source.refresh();
+            });
+            BoardScene landed = fixture.source.takeFrame().scene();
+            assertFalse(unit(landed, 2).airborne(), "A landed VTOL does not float");
+            assertFalse(unit(landed, 3).airborne(), "A landed fighter does not float");
+            assertEquals(fixture.game.getBoard().getHex(new Coords(4, 4)).getLevel(),
+                  unit(landed, 2).location().elevation(), 0.001f);
+            assertEquals(fixture.game.getBoard().getHex(new Coords(6, 6)).getLevel(),
+                  unit(landed, 3).location().elevation(), 0.001f);
+        }
+    }
+
+    private static BoardScene.Unit unit(BoardScene scene, int id) {
+        return scene.units().stream().filter(unit -> unit.id() == id).findFirst().orElseThrow();
+    }
+
+    @Test
+    void airborneFighterMovementPlaysAtItsAltitude() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Entity fighter = new MekFileParser(new File("testresources/megamek/common/units/Cheetah F-11.blk"))
+                  .getEntity();
+            fighter.setId(4);
+            SwingUtilities.invokeAndWait(() -> {
+                fighter.setOwner(fixture.player);
+                fighter.setDeployed(true);
+                fixture.game.addEntity(fighter, false);
+                fighter.setPosition(new Coords(6, 6));
+                fighter.setAltitude(5);
+                fixture.source.refresh();
+            });
+            // Path steps of a flying aerospace carry the airborne elevation sentinel, as the server sends them.
+            Vector<UnitLocation> path = new Vector<>();
+            path.add(new UnitLocation(4, new Coords(6, 6), 0, Aero.AERO_EFFECTIVE_ELEVATION, 0));
+            path.add(new UnitLocation(4, new Coords(7, 6), 1, Aero.AERO_EFFECTIVE_ELEVATION, 0));
+            SwingUtilities.invokeAndWait(() -> {
+                fighter.setPosition(new Coords(7, 6));
+                fixture.game.fireGameEvent(new GameEntityChangeEvent(fixture.game, fighter, path));
+            });
+            SwingUtilities.invokeAndWait(() -> { });
+            GpuBoardSource.Frame frame = fixture.source.takeFrame();
+            assertEquals(1, frame.movements().size());
+            for (BoardScene.Waypoint point : frame.movements().getFirst().path()) {
+                assertEquals(5, point.elevation(), 0.001f,
+                      "A flying fighter's path plays at its altitude, not the airborne sentinel");
+            }
+        }
+    }
+
+    @Test
+    void landingFighterPlaybackDescendsFromItsFlightAltitude() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Entity fighter = new MekFileParser(new File("testresources/megamek/common/units/Cheetah F-11.blk"))
+                  .getEntity();
+            Entity flying = new MekFileParser(new File("testresources/megamek/common/units/Cheetah F-11.blk"))
+                  .getEntity();
+            fighter.setId(5);
+            flying.setId(5);
+            flying.setPosition(new Coords(5, 5));
+            flying.setAltitude(5);
+            SwingUtilities.invokeAndWait(() -> {
+                fighter.setOwner(fixture.player);
+                fighter.setDeployed(true);
+                fixture.game.addEntity(fighter, false);
+                fighter.setPosition(new Coords(6, 6));
+                ((Aero) fighter).land();
+                fixture.source.refresh();
+            });
+            // The whole move carries the airborne sentinel except the step that sets the fighter down.
+            Vector<UnitLocation> path = new Vector<>();
+            path.add(new UnitLocation(5, new Coords(5, 5), 0, Aero.AERO_EFFECTIVE_ELEVATION, 0));
+            path.add(new UnitLocation(5, new Coords(6, 5), 1, Aero.AERO_EFFECTIVE_ELEVATION, 0));
+            path.add(new UnitLocation(5, new Coords(6, 6), 1, 0, 0));
+            SwingUtilities.invokeAndWait(() -> fixture.game.fireGameEvent(
+                  new GameEntityChangeEvent(fixture.game, fighter, path, flying)));
+            SwingUtilities.invokeAndWait(() -> { });
+            GpuBoardSource.Frame frame = fixture.source.takeFrame();
+            assertEquals(1, frame.movements().size());
+            List<BoardScene.Waypoint> played = frame.movements().getFirst().path();
+            assertEquals(5, played.getFirst().elevation(), 0.001f,
+                  "A landing move starts at the altitude the fighter flew at");
+            for (BoardScene.Waypoint point : played) {
+                assertTrue(point.elevation() < Aero.AERO_EFFECTIVE_ELEVATION,
+                      "No playback point keeps the airborne sentinel");
+            }
+            assertEquals(fixture.game.getBoard().getHex(new Coords(6, 6)).getLevel(),
+                  played.getLast().elevation(), 0.001f, "The landing step plays at its hex elevation");
+        }
+    }
+
+    @Test
     void unitArtworkAndAnnotationsAreNotBakedIntoTiles() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             Coords original = fixture.entity.getPosition();
@@ -151,6 +284,32 @@ class GpuBoardSourceTest {
             BoardScene.Tile empty = fixture.source.takeFrame().scene().tile(original);
             assertTrue(samePixels(occupied.image(), empty.image()));
             assertTrue(samePixels(occupied.tactical(), empty.tactical()));
+        }
+    }
+
+    @Test
+    void movingUnitGhostIsNotBakedIntoTiles() throws Exception {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        boolean moveStep = preferences.getShowMoveStep();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords destination = new Coords(6, 5);
+            BoardScene.Tile before = fixture.source.takeFrame().scene().tile(destination);
+            Vector<UnitLocation> path = new Vector<>();
+            path.add(new UnitLocation(fixture.entity.getId(), fixture.entity.getPosition(), 0, 0, 0));
+            path.add(new UnitLocation(fixture.entity.getId(), destination, 1, 0, 0));
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setShowMoveStep(true);
+                fixture.entity.setPosition(destination);
+                fixture.game.fireGameEvent(new GameEntityChangeEvent(fixture.game, fixture.entity, path));
+                fixture.source.refresh();
+            });
+            BoardScene.Tile after = fixture.source.takeFrame().scene().tile(destination);
+            assertTrue(samePixels(before.image(), after.image()),
+                  "The classic moving-unit ghost must not be baked into the captured terrain");
+            assertTrue(samePixels(before.tactical(), after.tactical()),
+                  "The classic moving-unit ghost must not be baked into the captured layers");
+        } finally {
+            SwingUtilities.invokeAndWait(() -> preferences.setShowMoveStep(moveStep));
         }
     }
 
@@ -173,7 +332,8 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile deployment = fixture.source.takeFrame().scene().tile(coords);
-            assertFalse(samePixels(before.image(), deployment.image()));
+            assertFalse(samePixels(before.tactical(), deployment.tactical()),
+                  "Deployment markings belong to the tactical layer, not the terrain artwork");
             SwingUtilities.invokeAndWait(() -> {
                 fixture.view.markDeploymentHexesFor(null);
                 fixture.game.setPhase(GamePhase.FIRING);
@@ -252,6 +412,60 @@ class GpuBoardSourceTest {
             SwingUtilities.invokeAndWait(() -> { });
             assertEquals(1, board.get());
         }
+    }
+
+    @Test
+    void paddingGroundIgnoresLooseSurfaceFeatures() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords coords = new Coords(0, 16);
+            AtomicReference<BufferedImage> plain = new AtomicReference<>();
+            AtomicReference<BufferedImage> rough = new AtomicReference<>();
+            AtomicReference<BufferedImage> rubble = new AtomicReference<>();
+            SwingUtilities.invokeAndWait(() -> {
+                Hex hex = fixture.game.getBoard().getHex(coords);
+                hex.setTheme("desert");
+                fixture.view.clearHexImageCache();
+                plain.set(paddingArt(fixture, coords));
+                hex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                fixture.view.clearHexImageCache();
+                rough.set(paddingArt(fixture, coords));
+                hex.removeTerrain(Terrains.ROUGH);
+                hex.addTerrain(new Terrain(Terrains.RUBBLE, 1));
+                fixture.view.clearHexImageCache();
+                rubble.set(paddingArt(fixture, coords));
+                hex.removeTerrain(Terrains.RUBBLE);
+            });
+            assertTrue(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rough.get())),
+                  "Loose rock must not reach the padding artwork");
+            assertTrue(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rubble.get())),
+                  "Rubble must not reach the padding artwork");
+        }
+    }
+
+    /**
+     * A water hex pads its water sides from the tile artwork and its land sides from the waterless base
+     * artwork, so the scene has to offer both. The tileset draws the water surface as a super image, which is
+     * why the base terrain artwork alone is the waterless bank image.
+     */
+    @Test
+    void waterHexOffersWaterAndBankPaddingArtwork() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            Coords coords = new Coords(3, 2);
+            assertTrue(fixture.game.getBoard().getHex(coords).containsTerrain(Terrains.WATER),
+                  "The fixture must hold water here");
+            AtomicReference<BoardView.PlanarHex> captured = new AtomicReference<>();
+            SwingUtilities.invokeAndWait(() -> captured.set(fixture.view
+                  .capturePlanarHexes(new Rectangle(coords.getX(), coords.getY(), 1, 1)).getFirst()));
+            assertTrue(captured.get().water(), "The captured water hex must be marked as water");
+            assertFalse(samePixels(new BoardScene.Pixels(captured.get().terrain()),
+                  new BoardScene.Pixels(captured.get().bank())),
+                  "A water hex must offer its water surface and its waterless bank artwork");
+        }
+    }
+
+    private static BufferedImage paddingArt(GpuBoardFixture fixture, Coords coords) {
+        Rectangle area = new Rectangle(coords.getX(), coords.getY(), 1, 1);
+        return fixture.view.capturePlanarHexes(area).getFirst().bank();
     }
 
     private static boolean samePixels(BoardScene.Pixels first, BoardScene.Pixels second) {

@@ -280,7 +280,7 @@ class GpuAtmosphereSmokeTest {
                             int difference = Math.abs((before >>> 24) - (after >>> 24))
                                   + Math.abs(((before >>> 16) & 255) - ((after >>> 16) & 255))
                                   + Math.abs(((before >>> 8) & 255) - ((after >>> 8) & 255));
-                            if (difference > 40) {
+                            if (difference > 12) {
                                 coverage++;
                             }
                         }
@@ -288,15 +288,80 @@ class GpuAtmosphereSmokeTest {
                 } finally {
                     dusty.dispose();
                 }
-                assertTrue(coverage > clear.getWidth() * clear.getHeight() * 0.08,
-                      "Even half-strength sand must cover a visible portion of the scene: " + coverage);
+                assertTrue(coverage > clear.getWidth() * clear.getHeight() * 0.003,
+                      "Even half-strength sand must remain visible as fine grains: " + coverage);
+                assertTrue(coverage < clear.getWidth() * clear.getHeight() * 0.08,
+                      "Sand must not blanket the board with broad opaque flakes: " + coverage);
                 assertTrue(coverage > previousCoverage, "Increasing sand strength must increase visible coverage");
                 previousCoverage = coverage;
                 GpuBoardTestUi.capture(new File(output, "weather-sand-strength-" + Math.round(strength * 100) + ".png"));
             }
+            checkSandMotion(particles, scene);
         } finally {
             clear.dispose();
             particles.dispose();
+        }
+    }
+
+    private void checkSandMotion(GpuWeatherParticles particles, BoardScene scene) {
+        BoardCamera camera = new BoardCamera();
+        camera.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.setIsometric(false);
+        camera.fit(scene);
+        camera.camera.zoom = 1;
+        camera.update();
+        for (int direction : new int[] { 0, 90, 180, 270 }) {
+            float calmDistance = 0;
+            for (float wind : new float[] { 0, 1 }) {
+                var effects = new BoardAtmosphere.Effects(0, 0, 0, 0.000001f, 0, wind, direction);
+                Grain first = sandGrain(particles, camera, scene, effects, 3);
+                Grain next = sandGrain(particles, camera, scene, effects, 3 + 1 / 60f);
+                float dx = next.x() - first.x(), dy = next.y() - first.y();
+                float along = direction == 0 ? dy : direction == 90 ? dx : direction == 180 ? -dy : -dx;
+                float across = direction == 0 || direction == 180 ? dx : dy;
+                assertTrue(along > 1.5f && along < 20,
+                      "Sand must stream quickly in the selected direction even in calm wind: " + along);
+                assertTrue(Math.abs(across) < 1.5f, "Small turbulent motion must not overwhelm the wind direction");
+                if (wind == 0) {
+                    calmDistance = along;
+                } else {
+                    assertTrue(along > calmDistance * 1.4f, "Increasing wind must visibly accelerate the sand");
+                }
+            }
+        }
+    }
+
+    private record Grain(float x, float y) { }
+
+    /** Measure one rendered grain, including its filtering and trail, instead of duplicating shader math. */
+    private Grain sandGrain(GpuWeatherParticles particles, BoardCamera camera, BoardScene scene,
+          BoardAtmosphere.Effects effects, float clock) {
+        ScreenUtils.clear(0, 0, 0, 1, true);
+        particles.render(camera.camera, scene, effects, Color.WHITE, clock);
+        Pixmap frame = ScreenUtils.getFrameBufferPixmap(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        try {
+            float weight = 0, xSum = 0, ySum = 0;
+            int minX = frame.getWidth(), minY = frame.getHeight(), maxX = 0, maxY = 0;
+            for (int y = 0; y < frame.getHeight(); y++) {
+                for (int x = 0; x < frame.getWidth(); x++) {
+                    int red = frame.getPixel(x, y) >>> 24;
+                    if (red > 2) {
+                        weight += red;
+                        xSum += red * x;
+                        ySum += red * y;
+                        minX = Math.min(minX, x);
+                        minY = Math.min(minY, y);
+                        maxX = Math.max(maxX, x);
+                        maxY = Math.max(maxY, y);
+                    }
+                }
+            }
+            assertTrue(weight > 0, "A filtered sand grain must remain visible at " + clock + " with " + effects);
+            assertTrue(maxX - minX < 6 && maxY - minY < 6,
+                  "A grain and its motion trail must stay small at normal zoom");
+            return new Grain(xSum / weight, ySum / weight);
+        } finally {
+            frame.dispose();
         }
     }
 

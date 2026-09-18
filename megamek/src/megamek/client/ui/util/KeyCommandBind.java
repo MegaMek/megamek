@@ -37,6 +37,7 @@ package megamek.client.ui.util;
 
 import static java.awt.event.KeyEvent.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -165,7 +166,15 @@ public enum KeyCommandBind {
     BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     FOV_SPOTTING(true, "toggleFovSpotting", VK_O, CTRL_DOWN_MASK),
     /** Toggles the objective overlays: control zone outlines and the scheme word on each flag. */
-    SHOW_OBJECTS(true, "toggleShowObjects", VK_O);
+    SHOW_OBJECTS(true, "toggleShowObjects", VK_O),
+
+    // --------- The following binds drive the GPU board's orbit camera; the classic board ignores them
+    CAMERA_ROTATE_LEFT("cameraRotateLeft", true, VK_Q),
+    CAMERA_ROTATE_RIGHT("cameraRotateRight", true, VK_E),
+    CAMERA_TILT_UP("cameraTiltUp", true, VK_PAGE_UP),
+    CAMERA_TILT_DOWN("cameraTiltDown", true, VK_PAGE_DOWN),
+    CAMERA_RESET("cameraReset", VK_HOME),
+    CAMERA_FIT_BOARD("cameraFitBoard", VK_END);
 
     /** The command associated with this binding. */
     public String cmd;
@@ -245,6 +254,21 @@ public enum KeyCommandBind {
               .filter(bind -> bind.key == keycode)
               .filter(bind -> bind.modifiers == modifiers)
               .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of binds using the given keycode and modifier, including those used by the CommonMenuBar. The GPU
+     * board runs in its own window where the menu bar's accelerators never see a key press, so it has to look those
+     * binds up itself.
+     */
+    public static List<KeyCommandBind> getAllBindsByKey(int keycode, int modifiers) {
+        List<KeyCommandBind> binds = new ArrayList<>();
+        for (KeyCommandBind bind : values()) {
+            if ((bind.key == keycode) && (bind.modifiers == modifiers)) {
+                binds.add(bind);
+            }
+        }
+        return binds;
     }
 
     /** Returns the bind identified by the given cmd or null if there is no such bind. */

@@ -40,6 +40,7 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.board.Coords;
+import megamek.logging.MMLogger;
 
 /** GPU board and Scene2D controls. The source remains the sole bridge to the existing client. */
 class GpuBattleView extends ApplicationAdapter {
@@ -55,6 +56,8 @@ class GpuBattleView extends ApplicationAdapter {
     private static final Color TETHER_COLOR = Color.valueOf("A9B8B8");
     private static final double[] PLAYBACK_SPEEDS = { 1, 0.5, 2, 0 };
     private static final String[] SPEED_LABELS = { "1x", "0.5x", "2x", Messages.getString("GpuBoard.instant") };
+    private static final float TILT_DEGREES_PER_SECOND = 60;
+    private static final MMLogger LOGGER = MMLogger.create(GpuBattleView.class);
     private final GpuBoardSource source;
     private final GpuDisplayScale displayScale = new GpuDisplayScale();
     final BoardCamera boardCamera = new BoardCamera();
@@ -200,14 +203,20 @@ class GpuBattleView extends ApplicationAdapter {
                 boardCamera.center(BoardGeometry.center(center, scene.tile(center).elevation()));
             }
         }
+        boardCamera.advance(Gdx.graphics.getDeltaTime());
         if (ui.acceptsCameraKeys()) {
             float distance = 500 * Gdx.graphics.getDeltaTime();
+            float inclination = TILT_DEGREES_PER_SECOND * Gdx.graphics.getDeltaTime();
             for (KeyCommandBind command : cameraKeys.values()) {
                 switch (command) {
                     case SCROLL_NORTH -> boardCamera.pan(0, distance);
                     case SCROLL_SOUTH -> boardCamera.pan(0, -distance);
                     case SCROLL_EAST -> boardCamera.pan(-distance, 0);
                     case SCROLL_WEST -> boardCamera.pan(distance, 0);
+                    case CAMERA_TILT_UP -> boardCamera.tilt(-inclination);
+                    case CAMERA_TILT_DOWN -> boardCamera.tilt(inclination);
+                    case CAMERA_ROTATE_LEFT -> continueRotation(-1);
+                    case CAMERA_ROTATE_RIGHT -> continueRotation(1);
                     default -> { }
                 }
             }
@@ -583,6 +592,13 @@ class GpuBattleView extends ApplicationAdapter {
         }
     }
 
+    /** A held rotate key starts the next turn as soon as the previous one has finished playing. */
+    private void continueRotation(int direction) {
+        if (!boardCamera.isRotating()) {
+            boardCamera.rotateStep(direction);
+        }
+    }
+
     Vector3 screenPosition(Coords coords) {
         Vector3 point = boardCamera.camera.project(BoardGeometry.center(coords, scene.tile(coords).elevation()),
               0, ui.bottomPixels(), boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight);
@@ -740,37 +756,68 @@ class GpuBattleView extends ApplicationAdapter {
                 source.setHover(hovered);
                 return true;
             }
-            if (key == Input.Keys.ENTER && hovered != null) {
+            // Enter with a modifier is a bound command such as Done, which must reach the phase display.
+            boolean isPlainEnter = (key == Input.Keys.ENTER) && (modifiers() == 0);
+            if (isPlainEnter && (hovered != null)) {
                 Vector3 point = screenPosition(hovered);
                 ui.inspect(hovered, (int) point.x, (int) point.y);
                 return true;
             }
             int awt = awtKey(key);
-            for (KeyCommandBind command : KeyCommandBind.getBindByKey(awt, modifiers())) {
-                switch (command) {
-                    case SCROLL_NORTH, SCROLL_SOUTH, SCROLL_EAST, SCROLL_WEST -> {
-                        cameraKeys.put(key, command);
-                        return true;
-                    }
-                    case ZOOM_IN -> {
-                        boardCamera.zoom(1 / 1.2f);
-                        return true;
-                    }
-                    case ZOOM_OUT -> {
-                        boardCamera.zoom(1.2f);
-                        return true;
-                    }
-                    case ZOOM_OVERVIEW_TOGGLE -> {
-                        boardCamera.toggleOverview(scene);
-                        return true;
-                    }
-                    default -> { }
+            // Menu bar binds are included: this window has no menu bar to catch the camera shortcuts itself.
+            for (KeyCommandBind command : KeyCommandBind.getAllBindsByKey(awt, modifiers())) {
+                if (cameraCommand(key, command)) {
+                    return true;
                 }
             }
             if (awt != KeyEvent.VK_UNDEFINED) {
                 source.key(awt, true, modifiers());
             }
             return awt != KeyEvent.VK_UNDEFINED;
+        }
+
+        /**
+         * Applies a bind that moves the camera. Held binds are only noted here and applied every frame while the key
+         * stays down.
+         *
+         * @return {@code false} for a bind that is not a camera command, which is then left to the Swing key dispatcher
+         */
+        private boolean cameraCommand(int key, KeyCommandBind command) {
+            switch (command) {
+                case SCROLL_NORTH, SCROLL_SOUTH, SCROLL_EAST, SCROLL_WEST, CAMERA_TILT_UP, CAMERA_TILT_DOWN ->
+                      cameraKeys.put(key, command);
+                case CAMERA_ROTATE_LEFT, CAMERA_ROTATE_RIGHT -> {
+                    if (ui.acceptsCameraKeys()) {
+                        boardCamera.rotateStep(command == KeyCommandBind.CAMERA_ROTATE_LEFT ? -1 : 1);
+                    } else {
+                        LOGGER.debug("[GpuCamera] {} ignored: a menu is open", command);
+                    }
+                    cameraKeys.put(key, command);
+                }
+                case TOGGLE_ISO -> boardCamera.setIsometric(!boardCamera.isIsometric());
+                case ZOOM_IN -> boardCamera.zoom(1 / 1.2f);
+                case ZOOM_OUT -> boardCamera.zoom(1.2f);
+                case CAMERA_RESET, CAMERA_FIT_BOARD, ZOOM_OVERVIEW_TOGGLE -> frameBoard(command);
+                default -> {
+                    return false;
+                }
+            }
+            LOGGER.debug("[GpuCamera] {} handled by the GPU camera", command);
+            return true;
+        }
+
+        /** These camera moves measure the board, so they wait until the first frame has delivered one. */
+        private void frameBoard(KeyCommandBind command) {
+            if (scene == null) {
+                LOGGER.debug("[GpuCamera] {} ignored: no board has been drawn yet", command);
+                return;
+            }
+            switch (command) {
+                case CAMERA_RESET -> boardCamera.reset(scene);
+                case CAMERA_FIT_BOARD -> boardCamera.fit(scene);
+                case ZOOM_OVERVIEW_TOGGLE -> boardCamera.toggleOverview(scene);
+                default -> { }
+            }
         }
 
         @Override

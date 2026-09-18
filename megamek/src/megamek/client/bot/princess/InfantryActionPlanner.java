@@ -136,6 +136,11 @@ public final class InfantryActionPlanner {
             if (newcomers.isEmpty()) {
                 return null;
             }
+            if (isAlreadyTaken(game, player, building)) {
+                LOGGER.debug("[InfantryAction] {} leaves {} alone: no crew and no enemy infantry are left inside to "
+                      + "fight", player.getName(), building.getShortName());
+                return null;
+            }
             double attackers = InfantryActionStrengths.total(newcomers, null);
             double defenders = expectedDefence(game, player, building);
             double odds = odds(attackers, defenders);
@@ -251,6 +256,18 @@ public final class InfantryActionPlanner {
             }
         }
         return mostWithinCap;
+    }
+
+    /**
+     * A building with nobody left to fight for it: its crew are gone, as they are once it has been captured, and no
+     * enemy infantry stand inside. Units that stay in a building they have just taken would otherwise attack it
+     * again every round and be told every round that it fell.
+     */
+    static boolean isAlreadyTaken(Game game, Player player, AbstractBuildingEntity building) {
+        boolean hasNoCrewLeft = building.getCrew().getCurrentSize() <= 0;
+        boolean hasNoEnemyInfantryInside = InfantryActionStrengths.enemyInfantryInside(game, player, building)
+              .isEmpty();
+        return hasNoCrewLeft && hasNoEnemyInfantryInside;
     }
 
     /** From {@code +3} at the lowest bravery to {@code +6} at the highest, in steps of the bravery index. */

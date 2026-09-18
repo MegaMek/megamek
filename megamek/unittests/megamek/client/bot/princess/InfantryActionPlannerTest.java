@@ -285,6 +285,23 @@ class InfantryActionPlannerTest {
         assertEquals(building.getId(), plan.getFirst().buildingId());
     }
 
+    @Test
+    @DisplayName("A building already taken is left alone; one with a platoon still inside is not")
+    void leavesATakenBuildingAlone() {
+        building.setOwner(enemy);
+        building.getCrew().setCurrentSize(0);
+        platoon(bot, HEX);
+        platoon(bot, HEX);
+        platoon(bot, HEX);
+
+        assertNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(BRAVEST), null),
+              "no crew and nobody inside: there is nothing to attack");
+
+        platoon(enemy, HEX);
+        assertNotNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(BRAVEST), null),
+              "three platoons against the one still inside is a fight");
+    }
+
     /** Three platoons against two behind a modifier of 1.0 is 1.5 to 1: between the two lines of a middling bot. */
     private void engageThreeAgainstTwo() {
         building.setOwner(enemy);

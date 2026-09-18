@@ -34,11 +34,6 @@
  */
 package megamek.client.generator;
 
-import megamek.common.Configuration;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
-import megamek.logging.MMLogger;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -61,6 +56,11 @@ import java.util.Vector;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import megamek.common.Configuration;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
+import megamek.logging.MMLogger;
 
 /**
  * This class sets up a random unit generator that can then be used to read in user-created input files of random

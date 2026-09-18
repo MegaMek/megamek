@@ -34,6 +34,17 @@
 
 package megamek.common.units;
 
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.Vector;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
 import megamek.common.LosEffects;
@@ -50,17 +61,6 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.logging.MMLogger;
-
-import java.io.Serial;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.Vector;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 /**
  * Fighter squadrons are basically "containers" for a bunch of fighters.

@@ -32,6 +32,15 @@
  */
 package megamek.client.ratgenerator;
 
+import static megamek.common.units.UnitRole.*;
+
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
@@ -51,15 +60,6 @@ import megamek.common.weapons.lrms.LRMWeapon;
 import megamek.common.weapons.srms.SRMWeapon;
 import megamek.common.weapons.tag.TAGWeapon;
 import megamek.logging.MMLogger;
-
-import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import static megamek.common.units.UnitRole.*;
 
 /**
  * Defines a Campaign Operations formation type (e.g., Battle Lance, Assault Lance, Aerospace Superiority Squadron),

@@ -4,6 +4,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 import java.awt.Rectangle;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 
@@ -14,6 +15,9 @@ final class BoardCamera {
     private static final float MIN_ZOOM = 0.1f;
     private static final float MAX_ZOOM = 20f;
     static final float MAX_TILT = 80;
+    /** One keyboard turn. Hex rows line up again every sixth of a circle, so each turn lands on a matching view. */
+    static final float ROTATION_STEP = 60;
+    static final float ROTATION_SECONDS = 0.25f;
     final OrthographicCamera camera = new OrthographicCamera();
     final Vector3 focus = new Vector3();
     private float azimuth;
@@ -24,6 +28,10 @@ final class BoardCamera {
     private boolean fitToWindow;
     private float displayScale = 1;
     private long revision;
+    private float rotationStart;
+    private float rotationSweep;
+    private float rotationTarget;
+    private float rotationElapsed = ROTATION_SECONDS;
 
     BoardCamera() {
         camera.near = 1;
@@ -48,6 +56,7 @@ final class BoardCamera {
     }
 
     void setIsometric(boolean value) {
+        stopRotation();
         azimuth = value ? 45 : 0;
         tilt = value ? ISOMETRIC_TILT : 0;
         update();
@@ -65,18 +74,68 @@ final class BoardCamera {
         return tilt;
     }
 
+    float azimuth() {
+        return azimuth;
+    }
+
     long revision() {
         return revision;
     }
 
     void orbit(float rotation, float inclination) {
+        stopRotation();
+        azimuth = wrapDegrees(azimuth + rotation);
+        tilt(inclination);
+    }
+
+    /** Changes only the viewing angle, so holding a tilt key does not interrupt a keyboard turn in progress. */
+    void tilt(float inclination) {
         fitToWindow = false;
-        azimuth = (azimuth + rotation) % 360;
-        if (azimuth < 0) {
-            azimuth += 360;
-        }
         tilt = MathUtils.clamp(tilt + inclination, 0, MAX_TILT);
         update();
+    }
+
+    /**
+     * Starts an eased keyboard turn of one {@link #ROTATION_STEP}. A turn requested while another is still playing
+     * is added to it, so quick taps queue up and an opposite tap turns back.
+     *
+     * @param direction {@code -1} to turn left, {@code 1} to turn right
+     */
+    void rotateStep(int direction) {
+        fitToWindow = false;
+        float remaining = isRotating() ? rotationSweep * (1 - rotationProgress()) : 0;
+        // The target is tracked apart from the eased path so that whole steps from a preset land exactly on it again.
+        rotationTarget = wrapDegrees((isRotating() ? rotationTarget : azimuth) + direction * ROTATION_STEP);
+        rotationStart = azimuth;
+        rotationSweep = remaining + direction * ROTATION_STEP;
+        rotationElapsed = 0;
+    }
+
+    boolean isRotating() {
+        return rotationElapsed < ROTATION_SECONDS;
+    }
+
+    /** Plays any keyboard turn in progress forward by the given frame time. */
+    void advance(float seconds) {
+        if (!isRotating()) {
+            return;
+        }
+        rotationElapsed = Math.min(rotationElapsed + seconds, ROTATION_SECONDS);
+        azimuth = isRotating() ? wrapDegrees(rotationStart + rotationSweep * rotationProgress()) : rotationTarget;
+        update();
+    }
+
+    private float rotationProgress() {
+        return Interpolation.smooth.apply(rotationElapsed / ROTATION_SECONDS);
+    }
+
+    private void stopRotation() {
+        rotationElapsed = ROTATION_SECONDS;
+    }
+
+    private static float wrapDegrees(float degrees) {
+        float wrapped = degrees % 360;
+        return wrapped < 0 ? wrapped + 360 : wrapped;
     }
 
     void reset(BoardScene scene) {

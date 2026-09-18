@@ -20,6 +20,11 @@ final class BoardGeometry {
     }
 
     static final Tuning DEFAULTS = new Tuning(1, 0.6f, 0.87f, 18, 0.8f);
+    /**
+     * Native tactical markers keep this fraction of the hex radius clear of the shared hex edges. Exactly on
+     * an edge a marker is coplanar with the terrain there and flickers against it while the camera rotates.
+     */
+    static final float MARKER_INSET = 0.1f;
     static final float TILE_WIDTH = HexTileset.HEX_W;
     static final float TILE_HEIGHT = HexTileset.HEX_H;
     static float HEX_SCALE;
@@ -89,6 +94,17 @@ final class BoardGeometry {
 
     static int edgeDirection(int edge) {
         return Math.floorMod(1 - edge, 6);
+    }
+
+    /** Pulls a point toward a hex center inside the hex plane; the point keeps its elevation. */
+    static Vector3 inset(Vector3 point, Vector3 center, float fraction) {
+        return point.set(point.x + (center.x - point.x) * fraction,
+              point.y + (center.y - point.y) * fraction, point.z);
+    }
+
+    /** One point of a native tactical marker, kept clear of the shared hex edges. */
+    static Vector3 markerPoint(Vector3 point, Vector3 center) {
+        return inset(point, center, MARKER_INSET);
     }
 
     /** Riverbeds include a two-world-unit recess even at game depth zero. */

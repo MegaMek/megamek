@@ -23,6 +23,10 @@ import com.badlogic.gdx.utils.Disposable;
 /** Unlit, depth-tested tactical volumes shared by both cameras. Owns its meshes and batch on the GL thread. */
 final class GpuFireControl implements Disposable {
     private static final long ATTRIBUTES = VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked;
+    /** Beam width as a fraction of its offset from the hex edge. */
+    private static final float FRAME_RATIO = 0.6f;
+    /** tan(30°): how far two adjoining offset edges reach to meet at the hex tiling's ~120° corners. */
+    private static final float MITER = 0.5774f;
     private final ModelBatch batch = new ModelBatch();
     private final Material material = new Material(ColorAttribute.createDiffuse(Color.WHITE),
           new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA),
@@ -59,10 +63,13 @@ final class GpuFireControl implements Disposable {
             }
             MeshPartBuilder mesh = builder.part("range-" + part++, GL20.GL_TRIANGLES, ATTRIBUTES, material);
             Color color = color(border.rgb(), 0.18f);
+            int mask = border.edges();
+            Vector3 center = BoardGeometry.center(border.coords(), 0);
             for (int edge = 0; edge < 6; edge++) {
-                if ((border.edges() & (1 << BoardGeometry.edgeDirection(edge))) != 0) {
-                    range(mesh, BoardFiringGeometry.rangeEdge(scene, border.coords(), edge),
-                          BoardGeometry.center(border.coords(), 0), color);
+                if ((mask & (1 << BoardGeometry.edgeDirection(edge))) != 0) {
+                    range(mesh, BoardFiringGeometry.rangeEdge(scene, border.coords(), edge), center,
+                          (mask & (1 << BoardGeometry.edgeDirection(edge + 5))) != 0,
+                          (mask & (1 << BoardGeometry.edgeDirection(edge + 1))) != 0, color);
                 }
             }
         }
@@ -103,9 +110,34 @@ final class GpuFireControl implements Disposable {
         return new Color(((rgb >>> 16) & 255) / 255f, ((rgb >>> 8) & 255) / 255f, (rgb & 255) / 255f, alpha);
     }
 
-    private static void range(MeshPartBuilder mesh, BoardFiringGeometry.RangeEdge edge, Vector3 center, Color color) {
-        Vector3 a = edge.bottomA(), b = edge.bottomB(), c = edge.topB(), d = edge.topA();
-        Vector3 innerA = inset(a, center), innerB = inset(b, center), innerC = inset(c, center), innerD = inset(d, center);
+    /**
+     * The beam is offset inward perpendicular to its edge, never sharing the terrain's edge plane, where it is
+     * coplanar with the terrain and flickers. Its ends meet the adjoining boundary edges: at a convex corner
+     * (the hex's own next or previous edge continues the border) both segments stop at the join, at a reflex
+     * corner (the border turns across to another hex) both continue past it. Both cases reach the same tan(30°)
+     * mitre, so the outline stays closed across hexes.
+     */
+    private static void range(MeshPartBuilder mesh, BoardFiringGeometry.RangeEdge edge, Vector3 center,
+          boolean convexStart, boolean convexEnd, Color color) {
+        Vector3 bottomA = edge.bottomA(), bottomB = edge.bottomB();
+        Vector3 along = new Vector3(bottomB.x - bottomA.x, bottomB.y - bottomA.y, 0).nor();
+        Vector3 inward = new Vector3(Vector3.Z).crs(along);
+        if (inward.x * (center.x - bottomA.x) + inward.y * (center.y - bottomA.y) < 0) {
+            inward.scl(-1);
+        }
+        float offset = BoardGeometry.MARKER_INSET * BoardGeometry.WIDTH / 2;
+        float miter = offset * MITER;
+        Vector3 start = new Vector3(inward).scl(offset).mulAdd(along, convexStart ? miter : -miter);
+        Vector3 end = new Vector3(inward).scl(offset).mulAdd(along, convexEnd ? -miter : miter);
+        Vector3 a = bottomA.add(start);
+        Vector3 b = bottomB.add(end);
+        Vector3 c = edge.topB().add(end);
+        Vector3 d = edge.topA().add(start);
+        float width = offset * FRAME_RATIO;
+        Vector3 innerA = new Vector3(a).mulAdd(inward, width);
+        Vector3 innerB = new Vector3(b).mulAdd(inward, width);
+        Vector3 innerC = new Vector3(c).mulAdd(inward, width);
+        Vector3 innerD = new Vector3(d).mulAdd(inward, width);
         quad(mesh, a, b, c, d, color);
         quad(mesh, innerB, innerA, innerD, innerC, color);
         quad(mesh, a, innerA, innerB, b, color);
@@ -114,11 +146,6 @@ final class GpuFireControl implements Disposable {
         Color cap = new Color(color).mul(1, 1, 1, 1.5f);
         quad(mesh, d, c, innerC, innerD, cap);
         tube(mesh, d, c, 0.65f * BoardGeometry.HEX_SCALE, new Color(color.r, color.g, color.b, 0.85f));
-    }
-
-    private static Vector3 inset(Vector3 point, Vector3 center) {
-        return new Vector3(point.x + (center.x - point.x) * 0.08f,
-              point.y + (center.y - point.y) * 0.08f, point.z);
     }
 
     private static void quad(MeshPartBuilder mesh, Vector3 a, Vector3 b, Vector3 c, Vector3 d, Color color) {

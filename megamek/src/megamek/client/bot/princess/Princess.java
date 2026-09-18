@@ -836,6 +836,15 @@ public class Princess extends BotClient {
     }
 
     /**
+     * A unit fighting an infantry vs. infantry action (TO:AR p. 169) leaves it by withdrawing, winning or being
+     * repulsed, not by walking out in the Movement Phase: the game lets it walk, but the action would go on
+     * without it standing there.
+     */
+    private boolean isCommittedToInfantryAction(final Entity entity) {
+        return (entity instanceof Infantry) && (entity.getInfantryCombatTargetId() != Entity.NONE);
+    }
+
+    /**
      * Builds the move path for a unit under a hold position order: the unit stays in its hex but is allowed to change
      * facing toward the closest enemy so it keeps its weapons bearing.
      *
@@ -2866,7 +2875,7 @@ public class Princess extends BotClient {
             initialize();
             Entity entity = getGame().getFirstEntity(getMyTurn());
             List<InfantryActionDeclaration> declarations = InfantryActionPlanner.plan(getGame(), getLocalPlayer(),
-                  getBehaviorSettings());
+                  getBehaviorSettings(), getMemory());
             LOGGER.debug("[PreEnd] bot declaration turn: {} infantry action declaration(s)", declarations.size());
             for (InfantryActionDeclaration declaration : declarations) {
                 sendInfantryActionDeclaration(declaration);
@@ -3139,6 +3148,12 @@ public class Princess extends BotClient {
             if (shootAndScoot && isArtilleryWithAmmo(entity) && !entity.isOffBoard()
                   && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()) {
                 return getShootAndScootPath(entity);
+            }
+
+            if (isCommittedToInfantryAction(entity)) {
+                LOGGER.info("[InfantryAction] {}: {} is committed to the action in building {} and holds its ground",
+                      getName(), entity.getDisplayName(), entity.getInfantryCombatTargetId());
+                return getHoldPositionPath(entity);
             }
 
             if (getHoldPosition() && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()) {

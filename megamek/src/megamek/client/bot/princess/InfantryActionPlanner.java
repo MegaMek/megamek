@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.bot.princess.FightMemory.OddsRecord;
 import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
@@ -50,6 +51,9 @@ import megamek.logging.MMLogger;
  * every building the bot has a stake in, whether to start an attack, reinforce or withdraw one, or answer one with
  * infantry and crew. The odds thresholds are the ones {@link InfantryCombatHelper} derives from the behaviour
  * settings, so a bot's bravery and aggression mean here what they mean elsewhere.
+ *
+ * <p>The planner keeps nothing itself. What it needs from earlier rounds, how the odds of an action have moved
+ * since it began, it reads from the {@link BotMemory} it is given, and it notes this round's odds there first.</p>
  *
  * <p>Shared by Princess and CASPAR, which inherits it; CASPAR changes only the settings it is given.</p>
  */
@@ -68,6 +72,8 @@ public final class InfantryActionPlanner {
     /** The share of a building's crew an attacker assumes will be committed against it. */
     private static final double CREW_SHARE_EXPECTED = 0.5;
     private static final int BRAVERY_INDEX_STEPS = 10;
+    /** How many rounds running the odds must fall before an attacker calls the fight a losing one. */
+    static final int SLIDING_ROUNDS = 2;
 
     private InfantryActionPlanner() {}
 
@@ -77,31 +83,51 @@ public final class InfantryActionPlanner {
      * @param game     the game
      * @param player   the bot
      * @param behavior the bot's behaviour settings
+     * @param memory   the bot's memory; this round's odds in every running action are noted in it, and actions
+     *                 that have ended are dropped from it
      *
      * @return the declarations, possibly empty
      */
-    public static List<InfantryActionDeclaration> plan(Game game, Player player, BehaviorSettings behavior) {
+    public static List<InfantryActionDeclaration> plan(Game game, Player player, BehaviorSettings behavior,
+          BotMemory memory) {
         List<InfantryActionDeclaration> declarations = new ArrayList<>();
+        List<Integer> runningBuildingIds = new ArrayList<>();
         for (AbstractBuildingEntity building : InfantryActionStrengths.stakes(game, player)) {
+            if (InfantryActionStrengths.hasActionRunning(game, building)) {
+                runningBuildingIds.add(building.getId());
+                memory.rememberFightOdds(building.getId(), building.getShortName(), currentOdds(game, building));
+            }
             InfantryActionDeclaration declaration = InfantryActionStrengths.defends(player, building)
                   ? planDefence(game, player, building, behavior)
-                  : planAttack(game, player, building, behavior);
+                  : planAttack(game, player, building, behavior, memory.fight(building.getId()));
             if (declaration != null) {
                 declarations.add(declaration);
             }
         }
+        memory.forgetFightsExcept(runningBuildingIds);
         return declarations;
+    }
+
+    /** The committed strengths on both sides of a running action, as they stand now. */
+    static OddsRecord currentOdds(Game game, AbstractBuildingEntity building) {
+        double attackers = InfantryActionStrengths.total(InfantryActionStrengths.engaged(game, building, true), null);
+        double defenders = InfantryActionStrengths.total(InfantryActionStrengths.engaged(game, building, false),
+              building);
+        return new OddsRecord(game.getCurrentRound(), attackers, defenders);
     }
 
     /**
      * The attacker's declaration for one enemy building: start with every unit inside when the odds beat the
-     * initiation threshold, withdraw the force when they fall below the withdrawal threshold, reinforce with units
-     * that entered since when the odds with them beat the reinforcement target, otherwise nothing.
+     * initiation threshold, withdraw the force when they fall below the withdrawal threshold or have slid below
+     * the initiation threshold and are still falling, reinforce with units that entered since when the odds with
+     * them beat the reinforcement target, otherwise nothing.
+     *
+     * @param fight what the bot remembers of this action from earlier rounds, or {@code null} for nothing
      *
      * @return the declaration, or {@code null} for none
      */
     static @Nullable InfantryActionDeclaration planAttack(Game game, Player player, AbstractBuildingEntity building,
-          BehaviorSettings behavior) {
+          BehaviorSettings behavior, @Nullable FightMemory fight) {
         double initiationThreshold = InfantryCombatHelper.calculateInitiationThreshold(behavior.getBraveryValue());
         List<Infantry> newcomers = InfantryActionStrengths.unengagedFriendlyInfantryInside(game, player, building);
         List<Integer> newcomerIds = ids(newcomers);
@@ -131,6 +157,13 @@ public final class InfantryActionPlanner {
                   building.getShortName(), number(odds), number(withdrawalThreshold));
             return InfantryActionDeclaration.attacking(player.getId(), building.getId(), List.of(), true);
         }
+        if ((fight != null) && isLosingSlide(odds, initiationThreshold, fight)) {
+            LOGGER.info("[InfantryAction] {} withdraws from {}: odds {} have fallen {} rounds running from {} at the "
+                        + "start, and are below the {} it would take to start this fight today", player.getName(),
+                  building.getShortName(), number(odds), SLIDING_ROUNDS, number(fight.firstRecord().odds()),
+                  number(initiationThreshold));
+            return InfantryActionDeclaration.attacking(player.getId(), building.getId(), List.of(), true);
+        }
         if (newcomers.isEmpty()) {
             return null;
         }
@@ -143,6 +176,17 @@ public final class InfantryActionPlanner {
               number(reinforcementTarget), worthIt ? "reinforce" : "hold them out");
         return worthIt ? InfantryActionDeclaration.attacking(player.getId(), building.getId(), newcomerIds, false)
               : null;
+    }
+
+    /**
+     * A fight the bot would not start today and that keeps getting worse. The withdrawal threshold alone lets an
+     * attack bleed for many rounds in the band between it and the initiation threshold; the trend is what tells a
+     * bad run of dice from a fight that is being lost.
+     */
+    private static boolean isLosingSlide(double odds, double initiationThreshold, FightMemory fight) {
+        boolean wouldNotStartToday = odds < initiationThreshold;
+        boolean keepsFalling = fight.oddsHaveFallenFor(SLIDING_ROUNDS);
+        return wouldNotStartToday && keepsFalling;
     }
 
     /**

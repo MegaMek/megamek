@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import megamek.client.bot.princess.FightMemory.OddsRecord;
 import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
 import megamek.common.board.Board;
@@ -53,6 +54,7 @@ import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.common.weapons.lasers.innerSphere.medium.ISLaserMedium;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -69,6 +71,8 @@ class InfantryActionPlannerTest {
     private static final Coords FAR_AWAY = new Coords(1, 1);
     private static final int BRAVEST = 10;
     private static final int MOST_CAUTIOUS = 0;
+    /** A bravery that starts a fight at 1.75 to 1 and leaves one below 1.31 to 1. */
+    private static final int MIDDLING = 5;
 
     private Game game;
     private Player bot;
@@ -141,7 +145,7 @@ class InfantryActionPlannerTest {
         ConvInfantry third = platoon(bot, HEX);
 
         InfantryActionDeclaration attack = InfantryActionPlanner.planAttack(game, bot, building,
-              behavior(MOST_CAUTIOUS));
+              behavior(MOST_CAUTIOUS), null);
 
         assertNotNull(attack, "63 points against half of ten crew is an attack even for the most cautious");
         assertEquals(List.of(first.getId(), second.getId(), third.getId()), attack.committedUnitIds());
@@ -150,7 +154,7 @@ class InfantryActionPlannerTest {
         for (int platoons = 0; platoons < 6; platoons++) {
             platoon(enemy, HEX);
         }
-        assertNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(BRAVEST)),
+        assertNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(BRAVEST), null),
               "one platoon against six waits, however brave");
     }
 
@@ -165,7 +169,7 @@ class InfantryActionPlannerTest {
         }
 
         InfantryActionDeclaration withdrawal = InfantryActionPlanner.planAttack(game, bot, building,
-              behavior(BRAVEST));
+              behavior(BRAVEST), null);
         assertNotNull(withdrawal);
         assertTrue(withdrawal.withdraw(), "one platoon against six leaves");
 
@@ -179,7 +183,7 @@ class InfantryActionPlannerTest {
         ConvInfantry newcomer = platoon(bot, HEX);
 
         InfantryActionDeclaration reinforcement = InfantryActionPlanner.planAttack(game, bot, building,
-              behavior(BRAVEST));
+              behavior(BRAVEST), null);
         assertNotNull(reinforcement);
         assertEquals(List.of(newcomer.getId()), reinforcement.committedUnitIds(), "three to one reinforces");
         assertFalse(reinforcement.withdraw());
@@ -274,9 +278,79 @@ class InfantryActionPlannerTest {
         platoon(bot, HEX);
         platoon(bot, FAR_AWAY);
 
-        List<InfantryActionDeclaration> plan = InfantryActionPlanner.plan(game, bot, behavior(BRAVEST));
+        List<InfantryActionDeclaration> plan = InfantryActionPlanner.plan(game, bot, behavior(BRAVEST),
+              new BotMemory());
 
         assertEquals(1, plan.size());
         assertEquals(building.getId(), plan.getFirst().buildingId());
+    }
+
+    /** Three platoons against two behind a modifier of 1.0 is 1.5 to 1: between the two lines of a middling bot. */
+    private void engageThreeAgainstTwo() {
+        building.setOwner(enemy);
+        engage(platoon(bot, HEX), true);
+        engage(platoon(bot, HEX), true);
+        engage(platoon(bot, HEX), true);
+        engage(platoon(enemy, HEX), false);
+        engage(platoon(enemy, HEX), false);
+    }
+
+    @Test
+    @DisplayName("A fight below the starting bar that has fallen two rounds running is abandoned")
+    void withdrawsFromALosingSlide() {
+        engageThreeAgainstTwo();
+        FightMemory slidingFight = new FightMemory(building.getId());
+        slidingFight.rememberOdds(new OddsRecord(1, 84, 42));
+        slidingFight.rememberOdds(new OddsRecord(2, 73.5, 42));
+        slidingFight.rememberOdds(new OddsRecord(3, 63, 42));
+
+        InfantryActionDeclaration cautious = InfantryActionPlanner.planAttack(game, bot, building,
+              behavior(MIDDLING), slidingFight);
+
+        assertNotNull(cautious, "2 to 1 has become 1.5 to 1 over two rounds, below the 1.75 needed to start: leave");
+        assertTrue(cautious.withdraw());
+    }
+
+    @Test
+    @DisplayName("The same odds with no slide behind them, or one bad round, are fought on")
+    void fightsOnWithoutASlide() {
+        engageThreeAgainstTwo();
+        FightMemory steadyFight = new FightMemory(building.getId());
+        steadyFight.rememberOdds(new OddsRecord(1, 63, 42));
+        steadyFight.rememberOdds(new OddsRecord(2, 63, 42));
+        steadyFight.rememberOdds(new OddsRecord(3, 63, 42));
+        FightMemory oneBadRound = new FightMemory(building.getId());
+        oneBadRound.rememberOdds(new OddsRecord(1, 63, 42));
+        oneBadRound.rememberOdds(new OddsRecord(2, 84, 42));
+        oneBadRound.rememberOdds(new OddsRecord(3, 63, 42));
+
+        assertNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(MIDDLING),
+              steadyFight), "1.5 to 1 that has always been 1.5 to 1 is no reason to leave");
+        assertNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(MIDDLING),
+              oneBadRound), "one fall is a die roll, not a slide");
+        assertNull(InfantryActionPlanner.planAttack(game, bot, building, behavior(MIDDLING),
+              null), "and with nothing remembered the odds alone decide");
+    }
+
+    @Test
+    @DisplayName("Planning notes the odds of each running action once a round and forgets actions that ended")
+    void planningKeepsTheFightPageCurrent() {
+        engageThreeAgainstTwo();
+        BotMemory memory = new BotMemory();
+
+        InfantryActionPlanner.plan(game, bot, behavior(BRAVEST), memory);
+        InfantryActionPlanner.plan(game, bot, behavior(BRAVEST), memory);
+
+        FightMemory fight = memory.fight(building.getId());
+        assertNotNull(fight);
+        assertEquals(1, fight.roundsNoted(), "two looks in one round are one record");
+        assertEquals(1.5, fight.latestRecord().odds(), 0.001);
+
+        for (Entity unit : game.getEntitiesVector()) {
+            unit.clearInfantryCombatState();
+        }
+        InfantryActionPlanner.plan(game, bot, behavior(BRAVEST), memory);
+
+        assertNull(memory.fight(building.getId()), "the action is over, so its page is dropped");
     }
 }

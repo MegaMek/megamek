@@ -75,6 +75,8 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.*;
 import megamek.common.equipment.*;
+import megamek.common.equipment.BankedScan;
+import megamek.common.equipment.ScanMission;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
@@ -919,6 +921,21 @@ public abstract class Entity extends TurnOrdered
      * The entity id of our current spot-target
      */
     private int spotTargetId = Entity.NONE;
+
+    /** The scan this unit has ordered for the End Phase, or {@code null} (Objectives series, scanning). */
+    private ScanAction pendingScan = null;
+
+    /**
+     * Successful scans this unit is carrying, worth nothing until it leaves over its home edge. Lazily created on
+     * read: a unit deserialized from a save written before the field existed restores it as {@code null}.
+     */
+    private List<BankedScan> bankedScans = new ArrayList<>();
+
+    /** Whether the banked readings have already been turned into points, or forfeited, when the unit left. */
+    private boolean bankedScansRedeemed = false;
+
+    /** Whether an objective mission names this unit as one of the units to be scanned (scenario key scanTargets). */
+    private boolean designatedScanTarget = false;
 
     /**
      * End Phases this unit has spent out in the open in a tainted atmosphere, TO:AR p.54. An {@code int} rather than a
@@ -6796,7 +6813,10 @@ public abstract class Entity extends TurnOrdered
                     return m.curMode().equals("Medium") ? 12 : 6;
                 }
 
-                if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
+                // By the flag, not by name: both Bloodhound variants carry it, and the old comparison tested a
+                // display name against an internal-name constant, so it never matched and a Bloodhound was
+                // given the generic 4 hexes instead of its 8.
+                if (type.hasFlag(MiscType.F_BLOODHOUND)) {
                     return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 String internalName = type.getInternalName();
@@ -7946,6 +7966,7 @@ public abstract class Entity extends TurnOrdered
         setFindingClub(false);
         setSpotting(false);
         spotTargetId = Entity.NONE;
+        pendingScan = null;
         setClearingMinefield(false);
         setClearingWoods(false);
         setUnjammingRAC(false);
@@ -12052,7 +12073,8 @@ public abstract class Entity extends TurnOrdered
               || canAnnounceAbandon()
               || hasMinesweeper()
               || ownerHasDemolitionCharge()
-              || BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
+              || BridgeLayerLogic.canDeclareBridgeDeploy(this, game)
+              || ScanMission.canOrderScan(this);
     }
 
     /**
@@ -12078,7 +12100,8 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasEntityScopedPreEndDeclaration() {
         // Bridge-Layer (AVLB) deployment is declared per unit (TM p.242 / TW); an infantry action is declared once
-        // per player per building, so it collapses to one turn like the other player-wide declarations.
+        // per player per building, so it collapses to one turn like the other player-wide declarations. So does a
+        // scan: the player gives every scanning unit its order in the one turn, each sent as it is given.
         return BridgeLayerLogic.canDeclareBridgeDeploy(this, game);
     }
 
@@ -13840,6 +13863,51 @@ public abstract class Entity extends TurnOrdered
 
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+
+    /** @return the scan this unit has ordered for the End Phase, or {@code null} when it has not ordered one */
+    public @Nullable ScanAction getPendingScan() {
+        return pendingScan;
+    }
+
+    /** @param pendingScan the scan to resolve in the End Phase, or {@code null} to withdraw the order */
+    public void setPendingScan(@Nullable ScanAction pendingScan) {
+        this.pendingScan = pendingScan;
+    }
+
+    /** @return the successful scans this unit is carrying, oldest first; never {@code null} */
+    public List<BankedScan> getBankedScans() {
+        if (bankedScans == null) {
+            bankedScans = new ArrayList<>();
+        }
+        return bankedScans;
+    }
+
+    /** @param scan a successful scan to carry until this unit leaves over its home edge */
+    public void bankScan(BankedScan scan) {
+        getBankedScans().add(scan);
+    }
+
+    /** @return {@code true} once the banked readings have been paid out or forfeited, so it happens only once */
+    public boolean isBankedScansRedeemed() {
+        return bankedScansRedeemed;
+    }
+
+    public void setBankedScansRedeemed(boolean bankedScansRedeemed) {
+        this.bankedScansRedeemed = bankedScansRedeemed;
+    }
+
+    /**
+     * @return {@code true} when an objective mission names this unit as a scan target. When any unit in a game is
+     *       designated, only designated units score in a Sensor Check mission; without designations every enemy
+     *       unit does.
+     */
+    public boolean isDesignatedScanTarget() {
+        return designatedScanTarget;
+    }
+
+    public void setDesignatedScanTarget(boolean designatedScanTarget) {
+        this.designatedScanTarget = designatedScanTarget;
     }
 
     public void setCommander(boolean arg) {

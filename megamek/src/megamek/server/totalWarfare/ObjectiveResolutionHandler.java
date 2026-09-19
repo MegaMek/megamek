@@ -444,6 +444,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         if (marker.isDestroyed()) {
             return false;
         }
+        if (marker.getScoringScheme().getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN) {
+            // read, not held: the scan pass scores it, and there is no zone to resolve control over
+            return false;
+        }
         if (marker.isPotential() && !marker.isConfirmed()) {
             LOGGER.debug("[Objective] {} at {} is an unconfirmed objective candidate - it cannot score until "
                   + "confirmed by a scan", marker.generalName(), objective.position());
@@ -804,11 +808,16 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         List<PlacedObjective> objectives = findAllObjectives();
-        if (objectives.isEmpty()) {
+        boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        if (objectives.isEmpty() && !isSensorCheckMission) {
             return;
         }
         addReport(new Report(REPORT_VICTORY_CONDITIONS_HEADER, Report.PUBLIC));
         reportVictoryPointTotals();
+        new ObjectiveScanHandler(gameManager).reportReadingsCarried();
+        if (objectives.isEmpty()) {
+            return;
+        }
         addReport(new Report(REPORT_STANDINGS_INTRO, Report.PUBLIC));
         for (PlacedObjective objective : objectives) {
             ObjectiveMarker marker = objective.marker();
@@ -837,13 +846,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     private String standingHolder(ObjectiveMarker marker) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        boolean isScanPoint = scheme.getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN;
         if (scheme.isDecided()) {
             int securedTeam = scheme.getSecuredTeam();
             int securedPlayer = scheme.getSecuredPlayerId();
             String securedBy = (securedTeam != ObjectiveScoringScheme.NO_SIDE)
                   ? teamDisplayName(securedTeam)
                   : playerName(securedPlayer);
-            return "secured by " + securedBy;
+            return (isScanPoint ? "scanned and reported home by " : "secured by ") + securedBy;
+        }
+        if (isScanPoint) {
+            // a scan point is read, not held: who is standing in it says nothing about it
+            return "not yet reported home";
         }
         if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
             return "held by " + teamDisplayName(marker.getControllingTeam());

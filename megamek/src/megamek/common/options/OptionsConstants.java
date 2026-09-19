@@ -240,6 +240,7 @@ public class OptionsConstants {
     public static final String EDGE_WHEN_KO = "edge_when_ko";
     public static final String EDGE_WHEN_EXPLOSION = "edge_when_explosion";
     public static final String EDGE_WHEN_MASC_FAILS = "edge_when_masc_fails";
+    public static final String EDGE_WHEN_SCAN_FAILS = "edge_when_scan_fails";
     // Aero Triggers
     public static final String EDGE_WHEN_AERO_ALT_LOSS = "edge_when_aero_alt_loss";
     public static final String EDGE_WHEN_AERO_EXPLOSION = "edge_when_aero_explosion";
@@ -357,6 +358,8 @@ public class OptionsConstants {
     public static final String VICTORY_USE_OBJECTIVES = "use_objectives";
     public static final String VICTORY_VP_WIN_THRESHOLD = "vp_win_threshold";
     public static final String VICTORY_VP_SUDDEN_DEATH = "vp_sudden_death";
+    public static final String VICTORY_USE_SENSOR_CHECK = "use_sensor_check";
+    public static final String VICTORY_SCAN_EXIT_TURN = "scan_exit_turn";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";
@@ -379,6 +382,7 @@ public class OptionsConstants {
     public static final String ADVANCED_SUPPRESS_DB_BV = "suppress_double_blind_bv";
     public static final String ADVANCED_TEAM_VISION = "team_vision";
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
+    public static final String ADVANCED_TAC_OPS_SCANNING = "tacops_scanning";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
     public static final String ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER = "tacops_c3_emergency_master";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";

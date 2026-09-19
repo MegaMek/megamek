@@ -46,6 +46,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import megamek.common.Player;
 import megamek.common.RulesRef;
 import megamek.common.SourceBookCode;
 import megamek.common.TargetRollModifier;
@@ -67,6 +68,7 @@ import megamek.common.options.AbstractOptions;
 import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
 import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.HeatBreakdown;
 import megamek.common.units.IBuilding;
@@ -526,6 +528,83 @@ public class SerializationHelper {
                 } else {
                     return null;
                 }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. ScanRecord is the after-action scan
+        // log of the VictoryPointTracker, so without this converter a save made after any unit scanned anything
+        // fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == VictoryPointTracker.ScanRecord.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int gameRound = 0;
+                int scannerId = Entity.NONE;
+                String scannerName = "";
+                int scannerOwnerId = Player.PLAYER_NONE;
+                VictoryPointTracker.ScanOutcome outcome = null;
+                String targetName = "";
+                String targetBoardNum = "";
+                int targetUnitId = Entity.NONE;
+                boolean wasObjective = false;
+                int victoryPointsAwarded = 0;
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "gameRound":
+                                gameRound = Integer.parseInt(reader.getValue());
+                                break;
+                            case "scannerId":
+                                scannerId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "scannerName":
+                                scannerName = reader.getValue();
+                                break;
+                            case "scannerOwnerId":
+                                scannerOwnerId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "outcome":
+                                outcome = VictoryPointTracker.ScanOutcome.valueOf(reader.getValue());
+                                break;
+                            case "targetName":
+                                targetName = reader.getValue();
+                                break;
+                            case "targetBoardNum":
+                                targetBoardNum = reader.getValue();
+                                break;
+                            case "targetUnitId":
+                                targetUnitId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "wasObjective":
+                                wasObjective = Boolean.parseBoolean(reader.getValue());
+                                break;
+                            case "victoryPointsAwarded":
+                                victoryPointsAwarded = Integer.parseInt(reader.getValue());
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                } catch (IllegalArgumentException exception) {
+                    return null;
+                }
+                if (outcome == null) {
+                    return null;
+                }
+                return new VictoryPointTracker.ScanRecord(gameRound, scannerId, scannerName, scannerOwnerId,
+                      outcome, targetName, targetBoardNum, targetUnitId, wasObjective, victoryPointsAwarded);
             }
 
             @Override

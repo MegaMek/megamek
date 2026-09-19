@@ -63,7 +63,9 @@ import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
+import megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
@@ -288,6 +290,8 @@ public class MapMenu extends JPopupMenu {
                         ((FiringDisplay) currentPanel).selectEntity(selectedEntity.getId());
                     } else if (currentPanel instanceof PhysicalDisplay) {
                         ((PhysicalDisplay) currentPanel).selectEntity(selectedEntity.getId());
+                    } else if (currentPanel instanceof PreEndDeclarationsDisplay preEndDisplay) {
+                        preEndDisplay.selectEntity(selectedEntity.getId());
                     }
                 }
             } catch (Exception ex) {
@@ -739,9 +743,68 @@ public class MapMenu extends JPopupMenu {
             // legally set depends on what the hex already holds, and the generated form cannot know that.
             menu.add(createChangeTerrainMenuItem());
             menu.add(createBuildingMenuItem());
+            if (client.getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+                menu.add(createObjectiveMenuItem());
+                if (!entities.isEmpty()) {
+                    menu.add(createScanTargetMenu(entities));
+                }
+            }
             menu.add(specialCommandsMenu);
         }
         return menu;
+    }
+
+    /**
+     * Opens the control point pane on the hex that was right-clicked, to change the objective there, remove it, or
+     * put a new one there, at any time in the game. The edit goes to the server, which replaces the marker and
+     * tells every client (Objectives series, game master tools).
+     */
+    private JMenuItem createObjectiveMenuItem() {
+        ObjectiveMarker existing = objectiveAt(coords);
+        JMenuItem item = new JMenuItem(Messages.getString(
+              (existing != null) ? "Gamemaster.cmd.objective.edit" : "Gamemaster.cmd.objective.add"));
+        item.addActionListener(event -> editObjectiveAsGameMaster(existing));
+        return item;
+    }
+
+    /**
+     * Marks the units standing in the right-clicked hex as ones the mission wants scanned, or unmarks them. Ticking
+     * every vehicle of a convoy makes the convoy the scanning objective: once any unit is marked, only marked units
+     * are worth reading (Objectives series, game master tools).
+     */
+    private JMenu createScanTargetMenu(List<Entity> entities) {
+        JMenu menu = new JMenu(Messages.getString("Gamemaster.cmd.scanTarget"));
+        for (Entity entity : entities) {
+            JCheckBoxMenuItem item = new JCheckBoxMenuItem(entity.getShortName(), entity.isDesignatedScanTarget());
+            item.addActionListener(event -> client.sendScanDesignation(entity.getId(), item.isSelected()));
+            menu.add(item);
+        }
+        return menu;
+    }
+
+    private @Nullable ObjectiveMarker objectiveAt(Coords hex) {
+        for (ICarryable groundObject : client.getGame().getGroundObjects(hex)) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    private void editObjectiveAsGameMaster(@Nullable ObjectiveMarker existing) {
+        ObjectiveMarker marker = existing;
+        if (marker == null) {
+            marker = new ObjectiveMarker();
+            marker.setName(Messages.getString("VictoryHex.name", coords.getBoardNum()));
+            marker.setOwnerId(client.getLocalPlayer().getId());
+        }
+        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(gui.getFrame(), marker,
+              client.getGame().getPlayersList(), true);
+        switch (result) {
+            case SAVED -> client.sendObjectiveEdit(coords, marker);
+            case REMOVED -> client.sendObjectiveEdit(coords, null);
+            case CANCELLED -> { /* nothing sent; the server's copy stands */ }
+        }
     }
 
     /** Opens the Building dialog on the hex that was right-clicked, to put one up, change it or remove it. */

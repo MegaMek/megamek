@@ -48,15 +48,14 @@ import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
-import megamek.common.RangeType;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
-import megamek.common.equipment.ObjectiveScoringScheme;
-import megamek.common.icons.Camouflage;
 import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
+import megamek.common.icons.Camouflage;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.logging.MMLogger;
@@ -294,7 +293,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             // the owner's colour drains toward white with the grip
             case DEFEND -> blend(ownerColor(marker), NEUTRAL_COLOR, fraction);
             // control is instantaneous and is painted in full
-            case STANDARD, RAID -> controllerColor(marker);
+            case STANDARD, RAID, SCAN -> controllerColor(marker);
         };
     }
 

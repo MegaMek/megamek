@@ -83,7 +83,23 @@ public class ObjectiveScoringScheme implements Serializable {
         /** Mission option: the owner's grip on the point is drained by enemy presence; at zero it falls. */
         DEFEND,
         /** Mission option: a progress meter contested by both sides; at the threshold the point is captured. */
-        CAPTURE
+        CAPTURE,
+        /**
+         * Mission option: the point is scanned rather than held. A unit within scanning range with line of sight
+         * passes a sensor check; when the point pays is its {@link ScanPayout}: on the scan, on the scan but taken
+         * back if the scout is lost, or only once a unit carrying the reading leaves over its home edge.
+         */
+        SCAN
+    }
+
+    /** When a {@code SCAN} point pays its victory points; the player chooses this at game setup. */
+    public enum ScanPayout {
+        /** The moment a scan succeeds, and nothing takes it back. */
+        ON_SCAN,
+        /** The moment a scan succeeds, but the points are lost again if the scout is destroyed or captured before it leaves. */
+        ON_SCAN_UNTIL_LOST,
+        /** Only once a unit carrying the reading leaves over its home edge on the exit turn or later (the default). */
+        ON_EXIT
     }
 
     /** How the {@code HOLD} preset counts held turns; the player chooses this at game setup. */
@@ -106,6 +122,7 @@ public class ObjectiveScoringScheme implements Serializable {
     private int defendGrip = 0;
     private boolean defendGripInitialized = false;
     private boolean retainsControlWhenEmpty = false;
+    private ScanPayout scanPayout = ScanPayout.ON_EXIT;
     private Map<Integer, Integer> heldTurnsByTeam = new HashMap<>();
     private Map<Integer, Integer> heldTurnsByPlayer = new HashMap<>();
     private Map<Integer, Integer> captureProgressByTeam = new HashMap<>();
@@ -163,6 +180,35 @@ public class ObjectiveScoringScheme implements Serializable {
         scheme.threshold = pointsToCapture;
         scheme.ratePerTurn = progressPerTurn;
         return scheme;
+    }
+
+    /**
+     * @param payout when the point pays: on the scan, on the scan but taken back if the scout is lost, or only once
+     *               the reading gets home
+     *
+     * @return a Scan scheme: the point is read with a sensor check rather than held
+     */
+    public static ObjectiveScoringScheme scan(ScanPayout payout) {
+        ObjectiveScoringScheme scheme = new ObjectiveScoringScheme();
+        scheme.preset = SchemePreset.SCAN;
+        scheme.scanPayout = payout;
+        return scheme;
+    }
+
+    /**
+     * When a Scan point pays. {@link ScanPayout#ON_EXIT}, the default, makes the scout carry the reading home over
+     * its edge on the exit turn or later and lose it if it dies first. {@link ScanPayout#ON_SCAN_UNTIL_LOST} pays at
+     * once but takes the points back if the scout is destroyed or captured before it leaves. {@link ScanPayout#ON_SCAN}
+     * pays at once with no counterplay.
+     *
+     * @return when the point pays; never {@code null}, a scheme from an older save reads as on exit
+     */
+    public ScanPayout getScanPayout() {
+        return (scanPayout == null) ? ScanPayout.ON_EXIT : scanPayout;
+    }
+
+    public void setScanPayout(ScanPayout scanPayout) {
+        this.scanPayout = scanPayout;
     }
 
     public SchemePreset getPreset() {
@@ -345,6 +391,8 @@ public class ObjectiveScoringScheme implements Serializable {
             case HOLD -> Math.max(0, threshold - getHeldTurns(team, playerId));
             case DEFEND -> Math.max(0, getDefendGrip());
             case CAPTURE -> Math.max(0, threshold - getCaptureProgress(team, playerId));
+            // one reading carried home decides a scan point
+            case SCAN -> 1;
             case STANDARD, RAID -> -1;
         };
     }
@@ -440,7 +488,7 @@ public class ObjectiveScoringScheme implements Serializable {
             case HOLD -> bestHeldTurns() + "/" + threshold;
             case DEFEND -> getDefendGrip() + "/" + threshold;
             case CAPTURE -> bestCaptureProgress() + "/" + threshold;
-            case STANDARD, RAID -> null;
+            case STANDARD, RAID, SCAN -> null;
         };
     }
 
@@ -476,7 +524,7 @@ public class ObjectiveScoringScheme implements Serializable {
             case HOLD -> Math.min(1.0, bestHeldTurns() / (double) threshold);
             case CAPTURE -> Math.min(1.0, bestCaptureProgress() / (double) threshold);
             case DEFEND -> Math.min(1.0, (threshold - getDefendGrip()) / (double) threshold);
-            case STANDARD, RAID -> 1.0;
+            case STANDARD, RAID, SCAN -> 1.0;
         };
     }
 

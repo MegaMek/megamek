@@ -92,7 +92,7 @@ public class ScanSprite extends Sprite {
      * @param boardView       the board view to draw on
      * @param scannerPosition where the scanning unit stands
      * @param targetPosition  the hex being read, which is the target unit's hex when a unit was picked
-     * @param sweepColor      the scanning player's colour, so several players' orders stay apart
+     * @param sweepColor      the colour to draw in, which is the same amber as the SCANNING label
      */
     public ScanSprite(BoardView boardView, Coords scannerPosition, Coords targetPosition, Color sweepColor) {
         super(boardView);

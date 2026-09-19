@@ -249,8 +249,13 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private Color tracedControllerColor(ObjectiveMarker marker) {
         Color chosen = pointColor(marker);
-        VICTORY_HEX_LOGGER.debug("[VictoryHex] zone colour for {}: team={}, player={} -> {}",
-              marker.generalName(), marker.getControllingTeam(), marker.getControllingPlayerId(), chosen);
+        // owner as well as controller: a scan point takes its colour from who it belongs to, so when one turns
+        // up the wrong colour the first question is whether the owner reached this client at all
+        Player owner = game.getPlayer(marker.getOwnerId());
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] colour for {} ({}): team={}, player={}, ownerId={} ({}) -> {}",
+              marker.generalName(), marker.getScoringScheme().getPreset(), marker.getControllingTeam(),
+              marker.getControllingPlayerId(), marker.getOwnerId(),
+              (owner == null) ? "not a player on this client" : owner.getName(), chosen);
         return chosen;
     }
 

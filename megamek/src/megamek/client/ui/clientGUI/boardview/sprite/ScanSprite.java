@@ -130,6 +130,19 @@ public class ScanSprite extends Sprite {
         return bounds;
     }
 
+    /**
+     * The board hands {@code drawOnto} the sprite's own bounds as the origin to draw from, the way it does for the
+     * attack arrows, so everything drawn has to be measured from the top left of those bounds rather than from the
+     * board. Adding the board position and the origin together put the whole sweep off the visible map.
+     *
+     * @return the top left of this sprite's bounds, in board pixels
+     */
+    private Point boundsOrigin() {
+        int pad = (int) ((WIDEST_ARC + 4) * bv.getScale());
+        return new Point(Math.min(scannerPoint.x, targetPoint.x) - pad,
+              Math.min(scannerPoint.y, targetPoint.y) - pad);
+    }
+
     @Override
     public void prepare() {
         getBounds();
@@ -146,6 +159,9 @@ public class ScanSprite extends Sprite {
         Graphics2D graphics2D = (Graphics2D) graphics.create();
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+        Point origin = boundsOrigin();
+        double startX = scannerPoint.x - (double) origin.x;
+        double startY = scannerPoint.y - (double) origin.y;
         double runX = targetPoint.x - (double) scannerPoint.x;
         double runY = targetPoint.y - (double) scannerPoint.y;
         double length = Math.hypot(runX, runY);
@@ -165,8 +181,8 @@ public class ScanSprite extends Sprite {
 
         for (int index = 1; index <= arcCount; index++) {
             double along = index / (double) (arcCount + 1);
-            double centreX = scannerPoint.x + (runX * along) + x;
-            double centreY = scannerPoint.y + (runY * along) + y;
+            double centreX = startX + (runX * along) + x;
+            double centreY = startY + (runY * along) + y;
             // the sweep widens as it travels, so the run reads as a direction even on a short line
             double radius = Math.max(2.0, WIDEST_ARC * bv.getScale() * along);
             Arc2D arc = new Arc2D.Double(centreX - radius, centreY - radius, radius * 2, radius * 2,

@@ -150,7 +150,6 @@ public class ObjectiveMarker extends GroundObject {
         }
     }
 
-    /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */
     /**
      * @return the player whose side this point belongs to, or {@link Player#PLAYER_NONE} when it belongs to
      *       nobody. Falls back to whoever placed it while no side has been chosen, which is how every point
@@ -168,6 +167,7 @@ public class ObjectiveMarker extends GroundObject {
         this.belongsToSideChosen = true;
     }
 
+    /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */
     public int getControlRadius() {
         return controlRadius;
     }

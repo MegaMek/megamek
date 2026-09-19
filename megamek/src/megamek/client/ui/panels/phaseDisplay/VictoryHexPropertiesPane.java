@@ -484,13 +484,6 @@ public final class VictoryHexPropertiesPane {
     }
 
     /**
-     * One entry in the starting-control dropdown: a player, or nobody at all.
-     *
-     * @param playerId The player who starts in control, or {@link ObjectiveMarker#NO_CONTROLLER} for none
-     * @param team     That player's team, or {@link ObjectiveMarker#NO_CONTROLLER} when they have none
-     * @param label    What the dropdown shows
-     */
-    /**
      * One entry in the "belongs to" selector: a side a scan point can belong to, or nobody.
      *
      * @param playerId the owning player's id, or {@link Player#PLAYER_NONE} for a point nobody owns
@@ -524,6 +517,13 @@ public final class VictoryHexPropertiesPane {
         combo.setSelectedItem(SideChoice.NEUTRAL);
     }
 
+    /**
+     * One entry in the starting-control dropdown: a player, or nobody at all.
+     *
+     * @param playerId The player who starts in control, or {@link ObjectiveMarker#NO_CONTROLLER} for none
+     * @param team     That player's team, or {@link ObjectiveMarker#NO_CONTROLLER} when they have none
+     * @param label    What the dropdown shows
+     */
     private record ControlChoice(int playerId, int team, String label) {
 
         static final ControlChoice NOBODY = new ControlChoice(ObjectiveMarker.NO_CONTROLLER,

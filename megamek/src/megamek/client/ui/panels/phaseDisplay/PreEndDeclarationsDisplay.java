@@ -64,7 +64,9 @@ import megamek.common.board.Coords;
 import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
+import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ScanMission;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
@@ -606,6 +608,55 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
+     * Picks what a click on this hex means for a scan. Ordinary targeting offers the units in the hex and falls back
+     * to the ground, but a hex holding an objective marker is itself worth scanning, so both are offered and the
+     * player chooses. Without this, a marker sharing a hex with a unit could never be scanned: the unit always won,
+     * and no choice was offered because there was only one candidate.
+     *
+     * @param coords  the hex that was clicked
+     * @param boardId the board it is on
+     *
+     * @return what to scan, or {@code null} when the player closed the choice dialog without picking
+     */
+    private @Nullable Targetable chooseScanTarget(Coords coords, int boardId) {
+        List<Targetable> candidates = new ArrayList<>();
+        for (Entity candidate : game.getEntitiesVector(coords, boardId, true)) {
+            // Not the scanner itself: clicking your own hex means the hex, which is how infantry read the ground
+            // they stand on.
+            if (candidate.getId() != currentEntity) {
+                candidates.add(candidate);
+            }
+        }
+        boolean hexIsWorthScanningOnItsOwn = candidates.isEmpty() || holdsAnObjectiveMarker(coords);
+        if (hexIsWorthScanningOnItsOwn) {
+            candidates.add(new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR));
+        }
+        if (candidates.size() == 1) {
+            return candidates.getFirst();
+        }
+        return TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+              "PreEndDeclarationsDisplay.ChooseTargetDialog.title",
+              Messages.getString("PreEndDeclarationsDisplay.ChooseTargetDialog.message"),
+              candidates,
+              clientgui,
+              game.getEntity(currentEntity));
+    }
+
+    /**
+     * @param coords the hex to look in
+     *
+     * @return {@code true} when this hex holds an objective marker this client knows about
+     */
+    private boolean holdsAnObjectiveMarker(Coords coords) {
+        for (ICarryable groundObject : game.getGroundObjects(coords)) {
+            if (groundObject instanceof ObjectiveMarker) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Updates button states based on current game state
      */
     protected void updateButtons() {
@@ -851,8 +902,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         if (scanner == null) {
             return;
         }
-        Targetable chosen = chooseTarget(coords, boardId);
-        Targetable scanTarget = (chosen != null) ? chosen : new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR);
+        Targetable scanTarget = chooseScanTarget(coords, boardId);
+        if (scanTarget == null) {
+            return;
+        }
         String refusal = scanRefusal(scanner, scanTarget);
         if (refusal != null) {
             clientgui.addToast(ToastLevel.WARNING, refusal, scanner);

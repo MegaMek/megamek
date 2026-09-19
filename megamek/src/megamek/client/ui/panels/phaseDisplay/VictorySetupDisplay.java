@@ -56,6 +56,7 @@ import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
 /**
@@ -347,6 +348,14 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
             }
         }
         if ((pointsOnBoard > 0) && (pointsStillToPlace == 0)) {
+            return true;
+        }
+
+        // A Sensor Check mission scores off enemy units, not off control points, so a player with none to place is
+        // not making a mistake and must not be told that nothing can be scored without them.
+        boolean scanningCanScoreOnItsOwn = game().getOptions()
+              .booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        if ((pointsStillToPlace == 0) && scanningCanScoreOnItsOwn) {
             return true;
         }
         String message = (pointsStillToPlace > 0)

@@ -60,7 +60,7 @@ final class GpuBuildingInterior {
         MeshPartBuilder struts = builder.part("struts", GL20.GL_TRIANGLES, ATTRIBUTES,
               new Material("struts", ColorAttribute.createDiffuse(0.29f, 0.31f, 0.33f, 1)));
         for (Vector3 column : columns) {
-            BoxShapeBuilder.build(struts, column.x, column.y, 0.5f, STRUT_WIDTH, STRUT_WIDTH, 1);
+            BoxShapeBuilder.build(struts, column.x, column.y, 0.499f, STRUT_WIDTH, STRUT_WIDTH, 1);
         }
         builder.node().id = "floors";
         Material floorMaterial = new Material("floors", ColorAttribute.createDiffuse(0.58f, 0.56f, 0.52f, 1));

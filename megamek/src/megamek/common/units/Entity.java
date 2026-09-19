@@ -6813,7 +6813,10 @@ public abstract class Entity extends TurnOrdered
                     return m.curMode().equals("Medium") ? 12 : 6;
                 }
 
-                if (m.getName().equals("Bloodhound Active Probe (THB)") || m.getName().equals(Sensor.BAP)) {
+                // By the flag, not by name: both Bloodhound variants carry it, and the old comparison tested a
+                // display name against an internal-name constant, so it never matched and a Bloodhound was
+                // given the generic 4 hexes instead of its 8.
+                if (type.hasFlag(MiscType.F_BLOODHOUND)) {
                     return 8 + cyberProbeBonus + quirkBonus + spaBonus;
                 }
                 String internalName = type.getInternalName();

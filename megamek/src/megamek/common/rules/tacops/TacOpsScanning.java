@@ -74,7 +74,7 @@ public class TacOpsScanning extends RulesScanning {
             // no sensors in play, so nothing for ECM to jam
             return new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("RulesScanning.visualInspection"));
         }
-        if ((target instanceof Entity targetEntity) && isInsideHostileEcm(scanner, targetEntity)) {
+        if (isInsideHostileEcm(scanner, target)) {
             return new TargetRoll(ECM_TARGET_NUMBER, Messages.getString("RulesScanning.targetInEcm"));
         }
         return new TargetRoll(TargetRoll.AUTOMATIC_SUCCESS, Messages.getString("RulesScanning.standardSensors"));
@@ -98,7 +98,7 @@ public class TacOpsScanning extends RulesScanning {
      *
      * @return {@code true} when the target sits inside ECM that is hostile to the scanner
      */
-    protected boolean isInsideHostileEcm(Entity scanner, Entity target) {
+    protected boolean isInsideHostileEcm(Entity scanner, Targetable target) {
         return (target.getPosition() != null)
               && ComputeECM.isAffectedByECM(scanner, target.getPosition(), target.getPosition());
     }

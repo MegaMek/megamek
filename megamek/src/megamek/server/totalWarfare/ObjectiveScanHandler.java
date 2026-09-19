@@ -353,8 +353,8 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             logScan(scanner, target, targetUnit.getShortName(), ScanOutcome.SUCCEEDED, false, 0);
             return;
         }
-        LOGGER.debug("[Scan] {} scanned {}: nothing of interest there for its side", scanner.getShortName(),
-              targetName);
+        LOGGER.info("[Scan] nothing of interest for {} scanning {}: {}", scanner.getShortName(), targetName,
+              whyNothingOfInterest(scanner, target));
         Report report = new Report(REPORT_NOTHING_OF_INTEREST, Report.PUBLIC);
         report.addDesc(scanner);
         report.add(targetName);
@@ -503,6 +503,38 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
         gameManager.sendServerChat(Messages.getString(
               wanted ? "ObjectiveScan.designated" : "ObjectiveScan.undesignated",
               sender.getName(), unit.getShortName()));
+    }
+
+    /**
+     * Spells out why a successful scan found nothing worth banking. Every condition is named rather than just the
+     * result, because "nothing of interest found" on its own leaves a playtester with nowhere to look.
+     *
+     * @param scanner the unit that scanned
+     * @param target  what it scanned
+     *
+     * @return the reasons, for the log
+     */
+    private String whyNothingOfInterest(Entity scanner, Targetable target) {
+        boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        boolean targetIsAUnit = target instanceof Entity;
+        if (!targetIsAUnit) {
+            return "the target is a hex or building, not a unit, and no scan point of this side is there"
+                  + " (sensor check mission=" + isSensorCheckMission + ")";
+        }
+        Entity targetUnit = (Entity) target;
+        boolean isEnemy = (scanner.getOwner() != null) && (targetUnit.getOwner() != null)
+              && targetUnit.getOwner().isEnemyOf(scanner.getOwner());
+        boolean anyDesignated = false;
+        for (Entity unit : getGame().getEntitiesVector()) {
+            if (unit.isDesignatedScanTarget()) {
+                anyDesignated = true;
+                break;
+            }
+        }
+        return "target is a unit; sensor check mission=" + isSensorCheckMission
+              + ", enemy of the scanner=" + isEnemy
+              + ", any unit marked wanted=" + anyDesignated
+              + ", this one marked wanted=" + targetUnit.isDesignatedScanTarget();
     }
 
     /**

@@ -139,11 +139,25 @@ public class CoreRulesScanning extends RulesScanning {
         if (probeLevel > PROBE_LEVEL_NONE) {
             roll.addModifier(-probeLevel, Messages.getString("RulesScanning.activeProbe", probeLevel));
         }
-        boolean isStealthyTarget = (target instanceof Entity targetEntity) && targetEntity.isStealthActive();
+        boolean isStealthyTarget = (target instanceof Entity targetEntity) && hasActiveStealthSystem(targetEntity);
         if (isStealthyTarget) {
             roll.addModifier(STEALTH_MODIFIER, Messages.getString("RulesScanning.stealth"));
         }
         return roll;
+    }
+
+    /**
+     * @param target the unit being scanned
+     *
+     * @return {@code true} when the target is running any stealth system, which the Core Rulebook (p. 209) takes to
+     *       mean stealth armour, a Null Signature System, a Void Signature System or a Chameleon Light Polarisation
+     *       Shield, rather than stealth armour alone
+     */
+    private static boolean hasActiveStealthSystem(Entity target) {
+        return target.isStealthActive()
+              || target.isNullSigActive()
+              || target.isVoidSigActive()
+              || target.isChameleonShieldActive();
     }
 
     /**

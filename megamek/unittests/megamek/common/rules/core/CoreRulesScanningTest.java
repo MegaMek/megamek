@@ -180,6 +180,17 @@ class CoreRulesScanningTest {
     }
 
     @Test
+    void testAnyStealthSystemAddsTheModifierNotOnlyStealthArmour() {
+        Entity nullSignatureTarget = mock(Mek.class);
+        when(nullSignatureTarget.getPosition()).thenReturn(new Coords(5, 3));
+        when(nullSignatureTarget.isStealthActive()).thenReturn(false);
+        when(nullSignatureTarget.isNullSigActive()).thenReturn(true);
+
+        assertEquals(9, rules.scanTargetRoll(scanner, nullSignatureTarget).getValue(),
+              "the rulebook says stealth system, which covers more than stealth armour");
+    }
+
+    @Test
     void testAerospaceUnitsCannotScanUnderCoreRules() {
         Aero fighter = mock(Aero.class);
         when(fighter.isAero()).thenReturn(true);

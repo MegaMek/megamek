@@ -39,6 +39,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import megamek.common.CriticalSlot;
+import megamek.common.HexTarget;
 import megamek.common.board.Coords;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Aero;
@@ -61,7 +62,7 @@ class TacOpsScanningTest {
         private boolean targetInsideHostileEcm = false;
 
         @Override
-        protected boolean isInsideHostileEcm(Entity scanner, Entity target) {
+        protected boolean isInsideHostileEcm(Entity scanner, Targetable target) {
             return targetInsideHostileEcm;
         }
     }
@@ -94,6 +95,18 @@ class TacOpsScanningTest {
 
         TargetRoll roll = rules.scanTargetRoll(scanner, enemy);
         assertEquals(TacOpsScanning.ECM_TARGET_NUMBER, roll.getValue());
+        assertTrue(roll.needsRoll());
+    }
+
+    @Test
+    void testAHexInsideHostileEcmAlsoNeedsAnEightOnTwoDice() {
+        rules.targetInsideHostileEcm = true;
+        HexTarget objectiveHex = new HexTarget(new Coords(9, 3), 0, Targetable.TYPE_HEX_CLEAR);
+
+        TargetRoll roll = rules.scanTargetRoll(scanner, objectiveHex);
+
+        assertEquals(TacOpsScanning.ECM_TARGET_NUMBER, roll.getValue(),
+              "jamming covers an objective as much as a unit");
         assertTrue(roll.needsRoll());
     }
 

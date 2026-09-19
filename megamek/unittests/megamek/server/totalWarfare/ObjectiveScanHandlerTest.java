@@ -466,6 +466,40 @@ class ObjectiveScanHandlerTest {
     }
 
     @Test
+    void testAMarkedEnemyUnitIsStillAReading() {
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK).setValue(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        BipedMek convoyTruck = mekOf(bob, new Coords(4, 3));
+        BipedMek escort = mekOf(bob, new Coords(4, 2));
+        convoyTruck.setDesignatedScanTarget(true);
+        when(game.getEntity(convoyTruck.getId())).thenReturn(convoyTruck);
+        scout.setPendingScan(new ScanAction(scout.getId(), convoyTruck.getId()));
+        when(game.getEntitiesVector()).thenReturn(List.of(scout, convoyTruck, escort));
+
+        handler.resolveScans();
+
+        assertEquals(1, scout.getBankedScans().size(), "a marked enemy unit is worth a reading");
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+    }
+
+    @Test
+    void testAnUnmarkedEnemyUnitIsNothingWhenOthersAreMarked() {
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK).setValue(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        BipedMek convoyTruck = mekOf(bob, new Coords(4, 3));
+        BipedMek escort = mekOf(bob, new Coords(4, 2));
+        convoyTruck.setDesignatedScanTarget(true);
+        when(game.getEntity(escort.getId())).thenReturn(escort);
+        scout.setPendingScan(new ScanAction(scout.getId(), escort.getId()));
+        when(game.getEntitiesVector()).thenReturn(List.of(scout, convoyTruck, escort));
+
+        handler.resolveScans();
+
+        assertTrue(scout.getBankedScans().isEmpty(), "only the marked units are worth reading");
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+    }
+
+    @Test
     void testWithoutTheSensorCheckMissionAnEnemyUnitIsNothingOfInterest() {
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         BipedMek enemy = mekOf(bob, new Coords(4, 3));

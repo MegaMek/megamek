@@ -99,9 +99,13 @@ public class EquipmentExplosionHandler extends AbstractTWRuleHandler {
               mounted.isHotLoaded());
         addReport(reports);
         gameManager.entityUpdate(entity.getId());
-        LOGGER.info("[Explode] {} on {} exploded at the gamemaster's request; unit destroyed {}, crew hits {}",
-              mounted.getName(), entity.getDisplayName(), entity.isDestroyed(),
-              (entity.getCrew() == null) ? "none" : entity.getCrew().getHits());
+        LOGGER.info("[Explode] {} on {} exploded at the gamemaster's request; unit doomed {}, crew hits {}, "
+                    + "crew ejected {}",
+              mounted.getName(), entity.getDisplayName(), entity.isDoomed(),
+              (entity.getCrew() == null) ? "none" : entity.getCrew().getHits(),
+              (entity.getCrew() != null) && entity.getCrew().isEjected());
+        // the blast may have destroyed the unit or ejected its crew mid-turn; the turn order has to follow
+        new GamemasterTurnUpkeep(gameManager).settleTurnsAfter(entity);
         return Outcome.EXPLODED;
     }
 

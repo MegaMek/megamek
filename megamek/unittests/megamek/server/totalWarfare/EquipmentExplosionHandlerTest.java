@@ -38,17 +38,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.options.GameOptions;
 import megamek.common.units.Entity;
+import megamek.common.units.Mek;
 import megamek.server.Server;
 import megamek.testUtilities.MMTestUtilities;
 import megamek.utils.ServerFactory;
@@ -137,6 +141,87 @@ class EquipmentExplosionHandlerTest {
               "The explosion damage lands on the location's internal structure");
         assertTrue(mek.getCrew().getHits() > 0, "The pilot takes the explosion's hits");
         assertFalse(gameManager.getMainPhaseReport().isEmpty(), "The explosion is reported");
+    }
+
+    /** Puts the game in the movement phase with the given turns, the first of them current. */
+    private void startMovementPhase(GameTurn... turns) {
+        Game game = gameManager.getGame();
+        game.setPhase(GamePhase.MOVEMENT);
+        game.setTurnVector(List.of(turns));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
+        assertNotNull(game.getTurn());
+        assertTrue(game.getTurn().isValid(mek.getOwnerId(), mek, game), "The unit can move before the explosion");
+    }
+
+    /** Adds a second unit to the game for the given player, in place in the turn order. */
+    private Entity addSecondUnit(Player owner) {
+        Entity secondUnit = MMTestUtilities.getEntityForUnitTesting("Atlas AS7-D", false);
+        assertNotNull(secondUnit, "Second test unit could not be loaded");
+        Game game = gameManager.getGame();
+        secondUnit.setGame(game);
+        secondUnit.setId(game.getNextEntityId());
+        secondUnit.setOwner(owner);
+        game.addEntity(secondUnit);
+        return secondUnit;
+    }
+
+    /** Pads the test unit so that an ammo explosion cannot reach its center torso. */
+    private void padStructure() {
+        for (int location = 0; location < mek.locations(); location++) {
+            mek.initializeArmor(200, location);
+            mek.initializeInternal(200, location);
+        }
+    }
+
+    @Test
+    void aSurvivedExplosionDuringTheUnitsOwnMovementTurnLeavesItsTurnValid() {
+        startMovementPhase(new GameTurn(mek.getOwnerId()));
+        padStructure();
+        // with auto-eject on, an ammo explosion ejects the pilot, which is the other case below
+        ((Mek) mek).setAutoEject(false);
+
+        explode(loadedAmmoBin());
+
+        Game game = gameManager.getGame();
+        assertFalse(mek.isDoomed(), "The padded unit survives the blast");
+        assertEquals(0, game.getTurnIndex(), "The unit keeps its turn");
+        assertTrue(game.getTurn().isValid(mek.getOwnerId(), mek, game),
+              "A unit that survives an explosion can still take its movement turn");
+    }
+
+    @Test
+    void anEjectingExplosionHandsTheTurnOnWhenTheOwnerHasNoOtherUnit() {
+        Player otherPlayer = new Player(1, "Other");
+        Game game = gameManager.getGame();
+        game.addPlayer(1, otherPlayer);
+        Entity otherUnit = addSecondUnit(otherPlayer);
+        startMovementPhase(new GameTurn(mek.getOwnerId()), new GameTurn(otherPlayer.getId()));
+        padStructure();
+        assertTrue(((Mek) mek).isAutoEject(), "Auto-eject is on by default, so the ammo explosion ejects the pilot");
+
+        explode(loadedAmmoBin());
+
+        assertTrue(mek.getCrew().isEjected(), "The pilot ejected");
+        assertFalse(mek.isSelectableThisTurn(), "An ejected Mek is abandoned and cannot take a turn");
+        assertEquals(1, game.getTurnIndex(),
+              "Nobody of the owner's could take the turn, so it was skipped on to the other player");
+        assertEquals(otherUnit, game.getFirstEntity(), "The other player's unit is now up");
+    }
+
+    @Test
+    void anEjectingExplosionLeavesTheOwnersOtherUnitItsTurn() {
+        Game game = gameManager.getGame();
+        Entity lanceMate = addSecondUnit(game.getPlayer(0));
+        startMovementPhase(new GameTurn(mek.getOwnerId()), new GameTurn(mek.getOwnerId()));
+        padStructure();
+
+        explode(loadedAmmoBin());
+
+        assertTrue(mek.getCrew().isEjected(), "The pilot ejected");
+        assertEquals(0, game.getTurnIndex(), "The lance mate can take the current turn, so it stays");
+        assertEquals(lanceMate, game.getFirstEntity(), "The lance mate is the unit left to take it");
+        assertEquals(1, game.getTurnsList().size(),
+              "The dead unit's own later turn is dropped, so the owner is not asked to move it");
     }
 
     @Test

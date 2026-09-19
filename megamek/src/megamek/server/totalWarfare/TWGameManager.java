@@ -435,6 +435,16 @@ public class TWGameManager extends AbstractGameManager {
         return new EquipmentExplosionHandler(this).explode(entity, mounted);
     }
 
+    /**
+     * Keeps the turn order sound after a gamemaster act took a unit out of action mid-phase; see
+     * {@link GamemasterTurnUpkeep}.
+     *
+     * @param entity the unit the gamemaster acted on
+     */
+    public void settleTurnsAfterGamemasterAct(Entity entity) {
+        new GamemasterTurnUpkeep(this).settleTurnsAfter(entity);
+    }
+
     public BuildingEditHandler buildingEditHandler() {
         if (buildingEditHandler == null) {
             buildingEditHandler = new BuildingEditHandler(this);
@@ -26817,6 +26827,7 @@ public class TWGameManager extends AbstractGameManager {
             sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
         } else {
             destroyEntityIfFatallyDamaged(entity);
+            settleTurnsAfterGamemasterAct(entity);
             // Editing a unit's damage in play is a gamemaster act, but it arrives as a unit update rather than a
             // command, so it is announced here with the same toast the gamemaster commands use.
             if (sender.isGameMaster()) {
@@ -26854,6 +26865,7 @@ public class TWGameManager extends AbstractGameManager {
         new DamageEditApplier(entity, spec).applyToEntity();
         entityUpdate(entity.getId());
         destroyEntityIfFatallyDamaged(entity);
+        settleTurnsAfterGamemasterAct(entity);
         // Editing a unit's damage in play is a gamemaster act, but it arrives as its own packet rather than a
         // command, so it is announced here with the same toast the gamemaster commands use.
         sendToast(GameToastEvent.Level.GAMEMASTER,

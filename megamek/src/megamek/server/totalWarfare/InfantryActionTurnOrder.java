@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,6 +58,10 @@ import megamek.logging.MMLogger;
 final class InfantryActionTurnOrder {
 
     private static final MMLogger LOGGER = MMLogger.create(InfantryActionTurnOrder.class);
+
+    /** The phases in which a player looks for a unit's turn; targeting and off-board would triple the lines. */
+    private static final Set<GamePhase> PHASES_WORTH_LOGGING = EnumSet.of(GamePhase.MOVEMENT, GamePhase.FIRING,
+          GamePhase.PHYSICAL);
 
     private InfantryActionTurnOrder() {}
 
@@ -109,6 +114,9 @@ final class InfantryActionTurnOrder {
      * @param phase the phase whose turns have just been built
      */
     static void logUnitsHeldInPlace(Game game, GamePhase phase) {
+        if (!PHASES_WORTH_LOGGING.contains(phase)) {
+            return;
+        }
         List<String> heldUnits = new ArrayList<>();
         for (Entity entity : game.getEntitiesVector()) {
             if ((entity instanceof Infantry infantry) && infantry.isHeldInPlaceByInfantryAction(phase)) {

@@ -170,6 +170,9 @@ public final class InfantryActionPlanner {
             return InfantryActionDeclaration.attacking(player.getId(), building.getId(), List.of(), true);
         }
         if (newcomers.isEmpty()) {
+            LOGGER.info("[InfantryAction] round {}: {} fights on in {}: odds {}, it would leave below {}; {} round(s) "
+                        + "remembered", game.getCurrentRound(), player.getName(), building.getShortName(), number(odds),
+                  number(withdrawalThreshold), (fight == null) ? 0 : fight.roundsNoted());
             return null;
         }
         double reinforcementTarget = InfantryCombatHelper.calculateReinforcementTargetRatio(initiationThreshold,
@@ -205,6 +208,8 @@ public final class InfantryActionPlanner {
     static @Nullable InfantryActionDeclaration planDefence(Game game, Player player,
           AbstractBuildingEntity building, BehaviorSettings behavior) {
         if (!InfantryActionStrengths.hasActionRunning(game, building)) {
+            LOGGER.debug("[InfantryAction] {} declares nothing for {}: enemy infantry are inside but have not attacked",
+                  player.getName(), building.getShortName());
             return null;
         }
         List<Infantry> insideUncommitted = InfantryActionStrengths.unengagedFriendlyInfantryInside(game, player,

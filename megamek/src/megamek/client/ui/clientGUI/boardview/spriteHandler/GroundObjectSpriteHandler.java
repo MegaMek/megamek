@@ -47,6 +47,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.GroundObjectSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.common.Player;
+import megamek.common.actions.ScanAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -55,10 +56,12 @@ import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.event.board.GameBoardChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
@@ -166,11 +169,40 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
                   ? Messages.getString("VictoryHex.word."
                         + marker.getScoringScheme().getPreset().name().toLowerCase(Locale.ROOT))
                   : null;
+            // A point this player has ordered read says so where its counter would go, so a scan order on a flag
+            // is as visible as one on a unit. Only the ordering player sees it; the sweep drawn to the hex is
+            // private for the same reason.
             String progress = showOverlays ? marker.getScoringScheme().progressLabel() : null;
+            if (isUnderAnOrderedScan(coords, boardView)) {
+                progress = Messages.getString("BoardView1.SCANNED");
+            }
             // the banner shows the same colour as the zone: a point reads as one thing
             return new HexFlagSprite(boardView, coords, tracedControllerColor(marker), schemeWord, progress);
         }
         return new GroundObjectSprite(boardView, coords);
+    }
+
+    /**
+     * Whether one of this player's units has been told to read this hex in the End Phase.
+     *
+     * @param coords    the objective's hex
+     * @param boardView the board view, which knows who is sitting at this client
+     *
+     * @return {@code true} when the scan marker belongs on the flag
+     */
+    private boolean isUnderAnOrderedScan(Coords coords, BoardView boardView) {
+        Player localPlayer = boardView.getLocalPlayer();
+        if (localPlayer == null) {
+            return false;
+        }
+        for (Entity scanner : game.getEntitiesVector()) {
+            ScanAction order = scanner.getPendingScan();
+            boolean isOurOrder = (order != null) && localPlayer.equals(scanner.getOwner());
+            if (isOurOrder && coords.equals(order.resolveTargetPosition(game))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -250,6 +282,13 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
     }
 
     @Override
+    public void gameEntityChange(GameEntityChangeEvent event) {
+        // A scan order reaches this client as a changed unit, and the flag it points at carries a marker, so
+        // the flags are redrawn when one is given, withdrawn or spent.
+        setGroundObjectSprites(currentGroundObjectList);
+    }
+
+    @Override
     public void gameBoardChanged(GameBoardChangeEvent e) {
         setGroundObjectSprites(game.getGroundObjects());
     }
@@ -267,14 +306,15 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      */
     private Color pointColor(ObjectiveMarker marker) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        // A scan point belongs to a side and stays theirs: reading something is not taking it. Every other
+        // scheme's decided point really has changed hands, which is why they paint in the winner's colour,
+        // and running a scan point through that told the player their side now owned a flag they had only
+        // looked at. Its colour is simply whose it is, before the scan and after.
+        if (scheme.getPreset() == SchemePreset.SCAN) {
+            return ownerColor(marker);
+        }
         if (scheme.isDecided()) {
-            // Reading something is not taking it. Every other scheme's decided point has genuinely changed
-            // hands, so it paints in the winner's colour; a scan point has only been read, and painting it in
-            // the scanner's colour told the player their side now owned a flag they had merely looked at.
-            boolean readingChangesNothing = scheme.getPreset() == SchemePreset.SCAN;
-            return readingChangesNothing
-                  ? controllerColor(marker)
-                  : sideColor(scheme.getSecuredTeam(), scheme.getSecuredPlayerId());
+            return sideColor(scheme.getSecuredTeam(), scheme.getSecuredPlayerId());
         }
         double fraction = scheme.progressFraction();
         // a point that is held with nothing counted against it is simply its holder's: it was given to
@@ -300,6 +340,7 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
             // the owner's colour drains toward white with the grip
             case DEFEND -> blend(ownerColor(marker), NEUTRAL_COLOR, fraction);
             // control is instantaneous and is painted in full
+            // SCAN never reaches here: it is answered by its owning side above
             case STANDARD, RAID, SCAN -> controllerColor(marker);
         };
     }

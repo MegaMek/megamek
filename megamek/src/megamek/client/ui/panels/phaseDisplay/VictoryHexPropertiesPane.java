@@ -144,6 +144,16 @@ public final class VictoryHexPropertiesPane {
         payoutCombo.setSelectedItem(scheme.getScanPayout());
         payoutCombo.setRenderer(new MessageKeyRenderer("VictoryHex.payout.", true));
         JLabel payoutLabel = new JLabel(Messages.getString("VictoryHex.scanPayout"));
+        // whose the point is. A scanning mission reads either something nobody owns or something belonging to
+        // a particular side, and without this every scan point came out as an unowned white flag
+        JComboBox<SideChoice> belongsToCombo = new JComboBox<>();
+        belongsToCombo.addItem(SideChoice.NEUTRAL);
+        for (Player player : players) {
+            belongsToCombo.addItem(new SideChoice(player.getId(), player.getName()));
+        }
+        selectOwningSide(belongsToCombo, marker);
+        belongsToCombo.setToolTipText(Messages.getString("VictoryHex.belongsTo.tooltip"));
+        JLabel belongsToLabel = new JLabel(Messages.getString("VictoryHex.belongsTo"));
         // a game master can write what the scan reveals; the note is sent to the scanning side on a success
         JTextField revealsField = new JTextField(marker.getScanRevealsNote(), REVEALS_COLUMNS);
         revealsField.setToolTipText(Messages.getString("VictoryHex.scanReveals.tooltip"));
@@ -158,8 +168,8 @@ public final class VictoryHexPropertiesPane {
         JLabel radiusLabel = new JLabel(Messages.getString("VictoryHex.radius"));
         // a scan point is read, not held: nothing about control applies to it, so these rows go away with it
         List<JComponent> scanRows = gameMaster
-              ? List.of(payoutLabel, payoutCombo, revealsLabel, revealsField)
-              : List.of(payoutLabel, payoutCombo);
+              ? List.of(payoutLabel, payoutCombo, belongsToLabel, belongsToCombo, revealsLabel, revealsField)
+              : List.of(payoutLabel, payoutCombo, belongsToLabel, belongsToCombo);
         List<JComponent> controlRows = List.of(retainControlLabel, retainControlCheckbox, startingControlLabel,
               startingControlCombo, radiusLabel, radiusSpinner);
         SchemeControls controls = new SchemeControls(schemeCombo, countingCombo, thresholdSpinner, rateSpinner,
@@ -185,14 +195,15 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 2, countingLabel, countingCombo);
         addRow(propertiesPanel, 3, rateLabel, rateSpinner);
         addRow(propertiesPanel, 4, payoutLabel, payoutCombo);
+        addRow(propertiesPanel, 5, belongsToLabel, belongsToCombo);
         if (gameMaster) {
-            addRow(propertiesPanel, 5, revealsLabel, revealsField);
+            addRow(propertiesPanel, 6, revealsLabel, revealsField);
         }
-        addRow(propertiesPanel, 6, retainControlLabel, retainControlCheckbox);
-        addRow(propertiesPanel, 7, startingControlLabel, startingControlCombo);
-        addRow(propertiesPanel, 8, radiusLabel, radiusSpinner);
-        addRow(propertiesPanel, 9, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
-        pinRowsToTheTop(propertiesPanel, 10);
+        addRow(propertiesPanel, 7, retainControlLabel, retainControlCheckbox);
+        addRow(propertiesPanel, 8, startingControlLabel, startingControlCombo);
+        addRow(propertiesPanel, 9, radiusLabel, radiusSpinner);
+        addRow(propertiesPanel, 10, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
+        pinRowsToTheTop(propertiesPanel, 11);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -227,6 +238,10 @@ public final class VictoryHexPropertiesPane {
             // Writing a teamed player's id as an unteamed controller would look right on the board and
             // never match the side the End Phase resolves
             marker.setController(startingControl.team(), startingControl.unteamedPlayerId());
+        }
+        if (isScanPoint) {
+            SideChoice owningSide = (SideChoice) belongsToCombo.getSelectedItem();
+            marker.setOwnerId((owningSide == null) ? Player.PLAYER_NONE : owningSide.playerId());
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
@@ -475,6 +490,40 @@ public final class VictoryHexPropertiesPane {
      * @param team     That player's team, or {@link ObjectiveMarker#NO_CONTROLLER} when they have none
      * @param label    What the dropdown shows
      */
+    /**
+     * One entry in the "belongs to" selector: a side a scan point can belong to, or nobody.
+     *
+     * @param playerId the owning player's id, or {@link Player#PLAYER_NONE} for a point nobody owns
+     * @param label    what the selector shows
+     */
+    private record SideChoice(int playerId, String label) {
+
+        static final SideChoice NEUTRAL = new SideChoice(Player.PLAYER_NONE,
+              Messages.getString("VictoryHex.belongsTo.neutral"));
+
+        @Override
+        public String toString() {
+            return label;
+        }
+    }
+
+    /**
+     * Points the selector at the marker's current owner, falling back to nobody when the owner is not a player
+     * in this game - which is the state every scan point starts in.
+     *
+     * @param combo  the selector to set
+     * @param marker the point being edited
+     */
+    private static void selectOwningSide(JComboBox<SideChoice> combo, ObjectiveMarker marker) {
+        for (int index = 0; index < combo.getItemCount(); index++) {
+            if (combo.getItemAt(index).playerId() == marker.getOwnerId()) {
+                combo.setSelectedIndex(index);
+                return;
+            }
+        }
+        combo.setSelectedItem(SideChoice.NEUTRAL);
+    }
+
     private record ControlChoice(int playerId, int team, String label) {
 
         static final ControlChoice NOBODY = new ControlChoice(ObjectiveMarker.NO_CONTROLLER,

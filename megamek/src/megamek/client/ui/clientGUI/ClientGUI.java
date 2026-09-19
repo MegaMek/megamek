@@ -958,6 +958,7 @@ public class ClientGUI extends AbstractClientGUI
               client.getGame());
         BridgeDeploySpriteHandler bridgeDeploySpriteHandler = new BridgeDeploySpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
+        ScanSpriteHandler scanSpriteHandler = new ScanSpriteHandler(this, client);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
@@ -977,6 +978,7 @@ public class ClientGUI extends AbstractClientGUI
               bridgeRepairedSpriteHandler,
               bridgeDeploySpriteHandler,
               groundObjectSpriteHandler,
+              scanSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
               fleeZoneSpriteHandler,

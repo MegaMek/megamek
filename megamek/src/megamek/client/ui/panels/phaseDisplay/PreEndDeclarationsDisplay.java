@@ -64,9 +64,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
-import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ScanMission;
 import megamek.common.game.GameTurn;
 import megamek.common.rolls.TargetRoll;
@@ -633,10 +631,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                 candidates.add(candidate);
             }
         }
-        boolean hexIsWorthScanningOnItsOwn = candidates.isEmpty() || holdsAnObjectiveMarker(coords);
-        if (hexIsWorthScanningOnItsOwn) {
-            candidates.add(new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR));
-        }
+        // The ground itself is always one of the answers. A player clicking a hex with a unit standing in it
+        // may well mean the hex, which is the only way to read a building or a control point under someone's
+        // feet, so the choice is theirs to make rather than one this code guesses at.
+        candidates.add(new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR));
         if (candidates.size() == 1) {
             return candidates.getFirst();
         }
@@ -646,20 +644,6 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
               candidates,
               clientgui,
               game.getEntity(currentEntity));
-    }
-
-    /**
-     * @param coords the hex to look in
-     *
-     * @return {@code true} when this hex holds an objective marker this client knows about
-     */
-    private boolean holdsAnObjectiveMarker(Coords coords) {
-        for (ICarryable groundObject : game.getGroundObjects(coords)) {
-            if (groundObject instanceof ObjectiveMarker) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

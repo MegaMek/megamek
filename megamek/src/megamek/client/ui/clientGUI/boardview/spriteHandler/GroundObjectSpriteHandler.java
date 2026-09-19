@@ -53,6 +53,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
@@ -267,7 +268,13 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
     private Color pointColor(ObjectiveMarker marker) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
         if (scheme.isDecided()) {
-            return sideColor(scheme.getSecuredTeam(), scheme.getSecuredPlayerId());
+            // Reading something is not taking it. Every other scheme's decided point has genuinely changed
+            // hands, so it paints in the winner's colour; a scan point has only been read, and painting it in
+            // the scanner's colour told the player their side now owned a flag they had merely looked at.
+            boolean readingChangesNothing = scheme.getPreset() == SchemePreset.SCAN;
+            return readingChangesNothing
+                  ? controllerColor(marker)
+                  : sideColor(scheme.getSecuredTeam(), scheme.getSecuredPlayerId());
         }
         double fraction = scheme.progressFraction();
         // a point that is held with nothing counted against it is simply its holder's: it was given to

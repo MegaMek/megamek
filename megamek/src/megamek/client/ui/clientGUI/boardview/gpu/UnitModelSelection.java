@@ -53,8 +53,9 @@ final class UnitModelSelection {
 
     /**
      * A Mek's lost locations, split by how a model shows them: an arm that is gone is taken off, anything else is
-     * left in place and burnt out, because the rest of the Mek stands on it or hangs from it. A side torso takes its
-     * arm with it in the game, so that arm arrives here as lost too.
+     * left in place and burnt out, because the rest of the Mek stands on it or hangs from it. A lost side torso
+     * takes its arm with it. Combat damage records that arm as destroyed too, but the damage editor can zero a torso
+     * and leave the arm's own numbers alone, so the arm is worked out here instead of trusted to be recorded.
      *
      * @return the locations to show as lost; {@link BoardScene.LocationDamage#NONE} for anything but a Mek
      */
@@ -66,11 +67,19 @@ final class UnitModelSelection {
         Set<String> wrecked = new TreeSet<>();
         for (int location = 0; location < mek.locations(); location++) {
             if (isLost(mek, location)) {
-                (mek.isArm(location) ? removed : wrecked).add(mek.getLocationAbbr(location));
+                addLost(mek, location, removed, wrecked);
+                int dependent = mek.getDependentLocation(location);
+                if (dependent != Entity.LOC_NONE) {
+                    addLost(mek, dependent, removed, wrecked);
+                }
             }
         }
         return (removed.isEmpty() && wrecked.isEmpty()) ? BoardScene.LocationDamage.NONE
               : new BoardScene.LocationDamage(removed, wrecked);
+    }
+
+    private static void addLost(Mek mek, int location, Set<String> removed, Set<String> wrecked) {
+        (mek.isArm(location) ? removed : wrecked).add(mek.getLocationAbbr(location));
     }
 
     /**

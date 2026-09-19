@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -134,6 +135,9 @@ class UnitModelSelectionTest {
         }
         when(mek.isArm(Mek.LOC_LEFT_ARM)).thenReturn(true);
         when(mek.isArm(Mek.LOC_RIGHT_ARM)).thenReturn(true);
+        when(mek.getDependentLocation(anyInt())).thenReturn(Entity.LOC_NONE);
+        when(mek.getDependentLocation(Mek.LOC_RIGHT_TORSO)).thenReturn(Mek.LOC_RIGHT_ARM);
+        when(mek.getDependentLocation(Mek.LOC_LEFT_TORSO)).thenReturn(Mek.LOC_LEFT_ARM);
         return mek;
     }
 
@@ -154,6 +158,16 @@ class UnitModelSelectionTest {
         BoardScene.LocationDamage damage = UnitModelSelection.damage(mek);
         assertEquals(Set.of("RA"), damage.removed());
         assertEquals(Set.of("RT", "LL"), damage.wrecked());
+    }
+
+    @Test
+    void aLostSideTorsoTakesItsArmEvenWhenTheArmWasNeverRecordedAsLost() {
+        // The damage editor can zero a side torso and leave the arm's own numbers untouched.
+        Mek mek = bipedWithLocations();
+        when(mek.isLocationTrulyDestroyed(Mek.LOC_LEFT_TORSO)).thenReturn(true);
+        BoardScene.LocationDamage damage = UnitModelSelection.damage(mek);
+        assertEquals(Set.of("LA"), damage.removed());
+        assertEquals(Set.of("LT"), damage.wrecked());
     }
 
     @Test

@@ -35,7 +35,7 @@ package megamek.common.loaders;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Color;
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1246,7 +1246,7 @@ public class MULParser {
         }
 
         Crew crew;
-        if (null != entity) {
+        if (entity != null) {
             crew = new Crew(entity.getCrew().getCrewType());
         } else {
             crew = new Crew(CrewType.SINGLE);
@@ -1397,7 +1397,7 @@ public class MULParser {
 
                 }
                 crew.setSize(crewSize);
-            } else if (null != entity) {
+            } else if (entity != null) {
                 crew.setSize(Compute.getFullCrewSize(entity));
                 // Reset the currentSize equal to the max size
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
@@ -1413,7 +1413,7 @@ public class MULParser {
 
                 }
                 crew.setCurrentSize(crewCurrentSize);
-            } else if (null != entity) {
+            } else if (entity != null) {
                 // Reset the currentSize equal to the max size
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
             }
@@ -1492,7 +1492,7 @@ public class MULParser {
             crew.setEjected(Boolean.parseBoolean(attributes.get(ATTR_EJECTED)));
         }
 
-        if (null != entity) {
+        if (entity != null) {
             // Set the crew for this entity.
             entity.setCrew(crew);
 

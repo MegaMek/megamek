@@ -325,7 +325,7 @@ public class WeaponFireInfo {
     }
 
     public ToHitData getToHit() {
-        if (null == toHit) {
+        if (toHit == null) {
             setToHit(calcToHit());
         }
         return toHit;
@@ -365,7 +365,7 @@ public class WeaponFireInfo {
     }
 
     private EntityState getShooterState() {
-        if (null == shooterState) {
+        if (shooterState == null) {
             shooterState = new EntityState(getShooter());
         }
         return shooterState;
@@ -376,7 +376,7 @@ public class WeaponFireInfo {
     }
 
     private EntityState getTargetState() {
-        if (null == targetState) {
+        if (targetState == null) {
             targetState = new EntityState(target);
         }
         return targetState;
@@ -691,7 +691,7 @@ public class WeaponFireInfo {
                     // Chance of getting a TAG spot is, at base, the spotter's gunnery skill
                     thd = new ToHitData(spotter.getCrew().getGunnery(), msg);
                     // Likelihood of hitting goes up as speed goes down...
-                    if (null != te) {
+                    if (te != null) {
                         thd.append(
                               Compute.getTargetMovementModifier(
                                     te.getRunMP(),
@@ -900,7 +900,7 @@ public class WeaponFireInfo {
               : null;
 
         // Set up the attack action and calculate the chance to hit.
-        if ((null == bombPayloads) || (0 == bombPayloads.get("external").getTotalBombs())) {
+        if ((bombPayloads == null) || (0 == bombPayloads.get("external").getTotalBombs())) {
             setAction(buildWeaponAttackAction());
         } else {
             setAction(buildBombAttackAction(bombPayloads));
@@ -914,7 +914,7 @@ public class WeaponFireInfo {
         // bot-related postprocessing on its results rather than inside of the WAA code.
         if (!guess) {
             setToHit(postProcessToHit(calcRealToHit(getWeaponAttackAction())));
-        } else if (null != shooterPath) {
+        } else if (shooterPath != null) {
             setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
         } else {
             setToHit(calcToHit());
@@ -1010,7 +1010,7 @@ public class WeaponFireInfo {
             }
         }
         // No target Mek found; nothing to do
-        if (null == targetMek) {
+        if (targetMek == null) {
             if (debugEnabled) {
                 logger.debug(msg.toString());
             }
@@ -1070,7 +1070,7 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction getWeaponAttackAction() {
-        if (null != getAction()) {
+        if (getAction() != null){
             return getAction();
         }
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)

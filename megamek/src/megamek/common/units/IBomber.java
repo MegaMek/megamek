@@ -243,7 +243,7 @@ public interface IBomber {
                 int loc = availableBombLocation(bombType.getCost());
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if (null != bombType.getWeaponName()) {
+                if (bombType.getWeaponName() != null){
                     applyBombWeapons(bombType, loc, true);
                 } else {
                     applyBombEquipment(bombType, loc, true);
@@ -262,7 +262,7 @@ public interface IBomber {
                 int loc = availableBombLocation(bombType.getCost());
                 // some bombs need an associated weapon and if so
                 // they need a weapon for each bomb
-                if (null != bombType.getWeaponName()) {
+                if (bombType.getWeaponName() != null){
                     applyBombWeapons(bombType, loc, false);
                 } else {
                     applyBombEquipment(bombType, loc, false);

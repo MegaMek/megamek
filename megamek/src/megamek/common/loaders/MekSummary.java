@@ -33,7 +33,7 @@
  */
 package megamek.common.loaders;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.File;
 import java.io.Serial;
 import java.io.Serializable;
@@ -1695,7 +1695,7 @@ public class MekSummary implements Serializable, ASCardDisplayable {
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final MekSummary other = (MekSummary) obj;

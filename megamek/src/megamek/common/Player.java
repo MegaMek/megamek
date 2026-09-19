@@ -598,7 +598,7 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean isEnemyOf(Player other) {
-        if (null == other) {
+        if (other == null) {
             return true;
         }
         return (id != other.getId()) && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
@@ -879,7 +879,7 @@ public final class Player extends TurnOrdered {
                                          .stream()
                                          .filter(Entity.class::isInstance)
                                          .map(Entity.class::cast)
-                                         .filter(entity -> (null != entity.getOwner()) &&
+                                         .filter(entity -> (entity.getOwner() != null) &&
                                                            entity.getOwner().equals(this))
                                          .collect(Collectors.toCollection(ArrayList::new));
         int commandBonus = 0;
@@ -1085,7 +1085,7 @@ public final class Player extends TurnOrdered {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if ((null == object) || (getClass() != object.getClass())) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         } else {
             final Player other = (Player) object;

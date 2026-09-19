@@ -101,7 +101,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-            if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
+            if (bayWAmmo == null || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 attackingEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
@@ -135,13 +135,13 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 if (current_av > 0) {
                     int shots = bayW.getCurrentShots();
                     for (int i = 0; i < shots; i++) {
-                        if (null == bayWAmmo
-                              || bayWAmmo.getUsableShotsLeft() < 1) {
+                        if (bayWAmmo == null
+                            || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
                             attackingEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
-                        if (null != bayWAmmo) {
+                        if (bayWAmmo != null) {
                             bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                         }
                     }
@@ -280,7 +280,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
               : null;
 
-        if ((((null == entityTarget) || entityTarget.isAirborne())
+        if ((((entityTarget == null) || entityTarget.isAirborne())
               && target != null
               && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
               && target.getTargetType() != Targetable.TYPE_HEX_IGNITE

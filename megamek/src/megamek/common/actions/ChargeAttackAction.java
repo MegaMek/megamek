@@ -48,7 +48,6 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.game.Game;
-import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -190,10 +189,10 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // check range
         if (src.distance(target.getPosition()) > 1) {
-            if (null != te.getSecondaryPositions()) {
+            if (te.getSecondaryPositions() != null) {
                 boolean inSecondaryRange = false;
                 for (int i : te.getSecondaryPositions().keySet()) {
-                    if (null != te.getSecondaryPositions().get(i)) {
+                    if (te.getSecondaryPositions().get(i) != null) {
                         if (src.distance(te.getSecondaryPositions().get(i)) < 2) {
                             inSecondaryRange = true;
                             break;
@@ -253,7 +252,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target units in buildings (from the outside).
-        if ((null != bldg) && (!targIsBuilding)
+        if ((bldg != null) && (!targIsBuilding)
               && Compute.isInBuilding(game, te)) {
             if (!Compute.isInBuilding(game, attackingEntity)) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside building");
@@ -476,9 +475,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         boolean isReachable = false;
         if ((chargeStep != null)) {
             isReachable = target.getPosition().equals(chargeStep.getPosition());
-            if (!isReachable && (target instanceof Entity) && (null != target.getSecondaryPositions())) {
+            if (!isReachable && (target instanceof Entity) && (target.getSecondaryPositions() != null)) {
                 for (int i : target.getSecondaryPositions().keySet()) {
-                    if (null != target.getSecondaryPositions().get(i)) {
+                    if (target.getSecondaryPositions().get(i) != null) {
                         isReachable = target.getSecondaryPositions().get(i).equals(chargeStep.getPosition());
                         if (isReachable) {
                             break;

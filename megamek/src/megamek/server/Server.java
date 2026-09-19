@@ -255,7 +255,7 @@ public class Server implements Runnable {
 
             // if there's a player for this connection, remove it too
             Player player = getPlayer(conn.getId());
-            if (null != player) {
+            if (player != null) {
                 Server.this.disconnected(player);
             }
         }
@@ -608,7 +608,7 @@ public class Server implements Runnable {
         }
 
         Player gamePlayer = getGame().getPlayer(connId);
-        if (null != gamePlayer) {
+        if (gamePlayer != null) {
             gamePlayer.setColour(player.getColour());
             gamePlayer.setStartingPos(player.getStartingPos());
             gamePlayer.setStartWidth(player.getStartWidth());
@@ -738,7 +738,7 @@ public class Server implements Runnable {
 
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer(connId);
-        if (!getGame().getPhase().isLounge() && (null != player) && (getGame().getEntitiesOwnedBy(player) < 1)) {
+        if (!getGame().getPhase().isLounge() && (player != null) && (getGame().getEntitiesOwnedBy(player) < 1)) {
             player.setObserver(true);
         }
 
@@ -779,7 +779,7 @@ public class Server implements Runnable {
 
         // Get the player *again*, because they may have disconnected.
         player = getPlayer(connId);
-        if (null != player) {
+        if (player != null) {
             String who = String.format("%s connected from %s", player.getName(), getClient(connId).getInetAddress());
             message = String.format("s: player #%d, %s", connId, who);
             LOGGER.info(message);
@@ -1348,7 +1348,7 @@ public class Server implements Runnable {
         Player player = getGame().getPlayer(connId);
 
         // Check player. Please note, the connection may be pending.
-        if ((null == player) && (null == getPendingConnection(connId))) {
+        if ((player == null) && (getPendingConnection(connId) == null)) {
             String message = String.format("Server does not recognize player at connection %d", connId);
             LOGGER.error(message);
             return;

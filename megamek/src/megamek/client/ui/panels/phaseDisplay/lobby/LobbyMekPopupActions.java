@@ -43,8 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.MMConstants;
@@ -497,7 +496,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 break;
             case LMP_APPLY_CONFIG:
                 munitionTree = loadLoadout();
-                if (null != munitionTree) {
+                if (munitionTree != null) {
                     // Apply existing loadout to selected entities.
                     // Use the unlimited availability map (all munitions allowed in any amount)
                     resetBombChoices(clientGUI, lobby.game(), entityArrayList);

@@ -33,24 +33,13 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
-import java.awt.BorderLayout;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Collection;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.Element;
@@ -219,7 +208,7 @@ public class EntityReadoutPanel extends JPanel {
         boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
         Image image = isSpritesOnly ? null : FluffImageHelper.getFluffImage(entity);
         // Scale down to the default width if the image is wider than that
-        if (null != image) {
+        if (image != null) {
             if (image.getWidth(this) > DEFAULT_WIDTH) {
                 image = image.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
             }

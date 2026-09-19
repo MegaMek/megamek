@@ -618,7 +618,7 @@ class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
             refreshSensorChoices(en);
 
-            if (null != en.getActiveSensor()) {
+            if (en.getActiveSensor() != null) {
                 String sensorDesc = "";
                 if (gameOptions.booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)
                       || (gameOptions.booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS))

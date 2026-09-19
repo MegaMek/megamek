@@ -240,7 +240,7 @@ public abstract class AbstractAttackAction extends AbstractEntityAction implemen
             }
         }
 
-        if ((toHit.getValue() > 0) && (null != attacker.getCrew())
+        if ((toHit.getValue() > 0) && (attacker.getCrew() != null)
               && attacker.hasAbility(OptionsConstants.UNOFFICIAL_BLIND_FIGHTER)) {
             toHit.addModifier(-1, "blind fighter");
         }

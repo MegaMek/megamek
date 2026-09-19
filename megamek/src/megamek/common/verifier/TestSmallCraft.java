@@ -796,7 +796,7 @@ public class TestSmallCraft extends TestAero {
         int quarters = 0;
         for (Bay bay : smallCraft.getTransportBays()) {
             Quarters q = Quarters.getQuartersForBay(bay);
-            if (null != q) {
+            if (q != null) {
                 quarters += (int) bay.getCapacity();
             }
         }

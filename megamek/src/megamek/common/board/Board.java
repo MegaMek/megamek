@@ -810,7 +810,7 @@ public class Board implements Serializable {
             int y = currCoords.getY();
 
             // Client may have sent off-board coordinates or null info; ignore.
-            if (!contains(x, y) || null == currHex) {
+            if (!contains(x, y) || currHex == null) {
                 continue;
             }
 
@@ -1201,7 +1201,7 @@ public class Board implements Serializable {
                     st.nextToken();
                     if (st.ttype == '"') {
                         String d = getDescription();
-                        if (null == d) {
+                        if (d == null) {
                             setDescription(st.sval);
                         } else {
                             setDescription(d + "\n\n" + st.sval);
@@ -1495,7 +1495,7 @@ public class Board implements Serializable {
 
     public void removeBombIconsFrom(Coords coords) {
         // Do nothing if the coords aren't on this board.
-        if (!this.contains(coords) || null == specialHexes.get(coords)) {
+        if (!this.contains(coords) || specialHexes.get(coords) == null) {
             return;
         }
 
@@ -1523,7 +1523,7 @@ public class Board implements Serializable {
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
         tracker = infernos.get(coords);
-        if (null != tracker) {
+        if (tracker != null) {
             if (tracker.isStillBurning()) {
                 result = true;
             }
@@ -2091,7 +2091,7 @@ public class Board implements Serializable {
      */
     public void setAnnotations(Coords c,
                                @Nullable Collection<String> a) {
-        if (null == a || a.isEmpty()) {
+        if (a == null || a.isEmpty()) {
             annotations.remove(c);
         } else {
             annotations.put(c, a);

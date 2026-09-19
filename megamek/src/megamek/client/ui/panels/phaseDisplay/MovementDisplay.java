@@ -39,15 +39,15 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Stream;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -1846,8 +1846,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity next = game
                 .getNextEntity(game.getTurnIndex());
         if (game.getPhase().isMovement()
-            && (null != next)
-            && (null != currentlySelectedEntity)
+            && (next != null)
+            && (currentlySelectedEntity != null)
             && (next.getOwnerId() != currentlySelectedEntity.getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
@@ -2418,7 +2418,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Check for unused velocity for airborne and spacecraft.
         if (needNagForOther()) {
-            if ((currentlySelectedEntity != null) && (null != cmd) && currentlySelectedEntity.isAero()) {
+            if ((currentlySelectedEntity != null) && (cmd != null) && currentlySelectedEntity.isAero()) {
                 // An aerodyne reports itself airborne at any altitude, so a fighter sitting on the ground
                 // still looks like it is flying. Left in, this refuses to end the turn over velocity the unit
                 // has no way to spend: on a ground map one point costs sixteen hexes of movement, and every
@@ -2429,7 +2429,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                       || currentlySelectedEntity.isSpaceborne();
                 boolean unusedVelocity;
 
-                if (null != cmd.getLastStep()) {
+                if (cmd.getLastStep() != null) {
                     unusedVelocity = cmd.getLastStep().getVelocityLeft() > 0;
                 } else {
                     unusedVelocity = (((IAero) currentlySelectedEntity).getCurrentVelocity() > 0) &&
@@ -2894,17 +2894,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         coords,
                         boardId,
                         elevation)) {
-                    // entity.isAero will check if a unit is a LAM in Fighter mode
-                    if ((currentlySelectedEntity instanceof IAero aero) && (currentlySelectedEntity.isAero())) {
-                        currentlySelectedEntity.setAltitude(elevation);
-                        if (elevation == 0) {
-                            aero.land();
-                        } else {
-                            aero.liftOff(elevation);
-                        }
-                    } else {
-                        currentlySelectedEntity.setElevation(elevation);
-                    }
+                    deploymentHelper.applyDeploymentElevation(currentlySelectedEntity,
+                                                              game.getBoard(boardId),
+                                                              elevation);
                     currentlySelectedEntity.setPosition(coords);
                     currentlySelectedEntity.setBoardId(boardId);
                     currentlySelectedEntity.setFacing(facing);
@@ -3598,7 +3590,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     }
 
     private synchronized void updateTakeOffButtons() {
-        if ((null != cmd) && (cmd.length() > 0)) {
+        if ((cmd != null) && (cmd.length() > 0)) {
             // you can't take off if you have already moved
             setTakeOffEnabled(false);
             setVTakeOffEnabled(false);
@@ -3695,7 +3687,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateHoverButton() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -3718,7 +3710,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateThrustButton() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -3729,7 +3721,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // only allow thrust if there is thrust left to spend
         int mpUsed = 0;
         MoveStep last = cmd.getLastStep();
-        if (null != last) {
+        if (last != null) {
             mpUsed = last.getMpUsed();
         }
 
@@ -3738,7 +3730,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private synchronized void updateSpeedButtons() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -3768,12 +3760,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         // figure out implied velocity, so you can't decelerate below zero
         int currentVelocity = a.getCurrentVelocity();
         int nextVelocity = a.getNextVelocity();
-        if (null != last) {
+        if (last != null) {
             currentVelocity = last.getVelocity();
             nextVelocity = last.getVelocityN();
         }
 
-        if (null == last || pathZeroOrDeploy()) {
+        if (last == null || pathZeroOrDeploy()) {
             setAccEnabled(true);
             if (currentVelocity > 0) {
                 setDecEnabled(true);
@@ -3920,7 +3912,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateLaunchButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4017,7 +4009,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateEvadeButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4036,7 +4028,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateBootleggerButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4062,7 +4054,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateShutdownButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4076,7 +4068,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateStartupButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4090,7 +4082,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateSelfDestructButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4113,7 +4105,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateTraitorButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4132,7 +4124,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             setModeConvertEnabled(false);
             return;
         }
@@ -4178,7 +4170,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateRecklessButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4189,17 +4181,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (currentEntity instanceof ProtoMek) {
             setRecklessEnabled(false);
         } else {
-            setRecklessEnabled((null == cmd) || (pathZeroOrDeploy()));
+            setRecklessEnabled((cmd == null) || (pathZeroOrDeploy()));
         }
     }
 
     private void updateBraceButton() {
-        if (null == currentEntity()) {
+        if (currentEntity() == null) {
             return;
         }
 
         MovePath movePath = cmd;
-        if (null == movePath) {
+        if (movePath == null) {
             movePath = new MovePath(game, currentEntity());
         }
 
@@ -4625,7 +4617,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private void updateManeuverButton() {
         final Entity currentEntity = currentEntity();
 
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -4651,7 +4643,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setManeuverEnabled(false);
         }
 
-        setManeuverEnabled((null == cmd) || !cmd.contains(MoveStepType.MANEUVER));
+        setManeuverEnabled((cmd == null) || !cmd.contains(MoveStepType.MANEUVER));
     }
 
     private void updateStrafeButton() {
@@ -4848,7 +4840,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         final Coords pos = finalPosition();
         int elev = movingEntity.getElevation();
         int mpUsed = movingEntity.mpUsed;
-        if (null != cmd) {
+        if (cmd != null) {
             elev = cmd.getFinalElevation();
             mpUsed = cmd.getMpUsed();
         }
@@ -4857,7 +4849,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     elev + game.getBoard(movingEntity).getHex(pos).getLevel(),
                     game).isEmpty();
         // Same rule the MOUNT step enforces on the path, so the button only lights when the mount would be legal
-        final boolean isJumping = (null != cmd) && cmd.isJumping();
+        final boolean isJumping = (cmd != null) && cmd.isJumping();
         final MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(movingEntity,
               movingEntity.getWalkMP(), mpUsed, isJumping);
         final boolean canMount = hasMountableUnit &&
@@ -5136,7 +5128,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateLayMineButton() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -5159,12 +5151,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         Coords pos = currentEntity.getPosition();
         int elev = currentEntity.getElevation();
-        if (null != cmd) {
+        if (cmd != null) {
             pos = cmd.getFinalCoords();
             elev = cmd.getFinalElevation();
         }
         Hex hex = game.getBoard(finalBoardId()).getHex(pos);
-        if (null != hex) {
+        if (hex != null) {
             elev += hex.getLevel();
         }
 
@@ -5654,7 +5646,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int altitude = 0;
 
         // Special handling for unloading on the move
-        if (null != cmd) {
+        if (cmd != null) {
             pos = cmd.getFinalCoords();
             elev = (currentEntity.isAirborne()) ? 999 : cmd.getFinalElevation();
             altitude = (currentEntity.isAirborne()) ? cmd.getFinalAltitude() : 0;
@@ -5799,7 +5791,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private synchronized void updateRecoveryButton() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -5865,7 +5857,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -6421,7 +6413,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private void checkOOC() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 
@@ -6584,7 +6576,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         EntityMovementType overallMoveType = EntityMovementType.MOVE_NONE;
-        if (null != cmd) {
+        if (cmd != null) {
             overallMoveType = cmd.getLastStepMovementType();
         }
         // bring up a dialog to dump bombs, then make a control roll and report success or failure should update mp
@@ -6659,7 +6651,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 IAero a = (IAero) currentEntity;
                 MoveStep last = cmd.getLastStep();
                 int vel = a.getCurrentVelocity();
-                if (null != last) {
+                if (last != null) {
                     vel = last.getVelocityLeft();
                 }
                 while (vel > 0) {
@@ -7241,7 +7233,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
             title = Messages.getString("MovementDisplay.ClearMinefieldDialog.title");
             body = Messages.getString("MovementDisplay.ClearMinefieldDialog.message", clear, boom);
-            if ((null != mf) && clientgui.doYesNoDialog(title, body)) {
+            if ((mf != null) && clientgui.doYesNoDialog(title, body)) {
                 addStepToMovePath(MoveStepType.CLEAR_MINEFIELD, mf);
                 ready();
             }
@@ -7463,7 +7455,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     } else {
                         pos = getUnloadPosition(other);
                     }
-                    if (null != pos) {
+                    if (pos != null) {
                         // set other's position and end this turn - the unloading unit will get
                         // another turn for further unloading later
                         // Also mark the chosen unit as planning to unload this turn.
@@ -7552,7 +7544,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 PlanetaryConditions conditions = game.getPlanetaryConditions();
                 boolean spheroidOrLessThanThin = ((IAero) entity).isSpheroid() ||
                                                  conditions.getAtmosphere().isLighterThan(Atmosphere.THIN);
-                if ((null != cmd.getLastStep()) &&
+                if ((cmd.getLastStep() != null) &&
                     (cmd.getLastStep().getNDown() == 1) &&
                     (cmd.getLastStep().getVelocity() < 12) &&
                     !spheroidOrLessThanThin) {
@@ -7753,7 +7745,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             int altitude = entity.getAltitude();
             Coords pos = entity.getPosition();
             int distance = 0;
-            if (null != last) {
+            if (last != null) {
                 vel = last.getVelocityLeft();
                 altitude = last.getAltitude();
                 distance = last.getDistance();
@@ -7813,7 +7805,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         } else if (actionCmd.equals(MoveCommand.MOVE_DUMP.getCmd())) {
             dumpBombs();
         } else if (actionCmd.equals(MoveCommand.MOVE_TAKE_OFF.getCmd())) {
-            if (currentEntity().isAero() && (null != ((IAero) currentEntity()).hasRoomForHorizontalTakeOff())) {
+            if (currentEntity().isAero() && (((IAero) currentEntity()).hasRoomForHorizontalTakeOff()) != null) {
                 clientgui.addToast(ToastLevel.ERROR,
                                    Messages.getString("MovementDisplay.NoTakeOffDialog.message",
                                                       ((IAero) currentEntity()).hasRoomForHorizontalTakeOff()),
@@ -8083,7 +8075,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             entity = stranded.elementAt(index);
             transport = clientgui.getClient().getEntity(entity.getTransportId());
             String buffer;
-            if (null == transport) {
+            if (transport == null) {
                 buffer = entity.getDisplayName();
             } else {
                 buffer = Messages.getString("MovementDisplay.EntityAt",
@@ -8100,7 +8092,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         // Convert the indexes into selected entity IDs and tell the server.
         int[] ids = null;
-        if (null != indexes) {
+        if (indexes != null) {
             ids = new int[indexes.length];
             for (int index = 0; index < indexes.length; index++) {
                 entity = stranded.elementAt(index);
@@ -8134,7 +8126,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         Entity entity = game.getEntity(boardViewEvent.getEntityId());
 
-        if (null == entity) {
+        if (entity == null) {
             return;
         }
 
@@ -8667,7 +8659,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void updateTurnButton() {
         final Entity currentEntity = currentEntity();
-        if (null == currentEntity) {
+        if (currentEntity == null) {
             return;
         }
 

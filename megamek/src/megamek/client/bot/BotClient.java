@@ -47,11 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -547,11 +543,10 @@ public abstract class BotClient extends Client {
                   null;
 
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
-                boolean stackingViolation = null !=
-                      Compute.stackingViolation(game,
+                boolean stackingViolation = Compute.stackingViolation(game,
                             currentEntity.getId(),
                             transport.getPosition(),
-                            currentEntity.climbMode());
+                                                                      currentEntity.climbMode()) != null;
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard(transport)) ||
                       currentEntity.isLocationProhibited(transport.getPosition()) ||
                       currentEntity.isLocationDeadly(transport.getPosition());
@@ -905,7 +900,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase().isPhysical()) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
-                if (null != po) {
+                if (po != null) {
                     sendAttackData(po.attacker.getId(), po.getVector());
                 } else {
                     // Send a "no attack" to clear the game turn, if any.
@@ -986,7 +981,7 @@ public abstract class BotClient extends Client {
 
             // Make sure we don't overload any buildings in this hex.
             IBuilding building = game.getBoard(deployedUnit).getBuildingAt(dest);
-            if (null != building) {
+            if (building != null) {
                 double mass = getMassOfAllInBuilding(game, dest, deployedUnit.getBoardId()) + deployedUnit.getWeight();
                 if (mass > building.getCurrentCF(dest)) {
                     continue;

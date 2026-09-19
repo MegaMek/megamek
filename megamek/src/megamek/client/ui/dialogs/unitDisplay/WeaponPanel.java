@@ -32,13 +32,7 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
@@ -56,13 +50,13 @@ import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
-import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -1767,7 +1761,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         } else {
             wDamR.setText(Integer.toString(weaponType.getDamage()));
         }
-        
+
         if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER)) {
             int damage = (mounted.curMode().equals("Damage 16")) ? 16 : (mounted.curMode().equals("Damage 12")) ? 12 :
                                                                          8;
@@ -2190,7 +2184,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         int maxRange = weaponType.getMaxRange(weapon);
 
         // change range and attack values based upon ammo
-        if (null != ammo) {
+        if (ammo != null) {
             AmmoType ammoType = ammo.getType();
             double[] changes = changeAttackValues(ammoType, avShort, avMed,
                   avLong, avExt, maxRange);
@@ -2427,7 +2421,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 int mMaxR = bayWType.getMaxRange(m);
 
                 // deal with any ammo adjustments
-                if (null != mAmmo) {
+                if (mAmmo != null) {
                     double[] changes = changeAttackValues(mAmmo.getType(), mAVShort, mAVMed,
                           mAVLong, mAVExt, mMaxR);
                     mAVShort = changes[0];

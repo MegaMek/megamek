@@ -1188,7 +1188,7 @@ public final class Game extends AbstractGame implements Serializable,
     public @Nullable Entity getOutOfGameEntity(int id) {
         Entity match = null;
         Enumeration<Entity> iter = vOutOfGame.elements();
-        while ((null == match) && iter.hasMoreElements()) {
+        while ((match == null) && iter.hasMoreElements()) {
             Entity entity = iter.nextElement();
             if (id == entity.getId()) {
                 match = entity;
@@ -1459,7 +1459,7 @@ public final class Game extends AbstractGame implements Serializable,
     @Override
     public Entity getEntityFromAllSources(int id) {
         Entity en = getEntity(id);
-        if (null == en) {
+        if (en == null) {
             for (Entity entity : vOutOfGame) {
                 if (entity.getId() == id) {
                     return entity;
@@ -2296,7 +2296,7 @@ public final class Game extends AbstractGame implements Serializable,
         // Is the entity being transported?
         final int transportId = entity.getTransportId();
         Entity transport = getEntity(transportId);
-        if ((Entity.NONE != transportId) && (null != transport)) {
+        if ((Entity.NONE != transportId) && (transport != null)) {
 
             // aero units don't count here
             if (transport instanceof Aero) {
@@ -3149,7 +3149,7 @@ public final class Game extends AbstractGame implements Serializable,
         Iterator<Entity> retVal;
 
         // If no selector was supplied, return all entities.
-        if (null == selector) {
+        if (selector == null) {
             retVal = this.inGameTWEntities().iterator();
         }
 
@@ -3165,17 +3165,17 @@ public final class Game extends AbstractGame implements Serializable,
                 @Override
                 public boolean hasNext() {
                     // See if we have a pre-approved entity.
-                    if (null == current) {
+                    if (current == null) {
 
                         // Find the first acceptable entity
-                        while ((null == current) && iter.hasNext()) {
+                        while ((current == null) && iter.hasNext()) {
                             current = iter.next();
                             if (!entitySelector.accept(current)) {
                                 current = null;
                             }
                         }
                     }
-                    return (null != current);
+                    return (current != null);
                 }
 
                 // Get the next entity that meets the selection criteria.
@@ -3219,7 +3219,7 @@ public final class Game extends AbstractGame implements Serializable,
         int retVal = 0;
 
         // If no selector was supplied, return the count of all game entities.
-        if (null == selector) {
+        if (selector == null) {
             retVal = getNoOfEntities();
         }
 
@@ -3251,7 +3251,7 @@ public final class Game extends AbstractGame implements Serializable,
         Enumeration<Entity> retVal;
 
         // If no selector was supplied, return all entities.
-        if (null == selector) {
+        if (selector == null) {
             retVal = vOutOfGame.elements();
         }
 
@@ -3267,17 +3267,17 @@ public final class Game extends AbstractGame implements Serializable,
                 @Override
                 public boolean hasMoreElements() {
                     // See if we have a pre-approved entity.
-                    if (null == current) {
+                    if (current == null) {
 
                         // Find the first acceptable entity
-                        while ((null == current) && iter.hasMoreElements()) {
+                        while ((current == null) && iter.hasMoreElements()) {
                             current = iter.nextElement();
                             if (!entitySelector.accept(current)) {
                                 current = null;
                             }
                         }
                     }
-                    return (null != current);
+                    return (current != null);
                 }
 
                 // Get the next entity that meets the selection criteria.
@@ -3316,7 +3316,7 @@ public final class Game extends AbstractGame implements Serializable,
         int retVal = 0;
 
         // If no selector was supplied, return the count of all game entities.
-        if (null == selector) {
+        if (selector == null) {
             retVal = vOutOfGame.size();
         }
 
@@ -4025,7 +4025,7 @@ public final class Game extends AbstractGame implements Serializable,
     }
 
     private Map<String, AIType> ensureBotTypes() {
-        if (null == botTypes) {
+        if (botTypes == null) {
             // Deserialization of a save from before this field existed leaves it null.
             botTypes = new HashMap<>();
         }

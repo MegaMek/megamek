@@ -427,7 +427,7 @@ public class MekSummaryCache {
                         File fSource = ms.getSourceFile();
                         if (fSource.exists()) {
                             vMeks.addElement(ms);
-                            if (null == ms.getEntryName()) {
+                            if (ms.getEntryName() == null) {
                                 sKnownFiles.add(fSource.toString());
                             } else {
                                 sKnownFiles.add(ms.getEntryName());
@@ -714,7 +714,7 @@ public class MekSummaryCache {
             File source = mekSummary.getSourceFile();
             if (source.exists()) {
                 units.add(mekSummary);
-                if (null == mekSummary.getEntryName()) {
+                if (mekSummary.getEntryName() == null) {
                     knownFiles.add(source.toString());
                 } else {
                     knownFiles.add(mekSummary.getEntryName());
@@ -1369,7 +1369,7 @@ public class MekSummaryCache {
                 String line;
                 String lookupName;
                 String entryName;
-                while (null != (line = br.readLine())) {
+                while ((line = br.readLine()) != null) {
                     if (line.startsWith("#")) {
                         continue;
                     }
@@ -1379,7 +1379,7 @@ public class MekSummaryCache {
                         entryName = line.substring(index + 1);
                         if (!nameMap.containsKey(lookupName)) {
                             MekSummary ms = nameMap.get(entryName);
-                            if (null != ms) {
+                            if (ms != null) {
                                 nameMap.put(lookupName, ms);
                             }
                         }

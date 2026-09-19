@@ -2782,7 +2782,7 @@ public class MoveStep implements Serializable {
                             }
                         }
                     }
-                    if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode, true)) ||
+                    if ((Compute.stackingViolation(game, other, curPos, entity, climbMode, true) != null) ||
                         other.isLocationProhibited(curPos, unloadElevation)) {
                         movementType = EntityMovementType.MOVE_ILLEGAL;
                     }
@@ -2828,7 +2828,7 @@ public class MoveStep implements Serializable {
             // or into stacking violation.
             Targetable target = getTarget(game);
             if (target instanceof Entity other) {
-                if ((null != Compute.stackingViolation(game, other, curPos, entity, climbMode, true)) ||
+                if ((Compute.stackingViolation(game, other, curPos, entity, climbMode, true) != null) ||
                     other.isLocationProhibited(curPos, getElevation())) {
                     movementType = EntityMovementType.MOVE_ILLEGAL;
                 }
@@ -3627,7 +3627,7 @@ public class MoveStep implements Serializable {
         if (destHex == null) {
             return false;
         }
-        if (null == dest) {
+        if (dest == null) {
             var ex = new IllegalStateException("Step has no position");
             LOGGER.error("", ex);
             throw ex;

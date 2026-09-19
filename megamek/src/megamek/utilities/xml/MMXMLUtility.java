@@ -73,7 +73,7 @@ public class MMXMLUtility {
      */
     public static DocumentBuilder newSafeDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DOCUMENT_BUILDER_FACTORY;
-        if (null == dbf) {
+        if (dbf == null) {
             // At worst, we may do this twice if multiple threads
             // hit this method. It is Ok to have more than one
             // instance of the builder factory, as long as it is

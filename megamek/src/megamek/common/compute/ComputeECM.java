@@ -144,7 +144,7 @@ public class ComputeECM {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = ae.getGame().getEntity(ent.getTransportId());
-                if ((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
+                if ((carrier != null) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                 }
             }
@@ -263,7 +263,7 @@ public class ComputeECM {
             Coords entPos = ent.getPosition();
             if ((entPos == null) && (ent.getTransportId() != Entity.NONE)) {
                 Entity carrier = ae.getGame().getEntity(ent.getTransportId());
-                if ((null != carrier) && carrier.loadedUnitsHaveActiveECM()) {
+                if ((carrier != null) && carrier.loadedUnitsHaveActiveECM()) {
                     entPos = carrier.getPosition();
                 }
             }

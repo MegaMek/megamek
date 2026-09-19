@@ -1917,7 +1917,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 if (md.automaticWiGELanding(false)) {
                     // try to land safely; LAMs require a psr when landing with gyro or leg actuator
                     // damage and ProtoMeks always require a roll
-                    int elevation = (null == prevStep) ? entity.getElevation() : prevStep.getElevation();
+                    int elevation = (prevStep == null) ? entity.getElevation() : prevStep.getElevation();
                     if (entity.hasETypeFlag(Entity.ETYPE_LAND_AIR_MEK) && entity instanceof LandAirMek landAirMek) {
                         addReport(gameManager.landAirMek(landAirMek,
                                                          entity.getPosition(),
@@ -2125,7 +2125,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         }
 
         // even if load was unsuccessful, I may need to update the loader
-        if (null != loader) {
+        if (loader != null) {
             gameManager.entityUpdate(loader.getId());
         }
 
@@ -3425,7 +3425,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         if (gameManager.processFailedVehicleManeuver(entity,
                                                                      curPos,
                                                                      step.getFacing() - curFacing,
-                                                                     (null == prevStep) ? step : prevStep,
+                                                                     (prevStep == null) ? step : prevStep,
                                                                      step.isThisStepBackwards(),
                                                                      lastStepMoveType,
                                                                      distance,
@@ -3461,7 +3461,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     gameManager.processFailedVehicleManeuver(entity,
                                                              curPos,
                                                              Compute.d6() < 4 ? -1 : 1,
-                                                             (null == prevStep) ? step : prevStep,
+                                                             (prevStep == null) ? step : prevStep,
                                                              step.isThisStepBackwards(),
                                                              lastStepMoveType,
                                                              distance,
@@ -3740,7 +3740,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             skidDirection = lastPos.direction(curPos);
                             start = curPos;
                         } else {
-                            elev = (null == prevStep) ? curElevation : prevStep.getElevation();
+                            elev = (prevStep == null) ? curElevation : prevStep.getElevation();
                             // maximum distance is hexes moved / 2
                             sideslipDistance = Math.min(moF, distance / 2);
                             skidDirection = prevFacing;
@@ -3759,7 +3759,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                         elev,
                                                         skidDirection,
                                                         sideslipDistance,
-                                                        (null == prevStep) ? step : prevStep,
+                                                        (prevStep == null) ? step : prevStep,
                                                         lastStepMoveType)) {
                                 return;
                             }
@@ -4319,7 +4319,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         entity.setDone(true);
                         gameManager.loadUnit(entityToMountInto, entity, entity.getTargetBay());
                         Bay currentBay = entityToMountInto.getBay(entity);
-                        if ((null != currentBay) && (Compute.d6(2) == 2)) {
+                        if ((currentBay != null) && (Compute.d6(2) == 2)) {
                             report = new Report(9390);
                             report.subject = entity.getId();
                             report.indent(1);
@@ -4514,7 +4514,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 int unloadFacing = curFacing;
 
                 // If the step has a targetPosition, use that
-                if (null != step.getTargetPosition()) {
+                if (step.getTargetPosition() != null){
                     unloadPos = step.getTargetPosition();
                     // A unit dismounting a Small Craft or DropShip chooses its facing (TW p.91); otherwise it faces
                     // away from the carrier
@@ -4552,7 +4552,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // some additional stuff to take care of for small
                 // craft/DropShip unloading
                 if ((entity instanceof SmallCraft) && (unloaded instanceof Entity)) {
-                    if ((null != currentBay) && (!(unloaded.isInfantry())) && (Compute.d6(2) == 2)) {
+                    if ((currentBay != null) && (!(unloaded.isInfantry())) && (Compute.d6(2) == 2)) {
                         report = new Report(9390);
                         report.subject = entity.getId();
                         report.indent(1);
@@ -4589,7 +4589,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.DISCONNECT) {
                 Targetable unloaded = step.getTarget(getGame());
                 Coords unloadPos = curPos;
-                if (null != step.getTargetPosition()) {
+                if (step.getTargetPosition() != null){
                     unloadPos = step.getTargetPosition();
                 }
                 // An off board train stays hooked up. There is no board hex to drop a trailer in, so letting one

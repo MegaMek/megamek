@@ -32,14 +32,7 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -889,7 +882,7 @@ class SystemPanel extends PicMap
         removeListeners();
         try {
             if (event.getSource().equals(unitList)) {
-                if (null != getSelectedEntity()) {
+                if (getSelectedEntity() != null){
                     en = getSelectedEntity();
                     ((DefaultComboBoxModel<String>) m_chMode.getModel())
                           .removeAllElements();

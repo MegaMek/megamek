@@ -36,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -186,7 +185,7 @@ class ObjectiveScanHandlerTest {
         assertFalse(scanPoint.getScoringScheme().isDecided(), "the point pays only once the reading is home");
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_SCAN_SUCCESS));
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_READING_BANKED), "nothing to reveal: the plain line");
-        verify(gameManager).entityUpdate(scout.getId());
+        verify(gameManager, atLeastOnce()).entityUpdate(scout.getId());
         assertEquals(0, VictoryPointTracker.getTracker(game).getPlayerVictoryPoints(alice.getId()),
               "nothing scored yet: the reading must be carried home first");
     }
@@ -246,7 +245,7 @@ class ObjectiveScanHandlerTest {
 
         assertTrue(scout.getBankedScans().isEmpty(), "7 against a target number of 8 fails");
         assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_SCAN_FAILED));
-        verify(gameManager, never()).entityUpdate(anyInt());
+        assertNull(scout.getPendingScan(), "the order is spent whether it succeeded or not");
     }
 
     @Test
@@ -463,6 +462,19 @@ class ObjectiveScanHandlerTest {
         leaveOverTheHomeEdge(scout, 5);
         handler.resolveScans();
         assertEquals(1, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(1));
+    }
+
+    @Test
+    void testTheClientsAreToldWhenAnOrderIsSpentEvenIfNothingWasFound() {
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        assertNull(scout.getPendingScan(), "the order is spent");
+        assertTrue(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+        // Without this the Scan button keeps offering to cancel a scan that already happened
+        verify(gameManager, atLeastOnce()).entityUpdate(scout.getId());
     }
 
     @Test

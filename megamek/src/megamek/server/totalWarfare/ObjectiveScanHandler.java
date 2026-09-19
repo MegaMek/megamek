@@ -204,6 +204,10 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             }
             scanner.setPendingScan(null);
             resolveScan(scanner, order);
+            // Tell the clients the order is spent. Without this a scan that banked nothing left every client
+            // believing one was still pending, so the Scan button went on offering to cancel a scan that had
+            // already happened.
+            gameManager.entityUpdate(scanner.getId());
         }
         settleReadingsOfUnitsThatLeft();
     }

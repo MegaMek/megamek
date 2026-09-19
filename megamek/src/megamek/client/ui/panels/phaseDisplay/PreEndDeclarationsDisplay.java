@@ -68,6 +68,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ScanMission;
+import megamek.common.game.GameTurn;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
 import megamek.common.units.AbstractBuildingEntity;
@@ -490,10 +491,15 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        LOGGER.debug("[PreEnd] entity {} ready; {} queued action(s), advancing turn", currentEntity, attacks.size());
+        // A player gets one declarations turn, held by one of their units, but Next lets them select any unit of
+        // theirs to give it a scan order. Ending the turn has to name the unit that actually holds it. Naming any
+        // other one left the turn open, so the selection bounced back to the turn holder and Done had to be
+        // pressed a second time.
+        int turnHolder = entityHoldingTheTurn();
+        LOGGER.debug("[PreEnd] ready: selected entity {} advancing turn as holder {} with {} action(s)",
+              currentEntity, turnHolder, attacks.size());
         // Always send attack data to advance turn, even if empty
-        LOGGER.debug("[PreEnd] ready: entity {} advancing turn with {} action(s)", currentEntity, attacks.size());
-        clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
+        clientgui.getClient().sendAttackData(turnHolder, attacks.toVector());
         removeAllAttacks();
 
         endMyTurn();
@@ -654,6 +660,23 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             }
         }
         return false;
+    }
+
+    /**
+     * Works out which of the player's units the declarations turn belongs to. The selected unit is usually the
+     * right answer, but the player may have used Next to step onto a unit that has no turn of its own, and ending
+     * the turn in that unit's name does nothing.
+     *
+     * @return the unit id to end the turn with
+     */
+    private int entityHoldingTheTurn() {
+        GameTurn myTurn = clientgui.getClient().getMyTurn();
+        Entity selected = game.getEntity(currentEntity);
+        if ((myTurn != null) && (selected != null) && myTurn.isValidEntity(selected, game)) {
+            return currentEntity;
+        }
+        int turnHolder = clientgui.getClient().getFirstEntityNum();
+        return (turnHolder == Entity.NONE) ? currentEntity : turnHolder;
     }
 
     /**

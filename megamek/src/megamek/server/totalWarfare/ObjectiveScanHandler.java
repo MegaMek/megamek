@@ -526,18 +526,9 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
                   + " (sensor check mission=" + isSensorCheckMission + ")";
         }
         Entity targetUnit = (Entity) target;
-        boolean isEnemy = (scanner.getOwner() != null) && (targetUnit.getOwner() != null)
-              && targetUnit.getOwner().isEnemyOf(scanner.getOwner());
-        boolean anyDesignated = false;
-        for (Entity unit : getGame().getEntitiesVector()) {
-            if (unit.isDesignatedScanTarget()) {
-                anyDesignated = true;
-                break;
-            }
-        }
         return "target is a unit; sensor check mission=" + isSensorCheckMission
-              + ", enemy of the scanner=" + isEnemy
-              + ", any unit marked wanted=" + anyDesignated
+              + ", enemy of the scanner=" + isEnemyOfTheScanner(scanner, targetUnit)
+              + ", this side has marked targets=" + missionMarksTargetsFor(scanner)
               + ", this one marked wanted=" + targetUnit.isDesignatedScanTarget();
     }
 
@@ -613,22 +604,43 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
 
     /**
      * @return {@code true} when the unit is an enemy of the scanner that counts in the Sensor Check mission: any
-     *       enemy, or only the designated ones when the scenario designated some
+     *       enemy, or only the marked ones when the mission marked some for this side to read
      */
     private boolean isScorableEnemy(Entity scanner, Entity target) {
-        boolean isEnemy = (scanner.getOwner() != null) && (target.getOwner() != null)
-              && target.getOwner().isEnemyOf(scanner.getOwner());
-        if (!isEnemy) {
+        if (!isEnemyOfTheScanner(scanner, target)) {
             return false;
         }
-        boolean anyDesignated = false;
+        return !missionMarksTargetsFor(scanner) || target.isDesignatedScanTarget();
+    }
+
+    /**
+     * Whether the mission has marked the units this side is meant to read. The question is asked about the
+     * scanner's side rather than about the game as a whole, because a mark only ever sits on a unit somebody else
+     * was sent to read. Asking globally meant that in a mission where both sides have something to read, marking
+     * one side's targets made every ordinary enemy worthless to the other side as well.
+     *
+     * @param scanner the unit doing the scanning
+     *
+     * @return {@code true} when at least one enemy of this scanner is marked
+     */
+    private boolean missionMarksTargetsFor(Entity scanner) {
         for (Entity unit : getGame().getEntitiesVector()) {
-            if (unit.isDesignatedScanTarget()) {
-                anyDesignated = true;
-                break;
+            if (unit.isDesignatedScanTarget() && isEnemyOfTheScanner(scanner, unit)) {
+                return true;
             }
         }
-        return !anyDesignated || target.isDesignatedScanTarget();
+        return false;
+    }
+
+    /**
+     * @param scanner the unit doing the scanning
+     * @param unit    the unit to weigh up
+     *
+     * @return {@code true} when the two are on opposing sides
+     */
+    private boolean isEnemyOfTheScanner(Entity scanner, Entity unit) {
+        return (scanner.getOwner() != null) && (unit.getOwner() != null)
+              && unit.getOwner().isEnemyOf(scanner.getOwner());
     }
 
     /**

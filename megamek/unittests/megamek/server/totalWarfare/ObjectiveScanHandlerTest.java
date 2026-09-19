@@ -512,6 +512,47 @@ class ObjectiveScanHandlerTest {
     }
 
     @Test
+    void testEachSideHasItsOwnMarkedTargets() {
+        // Both sides have something to read: Alice was sent to read Bob's convoy, Bob to read Alice's tanker.
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK).setValue(true);
+        BipedMek aliceScout = mekOf(alice, SCANNER_HEX);
+        BipedMek aliceTanker = mekOf(alice, new Coords(2, 2));
+        BipedMek bobScout = mekOf(bob, new Coords(2, 3));
+        BipedMek bobConvoyTruck = mekOf(bob, new Coords(4, 3));
+        bobConvoyTruck.setDesignatedScanTarget(true);
+        aliceTanker.setDesignatedScanTarget(true);
+        when(game.getEntity(bobConvoyTruck.getId())).thenReturn(bobConvoyTruck);
+        when(game.getEntity(aliceTanker.getId())).thenReturn(aliceTanker);
+        aliceScout.setPendingScan(new ScanAction(aliceScout.getId(), bobConvoyTruck.getId()));
+        bobScout.setPendingScan(new ScanAction(bobScout.getId(), aliceTanker.getId()));
+        when(game.getEntitiesVector()).thenReturn(List.of(aliceScout, aliceTanker, bobScout, bobConvoyTruck));
+
+        handler.resolveScans();
+
+        assertEquals(1, aliceScout.getBankedScans().size(),
+              "Bob marking a target of his own must not cost Alice her reading");
+        assertEquals(1, bobScout.getBankedScans().size(), "and Alice marking one must not cost Bob his");
+    }
+
+    @Test
+    void testAMarkOnYourOwnSideDoesNotNarrowYourOwnMission() {
+        // Only Alice's own tanker is marked, which is Bob's mission, not hers. Every enemy of hers still counts.
+        gameOptions.getOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK).setValue(true);
+        BipedMek aliceScout = mekOf(alice, SCANNER_HEX);
+        BipedMek aliceTanker = mekOf(alice, new Coords(2, 2));
+        BipedMek ordinaryEnemy = mekOf(bob, new Coords(4, 3));
+        aliceTanker.setDesignatedScanTarget(true);
+        when(game.getEntity(ordinaryEnemy.getId())).thenReturn(ordinaryEnemy);
+        aliceScout.setPendingScan(new ScanAction(aliceScout.getId(), ordinaryEnemy.getId()));
+        when(game.getEntitiesVector()).thenReturn(List.of(aliceScout, aliceTanker, ordinaryEnemy));
+
+        handler.resolveScans();
+
+        assertEquals(1, aliceScout.getBankedScans().size(),
+              "a mark sitting on her own side is not a mark on hers to read");
+    }
+
+    @Test
     void testWithoutTheSensorCheckMissionAnEnemyUnitIsNothingOfInterest() {
         BipedMek scout = mekOf(alice, SCANNER_HEX);
         BipedMek enemy = mekOf(bob, new Coords(4, 3));

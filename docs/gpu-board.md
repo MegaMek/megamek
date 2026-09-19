@@ -182,6 +182,12 @@ its legs at the unit's own facing and turns only that node, easing to a new
 twist at `UpperBodyTurn.DEGREES_PER_SECOND`. A descriptor without the key turns
 as one piece. `[GpuTwist]` debug lines record each change.
 
+The snapshot also lists a Mek's physically lost locations by the game's
+abbreviation, which is the name of that location's node in every Mek mesh.
+`UnitDamageDisplay` stops drawing a lost arm and gives any other lost location
+a dark copy of its material, on the unit's own instance only. `[GpuDamage]`
+debug lines record each change and any location the mesh has no node for.
+
 Annotations use the existing entity painter, rasterized at higher resolution
 and drawn in screen space. They follow the animated unit, spread around nearby
 labels, and stay clamped to the viewport edge when their unit is offscreen.

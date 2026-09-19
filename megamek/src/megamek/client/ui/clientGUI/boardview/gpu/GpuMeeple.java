@@ -11,20 +11,33 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Disposable;
+import megamek.common.annotations.Nullable;
 
 /** One owned unit model, authored or sprite-derived, with shared placement and annotation geometry. */
 final class GpuMeeple implements Disposable {
     private final Model model;
     final ModelInstance instance;
     private final BoundingBox bounds;
+    private final String upperBodyNode;
 
     GpuMeeple(Model model) {
+        this(model, null);
+    }
+
+    /**
+     * @param upperBodyNode the part of the model that carries everything above the waist, as named by the model's
+     *                      descriptor, or {@code null} for a model that turns as one piece
+     */
+    GpuMeeple(Model model, @Nullable String upperBodyNode) {
+        this.upperBodyNode = ((upperBodyNode != null) && (model.getNode(upperBodyNode) != null))
+              ? upperBodyNode : null;
         this.model = model;
         instance = new ModelInstance(model);
         bounds = instance.calculateBoundingBox(new BoundingBox());
@@ -51,6 +64,27 @@ final class GpuMeeple implements Disposable {
         // The token is built one height unit tall; the placement scales it to the occupied height.
         GpuCutout.extrude(pixels, region, Vector3.Zero, 1, 1, true, caps, sides);
         return builder.end();
+    }
+
+    /** @return {@code true} if the upper body can turn on its own, so a torso twist leaves the legs where they are */
+    boolean turnsUpperBody() {
+        return upperBodyNode != null;
+    }
+
+    /**
+     * Shows a torso twist: turns the upper body about its own pivot and leaves the rest of the model alone.
+     *
+     * @param placed  an instance of this model
+     * @param degrees the turn in degrees, clockwise seen from above, measured from the legs
+     */
+    void turnUpperBody(ModelInstance placed, float degrees) {
+        Node upperBody = (upperBodyNode == null) ? null : placed.getNode(upperBodyNode);
+        if (upperBody == null) {
+            return;
+        }
+        // Facings run clockwise and rotation about Z runs the other way, as in place().
+        upperBody.rotation.set(Vector3.Z, -degrees);
+        placed.calculateTransforms();
     }
 
     Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, int height, boolean multiHex) {

@@ -59,17 +59,27 @@ import megamek.common.board.Coords;
  */
 public class ScanSprite extends Sprite {
 
-    /** Distance in unscaled pixels between one arc and the next along the line. */
-    private static final int ARC_SPACING = 13;
+    /** Distance in unscaled pixels between one arc and the next along the line, about half a hex. */
+    private static final int ARC_SPACING = 38;
 
-    /** How wide, in unscaled pixels, the last and widest arc is drawn. */
-    private static final int WIDEST_ARC = 15;
+    /** The radius, in unscaled pixels, of the arc nearest the target. A hex is 84 wide, so this fills most of one. */
+    private static final int WIDEST_ARC = 58;
+
+    /** How much narrower the first arc is than the last, so the run reads as a direction rather than a ladder. */
+    private static final double NARROWEST_FRACTION = 0.55;
 
     /** The arcs stop short of both hexes so neither the scout nor its target is drawn over. */
-    private static final int CLEARANCE = 20;
+    private static final int CLEARANCE = 26;
 
-    /** The arc sweep in degrees, centred on the direction of travel. */
-    private static final int SWEEP_DEGREES = 70;
+    /** The arc sweep in degrees, centred on the direction of travel. A shallow curve, not a bowl. */
+    private static final int SWEEP_DEGREES = 58;
+
+    /** Stroke width in unscaled pixels. The sweep has to read at a glance across several hexes of terrain. */
+    private static final float STROKE_WIDTH = 5.5f;
+
+    /** Alpha of the arc nearest the scout, and of the one nearest the target. */
+    private static final int NEAR_ALPHA = 150;
+    private static final int FAR_ALPHA = 240;
 
     private final Coords scannerPosition;
     private final Coords targetPosition;
@@ -175,20 +185,21 @@ public class ScanSprite extends Sprite {
         // Screen degrees run anticlockwise from east while the screen's y axis runs down, so the sweep's facing is
         // the negated travel angle. Each arc opens toward the target.
         double facingDegrees = Math.toDegrees(Math.atan2(-runY, runX));
-        Stroke stroke = new BasicStroke(Math.max(1.4f, (float) (2.0 * bv.getScale())), BasicStroke.CAP_ROUND,
-              BasicStroke.JOIN_ROUND);
+        Stroke stroke = new BasicStroke(Math.max(2.5f, (float) (STROKE_WIDTH * bv.getScale())),
+              BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         graphics2D.setStroke(stroke);
 
         for (int index = 1; index <= arcCount; index++) {
             double along = index / (double) (arcCount + 1);
             double centreX = startX + (runX * along) + x;
             double centreY = startY + (runY * along) + y;
-            // the sweep widens as it travels, so the run reads as a direction even on a short line
-            double radius = Math.max(2.0, WIDEST_ARC * bv.getScale() * along);
+            // the sweep widens and strengthens as it travels, so the run reads as a direction rather than a
+            // ladder of identical marks, and the eye is pulled toward what is being read
+            double growth = NARROWEST_FRACTION + ((1.0 - NARROWEST_FRACTION) * along);
+            double radius = Math.max(4.0, WIDEST_ARC * bv.getScale() * growth);
             Arc2D arc = new Arc2D.Double(centreX - radius, centreY - radius, radius * 2, radius * 2,
                   facingDegrees - (SWEEP_DEGREES / 2.0), SWEEP_DEGREES, Arc2D.OPEN);
-            // the far arcs are the faintest, so the eye is pulled toward what is being read
-            int alpha = Math.min(255, (int) (90 + (140 * along)));
+            int alpha = (int) (NEAR_ALPHA + ((FAR_ALPHA - NEAR_ALPHA) * along));
             graphics2D.setColor(new Color(sweepColor.getRed(), sweepColor.getGreen(), sweepColor.getBlue(), alpha));
             graphics2D.draw(arc);
         }

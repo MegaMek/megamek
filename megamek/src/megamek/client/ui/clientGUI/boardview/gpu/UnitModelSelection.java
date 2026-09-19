@@ -1,6 +1,9 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 import megamek.client.ui.tileset.MekTileset;
 import megamek.client.ui.tileset.UnitModelKey;
 import megamek.common.battleArmor.BattleArmor;
@@ -45,7 +48,39 @@ final class UnitModelSelection {
             variant = infantry.getMovementMode().name();
         }
         return new BoardScene.UnitModel(asset, tileset.genericModelFor(entity, part),
-              variant, count, twist);
+              variant, count, twist, damage(entity));
+    }
+
+    /**
+     * A Mek's lost locations, split by how a model shows them: an arm that is gone is taken off, anything else is
+     * left in place and burnt out, because the rest of the Mek stands on it or hangs from it. A side torso takes its
+     * arm with it in the game, so that arm arrives here as lost too.
+     *
+     * @return the locations to show as lost; {@link BoardScene.LocationDamage#NONE} for anything but a Mek
+     */
+    static BoardScene.LocationDamage damage(Entity entity) {
+        if (!(entity instanceof Mek mek)) {
+            return BoardScene.LocationDamage.NONE;
+        }
+        Set<String> removed = new TreeSet<>();
+        Set<String> wrecked = new TreeSet<>();
+        for (int location = 0; location < mek.locations(); location++) {
+            if (isLost(mek, location)) {
+                (mek.isArm(location) ? removed : wrecked).add(mek.getLocationAbbr(location));
+            }
+        }
+        return (removed.isEmpty() && wrecked.isEmpty()) ? BoardScene.LocationDamage.NONE
+              : new BoardScene.LocationDamage(removed, wrecked);
+    }
+
+    /**
+     * Physically gone, as opposed to {@code isLocationBad}, which also counts a flooded leg that is still attached.
+     * A limb blown off this phase stays on until the phase ends, as its damage does everywhere else.
+     */
+    private static boolean isLost(Mek mek, int location) {
+        boolean isDestroyed = mek.isLocationTrulyDestroyed(location);
+        boolean isBlownOff = mek.isLocationBlownOff(location) && !mek.isLocationBlownOffThisPhase(location);
+        return isDestroyed || isBlownOff;
     }
 
     /**

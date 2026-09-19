@@ -67,6 +67,8 @@ class GpuBattleView extends ApplicationAdapter {
     private final Map<BoardScene.Unit, Vector3> unitAnchors = new HashMap<>();
     private final Map<String, ModelInstance> unitInstances = new HashMap<>();
     private final Map<String, BoardScene.Pixels> unitTints = new HashMap<>();
+    private final Map<String, UpperBodyTurn> upperBodyTurns = new HashMap<>();
+    private final Map<String, BoardScene.LocationDamage> unitDamage = new HashMap<>();
     private final Map<Integer, KeyCommandBind> cameraKeys = new HashMap<>();
     private final BoardInput boardInput = new BoardInput();
     private final List<Hover> hover = new ArrayList<>();
@@ -275,6 +277,8 @@ class GpuBattleView extends ApplicationAdapter {
         unitInstances.keySet().retainAll(scene.units().stream().map(unit -> unit.id() + ":" + unit.part())
               .collect(Collectors.toSet()));
         unitTints.keySet().retainAll(unitInstances.keySet());
+        upperBodyTurns.keySet().retainAll(unitInstances.keySet());
+        unitDamage.keySet().retainAll(unitInstances.keySet());
         for (BoardScene.Unit unit : scene.units()) {
             Vector3 position = BoardGeometry.center(unit.location().coords(), unit.location().elevation());
             float facing = unit.location().facing() * 60;
@@ -297,9 +301,11 @@ class GpuBattleView extends ApplicationAdapter {
             String key = unit.id() + ":" + unit.part();
             ModelInstance instance = unitInstances.get(key);
             if (instance == null || instance.model != meeple.instance.model) {
-                instance = new ModelInstance(meeple.instance.model);
-                unitInstances.put(key, instance);
-                unitTints.remove(key);
+                instance = newUnitInstance(key, meeple);
+            }
+            BoardScene.LocationDamage shownDamage = unitDamage.getOrDefault(key, BoardScene.LocationDamage.NONE);
+            if (authored && !unit.model().damage().equals(shownDamage)) {
+                instance = showDamage(key, meeple, unit);
             }
             // Presentation-only color for the see-through pass; the normal model materials retain their artwork.
             if (!(instance.userData instanceof Color)) {
@@ -319,6 +325,11 @@ class GpuBattleView extends ApplicationAdapter {
                     }
                 }
                 unitTints.put(key, unit.image());
+            }
+            if (authored && meeple.turnsUpperBody()) {
+                // A movement replay already follows the legs, so only a unit standing still shows its twist.
+                boolean isMoving = (motion != null) && motion.isMoving();
+                facing -= turnUpperBody(meeple, instance, key, unit, isMoving ? 0 : unit.model().twist());
             }
             Vector3 anchor = meeple.place(instance, boardCamera.camera, position, facing, unit.height(), unit.part() >= 0);
             if (unit.airborne()) {
@@ -384,6 +395,55 @@ class GpuBattleView extends ApplicationAdapter {
             }
         }
         lines.end();
+    }
+
+    /** A fresh instance shows no tint, twist or damage yet, so everything remembered about the old one is dropped. */
+    private ModelInstance newUnitInstance(String key, GpuMeeple meeple) {
+        ModelInstance instance = new ModelInstance(meeple.instance.model);
+        unitInstances.put(key, instance);
+        unitTints.remove(key);
+        upperBodyTurns.remove(key);
+        unitDamage.remove(key);
+        return instance;
+    }
+
+    /**
+     * Takes lost arms off the unit's model and burns out its other lost locations. Starts from a fresh instance
+     * instead of undoing the old damage, which also covers a location that a game master has repaired.
+     */
+    private ModelInstance showDamage(String key, GpuMeeple meeple, BoardScene.Unit unit) {
+        BoardScene.LocationDamage damage = unit.model().damage();
+        ModelInstance instance = newUnitInstance(key, meeple);
+        List<String> missing = UnitDamageDisplay.show(instance, damage);
+        unitDamage.put(key, damage);
+        LOGGER.debug("[GpuDamage] {}: taken off {}, burnt out {}, no part in the model for {}",
+              unit.name(), damage.removed(), damage.wrecked(), missing);
+        return instance;
+    }
+
+    /**
+     * Shows a torso twist on a model whose upper body turns on its own. The scene gives the unit's torso facing, as
+     * the classic sprite does, so the legs are that facing less the twist.
+     *
+     * @param twist hexsides the torso is turned clockwise from the legs
+     *
+     * @return the degrees to take off the displayed facing to get the facing of the legs
+     */
+    private float turnUpperBody(GpuMeeple meeple, ModelInstance instance, String key, BoardScene.Unit unit, int twist) {
+        UpperBodyTurn turn = upperBodyTurns.get(key);
+        if (turn == null) {
+            turn = new UpperBodyTurn();
+            upperBodyTurns.put(key, turn);
+        }
+        int previousTwist = turn.hexsides();
+        if (turn.advance(twist, Gdx.graphics.getDeltaTime())) {
+            meeple.turnUpperBody(instance, turn.degrees());
+        }
+        if (previousTwist != twist) {
+            LOGGER.debug("[GpuTwist] {}: upper body now {} hexside(s) clockwise of the legs, was {}",
+                  unit.name(), twist, previousTwist);
+        }
+        return turn.targetDegrees();
     }
 
     private void renderUnits() {

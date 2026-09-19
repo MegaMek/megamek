@@ -103,8 +103,43 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
     }
 
-    /** Derived on Swing after visibility filtering; the render thread never reads an Entity. */
-    record UnitModel(String asset, String fallback, String variant, int figures) { }
+    /**
+     * Derived on Swing after visibility filtering; the render thread never reads an Entity.
+     *
+     * @param asset    the descriptor chosen for the unit, relative to the model directory
+     * @param fallback the generic descriptor used when {@code asset} cannot be loaded, or {@code null}
+     * @param variant  the key of the unit's loadout or formation inside the descriptor
+     * @param figures  the number of figures a formation shows
+     * @param twist    hexsides the displayed facing (a Mek's torso) is turned clockwise from the unit's own facing
+     *                 (its legs), from {@code -2} to {@code 3}; {@code 0} when the two agree
+     * @param damage   the locations to show as lost or destroyed
+     */
+    record UnitModel(String asset, String fallback, String variant, int figures, int twist, LocationDamage damage) {
+        UnitModel(String asset, String fallback, String variant, int figures) {
+            this(asset, fallback, variant, figures, 0, LocationDamage.NONE);
+        }
+    }
+
+    /**
+     * The locations of a unit that a model shows as lost, each by the game's own abbreviation ({@code LA},
+     * {@code RT}, ...), which is also the name of that location's part in the model.
+     *
+     * @param removed locations shown as gone altogether: a lost arm
+     * @param wrecked locations shown still in place but burnt out: a destroyed leg, side torso or head, which the
+     *                rest of the model stands on or hangs from
+     */
+    record LocationDamage(Set<String> removed, Set<String> wrecked) {
+        static final LocationDamage NONE = new LocationDamage(Set.of(), Set.of());
+
+        LocationDamage {
+            removed = Set.copyOf(removed);
+            wrecked = Set.copyOf(wrecked);
+        }
+
+        boolean isNone() {
+            return removed.isEmpty() && wrecked.isEmpty();
+        }
+    }
 
     public record Waypoint(Coords coords, float elevation, float facing) { }
 

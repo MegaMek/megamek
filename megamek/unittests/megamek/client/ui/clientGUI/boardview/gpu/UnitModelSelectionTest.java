@@ -3,9 +3,14 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
+
+import java.util.Set;
 
 import com.badlogic.gdx.utils.JsonReader;
 import megamek.client.ui.tileset.MekTileset;
@@ -13,6 +18,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.Mek;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -92,6 +98,86 @@ class UnitModelSelectionTest {
         assertEquals("foot-six.g3dj", GpuUnitModels.selectModel(descriptor, "INF_UMU", 6));
         assertEquals("foot-six.g3dj", GpuUnitModels.selectModel(descriptor, "Rifle Platoon", 6));
         assertEquals("one.g3dj", GpuUnitModels.selectModel(descriptor, "HOVER", 8));
+    }
+
+    @Test
+    void twistIsTheShortestTurnFromTheLegsToTheTorso() {
+        assertEquals(0, UnitModelSelection.twist(2, 2));
+        assertEquals(1, UnitModelSelection.twist(2, 3));
+        assertEquals(-1, UnitModelSelection.twist(2, 1));
+        // Across north: legs facing 5 with the torso at 0 is one hexside clockwise, and the reverse is one back.
+        assertEquals(1, UnitModelSelection.twist(5, 0));
+        assertEquals(-1, UnitModelSelection.twist(0, 5));
+        assertEquals(2, UnitModelSelection.twist(4, 0));
+        assertEquals(-2, UnitModelSelection.twist(0, 4));
+        assertEquals(3, UnitModelSelection.twist(0, 3));
+        // An undeployed unit has no facing yet.
+        assertEquals(0, UnitModelSelection.twist(-1, 2));
+        assertEquals(0, UnitModelSelection.twist(2, -1));
+    }
+
+    @Test
+    void theTwistTravelsWithTheModelChoice() {
+        ConvInfantry infantry = new ConvInfantry();
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
+        MekTileset tileset = mock(MekTileset.class);
+        when(tileset.modelFor(infantry, -1)).thenReturn("units/infantry/model.json");
+        assertEquals(0, UnitModelSelection.capture(infantry, -1, false, tileset).twist());
+        assertEquals(-1, UnitModelSelection.capture(infantry, -1, false, tileset, -1).twist());
+    }
+
+    private static Mek bipedWithLocations() {
+        Mek mek = mock(Mek.class);
+        String[] abbreviations = { "HD", "CT", "RT", "LT", "RA", "LA", "RL", "LL" };
+        when(mek.locations()).thenReturn(abbreviations.length);
+        for (int location = 0; location < abbreviations.length; location++) {
+            when(mek.getLocationAbbr(location)).thenReturn(abbreviations[location]);
+        }
+        when(mek.isArm(Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mek.isArm(Mek.LOC_RIGHT_ARM)).thenReturn(true);
+        when(mek.getDependentLocation(anyInt())).thenReturn(Entity.LOC_NONE);
+        when(mek.getDependentLocation(Mek.LOC_RIGHT_TORSO)).thenReturn(Mek.LOC_RIGHT_ARM);
+        when(mek.getDependentLocation(Mek.LOC_LEFT_TORSO)).thenReturn(Mek.LOC_LEFT_ARM);
+        return mek;
+    }
+
+    @Test
+    void anIntactMekAndAnythingThatIsNotAMekShowNoDamage() {
+        assertSame(BoardScene.LocationDamage.NONE, UnitModelSelection.damage(bipedWithLocations()));
+        assertSame(BoardScene.LocationDamage.NONE, UnitModelSelection.damage(new ConvInfantry()));
+        assertTrue(BoardScene.LocationDamage.NONE.isNone());
+    }
+
+    @Test
+    void aLostArmIsTakenOffAndAnyOtherLostLocationIsBurntOutInPlace() {
+        Mek mek = bipedWithLocations();
+        // A destroyed right torso takes the right arm with it; the left leg was blown off in an earlier phase.
+        when(mek.isLocationTrulyDestroyed(Mek.LOC_RIGHT_TORSO)).thenReturn(true);
+        when(mek.isLocationTrulyDestroyed(Mek.LOC_RIGHT_ARM)).thenReturn(true);
+        when(mek.isLocationBlownOff(Mek.LOC_LEFT_LEG)).thenReturn(true);
+        BoardScene.LocationDamage damage = UnitModelSelection.damage(mek);
+        assertEquals(Set.of("RA"), damage.removed());
+        assertEquals(Set.of("RT", "LL"), damage.wrecked());
+    }
+
+    @Test
+    void aLostSideTorsoTakesItsArmEvenWhenTheArmWasNeverRecordedAsLost() {
+        // The damage editor can zero a side torso and leave the arm's own numbers untouched.
+        Mek mek = bipedWithLocations();
+        when(mek.isLocationTrulyDestroyed(Mek.LOC_LEFT_TORSO)).thenReturn(true);
+        BoardScene.LocationDamage damage = UnitModelSelection.damage(mek);
+        assertEquals(Set.of("LA"), damage.removed());
+        assertEquals(Set.of("LT"), damage.wrecked());
+    }
+
+    @Test
+    void aLimbBlownOffThisPhaseStaysOnUntilThePhaseEnds() {
+        Mek mek = bipedWithLocations();
+        when(mek.isLocationBlownOff(Mek.LOC_LEFT_ARM)).thenReturn(true);
+        when(mek.isLocationBlownOffThisPhase(Mek.LOC_LEFT_ARM)).thenReturn(true);
+        assertTrue(UnitModelSelection.damage(mek).isNone());
+        when(mek.isLocationBlownOffThisPhase(Mek.LOC_LEFT_ARM)).thenReturn(false);
+        assertEquals(Set.of("LA"), UnitModelSelection.damage(mek).removed());
     }
 
     @Test

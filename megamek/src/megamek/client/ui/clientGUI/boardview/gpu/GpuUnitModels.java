@@ -63,7 +63,13 @@ final class GpuUnitModels implements Disposable {
                     throw new IllegalArgumentException("Missing unit mesh " + modelPath);
                 }
                 var data = new G3dModelLoader(new JsonReader()).loadModelData(new FileHandle(modelPath.toFile()));
-                models.put(modelPath, new GpuMeeple(new Model(data)));
+                GpuMeeple meeple = new GpuMeeple(new Model(data), value.getString("upperBodyNode", null));
+                boolean isMek = "mek".equals(value.getString("kind", ""));
+                if (isMek && !meeple.turnsUpperBody()) {
+                    LOGGER.debug("[GpuTwist] {} has no upper body part to turn: a torso twist turns the whole unit",
+                          modelPath);
+                }
+                models.put(modelPath, meeple);
             }
             return models.get(modelPath);
         } catch (RuntimeException error) {

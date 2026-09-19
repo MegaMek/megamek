@@ -467,7 +467,8 @@ final class GpuBoardSource implements AutoCloseable {
                           .map(BoardScene.Unit::annotations).findFirst().orElse(null)),
               sensor ? 1 : entity.height() + 1, airborne,
               GpuUnitModels.ENABLED
-                    ? UnitModelSelection.capture(entity, part, sensor, MMStaticDirectoryManager.getMekTileset()) : null,
+                    ? UnitModelSelection.capture(entity, part, sensor, MMStaticDirectoryManager.getMekTileset(),
+                          sensor ? 0 : UnitModelSelection.twist(entity.getFacing(), facing)) : null,
               outline.getRGB());
     }
 

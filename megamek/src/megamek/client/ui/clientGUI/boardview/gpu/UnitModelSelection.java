@@ -13,6 +13,14 @@ final class UnitModelSelection {
     private UnitModelSelection() { }
 
     static BoardScene.UnitModel capture(Entity entity, int part, boolean sensor, MekTileset tileset) {
+        return capture(entity, part, sensor, tileset, 0);
+    }
+
+    /**
+     * @param twist hexsides the displayed facing is turned clockwise from the unit's own facing, see
+     *              {@link #twist(int, int)}
+     */
+    static BoardScene.UnitModel capture(Entity entity, int part, boolean sensor, MekTileset tileset, int twist) {
         if (sensor) {
             return null;
         }
@@ -37,7 +45,25 @@ final class UnitModelSelection {
             variant = infantry.getMovementMode().name();
         }
         return new BoardScene.UnitModel(asset, tileset.genericModelFor(entity, part),
-              variant, count);
+              variant, count, twist);
+    }
+
+    /**
+     * The classic sprite shows a Mek at its torso facing, so a twisted Mek appears to turn its legs as well. A model
+     * with a separate upper body can keep the legs where they are, which needs the difference between the two.
+     *
+     * @param facing          the unit's own facing (a Mek's legs), in hexsides
+     * @param displayedFacing the facing the unit is shown at (a Mek's torso), in hexsides
+     *
+     * @return the shortest turn from {@code facing} to {@code displayedFacing} in hexsides, clockwise positive, from
+     *       {@code -2} to {@code 3}; {@code 0} when either facing is not set
+     */
+    static int twist(int facing, int displayedFacing) {
+        if ((facing < 0) || (displayedFacing < 0)) {
+            return 0;
+        }
+        int clockwise = Math.floorMod(displayedFacing - facing, 6);
+        return (clockwise > 3) ? clockwise - 6 : clockwise;
     }
 
     /** Square-root compression: 28 soldiers become six figures; five armored troopers become three. */

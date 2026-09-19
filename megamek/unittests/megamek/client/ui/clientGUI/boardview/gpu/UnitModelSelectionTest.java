@@ -95,6 +95,32 @@ class UnitModelSelectionTest {
     }
 
     @Test
+    void twistIsTheShortestTurnFromTheLegsToTheTorso() {
+        assertEquals(0, UnitModelSelection.twist(2, 2));
+        assertEquals(1, UnitModelSelection.twist(2, 3));
+        assertEquals(-1, UnitModelSelection.twist(2, 1));
+        // Across north: legs facing 5 with the torso at 0 is one hexside clockwise, and the reverse is one back.
+        assertEquals(1, UnitModelSelection.twist(5, 0));
+        assertEquals(-1, UnitModelSelection.twist(0, 5));
+        assertEquals(2, UnitModelSelection.twist(4, 0));
+        assertEquals(-2, UnitModelSelection.twist(0, 4));
+        assertEquals(3, UnitModelSelection.twist(0, 3));
+        // An undeployed unit has no facing yet.
+        assertEquals(0, UnitModelSelection.twist(-1, 2));
+        assertEquals(0, UnitModelSelection.twist(2, -1));
+    }
+
+    @Test
+    void theTwistTravelsWithTheModelChoice() {
+        ConvInfantry infantry = new ConvInfantry();
+        infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
+        MekTileset tileset = mock(MekTileset.class);
+        when(tileset.modelFor(infantry, -1)).thenReturn("units/infantry/model.json");
+        assertEquals(0, UnitModelSelection.capture(infantry, -1, false, tileset).twist());
+        assertEquals(-1, UnitModelSelection.capture(infantry, -1, false, tileset, -1).twist());
+    }
+
+    @Test
     void unknownVariantsFallBackAndZeroStrengthHasAnEmptyFormation() {
         var mek = new JsonReader().parse("""
               {"kind":"mek", "fallback":"body.g3dj", "variants":{"Atlas AS7-D":"as7-d.g3dj"}}

@@ -523,7 +523,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                 completeScan(coords, event.getBoardId());
                 return;
             }
-            Targetable chosenTarget = chooseTarget(coords);
+            Targetable chosenTarget = chooseTarget(coords, event.getBoardId());
             if (chosenTarget != null) {
                 target(chosenTarget);
             }
@@ -575,13 +575,16 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Chooses a target from the given hex coordinates. If multiple entities exist at the hex, shows a dialog for
      * selection.
      */
-    private Targetable chooseTarget(Coords coords) {
+    private Targetable chooseTarget(Coords coords, int boardId) {
+        // The engine's own hex lookup, which every other display uses. The hand-written filter this replaces
+        // asked isBoardable(), which means "can be boarded" and is false for everything but a building, so no unit
+        // was ever offered and every click fell back to the hex.
         List<Targetable> targets = new ArrayList<>();
-
-        // Gather all entities at hex
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.getPosition() != null && e.getPosition().equals(coords) && e.isBoardable()) {
-                targets.add(e);
+        for (Entity candidate : game.getEntitiesVector(coords, boardId, true)) {
+            // Not the scanner itself: clicking your own hex means the hex, which is how infantry read the ground
+            // they stand on.
+            if (candidate.getId() != currentEntity) {
+                targets.add(candidate);
             }
         }
 
@@ -848,7 +851,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         if (scanner == null) {
             return;
         }
-        Targetable chosen = chooseTarget(coords);
+        Targetable chosen = chooseTarget(coords, boardId);
         Targetable scanTarget = (chosen != null) ? chosen : new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR);
         String refusal = scanRefusal(scanner, scanTarget);
         if (refusal != null) {

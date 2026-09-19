@@ -66,6 +66,7 @@ import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.ScanMission;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.GameTurn;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;
@@ -647,6 +648,19 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
+     * Puts a scan order on this client's own copy of the unit and tells the board, so the sweep and the labels
+     * follow the click instead of the packet. The server confirms or refuses a moment later and its answer
+     * replaces this one, so nothing here decides the rules - it only stops the board lagging the player.
+     *
+     * @param scanner the unit whose order changed
+     * @param order   the order it now carries, or {@code null} when it was withdrawn
+     */
+    private void showTheOrderImmediately(Entity scanner, @Nullable ScanAction order) {
+        scanner.setPendingScan(order);
+        game.processGameEvent(new GameEntityChangeEvent(this, scanner));
+    }
+
+    /**
      * Works out which of the player's units the declarations turn belongs to. The selected unit is usually the
      * right answer, but the player may have used Next to step onto a unit that has no turn of its own, and ending
      * the turn in that unit's name does nothing.
@@ -867,6 +881,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             // The order is already with the server, so take it back rather than making the player pick another hex
             clientgui.getClient().sendScanWithdraw(scanner.getId());
             scanner.setPendingScan(null);
+            showTheOrderImmediately(scanner, null);
             setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
             clientgui.addToast(ToastLevel.INFO,
                   Messages.getString("PreEndDeclarationsDisplay.scanWithdrawn", scanner.getShortName()));
@@ -923,6 +938,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
               ? new ScanAction(currentEntity, targetUnit.getId())
               : new ScanAction(currentEntity, coords, boardId);
         clientgui.getClient().sendScanOrder(order);
+        // Show the order at once rather than after the round trip. A scan order lives for part of one turn and a
+        // player often re-points it two or three times before ending the turn, so waiting for the server to
+        // confirm left the sweep lagging a click behind the choice. The server's own update follows and wins.
+        showTheOrderImmediately(scanner, order);
         String targetName = (scanTarget instanceof Entity targetUnit)
               ? targetUnit.getShortName()
               : scanTarget.getPosition().getBoardNum();
@@ -1203,7 +1222,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * withdrawn, without the client guessing ahead of the server.
      */
     @Override
-    public void gameEntityChange(megamek.common.event.entity.GameEntityChangeEvent event) {
+    public void gameEntityChange(GameEntityChangeEvent event) {
         super.gameEntityChange(event);
         boolean isTheSelectedUnit = (event.getEntity() != null) && (event.getEntity().getId() == currentEntity);
         if (isTheSelectedUnit && isMyTurn()) {

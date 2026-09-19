@@ -40,9 +40,12 @@ import java.util.stream.Collectors;
 
 import megamek.common.Player;
 import megamek.common.compute.InfantryActionStrengths;
+import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
 import megamek.logging.MMLogger;
 
 /**
@@ -95,6 +98,27 @@ final class InfantryActionTurnOrder {
               .map(turn -> describe(game, turn.playerId()))
               .collect(Collectors.joining(", ")));
         return true;
+    }
+
+    /**
+     * Says, once for the phase, which infantry get no turn in it because they are committed to an infantry action.
+     * A unit that is skipped shows nothing on the map, so without this line "my platoon never got a turn" cannot
+     * be told apart from a turn-order fault.
+     *
+     * @param game  the game
+     * @param phase the phase whose turns have just been built
+     */
+    static void logUnitsHeldInPlace(Game game, GamePhase phase) {
+        List<String> heldUnits = new ArrayList<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if ((entity instanceof Infantry infantry) && infantry.isHeldInPlaceByInfantryAction(phase)) {
+                heldUnits.add(infantry.getShortName() + " (building " + infantry.getInfantryCombatTargetId() + ")");
+            }
+        }
+        if (!heldUnits.isEmpty()) {
+            LOGGER.info("[InfantryAction] round {} {}: no turn for units committed to an action: {}",
+                  game.getCurrentRound(), phase, String.join(", ", heldUnits));
+        }
     }
 
     /** Whether the player has infantry inside an enemy building, or an attack already running, anywhere. */

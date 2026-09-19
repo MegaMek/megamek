@@ -175,8 +175,12 @@ public class ScanSprite extends Sprite {
         double runX = targetPoint.x - (double) scannerPoint.x;
         double runY = targetPoint.y - (double) scannerPoint.y;
         double length = Math.hypot(runX, runY);
-        int spacing = Math.max(4, (int) (ARC_SPACING * bv.getScale()));
-        int arcCount = (int) (length / spacing);
+        double spacing = Math.max(6.0, ARC_SPACING * bv.getScale());
+        // Measured from the scout end, starting half a gap out, so the run is evenly spaced from the unit to its
+        // target. Spacing the arcs as fractions of the line instead left a double-width gap at each end, which
+        // read as a missing arc next to the scout.
+        double firstOffset = spacing / 2.0;
+        int arcCount = (int) Math.floor((length - firstOffset) / spacing) + 1;
         if (arcCount < 1) {
             graphics2D.dispose();
             return;
@@ -189,8 +193,8 @@ public class ScanSprite extends Sprite {
               BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         graphics2D.setStroke(stroke);
 
-        for (int index = 1; index <= arcCount; index++) {
-            double along = index / (double) (arcCount + 1);
+        for (int index = 0; index < arcCount; index++) {
+            double along = (firstOffset + (index * spacing)) / length;
             double centreX = startX + (runX * along) + x;
             double centreY = startY + (runY * along) + y;
             // the sweep widens and strengthens as it travels, so the run reads as a direction rather than a

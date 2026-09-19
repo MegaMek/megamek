@@ -241,7 +241,7 @@ public final class VictoryHexPropertiesPane {
         }
         if (isScanPoint) {
             SideChoice owningSide = (SideChoice) belongsToCombo.getSelectedItem();
-            marker.setOwnerId((owningSide == null) ? Player.PLAYER_NONE : owningSide.playerId());
+            marker.setBelongsToPlayerId((owningSide == null) ? Player.PLAYER_NONE : owningSide.playerId());
         }
         marker.setControlRadius((Integer) radiusSpinner.getValue());
         marker.setVictoryPointValue((Integer) victoryPointSpinner.getValue());
@@ -516,7 +516,7 @@ public final class VictoryHexPropertiesPane {
      */
     private static void selectOwningSide(JComboBox<SideChoice> combo, ObjectiveMarker marker) {
         for (int index = 0; index < combo.getItemCount(); index++) {
-            if (combo.getItemAt(index).playerId() == marker.getOwnerId()) {
+            if (combo.getItemAt(index).playerId() == marker.getBelongsToPlayerId()) {
                 combo.setSelectedIndex(index);
                 return;
             }

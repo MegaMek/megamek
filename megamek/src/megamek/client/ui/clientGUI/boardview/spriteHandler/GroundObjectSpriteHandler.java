@@ -251,11 +251,12 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
         Color chosen = pointColor(marker);
         // owner as well as controller: a scan point takes its colour from who it belongs to, so when one turns
         // up the wrong colour the first question is whether the owner reached this client at all
-        Player owner = game.getPlayer(marker.getOwnerId());
-        VICTORY_HEX_LOGGER.debug("[VictoryHex] colour for {} ({}): team={}, player={}, ownerId={} ({}) -> {}",
+        Player belongsTo = game.getPlayer(marker.getBelongsToPlayerId());
+        VICTORY_HEX_LOGGER.debug("[VictoryHex] colour for {} ({}): team={}, player={}, placedBy={},"
+                    + " belongsTo={} ({}) -> {}",
               marker.generalName(), marker.getScoringScheme().getPreset(), marker.getControllingTeam(),
-              marker.getControllingPlayerId(), marker.getOwnerId(),
-              (owner == null) ? "not a player on this client" : owner.getName(), chosen);
+              marker.getControllingPlayerId(), marker.getOwnerId(), marker.getBelongsToPlayerId(),
+              (belongsTo == null) ? "nobody" : belongsTo.getName(), chosen);
         return chosen;
     }
 
@@ -394,7 +395,9 @@ public class GroundObjectSpriteHandler extends BoardViewSpriteHandler implements
      * @return the colour of the player who placed it, or white when this client does not know them
      */
     private Color ownerColor(ObjectiveMarker marker) {
-        Player owner = game.getPlayer(marker.getOwnerId());
+        // the side the mission says it belongs to, not whoever put it on the board: a scan point is commonly
+        // placed by one player and owned by another, or by nobody at all
+        Player owner = game.getPlayer(marker.getBelongsToPlayerId());
         return (owner != null) ? owner.getDisplayColour().getColour() : NEUTRAL_COLOR;
     }
 

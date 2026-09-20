@@ -33,6 +33,9 @@ final class UnitAttack {
     java.util.function.Function<Ray, BoardGeometry.Hit> landscape;
     private final Map<Integer, Vector3> misses = new HashMap<>();
     private final Map<Integer, Vector3> beamMisses = new HashMap<>();
+    private UnitPicking surfaces;
+    private record HitPoint(ModelInstance target, String location, int seed) { }
+    private final Map<HitPoint, UnitPicking.SurfacePoint> hitPoints = new HashMap<>();
     float seconds;
     float delay;
 
@@ -92,7 +95,9 @@ final class UnitAttack {
             return result;
         }
         endpoint(target, origin, result);
-        if (event.result().hit() && target != null) {
+        if (event.result().hit() && target != null && !event.result().impacts().isEmpty()) {
+            hitEndpoint(target, origin, event.result().limb(), 0, 1, result);
+        } else if (event.result().hit() && target != null) {
             var bounds = UnitBounds.world(target);
             var center = bounds.getCenter(new Vector3());
             float height = event.result().kind() == ResolvedAttack.Kind.KICK ? .18f : .65f;
@@ -124,10 +129,29 @@ final class UnitAttack {
             return result.set(origin.cpy().lerp(result, .25f)).add(0, 0, BoardGeometry.LEVEL * .35f);
         }
         center(targetInstance, event.destination(), result);
-        if (!missed) { return result; }
+        if (!missed) { return shot() ? hitEndpoint(targetInstance, origin, missile, 0, 1, result) : result; }
         if (misses.containsKey(missile)) { return result.set(misses.get(missile)); }
         scatter(targetInstance, origin, missile, false, result);
         if (landscape != null) { misses.put(missile, result.cpy()); }
+        return result;
+    }
+
+    /** Cosmetic placement on engine-reported locations. Unknown/unsplit locations use the actual hull surface. */
+    Vector3 hitEndpoint(ModelInstance target, Vector3 origin, int seed, int ordinal, int count, Vector3 result) {
+        center(target, event.destination(), result);
+        if (target == null) { return result; }
+        String location = "*";
+        int weight = event.result().impacts().stream().mapToInt(impact -> Math.max(0, impact.weight())).sum();
+        float at = (ordinal + .5f) / Math.max(1, count) * weight;
+        for (var impact : event.result().impacts()) {
+            at -= Math.max(0, impact.weight());
+            if (at < 0) { location = impact.location(); break; }
+        }
+        if (surfaces == null) { surfaces = new UnitPicking(); }
+        var key = new HitPoint(target, location, seed);
+        var point = hitPoints.computeIfAbsent(key, ignored -> surfaces.surface(target, key.location(), origin,
+              seed ^ event.result().id().hashCode()));
+        if (point != null) { point.world(target, result); }
         return result;
     }
 
@@ -152,7 +176,8 @@ final class UnitAttack {
 
     /** Straight light does not stop at an arbitrary point in the air. False means no visible impact. */
     boolean beamEndpoint(ModelInstance target, Vector3 origin, int ordinal, Vector3 result) {
-        if (event.result().hit() || defensive()) { endpoint(target, origin, result); return true; }
+        if (defensive()) { endpoint(target, origin, result); return true; }
+        if (event.result().hit()) { hitEndpoint(target, origin, ordinal, 0, 1, result); return true; }
         beamAim(target, origin, ordinal, result);
         var ray = new Ray(origin, result.cpy().sub(origin).nor());
         var hit = landscape == null ? null : landscape.apply(ray);

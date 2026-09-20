@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.imageio.ImageIO;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -175,12 +176,23 @@ class GpuPolishSmokeTest {
             var b = new ModelInstance(model.instance.model);
             var origin = BoardGeometry.center(unit.location().coords(), 0);
             model.place(b, renderer.camera, BoardGeometry.center(target.location().coords(), 1), 180, target);
-            for (boolean hit : List.of(false, true)) {
+            for (int hits : "LRM 20".equals(weapon) ? new int[] { 0, 20, 10 } : new int[] { 0, 1 }) {
+                boolean hit = hits > 0;
+                var shot = ResolvedAttack.Shot.capture(mount);
+                if (shot.missiles() > 0) { shot = shot.withResolution(null, hits); }
+                String outcome = hit && hits < shot.missiles() ? hits + "-hits" : Boolean.toString(hit);
                 var event = new ResolvedAttack(new UUID(4, 301), ResolvedAttack.Kind.SHOT,
                       new UnitLocation(unit.id(), unit.location().coords(), 0, 0, 0),
                       new UnitLocation(target.id(), target.location().coords(), 3, 0, 0), Targetable.TYPE_ENTITY,
                       mount.getEquipmentNum(), weapon, Mek.LOC_LEFT_ARM, hit,
-                      List.of(new ResolvedAttack.Mount(unit.id(), mount.getEquipmentNum())), ResolvedAttack.Shot.capture(mount));
+                      List.of(new ResolvedAttack.Mount(unit.id(), mount.getEquipmentNum())), shot);
+                if (hit) {
+                    event = event.withImpacts(shot.missiles() > 0
+                          ? hits == 10 ? List.of(new ResolvedAttack.Impact("LA", false, 5), new ResolvedAttack.Impact("RT", false, 5))
+                                : List.of(new ResolvedAttack.Impact("LA", false, 5), new ResolvedAttack.Impact("RT", false, 5),
+                                      new ResolvedAttack.Impact("CT", false, 10))
+                          : List.of(new ResolvedAttack.Impact("RT", false, 1)));
+                }
                 var attack = new UnitAttack(new BoardScene.Combat(event, unit, target, target.location()));
                 var scene = GpuFamilyMotionReview.ramp();
                 var terrain = GpuFamilyMotionReview.terrain(scene);
@@ -196,13 +208,38 @@ class GpuPolishSmokeTest {
                         animator.aim(model, unit, attack, attack.endpoint(b, origin, new Vector3()), b);
                         effects.update(attack, library, Map.of(unit.id() + ":-1", a, target.id() + ":-1", b));
                         renderer.frame(List.of(terrain, a, b), origin.cpy().lerp(BoardGeometry.center(target.location().coords(), 1), .5f), effects,
-                              "polish-shot-" + weapon.replace(' ', '-') + "-" + hit, frame);
+                              "polish-shot-" + weapon.replace(' ', '-') + "-" + outcome, frame);
+                        if (shot.missiles() > 0 && frame == 12) {
+                            assertEquals(20, effects.missileCount(), "Cluster hits do not reduce the launched rack size");
+                            assertEquals(hits, attack.missileHits(unit.id(), mount.getEquipmentNum(), 20));
+                        }
+                        if ("ISMediumLaser".equals(weapon) && frame == 12) {
+                            var image = ImageIO.read(new File(System.getProperty("megamek.gpu.screenshots"),
+                                  "playback-polish-shot-ISMediumLaser-" + outcome + "/012.png"));
+                            int redPixels = 0;
+                            for (int y = 0; y < image.getHeight(); y++) {
+                                for (int x = 0; x < image.getWidth(); x++) {
+                                    int color = image.getRGB(x, y);
+                                    int red = color >> 16 & 255, green = color >> 8 & 255, blue = color & 255;
+                                    if (red > 180 && red > green * 1.5f && red > blue * 1.5f) { redPixels++; }
+                                }
+                            }
+                            assertTrue(redPixels > 100, "The beam must be visible for both hits and long off-board misses: " + redPixels);
+                        }
                         if (frame == 12 && hit) {
                             if ("Flamer".equals(weapon)) { normalFlame = effects.flameSize(); assertTrue(normalFlame > 0); }
                             if ("Heavy Flamer".equals(weapon)) {
                                 assertTrue(effects.flameSize() > normalFlame * 1.05f,
                                       "The heavy flamer must have a larger plume: " + effects.flameSize() + " vs " + normalFlame);
                             }
+                        }
+                        if (weapon.contains("Flamer")) {
+                            if (frame == 20) {
+                                assertTrue(attack.seconds > attack.contactSeconds);
+                                assertTrue(effects.flameParticleCount() > 0,
+                                      "Traveling flame packets must finish burning after contact instead of switching off like a beam");
+                            }
+                            if (frame == 32) { assertEquals(0, effects.flameParticleCount(), "Completed flame effects leave no particles"); }
                         }
                     }
                 } finally { effects.dispose(); terrain.model.dispose(); }

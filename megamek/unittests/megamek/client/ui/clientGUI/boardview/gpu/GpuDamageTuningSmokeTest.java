@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.SwingUtilities;
 
@@ -28,6 +29,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -48,20 +50,13 @@ import org.junit.jupiter.api.Test;
 @Tag("on-demand")
 class GpuDamageTuningSmokeTest {
     @Test
-    void destroyedTextureRemainsVisibleOverBlackVertexColors() {
+    void damageArtworkUsesStablePatternsAndPreservesCockpits() {
         var failure = new AtomicReference<Throwable>();
         new Lwjgl3Application(new ApplicationAdapter() {
             @Override
             public void create() {
-                var builder = new ModelBuilder();
-                builder.begin();
-                var plate = builder.part("plate", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position
-                            | VertexAttributes.Usage.Normal | VertexAttributes.Usage.ColorUnpacked
-                            | VertexAttributes.Usage.TextureCoordinates,
-                      new Material("paint", ColorAttribute.createDiffuse(Color.WHITE)));
-                plate.setColor(Color.BLACK);
-                plate.rect(-32, -32, 0, 32, -32, 0, 32, 32, 0, -32, 32, 0, 0, 0, 1);
-                var model = builder.end();
+                var model = plate(Color.BLACK);
+                var glass = plate(new Color(.21f, .67f, .73f, 1));
                 var damage = new UnitDamageDisplay();
                 var batch = new ModelBatch(GpuUnitCamouflage.shaders());
                 var buffer = new FrameBuffer(Pixmap.Format.RGBA8888, 128, 128, true);
@@ -81,6 +76,24 @@ class GpuDamageTuningSmokeTest {
                     for (int pixel : original) { colors.add(pixel); }
                     assertTrue(colors.size() > 8, "Destroyed artwork must retain its texture over baked black vertex colors");
 
+                    int[] cockpit = pixels(batch, buffer, camera, new ModelInstance(glass));
+                    int[] bareArmor = pixels(batch, buffer, camera, new ModelInstance(model));
+                    for (var stage : UnitDamageDisplay.Stage.values()) {
+                        var state = new BoardScene.LocationDamage(Set.of(), Set.of(), Map.of("*", stage));
+                        var canopy = new ModelInstance(glass);
+                        damage.applyTexture(canopy, state, 42);
+                        assertArrayEquals(cockpit, pixels(batch, buffer, camera, canopy), stage + " must spare cockpit glass");
+                        var armor = new ModelInstance(model);
+                        damage.applyTexture(armor, state, 42);
+                        assertFalse(Arrays.equals(bareArmor, pixels(batch, buffer, camera, armor)),
+                              stage + " must still cover armor and dark details");
+                    }
+                    var destroyedCockpit = new ModelInstance(glass);
+                    UnitDamageDisplay.show(destroyedCockpit, preview);
+                    damage.applyTexture(destroyedCockpit, preview, 42);
+                    assertArrayEquals(original, pixels(batch, buffer, camera, destroyedCockpit),
+                          "Destroyed artwork covers glass just like armor");
+
                     var rebuilt = new ModelInstance(model);
                     UnitDamageDisplay.show(rebuilt, preview);
                     damage.applyTexture(rebuilt, preview, 42);
@@ -95,10 +108,22 @@ class GpuDamageTuningSmokeTest {
                     camera.update();
                     assertArrayEquals(original, pixels(batch, buffer, camera, instance), "Damage stays attached during movement");
                 } catch (Throwable error) { failure.set(error); }
-                finally { buffer.dispose(); batch.dispose(); damage.dispose(); model.dispose(); Gdx.app.exit(); }
+                finally { buffer.dispose(); batch.dispose(); damage.dispose(); glass.dispose(); model.dispose(); Gdx.app.exit(); }
             }
         }, GpuBoardWindow.configuration(false));
-        if (failure.get() != null) { throw new AssertionError("Destroyed texture rendering failed", failure.get()); }
+        if (failure.get() != null) { throw new AssertionError("Damage texture rendering failed", failure.get()); }
+    }
+
+    private static Model plate(Color color) {
+        var builder = new ModelBuilder();
+        builder.begin();
+        var plate = builder.part("plate", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position
+                    | VertexAttributes.Usage.Normal | VertexAttributes.Usage.ColorUnpacked
+                    | VertexAttributes.Usage.TextureCoordinates,
+              new Material("detail", ColorAttribute.createDiffuse(Color.WHITE)));
+        plate.setColor(color);
+        plate.rect(-32, -32, 0, 32, -32, 0, 32, 32, 0, -32, 32, 0, 0, 0, 1);
+        return builder.end();
     }
 
     private static int[] pixels(ModelBatch batch, FrameBuffer buffer, OrthographicCamera camera, ModelInstance instance) {
@@ -156,6 +181,10 @@ class GpuDamageTuningSmokeTest {
     private static void verify(GpuBattleView view, GpuBoardFixture fixture) throws Exception {
         GpuBoardTestUi.click("tuning");
         view.render();
+        CheckBox vsync = GpuBoardTestUi.stage().getRoot().findActor("tuning-vsync");
+        assertTrue(vsync.isChecked());
+        GpuBoardTestUi.click("tuning-vsync");
+        assertFalse(vsync.isChecked());
         CheckBox override = GpuBoardTestUi.stage().getRoot().findActor("tuning-override-damage");
         Slider slider = GpuBoardTestUi.stage().getRoot().findActor("Display damage");
         var actual = displayedDamage(view, 1);
@@ -215,6 +244,7 @@ class GpuDamageTuningSmokeTest {
         view.render();
         GpuBoardTestUi.click("tuning-defaults");
         view.render();
+        assertTrue(vsync.isChecked(), "Defaults re-enables VSync");
         assertFalse(override.isChecked());
         assertTrue(slider.isDisabled());
         assertEquals(0, slider.getValue());

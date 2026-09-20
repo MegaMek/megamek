@@ -304,7 +304,7 @@ final class UnitDamageDisplay implements Disposable {
         return parts;
     }
 
-    private static void forParts(ModelInstance instance, String location, BiConsumer<Node, NodePart> action) {
+    static void forParts(ModelInstance instance, String location, BiConsumer<Node, NodePart> action) {
         if ("*".equals(location)) {
             for (Node root : instance.nodes) { collect(root, null, action); }
             return;

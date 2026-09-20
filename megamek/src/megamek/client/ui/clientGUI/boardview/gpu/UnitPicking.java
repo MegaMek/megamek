@@ -20,6 +20,54 @@ final class UnitPicking {
 
     private final Map<Mesh, Geometry> meshes = new IdentityHashMap<>();
 
+    record SurfacePoint(Node node, Vector3 local) {
+        Vector3 world(ModelInstance instance, Vector3 result) {
+            return result.set(local).mul(node.globalTransform).mul(instance.transform);
+        }
+    }
+
+    /** Pick an area-weighted point on the posed, incoming-facing surface, not inside its bounding box. */
+    SurfacePoint surface(ModelInstance instance, String location, Vector3 origin, int seed) {
+        var point = sampleSurface(instance, location, origin, seed, true);
+        if (point == null) { point = sampleSurface(instance, location, origin, seed, false); }
+        return point == null && !"*".equals(location) ? sampleSurface(instance, "*", origin, seed, true) : point;
+    }
+
+    private SurfacePoint sampleSurface(ModelInstance instance, String location, Vector3 origin, int seed, boolean facing) {
+        var a = new Vector3();
+        var b = new Vector3();
+        var c = new Vector3();
+        var normal = new Vector3();
+        var edge = new Vector3();
+        var world = new Matrix4();
+        var result = new Vector3();
+        Node[] selected = { null };
+        float[] total = { 0 };
+        int[] ordinal = { 0 };
+        UnitDamageDisplay.forParts(instance, location, (node, part) -> {
+            if (!part.enabled) { return; }
+            world.set(instance.transform).mul(node.globalTransform);
+            Geometry geometry = meshes.computeIfAbsent(part.meshPart.mesh, UnitPicking::read);
+            int end = part.meshPart.offset + part.meshPart.size;
+            for (int index = part.meshPart.offset; index + 2 < end; index += 3) {
+                vertex(geometry, index, a); a.mul(world);
+                vertex(geometry, index + 1, b); b.mul(world);
+                vertex(geometry, index + 2, c); c.mul(world);
+                normal.set(b).sub(a).crs(edge.set(c).sub(a));
+                float area = normal.len();
+                if (area < .000001f || facing && normal.dot(edge.set(origin).sub(a)) <= 0) { continue; }
+                total[0] += area;
+                if (UnitAttack.noise(seed + ++ordinal[0] * 7919) * total[0] >= area) { continue; }
+                float u = (float) Math.sqrt(UnitAttack.noise(seed + 137));
+                float v = UnitAttack.noise(seed + 971);
+                result.set(a).scl(1 - u).mulAdd(b, u * (1 - v)).mulAdd(c, u * v);
+                selected[0] = node;
+            }
+        });
+        return selected[0] == null ? null : new SurfacePoint(selected[0],
+              result.mul(world.set(instance.transform).mul(selected[0].globalTransform).inv()));
+    }
+
     float distance(ModelInstance instance, Ray ray) {
         BoundingBox bounds = UnitBounds.world(instance);
         if (!Intersector.intersectRayBoundsFast(ray, bounds)) {

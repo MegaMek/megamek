@@ -195,11 +195,13 @@ class GpuVolleySmokeTest {
             for (float size : List.of(1f, 3.5f)) {
                 target.transform.set(original).scale(size, size, size);
                 var bounds = UnitBounds.world(target);
-                for (int hits : List.of(0, 1, 12, 20)) {
+                for (int hits : List.of(0, 1, 10, 12, 20)) {
                     var launch = GpuMissileEffects.capture(attack, new Vector3[] { origin }, target, 20, hits, indirect, 42);
                     int arrived = 0;
+                    var hitPoints = new java.util.HashSet<Vector3>();
                     for (int missile = 0; missile < 20; missile++) {
                         if (bounds.contains(GpuMissileEffects.position(launch, missile, 1, new Vector3()))) { arrived++; }
+                        if (launch.hit(missile)) { hitPoints.add(launch.targets()[missile]); }
                         if (!launch.hit(missile)) {
                             for (int sample = 1; sample <= 100; sample++) {
                                 assertFalse(bounds.contains(GpuMissileEffects.position(launch, missile, sample / 100f, new Vector3())),
@@ -212,7 +214,23 @@ class GpuVolleySmokeTest {
                         }
                     }
                     assertEquals(hits, arrived, "Only the resolved cluster hits may arrive inside the target");
+                    assertEquals(hits, hitPoints.size(), "Successful missiles must land at distinct surface points");
                 }
+                var event = attack.event;
+                var located = new UnitAttack(new BoardScene.Combat(event.result()
+                      .withImpacts(List.of(new ResolvedAttack.Impact("LA", false, 5), new ResolvedAttack.Impact("RT", false, 5))),
+                      event.attacker(), event.target(), event.destination()));
+                var launch = GpuMissileEffects.capture(located, new Vector3[] { origin }, target, 20, 10, indirect, 42);
+                int[] locatedHits = { 0, 0 };
+                for (int missile = 0; missile < 20; missile++) {
+                    if (!launch.hit(missile)) { continue; }
+                    for (int loc = 0; loc < 2; loc++) {
+                        var part = UnitBounds.subtree(target.getNode(loc == 0 ? "LA" : "RT")).mul(target.transform);
+                        if (part.contains(launch.targets()[missile])) { locatedHits[loc]++; }
+                    }
+                }
+                assertEquals(5, locatedHits[0], "Five observed cluster hits reach the left arm");
+                assertEquals(5, locatedHits[1], "Five observed cluster hits reach the right torso");
             }
         } finally {
             target.transform.set(original);

@@ -80,8 +80,6 @@ class BoardAtmosphereTest {
         assertTrue(cloudyNoon.direct().r >= clearNoon.direct().r * 0.45f,
               "Maximum cloud cover must preserve a substantial directional component and visible shadows");
         assertTrue(clearNoon.exposureScale(0) > 1.5f, "Neutral daytime exposure must lift the dim LDR scene");
-        assertEquals(0.5f, BoardAtmosphere.lighting(at(0)).exposureScale(0), 0.0001,
-              "Neutral night exposure must use -1 EV");
     }
 
     @Test

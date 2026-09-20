@@ -15,9 +15,11 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
@@ -30,6 +32,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OverlayImage;
 import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
+import megamek.client.ui.dialogs.clientDialogs.PlanetaryConditionsDialog;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
@@ -122,6 +125,7 @@ final class GpuBoardSource implements AutoCloseable {
     private BoardFieldOfView fieldOfView = BoardFieldOfView.EMPTY;
     private boolean terrainDirty = true;
     private volatile boolean closed;
+    private PlanetaryConditionsDialog conditionsDialog;
     /** Swing publishes chat focus for native camera/menu input; the BoardView owns the actual state. */
     private volatile boolean chatActive;
     private boolean suppressChatCharacter;
@@ -849,6 +853,33 @@ final class GpuBoardSource implements AutoCloseable {
         return relativeElevation == 0 ? BoardScene.AeroState.LANDED : BoardScene.AeroState.ELEVATED;
     }
 
+    /** Swing owns the dialog and its conditions copy; completion receives immutable settings, or null on cancel. */
+    void editPlanetaryConditions(Consumer<BoardAtmosphere.Settings> completed) {
+        SwingUtilities.invokeLater(() -> {
+            if (closed || conditionsDialog != null) {
+                completed.accept(null);
+                return;
+            }
+            BoardView initialView = view;
+            Board initialBoard = board;
+            BoardAtmosphere.Settings settings = null;
+            try {
+                var owner = view.getClientgui() == null ? SwingUtilities.getWindowAncestor(view.getPanel())
+                      : view.getClientgui().getFrame();
+                conditionsDialog = new PlanetaryConditionsDialog(owner instanceof JFrame frame ? frame : null,
+                      view.game.getPlanetaryConditions());
+                conditionsDialog.setAlwaysOnTop(true);
+                if (conditionsDialog.showDialog() && !closed && view == initialView && board == initialBoard) {
+                    settings = BoardAtmosphere.fromScenario(conditionsDialog.getConditions(), initialBoard.isSpace());
+                }
+            } finally {
+                if (conditionsDialog != null) { conditionsDialog.dispose(); }
+                conditionsDialog = null;
+                completed.accept(settings);
+            }
+        });
+    }
+
     public void inspect(Coords coords) {
         SwingUtilities.invokeLater(() -> {
             if (!closed) {
@@ -975,6 +1006,7 @@ final class GpuBoardSource implements AutoCloseable {
             return;
         }
         closed = true;
+        if (conditionsDialog != null) { conditionsDialog.dispose(); }
         timer.stop();
         view.game.removeGameListener(gameListener);
         PreferenceManager.getClientPreferences().removePreferenceChangeListener(preferenceListener);

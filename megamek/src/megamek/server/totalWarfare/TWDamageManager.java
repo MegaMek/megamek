@@ -128,6 +128,9 @@ public class TWDamageManager implements IDamageManager {
             throw new RuntimeException(message);
         }
 
+        if (!damageInfo.ammoExplosion()) {
+            manager.recordAttackHit(damageInfo.entity(), damageInfo.hit(), damageInfo.damage());
+        }
         Vector<Report> vDesc = new Vector<>();
         return damageEntity(
               damageInfo.entity(),

@@ -39,9 +39,13 @@ final class GpuMissileEffects implements Disposable {
     static Launch capture(UnitAttack attack, Vector3[] origins, ModelInstance target, int missiles, int hits,
           boolean indirect, int seed, ResolvedAttack.Shot profile) {
         var launch = new Launch(attack, origins, new Vector3[missiles], missiles, MathUtils.clamp(hits, 0, missiles), indirect, seed, profile);
+        int hitOrdinal = 0;
         for (int missile = 0; missile < missiles; missile++) {
-            launch.targets[missile] = attack.endpoint(target, origins[missile % origins.length], !launch.hit(missile),
-                  missile + seed, new Vector3());
+            Vector3 origin = origins[missile % origins.length];
+            // Observed artillery landings and counterfire retain their own targets rather than a body surface.
+            launch.targets[missile] = launch.hit(missile) && !attack.defensive() && (profile == null || profile.impact() == null)
+                  ? attack.hitEndpoint(target, origin, missile + seed, hitOrdinal++, launch.hits, new Vector3())
+                  : attack.endpoint(target, origin, !launch.hit(missile), missile + seed, new Vector3());
         }
         return launch;
     }

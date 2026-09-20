@@ -18,24 +18,63 @@ import java.util.stream.Stream;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.ResolvedAttack;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesManager;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Targetable;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.common.weapons.handlers.EnergyWeaponHandler;
+import megamek.common.weapons.handlers.FlamerHandler;
+import megamek.common.weapons.handlers.MissileWeaponHandler;
+import megamek.common.weapons.handlers.NarcHandler;
+import megamek.common.weapons.handlers.WeaponHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class ResolvedAttackServerTest {
+    @ParameterizedTest
+    @ValueSource(strings = { "energy", "lrm", "srm", "flamer", "narc" })
+    void weaponResolutionIncludesTheLocationsActuallyPassedToDamage(String family) throws Exception {
+        manager.getGame().setPhase(GamePhase.FIRING);
+        var ammo = family.equals("lrm") ? AmmoType.AmmoTypeEnum.LRM : family.equals("srm") ? AmmoType.AmmoTypeEnum.SRM : AmmoType.AmmoTypeEnum.NA;
+        var weapon = family.equals("flamer") ? (WeaponMounted) attacker.addEquipment(EquipmentType.get("Flamer"), Mek.LOC_LEFT_ARM)
+              : attacker.getWeaponList().stream().filter(mount -> mount.getType().getAmmoType() == ammo).findFirst().orElseThrow();
+        if (family.equals("narc")) {
+            weapon = (WeaponMounted) attacker.addEquipment(EquipmentType.get("ISNarcBeacon"), Mek.LOC_LEFT_ARM);
+            weapon.setLinked(attacker.addEquipment(EquipmentType.get("ISNarc Pods"), Mek.LOC_LEFT_ARM));
+        }
+        var action = new WeaponAttackAction(attacker.getId(), Targetable.TYPE_ENTITY, target.getId(), weapon.getEquipmentNum());
+        var toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "observed location test");
+        WeaponHandler handler = family.equals("energy") ? new EnergyWeaponHandler(toHit, action, manager.getGame(), manager)
+              : family.equals("flamer") ? new FlamerHandler(toHit, action, manager.getGame(), manager)
+              : family.equals("narc") ? new NarcHandler(toHit, action, manager.getGame(), manager)
+              : new MissileWeaponHandler(toHit, action, manager.getGame(), manager);
+        manager.resolveAttack(handler, GamePhase.FIRING, new java.util.Vector<>());
+        var result = deliveries.stream().map(Delivery::result).filter(event -> event.kind() == ResolvedAttack.Kind.SHOT).findFirst().orElseThrow();
+        assertFalse(result.impacts().isEmpty(), "Resolved locations must reach the visual event for " + family);
+        assertTrue(result.impacts().stream().allMatch(impact -> impact.weight() > 0));
+        assertEquals(2, deliveries.stream().filter(delivery -> delivery.result().id().equals(result.id())).count());
+    }
+
     @Test
     void findingATreeClubAddsEquipmentWithoutConsumingWoodlandCover() throws Exception {
         var resolve = TWGameManager.class.getDeclaredMethod("resolveFindClub", Entity.class);

@@ -144,7 +144,7 @@ final class GpuUnitCamouflage implements Disposable {
         textures.clear();
     }
 
-    /** Standard libGDX lighting/shadows, with only diffuse UV rotation and the existing asset marker added. */
+    /** Standard libGDX lighting/shadows with camouflage, markers and one damage overlay. */
     static DefaultShaderProvider shaders() {
         String vertex = DefaultShader.getDefaultVertexShader().replace("void main() {", """
               uniform vec2 u_camoRotation;
@@ -153,7 +153,15 @@ final class GpuUnitCamouflage implements Disposable {
               uniform vec4 u_damageTransform;
               varying vec2 v_markerUV;
               varying vec2 v_damageUV;
+              varying float v_damageMask;
               void main() {
+                  v_damageMask = 1.0;
+                  #ifdef colorFlag
+                      // The exporter's PALETTE['glass'] identifies cockpit glazing inside shared detail meshes.
+                      // Test the original vertex color, before player paint, damage or lighting can change it.
+                      vec3 glassDifference = a_color.rgb - vec3(0.21, 0.67, 0.73);
+                      v_damageMask = step(0.000025, dot(glassDifference, glassDifference));
+                  #endif
                   v_markerUV = (u_markerTransform * vec4(a_position, 1.0)).xy;
                   // Rest-space projection stays fixed to each rigid part, including unpainted metal.
                   v_damageUV = a_position.xy * 0.04;
@@ -193,6 +201,7 @@ final class GpuUnitCamouflage implements Disposable {
               uniform sampler2D u_damageTexture;
               uniform float u_damageEnabled;
               varying vec2 v_damageUV;
+              varying float v_damageMask;
               // Smooth, non-periodic coordinate warping breaks the mirrored grid with one texture lookup.
               vec2 damageHash(vec2 cell) {
                   vec2 p = fract(cell * vec2(0.3183099, 0.3678794));
@@ -213,7 +222,7 @@ final class GpuUnitCamouflage implements Disposable {
                   vec4 marker = texture2D(u_markerTexture, v_markerUV);
                   diffuse.rgb = mix(diffuse.rgb, marker.rgb, marker.a);
               }
-              if (u_damageEnabled > 0.5) {
+              if (u_damageEnabled > 0.5 && (u_damageEnabled > 1.5 || v_damageMask > 0.5)) {
                   vec4 damage = texture2D(u_damageTexture, damageUV(v_damageUV));
                   diffuse.rgb = mix(diffuse.rgb, damage.rgb, damage.a);
               }
@@ -236,7 +245,8 @@ final class GpuUnitCamouflage implements Disposable {
                     public void render(Renderable part, Attributes attributes) {
                         Paint paint = attributes.get(Paint.class, Paint.TYPE);
                         var damage = attributes.get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE);
-                        set(damageEnabled, damage == null ? 0f : 1f);
+                        set(damageEnabled, damage == null ? 0f
+                              : part.material.id.endsWith(UnitDamageDisplay.WRECKED_SUFFIX) ? 2f : 1f);
                         if (damage != null) {
                             set(damageTexture, context.textureBinder.bind(damage.texture));
                             set(damageTransform, damage.cos, damage.sin, damage.offsetU, damage.offsetV);

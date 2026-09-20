@@ -519,8 +519,11 @@ final class UnitAnimator {
                 var forward = new Vector3();
                 UnitModelAttachment.emitter(instance, emitter, origin, forward);
                 var aim = target.cpy();
+                int ordinal = (binding.node() + ":1").hashCode();
+                if (attack.event.result().hit() && !attack.defensive() && !attack.arcing(binding)) {
+                    attack.hitEndpoint(victim, origin, ordinal, 0, 1, aim);
+                }
                 if (!attack.event.result().hit() && !attack.defensive()) {
-                    int ordinal = (binding.node() + ":1").hashCode();
                     if ("laser".equals(emitter.effect())) { attack.beamAim(victim, origin, ordinal, aim); }
                     else if (!attack.arcing(binding)) { attack.endpoint(victim, origin, true, ordinal, aim); }
                 }

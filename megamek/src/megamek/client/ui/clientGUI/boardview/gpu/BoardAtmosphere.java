@@ -90,11 +90,10 @@ final class BoardAtmosphere {
           float saturation, float daylight) {
         /** Exposure scale, in photographic stops, at full daylight and at full night. */
         private static final float MIDDAY_STOPS = 0.8f;
-        private static final float NIGHT_STOPS = -1.0f;
+        private static final float NIGHT_STOPS = -0.8f;
 
-        /** Night is 1.5 stops below the old neutral exposure; the daylight lift is unchanged. */
         float exposureScale(float compensation) {
-            float night = 1 - daylight;
+            float night = 1 - daylight; // night is ^2
             return (float) Math.pow(2, compensation + (MIDDAY_STOPS * daylight) + (NIGHT_STOPS * night * night));
         }
     }

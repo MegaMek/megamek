@@ -26,6 +26,7 @@ import megamek.common.ResolvedAttack;
 final class GpuAttackEffects implements Disposable {
     private static final int MAX_EFFECTS = 512;
     private static final int MAX_MUZZLES = 512;
+    private static final int FLAME_PUFFS = 32;
     private final Vector3[] origins = new Vector3[MAX_MUZZLES];
     private final Vector3[] endpoints = new Vector3[MAX_MUZZLES];
     private final String[] effects = new String[MAX_MUZZLES];
@@ -47,7 +48,10 @@ final class GpuAttackEffects implements Disposable {
     private Map<String, ModelInstance> instances = Map.of();
     private final GpuMissileEffects missiles = new GpuMissileEffects();
     private final GpuExhaustBatch flames = new GpuExhaustBatch(2048);
+    private final GpuExhaustBatch beams = new GpuExhaustBatch(MAX_MUZZLES);
+    private final Vector3 beamWidth = new Vector3();
     private final Vector3 flameWidth = new Vector3(), flameLength = new Vector3();
+    private final Vector3 flameSide = new Vector3(), flameUp = new Vector3();
     private Camera camera;
     private record Trace(Vector3 origin, Vector3 target, boolean impact) { }
     private final Map<UnitAttack, Map<String, Trace>> traces = new HashMap<>();
@@ -189,6 +193,7 @@ final class GpuAttackEffects implements Disposable {
 
     int missileCount() { return missiles.missileCount(); }
     int smokeCount() { return missiles.smokeCount(); }
+    int flameParticleCount() { return flames.size(); }
 
     float flameSize() {
         float size = 0;
@@ -210,6 +215,7 @@ final class GpuAttackEffects implements Disposable {
         ensureResources();
         missiles.begin();
         flames.begin();
+        beams.begin();
         this.camera = camera;
         count = 0;
         batch.begin(camera);
@@ -220,7 +226,9 @@ final class GpuAttackEffects implements Disposable {
         }
         batch.end();
         missiles.render(camera);
-        flames.render(camera, 0);
+        // Alpha blending retains orange/red detail where flame puffs overlap instead of bleaching into a beam.
+        flames.render(camera, flames.size());
+        beams.render(camera, 0);
     }
 
     private void renderShot() {
@@ -237,21 +245,25 @@ final class GpuAttackEffects implements Disposable {
             }
             return;
         }
-        if (attack.shot() && attack.seconds < attack.contactSeconds) {
+        if (attack.shot()) {
             for (int index = 0; index < muzzleCount; index++) {
                 String effect = effects[index];
                 Vector3 start = origins[index];
                 Vector3 target = endpoints[index];
+                if ("flame".equals(effect)) {
+                    flame(start, target, flameSizes[index]);
+                    continue;
+                }
+                if (attack.seconds >= attack.contactSeconds) { continue; }
                 float t = attack.flight();
                 switch (effect) {
-                    case "laser" -> line(start, target, 1, Color.RED, Math.min(1, t * 8));
+                    case "laser" -> beam(start, target, Math.min(1, t * 8));
                     case "ppc", "energy" -> {
                         point.set(start).lerp(target, t);
                         ball(point, 2.5f, Color.CYAN, 1);
                         end.set(start).lerp(target, Math.max(0, t - .07f));
                         line(end, point, .8f, Color.CYAN, .65f);
                     }
-                    case "flame" -> flame(start, target, flameSizes[index], t);
                     case "spray", "screen" -> {
                         Color color = "screen".equals(effect) ? Color.PURPLE : "spray".equals(effect) ? Color.SKY : Color.ORANGE;
                         for (int puff = 0; puff < 6; puff++) {
@@ -299,26 +311,57 @@ final class GpuAttackEffects implements Disposable {
         }
     }
 
-    /** Continuous turbulent ribbons, batched with the same bounded buffer used by exhaust effects. */
-    private void flame(Vector3 start, Vector3 finish, float size, float progress) {
-        float reach = Math.min(1, progress * 3);
+    /** Constant width even when a missed beam continues far off-board; a stretched sphere tapers out of view. */
+    private void beam(Vector3 start, Vector3 finish, float alpha) {
         direction.set(finish).sub(start);
-        flameWidth.set(direction).crs(camera.direction).nor();
-        if (flameWidth.isZero()) { flameWidth.set(camera.up); }
-        for (int strand = 0; strand < 3; strand++) {
-            for (int segment = 0; segment < 8; segment++) {
-                float t = segment / 8f * reach;
-                float next = (segment + 1) / 8f * reach;
-                float pulse = MathUtils.sin(attack.seconds * 35 + segment * 1.7f + strand * 2.1f);
-                point.set(start).mulAdd(direction, t).mulAdd(flameWidth, pulse * size * t * .7f)
-                      .add(0, 0, t * t * size * 1.2f);
-                end.set(start).mulAdd(direction, next).add(0, 0, next * next * size * 1.2f);
-                flameLength.set(end).sub(point);
-                float width = size * (.3f + t * 3.5f) * (1 + strand * .3f);
-                flames.quad(point, flameWidth.scl(width), flameLength, 0, 2 + strand * .2f,
-                      .3f * (1 - progress * .45f));
-                flameWidth.scl(1 / width);
-            }
+        beamWidth.set(direction).crs(camera.direction).nor();
+        if (beamWidth.isZero()) { beamWidth.set(camera.up); }
+        beams.quad(start, beamWidth.scl(.65f), direction, 0, -1, alpha);
+    }
+
+    /** A short stream of growing, rolling flame packets; all positions come from the shared attack clock. */
+    private void flame(Vector3 start, Vector3 finish, float size) {
+        direction.set(finish).sub(start);
+        float time = (attack.seconds - UnitAttack.ANTICIPATION_SECONDS)
+              / Math.max(.18f, attack.contactSeconds - UnitAttack.ANTICIPATION_SECONDS);
+        float fade = MathUtils.clamp((attack.duration - attack.seconds) / .16f, 0, 1);
+        float seed = (attack.event.result().id().hashCode() & 255) * .17f;
+        flameSide.set(direction).crs(Vector3.Z).nor();
+        if (flameSide.isZero()) { flameSide.set(Vector3.X); }
+        flameUp.set(flameSide).crs(direction).nor();
+        // These wisps are transient exhaust; the game alone decides whether terrain actually catches fire.
+        for (int puff = 0; puff < 6; puff++) {
+            float age = time - .7f - puff * .12f;
+            if (age <= 0 || age >= 1.2f) { continue; }
+            point.set(start).mulAdd(direction, .8f + puff * .035f)
+                  .mulAdd(flameSide, MathUtils.sin(seed + puff * 2.4f) * age * size)
+                  .add(0, 0, age * size * 5);
+            float radius = size * (1 + age * 3);
+            flameWidth.set(camera.direction).crs(camera.up).nor().scl(radius);
+            flameLength.set(camera.up).scl(radius);
+            flames.quad(point, flameWidth, flameLength, -1, 0,
+                  .16f * MathUtils.sin(age / 1.2f * MathUtils.PI) * fade);
+        }
+        for (int puff = 0; puff < FLAME_PUFFS; puff++) {
+            float age = time - puff * (.85f / (FLAME_PUFFS - 1));
+            if (age <= 0 || age >= 1.12f) { continue; }
+            float travel = Math.min(1, age);
+            float swirl = seed + puff * 2.399963f + age * 8;
+            float spread = size * travel * 1.25f;
+            point.set(start).mulAdd(direction, travel)
+                  .mulAdd(flameSide, MathUtils.sin(swirl) * spread)
+                  .mulAdd(flameUp, MathUtils.cos(swirl * 1.3f) * spread * .65f)
+                  .add(0, 0, travel * travel * size * 1.5f);
+            float radius = size * (.55f + travel * 3.4f) * (.85f + .15f * MathUtils.sin(swirl));
+            flameWidth.set(direction).crs(camera.direction).nor();
+            if (flameWidth.isZero()) { flameWidth.set(camera.up); }
+            flameLength.set(camera.direction).crs(flameWidth).nor()
+                  .scl(Math.max(radius * 1.35f, direction.len() / FLAME_PUFFS));
+            flameWidth.scl(radius);
+            float opacity = .8f * MathUtils.clamp(age * 16, 0, 1)
+                  * (1 - MathUtils.clamp((age - 1) / .12f, 0, 1)) * fade;
+            // Integer part identifies a packet; the fractional part is its normalized age for the flame shader.
+            flames.quad(point, flameWidth, flameLength, -1, 2 + puff + age / 1.12f, opacity);
         }
     }
 
@@ -401,5 +444,6 @@ final class GpuAttackEffects implements Disposable {
         traces.clear();
         missiles.dispose();
         flames.dispose();
+        beams.dispose();
     }
 }

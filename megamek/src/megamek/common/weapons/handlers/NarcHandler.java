@@ -289,6 +289,8 @@ public class NarcHandler extends MissileWeaponHandler {
             }
             entityTarget.attachINarcPod(pod);
         }
+        // Observe the final attachment location after the existing rules have completed; no second location roll.
+        gameManager.recordAttackHit(entityTarget, hit, 1);
     }
 
     private boolean narcCanAttachTo(Entity entity, int location) {

@@ -22,10 +22,10 @@ final class GpuFieldOfView implements Disposable {
     }
 
     /** Default presentation: all styles use the same LOS/sensor results and unit visibility. */
-    static final Style STYLE = Style.GRAYSCALE;
+    static final Style STYLE = Style.FOG_OF_WAR;
 
     /** Default FoV opacity multiplier: 0 leaves brightness unchanged, 1 uses full opacity. */
-    static final float DARKNESS = 0.75f;
+    static final float DARKNESS = 0.25f;
 
     private Style style;
     private float darkness = DARKNESS;

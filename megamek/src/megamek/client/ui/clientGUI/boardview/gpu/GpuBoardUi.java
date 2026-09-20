@@ -280,7 +280,7 @@ final class GpuBoardUi implements Disposable {
               () -> open("orders", "Planned orders", "attack-review-orders"));
         stage.addActor(attackPanel.panel());
         stage.addActor(popup);
-        tuning = new GpuBoardTuning(skin);
+        tuning = new GpuBoardTuning(skin, source);
         tuning.panel().setVisible(false);
         stage.addActor(tuning.panel());
         stage.addListener(new InputListener() {

@@ -112,6 +112,7 @@ public class FlamerHandler extends WeaponHandler {
             report.add(entityTarget.getLocationAbbr(hit));
             vPhaseReport.addElement(report);
 
+            gameManager.recordAttackHit(entityTarget, hit, Math.max(1, nDamPerHit * Math.min(hits, nCluster)));
             FlamerHandlerHelper.doHeatDamage(entityTarget, vPhaseReport, weaponType, subjectId, hit);
         }
     }

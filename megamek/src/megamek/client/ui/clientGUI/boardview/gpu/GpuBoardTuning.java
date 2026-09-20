@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -71,6 +72,7 @@ final class GpuBoardTuning {
     private final Table rows = new Table();
     private final ScrollPane scroll;
     private final CheckBox normalMaps;
+    private final CheckBox vsync;
     private final List<Control> geometry;
     private final List<Control> visibility;
     private final ButtonGroup<TextButton> fovModes = new ButtonGroup<>();
@@ -84,6 +86,10 @@ final class GpuBoardTuning {
     private boolean syncing;
 
     GpuBoardTuning(Skin skin) {
+        this(skin, null);
+    }
+
+    GpuBoardTuning(Skin skin, GpuBoardSource source) {
         panel.setBackground(skin.getDrawable("menu-panel"));
         panel.setTouchable(Touchable.enabled);
         panel.setName("board-tuning");
@@ -93,6 +99,16 @@ final class GpuBoardTuning {
         section(skin, "Geometry");
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
         normalMaps = checkbox(skin, "Normal maps", "tuning-normal-maps");
+        vsync = checkbox(skin, "VSync", "tuning-vsync");
+        vsync.addListener(new TextTooltip("Synchronize with the monitor's refresh rate. FPS stays capped at 60.",
+              skin, "menu"));
+        vsync.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.graphics.setVSync(vsync.isChecked());
+                Gdx.graphics.setForegroundFPS(vsync.isChecked() ? 0 : 60);
+            }
+        });
         section(skin, "Unit visibility");
         visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
         visibility.get(1).slider().addListener(new TextTooltip(
@@ -108,7 +124,25 @@ final class GpuBoardTuning {
         }
         rows.add(modes).colspan(3).left().padBottom(2).row();
         fieldOfView = controls(skin, FOV_KNOBS, this::applyFieldOfView, 0);
-        section(skin, "Daylight & atmosphere");
+        TextButton conditions = new TextButton("Planetary conditions...", skin, "menu-control");
+        conditions.setName("tuning-planetary-conditions");
+        conditions.setDisabled(source == null);
+        conditions.setProgrammaticChangeEvents(false);
+        conditions.addListener(new TextTooltip("Choose planetary conditions to preview their lighting and weather.", skin, "menu"));
+        conditions.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                conditions.setChecked(false);
+                conditions.setDisabled(true);
+                var application = Gdx.app;
+                source.editPlanetaryConditions(settings -> application.postRunnable(() -> {
+                    if (source.isClosed()) { return; }
+                    conditions.setDisabled(false);
+                    if (settings != null) { setAtmosphere(settings); }
+                }));
+            }
+        });
+        section(skin, "Daylight & atmosphere").add(conditions).height(22).padLeft(8);
         Table presets = new Table();
         for (BoardAtmosphere.Weather preset : BoardAtmosphere.Weather.values()) {
             TextButton button = new TextButton(preset.label, skin, "menu-control");
@@ -157,7 +191,7 @@ final class GpuBoardTuning {
         panel.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
         TextButton reset = new TextButton("Defaults", skin, "menu-control");
         reset.setName("tuning-defaults");
-        reset.addListener(new TextTooltip("Restore geometry, visibility, the scenario's starting atmosphere, and disable damage preview.",
+        reset.addListener(new TextTooltip("Restore geometry, visibility, VSync, the scenario's starting atmosphere, and disable damage preview.",
               skin, "menu"));
         reset.setProgrammaticChangeEvents(false);
         reset.addListener(new ChangeListener() {
@@ -175,10 +209,12 @@ final class GpuBoardTuning {
         restoreDefaults();
     }
 
-    private void section(Skin skin, String title) {
+    private Table section(Skin skin, String title) {
         float spacing = rows.hasChildren() ? 8 : 0;
-        rows.add(new Label(title.toUpperCase(Locale.ROOT), skin, "kicker"))
-              .colspan(3).left().padTop(spacing).padBottom(3).row();
+        Table heading = new Table();
+        heading.add(new Label(title.toUpperCase(Locale.ROOT), skin, "kicker")).left().expandX();
+        rows.add(heading).colspan(3).growX().padTop(spacing).padBottom(3).row();
+        return heading;
     }
 
     private CheckBox checkbox(Skin skin, String label, String name) {
@@ -251,6 +287,7 @@ final class GpuBoardTuning {
     /** Writes the current board values into the sliders, as the initial state and after a reset. */
     private void restoreDefaults() {
         normalMaps.setChecked(true);
+        vsync.setChecked(GpuBoardWindow.DEFAULT_VSYNC);
         BoardGeometry.Tuning defaults = BoardGeometry.DEFAULTS;
         float[] values = { defaults.hexScale(), defaults.unitScale(), defaults.unitHeightScale(),
               defaults.levelHeight(), defaults.gridShade(), defaults.multiHexUnitScale() };

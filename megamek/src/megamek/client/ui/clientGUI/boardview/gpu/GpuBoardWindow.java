@@ -25,6 +25,7 @@ import megamek.logging.MMLogger;
 
 /** Owns the optional native window. A single libGDX application avoids competing global Gdx contexts. */
 public final class GpuBoardWindow {
+    static final boolean DEFAULT_VSYNC = true;
     /** The planar compatibility layer omits wreck sprites when the shared unit renderer supplies them. */
     public static boolean modelsEnabled() { return GpuUnitModels.ENABLED; }
     private static final MMLogger LOGGER = MMLogger.create(GpuBoardWindow.class);
@@ -186,8 +187,9 @@ public final class GpuBoardWindow {
         configuration.setWindowedMode(1280, 800);
         configuration.setWindowSizeLimits(900, 600, -1, -1);
         configuration.setInitialVisible(visible);
-        configuration.setForegroundFPS(60);
-        configuration.useVsync(true);
+        // Keep rendering bounded even when VSync is disabled, we cap at 60fps. With VSync we let it do what it needs...
+        configuration.setForegroundFPS(DEFAULT_VSYNC ? 0 : 60);
+        configuration.useVsync(DEFAULT_VSYNC);
         configuration.setDepthBits(24);
         configuration.disableAudio(true);
         configuration.setWindowListener(new Lwjgl3WindowAdapter() {

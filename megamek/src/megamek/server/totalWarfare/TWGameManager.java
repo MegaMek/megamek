@@ -166,6 +166,42 @@ public class TWGameManager extends AbstractGameManager {
 
     private Game game = new Game();
     private TWDamageManager damager = null;
+    private final ThreadLocal<AttackAnimationCapture> attackAnimationCapture = new ThreadLocal<>();
+
+    @Override
+    public void send(Packet packet) {
+        var capture = attackAnimationCapture.get();
+        if (capture == null) { super.send(packet); }
+        else { capture.packet(null, packet); }
+    }
+
+    @Override
+    public void send(int connection, Packet packet) {
+        var capture = attackAnimationCapture.get();
+        if (capture == null) { super.send(connection, packet); }
+        else { capture.packet(connection, packet); }
+    }
+
+    /** Keep the launch before its damage/death packets while adding locations observed during this rules call. */
+    private <T> T captureAttackAnimation(java.util.function.Supplier<T> resolution) {
+        if (attackAnimationCapture.get() != null) { return resolution.get(); }
+        var capture = new AttackAnimationCapture();
+        attackAnimationCapture.set(capture);
+        try { return resolution.get(); }
+        finally {
+            attackAnimationCapture.remove();
+            capture.flush(this::send, this::send);
+        }
+    }
+
+    public boolean resolveAttack(AttackHandler handler, GamePhase phase, Vector<Report> reports) {
+        return captureAttackAnimation(() -> handler.handle(phase, reports));
+    }
+
+    public void recordAttackHit(Entity target, HitData hit, int damage) {
+        var capture = attackAnimationCapture.get();
+        if (capture != null) { capture.hit(target, hit, damage); }
+    }
 
     private final Vector<Report> mainPhaseReport = new Vector<>();
 
@@ -12020,7 +12056,8 @@ public class TWGameManager extends AbstractGameManager {
         }
         int cen = Entity.NONE;
         for (PhysicalResult pr : physicalResults) {
-            resolvePhysicalAttack(pr, cen);
+            int previousAttacker = cen;
+            captureAttackAnimation(() -> { resolvePhysicalAttack(pr, previousAttacker); return null; });
             cen = pr.aaa.getEntityId();
         }
         physicalResults.removeAllElements();
@@ -28357,8 +28394,13 @@ public class TWGameManager extends AbstractGameManager {
         if (target instanceof Entity entity && (doBlind() || entity.isHidden())) {
             recipients.retainAll(whoCanSee(entity, false, null));
         }
-        for (Player player : recipients) {
-            send(player.getId(), new Packet(PacketCommand.ENTITY_ATTACK_RESOLVED, result));
+        var capture = attackAnimationCapture.get();
+        if (capture != null) {
+            capture.attack(result, recipients.stream().map(Player::getId).toList());
+        } else {
+            for (Player player : recipients) {
+                send(player.getId(), new Packet(PacketCommand.ENTITY_ATTACK_RESOLVED, result));
+            }
         }
     }
 
@@ -32769,7 +32811,7 @@ public class TWGameManager extends AbstractGameManager {
                     ah.setAnnouncedEntityFiring(true);
                     lastAttackerId = aId;
                 }
-                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                boolean keep = resolveAttack(ah, game.getPhase(), handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);
                 }
@@ -32812,7 +32854,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (ah.getAttacker() instanceof Infantry firingInfantry && firingInfantry.isHitTheDeck()) {
                     firingInfantry.setFiredWhileOnDeck(true);
                 }
-                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                boolean keep = resolveAttack(ah, game.getPhase(), handleAttackReports);
                 if (keep) {
                     keptAttacks.add(ah);
                 }

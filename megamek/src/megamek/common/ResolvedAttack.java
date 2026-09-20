@@ -18,12 +18,27 @@ import megamek.common.units.UnitLocation;
 
 /** A transient, server-confirmed visual event. It is not an attack order or another damage/rules calculation. */
 public record ResolvedAttack(UUID id, Kind kind, UnitLocation attacker, UnitLocation target, int targetType,
-      int equipmentIndex, String equipmentName, int limb, boolean hit, List<Mount> mounts, Shot shot) implements Serializable {
+      int equipmentIndex, String equipmentName, int limb, boolean hit, List<Mount> mounts, Shot shot,
+      List<Impact> impacts) implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
     public ResolvedAttack {
         mounts = mounts == null ? singleMount(attacker, equipmentIndex) : List.copyOf(mounts);
+        impacts = impacts == null ? List.of() : List.copyOf(impacts);
+    }
+
+    public ResolvedAttack(UUID id, Kind kind, UnitLocation attacker, UnitLocation target, int targetType,
+          int equipmentIndex, String equipmentName, int limb, boolean hit, List<Mount> mounts, Shot shot) {
+        this(id, kind, attacker, target, targetType, equipmentIndex, equipmentName, limb, hit, mounts, shot, List.of());
+    }
+
+    /** Observed incoming locations; damage weights distribute visuals, never recalculate hits or damage. */
+    public record Impact(String location, boolean rear, int weight) implements Serializable { }
+
+    public ResolvedAttack withImpacts(List<Impact> locations) {
+        return new ResolvedAttack(id, kind, attacker, target, targetType, equipmentIndex, equipmentName, limb, hit,
+              mounts, shot, locations);
     }
 
     public ResolvedAttack(UUID id, Kind kind, UnitLocation attacker, UnitLocation target, int targetType,

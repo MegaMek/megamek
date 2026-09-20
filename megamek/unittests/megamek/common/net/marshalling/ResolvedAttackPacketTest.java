@@ -29,7 +29,8 @@ class ResolvedAttackPacketTest {
                         new ResolvedAttack.Shot("Indirect", Set.of("M_STANDARD"), false, false, 1, 20, true, 12))),
                   new ResolvedAttack.Shot("Indirect", Set.of("M_STANDARD"), false, false, 1, 20, true, 12)
                         .withTrajectory(new UnitLocation(1, new Coords(1, 2), 0, 0, 0),
-                              new UnitLocation(-1, new Coords(4, 5), 0, 2, 0)));
+                              new UnitLocation(-1, new Coords(4, 5), 0, 2, 0)))
+                  .withImpacts(List.of(new ResolvedAttack.Impact("LA", false, 5), new ResolvedAttack.Impact("RT", true, 7)));
             var bytes = new ByteArrayOutputStream();
             marshaller.marshall(new Packet(PacketCommand.ENTITY_ATTACK_RESOLVED, result), bytes);
             var packet = marshaller.unmarshall(new ByteArrayInputStream(bytes.toByteArray()));

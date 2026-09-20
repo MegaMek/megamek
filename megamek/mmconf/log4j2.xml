@@ -359,32 +359,6 @@
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />
         </Logger>
-        <!--
-          DRAFT ONLY - REMOVE BEFORE MERGING PR #8999.
-          Objectives scanning is being play-tested, and the parent "megamek" logger sits at info, so the
-          [Scan], [PreEnd] and [Objective] diagnostics would never reach logs/megamek.log on a tester's
-          machine. These turn them on so a tester can attach the log with a report. Delete this block once
-          the feature is merged.
-        -->
-        <Logger name="megamek.server.totalWarfare.ObjectiveScanHandler" level="debug" additivity="false">
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
-        <Logger name="megamek.server.totalWarfare.ObjectivePlacementHandler" level="debug" additivity="false">
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
-        <Logger name="megamek.server.totalWarfare.ObjectiveResolutionHandler" level="debug" additivity="false">
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
-        <Logger name="megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay" level="debug" additivity="false">
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
-        <Logger name="megamek.common.equipment.ScanMission" level="debug" additivity="false">
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
-        <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
-            <AppenderRef ref="MegaMekLog" />
-        </Logger>
-
         <Root level="info">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

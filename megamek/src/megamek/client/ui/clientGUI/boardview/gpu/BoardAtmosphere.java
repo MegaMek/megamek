@@ -196,7 +196,7 @@ final class BoardAtmosphere {
         Vector3 direction = new Vector3(-MathUtils.cos(angle) * side, -0.35f * side,
               -Math.max(0.12f, Math.abs(altitude)) * 0.9f).nor();
         Color direct = new Color(1, 0.96f, 0.86f, 1).lerp(new Color(1, 0.43f, 0.18f, 1), warmth);
-        direct.mul(sun * transmission * 0.3f);
+        direct.mul(sun * transmission * 0.3f); // <------------------------------- THIS IS THE SUNLIGHT BRIGHTNESS!!!!
         direct.add(0.45f * moon, 0.62f * moon, moon, 0);
         Color ambient = new Color(0.62f, 0.69f, 0.82f, 1)
               .lerp(new Color(0.53f, 0.56f, 0.60f, 1), daylight);

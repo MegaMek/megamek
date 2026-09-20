@@ -9,17 +9,26 @@ import megamek.common.board.Coords;
 
 /** Z-up, tightly tiled hex columns. Rendering and picking use these same surfaces. */
 final class BoardGeometry {
-    record Tuning(float hexScale, float unitScale, float unitHeightScale, int levelHeight, float gridShade) {
+    /** Independent default for a whole unit occupying more than one game hex. */
+    static final float DEFAULT_MULTI_HEX_UNIT_SCALE = 0.85f;
+
+    record Tuning(float hexScale, float unitScale, float unitHeightScale, int levelHeight, float gridShade,
+          float multiHexUnitScale) {
+        Tuning(float hexScale, float unitScale, float unitHeightScale, int levelHeight, float gridShade) {
+            this(hexScale, unitScale, unitHeightScale, levelHeight, gridShade, DEFAULT_MULTI_HEX_UNIT_SCALE);
+        }
+
         Tuning {
             if (!Float.isFinite(hexScale) || hexScale <= 0 || !Float.isFinite(unitScale) || unitScale <= 0
                   || !Float.isFinite(unitHeightScale) || unitHeightScale <= 0 || levelHeight < 1
-                  || !Float.isFinite(gridShade) || gridShade < 0 || gridShade > 1) {
+                  || !Float.isFinite(gridShade) || gridShade < 0 || gridShade > 1
+                  || !Float.isFinite(multiHexUnitScale) || multiHexUnitScale <= 0) {
                 throw new IllegalArgumentException("Invalid board dimensions");
             }
         }
     }
 
-    static final Tuning DEFAULTS = new Tuning(1, 0.6f, 0.87f, 18, 0.8f);
+    static final Tuning DEFAULTS = new Tuning(1, 0.7f, 1.0f, 18, 0.8f);
     /**
      * Native tactical markers keep this fraction of the hex radius clear of the shared hex edges. Exactly on
      * an edge a marker is coplanar with the terrain there and flickers against it while the camera rotates.
@@ -32,6 +41,7 @@ final class BoardGeometry {
     static float HEIGHT;
     static float LEVEL;
     static float UNIT_SCALE;
+    static float MULTI_HEX_UNIT_SCALE;
     static float UNIT_HEIGHT_SCALE;
     private static Tuning tuning;
     private static int revision;
@@ -56,6 +66,7 @@ final class BoardGeometry {
         HEIGHT = TILE_HEIGHT * HEX_SCALE;
         LEVEL = next.levelHeight() * HEX_SCALE;
         UNIT_SCALE = next.unitScale();
+        MULTI_HEX_UNIT_SCALE = next.multiHexUnitScale();
         UNIT_HEIGHT_SCALE = next.unitHeightScale();
         revision++;
     }
@@ -129,6 +140,11 @@ final class BoardGeometry {
             lowest = Math.min(lowest, groundZ(tile));
         }
         return lowest - LEVEL;
+    }
+
+    /** Shared atmosphere baseline: hex LEVEL, never a riverbed, water DEPTH, or model height. */
+    static float weatherBase(BoardScene scene) {
+        return scene.tiles().stream().mapToInt(BoardScene.Tile::elevation).min().orElse(0) * LEVEL;
     }
 
     static boolean contains(Coords coords, float x, float y) {

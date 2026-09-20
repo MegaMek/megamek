@@ -34,25 +34,73 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.io.File;
 
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
+import com.badlogic.gdx.utils.Disposable;
+import megamek.common.Configuration;
+import megamek.logging.MMLogger;
 
 /**
  * Shows a unit's lost locations on its model. Each location is its own part of the model, named after the game's
- * abbreviation for it, so a lost arm is simply not drawn and any other lost location is drawn burnt out in place.
+ * abbreviation for it. Detached parts are hidden; destroyed attached locations receive burnt armor artwork.
  * Presentation only; works on one unit's own instance and never on the shared model.
  */
-final class UnitDamageDisplay {
+final class UnitDamageDisplay implements Disposable {
     /** The flat color of a burnt-out location. Dark, but not so dark that its shape is lost against a shadow. */
-    static final Color WRECKED = new Color(0.13f, 0.12f, 0.11f, 1);
+    static final Color WRECKED = new Color(0.22f, 0.22f, 0.22f, 1);
     static final String WRECKED_SUFFIX = "-wrecked";
+    private static final MMLogger LOGGER = MMLogger.create(UnitDamageDisplay.class);
+    private Texture texture;
+    private boolean attempted;
 
-    private UnitDamageDisplay() {}
+    /** GL-thread only. One view owns the shared damage texture; model instances merely borrow it. */
+    void applyTexture(ModelInstance instance) {
+        for (Node node : instance.nodes) {
+            applyTexture(node);
+        }
+    }
+
+    private void applyTexture(Node node) {
+        for (NodePart part : node.parts) {
+            if (part.enabled && part.material.id.endsWith(WRECKED_SUFFIX)
+                  && part.meshPart.mesh.getVertexAttribute(VertexAttributes.Usage.TextureCoordinates) != null) {
+                if (!attempted) {
+                    attempted = true;
+                    try {
+                        texture = new Texture(new FileHandle(new File(Configuration.dataDir(),
+                              "models/units/textures/destroyed-armor.png")), true);
+                        texture.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+                        texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
+                    } catch (RuntimeException error) {
+                        LOGGER.warn("Cannot load destroyed armor texture; using dark gray: {}", error.getMessage());
+                    }
+                }
+                if (texture != null) {
+                    part.material.set(ColorAttribute.createDiffuse(Color.WHITE), TextureAttribute.createDiffuse(texture));
+                }
+            }
+        }
+        node.getChildren().forEach(this::applyTexture);
+    }
+
+    @Override
+    public void dispose() {
+        if (texture != null) {
+            texture.dispose();
+            texture = null;
+        }
+        attempted = false;
+    }
 
     /**
      * Applies the damage to a fresh instance. It does not undo earlier damage, so give it an instance that shows
@@ -111,9 +159,12 @@ final class UnitDamageDisplay {
     }
 
     /** A copy, so that neither the shared model nor the unit's player tint on the other parts is touched. */
-    private static Material wrecked(Material material) {
+    static Material wrecked(Material material) {
         Material copy = material.copy();
-        copy.id = material.id + WRECKED_SUFFIX;
+        if (!copy.id.endsWith(WRECKED_SUFFIX)) {
+            copy.id += WRECKED_SUFFIX;
+        }
+        copy.remove(TextureAttribute.Diffuse | ColorAttribute.Emissive | TextureAttribute.Emissive);
         copy.set(ColorAttribute.createDiffuse(WRECKED));
         return copy;
     }

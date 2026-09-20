@@ -83,6 +83,8 @@ public enum PacketCommand {
      */
     ENTITY_ATTACK,
 
+    /** Server-to-client, visibility-filtered presentation result, separate from attack declarations. */
+
     ENTITY_PREPHASE,
     ENTITY_GHOST_TARGET,
     ENTITY_GTA_HEX_SELECT,
@@ -294,7 +296,10 @@ public enum PacketCommand {
      */
     ENTITY_EJECTION_SETTING_CHANGE,
     /** A player's declaration for an infantry action in a building, in the Pre-End Declarations phase. */
-    INFANTRY_ACTION_DECLARATION;
+    INFANTRY_ACTION_DECLARATION,
+
+    /** Server-confirmed, visibility-filtered attack presentation; never an attack order. */
+    ENTITY_ATTACK_RESOLVED;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

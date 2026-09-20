@@ -38,9 +38,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,7 +70,6 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     private static final int PADDING_X = 10;
     private static final int PADDING_Y = 5;
-    private static final float FADE_SPEED = 0.2f;
     /** The ClientGUI of the boardview. May be null! */
     protected final ClientGUI clientGui;
     protected static final GUIPreferences GUIP = GUIPreferences.getInstance();
@@ -82,7 +81,7 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     private boolean dirty = true;
     private boolean hasContents = false;
     /** The cached image for this Display. */
-    private Image displayImage;
+    private BufferedImage displayImage;
     private double imageScaleX;
     private double imageScaleY;
     /** The current game phase. */
@@ -91,18 +90,16 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     protected final Font font;
 
-    /** True while fading in this overlay. */
-    private boolean fadingIn = false;
-    /** True while fading out this overlay. */
-    private boolean fadingOut = false;
-    /** The transparency of the overlay. Only used while fading in/out. */
-    private float alpha = 1;
+    private OverlayImage.Fade fade;
+    /** Keeps the classic repaint timer running through the final animation frame. */
+    private boolean sliding;
     private int overlayWidth = 500;
     private int overlayHeight = 500;
 
     public AbstractBoardViewOverlay(BoardView boardView, Font font) {
         this.font = font;
         visible = getVisibilityGUIPreference();
+        fade = new OverlayImage.Fade(0, visible ? 1 : 0, visible ? 1 : 0);
         this.boardView = Objects.requireNonNull(boardView);
         clientGui = boardView.getClientgui();
         currentGame = Objects.requireNonNull(boardView.game);
@@ -145,7 +142,25 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
             return;
         }
 
-        AffineTransform transform = ((Graphics2D) graph).getTransform();
+        OverlayImage layer = capture((Graphics2D) graph, clipBounds);
+        if (layer != null) {
+            Graphics2D imageGraph = (Graphics2D) graph.create();
+            try {
+                imageGraph.setTransform(imageTransform((Graphics2D) graph, clipBounds));
+                float opacity = layer.fade().opacity(System.nanoTime());
+                if (opacity < 1) {
+                    imageGraph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
+                }
+                imageGraph.drawImage(layer.image(), 0, 0, null);
+            } finally {
+                imageGraph.dispose();
+            }
+        }
+    }
+
+    /** Captures unfaded artwork so native rendering can evaluate the same fade at its own frame rate. */
+    public OverlayImage capture(Graphics2D graph, Rectangle clipBounds) {
+        AffineTransform transform = graph.getTransform();
         double scaleX = Math.hypot(transform.getScaleX(), transform.getShearY());
         double scaleY = Math.hypot(transform.getShearX(), transform.getScaleY());
         // The cached text must also be redrawn when display density changes, even if its contents do not.
@@ -197,28 +212,29 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
             }
         }
 
-        if (hasContents) {
-            int distSide = getDistSide(clipBounds, overlayWidth);
-            int distTop = getDistTop(clipBounds, overlayHeight);
-            // Blit at native density on whole device pixels. Resizing the rounded cache dimensions or
-            // placing it between pixels would resample the glyphs at fractional display scales.
-            AffineTransform imageTransform = new AffineTransform(transform);
-            imageTransform.translate(clipBounds.x + distSide, clipBounds.y + distTop);
-            imageTransform.scale(1 / imageScaleX, 1 / imageScaleY);
-            imageTransform.setTransform(imageTransform.getScaleX(), imageTransform.getShearY(),
-                  imageTransform.getShearX(), imageTransform.getScaleY(),
-                  Math.rint(imageTransform.getTranslateX()), Math.rint(imageTransform.getTranslateY()));
-            Graphics2D imageGraph = (Graphics2D) graph.create();
-            try {
-                imageGraph.setTransform(imageTransform);
-                if (alpha < 1) {
-                    imageGraph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, alpha));
-                }
-                imageGraph.drawImage(displayImage, 0, 0, null);
-            } finally {
-                imageGraph.dispose();
-            }
+        if (!hasContents) {
+            return null;
         }
+        AffineTransform placement = imageTransform(graph, clipBounds);
+        return new OverlayImage(displayImage, (int) placement.getTranslateX(), (int) placement.getTranslateY(), fade);
+    }
+
+    @Override
+    public List<OverlayImage> captureLayers(Graphics2D graph, Rectangle clipBounds) {
+        OverlayImage layer = capture(graph, clipBounds);
+        return layer == null ? List.of() : List.of(layer);
+    }
+
+    private AffineTransform imageTransform(Graphics2D graph, Rectangle clipBounds) {
+        // Blit at native density on whole device pixels, preserving glyphs at fractional display scales.
+        AffineTransform placement = graph.getTransform();
+        placement.translate(clipBounds.x + getDistSide(clipBounds, overlayWidth),
+              clipBounds.y + getDistTop(clipBounds, overlayHeight));
+        placement.scale(1 / imageScaleX, 1 / imageScaleY);
+        placement.setTransform(placement.getScaleX(), placement.getShearY(),
+              placement.getShearX(), placement.getScaleY(),
+              Math.rint(placement.getTranslateX()), Math.rint(placement.getTranslateY()));
+        return placement;
     }
 
     /** Calculates the pixel size of the display from the necessary text lines. */
@@ -265,19 +281,20 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
     }
 
     /**
-     * Activates or deactivates the overlay, fading it in or out. Also saves the visibility to the GUIPreferences so
-     * MegaMek remembers it.
+     * Activates or deactivates the overlay, fading from its current opacity even when a previous fade is incomplete.
      */
     public void setVisible(boolean vis) {
+        if (visible == vis) {
+            return;
+        }
+        long now = System.nanoTime();
+        fade = new OverlayImage.Fade(now, fade.opacity(now), vis ? 1 : 0);
+        sliding = fade.isAnimating(now);
         visible = vis;
-
         if (vis) {
-            fadingIn = true;
-            fadingOut = false;
             setDirty();
         } else {
-            fadingIn = false;
-            fadingOut = true;
+            scheduleBoardViewRepaint();
         }
     }
 
@@ -287,27 +304,14 @@ public abstract class AbstractBoardViewOverlay implements IDisplayable, IPrefere
 
     @Override
     public boolean isSliding() {
-        return fadingOut || fadingIn;
+        return sliding;
     }
 
     @Override
     public boolean slide() {
-        if (fadingIn) {
-            alpha += FADE_SPEED;
-            if (alpha > 1) {
-                alpha = 1;
-                fadingIn = false;
-            }
-            return true;
-        } else if (fadingOut) {
-            alpha -= FADE_SPEED;
-            if (alpha < 0) {
-                alpha = 0;
-                fadingOut = false;
-            }
-            return true;
-        }
-        return false;
+        boolean repaint = sliding;
+        sliding = fade.isAnimating(System.nanoTime());
+        return repaint;
     }
 
     protected void setDirty() {

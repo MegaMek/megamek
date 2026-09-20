@@ -43,6 +43,7 @@ import java.awt.RenderingHints;
 import java.io.File;
 import javax.swing.ImageIcon;
 
+import megamek.client.ui.clientGUI.boardview.BoardMarker;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
@@ -89,10 +90,17 @@ public class DugInSprite extends HexSprite {
     }
 
     @Override
+    public BoardMarker boardMarker() {
+        return bv.boardMarker(BoardMarker.Kind.DUG_IN, loc, label);
+    }
+
+    @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
         drawTrenches(graph);
-        drawLabel(graph);
+        if (!bv.isGpuCapture()) {
+            drawLabel(graph);
+        }
         graph.dispose();
     }
 

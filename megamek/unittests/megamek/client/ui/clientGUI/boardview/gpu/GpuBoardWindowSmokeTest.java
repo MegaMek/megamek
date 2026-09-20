@@ -179,18 +179,11 @@ class GpuBoardWindowSmokeTest {
                         return null;
                     });
                 }
+                input(() -> GpuBoardTestUi.clickText(Messages.getString("CommonMenuBar.FileMenu")));
+                captureMenu("file-menu.png");
+                input(() -> Gdx.input.getInputProcessor().keyDown(Input.Keys.ESCAPE));
                 input(() -> GpuBoardTestUi.clickText(Messages.getString("CommonMenuBar.ViewMenu")));
-                onGl(() -> {
-                    File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
-                    assertTrue(output.isDirectory() || output.mkdirs());
-                    GpuBoardTestUi.capture(new File(output, "menu-bar.png"));
-                    return null;
-                });
-                input(() -> {
-                    for (char character : "zoom in".toCharArray()) {
-                        Gdx.input.getInputProcessor().keyTyped(character);
-                    }
-                });
+                captureMenu("menu-bar.png");
                 onGl(() -> {
                     GpuBattleView battle = (GpuBattleView) Gdx.app.getApplicationListener();
                     float before = battle.boardCamera.camera.zoom;
@@ -327,6 +320,18 @@ class GpuBoardWindowSmokeTest {
         FutureTask<T> task = new FutureTask<>(action);
         app.postRunnable(task);
         return task.get(10, TimeUnit.SECONDS);
+    }
+
+    private static void captureMenu(String name) throws Exception {
+        await(() -> onGl(() -> GpuBoardTestUi.stage().getRoot().findActor("tactical-menu").getColor().a == 1));
+        onGl(() -> {
+            assertFalse(GpuBoardTestUi.stage().getRoot().findActor("command-search").getParent().isVisible(),
+                  "Menu-bar dropdowns do not include command search");
+            File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
+            assertTrue(output.isDirectory() || output.mkdirs());
+            GpuBoardTestUi.capture(new File(output, name));
+            return null;
+        });
     }
 
     private static void input(Runnable action) throws Exception {

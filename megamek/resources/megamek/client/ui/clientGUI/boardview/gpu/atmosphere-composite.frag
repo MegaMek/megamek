@@ -1,5 +1,6 @@
 // Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later
 #ifdef GL_ES
+#extension GL_OES_standard_derivatives : enable
 precision highp float;
 #endif
 varying vec2 v_uv;
@@ -16,6 +17,96 @@ uniform vec3 u_tint;
 uniform float u_saturation;
 uniform vec3 u_sky;
 uniform vec3 u_horizon;
+// FoV is a rules-derived mask applied to reconstructed world positions, never a repaint of terrain artwork.
+uniform sampler2D u_fov;
+uniform float u_fovEnabled;
+uniform vec2 u_fovSize;
+uniform vec2 u_fovHexSize;
+uniform mat4 u_fovInverseView;
+uniform vec4 u_fovOptions;
+uniform float u_fovStyle;
+uniform float u_fovEdge;
+
+vec2 fovCenter(vec2 hex) {
+    return vec2(hex.x * 0.75 + 0.5, hex.y + mod(hex.x, 2.0) * 0.5 + 0.5);
+}
+
+vec2 fovHex(vec2 point) {
+    float column = floor(point.x / 0.75) - 1.0;
+    vec2 hex = vec2(column, floor(point.y - mod(column, 2.0) * 0.5));
+    vec2 delta = abs(point - fovCenter(hex));
+    if (delta.y <= 0.5 && delta.x + 0.5 * delta.y <= 0.5) return hex;
+    column += 1.0;
+    return vec2(column, floor(point.y - mod(column, 2.0) * 0.5));
+}
+
+vec4 fovAt(vec2 hex) {
+    if (hex.x < 0.0 || hex.y < 0.0 || hex.x >= u_fovSize.x || hex.y >= u_fovSize.y) return vec4(0.0);
+    return texture2D(u_fov, (hex + 0.5) / u_fovSize);
+}
+
+float fovState(vec4 value) {
+    return mod(floor(value.a * 255.0 + 0.5), 8.0);
+}
+
+float fovBorder(vec2 neighbor, float distance, float state) {
+    float other = fovState(fovAt(neighbor));
+    if (other < 0.5 || (state < 2.5) == (other < 2.5)) return 0.0;
+    return 1.0 - smoothstep(u_fovEdge * 0.5, u_fovEdge * 2.0, distance);
+}
+
+vec3 fieldOfView(vec3 color, float depth) {
+    vec4 world = u_fovInverseView * vec4(v_uv * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
+    vec3 position = world.xyz / world.w;
+    vec3 normal = cross(dFdx(position), dFdy(position));
+    normal /= max(length(normal), 0.000001);
+    // Derivatives need the whole pixel quad, including background lanes at silhouettes.
+    if (depth >= 0.99999) return color;
+    float horizontal = smoothstep(0.35, 0.80, abs(normal.z));
+    vec2 point = vec2(position.x, -position.y) / u_fovHexSize;
+    // A cliff sits exactly on a shared edge. Reconstructed depth can round to either
+    // hex, so sample just inside its solid side instead of letting the wall sparkle.
+    // Top faces have no horizontal normal and keep their original lookup position.
+    vec3 inside = position - normal * (min(u_fovHexSize.x, u_fovHexSize.y) * 0.002);
+    vec2 hex = fovHex(vec2(inside.x, -inside.y) / u_fovHexSize);
+    vec4 mask = fovAt(hex);
+    float state = fovState(mask);
+    if (state < 0.5) return color;
+    vec2 p = point - fovCenter(hex);
+    float north = 0.5 + p.y, south = 0.5 - p.y;
+    float northEast = 0.5 - p.x + 0.5 * p.y, southEast = 0.5 - p.x - 0.5 * p.y;
+    float northWest = 0.5 + p.x + 0.5 * p.y, southWest = 0.5 + p.x - 0.5 * p.y;
+    float parity = mod(hex.x, 2.0);
+    float boundary = fovBorder(hex + vec2(0, -1), north, state);
+    boundary = max(boundary, fovBorder(hex + vec2(1, parity - 1.0), northEast, state));
+    boundary = max(boundary, fovBorder(hex + vec2(1, parity), southEast, state));
+    boundary = max(boundary, fovBorder(hex + vec2(0, 1), south, state));
+    boundary = max(boundary, fovBorder(hex + vec2(-1, parity), southWest, state));
+    boundary = max(boundary, fovBorder(hex + vec2(-1, parity - 1.0), northWest, state));
+    if (state > 2.5) {
+        bool sensor = state < 3.5;
+        float amount = u_fovOptions.x * (sensor ? 0.5 : 1.0);
+        float gray = dot(color, vec3(0.2126, 0.7152, 0.0722));
+        float desaturate = max(u_fovOptions.z, u_fovOptions.x > 0.0 ? (u_fovStyle > 0.5 ? 0.85 : 0.25) : 0.0);
+        color = mix(color, vec3(gray), desaturate);
+        vec3 shade = sensor ? vec3(0.10, 0.20, 0.25) : vec3(0.025, 0.035, 0.055);
+        if (u_fovOptions.w > 0.5) shade.b += 0.10;
+        if (u_fovStyle > 0.5) amount = 1.0 - pow(1.0 - amount, 4.0);
+        color = mix(color, shade, amount);
+    } else if (state < 1.5 && mask.a * 255.0 > 8.0) {
+        color = mix(color, mask.rgb, u_fovOptions.y);
+    }
+    if (state > 1.5 && state < 2.5) {
+        float edge = min(min(north, south), min(min(northEast, southEast), min(northWest, southWest)));
+        color = mix(color, mask.rgb, (1.0 - smoothstep(0.015, 0.04, edge)) * 0.28 * horizontal);
+    }
+    if (u_fovOptions.x > 0.0) {
+        // A contour appears only where visible hexes meet blocked/sensor hexes, not around every cell.
+        color = mix(color, vec3(0.40, 0.78, 0.84), boundary * 0.60 * horizontal);
+    }
+    return color;
+}
+
 
 float depthAt(vec2 uv) {
     return dot(texture2D(u_depth, uv), vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0));
@@ -59,5 +150,6 @@ void main() {
     color = pow(linear, vec3(1.0 / 2.2));
     vec2 edge = (v_uv - 0.5) * 2.0;
     color *= 1.0 - 0.09 * dot(edge, edge) * 0.5;
+    if (u_fovEnabled > 0.5) color = fieldOfView(color, depthAt(v_uv));
     gl_FragColor = vec4(color, 1.0);
 }

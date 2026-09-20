@@ -32,28 +32,23 @@ final class UnitModelSelection {
             return null;
         }
         // Support assets may reuse an infantry tileset entry without exposing a personnel count.
+        UnitModelState state = UnitModelState.capture(entity);
         int count = 1;
         String variant = entity instanceof Mek ? UnitModelKey.forEntity(entity) : entity.getShortNameRaw();
-        if (entity instanceof BattleArmor armor) {
-            int survivors = 0;
-            for (int location = 1; location < armor.locations(); location++) {
-                if (armor.getInternal(location) > 0) {
-                    survivors++;
-                }
-            }
-            count = figures(survivors, 4);
+        if (entity instanceof BattleArmor) {
+            count = BattleArmorVisual.figures(state.structure().activeTroopers());
         } else if (entity instanceof Infantry infantry) {
-            count = figures(infantry.getActiveTroopers(), 6);
+            count = figures(state.structure().activeTroopers(), 6);
             // Formation artwork follows the unit's motive type, independently of its name or sprite.
             variant = infantry.getMovementMode().name();
         }
         return new BoardScene.UnitModel(asset, tileset.genericModelFor(entity, part),
-              variant, count, twist, damage(entity));
+              variant, count, twist, damage(entity), state);
     }
 
     /**
-     * A Mek's lost locations, split by how a model shows them: an arm that is gone is taken off, anything else is
-     * left in place and burnt out, because the rest of the Mek stands on it or hangs from it. A lost side torso
+     * A Mek's lost locations: blown-off parts and destroyed arms disappear; other destroyed locations remain
+     * burnt out in place. A lost side torso
      * takes its arm with it. Combat damage records that arm as destroyed too, but the damage editor can zero a torso
      * and leave the arm's own numbers alone, so the arm is worked out here instead of trusted to be recorded.
      *
@@ -79,16 +74,17 @@ final class UnitModelSelection {
     }
 
     private static void addLost(Mek mek, int location, Set<String> removed, Set<String> wrecked) {
-        (mek.isArm(location) ? removed : wrecked).add(mek.getLocationAbbr(location));
+        (mek.isLocationBlownOff(location) || mek.isArm(location) ? removed : wrecked)
+              .add(mek.getLocationAbbr(location));
     }
 
     /**
      * Physically gone, as opposed to {@code isLocationBad}, which also counts a flooded leg that is still attached.
-     * A limb blown off this phase stays on until the phase ends, as its damage does everywhere else.
+     * Show a confirmed detachment immediately, matching the game's ground remains. This changes no phase rules.
      */
     private static boolean isLost(Mek mek, int location) {
         boolean isDestroyed = mek.isLocationTrulyDestroyed(location);
-        boolean isBlownOff = mek.isLocationBlownOff(location) && !mek.isLocationBlownOffThisPhase(location);
+        boolean isBlownOff = mek.isLocationBlownOff(location);
         return isDestroyed || isBlownOff;
     }
 
@@ -110,7 +106,7 @@ final class UnitModelSelection {
         return (clockwise > 3) ? clockwise - 6 : clockwise;
     }
 
-    /** Square-root compression: 28 soldiers become six figures; five armored troopers become three. */
+    /** Conventional-infantry compression: 28 soldiers become six figures. BA owns its independent policy. */
     static int figures(int survivors, int limit) {
         return Math.min(limit, (int) Math.ceil(Math.sqrt(Math.max(0, survivors))));
     }

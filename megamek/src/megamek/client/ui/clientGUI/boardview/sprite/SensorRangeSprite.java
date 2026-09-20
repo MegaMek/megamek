@@ -32,14 +32,6 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea01;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea012;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea0123;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossArea01234;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine01;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine012;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine0123;
-import static megamek.client.ui.clientGUI.boardview.HexDrawUtilities.getHexCrossLine01234;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
@@ -117,55 +109,7 @@ public class SensorRangeSprite extends FieldOfFireSprite {
         // scale the following draws according to board zoom
         graph.scale(bv.getScale(), bv.getScale());
 
-        graph.setStroke(getLineStroke());
-
-        int[] bTypes = getBTypes();
-        int[] bDir = getBDir();
-
-        // this will take the right way to paint the borders
-        // from the static arrays; depends on the exact
-        // borders that are present
-        switch (bTypes[borders]) {
-            case 1: // 2 adjacent borders
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                      getHexCrossLine01(bDir[borders], getBorderW()));
-                break;
-            case 2: // 3 adjacent borders
-                drawBorderXC(graph, getHexCrossArea012(bDir[borders], getBorderW()),
-                      getHexCrossLine012(bDir[borders], getBorderW()));
-                break;
-            case 3: // 4 adjacent borders
-                drawBorderXC(graph, getHexCrossArea0123(bDir[borders], getBorderW()),
-                      getHexCrossLine0123(bDir[borders], getBorderW()));
-                break;
-            case 4: // twice two adjacent borders
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                      getHexCrossLine01(bDir[borders], getBorderW()));
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders] + 3, getBorderW()),
-                      getHexCrossLine01(bDir[borders] + 3, getBorderW()));
-                break;
-            case 5: // three adjacent borders and one lone
-                drawBorderXC(graph, getHexCrossArea012(bDir[borders], getBorderW()),
-                      getHexCrossLine012(bDir[borders], getBorderW()));
-                drawLoneBorder(graph, bDir[borders] + 4);
-                break;
-            case 6: // two adjacent borders and one lone
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                      getHexCrossLine01(bDir[borders], getBorderW()));
-                drawLoneBorder(graph, bDir[borders] + 3);
-                break;
-            case 7: // two adjacent borders and one lone (other hexface)
-                drawBorderXC(graph, getHexCrossArea01(bDir[borders], getBorderW()),
-                      getHexCrossLine01(bDir[borders], getBorderW()));
-                drawLoneBorder(graph, bDir[borders] + 4);
-                break;
-            case 8:
-                drawBorderXC(graph, getHexCrossArea01234(bDir[borders], getBorderW()),
-                      getHexCrossLine01234(bDir[borders], getBorderW()));
-                break;
-            default:
-                drawNormalBorders(graph);
-        }
+        paintTactical(graph);
 
         graph.dispose();
     }

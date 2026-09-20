@@ -163,7 +163,8 @@ public enum KeyCommandBind {
     UNDO_SINGLE_STEP("undoSingleStep", VK_BACK_SPACE, CTRL_DOWN_MASK),
     FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
     EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK),
-    BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
+    // A submenu cannot have an accelerator; ClientGUI registers this with the controller.
+    BOT_COMMANDS(false, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
     FOV_SPOTTING(true, "toggleFovSpotting", VK_O, CTRL_DOWN_MASK),
     /** Toggles the objective overlays: control zone outlines and the scheme word on each flag. */
     SHOW_OBJECTS(true, "toggleShowObjects", VK_O),

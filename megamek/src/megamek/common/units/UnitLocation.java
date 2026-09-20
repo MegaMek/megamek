@@ -44,10 +44,14 @@ import megamek.common.board.Coords;
  *
  * @since July 5, 2005
  */
-public record UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId)
+public record UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause)
       implements Serializable {
     @Serial
     private static final long serialVersionUID = 3989732522854387850L;
 
+    /** Older movement producers/saves have no posture cue; null means no observation, not standing. */
+    public UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId) {
+        this(entityId, coords, facing, elevation, boardId, null);
+    }
 
 }

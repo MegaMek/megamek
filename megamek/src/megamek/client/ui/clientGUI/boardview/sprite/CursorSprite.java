@@ -37,6 +37,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
+import megamek.client.ui.clientGUI.boardview.BoardTactical;
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
@@ -44,7 +46,12 @@ import megamek.common.board.Coords;
 /**
  * Sprite for a cursor. Just a hexagon outline in a specified color.
  */
-public class CursorSprite extends Sprite {
+public class CursorSprite extends Sprite implements TacticalSprite {
+
+    @Override
+    public BoardTactical.Playback playback() {
+        return BoardTactical.Playback.LIVE;
+    }
 
     private Color color;
 
@@ -111,4 +118,15 @@ public class CursorSprite extends Sprite {
     public boolean isHidden() {
         return hidden || isOffScreen();
     }
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Graphics2D local = BoardTacticalGraphics.at(graphics, bv.getHexLocation(hexLoc));
+        try {
+            local.setColor(color);
+            local.drawPolygon(BoardView.getHexPoly());
+        } finally {
+            local.dispose();
+        }
+    }
+
 }

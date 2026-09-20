@@ -56,6 +56,9 @@ import megamek.common.equipment.MiscType;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.event.entity.GameEntityNewEvent;
+import megamek.common.event.entity.GameEntityRemoveEvent;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.IlluminationLevel;
@@ -95,10 +98,37 @@ public class FovHighlightingAndDarkening {
         cacheGameListener = new GameListenerAdapter() {
             @Override
             public void gameTurnChange(GameTurnChangeEvent e) {
-                cacheGameChanged = true;
+                visibilityChanged();
+            }
+
+            @Override
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                visibilityChanged();
+            }
+
+            @Override
+            public void gameEntityNew(GameEntityNewEvent e) {
+                visibilityChanged();
+            }
+
+            @Override
+            public void gameEntityRemove(GameEntityRemoveEvent e) {
+                visibilityChanged();
             }
         };
         this.boardView.game.addGameListener(cacheGameListener);
+    }
+
+    private void visibilityChanged() {
+        Runnable refresh = () -> {
+            invalidate();
+            boardView.checkFoVHexImageCacheClear();
+        };
+        if (javax.swing.SwingUtilities.isEventDispatchThread()) {
+            refresh.run();
+        } else {
+            javax.swing.SwingUtilities.invokeLater(refresh);
+        }
     }
 
     public void die() {
@@ -115,145 +145,95 @@ public class FovHighlightingAndDarkening {
      * @param c          Hex that is being processed.
      */
     boolean draw(Graphics2D boardGraph, Coords c) {
+        BoardFieldOfView.Hex result = evaluate(c);
+        if (result.tint() != 0) {
+            Color tint = new Color(result.tint(), true);
+            if (result.visibility() == BoardFieldOfView.Visibility.ORIGIN) {
+                boardView.drawHexBorder(boardGraph, new Point(0, 0), tint, 0, 7);
+            } else {
+                boardView.drawHexLayer(boardGraph, tint,
+                      result.visibility() == BoardFieldOfView.Visibility.BLOCKED, gs.getFovSpottingMode());
+            }
+        }
+        return result.hasLineOfSight();
+    }
+
+    /** Shared rules result. The classic painter and native renderer consume the same classification and colors. */
+    public BoardFieldOfView.Hex evaluate(Coords c) {
+        boolean highlight = boardView.shouldFovHighlight();
+        boolean darken = boardView.shouldFovDarken();
+        if (!highlight && !darken) {
+            return BoardFieldOfView.Hex.NONE;
+        }
         Coords viewerPosition = null;
-        // In the movement phase, calc LOS based on the selected hex, otherwise use the selected Entity
+        // In the movement phase, calc LOS based on the selected hex, otherwise use the selected Entity.
         if (boardView.game.getPhase().isMovement() && boardView.selected != null) {
             viewerPosition = boardView.selected;
         } else if (boardView.getSelectedEntity() != null) {
             Entity viewer = boardView.getSelectedEntity();
             if (viewer.isOnBoard(boardView.getBoardId())) {
-                // multi-hex units look from the hex closest to the target to avoid self-blocking
-                viewerPosition = viewer.getSecondaryPositions()
-                      .values()
-                      .stream()
-                      .min(Comparator.comparingInt(co -> co.distance(c)))
-                      .orElse(viewer.getPosition());
+                viewerPosition = viewer.getSecondaryPositions().values().stream()
+                      .min(Comparator.comparingInt(co -> co.distance(c))).orElse(viewer.getPosition());
             }
         }
-
-        // If there is no position to look from, we have nothing to do
-        if ((viewerPosition == null) || !boardView.getBoard().contains(viewerPosition)) {
-            return true;
+        if (viewerPosition == null || !boardView.getBoard().contains(viewerPosition)) {
+            return BoardFieldOfView.Hex.NONE;
         }
-
-        // Code for LoS darkening/highlighting
-        Point p = new Point(0, 0);
-        boolean highlight = boardView.shouldFovHighlight();
-        boolean darken = boardView.shouldFovDarken();
-        boolean hasLoS = true;
-
-        if (darken || highlight) {
-            final int pad = 0;
-            final int lw = 7;
-
-            boolean sensorsOn = (boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS) ||
-                  boardView.game.getOptions()
-                        .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS));
-            boolean doubleBlindOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
-            boolean inclusiveSensorsOn = boardView.game.getOptions()
-                  .booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
-
-            // Determine if any of the entities at the coordinates are illuminated, or if the
-            // coordinates are illuminated themselves
-            boolean targetIlluminated = boardView.game.getEntitiesVector(c, boardView.boardId)
-                  .stream()
-                  .anyMatch(Entity::isIlluminated) ||
-                  !IlluminationLevel.determineIlluminationLevel(boardView.game,
-                        boardView.boardId, c).isNone();
-
-            final int max_dist;
-            // We don't want to have to compute a LoSEffects yet, as that can be expensive on large viewing areas
-            if ((boardView.getSelectedEntity() != null) && doubleBlindOn) {
-                // We can only use this is double-blind is on, otherwise visual range won't affect LoS
-                max_dist = this.boardView.game.getPlanetaryConditions()
-                      .getVisualRange(this.boardView.getSelectedEntity(), targetIlluminated);
-            } else {
-                max_dist = 60;
+        boolean sensorsOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)
+              || boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS);
+        boolean doubleBlindOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
+        boolean inclusiveSensorsOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
+        boolean targetIlluminated = boardView.game.getEntitiesVector(c, boardView.boardId).stream().anyMatch(Entity::isIlluminated)
+              || !IlluminationLevel.determineIlluminationLevel(boardView.game, boardView.boardId, c).isNone();
+        int maxDistance = boardView.getSelectedEntity() != null && doubleBlindOn
+              ? boardView.game.getPlanetaryConditions().getVisualRange(boardView.getSelectedEntity(), targetIlluminated) : 60;
+        int distance = viewerPosition.distance(c);
+        int blue = gs.getFovSpottingMode() ? 80 : 0;
+        int darkenAlpha = gs.getFovDarkenAlpha();
+        int blockedTint = darken ? new Color(0, 0, blue, darkenAlpha).getRGB() : 0;
+        if (distance == 0) {
+            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.ORIGIN, new Color(50, 80, 150, 70).getRGB());
+        }
+        if (distance > maxDistance) {
+            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.BLOCKED, blockedTint);
+        }
+        LosEffects los = getCachedLosEffects(viewerPosition, c, boardView.getBoardId());
+        int visualRange = 30, minSensorRange = 0, maxSensorRange = 0;
+        if (boardView.getSelectedEntity() != null) {
+            if (los == null) {
+                los = LosEffects.calculateLOS(boardView.game, boardView.getSelectedEntity(), null);
             }
-
-            // Use blue tint when spotting mode is active to indicate non-standard FOV
-            final boolean spottingMode = gs.getFovSpottingMode();
-            final int darkenAlpha = gs.getInt(GUIPreferences.FOV_DARKEN_ALPHA);
-            final Color transparent_gray = spottingMode
-                  ? new Color(0, 0, 80, darkenAlpha)  // Blue tint for spotting mode
-                  : new Color(0, 0, 0, darkenAlpha);
-            final Color transparent_light_gray = spottingMode
-                  ? new Color(0, 0, 80, darkenAlpha / 2)
-                  : new Color(0, 0, 0, darkenAlpha / 2);
-            final Color selected_color = new Color(50, 80, 150, 70);
-
-            int dist = viewerPosition.distance(c);
-
-            int visualRange = 30;
-            int minSensorRange = 0;
-            int maxSensorRange = 0;
-            if (dist == 0) {
-                boardView.drawHexBorder(boardGraph, p, selected_color, pad, lw);
-            } else if (dist <= max_dist) {
-                LosEffects los = getCachedLosEffects(viewerPosition, c, boardView.getBoardId());
-                if (null != boardView.getSelectedEntity()) {
-                    if (los == null) {
-                        los = LosEffects.calculateLOS(boardView.game, boardView.getSelectedEntity(), null);
-                    }
-
-                    if (doubleBlindOn) { // Visual Range only matters in DB
-                        visualRange = Compute.getVisualRange(this.boardView.game,
-                              this.boardView.getSelectedEntity(),
-                              los,
-                              targetIlluminated);
-                    }
-                    int bracket = Compute.getSensorRangeBracket(this.boardView.getSelectedEntity(),
-                          null,
-                          cachedAllECMInfo);
-                    int range = Compute.getSensorRangeByBracket(this.boardView.game,
-                          this.boardView.getSelectedEntity(),
-                          null,
-                          los);
-
-                    maxSensorRange = bracket * range;
-                    minSensorRange = Math.max((bracket - 1) * range, 0);
-                    if (inclusiveSensorsOn) {
-                        minSensorRange = 0;
-                    }
+            if (doubleBlindOn) {
+                visualRange = Compute.getVisualRange(boardView.game, boardView.getSelectedEntity(), los, targetIlluminated);
+            }
+            int bracket = Compute.getSensorRangeBracket(boardView.getSelectedEntity(), null, cachedAllECMInfo);
+            int range = Compute.getSensorRangeByBracket(boardView.game, boardView.getSelectedEntity(), null, los);
+            maxSensorRange = bracket * range;
+            minSensorRange = inclusiveSensorsOn ? 0 : Math.max((bracket - 1) * range, 0);
+        }
+        // Visual range only constrains LOS when double blind is enabled.
+        if (!doubleBlindOn) {
+            visualRange = distance;
+        }
+        if (los != null && !los.canSee() || distance > visualRange) {
+            if (darken && sensorsOn && distance > minSensorRange && distance <= maxSensorRange) {
+                return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.SENSOR,
+                      new Color(0, 0, blue, darkenAlpha / 2).getRGB());
+            }
+            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.BLOCKED, blockedTint);
+        }
+        if (highlight) {
+            Iterator<Integer> radii = ringsRadii.iterator();
+            Iterator<Color> colors = ringsColors.iterator();
+            while (radii.hasNext() && colors.hasNext()) {
+                int radius = radii.next();
+                Color color = colors.next();
+                if (distance <= radius) {
+                    return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.VISIBLE, color.getRGB());
                 }
-
-                // Visual Range only matters in DB: ensure no effect w/o DB
-                if (!doubleBlindOn) {
-                    visualRange = dist;
-                }
-
-                if (((los != null) && !los.canSee()) || (dist > visualRange)) {
-                    if (darken) {
-                        if (sensorsOn && (dist > minSensorRange) && (dist <= maxSensorRange)) {
-                            boardView.drawHexLayer(boardGraph, transparent_light_gray);
-                        } else {
-                            // Reverse stripe direction when in spotting mode for visual distinction
-                            boardView.drawHexLayer(boardGraph, transparent_gray, true, spottingMode);
-                        }
-                    }
-                    hasLoS = false;
-                } else if (highlight) {
-                    Iterator<Integer> itR = ringsRadii.iterator();
-                    Iterator<Color> itC = ringsColors.iterator();
-                    while (itR.hasNext() && itC.hasNext()) {
-                        int dt = itR.next();
-                        Color ct = itC.next();
-                        if (dist <= dt) {
-                            boardView.drawHexLayer(boardGraph, ct);
-                            break;
-                        }
-                    }
-                }
-            } else {
-                // Max dist should be >= visual dist, this hex can't be seen
-                if (darken) {
-                    // Reverse stripe direction when in spotting mode for visual distinction
-                    boardView.drawHexLayer(boardGraph, transparent_gray, true, spottingMode);
-                }
-                hasLoS = false;
             }
         }
-        return hasLoS;
+        return BoardFieldOfView.Hex.VISIBLE;
     }
 
     List<ECMInfo> cachedAllECMInfo = null;
@@ -263,6 +243,12 @@ public class FovHighlightingAndDarkening {
     boolean cacheGameChanged = true;
     int cacheBoardId = -1;
     Map<Coords, LosEffects> losCache = new HashMap<>();
+
+    /** Terrain, unit state and visibility preferences can change between turns. */
+    void invalidate() {
+        cacheGameChanged = true;
+        clearCache();
+    }
 
     private void clearCache() {
         losCache = new HashMap<>();

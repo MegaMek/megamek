@@ -39,6 +39,7 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.FontHandler;
@@ -57,7 +58,7 @@ import megamek.common.units.Entity;
  * indicates the craft has used all its remaining velocity on that hex. A yellow two-way diamond indicates the craft
  * will fly off the map with remaining velocity.
  */
-public class FlightPathIndicatorSprite extends HexSprite {
+public class FlightPathIndicatorSprite extends HexSprite implements TacticalSprite {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final int TEXT_SIZE = 50;
@@ -114,6 +115,18 @@ public class FlightPathIndicatorSprite extends HexSprite {
         Graphics2D graph = spriteSetup();
         drawSprite(graph);
         graph.dispose();
+    }
+
+
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Graphics2D local = BoardTacticalGraphics.at(graphics, bv.getHexLocation(getPosition()));
+        try {
+            local.setFont(FontHandler.symbolFont());
+            drawSprite(local);
+        } finally {
+            local.dispose();
+        }
     }
 
     /*
@@ -285,8 +298,12 @@ public class FlightPathIndicatorSprite extends HexSprite {
         }
 
         int remainingDistance = velocity - moveStep.getDistance();
-        new StringDrawer(Integer.toString(remainingDistance)).at(HEX_CENTER_X, HEX_CENTER_Y - TEXT_Y_OFFSET)
+        StringDrawer text = new StringDrawer(Integer.toString(remainingDistance)).at(HEX_CENTER_X, HEX_CENTER_Y - TEXT_Y_OFFSET)
               .font(new Font(GUIP.getMoveFontType(), GUIP.getMoveFontStyle(), 16)).outline(COLOR_OUTLINE, 2.5f)
-              .color(GUIP.getOkColor()).centerX().draw(graph);
+              .color(GUIP.getOkColor()).centerX();
+        if (graph instanceof BoardTacticalGraphics) {
+            text.asText();
+        }
+        text.draw(graph);
     }
 }

@@ -1950,18 +1950,23 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         Map<String, Integer> groups = new HashMap<>();
 
         for (Mounted<?> mounted : getTotalWeaponList()) {
-            int loc = switch (mounted.getLocation()) {
-                case Mek.LOC_CENTER_TORSO, Mek.LOC_HEAD -> LOC_CAPITAL_NOSE;
-                case Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG ->
-                      mounted.isRearMounted() ? LOC_CAPITAL_AFT : LOC_CAPITAL_WINGS;
-                default -> LOC_CAPITAL_WINGS;
-            };
+            int loc = weaponGroupLocation(mounted);
 
             String key = mounted.getType().getInternalName() + ":" + loc;
             groups.merge(key, mounted.getNWeapons(), Integer::sum);
         }
 
         return groups;
+    }
+
+    @Override
+    public int weaponGroupLocation(Mounted<?> mounted) {
+        return switch (mounted.getLocation()) {
+            case Mek.LOC_CENTER_TORSO, Mek.LOC_HEAD -> LOC_CAPITAL_NOSE;
+            case Mek.LOC_LEFT_LEG, Mek.LOC_RIGHT_LEG ->
+                  mounted.isRearMounted() ? LOC_CAPITAL_AFT : LOC_CAPITAL_WINGS;
+            default -> LOC_CAPITAL_WINGS;
+        };
     }
 
     // Damage a fighter that was part of a squadron when splitting it. Per StratOps pg. 32 & 34

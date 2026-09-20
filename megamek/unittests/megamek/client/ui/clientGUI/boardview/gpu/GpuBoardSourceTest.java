@@ -30,6 +30,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.CursorSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
 import megamek.client.ui.tileset.HexTileset;
+import megamek.client.ui.clientGUI.boardview.ECMEffects;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.Hex;
@@ -71,14 +72,13 @@ class GpuBoardSourceTest {
                     fixture.view.updateEcmList();
                     fixture.source.refresh();
                 });
-                BoardScene.Pixels markings = fixture.source.takeFrame().scene().tile(new Coords(4, 4)).tactical();
-                assertTrue(markings != null);
+                BoardScene scene = fixture.source.takeFrame().scene();
                 for (Point point : List.of(new Point(42, 36), new Point(42, 12), new Point(42, 60),
                       new Point(14, 36), new Point(70, 36))) {
-                    int x = point.x * markings.width() / 84;
-                    int y = point.y * markings.height() / 72;
-                    assertTrue((markings.rgba(y * markings.width() + x) & 255) > 0,
-                          "ECM must cover the entire hex, not an unscaled corner patch: " + owner.getName() + " at " + point);
+                    assertTrue(scene.tactical().fills().stream().anyMatch(fill ->
+                                fill.argb() == ECMEffects.getECMColor(owner).getRGB()
+                                      && fill.shape().contains(4 * 63 + point.x, 4 * 72 + point.y)),
+                          "Native ECM must cover the entire hex: " + owner.getName() + " at " + point);
                 }
             }
         }
@@ -92,24 +92,18 @@ class GpuBoardSourceTest {
                 fixture.view.checkLOS(coords);
                 fixture.source.refresh();
             });
-            BoardScene.Pixels markings = fixture.source.takeFrame().scene().tile(coords).tactical();
             Rectangle outline = null;
-            for (int y = 0; y < markings.height(); y++) {
-                for (int x = 0; x < markings.width(); x++) {
-                    int pixel = markings.rgba(y * markings.width() + x);
-                    if ((pixel >>> 24) > 220 && ((pixel >>> 16) & 255) < 40
-                          && ((pixel >>> 8) & 255) < 40 && (pixel & 255) > 0) {
-                        if (outline == null) {
-                            outline = new Rectangle(x, y, 1, 1);
-                        } else {
-                            outline.add(x, y);
-                        }
-                    }
+            for (var fill : fixture.source.takeFrame().scene().tactical().fills()) {
+                if ((fill.argb() & 0xFFFFFF) == (Color.RED.getRGB() & 0xFFFFFF)) {
+                    Rectangle bounds = fill.shape().getBounds();
+                    outline = outline == null ? bounds : outline.union(bounds);
                 }
             }
-            assertTrue(outline != null, "The measurement cursor must be captured");
-            assertTrue(outline.width >= markings.width() - 6, "The red cursor must reach both sides of the marked hex");
-            assertTrue(outline.height >= markings.height() - 6, "The red cursor must reach the top and bottom edges");
+            assertTrue(outline != null, "The measurement cursor must be captured as native geometry");
+            assertEquals(coords.getX() * 63, outline.x, 1);
+            assertEquals(coords.getY() * 72, outline.y, 1);
+            assertTrue(outline.width >= 83, "The red cursor must reach both sides of its hex");
+            assertTrue(outline.height >= 71, "The red cursor must reach the top and bottom edges");
         }
     }
 
@@ -363,6 +357,7 @@ class GpuBoardSourceTest {
             for (BoardScene.Waypoint point : frame.movements().getFirst().path()) {
                 assertEquals(5, point.elevation(), 0.001f,
                       "A flying fighter's path plays at its altitude, not the airborne sentinel");
+                assertEquals(BoardScene.AeroState.AIRBORNE, point.aeroState());
             }
         }
     }
@@ -405,6 +400,10 @@ class GpuBoardSourceTest {
             }
             assertEquals(fixture.game.getBoard().getHex(new Coords(6, 6)).getLevel(),
                   played.getLast().elevation(), 0.001f, "The landing step plays at its hex elevation");
+            assertEquals(BoardScene.AeroState.LANDED, played.getLast().aeroState());
+            assertTrue(played.subList(0, played.size() - 1).stream()
+                  .allMatch(point -> point.aeroState() == BoardScene.AeroState.AIRBORNE),
+                  "A final landed Entity cannot deploy supports during its earlier flight steps");
         }
     }
 
@@ -461,7 +460,9 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile ranged = fixture.source.takeFrame().scene().tile(coords);
-            assertTrue(before.ground() != ranged.ground() || before.tactical() != ranged.tactical());
+            assertSame(before.ground(), ranged.ground());
+            assertTrue(samePixels(before.tactical(), ranged.tactical()));
+            assertFalse(fixture.source.takeFrame().scene().tactical().fills().isEmpty());
             SwingUtilities.invokeAndWait(() -> {
                 fixture.view.removeSprites(List.of(range));
                 fixture.player.setStartingPos(Board.START_ANY);
@@ -469,8 +470,9 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile deployment = fixture.source.takeFrame().scene().tile(coords);
-            assertFalse(samePixels(before.tactical(), deployment.tactical()),
-                  "Deployment markings belong to the tactical layer, not the terrain artwork");
+            assertTrue(samePixels(before.tactical(), deployment.tactical()));
+            assertFalse(fixture.source.takeFrame().scene().tactical().fills().isEmpty(),
+                  "Legal deployment borders belong to the native tactical geometry");
             SwingUtilities.invokeAndWait(() -> {
                 fixture.view.markDeploymentHexesFor(null);
                 fixture.game.setPhase(GamePhase.FIRING);
@@ -478,12 +480,14 @@ class GpuBoardSourceTest {
                 fixture.source.refresh();
             });
             BoardScene.Tile strafing = fixture.source.takeFrame().scene().tile(coords);
-            assertFalse(samePixels(before.tactical(), strafing.tactical()));
+            assertTrue(samePixels(before.tactical(), strafing.tactical()));
+            assertFalse(fixture.source.takeFrame().scene().tactical().fills().isEmpty());
             SwingUtilities.invokeAndWait(() -> {
                 fixture.view.clearStrafingCoords();
                 fixture.source.refresh();
             });
             BoardScene.Tile cleared = fixture.source.takeFrame().scene().tile(coords);
+            assertTrue(fixture.source.takeFrame().scene().tactical().fills().isEmpty());
             assertTrue(samePixels(before.ground(), cleared.ground()));
             assertTrue(samePixels(before.tactical(), cleared.tactical()));
         }
@@ -546,7 +550,7 @@ class GpuBoardSourceTest {
                 fixture.source.setViewport(200, 100, (int) (200 * density), (int) (100 * density));
                 fixture.source.refresh();
             });
-            BoardScene.Pixels hud = fixture.source.takeFrame().hud();
+            BoardScene.Pixels hud = fixture.source.takeFrame().hud().layers().getFirst().pixels();
             assertEquals((int) (200 * density), hud.width());
             assertEquals((int) (100 * density), hud.height());
             assertEquals(0x00ffffff, hud.rgba((int) (40 * density) * hud.width() + (int) (40 * density)));
@@ -565,7 +569,7 @@ class GpuBoardSourceTest {
     }
 
     @Test
-    void groundIgnoresLooseSurfaceDecals() throws Exception {
+    void groundIncludesRoughAndRubbleArtworkForNormalMapping() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             Coords coords = new Coords(0, 16);
             AtomicReference<BufferedImage> plain = new AtomicReference<>();
@@ -585,10 +589,10 @@ class GpuBoardSourceTest {
                 rubble.set(groundArt(fixture, coords));
                 hex.removeTerrain(Terrains.RUBBLE);
             });
-            assertTrue(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rough.get())),
-                  "Loose rock must not reach the ground artwork");
-            assertTrue(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rubble.get())),
-                  "Rubble must not reach the ground artwork");
+            assertFalse(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rough.get())),
+                  "Rough terrain's painted stones must reach the ground artwork");
+            assertFalse(samePixels(new BoardScene.Pixels(plain.get()), new BoardScene.Pixels(rubble.get())),
+                  "Rubble's painted stones must reach the ground artwork");
         }
     }
 
@@ -625,14 +629,20 @@ class GpuBoardSourceTest {
                 fixture.game.getBoard().addSpecialHexDisplay(coords, marker, true);
                 fixture.source.refresh();
             });
-            BoardScene.Tile marked = fixture.source.takeFrame().scene().tile(coords);
+            BoardScene markedScene = fixture.source.takeFrame().scene();
+            BoardScene.Tile marked = markedScene.tile(coords);
             assertTrue(samePixels(before.ground(), marked.ground()));
-            assertFalse(samePixels(before.tactical(), marked.tactical()));
+            assertTrue(before.normals() != null);
+            assertSame(before.normals(), marked.normals(), "Tactical-only refreshes retain the captured ground normals");
+            assertTrue(samePixels(before.tactical(), marked.tactical()), "The raised symbol must not be painted twice");
+            assertTrue(markedScene.markers().stream().anyMatch(symbol -> symbol.coords().equals(coords)
+                  && symbol.kind() == megamek.client.ui.clientGUI.boardview.BoardMarker.Kind.ARTILLERY_AUTO_HIT));
             SwingUtilities.invokeAndWait(() -> {
                 fixture.game.getBoard().removeSpecialHexDisplay(coords, marker, true);
                 fixture.source.refresh();
             });
             assertTrue(samePixels(before.tactical(), fixture.source.takeFrame().scene().tile(coords).tactical()));
+            assertTrue(fixture.source.takeFrame().scene().markers().isEmpty(), "Removed symbols must leave no stale marker");
         }
     }
 
@@ -664,7 +674,8 @@ class GpuBoardSourceTest {
                   Terrains.INCLINE_BOTTOM, Terrains.INCLINE_HIGH_TOP, Terrains.INCLINE_HIGH_BOTTOM,
                   Terrains.CLIFF_BOTTOM), "The board must shade the hex beside a drop by itself");
             BoardScene scene = fixture.source.takeFrame().scene();
-            assertTrue(scene.tile(cliff).features().isEmpty());
+            assertTrue(scene.tile(cliff).features().stream()
+                  .allMatch(feature -> feature.kind() == BoardScene.FeatureKind.SCATTER));
             assertFalse(hasOpaque(scene.tile(cliff).decals()), "Painted slopes must not duplicate the 3D faces");
             assertTrue(scene.tile(building).features().stream()
                   .allMatch(feature -> feature.asset().startsWith("building") && feature.height() == 3));
@@ -798,7 +809,8 @@ class GpuBoardSourceTest {
             assertEquals(1, contact.height());
             assertEquals(Messages.getString("BoardView1.sensorReturn"), contact.name());
             assertEquals(0, contact.location().facing());
-            assertEquals(Color.LIGHT_GRAY.getRGB(), contact.outlineRgb(), "Sensor contacts must not reveal team colors");
+            assertEquals(new Color(GpuMarkers.SENSOR_RGB).getRGB(), contact.outlineRgb(),
+                  "Sensor contacts use a fixed red outline without revealing team colors");
             SwingUtilities.invokeAndWait(() -> {
                 fixture.game.getOptions().getOption(OptionsConstants.ADVANCED_HIDDEN_UNITS).setValue(true);
                 fixture.entity.setHidden(true);

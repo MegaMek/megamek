@@ -45,6 +45,7 @@ import java.awt.Stroke;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardTactical;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
@@ -171,6 +172,18 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         };
     }
 
+    /** Shared labels for the classic markers and the native range contours. */
+    public static String getRangeText(int rangeBracket) {
+        return switch (rangeBracket) {
+            case RangeType.RANGE_MINIMUM -> "min";
+            case RangeType.RANGE_SHORT -> "S";
+            case RangeType.RANGE_MEDIUM -> "M";
+            case RangeType.RANGE_LONG -> "L";
+            case RangeType.RANGE_EXTREME -> "E";
+            default -> "";
+        };
+    }
+
     protected void setFillColor(Color c) {
         fillColor = c;
     }
@@ -194,6 +207,12 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
     /** Sensor ranges and objective zones keep their own planar presentation. */
     public boolean isWeaponRange() {
         return getClass() == FieldOfFireSprite.class && !usesOwnColor;
+    }
+
+    @Override
+    public BoardTactical.Playback playback() {
+        return usesOwnColor ? BoardTactical.Playback.HOLD_DURING_MOVEMENT
+              : BoardTactical.Playback.HIDE_DURING_MOVEMENT;
     }
 
     public int getBorders() {
@@ -247,6 +266,13 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
         // scale the following draws according to board zoom
         graph.scale(bv.getScale(), bv.getScale());
 
+        paintTactical(graph);
+
+        graph.dispose();
+    }
+
+    @Override
+    protected void paintTactical(Graphics2D graph) {
         graph.setStroke(lineStroke);
 
         // this will take the right way to paint the borders
@@ -294,7 +320,6 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
                 drawNormalBorders(graph);
         }
 
-        graph.dispose();
     }
 
     protected void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {

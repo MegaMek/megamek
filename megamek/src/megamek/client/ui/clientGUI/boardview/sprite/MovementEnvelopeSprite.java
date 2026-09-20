@@ -43,6 +43,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
@@ -50,7 +51,7 @@ import megamek.common.board.Coords;
 /**
  * Sprite for displaying information about where a unit can move to.
  */
-public class MovementEnvelopeSprite extends HexSprite {
+public class MovementEnvelopeSprite extends HexSprite implements TacticalSprite {
 
     // control values
     private static final int BORDER_THICKNESS = 10;
@@ -80,6 +81,22 @@ public class MovementEnvelopeSprite extends HexSprite {
         // scale the following draws according to board zoom
         graph.scale(bv.getScale(), bv.getScale());
 
+        paintTactical(graph);
+
+        graph.dispose();
+    }
+
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Graphics2D local = BoardTacticalGraphics.at(graphics, bv.getHexLocation(getPosition()));
+        try {
+            paintTactical(local);
+        } finally {
+            local.dispose();
+        }
+    }
+
+    protected void paintTactical(Graphics2D graph) {
         graph.setStroke(new BasicStroke(LINE_THICKNESS, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER,
               10f, new float[] { 5f, 3f }, 0f));
 
@@ -99,7 +116,6 @@ public class MovementEnvelopeSprite extends HexSprite {
                 graph.draw(getHexBorderLine(i, cut, LINE_THICKNESS / 2));
             }
         }
-        graph.dispose();
     }
 
 }

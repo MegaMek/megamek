@@ -54,19 +54,21 @@ class GpuUnitVisibilitySmokeTest {
         GpuUnitVisibility visibility = new GpuUnitVisibility();
         GpuUnitModels models = new GpuUnitModels();
         GpuBoardSkin skin = new GpuBoardSkin();
-        ModelBatch batch = new ModelBatch();
+        ModelBatch batch = new ModelBatch(GpuUnitCamouflage.shaders());
+        GpuUnitCamouflage camouflage = new GpuUnitCamouflage();
+        UnitCamouflage camoSource = new UnitCamouflage();
         List<Pixmap> captures = new ArrayList<>();
         try {
             GpuBoardTuning tuning = new GpuBoardTuning(skin.skin);
             Slider strength = tuning.panel().findActor("See-through");
             assertNotNull(strength);
-            assertEquals(0.75f, tuning.seeThrough());
+            assertEquals(GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY, tuning.seeThrough());
             strength.setValue(0);
             assertEquals(0, tuning.seeThrough());
-            assertEquals(0.5f, tuning.buildingOpacity());
-            assertEquals(0.75f, tuning.treeOpacity());
+            assertEquals(GpuTerrain.DEFAULT_BUILDING_OPACITY, tuning.buildingOpacity());
+            assertEquals(GpuTerrain.DEFAULT_TREE_OPACITY, tuning.treeOpacity());
             tuning.panel().findActor("tuning-defaults").fire(new ChangeListener.ChangeEvent());
-            assertEquals(0.75f, tuning.seeThrough());
+            assertEquals(GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY, tuning.seeThrough());
 
             BoardScene scene = ridge();
             BoardCamera camera = new BoardCamera();
@@ -75,10 +77,15 @@ class GpuUnitVisibilitySmokeTest {
             camera.orbit(-45, 20);
             camera.fit(scene);
             terrain.update(scene);
-            GpuMeeple atlas = models.get(new BoardScene.UnitModel("units/meks/atlas/model.json",
-                  "units/fallback/biped.json", "Atlas AS7-D", 1));
+            GpuMeeple atlas = models.get(new BoardScene.UnitModel("units/modular/meks/atlas.json",
+                  "units/modular/meks/fallback-biped.json", "Atlas AS7-D", 1, 0, BoardScene.LocationDamage.NONE,
+                  UnitModelState.capture(new megamek.common.units.BipedMek())));
             assertNotNull(atlas);
             ModelInstance unit = new ModelInstance(atlas.instance.model);
+            var entity = new megamek.common.units.BipedMek();
+            entity.setCamouflage(new megamek.common.icons.Camouflage("Word of Blake/", "TerraSec (Camo).png"));
+            var paint = camoSource.resolve(UnitCamouflageTest.selection(entity)).state().appearance();
+            camouflage.apply(unit, atlas.instance, paint);
             unit.userData = new Color(0.1f, 0.45f, 1, 1);
             atlas.place(unit, camera.camera, BoardGeometry.center(new Coords(3, 2), 1), 0, 2, false);
             List<ModelInstance> units = List.of(unit);
@@ -96,6 +103,7 @@ class GpuUnitVisibilitySmokeTest {
                   "Disabling see-through must restore the original frame immediately");
 
             ModelInstance opponent = new ModelInstance(atlas.instance.model);
+            camouflage.apply(opponent, atlas.instance, paint);
             opponent.userData = new Color(0.9f, 0.15f, 0.1f, 1);
             atlas.place(opponent, camera.camera, BoardGeometry.center(new Coords(1, 2), 1), 0, 2, false);
             List<ModelInstance> teams = List.of(unit, opponent);
@@ -135,7 +143,7 @@ class GpuUnitVisibilitySmokeTest {
             camera.fit(scene);
             atlas.place(unit, camera.camera, BoardGeometry.center(new Coords(3, 2), 1), 0, 2, false);
             for (float fog : new float[] { 0.3f, 0 }) {
-                atmosphere.configure(new BoardAtmosphere.Settings(13, 0, fog, 2.5f, 0, 0, 0));
+                atmosphere.configure(new BoardAtmosphere.Settings(13, 0, fog, 2.5f, 0, 0));
                 Pixmap before = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0, captures);
                 Pixmap after = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0.75f, captures);
                 assertTrue(difference(before, after) > 1000, "See-through must survive viewport resizing and fog changes");
@@ -144,6 +152,8 @@ class GpuUnitVisibilitySmokeTest {
         } finally {
             captures.forEach(Pixmap::dispose);
             batch.dispose();
+            camouflage.dispose();
+            camoSource.clear();
             skin.dispose();
             models.dispose();
             visibility.dispose();

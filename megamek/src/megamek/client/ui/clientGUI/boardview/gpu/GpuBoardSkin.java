@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -115,6 +116,30 @@ final class GpuBoardSkin implements Disposable {
         action.font = bold;
         skin.add("action", action);
 
+        // Menu controls have their own presentation; the shared action-button artwork stays intact.
+        skin.add("menu-panel", menuPanel(), Drawable.class);
+        TextButton.TextButtonStyle menuRow = new TextButton.TextButtonStyle();
+        menuRow.font = font;
+        menuRow.fontColor = TEXT;
+        menuRow.disabledFontColor = DISABLED;
+        menuRow.up = skin.newDrawable("white", Color.CLEAR);
+        menuRow.over = skin.newDrawable("white", Color.valueOf("2B383D"));
+        menuRow.down = skin.newDrawable("white", Color.valueOf("405258"));
+        menuRow.checked = skin.newDrawable("white", Color.valueOf("35474D"));
+        menuRow.checkedOver = menuRow.checked;
+        menuRow.disabled = menuRow.up;
+        skin.add("menu-row", menuRow);
+        TextButton.TextButtonStyle menuControl = new TextButton.TextButtonStyle(menuRow);
+        menuControl.font = small;
+        skin.add("menu-control", menuControl);
+        ScrollPane.ScrollPaneStyle menuScroll = new ScrollPane.ScrollPaneStyle();
+        menuScroll.vScroll = skin.newDrawable("white", Color.valueOf("1C2529"));
+        menuScroll.vScrollKnob = skin.newDrawable("white", Color.valueOf("52666D"));
+        menuScroll.vScroll.setMinWidth(4);
+        menuScroll.vScrollKnob.setMinWidth(4);
+        menuScroll.vScrollKnob.setMinHeight(24);
+        skin.add("menu", menuScroll);
+
         ScrollPane.ScrollPaneStyle scrolling = new ScrollPane.ScrollPaneStyle();
         scrolling.vScroll = skin.newDrawable("white", Color.valueOf("151A1B"));
         scrolling.vScrollKnob = new TextureRegionDrawable(skin.get("button-normal", Texture.class));
@@ -146,14 +171,29 @@ final class GpuBoardSkin implements Disposable {
         tooltip.wrapWidth = 340;
         skin.add("default", tooltip);
         for (String icon : List.of("target", "move", "group", "orders", "info", "unit", "hex", "close",
-              "search", "arrow", "lock")) {
+              "search", "arrow", "lock", "checkbox-off", "checkbox-on")) {
             icon(icon);
         }
+        skin.add("default", new CheckBox.CheckBoxStyle(skin.getDrawable("icon-checkbox-off"),
+              skin.getDrawable("icon-checkbox-on"), font, TEXT));
     }
 
     private static Color fontColor(SkinSpecification spec, int index, Color fallback) {
         return !spec.hasBackgrounds() || spec.fontColors.size() <= index ? fallback
               : new Color((spec.fontColors.get(index).getRGB() << 8) | 0xff);
+    }
+
+    /** One quiet surface for a menu, with a single-pixel edge instead of a frame around every row. */
+    private NinePatchDrawable menuPanel() {
+        Pixmap pixels = new Pixmap(3, 3, Pixmap.Format.RGBA8888);
+        pixels.setColor(Color.valueOf("46565D"));
+        pixels.fill();
+        pixels.setColor(Color.valueOf("171F23"));
+        pixels.fillRectangle(1, 1, 1, 1);
+        Texture texture = new Texture(pixels);
+        pixels.dispose();
+        skin.add("menu-panel-texture", texture);
+        return new NinePatchDrawable(new NinePatch(texture, 1, 1, 1, 1));
     }
 
     /** A matte recessed surface, with a thin steel lip instead of a raised button's chrome. */
@@ -304,6 +344,14 @@ final class GpuBoardSkin implements Disposable {
         Pixmap pixels = new Pixmap(48, 48, Pixmap.Format.RGBA8888);
         pixels.setColor(Color.WHITE);
         switch (name) {
+            case "checkbox-off", "checkbox-on" -> {
+                pixels.drawRectangle(5, 5, 38, 38);
+                pixels.drawRectangle(6, 6, 36, 36);
+                if (name.equals("checkbox-on")) {
+                    stroke(pixels, 12, 24, 21, 33);
+                    stroke(pixels, 21, 33, 36, 14);
+                }
+            }
             case "target" -> {
                 pixels.drawCircle(24, 24, 13);
                 pixels.drawCircle(24, 24, 12);

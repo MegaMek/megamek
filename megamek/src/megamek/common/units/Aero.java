@@ -2423,17 +2423,20 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     public Map<String, Integer> groupWeaponsByLocation() {
         Map<String, Integer> groups = new HashMap<>();
         for (Mounted<?> mounted : getTotalWeaponList()) {
-            int loc = mounted.getLocation();
-            if (isFighter() && ((loc == Aero.LOC_RIGHT_WING) || (loc == Aero.LOC_LEFT_WING))) {
-                loc = Aero.LOC_WINGS;
-            }
-            if (mounted.isRearMounted()) {
-                loc = Aero.LOC_AFT;
-            }
+            int loc = weaponGroupLocation(mounted);
             String key = mounted.getType().getInternalName() + ":" + loc;
             groups.merge(key, mounted.getNWeapons(), Integer::sum);
         }
         return groups;
+    }
+
+    @Override
+    public int weaponGroupLocation(Mounted<?> mounted) {
+        int loc = mounted.getLocation();
+        if (isFighter() && ((loc == Aero.LOC_RIGHT_WING) || (loc == Aero.LOC_LEFT_WING))) {
+            loc = Aero.LOC_WINGS;
+        }
+        return mounted.isRearMounted() ? Aero.LOC_AFT : loc;
     }
 
     @Override

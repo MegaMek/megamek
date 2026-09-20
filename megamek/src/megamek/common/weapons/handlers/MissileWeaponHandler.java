@@ -972,6 +972,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         if (!bMissed) {
             // Buildings shield all units from a certain amount of damage.
+            reportAttackAnimation(hits > 0 && !missReported);
             // Amount is based upon the building's CF at the phase's start.
             int bldgAbsorbs = 0;
             if (targetInBuilding && (bldg != null)

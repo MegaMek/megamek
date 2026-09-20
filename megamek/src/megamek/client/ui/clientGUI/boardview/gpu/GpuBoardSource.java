@@ -3,29 +3,31 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.clientGUI.MegaMekGUI;
+import megamek.client.ui.clientGUI.boardview.BoardFieldOfView;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
+import megamek.client.ui.clientGUI.boardview.overlay.OverlayImage;
+import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
@@ -36,6 +38,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListenerAdapter;
@@ -55,33 +58,48 @@ import megamek.common.units.UnitLocation;
 /** Thin Swing adapter. Reuses MegaMek's tileset, visibility checks, movement path, and actual phase buttons. */
 final class GpuBoardSource implements AutoCloseable {
     public record UiPreferences(float scale) { }
-    public record Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
-          List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
+    record HudLayer(BoardScene.Pixels pixels, int x, int y, OverlayImage.Fade fade, OverlayImage.Transition shiftY) {
+        HudLayer(BoardScene.Pixels pixels, int x, int y, OverlayImage.Fade fade) {
+            this(pixels, x, y, fade, OverlayImage.Transition.ZERO);
+        }
+    }
+    record Hud(int width, int height, List<HudLayer> layers) { }
+    public record Frame(BoardScene scene, List<BoardScene.Animation> animations, BoardScene.Context context,
+          List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
           BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
           BoardAtmosphere.Settings scenarioAtmosphere, BoardScene.Attack attack) {
-        Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
-              List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
+        Frame(BoardScene scene, List<BoardScene.Animation> animations, BoardScene.Context context,
+              List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
               BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
               BoardAtmosphere.Settings scenarioAtmosphere) {
-            this(scene, movements, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
+            this(scene, animations, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
                   scenarioAtmosphere, null);
         }
 
-        Frame(BoardScene scene, List<BoardScene.Movement> movements, BoardScene.Context context,
-              List<BoardScene.Command> globalCommands, BoardScene.Pixels hud, String tooltip,
+        Frame(BoardScene scene, List<BoardScene.Animation> animations, BoardScene.Context context,
+              List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
               BoardView.CenterRequest centerRequest, long boardGeneration, String actorName) {
-            this(scene, movements, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
+            this(scene, animations, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
                   BoardAtmosphere.DEFAULTS);
         }
+        List<BoardScene.Movement> movements() {
+            return animations.stream().filter(BoardScene.Movement.class::isInstance).map(BoardScene.Movement.class::cast).toList();
+        }
     }
+
+    private final java.util.LinkedHashSet<java.util.UUID> receivedAttacks = new java.util.LinkedHashSet<>();
 
     private volatile BoardView view;
     private final Supplier<JComponent> phasePanel;
     private GpuBoardActions actions;
     volatile UiPreferences uiPreferences;
     private final Map<Image, BoardScene.Pixels> unitImages = new IdentityHashMap<>();
+    private record AnnotationKey(int entityId, int part) { }
+    private final Map<AnnotationKey, EntitySprite.Annotations> unitAnnotations = new HashMap<>();
+    private final Map<Image, BoardScene.Pixels> overlayImages = new IdentityHashMap<>();
+    private final UnitCamouflage camouflage = new UnitCamouflage();
     private final BoardScene.PixelPool terrainImages = new BoardScene.PixelPool();
-    private final List<BoardScene.Movement> pendingMoves = new ArrayList<>();
+    private final List<BoardScene.Animation> pendingEvents = new ArrayList<>();
     private final Timer timer;
     private final GameListenerAdapter gameListener;
     private final BoardListenerAdapter boardListener;
@@ -94,8 +112,12 @@ final class GpuBoardSource implements AutoCloseable {
     };
     private Board board;
     private List<BoardScene.Tile> tiles = List.of();
+    private BoardFieldOfView fieldOfView = BoardFieldOfView.EMPTY;
     private boolean terrainDirty = true;
     private volatile boolean closed;
+    /** Swing publishes chat focus for native camera/menu input; the BoardView owns the actual state. */
+    private volatile boolean chatActive;
+    private boolean suppressChatCharacter;
     private Frame frame;
     private Coords contextCoords;
     /** The GL thread publishes layout and raster sizes together; Swing owns overlay painting and hit testing. */
@@ -108,6 +130,7 @@ final class GpuBoardSource implements AutoCloseable {
     private volatile Rectangle visibleArea = new Rectangle(0, 0, 16, 16);
     private Rectangle capturedArea;
     private long capturedRevision = -1;
+    private GamePhase capturedPhase;
 
     public void setVisibleArea(Rectangle area) {
         visibleArea = new Rectangle(area);
@@ -155,22 +178,33 @@ final class GpuBoardSource implements AutoCloseable {
         };
         gameListener = new GameListenerAdapter() {
             @Override
+            public void gameAttackResolved(megamek.common.event.GameAttackResolvedEvent event) {
+                BoardView eventView = GpuBoardSource.this.view;
+                SwingUtilities.invokeLater(() -> {
+                    if (GpuBoardSource.this.view == eventView) {
+                        captureCombat(event);
+                    }
+                });
+            }
+
+            @Override
             public void gameEntityChange(GameEntityChangeEvent event) {
                 BoardView eventView = GpuBoardSource.this.view;
                 // BoardView consumes the event's Vector during playback. Copy it before leaving the event callback.
                 List<UnitLocation> path = event.getMovePath() == null ? List.of() : List.copyOf(event.getMovePath());
                 int entityId = event.getEntity().getId();
                 EntityMovementType type = event.getEntity().moved;
+                int moveMP = movementMP(event.getEntity(), type);
                 Entity old = event.getOldEntity();
                 UnitLocation start = old == null || old.getPosition() == null ? null
                       : new UnitLocation(old.getId(), old.getPosition(), old.getFacing(), old.getElevation(),
-                            old.getBoardId());
+                            old.getBoardId(), old.getProneCause());
                 int startAltitude = old == null ? 0 : old.getAltitude();
+                Entity takeoff = old == null ? event.getEntity() : old;
+                int jumpMP = type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0;
                 SwingUtilities.invokeLater(() -> {
                     if (GpuBoardSource.this.view == eventView) {
-                        Entity takeoff = old == null ? event.getEntity() : old;
-                        captureMovement(entityId, start, path, type,
-                            type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0, startAltitude);
+                        captureMovement(entityId, start, path, type, jumpMP, startAltitude, moveMP);
                     }
                 });
             }
@@ -203,8 +237,8 @@ final class GpuBoardSource implements AutoCloseable {
         }
     }
 
-        private void captureMovement(int entityId, UnitLocation start, List<UnitLocation> path, EntityMovementType type,
-            int jumpMP, int startAltitude) {
+    private void captureMovement(int entityId, UnitLocation start, List<UnitLocation> path, EntityMovementType type,
+            int jumpMP, int startAltitude, int movementMP) {
         if (closed || path.isEmpty()) {
             return;
         }
@@ -220,23 +254,89 @@ final class GpuBoardSource implements AutoCloseable {
         int flightAltitude = entity.getAltitude() > 0 ? entity.getAltitude() : startAltitude;
         if (start != null && start.boardId() == view.getBoardId()) {
             points.add(pathWaypoint(entity, start.coords(), start.elevation(), start.facing(),
-                  startAltitude > 0 ? startAltitude : flightAltitude));
+                  startAltitude > 0 ? startAltitude : flightAltitude).withProneCause(start.proneCause()));
         }
         for (UnitLocation location : path) {
             BoardScene.Waypoint point = pathWaypoint(entity, location.coords(), location.elevation(),
-                  location.facing(), flightAltitude);
+                  location.facing(), flightAltitude).withProneCause(location.proneCause() != null ? location.proneCause()
+                        : points.isEmpty() ? null : points.getLast().proneCause());
             if (points.isEmpty() || !points.getLast().equals(point)) {
                 points.add(point);
             }
         }
         // Publish the final visible state and its movement together, so a frame cannot jump to the end first.
         Frame next = capture();
+        if (!points.isEmpty()) {
+            points.set(0, supportedEndpoint(points.getFirst(), frame, entityId));
+            points.set(points.size() - 1, supportedEndpoint(points.getLast(), next, entityId));
+        }
         synchronized (this) {
             if (view == movingView) {
-                pendingMoves.add(new BoardScene.Movement(entityId, view.getBoardId(), points, type, jumpMP));
+                queueAnimation(new BoardScene.Movement(entityId, view.getBoardId(), points, type, jumpMP,
+                      movementMP, next.scene().units().stream()
+                            .filter(unit -> unit.id() == entityId && !unit.sensorContact()).findFirst().orElse(null)));
             }
             frame = next;
         }
+    }
+
+    /** Copy authorized, then-visible appearance once; no Entity reaches the GL thread. */
+    private void captureCombat(megamek.common.event.GameAttackResolvedEvent event) {
+        requireSwingThread();
+        var result = event.result();
+        Entity attacker = event.attacker();
+        Entity target = event.target() instanceof Entity entity ? entity : null;
+        if (closed || result.attacker().boardId() != view.getBoardId() || attacker == null
+              || !visible(attacker) || sensorContact(attacker)
+              || (result.targetType() == Targetable.TYPE_ENTITY && target == null)
+              || (target != null && (!visible(target) || sensorContact(target)))
+              || !receivedAttacks.add(result.id())) {
+            return;
+        }
+        if (receivedAttacks.size() > 2048) {
+            receivedAttacks.removeFirst();
+        }
+        var usedImages = new IdentityHashMap<Image, Boolean>();
+        var firing = unit(attacker, -1, result.attacker().coords(), false, usedImages);
+        var receiving = target == null ? null : unit(target, -1, result.target().coords(), false, usedImages);
+        var destination = receiving == null
+              ? waypoint(result.target().coords(), result.target().elevation(), result.target().facing())
+              : receiving.location();
+        synchronized (this) {
+            queueAnimation(new BoardScene.Combat(result, firing, receiving, destination));
+        }
+    }
+
+    private synchronized void queueAnimation(BoardScene.Animation animation) {
+        if (pendingEvents.size() >= UnitPlayback.MAX_PENDING_EVENTS) {
+            pendingEvents.clear();
+        }
+        pendingEvents.add(animation);
+    }
+
+    /** Copy the game's current capability once at the event boundary; the renderer never recalculates MP rules. */
+    static int movementMP(Entity entity, EntityMovementType type) {
+        if (entity instanceof Aero aero && aero.isAirborne()) {
+            return Math.max(1, aero.getCurrentVelocity());
+        }
+        return switch (type) {
+            case MOVE_JUMP -> entity.getJumpMP();
+            case MOVE_SPRINT, MOVE_VTOL_SPRINT -> entity.getSprintMP();
+            case MOVE_RUN, MOVE_VTOL_RUN, MOVE_SUBMARINE_RUN, MOVE_OVER_THRUST, MOVE_SKID -> entity.getRunMP();
+            default -> entity.getWalkMP();
+        };
+    }
+
+    /** A landed path endpoint uses the same whole-footprint support as its captured hull, not just its centre hex. */
+    private static BoardScene.Waypoint supportedEndpoint(BoardScene.Waypoint point, Frame frame, int id) {
+        if (frame == null || point.aeroState() != BoardScene.AeroState.LANDED) {
+            return point;
+        }
+        return frame.scene().units().stream().filter(unit -> unit.id() == id && !unit.sensorContact()
+                    && unit.footprint().size() > 1 && unit.location().coords().equals(point.coords())
+                    && unit.location().aeroState() == BoardScene.AeroState.LANDED)
+              .map(unit -> new BoardScene.Waypoint(point.coords(), unit.location().elevation(), point.facing(),
+                    point.proneCause(), point.aeroState(), unit.footprint())).findFirst().orElse(point);
     }
 
     public void refresh() {
@@ -250,10 +350,10 @@ final class GpuBoardSource implements AutoCloseable {
     }
 
     public synchronized Frame takeFrame() {
-        Frame result = new Frame(frame.scene(), List.copyOf(pendingMoves), frame.context(), frame.globalCommands(),
+        Frame result = new Frame(frame.scene(), List.copyOf(pendingEvents), frame.context(), frame.globalCommands(),
               frame.hud(), frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
               frame.scenarioAtmosphere(), frame.attack());
-        pendingMoves.clear();
+        pendingEvents.clear();
         return result;
     }
 
@@ -268,10 +368,24 @@ final class GpuBoardSource implements AutoCloseable {
                       () -> closed || view != selectedView, this::refresh);
                 contextCoords = null;
                 unitImages.clear();
+                unitAnnotations.clear();
                 terrainDirty = true;
                 synchronized (this) {
-                    pendingMoves.clear();
+                    pendingEvents.clear();
                 }
+            }
+        }
+        chatActive = view.getChatterBoxActive();
+        OverlayViewport overlayViewport = viewport;
+        view.overlayInput(MouseEvent.MOUSE_MOVED, pointer, overlayViewport.size(), overlayViewport.pixels());
+        Hud nextHud = captureHud(overlayViewport);
+        // A toggle starts on Swing. Publish its timeline before potentially expensive board/command capture,
+        // so native rendering can already animate it while the rest of this scene snapshot is being prepared.
+        synchronized (this) {
+            if (frame != null && frame.scene().boardId() == view.getBoardId()) {
+                frame = new Frame(frame.scene(), frame.animations(), frame.context(), frame.globalCommands(), nextHud,
+                      frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
+                      frame.scenarioAtmosphere(), frame.attack());
             }
         }
         Board current = view.game.getBoard(view.getBoardId());
@@ -281,6 +395,10 @@ final class GpuBoardSource implements AutoCloseable {
             }
             board = current;
             boardGeneration++;
+            synchronized (this) {
+                pendingEvents.clear();
+                receivedAttacks.clear();
+            }
             board.addBoardListener(boardListener);
             terrainDirty = true;
         }
@@ -294,20 +412,21 @@ final class GpuBoardSource implements AutoCloseable {
         }
         Rectangle area = visibleArea;
         long revision = view.getPlanarRevision();
-        if (changedTerrain || revision != capturedRevision || !area.equals(capturedArea)) {
+        if (changedTerrain || revision != capturedRevision || view.game.getPhase() != capturedPhase || !area.equals(capturedArea)) {
             List<BoardScene.Tile> painted = new ArrayList<>(tiles);
             for (int index = 0; index < tiles.size(); index++) {
                 BoardScene.Tile old = tiles.get(index);
                 if (old.tactical() != null && !area.contains(old.coords().getX(), old.coords().getY())) {
                     painted.set(index, new BoardScene.Tile(old.coords(), old.elevation(), old.waterDepth(), old.frozen(),
-                          old.roadExits(), old.surface(), old.ground(), old.decals(), null, old.features(), old.text()));
+                          old.roadExits(), old.surface(), old.ground(), old.normals(), old.decals(), old.decalsWithoutLimbs(),
+                          null, old.features(), old.text()));
                 }
             }
             view.capturePlanarTactical(area, hex -> {
                 int index = hex.coords().getX() * board.getHeight() + hex.coords().getY();
                 BoardScene.Tile old = tiles.get(index);
                 BoardScene.Tile next = new BoardScene.Tile(old.coords(), old.elevation(), old.waterDepth(), old.frozen(),
-                      old.roadExits(), old.surface(), old.ground(), old.decals(),
+                      old.roadExits(), old.surface(), old.ground(), old.normals(), old.decals(), old.decalsWithoutLimbs(),
                       terrainImages.capture(hex.tactical(), old.tactical()), old.features(), hex.text());
                 if (!next.equals(old)) {
                     painted.set(index, next);
@@ -317,17 +436,22 @@ final class GpuBoardSource implements AutoCloseable {
                 tiles = List.copyOf(painted);
             }
             terrainImages.retain(tiles);
+            fieldOfView = view.captureFieldOfView(area);
             capturedArea = area;
             capturedRevision = revision;
+            capturedPhase = view.game.getPhase();
         }
         List<BoardScene.Unit> units = new ArrayList<>();
+        camouflage.begin();
         Map<Image, Boolean> usedImages = new IdentityHashMap<>();
         for (Entity entity : view.game.getEntitiesVector()) {
             if (!visible(entity)) {
                 continue;
             }
             boolean sensor = sensorContact(entity);
-            if (entity.getSecondaryPositions().isEmpty() || sensor) {
+            boolean wholeModel = !sensor && GpuUnitModels.ENABLED
+                  && MMStaticDirectoryManager.getMekTileset().modelFor(entity, -1) != null;
+            if (entity.getSecondaryPositions().isEmpty() || sensor || wholeModel) {
                 units.add(unit(entity, -1, entity.getPosition(), sensor, usedImages));
             } else {
                 entity.getSecondaryPositions().forEach((part, coords) ->
@@ -335,6 +459,8 @@ final class GpuBoardSource implements AutoCloseable {
             }
         }
         unitImages.keySet().retainAll(usedImages.keySet());
+        unitAnnotations.values().removeIf(annotations -> !usedImages.containsKey(annotations.image()));
+        camouflage.retain();
         JComponent panel = phasePanel.get();
         List<BoardScene.Command> commands = actions.phaseCommands();
         BoardScene.Context nextContext = contextCoords == null ? null : new BoardScene.Context(contextCoords,
@@ -351,10 +477,6 @@ final class GpuBoardSource implements AutoCloseable {
                   }))).toList();
             nextGlobal.add(new BoardScene.Command("boards", "Maps", "", true, false, boards, () -> { }));
         }
-        OverlayViewport overlayViewport = viewport;
-        view.overlayInput(MouseEvent.MOUSE_MOVED, pointer, overlayViewport.size(), overlayViewport.pixels());
-        BoardScene.Pixels nextHud = BoardScene.Pixels.capture(
-              view.captureOverlayImage(overlayViewport.size(), overlayViewport.pixels()), frame == null ? null : frame.hud());
         String nextTooltip = GpuBoardActions.plainText(view.getHexTooltip(contextCoords == null ? hoverCoords : contextCoords));
         List<BoardScene.Waypoint> planned = new ArrayList<>();
         if (panel instanceof MovementDisplay movement) {
@@ -374,13 +496,38 @@ final class GpuBoardSource implements AutoCloseable {
               light == null || light.x == 0 && light.y == 0 ? null : new BoardScene.Light(light.x, -light.y),
               firingLines(), view.getWeaponRangeSprites().stream().map(sprite -> new BoardScene.RangeBorder(
                     sprite.getPosition(), sprite.getBorders(),
-                    FieldOfFireSprite.getFieldOfFireColor(sprite.getRangeBracket()).getRGB())).toList());
+                    FieldOfFireSprite.getFieldOfFireColor(sprite.getRangeBracket()).getRGB(),
+                    FieldOfFireSprite.getRangeText(sprite.getRangeBracket()))).toList(),
+              view.getBoardMarkers(), view.captureTacticalGeometry(),
+              view.getWeaponRangeTextSprites().stream().map(sprite -> new BoardScene.RangeLabel(sprite.getPosition(),
+                    FieldOfFireSprite.getFieldOfFireColor(sprite.getRangeBracket()).getRGB(),
+                    FieldOfFireSprite.getRangeText(sprite.getRangeBracket()))).toList(), fieldOfView);
         Entity actor = view.game.getEntity(actions.actorId());
         boolean knownActor = actor != null && (actor.getOwner().equals(view.getLocalPlayer())
               || visible(actor) && !sensorContact(actor));
         return new Frame(scene, List.of(), nextContext, List.copyOf(nextGlobal), nextHud, nextTooltip,
               view.getCenterRequest(), boardGeneration, knownActor ? actor.getShortName() : "",
               BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()), actions.attackState());
+    }
+
+    private Hud captureHud(OverlayViewport layout) {
+        List<OverlayImage> artwork = view.captureOverlayLayers(layout.size(), layout.pixels());
+        List<HudLayer> layers = new ArrayList<>();
+        Map<Image, BoardScene.Pixels> retained = new IdentityHashMap<>();
+        for (int index = 0; index < artwork.size(); index++) {
+            OverlayImage layer = artwork.get(index);
+            BoardScene.Pixels pixels = overlayImages.get(layer.image());
+            if (pixels == null) {
+                BoardScene.Pixels previous = frame == null || index >= frame.hud().layers().size() ? null
+                      : frame.hud().layers().get(index).pixels();
+                pixels = BoardScene.Pixels.capture(layer.image(), previous);
+            }
+            retained.put(layer.image(), pixels);
+            layers.add(new HudLayer(pixels, layer.x(), layer.y(), layer.fade(), layer.shiftY()));
+        }
+        overlayImages.clear();
+        overlayImages.putAll(retained);
+        return new Hud(layout.pixels().width, layout.pixels().height, List.copyOf(layers));
     }
 
     private boolean visible(Entity entity) {
@@ -435,7 +582,9 @@ final class GpuBoardSource implements AutoCloseable {
               hex.containsTerrain(Terrains.ROAD) ? hex.getTerrain(Terrains.ROAD).getExits() & 63 : 0,
               BoardFeatures.surface(hex),
               terrainImages.capture(pixels.terrain(), previous == null ? null : previous.ground()),
+              terrainImages.capture(pixels.normals(), previous == null ? null : previous.normals()),
               terrainImages.captureOverlay(pixels.decals(), previous == null ? null : previous.decals()),
+              terrainImages.capture(pixels.decalsWithoutLimbs(), previous == null ? null : previous.decalsWithoutLimbs()),
               terrainImages.capture(pixels.tactical(), previous == null ? null : previous.tactical()),
               BoardFeatures.capture(hex, pixels.coords(), pixels.structureModels()), pixels.text());
     }
@@ -448,28 +597,43 @@ final class GpuBoardSource implements AutoCloseable {
           Map<Image, Boolean> usedImages) {
         Image image = sensor ? view.getRadarBlipImage() : view.getTileManager().textureFor(entity, part);
         usedImages.put(image, true);
-        BoardScene.Pixels pixels = unitImages.computeIfAbsent(image, this::copyImage);
+        BoardScene.Pixels pixels = unitImages.computeIfAbsent(image, BoardScene.Pixels::copy);
+        AnnotationKey annotationKey = new AnnotationKey(entity.getId(), part);
+        EntitySprite.Annotations annotations = view.captureUnitAnnotations(entity, part, unitAnnotations.get(annotationKey));
+        unitAnnotations.put(annotationKey, annotations);
+        usedImages.put(annotations.image(), true);
+        BoardScene.Pixels annotationPixels = unitImages.computeIfAbsent(annotations.image(), BoardScene.Pixels::copy);
         int facing = sensor ? 0 : view.getTileManager().facingFor(entity);
         boolean airborne = !sensor && airborne(entity);
+        List<Coords> footprint = !sensor && part < 0 ? entity.getOccupiedCoords().stream()
+              .sorted(java.util.Comparator.comparingInt(Coords::getX).thenComparingInt(Coords::getY)).toList() : List.of(coords);
+        if (footprint.isEmpty()) {
+            footprint = List.of(coords);
+        }
         BoardScene.Waypoint location = airborne
               ? new BoardScene.Waypoint(coords, flightLevel(entity, coords), facing)
-              : waypoint(coords, sensor ? 0 : entity.getElevation(), facing);
-        Color outline = sensor ? Color.LIGHT_GRAY
+              : footprint.size() > 1 && UnitFootprint.terrainSupported(entity.getMovementMode())
+                    ? new BoardScene.Waypoint(coords, UnitFootprint.support(board, coords, footprint, entity.getElevation()), facing)
+                    : waypoint(coords, sensor ? 0 : entity.getElevation(), facing);
+        if (!sensor) {
+            location = location.withAeroState(aeroState(entity, entity.getElevation(), airborne));
+            if (location.aeroState() != null) {
+                location = location.withFootprint(footprint);
+            }
+        }
+        Color outline = sensor ? new Color(GpuMarkers.SENSOR_RGB)
               : GUIPreferences.getInstance().getTeamColoring() && view.getLocalPlayer() != null
                     ? UIUtil.teamColor(entity.getOwner(), view.getLocalPlayer())
                     : entity.getOwner().getColour().getColour(false);
         return new BoardScene.Unit(entity.getId(), part, sensor ? Messages.getString("BoardView1.sensorReturn")
               : entity.getShortName(),
               location, pixels, sensor,
-              BoardScene.Pixels.capture(view.captureUnitAnnotations(entity, part),
-                  frame == null ? null : frame.scene().units().stream()
-                      .filter(unit -> unit.id() == entity.getId() && unit.part() == part)
-                          .map(BoardScene.Unit::annotations).findFirst().orElse(null)),
+              annotationPixels,
               sensor ? 1 : entity.height() + 1, airborne,
               GpuUnitModels.ENABLED
-                    ? UnitModelSelection.capture(entity, part, sensor, MMStaticDirectoryManager.getMekTileset(),
-                          sensor ? 0 : UnitModelSelection.twist(entity.getFacing(), facing)) : null,
-              outline.getRGB());
+                    ? camouflage.resolve(UnitModelSelection.capture(entity, part, sensor, MMStaticDirectoryManager.getMekTileset(),
+                          sensor ? 0 : UnitModelSelection.twist(entity.getFacing(), facing))) : null,
+              outline.getRGB(), footprint);
     }
 
     private BoardScene.Waypoint waypoint(Coords coords, float relativeElevation, int facing) {
@@ -508,22 +672,21 @@ final class GpuBoardSource implements AutoCloseable {
      */
     private BoardScene.Waypoint pathWaypoint(Entity entity, Coords coords, float elevation, int facing,
           int flightAltitude) {
-        return entity.isAero() && elevation >= Aero.AERO_EFFECTIVE_ELEVATION && flightAltitude > 0
+        BoardScene.Waypoint point = entity.isAero() && elevation >= Aero.AERO_EFFECTIVE_ELEVATION && flightAltitude > 0
               ? new BoardScene.Waypoint(coords, flightAltitude, facing)
               : waypoint(coords, elevation, facing);
+        // A real path elevation describes the displayed step; the final Entity may already have landed/taken off.
+        return point.withAeroState(aeroState(entity, elevation, false));
     }
 
-    private BoardScene.Pixels copyImage(Image source) {
-        ImageIcon loaded = new ImageIcon(source);
-        BufferedImage copy = new BufferedImage(Math.max(1, loaded.getIconWidth()), Math.max(1, loaded.getIconHeight()),
-              BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = copy.createGraphics();
-        try {
-            graphics.drawImage(loaded.getImage(), 0, 0, null);
-        } finally {
-            graphics.dispose();
+    private BoardScene.AeroState aeroState(Entity entity, float relativeElevation, boolean flying) {
+        if (!entity.isAero()) {
+            return null;
         }
-        return new BoardScene.Pixels(copy);
+        if (board.isSpace() || flying || relativeElevation >= Aero.AERO_EFFECTIVE_ELEVATION) {
+            return BoardScene.AeroState.AIRBORNE;
+        }
+        return relativeElevation == 0 ? BoardScene.AeroState.LANDED : BoardScene.AeroState.ELEVATED;
     }
 
     public void inspect(Coords coords) {
@@ -561,27 +724,71 @@ final class GpuBoardSource implements AutoCloseable {
 
     public void key(int keyCode, boolean down, int modifiers) {
         SwingUtilities.invokeLater(() -> {
-            if (!closed && view.getClientgui() != null) {
-                MegaMekGUI.getKeyDispatcher().dispatchKeyEvent(new KeyEvent(view.getPanel(),
+            if (!closed && view.getClientgui() != null && !view.getClientgui().shouldIgnoreHotKeys()) {
+                KeyEvent event = new KeyEvent(view.getPanel(),
                       down ? KeyEvent.KEY_PRESSED : KeyEvent.KEY_RELEASED, System.currentTimeMillis(), modifiers,
-                      keyCode, KeyEvent.CHAR_UNDEFINED));
+                      keyCode, KeyEvent.CHAR_UNDEFINED);
+                var controller = view.getClientgui().controller;
+                boolean handled = controller != null && controller.dispatchKeyEvent(event);
+                if (down) {
+                    // Opening chat (especially with '/') must not also type the shortcut into its message.
+                    suppressChatCharacter = handled;
+                    if (!handled) {
+                        if (view.getChatterBoxActive()) {
+                            chatKey(event);
+                        } else {
+                            actions.menuShortcut(KeyStroke.getKeyStrokeForEvent(event));
+                        }
+                    }
+                }
                 refresh();
             }
         });
     }
 
-    public void stopKeys() {
+    boolean chatActive() {
+        return chatActive;
+    }
+
+    public void keyTyped(char character) {
         SwingUtilities.invokeLater(() -> {
-            if (MegaMekGUI.getKeyDispatcher() != null) {
-                MegaMekGUI.getKeyDispatcher().stopAllRepeating();
+            if (!closed && !suppressChatCharacter && !Character.isISOControl(character)
+                  && view.getChatterBoxActive() && view.getClientgui() != null
+                  && !view.getClientgui().shouldIgnoreHotKeys()) {
+                // ChatterBoxOverlay edits text in keyPressed; GLFW supplies Unicode separately from physical keys.
+                chatKey(new KeyEvent(view.getPanel(), KeyEvent.KEY_PRESSED, System.currentTimeMillis(), 0,
+                      KeyEvent.VK_UNDEFINED, character));
+                refresh();
             }
         });
+    }
+
+    private void chatKey(KeyEvent event) {
+        for (var listener : view.getPanel().getKeyListeners()) {
+            if (listener instanceof ChatterBoxOverlay chat) {
+                chat.keyPressed(event);
+            }
+        }
+    }
+
+    public void stopKeys() {
+        SwingUtilities.invokeLater(() -> {
+            var gui = view.getClientgui();
+            if (gui != null && gui.controller != null) {
+                gui.controller.stopAllRepeating();
+            }
+        });
+    }
+
+    /** Both measurement gestures belong to the shared ruler, independently of the active phase tool. */
+    static boolean isMeasurement(int modifiers) {
+        return (modifiers & (InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK)) != 0;
     }
 
     public void click(Coords coords, boolean doubleClick, int modifiers) {
         SwingUtilities.invokeLater(() -> {
             if (!closed && coords != null && (view.game.getPhase().isOnMap()
-                  || (modifiers & InputEvent.CTRL_DOWN_MASK) != 0)) {
+                  || isMeasurement(modifiers))) {
                 view.mouseAction(coords, doubleClick ? BoardView.BOARD_HEX_DOUBLE_CLICK : BoardView.BOARD_HEX_CLICK,
                       modifiers, 1);
                 refresh();
@@ -591,7 +798,7 @@ final class GpuBoardSource implements AutoCloseable {
 
     public void hover(Coords coords, int modifiers) {
         SwingUtilities.invokeLater(() -> {
-            if (!closed && coords != null && view.game.getPhase().isOnMap()) {
+            if (!closed && coords != null && !isMeasurement(modifiers) && view.game.getPhase().isOnMap()) {
                 view.mouseAction(coords, BoardView.BOARD_HEX_DRAG, modifiers | InputEvent.BUTTON1_DOWN_MASK, 1);
             }
         });
@@ -616,11 +823,14 @@ final class GpuBoardSource implements AutoCloseable {
             board.removeBoardListener(boardListener);
         }
         unitImages.clear();
+        unitAnnotations.clear();
+        overlayImages.clear();
         terrainImages.clear();
+        camouflage.clear();
         tiles = List.of();
         view.releasePlanarCapture();
         synchronized (this) {
-            pendingMoves.clear();
+            pendingEvents.clear();
         }
     }
 }

@@ -3,6 +3,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
@@ -68,5 +69,63 @@ class GpuTacticalSmokeTest {
             }, GpuBoardWindow.configuration(false));
         }
         assertNull(failure.get(), () -> String.valueOf(failure.get()));
+    }
+
+    @Test
+    void rendersTerrainFollowingShapesInBothCamerasAndReusesGeometry() throws Exception {
+        AtomicReference<Throwable> failure = new AtomicReference<>();
+        File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
+        assertTrue(output.isDirectory() || output.mkdirs());
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                GpuTacticalTest.overlays(fixture);
+                fixture.source.refresh();
+            });
+            new Lwjgl3Application(new GpuBattleView(fixture.source) {
+                private int tick;
+                private GpuTactical probe;
+                private long builds;
+
+                @Override
+                public void render() {
+                    try {
+                        super.render();
+                        tick++;
+                        if (probe == null) {
+                            probe = new GpuTactical();
+                            probe.update(fixture.source.takeFrame().scene());
+                            builds = probe.builds();
+                        }
+                        probe.update(fixture.source.takeFrame().scene());
+                        assertEquals(builds, probe.builds(), "Unchanged geometry must survive new frames and cameras");
+                        assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
+                        if (tick == 15) {
+                            boardCamera.setIsometric(false);
+                            boardCamera.zoom(0.6f);
+                        } else if (tick == 35) {
+                            GpuBoardTestUi.capture(new File(output, "native-tactical-top.png"));
+                            boardCamera.setIsometric(true);
+                        } else if (tick == 60) {
+                            GpuBoardTestUi.capture(new File(output, "native-tactical-isometric.png"));
+                            Gdx.app.exit();
+                        }
+                    } catch (Throwable error) {
+                        failure.set(error);
+                        Gdx.app.exit();
+                    }
+                }
+
+                @Override
+                public void dispose() {
+                    if (probe != null) {
+                        probe.dispose();
+                    }
+                    super.dispose();
+                }
+            }, GpuBoardWindow.configuration(false));
+        }
+        if (failure.get() != null) {
+            throw new AssertionError("Native tactical rendering failed", failure.get());
+        }
     }
 }

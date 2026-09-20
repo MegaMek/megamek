@@ -2,16 +2,80 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.math.Vector3;
 import megamek.common.board.Coords;
 
 /** Presentation geometry only: attack legality and the range edges arrive from the Swing board. */
 final class BoardFiringGeometry {
+    /** Contour height above the highest adjoining surface, in board elevation levels. */
+    static final float RANGE_HEIGHT = 2;
+    /** Clearance above the surface, in unscaled board pixels. */
+    static final float RANGE_CLEARANCE = 0.6f;
+    /** tan(30 degrees), for joins between inset edges of the hex contour. */
+    private static final float MITER = 0.5774f;
+
     private BoardFiringGeometry() { }
 
     record RangeEdge(Vector3 bottomA, Vector3 bottomB, Vector3 topA, Vector3 topB) { }
+
+    record RangeSide(BoardScene.RangeBorder border, int edge) { }
+
+    private record RangeVertex(int x, int y, String label, int rgb) { }
+
+    /** Follow each directed boundary once, so texture coordinates continue across hexes and close at the seam. */
+    static List<List<RangeSide>> rangeContours(BoardScene scene) {
+        Map<RangeVertex, RangeSide> remaining = new LinkedHashMap<>();
+        for (BoardScene.RangeBorder border : scene.rangeBorders()) {
+            if (scene.tile(border.coords()) == null) {
+                continue;
+            }
+            for (int edge = 0; edge < 6; edge++) {
+                if ((border.edges() & (1 << BoardGeometry.edgeDirection(edge))) != 0) {
+                    remaining.put(rangeVertex(border, edge), new RangeSide(border, edge));
+                }
+            }
+        }
+        List<List<RangeSide>> contours = new ArrayList<>();
+        while (!remaining.isEmpty()) {
+            List<RangeSide> contour = new ArrayList<>();
+            RangeSide side = remaining.values().iterator().next();
+            remaining.remove(rangeVertex(side.border(), side.edge()));
+            do {
+                contour.add(side);
+                side = remaining.remove(rangeVertex(side.border(), side.edge() + 1));
+            } while (side != null);
+            contours.add(contour);
+        }
+        return contours;
+    }
+
+    private static RangeVertex rangeVertex(BoardScene.RangeBorder border, int corner) {
+        Vector3 point = BoardGeometry.corner(border.coords(), 0, corner);
+        // Integer lattice coordinates avoid floating-point mismatches at shared hex corners.
+        return new RangeVertex(Math.round(point.x / (BoardGeometry.WIDTH / 4)),
+              Math.round(point.y / (BoardGeometry.HEIGHT / 2)), border.label(), border.rgb());
+    }
+
+    /** Inset adjoining walls meet at convex and reflex corners without sharing the terrain's edge plane. */
+    static RangeEdge rangeWall(BoardScene scene, RangeSide side) {
+        RangeEdge wall = rangeEdge(scene, side.border().coords(), side.edge());
+        Vector3 along = new Vector3(wall.bottomB().x - wall.bottomA().x,
+              wall.bottomB().y - wall.bottomA().y, 0).nor();
+        Vector3 inward = new Vector3(Vector3.Z).crs(along);
+        float offset = BoardGeometry.MARKER_INSET * BoardGeometry.WIDTH / 2;
+        float miter = offset * MITER;
+        int mask = side.border().edges();
+        boolean convexStart = (mask & (1 << BoardGeometry.edgeDirection(side.edge() - 1))) != 0;
+        boolean convexEnd = (mask & (1 << BoardGeometry.edgeDirection(side.edge() + 1))) != 0;
+        Vector3 start = new Vector3(inward).scl(offset).mulAdd(along, convexStart ? miter : -miter);
+        Vector3 end = new Vector3(inward).scl(offset).mulAdd(along, convexEnd ? -miter : miter);
+        return new RangeEdge(wall.bottomA().add(start), wall.bottomB().add(end),
+              wall.topA().add(start), wall.topB().add(end));
+    }
 
     static List<Vector3> trajectory(BoardScene scene, BoardScene.FiringLine line) {
         Vector3 start = BoardGeometry.center(line.source().coords(), line.source().elevation());
@@ -80,6 +144,7 @@ final class BoardFiringGeometry {
     }
 
     private static Vector3 ridgeCorner(BoardScene scene, Coords coords, int corner, boolean top) {
+        // Tile elevation is the surface level, including over water; waterDepth only lowers the lakebed.
         float level = scene.tile(coords).elevation();
         // All three hexes touching a vertex use the same ridge height, so adjoining walls never jump apart.
         for (int edge : new int[] { corner - 1, corner }) {
@@ -88,6 +153,7 @@ final class BoardFiringGeometry {
                 level = top ? Math.max(level, neighbor.elevation()) : Math.min(level, neighbor.elevation());
             }
         }
-        return BoardGeometry.corner(coords, level + (top ? 2 : 0), corner).add(0, 0, 0.6f * BoardGeometry.HEX_SCALE);
+        return BoardGeometry.corner(coords, level + (top ? RANGE_HEIGHT : 0), corner)
+              .add(0, 0, RANGE_CLEARANCE * BoardGeometry.HEX_SCALE);
     }
 }

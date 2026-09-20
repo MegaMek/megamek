@@ -36,6 +36,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import megamek.MMConstants;
@@ -68,7 +69,6 @@ public class EntitySprite extends Sprite {
     private static final int BIGGER_PIP_SCALE = 2;
     private static final int BIGGER_PIP_OFFSET = 1;
     private static final int TMM_PIP_SIZE = STATUS_BAR_LENGTH / MAX_TMM_PIPS;
-    private static final boolean DIRECT = true;
     private static final Color LABEL_CRITICAL_BACK = new Color(200, 0, 0, 200);
     private static final Color LABEL_SPACE_BACK = new Color(0, 0, 200, 200);
     private static final Color LABEL_GROUND_BACK = new Color(50, 50, 50, 200);
@@ -365,54 +365,45 @@ public class EntitySprite extends Sprite {
         }
     }
 
-    // Happy little class to hold status info until it gets drawn
-    private class Status {
-        final Color color;
-        final String status;
-        final boolean small;
-
-        Status(Color color, String status) {
-            this.color = color;
-            this.status = Messages.getString("BoardView1." + status);
-            small = false;
-
-            if (this.color.equals(GUIP.getWarningColor())) {
-                criticalStatus = true;
-            }
+    private record Status(Color color, String status, boolean small) {
+        Status(Color color, String key) {
+            this(color, Messages.getString("BoardView1." + key), false);
         }
 
-        Status(Color color, String status, Object... objs) {
-            this.color = color;
-            this.status = Messages.getString("BoardView1." + status, objs);
-            small = false;
-            if (this.color.equals(GUIP.getWarningColor())) {
-                criticalStatus = true;
-            }
+        Status(Color color, String key, Object... arguments) {
+            this(color, Messages.getString("BoardView1." + key, arguments), false);
         }
 
-        Status(Color color, String status, boolean direct) {
-            this.color = color;
-            this.status = status;
-            small = false;
-            if (this.color.equals(GUIP.getWarningColor())) {
-                criticalStatus = true;
-            }
+        Status(Color color, String text, int size) {
+            this(color, text, true);
         }
 
-        Status(Color color, String status, int t) {
-            this.color = color;
-            this.status = status;
-            small = true;
-        }
-
-        Status(Color color, int b, int t) {
-            this.color = color;
-            status = null;
-            small = true;
+        Status(Color color, int damage, int size) {
+            this(color, null, true);
         }
     }
 
-    private void drawStatusStrings(Graphics2D graphics2D, ArrayList<Status> statusStrings) {
+    private record Bar(int length, Color color) { }
+    private record Tmm(int mode, int value, Color color) { }
+    private record AnnotationState(boolean visible, String name, Font font, Positioning labelPosition,
+          Color background, Color border, Color text, List<Status> statuses, Bar armor, Bar internal, Tmm tmm) { }
+
+    /** Cached presentation owned by the Swing snapshot caller. Its image must not be modified after capture. */
+    public static final class Annotations {
+        private final AnnotationState state;
+        private final BufferedImage image;
+
+        private Annotations(AnnotationState state, BufferedImage image) {
+            this.state = state;
+            this.image = image;
+        }
+
+        public BufferedImage image() {
+            return image;
+        }
+    }
+
+    private void drawStatusStrings(Graphics2D graphics2D, List<Status> statusStrings) {
         if (statusStrings.isEmpty()) {
             return;
         }
@@ -439,7 +430,7 @@ public class EntitySprite extends Sprite {
                 graphics2D.setColor(labelBack);
                 graphics2D.fillRoundRect(rectangle.x, rectangle.y, squareEdge, squareEdge, 5, 5);
                 if (curStatus.status == null) {
-                    Color damageColor = getDamageColor();
+                    Color damageColor = curStatus.color;
                     if (damageColor != null) {
                         graphics2D.setColor(damageColor);
                         graphics2D.fillRoundRect(rectangle.x + 2,
@@ -492,11 +483,30 @@ public class EntitySprite extends Sprite {
      */
     @Override
     public void prepare() {
-        prepare(false);
+        prepare(false, statusStrings());
     }
 
     public BufferedImage captureAnnotations() {
-        prepare(true);
+        return captureAnnotations(null, isSelected, isAffectedByECM).image();
+    }
+
+    /** Reuses artwork when the visible presentation is unchanged, regardless of board position or camera zoom. */
+    public Annotations captureAnnotations(Annotations previous, boolean selected, boolean affectedByECM) {
+        isSelected = selected;
+        isAffectedByECM = affectedByECM;
+        getBounds();
+        boolean sensor = onlyDetectedBySensors();
+        List<Status> statuses = sensor ? List.of() : statusStrings();
+        if (sensor) {
+            criticalStatus = false;
+        }
+        AnnotationState state = new AnnotationState(hasAnnotations(), getAdjShortName(), labelFont, labelPos,
+              labelBackground(true), labelBorder(), labelTextColor(), statuses,
+              sensor ? null : armorBar(), sensor ? null : internalBar(), sensor ? null : tmm());
+        if (previous != null && previous.state.equals(state)) {
+            return previous;
+        }
+        prepare(true, statuses);
         BufferedImage result = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = result.createGraphics();
         graphics.drawImage(image, 0, 0, null);
@@ -515,11 +525,230 @@ public class EntitySprite extends Sprite {
                 }
             }
         }
-        return right > left ? result.getSubimage(left, top, right - left, bottom - top)
-              : new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+        // A subimage would retain the entire transparent backing buffer for the lifetime of the cache.
+        BufferedImage cropped = new BufferedImage(Math.max(1, right - left), Math.max(1, bottom - top),
+              BufferedImage.TYPE_INT_ARGB);
+        if (right > left) {
+            Graphics2D crop = cropped.createGraphics();
+            try {
+                crop.drawImage(result, -left, -top, null);
+            } finally {
+                crop.dispose();
+            }
+        }
+        return new Annotations(state, cropped);
     }
 
-    private void prepare(boolean floating) {
+    private List<Status> statusStrings() {
+        Board board = bv.getBoard();
+        boolean isStaticEntity = isStaticEntity();
+        boolean isSquadron = entity instanceof FighterSquadron;
+        boolean isTank = entity instanceof Tank;
+        boolean isInfantry = entity instanceof Infantry;
+        boolean isAero = entity.isAero();
+        // Gather unit conditions
+        ArrayList<Status> stStr = new ArrayList<>();
+
+        // Determine if the entity has a locked turret and if it is a gun emplacement
+        boolean turretLocked = false;
+        int crewStunned = 0;
+        if (entity instanceof Tank tankEntity) {
+            turretLocked = !tankEntity.hasNoTurret() && !tankEntity.canChangeSecondaryFacing();
+            crewStunned = tankEntity.getStunnedTurns();
+        } else if (entity instanceof AbstractBuildingEntity buildingEntity) {
+            // Advanced Building critical hits (TO:AR p. 118) stun the gunners or lock a turret
+            turretLocked = buildingEntity.hasLockedTurret();
+            crewStunned = buildingEntity.getStunnedTurns();
+        }
+
+        // draw elevation/altitude if non-zero
+        if (entity.isAirborne()) {
+            if (!board.isSpace()) {
+                stStr.add(new Status(Color.CYAN, "A", SMALL));
+                stStr.add(new Status(Color.CYAN, Integer.toString(entity.getAltitude()), SMALL));
+            }
+        } else if (entity.getElevation() != 0) {
+            stStr.add(new Status(Color.CYAN, Integer.toString(entity.getElevation()), SMALL));
+        }
+
+        // Shutdown
+        if (entity.isManualShutdown()) {
+            stStr.add(new Status(GUIP.getCautionColor(), "SHUTDOWN"));
+        } else if (entity.isShutDown()) {
+            stStr.add(new Status(GUIP.getWarningColor(), "SHUTDOWN"));
+        }
+
+        // Prone, Hull down, Stuck, Immobile, Jammed
+        if (entity.isProne()) {
+            stStr.add(new Status(GUIP.getCautionColor(), "PRONE"));
+        }
+
+        if (!entity.getHiddenActivationPhase().isUnknown()) {
+            stStr.add(new Status(GUIP.getPrecautionColor(), "ACTIVATING"));
+        }
+
+        if (entity.isHidden()) {
+            stStr.add(new Status(GUIP.getPrecautionColor(), "HIDDEN"));
+        }
+
+        if (entity.isGyroDestroyed()) {
+            stStr.add(new Status(GUIP.getWarningColor(), "NO_GYRO"));
+        }
+
+        if (entity.isHullDown()) {
+            stStr.add(new Status(GUIP.getPrecautionColor(), "HULLDOWN"));
+        }
+
+        if (entity.isStuck()) {
+            stStr.add(new Status(GUIP.getCautionColor(), "STUCK"));
+        }
+
+        if (!isStaticEntity && entity.isImmobile()) {
+            stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
+        }
+
+        if ((entity instanceof ConvInfantry infantry) && infantry.isExhaustedFromFastMove()) {
+            stStr.add(new Status(GUIP.getWarningColor(), "EXHAUSTED"));
+        }
+
+        if (entity.isBracing()) {
+            stStr.add(new Status(GUIP.getPrecautionColor(), "BRACING"));
+        }
+
+        if (isAffectedByECM()) {
+            stStr.add(new Status(GUIP.getCautionColor(), "Jammed"));
+        }
+
+        // Turret Lock
+        if (turretLocked) {
+            stStr.add(new Status(GUIP.getCautionColor(), "LOCKED"));
+        }
+
+        // Grappling & Swarming
+        if (entity.getGrappled() != Entity.NONE) {
+            if (entity.isGrappleAttacker()) {
+                stStr.add(new Status(GUIP.getCautionColor(), "GRAPPLER"));
+            } else {
+                stStr.add(new Status(GUIP.getWarningColor(), "GRAPPLED"));
+            }
+        }
+        if (entity.getSwarmAttackerId() != Entity.NONE) {
+            stStr.add(new Status(GUIP.getWarningColor(), "SWARMED"));
+        }
+
+        // Transporting (but not Squadrons that are obviously composed of subunits)
+        if (!entity.getLoadedUnits().isEmpty() && !isSquadron) {
+            stStr.add(new Status(GUIP.getCautionColor(), "T", SMALL));
+        }
+
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            stStr.add(new Status(GUIP.getCautionColor(), "TOWING"));
+        }
+
+        // Hidden, Unseen Unit
+        if (trackThisEntitiesVisibilityInfo(entity)) {
+            if (!entity.isEverSeenByEnemy()) {
+                stStr.add(new Status(Color.GREEN, "U", SMALL));
+            } else if (!entity.isVisibleToEnemy()) {
+                stStr.add(new Status(Color.GREEN, "H", SMALL));
+            }
+        }
+
+        if (entity.hasAnyTypeNarcPodsAttached()) {
+            stStr.add(new Status(GUIP.getWarningColor(), "N", SMALL));
+        }
+
+        // Large Craft Ejecting
+        if (entity instanceof Aero aero) {
+            if (aero.isEjecting()) {
+                stStr.add(new Status(GUIP.getCautionColor(), "EJECTING"));
+            }
+        }
+
+        // Crew
+        if (entity.getCrew().isDead()) {
+            stStr.add(new Status(GUIP.getWarningColor(), "CrewDead"));
+        }
+
+        if (crewStunned > 0) {
+            stStr.add(new Status(GUIP.getCautionColor(), "STUNNED", new Object[] { crewStunned }));
+        }
+
+        // Infantry
+        if (isInfantry && entity instanceof Infantry inf) {
+            int dig = inf.getDugIn();
+            if (dig == Infantry.DUG_IN_COMPLETE) {
+                stStr.add(new Status(Color.PINK, "D", SMALL));
+            } else if (inf.isFortifying()) {
+                // Multi-turn fortification: show how far along the build is (stage of total).
+                stStr.add(new Status(GUIP.getPrecautionColor(), "fortifyProgress",
+                      new Object[] { inf.getFortifyStage(), inf.getFortifyTotalStages() }));
+                stStr.add(new Status(Color.PINK, "D", SMALL));
+            } else if (dig != Infantry.DUG_IN_NONE) {
+                stStr.add(new Status(GUIP.getPrecautionColor(), "Working", false));
+                stStr.add(new Status(Color.PINK, "D", SMALL));
+            } else if (inf.isHitTheDeck()) {
+                stStr.add(new Status(GUIP.getPrecautionColor(), "Deck", false));
+            } else if (inf.isTakingCover()) {
+                stStr.add(new Status(GUIP.getPrecautionColor(), "TakingCover"));
+            }
+
+            if (inf.turnsLayingExplosives >= 0) {
+                int turnsSpent = Math.min(inf.turnsLayingExplosives,
+                      LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES);
+                // Keep this label short: non-small statuses draw centered in the hex-sized sprite buffer
+                // and longer text gets clipped at its edges
+                stStr.add(new Status(GUIP.getPrecautionColor(),
+                      "Rigging " + turnsSpent + "/" + LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES,
+                      false));
+                stStr.add(new Status(Color.PINK, "E", SMALL));
+            }
+        }
+
+        // Tank
+        if (isTank && entity instanceof Tank tank) {
+            if (tank.isFortifying()) {
+                // Multi-turn fortification: show how far along the build is (stage of total).
+                stStr.add(new Status(GUIP.getPrecautionColor(), "fortifyProgress",
+                      new Object[] { tank.getFortifyStage(), tank.getFortifyTotalStages() }));
+                stStr.add(new Status(Color.PINK, "D", SMALL));
+            }
+        }
+
+        // Aero
+        if (isAero) {
+            IAero a = (IAero) entity;
+            if (a.isRolled()) {
+                stStr.add(new Status(GUIP.getCautionColor(), "ROLLED"));
+            }
+
+            if ((a.getCurrentFuel() <= 0) && a.requiresFuel()) {
+                stStr.add(new Status(GUIP.getWarningColor(), "FUEL"));
+            }
+
+            if (entity.isEvading()) {
+                stStr.add(new Status(Color.GREEN, "EVADE"));
+            }
+
+            if (a.isOutControlTotal() && a.isRandomMove()) {
+                stStr.add(new Status(GUIP.getWarningColor(), "RANDOM"));
+            } else if (a.isOutControlTotal()) {
+                stStr.add(new Status(GUIP.getWarningColor(), "CONTROL"));
+            }
+        }
+
+        if (GUIP.getShowDamageLevel()) {
+            Color damageColor = getDamageColor();
+            if (damageColor != null) {
+                stStr.add(new Status(damageColor, 0, SMALL));
+            }
+        }
+
+        criticalStatus = stStr.stream().anyMatch(status -> !status.small && status.color.equals(GUIP.getWarningColor()));
+        return List.copyOf(stStr);
+    }
+
+    private void prepare(boolean floating, List<Status> stStr) {
         final Board board = bv.getBoard();
         // recalculate bounds & label
         getBounds();
@@ -547,250 +776,27 @@ public class EntitySprite extends Sprite {
         // scale the following draws according to board zoom
         graph.scale(bv.getScale(), bv.getScale());
 
-        boolean isTank = (entity instanceof Tank);
-        boolean isInfantry = (entity instanceof Infantry);
         boolean isAero = entity.isAero();
-        boolean isStaticEntity = entity.isBuildingEntityOrGunEmplacement()
-              || entity instanceof HandheldWeapon
-              || entity instanceof AbstractBuildingEntity;
-        boolean isSquadron = entity instanceof FighterSquadron;
 
         if (!floating && (isAero && ((IAero) entity).isSpheroid() && !board.isSpace()) && (secondaryPos == 1)) {
             graph.setColor(Color.WHITE);
             graph.draw(bv.getFacingPolys()[entity.getFacing()]);
         }
 
-        // A building entity lists its own hex as secondary position 0, so that sprite carries its status labels
-        boolean isBuildingOriginSprite = (entity instanceof AbstractBuildingEntity) && (secondaryPos == 0);
-        if ((secondaryPos == -1) || (secondaryPos == 6) || isBuildingOriginSprite) {
-            // Gather unit conditions
-            ArrayList<Status> stStr = new ArrayList<>();
-            criticalStatus = false;
-
-            // Determine if the entity has a locked turret and if it is a gun emplacement
-            boolean turretLocked = false;
-            int crewStunned = 0;
-            if (entity instanceof Tank tankEntity) {
-                turretLocked = !tankEntity.hasNoTurret() && !tankEntity.canChangeSecondaryFacing();
-                crewStunned = tankEntity.getStunnedTurns();
-            } else if (entity instanceof AbstractBuildingEntity buildingEntity) {
-                // Advanced Building critical hits (TO:AR p. 118) stun the gunners or lock a turret
-                turretLocked = buildingEntity.hasLockedTurret();
-                crewStunned = buildingEntity.getStunnedTurns();
-            }
-
-            // draw elevation/altitude if non-zero
-            if (entity.isAirborne()) {
-                if (!board.isSpace()) {
-                    stStr.add(new Status(Color.CYAN, "A", SMALL));
-                    stStr.add(new Status(Color.CYAN, Integer.toString(entity.getAltitude()), SMALL));
-                }
-            } else if (entity.getElevation() != 0) {
-                stStr.add(new Status(Color.CYAN, Integer.toString(entity.getElevation()), SMALL));
-            }
-
-            // Shutdown
-            if (entity.isManualShutdown()) {
-                stStr.add(new Status(GUIP.getCautionColor(), "SHUTDOWN"));
-            } else if (entity.isShutDown()) {
-                stStr.add(new Status(GUIP.getWarningColor(), "SHUTDOWN"));
-            }
-
-            // Prone, Hull down, Stuck, Immobile, Jammed
-            if (entity.isProne()) {
-                stStr.add(new Status(GUIP.getCautionColor(), "PRONE"));
-            }
-
-            if (!entity.getHiddenActivationPhase().isUnknown()) {
-                stStr.add(new Status(GUIP.getPrecautionColor(), "ACTIVATING"));
-            }
-
-            if (entity.isHidden()) {
-                stStr.add(new Status(GUIP.getPrecautionColor(), "HIDDEN"));
-            }
-
-            if (entity.isGyroDestroyed()) {
-                stStr.add(new Status(GUIP.getWarningColor(), "NO_GYRO"));
-            }
-
-            if (entity.isHullDown()) {
-                stStr.add(new Status(GUIP.getPrecautionColor(), "HULLDOWN"));
-            }
-
-            if (entity.isStuck()) {
-                stStr.add(new Status(GUIP.getCautionColor(), "STUCK"));
-            }
-
-            if (!isStaticEntity && entity.isImmobile()) {
-                stStr.add(new Status(GUIP.getWarningColor(), "IMMOBILE"));
-            }
-
-            if ((entity instanceof ConvInfantry infantry) && infantry.isExhaustedFromFastMove()) {
-                stStr.add(new Status(GUIP.getWarningColor(), "EXHAUSTED"));
-            }
-
-            if (entity.isBracing()) {
-                stStr.add(new Status(GUIP.getPrecautionColor(), "BRACING"));
-            }
-
-            if (isAffectedByECM()) {
-                stStr.add(new Status(GUIP.getCautionColor(), "Jammed"));
-            }
-
-            // Turret Lock
-            if (turretLocked) {
-                stStr.add(new Status(GUIP.getCautionColor(), "LOCKED"));
-            }
-
-            // Grappling & Swarming
-            if (entity.getGrappled() != Entity.NONE) {
-                if (entity.isGrappleAttacker()) {
-                    stStr.add(new Status(GUIP.getCautionColor(), "GRAPPLER"));
-                } else {
-                    stStr.add(new Status(GUIP.getWarningColor(), "GRAPPLED"));
-                }
-            }
-            if (entity.getSwarmAttackerId() != Entity.NONE) {
-                stStr.add(new Status(GUIP.getWarningColor(), "SWARMED"));
-            }
-
-            // Transporting (but not Squadrons that are obviously composed of subunits)
-            if (!entity.getLoadedUnits().isEmpty() && !isSquadron) {
-                stStr.add(new Status(GUIP.getCautionColor(), "T", SMALL));
-            }
-
-            if (!entity.getAllTowedUnits().isEmpty()) {
-                stStr.add(new Status(GUIP.getCautionColor(), "TOWING"));
-            }
-
-            // Hidden, Unseen Unit
-            if (trackThisEntitiesVisibilityInfo(entity)) {
-                if (!entity.isEverSeenByEnemy()) {
-                    stStr.add(new Status(Color.GREEN, "U", SMALL));
-                } else if (!entity.isVisibleToEnemy()) {
-                    stStr.add(new Status(Color.GREEN, "H", SMALL));
-                }
-            }
-
-            if (entity.hasAnyTypeNarcPodsAttached()) {
-                stStr.add(new Status(GUIP.getWarningColor(), "N", SMALL));
-            }
-
-            // Large Craft Ejecting
-            if (entity instanceof Aero aero) {
-                if (aero.isEjecting()) {
-                    stStr.add(new Status(GUIP.getCautionColor(), "EJECTING"));
-                }
-            }
-
-            // Crew
-            if (entity.getCrew().isDead()) {
-                stStr.add(new Status(GUIP.getWarningColor(), "CrewDead"));
-            }
-
-            if (crewStunned > 0) {
-                stStr.add(new Status(GUIP.getCautionColor(), "STUNNED", new Object[] { crewStunned }));
-            }
-
-            // Infantry
-            if (isInfantry && entity instanceof Infantry inf) {
-                int dig = inf.getDugIn();
-                if (dig == Infantry.DUG_IN_COMPLETE) {
-                    stStr.add(new Status(Color.PINK, "D", SMALL));
-                } else if (inf.isFortifying()) {
-                    // Multi-turn fortification: show how far along the build is (stage of total).
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "fortifyProgress",
-                          new Object[] { inf.getFortifyStage(), inf.getFortifyTotalStages() }));
-                    stStr.add(new Status(Color.PINK, "D", SMALL));
-                } else if (dig != Infantry.DUG_IN_NONE) {
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "Working", DIRECT));
-                    stStr.add(new Status(Color.PINK, "D", SMALL));
-                } else if (inf.isHitTheDeck()) {
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "Deck", DIRECT));
-                } else if (inf.isTakingCover()) {
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "TakingCover"));
-                }
-
-                if (inf.turnsLayingExplosives >= 0) {
-                    int turnsSpent = Math.min(inf.turnsLayingExplosives,
-                          LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES);
-                    // Keep this label short: non-small statuses draw centered in the hex-sized sprite buffer
-                    // and longer text gets clipped at its edges
-                    stStr.add(new Status(GUIP.getPrecautionColor(),
-                          "Rigging " + turnsSpent + "/" + LayExplosivesAttackAction.MAX_TURNS_LAYING_EXPLOSIVES,
-                          DIRECT));
-                    stStr.add(new Status(Color.PINK, "E", SMALL));
-                }
-            }
-
-            // Tank
-            if (isTank && entity instanceof Tank tank) {
-                if (tank.isFortifying()) {
-                    // Multi-turn fortification: show how far along the build is (stage of total).
-                    stStr.add(new Status(GUIP.getPrecautionColor(), "fortifyProgress",
-                          new Object[] { tank.getFortifyStage(), tank.getFortifyTotalStages() }));
-                    stStr.add(new Status(Color.PINK, "D", SMALL));
-                }
-            }
-
-            // Aero
-            if (isAero) {
-                IAero a = (IAero) entity;
-                if (a.isRolled()) {
-                    stStr.add(new Status(GUIP.getCautionColor(), "ROLLED"));
-                }
-
-                if ((a.getCurrentFuel() <= 0) && a.requiresFuel()) {
-                    stStr.add(new Status(GUIP.getWarningColor(), "FUEL"));
-                }
-
-                if (entity.isEvading()) {
-                    stStr.add(new Status(Color.GREEN, "EVADE"));
-                }
-
-                if (a.isOutControlTotal() && a.isRandomMove()) {
-                    stStr.add(new Status(GUIP.getWarningColor(), "RANDOM"));
-                } else if (a.isOutControlTotal()) {
-                    stStr.add(new Status(GUIP.getWarningColor(), "CONTROL"));
-                }
-            }
-
-            if (GUIP.getShowDamageLevel()) {
-                Color damageColor = getDamageColor();
-                if (damageColor != null) {
-                    stStr.add(new Status(damageColor, 0, SMALL));
-                }
-            }
-
+        if (hasAnnotations()) {
             // Unit Label
             // no scaling for the label, its size is changed by varying the font size directly => better control
             graph.scale(1 / bv.getScale(), 1 / bv.getScale());
 
             // Label background
             if (!getAdjShortName().isBlank()) {
-                if (criticalStatus && (!floating || !onlyDetectedBySensors())) {
-                    graph.setColor(LABEL_CRITICAL_BACK);
-                } else {
-                    graph.setColor(labelBack);
-                }
+                graph.setColor(labelBackground(floating));
                 graph.fillRoundRect(labelRect.x, labelRect.y, labelRect.width, labelRect.height, 5, 10);
 
                 // Draw a label border with player colors or team coloring
-                if (GUIP.getUnitLabelBorder()) {
-                    if (GUIP.getTeamColoring()) {
-                        boolean isLocalTeam = bv.getLocalPlayer() != null
-                              && entity.getOwner().getTeam() == bv.getLocalPlayer().getTeam();
-                        boolean isLocalPlayer = entity.getOwner().equals(bv.getLocalPlayer());
-                        if (isLocalPlayer) {
-                            graph.setColor(GUIP.getMyUnitColor());
-                        } else if (isLocalTeam) {
-                            graph.setColor(GUIP.getAllyUnitColor());
-                        } else {
-                            graph.setColor(GUIP.getEnemyUnitColor());
-                        }
-                    } else {
-                        graph.setColor(entity.getOwner().getColour().getColour(false));
-                    }
+                Color border = labelBorder();
+                if (border != null) {
+                    graph.setColor(border);
                     Stroke oldStroke = graph.getStroke();
                     graph.setStroke(new BasicStroke(3));
                     graph.drawRoundRect(labelRect.x - 1,
@@ -804,19 +810,9 @@ public class EntitySprite extends Sprite {
 
                 // Label text
                 graph.setFont(labelFont);
-                Color textColor = GUIP.getUnitTextColor();
-                if (!entity.isDone() && !onlyDetectedBySensors()) {
-                    textColor = GUIP.getUnitValidColor();
-                }
-                if (isSelected) {
-                    textColor = GUIP.getUnitSelectedColor();
-                }
-                if (entity.isDone() && !onlyDetectedBySensors()) {
-                    textColor = UIUtil.addAlpha(textColor, 100);
-                }
                 new StringDrawer(getAdjShortName()).center()
                       .at(labelRect.x + labelRect.width / 2, labelRect.y + labelRect.height / 2)
-                      .color(textColor)
+                      .color(labelTextColor())
                       .draw(graph);
             }
 
@@ -896,42 +892,30 @@ public class EntitySprite extends Sprite {
                 graph.translate((bv.getHexSize().width / bv.getScale() - STATUS_BAR_LENGTH) / 2.0 - STATUS_BAR_X,
                       (labelRect.height + 6) / bv.getScale() - 6);
             }
-            double percentRemaining = entity.getArmorRemainingPercent();
-            int barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
-
+            Bar armor = armorBar();
             graph.setColor(Color.darkGray);
             graph.fillRect(STATUS_BAR_X + 1, 7, STATUS_BAR_LENGTH, 3);
             graph.setColor(Color.lightGray);
             graph.fillRect(STATUS_BAR_X, 6, STATUS_BAR_LENGTH, 3);
-            graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(STATUS_BAR_X, 6, barLength, 3);
+            graph.setColor(armor.color());
+            graph.fillRect(STATUS_BAR_X, 6, armor.length(), 3);
 
-            if (!isStaticEntity && !isSquadron) {
-                // Gun emplacements and squadrons don't use internal structure nor SI damage
-                percentRemaining = entity.getInternalRemainingPercent();
-                barLength = (int) (STATUS_BAR_LENGTH * percentRemaining);
-
+            Bar internal = internalBar();
+            if (internal != null) {
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X + 1, 11, STATUS_BAR_LENGTH, 3);
                 graph.setColor(Color.lightGray);
                 graph.fillRect(STATUS_BAR_X, 10, STATUS_BAR_LENGTH, 3);
-                graph.setColor(getStatusBarColor(percentRemaining));
-                graph.fillRect(STATUS_BAR_X, 10, barLength, 3);
+                graph.setColor(internal.color());
+                graph.fillRect(STATUS_BAR_X, 10, internal.length(), 3);
             }
 
-            // TMM pips show if done in movement, or on all units during firing
-            int pipOption = GUIP.getTMMPipMode();
-            int pipScaleFactor = 1;
-            int pipOffset = 0;
-            if (pipOption == 3 || pipOption == 4) { // bigger pips
-                pipScaleFactor = BIGGER_PIP_SCALE;
-                pipOffset = BIGGER_PIP_OFFSET;
-            }
-            if ((pipOption != 0) && !isStaticEntity && !entity.isAero() && ((entity.isDone() && bv.game.getPhase()
-                  .isMovement()) || bv.game.getPhase().isFiring())) {
-                int tmm = Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue();
-                Color tmmColor = (pipOption == 1 || pipOption == 3) ? Color.WHITE :
-                      GUIP.getColorForMovement(entity.moved);
+            Tmm pips = tmm();
+            if (pips != null) {
+                int pipScaleFactor = pips.mode() == 3 || pips.mode() == 4 ? BIGGER_PIP_SCALE : 1;
+                int pipOffset = pipScaleFactor == BIGGER_PIP_SCALE ? BIGGER_PIP_OFFSET : 0;
+                int tmm = pips.value();
+                Color tmmColor = pips.color();
                 graph.setColor(Color.darkGray);
                 graph.fillRect(STATUS_BAR_X - (pipOffset * (MAX_TMM_PIPS - 1)),
                       12 + TMM_PIP_SIZE,
@@ -968,6 +952,69 @@ public class EntitySprite extends Sprite {
         }
 
         graph.dispose();
+    }
+
+    private boolean hasAnnotations() {
+        // A building's origin is secondary position 0; a large craft's central sprite is position 6.
+        return secondaryPos == -1 || secondaryPos == 6 || entity instanceof AbstractBuildingEntity && secondaryPos == 0;
+    }
+
+    private boolean isStaticEntity() {
+        return entity.isBuildingEntityOrGunEmplacement() || entity instanceof HandheldWeapon
+              || entity instanceof AbstractBuildingEntity;
+    }
+
+    private Color labelBackground(boolean floating) {
+        return criticalStatus && (!floating || !onlyDetectedBySensors()) ? LABEL_CRITICAL_BACK : labelBack;
+    }
+
+    private Color labelBorder() {
+        if (!GUIP.getUnitLabelBorder()) {
+            return null;
+        }
+        if (!GUIP.getTeamColoring()) {
+            return entity.getOwner().getColour().getColour(false);
+        }
+        if (entity.getOwner().equals(bv.getLocalPlayer())) {
+            return GUIP.getMyUnitColor();
+        }
+        return bv.getLocalPlayer() != null && entity.getOwner().getTeam() == bv.getLocalPlayer().getTeam()
+              ? GUIP.getAllyUnitColor() : GUIP.getEnemyUnitColor();
+    }
+
+    private Color labelTextColor() {
+        Color color = GUIP.getUnitTextColor();
+        boolean sensor = onlyDetectedBySensors();
+        if (!entity.isDone() && !sensor) {
+            color = GUIP.getUnitValidColor();
+        }
+        if (isSelected) {
+            color = GUIP.getUnitSelectedColor();
+        }
+        return entity.isDone() && !sensor ? UIUtil.addAlpha(color, 100) : color;
+    }
+
+    private Bar armorBar() {
+        double percent = entity.getArmorRemainingPercent();
+        return new Bar((int) (STATUS_BAR_LENGTH * percent), getStatusBarColor(percent));
+    }
+
+    private Bar internalBar() {
+        if (isStaticEntity() || entity instanceof FighterSquadron) {
+            return null;
+        }
+        double percent = entity.getInternalRemainingPercent();
+        return new Bar((int) (STATUS_BAR_LENGTH * percent), getStatusBarColor(percent));
+    }
+
+    private Tmm tmm() {
+        int mode = GUIP.getTMMPipMode();
+        if (mode == 0 || isStaticEntity() || entity.isAero()
+              || !(entity.isDone() && bv.game.getPhase().isMovement() || bv.game.getPhase().isFiring())) {
+            return null;
+        }
+        return new Tmm(mode, Compute.getTargetMovementModifier(bv.game, entity.getId()).getValue(),
+              mode == 1 || mode == 3 ? Color.WHITE : GUIP.getColorForMovement(entity.moved));
     }
 
     /**

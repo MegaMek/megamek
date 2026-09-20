@@ -51,10 +51,10 @@ class UnitModelSelectionTest {
         when(tileset.modelFor(armor, -1)).thenReturn("units/battle-armor/model.json");
         when(armor.getShortNameRaw()).thenReturn("Battle Armor");
         when(armor.getMovementMode()).thenReturn(EntityMovementMode.INF_JUMP);
-        assertEquals(3, UnitModelSelection.capture(armor, -1, false, tileset).figures());
+        assertEquals(5, UnitModelSelection.capture(armor, -1, false, tileset).figures());
         assertEquals("Battle Armor", UnitModelSelection.capture(armor, -1, false, tileset).variant());
         when(armor.getInternal(3)).thenReturn(-1);
-        assertEquals(2, UnitModelSelection.capture(armor, -1, false, tileset).figures());
+        assertEquals(4, UnitModelSelection.capture(armor, -1, false, tileset).figures());
         assertEquals(4, UnitModelSelection.figures(100, 4));
     }
 
@@ -149,15 +149,15 @@ class UnitModelSelectionTest {
     }
 
     @Test
-    void aLostArmIsTakenOffAndAnyOtherLostLocationIsBurntOutInPlace() {
+    void blownOffLegsAndDestroyedArmsDisappearWhileAttachedDamageRemains() {
         Mek mek = bipedWithLocations();
         // A destroyed right torso takes the right arm with it; the left leg was blown off in an earlier phase.
         when(mek.isLocationTrulyDestroyed(Mek.LOC_RIGHT_TORSO)).thenReturn(true);
         when(mek.isLocationTrulyDestroyed(Mek.LOC_RIGHT_ARM)).thenReturn(true);
         when(mek.isLocationBlownOff(Mek.LOC_LEFT_LEG)).thenReturn(true);
         BoardScene.LocationDamage damage = UnitModelSelection.damage(mek);
-        assertEquals(Set.of("RA"), damage.removed());
-        assertEquals(Set.of("RT", "LL"), damage.wrecked());
+        assertEquals(Set.of("RA", "LL"), damage.removed());
+        assertEquals(Set.of("RT"), damage.wrecked());
     }
 
     @Test
@@ -171,13 +171,20 @@ class UnitModelSelectionTest {
     }
 
     @Test
-    void aLimbBlownOffThisPhaseStaysOnUntilThePhaseEnds() {
+    void confirmedDetachmentsDisappearImmediatelyWithoutWaitingForPhaseCleanup() {
         Mek mek = bipedWithLocations();
-        when(mek.isLocationBlownOff(Mek.LOC_LEFT_ARM)).thenReturn(true);
-        when(mek.isLocationBlownOffThisPhase(Mek.LOC_LEFT_ARM)).thenReturn(true);
-        assertTrue(UnitModelSelection.damage(mek).isNone());
-        when(mek.isLocationBlownOffThisPhase(Mek.LOC_LEFT_ARM)).thenReturn(false);
-        assertEquals(Set.of("LA"), UnitModelSelection.damage(mek).removed());
+        for (int location : new int[] { Mek.LOC_HEAD, Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_LEG }) {
+            when(mek.isLocationBlownOff(location)).thenReturn(true);
+            when(mek.isLocationBlownOffThisPhase(location)).thenReturn(true);
+        }
+        when(mek.isLocationTrulyDestroyed(Mek.LOC_LEFT_LEG)).thenReturn(true);
+        var damage = UnitModelSelection.damage(mek);
+        assertEquals(Set.of("HD", "LA", "RL"), damage.removed());
+        assertEquals(Set.of("LL"), damage.wrecked());
+        for (int location : new int[] { Mek.LOC_HEAD, Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_LEG }) {
+            when(mek.isLocationBlownOffThisPhase(location)).thenReturn(false);
+        }
+        assertEquals(damage, UnitModelSelection.damage(mek));
     }
 
     @Test

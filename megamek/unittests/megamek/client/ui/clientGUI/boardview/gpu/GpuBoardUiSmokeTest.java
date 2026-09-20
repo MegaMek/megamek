@@ -36,6 +36,7 @@ class GpuBoardUiSmokeTest {
         AtomicInteger chosen = new AtomicInteger();
         AtomicInteger committed = new AtomicInteger();
         AtomicInteger leaked = new AtomicInteger();
+        AtomicInteger playbackToggles = new AtomicInteger();
         File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
         assertTrue(output.isDirectory() || output.mkdirs());
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
@@ -47,7 +48,7 @@ class GpuBoardUiSmokeTest {
                 @Override
                 public void create() {
                     super.create();
-                    controls = new GpuBoardUi(fixture.source, boardCamera, () -> { });
+                    controls = new GpuBoardUi(fixture.source, boardCamera, () -> { }, playbackToggles::incrementAndGet);
                     snapshot = presentation(fixture.source.takeFrame(), chosen, committed, false);
                     controls.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(),
                           new GpuDisplayScale().read(fixture.source.uiPreferences.scale()));
@@ -69,10 +70,21 @@ class GpuBoardUiSmokeTest {
                         controls.draw();
                         tick++;
                         if (tick == 5) {
+                            GpuBoardTestUi.click("playback");
+                            assertEquals(1, playbackToggles.get());
+                            controls.setPlaybackPaused(true);
+                            TextButton playbackButton = controls.stage.getRoot().findActor("playback");
+                            assertEquals(megamek.client.ui.Messages.getString("GpuBoard.resumePlayback"), playbackButton.getText().toString());
+                            GpuBoardTestUi.click("playback");
+                            assertEquals(2, playbackToggles.get());
+                            controls.setPlaybackPaused(false);
                             controls.inspect(new Coords(5, 5), 750, 200);
                         } else if (tick == 25) {
                             assertBounds();
+                            assertFalse(controls.stage.getRoot().findActor("command-search").getParent().isVisible(),
+                                  "Context menus do not include command search");
                             GpuBoardTestUi.capture(new File(output, "tactical-context.png"));
+                            controls.key(Input.Keys.F10, true);
                             GpuBoardTestUi.click("weapons");
                         } else if (tick == 30) {
                             press(Input.Keys.UP);
@@ -111,6 +123,8 @@ class GpuBoardUiSmokeTest {
                             GpuBoardTestUi.click("menu-back");
                         } else if (tick == 50) {
                             assertBounds();
+                            assertTrue(controls.stage.getRoot().findActor("command-search-hint").isVisible(),
+                                  "The palette hint returns when navigation clears the search");
                             assertEquals(0, leaked.get(), "Menu clicks must not reach the board");
                             // The same layout is clamped at the smallest supported logical viewport.
                             Gdx.graphics.setWindowedMode(900, 600);
@@ -131,9 +145,27 @@ class GpuBoardUiSmokeTest {
                             assertFalse(controls.plotting());
                             controls.key(Input.Keys.F10, true);
                         } else if (tick == 90) {
+                            assertBounds();
+                            Actor trigger = controls.stage.getRoot().findActor("all-actions");
+                            Vector2 top = trigger.localToStageCoordinates(new Vector2(0, trigger.getHeight()));
+                            Table menu = controls.stage.getRoot().findActor("tactical-menu");
+                            assertEquals(top.y + 2, menu.getY(), 0.01f, "The palette opens just above its bottom-bar trigger");
+                            assertTrue(controls.stage.getRoot().findActor("command-search").getParent().isVisible(),
+                                  "Search remains available in All Actions");
                             GpuBoardTestUi.capture(new File(output, "tactical-actions-small.png"));
                             press(Input.Keys.ESCAPE);
                             assertTrue(controls.acceptsCameraKeys());
+                            GpuBoardTestUi.click("camera");
+                        } else if (tick == 100) {
+                            assertBounds();
+                            Actor trigger = controls.stage.getRoot().findActor("camera");
+                            Vector2 bottom = trigger.localToStageCoordinates(new Vector2());
+                            Table menu = controls.stage.getRoot().findActor("tactical-menu");
+                            assertEquals(bottom.x, menu.getX(), 0.01f);
+                            assertEquals(bottom.y - 2, menu.getTop(), 0.01f, "The dropdown opens just below its trigger");
+                            assertFalse(controls.stage.getRoot().findActor("command-search").getParent().isVisible());
+                            assertEquals(menu, controls.stage.getKeyboardFocus(), "A hidden search field cannot capture typing");
+                            GpuBoardTestUi.capture(new File(output, "camera-menu.png"));
                             Gdx.app.exit();
                         }
                     } catch (Throwable error) {
@@ -155,12 +187,10 @@ class GpuBoardUiSmokeTest {
                           "FPS must remain visible in the bottom-right corner, including small windows");
                     Table menu = controls.stage.getRoot().findActor("tactical-menu");
                     assertTrue(menu.getX() >= 0 && menu.getRight() <= controls.stage.getWidth());
-                    assertTrue(menu.getY() >= GpuBoardUi.TURN_HEIGHT);
-                    assertTrue(menu.getTop() <= controls.stage.getHeight() - GpuBoardUi.TOP_HEIGHT);
+                    assertTrue(menu.getY() >= 0);
+                    assertTrue(menu.getTop() <= controls.stage.getHeight());
                     Actor close = controls.stage.getRoot().findActor("close-menu");
                     assertTrue(close.getWidth() >= 24 && close.getHeight() >= 24);
-                    assertTrue(controls.stage.getRoot().findActor("command-search-hint").isVisible(),
-                          "The empty-field hint returns when navigation clears the search");
                     TextButton move = controls.stage.getRoot().findActor("board.useHex");
                     if (move != null) {
                         assertInset(move.getLabel(), move);
@@ -171,11 +201,10 @@ class GpuBoardUiSmokeTest {
                 private void assertInset(Actor content, TextButton button) {
                     Vector2 bottom = content.localToAscendantCoordinates(button, new Vector2());
                     Vector2 top = content.localToAscendantCoordinates(button, new Vector2(content.getWidth(), content.getHeight()));
-                    var face = button.getStyle().up;
-                    assertTrue(bottom.x >= face.getLeftWidth() && top.x <= button.getWidth() - face.getRightWidth(),
-                          "Command content must fit horizontally inside the metal frame");
-                    assertTrue(bottom.y >= face.getBottomHeight() && top.y <= button.getHeight() - face.getTopHeight(),
-                          "Command content must fit vertically inside the metal frame");
+                    assertTrue(bottom.x >= button.getPadLeft() && top.x <= button.getWidth() - button.getPadRight(),
+                          "Command content must fit horizontally inside the menu row");
+                    assertTrue(bottom.y >= button.getPadBottom() && top.y <= button.getHeight() - button.getPadTop(),
+                          "Command content must fit vertically inside the menu row");
                 }
 
                 @Override

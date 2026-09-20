@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -34,16 +35,16 @@ final class GpuBoardTuning {
           new Knob("Unit height scale", 0.1f, 2f, 0.05f, "%.2f"),
           new Knob("Base level height", 4, 40, 1, "%.0f"),
           // A value of one hides the grid.
-          new Knob("Hex frame shade", 0f, 1f, 0.05f, "%.2f"));
+          new Knob("Hex frame shade", 0f, 1f, 0.05f, "%.2f"),
+          new Knob("Multi-hex unit scale", 0.25f, 1.5f, 0.05f, "%.2f"));
 
     private static final List<Knob> ATMOSPHERE_KNOBS = List.of(
           new Knob("Time of day", 0, 24, 0.25f, "clock"),
           new Knob("Cloud cover", 0, 1, 0.05f, "%.2f"),
           new Knob("Ground fog", 0, 1, 0.01f, "%.2f"),
-          new Knob("Fog height", 0.5f, 8, 0.25f, "%.2f"),
+          new Knob("Fog height", BoardAtmosphere.MIN_FOG_HEIGHT, 8, 0.25f, "%.2f"),
           new Knob("Haze", 0, 1, 0.05f, "%.2f"),
-          new Knob("Exposure (EV)", -2, 2, 0.1f, "%+.1f"),
-          new Knob("Light shafts", 0, 1, 0.05f, "%.2f"));
+          new Knob("Exposure (EV)", -2, 2, 0.1f, "%+.1f"));
 
     private static final List<Knob> VISIBILITY_KNOBS = List.of(
           new Knob("Building opacity", 0, 100, 5, "%.0f%%"),
@@ -62,6 +63,7 @@ final class GpuBoardTuning {
     private final Table panel = new Table();
     private final Table rows = new Table();
     private final ScrollPane scroll;
+    private final CheckBox normalMaps;
     private final List<Control> geometry;
     private final List<Control> visibility;
     private final List<Control> weather;
@@ -80,6 +82,10 @@ final class GpuBoardTuning {
         rows.top().defaults().pad(3);
         rows.add(new Label("Geometry", skin, "heading")).colspan(3).left().row();
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
+        normalMaps = new CheckBox("Normal maps", skin);
+        normalMaps.setName("tuning-normal-maps");
+        normalMaps.getImageCell().size(18).padRight(7);
+        rows.add(normalMaps).colspan(3).left().padTop(6).row();
         rows.add(new Label("Unit visibility", skin, "heading")).colspan(3).left().padTop(12).row();
         visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
         rows.add(new Label("See-through: occluded unit outline + fill (0% off)", skin)).colspan(3).left().row();
@@ -104,6 +110,8 @@ final class GpuBoardTuning {
         }
         rows.add(presets).colspan(3).left().padBottom(5).row();
         weather = controls(skin, ATMOSPHERE_KNOBS, this::applyAtmosphere, 0);
+        rows.add(new Label(String.format(Locale.ROOT, "Fog + haze share a %.0f%% opacity cap",
+              BoardAtmosphere.MAX_FOG_OPACITY * 100), skin)).colspan(3).left().row();
         rows.add(new Label("Weather effects", skin, "heading")).colspan(3).left().padTop(12).row();
         effects = controls(skin, EFFECT_KNOBS, this::applyAtmosphere, 5);
         scroll = new ScrollPane(rows, skin);
@@ -194,13 +202,14 @@ final class GpuBoardTuning {
 
     /** Writes the current board values into the sliders, as the initial state and after a reset. */
     private void restoreDefaults() {
+        normalMaps.setChecked(true);
         BoardGeometry.Tuning defaults = BoardGeometry.DEFAULTS;
         float[] values = { defaults.hexScale(), defaults.unitScale(), defaults.unitHeightScale(),
-              defaults.levelHeight(), defaults.gridShade() };
+              defaults.levelHeight(), defaults.gridShade(), defaults.multiHexUnitScale() };
         setValues(geometry, values);
         applyGeometry();
         setValues(visibility, new float[] { GpuTerrain.DEFAULT_BUILDING_OPACITY * 100,
-              GpuTerrain.DEFAULT_TREE_OPACITY * 100, GpuUnitVisibility.DEFAULT_INTENSITY * 100 });
+              GpuTerrain.DEFAULT_TREE_OPACITY * 100, GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY * 100 });
         updateReadings(visibility);
         setAtmosphere(scenarioDefaults == null ? BoardAtmosphere.DEFAULTS : scenarioDefaults);
     }
@@ -215,6 +224,10 @@ final class GpuBoardTuning {
 
     BoardAtmosphere.Settings atmosphere() {
         return atmosphere;
+    }
+
+    boolean normalMaps() {
+        return normalMaps.isChecked();
     }
 
     float buildingOpacity() {
@@ -239,7 +252,7 @@ final class GpuBoardTuning {
 
     private void setAtmosphere(BoardAtmosphere.Settings settings) {
         setValues(weather, new float[] { settings.hour(), settings.clouds(), settings.fog(), settings.fogHeight(),
-              settings.haze(), settings.exposure(), settings.shafts() });
+              settings.haze(), settings.exposure() });
         BoardAtmosphere.Effects next = settings.effects();
         setValues(effects, new float[] { next.rain(), next.snow(), next.hail(), next.sand(), next.lightning(),
               next.wind(), next.windDirection() });
@@ -248,7 +261,7 @@ final class GpuBoardTuning {
 
     private void applyGeometry() {
         BoardGeometry.tune(new BoardGeometry.Tuning(value(geometry, 0), value(geometry, 1), value(geometry, 2),
-              Math.round(value(geometry, 3)), value(geometry, 4)));
+              Math.round(value(geometry, 3)), value(geometry, 4), value(geometry, 5)));
         updateReadings(geometry);
     }
 
@@ -258,7 +271,7 @@ final class GpuBoardTuning {
 
     private void applyAtmosphere() {
         atmosphere = new BoardAtmosphere.Settings(value(weather, 0), value(weather, 1), value(weather, 2),
-              value(weather, 3), value(weather, 4), value(weather, 5), value(weather, 6),
+              value(weather, 3), value(weather, 4), value(weather, 5),
               new BoardAtmosphere.Effects(value(effects, 0), value(effects, 1), value(effects, 2), value(effects, 3),
                     value(effects, 4), value(effects, 5), value(effects, 6)));
         updateReadings(weather);

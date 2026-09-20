@@ -39,6 +39,7 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardMarker;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
@@ -122,13 +123,20 @@ public class BridgeBuildSprite extends HexSprite {
     }
 
     @Override
+    public BoardMarker boardMarker() {
+        return bv.boardMarker(BoardMarker.Kind.BRIDGE_BUILD, loc, turnsWorked + "/" + turnsRequired);
+    }
+
+    @Override
     public void prepare() {
         Graphics2D graph = spriteSetup();
         drawGhostBridge(graph);
         if (hazardOutline) {
             drawHazardOutline(graph);
         }
-        drawProgressIndicator(graph);
+        if (!bv.isGpuCapture()) {
+            drawProgressIndicator(graph);
+        }
         graph.dispose();
     }
 

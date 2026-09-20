@@ -41,7 +41,9 @@ import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
 
 import jakarta.annotation.Nonnull;
+import megamek.client.ui.clientGUI.boardview.BoardMarker;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.common.annotations.Nullable;
 
 /**
  * Everything in the main map view is either the board or it's a sprite displayed on top of the board. Most sprites
@@ -132,6 +134,11 @@ abstract public class Sprite implements ImageObserver, Comparable<Sprite> {
      * Since most sprites being drawn correspond to something in the game, this returns a little info for a tooltip.
      */
     public StringBuffer getTooltip() {
+        return null;
+    }
+
+    /** Optional point symbol for the 3D view, using the same handler-owned visibility and presentation state. */
+    public @Nullable BoardMarker boardMarker() {
         return null;
     }
 

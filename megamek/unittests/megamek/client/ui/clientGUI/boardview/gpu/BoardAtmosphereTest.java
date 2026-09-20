@@ -49,7 +49,7 @@ class BoardAtmosphereTest {
         for (float clouds : new float[] { 0, 1 }) {
             for (int quarter = 0; quarter < 96; quarter++) {
                 var light = BoardAtmosphere.lighting(new BoardAtmosphere.Settings(quarter / 4f,
-                      clouds, 0, 2, 0, 0, 0));
+                      clouds, 0, 2, 0, 0));
                 float ambient = 0.2126f * light.ambient().r + 0.7152f * light.ambient().g + 0.0722f * light.ambient().b;
                 float direct = 0.2126f * light.direct().r + 0.7152f * light.direct().g + 0.0722f * light.direct().b;
                 assertTrue(ambient - light.direction().z * direct >= 0.53f,
@@ -60,7 +60,7 @@ class BoardAtmosphereTest {
 
     @Test
     void weatherPreservesTimeAndExposureWhileCloudsReduceDirectionalContrast() {
-        var clear = BoardAtmosphere.Weather.CLEAR.apply(new BoardAtmosphere.Settings(17, 1, 1, 8, 1, 1, 0.7f));
+        var clear = BoardAtmosphere.Weather.CLEAR.apply(new BoardAtmosphere.Settings(17, 1, 1, 8, 1, 1));
         assertEquals(0, clear.clouds(), "Clear must remove all cloud cover");
         assertEquals(0, clear.fog());
         assertEquals(0, clear.haze());
@@ -70,29 +70,29 @@ class BoardAtmosphereTest {
         var mist = BoardAtmosphere.Weather.MIST.apply(clear);
         assertEquals(clear.hour(), overcast.hour());
         assertEquals(clear.exposure(), overcast.exposure());
-        assertEquals(clear.shafts(), overcast.shafts());
         assertTrue(BoardAtmosphere.lighting(overcast).direct().r < BoardAtmosphere.lighting(clear).direct().r);
         var night = at(0);
         assertTrue(BoardAtmosphere.lighting(BoardAtmosphere.Weather.OVERCAST.apply(night)).direct().b
               < BoardAtmosphere.lighting(night).direct().b, "Cloud cover also dims the moon");
         assertTrue(mist.fogHeight() < overcast.fogHeight() && mist.fog() > overcast.fog());
-        var clearNoon = BoardAtmosphere.lighting(new BoardAtmosphere.Settings(12, 0, 0, 2.5f, 0, 0, 0));
-        var cloudyNoon = BoardAtmosphere.lighting(new BoardAtmosphere.Settings(12, 1, 0, 2.5f, 0, 0, 0));
+        var clearNoon = BoardAtmosphere.lighting(new BoardAtmosphere.Settings(12, 0, 0, 2.5f, 0, 0));
+        var cloudyNoon = BoardAtmosphere.lighting(new BoardAtmosphere.Settings(12, 1, 0, 2.5f, 0, 0));
         assertTrue(cloudyNoon.direct().r >= clearNoon.direct().r * 0.45f,
               "Maximum cloud cover must preserve a substantial directional component and visible shadows");
         assertTrue(clearNoon.exposureScale(0) > 1.5f, "Neutral daytime exposure must lift the dim LDR scene");
-        assertEquals(1, BoardAtmosphere.lighting(at(0)).exposureScale(0), "Keep neutral night exposure unchanged");
+        assertEquals(1 / (float) Math.sqrt(8), BoardAtmosphere.lighting(at(0)).exposureScale(0), 0.0001,
+              "Neutral night exposure must sit 1.5 stops below the daylight lift");
     }
 
     @Test
     void settingsRejectNonFiniteValuesAndBoundShaderInputs() {
         assertThrows(IllegalArgumentException.class,
-              () -> new BoardAtmosphere.Settings(Float.NaN, 0, 0, 1, 0, 0, 0));
-        var bounded = new BoardAtmosphere.Settings(-1, 2, -1, 0, 3, 8, -1);
+              () -> new BoardAtmosphere.Settings(Float.NaN, 0, 0, 1, 0, 0));
+        var bounded = new BoardAtmosphere.Settings(-1, 2, -1, 0, 3, 8);
         assertEquals(23, bounded.hour());
         assertEquals(1, bounded.clouds());
         assertEquals(0, bounded.fog());
-        assertEquals(0.5f, bounded.fogHeight());
+        assertEquals(1.0f, bounded.fogHeight());
         assertEquals(2, bounded.exposure());
         assertThrows(IllegalArgumentException.class,
               () -> new BoardAtmosphere.Effects(0, 0, 0, 0, 0, Float.POSITIVE_INFINITY, 0));
@@ -187,7 +187,50 @@ class BoardAtmosphereTest {
               "The renderer must not roll or invent the scenario's unresolved wind direction");
     }
 
+    @Test
+    void higherPressureLowersBothFogLayersWithoutChangingWeatherOrLighting() {
+        PlanetaryConditions conditions = new PlanetaryConditions();
+        conditions.setLight(Light.DUSK);
+        conditions.setWeather(Weather.HEAVY_RAIN);
+        for (Fog fog : new Fog[] { Fog.FOG_LIGHT, Fog.FOG_HEAVY }) {
+            conditions.setFog(fog);
+            conditions.setAtmosphere(Atmosphere.STANDARD);
+            var standard = BoardAtmosphere.fromScenario(conditions, false);
+            conditions.setAtmosphere(Atmosphere.HIGH);
+            var high = BoardAtmosphere.fromScenario(conditions, false);
+            conditions.setAtmosphere(Atmosphere.VERY_HIGH);
+            var veryHigh = BoardAtmosphere.fromScenario(conditions, false);
+            assertEquals(standard.fogHeight() - 0.5f, high.fogHeight());
+            assertEquals(high.fogHeight() - 0.5f, veryHigh.fogHeight());
+            assertEquals(BoardAtmosphere.MIN_FOG_HEIGHT, veryHigh.fogHeight());
+            for (var compressed : new BoardAtmosphere.Settings[] { high, veryHigh }) {
+                assertEquals(standard.fog(), compressed.fog());
+                assertEquals(standard.haze(), compressed.haze());
+                assertEquals(standard.hour(), compressed.hour());
+                assertEquals(standard.exposure(), compressed.exposure());
+                assertEquals(standard.clouds(), compressed.clouds());
+                assertEquals(standard.effects(), compressed.effects());
+            }
+        }
+    }
+
+    @Test
+    void fogAddsCloudCoverWithoutReplacingPrecipitationClouds() {
+        PlanetaryConditions conditions = new PlanetaryConditions();
+        assertEquals(0, BoardAtmosphere.fromScenario(conditions, false).clouds());
+        conditions.setFog(Fog.FOG_LIGHT);
+        assertEquals(0.15f, BoardAtmosphere.fromScenario(conditions, false).clouds());
+        conditions.setFog(Fog.FOG_HEAVY);
+        assertEquals(0.3f, BoardAtmosphere.fromScenario(conditions, false).clouds());
+        conditions.setWeather(Weather.HEAVY_RAIN);
+        assertEquals(1, BoardAtmosphere.fromScenario(conditions, false).clouds(),
+              "Denser precipitation clouds still win over fog clouds");
+        conditions.setAtmosphere(Atmosphere.THIN);
+        assertEquals(0, BoardAtmosphere.fromScenario(conditions, false).clouds(),
+              "Thin atmospheres suppress fog and its cloud cover");
+    }
+
     private static BoardAtmosphere.Settings at(float hour) {
-        return new BoardAtmosphere.Settings(hour, 0.15f, 0.08f, 2.5f, 0.2f, 0, 0.55f);
+        return new BoardAtmosphere.Settings(hour, 0.15f, 0.08f, 2.5f, 0.2f, 0);
     }
 }

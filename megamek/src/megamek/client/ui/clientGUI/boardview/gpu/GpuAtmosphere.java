@@ -13,7 +13,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.environment.ShadowMap;
 import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
@@ -24,7 +23,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-/** Scene grading and bounded analytic height fog, with optional coarse light shafts. Owns its GL resources. */
+/** Scene grading and bounded analytic height fog. Owns its GL resources. */
 final class GpuAtmosphere implements Disposable {
     private static final String SHADERS = "megamek/client/ui/clientGUI/boardview/gpu/";
     private final Mesh quad;
@@ -95,8 +94,8 @@ final class GpuAtmosphere implements Disposable {
         begin(width, height, delta, false);
     }
 
-    void begin(int width, int height, float delta, boolean unitVisibility) {
-        captureDepth = hasFog() || unitVisibility;
+    void begin(int width, int height, float delta, boolean requireSceneDepth) {
+        captureDepth = hasFog() || requireSceneDepth;
         int pixelsWide = Math.max(1, HdpiUtils.toBackBufferX(width));
         int pixelsHigh = Math.max(1, HdpiUtils.toBackBufferY(height));
         if (sceneColor == null || sceneColor.getWidth() != pixelsWide || sceneColor.getHeight() != pixelsHigh) {
@@ -131,6 +130,12 @@ final class GpuAtmosphere implements Disposable {
 
     /** Ends scene capture, derives depth using the same geometry, then composites only the board viewport. */
     void end(Camera camera, GpuTerrain terrain, List<ModelInstance> units, BoardScene board, int bottom) {
+        end(camera, terrain, units, board, bottom, null);
+    }
+
+    void end(Camera camera, GpuTerrain terrain, List<ModelInstance> units, BoardScene board, int bottom,
+          GpuFieldOfView fieldOfView) {
+        boolean fovActive = fieldOfView != null && fieldOfView.active();
         sceneColor.end();
         if (captureDepth) {
             sceneDepth.begin();
@@ -140,18 +145,24 @@ final class GpuAtmosphere implements Disposable {
             sceneDepth.end();
         }
         if (hasFog()) {
-            renderFog(camera, terrain, board);
+            renderFog(camera, board);
         }
         HdpiUtils.glViewport(0, bottom, (int) camera.viewportWidth, (int) camera.viewportHeight);
         screenState();
         compositeShader.bind();
         sceneColor.getColorBufferTexture().bind(0);
-        if (hasFog()) {
+        if (hasFog() || fovActive) {
             sceneDepth.getColorBufferTexture().bind(1);
+        }
+        if (hasFog()) {
             fog.getColorBufferTexture().bind(2);
         }
+        compositeShader.setUniformf("u_fovEnabled", fovActive ? 1 : 0);
+        if (fovActive) {
+            fieldOfView.bind(compositeShader, camera);
+        }
         compositeShader.setUniformi("u_scene", 0);
-        compositeShader.setUniformi("u_depth", hasFog() ? 1 : 0);
+        compositeShader.setUniformi("u_depth", hasFog() || fovActive ? 1 : 0);
         compositeShader.setUniformi("u_fog", hasFog() ? 2 : 0);
         compositeShader.setUniformf("u_fogEnabled", hasFog() ? 1 : 0);
         compositeShader.setUniformf("u_fogSize", hasFog() ? fog.getWidth() : 1, hasFog() ? fog.getHeight() : 1);
@@ -171,7 +182,7 @@ final class GpuAtmosphere implements Disposable {
         Gdx.gl.glDepthMask(true);
     }
 
-    /** Borrowed packed camera depth, valid after end() when fog or unit visibility requested it. */
+    /** Borrowed packed camera depth, valid after end() when a scene effect requested it. */
     Texture depthTexture() {
         return captureDepth ? sceneDepth.getColorBufferTexture() : null;
     }
@@ -201,8 +212,8 @@ final class GpuAtmosphere implements Disposable {
         }
     }
 
-    private void renderFog(Camera camera, GpuTerrain terrain, BoardScene board) {
-        float base = board.tiles().stream().mapToInt(BoardScene.Tile::elevation).min().orElse(0) * BoardGeometry.LEVEL;
+    private void renderFog(Camera camera, BoardScene board) {
+        float base = BoardGeometry.weatherBase(board);
         float height = settings.fogHeight() * BoardGeometry.LEVEL;
         fog.begin();
         screenState();
@@ -220,17 +231,7 @@ final class GpuAtmosphere implements Disposable {
         fogShader.setUniformf("u_noiseScale", 1 / (BoardGeometry.WIDTH * 1.8f));
         fogShader.setUniformf("u_clock", clock);
         fogShader.setUniformf("u_fogColor", lighting.fog().r, lighting.fog().g, lighting.fog().b);
-        fogShader.setUniformf("u_lightColor", lighting.direct().r, lighting.direct().g, lighting.direct().b);
-        fogShader.setUniformf("u_lightDirection", lighting.direction());
-        fogShader.setUniformf("u_shafts", settings.shafts());
         fogShader.setUniformf("u_maxOpacity", BoardAtmosphere.MAX_FOG_OPACITY);
-        ShadowMap shadow = terrain.environment().shadowMap;
-        fogShader.setUniformf("u_hasShadow", shadow == null ? 0 : 1);
-        if (shadow != null) {
-            shadow.getDepthMap().texture.bind(1);
-            fogShader.setUniformMatrix("u_shadowMatrix", shadow.getProjViewTrans());
-        }
-        fogShader.setUniformi("u_shadow", 1);
         quad.render(fogShader, GL20.GL_TRIANGLES);
         fog.end();
     }

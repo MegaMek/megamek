@@ -1,6 +1,8 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.util.List;
+
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.VertexAttributes;
@@ -26,6 +28,12 @@ final class GpuMeeple implements Disposable {
     final ModelInstance instance;
     private final BoundingBox bounds;
     private final String upperBodyNode;
+    private final boolean modularCoordinates;
+    private final List<UnitEquipmentAssembly.Binding> equipment;
+    private final List<UnitRig> rigs;
+    private final float levelsPerModelUnit;
+    private final Vector3 restDimensions;
+    private final UnitFamilyScale familyScale;
 
     GpuMeeple(Model model) {
         this(model, null);
@@ -36,6 +44,35 @@ final class GpuMeeple implements Disposable {
      *                      descriptor, or {@code null} for a model that turns as one piece
      */
     GpuMeeple(Model model, @Nullable String upperBodyNode) {
+        this(model, upperBodyNode, false);
+    }
+
+    GpuMeeple(Model model, @Nullable String upperBodyNode, UnitFamilyScale familyScale) {
+        this(model, upperBodyNode, false, List.of(), upperBodyNode == null ? 1f / 54 : 1f / 27, null, List.of(), familyScale);
+    }
+
+    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates) {
+        this(model, upperBodyNode, modularCoordinates, List.of());
+    }
+
+    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates, List<UnitEquipmentAssembly.Binding> equipment) {
+        this(model, upperBodyNode, modularCoordinates, equipment, upperBodyNode == null ? 1f / 54 : 1f / 27, null, List.of());
+    }
+
+    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates,
+          List<UnitEquipmentAssembly.Binding> equipment, float levelsPerModelUnit, @Nullable Vector3 restDimensions,
+          List<UnitRig> rigs) {
+        this(model, upperBodyNode, modularCoordinates, equipment, levelsPerModelUnit, restDimensions, rigs, UnitFamilyScale.DEFAULT);
+    }
+
+    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates,
+          List<UnitEquipmentAssembly.Binding> equipment, float levelsPerModelUnit, @Nullable Vector3 restDimensions,
+          List<UnitRig> rigs, UnitFamilyScale familyScale) {
+        this.modularCoordinates = modularCoordinates;
+        this.familyScale = familyScale;
+        this.equipment = List.copyOf(equipment);
+        this.rigs = List.copyOf(rigs);
+        this.levelsPerModelUnit = levelsPerModelUnit;
         this.upperBodyNode = ((upperBodyNode != null) && (model.getNode(upperBodyNode) != null))
               ? upperBodyNode : null;
         this.model = model;
@@ -44,18 +81,24 @@ final class GpuMeeple implements Disposable {
         if (!bounds.isValid()) {
             bounds.set(Vector3.Zero, Vector3.Zero);
         }
+        this.restDimensions = restDimensions == null ? bounds.getDimensions(new Vector3()) : new Vector3(restDimensions);
     }
 
     GpuMeeple(BoardScene.Pixels pixels, TextureRegion region) {
-        this(cutout(pixels, region));
+        this(pixels, region, true);
     }
 
-    private static Model cutout(BoardScene.Pixels pixels, TextureRegion region) {
+    /** Spinning markers show their artwork on both faces; a unit token normally has a dark underside. */
+    GpuMeeple(BoardScene.Pixels pixels, TextureRegion region, boolean shadedBottom) {
+        this(cutout(pixels, region, shadedBottom));
+    }
+
+    private static Model cutout(BoardScene.Pixels pixels, TextureRegion region, boolean shadedBottom) {
         ModelBuilder builder = new ModelBuilder();
         builder.begin();
         MeshPartBuilder caps = builder.part("cutout", GL20.GL_TRIANGLES,
-              VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.ColorPacked
-                  | VertexAttributes.Usage.Normal,
+              VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal
+                    | (shadedBottom ? VertexAttributes.Usage.ColorPacked : 0),
               new Material(TextureAttribute.createDiffuse(region.getTexture()), IntAttribute.createCullFace(GL20.GL_NONE)));
         MeshPartBuilder sides = builder.part("sides", GL20.GL_TRIANGLES,
               VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
@@ -69,6 +112,47 @@ final class GpuMeeple implements Disposable {
     /** @return {@code true} if the upper body can turn on its own, so a torso twist leaves the legs where they are */
     boolean turnsUpperBody() {
         return upperBodyNode != null;
+    }
+
+    boolean modularCoordinates() {
+        return modularCoordinates;
+    }
+
+    List<UnitEquipmentAssembly.Binding> equipment() {
+        return equipment;
+    }
+
+    List<UnitRig> rigs() {
+        return rigs;
+    }
+
+    /** Apply to a fresh instance, alongside location damage, so repairs restore the original shared artwork. */
+    void showEquipment(ModelInstance placed, UnitModelState.Appearance appearance) {
+        for (var binding : equipment) {
+            var effective = binding.memberId() < 0 ? appearance : appearance.fighters().get(binding.memberId());
+            if (effective == null) {
+                continue;
+            }
+            boolean broken = effective.inoperableEquipment().contains(binding.index());
+            boolean lamp = binding.emitters().stream().anyMatch(emitter -> "lamp".equals(emitter.role()));
+            if (broken || lamp) {
+                showEquipment(placed.getNode(binding.node()), broken, lamp && effective.searchlightOn());
+            }
+        }
+    }
+
+    private static void showEquipment(Node node, boolean broken, boolean lit) {
+        for (var part : node.parts) {
+            var material = part.material.copy();
+            boolean wrecked = broken || material.id.endsWith(UnitDamageDisplay.WRECKED_SUFFIX);
+            if (wrecked) {
+                material = UnitDamageDisplay.wrecked(material);
+            } else if ("detail".equals(material.id)) {
+                material.set(ColorAttribute.createEmissive(lit ? .8f : 0, lit ? .75f : 0, lit ? .45f : 0, 1));
+            }
+            part.material = material;
+        }
+        node.getChildren().forEach(child -> showEquipment(child, broken, lit));
     }
 
     /**
@@ -88,17 +172,64 @@ final class GpuMeeple implements Disposable {
     }
 
     Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, int height, boolean multiHex) {
-        // Multi-hex artwork must stay at full size so neighboring sections meet.
-        float scale = multiHex ? 1 : BoardGeometry.UNIT_SCALE;
-        float thickness = height * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE;
+        // Schema-1 sprite sections retain their original placement while external compatibility is supported.
+        float scale = (multiHex ? 1 : BoardGeometry.UNIT_SCALE) * familyScale.UNIT_SCALE;
+        float thickness = (modularCoordinates ? levelsPerModelUnit : height)
+              * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE * familyScale.UNIT_SCALE * familyScale.HEIGHT_SCALE;
+        return placeScaled(placed, camera, ground, facing, scale, thickness);
+    }
+
+    Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, BoardScene.Unit unit) {
+        if (!modularCoordinates) {
+            return place(placed, camera, ground, facing, unit.height(), unit.part() >= 0);
+        }
+        var footprint = unit.footprint().size() > 1 ? UnitFootprint.layout(unit.location().coords(), unit.footprint(), facing) : null;
+        float scale = horizontalScale(footprint);
+        if (footprint != null) {
+            ground = new Vector3(ground).add(footprint.offsetX(), footprint.offsetY(), 0);
+        }
+        // Rest geometry controls shape. Gameplay height changes when prone/flying and must not flatten the rig.
+        float thickness = verticalScale(scale);
+        return placeScaled(placed, camera, ground, facing, scale, thickness);
+    }
+
+    /** Horizontal distance conversion shared by placement and the distance-driven gait/wheel animation. */
+    float horizontalScale(BoardScene.Unit unit) {
+        return horizontalScale(unit.footprint().size() > 1
+              ? UnitFootprint.layout(unit.location().coords(), unit.footprint(), unit.location().facing() * 60) : null);
+    }
+
+    float verticalScale(float horizontalScale) {
+        return levelsPerModelUnit * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE
+              * horizontalScale / (BoardGeometry.HEX_SCALE * BoardGeometry.DEFAULTS.unitScale()) * familyScale.HEIGHT_SCALE;
+    }
+
+    private float horizontalScale(UnitFootprint.Layout footprint) {
+        if (footprint == null) {
+            return BoardGeometry.UNIT_SCALE * BoardGeometry.HEX_SCALE * familyScale.UNIT_SCALE;
+        }
+        return BoardGeometry.MULTI_HEX_UNIT_SCALE * familyScale.UNIT_SCALE * Math.min(footprint.width() / Math.max(1, restDimensions.x),
+              footprint.depth() / Math.max(1, restDimensions.y));
+    }
+
+    private Vector3 placeScaled(ModelInstance placed, Camera camera, Vector3 ground, float facing, float scale,
+          float thickness) {
         // Authored Z is in nominal occupied-height units. Keep feet half a world unit above the ground.
         placed.transform.set(ground, new Quaternion(Vector3.Z, -facing))
               .translate(0, 0, 0.5f)
               .scale(scale, scale, thickness);
+        return anchor(placed, camera);
+    }
+
+    Vector3 anchor(ModelInstance placed, Camera camera) {
+        BoundingBox posed = UnitBounds.local(placed);
+        if (!posed.isValid()) {
+            posed.set(bounds);
+        }
         float top = -Float.MAX_VALUE;
-        for (float horizontal : new float[] { bounds.min.x, bounds.max.x }) {
-            for (float vertical : new float[] { bounds.min.y, bounds.max.y }) {
-                for (float depth : new float[] { bounds.min.z, bounds.max.z }) {
+        for (float horizontal : new float[] { posed.min.x, posed.max.x }) {
+            for (float vertical : new float[] { posed.min.y, posed.max.y }) {
+                for (float depth : new float[] { posed.min.z, posed.max.z }) {
                     top = Math.max(top, new Vector3(horizontal, vertical, depth).rot(placed.transform).dot(camera.up));
                 }
             }

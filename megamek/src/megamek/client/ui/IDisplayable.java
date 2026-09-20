@@ -37,8 +37,12 @@ package megamek.client.ui;
 
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.util.List;
+
+import megamek.client.ui.clientGUI.boardview.overlay.OverlayImage;
 
 /**
  * Used for {@link megamek.client.ui.clientGUI.boardview.BoardView} overlays that don't move when the map is scrolled
@@ -95,6 +99,14 @@ public interface IDisplayable {
      * of the visible {@link megamek.client.ui.clientGUI.boardview.BoardView} is rect.x, rect.y.
      */
     void draw(Graphics graph, Rectangle rect);
+
+    /**
+     * Optional cached artwork and animation timelines for native compositing, captured on the Swing thread.
+     * Return null to use the ordinary painter; an empty list means this overlay currently has no artwork.
+     */
+    default List<OverlayImage> captureLayers(Graphics2D graph, Rectangle rect) {
+        return null;
+    }
 
     /**
      * Return true while sliding. "Sliding" means that this IDisplayable is in the process of opening, closing moving or

@@ -39,6 +39,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -47,9 +48,11 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.Timer;
 
 import megamek.MMConstants;
@@ -109,7 +112,6 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         COLOR_BACKGROUND = temp;
     }
 
-    private static final int SLIDING_SPEED = 5;
     private static final int MIN_SLIDE_OFFSET = 0;
 
     private static final int DIST_BOTTOM = 0;
@@ -128,13 +130,12 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
     private boolean decreasedChatScroll = false;
     private boolean overTheTop = false;
     private boolean underTheBottom = false;
-    private boolean slidingDown = false;
-    private boolean slidingUp = false;
+    private boolean sliding;
+    private OverlayImage.Transition slide = OverlayImage.Transition.ZERO;
     private boolean lockOpen = false;
     private int chatScroll = 0;
     private int scrollBarHeight;
     private int scrollBarOffset;
-    private int slideOffset = 0;
     private long idleTime = 0;
     private float scrollBarStep;
     private float scrollBarDragPos;
@@ -158,6 +159,10 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
     private boolean cursorVisible = true;
     private final Timer cursorBlinkTimer;
+    private record Artwork(int width, int height, int rows, int scroll, int barHeight, int barOffset,
+          Font font, String input, boolean minimized, List<String> messages, double scaleX, double scaleY) { }
+    private Artwork artwork;
+    private BufferedImage displayImage;
 
     public ChatterBoxOverlay(ClientGUI clientGUI, BoardView boardview, MegaMekController controller,
           ChatterBox chatterBox) {
@@ -253,34 +258,38 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
     @Override
     public boolean isSliding() {
-        return slidingDown || slidingUp;
+        return sliding;
     }
 
     public void slideUp() {
-        setIdleTime(0, false);
-        slidingUp = true;
-        slidingDown = false;
+        startSlide(MIN_SLIDE_OFFSET);
     }
 
     public void slideDown() {
-        setIdleTime(0, false);
-        slidingUp = false;
-        slidingDown = true;
+        startSlide(getMaxSlideOffset());
         boardView.setChatterBoxActive(false);
     }
 
-    private void stopSliding() {
+    private void startSlide(int target) {
         setIdleTime(0, false);
-        slidingUp = false;
-        slidingDown = false;
+        if (slide.to() != target) {
+            long now = System.nanoTime();
+            slide = new OverlayImage.Transition(now, slide.value(now), target, 200_000_000);
+            sliding = slide.isAnimating(now);
+            boardView.refreshDisplayables();
+        }
+    }
+
+    private int slideOffset() {
+        return Math.round(slide.value(System.nanoTime()));
     }
 
     private boolean isDown() {
-        return !isSliding() && (slideOffset == getMaxSlideOffset());
+        return !slide.isAnimating(System.nanoTime()) && (slide.to() == getMaxSlideOffset());
     }
 
     private boolean isUp() {
-        return !isSliding() && (slideOffset == MIN_SLIDE_OFFSET);
+        return !slide.isAnimating(System.nanoTime()) && (slide.to() == MIN_SLIDE_OFFSET);
     }
 
     @Override
@@ -320,24 +329,12 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
     @Override
     public boolean slide() {
-        if (slidingDown) {
-            if (slideOffset < getMaxSlideOffset()) {
-                slideOffset += SLIDING_SPEED;
-            } else {
-                stopSliding();
-            }
-            slideOffset = Math.min(slideOffset, getMaxSlideOffset());
-            return true;
-        } else if (slidingUp) {
-            if (slideOffset > MIN_SLIDE_OFFSET) {
-                slideOffset -= SLIDING_SPEED;
-            } else {
-                stopSliding();
-            }
-            slideOffset = Math.max(slideOffset, MIN_SLIDE_OFFSET);
-            return true;
+        boolean repaint = sliding;
+        sliding = slide.isAnimating(System.nanoTime());
+        if (repaint && !sliding) {
+            setIdleTime(0, false);
         }
-        return false;
+        return repaint;
     }
 
     private void stopScrolling() {
@@ -363,7 +360,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
         int xMin = DIST_SIDE;
         int xMax = xMin + width;
-        int yMin = ((size.height) - height - DIST_BOTTOM) + slideOffset;
+        int yMin = ((size.height) - height - DIST_BOTTOM) + slideOffset();
         int yMax = yMin + height;
 
         return (p.x > xMin) && (p.x < xMax) && (p.y > yMin)
@@ -379,7 +376,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
     public boolean isMouseOver(Point p, Dimension size) {
         int xMin = DIST_SIDE;
         int xMax = xMin + width;
-        int yMin = ((size.height) - height - DIST_BOTTOM) + slideOffset;
+        int yMin = ((size.height) - height - DIST_BOTTOM) + slideOffset();
         int yMax = yMin + height;
 
         boolean mouseOver = (p.x > xMin) && (p.x < xMax) && (p.y > yMin)
@@ -415,7 +412,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
 
         int x = p.x;
         int y = p.y;
-        int yOffset = ((size.height) - height - DIST_BOTTOM) + slideOffset;
+        int yOffset = ((size.height) - height - DIST_BOTTOM) + slideOffset();
 
         if ((x < DIST_SIDE) || (x > (DIST_SIDE + width)) || (y < yOffset)
               || (y > (yOffset + height))) {
@@ -495,17 +492,50 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
      */
     @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
+        long now = System.nanoTime();
+        for (OverlayImage layer : captureLayers((Graphics2D) graph, clipBounds)) {
+            layer.draw((Graphics2D) graph, now);
+        }
+    }
+
+    @Override
+    public List<OverlayImage> captureLayers(Graphics2D graph, Rectangle clipBounds) {
+        var transform = graph.getTransform();
+        double scaleX = Math.hypot(transform.getScaleX(), transform.getShearY());
+        double scaleY = Math.hypot(transform.getShearX(), transform.getScaleY());
+        Artwork next = new Artwork(width, height, max_nbr_rows, chatScroll, scrollBarHeight, scrollBarOffset,
+              FONT_CHAT, inputText(), isDown(), List.copyOf(messages), scaleX, scaleY);
+        if (!next.equals(artwork)) {
+            artwork = next;
+            displayImage = new BufferedImage(Math.max(1, (int) Math.ceil(width * scaleX)),
+                  Math.max(1, (int) Math.ceil(height * scaleY)), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D painter = displayImage.createGraphics();
+            try {
+                painter.scale(scaleX, scaleY);
+                UIUtil.setHighQualityRendering(painter);
+                paint(painter, -DIST_SIDE, 0);
+            } finally {
+                painter.dispose();
+            }
+        }
+        int x = (int) Math.round((clipBounds.x + DIST_SIDE) * scaleX + transform.getTranslateX());
+        int y = (int) Math.round((clipBounds.y + clipBounds.height - height - DIST_BOTTOM) * scaleY
+              + transform.getTranslateY());
+        return List.of(new OverlayImage(displayImage, x, y, OverlayImage.Fade.OPAQUE, slide.scaled((float) scaleY)));
+    }
+
+    private void paint(Graphics graph, int x, int yOffset) {
+        Rectangle clipBounds = new Rectangle(x, 0, width, height);
         graph.setColor(COLOR_BACKGROUND);
         graph.setFont(FONT_CHAT);
         int h = fm.getHeight();
 
         // Draw box.
-        int yOffset = ((clipBounds.height) - height - DIST_BOTTOM) + slideOffset + clipBounds.y;
         graph.fillRect(DIST_SIDE + clipBounds.x, yOffset, width, height);
         graph.setColor(COLOR_TEXT_BACK);
 
         // Min/max button
-        if (slideOffset == getMaxSlideOffset()) {
+        if (isDown()) {
             graph.drawImage(maxButton, 10 + clipBounds.x, yOffset + 3, boardView.getPanel());
         } else {
             graph.drawImage(minButton, 10 + clipBounds.x, yOffset + 3, boardView.getPanel());
@@ -533,19 +563,9 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         graph.drawRect(10 + clipBounds.x, (yOffset + height) - 21, width - 50, 17);
 
         // Draw the input text and/or the cursor
-        if ((!isDown()) && ((boardView.getChatterBoxActive()) || (!StringUtility.isNullOrBlank(message)))) {
-            String textToDisplayInInput = "";
-            // If there's an actual message being composed
-            if (!StringUtility.isNullOrBlank(message)) {
-                textToDisplayInInput = visibleMessage;
-            }
-            // Append cursor if the chatbox is active and ready for input
-            if ((boardView.getChatterBoxActive()) && (cursorVisible)) {
-                textToDisplayInInput += "_";
-            }
-            if (!textToDisplayInInput.isEmpty()) {
-                printLine(graph, textToDisplayInInput, 13 + clipBounds.x, (yOffset + height) - 7);
-            }
+        String input = inputText();
+        if (!input.isEmpty()) {
+            printLine(graph, input, 13 + clipBounds.x, (yOffset + height) - 7);
         }
 
         // Text rows
@@ -567,6 +587,14 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
                 }
             }
         }
+    }
+
+    private String inputText() {
+        if (isDown()) {
+            return "";
+        }
+        String text = StringUtility.isNullOrBlank(message) ? "" : visibleMessage;
+        return boardView.getChatterBoxActive() && cursorVisible ? text + "_" : text;
     }
 
     private void printLine(Graphics graph, String text, int x, int y) {
@@ -831,7 +859,7 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
         if ((isDown() || isSliding()) && (ke.getKeyCode() != KeyEvent.VK_ENTER)
               && (ke.getKeyCode() != KeyEvent.VK_BACK_SPACE)
               && (ke.getKeyCode() != KeyEvent.VK_ESCAPE)) {
-            if (!slidingUp) {
+            if (slide.to() != MIN_SLIDE_OFFSET) {
                 slideUp();
             }
         }
@@ -876,6 +904,9 @@ public class ChatterBoxOverlay implements KeyListener, IDisplayable, IPreference
                 cb.setMessage(message);
                 break;
             default:
+                if (ke.getKeyChar() == KeyEvent.CHAR_UNDEFINED) {
+                    return;
+                }
                 if (message == null) {
                     message = "" + ke.getKeyChar();
                 } else {

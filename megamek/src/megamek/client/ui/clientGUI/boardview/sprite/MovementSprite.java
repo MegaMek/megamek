@@ -34,6 +34,7 @@ package megamek.client.ui.clientGUI.boardview.sprite;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.ImageObserver;
@@ -55,7 +56,7 @@ import megamek.common.units.Entity;
  * TODO: Different color depending upon whether
  * entity has already moved this turn
  */
-public class MovementSprite extends Sprite {
+public class MovementSprite extends Sprite implements TacticalSprite {
 
     private final double angle;
     private StraightArrowPolygon movePoly;
@@ -185,4 +186,10 @@ public class MovementSprite extends Sprite {
     public boolean isInside(Point point) {
         return movePoly.contains(point.x - bounds.x, point.y - bounds.y);
     }
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Rectangle location = getBounds();
+        drawOnto(graphics, location.x, location.y, null);
+    }
+
 }

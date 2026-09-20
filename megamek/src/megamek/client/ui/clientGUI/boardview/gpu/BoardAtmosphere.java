@@ -9,29 +9,29 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 
 /** Scenario-derived visual settings owned by the GPU thread; tuning never changes planetary game conditions. */
 final class BoardAtmosphere {
-    static final Settings DEFAULTS = new Settings(13, 0, 0, 2.5f, 0, 0, 0);
-    static final float MAX_FOG_OPACITY = 0.18f;
+    static final float MIN_FOG_HEIGHT = 1.0f;
+    static final float STANDARD_FOG_HEIGHT = 2.5f;
+    static final Settings DEFAULTS = new Settings(13, 0, 0, STANDARD_FOG_HEIGHT, 0, 0);
+    static final float MAX_FOG_OPACITY = 0.4f;
 
     /** Fog height is in terrain levels; exposure is in photographic stops. */
-    record Settings(float hour, float clouds, float fog, float fogHeight, float haze, float exposure, float shafts,
+    record Settings(float hour, float clouds, float fog, float fogHeight, float haze, float exposure,
           Effects effects) {
-        Settings(float hour, float clouds, float fog, float fogHeight, float haze, float exposure, float shafts) {
-            this(hour, clouds, fog, fogHeight, haze, exposure, shafts, Effects.NONE);
+        Settings(float hour, float clouds, float fog, float fogHeight, float haze, float exposure) {
+            this(hour, clouds, fog, fogHeight, haze, exposure, Effects.NONE);
         }
 
         Settings {
             if (!Float.isFinite(hour) || !Float.isFinite(clouds) || !Float.isFinite(fog)
-                  || !Float.isFinite(fogHeight) || !Float.isFinite(haze) || !Float.isFinite(exposure)
-                  || !Float.isFinite(shafts)) {
+                  || !Float.isFinite(fogHeight) || !Float.isFinite(haze) || !Float.isFinite(exposure)) {
                 throw new IllegalArgumentException("Atmosphere settings must be finite");
             }
             hour = ((hour % 24) + 24) % 24;
             clouds = MathUtils.clamp(clouds, 0, 1);
             fog = MathUtils.clamp(fog, 0, 1);
-            fogHeight = MathUtils.clamp(fogHeight, 0.5f, 8);
+            fogHeight = MathUtils.clamp(fogHeight, MIN_FOG_HEIGHT, 8);
             haze = MathUtils.clamp(haze, 0, 1);
             exposure = MathUtils.clamp(exposure, -2, 2);
-            shafts = MathUtils.clamp(shafts, 0, 1);
             java.util.Objects.requireNonNull(effects);
         }
     }
@@ -60,10 +60,10 @@ final class BoardAtmosphere {
     }
 
     enum Weather {
-        CLEAR("Clear", 0, 0, 2.5f, 0),
+        CLEAR("Clear", 0, 0, STANDARD_FOG_HEIGHT, 0),
         OVERCAST("Overcast", 1, 0.04f, 3, 0.06f),
-        MIST("Mist", 0.35f, 0.18f, 1.5f, 0.08f),
-        FOG("Fog", 0.85f, 0.3f, 3, 0.15f);
+        MIST("Mist", 0.35f, 0.18f, 1.5f, 0.1f),
+        FOG("Fog", 0.85f, 0.6f, 3, 0.15f);
 
         final String label;
         private final float clouds;
@@ -80,7 +80,7 @@ final class BoardAtmosphere {
         }
 
         Settings apply(Settings current) {
-            return new Settings(current.hour(), clouds, fog, height, haze, current.exposure(), current.shafts(),
+            return new Settings(current.hour(), clouds, fog, height, haze, current.exposure(),
                   new Effects(0, 0, 0, 0, 0, current.effects().wind(), current.effects().windDirection()));
         }
     }
@@ -88,9 +88,14 @@ final class BoardAtmosphere {
     /** Derived afresh when settings change. Colors and direction are read-only to consumers. */
     record Lighting(Vector3 direction, Color direct, Color ambient, Color fog, Color sky, Color tint,
           float saturation, float daylight) {
-        /** Neutral exposure includes a daylight lift; moonlit brightness stays unchanged. */
+        /** Exposure scale, in photographic stops, at full daylight and at full night. */
+        private static final float MIDDAY_STOPS = 0.8f;
+        private static final float NIGHT_STOPS = -1.0f;
+
+        /** Night is 1.5 stops below the old neutral exposure; the daylight lift is unchanged. */
         float exposureScale(float compensation) {
-            return (float) Math.pow(2, compensation + 0.8f * daylight);
+            float night = 1 - daylight;
+            return (float) Math.pow(2, compensation + (MIDDAY_STOPS * daylight) + (NIGHT_STOPS * night * night));
         }
     }
 
@@ -106,10 +111,10 @@ final class BoardAtmosphere {
         };
         float exposure = switch (conditions.getLight()) {
             case DAY, DUSK, FULL_MOON -> 0;
-            case GLARE -> 0.1f;
-            case SOLAR_FLARE -> 0.2f;
-            case MOONLESS -> -0.1f;
-            case PITCH_BLACK -> -0.2f;
+            case GLARE -> 0.2f;
+            case SOLAR_FLARE -> 0.4f;
+            case MOONLESS -> -0.3f;
+            case PITCH_BLACK -> -0.6f;
         };
         boolean air = !inSpace && !conditions.getAtmosphere().isVacuum();
         // The scenario editor permits precipitation and fog only in standard or denser atmospheres.
@@ -120,11 +125,12 @@ final class BoardAtmosphere {
                 case CLEAR -> { }
                 case LIGHT_RAIN -> rain = 0.25f;
                 case MOD_RAIN -> rain = 0.5f;
-                case HEAVY_RAIN, GUSTING_RAIN -> rain = 0.75f;
+                case HEAVY_RAIN -> rain = 0.7f;
+                case GUSTING_RAIN -> rain = 0.85f;
                 case DOWNPOUR -> rain = 1;
                 case LIGHT_SNOW -> snow = 0.25f;
                 case MOD_SNOW -> snow = 0.5f;
-                case SNOW_FLURRIES -> snow = 0.65f;
+                case SNOW_FLURRIES -> snow = 0.7f;
                 case HEAVY_SNOW -> snow = 1;
                 case SLEET -> { rain = 0.35f; snow = 0.35f; }
                 case ICE_STORM -> { rain = 0.5f; hail = 0.5f; }
@@ -150,15 +156,29 @@ final class BoardAtmosphere {
             case SOUTHEAST -> 300;
         };
         float sand = air && conditions.isBlowingSandActive() ? 0.6f : 0;
-        float density = weather ? switch (conditions.getFog()) {
-            case FOG_NONE -> 0;
-            case FOG_LIGHT -> 0.18f;
-            case FOG_HEAVY -> 0.3f;
-        } : 0;
+        // Ground fog also implies a hazier sky, so it lifts cloud cover without replacing precipitation clouds.
+        float fogDensity = 0;
+        float fogClouds = 0;
+        if (weather) {
+            switch (conditions.getFog()) {
+                case FOG_NONE -> { }
+                case FOG_LIGHT -> { fogDensity = 0.2f; fogClouds = 0.15f; }
+                case FOG_HEAVY -> { fogDensity = 1; fogClouds = 0.3f; }
+            }
+        }
         float precipitation = Math.max(rain, Math.max(snow, hail));
-        float clouds = precipitation >= 0.75f ? 1 : precipitation >= 0.5f ? 0.85f : precipitation > 0 ? 0.65f : 0;
-        float haze = Math.max(density > 0 ? 0.1f : 0, sand * 0.25f);
-        return new Settings(hour, clouds, density, 2.5f, haze, exposure, 0,
+        float clouds = Math.max(fogClouds,
+              precipitation >= 0.75f ? 1 : precipitation >= 0.5f ? 0.85f : precipitation > 0 ? 0.65f : 0);
+        // Low fog pools around the terrain; haze scales its presence above that layer.
+        float pressureReduction = switch (conditions.getAtmosphere()) {
+            case HIGH -> 0.75f;
+            case VERY_HIGH -> 1.5f;
+            default -> 0;
+        };
+        float height = fogDensity > 0 ? Math.max(MIN_FOG_HEIGHT, STANDARD_FOG_HEIGHT - pressureReduction)
+              : DEFAULTS.fogHeight();
+        float haze = Math.max(fogDensity, sand * 0.25f);
+        return new Settings(hour, clouds, fogDensity, height, haze, exposure,
               new Effects(rain, snow, hail, sand, lightning, wind, direction));
     }
 

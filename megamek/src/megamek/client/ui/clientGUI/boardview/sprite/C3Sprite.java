@@ -34,6 +34,7 @@ package megamek.client.ui.clientGUI.boardview.sprite;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
@@ -47,7 +48,7 @@ import megamek.common.units.Entity;
  * Sprite and info for a C3 network. Does not actually use the image buffer as this can be horribly inefficient for long
  * diagonal lines.
  */
-public class C3Sprite extends Sprite {
+public class C3Sprite extends Sprite implements TacticalSprite {
 
     private Polygon c3Poly;
 
@@ -175,6 +176,12 @@ public class C3Sprite extends Sprite {
     @Override
     public boolean isInside(Point point) {
         return c3Poly.contains(point.x - bounds.x, point.y - bounds.y);
+    }
+
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Rectangle location = getBounds();
+        drawOnto(graphics, location.x, location.y, null);
     }
 
 }

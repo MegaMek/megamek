@@ -52,6 +52,7 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -256,6 +257,20 @@ public interface IAero {
     Map<String, Integer> groupWeaponsByLocation();
 
     Map<String, Integer> getWeaponGroups();
+
+    /** The same location normalization used to create the capital-fighter weapon groups. */
+    int weaponGroupLocation(Mounted<?> mounted);
+
+    /** Physical mounts represented by a logical group; indices remain local to each mount's owning entity. */
+    default List<WeaponMounted> getWeaponGroupMembers(WeaponMounted group) {
+        if (!(this instanceof Entity entity) || group.getNWeapons() <= 0) {
+            return List.of();
+        }
+        return entity.getTotalWeaponList().stream().filter(mount -> !mount.isWeaponGroup()
+                    && !mount.isHit() && !mount.isDestroyed()
+                    && mount.getType().equals(group.getType()) && weaponGroupLocation(mount) == group.getLocation())
+              .toList();
+    }
 
     /**
      * Refresh the capital fighter weapons groups.

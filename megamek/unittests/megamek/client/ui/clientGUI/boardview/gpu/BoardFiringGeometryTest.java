@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.badlogic.gdx.math.Vector3;
 import megamek.common.board.Coords;
@@ -80,8 +82,90 @@ class BoardFiringGeometryTest {
                 assertTrue(first.topA().epsilonEquals(opposite.topB(), 0.001f));
                 assertTrue(first.topB().epsilonEquals(opposite.topA(), 0.001f));
                 assertTrue(first.bottomA().epsilonEquals(opposite.bottomB(), 0.001f));
-                assertTrue(first.topA().z - first.bottomA().z >= 2 * BoardGeometry.LEVEL - 0.001f);
+                assertTrue(first.topA().z - first.bottomA().z
+                      >= BoardFiringGeometry.RANGE_HEIGHT * BoardGeometry.LEVEL - 0.001f);
             }
+        }
+    }
+
+    @Test
+    void contourFollowsTheSurfaceAcrossWaterRegardlessOfDepthOrIce() {
+        for (int level : new int[] { 1, -2 }) {
+            for (int depth : new int[] { 0, 1, 5 }) {
+                for (boolean frozen : new boolean[] { false, true }) {
+                    List<BoardScene.Tile> tiles = new ArrayList<>();
+                    for (int x = 0; x < 3; x++) {
+                        tiles.add(new BoardScene.Tile(new Coords(x, 0), level, x == 1 ? depth : -1,
+                              x == 1 && frozen, 0, BoardScene.Surface.GRASS, null, null, null, List.of(), List.of()));
+                    }
+                    BoardScene scene = new BoardScene(0, 3, 1, tiles, List.of(), List.of(), -1, "Firing", List.of());
+                    float bottom = level * BoardGeometry.LEVEL
+                          + BoardFiringGeometry.RANGE_CLEARANCE * BoardGeometry.HEX_SCALE;
+                    float top = bottom + BoardFiringGeometry.RANGE_HEIGHT * BoardGeometry.LEVEL;
+                    for (var tile : tiles) {
+                        for (int edge = 0; edge < 6; edge++) {
+                            var wall = BoardFiringGeometry.rangeEdge(scene, tile.coords(), edge);
+                            assertEquals(bottom, wall.bottomA().z, 0.001f);
+                            assertEquals(bottom, wall.bottomB().z, 0.001f);
+                            assertEquals(top, wall.topA().z, 0.001f);
+                            assertEquals(top, wall.topB().z, 0.001f);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    static List<BoardScene.RangeBorder> borders(Set<Coords> coverage, String label) {
+        return coverage.stream().map(coords -> {
+            int mask = 0;
+            for (int direction = 0; direction < 6; direction++) {
+                if (!coverage.contains(coords.translated(direction))) {
+                    mask |= 1 << direction;
+                }
+            }
+            return new BoardScene.RangeBorder(coords, mask, 0x40FF90, label);
+        }).filter(border -> border.edges() != 0).toList();
+    }
+
+    @Test
+    void contoursJoinEveryEdgeOnceIncludingHolesAndDisconnectedAreas() {
+        Set<Coords> coverage = new HashSet<>(new Coords(4, 4).allAtDistanceOrLess(2));
+        coverage.remove(new Coords(4, 4));
+        coverage.add(new Coords(0, 0));
+        List<BoardScene.RangeBorder> borders = borders(coverage, "S");
+        BoardScene terrain = scene();
+        BoardScene scene = new BoardScene(0, 9, 9, terrain.tiles(), List.of(), List.of(), -1, "Firing", List.of(),
+              null, List.of(), borders);
+        var contours = BoardFiringGeometry.rangeContours(scene);
+        assertEquals(3, contours.size());
+        var visited = new HashSet<BoardFiringGeometry.RangeSide>();
+        for (var contour : contours) {
+            for (int i = 0; i < contour.size(); i++) {
+                var side = contour.get(i);
+                assertTrue(visited.add(side), "Each boundary edge must occur exactly once");
+                var wall = BoardFiringGeometry.rangeWall(scene, side);
+                var next = BoardFiringGeometry.rangeWall(scene, contour.get((i + 1) % contour.size()));
+                assertTrue(wall.topB().epsilonEquals(next.topA(), 0.1f),
+                      () -> "Contour must meet across the seam: " + wall.topB() + " / " + next.topA());
+                assertTrue(wall.bottomB().epsilonEquals(next.bottomA(), 0.1f));
+            }
+        }
+        assertEquals(borders.stream().mapToInt(border -> Integer.bitCount(border.edges())).sum(), visited.size());
+    }
+
+    @Test
+    void adjoiningBracketsWithTheSameColorKeepTheirOwnLabelsAndContours() {
+        BoardScene terrain = scene();
+        List<BoardScene.RangeBorder> borders = new ArrayList<>(borders(Set.of(new Coords(4, 4)), "S"));
+        borders.addAll(borders(Set.of(new Coords(4, 5)), "M"));
+        BoardScene scene = new BoardScene(0, 9, 9, terrain.tiles(), List.of(), List.of(), -1, "Firing", List.of(),
+              null, List.of(), borders);
+        var contours = BoardFiringGeometry.rangeContours(scene);
+        assertEquals(2, contours.size());
+        for (var contour : contours) {
+            assertEquals(6, contour.size());
+            assertEquals(1, contour.stream().map(side -> side.border().label()).distinct().count());
         }
     }
 

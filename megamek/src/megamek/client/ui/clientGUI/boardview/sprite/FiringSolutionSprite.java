@@ -42,6 +42,7 @@ import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StringDrawer;
@@ -53,7 +54,7 @@ import megamek.common.util.FiringSolution;
  * Sprite for displaying generic firing information. This is used for the firing phase and displays either range and
  * target modifier or a big red X if the target cannot be hit.
  */
-public class FiringSolutionSprite extends HexSprite {
+public class FiringSolutionSprite extends HexSprite implements TacticalSprite {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -121,6 +122,31 @@ public class FiringSolutionSprite extends HexSprite {
         UIUtil.setHighQualityRendering(graph);
         graph.scale(bv.getScale(), bv.getScale());
 
+        paintTactical(graph);
+
+        graph.dispose();
+    }
+
+    @Override
+    public boolean isBehindTerrain() {
+        return false;
+    }
+
+    @Override
+    protected int getSpritePriority() {
+        return 80;
+    }
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Graphics2D local = BoardTacticalGraphics.at(graphics, bv.getHexLocation(getPosition()));
+        try {
+            paintTactical(local);
+        } finally {
+            local.dispose();
+        }
+    }
+
+    protected void paintTactical(Graphics2D graph) {
         String fontName = GUIP.getMoveFontType();
         int fontStyle = GUIP.getMoveFontStyle();
         graph.setFont(new Font(fontName, fontStyle, X_SIZE));
@@ -148,16 +174,6 @@ public class FiringSolutionSprite extends HexSprite {
             graph.draw(BoardView.getHexPoly());
         }
 
-        graph.dispose();
     }
 
-    @Override
-    public boolean isBehindTerrain() {
-        return false;
-    }
-
-    @Override
-    protected int getSpritePriority() {
-        return 80;
-    }
 }

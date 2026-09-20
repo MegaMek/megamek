@@ -542,7 +542,6 @@ public class EntityImage {
         }
         Color markerColor = camo.getOverlayColor();
         StripeDirection direction = camo.getOverlayDirection();
-        boolean repeating = camo.getOverlayStyle().isRepeating();
         if ((markerColor == null) || (direction == null)) {
             return image;
         }
@@ -565,7 +564,7 @@ public class EntityImage {
             }
             int y = i / IMG_WIDTH;
             int x = i - y * IMG_WIDTH;
-            if (!isOnStripe(x, y, direction, repeating)) {
+            if (markerPixel(x, y, markerColor.getRGB(), direction, camo.getOverlayStyle()) == 0) {
                 continue;
             }
             int red = (pixel >> 16) & 0xff;
@@ -589,7 +588,7 @@ public class EntityImage {
      *
      * @return {@code true} if the pixel falls on the marker stripe
      */
-    private boolean isOnStripe(int x, int y, StripeDirection direction, boolean repeating) {
+    private static boolean isOnStripe(int x, int y, StripeDirection direction, boolean repeating) {
         int value = switch (direction) {
             case DIAGONAL -> x + y;
             case ANTI_DIAGONAL -> x - y + IMG_HEIGHT;
@@ -607,6 +606,13 @@ public class EntityImage {
             case VERTICAL -> IMG_WIDTH;
         };
         return Math.abs(value - extent / 2) < BAND_HALF_WIDTH;
+    }
+
+    /** Shared 84x72 marker artwork for sprites and rigid models; transparent away from the selected stripe. */
+    public static int markerPixel(int x, int y, int rgb, StripeDirection direction,
+          megamek.common.battlefieldSupport.OverlayStyle style) {
+        return style.isVisible() && isOnStripe(x, y, direction, style.isRepeating())
+              ? (STRIPE_ALPHA << 24) | (rgb & 0xFFFFFF) : 0;
     }
 
     /**

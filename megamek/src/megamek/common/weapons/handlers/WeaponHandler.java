@@ -108,6 +108,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected Game game;
     protected transient TWGameManager gameManager; // must not save the server
     protected boolean bMissed;
+    private transient boolean animationReported;
+
+    /** One visual result per resolved salvo, independent of the number of damage clusters. */
+    protected final void reportAttackAnimation(boolean hit) {
+        if (!animationReported) {
+            animationReported = true;
+            gameManager.sendAttackAnimation(attackingEntity, target, megamek.common.ResolvedAttack.Kind.SHOT,
+                  attackingEntity.getEquipmentNum(weapon), weapon.getLocation(), hit);
+        }
+    }
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
     protected boolean bDirect = false;
@@ -872,6 +882,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         IBuilding bldg = game.getBuildingAt(target.getBoardLocation()).orElse(null);
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
+            animationReported = false;
             // Skip weapon announcement for spawned attacks (e.g., rapid-fire AC special ammo)
             // The parent handler already announced the weapon
             if (parentBayHandler == null) {
@@ -1147,6 +1158,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
             if (!bMissed) {
                 // Buildings shield all units from a certain amount of damage.
+                reportAttackAnimation(hits > 0);
                 // Amount is based upon the building's CF at the phase's start.
                 int bldgAbsorbs = 0;
                 if (targetInBuilding && (bldg != null)
@@ -1652,6 +1664,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected void handleEntityDamage(Entity entityTarget,
           Vector<Report> vPhaseReport, IBuilding bldg, int hits, int nCluster,
           int bldgAbsorbs) {
+        reportAttackAnimation(!bMissed && hits > 0);
         missed = false;
 
         initHit(entityTarget);
@@ -1838,6 +1851,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void handleIgnitionDamage(Vector<Report> vPhaseReport, IBuilding bldg, int hits) {
+        reportAttackAnimation(!bMissed && hits > 0);
         if (!bSalvo) {
             // hits!
             Report r = new Report(2270);
@@ -1859,6 +1873,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected void handleClearDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage,
           boolean hitReport) {
+        reportAttackAnimation(!bMissed);
         if (!bSalvo && hitReport) {
             // hits!
             Report r = new Report(2270);
@@ -1919,6 +1934,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected void handleBuildingDamage(Vector<Report> vPhaseReport, IBuilding bldg, int nDamage,
           Coords coords) {
+        reportAttackAnimation(!bMissed);
         if (!bSalvo) {
             // hits!
             Report r = new Report(3390);
@@ -1958,6 +1974,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void reportMiss(Vector<Report> vPhaseReport, boolean singleNewline) {
+        reportAttackAnimation(false);
         // Report the miss.
         Report r = new Report(3220);
         r.subject = subjectId;

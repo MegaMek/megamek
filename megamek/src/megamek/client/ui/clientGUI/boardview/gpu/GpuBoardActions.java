@@ -15,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
@@ -250,6 +251,30 @@ final class GpuBoardActions {
     List<BoardScene.Command> globalCommands() {
         return view.getClientgui() == null || view.getClientgui().getMenuBar() == null ? List.of()
               : menuCommands(view.getClientgui().getMenuBar(), turn(), null, List.of());
+    }
+
+    /** The native window cannot trigger Swing accelerators, so invoke the current menu item on the EDT. */
+    boolean menuShortcut(KeyStroke key) {
+        var gui = view.getClientgui();
+        return !closed.getAsBoolean() && gui != null && !gui.shouldIgnoreHotKeys() && gui.getMenuBar() != null
+              && menuShortcut(gui.getMenuBar(), key);
+    }
+
+    private static boolean menuShortcut(Container menu, KeyStroke key) {
+        for (Component component : menu.getComponents()) {
+            if (!(component instanceof JMenuItem item) || !item.isVisible() || !item.isEnabled()) {
+                continue;
+            }
+            if (item instanceof JMenu group) {
+                if (menuShortcut(group.getPopupMenu(), key)) {
+                    return true;
+                }
+            } else if (key.equals(item.getAccelerator())) {
+                item.doClick(0);
+                return true;
+            }
+        }
+        return false;
     }
 
     private List<BoardScene.Command> menuCommands(Container menu, Turn owner, Coords coords, List<String> parents) {

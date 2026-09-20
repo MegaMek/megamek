@@ -61,6 +61,12 @@ import megamek.logging.MMLogger;
 public final class ASConverter {
     private static final MMLogger logger = MMLogger.create(ASConverter.class);
 
+    /** Query the existing size rules without loading a clean unit or performing the rest of conversion. */
+    public static int sizeFor(Entity entity) {
+        return ASSizeConverter.convertSize(new ConversionData(Objects.requireNonNull(entity), null,
+              new DummyCalculationReport()));
+    }
+
     // TODO: LG, SLG, VLG support vehicles, MS
 
     /**

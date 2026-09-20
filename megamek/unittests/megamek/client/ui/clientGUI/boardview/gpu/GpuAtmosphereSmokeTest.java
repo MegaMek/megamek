@@ -3,7 +3,6 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -37,6 +36,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.common.board.Coords;
+import megamek.common.planetaryConditions.Fog;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.Weather;
 import org.junit.jupiter.api.Tag;
@@ -62,7 +62,9 @@ class GpuAtmosphereSmokeTest {
                 }
             }
         }, GpuBoardWindow.configuration(false));
-        assertNull(failure.get(), () -> String.valueOf(failure.get()));
+        if (failure.get() != null) {
+            throw new AssertionError(failure.get());
+        }
     }
 
     private void checkRendering() throws Exception {
@@ -102,7 +104,7 @@ class GpuAtmosphereSmokeTest {
         camera.fit(scene);
         terrain.update(scene);
         try {
-            BoardAtmosphere.Settings clear = new BoardAtmosphere.Settings(12, 0, 0, 1.5f, 0, 0, 0.7f);
+            BoardAtmosphere.Settings clear = new BoardAtmosphere.Settings(12, 0, 0, 1.5f, 0, 0);
             draw(atmosphere, terrain, batch, tower, camera, scene, clear);
             var shadow = terrain.environment().shadowMap;
             Vector3 ground = BoardGeometry.center(new Coords(1, 3), 0);
@@ -110,10 +112,10 @@ class GpuAtmosphereSmokeTest {
             Vector3 roof = new Vector3(center).add(0, 0, 108);
             Color clearGround = sample(camera, ground);
             Color clearRoof = sample(camera, roof);
-            float clearContrast = luminance(clearGround) - luminance(sample(camera, darkGround));
+            float clearContrast = linearLuminance(clearGround) - linearLuminance(sample(camera, darkGround));
             GpuBoardTestUi.capture(new File(output, "atmosphere-noon.png"));
             draw(atmosphere, terrain, batch, tower, camera, scene,
-                  new BoardAtmosphere.Settings(12, 0, 0.8f, 1.5f, 0, 0, 0.7f));
+                  new BoardAtmosphere.Settings(12, 0, 0.8f, 1.5f, 0, 0));
             Color fogGround = sample(camera, ground);
             Color fogRoof = sample(camera, roof);
             GpuBoardTestUi.capture(new File(output, "atmosphere-depth-fog.png"));
@@ -122,13 +124,13 @@ class GpuAtmosphereSmokeTest {
                   "Camera depth and exponential height fog must leave the raised roof clearer: ground "
                         + clearGround + " -> " + fogGround + ", roof " + clearRoof + " -> " + fogRoof);
             draw(atmosphere, terrain, batch, tower, camera, scene,
-                  new BoardAtmosphere.Settings(12, 0, 1, 8, 1, 0, 1));
-            float fogContrast = luminance(sample(camera, ground)) - luminance(sample(camera, darkGround));
-            assertTrue(fogContrast > clearContrast * 0.6f,
-                  "Even maximum fog, haze and shafts must preserve terrain contrast: " + fogContrast + " / " + clearContrast);
+                  new BoardAtmosphere.Settings(12, 0, 1, 8, 1, 0));
+            float fogContrast = linearLuminance(sample(camera, ground)) - linearLuminance(sample(camera, darkGround));
+            assertEquals(1 - BoardAtmosphere.MAX_FOG_OPACITY, fogContrast / clearContrast, 0.025f,
+                  "Maximum fog and haze must retain the configured share of scene contrast in linear light");
             GpuBoardTestUi.capture(new File(output, "atmosphere-maximum-fog.png"));
             draw(atmosphere, terrain, batch, tower, camera, scene,
-                  new BoardAtmosphere.Settings(0, 0, 0, 1.5f, 0, 0, 0.7f));
+                  new BoardAtmosphere.Settings(0, 0, 0, 1.5f, 0, 0));
             Color night = sample(camera, ground);
             assertTrue(luminance(clearGround) > luminance(night) * 1.25f, "Neutral daylight must be visibly brighter than night");
             assertTrue(luminance(night) > 0.4f, "Full moon lighting must keep the ground readable");
@@ -137,7 +139,7 @@ class GpuAtmosphereSmokeTest {
             GpuBoardTestUi.capture(new File(output, "atmosphere-night.png"));
             for (float hour : new float[] { 4, 5, 5.5f, 6, 6.5f, 7, 17, 17.5f, 18, 18.5f, 19, 20 }) {
                 draw(atmosphere, terrain, batch, tower, camera, scene,
-                      new BoardAtmosphere.Settings(hour, 1, 0, 1.5f, 0, 0, 0));
+                      new BoardAtmosphere.Settings(hour, 1, 0, 1.5f, 0, 0));
                 Color twilight = sample(camera, ground);
                 assertTrue(luminance(twilight) > 0.4f,
                       "The rendered board must not go dark during twilight at " + hour + ": " + twilight);
@@ -157,14 +159,14 @@ class GpuAtmosphereSmokeTest {
             camera.fit(scene);
             StringBuilder timing = new StringBuilder("Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER)
                   + "\n1280x800 synthetic 7x7 board and tower; warmed, synchronous GL completion; no vsync wait\n");
-            String[] modes = { "Clear", "Maximum fog/haze", "Maximum fog/haze + shafts", "Downpour",
+            String[] modes = { "Clear", "Maximum fog/haze", "Downpour",
                   "Maximum snow", "Maximum hail", "Maximum sand", "All precipitation at maximum" };
             for (int mode = 0; mode < modes.length; mode++) {
-                var effects = new BoardAtmosphere.Effects(mode == 3 || mode == 7 ? 1 : 0,
-                      mode == 4 || mode == 7 ? 1 : 0, mode == 5 || mode == 7 ? 1 : 0,
-                      mode == 6 || mode == 7 ? 1 : 0, 0, 0.4f, 60);
-                var settings = new BoardAtmosphere.Settings(13, 0, mode == 1 || mode == 2 ? 1 : 0, 8,
-                      mode == 1 || mode == 2 ? 1 : 0, 0, mode == 2 ? 1 : 0, effects);
+                var effects = new BoardAtmosphere.Effects(mode == 2 || mode == 6 ? 1 : 0,
+                      mode == 3 || mode == 6 ? 1 : 0, mode == 4 || mode == 6 ? 1 : 0,
+                      mode == 5 || mode == 6 ? 1 : 0, 0, 0.4f, 60);
+                var settings = new BoardAtmosphere.Settings(13, 0, mode == 1 ? 1 : 0, 8,
+                      mode == 1 ? 1 : 0, 0, effects);
                 List<Double> millis = new ArrayList<>();
                 for (int frame = 0; frame < 45; frame++) {
                     long start = System.nanoTime();
@@ -214,7 +216,7 @@ class GpuAtmosphereSmokeTest {
         for (int kind = 0; kind < names.length; kind++) {
             var effects = new BoardAtmosphere.Effects(kind == 0 ? 1 : 0, kind == 1 ? 1 : 0,
                   kind == 2 ? 1 : 0, kind == 3 ? 1 : 0, 0, 0.4f, 60);
-            var weather = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0, 0, effects);
+            var weather = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0, effects);
             draw(atmosphere, terrain, batch, tower, camera, scene, weather);
             long first = GpuBoardTestUi.capture(new File(output, "weather-" + names[kind] + ".png"));
             assertNotEquals(clear, first, names[kind] + " must be visible");
@@ -236,14 +238,14 @@ class GpuAtmosphereSmokeTest {
         checkSandDensity(atmosphere, terrain, batch, tower, camera, scene);
         camera.setIsometric(false);
         camera.fit(scene);
-        var calmRain = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0, 0,
+        var calmRain = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0,
               new BoardAtmosphere.Effects(1, 0, 0, 0, 0, 0, 0));
         draw(atmosphere, terrain, batch, tower, camera, scene, calmRain);
         long overhead = GpuBoardTestUi.capture(new File(output, "weather-rain-top.png"));
         draw(atmosphere, terrain, batch, tower, camera, scene, calmRain);
         assertNotEquals(overhead, GpuBoardTestUi.capture(new File(output, "weather-rain-top-moving.png")),
               "Rain must remain animated when looking straight down without wind");
-        var lightning = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0, 0,
+        var lightning = new BoardAtmosphere.Settings(13, 0, 0, 2.5f, 0, 0,
               new BoardAtmosphere.Effects(0, 0, 0, 0, 1, 0, 0));
         float darkest = 1, brightest = 0;
         for (int frame = 0; frame < 80; frame++) {
@@ -449,6 +451,11 @@ class GpuAtmosphereSmokeTest {
         return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
     }
 
+    private static float linearLuminance(Color color) {
+        return (float) (0.2126 * Math.pow(color.r, 2.2) + 0.7152 * Math.pow(color.g, 2.2)
+              + 0.0722 * Math.pow(color.b, 2.2));
+    }
+
     @Test
     void scenarioInitializesTheLiveControlsAndDefaultsRestoresItAfterWeatherOverrides() throws Exception {
         AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -457,8 +464,10 @@ class GpuAtmosphereSmokeTest {
                 var conditions = fixture.game.getPlanetaryConditions();
                 conditions.setLight(Light.FULL_MOON);
                 conditions.setWeather(Weather.HEAVY_SNOW);
+                conditions.setFog(Fog.FOG_HEAVY);
                 fixture.source.refresh();
             });
+            var initial = fixture.source.takeFrame().scenarioAtmosphere();
             new Lwjgl3Application(new GpuBattleView(fixture.source) {
                 @Override
                 public void render() {
@@ -468,11 +477,16 @@ class GpuAtmosphereSmokeTest {
                             assertEquals(0, value("Time of day"));
                             assertEquals(1, value("Snow"));
                             assertEquals(0, value("Rain"));
+                            assertEquals(1, value("Ground fog"));
+                            assertEquals(1, value("Haze"));
+                            assertEquals(initial.fogHeight(), value("Fog height"));
                             GpuBoardTestUi.capture(new File(output, "weather-scenario-night-snow.png"));
                             GpuBoardTestUi.click("tuning");
                         } else if (frames() == 5) {
                             GpuBoardTestUi.click("atmosphere-CLEAR");
                             assertEquals(0, value("Snow"));
+                            assertEquals(0, value("Ground fog"));
+                            assertEquals(0, value("Haze"));
                             Slider time = GpuBoardTestUi.stage().getRoot().findActor("Time of day");
                             time.setValue(13);
                             Actor rain = GpuBoardTestUi.stage().getRoot().findActor("weather-toggle-Rain");
@@ -494,6 +508,8 @@ class GpuAtmosphereSmokeTest {
                             assertEquals(0, value("Time of day"), "Defaults restores scenario moonlight");
                             assertEquals(1, value("Snow"), "Defaults restores scenario snowfall");
                             assertEquals(0, value("Rain"));
+                            assertEquals(1, value("Ground fog"), "Defaults restores scenario fog");
+                            assertEquals(1, value("Haze"));
                             GpuBoardTestUi.click("weather-toggle-Snow");
                             assertEquals(0, value("Snow"));
                             GpuBoardTestUi.click("weather-toggle-Snow");
@@ -516,9 +532,12 @@ class GpuAtmosphereSmokeTest {
             SwingUtilities.invokeAndWait(() -> {
                 assertEquals(Light.FULL_MOON, fixture.game.getPlanetaryConditions().getLight());
                 assertEquals(Weather.HEAVY_SNOW, fixture.game.getPlanetaryConditions().getWeather());
+                assertEquals(Fog.FOG_HEAVY, fixture.game.getPlanetaryConditions().getFog());
             });
         }
-        assertNull(failure.get(), () -> String.valueOf(failure.get()));
+        if (failure.get() != null) {
+            throw new AssertionError(failure.get());
+        }
     }
 
     @Test
@@ -585,6 +604,8 @@ class GpuAtmosphereSmokeTest {
                 }
             }, GpuBoardWindow.configuration(false));
         }
-        assertNull(failure.get(), () -> String.valueOf(failure.get()));
+        if (failure.get() != null) {
+            throw new AssertionError(failure.get());
+        }
     }
 }

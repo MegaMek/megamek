@@ -1312,6 +1312,13 @@ public class Client extends AbstractClient {
                 case ENTITY_ATTACK:
                     receiveAttack(packet);
                     break;
+                case ENTITY_ATTACK_RESOLVED:
+                    if (packet.getObject(0) instanceof megamek.common.ResolvedAttack result) {
+                        game.processGameEvent(new megamek.common.event.GameAttackResolvedEvent(this, result,
+                              game.getEntity(result.attacker().entityId()),
+                              game.getTarget(result.targetType(), result.target().entityId())));
+                    }
+                    break;
                 case TURN:
                     changeTurnIndex(packet.getIntValue(0), packet.getIntValue(1));
                     break;

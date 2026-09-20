@@ -614,6 +614,8 @@ tasks.register('gpuBoardSmoke', Test) {
     filter { includeTestsMatching 'megamek.client.ui.clientGUI.boardview.gpu.*SmokeTest' }
     jvmArgs = mmJvmOptions
     systemProperty 'java.awt.headless', 'false'
+    systemProperty 'megamek.gpu.referenceModels', new File(gradle.includedBuild('mm-data').projectDir,
+            'tools/unit-models/references/legacy').absolutePath
     systemProperty 'megamek.gpu.screenshots', layout.buildDirectory.dir('gpu-board-review').get().asFile.absolutePath
     outputs.upToDateWhen { false }
 }
@@ -797,6 +799,18 @@ tasks.register('exportMekModelCatalog', JavaExec) {
     def modelDataDir = project.findProperty('unitModelDataRoot') ?: mmDataDir
     args "${modelDataDir}/data", "${modelDataDir}/.work/mek-models/catalog.json"
     jvmArgs = ['-Xmx2048m', '-Djava.awt.headless=true']
+}
+
+tasks.register('exportEquipmentModelCatalog', JavaExec) {
+    dependsOn classes
+    description = 'Export every registered equipment type and its modular-model visualization policy.'
+    group = 'utility'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.utilities.EquipmentModelCatalog'
+    workingDir = projectDir
+    def modelDataDir = project.findProperty('unitModelDataRoot') ?: mmDataDir
+    args "${modelDataDir}/data", "${modelDataDir}/.work/modular-models/equipment.json"
+    jvmArgs = ['-Xmx1024m', '-Djava.awt.headless=true']
 }
 
 tasks.register('nameChangesValidator', JavaExec) {

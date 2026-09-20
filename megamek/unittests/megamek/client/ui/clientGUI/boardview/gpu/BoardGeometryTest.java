@@ -49,6 +49,22 @@ class BoardGeometryTest {
     }
 
     @Test
+    void weatherStartsAtTheLowestHexLevelRegardlessOfDepthOrBoardElevation() {
+        for (int base : new int[] { -3, 0, 4 }) {
+            for (int wetLevel : new int[] { base, base + 2 }) {
+                var wet = new BoardScene.Tile(new Coords(0, 0), wetLevel, 12, false, 0, BoardScene.Surface.GRASS,
+                      null, null, null, List.of(), List.of());
+                var dry = new BoardScene.Tile(new Coords(1, 0), base, -1, false, 0, BoardScene.Surface.GRASS,
+                      null, null, null, List.of(), List.of());
+                BoardScene scene = new BoardScene(0, 2, 1, List.of(wet, dry), List.of(), List.of(), -1, "", List.of());
+                assertEquals(base * BoardGeometry.LEVEL, BoardGeometry.weatherBase(scene));
+                assertTrue(BoardGeometry.floor(scene) < BoardGeometry.weatherBase(scene),
+                      "The carved board floor must not pull atmosphere below the hex surfaces");
+            }
+        }
+    }
+
+    @Test
     void cliffFaceBelongsToTheRaisedHexAndOutsideMisses() {
         BoardScene scene = scene(4);
         Coords raised = new Coords(2, 2);

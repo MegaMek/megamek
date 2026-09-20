@@ -654,11 +654,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(BOARD_TEXT_COLOR, DEFAULT_BLACK);
         setDefault(BOARD_SPACE_TEXT_COLOR, DEFAULT_LIGHT_GRAY);
         setDefault(BOARD_MAP_SHEET_COLOR, DEFAULT_BLUE);
-        setDefault(BOARD_FIELD_OF_FIRE_MIN_COLOR, new Color(255, 100, 100));
-        setDefault(BOARD_FIELD_OF_FIRE_SHORT_COLOR, new Color(100, 255, 100));
-        setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(80, 200, 80));
-        setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(60, 150, 60));
-        setDefault(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, new Color(40, 100, 40));
+        setDefault(BOARD_FIELD_OF_FIRE_MIN_COLOR, new Color(238, 102, 102));
+        setDefault(BOARD_FIELD_OF_FIRE_SHORT_COLOR, new Color(68, 255, 136));
+        setDefault(BOARD_FIELD_OF_FIRE_MEDIUM_COLOR, new Color(255, 255, 68));
+        setDefault(BOARD_FIELD_OF_FIRE_LONG_COLOR, new Color(255, 136, 68));
+        setDefault(BOARD_FIELD_OF_FIRE_EXTREME_COLOR, new Color(204, 136, 255));
         setDefault(BOARD_SENSOR_RANGE_COLOR, new Color(105, 105, 245));
         setDefault(BOARD_VISUAL_RANGE_COLOR, new Color(255, 204, 255));
         setDefault(BOARD_UNIT_SELECTED_COLOR, DEFAULT_MAGENTA);

@@ -10,8 +10,10 @@ import java.io.File;
 import java.util.List;
 import javax.swing.SwingUtilities;
 
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.SensorRangeSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.RangeType;
@@ -124,12 +126,13 @@ class GpuFiringCaptureTest {
     }
 
     @Test
-    void weaponBordersLeavePlanarCaptureWhileSensorsAndObjectiveZonesRemain() throws Exception {
+    void weaponBordersAndSurfaceRegionsUseTheirOwnNativeGeometry() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create(board())) {
             SwingUtilities.invokeAndWait(() -> {
                 BoardScene before = fixture.source.takeFrame().scene();
                 Coords weaponHex = new Coords(2, 2), sensorHex = new Coords(6, 2), objectiveHex = new Coords(6, 6);
                 FieldOfFireSprite weapon = new FieldOfFireSprite(fixture.view, RangeType.RANGE_SHORT, weaponHex, 63);
+                var label = new TextMarkerSprite(fixture.view, weaponHex, RangeType.RANGE_SHORT);
                 var sensor = new SensorRangeSprite(fixture.view, SensorRangeSprite.SENSORS, sensorHex, 63);
                 var objective = new FieldOfFireSprite(fixture.view, Color.CYAN, objectiveHex, 63);
                 fixture.view.addSprites(List.of(weapon, sensor, objective));
@@ -138,15 +141,76 @@ class GpuFiringCaptureTest {
                 assertEquals(1, scene.rangeBorders().size());
                 assertEquals(63, scene.rangeBorders().getFirst().edges());
                 assertEquals(weaponHex, scene.rangeBorders().getFirst().coords());
+                assertEquals("S", scene.rangeBorders().getFirst().label());
                 assertEquals(before.tile(weaponHex).tactical(), scene.tile(weaponHex).tactical());
-                assertFalse(java.util.Objects.equals(before.tile(sensorHex).tactical(), scene.tile(sensorHex).tactical()));
-                assertFalse(java.util.Objects.equals(before.tile(objectiveHex).tactical(), scene.tile(objectiveHex).tactical()));
+                assertEquals(before.tile(sensorHex).tactical(), scene.tile(sensorHex).tactical());
+                assertEquals(before.tile(objectiveHex).tactical(), scene.tile(objectiveHex).tactical());
+                assertFalse(scene.tactical().fills().isEmpty(), "Sensor and objective borders must survive as native geometry");
+                fixture.view.addSprites(List.of(label));
+                fixture.source.refresh();
+                BoardScene withLabel = fixture.source.takeFrame().scene();
+                assertEquals(before.tile(weaponHex).tactical(), withLabel.tile(weaponHex).tactical(),
+                      "Camera-facing lettering must not also be baked into the terrain");
+                assertEquals(scene.tactical(), withLabel.tactical());
+                assertEquals(BoardView.GPU_SCROLLING_RANGE_LABELS ? List.of() : List.of(
+                      new BoardScene.RangeLabel(weaponHex,
+                            FieldOfFireSprite.getFieldOfFireColor(RangeType.RANGE_SHORT).getRGB(), "S")),
+                      withLabel.rangeLabels());
+                assertEquals(withLabel.rangeLabels(), withLabel.withUnits(List.of()).rangeLabels(),
+                      "Playback must retain the range lettering");
+                assertEquals(withLabel.tactical(), withLabel.withUnits(List.of()).tactical());
+                Coords neighbor = weaponHex.translated(0);
+                assertEquals(scene.tile(neighbor).tactical(), withLabel.tile(neighbor).tactical(),
+                      "The flat marker must stay in the handler's original hex");
                 weapon.setHidden(true);
+                label.setHidden(true);
                 fixture.source.refresh();
                 assertTrue(fixture.source.takeFrame().scene().rangeBorders().isEmpty());
-                fixture.view.removeSprites(List.of(weapon, sensor, objective));
+                assertTrue(fixture.source.takeFrame().scene().rangeLabels().isEmpty());
+                assertEquals(BoardView.GPU_SCROLLING_RANGE_LABELS ? 0 : 1, withLabel.rangeLabels().size(),
+                      "Hiding the Swing sprite must not mutate an already published snapshot");
+                fixture.view.removeSprites(List.of(weapon, label, sensor, objective));
                 fixture.source.refresh();
                 assertTrue(fixture.source.takeFrame().scene().rangeBorders().isEmpty());
+                assertTrue(fixture.source.takeFrame().scene().rangeLabels().isEmpty());
+                assertEquals(before.tile(weaponHex).tactical(), fixture.source.takeFrame().scene().tile(weaponHex).tactical());
+            });
+        }
+    }
+
+    @Test
+    void everyBracketPublishesItsLabelAndColorAndFlatMarkersUseTheSamePalette() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create(board())) {
+            SwingUtilities.invokeAndWait(() -> {
+                List<String> labels = List.of("min", "S", "M", "L", "E");
+                for (int bracket = RangeType.RANGE_MINIMUM; bracket <= RangeType.RANGE_EXTREME; bracket++) {
+                    Coords coords = new Coords(bracket + 1, 2);
+                    var border = new FieldOfFireSprite(fixture.view, bracket, coords, 63);
+                    var marker = new TextMarkerSprite(fixture.view, coords, bracket);
+                    fixture.view.addSprites(List.of(border, marker));
+                    fixture.source.refresh();
+                    var captured = fixture.source.takeFrame().scene().rangeBorders().stream()
+                          .filter(range -> range.coords().equals(coords)).findFirst().orElseThrow();
+                    assertEquals(labels.get(bracket), captured.label());
+                    int rgb = FieldOfFireSprite.getFieldOfFireColor(bracket).getRGB();
+                    assertEquals(rgb, captured.rgb(), "Native contours must use the shared range color");
+                    if (!BoardView.GPU_SCROLLING_RANGE_LABELS) {
+                        var label = fixture.source.takeFrame().scene().rangeLabels().stream()
+                              .filter(range -> range.coords().equals(coords)).findFirst().orElseThrow();
+                        assertEquals(captured.label(), label.label());
+                        assertEquals(rgb, label.rgb(), "Flat letters and contours must use the same color");
+                    }
+                    border.setHidden(true);
+                    fixture.source.refresh();
+                    assertTrue(fixture.source.takeFrame().scene().rangeBorders().isEmpty());
+                    fixture.view.removeSprites(List.of(border, marker));
+                }
+                Coords coords = new Coords(2, 2);
+                BoardScene before = fixture.source.takeFrame().scene();
+                fixture.view.addSprites(List.of(new TextMarkerSprite(fixture.view, coords, "X", Color.CYAN)));
+                fixture.source.refresh();
+                assertFalse(java.util.Objects.equals(before.tile(coords).tactical(),
+                      fixture.source.takeFrame().scene().tile(coords).tactical()));
             });
         }
     }

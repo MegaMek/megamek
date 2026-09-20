@@ -58,9 +58,22 @@ final class BoardSurface {
             return false;
         }
         boolean exit = (tile.roadExits() & (1 << direction)) != 0;
-        boolean continuation = (neighbor.roadExits() & (1 << ((direction + 3) % 6))) != 0;
+        int reverse = (direction + 3) % 6;
+        boolean continuation = (neighbor.roadExits() & (1 << reverse)) != 0;
+        // A road meeting a bridge deck must not cut or fill the ground below it, on either side.
+        if ((exit && meetsBridge(neighbor, reverse, tile.elevation()))
+              || (continuation && meetsBridge(tile, direction, neighbor.elevation()))) {
+            return false;
+        }
         return (exit && continuation)
               || ((exit || continuation) && Math.abs(tile.elevation() - neighbor.elevation()) <= 2);
+    }
+
+    private static boolean meetsBridge(BoardScene.Tile tile, int direction, int elevation) {
+        // Captured bridge arms point north before rotation; hex directions run clockwise.
+        return tile.features().stream().anyMatch(feature -> feature.asset().equals("bridge")
+              && tile.elevation() + feature.elevation() == elevation
+              && Math.floorMod(Math.round(-feature.rotation() / 60), 6) == direction);
     }
 
     private void river(BoardScene scene) {

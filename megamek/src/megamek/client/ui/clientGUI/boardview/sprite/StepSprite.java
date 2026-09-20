@@ -46,6 +46,7 @@ import java.awt.image.BufferedImage;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.HexDrawUtilities;
 import megamek.client.ui.tileset.HexTileset;
@@ -66,7 +67,7 @@ import megamek.common.units.Mek;
  * Sprite for a step in a movement path. Only one sprite should exist for any hex in a path. Contains a colored number,
  * and arrows indicating entering, exiting or turning.
  */
-public class StepSprite extends Sprite {
+public class StepSprite extends Sprite implements TacticalSprite {
 
     private final static GUIPreferences GUIP = GUIPreferences.getInstance();
     private static final AffineTransform shadowOffset = new AffineTransform();
@@ -120,6 +121,27 @@ public class StepSprite extends Sprite {
         graph.setColor(new Color(0, 0, 0, 0));
         graph.fillRect(0, 0, HexTileset.HEX_W, HexTileset.HEX_H);
 
+        paintTactical(g2D);
+
+        baseScaleImage = bv.getPanel().createImage(tempImage.getSource());
+        image = bv.getScaledImage(bv.getPanel().createImage(tempImage.getSource()), false);
+
+        graph.dispose();
+        tempImage.flush();
+    }
+
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Graphics2D local = BoardTacticalGraphics.at(graphics, bv.getHexLocation(step.getPosition()));
+        try {
+            paintTactical(local);
+        } finally {
+            local.dispose();
+        }
+    }
+
+    private void paintTactical(Graphics2D g2D) {
+        Graphics graph = g2D;
         // setup some variables
         Shape moveArrow = bv.getMovementPolys()[step.getFacing()];
         Shape facingArrow = bv.getFacingPolys()[step.getFacing()];
@@ -327,11 +349,6 @@ public class StepSprite extends Sprite {
             drawTMMAndRolls(step, jumped, bv.game, new Point(0, 0), graph, col, true);
         }
 
-        baseScaleImage = bv.getPanel().createImage(tempImage.getSource());
-        image = bv.getScaledImage(bv.getPanel().createImage(tempImage.getSource()), false);
-
-        graph.dispose();
-        tempImage.flush();
     }
 
     /** Draws the given form in the given Color col with a shadow. */

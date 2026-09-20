@@ -4694,7 +4694,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 rollTarget = entity.checkDislodgeSwarmers(step, overallMoveType);
                 if (rollTarget.getValue() == TargetRoll.CHECK_FALSE) {
                     // Not being swarmed
-                    entity.setProne(true);
+                    entity.setProne(ProneCause.VOLUNTARY);
                     // check to see if we washed off infernos
                     gameManager.checkForWashedInfernos(entity, curPos, step.getBoardId());
                 } else {
@@ -4708,7 +4708,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         break;
                     }
                     // roll failed, go prone but don't dislodge swarmers
-                    entity.setProne(true);
+                    entity.setProne(ProneCause.VOLUNTARY);
                     // check to see if we washed off infernos
                     gameManager.checkForWashedInfernos(entity, curPos, step.getBoardId());
                     break;
@@ -4743,7 +4743,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Track this step's location.
             movePath.addElement(new UnitLocation(entity.getId(), curPos,
-                  curFacing, step.getElevation(), entity.getBoardLocation().boardId()));
+                  curFacing, step.getElevation(), entity.getBoardLocation().boardId(),
+                  entity instanceof Mek ? entity.getProneCause() : ProneCause.NONE));
 
             // if the lastpos is not the same as the current position
             // then add the current position to the list of places passed

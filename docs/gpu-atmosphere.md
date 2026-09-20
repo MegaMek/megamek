@@ -10,13 +10,12 @@ preview changes; opening another board captures that board's starting conditions
 | Control | Visual effect |
 | --- | --- |
 | Time of day | 24-hour clock in 15-minute steps; 00:00 and 24:00 both mean midnight |
-| Clear / Overcast / Mist / Fog | Set cloud cover, ground fog, fog height, and haze; disable precipitation, blowing sand, and lightning; preserve clock, exposure, shafts, and wind |
+| Clear / Overcast / Mist / Fog | Set cloud cover, ground fog, fog height, and haze; disable precipitation, blowing sand, and lightning; preserve clock, exposure, and wind |
 | Cloud cover | Reduce direct sunlight and shadow contrast; maximum now equals the former 0.6 setting so shadows remain visible |
-| Ground fog | Change the density of subtle, height-dependent fog |
-| Fog height | Set its vertical falloff in terrain levels, starting at the board's lowest terrain elevation |
+| Ground fog | Change the density of height-dependent fog |
+| Fog height | Set its vertical falloff in terrain levels (minimum 1.0), starting at the board's lowest hex LEVEL |
 | Haze | Add more uniform atmospheric extinction |
-| Exposure (EV) | Brighten or darken the scene by up to two stops; neutral daylight includes a +0.65-stop lift, fading to no lift at night |
-| Light shafts | Optionally add directional scattering through fog and haze; off by default |
+| Exposure (EV) | Brighten or darken the scene by up to two stops; neutral daylight includes a +0.8-stop lift, fading to a 1.5-stop reduction at night |
 | Rain / Snow / Hail / Blowing sand / Lightning | Buttons toggle each effect; adjacent sliders adjust intensity (zero is off). Turning an effect back on sets it to half strength |
 | Wind strength / Wind direction | Set particle drift; blowing sand maintains a fast base flow even at zero wind, and stronger wind accelerates it. Direction is clockwise from north, toward where particles travel |
 | Defaults | Restore geometry defaults and the scenario atmosphere captured when this board opened |
@@ -45,11 +44,11 @@ The clock values below are representative visual starting points.
 | Ice storm | Mixed rain and ice pellets |
 | Light / Heavy hail | Increasing ice-pellet intensity; heavy hail uses the maximum slider value |
 | Lightning storm | Rain and a visible illumination strike within half a second of enabling; repeat at seven-second intervals with a short attack and longer decay |
-| None / Light / Heavy fog | No fog or progressively denser ground fog, always subject to the readability cap |
+| None / Light / Heavy fog | None disables ground fog. Light uses 0.2 ground fog/haze; Heavy uses 1.0 for both. Both share the same height falloff and opacity cap; blowing sand can independently add haze. Light fog also lifts cloud cover to 0.15 and Heavy to 0.3, as haze implies a duller sky |
 | Blowing sand | Fine, fast gusts of sand close to the ground and warm haze, only when the game's `isBlowingSandActive()` says it is effective |
 | Calm / Light gale / Moderate gale / Strong gale / Storm / Tornado F1–F3 / Tornado F4 | Increasing wind drift, capped at storm-scale visual motion for tornadoes; no tornado funnel geometry |
 | Six wind directions / Random | Use the game's resolved direction; unresolved Random adds no invented wind direction or random game rolls |
-| Vacuum / Trace / Thin / Standard / High / Very high pressure | Vacuum disables atmospheric weather and wind. Trace and thin suppress precipitation and fog, matching the scenario editor. Standard and denser atmospheres permit them; clear weather stays clear |
+| Vacuum / Trace / Thin / Standard / High / Very high pressure | Vacuum disables atmospheric weather and wind. Trace and thin suppress precipitation and fog, matching the scenario editor. Fog height is 2.0 levels at Standard, 1.5 at High, and 1.0 at Very High |
 | Space and high-altitude space boards | Suppress atmospheric precipitation, clouds, fog, haze, and wind across the board |
 | Temperature / Gravity / Atmospheric taint / EMI | No invented screen tint or distortion; existing game rules and tactical indicators remain authoritative |
 | Terrain affected / Wind-shift flags | Consume the game's resulting terrain and effective wind; the renderer does not simulate accumulation, freezing, wind rolls, or terrain changes |
@@ -59,8 +58,28 @@ in its frame snapshot. The render thread never reads or mutates the live
 `PlanetaryConditions` object. Scenario light and weather are independent: a clear
 night remains clear, and a rainy night remains moonlit and readable.
 
-Fog and haze share an **18% maximum opacity**, including at maximum slider values.
-At least 82% of scene color is retained before color grading. The Clear preset
+Heavy Fog uses dense, low-lying mist with haze above the ground layer; Light Fog
+uses a gentler version. Scenario lighting, exposure, precipitation, and wind
+remain independent of fog, while fog adds a little cloud cover of its own. For
+lower morning mist, set Time of day to 09:30,
+Exposure to -0.6 EV, and Fog height to 1.5 in Tuning. The manual Mist/Fog
+preview buttons keep their separate weather settings; Defaults restores the
+scenario's fog appearance.
+
+Pressure reduces scenario fog height by 0.5 levels per step above Standard,
+clamped to `BoardAtmosphere.MIN_FOG_HEIGHT` (1.0). This is a visual tuning rule;
+it does not change fog density or game rules. The same minimum applies to Tuning.
+
+Fog, haze, rain, snow, hail, and blowing sand share the lowest hex **LEVEL** as
+their atmospheric baseline. Water depth, riverbed recesses, and other terrain
+depth do not lower it. A map whose lowest surface is level 4 starts its weather
+at level 4; negative surface levels work the same way. The particle volume extends
+above the highest terrain and features, with opaque terrain hiding particles behind it.
+
+Fog and haze share a **40% maximum opacity**, including at maximum slider values.
+Their sliders control density, not opacity: nearby or elevated surfaces can still
+receive less fog at full density. At least 60% of scene color is retained before
+color grading. The Tuning panel shows the shared cap. The Clear preset
 sets cloud cover and both densities to zero and bypasses the depth and fog passes. Night uses a
 bright full-moon fill with a blue tint; diffuse twilight fill prevents a dark dip
 as directional sunlight and moonlight exchange positions.
@@ -80,15 +99,16 @@ the shadow and camera-depth passes, including the current animated unit poses.
 `GpuAtmosphere` captures scene color. Only when fog or haze is enabled does it
 also capture packed camera depth. Fog is evaluated at quarter resolution using
 the analytic integral of exponential height density, stopping at opaque geometry.
-This replaces the original 24-step noise march. Ordinary fog uses no shadow-map
-lookups; optional light shafts use four weighted shadow samples per fog pixel.
+This replaces the original 24-step noise march. Fog uses no shadow-map lookups.
+The coarse Light shafts approximation and its tuning control have been removed;
+fog retains its height falloff, haze, and day/night color.
 Depth-weighted upsampling reduces bleeding across silhouettes. The backdrop is
 identified using scene alpha, so clear weather needs no packed camera-depth pass.
 
 The final pass applies fog transmission and scattering, exposure, color tint,
 saturation, and a subtle vignette. Daylight is calibrated for the existing LDR
 tileset; there is no additional filmic curve to amplify its baked contrast.
-Neutral exposure lifts daylight by 0.65 stops without changing neutral night exposure.
+Neutral exposure lifts daylight by 0.8 stops, and night sits 1.5 stops below that neutral exposure.
 Cloud cover maps the full control range to 0–60% of the original cloud response,
 retaining at least 47% of the clear-sky directional light even at maximum.
 The backdrop uses a day/night gradient. A color-masked opaque pass restores
@@ -124,7 +144,11 @@ lightning bolt meshes, or per-building weather simulation.
 `BoardAtmosphereTest` covers the daily light cycle, clock wrapping, finite light
 directions, every scenario light/weather category, pressure and space exclusions,
 effective blowing sand, and shader input bounds. `GpuScenarioAtmosphereTest`
-checks publication and immutable ownership across the Swing/render boundary.
+checks publication and immutable ownership across the Swing/render boundary,
+including switching between Heavy Fog, Light Fog, and None without changing lighting
+or precipitation. `BoardGeometryTest` checks the shared LEVEL-based weather baseline;
+`GpuWeatherBaselineSmokeTest` compares actual rain, snow, hail, and sand frames at
+levels -3, 0, and 4, verifying that adding depth-20 water does not move the particles.
 `GpuAtmosphereSmokeTest`
 exercises actual shaders, fog at different heights, contrast under maximum fog,
 bright moonlight and twilight, shadow resource reuse, live controls, and resizing.
@@ -139,8 +163,8 @@ Desert contrast checks use shipped HQ and beige sand hex textures in both camera
 presets and at a wider zoom, counting visible grains only over the board interior.
 It writes `atmosphere-*.png` review images and `atmosphere-timing.txt` to
 `megamek/build/gpu-board-review/`. Timing compares clear weather, maximum fog/haze,
-maximum fog/haze with shafts, each maximum precipitation type, and all precipitation
-types together on the same warmed synthetic board, using GL
+each maximum precipitation type, and all precipitation types together on the same
+warmed synthetic board, using GL
 completion rather than vsync timing. It does not establish full-game performance.
 
 The renderer uses RGBA8 scene color and fog buffers, one board-wide 2048-pixel

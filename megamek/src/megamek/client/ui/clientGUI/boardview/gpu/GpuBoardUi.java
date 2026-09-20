@@ -37,6 +37,7 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.board.Coords;
 
 /** Target-anchored Scene2D menus; all game actions come from the Swing command adapter. */
@@ -45,33 +46,34 @@ final class GpuBoardUi implements Disposable {
     private static final int MENU_BAR_HEIGHT = 36;
     static final int TOP_HEIGHT = MENU_BAR_HEIGHT + 48;
     static final int TURN_HEIGHT = 100;
-    private static final int MENU_WIDTH = 400;
+    private static final int MENU_WIDTH = 360;
+    private static final int DROPDOWN_WIDTH = 300;
     private final GpuBoardSource source;
     private final BoardCamera camera;
     private final GpuBoardTuning tuning;
     private final GpuAttackPanel attackPanel;
     private final GpuBoardSkin theme = new GpuBoardSkin();
     private final Skin skin = theme.skin;
-    private final GpuTextures<String> hudTextures = new GpuTextures<>();
     private final GpuTextures<String> portraits = new GpuTextures<>();
     final Stage stage;
-    private final Image hud = new Image();
+    private final Table hud = new Table();
+    private record HudActor(Image image, GpuTextures<Integer> textures) { }
+    private final List<HudActor> hudLayers = new ArrayList<>();
+    private GpuBoardSource.Hud hudFrame;
     private final Table completion = new Table();
     private final Table menuBar = new Table();
     private final Table popup = new Table();
     private final Table rows = new Table();
     private final TextField search;
+    private final Stack searchBox;
     private final Label title;
-    private final Label eyebrow;
     private final Label subtitle;
-    private final Label section;
     private final Label status;
     private final Label fps;
     private final Label phase;
     private final Label actor;
     private final Label actorMeta;
     private final Image portrait = new Image();
-    private final Image contextIcon;
     private final Label help;
     private final Label details;
     private final ScrollPane scroll;
@@ -95,8 +97,13 @@ final class GpuBoardUi implements Disposable {
     private float hudScale = 1;
     private float anchorX;
     private float anchorTop;
+    private String menuTriggerName;
 
     GpuBoardUi(GpuBoardSource source, BoardCamera camera, Runnable changeSpeed) {
+        this(source, camera, changeSpeed, () -> { });
+    }
+
+    GpuBoardUi(GpuBoardSource source, BoardCamera camera, Runnable changeSpeed, Runnable togglePlayback) {
         this.source = source;
         this.camera = camera;
         stage = new Stage(new ScreenViewport()) {
@@ -117,18 +124,20 @@ final class GpuBoardUi implements Disposable {
             }
         };
         hud.setTouchable(Touchable.disabled);
+        hud.setClip(true);
         stage.addActor(hud);
         Table root = new Table();
         root.setFillParent(true);
         root.setTouchable(Touchable.childrenOnly);
         stage.addActor(root);
-        menuBar.setBackground(skin.getDrawable("bar"));
+        menuBar.setBackground(skin.getDrawable("menu-panel"));
         menuBar.setTouchable(Touchable.enabled);
         menuBar.pad(0, 12, 0, 12).left().defaults().height(26).padRight(4);
         phase = new Label("", skin, "kicker");
         phase.setEllipsis(true);
         root.add(menuBar).height(MENU_BAR_HEIGHT).growX().row();
         Table toolbar = panel();
+        toolbar.setBackground(skin.getDrawable("menu-panel"));
         toolbar.pad(0, 12, 0, 12).defaults().height(30).padRight(4);
         toolbar.add(new Label("VIEW", skin, "muted")).padRight(12);
         toolbar.add(namedButton("top", Messages.getString("GpuBoard.top"), () -> camera.setIsometric(false))).width(78);
@@ -141,11 +150,12 @@ final class GpuBoardUi implements Disposable {
         toolbar.add(button("-", () -> camera.zoom(1.2f))).width(30);
         toolbar.add(button("+", () -> camera.zoom(1 / 1.2f))).width(30);
         TextButton cameraControls = namedButton("camera", Messages.getString("GpuBoard.camera"),
-              () -> open("camera", Messages.getString("GpuBoard.camera"), 280, stage.getHeight() - TOP_HEIGHT));
+              () -> open("camera", Messages.getString("GpuBoard.camera"), "camera"));
         cameraControls.addListener(new TextTooltip(Messages.getString("GpuBoard.cameraHelp"), skin));
         toolbar.add(cameraControls).width(70).padRight(12);
         toolbar.add(new Image(skin.getDrawable("rule"))).width(1).height(20).padRight(12);
         toolbar.add(namedButton("speed", "", changeSpeed)).width(88);
+        toolbar.add(namedButton("playback", Messages.getString("GpuBoard.pausePlayback"), togglePlayback)).width(76);
         toolbar.add(namedButton("tuning", "Tuning", this::toggleTuning)).width(70);
         toolbar.add().expandX();
         status = new Label("", skin, "muted");
@@ -174,12 +184,13 @@ final class GpuBoardUi implements Disposable {
         identification.add(actorMeta).minWidth(0).growX().left().padTop(2);
         unit.add(identification).minWidth(0).growX();
         turn.add(unit).minWidth(180).growX().padRight(16);
-        turn.add(namedButton("all-actions", "All actions  /  F10",
-              () -> open("all", "All actions", 16, stage.getHeight() - TOP_HEIGHT - 12)))
+        turn.add(actionButton("all-actions", "All actions  /  F10",
+              () -> open("all", "All actions", "all-actions")))
               .width(132).height(42).padRight(6);
-        turn.add(button("Orders", () -> open("orders", "Planned orders", 16, stage.getHeight() - TOP_HEIGHT - 12)))
+        turn.add(actionButton("orders", "Orders",
+              () -> open("orders", "Planned orders", "orders")))
               .width(80).height(42).padRight(6);
-        turn.add(namedButton("clear", Messages.getString("GpuBoard.clear"), () -> {
+        turn.add(actionButton("clear", Messages.getString("GpuBoard.clear"), () -> {
             if (frame != null) {
                 frame.scene().commands().stream().filter(command -> command.id().equals("clear"))
                       .filter(BoardScene.Command::enabled).findFirst().ifPresent(command -> command.action().run());
@@ -198,40 +209,15 @@ final class GpuBoardUi implements Disposable {
         turn.add(footer).colspan(5).minWidth(0).growX().height(16).padTop(4);
         root.add(turn).height(TURN_HEIGHT).growX();
 
-        popup.setBackground(skin.getDrawable("panel"));
+        popup.setBackground(skin.getDrawable("menu-panel"));
         popup.setName("tactical-menu");
         popup.setTouchable(Touchable.enabled);
-        popup.pad(12, 16, 10, 16).top();
+        popup.pad(8).top();
         Table cap = new Table();
-        eyebrow = new Label("", skin, "kicker");
-        eyebrow.setEllipsis(true);
-        cap.add(eyebrow).minWidth(0).growX().left();
-        TextButton dismiss = button("", this::closeMenu);
-        dismiss.setStyle(skin.get("icon", TextButton.TextButtonStyle.class));
-        dismiss.setName("close-menu");
-        dismiss.clearChildren();
-        dismiss.pad(0);
-        dismiss.add(icon("close", GpuBoardSkin.MUTED)).size(14);
-        dismiss.addListener(new TextTooltip("Close  /  Esc", skin));
-        cap.add(dismiss).size(24).padLeft(8);
-        popup.add(cap).growX().row();
-        Table heading = new Table();
-        contextIcon = icon("hex", GpuBoardSkin.ACCENT);
-        heading.add(contextIcon).size(32).padRight(12);
-        Table description = new Table();
-        title = new Label("", skin, "heading");
-        title.setWrap(true);
-        description.add(title).minWidth(0).growX().left().row();
-        subtitle = new Label("", skin, "small");
-        subtitle.setEllipsis(true);
-        description.add(subtitle).minWidth(0).growX().left().padTop(3);
-        heading.add(description).minWidth(0).growX();
-        popup.add(heading).growX().padTop(4).padBottom(8).row();
-        popup.add(new Image(skin.getDrawable("rule"))).height(1).growX().row();
         search = new TextField("", skin);
         search.setName("command-search");
         search.setProgrammaticChangeEvents(true);
-        back = button("BACK", () -> {
+        back = button("< Back", () -> {
             if (!path.isEmpty()) {
                 path.removeLast();
             }
@@ -239,11 +225,21 @@ final class GpuBoardUi implements Disposable {
             resetRows();
         });
         back.setName("menu-back");
-        Table navigation = new Table();
-        navigation.add(back).width(60).height(24).padRight(10);
-        section = new Label("", skin, "muted");
-        navigation.add(section).growX().left();
-        popup.add(navigation).growX().padTop(8).row();
+        cap.add(back).width(54).height(28).padRight(6);
+        title = new Label("", new Label.LabelStyle(skin.getFont("bold-font"), GpuBoardSkin.TEXT));
+        title.setWrap(true);
+        cap.add(title).minWidth(0).growX().left().padLeft(4);
+        TextButton dismiss = button("", this::closeMenu);
+        dismiss.setName("close-menu");
+        dismiss.clearChildren();
+        dismiss.pad(0);
+        dismiss.add(icon("close", GpuBoardSkin.MUTED)).size(14);
+        dismiss.addListener(new TextTooltip("Close  /  Esc", skin));
+        cap.add(dismiss).size(28).padLeft(8);
+        popup.add(cap).growX().row();
+        subtitle = new Label("", skin, "small");
+        subtitle.setEllipsis(true);
+        popup.add(subtitle).minWidth(0).growX().left().padLeft(4).row();
         Label searchHint = new Label("Search commands...", skin, "small");
         searchHint.setName("command-search-hint");
         searchHint.setEllipsis(true);
@@ -259,27 +255,29 @@ final class GpuBoardUi implements Disposable {
                 resetRows();
             }
         });
-        popup.add(new Stack(search, fieldOverlay)).growX().height(36).padTop(6).row();
+        searchBox = new Stack(search, fieldOverlay);
+        popup.add(searchBox).growX().height(30).padTop(6).row();
         rows.top();
-        scroll = new ScrollPane(rows, skin);
+        scroll = new ScrollPane(rows, skin, "menu");
         scroll.setName("command-scroll");
         scroll.setFadeScrollBars(false);
         scroll.setScrollingDisabled(true, false);
         scroll.setFlickScroll(false);
-        popup.add(scroll).minHeight(0).grow().padTop(8).row();
+        popup.add(scroll).minHeight(0).grow().padTop(6).row();
         popup.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
-        Label shortcuts = new Label("UP / DOWN  NAVIGATE     ENTER  SELECT     ESC  CLOSE", skin, "muted");
-        popup.add(shortcuts).left().padTop(6).row();
+        Label shortcuts = new Label("Up/Down Navigate   Enter Select   Esc Close", skin, "muted");
+        shortcuts.setEllipsis(true);
+        popup.add(shortcuts).minWidth(0).growX().left().pad(6, 4, 2, 4).row();
         details = new Label("", skin, "small");
         details.setWrap(true);
         popup.setVisible(false);
         attackPanel = new GpuAttackPanel(skin, this::executeCommand, id -> {
-            open("all", "Weapons and ammunition", 16, stage.getHeight() - TOP_HEIGHT - 12);
+            open("weapons", "Weapons and ammunition", "attack:" + id);
             path.add("weapons");
             path.add(id);
             updateMenu();
-        }, () -> open("all", "Attack controls", 16, stage.getHeight() - TOP_HEIGHT - 12),
-              () -> open("orders", "Planned orders", 16, stage.getHeight() - TOP_HEIGHT - 12));
+        }, () -> open("all", "All actions", "attack-more"),
+              () -> open("orders", "Planned orders", "attack-review-orders"));
         stage.addActor(attackPanel.panel());
         stage.addActor(popup);
         tuning = new GpuBoardTuning(skin);
@@ -328,8 +326,15 @@ final class GpuBoardUi implements Disposable {
         return result;
     }
 
+    private TextButton actionButton(String name, String text, Runnable action) {
+        TextButton result = namedButton(name, text, action);
+        result.setStyle(skin.get("toolbar", TextButton.TextButtonStyle.class));
+        return result;
+    }
+
     private TextButton button(String text, Runnable action) {
-        TextButton result = new TextButton(text, skin, "toolbar");
+        TextButton result = new TextButton(text, skin, "menu-control");
+        result.pad(4, 10, 4, 10);
         result.setProgrammaticChangeEvents(false);
         result.addListener(new ChangeListener() {
             @Override
@@ -366,12 +371,16 @@ final class GpuBoardUi implements Disposable {
         tuning.toggle();
     }
 
-    BitmapFont boldFont() {
-        return skin.getFont("bold-font");
+    BitmapFont font() {
+        return skin.getFont("default-font");
     }
 
     BoardAtmosphere.Settings atmosphere() {
         return tuning.atmosphere();
+    }
+
+    boolean normalMaps() {
+        return tuning.normalMaps();
     }
 
     float buildingOpacity() {
@@ -399,6 +408,47 @@ final class GpuBoardUi implements Disposable {
         return Math.round(TURN_HEIGHT * scale);
     }
 
+    void updateHud(GpuBoardSource.Hud next, long now) {
+        if (next == null) {
+            return;
+        }
+        if (hudFrame != next) {
+            while (hudLayers.size() > next.layers().size()) {
+                HudActor removed = hudLayers.removeLast();
+                removed.image().remove();
+                removed.textures().dispose();
+            }
+            while (hudLayers.size() < next.layers().size()) {
+                Image layer = new Image();
+                layer.setTouchable(Touchable.disabled);
+                hudLayers.add(new HudActor(layer, new GpuTextures<>()));
+                hud.addActor(layer);
+            }
+            for (int index = 0; index < hudLayers.size(); index++) {
+                HudActor layer = hudLayers.get(index);
+                // Adding or expiring a toast must not repack and upload every other HUD panel's texture.
+                layer.textures().update(Map.of(0, next.layers().get(index).pixels()));
+                layer.image().setDrawable(new TextureRegionDrawable(layer.textures().region(0)));
+            }
+            hudFrame = next;
+        }
+        float scaleX = hud.getWidth() / next.width();
+        float scaleY = hud.getHeight() / next.height();
+        for (int index = 0; index < hudLayers.size(); index++) {
+            GpuBoardSource.HudLayer layer = next.layers().get(index);
+            Image actor = hudLayers.get(index).image();
+            actor.setBounds(layer.x() * scaleX,
+                  hud.getHeight() - (layer.y() + layer.shiftY().value(now) + layer.pixels().height()) * scaleY,
+                  layer.pixels().width() * scaleX, layer.pixels().height() * scaleY);
+            actor.getColor().a = layer.fade().opacity(now);
+        }
+    }
+
+    void setPlaybackPaused(boolean paused) {
+        ((TextButton) stage.getRoot().findActor("playback")).setText(Messages.getString(
+              paused ? "GpuBoard.resumePlayback" : "GpuBoard.pausePlayback"));
+    }
+
     void update(GpuBoardSource.Frame next, String speed) {
         tuning.useScenario(next.scenarioAtmosphere(), frame == null || frame.boardGeneration() != next.boardGeneration()
               || frame.scene().boardId() != next.scene().boardId());
@@ -411,10 +461,7 @@ final class GpuBoardUi implements Disposable {
         frame = next;
         attackPanel.update(frame);
         updateMenuBar();
-        if (frame.hud() != null) {
-            hudTextures.update(Map.of("hud", frame.hud()));
-            hud.setDrawable(new TextureRegionDrawable(hudTextures.region("hud")));
-        }
+        updateHud(frame.hud(), System.nanoTime());
         phase.setText(frame.scene().phase().toUpperCase(Locale.ROOT) + "  /  PHASE");
         status.setText("MAP " + (frame.scene().boardId() + 1) + "  /  " + frame.scene().width() + " \u00d7 " + frame.scene().height());
         ((TextButton) stage.getRoot().findActor("top")).setChecked(camera.isTopDown());
@@ -491,7 +538,10 @@ final class GpuBoardUi implements Disposable {
             menuBar.add(phase).minWidth(0).maxWidth(240).right();
         }
         for (BoardScene.Command command : commands) {
-            ((TextButton) menuBar.findActor("menu:" + command.id())).setDisabled(!command.enabled());
+            TextButton item = menuBar.findActor("menu:" + command.id());
+            item.setDisabled(!command.enabled());
+            item.setChecked(popup.isVisible() && menu.equals("global") && !path.isEmpty()
+                  && path.getFirst().equals(command.id()));
         }
     }
 
@@ -506,9 +556,7 @@ final class GpuBoardUi implements Disposable {
             closeMenu();
             return;
         }
-        TextButton item = menuBar.findActor("menu:" + id);
-        Vector2 point = item.localToStageCoordinates(new Vector2(0, 0));
-        open("global", command.label(), point.x, point.y);
+        open("global", command.label(), "menu:" + id);
         path.add(id);
         updateMenu();
     }
@@ -516,7 +564,7 @@ final class GpuBoardUi implements Disposable {
     private void updateMenu() {
         details.setText(frame.tooltip());
         roots = switch (menu) {
-            case "all" -> frame.scene().commands().stream().filter(command -> !command.commit()).toList();
+            case "all", "weapons" -> frame.scene().commands().stream().filter(command -> !command.commit()).toList();
             case "global" -> frame.globalCommands();
             case "camera" -> cameraCommands();
             case "orders" -> List.of();
@@ -524,19 +572,16 @@ final class GpuBoardUi implements Disposable {
         };
         List<BoardScene.Command> commands = roots;
         String heading = popupTitle;
-        String description = frame.scene().phase() + "  /  Command console";
-        String symbol = menu.equals("orders") ? "orders" : "group";
-        eyebrow.setText(menu.equals("context") ? "TACTICAL COMMAND  /  " + popupTitle.toUpperCase(Locale.ROOT)
-              : "TACTICAL COMMAND  /  " + menu.toUpperCase(Locale.ROOT));
+        String description = "";
         if (menu.equals("context")) {
-            List<String> names = frame.scene().units().stream().filter(unit -> unit.location().coords().equals(context))
+            List<String> names = frame.scene().units().stream().filter(unit -> unit.footprint().contains(context))
                   .map(BoardScene.Unit::name).distinct().toList();
             if (!names.isEmpty()) {
                 heading = names.size() == 1 ? names.getFirst() : names.size() + " units in hex";
             }
-            symbol = names.isEmpty() ? "hex" : "target";
             BoardScene.Tile tile = frame.scene().tile(context);
-            description = frame.scene().phase() + (tile == null ? "" : "  /  Elevation " + tile.elevation());
+            description = popupTitle + "  /  " + frame.scene().phase()
+                  + (tile == null ? "" : "  /  Elevation " + tile.elevation());
         }
         for (String id : path) {
             BoardScene.Command group = commands.stream().filter(command -> command.id().equals(id)).findFirst()
@@ -551,17 +596,18 @@ final class GpuBoardUi implements Disposable {
         }
         title.setText(heading);
         subtitle.setText(description);
-        contextIcon.setDrawable(skin.getDrawable("icon-" + symbol));
-        back.setDisabled(path.isEmpty());
-        back.setVisible(!path.isEmpty());
-        ((Table) back.getParent()).getCell(back).width(path.isEmpty() ? 0 : 60).height(path.isEmpty() ? 0 : 24)
-              .padRight(path.isEmpty() ? 0 : 10);
+        subtitle.setVisible(!description.isEmpty());
+        popup.getCell(subtitle).height(description.isEmpty() ? 0 : subtitle.getPrefHeight())
+              .padBottom(description.isEmpty() ? 0 : 2);
+        boolean canGoBack = path.size() > (menu.equals("global") ? 1 : 0);
+        back.setDisabled(!canGoBack);
+        back.setVisible(canGoBack);
+        ((Table) back.getParent()).getCell(back).width(canGoBack ? 54 : 0).height(canGoBack ? 28 : 0)
+              .padRight(canGoBack ? 6 : 0);
         String query = search.getText().strip().toLowerCase(Locale.ROOT);
         if (!query.isEmpty()) {
             commands = search(roots, query, "");
         }
-        section.setText((query.isEmpty() ? "COMMANDS" : "SEARCH RESULTS") + "  /  "
-              + String.format(Locale.ROOT, "%02d", commands.size()));
         List<String> signature = new ArrayList<>(commands.stream()
               .map(command -> command.id() + command.label() + command.enabled() + command.detail()
                     + command.boardTool() + command.children().isEmpty()).toList());
@@ -591,11 +637,10 @@ final class GpuBoardUi implements Disposable {
         }
         for (BoardScene.Command command : commands) {
             if (command.id().equals("Details") && query.isEmpty()) {
-                rows.add(new Label("INTELLIGENCE & CONTROLS", skin, "muted")).left().padTop(7).padBottom(5).row();
+                rows.add(new Image(skin.getDrawable("rule"))).width(rowWidth()).height(1).pad(5, 0, 5, 0).row();
             }
             TextButton row = commandRow(command);
-            rows.add(row).width(rowWidth()).minHeight(command.detail().isBlank() && command.enabled() ? 44 : 54)
-                  .row();
+            rows.add(row).width(rowWidth()).minHeight(32).row();
             rowButtons.add(row);
             rowCommands.add(command);
             if (command.id().equals(focusedId) && command.enabled()) {
@@ -611,20 +656,20 @@ final class GpuBoardUi implements Disposable {
             intel.add(details).width(rowWidth() - 24).padTop(6).left();
             rows.add(intel).width(rowWidth()).padTop(8).row();
         }
-        positionPopup(anchorX, anchorTop);
+        positionPopup();
         scroll.setScrollY(scrollY);
         if (rowFocused) {
             if (keyboardRow >= 0) {
                 rowButtons.get(keyboardRow).setChecked(true);
                 stage.setKeyboardFocus(rowButtons.get(keyboardRow));
             } else {
-                stage.setKeyboardFocus(search);
+                focusMenu();
             }
         }
     }
 
     private float rowWidth() {
-        return menuWidth() - 44;
+        return menuWidth() - 24;
     }
 
     private void resetRows() {
@@ -636,10 +681,10 @@ final class GpuBoardUi implements Disposable {
     private TextButton commandRow(BoardScene.Command command) {
         TextButton row = button(command.label(), () -> choose(command));
         row.setName(command.id());
-        row.setStyle(skin.get("action", TextButton.TextButtonStyle.class));
+        row.setStyle(skin.get("menu-row", TextButton.TextButtonStyle.class));
         row.clearChildren();
-        row.pad(10, 20, 10, 20);
-        String symbol = !command.children().isEmpty() ? "group" : command.boardTool() ? "move" : "arrow";
+        row.pad(6, 10, 6, 10);
+        String symbol = command.boardTool() ? "move" : null;
         if (command.id().equals("board.los") || command.id().startsWith("weapon")) {
             symbol = "target";
         } else if (command.id().equals("Details")) {
@@ -647,7 +692,10 @@ final class GpuBoardUi implements Disposable {
         } else if (command.id().equals("All actions")) {
             symbol = "group";
         }
-        row.add(icon(symbol, command.enabled() ? GpuBoardSkin.ACCENT : GpuBoardSkin.DISABLED)).size(22).padRight(12);
+        if (!menu.equals("global") && !menu.equals("camera")) {
+            row.add(symbol == null ? null : icon(symbol,
+                  command.enabled() ? GpuBoardSkin.ACCENT : GpuBoardSkin.DISABLED)).size(16).padRight(8);
+        }
         Table caption = new Table();
         row.getLabel().setWrap(true);
         row.getLabel().setAlignment(Align.left);
@@ -657,14 +705,17 @@ final class GpuBoardUi implements Disposable {
             detail = "Unavailable for the current unit or phase.";
         }
         if (!detail.isEmpty()) {
-            Label summary = new Label(detail.replaceAll("\\s+", " "), skin, "small");
-            summary.setEllipsis(true);
-            caption.add(summary).minWidth(0).growX().left().padTop(3);
+            if (command.enabled() && !menu.equals("global")) {
+                Label summary = new Label(detail.replaceAll("\\s+", " "), skin, "small");
+                summary.setEllipsis(true);
+                caption.add(summary).minWidth(0).growX().left().padTop(2);
+            }
             row.addListener(new TextTooltip(detail, skin));
         }
         row.add(caption).minWidth(0).growX();
         if (!command.enabled() || !command.children().isEmpty()) {
-            row.add(icon(command.enabled() ? "arrow" : "lock", GpuBoardSkin.MUTED)).size(14).padLeft(6);
+            row.add(icon(command.enabled() ? "arrow" : "lock",
+                  command.enabled() ? GpuBoardSkin.ACCENT : GpuBoardSkin.DISABLED)).size(16).padLeft(8);
         }
         row.setDisabled(!command.enabled());
         return row;
@@ -699,7 +750,8 @@ final class GpuBoardUi implements Disposable {
                 scroll.setScrollPercentY(1);
             }
         }));
-        result.add(new BoardScene.Command("All actions", true, () -> open("all", "All actions", popup.getX(), popup.getTop())));
+        result.add(new BoardScene.Command("All actions", true,
+              () -> open("all", "All actions", anchorX, anchorTop, menuTriggerName)));
         return result;
     }
 
@@ -739,7 +791,7 @@ final class GpuBoardUi implements Disposable {
             path.add(command.id());
             search.setText("");
             resetRows();
-            stage.setKeyboardFocus(search);
+            focusMenu();
             return;
         }
         if (menu.equals("global") && cameraCommand(command)) {
@@ -792,46 +844,79 @@ final class GpuBoardUi implements Disposable {
         context = coords;
         source.inspect(coords);
         Vector2 point = stage.screenToStageCoordinates(new Vector2(screenX, screenY));
-        open("context", "Hex " + coords.getBoardNum(), point.x + 14, point.y);
+        open("context", "Hex " + coords.getBoardNum(), point.x + 4, point.y, null);
     }
 
-    private void open(String kind, String heading, float x, float top) {
+    private void open(String kind, String heading, String triggerName) {
+        open(kind, heading, 0, 0, triggerName);
+    }
+
+    private void open(String kind, String heading, float x, float top, String triggerName) {
         source.stopKeys();
         menu = kind;
         anchorX = x;
         anchorTop = top;
+        menuTriggerName = triggerName;
         popupTitle = heading;
         path.clear();
         search.setText("");
+        boolean searchable = menu.equals("all");
+        searchBox.setVisible(searchable);
+        popup.getCell(searchBox).height(searchable ? 30 : 0).padTop(searchable ? 6 : 0);
         showingDetails = false;
         resetRows();
         popup.setVisible(true);
         popup.clearActions();
         popup.getColor().a = 0;
         popup.addAction(Actions.fadeIn(0.1f));
-        positionPopup(x, top);
+        positionPopup();
         stage.setScrollFocus(scroll);
-        stage.setKeyboardFocus(search);
+        focusMenu();
         if (frame != null) {
             updateMenu();
         }
     }
 
     private float menuWidth() {
-        return Math.min(MENU_WIDTH, Math.max(160, stage.getWidth() - 16));
+        int preferred = menu.equals("global") || menu.equals("camera") || menu.equals("weapons")
+              ? DROPDOWN_WIDTH : MENU_WIDTH;
+        return Math.min(preferred, Math.max(160, stage.getWidth() - 16));
     }
 
-    private void positionPopup(float x, float top) {
-        float upperEdge = stage.getHeight() - (menu.equals("global") ? MENU_BAR_HEIGHT : TOP_HEIGHT);
+    private void focusMenu() {
+        stage.setKeyboardFocus(searchBox.isVisible() ? search : popup);
+    }
+
+    private void positionPopup() {
         popup.setWidth(menuWidth());
         popup.invalidateHierarchy();
         // Let wrapped titles and command descriptions determine the height before clamping the scroll area.
         popup.validate();
-        float height = Math.min(popup.getPrefHeight(), Math.min(620, Math.max(1, upperEdge - TURN_HEIGHT - 16)));
-        popup.setSize(menuWidth(), height);
-        float right = attackPanel.panel().isVisible() ? attackPanel.panel().getX() - 8 : stage.getWidth();
-        popup.setPosition(MathUtils.clamp(x, 8, Math.max(8, right - menuWidth() - 8)),
-              MathUtils.clamp(top - height, TURN_HEIGHT + 8, upperEdge - height - 8));
+        float height = Math.min(popup.getPrefHeight(), 620);
+        float x;
+        float y;
+        Actor menuTrigger = menuTriggerName == null ? null : stage.getRoot().findActor(menuTriggerName);
+        if (menuTrigger != null) {
+            // Resolve the bars' new layout before reading a trigger's position after a resize.
+            ((Table) menuBar.getParent()).validate();
+            Vector2 bottom = menuTrigger.localToStageCoordinates(new Vector2());
+            Vector2 top = menuTrigger.localToStageCoordinates(new Vector2(menuTrigger.getWidth(), menuTrigger.getHeight()));
+            float below = Math.max(1, bottom.y - 6);
+            float above = Math.max(1, stage.getHeight() - top.y - 6);
+            boolean openAbove = below < height && above > below;
+            height = Math.min(height, openAbove ? above : below);
+            y = openAbove ? top.y + 2 : bottom.y - height - 2;
+            x = bottom.x + menuWidth() <= stage.getWidth() - 4 ? bottom.x : top.x - menuWidth();
+            x = MathUtils.clamp(x, 4, Math.max(4, stage.getWidth() - menuWidth() - 4));
+            y = MathUtils.clamp(y, 4, Math.max(4, stage.getHeight() - height - 4));
+        } else {
+            float upperEdge = stage.getHeight() - TOP_HEIGHT - 8;
+            height = Math.min(height, Math.max(1, upperEdge - TURN_HEIGHT - 8));
+            float right = attackPanel.panel().isVisible() ? attackPanel.panel().getX() - 8 : stage.getWidth();
+            x = MathUtils.clamp(anchorX, 8, Math.max(8, right - menuWidth() - 8));
+            y = MathUtils.clamp(anchorTop - height, TURN_HEIGHT + 8, upperEdge - height);
+        }
+        popup.setBounds(x, y, menuWidth(), height);
         popup.validate();
     }
 
@@ -870,18 +955,30 @@ final class GpuBoardUi implements Disposable {
     }
 
     boolean key(int key, boolean down) {
-        if (down && key == Input.Keys.F10) {
-            open("all", "All actions", 16, stage.getHeight() - TOP_HEIGHT - 12);
+        int modifiers = GpuBattleView.modifiers();
+        List<KeyCommandBind> bindings = KeyCommandBind.getAllBindsByKey(GpuBattleView.awtKey(key), modifiers);
+        boolean unbound = bindings.isEmpty();
+        if (down && bindings.contains(KeyCommandBind.CANCEL)) {
+            plotting = false;
+        }
+        if (down && unbound && modifiers == 0 && key == Input.Keys.F10) {
+            open("all", "All actions", "all-actions");
             return true;
         }
-        if (down && key == Input.Keys.F9) {
+        if (down && unbound && modifiers == 0 && key == Input.Keys.F9) {
             toggleTuning();
             return true;
         }
-        if (down && key == Input.Keys.ESCAPE) {
+        if (down && key == Input.Keys.ESCAPE && modifiers == 0) {
             plotting = false;
-            closeMenu();
-            return true;
+            if (popup.isVisible()) {
+                closeMenu();
+                return true;
+            }
+            if (tuning.visible()) {
+                tuning.toggle();
+                return true;
+            }
         }
         return false;
     }
@@ -909,7 +1006,7 @@ final class GpuBoardUi implements Disposable {
     public void dispose() {
         stage.dispose();
         theme.dispose();
-        hudTextures.dispose();
+        hudLayers.forEach(layer -> layer.textures().dispose());
         portraits.dispose();
     }
 }

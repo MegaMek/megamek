@@ -143,6 +143,7 @@ public class MGHandler extends AmmoWeaponHandler {
      */
     @Override
     protected void reportMiss(Vector<Report> vPhaseReport) {
+        reportAttackAnimation(false);
         // Report the miss
         Report r = new Report(3220);
         r.subject = subjectId;

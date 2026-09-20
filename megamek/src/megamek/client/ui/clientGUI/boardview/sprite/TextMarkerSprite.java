@@ -48,12 +48,32 @@ import megamek.common.board.Coords;
 public class TextMarkerSprite extends HexSprite {
 
     private final String spriteText;
-    private final StringDrawer textDrawer;
+    private final Color textColor;
+    private final int rangeBracket;
 
     public TextMarkerSprite(BoardView boardView1, Coords loc, String text, Color color) {
+        this(boardView1, loc, text, color, -1);
+    }
+
+    public TextMarkerSprite(BoardView boardView, Coords loc, int rangeBracket) {
+        this(boardView, loc, FieldOfFireSprite.getRangeText(rangeBracket),
+              FieldOfFireSprite.getFieldOfFireColor(rangeBracket), rangeBracket);
+    }
+
+    private TextMarkerSprite(BoardView boardView1, Coords loc, String text, Color color, int rangeBracket) {
         super(boardView1, loc);
         spriteText = text;
-        textDrawer = new StringDrawer(spriteText).color(color).center();
+        textColor = color;
+        this.rangeBracket = rangeBracket;
+    }
+
+    /** Identifies range labels so the GPU board can choose flat markers or contour text. */
+    public boolean isWeaponRange() {
+        return rangeBracket >= 0;
+    }
+
+    public int getRangeBracket() {
+        return rangeBracket;
     }
 
     @Override
@@ -64,25 +84,31 @@ public class TextMarkerSprite extends HexSprite {
         // create image for buffer
         image = createNewHexImage();
         Graphics2D graph = (Graphics2D) image.getGraphics();
-        UIUtil.setHighQualityRendering(graph);
-
-        // get a big font and test to see which font size will fit the hex shape
-        Font textFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 1000);
-        graph.setFont(textFont);
-        FontMetrics fm = graph.getFontMetrics(graph.getFont());
-        Rectangle2D rect = fm.getStringBounds(spriteText, graph);
-        Point pos = new Point((int) (bounds.getWidth() / 2), (int) (bounds.getHeight() / 2));
-        textDrawer.at(pos).outline(Color.BLACK, bv.getScale()).font(getFont(rect)).draw(graph);
+        try {
+            drawMarker(graph, spriteText, textColor, bounds.width, bounds.height, bv.getScale());
+        } finally {
+            graph.dispose();
+        }
     }
 
-    private Font getFont(Rectangle2D rect) {
+    /** Shared flat artwork for the classic sprite and the GPU's camera-facing range labels. */
+    public static void drawMarker(Graphics2D graph, String text, Color color, int width, int height, float scale) {
+        UIUtil.setHighQualityRendering(graph);
+        Font textFont = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN, 1000);
+        FontMetrics fm = graph.getFontMetrics(textFont);
+        Rectangle2D rect = fm.getStringBounds(text, graph);
+        new StringDrawer(text).color(color).center().at(new Point(width / 2, height / 2))
+              .outline(Color.BLACK, scale).font(getFont(rect, width, height)).draw(graph);
+    }
+
+    private static Font getFont(Rectangle2D rect, int width, int height) {
         float factor = 1;
-        if (rect.getHeight() > bounds.getHeight()) {
-            factor = (float) bounds.getHeight() / (float) rect.getHeight();
+        if (rect.getHeight() > height) {
+            factor = height / (float) rect.getHeight();
         }
 
-        if ((rect.getWidth() * factor) > bounds.getWidth()) {
-            factor = Math.min(factor, ((float) bounds.getWidth() / (float) rect.getWidth()));
+        if ((rect.getWidth() * factor) > width) {
+            factor = Math.min(factor, width / (float) rect.getWidth());
         }
         // make smaller to actually fit the hex shape
         factor = factor * 0.7f;

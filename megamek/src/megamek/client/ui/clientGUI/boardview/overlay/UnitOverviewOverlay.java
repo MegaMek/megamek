@@ -35,7 +35,16 @@
 package megamek.client.ui.clientGUI.boardview.overlay;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.MMConstants;
@@ -46,6 +55,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.Configuration;
 import megamek.common.battleArmor.BattleArmor;
@@ -82,7 +92,37 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
     private static final int BUTTON_PADDING = 4;
     private static final int PADDING = 5;
 
-    private int[] unitIds;
+    private static final int CARD_MARGIN = 3;
+
+    /** Derived presentation only. The client remains responsible for selection and turn validity. */
+    private record Text(String value, int x, int y, Color color, Color shadow, boolean outlined) {
+        void draw(Graphics2D graph) {
+            graph.setColor(shadow);
+            if (outlined) {
+                graph.drawString(value, x + 1, y);
+                graph.drawString(value, x - 1, y);
+                graph.drawString(value, x, y + 1);
+                graph.drawString(value, x, y - 1);
+            } else {
+                graph.drawString(value, x + 1, y + 1);
+            }
+            graph.setColor(color);
+            graph.drawString(value, x, y);
+        }
+    }
+
+    private record Bar(int length, Color color) { }
+    private record Card(Image icon, List<Text> texts, Bar armor, Bar internal, int heat,
+          Color frame, Color border) { }
+    private record CardImage(Card card, BufferedImage image) { }
+
+    // Swing owns these small immutable images. GPU snapshots copy them only when the image identity changes.
+    private final Map<Integer, CardImage> cards = new HashMap<>();
+    private final Map<Image, BufferedImage> buttons = new IdentityHashMap<>();
+    private double imageScaleX;
+    private double imageScaleY;
+
+    private int[] unitIds = new int[0];
     private boolean isHit = false;
     private boolean visible;
     private boolean scroll = false;
@@ -124,13 +164,13 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         pageDown = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2.png").toString());
         PMUtil.setImage(pageDown, clientgui.getMainPanel());
         scrollUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollUp2_G.png").toString());
-        PMUtil.setImage(scrollUp, clientgui.getMainPanel());
+        PMUtil.setImage(scrollUpG, clientgui.getMainPanel());
         scrollDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "scrollDown2_G.png").toString());
-        PMUtil.setImage(scrollDown, clientgui.getMainPanel());
+        PMUtil.setImage(scrollDownG, clientgui.getMainPanel());
         pageUpG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageUp2_G.png").toString());
-        PMUtil.setImage(pageUp, clientgui.getMainPanel());
+        PMUtil.setImage(pageUpG, clientgui.getMainPanel());
         pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString());
-        PMUtil.setImage(pageDown, clientgui.getMainPanel());
+        PMUtil.setImage(pageDownG, clientgui.getMainPanel());
 
         visible = GUIP.getShowUnitOverview();
         GUIP.addPreferenceChangeListener(this);
@@ -138,101 +178,154 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     @Override
     public void draw(Graphics graph, Rectangle clipBounds) {
+        long now = System.nanoTime();
+        for (OverlayImage layer : captureLayers((Graphics2D) graph, clipBounds)) {
+            layer.draw((Graphics2D) graph, now);
+        }
+    }
+
+    @Override
+    public List<OverlayImage> captureLayers(Graphics2D graph, Rectangle clipBounds) {
         if (!visible) {
-            return;
+            cards.clear();
+            buttons.clear();
+            return List.of();
         }
-
+        AffineTransform transform = graph.getTransform();
+        double scaleX = Math.hypot(transform.getScaleX(), transform.getShearY());
+        double scaleY = Math.hypot(transform.getScaleY(), transform.getShearX());
+        if (imageScaleX != scaleX || imageScaleY != scaleY) {
+            imageScaleX = scaleX;
+            imageScaleY = scaleY;
+            cards.clear();
+            buttons.clear();
+        }
         computeUnitsPerPage(clipBounds.getSize());
-
-        graph.setFont(FONT);
-        ArrayList<Entity> v = clientgui.getClient().getGame()
+        List<Entity> units = clientgui.getClient().getGame()
               .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
-        unitIds = new int[v.size()];
+        unitIds = units.stream().mapToInt(Entity::getId).toArray();
+        Set<Integer> retained = new HashSet<>();
+        units.forEach(entity -> retained.add(entity.getId()));
+        cards.keySet().retainAll(retained);
+        scroll = units.size() > unitsPerPage;
+        actUnitsPerPage = Math.max(0, scroll ? unitsPerPage - 2 : unitsPerPage);
+        scrollOffset = Math.max(0, Math.min(scrollOffset, units.size() - actUnitsPerPage));
 
-        scroll = v.size() > unitsPerPage;
-
-        actUnitsPerPage = scroll ? unitsPerPage - 2 : unitsPerPage;
-
-        if (scrollOffset + actUnitsPerPage > unitIds.length) {
-            scrollOffset = unitIds.length - actUnitsPerPage;
-            if (scrollOffset < 0) {
-                scrollOffset = 0;
-            }
-        }
-
+        List<OverlayImage> layers = new ArrayList<>();
         int x = clipBounds.x + clipBounds.width - DIST_SIDE - ICON_WIDTH;
         int y = clipBounds.y + DIST_TOP;
-
         if (scroll) {
-            if (scrollOffset > 0) {
-                graph.drawImage(pageUp, x, y, null);
-                graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                      null);
-            } else {
-                graph.drawImage(pageUpG, x, y, null);    // Top of list = greyed out buttons
-                graph.drawImage(scrollUpG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                      null);
-            }
-            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
-                  + BUTTON_PADDING;
+            layers.add(buttonLayer(graph, scrollOffset > 0 ? pageUp : pageUpG, x, y));
+            layers.add(buttonLayer(graph, scrollOffset > 0 ? scrollUp : scrollUpG,
+                  x, y + BUTTON_HEIGHT + BUTTON_PADDING));
+            y += 2 * (BUTTON_HEIGHT + BUTTON_PADDING);
         }
-
-        for (int i = scrollOffset; (i < v.size())
-              && (i < actUnitsPerPage + scrollOffset); i++) {
-            Entity e = v.get(i);
-            unitIds[i] = e.getId();
-            String name = getIconName(e, fm);
-            Image i1 = clientgui.getCurrentBoardView()
-                  .map(bv -> ((BoardView) bv).getTilesetManager().iconFor(e))
-                  .orElse(null);
-
-            graph.drawImage(i1, x, y, null);
-            printLine(graph, x + 3, y + 46, name);
-            drawBars(graph, e, x, y);
-            drawHeat(graph, e, x, y);
-            drawConditionStrings(graph, e, x, y);
-            graph.setColor(getFrameColor(e));
-            ((Graphics2D) graph).setStroke(new BasicStroke(1f));
-            graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
-
-            Game game = clientgui.getClient().getGame();
-            GameTurn turn = game.getPhase().isSimultaneous(game)
-                  ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId())
-                  : game.getTurn();
-
-            if ((turn != null) && turn.isValidEntity(e, game)) {
-                Color oldColor = graph.getColor();
-                graph.setColor(GUIP.getUnitValidColor());
-                graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
-                graph.setColor(oldColor);
+        for (int i = scrollOffset; i < units.size() && i < actUnitsPerPage + scrollOffset; i++) {
+            Entity entity = units.get(i);
+            Card card = card(entity);
+            CardImage cached = cards.get(entity.getId());
+            if (cached == null || !cached.card().equals(card)) {
+                cached = new CardImage(card, paintCard(card));
+                cards.put(entity.getId(), cached);
             }
-
-            Entity se = clientgui.getDisplayedUnit();
-            if ((e == se) && (game.getTurn() != null) && game.getTurn().isValidEntity(e, game)) {
-                Color oldColor = graph.getColor();
-                graph.setColor(GUIP.getUnitSelectedColor());
-                graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
-                graph.setColor(oldColor);
-            }
-
+            layers.add(layer(graph, cached.image(), x - CARD_MARGIN, y - CARD_MARGIN));
             y += ICON_HEIGHT + PADDING;
         }
-
         if (scroll) {
-            y -= PADDING;
-            y += BUTTON_PADDING;
-            if (scrollOffset == unitIds.length - actUnitsPerPage) {
-                graph.drawImage(scrollDownG, x, y, null);   // Bottom of list = greyed out buttons
-                graph.drawImage(pageDownG, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                      null);
-            } else {
-                graph.drawImage(scrollDown, x, y, null);
-                graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                      null);
-            }
-
+            y += BUTTON_PADDING - PADDING;
+            boolean atBottom = scrollOffset == units.size() - actUnitsPerPage;
+            layers.add(buttonLayer(graph, atBottom ? scrollDownG : scrollDown, x, y));
+            layers.add(buttonLayer(graph, atBottom ? pageDownG : pageDown,
+                  x, y + BUTTON_HEIGHT + BUTTON_PADDING));
         }
+        return List.copyOf(layers);
+    }
 
+    private OverlayImage buttonLayer(Graphics2D graph, Image button, int x, int y) {
+        BufferedImage image = buttons.computeIfAbsent(button, artwork -> {
+            BufferedImage result = image(artwork.getWidth(null), artwork.getHeight(null));
+            Graphics2D painter = painter(result);
+            try {
+                painter.drawImage(artwork, 0, 0, null);
+            } finally {
+                painter.dispose();
+            }
+            return result;
+        });
+        return layer(graph, image, x, y);
+    }
+
+    private OverlayImage layer(Graphics2D graph, BufferedImage image, int x, int y) {
+        Point2D point = graph.getTransform().transform(new Point(x, y), null);
+        return new OverlayImage(image, (int) Math.round(point.getX()), (int) Math.round(point.getY()),
+              OverlayImage.Fade.OPAQUE);
+    }
+
+    private BufferedImage image(int width, int height) {
+        return new BufferedImage(Math.max(1, (int) Math.ceil(width * imageScaleX)),
+              Math.max(1, (int) Math.ceil(height * imageScaleY)), BufferedImage.TYPE_INT_ARGB);
+    }
+
+    private Graphics2D painter(BufferedImage image) {
+        Graphics2D graph = image.createGraphics();
+        graph.scale(imageScaleX, imageScaleY);
+        UIUtil.setHighQualityRendering(graph);
+        graph.setFont(FONT);
+        return graph;
+    }
+
+    private Card card(Entity entity) {
+        Image icon = clientgui.getCurrentBoardView()
+              .map(bv -> ((BoardView) bv).getTilesetManager().iconFor(entity)).orElse(null);
+        List<Text> texts = new ArrayList<>();
+        texts.add(outlinedText(getIconName(entity, fm), 3, 46));
+        texts.addAll(conditionStrings(entity));
+        Game game = clientgui.getClient().getGame();
+        GameTurn turn = game.getPhase().isSimultaneous(game)
+              ? game.getTurnForPlayer(clientgui.getClient().getLocalPlayer().getId()) : game.getTurn();
+        Color border = turn != null && turn.isValidEntity(entity, game) ? GUIP.getUnitValidColor() : null;
+        if (entity == clientgui.getDisplayedUnit() && game.getTurn() != null && game.getTurn().isValidEntity(entity, game)) {
+            border = GUIP.getUnitSelectedColor();
+        }
+        double armor = entity.getArmorRemainingPercent();
+        return new Card(icon, List.copyOf(texts), armor == IArmorState.ARMOR_NA ? null : bar(armor),
+              bar(entity.getInternalRemainingPercent()), heat(entity), getFrameColor(entity), border);
+    }
+
+    private BufferedImage paintCard(Card card) {
+        // Localized condition strings can extend beyond the portrait. Preserve their original unclipped extent.
+        int width = Math.max(ICON_WIDTH, card.texts().stream()
+              .mapToInt(text -> text.x() + fm.stringWidth(text.value()) + 1).max().orElse(0));
+        int height = Math.max(ICON_HEIGHT, card.texts().stream()
+              .mapToInt(text -> text.y() + fm.getDescent() + 1).max().orElse(0));
+        BufferedImage result = image(width + 2 * CARD_MARGIN, height + 2 * CARD_MARGIN);
+        Graphics2D graph = painter(result);
+        try {
+            graph.translate(CARD_MARGIN, CARD_MARGIN);
+            graph.drawImage(card.icon(), 0, 0, null);
+            card.texts().getFirst().draw(graph);
+            drawBar(graph, card.armor(), 3);
+            drawBar(graph, card.internal(), 6);
+            if (card.heat() >= 0) {
+                graph.setColor(Color.darkGray);
+                graph.fillRect(52, 4, 2, 30);
+                graph.setColor(Color.lightGray);
+                graph.fillRect(51, 3, 2, 30);
+                graph.setColor(Color.red);
+                graph.fillRect(51, 33 - card.heat(), 2, card.heat());
+            }
+            card.texts().stream().skip(1).forEach(text -> text.draw(graph));
+            graph.setColor(card.frame());
+            graph.setStroke(new BasicStroke(1f));
+            graph.drawRect(0, 0, ICON_WIDTH, ICON_HEIGHT);
+            if (card.border() != null) {
+                graph.setColor(card.border());
+                graph.drawRect(-1, -1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
+            }
+        } finally {
+            graph.dispose();
+        }
+        return result;
     }
 
     @Override
@@ -320,60 +413,29 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         return false;
     }
 
-    private void drawHeat(Graphics graph, Entity entity, int x, int y) {
-        if (!((entity instanceof Mek) || (entity instanceof Aero))) {
-            return;
+    private int heat(Entity entity) {
+        if (!(entity instanceof Mek || entity instanceof Aero)) {
+            return -1;
         }
-        boolean mtHeat = false;
-        int mHeat = 30;
-        if ((entity.getGame() != null)
-              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT)) {
-            mHeat = 50;
-            mtHeat = true;
-        }
-        int heat = Math.min(mHeat, entity.heat);
-
-        graph.setColor(Color.darkGray);
-        graph.fillRect(x + 52, y + 4, 2, 30);
-        graph.setColor(Color.lightGray);
-        graph.fillRect(x + 51, y + 3, 2, 30);
-        graph.setColor(Color.red);
-        if (mtHeat) {
-            graph.fillRect(x + 51, y + 3 + (30 - (int) (heat * 0.6)), 2,
-                  (int) (heat * 0.6));
-        } else {
-            graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
-        }
+        boolean extended = entity.getGame() != null
+              && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT);
+        return extended ? (int) (Math.min(50, entity.heat) * 0.6) : Math.min(30, entity.heat);
     }
 
-    private void drawBars(Graphics graph, Entity entity, int x, int y) {
-        // Let's draw our armor and internal status bars
-        int baseBarLength = 23;
-        int barLength;
-        double percentRemaining;
+    private Bar bar(double percent) {
+        return new Bar((int) (23 * percent), getStatusBarColor(percent));
+    }
 
-        percentRemaining = entity.getArmorRemainingPercent();
-        if (percentRemaining != IArmorState.ARMOR_NA) {
-            barLength = (int) (baseBarLength * percentRemaining);
-
-            graph.setColor(Color.darkGray);
-            graph.fillRect(x + 4, y + 4, 23, 2);
-            graph.setColor(Color.lightGray);
-            graph.fillRect(x + 3, y + 3, 23, 2);
-            graph.setColor(getStatusBarColor(percentRemaining));
-            graph.fillRect(x + 3, y + 3, barLength, 2);
-
+    private void drawBar(Graphics graph, Bar bar, int y) {
+        if (bar == null) {
+            return;
         }
-        percentRemaining = entity.getInternalRemainingPercent();
-        barLength = (int) (baseBarLength * percentRemaining);
-
         graph.setColor(Color.darkGray);
-        graph.fillRect(x + 4, y + 7, 23, 2);
+        graph.fillRect(4, y + 1, 23, 2);
         graph.setColor(Color.lightGray);
-        graph.fillRect(x + 3, y + 6, 23, 2);
-        graph.setColor(getStatusBarColor(percentRemaining));
-        graph.fillRect(x + 3, y + 6, barLength, 2);
-
+        graph.fillRect(3, y, 23, 2);
+        graph.setColor(bar.color());
+        graph.fillRect(3, y, bar.length(), 2);
     }
 
     private Color getStatusBarColor(double percentRemaining) {
@@ -393,101 +455,53 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         return Color.black;
     }
 
-    private void printLine(Graphics g, int x, int y, String s) {
-        g.setColor(GUIP.getUnitOverviewTextShadowColor());
-        g.drawString(s, x + 1, y);
-        g.drawString(s, x - 1, y);
-        g.drawString(s, x, y + 1);
-        g.drawString(s, x, y - 1);
-        g.setColor(GUIP.getUnitTextColor());
-        g.drawString(s, x, y);
+    private Text outlinedText(String text, int x, int y) {
+        return new Text(text, x, y, GUIP.getUnitTextColor(), GUIP.getUnitOverviewTextShadowColor(), true);
     }
 
-    private void drawConditionStrings(Graphics graph, Entity entity, int x, int y) {
-        // out of control conditions for ASF
+    private Text condition(String key, int x, int y, Color color) {
+        return new Text(Messages.getString(key), x, y, color, GUIP.getUnitOverviewConditionShadowColor(), false);
+    }
+
+    private List<Text> conditionStrings(Entity entity) {
+        List<Text> texts = new ArrayList<>();
         if (entity.isAero()) {
-            IAero a = (IAero) entity;
-
-            if (a.isRolled()) {
-                // draw "rolled"
-                graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y + 29);
-                graph.setColor(GUIP.getWarningColor());
-                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y + 28);
+            IAero aero = (IAero) entity;
+            if (aero.isRolled()) {
+                texts.add(condition("BoardView1.ROLLED", 10, 28, GUIP.getWarningColor()));
             }
-
-            if (a.isOutControlTotal() && a.isRandomMove()) {
-                graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24);
-                graph.setColor(GUIP.getWarningColor());
-                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23);
-            } else if (a.isOutControlTotal()) {
-                // draw "CONTROL"
-                graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24);
-                graph.setColor(GUIP.getWarningColor());
-                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 10, y + 23);
+            if (aero.isOutControlTotal() && aero.isRandomMove()) {
+                texts.add(condition("UnitOverview.RANDOM", 10, 23, GUIP.getWarningColor()));
+            } else if (aero.isOutControlTotal()) {
+                texts.add(condition("UnitOverview.CONTROL", 10, 23, GUIP.getWarningColor()));
             }
-
-            //is the unit evading? - can't evade and be out of control so just draw on top
             if (entity.isEvading()) {
-                // draw evasion
-                graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-                graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 11, y + 24);
-                graph.setColor(GUIP.getWarningColor());
-                graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23);
+                texts.add(condition("UnitOverview.EVADE", 10, 23, GUIP.getWarningColor()));
             }
-
         }
-
-        // draw condition strings
-        if (entity.isImmobile() && !entity.isProne() && !(entity.isBuildingEntityOrGunEmplacement())) {
-            // draw "IMMOB"
-            graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29);
-            graph.setColor(GUIP.getWarningColor());
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28);
+        if (entity.isImmobile() && !entity.isProne() && !entity.isBuildingEntityOrGunEmplacement()) {
+            texts.add(condition("UnitOverview.IMMOB", 10, 28, GUIP.getWarningColor()));
         } else if (!entity.isImmobile() && entity.isProne()) {
-            // draw "PRONE"
-            graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 29);
-            graph.setColor(GUIP.getCautionColor());
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 28);
+            texts.add(condition("UnitOverview.PRONE", 10, 28, GUIP.getCautionColor()));
         } else if (entity.isImmobile() && entity.isProne()) {
-            // draw "IMMOB" and "PRONE"
-            graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 34);
-            graph.setColor(GUIP.getWarningColor());
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
-            graph.setColor(GUIP.getCautionColor());
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 33);
+            texts.add(condition("UnitOverview.IMMOB", 10, 23, GUIP.getWarningColor()));
+            texts.add(condition("UnitOverview.PRONE", 10, 33, GUIP.getCautionColor()));
         } else if (!entity.isImmobile() && entity.isHullDown()) {
-            // draw "HullDown"
-            graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 29);
-            graph.setColor(GUIP.getPrecautionColor());
-            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 28);
+            texts.add(condition("UnitOverview.HULLDOWN", -2, 28, GUIP.getPrecautionColor()));
         } else if (entity.isImmobile() && entity.isHullDown()) {
-            // draw "IMMOB" and "HullDown"
-            graph.setColor(GUIP.getUnitOverviewConditionShadowColor());
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24);
-            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 1, y + 34);
-            graph.setColor(GUIP.getWarningColor());
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23);
-            graph.setColor(GUIP.getPrecautionColor());
-            graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33);
+            texts.add(condition("UnitOverview.IMMOB", 10, 23, GUIP.getWarningColor()));
+            texts.add(condition("UnitOverview.HULLDOWN", -2, 33, GUIP.getPrecautionColor()));
         } else if (!entity.isDeployed()) {
-            int roundsLeft = entity.getDeployRound()
-                  - clientgui.getClient().getGame().getRoundCount();
+            int roundsLeft = entity.getDeployRound() - clientgui.getClient().getGame().getRoundCount();
             if (roundsLeft > 0) {
-                printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
+                texts.add(outlinedText(Integer.toString(roundsLeft), 25, 28));
             }
         }
+        return texts;
     }
 
     private void computeUnitsPerPage(Dimension size) {
-        unitsPerPage = (size.height - DIST_TOP) / (ICON_HEIGHT + PADDING);
+        unitsPerPage = Math.max(0, (size.height - DIST_TOP) / (ICON_HEIGHT + PADDING));
     }
 
     private void pageUp() {

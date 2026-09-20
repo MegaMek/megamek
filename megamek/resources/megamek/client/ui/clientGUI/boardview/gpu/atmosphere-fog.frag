@@ -4,9 +4,7 @@ precision highp float;
 #endif
 varying vec2 v_uv;
 uniform sampler2D u_depth;
-uniform sampler2D u_shadow;
 uniform mat4 u_inverseView;
-uniform mat4 u_shadowMatrix;
 uniform vec3 u_direction;
 uniform vec3 u_boundsMin;
 uniform vec3 u_boundsMax;
@@ -15,10 +13,6 @@ uniform float u_haze;
 uniform float u_noiseScale;
 uniform float u_clock;
 uniform vec3 u_fogColor;
-uniform vec3 u_lightColor;
-uniform vec3 u_lightDirection;
-uniform float u_shafts;
-uniform float u_hasShadow;
 uniform float u_maxOpacity;
 
 float depthAt(sampler2D map, vec2 uv) {
@@ -28,14 +22,6 @@ float depthAt(sampler2D map, vec2 uv) {
 vec3 world(float depth) {
     vec4 p = u_inverseView * vec4(v_uv * 2.0 - 1.0, depth * 2.0 - 1.0, 1.0);
     return p.xyz / p.w;
-}
-
-float visibility(vec3 point) {
-    if (u_hasShadow < 0.5) return 1.0;
-    vec4 projected = u_shadowMatrix * vec4(point, 1.0);
-    vec3 uv = projected.xyz / projected.w * 0.5 + 0.5;
-    if (min(uv.x, min(uv.y, uv.z)) < 0.0 || max(uv.x, max(uv.y, uv.z)) > 1.0) return 1.0;
-    return step(uv.z - 0.0005, depthAt(u_shadow, uv.xy));
 }
 
 void main() {
@@ -70,19 +56,6 @@ void main() {
           * sin(last.y * u_noiseScale - u_clock * 0.04);
     float opacity = min(u_maxOpacity, 1.0 - exp(-u_fog.x * integral * wisps - u_haze * (end - start)));
     vec3 illumination = pow(u_fogColor, vec3(2.2));
-    if (u_shafts > 0.0) {
-        float lit = 0.0;
-        float weight = 0.0;
-        // Optional shafts get four shadow probes at quarter resolution; ordinary fog does no shadow sampling.
-        for (int i = 0; i < 4; i++) {
-            vec3 p = mix(first, last, (float(i) + 0.5) / 4.0);
-            float density = exp(-max(0.0, p.z - u_fog.z) / u_fog.y) + 0.05;
-            lit += visibility(p) * density;
-            weight += density;
-        }
-        float phase = 0.25 + 1.75 * pow(max(0.0, dot(u_direction, -u_lightDirection)), 6.0);
-        illumination += u_lightColor * (lit / weight) * phase * u_shafts * 0.25;
-    }
     // Fog and haze share one opacity ceiling, even when both controls are at their maximum.
     gl_FragColor = vec4(illumination * opacity, 1.0 - opacity);
 }

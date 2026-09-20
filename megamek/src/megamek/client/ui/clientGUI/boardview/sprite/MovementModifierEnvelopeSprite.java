@@ -40,6 +40,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
@@ -53,7 +54,7 @@ import megamek.common.moves.MovePath;
  *
  * @author Saginatio
  */
-public class MovementModifierEnvelopeSprite extends HexSprite {
+public class MovementModifierEnvelopeSprite extends HexSprite implements TacticalSprite {
 
     private static final Color fontColor = Color.BLACK;
     private static final float fontSize = 9;
@@ -62,7 +63,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
     private final Color color;
     private final Facing facing;
-    private final StringDrawer modifierText;
+    private final String modifier;
 
     /**
      * @param boardView The {@link BoardView}
@@ -78,8 +79,7 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         int movementModifier = DefensiveMovementModifier.forPath(movePath, boardView.game);
         float hue = 0.7f - 0.15f * movementModifier;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
-        String modifier = String.format("%+d", movementModifier);
-        modifierText = new StringDrawer(modifier).center().color(fontColor);
+        modifier = String.format("%+d", movementModifier);
     }
 
     @Override
@@ -95,6 +95,21 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         // scale the following draws according to board zoom
         graph.scale(bv.getScale(), bv.getScale());
 
+        paintTactical(graph);
+
+        graph.dispose();
+    }
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Graphics2D local = BoardTacticalGraphics.at(graphics, bv.getHexLocation(getPosition()));
+        try {
+            paintTactical(local);
+        } finally {
+            local.dispose();
+        }
+    }
+
+    protected void paintTactical(Graphics2D graph) {
         // colored polygon at the hex border
         graph.setColor(color);
         graph.fill(getHexBorderArea(facing.getIntValue(), CUT_INSIDE, borderW, inset));
@@ -103,9 +118,13 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
         if (fontSize * bv.getScale() > 4) {
             graph.setFont(graph.getFont().deriveFont(fontSize));
             Point2D.Double pos = getHexBorderAreaMid(facing.getIntValue(), borderW, inset);
-            modifierText.at((int) pos.x, (int) pos.y).draw(graph);
+            StringDrawer text = new StringDrawer(modifier).center().color(fontColor).at((int) pos.x, (int) pos.y);
+            if (graph instanceof BoardTacticalGraphics) {
+                text.asText();
+            }
+            text.draw(graph);
         }
 
-        graph.dispose();
     }
+
 }

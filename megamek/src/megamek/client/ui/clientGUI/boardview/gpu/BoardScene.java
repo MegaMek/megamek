@@ -1,6 +1,7 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.Raster;
@@ -11,7 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
+import javax.swing.ImageIcon;
 
+import megamek.client.ui.clientGUI.boardview.BoardFieldOfView;
+import megamek.client.ui.clientGUI.boardview.BoardMarker;
+import megamek.client.ui.clientGUI.boardview.BoardTactical;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.board.Coords;
 import megamek.common.units.EntityMovementType;
@@ -19,7 +25,37 @@ import megamek.common.units.EntityMovementType;
 /** A presentation snapshot. Only the Swing thread reads the game; the GPU thread owns rendering. */
 record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
       List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light,
-      List<FiringLine> firingLines, List<RangeBorder> rangeBorders) {
+      List<FiringLine> firingLines, List<RangeBorder> rangeBorders, List<BoardMarker> markers, BoardTactical tactical,
+      List<RangeLabel> rangeLabels, BoardFieldOfView fieldOfView) {
+
+    BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
+          List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light,
+          List<FiringLine> firingLines, List<RangeBorder> rangeBorders, List<BoardMarker> markers, BoardTactical tactical,
+          List<RangeLabel> rangeLabels) {
+        this(boardId, width, height, tiles, units, plannedPath, selectedId, phase, commands, light, firingLines,
+              rangeBorders, markers, tactical, rangeLabels, BoardFieldOfView.EMPTY);
+    }
+
+    BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
+          List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light,
+          List<FiringLine> firingLines, List<RangeBorder> rangeBorders, List<BoardMarker> markers, BoardTactical tactical) {
+        this(boardId, width, height, tiles, units, plannedPath, selectedId, phase, commands, light, firingLines,
+              rangeBorders, markers, tactical, List.of());
+    }
+
+    BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
+          List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light,
+          List<FiringLine> firingLines, List<RangeBorder> rangeBorders, List<BoardMarker> markers) {
+        this(boardId, width, height, tiles, units, plannedPath, selectedId, phase, commands, light, firingLines,
+              rangeBorders, markers, BoardTactical.EMPTY);
+    }
+
+    BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
+          List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light,
+          List<FiringLine> firingLines, List<RangeBorder> rangeBorders) {
+        this(boardId, width, height, tiles, units, plannedPath, selectedId, phase, commands, light, firingLines,
+              rangeBorders, List.of());
+    }
 
     BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Unit> units,
           List<Waypoint> plannedPath, int selectedId, String phase, List<Command> commands, Light light) {
@@ -44,13 +80,18 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         commands = List.copyOf(commands);
         firingLines = List.copyOf(firingLines);
         rangeBorders = List.copyOf(rangeBorders);
+        rangeLabels = List.copyOf(rangeLabels);
+        markers = List.copyOf(markers);
     }
 
     /** Absolute endpoint levels and displayed attack modes, copied from the existing visible attack sprites. */
     record FiringLine(Waypoint source, Waypoint target, int rgb, boolean indirect) { }
 
     /** The weapon handler already determines these edges, brackets and colours. No range rules live in the renderer. */
-    record RangeBorder(Coords coords, int edges, int rgb) { }
+    record RangeBorder(Coords coords, int edges, int rgb, String label) { }
+
+    /** Flat lettering at positions chosen by the weapon handler, independently oriented toward the camera. */
+    record RangeLabel(Coords coords, int rgb, String label) { }
 
     public Tile tile(Coords coords) {
         return coords.getX() < 0 || coords.getY() < 0 || coords.getX() >= width || coords.getY() >= height
@@ -71,9 +112,9 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
     }
 
-    enum FeatureKind { PROP, BUILDING, TREE }
+    enum FeatureKind { PROP, BUILDING, TREE, LIMB, SCATTER }
 
-    /** Shared authored model, placement in tile pixels, and height/type copied from game terrain. */
+    /** Authored model or scatter shape, placement in tile pixels, and height in elevation levels. */
     record Feature(String asset, float x, float y, float rotation, float scale, float height, float elevation,
           FeatureKind kind) {
         Feature(String asset, float x, float y, float rotation, float scale, float height, float elevation) {
@@ -82,8 +123,19 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
     }
 
     /** Water depth -1 means dry. Ground and decals are independent from solid feature geometry. */
-    record Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground, Pixels decals,
+    record Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
+          Pixels normals, Pixels decals, Pixels decalsWithoutLimbs,
           Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
+        Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
+              Pixels normals, Pixels decals, Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
+            this(coords, elevation, waterDepth, frozen, roadExits, surface, ground, normals, decals, null, tactical, features, text);
+        }
+
+        Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
+              Pixels decals, Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
+            this(coords, elevation, waterDepth, frozen, roadExits, surface, ground, null, decals, tactical, features, text);
+        }
+
         Tile {
             features = List.copyOf(features);
             text = List.copyOf(text);
@@ -96,7 +148,16 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     /** Stand/flight elevation and occupied levels come from the game, including the unit's current stance. */
     public record Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
-          Pixels annotations, int height, boolean airborne, UnitModel model, int outlineRgb) {
+          Pixels annotations, int height, boolean airborne, UnitModel model, int outlineRgb, List<Coords> footprint) {
+        public Unit {
+            footprint = List.copyOf(footprint);
+        }
+
+        Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
+              Pixels annotations, int height, boolean airborne, UnitModel model, int outlineRgb) {
+            this(id, part, name, location, image, sensorContact, annotations, height, airborne, model, outlineRgb,
+                  List.of(location.coords()));
+        }
         Unit(int id, int part, String name, Waypoint location, Pixels image, boolean sensorContact,
               Pixels annotations, int height, boolean airborne) {
             this(id, part, name, location, image, sensorContact, annotations, height, airborne, null, 0xFFC0C0C0);
@@ -113,8 +174,14 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
      * @param twist    hexsides the displayed facing (a Mek's torso) is turned clockwise from the unit's own facing
      *                 (its legs), from {@code -2} to {@code 3}; {@code 0} when the two agree
      * @param damage   the locations to show as lost or destroyed
+     * @param state    immutable live components and posture, or {@code null} for legacy review fixtures
      */
-    record UnitModel(String asset, String fallback, String variant, int figures, int twist, LocationDamage damage) {
+    record UnitModel(String asset, String fallback, String variant, int figures, int twist, LocationDamage damage,
+          UnitModelState state) {
+        UnitModel(String asset, String fallback, String variant, int figures, int twist, LocationDamage damage) {
+            this(asset, fallback, variant, figures, twist, damage, null);
+        }
+
         UnitModel(String asset, String fallback, String variant, int figures) {
             this(asset, fallback, variant, figures, 0, LocationDamage.NONE);
         }
@@ -141,7 +208,74 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
     }
 
-    public record Waypoint(Coords coords, float elevation, float facing) { }
+    /** Observed aerospace state, kept separate from the absolute height used for drawing. */
+    public enum AeroState { LANDED, ELEVATED, AIRBORNE }
+
+    public record Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
+          AeroState aeroState, List<Coords> footprint) {
+        public Waypoint {
+            footprint = List.copyOf(footprint);
+        }
+
+        public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
+              AeroState aeroState) {
+            this(coords, elevation, facing, proneCause, aeroState, List.of());
+        }
+        public Waypoint(Coords coords, float elevation, float facing) {
+            this(coords, elevation, facing, null, null);
+        }
+
+        public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause) {
+            this(coords, elevation, facing, proneCause, null);
+        }
+
+        Waypoint withProneCause(megamek.common.units.ProneCause cause) {
+            return new Waypoint(coords, elevation, facing, cause, aeroState, footprint);
+        }
+
+        Waypoint withAeroState(AeroState state) {
+            return new Waypoint(coords, elevation, facing, proneCause, state, footprint);
+        }
+
+        Waypoint withFootprint(List<Coords> occupied) {
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, occupied);
+        }
+
+        /** Captured fitting metadata does not create another movement step at a queued path boundary. */
+        boolean samePose(Waypoint other) {
+            return coords.equals(other.coords) && elevation == other.elevation && facing == other.facing
+                  && proneCause == other.proneCause && aeroState == other.aeroState;
+        }
+    }
+
+    BoardScene withUnits(List<Unit> shown) {
+        return new BoardScene(boardId, width, height, tiles, shown, plannedPath, selectedId, phase, commands, light,
+              firingLines, rangeBorders, markers, tactical, rangeLabels, fieldOfView);
+    }
+
+    /** Board artwork, terrain and authorized contacts advance with the queue; interactive tools stay live. */
+    BoardScene duringPlayback(BoardScene settled, boolean hideMovement) {
+        BoardScene world = settled == null ? this : settled;
+        var heldMarkers = settled == null ? Stream.<BoardMarker>empty() : settled.markers.stream();
+        var shownMarkers = Stream.concat(heldMarkers.filter(marker ->
+                    (!hideMovement || marker.kind() != BoardMarker.Kind.COLLAPSE_WARNING)
+                          && marker.kind() != BoardMarker.Kind.PLAYER_NOTE),
+              markers.stream().filter(marker -> marker.kind() == BoardMarker.Kind.PLAYER_NOTE)).toList();
+        return new BoardScene(boardId, width, height, world.tiles, world.units,
+              hideMovement ? List.of() : world.plannedPath, selectedId, phase, commands, light,
+              hideMovement ? List.of() : world.firingLines, hideMovement ? List.of() : world.rangeBorders, shownMarkers,
+              tactical.duringPlayback(settled == null ? BoardTactical.EMPTY : settled.tactical, hideMovement),
+              hideMovement ? List.of() : world.rangeLabels, hideMovement ? BoardFieldOfView.EMPTY : world.fieldOfView);
+    }
+
+    /** Excludes HUD commands and other live controls, which do not need a playback checkpoint. */
+    boolean samePlaybackState(BoardScene other) {
+        return other != null && boardId == other.boardId && width == other.width && height == other.height
+              && tiles.equals(other.tiles) && units.equals(other.units) && markers.equals(other.markers)
+              && tactical.equals(other.tactical) && plannedPath.equals(other.plannedPath)
+              && firingLines.equals(other.firingLines) && rangeBorders.equals(other.rangeBorders)
+              && rangeLabels.equals(other.rangeLabels) && fieldOfView.equals(other.fieldOfView);
+    }
 
     /** The action marshals back to Swing and rechecks the original button before invoking it. */
     public record Command(String id, String label, String detail, boolean enabled, boolean commit, boolean boardTool,
@@ -174,9 +308,40 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
     }
 
-    public record Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP) {
+    interface Animation {
+        int entityId();
+        int boardId();
+    }
+
+    /** An immutable, visibility-filtered checkpoint in packet order; it consumes no animation time. */
+    record SceneUpdate(BoardScene scene) implements Animation {
+        @Override
+        public int entityId() { return -1; }
+
+        @Override
+        public int boardId() { return scene.boardId(); }
+    }
+
+    record Combat(megamek.common.ResolvedAttack result, Unit attacker, Unit target, Waypoint destination) implements Animation {
+        @Override
+        public int entityId() { return attacker.id(); }
+
+        @Override
+        public int boardId() { return result.attacker().boardId(); }
+    }
+
+    public record Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP, int movementMP,
+          Unit unit) implements Animation {
         public Movement {
             path = List.copyOf(path);
+        }
+
+        public Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP, int movementMP) {
+            this(entityId, boardId, path, type, jumpMP, movementMP, null);
+        }
+
+        public Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP) {
+            this(entityId, boardId, path, type, jumpMP, 0);
         }
     }
 
@@ -189,6 +354,19 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
         public Pixels(BufferedImage image) {
             this(image.getWidth(), image.getHeight(), read(image, null));
+        }
+
+        static Pixels copy(Image source) {
+            ImageIcon loaded = new ImageIcon(source);
+            BufferedImage copy = new BufferedImage(Math.max(1, loaded.getIconWidth()), Math.max(1, loaded.getIconHeight()),
+                  BufferedImage.TYPE_INT_ARGB);
+            var graphics = copy.createGraphics();
+            try {
+                graphics.drawImage(loaded.getImage(), 0, 0, null);
+            } finally {
+                graphics.dispose();
+            }
+            return new Pixels(copy);
         }
 
         private static int[] read(BufferedImage image, int[] target) {
@@ -282,7 +460,9 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
             Set<Pixels> used = new HashSet<>();
             for (Tile tile : tiles) {
                 used.add(tile.ground());
+                used.add(tile.normals());
                 used.add(tile.decals());
+                used.add(tile.decalsWithoutLimbs());
                 used.add(tile.tactical());
             }
             images.keySet().retainAll(used);

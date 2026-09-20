@@ -427,6 +427,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean done = false;
 
     protected boolean prone = false;
+    private ProneCause proneCause = ProneCause.NONE;
     protected boolean hullDown = false;
     protected boolean climbing = false;
     protected boolean dangling = false;
@@ -2252,7 +2253,25 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void setProne(boolean prone) {
-        this.prone = prone;
+        if (prone) {
+            setProne(isProne() ? getProneCause() : ProneCause.UNKNOWN);
+        } else {
+            setProne(ProneCause.NONE);
+        }
+    }
+
+    /** Older saved/replicated entities have no cause field; never infer an unrecorded fall or player order. */
+    public ProneCause getProneCause() {
+        if (!prone) {
+            return ProneCause.NONE;
+        }
+        return ((proneCause == null) || (proneCause == ProneCause.NONE)) ? ProneCause.UNKNOWN : proneCause;
+    }
+
+    /** Records a resolved posture transition. A forced fall can replace an earlier deliberate prone posture. */
+    public void setProne(ProneCause cause) {
+        proneCause = Objects.requireNonNull(cause);
+        prone = cause != ProneCause.NONE;
         if (prone) {
             hullDown = false;
         }
@@ -2265,7 +2284,7 @@ public abstract class Entity extends TurnOrdered
     public void setHullDown(boolean down) {
         hullDown = down;
         if (hullDown) {
-            prone = false;
+            setProne(false);
         }
     }
 

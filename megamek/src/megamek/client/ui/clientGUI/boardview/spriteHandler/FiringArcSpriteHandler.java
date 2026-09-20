@@ -74,7 +74,6 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  */
 public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IPreferenceChangeListener {
 
-    private static final String[] rangeTexts = { "min", "S", "M", "L", "E" };
 
     private final Game game;
     private final ClientGUI clientGUI;
@@ -317,8 +316,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                     TextMarkerSprite tS =
                           new TextMarkerSprite(clientGUI.getBoardView(firingEntity),
                                 mark,
-                                rangeTexts[bracket],
-                                FieldOfFireSprite.getFieldOfFireColor(bracket));
+                                bracket);
                     currentSprites.add(tS);
                     if (bracket == 0) {
                         numMinMarkers++;

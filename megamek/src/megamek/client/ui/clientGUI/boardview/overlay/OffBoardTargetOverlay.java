@@ -32,12 +32,14 @@
  */
 package megamek.client.ui.clientGUI.boardview.overlay;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +52,7 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
 import megamek.common.HexTarget;
 import megamek.common.OffBoardDirection;
@@ -80,6 +83,7 @@ public class OffBoardTargetOverlay implements IDisplayable {
     private final Map<OffBoardDirection, Rectangle> buttons = new HashMap<>();
     private TargetingPhaseDisplay targetingPhaseDisplay;
     private final Image offBoardTargetImage;
+    private BufferedImage buttonImage;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -244,67 +248,45 @@ public class OffBoardTargetOverlay implements IDisplayable {
 
     @Override
     public void draw(Graphics graph, Rectangle rect) {
-        if (!shouldBeVisible()) {
-            return;
+        for (OverlayImage layer : captureLayers((Graphics2D) graph, rect)) {
+            layer.draw((Graphics2D) graph, System.nanoTime());
         }
+    }
 
-        Rectangle button;
+    @Override
+    public List<OverlayImage> captureLayers(Graphics2D graph, Rectangle rect) {
         buttons.clear();
-
-        Color push = graph.getColor();
-
-        graph.setColor(GUIP.getUnitValidColor());
-
-        // each of these draws the relevant icon and stores the coordinates for
-        // retrieval when checking hit box
-        // pre-store the selected artillery weapon as it carries out a bunch of
-        // computations
-        Mounted<?> selectedArtilleryWeapon = clientGUI.getBoardView().getSelectedArtilleryWeapon();
-
-        // draw top icon, if necessary
-        if (showDirectionalElement(OffBoardDirection.NORTH, selectedArtilleryWeapon)) {
-            button = generateRectangle(OffBoardDirection.NORTH, rect);
-            if (button != null) {
-                buttons.put(OffBoardDirection.NORTH, button);
-                graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                      clientGUI.getBoardView().getPanel());
+        if (!shouldBeVisible()) {
+            return List.of();
+        }
+        var transform = graph.getTransform();
+        int width = Math.max(1, (int) Math.ceil(WIDE_EDGE_SIZE
+              * Math.hypot(transform.getScaleX(), transform.getShearY())));
+        int height = Math.max(1, (int) Math.ceil(NARROW_EDGE_SIZE
+              * Math.hypot(transform.getScaleY(), transform.getShearX())));
+        if (buttonImage == null || buttonImage.getWidth() != width || buttonImage.getHeight() != height) {
+            buttonImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D painter = buttonImage.createGraphics();
+            try {
+                UIUtil.setHighQualityRendering(painter);
+                painter.drawImage(offBoardTargetImage, 0, 0, width, height, null);
+            } finally {
+                painter.dispose();
             }
         }
-
-        // draw left icon, if necessary
-        if (showDirectionalElement(OffBoardDirection.WEST, selectedArtilleryWeapon)) {
-            button = generateRectangle(OffBoardDirection.WEST, rect);
-            if (button != null) {
-                buttons.put(OffBoardDirection.WEST, button);
-                graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                      clientGUI.getBoardView().getPanel());
+        Mounted<?> weapon = clientGUI.getBoardView().getSelectedArtilleryWeapon();
+        List<OverlayImage> result = new ArrayList<>();
+        for (OffBoardDirection direction : OffBoardDirection.values()) {
+            if (direction == OffBoardDirection.NONE || !showDirectionalElement(direction, weapon)) {
+                continue;
             }
+            Rectangle button = generateRectangle(direction, rect);
+            buttons.put(direction, button);
+            Point2D location = transform.transform(button.getLocation(), null);
+            result.add(new OverlayImage(buttonImage, (int) Math.round(location.getX()),
+                  (int) Math.round(location.getY()), OverlayImage.Fade.OPAQUE));
         }
-
-        // draw bottom icon, if necessary
-        if (showDirectionalElement(OffBoardDirection.SOUTH, selectedArtilleryWeapon)) {
-            button = generateRectangle(OffBoardDirection.SOUTH, rect);
-            if (button != null) {
-                buttons.put(OffBoardDirection.SOUTH, button);
-                graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                      clientGUI.getBoardView().getPanel());
-
-            }
-        }
-
-        // draw right icon, if necessary. This one is hairy because of the unit overview
-        // pane
-        if (showDirectionalElement(OffBoardDirection.EAST, selectedArtilleryWeapon)) {
-            button = generateRectangle(OffBoardDirection.EAST, rect);
-            if (button != null) {
-                buttons.put(OffBoardDirection.EAST, button);
-                graph.drawImage(offBoardTargetImage, button.x, button.y, button.width, button.height,
-                      clientGUI.getBoardView().getPanel());
-            }
-        }
-
-        // be nice, leave the color as we found it
-        graph.setColor(push);
+        return List.copyOf(result);
     }
 
     /**

@@ -117,10 +117,9 @@ final class GpuWeatherParticles implements Disposable {
         if (tiles != scene.tiles() || level != BoardGeometry.LEVEL) {
             tiles = scene.tiles();
             level = BoardGeometry.LEVEL;
-            bottom = Float.POSITIVE_INFINITY;
+            bottom = BoardGeometry.weatherBase(scene);
             top = Float.NEGATIVE_INFINITY;
             for (BoardScene.Tile tile : tiles) {
-                bottom = Math.min(bottom, BoardGeometry.groundZ(tile));
                 float roof = tile.elevation();
                 for (BoardScene.Feature feature : tile.features()) {
                     roof = Math.max(roof, tile.elevation() + feature.elevation() + feature.height());

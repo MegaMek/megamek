@@ -15,6 +15,31 @@ import org.junit.jupiter.api.Test;
 
 class BoardFeaturesTest {
     @Test
+    void collectableLimbCountsControlStableGroundProps() {
+        Hex hex = new Hex(0);
+        Coords coords = new Coords(2, 3);
+        hex.addTerrain(new Terrain(Terrains.ARMS, 2));
+        hex.addTerrain(new Terrain(Terrains.LEGS, 1));
+        var before = BoardFeatures.capture(hex, coords, Map.of()).stream()
+              .filter(feature -> feature.kind() == BoardScene.FeatureKind.LIMB).toList();
+        assertEquals(3, before.size());
+        assertTrue(before.stream().allMatch(feature -> feature.kind() == BoardScene.FeatureKind.LIMB
+              && feature.asset().equals("Limb Club")));
+        assertEquals(3, before.stream().map(BoardScene.Feature::rotation).distinct().count());
+        assertEquals(before, BoardFeatures.capture(hex, coords, Map.of()).stream()
+              .filter(feature -> feature.kind() == BoardScene.FeatureKind.LIMB).toList());
+        hex.addTerrain(new Terrain(Terrains.ARMS, 1));
+        var after = BoardFeatures.capture(hex, coords, Map.of()).stream()
+              .filter(feature -> feature.kind() == BoardScene.FeatureKind.LIMB).toList();
+        assertEquals(2, after.size());
+        assertTrue(before.containsAll(after), "Picking up one limb must not move the others");
+        hex.removeTerrain(Terrains.ARMS);
+        hex.removeTerrain(Terrains.LEGS);
+        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream()
+              .noneMatch(feature -> feature.kind() == BoardScene.FeatureKind.LIMB));
+    }
+
+    @Test
     void snowTerrainAndThemeSelectSnowAssetsWhileJungleUsesPalms() {
         Hex hex = new Hex(0);
         hex.addTerrain(new Terrain(Terrains.JUNGLE, 2));
@@ -55,22 +80,24 @@ class BoardFeaturesTest {
     }
 
     @Test
-    void woodlandMixesSilhouettesAndRubbleStaysBelowAThirdOfALevel() {
+    void woodlandMixesSilhouettesWhileRubbleAndRoughAddOnlySmallScatter() {
         Hex hex = new Hex(0);
         Coords coords = new Coords(3, 2);
         hex.addTerrain(new Terrain(Terrains.WOODS, 2));
         hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
         assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().map(BoardScene.Feature::asset).distinct().count() >= 5);
-        hex.removeAllTerrains();
-        hex.addTerrain(new Terrain(Terrains.RUBBLE, 4));
-        var rubble = BoardFeatures.capture(hex, coords, Map.of());
-        assertEquals(8, rubble.size());
-        assertTrue(rubble.stream().allMatch(feature -> feature.asset().startsWith("rock-")
-              && feature.height() > 0 && feature.height() < 1f / 3 && feature.elevation() == 0));
-        assertEquals(3, rubble.stream().map(BoardScene.Feature::asset).distinct().count());
-        assertEquals(rubble, BoardFeatures.capture(hex, coords, Map.of()));
-        hex.setTheme("snow");
-        assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream().allMatch(feature -> feature.asset().endsWith("-snow")));
+        for (String theme : new String[] { "", "snow", "desert" }) {
+            for (int terrain : new int[] { Terrains.RUBBLE, Terrains.ROUGH }) {
+                hex.removeAllTerrains();
+                hex.setTheme(theme);
+                hex.addTerrain(new Terrain(terrain, 4));
+                assertTrue(BoardFeatures.capture(hex, coords, Map.of()).stream()
+                      .allMatch(feature -> feature.kind() == BoardScene.FeatureKind.SCATTER));
+                hex.addTerrain(new Terrain(Terrains.WOODS, 1));
+                assertEquals(3, BoardFeatures.capture(hex, coords, Map.of()).size(),
+                      "Cosmetic scatter must preserve coexisting woodland");
+            }
+        }
     }
 
     @Test

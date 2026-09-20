@@ -385,26 +385,12 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         // now collect a hash of all the same weapons in each location by id
         Map<String, Integer> groups = new HashMap<>();
-        for (Entity entity : getActiveSubEntities()) {
-            IAero fighter = (IAero) entity;
-            if (fighter.getFCSHits() > 2) {
-                // can't fire with no more FCS
-                continue;
-            }
-            for (Mounted<?> mounted : entity.getWeaponGroupList()) {
-                if (mounted.isHit() || mounted.isDestroyed()) {
-                    continue;
-                }
-                int loc = mounted.getLocation();
-                if (entity instanceof LandAirMek) {
-                    loc = LandAirMek.getAeroLocation(loc);
-                }
-                String key = mounted.getType().getInternalName() + ":" + loc;
-                if (null == groups.get(key)) {
-                    groups.put(key, mounted.getNWeapons());
-                } else if (!mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
-                    groups.put(key, groups.get(key) + mounted.getNWeapons());
-                }
+        for (WeaponMounted mounted : weaponGroupContributors()) {
+            String key = mounted.getType().getInternalName() + ":" + weaponGroupLocation(mounted);
+            if (null == groups.get(key)) {
+                groups.put(key, mounted.getNWeapons());
+            } else if (!mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
+                groups.put(key, groups.get(key) + mounted.getNWeapons());
             }
         }
         // now we just need to traverse the hash and either update our existing
@@ -437,6 +423,27 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
         // make sure to set all the UACs and RACs to rapid fire
         setRapidFire();
+    }
+
+    private List<WeaponMounted> weaponGroupContributors() {
+        return getActiveSubEntities().stream().filter(entity -> ((IAero) entity).getFCSHits() <= 2)
+              .flatMap(entity -> entity.getWeaponGroupList().stream())
+              .filter(mount -> !mount.isHit() && !mount.isDestroyed()).toList();
+    }
+
+    @Override
+    public int weaponGroupLocation(Mounted<?> mounted) {
+        return mounted.getEntity() instanceof LandAirMek ? LandAirMek.getAeroLocation(mounted.getLocation()) : mounted.getLocation();
+    }
+
+    @Override
+    public List<WeaponMounted> getWeaponGroupMembers(WeaponMounted group) {
+        if (group.getNWeapons() <= 0) {
+            return List.of();
+        }
+        return weaponGroupContributors().stream().filter(mount -> mount.getType().equals(group.getType())
+                    && weaponGroupLocation(mount) == group.getLocation())
+              .flatMap(mount -> ((IAero) mount.getEntity()).getWeaponGroupMembers(mount).stream()).toList();
     }
 
     public void updateSkills() {

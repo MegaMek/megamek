@@ -25,9 +25,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-/** Occluded parts of already-visible unit instances. Owns its GL resources; never changes scene materials or depth. */
+/** Occluded parts of visible units and opted-in markers. Owns GL resources; never changes scene materials or depth. */
 final class GpuUnitVisibility implements Disposable {
-    static final float DEFAULT_INTENSITY = 0.75f;
+    static final float DEFAULT_OUTLINE_INTENSITY = 0.55f;
     private final ShaderProgram shader;
     private final Mesh quad;
     private final ModelBatch depthBatch;

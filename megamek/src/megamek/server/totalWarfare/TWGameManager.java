@@ -12228,6 +12228,9 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        sendAttackAnimation(ae, target, megamek.common.ResolvedAttack.Kind.PUNCH, -1, armLoc,
+              rollValue >= toHit.getValue());
+
         // do we hit?
         if (rollValue < toHit.getValue()) {
             // nope
@@ -12529,6 +12532,14 @@ public class TWGameManager extends AbstractGameManager {
                 addReport(r);
             }
         }
+
+        boolean leftKick = kaa.getLeg() == KickAttackAction.LEFT || kaa.getLeg() == KickAttackAction.LEFT_MULE;
+        boolean frontKick = ae instanceof QuadMek && kaa.getLeg() != KickAttackAction.LEFT_MULE
+              && kaa.getLeg() != KickAttackAction.RIGHT_MULE;
+        int kickingLocation = frontKick ? (leftKick ? Mek.LOC_LEFT_ARM : Mek.LOC_RIGHT_ARM)
+              : (leftKick ? Mek.LOC_LEFT_LEG : Mek.LOC_RIGHT_LEG);
+        sendAttackAnimation(ae, target, megamek.common.ResolvedAttack.Kind.KICK, -1, kickingLocation,
+              rollValue >= toHit.getValue());
 
         // do we hit?
         if (rollValue < toHit.getValue()) {
@@ -14243,6 +14254,9 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        sendAttackAnimation(ae, target, megamek.common.ResolvedAttack.Kind.CLUB, ae.getEquipmentNum(caa.getClub()),
+              caa.getClub().getLocation(), rollValue >= toHit.getValue());
+
         // do we hit?
         if (rollValue < toHit.getValue()) {
             // miss
@@ -14604,6 +14618,9 @@ public class TWGameManager extends AbstractGameManager {
         r.newlines = 0;
         addReport(r);
 
+        sendAttackAnimation(ae, te, megamek.common.ResolvedAttack.Kind.PUSH, -1, Entity.LOC_NONE,
+              rollValue >= toHit.getValue());
+
         // check if our target has a push against us, too, and get it
         PhysicalResult targetPushResult = null;
         for (PhysicalResult tpr : physicalResults) {
@@ -14618,6 +14635,10 @@ public class TWGameManager extends AbstractGameManager {
         // both now
         if ((targetPushResult != null) && !targetPushResult.pushBackResolved && (rollValue >= toHit.getValue())) {
             targetPushResult.pushBackResolved = true;
+            if (targetPushResult.toHit.getValue() != TargetRoll.IMPOSSIBLE) {
+                sendAttackAnimation(te, ae, megamek.common.ResolvedAttack.Kind.PUSH, -1, Entity.LOC_NONE,
+                      targetPushResult.roll.getIntValue() >= targetPushResult.toHit.getValue());
+            }
             // do they hit?
             if (targetPushResult.roll.getIntValue() >= targetPushResult.toHit.getValue()) {
                 r = new Report(4165);
@@ -24844,7 +24865,7 @@ public class TWGameManager extends AbstractGameManager {
             r = new Report(2305);
             r.subject = entity.getId();
             vPhaseReport.add(r);
-            entity.setProne(true);
+            entity.setProne(ProneCause.FORCED);
             return vPhaseReport;
         }
 
@@ -25086,7 +25107,7 @@ public class TWGameManager extends AbstractGameManager {
         // Positioning must be prior to damage for proper handling of breaches
         // Only Meks can fall prone.
         if (entity instanceof Mek) {
-            entity.setProne(true);
+            entity.setProne(ProneCause.FORCED);
         }
         entity.setPosition(fallPos);
         entity.setElevation(newElevation);
@@ -28296,6 +28317,34 @@ public class TWGameManager extends AbstractGameManager {
 
     void sendReport() {
         sendReport(false);
+    }
+
+    /** Publish only a confirmed shot/contact, to players who can visually see both participants at resolution. */
+    public void sendAttackAnimation(Entity attacker, Targetable target, megamek.common.ResolvedAttack.Kind kind,
+          int equipmentIndex, int limb, boolean hit) {
+        if (attacker == null || target == null || attacker.getPosition() == null || target.getPosition() == null
+              || attacker.getBoardId() != target.getBoardId()
+              || kind != megamek.common.ResolvedAttack.Kind.SHOT && !(attacker instanceof Mek)) {
+            return;
+        }
+        var equipment = equipmentIndex < 0 ? null : attacker.getEquipment(equipmentIndex);
+        var result = new megamek.common.ResolvedAttack(java.util.UUID.randomUUID(), kind,
+              new UnitLocation(attacker.getId(), attacker.getPosition(), attacker.getFacing(), attacker.getElevation(),
+                    attacker.getBoardId(), attacker.getProneCause()),
+              new UnitLocation(target.getId(), target.getPosition(), target instanceof Entity entity ? entity.getFacing() : 0,
+                    target.getElevation(), target.getBoardId()), target.getTargetType(), equipmentIndex,
+              equipment == null ? "" : equipment.getType().getInternalName(), limb, hit,
+              megamek.common.ResolvedAttack.captureMounts(attacker, equipmentIndex));
+        List<Player> recipients = new ArrayList<>(game.getPlayersList());
+        if (doBlind() || attacker.isHidden()) {
+            recipients.retainAll(whoCanSee(attacker, false, null));
+        }
+        if (target instanceof Entity entity && (doBlind() || entity.isHidden())) {
+            recipients.retainAll(whoCanSee(entity, false, null));
+        }
+        for (Player player : recipients) {
+            send(player.getId(), new Packet(PacketCommand.ENTITY_ATTACK_RESOLVED, result));
+        }
     }
 
     /**

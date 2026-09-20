@@ -39,6 +39,7 @@ import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.RoundRectangle2D;
 
+import megamek.client.ui.clientGUI.boardview.BoardMarker;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
@@ -67,6 +68,11 @@ public class BridgeRepairedSprite extends HexSprite {
      */
     public BridgeRepairedSprite(BoardView boardView, Coords loc) {
         super(boardView, loc);
+    }
+
+    @Override
+    public BoardMarker boardMarker() {
+        return bv.boardMarker(BoardMarker.Kind.BRIDGE_REPAIRED, loc, "");
     }
 
     @Override

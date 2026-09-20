@@ -50,7 +50,7 @@ import megamek.common.units.Entity;
  * Sprite and info for an aero flyover route. Does not actually use the image buffer as this can be horribly inefficient
  * for long diagonal lines.
  */
-public class FlyOverSprite extends Sprite {
+public class FlyOverSprite extends Sprite implements TacticalSprite {
 
     private Polygon flyOverPoly = null;
 
@@ -270,6 +270,12 @@ public class FlyOverSprite extends Sprite {
     @Override
     public boolean isInside(Point point) {
         return flyOverPoly.contains(point.x - bounds.x, point.y - bounds.y);
+    }
+
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        Rectangle location = getBounds();
+        drawOnto(graphics, location.x, location.y, null);
     }
 
 }

@@ -52,7 +52,7 @@ import megamek.common.units.VTOL;
 /**
  * @author Neoancient
  */
-public class VTOLAttackSprite extends Sprite {
+public class VTOLAttackSprite extends Sprite implements TacticalSprite {
     private final BoardView boardView;
     private final Entity entity;
     private List<Coords> targets;
@@ -114,4 +114,11 @@ public class VTOLAttackSprite extends Sprite {
     public Entity getEntity() {
         return entity;
     }
+    @Override
+    public void drawTactical(Graphics2D graphics) {
+        prepare();
+        Rectangle location = getBounds();
+        drawOnto(graphics, location.x, location.y, null);
+    }
+
 }

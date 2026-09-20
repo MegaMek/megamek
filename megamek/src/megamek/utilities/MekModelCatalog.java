@@ -15,13 +15,11 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import megamek.client.ui.tileset.MekTileset;
+import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.client.ui.tileset.UnitModelKey;
 import megamek.common.Configuration;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.units.Mek;
 
@@ -103,65 +101,22 @@ public final class MekModelCatalog {
 
     /** Returns the abbreviations of the arms that have the given actuator, left arm first. */
     static List<String> armsWith(Mek mek, int actuator) {
-        List<String> arms = new ArrayList<>();
-        for (int location : new int[] { Mek.LOC_LEFT_ARM, Mek.LOC_RIGHT_ARM }) {
-            if (mek.hasSystem(actuator, location)) {
-                arms.add(mek.getLocationAbbr(location));
-            }
-        }
-        return arms;
+        return UnitModelEquipment.armsWith(mek, actuator);
     }
 
     static List<Mount> mounts(Mek mek) {
         return mek.getEquipment().stream().map(mounted -> {
             EquipmentType type = mounted.getType();
-            return new Mount(mounted.getEquipmentNum(), type.getName(), type.getInternalName(),
-                  location(mek, mounted.getLocation()), location(mek, mounted.getSecondLocation()),
-                  mounted.isRearMounted(), mounted.isOmniPodMounted(), family(mounted), mounted.getTonnage(),
+            var visual = UnitModelEquipment.describe(mek, mounted);
+            return new Mount(visual.index(), type.getName(), visual.internalName(),
+                  visual.location(), visual.secondLocation(),
+                  visual.rear(), visual.omniPod(), visual.family(), mounted.getTonnage(),
                   type instanceof WeaponType weapon ? weapon.getRackSize() : 0);
         }).toList();
     }
 
-    private static String location(Mek mek, int location) {
-        return location < 0 ? "" : mek.getLocationAbbr(location);
-    }
-
-    /** Broad art families only. Exact dimensions and placement belong to the authored chassis recipe. */
-    private static String family(Mounted<?> mounted) {
-        EquipmentType type = mounted.getType();
-        if (type instanceof WeaponType weapon) {
-            if (weapon.hasFlag(WeaponType.F_MGA)) {
-                return "internal";
-            } else if (weapon.hasFlag(WeaponType.F_MISSILE)) {
-                return "missile";
-            } else if (weapon.hasFlag(WeaponType.F_PPC)) {
-                return "ppc";
-            } else if (weapon.hasFlag(WeaponType.F_LASER)) {
-                return "laser";
-            } else if (weapon.hasFlag(WeaponType.F_MG)) {
-                return "machine-gun";
-            } else if (weapon.hasFlag(WeaponType.F_BALLISTIC)) {
-                return "ballistic";
-            } else if (weapon.hasFlag(WeaponType.F_FLAMER)) {
-                return "flamer";
-            } else if (weapon.hasFlag(WeaponType.F_C3M) || weapon.hasFlag(WeaponType.F_C3MBS)) {
-                return "internal";
-            } else if (weapon.hasFlag(WeaponType.F_TAG)) {
-                return "sensor";
-            } else if (weapon.hasFlag(WeaponType.F_PLASMA) || weapon.hasFlag(WeaponType.F_ENERGY)) {
-                return "energy";
-            }
-            return "unmapped-weapon";
-        }
-        if (type instanceof MiscType misc) {
-            if (misc.hasFlag(MiscType.F_JUMP_JET)) {
-                return "jump-jet";
-            } else if (misc.hasFlag(MiscType.F_CLUB) && misc.hasFlag(MiscTypeFlag.S_HATCHET)) {
-                return "hatchet";
-            } else if (misc.hasFlag(MiscType.F_CLUB)) {
-                return "unmapped-melee";
-            }
-        }
-        return "internal";
+    /** Shared with live-unit capture; retained here for the legacy catalog contract. */
+    static String family(EquipmentType type) {
+        return UnitModelEquipment.family(type);
     }
 }

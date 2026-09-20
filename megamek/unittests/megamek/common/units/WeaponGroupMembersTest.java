@@ -52,10 +52,11 @@ class WeaponGroupMembersTest {
         var laser = squadron.getWeaponGroupList().stream()
               .filter(mount -> mount.getType() == EquipmentType.get("ISMediumLaser")).findFirst().orElseThrow();
         var captured = ResolvedAttack.captureMounts(squadron, laser.getEquipmentNum());
-        assertEquals(List.of(new ResolvedAttack.Mount(11, 0), new ResolvedAttack.Mount(12, 1)), captured);
+        assertEquals(List.of("11:0", "12:1"), captured.stream().map(mount -> mount.entityId() + ":" + mount.equipmentIndex()).toList());
         ((Aero) game.getEntity(11)).setFCSHits(3);
         squadron.updateWeaponGroups();
-        assertEquals(List.of(new ResolvedAttack.Mount(12, 1)), ResolvedAttack.captureMounts(squadron, laser.getEquipmentNum()));
+        assertEquals(List.of("12:1"), ResolvedAttack.captureMounts(squadron, laser.getEquipmentNum()).stream()
+              .map(mount -> mount.entityId() + ":" + mount.equipmentIndex()).toList());
         assertEquals(2, captured.size(), "Later damage must not change an already queued shot");
         laser.setNWeapons(0);
         assertTrue(ResolvedAttack.captureMounts(squadron, laser.getEquipmentNum()).isEmpty());

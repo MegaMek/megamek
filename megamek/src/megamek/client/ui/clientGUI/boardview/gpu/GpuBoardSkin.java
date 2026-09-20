@@ -63,6 +63,7 @@ final class GpuBoardSkin implements Disposable {
         skin.add("small", new Label.LabelStyle(small, MUTED));
         skin.add("kicker", new Label.LabelStyle(small, ACCENT));
         skin.add("muted", new Label.LabelStyle(small, MUTED));
+        skin.add("menu", new Label.LabelStyle(small, TEXT));
 
         SkinSpecification buttons = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.PhaseDisplayButton.getComp(), false, true);
         SkinSpecification phase = SkinXMLHandler.getSkin(SkinSpecification.UIComponents.PhaseDisplay.getComp());
@@ -166,16 +167,35 @@ final class GpuBoardSkin implements Disposable {
         slider.knob.setMinWidth(14);
         slider.knob.setMinHeight(18);
         skin.add("default", slider);
+        Slider.SliderStyle menuSlider = new Slider.SliderStyle();
+        menuSlider.background = skin.newDrawable("white", Color.valueOf("2B383D"));
+        menuSlider.background.setMinHeight(2);
+        menuSlider.knobBefore = skin.newDrawable("white", Color.valueOf("687D87"));
+        menuSlider.knobBefore.setMinHeight(2);
+        menuSlider.knob = skin.newDrawable("white", Color.valueOf("9CAFB8"));
+        menuSlider.knob.setMinWidth(8);
+        menuSlider.knob.setMinHeight(12);
+        menuSlider.knobOver = skin.newDrawable("white", TEXT);
+        menuSlider.knobOver.setMinWidth(8);
+        menuSlider.knobOver.setMinHeight(12);
+        menuSlider.knobDown = menuSlider.knobOver;
+        skin.add("menu", menuSlider);
         TextTooltip.TextTooltipStyle tooltip = new TextTooltip.TextTooltipStyle(
               skin.get("small", Label.LabelStyle.class), skin.getDrawable("panel"));
         tooltip.wrapWidth = 340;
         skin.add("default", tooltip);
+        TextTooltip.TextTooltipStyle menuTooltip = new TextTooltip.TextTooltipStyle(
+              skin.get("small", Label.LabelStyle.class), skin.getDrawable("menu-panel"));
+        menuTooltip.wrapWidth = 280;
+        skin.add("menu", menuTooltip);
         for (String icon : List.of("target", "move", "group", "orders", "info", "unit", "hex", "close",
               "search", "arrow", "lock", "checkbox-off", "checkbox-on")) {
             icon(icon);
         }
         skin.add("default", new CheckBox.CheckBoxStyle(skin.getDrawable("icon-checkbox-off"),
               skin.getDrawable("icon-checkbox-on"), font, TEXT));
+        skin.add("menu", new CheckBox.CheckBoxStyle(skin.getDrawable("icon-checkbox-off"),
+              skin.getDrawable("icon-checkbox-on"), small, TEXT));
     }
 
     private static Color fontColor(SkinSpecification spec, int index, Color fallback) {

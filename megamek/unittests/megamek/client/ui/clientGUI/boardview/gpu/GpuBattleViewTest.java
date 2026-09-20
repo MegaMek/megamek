@@ -36,15 +36,15 @@ class GpuBattleViewTest {
     }
 
     @Test
-    void floatingMeeplesAreTiedToTheirHexCenter() {
+    void floatingUnitsAreTiedToTheirHexCenter() {
         BoardScene.Unit floating = unit(true);
         Vector3 center = new Vector3(10, 20, 5 * BoardGeometry.LEVEL);
         assertEquals(3 * BoardGeometry.LEVEL, GpuBattleView.tetherGround(floating, 3, center, false), 0.001f,
               "The stem ends at the center of the hex under the token");
         assertTrue(Float.isNaN(GpuBattleView.tetherGround(floating, 3, center, true)),
-              "A moving meeple is between hexes and gets no stem");
+              "A moving visual is between hexes and gets no stem");
         assertTrue(Float.isNaN(GpuBattleView.tetherGround(unit(false), 3, center, false)),
-              "A grounded meeple covers its hex and gets no stem");
+              "A grounded visual covers its hex and gets no stem");
         assertTrue(Float.isNaN(GpuBattleView.tetherGround(floating, 3,
               new Vector3(10, 20, 3 * BoardGeometry.LEVEL), false)),
               "A token at its tile surface has nothing to point at");

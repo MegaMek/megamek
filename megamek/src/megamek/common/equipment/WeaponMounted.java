@@ -185,19 +185,16 @@ public class WeaponMounted extends Mounted<WeaponType> {
         int nShots = getNumShots(getType(), curMode(), false);
         // sets number of shots for MG arrays
         if (getType().hasFlag(WeaponType.F_MGA)) {
-            nShots = 0;
-            for (WeaponMounted m : getBayWeapons()) {
-                if ((m.getLocation() == getLocation())
-                      && !m.isDestroyed()
-                      && !m.isBreached()
-                      && m.getType().hasFlag(WeaponType.F_MG)
-                      && (m.getType().getRackSize() == getType()
-                      .getRackSize())) {
-                    nShots++;
-                }
-            }
+            nShots = getMGAWeapons().size();
         }
         return nShots;
+    }
+
+    /** The physical constituents counted by the existing machine-gun-array firing rule. */
+    public java.util.List<WeaponMounted> getMGAWeapons() {
+        return getBayWeapons().stream().filter(m -> m.getLocation() == getLocation()
+              && !m.isDestroyed() && !m.isBreached() && m.getType().hasFlag(WeaponType.F_MG)
+              && m.getType().getRackSize() == getType().getRackSize()).toList();
     }
 
     @Override

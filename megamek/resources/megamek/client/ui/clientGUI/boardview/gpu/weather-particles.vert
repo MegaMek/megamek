@@ -14,6 +14,7 @@ uniform float u_clock;
 uniform float u_level;
 uniform float u_pixelSize;
 uniform float u_kind;
+uniform float u_batch;
 
 varying vec2 v_uv;
 varying float v_kind;
@@ -28,6 +29,7 @@ void main() {
 
     vec3 seed = fract(
         a_position + vec3(0.173, 0.371, 0.619) * u_kind
+            + vec3(0.457, 0.239, 0.853) * u_batch
     );
 
     vec3 center;
@@ -211,11 +213,11 @@ void main() {
             : width;
 
     if (sand) {
-        // Slightly larger grains than before.
+        // Small grains, with a filtered footprint when zoomed out.
         float grain =
             mix(
-                0.025,
-                0.040,
+                0.0225,
+                0.036,
                 fract(
                     seed.y * 19.3
                     + seed.z * 7.1
@@ -224,11 +226,10 @@ void main() {
             * u_level;
 
         // Keep sand readable even when zoomed out.
-        // Minimum projected size increased from 1.05px to 1.5px.
         width =
             max(
                 grain,
-                u_pixelSize * 1.5
+                u_pixelSize * 1.35
             );
 
         // Slightly longer wind-aligned trails
@@ -237,8 +238,8 @@ void main() {
             max(
                 width * 1.5,
                 min(
-                    u_level * 0.12,
-                    projectedLength * 0.0025
+                    u_level * 0.108,
+                    projectedLength * 0.00225
                 )
             );
 

@@ -12,9 +12,9 @@ import java.util.Set;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.MathUtils;
@@ -33,7 +33,7 @@ final class GpuUnitModels implements Disposable {
     private static final MMLogger LOGGER = MMLogger.create(GpuUnitModels.class);
     private final Path root;
     private final Map<Path, JsonValue> descriptors = new HashMap<>();
-    private final Map<Path, GpuMeeple> models = new HashMap<>();
+    private final Map<Path, GpuUnitModel> models = new HashMap<>();
     private final Map<Path, ModularAsset> modular = new HashMap<>();
     private final Map<Integer, Assembly> assemblies = new HashMap<>();
     private final Set<Path> failed = new HashSet<>();
@@ -52,7 +52,7 @@ final class GpuUnitModels implements Disposable {
     record ModularAsset(UnitModelDescriptor descriptor, Model model, int triangles) { }
 
     private record Assembly(String asset, String fallback, String variant, int figures,
-          UnitModelState.Structure structure, GpuMeeple model) {
+          UnitModelState.Structure structure, GpuUnitModel model) {
         boolean matches(BoardScene.UnitModel selection) {
             return java.util.Objects.equals(asset, selection.asset())
                   && java.util.Objects.equals(fallback, selection.fallback())
@@ -133,11 +133,18 @@ final class GpuUnitModels implements Disposable {
         }
     }
 
-    GpuMeeple get(BoardScene.UnitModel selection) {
+    GpuUnitModel get(BoardScene.UnitModel selection) {
         return get(selection, Integer.MIN_VALUE);
     }
 
-    GpuMeeple get(BoardScene.UnitModel selection, int unitId) {
+    /** Effects may use a displayed assembly, but must never rebuild a past loadout during recovery after a refit. */
+    GpuUnitModel loaded(BoardScene.UnitModel selection, int unitId) {
+        var assembly = assemblies.get(unitId);
+        return selection != null && selection.state() != null && assembly != null && assembly.matches(selection)
+              ? assembly.model() : null;
+    }
+
+    GpuUnitModel get(BoardScene.UnitModel selection, int unitId) {
         if (selection == null) {
             return null;
         }
@@ -145,7 +152,7 @@ final class GpuUnitModels implements Disposable {
         if (selection.state() != null && cached != null && cached.matches(selection)) {
             return cached.model();
         }
-        GpuMeeple model = load(selection.asset(), selection);
+        GpuUnitModel model = load(selection.asset(), selection);
         if (model == null && !java.util.Objects.equals(selection.asset(), selection.fallback())) {
             model = load(selection.fallback(), selection);
         }
@@ -159,7 +166,7 @@ final class GpuUnitModels implements Disposable {
         return model;
     }
 
-    private GpuMeeple load(String asset, BoardScene.UnitModel selection) {
+    private GpuUnitModel load(String asset, BoardScene.UnitModel selection) {
         if (asset == null) {
             return null;
         }
@@ -214,14 +221,14 @@ final class GpuUnitModels implements Disposable {
                 }
                 var data = new G3dModelLoader(new JsonReader()).loadModelData(new FileHandle(modelPath.toFile()));
                 // Schema-1 variants already contain their loadouts; their total is not a bare-body budget.
-                GpuMeeple meeple = new GpuMeeple(new Model(data), value.getString("upperBodyNode", null),
+                GpuUnitModel visual = new GpuUnitModel(new Model(data), value.getString("upperBodyNode", null),
                       UnitFamilyScale.forFamily(value.getString("family", value.getString("kind", ""))));
                 boolean isMek = "mek".equals(value.getString("kind", ""));
-                if (isMek && !meeple.turnsUpperBody()) {
+                if (isMek && !visual.turnsUpperBody()) {
                     LOGGER.debug("[GpuTwist] {} has no upper body part to turn: a torso twist turns the whole unit",
                           modelPath);
                 }
-                models.put(modelPath, meeple);
+                models.put(modelPath, visual);
             }
             return models.get(modelPath);
         } catch (RuntimeException error) {
@@ -234,7 +241,7 @@ final class GpuUnitModels implements Disposable {
         }
     }
 
-    private GpuMeeple formation(List<InfantryVisual.Part> parts, UnitFamilyScale familyScale) {
+    private GpuUnitModel formation(List<InfantryVisual.Part> parts, UnitFamilyScale familyScale) {
         // This Model owns only the assembly tree. NodeParts borrow mesh buffers from the shared asset library.
         Model assembled = new Model();
         List<UnitRig> rigs = new java.util.ArrayList<>();
@@ -265,7 +272,7 @@ final class GpuUnitModels implements Disposable {
                       + " triangles: " + bodyTriangles);
             }
             assembled.calculateTransforms();
-            return new GpuMeeple(assembled, null, true, List.of(), 1f / 54, null, rigs, familyScale);
+            return new GpuUnitModel(assembled, null, true, List.of(), 1f / 54, null, rigs, familyScale);
         } catch (RuntimeException error) {
             assembled.dispose();
             throw error;
@@ -307,7 +314,7 @@ final class GpuUnitModels implements Disposable {
             bark.dispose();
             bark = null;
         }
-        models.values().forEach(GpuMeeple::dispose);
+        models.values().forEach(GpuUnitModel::dispose);
         models.clear();
         descriptors.clear();
         failed.clear();

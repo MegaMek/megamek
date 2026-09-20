@@ -15,6 +15,29 @@ import org.junit.jupiter.api.Test;
 
 class BoardFeaturesTest {
     @Test
+    void treeCountsFollowAuthoritativeCoverReductionUntilTheHexIsClear() {
+        Coords coords = new Coords(2, 3);
+        for (int type : new int[] { Terrains.WOODS, Terrains.JUNGLE }) {
+            Hex hex = new Hex(0);
+            hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+            int previous = Integer.MAX_VALUE;
+            for (int density = 3; density >= 0; density--) {
+                if (density == 0) {
+                    hex.removeTerrain(type);
+                } else {
+                    hex.addTerrain(new Terrain(type, density));
+                }
+                var features = BoardFeatures.capture(hex, coords, Map.of());
+                int count = (int) features.stream().filter(feature -> feature.kind() == BoardScene.FeatureKind.TREE).count();
+                assertTrue(count < previous, "Each cover reduction must visibly reduce the number of trees");
+                assertEquals(density == 0, count == 0, "Trees disappear only when the hex becomes clear");
+                assertEquals(features, BoardFeatures.capture(hex, coords, Map.of()), "Unchanged cover must keep its scenery");
+                previous = count;
+            }
+        }
+    }
+
+    @Test
     void collectableLimbCountsControlStableGroundProps() {
         Hex hex = new Hex(0);
         Coords coords = new Coords(2, 3);

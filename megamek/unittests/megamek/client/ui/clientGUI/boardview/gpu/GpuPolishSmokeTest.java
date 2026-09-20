@@ -1,0 +1,209 @@
+/* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
+package megamek.client.ui.clientGUI.boardview.gpu;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
+import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.math.Vector3;
+import megamek.client.ui.tileset.MekTileset;
+import megamek.common.Configuration;
+import megamek.common.ResolvedAttack;
+import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.*;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@Tag("on-demand")
+class GpuPolishSmokeTest {
+    @Test
+    void renderDamageConversionsFallsAndFlamersWithProductionMaterials() {
+        var failure = new AtomicReference<Throwable>();
+        new Lwjgl3Application(new ApplicationAdapter() {
+            @Override public void create() {
+                var library = new GpuUnitModels();
+                var damage = new UnitDamageDisplay();
+                var camo = new GpuUnitCamouflage();
+                try (var renderer = new GpuPlaybackReview.ReviewRenderer()) {
+                    var tileset = new MekTileset(Configuration.unitImagesDir());
+                    tileset.loadFromFile("mekset.txt");
+                    var atlas = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
+                    atlas.setId(9100);
+                    damage(renderer, library, damage, camo, tileset, atlas);
+                    falls(renderer, library, tileset, atlas);
+                    conversions(renderer, library, tileset);
+                    fallbacks(renderer, library, tileset);
+                    effects(renderer, library, tileset);
+                } catch (Throwable error) { failure.set(error); }
+                finally { camo.dispose(); damage.dispose(); library.dispose(); Gdx.app.exit(); }
+            }
+        }, GpuBoardWindow.configuration(false));
+        if (failure.get() != null) { throw new AssertionError("Animation/damage native review", failure.get()); }
+    }
+
+    private static BoardScene.Unit unit(Entity entity, MekTileset tileset) {
+        return new BoardScene.Unit(entity.getId(), -1, entity.getShortNameRaw(),
+              new BoardScene.Waypoint(new Coords(2, 3), 0, 0, entity.getProneCause()).withFallSide(entity.getFallSide()),
+              null, false, null, 2, false, UnitModelSelection.capture(entity, -1, false, tileset), 0);
+    }
+
+    private static void damage(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, UnitDamageDisplay damage,
+          GpuUnitCamouflage camo, MekTileset tileset, Entity atlas) {
+        var unit = unit(atlas, tileset);
+        var model = library.get(unit.model(), unit.id());
+        for (int stage = -1; stage < UnitDamageDisplay.Stage.values().length; stage++) {
+            var instance = new ModelInstance(model.instance.model);
+            camo.apply(instance, model.instance, unit.model().state().appearance());
+            String name = stage < 0 ? "intact" : UnitDamageDisplay.Stage.values()[stage].file;
+            if (stage >= 0) {
+                var level = UnitDamageDisplay.Stage.values()[stage];
+                var snapshot = new BoardScene.LocationDamage(Set.of(), Set.of(), Map.of(stage < 3 ? "LT" : "*", level));
+                damage.applyTexture(instance, snapshot);
+                assertFalse(UnitDamageDisplay.locationParts(model.instance, "LT").getFirst().material.has(UnitDamageDisplay.Overlay.TYPE));
+                assertTrue(UnitDamageDisplay.locationParts(instance, "LT").getFirst().material.has(UnitDamageDisplay.Overlay.TYPE));
+                if (stage < 3) { assertFalse(UnitDamageDisplay.locationParts(instance, "RT").getFirst().material.has(UnitDamageDisplay.Overlay.TYPE)); }
+            }
+            var origin = BoardGeometry.center(unit.location().coords(), 0);
+            model.place(instance, renderer.camera, origin, 180, unit);
+            renderer.frame(List.of(instance), origin, null, "polish-damage-" + name, 0);
+        }
+    }
+
+    private static void falls(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset, Entity atlas) {
+        var unit = unit(atlas, tileset);
+        var model = library.get(unit.model(), unit.id());
+        var origin = BoardGeometry.center(unit.location().coords(), 0);
+        for (FallSide side : FallSide.values()) {
+            var start = unit.location();
+            var down = start.withProneCause(ProneCause.FORCED).withFallSide(side);
+            var motion = new UnitMotion(start);
+            motion.append(List.of(start, down, start), EntityMovementType.MOVE_WALK, 0);
+            var animator = new UnitAnimator();
+            var instance = new ModelInstance(model.instance.model);
+            Vector3 center = null;
+            for (int frame = 0; frame <= 64; frame++) {
+                motion.advance(frame == 0 ? 0 : UnitMotion.POSTURE_SECONDS / 32, 1);
+                animator.apply(model, instance, unit, motion.sample(), 0, (float) UnitMotion.POSTURE_SECONDS / 32, false, 0);
+                model.place(instance, renderer.camera, motion.position(), motion.facing(), unit);
+                var bounds = UnitBounds.world(instance);
+                assertEquals(.5f, bounds.min.z, .02f);
+                var current = bounds.getCenter(new Vector3());
+                if (center == null) { center = current.cpy(); }
+                assertTrue(Math.hypot(current.x - center.x, current.y - center.y) < 1, "Fall stays centered in its hex");
+                if (frame % 2 == 0) { renderer.frame(List.of(instance), origin, null, "polish-fall-" + side, frame); }
+            }
+        }
+    }
+
+    private static void conversions(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset) {
+        for (Mek entity : List.of(new QuadVee(), new LandAirMek(0, 0, LandAirMek.LAM_STANDARD))) {
+            entity.setId(9120);
+            entity.setWeight(50);
+            for (int loc = 0; loc < entity.locations(); loc++) { entity.initializeInternal(10, loc); }
+            var before = unit(entity, tileset);
+            for (int mode : entity instanceof QuadVee ? new int[] { 1, 0 } : new int[] { 1, 2, 1, 0 }) {
+                entity.setConversionMode(mode);
+                var after = unit(entity, tileset);
+                var conversion = new UnitConversion(new BoardScene.Conversion(0, before, after));
+                if (entity instanceof QuadVee) {
+                    assertSame(library.get(before.model(), entity.getId()), library.get(after.model(), entity.getId()),
+                          "QuadVee conversion must reuse the same assembly and buffers");
+                }
+                var animator = new UnitAnimator();
+                for (int frame = 0; frame <= 32; frame++) {
+                    conversion.seconds = UnitConversion.DURATION_SECONDS * frame / 32;
+                    var shown = conversion.displayed();
+                    var model = library.get(shown.model(), shown.id());
+                    assertNotNull(model);
+                    var instance = new ModelInstance(model.instance.model);
+                    animator.apply(model, instance, shown, UnitMotion.Sample.STILL, 0, 0, true, 0);
+                    animator.conversion(conversion, shown);
+                    var origin = BoardGeometry.center(shown.location().coords(), 0);
+                    model.place(instance, renderer.camera, origin, 180, shown);
+                    renderer.frame(List.of(instance), origin, null,
+                          "polish-conversion-" + entity.getClass().getSimpleName() + "-" + UnitConversion.form(before).mode() + "-" + mode, frame);
+                }
+                before = after;
+            }
+        }
+    }
+
+    private static void effects(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset) throws Exception {
+        for (String weapon : List.of("Flamer", "Heavy Flamer", "ISMediumLaser", "LRM 20")) {
+            var atlas = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
+            atlas.setId(9100);
+            var mount = atlas.addEquipment(EquipmentType.get(weapon), Mek.LOC_LEFT_ARM);
+            var unit = unit(atlas, tileset);
+            var model = library.get(unit.model(), unit.id());
+            var target = new BoardScene.Unit(9199, -1, "Target", new BoardScene.Waypoint(new Coords(2, 1), 1, 3),
+                  null, false, null, 2, false, unit.model(), 0);
+            var a = new ModelInstance(model.instance.model);
+            var b = new ModelInstance(model.instance.model);
+            var origin = BoardGeometry.center(unit.location().coords(), 0);
+            model.place(b, renderer.camera, BoardGeometry.center(target.location().coords(), 1), 180, target);
+            for (boolean hit : List.of(false, true)) {
+                var event = new ResolvedAttack(new UUID(4, 301), ResolvedAttack.Kind.SHOT,
+                      new UnitLocation(unit.id(), unit.location().coords(), 0, 0, 0),
+                      new UnitLocation(target.id(), target.location().coords(), 3, 0, 0), Targetable.TYPE_ENTITY,
+                      mount.getEquipmentNum(), weapon, Mek.LOC_LEFT_ARM, hit,
+                      List.of(new ResolvedAttack.Mount(unit.id(), mount.getEquipmentNum())), ResolvedAttack.Shot.capture(mount));
+                var attack = new UnitAttack(new BoardScene.Combat(event, unit, target, target.location()));
+                var scene = GpuFamilyMotionReview.ramp();
+                var terrain = GpuFamilyMotionReview.terrain(scene);
+                attack.landscape = ray -> BoardGeometry.hit(scene, ray);
+                var effects = new GpuAttackEffects();
+                var animator = new UnitAnimator();
+                try {
+                    for (int frame = 0; frame <= 32; frame++) {
+                        attack.seconds = attack.duration * frame / 32;
+                        animator.apply(model, a, unit, UnitMotion.Sample.STILL, 0, 0, true, 0);
+                        animator.attack(model, unit, attack);
+                        model.place(a, renderer.camera, origin, 0, unit);
+                        animator.aim(model, unit, attack, attack.endpoint(b, origin, new Vector3()), b);
+                        effects.update(attack, library, Map.of(unit.id() + ":-1", a, target.id() + ":-1", b));
+                        renderer.frame(List.of(terrain, a, b), origin.cpy().lerp(BoardGeometry.center(target.location().coords(), 1), .5f), effects,
+                              "polish-shot-" + weapon.replace(' ', '-') + "-" + hit, frame);
+                    }
+                } finally { effects.dispose(); terrain.model.dispose(); }
+            }
+        }
+    }
+
+    private static void fallbacks(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset) {
+        for (Mek entity : List.of(new BipedMek(), new TripodMek(), new QuadMek())) {
+            entity.setId(9160);
+            for (int loc = 0; loc < entity.locations(); loc++) { entity.initializeInternal(10, loc); }
+            float previousHeight = 0, previousWidth = 0;
+            var paths = new java.util.HashSet<String>();
+            for (int weight : new int[] { 20, 50, 70, 100, 150 }) {
+                entity.setWeight(weight);
+                var unit = unit(entity, tileset);
+                assertTrue(paths.add(unit.model().asset()), "Each weight class must select a distinct authored body");
+                var model = library.get(unit.model(), entity.getId());
+                assertNotNull(model, unit.model().asset());
+                assertEquals(new Vector3(1, 1, 1), model.instance.getNode("root").scale,
+                      "Authored fallbacks must not be resized by a second runtime weight multiplier");
+                assertEquals(UnitFamilyScale.MEK, UnitFamilyScale.forFamily(model.rigs().getFirst().family()));
+                var dimensions = UnitBounds.world(model.instance).getDimensions(new Vector3());
+                assertTrue(dimensions.z > previousHeight && dimensions.x > previousWidth);
+                previousHeight = dimensions.z;
+                previousWidth = dimensions.x;
+                var origin = BoardGeometry.center(unit.location().coords(), 0);
+                var instance = new ModelInstance(model.instance.model);
+                model.place(instance, renderer.camera, origin, 180, unit);
+                renderer.frame(List.of(instance), origin, null,
+                      "polish-fallback-" + model.rigs().getFirst().type() + "-" + weight, 0);
+            }
+        }
+    }
+}

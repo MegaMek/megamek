@@ -305,6 +305,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected int calcAttackValue() {
+        beginFiringMounts();
 
         double av = 0;
         double counterAV = calcCounterAV();
@@ -364,6 +365,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 armor = armor + weaponArmor;
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
+                    recordFiringMount(bayW);
                     int shots = bayW.getCurrentShots();
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo

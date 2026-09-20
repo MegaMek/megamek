@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.JsonValue;
 final class SquadronVisual {
     private SquadronVisual() { }
 
-    static GpuMeeple assemble(GpuUnitModels library, JsonValue descriptor, UnitModelState.Structure structure) {
+    static GpuUnitModel assemble(GpuUnitModels library, JsonValue descriptor, UnitModelState.Structure structure) {
         var members = structure.bodyForm().fighters();
         var body = library.modular(descriptor.getString("body"));
         if (body == null || body.triangles() * members.size() > UnitModelDescriptor.TRIANGLE_LIMIT) {
@@ -52,7 +52,7 @@ final class SquadronVisual {
                 }
             }
             assembled.calculateTransforms();
-            return new GpuMeeple(assembled, null, true, bindings, 1f / 27, null, rigs,
+            return new GpuUnitModel(assembled, null, true, bindings, 1f / 27, null, rigs,
                   UnitFamilyScale.forFamily(descriptor.getString("family")));
         } catch (RuntimeException error) {
             assembled.dispose();

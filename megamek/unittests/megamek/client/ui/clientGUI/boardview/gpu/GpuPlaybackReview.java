@@ -141,7 +141,7 @@ final class GpuPlaybackReview {
         }
     }
 
-    private static void groupJumpFrames(ReviewRenderer renderer, GpuMeeple model, BoardScene.Unit unit) {
+    private static void groupJumpFrames(ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit) {
         var start = new BoardScene.Waypoint(new Coords(2, 3), 0, 0);
         var motion = new UnitMotion(start);
         motion.append(List.of(start, unit.location()), EntityMovementType.MOVE_JUMP, 2, false, 2, 6);
@@ -200,7 +200,7 @@ final class GpuPlaybackReview {
         }
     }
 
-    private static void measureVehicles(GpuMeeple model, BoardScene.Unit unit) {
+    private static void measureVehicles(GpuUnitModel model, BoardScene.Unit unit) {
         var instance = new ModelInstance(model.instance.model);
         var animator = new UnitAnimator();
         var camera = new OrthographicCamera();
@@ -261,7 +261,7 @@ final class GpuPlaybackReview {
               null, false, null, 3, false, model, 0);
     }
 
-    private static void measureFeet(GpuMeeple model, BoardScene.Unit unit) {
+    private static void measureFeet(GpuUnitModel model, BoardScene.Unit unit) {
         for (var rig : model.rigs()) {
             var feet = rig.joints().entrySet().stream().filter(joint -> joint.getKey().endsWith("Foot"))
                   .map(Map.Entry::getValue).toList();
@@ -305,7 +305,7 @@ final class GpuPlaybackReview {
         }
     }
 
-    private static void movementFrames(ReviewRenderer renderer, GpuMeeple model, BoardScene.Unit unit, String name, boolean transports) {
+    private static void movementFrames(ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit, String name, boolean transports) {
         var start = new BoardScene.Waypoint(new Coords(2, 5), 0, 0);
         var motion = new UnitMotion(start);
         motion.append(List.of(start, unit.location()), EntityMovementType.MOVE_WALK, 0, transports, 4);
@@ -321,7 +321,7 @@ final class GpuPlaybackReview {
         }
     }
 
-    private static void attacks(ReviewRenderer renderer, GpuUnitModels library, GpuMeeple model, BoardScene.Unit unit) {
+    private static void attacks(ReviewRenderer renderer, GpuUnitModels library, GpuUnitModel model, BoardScene.Unit unit) {
         var attacker = new ModelInstance(model.instance.model);
         var target = new ModelInstance(model.instance.model);
         var animator = new UnitAnimator();
@@ -333,7 +333,8 @@ final class GpuPlaybackReview {
         try {
             int index = model.equipment().stream().filter(binding -> binding.emitters().stream()
                   .anyMatch(emitter -> "laser".equals(emitter.effect()))).findFirst().orElseThrow().index();
-            for (var kind : ResolvedAttack.Kind.values()) {
+            for (var kind : List.of(ResolvedAttack.Kind.SHOT, ResolvedAttack.Kind.PUNCH, ResolvedAttack.Kind.KICK,
+                  ResolvedAttack.Kind.PUSH, ResolvedAttack.Kind.CLUB)) {
                 int location = kind == ResolvedAttack.Kind.KICK ? Mek.LOC_LEFT_LEG : Mek.LOC_LEFT_ARM;
                 var result = new ResolvedAttack(UUID.randomUUID(), kind,
                       new UnitLocation(unit.id(), unit.location().coords(), 0, 0, 0),
@@ -346,9 +347,26 @@ final class GpuPlaybackReview {
                     animator.apply(model, attacker, unit, UnitMotion.Sample.STILL, frame / 48f, 1f / 48, false, 0);
                     animator.attack(model, unit, attack);
                     model.place(attacker, renderer.camera, origin, 0, unit);
+                    animator.aim(model, unit, attack, UnitAttack.center(target, victim.location(), new Vector3()), target);
                     effects.update(attack, library, Map.of(unit.id() + ":-1", attacker, victim.id() + ":-1", target));
                     renderer.frame(List.of(attacker, target), origin.cpy().add(0, BoardGeometry.HEIGHT * .4f, 0), effects,
                           "attack-" + kind.name().toLowerCase(java.util.Locale.ROOT), frame);
+                }
+                if (kind == ResolvedAttack.Kind.SHOT) {
+                    attack.seconds = UnitAttack.ANTICIPATION_SECONDS;
+                    animator.apply(model, attacker, unit, UnitMotion.Sample.STILL, 2, 0, true, 0);
+                    model.place(attacker, renderer.camera, origin, 0, unit);
+                    var binding = model.equipment().stream().filter(attack::fires).findFirst().orElseThrow();
+                    var emitter = binding.emitters().getFirst();
+                    var muzzle = new Vector3();
+                    var direction = new Vector3();
+                    UnitModelAttachment.emitter(attacker, emitter, muzzle, direction);
+                    var aimPoint = direction.cpy().rotate(Vector3.Z, 20).scl(500).add(muzzle);
+                    float originalAlignment = direction.dot(aimPoint.cpy().sub(muzzle).nor());
+                    animator.aim(model, unit, attack, aimPoint, target);
+                    UnitModelAttachment.emitter(attacker, emitter, muzzle, direction);
+                    assertTrue(direction.dot(aimPoint.cpy().sub(muzzle).nor()) > .99f,
+                          "A constrained nearby target must align with the actual posed muzzle; before " + originalAlignment);
                 }
                 animator.apply(model, attacker, unit, UnitMotion.Sample.STILL, 2, .1f, false, 0);
                 animator.attack(model, unit, null);
@@ -362,12 +380,13 @@ final class GpuPlaybackReview {
         }
     }
 
-    private static final class ReviewRenderer implements AutoCloseable {
+    static final class ReviewRenderer implements AutoCloseable {
         final OrthographicCamera camera = new OrthographicCamera(180, 135);
-        final ModelBatch batch = new ModelBatch();
+        final ModelBatch batch = new ModelBatch(GpuUnitCamouflage.shaders());
         final ShapeRenderer lines = new ShapeRenderer();
         final Environment light = new Environment();
         final FrameBuffer buffer = new FrameBuffer(Pixmap.Format.RGBA8888, 640, 480, true);
+        boolean topView;
 
         ReviewRenderer() {
             camera.near = 1;
@@ -382,8 +401,8 @@ final class GpuPlaybackReview {
 
         void frame(List<ModelInstance> models, Vector3 origin, GpuAttackEffects effects, GpuJumpJets jets, String name, int frame) {
             buffer.begin();
-            camera.position.set(origin).add(95, -150, 105);
-            camera.up.set(Vector3.Z);
+            camera.position.set(origin).add(topView ? 0 : 95, topView ? 0 : -150, topView ? 260 : 105);
+            camera.up.set(topView ? Vector3.Y : Vector3.Z);
             camera.lookAt(origin.x, origin.y, origin.z + 22);
             camera.update();
             Gdx.gl.glClearColor(.15f, .19f, .23f, 1);

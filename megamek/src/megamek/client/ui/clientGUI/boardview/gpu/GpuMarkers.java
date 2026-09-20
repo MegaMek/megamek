@@ -19,9 +19,17 @@ import java.util.stream.Collectors;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
@@ -81,7 +89,7 @@ final class GpuMarkers implements Disposable {
     private static final Font LABEL_FONT = new Font(Font.SANS_SERIF, Font.BOLD, 16);
 
     private final GpuTextures<BoardMarker.Kind> textures = new GpuTextures<>(true);
-    private final Map<BoardMarker.Kind, GpuMeeple> models = new EnumMap<>(BoardMarker.Kind.class);
+    private final Map<BoardMarker.Kind, GpuUnitModel> models = new EnumMap<>(BoardMarker.Kind.class);
     private final Map<BoardMarker, ModelInstance> locations = new LinkedHashMap<>();
     private final GpuTextures<String> labelTextures = new GpuTextures<>();
     private final Map<String, BoardScene.Pixels> labelImages = new HashMap<>();
@@ -97,7 +105,7 @@ final class GpuMarkers implements Disposable {
         }
         textures.update(artwork);
         artwork.forEach((kind, pixels) -> {
-            GpuMeeple model = new GpuMeeple(pixels, textures.region(kind), false);
+            GpuUnitModel model = new GpuUnitModel(symbol(pixels, textures.region(kind)));
             tint(model.instance, kind.rgb());
             // Instance materials are copies. Future instances (including sensors) need the same default tint.
             model.instance.model.materials.forEach(material -> material.set(ColorAttribute.createDiffuse(color(kind.rgb()))));
@@ -105,8 +113,21 @@ final class GpuMarkers implements Disposable {
         });
     }
 
-    GpuMeeple model(BoardMarker.Kind kind) {
+    GpuUnitModel model(BoardMarker.Kind kind) {
         return models.get(kind);
+    }
+
+    /** Spinning map symbols retain artwork on both faces; this geometry is never used for a known unit. */
+    private static Model symbol(BoardScene.Pixels pixels, TextureRegion region) {
+        ModelBuilder builder = new ModelBuilder();
+        builder.begin();
+        var caps = builder.part("symbol", GL20.GL_TRIANGLES,
+              VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal,
+              new Material(TextureAttribute.createDiffuse(region.getTexture()), IntAttribute.createCullFace(GL20.GL_NONE)));
+        var sides = builder.part("edge", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
+              new Material(ColorAttribute.createDiffuse(GpuCutout.averageColor(pixels)), IntAttribute.createCullFace(GL20.GL_NONE)));
+        GpuCutout.extrude(pixels, region, Vector3.Zero, 1, 1, true, caps, sides);
+        return builder.end();
     }
 
     /** One cosmetic clock and transform for location markers and sensor contacts, independent of playback speed. */
@@ -550,7 +571,7 @@ final class GpuMarkers implements Disposable {
         labelAnchors.clear();
         labelImages.clear();
         labelTextures.dispose();
-        models.values().forEach(GpuMeeple::dispose);
+        models.values().forEach(GpuUnitModel::dispose);
         models.clear();
         textures.dispose();
     }

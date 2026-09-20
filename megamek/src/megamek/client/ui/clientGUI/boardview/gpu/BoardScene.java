@@ -195,16 +195,19 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
      * @param wrecked locations shown still in place but burnt out: a destroyed leg, side torso or head, which the
      *                rest of the model stands on or hangs from
      */
-    record LocationDamage(Set<String> removed, Set<String> wrecked) {
+    record LocationDamage(Set<String> removed, Set<String> wrecked, Map<String, UnitDamageDisplay.Stage> stages) {
         static final LocationDamage NONE = new LocationDamage(Set.of(), Set.of());
+
+        LocationDamage(Set<String> removed, Set<String> wrecked) { this(removed, wrecked, Map.of()); }
 
         LocationDamage {
             removed = Set.copyOf(removed);
             wrecked = Set.copyOf(wrecked);
+            stages = Map.copyOf(stages);
         }
 
         boolean isNone() {
-            return removed.isEmpty() && wrecked.isEmpty();
+            return removed.isEmpty() && wrecked.isEmpty() && stages.isEmpty();
         }
     }
 
@@ -212,9 +215,20 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
     public enum AeroState { LANDED, ELEVATED, AIRBORNE }
 
     public record Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
-          AeroState aeroState, List<Coords> footprint) {
+          AeroState aeroState, List<Coords> footprint, megamek.common.units.UnitLocation.Form form,
+          megamek.common.units.FallSide fallSide) {
         public Waypoint {
             footprint = List.copyOf(footprint);
+        }
+
+        public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
+              AeroState aeroState, List<Coords> footprint, megamek.common.units.UnitLocation.Form form) {
+            this(coords, elevation, facing, proneCause, aeroState, footprint, form, null);
+        }
+
+        public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
+              AeroState aeroState, List<Coords> footprint) {
+            this(coords, elevation, facing, proneCause, aeroState, footprint, null);
         }
 
         public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
@@ -230,21 +244,30 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
 
         Waypoint withProneCause(megamek.common.units.ProneCause cause) {
-            return new Waypoint(coords, elevation, facing, cause, aeroState, footprint);
+            return new Waypoint(coords, elevation, facing, cause, aeroState, footprint, form, fallSide);
         }
 
         Waypoint withAeroState(AeroState state) {
-            return new Waypoint(coords, elevation, facing, proneCause, state, footprint);
+            return new Waypoint(coords, elevation, facing, proneCause, state, footprint, form, fallSide);
         }
 
         Waypoint withFootprint(List<Coords> occupied) {
-            return new Waypoint(coords, elevation, facing, proneCause, aeroState, occupied);
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, occupied, form, fallSide);
+        }
+
+        Waypoint withForm(megamek.common.units.UnitLocation.Form value) {
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, value, fallSide);
+        }
+
+        Waypoint withFallSide(megamek.common.units.FallSide side) {
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, form, side);
         }
 
         /** Captured fitting metadata does not create another movement step at a queued path boundary. */
         boolean samePose(Waypoint other) {
             return coords.equals(other.coords) && elevation == other.elevation && facing == other.facing
-                  && proneCause == other.proneCause && aeroState == other.aeroState;
+                  && proneCause == other.proneCause && fallSide == other.fallSide && aeroState == other.aeroState
+                  && java.util.Objects.equals(form, other.form);
         }
     }
 
@@ -316,6 +339,9 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         int boardId();
     }
 
+    /** Visibility loss invalidates historical presentation immediately, including while playback is paused. */
+    record Concealed(int entityId, int boardId) implements Animation { }
+
     /** An immutable, visibility-filtered checkpoint in packet order; it consumes no animation time. */
     record SceneUpdate(BoardScene scene) implements Animation {
         @Override
@@ -331,6 +357,11 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
         @Override
         public int boardId() { return result.attacker().boardId(); }
+    }
+
+    record Conversion(int boardId, Unit before, Unit after) implements Animation {
+        @Override
+        public int entityId() { return after.id(); }
     }
 
     public record Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP, int movementMP,

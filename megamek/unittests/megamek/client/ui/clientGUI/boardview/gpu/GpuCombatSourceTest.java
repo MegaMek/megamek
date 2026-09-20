@@ -22,6 +22,27 @@ import org.junit.jupiter.api.Test;
 
 class GpuCombatSourceTest {
     @Test
+    void removedWrecksUseTheExistingBoardListAndRespectTheWreckPreference() throws Exception {
+        var preferences = megamek.client.ui.clientGUI.GUIPreferences.getInstance();
+        boolean show = preferences.getShowWrecks();
+        try (var fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setShowWrecks(true);
+                fixture.entity.setDestroyed(true);
+                fixture.game.removeEntity(fixture.entity.getId(), megamek.common.interfaces.IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+                fixture.view.redrawAllEntities();
+                fixture.source.refresh();
+            });
+            var wrecks = fixture.source.takeFrame().scene().units();
+            assertEquals(1, wrecks.size());
+            assertTrue(wrecks.getFirst().model().state().pose().dead());
+            assertEquals(null, wrecks.getFirst().annotations(), "Wrecks cannot retain live health bars");
+            SwingUtilities.invokeAndWait(() -> { preferences.setShowWrecks(false); fixture.source.refresh(); });
+            assertTrue(fixture.source.takeFrame().scene().units().isEmpty());
+        } finally { preferences.setShowWrecks(show); }
+    }
+
+    @Test
     void capturedResultsAreImmutableAndDuplicatesDoNotReplay() throws Exception {
         try (var fixture = GpuBoardFixture.create()) {
             var entity = fixture.entity;

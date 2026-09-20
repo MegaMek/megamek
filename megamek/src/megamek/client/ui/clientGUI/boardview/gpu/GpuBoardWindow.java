@@ -25,6 +25,8 @@ import megamek.logging.MMLogger;
 
 /** Owns the optional native window. A single libGDX application avoids competing global Gdx contexts. */
 public final class GpuBoardWindow {
+    /** The planar compatibility layer omits wreck sprites when the shared unit renderer supplies them. */
+    public static boolean modelsEnabled() { return GpuUnitModels.ENABLED; }
     private static final MMLogger LOGGER = MMLogger.create(GpuBoardWindow.class);
     private static GpuBoardWindow active;
     private final BoardView view;

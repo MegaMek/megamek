@@ -149,7 +149,8 @@ class BoardGeometryTest {
                 assertEquals(1, view.camera.direction.len(), 0.0001f);
                 assertEquals(1, view.camera.up.len(), 0.0001f);
                 assertEquals(0, view.camera.direction.dot(view.camera.up), 0.0001f);
-                assertTrue(view.camera.direction.z < -0.25f, "Orbit must stay above the horizon");
+                assertTrue(view.camera.direction.z <= -Math.cos(Math.toRadians(BoardCamera.MAX_TILT)) + 0.0001,
+                      "Orbit must stay above the horizon within the maximum tilt");
                 for (BoardScene.Tile tile : scene.tiles()) {
                     Vector3 center = BoardGeometry.center(tile.coords(), tile.elevation());
                     Ray ray = new Ray(new Vector3(center).mulAdd(view.camera.direction, -1000), view.camera.direction);

@@ -153,7 +153,7 @@ public class StreakHandler extends MissileWeaponHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 
     @Override

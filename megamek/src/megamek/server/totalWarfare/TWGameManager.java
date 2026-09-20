@@ -24060,6 +24060,7 @@ public class TWGameManager extends AbstractGameManager {
 
         // Destroy the entity, unless it's already destroyed.
         if (!entity.isDoomed() && !entity.isDestroyed()) {
+            sendAttackAnimation(entity, entity, megamek.common.ResolvedAttack.Kind.DEATH, -1, Entity.LOC_NONE, true);
             r = new Report(6365);
             r.subject = entity.getId();
             r.addDesc(entity);
@@ -24851,6 +24852,7 @@ public class TWGameManager extends AbstractGameManager {
     Vector<Report> doEntityFall(Entity entity, Coords fallPos, int fallHeight, int facing,
           PilotingRollData roll, boolean intoBasement, boolean fromCliff) {
         entity.setFallen(true);
+        if (entity instanceof Mek) { entity.setFallSide(megamek.common.units.FallSide.fromDirection(facing)); }
 
         Vector<Report> vPhaseReport = new Vector<>();
         Report r;
@@ -28322,19 +28324,32 @@ public class TWGameManager extends AbstractGameManager {
     /** Publish only a confirmed shot/contact, to players who can visually see both participants at resolution. */
     public void sendAttackAnimation(Entity attacker, Targetable target, megamek.common.ResolvedAttack.Kind kind,
           int equipmentIndex, int limb, boolean hit) {
+        sendAttackAnimation(attacker, target, kind, equipmentIndex, limb, hit, null);
+    }
+
+    public void sendAttackAnimation(Entity attacker, Targetable target, megamek.common.ResolvedAttack.Kind kind,
+          int equipmentIndex, int limb, boolean hit, megamek.common.ResolvedAttack.Shot shot) {
+        sendAttackAnimation(attacker, target, kind, equipmentIndex, limb, hit, shot, null);
+    }
+
+    public void sendAttackAnimation(Entity attacker, Targetable target, megamek.common.ResolvedAttack.Kind kind,
+          int equipmentIndex, int limb, boolean hit, megamek.common.ResolvedAttack.Shot shot,
+          List<megamek.common.ResolvedAttack.Mount> firingMounts) {
         if (attacker == null || target == null || attacker.getPosition() == null || target.getPosition() == null
               || attacker.getBoardId() != target.getBoardId()
-              || kind != megamek.common.ResolvedAttack.Kind.SHOT && !(attacker instanceof Mek)) {
+              || kind != megamek.common.ResolvedAttack.Kind.SHOT && kind != megamek.common.ResolvedAttack.Kind.DEATH
+                    && !(attacker instanceof Mek)) {
             return;
         }
         var equipment = equipmentIndex < 0 ? null : attacker.getEquipment(equipmentIndex);
         var result = new megamek.common.ResolvedAttack(java.util.UUID.randomUUID(), kind,
-              new UnitLocation(attacker.getId(), attacker.getPosition(), attacker.getFacing(), attacker.getElevation(),
+              shot != null && shot.launch() != null ? shot.launch() : new UnitLocation(attacker.getId(), attacker.getPosition(), attacker.getFacing(), attacker.getElevation(),
                     attacker.getBoardId(), attacker.getProneCause()),
               new UnitLocation(target.getId(), target.getPosition(), target instanceof Entity entity ? entity.getFacing() : 0,
                     target.getElevation(), target.getBoardId()), target.getTargetType(), equipmentIndex,
               equipment == null ? "" : equipment.getType().getInternalName(), limb, hit,
-              megamek.common.ResolvedAttack.captureMounts(attacker, equipmentIndex));
+              firingMounts == null ? megamek.common.ResolvedAttack.captureMounts(attacker, equipmentIndex) : firingMounts,
+              shot == null ? megamek.common.ResolvedAttack.Shot.capture(equipment) : shot);
         List<Player> recipients = new ArrayList<>(game.getPlayersList());
         if (doBlind() || attacker.isHidden()) {
             recipients.retainAll(whoCanSee(attacker, false, null));

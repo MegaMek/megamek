@@ -136,7 +136,7 @@ final class GpuJumpJetReview {
         assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
     }
 
-    private static int smokeAt(GpuMeeple model, ModelInstance instance, BoardScene.Unit unit, int framesPerSecond) {
+    private static int smokeAt(GpuUnitModel model, ModelInstance instance, BoardScene.Unit unit, int framesPerSecond) {
         var jets = new GpuJumpJets();
         var motion = jump();
         try {

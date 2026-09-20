@@ -36,47 +36,61 @@ class GpuPlaybackSmokeTest {
                     tileset.loadFromFile("mekset.txt");
                     var mek = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
                     mek.setId(9060);
-                    var selection = UnitModelSelection.capture(mek, -1, false, tileset);
-                    var model = library.get(selection, mek.getId());
-                    var start = new BoardScene.Waypoint(new Coords(2, 9), 0, 0);
-                    var finish = new BoardScene.Waypoint(new Coords(2, 1), 0, 0);
-                    var unit = new BoardScene.Unit(mek.getId(), -1, "Atlas", finish, null, false, null, 3, false, selection, 0);
-                    var camera = new OrthographicCamera(250, 180);
-                    camera.up.set(Vector3.Z);
-                    for (int facing : List.of(0, 3)) {
-                        for (var type : List.of(EntityMovementType.MOVE_WALK, EntityMovementType.MOVE_RUN)) {
-                            for (int mp : List.of(3, 12, 40)) {
-                                var instance = new ModelInstance(model.instance.model);
-                                var animator = new UnitAnimator();
-                                var departure = new BoardScene.Waypoint(start.coords(), 0, facing);
-                                var arrival = new BoardScene.Waypoint(finish.coords(), 0, facing);
-                                var motion = new UnitMotion(departure);
-                                motion.append(List.of(departure, arrival), type, 0, false, mp);
-                                float dt = (float) (motion.remainingSeconds() / 480);
-                                var previous = new Vector3();
-                                var previousRoot = new Vector3();
-                                int previousSupport = -1;
-                                float drift = 0, travel = 0;
-                                for (int frame = 0; frame < 480; frame++) {
-                                    motion.advance(dt, 1);
-                                    animator.apply(model, instance, unit, motion.sample(), frame * dt, dt, false, 0);
-                                    model.place(instance, camera, motion.position(), motion.facing(), unit);
-                                    var left = foot(instance, model.rigs().getFirst().joints().get("leftFoot"));
-                                    var right = foot(instance, model.rigs().getFirst().joints().get("rightFoot"));
-                                    int support = left.z < right.z ? 0 : 1;
-                                    var planted = support == 0 ? left : right;
-                                    if (frame > 0 && motion.sample().progress() > .15f && motion.sample().progress() < .85f
-                                          && support == previousSupport && Math.abs(planted.z - previous.z) < .02f) {
-                                        drift += (float) Math.hypot(planted.x - previous.x, planted.y - previous.y);
-                                        travel += motion.position().dst(previousRoot);
+                    for (var selection : List.of(UnitModelSelection.capture(mek, -1, false, tileset),
+                          UnitModelSelection.capture(new MekFileParser(new File("testresources/megamek/common/units/Barghest BGS-1T.mtf"))
+                                .getEntity(), -1, false, tileset),
+                          UnitModelSelection.capture(new MekFileParser(new File("testresources/megamek/common/units/Triskelion TRK-4V.mtf"))
+                                .getEntity(), -1, false, tileset),
+                          GpuFamilyAssemblyReview.selection("proto", List.of()),
+                          GpuFamilyAssemblyReview.selection("quad-proto", List.of()),
+                          GpuFamilyAssemblyReview.selection("glider-proto", List.of()))) {
+                        var model = library.get(selection, mek.getId());
+                        var feet = model.rigs().getFirst().joints().entrySet().stream()
+                              .filter(joint -> joint.getKey().endsWith("Foot")).map(java.util.Map.Entry::getValue).sorted().toList();
+                        assertTrue(feet.size() >= 2, "A walking rig needs articulated feet");
+                        var start = new BoardScene.Waypoint(new Coords(2, 9), 0, 0);
+                        var finish = new BoardScene.Waypoint(new Coords(2, 1), 0, 0);
+                        var unit = new BoardScene.Unit(mek.getId(), -1, "Atlas", finish, null, false, null, 3, false, selection, 0);
+                        var camera = new OrthographicCamera(250, 180);
+                        camera.up.set(Vector3.Z);
+                        for (int facing : List.of(0, 1, 2, 3, 4, 5)) {
+                            for (var type : List.of(EntityMovementType.MOVE_WALK, EntityMovementType.MOVE_RUN)) {
+                                for (int mp : List.of(3, 12, 40)) {
+                                    var instance = new ModelInstance(model.instance.model);
+                                    var animator = new UnitAnimator();
+                                    var departure = new BoardScene.Waypoint(start.coords(), 0, facing);
+                                    var arrival = new BoardScene.Waypoint(finish.coords(), 0, facing);
+                                    var motion = new UnitMotion(departure);
+                                    motion.append(List.of(departure, arrival), type, 0, false, mp);
+                                    float dt = (float) (motion.remainingSeconds() / 480);
+                                    var previous = new Vector3();
+                                    var previousRoot = new Vector3();
+                                    int previousSupport = -1;
+                                    float drift = 0, travel = 0;
+                                    for (int frame = 0; frame < 480; frame++) {
+                                        motion.advance(dt, 1);
+                                        animator.apply(model, instance, unit, motion.sample(), frame * dt, dt, false, 0);
+                                        model.place(instance, camera, motion.position(), motion.facing(), unit);
+                                        int support = 0;
+                                        var planted = foot(instance, feet.getFirst());
+                                        for (int index = 1; index < feet.size(); index++) {
+                                            var candidate = foot(instance, feet.get(index));
+                                            if (candidate.z < planted.z) { support = index; planted = candidate; }
+                                        }
+                                        if (frame > 0 && motion.sample().progress() > .15f && motion.sample().progress() < .85f
+                                              && support == previousSupport && Math.abs(planted.z - previous.z) < .02f) {
+                                            drift += (float) Math.hypot(planted.x - previous.x, planted.y - previous.y);
+                                            travel += motion.position().dst(previousRoot);
+                                        }
+                                        previous.set(planted);
+                                        previousRoot.set(motion.position());
+                                        previousSupport = support;
                                     }
-                                    previous.set(planted);
-                                    previousRoot.set(motion.position());
-                                    previousSupport = support;
+                                    System.out.println(model.rigs().getFirst().type() + " facing " + facing + " " + type
+                                          + " " + mp + " MP planted-foot drift / travel = " + drift / travel);
+                                    assertTrue(travel > 30 && drift / travel < .12f,
+                                          type + " " + mp + " MP slides: planted feet travel " + drift + " while body travels " + travel);
                                 }
-                                System.out.println((facing == 0 ? "Forward " : "Reverse ") + type + " " + mp + " MP planted-foot drift / travel = " + drift / travel);
-                                assertTrue(travel > 30 && drift / travel < .12f,
-                                      type + " " + mp + " MP slides: planted feet travel " + drift + " while body travels " + travel);
                             }
                         }
                     }

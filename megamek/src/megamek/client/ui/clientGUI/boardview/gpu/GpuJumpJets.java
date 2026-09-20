@@ -8,14 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
@@ -27,14 +22,10 @@ final class GpuJumpJets implements Disposable {
     private static final float EMISSION_STEP = .0125f;
     private static final float SMOKE_LIFE = .7f;
     private static final int MAX_QUADS = MAX_EMITTERS * (PUFFS_PER_EMITTER + 1);
-    private static final int STRIDE = 7;
     private final Map<String, Jet> jets = new LinkedHashMap<>();
     private final List<Puff> sortedSmoke = new ArrayList<>();
     private final Vector3 right = new Vector3(), across = new Vector3(), along = new Vector3();
-    private float[] vertices;
-    private Mesh mesh;
-    private ShaderProgram shader;
-    private int vertexOffset;
+    private final GpuExhaustBatch batch = new GpuExhaustBatch(MAX_QUADS);
 
     private static final class Puff {
         final Vector3 origin, velocity;
@@ -109,7 +100,7 @@ final class GpuJumpJets implements Disposable {
     }
 
     /** Call after bone animation, placement and hover. No sensor-contact or absent body is a source of effects. */
-    void update(String key, GpuMeeple model, ModelInstance instance, BoardScene.Unit unit, UnitMotion.Sample motion) {
+    void update(String key, GpuUnitModel model, ModelInstance instance, BoardScene.Unit unit, UnitMotion.Sample motion) {
         if (unit.sensorContact() || unit.model().state() == null || motion.jets() == null && motion.group() == null) {
             return;
         }
@@ -197,9 +188,6 @@ final class GpuJumpJets implements Disposable {
         if (jets.isEmpty()) {
             return;
         }
-        if (mesh == null) {
-            createMesh();
-        }
         right.set(camera.direction).crs(camera.up).nor();
         sortedSmoke.clear();
         for (Jet jet : jets.values()) {
@@ -213,12 +201,13 @@ final class GpuJumpJets implements Disposable {
             }
         }
         sortedSmoke.sort(Comparator.comparingDouble((Puff puff) -> puff.depth).reversed());
-        vertexOffset = 0;
+        batch.begin();
         for (Puff puff : sortedSmoke) {
             across.set(right).scl(puff.radius);
             along.set(camera.up).scl(puff.radius);
-            quad(puff.center, across, along, -1, 0, puff.alpha);
+            batch.quad(puff.center, across, along, -1, 0, puff.alpha);
         }
+        int smokeCount = batch.size();
         for (Jet jet : jets.values()) {
             across.set(jet.direction).crs(camera.direction);
             if (across.isZero(.001f)) {
@@ -227,62 +216,9 @@ final class GpuJumpJets implements Disposable {
             across.nor().scl(jet.width * 1.5f);
             float flicker = .94f + .06f * MathUtils.sin(jet.time * 89 + (jet.seed & 1023) * .017f);
             along.set(jet.direction).scl(jet.width * 10 * jet.power.flame() * flicker);
-            quad(jet.position, across, along, 0, 1, jet.power.flame());
+            batch.quad(jet.position, across, along, 0, 1, jet.power.flame());
         }
-        mesh.setVertices(vertices, 0, vertexOffset);
-        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
-        Gdx.gl.glDepthMask(false);
-        Gdx.gl.glDisable(GL20.GL_CULL_FACE);
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        try {
-            shader.bind();
-            shader.setUniformMatrix("u_projView", camera.combined);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            mesh.render(shader, GL20.GL_TRIANGLES, 0, sortedSmoke.size() * 6);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
-            mesh.render(shader, GL20.GL_TRIANGLES, sortedSmoke.size() * 6, jets.size() * 6);
-        } finally {
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            Gdx.gl.glDepthMask(true);
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-        }
-    }
-
-    private void quad(Vector3 origin, Vector3 width, Vector3 length, float from, float kind, float alpha) {
-        for (int corner = 0; corner < 4; corner++) {
-            float x = corner == 1 || corner == 2 ? 1 : -1;
-            float y = corner < 2 ? from : 1;
-            vertices[vertexOffset++] = origin.x + width.x * x + length.x * y;
-            vertices[vertexOffset++] = origin.y + width.y * x + length.y * y;
-            vertices[vertexOffset++] = origin.z + width.z * x + length.z * y;
-            vertices[vertexOffset++] = x;
-            vertices[vertexOffset++] = y;
-            vertices[vertexOffset++] = kind;
-            vertices[vertexOffset++] = alpha;
-        }
-    }
-
-    private void createMesh() {
-        String path = "megamek/client/ui/clientGUI/boardview/gpu/jump-jets";
-        shader = new ShaderProgram(Gdx.files.classpath(path + ".vert"), Gdx.files.classpath(path + ".frag"));
-        if (!shader.isCompiled()) {
-            String log = shader.getLog();
-            shader.dispose();
-            shader = null;
-            throw new IllegalStateException("Jump jet shader: " + log);
-        }
-        vertices = new float[MAX_QUADS * 4 * STRIDE];
-        short[] indices = new short[MAX_QUADS * 6];
-        int[] corners = { 0, 1, 2, 2, 3, 0 };
-        for (int quad = 0; quad < MAX_QUADS; quad++) {
-            for (int index = 0; index < corners.length; index++) {
-                indices[quad * 6 + index] = (short) (quad * 4 + corners[index]);
-            }
-        }
-        mesh = new Mesh(false, MAX_QUADS * 4, indices.length, VertexAttribute.Position(),
-              VertexAttribute.TexCoords(0), VertexAttribute.TexCoords(1));
-        mesh.setIndices(indices);
+        batch.render(camera, smokeCount);
     }
 
     private static float noise(int value) {
@@ -295,14 +231,6 @@ final class GpuJumpJets implements Disposable {
     @Override
     public void dispose() {
         clear();
-        if (mesh != null) {
-            mesh.dispose();
-            mesh = null;
-        }
-        if (shader != null) {
-            shader.dispose();
-            shader = null;
-        }
-        vertices = null;
+        batch.dispose();
     }
 }

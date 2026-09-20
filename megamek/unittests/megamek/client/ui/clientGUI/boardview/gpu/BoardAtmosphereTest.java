@@ -80,8 +80,8 @@ class BoardAtmosphereTest {
         assertTrue(cloudyNoon.direct().r >= clearNoon.direct().r * 0.45f,
               "Maximum cloud cover must preserve a substantial directional component and visible shadows");
         assertTrue(clearNoon.exposureScale(0) > 1.5f, "Neutral daytime exposure must lift the dim LDR scene");
-        assertEquals(1 / (float) Math.sqrt(8), BoardAtmosphere.lighting(at(0)).exposureScale(0), 0.0001,
-              "Neutral night exposure must sit 1.5 stops below the daylight lift");
+        assertEquals(0.5f, BoardAtmosphere.lighting(at(0)).exposureScale(0), 0.0001,
+              "Neutral night exposure must use -1 EV");
     }
 
     @Test
@@ -112,7 +112,12 @@ class BoardAtmosphereTest {
                 assertTrue(daylight > 0 && daylight < 1, "Dusk must use the twilight transition");
             } else if (light.isDuskOrFullMoonOrMoonlessOrPitchBack()) {
                 assertEquals(0, daylight);
-                assertTrue(settings.exposure() >= -0.2f, "Scenario darkness must retain a readable board");
+                float expectedExposure = switch (light) {
+                    case MOONLESS -> -0.3f;
+                    case PITCH_BLACK -> -0.6f;
+                    default -> 0;
+                };
+                assertEquals(expectedExposure, settings.exposure(), "Scenario exposure for " + light);
             } else {
                 assertEquals(1, daylight);
             }
@@ -200,8 +205,9 @@ class BoardAtmosphereTest {
             var high = BoardAtmosphere.fromScenario(conditions, false);
             conditions.setAtmosphere(Atmosphere.VERY_HIGH);
             var veryHigh = BoardAtmosphere.fromScenario(conditions, false);
-            assertEquals(standard.fogHeight() - 0.5f, high.fogHeight());
-            assertEquals(high.fogHeight() - 0.5f, veryHigh.fogHeight());
+            assertEquals(2.5f, standard.fogHeight());
+            assertEquals(standard.fogHeight() - 0.75f, high.fogHeight());
+            assertEquals(high.fogHeight() - 0.75f, veryHigh.fogHeight());
             assertEquals(BoardAtmosphere.MIN_FOG_HEIGHT, veryHigh.fogHeight());
             for (var compressed : new BoardAtmosphere.Settings[] { high, veryHigh }) {
                 assertEquals(standard.fog(), compressed.fog());
@@ -223,7 +229,7 @@ class BoardAtmosphereTest {
         conditions.setFog(Fog.FOG_HEAVY);
         assertEquals(0.3f, BoardAtmosphere.fromScenario(conditions, false).clouds());
         conditions.setWeather(Weather.HEAVY_RAIN);
-        assertEquals(1, BoardAtmosphere.fromScenario(conditions, false).clouds(),
+        assertEquals(0.85f, BoardAtmosphere.fromScenario(conditions, false).clouds(),
               "Denser precipitation clouds still win over fog clouds");
         conditions.setAtmosphere(Atmosphere.THIN);
         assertEquals(0, BoardAtmosphere.fromScenario(conditions, false).clouds(),

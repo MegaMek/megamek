@@ -156,14 +156,14 @@ final class GpuEquipmentAssemblyReview {
         Path source = Configuration.dataDir().toPath().resolve("models");
         Path root = Path.of(System.getProperty("megamek.gpu.screenshots"), "equipment-extension");
         var json = new ObjectMapper();
-        for (String key : List.of("bodies/atlas", "bodies/fallback-biped", "equipment/ppc", "equipment/srm-6")) {
+        for (String key : List.of("bodies/atlas", "bodies/fallback-biped-heavy", "equipment/ppc", "equipment/srm-6")) {
             Path descriptor = Path.of(ROOT + key + ".json");
             Files.createDirectories(root.resolve(descriptor).getParent());
             Files.copy(source.resolve(descriptor), root.resolve(descriptor), StandardCopyOption.REPLACE_EXISTING);
             Path mesh = descriptor.resolveSibling(json.readTree(source.resolve(descriptor).toFile()).get("mesh").asText());
             Files.copy(source.resolve(mesh), root.resolve(mesh), StandardCopyOption.REPLACE_EXISTING);
         }
-        for (String key : List.of("atlas", "fallback-biped")) {
+        for (String key : List.of("atlas", "fallback-biped-heavy")) {
             var body = (ObjectNode) json.readTree(source.resolve(ROOT + "meks/" + key + ".json").toFile());
             body.put("equipment", "equipment.json");
             if (key.equals("atlas")) {
@@ -190,7 +190,7 @@ final class GpuEquipmentAssemblyReview {
             json.writeValue(root.resolve("equipment.json").toFile(), catalog);
             var library = new GpuUnitModels(root);
             try {
-                for (String key : List.of("atlas", "fallback-biped")) {
+                for (String key : List.of("atlas", "fallback-biped-heavy")) {
                     var visual = library.get(selection("meks/" + key + ".json", state), 1120);
                     assertNotNull(visual);
                     assertEquals(1, visual.equipment().size(), "Split entries and excluded equipment must not add modules");
@@ -201,10 +201,10 @@ final class GpuEquipmentAssemblyReview {
                     UnitModelAttachment.emitter(visual.instance, binding.emitters().getFirst(), new Vector3(), direction);
                     assertTrue(direction.y < -.99f);
                 }
-                var refit = new BoardScene.UnitModel(ROOT + "meks/atlas.json", ROOT + "meks/fallback-biped.json",
+                var refit = new BoardScene.UnitModel(ROOT + "meks/atlas.json", ROOT + "meks/fallback-biped-heavy.json",
                       "altered-loadout", 1, 0, BoardScene.LocationDamage.NONE, state);
                 var resolved = library.get(refit, 1121);
-                var fallback = library.get(selection("meks/fallback-biped.json", state), 1122);
+                var fallback = library.get(selection("meks/fallback-biped-heavy.json", state), 1122);
                 var expected = fallback.instance.calculateBoundingBox(new BoundingBox());
                 var actual = resolved.instance.calculateBoundingBox(new BoundingBox());
                 assertTrue(expected.min.epsilonEquals(actual.min, .001f) && expected.max.epsilonEquals(actual.max, .001f),

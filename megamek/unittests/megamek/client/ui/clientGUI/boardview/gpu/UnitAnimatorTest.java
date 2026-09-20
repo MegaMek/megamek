@@ -43,7 +43,7 @@ class UnitAnimatorTest {
             root.id = "root";
             raw.nodes.add(root);
             raw.calculateTransforms();
-            var model = new GpuMeeple(raw, null, true, List.of(), 1, new Vector3(1, 1, 1),
+            var model = new GpuUnitModel(raw, null, true, List.of(), 1, new Vector3(1, 1, 1),
                   List.of(new UnitRig("mek", "biped-v1", null, Map.of("root", "root"), List.of(), List.of())));
             try {
                 var placed = new ModelInstance(raw);
@@ -59,11 +59,13 @@ class UnitAnimatorTest {
                 assertEquals(0, placed.getNode("root").rotation.getAngleAround(Vector3.X), .001);
                 playback.advance((motion.remainingSeconds() - UnitMotion.POSTURE_SECONDS / 2) / speed.rate, speed);
                 animator.apply(model, placed, fallen, motion.sample(), 0, 0, false, 0);
-                assertEquals(45, placed.getNode("root").rotation.getAngleAround(Vector3.X), .001);
+                var halfway = new Vector3(Vector3.Z).mul(placed.getNode("root").rotation);
+                assertTrue(halfway.y > 0 && halfway.z > .8f, "The forward fall accelerates from its standing pose");
                 assertEquals(0, playback.holdSeconds());
                 playback.advance(motion.remainingSeconds() / speed.rate, speed);
                 animator.apply(model, placed, fallen, motion.sample(), 0, 0, false, 0);
-                assertEquals(90, placed.getNode("root").rotation.getAngleAround(Vector3.X), .001);
+                assertTrue(new Vector3(Vector3.Z).mul(placed.getNode("root").rotation).epsilonEquals(Vector3.Y, .001f),
+                      "The full forward fall must finish before the completion hold");
                 assertEquals(1, playback.holdSeconds(), 1e-6);
                 playback.advance(.999, speed);
                 assertNull(playback.attack());
@@ -114,7 +116,7 @@ class UnitAnimatorTest {
             var emitter = new UnitModelDescriptor.Emitter("muzzle", muzzle.id, List.of(0f, 2f, 0f),
                   List.of(0f, 1f, 0f), "muzzle", "laser");
             var binding = new UnitEquipmentAssembly.Binding(0, "RT", mount.id, "test-gun", false, List.of(emitter));
-            var model = new GpuMeeple(raw, null, true, List.of(binding));
+            var model = new GpuUnitModel(raw, null, true, List.of(binding));
             try {
                 var source = UnitPlaybackTest.unit(1, 1);
                 var appearance = new BoardScene.UnitModel("", "", "", 1, 0, BoardScene.LocationDamage.NONE,
@@ -132,6 +134,7 @@ class UnitAnimatorTest {
                 assertTrue(displacement.len() > .8f);
                 assertEquals(-1, displacement.nor().dot(forward), .0001, "Wrong recoil axis at mount angle " + angle);
                 attack.seconds = attack.duration;
+                animator.apply(model, placed, unit, new UnitMotion(unit.location()).sample(), 0, 0, false, 0);
                 animator.attack(model, unit, attack);
                 assertTrue(placed.getNode("gun").globalTransform.getTranslation(new Vector3()).epsilonEquals(original, .0001f));
             } finally {

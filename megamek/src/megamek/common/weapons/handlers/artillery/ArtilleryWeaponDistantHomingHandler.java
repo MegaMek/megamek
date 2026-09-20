@@ -252,6 +252,8 @@ public class ArtilleryWeaponDistantHomingHandler extends ArtilleryWeaponDistantF
 
         // Any AMS/Point Defense fire against homing rounds?
         int hits = handleAMS(vPhaseReport);
+        recordMissileHits(hits);
+        reportAttackAnimation(!bMissed && hits > 0);
 
         if (bMissed && !missReported) {
             // Notify player of last-second miss that hits the hex instead

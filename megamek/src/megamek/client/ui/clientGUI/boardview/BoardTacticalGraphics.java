@@ -2,6 +2,7 @@
 package megamek.client.ui.clientGUI.boardview;
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import megamek.client.ui.tileset.HexTileset;
+import megamek.common.board.Coords;
 import org.apache.batik.ext.awt.g2d.AbstractGraphics2D;
 import org.apache.batik.ext.awt.g2d.GraphicContext;
 
@@ -35,6 +37,8 @@ import org.apache.batik.ext.awt.g2d.GraphicContext;
 public final class BoardTacticalGraphics extends AbstractGraphics2D {
     private final List<BoardTactical.Fill> fills;
     private final List<BoardTactical.Label> labels;
+    private final List<BoardTactical.Wall> walls;
+    private final List<BoardTactical.Fill> flatWalls;
     private final Graphics2D metrics;
     private BoardTactical.Point anchor;
     private BoardTactical.Playback playback = BoardTactical.Playback.LIVE;
@@ -44,6 +48,8 @@ public final class BoardTacticalGraphics extends AbstractGraphics2D {
         gc = new GraphicContext();
         fills = new ArrayList<>();
         labels = new ArrayList<>();
+        walls = new ArrayList<>();
+        flatWalls = new ArrayList<>();
         metrics = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).createGraphics();
         setFont(metrics.getFont());
     }
@@ -52,13 +58,15 @@ public final class BoardTacticalGraphics extends AbstractGraphics2D {
         super(parent);
         fills = parent.fills;
         labels = parent.labels;
+        walls = parent.walls;
+        flatWalls = parent.flatWalls;
         metrics = (Graphics2D) parent.metrics.create();
         anchor = parent.anchor;
         playback = parent.playback;
     }
 
     public BoardTactical snapshot() {
-        return new BoardTactical(fills, labels);
+        return new BoardTactical(fills, labels, walls, flatWalls);
     }
 
     /** Tags only the native capture; classic painters keep their existing graphics state and behavior. */
@@ -110,8 +118,37 @@ public final class BoardTacticalGraphics extends AbstractGraphics2D {
         fill(getStroke().createStrokedShape(shape));
     }
 
+    /** Preserve the painter's path as upright segments, carrying its outline to the top edge. */
+    public void wall(Shape shape, Shape footprint, Coords coords, float height, Color outlineColor) {
+        fill(footprint, flatWalls);
+        int color = argb();
+        BoardTactical.Outline outline = outlineColor == null ? null
+              : new BoardTactical.Outline(outlineColor.getRGB(), (BasicStroke) getStroke());
+        PathIterator path = shape.getPathIterator(getTransform(), 0.25);
+        BoardTactical.Point start = null, previous = null;
+        float distance = 0;
+        float[] xy = new float[6];
+        while (!path.isDone()) {
+            int segment = path.currentSegment(xy);
+            BoardTactical.Point point = segment == PathIterator.SEG_CLOSE ? start : new BoardTactical.Point(xy[0], xy[1]);
+            if (segment == PathIterator.SEG_MOVETO) {
+                start = point;
+                distance = 0;
+            } else if (!point.equals(previous)) {
+                walls.add(new BoardTactical.Wall(coords, previous, point, height, color, outline, distance, playback));
+                distance += (float) Math.hypot(point.x() - previous.x(), point.y() - previous.y());
+            }
+            previous = point;
+            path.next();
+        }
+    }
+
     @Override
     public void fill(Shape shape) {
+        fill(shape, fills);
+    }
+
+    private void fill(Shape shape, List<BoardTactical.Fill> destination) {
         int color = argb();
         if ((color >>> 24) == 0) {
             return;
@@ -141,7 +178,7 @@ public final class BoardTacticalGraphics extends AbstractGraphics2D {
             contours.add(new BoardTactical.Contour(points));
         }
         if (!contours.isEmpty()) {
-            fills.add(new BoardTactical.Fill(contours, winding, color, playback));
+            destination.add(new BoardTactical.Fill(contours, winding, color, playback));
         }
     }
 

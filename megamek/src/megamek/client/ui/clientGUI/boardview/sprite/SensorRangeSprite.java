@@ -38,9 +38,11 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Shape;
 import java.awt.image.ImageObserver;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.board.Coords;
@@ -55,6 +57,13 @@ public class SensorRangeSprite extends FieldOfFireSprite {
     public final static int SENSORS_AIR = 1;
     public final static int VISUAL = 2;
     public final static int VISUAL_DARK = 3;
+
+    /** Upright GPU visual-range boundary, often clipped to a straight line at the map edge. */
+    private static final float GPU_VISUAL_RANGE_HEIGHT = 0.5f;
+    /** 0 is fully transparent; 1 is fully opaque. */
+    private static final float GPU_VISUAL_RANGE_OPACITY = 0.75f;
+    /** Include the map perimeter in GPU sensor/visual ranges; false keeps only boundaries within the map. */
+    private static final boolean GPU_RANGE_SHOW_MAP_BORDER = false;
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
@@ -82,6 +91,35 @@ public class SensorRangeSprite extends FieldOfFireSprite {
             case VISUAL, VISUAL_DARK -> GUIP.getVisualRangeColor();
             default -> new Color(0, 0, 0);
         };
+    }
+
+    @Override
+    protected void paintTactical(Graphics2D graph) {
+        paintRange(graph, GPU_RANGE_SHOW_MAP_BORDER);
+    }
+
+    protected void paintRange(Graphics2D graph, boolean includeMapBorder) {
+        int borderMask = borders;
+        if (graph instanceof BoardTacticalGraphics && !includeMapBorder) {
+            for (int direction = 0; direction < 6; direction++) {
+                if (!bv.getBoard().contains(getPosition().translated(direction))) {
+                    borderMask &= ~(1 << direction);
+                }
+            }
+        }
+        super.paintTactical(graph, borderMask);
+    }
+
+    @Override
+    protected void drawBorderXC(Graphics2D graph, Shape fillShape, Shape lineShape) {
+        if (graph instanceof BoardTacticalGraphics tactical
+              && (getRangeBracket() == VISUAL || getRangeBracket() == VISUAL_DARK)) {
+            graph.setColor(getColor(getRangeBracket()));
+            graph.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, GPU_VISUAL_RANGE_OPACITY));
+            tactical.wall(lineShape, fillShape, getPosition(), GPU_VISUAL_RANGE_HEIGHT, lineColor);
+        } else {
+            super.drawBorderXC(graph, fillShape, lineShape);
+        }
     }
 
     @Override

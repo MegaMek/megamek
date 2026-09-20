@@ -10,7 +10,7 @@ import com.badlogic.gdx.utils.JsonValue;
 final class MekVisual {
     private MekVisual() { }
 
-    static GpuMeeple assemble(GpuUnitModels library, JsonValue descriptor, UnitModelState.Structure structure) {
+    static GpuUnitModel assemble(GpuUnitModels library, JsonValue descriptor, UnitModelState.Structure structure) {
         if (structure.anatomy() != null && !descriptor.getString("configuration").equals(structure.anatomy().configuration())) {
             throw new IllegalArgumentException("Body topology does not match this Mek's configuration");
         }
@@ -26,14 +26,8 @@ final class MekVisual {
             }
             assembled.calculateTransforms();
             var bindings = UnitEquipmentAssembly.attachAll(library, descriptor, body, structure, assembled);
-            if (descriptor.has("sizeScales") && structure.anatomy() != null) {
-                var anatomy = structure.anatomy();
-                float scale = anatomy.superHeavy() ? descriptor.getFloat("superHeavyScale")
-                      : descriptor.get("sizeScales").getFloat(Math.clamp(anatomy.size() - 1, 0, 3));
-                assembled.getNode(body.descriptor().joints().get("root")).scale.scl(scale);
-            }
             assembled.calculateTransforms();
-            return new GpuMeeple(assembled, body.descriptor().joints().get("torso"), true, bindings, 1f / 27, null,
+            return new GpuUnitModel(assembled, body.descriptor().joints().get("torso"), true, bindings, 1f / 27, null,
                   java.util.List.of(new UnitRig(body.descriptor())), UnitFamilyScale.forFamily(body.descriptor().family()));
         } catch (RuntimeException error) {
             assembled.dispose();

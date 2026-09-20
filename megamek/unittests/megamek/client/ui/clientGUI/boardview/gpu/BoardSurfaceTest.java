@@ -21,6 +21,29 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class BoardSurfaceTest {
+    @Test
+    void supportCacheReusesGeometryAcrossPosesAndInvalidatesForTerrainAndTuning() {
+        var cache = new BoardSurface.Cache();
+        var scene = scene(false);
+        var first = cache.get(scene, scene.tile(FIRST));
+        assertSame(first, cache.get(scene.withUnits(List.of()), scene.tile(FIRST)));
+        var edited = scene(false, 1, false, false, 2);
+        var cliff = cache.get(edited, edited.tile(FIRST));
+        assertEquals(0, cliff.ramps);
+        assertNotSame(first, cliff);
+        var tuning = BoardGeometry.tuning();
+        try {
+            BoardGeometry.tune(new BoardGeometry.Tuning(tuning.hexScale() * 1.2f, tuning.unitScale(), tuning.unitHeightScale(),
+                  tuning.levelHeight(), tuning.gridShade(), tuning.multiHexUnitScale()));
+            var resized = cache.get(edited, edited.tile(FIRST));
+            assertNotSame(cliff, resized);
+            var center = BoardGeometry.center(FIRST, 2);
+            assertEquals(center.z, resized.height(center.x, center.y), .001f);
+        } finally { BoardGeometry.tune(tuning); }
+        cache.clear();
+        assertNotSame(cliff, cache.get(edited, edited.tile(FIRST)));
+    }
+
     private static final Coords FIRST = new Coords(1, 1);
     private static final Coords SECOND = FIRST.translated(1);
 

@@ -91,6 +91,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
+        beginFiringMounts();
 
         double av = 0;
         double counterAV;
@@ -132,6 +133,7 @@ public class MissileBayWeaponHandler extends AmmoBayWeaponHandler {
                 weaponArmor += bayWType.getMissileArmor();
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
+                    recordFiringMount(bayW);
                     int shots = bayW.getCurrentShots();
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo

@@ -111,6 +111,8 @@ public class MGAWeaponHandler extends MGHandler {
             howManyShots = total;
         }
         shotsNeedFiring = howManyShots;
+        beginFiringMounts();
+        weapon.getMGAWeapons().stream().limit(howManyShots).forEach(this::recordFiringMount);
         if (ammo.getUsableShotsLeft() == 0) {
             weaponEntity.loadWeapon(weapon);
             ammo = (AmmoMounted) weapon.getLinked();
@@ -136,7 +138,7 @@ public class MGAWeaponHandler extends MGHandler {
         int shotsHit;
         int nMod = getClusterModifiers(true);
         nMod += Game.rulesManager.getRulesWeapons().getMGABonus();
-        
+
         if ((howManyShots == 1) || target.isConventionalInfantry()) {
             shotsHit = 1;
         } else {

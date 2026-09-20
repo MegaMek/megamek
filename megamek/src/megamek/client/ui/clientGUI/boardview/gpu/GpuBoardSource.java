@@ -16,6 +16,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -51,6 +52,7 @@ import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.EntityVisibilityUtils;
+import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.units.UnitLocation;
@@ -87,7 +89,8 @@ final class GpuBoardSource implements AutoCloseable {
         }
 
         List<BoardScene.Animation> animations() {
-            return timeline.stream().filter(event -> !(event instanceof BoardScene.SceneUpdate)).toList();
+            return timeline.stream().filter(event -> !(event instanceof BoardScene.SceneUpdate)
+                  && !(event instanceof BoardScene.Concealed)).toList();
         }
     }
 
@@ -202,7 +205,7 @@ final class GpuBoardSource implements AutoCloseable {
                 Entity old = event.getOldEntity();
                 UnitLocation start = old == null || old.getPosition() == null ? null
                       : new UnitLocation(old.getId(), old.getPosition(), old.getFacing(), old.getElevation(),
-                            old.getBoardId(), old.getProneCause());
+                            old.getBoardId(), old.getProneCause(), UnitLocation.Form.capture(old), old.getFallSide());
                 int startAltitude = old == null ? 0 : old.getAltitude();
                 Entity takeoff = old == null ? event.getEntity() : old;
                 int jumpMP = type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0;
@@ -224,7 +227,16 @@ final class GpuBoardSource implements AutoCloseable {
 
             @Override
             public void gameEntityRemove(megamek.common.event.entity.GameEntityRemoveEvent event) {
-                onSwing(GpuBoardSource.this::refresh);
+                BoardView eventView = GpuBoardSource.this.view;
+                int condition = event.getEntity().getRemovalCondition();
+                int id = event.getEntity().getId(), boardId = event.getEntity().getBoardId();
+                onSwing(() -> {
+                    if (closed || GpuBoardSource.this.view != eventView) { return; }
+                    if (condition == megamek.common.interfaces.IEntityRemovalConditions.REMOVE_UNKNOWN) {
+                        queueAnimation(new BoardScene.Concealed(id, boardId));
+                    }
+                    refresh();
+                });
             }
         };
         view.game.addGameListener(gameListener);
@@ -277,20 +289,31 @@ final class GpuBoardSource implements AutoCloseable {
             return;
         }
         List<BoardScene.Waypoint> points = new ArrayList<>();
-        // An airborne meeple plays at the altitude the unit has now, and at the altitude it started the move at for
+        // An airborne visual plays at the altitude the unit has now, and at the altitude it started the move at for
         // its first point and when it has just landed, so flying stays on the board through climbs and landings.
         int flightAltitude = entity.getAltitude() > 0 ? entity.getAltitude() : startAltitude;
         if (start != null && start.boardId() == view.getBoardId()) {
             points.add(pathWaypoint(entity, start.coords(), start.elevation(), start.facing(),
-                  startAltitude > 0 ? startAltitude : flightAltitude).withProneCause(start.proneCause()));
+                  startAltitude > 0 ? startAltitude : flightAltitude, start.form()).withProneCause(start.proneCause())
+                  .withFallSide(start.fallSide()));
         }
         for (UnitLocation location : path) {
+            var observedForm = location.form() != null ? location.form() : points.isEmpty() ? null : points.getLast().form();
             BoardScene.Waypoint point = pathWaypoint(entity, location.coords(), location.elevation(),
-                  location.facing(), flightAltitude).withProneCause(location.proneCause() != null ? location.proneCause()
-                        : points.isEmpty() ? null : points.getLast().proneCause());
+                  location.facing(), flightAltitude, observedForm).withProneCause(location.proneCause() != null ? location.proneCause()
+                        : points.isEmpty() ? null : points.getLast().proneCause())
+                  .withFallSide(location.proneCause() != null ? location.fallSide()
+                        : points.isEmpty() ? null : points.getLast().fallSide());
             if (points.isEmpty() || !points.getLast().equals(point)) {
                 points.add(point);
             }
+        }
+        // Older paths carry no conversion observations. Show their known final conversion at arrival.
+        var finalForm = UnitLocation.Form.capture(entity);
+        if (!points.isEmpty() && finalForm != null && path.stream().allMatch(location -> location.form() == null)) {
+            var last = path.getLast();
+            points.add(pathWaypoint(entity, last.coords(), last.elevation(), last.facing(), flightAltitude, finalForm)
+                  .withProneCause(points.getLast().proneCause()).withFallSide(points.getLast().fallSide()));
         }
         // Publish the final visible state and its movement together, so a frame cannot jump to the end first.
         Frame next = capture();
@@ -300,12 +323,48 @@ final class GpuBoardSource implements AutoCloseable {
         }
         synchronized (this) {
             if (view == movingView) {
-                queueAnimation(new BoardScene.Movement(entityId, view.getBoardId(), points, type, jumpMP,
-                      movementMP, next.scene().units().stream()
-                            .filter(unit -> unit.id() == entityId && !unit.sensorContact()).findFirst().orElse(null)));
+                var captured = next.scene().units().stream()
+                      .filter(unit -> unit.id() == entityId && !unit.sensorContact()).findFirst().orElse(null);
+                queueMovement(entity, captured, points, type, jumpMP, movementMP);
             }
             publishScene(next, false);
         }
+    }
+
+    /** Split only at observed conversion steps; normal travel keeps its one continuous acceleration interval. */
+    private void queueMovement(Entity entity, BoardScene.Unit captured, List<BoardScene.Waypoint> points,
+          EntityMovementType type, int jumpMP, int movementMP) {
+        if (captured == null || captured.model() == null || points.stream().noneMatch(point -> point.form() != null)) {
+            queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), points, type, jumpMP, movementMP, captured));
+            return;
+        }
+        List<BoardScene.Waypoint> leg = new ArrayList<>();
+        var form = points.getFirst().form();
+        for (var point : points) {
+            if (form != null && point.form() != null && form.mode() != point.form().mode()) {
+                var before = inForm(captured, entity, leg.getLast(), form);
+                var legStart = leg.getFirst();
+                if (leg.stream().anyMatch(step -> !step.samePose(legStart))) {
+                    queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), leg, type, jumpMP, movementMP, before));
+                }
+                var after = inForm(captured, entity, point, point.form());
+                queueAnimation(new BoardScene.Conversion(view.getBoardId(), before, after));
+                leg = new ArrayList<>();
+                form = point.form();
+            }
+            leg.add(point);
+            if (form == null) { form = point.form(); }
+        }
+        if (leg.size() > 1) {
+            queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), leg, type, jumpMP, movementMP,
+                  inForm(captured, entity, leg.getLast(), form)));
+        }
+    }
+
+    private BoardScene.Unit inForm(BoardScene.Unit unit, Entity entity, BoardScene.Waypoint location, UnitLocation.Form form) {
+        var model = UnitModelSelection.inForm(unit.model(), entity, unit.part(), MMStaticDirectoryManager.getMekTileset(), form);
+        return new BoardScene.Unit(unit.id(), unit.part(), unit.name(), location, unit.image(), false, unit.annotations(),
+              unit.height(), form == null ? unit.airborne() : form.airborne(), model, unit.outlineRgb(), unit.footprint());
     }
 
     /** Copy authorized, then-visible appearance once; no Entity reaches the GL thread. */
@@ -326,6 +385,10 @@ final class GpuBoardSource implements AutoCloseable {
         }
         var usedImages = new IdentityHashMap<Image, Boolean>();
         var firing = unit(attacker, -1, result.attacker().coords(), false, usedImages);
+        if (result.shot() != null && result.shot().launch() != null) {
+            firing = inForm(firing, attacker, waypoint(result.attacker().coords(), result.attacker().elevation(), result.attacker().facing()),
+                  result.attacker().form());
+        }
         var receiving = target == null ? null : unit(target, -1, result.target().coords(), false, usedImages);
         var destination = receiving == null
               ? waypoint(result.target().coords(), result.target().elevation(), result.target().facing())
@@ -355,8 +418,17 @@ final class GpuBoardSource implements AutoCloseable {
             Map<Integer, BoardScene.Unit> previous = new HashMap<>();
             frame.scene().units().stream().filter(unit -> !unit.sensorContact())
                   .forEach(unit -> previous.put(unit.id(), unit));
+            for (var old : previous.values()) {
+                Entity entity = view.game.getEntity(old.id());
+                if (entity != null && (!visible(entity) || sensorContact(entity))) {
+                    queueAnimation(new BoardScene.Concealed(old.id(), next.scene().boardId()));
+                }
+            }
             for (var unit : next.scene().units()) {
                 var old = previous.get(unit.id());
+                if (UnitConversion.changes(old, unit)) {
+                    queueAnimation(new BoardScene.Conversion(next.scene().boardId(), old, unit));
+                }
                 if (old != null && !unit.sensorContact() && UnitMotion.changesGear(old.location(), unit.location())) {
                     Entity entity = view.game.getEntity(unit.id());
                     queueAnimation(new BoardScene.Movement(unit.id(), next.scene().boardId(),
@@ -394,7 +466,7 @@ final class GpuBoardSource implements AutoCloseable {
                     && unit.footprint().size() > 1 && unit.location().coords().equals(point.coords())
                     && unit.location().aeroState() == BoardScene.AeroState.LANDED)
               .map(unit -> new BoardScene.Waypoint(point.coords(), unit.location().elevation(), point.facing(),
-                    point.proneCause(), point.aeroState(), unit.footprint())).findFirst().orElse(point);
+                    point.proneCause(), point.aeroState(), unit.footprint(), point.form(), point.fallSide())).findFirst().orElse(point);
     }
 
     public void refresh() {
@@ -515,6 +587,13 @@ final class GpuBoardSource implements AutoCloseable {
                 entity.getSecondaryPositions().forEach((part, coords) ->
                       units.add(unit(entity, part, coords, false, usedImages)));
             }
+        }
+        if (GpuUnitModels.ENABLED && GUIPreferences.getInstance().getShowWrecks()) {
+            // BoardView already owns which removed units leave wrecks, including infantry/CVEP exceptions.
+            var live = units.stream().map(BoardScene.Unit::id).collect(Collectors.toSet());
+            view.getIsoWreckSprites().stream().map(sprite -> sprite.getEntity()).distinct()
+                  .filter(entity -> !live.contains(entity.getId()) && visible(entity) && !sensorContact(entity))
+                  .forEach(entity -> units.add(wreck(entity, usedImages)));
         }
         unitImages.keySet().retainAll(usedImages.keySet());
         unitAnnotations.values().removeIf(annotations -> !usedImages.containsKey(annotations.image()));
@@ -651,6 +730,22 @@ final class GpuBoardSource implements AutoCloseable {
         return EntityVisibilityUtils.onlyDetectedBySensors(view.getLocalPlayer(), entity);
     }
 
+    private BoardScene.Unit wreck(Entity entity, Map<Image, Boolean> usedImages) {
+        var captured = unit(entity, -1, entity.getPosition(), false, usedImages);
+        var model = captured.model();
+        var state = model == null ? UnitModelState.capture(entity) : model.state();
+        var pose = state.pose();
+        var dead = new UnitModelState(state.structure(), state.appearance(),
+              new UnitModelState.Pose(pose.proneCause(), pose.facing(), pose.secondaryFacing(), pose.form(), true));
+        model = model == null ? new BoardScene.UnitModel("", "", "", 1, 0, BoardScene.LocationDamage.NONE, dead)
+              : new BoardScene.UnitModel(model.asset(), model.fallback(), model.variant(), model.figures(), model.twist(), model.damage(), dead);
+        Image image = view.getTileManager().wreckMarkerFor(entity, -1);
+        usedImages.put(image, true);
+        var pixels = unitImages.computeIfAbsent(image, BoardScene.Pixels::copy);
+        return new BoardScene.Unit(captured.id(), -1, captured.name(), captured.location(), pixels, false, null,
+              captured.height(), captured.airborne(), model, captured.outlineRgb(), captured.footprint());
+    }
+
     private BoardScene.Unit unit(Entity entity, int part, Coords coords, boolean sensor,
           Map<Image, Boolean> usedImages) {
         Image image = sensor ? view.getRadarBlipImage() : view.getTileManager().textureFor(entity, part);
@@ -674,7 +769,8 @@ final class GpuBoardSource implements AutoCloseable {
                     ? new BoardScene.Waypoint(coords, UnitFootprint.support(board, coords, footprint, entity.getElevation()), facing)
                     : waypoint(coords, sensor ? 0 : entity.getElevation(), facing);
         if (!sensor) {
-            location = location.withAeroState(aeroState(entity, entity.getElevation(), airborne));
+            location = location.withAeroState(aeroState(entity, entity.getElevation(), airborne))
+                  .withFallSide(entity instanceof Mek ? entity.getFallSide() : null);
             if (location.aeroState() != null) {
                 location = location.withFootprint(footprint);
             }
@@ -709,7 +805,7 @@ final class GpuBoardSource implements AutoCloseable {
     }
 
     /**
-     * Absolute level a flying meeple floats at, with its token staying its own height above it. Aerospace altitude is
+     * Absolute level a flying visual floats at, with its token staying its own height above it. Aerospace altitude is
      * already absolute above the board, exactly as the LOS height conversion treats it, and is the only height
      * available for it because {@code Aero.getElevation()} reports the airborne sentinel while flying. VTOL and WiGE
      * elevation is relative to the hex below them.
@@ -729,16 +825,22 @@ final class GpuBoardSource implements AutoCloseable {
      * keeps its own per-step elevation, so VTOL and WiGE climbs and descents still animate.
      */
     private BoardScene.Waypoint pathWaypoint(Entity entity, Coords coords, float elevation, int facing,
-          int flightAltitude) {
-        BoardScene.Waypoint point = entity.isAero() && elevation >= Aero.AERO_EFFECTIVE_ELEVATION && flightAltitude > 0
+          int flightAltitude, UnitLocation.Form form) {
+        boolean aero = form == null ? entity.isAero() : form.aero();
+        if (form != null && form.altitude() > 0) { flightAltitude = form.altitude(); }
+        BoardScene.Waypoint point = aero && elevation >= Aero.AERO_EFFECTIVE_ELEVATION && flightAltitude > 0
               ? new BoardScene.Waypoint(coords, flightAltitude, facing)
               : waypoint(coords, elevation, facing);
         // A real path elevation describes the displayed step; the final Entity may already have landed/taken off.
-        return point.withAeroState(aeroState(entity, elevation, false));
+        return point.withAeroState(aeroState(aero, elevation, false)).withForm(form);
     }
 
     private BoardScene.AeroState aeroState(Entity entity, float relativeElevation, boolean flying) {
-        if (!entity.isAero()) {
+        return aeroState(entity.isAero(), relativeElevation, flying);
+    }
+
+    private BoardScene.AeroState aeroState(boolean aero, float relativeElevation, boolean flying) {
+        if (!aero) {
             return null;
         }
         if (board.isSpace() || flying || relativeElevation >= Aero.AERO_EFFECTIVE_ELEVATION) {

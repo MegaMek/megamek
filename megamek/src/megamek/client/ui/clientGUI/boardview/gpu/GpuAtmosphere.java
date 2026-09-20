@@ -30,6 +30,7 @@ final class GpuAtmosphere implements Disposable {
     private final ModelBatch depthBatch;
     private final ShaderProgram fogShader;
     private final ShaderProgram compositeShader;
+    private final ShaderProgram depthRestoreShader;
     private FrameBuffer sceneColor;
     private FrameBuffer sceneDepth;
     private FrameBuffer fog;
@@ -48,11 +49,18 @@ final class GpuAtmosphere implements Disposable {
             fogShader.dispose();
             throw failure;
         }
+        try {
+            depthRestoreShader = shader("depth-restore.frag");
+        } catch (RuntimeException failure) {
+            fogShader.dispose();
+            compositeShader.dispose();
+            throw failure;
+        }
         quad = screenQuad();
         DepthShader.Config depthConfig = new DepthShader.Config();
         // Shadow shaders cull front faces by default. Camera depth must use the visible front surface.
         depthConfig.defaultCullFace = GL20.GL_BACK;
-        depthBatch = new ModelBatch(new DepthShaderProvider(depthConfig));
+        depthBatch = new ModelBatch(new DepthShaderProvider(depthConfig), new GpuOpaqueSorter());
         configure(BoardAtmosphere.DEFAULTS);
     }
 
@@ -201,14 +209,26 @@ final class GpuAtmosphere implements Disposable {
         }
     }
 
-    /** Re-establish opaque depth for crisp, ungraded board markings after compositing. */
+    /** Reuse captured opaque depth; do not submit every unit and terrain mesh a second time after compositing. */
     void restoreDepth(Camera camera, GpuTerrain terrain, List<ModelInstance> units) {
         Gdx.gl.glColorMask(false, false, false, false);
         Gdx.gl.glDepthMask(true);
         try {
-            terrain.renderDepth(camera, units, depthBatch);
+            if (captureDepth) {
+                Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+                Gdx.gl.glDepthFunc(GL20.GL_ALWAYS);
+                Gdx.gl.glDisable(GL20.GL_CULL_FACE);
+                Gdx.gl.glDisable(GL20.GL_BLEND);
+                depthRestoreShader.bind();
+                sceneDepth.getColorBufferTexture().bind(0);
+                depthRestoreShader.setUniformi("u_depth", 0);
+                quad.render(depthRestoreShader, GL20.GL_TRIANGLES);
+            } else {
+                terrain.renderDepth(camera, units, depthBatch);
+            }
         } finally {
             Gdx.gl.glColorMask(true, true, true, true);
+            Gdx.gl.glDepthFunc(GL20.GL_LEQUAL);
         }
     }
 
@@ -268,5 +288,6 @@ final class GpuAtmosphere implements Disposable {
         depthBatch.dispose();
         fogShader.dispose();
         compositeShader.dispose();
+        depthRestoreShader.dispose();
     }
 }

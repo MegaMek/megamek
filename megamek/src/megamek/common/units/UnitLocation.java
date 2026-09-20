@@ -44,10 +44,29 @@ import megamek.common.board.Coords;
  *
  * @since July 5, 2005
  */
-public record UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause)
+public record UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause, Form form,
+      FallSide fallSide)
       implements Serializable {
     @Serial
     private static final long serialVersionUID = 3989732522854387850L;
+
+    public UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause, Form form) {
+        this(entityId, coords, facing, elevation, boardId, proneCause, form, null);
+    }
+
+    /** Sparse conversion observation. Old packets/saves contain null and retain their established behavior. */
+    public record Form(int mode, EntityMovementMode movement, String tilesetMode, boolean aero,
+          boolean airborne, int altitude) implements Serializable {
+        public static Form capture(Entity entity) {
+            return entity instanceof LandAirMek || entity instanceof QuadVee
+                  ? new Form(entity.getConversionMode(), entity.getMovementMode(), entity.getTilesetModeString(),
+                        entity.isAero(), entity.isAirborne() || entity.isAirborneVTOLorWIGE(), entity.getAltitude()) : null;
+        }
+    }
+
+    public UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause) {
+        this(entityId, coords, facing, elevation, boardId, proneCause, null);
+    }
 
     /** Older movement producers/saves have no posture cue; null means no observation, not standing. */
     public UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId) {

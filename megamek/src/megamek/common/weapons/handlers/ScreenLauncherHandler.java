@@ -121,6 +121,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         }
 
         addHeat();
+        reportAttackAnimation(true);
 
         // deliver screen
         Coords coords = target.getPosition();

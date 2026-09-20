@@ -133,7 +133,10 @@ class GpuAtmosphereSmokeTest {
                   new BoardAtmosphere.Settings(0, 0, 0, 1.5f, 0, 0));
             Color night = sample(camera, ground);
             assertTrue(luminance(clearGround) > luminance(night) * 1.25f, "Neutral daylight must be visibly brighter than night");
-            assertTrue(luminance(night) > 0.4f, "Full moon lighting must keep the ground readable");
+            // The -1 EV night exposure halves linear light: the old 0.4 display-space floor becomes ~0.29.
+            float nightBrightnessFloor = 0.29f;
+            assertTrue(luminance(night) > nightBrightnessFloor,
+                  "Full moon lighting must keep the ground readable at -1 EV: " + night);
             assertTrue(night.b > night.r, "Moonlit gray ground must have a blue tint");
             assertSame(shadow, terrain.environment().shadowMap, "Changing time must reuse the shadow framebuffer");
             GpuBoardTestUi.capture(new File(output, "atmosphere-night.png"));
@@ -141,7 +144,7 @@ class GpuAtmosphereSmokeTest {
                 draw(atmosphere, terrain, batch, tower, camera, scene,
                       new BoardAtmosphere.Settings(hour, 1, 0, 1.5f, 0, 0));
                 Color twilight = sample(camera, ground);
-                assertTrue(luminance(twilight) > 0.4f,
+                assertTrue(luminance(twilight) > nightBrightnessFloor,
                       "The rendered board must not go dark during twilight at " + hour + ": " + twilight);
             }
             checkParticles(atmosphere, terrain, batch, tower, camera, scene);
@@ -285,8 +288,14 @@ class GpuAtmosphereSmokeTest {
                 }
                 assertTrue(coverage > clear.getWidth() * clear.getHeight() * 0.003,
                       "Even half-strength sand must remain visible as fine grains: " + coverage);
-                assertTrue(coverage < clear.getWidth() * clear.getHeight() * 0.08,
-                      "Sand must not blanket the board with broad opaque flakes: " + coverage);
+                float coverageFraction = coverage / (float) (clear.getWidth() * clear.getHeight());
+                assertTrue(coverageFraction < 0.22f,
+                      "Sand must cover no more than about a fifth of the frame: " + coverageFraction);
+                if (strength == 1) {
+                    assertEquals(0.20f, coverageFraction, 0.02f,
+                          "Maximum-strength sand must cover about 20% of the frame");
+                }
+                System.out.println("Sand strength " + strength + ": coverage " + coverageFraction);
                 assertTrue(coverage > previousCoverage, "Increasing sand strength must increase visible coverage");
                 previousCoverage = coverage;
                 GpuBoardTestUi.capture(new File(output, "weather-sand-strength-" + Math.round(strength * 100) + ".png"));

@@ -43,7 +43,7 @@ class GpuTreeLodSmokeTest {
           "willow-snow", "pine-snow", "pine-tall-snow");
 
     @Test
-    void changesSubmittedGeometryWithoutChangingPickingOrLosingFadingAndShadows() {
+    void changesSubmittedGeometryWithoutChangingPickingOpacityOrShadows() {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         new Lwjgl3Application(new ApplicationAdapter() {
             @Override
@@ -84,7 +84,7 @@ class GpuTreeLodSmokeTest {
                         for (int level : new int[] { 0, 1, 2, 0, 2, 1, 0 }) {
                             camera.camera.zoom = level == 0 ? 0.1f : zoomForSize(diameter, level == 1 ? 50 : 12);
                             camera.update();
-                            terrain.animate(0, List.of(), 1, 1);
+                            terrain.animate(0, List.of(), 1);
                             int shadowCount = count(profiler, () -> terrain.renderShadows(camera.camera, List.of()));
                             int colorCount = count(profiler, () -> terrain.render(camera.camera, false));
                             if (level == 0) {
@@ -97,23 +97,22 @@ class GpuTreeLodSmokeTest {
                             assertEquals(shadowCount, count(profiler, () -> terrain.renderDepth(camera.camera, List.of(), depth)));
                             assertEquals(nearHit, terrain.hit(scene, new Ray(new Vector3(center).add(0, 0, 1000),
                                   new Vector3(0, 0, -1))), "Picking remains stable across detail levels");
-                            terrain.animate(0, List.of(unit), 1, 0.35f);
-                            int fadedTriangles = level == 0 ? GpuTerrain.triangles(assets.model(name)).size() : triangles[level] * 3;
-                            assertEquals(fadedTriangles,
-                                  count(profiler, () -> terrain.renderTransparent(camera.camera)), "Faded trees retain their LoD");
-                            assertEquals(shadowCount - triangles[level] * 3,
+                            terrain.animate(0, List.of(unit), 0);
+                            assertEquals(0, count(profiler, () -> terrain.renderTransparent(camera.camera)),
+                                  "Trees must stay in the opaque pass when a unit enters");
+                            assertEquals(colorCount, count(profiler, () -> terrain.render(camera.camera, false)));
+                            assertEquals(shadowCount,
                                   count(profiler, () -> terrain.renderDepth(camera.camera, List.of(), depth)));
                         }
-                        // Keep occupancy unchanged while crossing both thresholds. A mesh replacement must
-                        // retain transparency, omit the camera depth, and still cast an opaque near shadow.
+                        // An occupied tree stays opaque through both LoD thresholds, including camera depth
+                        // for the unit outline. The same selected geometry casts its shadow.
                         for (int level : new int[] { 1, 2, 0 }) {
                             camera.camera.zoom = level == 0 ? 0.1f : zoomForSize(diameter, level == 1 ? 50 : 12);
                             camera.update();
                             assertEquals(nearShadowCount - 3 * (triangles[0] - triangles[level]),
                                   count(profiler, () -> terrain.renderShadows(camera.camera, List.of())));
-                            assertEquals(level == 0 ? GpuTerrain.triangles(assets.model(name)).size() : triangles[level] * 3,
-                                  count(profiler, () -> terrain.renderTransparent(camera.camera)));
-                            assertEquals(nearShadowCount - triangles[0] * 3,
+                            assertEquals(0, count(profiler, () -> terrain.renderTransparent(camera.camera)));
+                            assertEquals(nearShadowCount - 3 * (triangles[0] - triangles[level]),
                                   count(profiler, () -> terrain.renderDepth(camera.camera, List.of(), depth)));
                             assertEquals(0, count(profiler, () -> terrain.renderShadows(camera.camera, List.of())),
                                   "An unchanged camera and scene must reuse the shadow map");
@@ -158,7 +157,7 @@ class GpuTreeLodSmokeTest {
         return new BoardScene(0, 1, 1, List.of(tile), List.of(), List.of(), -1, "", List.of(), new BoardScene.Light(-24, -30));
     }
 
-    /** The complete authored meshes remain available for close transparent trees and serve as the reference. */
+    /** The complete authored meshes remain available as the visual reference for optimized geometry. */
     private static void compareReferences(GpuAssets assets) throws Exception {
         Environment environment = new Environment();
         environment.set(ColorAttribute.createAmbientLight(0.55f, 0.58f, 0.62f, 1));

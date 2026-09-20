@@ -123,6 +123,9 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         }
 
         addHeat();
+        beginFiringMounts();
+        weapon.getBayWeapons().forEach(this::recordFiringMount);
+        reportAttackAnimation(true);
 
         // iterate through by number of weapons in bay
         for (int i = 0; i < weapon.getBayWeapons().size(); i++) {

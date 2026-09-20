@@ -40,7 +40,7 @@ final class GpuUnitVisibility implements Disposable {
         quad = GpuAtmosphere.screenQuad();
         DepthShader.Config config = new DepthShader.Config();
         config.defaultCullFace = GL20.GL_BACK;
-        depthBatch = new ModelBatch(new DepthShaderProvider(config));
+        depthBatch = new ModelBatch(new DepthShaderProvider(config), new GpuOpaqueSorter());
         colorBatch = new ModelBatch(new DefaultShaderProvider(DefaultShader.getDefaultVertexShader(),
               Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/unit-color.frag").readString()) {
             @Override
@@ -55,7 +55,7 @@ final class GpuUnitVisibility implements Disposable {
                     }
                 };
             }
-        });
+        }, new GpuOpaqueSorter());
     }
 
     void render(Camera camera, List<ModelInstance> units, Texture sceneDepth, int bottom, float intensity, float scale) {
@@ -76,7 +76,7 @@ final class GpuUnitVisibility implements Disposable {
         ScreenUtils.clear(1, 1, 1, 1, true);
         // The nearest unit surface prevents rear faces and overlapping limbs from highlighting an exposed unit.
         depthBatch.begin(camera);
-        units.forEach(depthBatch::render);
+        units.forEach(unit -> GpuUnitInstance.renderDepth(depthBatch, unit));
         depthBatch.end();
         unitDepth.end();
 
@@ -85,7 +85,7 @@ final class GpuUnitVisibility implements Disposable {
         Gdx.gl.glDepthMask(true);
         ScreenUtils.clear(0, 0, 0, 0, true);
         colorBatch.begin(camera);
-        units.forEach(colorBatch::render);
+        units.forEach(unit -> GpuUnitInstance.renderDepth(colorBatch, unit));
         colorBatch.end();
         unitColors.end();
 

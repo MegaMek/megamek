@@ -412,6 +412,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
             return false;
         }
 
+        reportArtilleryAnimation(finalPos, height);
         if (ammoType.getMunitionType().contains(Munitions.M_FAE)) {
             handleArtilleryDriftMarker(targetPos, finalPos, artilleryAttackAction,
                   AreaEffectHelper.processFuelAirDamage(

@@ -307,7 +307,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 
     @Override
@@ -577,6 +577,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                             bayW.setUsedThisRound(true);
                         }
                         amsEngaged = true;
+                        reportCounterAnimation(bayW);
                     }
                 } else {
                     // build up some heat
@@ -618,6 +619,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     if (isAPDS) {
                         apdsEngaged = true;
                     }
+                    reportCounterAnimation(counter);
                 }
                 // Determine APDS mod
                 if (apdsEngaged) {

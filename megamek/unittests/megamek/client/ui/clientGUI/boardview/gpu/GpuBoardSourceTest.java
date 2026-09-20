@@ -27,10 +27,10 @@ import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.ECMEffects;
 import megamek.client.ui.clientGUI.boardview.sprite.CursorSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.MovementEnvelopeSprite;
 import megamek.client.ui.tileset.HexTileset;
-import megamek.client.ui.clientGUI.boardview.ECMEffects;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.Hex;
@@ -278,7 +278,7 @@ class GpuBoardSourceTest {
     }
 
     @Test
-    void airborneMeeplesFloatAtTheirFlightHeight() throws Exception {
+    void airborneUnitsFloatAtTheirFlightHeight() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             Entity vtol = new MekFileParser(new File("testresources/megamek/common/units/Cobra Transport VTOL.blk"))
                   .getEntity();

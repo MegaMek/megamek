@@ -16,9 +16,9 @@ import javax.swing.SwingUtilities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
@@ -26,37 +26,37 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import megamek.client.ui.tileset.EquipmentModelPolicy;
-import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.client.ui.tileset.MekTileset;
+import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.game.Game;
+import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.icons.Camouflage;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
-import megamek.common.battlefieldSupport.BFSAssetType;
-import megamek.common.options.OptionsConstants;
-import megamek.common.board.Coords;
+import megamek.common.game.Game;
+import megamek.common.icons.Camouflage;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.options.OptionsConstants;
+import megamek.common.units.AeroSpaceFighter;
+import megamek.common.units.CombatVehicleEscapePod;
 import megamek.common.units.Dropship;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.ProneCause;
-import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.FighterSquadron;
-import megamek.common.units.Tank;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.SmallCraft;
 import megamek.common.units.Jumpship;
-import megamek.common.units.Warship;
-import megamek.common.units.SpaceStation;
-import megamek.common.units.CombatVehicleEscapePod;
 import megamek.common.units.LandAirMek;
-import megamek.common.units.QuadVee;
 import megamek.common.units.Mek;
+import megamek.common.units.ProneCause;
+import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.SmallCraft;
+import megamek.common.units.SpaceStation;
+import megamek.common.units.Tank;
+import megamek.common.units.Warship;
 
 /** Native family, side-mounted equipment, footprint, placement and picking integration review. */
 final class GpuFamilyAssemblyReview {
@@ -196,7 +196,7 @@ final class GpuFamilyAssemblyReview {
         assertEquals(10, selection.state().structure().bodyForm().fighters().size());
     }
 
-    private static BoardScene.UnitModel selection(String family, List<UnitModelEquipment.Mount> equipment) {
+    static BoardScene.UnitModel selection(String family, List<UnitModelEquipment.Mount> equipment) {
         var structure = new UnitModelState.Structure(EntityMovementMode.NONE, equipment, List.of(), 0, false, null,
               new UnitModelState.BodyForm(family, 3, 2));
         return new BoardScene.UnitModel("units/modular/families/" + family + ".json", null, family, 1, 0,

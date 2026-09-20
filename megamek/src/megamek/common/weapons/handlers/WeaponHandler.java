@@ -109,13 +109,93 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected transient TWGameManager gameManager; // must not save the server
     protected boolean bMissed;
     private transient boolean animationReported;
+    private transient Integer animationMissileHits;
+    private transient java.util.Set<WeaponMounted> animatedCounters;
+    // Delayed artillery can be saved between firing and landing. Preserve the mounts observed at launch.
+    private java.util.List<megamek.common.ResolvedAttack.Mount> animationFiringMounts;
+    private transient java.util.Set<Integer> animatedArtillery;
+    private megamek.common.units.UnitLocation animationOrigin;
+
+    /** Bay/array handlers observe membership where the rules actually fire each constituent, before spending ammo. */
+    protected final void beginFiringMounts() { animationFiringMounts = new java.util.ArrayList<>(); }
+
+    protected final void recordFiringMount(WeaponMounted mount) {
+        animationFiringMounts.add(new megamek.common.ResolvedAttack.Mount(mount.getEntity().getId(),
+              mount.getEquipmentNum(), megamek.common.ResolvedAttack.Shot.capture(mount)));
+    }
+
+    protected final java.util.List<megamek.common.ResolvedAttack.Mount> firingMounts() {
+        return animationFiringMounts == null ? megamek.common.ResolvedAttack.captureMounts(attackingEntity,
+              attackingEntity.getEquipmentNum(weapon)) : java.util.List.copyOf(animationFiringMounts);
+    }
+
+    protected final void reportArtilleryAnimation(Coords landing, int height) {
+        for (var mount : firingMounts()) { reportArtilleryAnimation(landing, height, mount); }
+    }
+
+    /** Specialized bays can resolve each physical gun separately, including interception of a homing round. */
+    protected final void reportFiringMount(int ordinal, boolean hit, Integer missileHits) {
+        var mounts = firingMounts();
+        if (ordinal >= mounts.size()) { return; }
+        var mount = mounts.get(ordinal);
+        if (animatedArtillery == null) { animatedArtillery = new java.util.HashSet<>(); }
+        if (!animatedArtillery.add(mount.equipmentIndex())) { return; }
+        animationReported = true;
+        var gun = attackingEntity.getEquipment(mount.equipmentIndex());
+        var shot = mount.shot() == null ? megamek.common.ResolvedAttack.Shot.capture(gun) : mount.shot();
+        if (shot != null) { shot = shot.withResolution(null, missileHits); }
+        gameManager.sendAttackAnimation(attackingEntity, target, megamek.common.ResolvedAttack.Kind.SHOT,
+              mount.equipmentIndex(), gun.getLocation(), hit, shot,
+              java.util.List.of(new megamek.common.ResolvedAttack.Mount(mount.entityId(), mount.equipmentIndex(), shot)));
+    }
+
+    /** Called after the artillery handler resolves a landing, before applying any area damage. */
+    protected final void reportArtilleryAnimation(Coords landing, int height, megamek.common.ResolvedAttack.Mount mount) {
+        if (animatedArtillery == null) { animatedArtillery = new java.util.HashSet<>(); }
+        if (!animatedArtillery.add(mount.equipmentIndex())) { return; }
+        animationReported = true;
+        var gun = attackingEntity.getEquipment(mount.equipmentIndex());
+        var profile = mount.shot() == null ? megamek.common.ResolvedAttack.Shot.capture(gun) : mount.shot();
+        if (profile == null || animationOrigin == null) { return; }
+        var shot = profile.withResolution(ammoType, null).withTrajectory(animationOrigin,
+              new megamek.common.units.UnitLocation(Entity.NONE, landing, 0, height, target.getBoardId()));
+        gameManager.sendAttackAnimation(attackingEntity, target, megamek.common.ResolvedAttack.Kind.SHOT,
+              mount.equipmentIndex(), gun.getLocation(), !bMissed, shot,
+              java.util.List.of(new megamek.common.ResolvedAttack.Mount(mount.entityId(), mount.equipmentIndex(), shot)));
+    }
+
+    /** Called only where the existing rules actually expend a counterweapon's shot. */
+    protected final void reportCounterAnimation(WeaponMounted counter) {
+        if (animatedCounters == null) { animatedCounters = new java.util.HashSet<>(); }
+        if (animatedCounters.add(counter)) {
+            gameManager.sendAttackAnimation(counter.getEntity(), attackingEntity, megamek.common.ResolvedAttack.Kind.SHOT,
+                  counter.getEquipmentNum(), counter.getLocation(), true,
+                  megamek.common.ResolvedAttack.Shot.capture(counter).asDefensive());
+        }
+    }
+
+    /** Observe the resolved count before a handler converts missiles into damage points or damage clusters. */
+    protected final int recordMissileHits(int missiles) {
+        animationMissileHits = missiles;
+        return missiles;
+    }
 
     /** One visual result per resolved salvo, independent of the number of damage clusters. */
     protected final void reportAttackAnimation(boolean hit) {
+        // A Swarm continuation reuses airborne missiles. It must not emit another full rack from the gun.
+        // Its secondary flight needs a separate observed origin/visibility event before it can be animated.
+        if (weaponAttackAction.isSwarmingMissiles()) { return; }
         if (!animationReported) {
             animationReported = true;
-            gameManager.sendAttackAnimation(attackingEntity, target, megamek.common.ResolvedAttack.Kind.SHOT,
-                  attackingEntity.getEquipmentNum(weapon), weapon.getLocation(), hit);
+            var shot = megamek.common.ResolvedAttack.Shot.capture(weapon);
+            var resolved = shot == null ? null : shot.withResolution(ammoType, hit ? animationMissileHits : Integer.valueOf(0));
+            if (animationFiringMounts == null) {
+                gameManager.sendAttackAnimation(attackingEntity, target, megamek.common.ResolvedAttack.Kind.SHOT,
+                      attackingEntity.getEquipmentNum(weapon), weapon.getLocation(), hit, resolved);
+            } else if (!animationFiringMounts.isEmpty()) {
+                gameManager.sendAttackAnimation(attackingEntity, target, megamek.common.ResolvedAttack.Kind.SHOT,
+                      attackingEntity.getEquipmentNum(weapon), weapon.getLocation(), hit, resolved, animationFiringMounts);
+            }
         }
     }
     protected boolean bSalvo = false;
@@ -408,6 +488,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
 
                     if (isAMSBay) {
+                        reportCounterAnimation(bayW);
                         // get the attack value
                         amsAV += (int) Math.round(bayWType.getShortAV());
                         // set the ams as having fired, if it did
@@ -415,6 +496,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     }
 
                     if (isPDBay) {
+                        reportCounterAnimation(bayW);
                         // get the attack value
                         pdAV += bayWType.getShortAV();
                         // set the pod bay as having fired, if it was able to
@@ -649,9 +731,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             vPhaseReport.removeLast();
                         }
                         hits = 0;
+                        int observedMissiles = 0;
+                        boolean observedEverySalvo = true;
                         for (int i = 0; i < numWeaponsHit; i++) {
                             hits += calcHits(throwAwayReport);
+                            observedEverySalvo &= animationMissileHits != null;
+                            observedMissiles += animationMissileHits == null ? 0 : animationMissileHits;
                         }
+                        // These are missiles, even for ATM/dead-fire handlers which return damage points.
+                        animationMissileHits = observedEverySalvo && !pdBayEngaged && !amsBayEngaged
+                              ? observedMissiles : null;
                         // Report and apply point defense fire
                         if (pdBayEngaged || amsBayEngaged) {
                             Report r = new Report(3367);
@@ -773,6 +862,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             results[1] = nCluster;
             return results;
         } else {
+            // Attack-value rules do not resolve individual missiles. Do not reuse an earlier ground cluster roll.
+            animationMissileHits = null;
             int hits = 1;
             int nCluster = calculateNumClusterAero(entityTarget);
             if (attackingEntity.isCapitalFighter()) {
@@ -883,6 +974,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         String number = numWeapons > 1 ? " (" + numWeapons + ")" : "";
         for (int i = numAttacks; i > 0; i--) {
             animationReported = false;
+            animationMissileHits = null;
             // Skip weapon announcement for spawned attacks (e.g., rapid-fire AC special ammo)
             // The parent handler already announced the weapon
             if (parentBayHandler == null) {
@@ -2009,6 +2101,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
 
         weapon = (WeaponMounted) weaponEntity.getEquipment(this.weaponAttackAction.getWeaponId());
+        if (attackingEntity.getPosition() != null) {
+            animationOrigin = new megamek.common.units.UnitLocation(attackingEntity.getId(), attackingEntity.getPosition(),
+                  attackingEntity.getFacing(), attackingEntity.getElevation(), attackingEntity.getBoardId(), attackingEntity.getProneCause());
+        }
         weaponType = weapon.getType();
         ammoType = (weapon.getLinked() != null && weapon.getLinked().getType() instanceof AmmoType)
               ? (AmmoType) weapon.getLinked().getType()

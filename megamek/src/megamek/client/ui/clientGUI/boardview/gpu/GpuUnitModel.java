@@ -10,7 +10,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
@@ -22,8 +24,8 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Disposable;
 import megamek.common.annotations.Nullable;
 
-/** One owned unit model, authored or sprite-derived, with shared placement and annotation geometry. */
-final class GpuMeeple implements Disposable {
+/** One owned unit model with shared placement and annotation geometry. */
+final class GpuUnitModel implements Disposable {
     private final Model model;
     final ModelInstance instance;
     private final BoundingBox bounds;
@@ -35,7 +37,7 @@ final class GpuMeeple implements Disposable {
     private final Vector3 restDimensions;
     private final UnitFamilyScale familyScale;
 
-    GpuMeeple(Model model) {
+    GpuUnitModel(Model model) {
         this(model, null);
     }
 
@@ -43,29 +45,29 @@ final class GpuMeeple implements Disposable {
      * @param upperBodyNode the part of the model that carries everything above the waist, as named by the model's
      *                      descriptor, or {@code null} for a model that turns as one piece
      */
-    GpuMeeple(Model model, @Nullable String upperBodyNode) {
+    GpuUnitModel(Model model, @Nullable String upperBodyNode) {
         this(model, upperBodyNode, false);
     }
 
-    GpuMeeple(Model model, @Nullable String upperBodyNode, UnitFamilyScale familyScale) {
+    GpuUnitModel(Model model, @Nullable String upperBodyNode, UnitFamilyScale familyScale) {
         this(model, upperBodyNode, false, List.of(), upperBodyNode == null ? 1f / 54 : 1f / 27, null, List.of(), familyScale);
     }
 
-    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates) {
+    GpuUnitModel(Model model, @Nullable String upperBodyNode, boolean modularCoordinates) {
         this(model, upperBodyNode, modularCoordinates, List.of());
     }
 
-    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates, List<UnitEquipmentAssembly.Binding> equipment) {
+    GpuUnitModel(Model model, @Nullable String upperBodyNode, boolean modularCoordinates, List<UnitEquipmentAssembly.Binding> equipment) {
         this(model, upperBodyNode, modularCoordinates, equipment, upperBodyNode == null ? 1f / 54 : 1f / 27, null, List.of());
     }
 
-    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates,
+    GpuUnitModel(Model model, @Nullable String upperBodyNode, boolean modularCoordinates,
           List<UnitEquipmentAssembly.Binding> equipment, float levelsPerModelUnit, @Nullable Vector3 restDimensions,
           List<UnitRig> rigs) {
         this(model, upperBodyNode, modularCoordinates, equipment, levelsPerModelUnit, restDimensions, rigs, UnitFamilyScale.DEFAULT);
     }
 
-    GpuMeeple(Model model, @Nullable String upperBodyNode, boolean modularCoordinates,
+    GpuUnitModel(Model model, @Nullable String upperBodyNode, boolean modularCoordinates,
           List<UnitEquipmentAssembly.Binding> equipment, float levelsPerModelUnit, @Nullable Vector3 restDimensions,
           List<UnitRig> rigs, UnitFamilyScale familyScale) {
         this.modularCoordinates = modularCoordinates;
@@ -84,29 +86,18 @@ final class GpuMeeple implements Disposable {
         this.restDimensions = restDimensions == null ? bounds.getDimensions(new Vector3()) : new Vector3(restDimensions);
     }
 
-    GpuMeeple(BoardScene.Pixels pixels, TextureRegion region) {
-        this(pixels, region, true);
-    }
-
-    /** Spinning markers show their artwork on both faces; a unit token normally has a dark underside. */
-    GpuMeeple(BoardScene.Pixels pixels, TextureRegion region, boolean shadedBottom) {
-        this(cutout(pixels, region, shadedBottom));
-    }
-
-    private static Model cutout(BoardScene.Pixels pixels, TextureRegion region, boolean shadedBottom) {
+    /** Flat artwork for disabled/unavailable models; never extrude a sprite into a unit-shaped solid. */
+    static GpuUnitModel sprite(BoardScene.Pixels pixels, TextureRegion region) {
         ModelBuilder builder = new ModelBuilder();
         builder.begin();
-        MeshPartBuilder caps = builder.part("cutout", GL20.GL_TRIANGLES,
-              VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal
-                    | (shadedBottom ? VertexAttributes.Usage.ColorPacked : 0),
-              new Material(TextureAttribute.createDiffuse(region.getTexture()), IntAttribute.createCullFace(GL20.GL_NONE)));
-        MeshPartBuilder sides = builder.part("sides", GL20.GL_TRIANGLES,
-              VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
-              new Material(ColorAttribute.createDiffuse(GpuCutout.averageColor(pixels)),
-                    IntAttribute.createCullFace(GL20.GL_NONE)));
-        // The token is built one height unit tall; the placement scales it to the occupied height.
-        GpuCutout.extrude(pixels, region, Vector3.Zero, 1, 1, true, caps, sides);
-        return builder.end();
+        MeshPartBuilder mesh = builder.part("sprite", GL20.GL_TRIANGLES,
+              VertexAttributes.Usage.Position | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Normal,
+              new Material(TextureAttribute.createDiffuse(region.getTexture()), new BlendingAttribute(1f),
+                    FloatAttribute.createAlphaTest(.1f), IntAttribute.createCullFace(GL20.GL_NONE)));
+        mesh.setUVRange(region);
+        float x = pixels.width() * .5f, y = pixels.height() * .5f;
+        mesh.rect(-x, -y, 0, x, -y, 0, x, y, 0, -x, y, 0, 0, 0, 1);
+        return new GpuUnitModel(builder.end());
     }
 
     /** @return {@code true} if the upper body can turn on its own, so a torso twist leaves the legs where they are */
@@ -172,43 +163,54 @@ final class GpuMeeple implements Disposable {
     }
 
     Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, int height, boolean multiHex) {
+        return place(placed, camera, ground, facing, height, multiHex, familyScale);
+    }
+
+    private Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, int height, boolean multiHex,
+          UnitFamilyScale scaleTuning) {
         // Schema-1 sprite sections retain their original placement while external compatibility is supported.
-        float scale = (multiHex ? 1 : BoardGeometry.UNIT_SCALE) * familyScale.UNIT_SCALE;
+        float scale = (multiHex ? 1 : BoardGeometry.UNIT_SCALE) * scaleTuning.unitScale();
         float thickness = (modularCoordinates ? levelsPerModelUnit : height)
-              * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE * familyScale.UNIT_SCALE * familyScale.HEIGHT_SCALE;
+              * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE * scaleTuning.unitScale() * scaleTuning.heightScale();
         return placeScaled(placed, camera, ground, facing, scale, thickness);
     }
 
     Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, BoardScene.Unit unit) {
+        var scaleTuning = familyScale.forUnit(unit);
         if (!modularCoordinates) {
-            return place(placed, camera, ground, facing, unit.height(), unit.part() >= 0);
+            return place(placed, camera, ground, facing, unit.height(), unit.part() >= 0, scaleTuning);
         }
         var footprint = unit.footprint().size() > 1 ? UnitFootprint.layout(unit.location().coords(), unit.footprint(), facing) : null;
-        float scale = horizontalScale(footprint);
+        float scale = horizontalScale(footprint, scaleTuning);
         if (footprint != null) {
             ground = new Vector3(ground).add(footprint.offsetX(), footprint.offsetY(), 0);
         }
         // Rest geometry controls shape. Gameplay height changes when prone/flying and must not flatten the rig.
-        float thickness = verticalScale(scale);
+        float thickness = verticalScale(scale, scaleTuning);
         return placeScaled(placed, camera, ground, facing, scale, thickness);
     }
 
     /** Horizontal distance conversion shared by placement and the distance-driven gait/wheel animation. */
     float horizontalScale(BoardScene.Unit unit) {
         return horizontalScale(unit.footprint().size() > 1
-              ? UnitFootprint.layout(unit.location().coords(), unit.footprint(), unit.location().facing() * 60) : null);
+              ? UnitFootprint.layout(unit.location().coords(), unit.footprint(), unit.location().facing() * 60) : null,
+              familyScale.forUnit(unit));
     }
 
-    float verticalScale(float horizontalScale) {
+    float verticalScale(float horizontalScale, BoardScene.Unit unit) {
+        return verticalScale(horizontalScale, familyScale.forUnit(unit));
+    }
+
+    private float verticalScale(float horizontalScale, UnitFamilyScale scaleTuning) {
         return levelsPerModelUnit * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE
-              * horizontalScale / (BoardGeometry.HEX_SCALE * BoardGeometry.DEFAULTS.unitScale()) * familyScale.HEIGHT_SCALE;
+              * horizontalScale / (BoardGeometry.HEX_SCALE * BoardGeometry.DEFAULTS.unitScale()) * scaleTuning.heightScale();
     }
 
-    private float horizontalScale(UnitFootprint.Layout footprint) {
+    private float horizontalScale(UnitFootprint.Layout footprint, UnitFamilyScale scaleTuning) {
         if (footprint == null) {
-            return BoardGeometry.UNIT_SCALE * BoardGeometry.HEX_SCALE * familyScale.UNIT_SCALE;
+            return BoardGeometry.UNIT_SCALE * BoardGeometry.HEX_SCALE * scaleTuning.unitScale();
         }
-        return BoardGeometry.MULTI_HEX_UNIT_SCALE * familyScale.UNIT_SCALE * Math.min(footprint.width() / Math.max(1, restDimensions.x),
+        return BoardGeometry.MULTI_HEX_UNIT_SCALE * scaleTuning.unitScale() * Math.min(footprint.width() / Math.max(1, restDimensions.x),
               footprint.depth() / Math.max(1, restDimensions.y));
     }
 

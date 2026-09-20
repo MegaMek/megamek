@@ -151,8 +151,19 @@ final class GpuUnitCamouflage implements Disposable {
               uniform vec3 u_camoRestScale;
               uniform mat4 u_markerTransform;
               varying vec2 v_markerUV;
+              varying vec2 v_damageUV;
               void main() {
                   v_markerUV = (u_markerTransform * vec4(a_position, 1.0)).xy;
+                  // Rest-space projection stays fixed to each rigid part, including unpainted metal.
+                  v_damageUV = a_position.xy * 0.04;
+                  #ifdef normalFlag
+                      vec3 damageNormal = abs(a_normal);
+                      if (damageNormal.x > damageNormal.y && damageNormal.x > damageNormal.z) {
+                          v_damageUV = a_position.yz * 0.04;
+                      } else if (damageNormal.y > damageNormal.z) {
+                          v_damageUV = a_position.xz * 0.04;
+                      }
+                  #endif
               """).replace("v_diffuseUV = u_diffuseUVTransform.xy + a_texCoord0 * u_diffuseUVTransform.zw;", """
               vec2 restScale = vec2(1.0);
               #ifdef normalFlag
@@ -175,11 +186,18 @@ final class GpuUnitCamouflage implements Disposable {
               uniform sampler2D u_markerTexture;
               uniform float u_markerEnabled;
               varying vec2 v_markerUV;
+              uniform sampler2D u_damageTexture;
+              uniform float u_damageEnabled;
+              varying vec2 v_damageUV;
               void main() {
               """).replace("#if defined(emissiveTextureFlag) && defined(emissiveColorFlag)", """
               if (u_markerEnabled > 0.5) {
                   vec4 marker = texture2D(u_markerTexture, v_markerUV);
                   diffuse.rgb = mix(diffuse.rgb, marker.rgb, marker.a);
+              }
+              if (u_damageEnabled > 0.5) {
+                  vec4 damage = texture2D(u_damageTexture, v_damageUV);
+                  diffuse.rgb = mix(diffuse.rgb, damage.rgb, damage.a);
               }
               #if defined(emissiveTextureFlag) && defined(emissiveColorFlag)
               """);
@@ -192,10 +210,15 @@ final class GpuUnitCamouflage implements Disposable {
                     private final int markerTransform = register("u_markerTransform");
                     private final int markerTexture = register("u_markerTexture");
                     private final int markerEnabled = register("u_markerEnabled");
+                    private final int damageTexture = register("u_damageTexture");
+                    private final int damageEnabled = register("u_damageEnabled");
 
                     @Override
                     public void render(Renderable part, Attributes attributes) {
                         Paint paint = attributes.get(Paint.class, Paint.TYPE);
+                        var damage = attributes.get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE);
+                        set(damageEnabled, damage == null ? 0f : 1f);
+                        if (damage != null) { set(damageTexture, context.textureBinder.bind(damage.texture)); }
                         set(rotation, paint == null ? 1 : paint.cos, paint == null ? 0 : paint.sin);
                         set(restScale, paint == null ? 1 : paint.scale.x, paint == null ? 1 : paint.scale.y,
                               paint == null ? 1 : paint.scale.z);

@@ -83,14 +83,17 @@ class ProneTransitionsTest {
         assertEquals(ProneCause.VOLUNTARY, mek.getProneCause());
     }
 
-    @Test
-    void resolvedFallOverridesEarlierVoluntaryPostureAndTravelsInEntityUpdate() {
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2, 3, 4, 5 })
+    void resolvedFallOverridesEarlierVoluntaryPostureAndTravelsInEntityUpdate(int direction) {
         mek.setProne(ProneCause.VOLUNTARY);
-        manager.doEntityFall(mek, mek.getPosition(), 0, 0,
+        manager.doEntityFall(mek, mek.getPosition(), 0, direction,
               new PilotingRollData(mek.getId(), TargetRoll.AUTOMATIC_SUCCESS, "test fall"), false, false);
         assertTrue(mek.isProne());
         assertEquals(ProneCause.FORCED, mek.getProneCause());
+        assertEquals(megamek.common.units.FallSide.fromDirection(direction), mek.getFallSide());
         var update = manager.createEntityPacket(mek.getId(), null);
         assertEquals(ProneCause.FORCED, ((BipedMek) update.getObject(1)).getProneCause());
+        assertEquals(mek.getFallSide(), ((BipedMek) update.getObject(1)).getFallSide());
     }
 }

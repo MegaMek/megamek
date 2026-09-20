@@ -18,16 +18,24 @@ import megamek.common.units.EntityMovementType;
 final class UnitPlayback {
     static final double COMPLETION_HOLD_SECONDS = 1;
     static final int MAX_PENDING_EVENTS = 512;
+    /** Maximum spread between a unit's weapon launches, in shared animation seconds. */
+    static final float VOLLEY_JITTER_SECONDS = .12f;
     final Map<Integer, UnitMotion> motions = new HashMap<>();
     private final ArrayDeque<BoardScene.Animation> pending = new ArrayDeque<>();
     private final Map<Integer, BoardScene.Waypoint> observed = new HashMap<>();
     private BoardScene.Animation active;
     private UnitAttack attack;
+    private final List<UnitAttack> attacks = new ArrayList<>();
+    private final List<UnitAttack> visibleAttacks = java.util.Collections.unmodifiableList(attacks);
+    private double combatSeconds, combatDuration, combatContact;
+    private BoardScene volleyScene;
+    private UnitConversion conversion;
     private double hold;
     private boolean completed;
     private boolean paused;
     private Predicate<BoardScene.Unit> transports = ignored -> false;
     private final Consumer<BoardScene.Movement> completeMovement;
+    private final java.util.function.BiConsumer<UnitAttack, Boolean> soundCue;
     // GL-owned presentation history only. The game and current selection continue to update on Swing.
     private BoardScene settledScene;
     private BoardScene overlayInput;
@@ -41,15 +49,32 @@ final class UnitPlayback {
     }
 
     UnitPlayback(Consumer<BoardScene.Movement> completeMovement) {
+        this(completeMovement, (attack, contact) -> { });
+    }
+
+    /** Optional audio consumes launch/contact edges from this clock, never from drawing or attack declarations. */
+    UnitPlayback(Consumer<BoardScene.Movement> completeMovement, java.util.function.BiConsumer<UnitAttack, Boolean> soundCue) {
         this.completeMovement = completeMovement;
+        this.soundCue = soundCue;
     }
 
     void accept(List<BoardScene.Animation> events, BoardScene scene, Predicate<BoardScene.Unit> transports) {
         this.transports = transports;
+        int start = 0;
+        for (int index = 0; index < events.size(); index++) {
+            if (events.get(index) instanceof BoardScene.Concealed hidden && hidden.boardId() == scene.boardId()) {
+                // Catch up to the authorized scene. Historical snapshots must not restore a hidden identity.
+                boolean wasPaused = paused;
+                clear();
+                paused = wasPaused;
+                settledScene = scene;
+                start = index + 1;
+            }
+        }
         Set<Integer> visible = scene.units().stream().filter(unit -> !unit.sensorContact()).map(BoardScene.Unit::id)
               .collect(Collectors.toSet());
         observed.keySet().retainAll(visible);
-        for (var event : events) {
+        for (var event : events.subList(start, events.size())) {
             if (event.boardId() == scene.boardId()
                   && (!(event instanceof BoardScene.Movement move)
                         || (move.unit() != null || visible.contains(move.entityId())) && move.path().size() > 1)) {
@@ -68,6 +93,7 @@ final class UnitPlayback {
                       EntityMovementType.MOVE_SAFE_THRUST, 0, 0, unit));
             }
         }
+        collectVolley();
         applySceneUpdates();
     }
 
@@ -105,14 +131,32 @@ final class UnitPlayback {
                     start(movement);
                 } else if (active instanceof BoardScene.Combat combat) {
                     attack = new UnitAttack(combat);
+                    attacks.add(attack);
+                    combatSeconds = 0;
+                    combatDuration = attack.duration;
+                    combatContact = attack.contactSeconds;
+                    collectVolley();
+                } else if (active instanceof BoardScene.Conversion change) {
+                    conversion = new UnitConversion(change);
                 }
             }
             if (!completed) {
                 UnitMotion motion = active instanceof BoardScene.Movement ? motions.get(active.entityId()) : null;
-                double left = motion == null ? attack.duration - attack.seconds : motion.remainingSeconds();
+                double left = conversion != null ? UnitConversion.DURATION_SECONDS - conversion.seconds
+                      : motion == null ? combatDuration - combatSeconds : motion.remainingSeconds();
                 double step = Math.min(remaining, Math.max(0, left) / speed.rate);
-                if (motion == null) {
-                    attack.seconds = Math.min(attack.duration, attack.seconds + (float) (step * speed.rate));
+                if (conversion != null) {
+                    conversion.seconds = Math.min(UnitConversion.DURATION_SECONDS, conversion.seconds + (float) (step * speed.rate));
+                } else if (motion == null) {
+                    combatSeconds = Math.min(combatDuration, combatSeconds + step * speed.rate);
+                    attacks.forEach(shot -> {
+                        float previous = shot.seconds;
+                        shot.seconds = Math.min(shot.duration, (float) combatSeconds - shot.delay);
+                        if (previous < UnitAttack.ANTICIPATION_SECONDS && shot.seconds >= UnitAttack.ANTICIPATION_SECONDS) {
+                            soundCue.accept(shot, false);
+                        }
+                        if (previous < shot.contactSeconds && shot.seconds >= shot.contactSeconds) { soundCue.accept(shot, true); }
+                    });
                     applySceneUpdates();
                 } else {
                     motion.advance(step, speed.rate);
@@ -124,6 +168,8 @@ final class UnitPlayback {
                 completed = true;
                 if (active instanceof BoardScene.Movement movement) {
                     completeMovement.accept(movement);
+                } else if (active instanceof BoardScene.Conversion change) {
+                    settleConversion(change);
                 }
                 applySceneUpdates();
                 hold = COMPLETION_HOLD_SECONDS;
@@ -136,10 +182,80 @@ final class UnitPlayback {
             }
             active = null;
             attack = null;
+            attacks.clear();
+            volleyScene = null;
+            conversion = null;
         }
     }
 
     UnitAttack attack() { return attack; }
+
+    List<UnitAttack> attacks() { return visibleAttacks; }
+
+    /** Interpolate only a displacement actually present in the post-resolution checkpoint. */
+    void placeDisplacement(BoardScene.Unit unit, com.badlogic.gdx.math.Vector3 position) {
+        if (attack == null || attack.event.result().kind() != megamek.common.ResolvedAttack.Kind.PUSH
+              || !attack.event.result().hit() || beforeImpact()) { return; }
+        var before = unit.id() == attack.event.entityId() ? attack.event.attacker()
+              : attack.event.target() != null && unit.id() == attack.event.target().id() ? attack.event.target() : null;
+        if (before == null || before.location().coords().equals(unit.location().coords())) { return; }
+        float progress = com.badlogic.gdx.math.MathUtils.clamp((attack.seconds - attack.contactSeconds)
+              / UnitAttack.RECOVERY_SECONDS, 0, 1);
+        progress *= progress * (3 - 2 * progress);
+        var origin = BoardGeometry.center(before.location().coords(), before.location().elevation());
+        position.set(origin.lerp(position, progress));
+    }
+
+    /** Adjacent confirmed shots from the same pose form one volley; movement and physical actions are barriers. */
+    private void collectVolley() {
+        if (attack == null || !attack.shot()) { return; }
+        while (attacks.size() < MAX_PENDING_EVENTS) {
+            BoardScene.Combat next = null;
+            for (var event : pending) {
+                if (event instanceof BoardScene.SceneUpdate) { continue; }
+                if (event instanceof BoardScene.Combat casualty && casualty.result().kind() == megamek.common.ResolvedAttack.Kind.DEATH) {
+                    continue; // Finish the firing unit's volley before playing its resulting casualties.
+                }
+                if (event instanceof BoardScene.Combat combat && combat.result().kind() == megamek.common.ResolvedAttack.Kind.SHOT
+                      && sameVolley(combat)) { next = combat; }
+                break;
+            }
+            if (next == null) { return; }
+            for (var iterator = pending.iterator(); iterator.hasNext();) {
+                var event = iterator.next();
+                if (event == next) { iterator.remove(); break; }
+                if (event instanceof BoardScene.SceneUpdate update) {
+                    volleyScene = update.scene();
+                    iterator.remove();
+                }
+            }
+            var shot = new UnitAttack(next);
+            float jitter = (next.result().id().hashCode() & 0xFFFF) / 65535f * VOLLEY_JITTER_SECONDS;
+            shot.delay = combatSeconds < UnitAttack.ANTICIPATION_SECONDS ? jitter : (float) combatSeconds + jitter;
+            shot.seconds = (float) combatSeconds - shot.delay;
+            attacks.add(shot);
+            combatDuration = Math.max(combatDuration, shot.delay + shot.duration);
+            combatContact = Math.max(combatContact, shot.delay + shot.contactSeconds);
+            completed = false;
+            hold = 0;
+        }
+    }
+
+    private boolean beforeImpact() { return attack == null || combatSeconds + 1e-7 < combatContact; }
+
+    private boolean sameVolley(BoardScene.Combat next) {
+        var primary = attacks.stream().filter(shot -> !shot.defensive()).findFirst().orElse(attack);
+        boolean defensive = next.result().shot() != null && next.result().shot().defensive();
+        if (defensive) {
+            int incoming = primary.defensive() ? primary.event.result().target().entityId() : primary.event.entityId();
+            return next.result().target().entityId() == incoming;
+        }
+        if (primary.defensive()) { return next.entityId() == primary.event.result().target().entityId(); }
+        return next.entityId() == primary.event.entityId()
+              && next.attacker().location().samePose(primary.event.attacker().location());
+    }
+
+    UnitConversion conversion() { return conversion; }
 
     boolean busy() { return active != null || !pending.isEmpty(); }
 
@@ -162,13 +278,18 @@ final class UnitPlayback {
         motions.values().forEach(UnitMotion::finish);
         if (active instanceof BoardScene.Movement movement && !completed) {
             completeMovement.accept(movement);
+        } else if (active instanceof BoardScene.Conversion change) {
+            settleConversion(change);
         }
+        if (volleyScene != null) { settledScene = volleyScene; }
         for (var event : pending) {
             if (event instanceof BoardScene.SceneUpdate update) {
                 settledScene = update.scene();
             } else if (event instanceof BoardScene.Movement movement) {
                 start(movement).finish();
                 completeMovement.accept(movement);
+            } else if (event instanceof BoardScene.Conversion change) {
+                settleConversion(change);
             }
         }
         resetQueue();
@@ -178,6 +299,9 @@ final class UnitPlayback {
         pending.clear();
         active = null;
         attack = null;
+        attacks.clear();
+        volleyScene = null;
+        conversion = null;
         hold = 0;
         completed = false;
     }
@@ -196,8 +320,12 @@ final class UnitPlayback {
 
     /** Checkpoints after an action become visible at arrival/impact, before its recovery or completion hold. */
     private void applySceneUpdates() {
-        if (active != null && !completed && (attack == null || attack.seconds < attack.contactSeconds)) {
+        if (active != null && !completed && beforeImpact()) {
             return;
+        }
+        if (volleyScene != null) {
+            settledScene = volleyScene;
+            volleyScene = null;
         }
         while (pending.peekFirst() instanceof BoardScene.SceneUpdate update) {
             pending.removeFirst();
@@ -212,7 +340,7 @@ final class UnitPlayback {
         // overlays between events; the final completion hold does not delay their return.
         boolean movementPending = active instanceof BoardScene.Movement && !completed
               || pending.stream().anyMatch(BoardScene.Movement.class::isInstance);
-        boolean awaitingAction = active != null && !completed && (attack == null || attack.seconds < attack.contactSeconds)
+        boolean awaitingAction = active != null && !completed && beforeImpact()
               || pending.stream().anyMatch(event -> !(event instanceof BoardScene.SceneUpdate));
         if (awaitingAction) {
             // Review fixtures without checkpoints cannot supply history for their first combat frame.
@@ -237,8 +365,9 @@ final class UnitPlayback {
             return scene;
         }
         Map<Integer, BoardScene.Unit> shown = new LinkedHashMap<>();
-        if (active != null && !completed && (attack == null || attack.seconds < attack.contactSeconds)) {
-            holdUnits(active, shown, true);
+        if (active != null && !completed && beforeImpact()) {
+            if (attack == null) { holdUnits(active, shown, true); }
+            else { attacks.forEach(shot -> holdUnits(shot.event, shown, true)); }
         }
         pending.forEach(event -> holdUnits(event, shown, false));
         List<BoardScene.Unit> units = new ArrayList<>();
@@ -257,9 +386,18 @@ final class UnitPlayback {
               .map(BoardScene.Unit::id).collect(Collectors.toSet()));
     }
 
+    private void settleConversion(BoardScene.Conversion change) {
+        if (settledScene != null) {
+            settledScene = settledScene.withUnits(settledScene.units().stream()
+                  .map(unit -> unit.id() == change.entityId() ? change.after() : unit).toList());
+        }
+    }
+
     private void holdUnits(BoardScene.Animation event, Map<Integer, BoardScene.Unit> shown, boolean playing) {
-        if (!playing && checkpoints) {
+        if (!playing && checkpoints
+              && !(event instanceof BoardScene.Combat combat && combat.result().kind() == megamek.common.ResolvedAttack.Kind.DEATH)) {
             // The preceding checkpoint already contains the waiting unit's then-visible pose and appearance.
+            // A queued collapse still needs its authorized victim after the volley checkpoint removes it.
             return;
         }
         if (event instanceof BoardScene.Combat combat) {
@@ -267,6 +405,8 @@ final class UnitPlayback {
             if (combat.target() != null) {
                 shown.putIfAbsent(combat.target().id(), combat.target());
             }
+        } else if (event instanceof BoardScene.Conversion change) {
+            shown.putIfAbsent(change.entityId(), playing && conversion != null ? conversion.displayed() : change.before());
         } else if (event instanceof BoardScene.Movement movement && movement.unit() != null) {
             var unit = movement.unit();
             var appearance = checkpoints && settledScene != null ? settledScene.units().stream()

@@ -79,6 +79,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
+        beginFiringMounts();
 
         double av = 0;
         int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
@@ -115,6 +116,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
                 av = av + current_av;
                 // now use the ammo that we had loaded
                 if (current_av > 0) {
+                    recordFiringMount(bayW);
                     int shots = bayW.getCurrentShots();
                     for (int i = 0; i < shots; i++) {
                         if (null == bayWAmmo

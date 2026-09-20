@@ -11,12 +11,24 @@ import megamek.client.ui.clientGUI.boardview.BoardFieldOfView;
 
 /** One texel per hex, containing shared visibility results rather than painted board artwork. */
 final class GpuFieldOfView implements Disposable {
-    enum Style { DIMMED, FOG_OF_WAR }
+    enum Style {
+        DIMMED("Dimmed"), GRAYSCALE("Grayscale"), FOG_OF_WAR("Fog of war");
 
-    /** Presentation only: both styles use the same LOS/sensor results and unit visibility. */
-    static final Style STYLE = Style.DIMMED;
+        final String label;
 
-    private final Style style;
+        Style(String label) {
+            this.label = label;
+        }
+    }
+
+    /** Default presentation: all styles use the same LOS/sensor results and unit visibility. */
+    static final Style STYLE = Style.GRAYSCALE;
+
+    /** Default FoV opacity multiplier: 0 leaves brightness unchanged, 1 uses full opacity. */
+    static final float DARKNESS = 0.75f;
+
+    private Style style;
+    private float darkness = DARKNESS;
     private BoardFieldOfView previous = BoardFieldOfView.EMPTY;
     private Texture mask;
     private boolean active;
@@ -24,6 +36,12 @@ final class GpuFieldOfView implements Disposable {
 
     GpuFieldOfView(Style style) {
         this.style = style;
+    }
+
+    /** Render-thread presentation settings; changes reuse the current visibility mask. */
+    void configure(Style style, float darkness) {
+        this.style = style;
+        this.darkness = darkness;
     }
 
     void update(BoardFieldOfView next) {
@@ -79,8 +97,10 @@ final class GpuFieldOfView implements Disposable {
         shader.setUniformf("u_fovSize", previous.width(), previous.height());
         shader.setUniformf("u_fovHexSize", BoardGeometry.WIDTH, BoardGeometry.HEIGHT);
         shader.setUniformMatrix("u_fovInverseView", camera.invProjectionView);
-        shader.setUniformf("u_fovOptions", previous.darken() ? previous.darkenAlpha() / 255f : 0,
-              previous.highlightAlpha() / 255f, previous.grayscale() ? 1 : 0, previous.spotting() ? 1 : 0);
+        float opacity = previous.darken() ? previous.darkenAlpha() / 255f * darkness : 0;
+        boolean grayscale = previous.grayscale() || style == Style.GRAYSCALE && previous.darken();
+        shader.setUniformf("u_fovOptions", opacity,
+              previous.highlightAlpha() / 255f, grayscale ? 1 : 0, previous.spotting() ? 1 : 0);
         shader.setUniformf("u_fovStyle", style == Style.FOG_OF_WAR ? 1 : 0);
         float pixel = camera instanceof OrthographicCamera ortho ? ortho.zoom / BoardGeometry.HEIGHT : 0.01f;
         shader.setUniformf("u_fovEdge", Math.max(0.004f, Math.min(0.04f, pixel * 1.5f)));

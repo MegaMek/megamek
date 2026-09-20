@@ -66,7 +66,7 @@ class GpuUnitVisibilitySmokeTest {
             strength.setValue(0);
             assertEquals(0, tuning.seeThrough());
             assertEquals(GpuTerrain.DEFAULT_BUILDING_OPACITY, tuning.buildingOpacity());
-            assertEquals(GpuTerrain.DEFAULT_TREE_OPACITY, tuning.treeOpacity());
+            assertNull(tuning.panel().findActor("Tree opacity"));
             tuning.panel().findActor("tuning-defaults").fire(new ChangeListener.ChangeEvent());
             assertEquals(GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY, tuning.seeThrough());
 
@@ -77,8 +77,8 @@ class GpuUnitVisibilitySmokeTest {
             camera.orbit(-45, 20);
             camera.fit(scene);
             terrain.update(scene);
-            GpuMeeple atlas = models.get(new BoardScene.UnitModel("units/modular/meks/atlas.json",
-                  "units/modular/meks/fallback-biped.json", "Atlas AS7-D", 1, 0, BoardScene.LocationDamage.NONE,
+            GpuUnitModel atlas = models.get(new BoardScene.UnitModel("units/modular/meks/atlas.json",
+                  "units/modular/meks/fallback-biped-heavy.json", "Atlas AS7-D", 1, 0, BoardScene.LocationDamage.NONE,
                   UnitModelState.capture(new megamek.common.units.BipedMek())));
             assertNotNull(atlas);
             ModelInstance unit = new ModelInstance(atlas.instance.model);
@@ -148,6 +148,23 @@ class GpuUnitVisibilitySmokeTest {
                 Pixmap after = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0.75f, captures);
                 assertTrue(difference(before, after) > 1000, "See-through must survive viewport resizing and fog changes");
             }
+            Coords wooded = new Coords(3, 2);
+            List<BoardScene.Tile> groveTiles = scene.tiles().stream().map(tile -> new BoardScene.Tile(tile.coords(),
+                  0, -1, false, 0, tile.surface(), tile.ground(), null, null,
+                  tile.coords().equals(wooded) ? List.of(new BoardScene.Feature("tree-broad", 0, 0, 0, 1.5f, 4, 0,
+                        BoardScene.FeatureKind.TREE)) : List.of(), List.of())).toList();
+            BoardScene grove = new BoardScene(0, scene.width(), scene.height(), groveTiles,
+                  List.of(), List.of(), -1, "", List.of());
+            terrain.update(grove);
+            for (boolean top : new boolean[] { false, true }) {
+                camera.setIsometric(!top);
+                camera.fit(grove);
+                atlas.place(unit, camera.camera, BoardGeometry.center(wooded, 0), 0, 2, false);
+                Pixmap opaque = draw(terrain, atmosphere, visibility, batch, camera, grove, units, 0, captures);
+                Pixmap outlined = draw(terrain, atmosphere, visibility, batch, camera, grove, units, .75f, captures);
+                assertTrue(difference(opaque, outlined) > 1000, "Opaque canopies must allow unit outlines in both views");
+                capture("see-through-trees-" + (top ? "top" : "iso") + ".png");
+            }
             assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
         } finally {
             captures.forEach(Pixmap::dispose);
@@ -165,8 +182,8 @@ class GpuUnitVisibilitySmokeTest {
     private Pixmap draw(GpuTerrain terrain, GpuAtmosphere atmosphere, GpuUnitVisibility visibility, ModelBatch batch,
           BoardCamera camera, BoardScene scene, List<ModelInstance> units, float intensity, List<Pixmap> captures) {
         terrain.setAtmosphere(atmosphere.lighting());
-        // The effect must work while the independent building/tree controls are completely opaque.
-        terrain.animate(0, units, 1, 1);
+        // The effect must work with opaque terrain and the building cutaway disabled.
+        terrain.animate(0, units, 1);
         terrain.renderShadows(camera.camera, units);
         ScreenUtils.clear(0.02f, 0.03f, 0.04f, 1, true);
         atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0,

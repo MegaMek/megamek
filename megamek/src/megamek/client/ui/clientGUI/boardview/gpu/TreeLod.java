@@ -21,6 +21,6 @@ final class TreeLod {
     }
 
     static String asset(String name, int level) {
-        return level < 0 ? name : name + "-lod" + level;
+        return name + "-lod" + level;
     }
 }

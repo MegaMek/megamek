@@ -88,11 +88,15 @@ final class UnitMotion {
     }
     private record Travel(double start, double end) { }
     private record GearPause(int waypoint, boolean retract, double start, double end) { }
-    private record PosturePause(ProneCause from, ProneCause to, double start, double end) { }
-    record Posture(float crouch, float fallen) {
+    private record PosturePause(ProneCause from, ProneCause to, megamek.common.units.FallSide side, double start, double end) { }
+    record Posture(float crouch, float fallen, megamek.common.units.FallSide side, boolean rising, float progress) {
+        Posture(float crouch, float fallen) { this(crouch, fallen, null, false, fallen); }
         static Posture of(ProneCause cause) {
+            return of(cause, null);
+        }
+        static Posture of(ProneCause cause, megamek.common.units.FallSide side) {
             return new Posture(cause == ProneCause.VOLUNTARY ? 1 : 0,
-                  cause == ProneCause.FORCED || cause == ProneCause.UNKNOWN ? 1 : 0);
+                  cause == ProneCause.FORCED || cause == ProneCause.UNKNOWN ? 1 : 0, side, false, 1);
         }
     }
     record LandingGear(float deployment, BoardScene.Waypoint ground) { }
@@ -116,7 +120,13 @@ final class UnitMotion {
     /** Derived from this timeline; animation never guesses movement type or posture from the final Entity. */
     record Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
           float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
-          BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group, Posture posture) {
+          BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group, Posture posture, float lateral) {
+        Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
+              float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
+              BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group, Posture posture) {
+            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, boarding, jets,
+                  aeroState, gear, sequence, group, posture, 0);
+        }
         Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
               float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
               BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group) {
@@ -299,7 +309,8 @@ final class UnitMotion {
         if (!changesPosture(from, to)) {
             return time;
         }
-        pauses.add(new PosturePause(from.proneCause(), to.proneCause(), time, time + POSTURE_SECONDS));
+        pauses.add(new PosturePause(from.proneCause(), to.proneCause(),
+              to.fallSide() == null ? from.fallSide() : to.fallSide(), time, time + POSTURE_SECONDS));
         return time + POSTURE_SECONDS;
     }
 
@@ -516,7 +527,7 @@ final class UnitMotion {
         Sample pose = sample(playback, elapsed);
         return new Sample(pose.moving(), pose.type(), pose.progress(), pose.steps(), pose.turn(), pose.forward(), pose.heading(),
               pose.settledSeconds(), pose.proneCause(), pose.boarding(), pose.jets(), pose.aeroState(), pose.gear(), pose.sequence(),
-              playback.stagger() == 0 ? null : new Group(playback, elapsed), pose.posture());
+              playback.stagger() == 0 ? null : new Group(playback, elapsed), pose.posture(), pose.lateral());
     }
 
     private static Sample sample(Playback playback, double seconds) {
@@ -561,11 +572,13 @@ final class UnitMotion {
         return new Sample(seconds < playback.duration(), playback.type(), progress, distance,
               UpperBodyTurn.shortestTurn((to.facing() - from.facing()) * 60),
               MathUtils.cosDeg(direction - facing), direction, (float) Math.max(0, seconds - playback.duration()), posture, boarding(playback, seconds), jets,
-              gear == null ? aeroState(from, to) : BoardScene.AeroState.LANDED, gear, playback.sequence(), null, posture(playback, seconds));
+              gear == null ? aeroState(from, to) : BoardScene.AeroState.LANDED, gear, playback.sequence(), null, posture(playback, seconds),
+              MathUtils.sinDeg(direction - facing));
     }
 
     private static Posture posture(Playback playback, double seconds) {
         ProneCause cause = playback.path().getFirst().proneCause();
+        var side = playback.path().getFirst().fallSide();
         for (PosturePause pause : playback.postures()) {
             if (seconds < pause.start()) {
                 break;
@@ -575,11 +588,13 @@ final class UnitMotion {
                 t = t * t * (3 - 2 * t);
                 var from = Posture.of(pause.from());
                 var to = Posture.of(pause.to());
-                return new Posture(MathUtils.lerp(from.crouch(), to.crouch(), t), MathUtils.lerp(from.fallen(), to.fallen(), t));
+                return new Posture(MathUtils.lerp(from.crouch(), to.crouch(), t), MathUtils.lerp(from.fallen(), to.fallen(), t),
+                      pause.side(), from.fallen() > to.fallen(), t);
             }
             cause = pause.to();
+            side = pause.side();
         }
-        return cause == null ? null : Posture.of(cause);
+        return cause == null ? null : Posture.of(cause, side);
     }
 
     private static LandingGear landingGear(Playback playback, double seconds) {

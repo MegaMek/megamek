@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.math.Vector3;
@@ -17,6 +18,8 @@ import megamek.common.board.Coords;
 
 /** Tessellation and terrain clipping only; all tactical decisions are supplied by the client painters. */
 final class BoardTacticalGeometry {
+    private static final float WALL_CLEARANCE = 0.6f;
+
     record Triangle(Vector3 a, Vector3 b, Vector3 c, int argb) { }
     private record Edge(float x1, float y1, float x2, float y2) {
         float x(float y) {
@@ -70,9 +73,13 @@ final class BoardTacticalGeometry {
     }
 
     static void drape(BoardScene scene, Consumer<Triangle> destination) {
+        drape(scene, scene.tactical().fills(), destination);
+    }
+
+    private static void drape(BoardScene scene, List<BoardTactical.Fill> fills, Consumer<Triangle> destination) {
         Map<Coords, BoardSurface> surfaces = new HashMap<>();
         int layer = 0;
-        for (BoardTactical.Fill fill : scene.tactical().fills()) {
+        for (BoardTactical.Fill fill : fills) {
             float lift = (0.35f + Math.min(layer++, 10000) * 0.0001f) * BoardGeometry.HEX_SCALE;
             for (Triangle triangle : flat(fill)) {
                 int firstX = Math.max(0, (int) Math.floor(minX(triangle) / (BoardGeometry.TILE_WIDTH * 0.75f)) - 1);
@@ -84,22 +91,80 @@ final class BoardTacticalGeometry {
                     for (int y = firstY; y <= lastY; y++) {
                         Coords coords = new Coords(x, y);
                         BoardSurface surface = surfaces.computeIfAbsent(coords, key -> new BoardSurface(scene, scene.tile(key)));
-                        for (BoardSurface.Face face : surface.faces) {
-                            boolean top = surface.tile.frozen() ? face.finish() == BoardSurface.Finish.ICE
-                                  : face.finish() == BoardSurface.Finish.TOP || face.finish() == BoardSurface.Finish.SHORE;
-                            if (top) {
-                                clip(world, face, lift, destination);
-                            }
-                        }
-                        if (!surface.tile.frozen()) {
-                            for (BoardSurface.Face face : surface.waterFaces) {
-                                clip(world, face, lift, destination);
-                            }
-                        }
+                        clipSurface(world, surface, lift, destination);
                     }
                 }
             }
         }
+    }
+
+    /** Cache both presentations once; the camera only selects which one to draw. */
+    static void walls(BoardScene scene, boolean flat, Consumer<Triangle> destination,
+          BiConsumer<BoardTactical.Wall, Triangle> outline) {
+        if (flat) {
+            drape(scene, scene.tactical().flatWalls(), destination);
+        }
+        for (BoardTactical.Wall wall : scene.tactical().walls()) {
+            if (scene.tile(wall.coords()) == null) {
+                continue;
+            }
+            Vector3 c = wallPoint(scene, wall, wall.b(), true), d = wallPoint(scene, wall, wall.a(), true);
+            if (!flat) {
+                Vector3 a = wallPoint(scene, wall, wall.a(), false), b = wallPoint(scene, wall, wall.b(), false);
+                destination.accept(new Triangle(a, b, c, wall.argb()));
+                destination.accept(new Triangle(a, c, d, wall.argb()));
+                wallOutline(wall, d, c, triangle -> outline.accept(wall, triangle));
+            } else {
+                BoardSurface surface = new BoardSurface(scene, scene.tile(wall.coords()));
+                wallOutline(wall, d, c, triangle -> clipSurface(triangle, surface,
+                      WALL_CLEARANCE * BoardGeometry.HEX_SCALE, clipped -> outline.accept(wall, clipped)));
+            }
+        }
+    }
+
+    private static void clipSurface(Triangle triangle, BoardSurface surface, float lift, Consumer<Triangle> destination) {
+        for (BoardSurface.Face face : surface.faces) {
+            boolean top = surface.tile.frozen() ? face.finish() == BoardSurface.Finish.ICE
+                  : face.finish() == BoardSurface.Finish.TOP || face.finish() == BoardSurface.Finish.SHORE;
+            if (top) {
+                clip(triangle, face, lift, destination);
+            }
+        }
+        if (!surface.tile.frozen()) {
+            for (BoardSurface.Face face : surface.waterFaces) {
+                clip(triangle, face, lift, destination);
+            }
+        }
+    }
+
+    /** A continuous ribbon: the original dash pattern is supplied by a scrolling texture. */
+    private static void wallOutline(BoardTactical.Wall wall, Vector3 a, Vector3 b, Consumer<Triangle> destination) {
+        if (wall.outline() == null) {
+            return;
+        }
+        var stroke = wall.outline().stroke();
+        Vector3 side = new Vector3(a.y - b.y, b.x - a.x, 0).nor()
+              .scl(stroke.getLineWidth() * BoardGeometry.HEX_SCALE / 2);
+        Vector3 first = new Vector3(a).sub(side), second = new Vector3(b).sub(side);
+        Vector3 third = new Vector3(b).add(side), fourth = new Vector3(a).add(side);
+        destination.accept(new Triangle(first, second, third, wall.outline().argb()));
+        destination.accept(new Triangle(first, third, fourth, wall.outline().argb()));
+    }
+
+    private static Vector3 wallPoint(BoardScene scene, BoardTactical.Wall wall, BoardTactical.Point point, boolean top) {
+        Vector3 world = new Vector3(point.x() * BoardGeometry.HEX_SCALE, -point.y() * BoardGeometry.HEX_SCALE, 0);
+        // Like the firing contour, adjoining panels share the full ridge span at their common endpoints.
+        // Use surface elevation, never water depth or the lakebed, when crossing a change in level.
+        float level = scene.tile(wall.coords()).elevation();
+        for (int direction = 0; direction < 6; direction++) {
+            Coords coords = wall.coords().translated(direction);
+            BoardScene.Tile neighbor = scene.tile(coords);
+            if (neighbor != null && BoardGeometry.contains(coords, world.x, world.y)) {
+                level = top ? Math.max(level, neighbor.elevation()) : Math.min(level, neighbor.elevation());
+            }
+        }
+        world.z = (level + (top ? wall.height() : 0)) * BoardGeometry.LEVEL + WALL_CLEARANCE * BoardGeometry.HEX_SCALE;
+        return world;
     }
 
     private static Vector3 world(Vector3 point) {

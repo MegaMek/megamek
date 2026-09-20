@@ -387,12 +387,16 @@ final class GpuBoardUi implements Disposable {
         return tuning.buildingOpacity();
     }
 
-    float treeOpacity() {
-        return tuning.treeOpacity();
-    }
-
     float seeThrough() {
         return tuning.seeThrough();
+    }
+
+    GpuFieldOfView.Style fovStyle() {
+        return tuning.fovStyle();
+    }
+
+    float fovDarkness() {
+        return tuning.fovDarkness();
     }
 
     float hudScale() {

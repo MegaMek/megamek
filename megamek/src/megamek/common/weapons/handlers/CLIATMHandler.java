@@ -357,7 +357,7 @@ public class CLIATMHandler extends ATMHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 
     /**
@@ -632,6 +632,7 @@ public class CLIATMHandler extends ATMHandler {
 
             if (!bMissed) {
                 // light inferno missiles all at once, if not missed
+                reportAttackAnimation(hits > 0);
                 vPhaseReport.addAll(gameManager.deliverInfernoMissiles(weaponEntity, target,
                       hits, weapon.getCalledShot().getCall()));
             }
@@ -893,6 +894,7 @@ public class CLIATMHandler extends ATMHandler {
 
             // The IMP effect scales with the total warheads that hit, so capture it before the
             // damage loop decrements the running count.
+            reportAttackAnimation(hits > 0);
             int impWarheads = Math.max(0, hits - Math.max(0, bldgAbsorbs));
 
             // for each cluster of hits, do a chunk of damage

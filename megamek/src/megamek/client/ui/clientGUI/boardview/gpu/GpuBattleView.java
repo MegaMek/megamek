@@ -48,11 +48,11 @@ import megamek.logging.MMLogger;
 class GpuBattleView extends ApplicationAdapter {
     private static final boolean SPREAD_UNIT_ANNOTATIONS = false;
     private static final float UNIT_ANNOTATION_MAX_OFFSCREEN_DISTANCE = -1;
-    /** Airborne meeples hover: one full wave cycle lasts this long. */
+    /** Airborne units hover: one full wave cycle lasts this long. */
     static final float HOVER_PERIOD_SECONDS = UnitAnimator.HOVER_PERIOD_SECONDS;
     /** Height of that wave in terrain levels, so a floating token drifts off its flight height. */
     static final float HOVER_LEVELS = UnitAnimator.HOVER_LEVELS;
-    /** Floating meeples are tied to their hex with this faint solid stem; solid, so it needs no blending state. */
+    /** Floating units are tied to their hex with this faint solid stem; solid, so it needs no blending state. */
     private static final Color TETHER_COLOR = Color.valueOf("A9B8B8");
     private static final float TILT_DEGREES_PER_SECOND = 60;
     private static final MMLogger LOGGER = MMLogger.create(GpuBattleView.class);
@@ -60,9 +60,10 @@ class GpuBattleView extends ApplicationAdapter {
     private final GpuDisplayScale displayScale = new GpuDisplayScale();
     final BoardCamera boardCamera = new BoardCamera();
     private final UnitPlayback playback = new UnitPlayback(this::completeMovement);
+    private final BoardSurface.Cache groundSurfaces = new BoardSurface.Cache();
     private final Map<Integer, UnitMotion> motions = playback.motions;
     private final GpuAttackEffects attackEffects = new GpuAttackEffects();
-    private final Map<BoardScene.Pixels, GpuMeeple> meeples = new HashMap<>();
+    private final Map<BoardScene.Pixels, GpuUnitModel> spriteModels = new HashMap<>();
     private final GpuUnitModels unitModels = GpuUnitModels.ENABLED ? new GpuUnitModels() : null;
     private final UnitDamageDisplay damageDisplay = new UnitDamageDisplay();
     private final GpuJumpJets jumpJets = new GpuJumpJets();
@@ -113,12 +114,8 @@ class GpuBattleView extends ApplicationAdapter {
     private long hoverCameraRevision;
 
     GpuBattleView(GpuBoardSource source) {
-        this(source, GpuFieldOfView.STYLE);
-    }
-
-    GpuBattleView(GpuBoardSource source, GpuFieldOfView.Style fovStyle) {
         this.source = source;
-        fieldOfView = new GpuFieldOfView(fovStyle);
+        fieldOfView = new GpuFieldOfView(GpuFieldOfView.STYLE);
     }
 
     @Override
@@ -131,7 +128,7 @@ class GpuBattleView extends ApplicationAdapter {
         markers = new GpuMarkers();
         unitTextures = new GpuTextures<>();
         annotationTextures = new GpuTextures<>();
-        unitBatch = new ModelBatch(GpuUnitCamouflage.shaders());
+        unitBatch = new ModelBatch(GpuUnitCamouflage.shaders(), new GpuOpaqueSorter());
         annotationBatch = new SpriteBatch();
         lines = new ShapeRenderer();
         ui = new GpuBoardUi(source, boardCamera, () -> playbackSpeed = playbackSpeed.next(), playback::togglePaused);
@@ -191,6 +188,7 @@ class GpuBattleView extends ApplicationAdapter {
               || scene.height() != frame.scene().height())) {
             playback.clear();
             animators.clear();
+            groundSurfaces.clear();
             jumpJets.clear();
             unitPicking.clear();
             hovered = null;
@@ -215,27 +213,29 @@ class GpuBattleView extends ApplicationAdapter {
         fireControl.update(scene);
         tactical.update(scene);
         fieldOfView.update(scene.fieldOfView());
+        fieldOfView.configure(ui.fovStyle(), ui.fovDarkness());
         atmosphere.configure(ui.atmosphere());
         terrain.setAtmosphere(atmosphere.lighting());
         terrain.setNormalMaps(ui.normalMaps());
-        if (unitTextures.update(scene.units().stream().filter(unit -> !unit.sensorContact()).map(BoardScene.Unit::image).distinct()
+        if (unitTextures.update(scene.units().stream().filter(unit -> !unit.sensorContact()
+              && (unitModels == null || unitModels.get(unit.model(), unit.id()) == null)).map(BoardScene.Unit::image).distinct()
               .collect(Collectors.toMap(pixels -> pixels, pixels -> pixels)))) {
-            meeples.values().forEach(GpuMeeple::dispose);
-            meeples.clear();
+            spriteModels.values().forEach(GpuUnitModel::dispose);
+            spriteModels.clear();
             unitPicking.clear();
         }
         Set<BoardScene.Pixels> images = scene.units().stream().map(BoardScene.Unit::image).collect(Collectors.toSet());
-        boolean removedMeeples = meeples.entrySet().removeIf(entry -> {
+        boolean removedSprites = spriteModels.entrySet().removeIf(entry -> {
             if (images.contains(entry.getKey())) {
                 return false;
             }
             entry.getValue().dispose();
             return true;
         });
-        if (removedMeeples) {
+        if (removedSprites) {
             unitPicking.clear();
         }
-        annotationTextures.update(scene.units().stream().collect(Collectors.toMap(
+        annotationTextures.update(scene.units().stream().filter(unit -> unit.annotations() != null).collect(Collectors.toMap(
               unit -> unit.id() + ":" + unit.part(), BoardScene.Unit::annotations)));
         if (!fitted) {
             boardCamera.fit(scene);
@@ -282,9 +282,12 @@ class GpuBattleView extends ApplicationAdapter {
         markers.beginFrame(scene.markers(), Gdx.graphics.getDeltaTime());
         prepareUnits();
         applyHover();
+        for (var attack : playback.attacks()) { attack.landscape = ray -> terrain.hit(scene, ray); }
+        aimAttack();
+        updateEquipmentDetail();
         markers.update(unitInstances.values(), boardCamera.camera);
         updateJumpJets();
-        attackEffects.update(playback.attack(), unitModels, unitInstances);
+        attackEffects.update(playback.attacks(), unitModels, unitInstances);
         List<ModelInstance> units = new ArrayList<>(unitInstances.values());
         List<ModelInstance> sceneObjects = new ArrayList<>(units);
         sceneObjects.addAll(markers.instances());
@@ -293,8 +296,9 @@ class GpuBattleView extends ApplicationAdapter {
               .map(unit -> unitInstances.get(unit.id() + ":" + unit.part()))
               .collect(Collectors.toCollection(ArrayList::new));
         outlined.addAll(markers.outlinedInstances());
+        outlined.removeIf(instance -> instance == null || !boardCamera.camera.frustum.boundsInFrustum(UnitBounds.world(instance)));
         float seeThrough = ui.seeThrough();
-        terrain.animate(Gdx.graphics.getDeltaTime(), units, ui.buildingOpacity(), ui.treeOpacity());
+        terrain.animate(Gdx.graphics.getDeltaTime(), units, ui.buildingOpacity());
         terrain.renderShadows(boardCamera.camera, units);
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
         atmosphere.begin((int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight,
@@ -311,7 +315,7 @@ class GpuBattleView extends ApplicationAdapter {
         unitVisibility.render(boardCamera.camera, outlined, atmosphere.depthTexture(), ui.bottomPixels(), seeThrough, layoutScale);
         terrain.render(boardCamera.camera, true);
         fireControl.render(boardCamera.camera, Gdx.graphics.getDeltaTime());
-        tactical.render(boardCamera.camera);
+        tactical.render(boardCamera.camera, Gdx.graphics.getDeltaTime());
         renderHexText();
         fireControl.renderLabels(boardCamera.camera);
         renderSelectionOutlines();
@@ -358,6 +362,7 @@ class GpuBattleView extends ApplicationAdapter {
         equipmentAppearance.keySet().retainAll(unitInstances.keySet());
         for (BoardScene.Unit unit : scene.units()) {
             Vector3 position = BoardGeometry.center(unit.location().coords(), unit.location().elevation());
+            playback.placeDisplacement(unit, position);
             float facing = unit.location().facing() * 60;
             UnitMotion motion = unit.sensorContact() ? null : motions.get(unit.id());
             UnitMotion.Sample sample = motion == null ? UnitMotion.Sample.STILL : motion.sample();
@@ -380,17 +385,26 @@ class GpuBattleView extends ApplicationAdapter {
             if (motion != null && motion.isMoving()) {
                 movingFootprints.put(unit, new UnitFootprint.Pose(placement, position, facing));
             }
-            GpuMeeple meeple = unit.sensorContact() ? markers.model(BoardMarker.Kind.SENSOR_CONTACT)
+            GpuUnitModel visual = unit.sensorContact() ? markers.model(BoardMarker.Kind.SENSOR_CONTACT)
                   : unitModels == null ? null : unitModels.get(unit.model(), unit.id());
-            boolean authored = !unit.sensorContact() && meeple != null;
-            if (meeple == null) {
-                meeple = meeples.computeIfAbsent(unit.image(), pixels ->
-                      new GpuMeeple(pixels, unitTextures.region(pixels)));
+            boolean authored = !unit.sensorContact() && visual != null;
+            boolean dead = authored && unit.model().state() != null && unit.model().state().pose().dead();
+            var death = playback.attacks().stream().filter(attack -> attack.death() && attack.event.entityId() == unit.id())
+                  .findFirst().orElse(null);
+            float collapse = death == null ? dead ? 1 : 0 : death.deathProgress();
+            if (airborne && collapse > 0) {
+                float ground = UnitLandingSupports.ground(scene, position.x, position.y, groundSurfaces);
+                if (!Float.isFinite(ground) && tile != null) { ground = BoardGeometry.surfaceZ(tile); }
+                if (Float.isFinite(ground)) { position.z = MathUtils.lerp(position.z, ground, collapse); }
+            }
+            if (visual == null) {
+                visual = spriteModels.computeIfAbsent(unit.image(), pixels ->
+                      GpuUnitModel.sprite(pixels, unitTextures.region(pixels)));
             }
             String key = unit.id() + ":" + unit.part();
             ModelInstance instance = unitInstances.get(key);
-            if (instance == null || instance.model != meeple.instance.model) {
-                instance = newUnitInstance(key, meeple);
+            if (instance == null || instance.model != visual.instance.model) {
+                instance = newUnitInstance(key, visual);
             }
             BoardScene.LocationDamage shownDamage = unitDamage.getOrDefault(key, BoardScene.LocationDamage.NONE);
             UnitModelState.Appearance appearance = authored && unit.model().state() != null
@@ -398,18 +412,19 @@ class GpuBattleView extends ApplicationAdapter {
             if (authored && (!unit.model().damage().equals(shownDamage)
                   || !java.util.Objects.equals(appearance, equipmentAppearance.get(key)))) {
                 UpperBodyTurn previousTurn = upperBodyTurns.get(key);
-                instance = showDamage(key, meeple, unit);
+                instance = showDamage(key, visual, unit);
                 if (appearance != null) {
-                    meeple.showEquipment(instance, appearance);
-                    camouflage.apply(instance, meeple.instance, appearance);
+                    visual.showEquipment(instance, appearance);
+                    camouflage.apply(instance, visual.instance, appearance);
                     equipmentAppearance.put(key, appearance);
                 }
-                damageDisplay.applyTexture(instance);
+                damageDisplay.applyTexture(instance, unit.model().damage());
                 if (previousTurn != null) {
                     upperBodyTurns.put(key, previousTurn);
-                    meeple.turnUpperBody(instance, previousTurn.degrees());
+                    visual.turnUpperBody(instance, previousTurn.degrees());
                 }
             }
+            if (dead) { damageDisplay.wreck(instance, visual); }
             // Presentation-only color for the see-through pass; the normal model materials retain their artwork.
             if (!(instance.userData instanceof Color)) {
                 instance.userData = new Color();
@@ -429,29 +444,30 @@ class GpuBattleView extends ApplicationAdapter {
                 }
                 unitTints.put(key, unit.image());
             }
-            if (authored && meeple.turnsUpperBody()) {
+            if (authored && visual.turnsUpperBody()) {
                 // A movement replay already follows the legs, so only a unit standing still shows its twist.
                 boolean isMoving = (motion != null) && motion.isMoving();
-                facing -= turnUpperBody(meeple, instance, key, unit, isMoving ? 0 : unit.model().twist());
+                facing -= turnUpperBody(visual, instance, key, unit, isMoving ? 0 : unit.model().twist());
             }
-            if (authored && unit.model().state() != null && !meeple.rigs().isEmpty()) {
-                if (meeple.rigs().stream().allMatch(rig -> rig.trooper() || "infantry-transport".equals(rig.family()))) {
+            if (authored && unit.model().state() != null && !visual.rigs().isEmpty()) {
+                if (visual.rigs().stream().allMatch(rig -> rig.trooper() || "infantry-transport".equals(rig.family()))) {
                     facing = 0; // Troops and their transports have cosmetic member headings, no gameplay facing.
                 }
                 var turn = upperBodyTurns.get(key);
-                animators.computeIfAbsent(key, ignored -> new UnitAnimator()).apply(meeple, instance, unit,
+                animators.computeIfAbsent(key, ignored -> new UnitAnimator(groundSurfaces)).apply(visual, instance, unit,
                       sample, hoverClock, animationSeconds(),
                       playbackSpeed == UnitMotion.Speed.INSTANT, turn == null ? 0 : turn.degrees());
-                animators.get(key).attack(meeple, unit, playback.attack());
+                animators.get(key).attacks(visual, unit, playback.attacks());
+                animators.get(key).conversion(playback.conversion(), unit);
             }
             Vector3 anchor = unit.sensorContact()
                   ? markers.placeSensor(unit.location().coords(), instance, boardCamera.camera, position)
-                  : meeple.place(instance, boardCamera.camera, position, facing, placement);
+                  : visual.place(instance, boardCamera.camera, position, facing, placement);
             UnitAnimator animator = animators.get(key);
             if (authored && animator != null && animator.groundSupports(scene, placement, sample)) {
-                anchor = meeple.anchor(instance, boardCamera.camera);
+                anchor = visual.anchor(instance, boardCamera.camera);
             }
-            if (airborne) {
+            if (airborne && collapse == 0) {
                 float offset = hoverOffset(hoverClock, unit.id(), unit.part());
                 hover.add(new Hover(instance, offset));
                 anchor.add(0, 0, offset);
@@ -460,7 +476,32 @@ class GpuBattleView extends ApplicationAdapter {
         }
     }
 
-    /** One floating meeple's drift for the current frame: a draw-time offset, never part of the game state. */
+    private void aimAttack() {
+        if (unitModels == null) { return; }
+        for (var attack : playback.attacks()) {
+            if (attack.aimWeight() <= 0) { continue; }
+            var unit = attack.event.attacker();
+            var key = unit.id() + ":" + unit.part();
+            var animator = animators.get(key);
+            if (animator == null || !unitInstances.containsKey(key) || unit.model() == null) { continue; }
+            var model = unitModels.loaded(unit.model(), unit.id());
+            if (model == null) { continue; }
+            var target = attack.event.target();
+            var targetInstance = target == null ? null : unitInstances.get(target.id() + ":" + target.part());
+            var origin = UnitAttack.center(unitInstances.get(key), unit.location(), new Vector3());
+            var endpoint = attack.shot() ? attack.endpoint(targetInstance, origin, new Vector3())
+                  : attack.contact(targetInstance, origin, unitPicking, new Vector3());
+            animator.aim(model, unit, attack, endpoint, targetInstance);
+            for (var displayed : scene.units()) {
+                if (displayed.id() == unit.id()) {
+                    unitAnchors.put(displayed, model.anchor(unitInstances.get(key), boardCamera.camera));
+                    break;
+                }
+            }
+        }
+    }
+
+    /** One floating visual's drift for the current frame: a draw-time offset, never part of the game state. */
     private record Hover(ModelInstance instance, float offset) { }
 
     /** Apply the same hover transform before drawing, feature fading, and shadow capture. */
@@ -472,7 +513,7 @@ class GpuBattleView extends ApplicationAdapter {
     }
 
     /**
-     * Vertical hover offset in world units for an airborne meeple at the current animation time: a slow sine wave that
+     * Vertical hover offset in world units for an airborne visual at the current animation time: a slow sine wave that
      * each unit starts at a different phase, so the floating tokens drift as a loose wave instead of rising and
      * falling together. A grounded unit (elevation or altitude 0) never gets an offset. This only moves the rendered
      * token; no game state changes.
@@ -512,14 +553,14 @@ class GpuBattleView extends ApplicationAdapter {
               motions.get(unit.id()).sample(), hoverClock, 0, true, unit.model().twist());
     }
 
-    /** Level a floating meeple's stem ends at, or NaN when no stem is drawn for this token at this time. */
+    /** Level a floating visual's stem ends at, or NaN when no stem is drawn for this token at this time. */
     static float tetherGround(BoardScene.Unit unit, int tileElevation, Vector3 center, boolean moving) {
         float ground = tileElevation * BoardGeometry.LEVEL;
         return unit.airborne() && !moving && center.z > ground ? ground : Float.NaN;
     }
 
     /**
-     * Faint stems from each floating meeple's center down to the center of the hex it occupies, so an airborne token
+     * Faint stems from each floating visual's center down to the center of the hex it occupies, so an airborne token
      * beside a hill or another raised tile still reads as belonging to the hex under it. A grounded token already
      * covers its hex, and a moving token is between hexes, so neither gets a stem.
      */
@@ -545,9 +586,24 @@ class GpuBattleView extends ApplicationAdapter {
         lines.end();
     }
 
+    /** One render-only selection shared by color, depth, outlines and shadows. */
+    void updateEquipmentDetail() {
+        Set<Integer> detailedUnits = new java.util.HashSet<>();
+        detailedUnits.add(scene.selectedId());
+        for (var attack : playback.attacks()) {
+            detailedUnits.add(attack.event.entityId());
+            if (attack.event.target() != null) { detailedUnits.add(attack.event.target().id()); }
+        }
+        for (var unit : scene.units()) {
+            if (unitInstances.get(unit.id() + ":" + unit.part()) instanceof GpuUnitInstance instance) {
+                instance.equipmentDetail(boardCamera.camera, detailedUnits.contains(unit.id()));
+            }
+        }
+    }
+
     /** A fresh instance shows no tint, twist or damage yet, so everything remembered about the old one is dropped. */
-    private ModelInstance newUnitInstance(String key, GpuMeeple meeple) {
-        ModelInstance instance = new ModelInstance(meeple.instance.model);
+    private ModelInstance newUnitInstance(String key, GpuUnitModel visual) {
+        ModelInstance instance = new GpuUnitInstance(visual);
         unitInstances.put(key, instance);
         unitTints.remove(key);
         upperBodyTurns.remove(key);
@@ -560,9 +616,9 @@ class GpuBattleView extends ApplicationAdapter {
      * Takes lost arms off the unit's model and burns out its other lost locations. Starts from a fresh instance
      * instead of undoing the old damage, which also covers a location that a game master has repaired.
      */
-    private ModelInstance showDamage(String key, GpuMeeple meeple, BoardScene.Unit unit) {
+    private ModelInstance showDamage(String key, GpuUnitModel visual, BoardScene.Unit unit) {
         BoardScene.LocationDamage damage = unit.model().damage();
-        ModelInstance instance = newUnitInstance(key, meeple);
+        ModelInstance instance = newUnitInstance(key, visual);
         List<String> missing = UnitDamageDisplay.show(instance, damage);
         unitDamage.put(key, damage);
         LOGGER.debug("[GpuDamage] {}: taken off {}, burnt out {}, no part in the model for {}",
@@ -578,7 +634,7 @@ class GpuBattleView extends ApplicationAdapter {
      *
      * @return the degrees to take off the displayed facing to get the facing of the legs
      */
-    private float turnUpperBody(GpuMeeple meeple, ModelInstance instance, String key, BoardScene.Unit unit, int twist) {
+    private float turnUpperBody(GpuUnitModel visual, ModelInstance instance, String key, BoardScene.Unit unit, int twist) {
         UpperBodyTurn turn = upperBodyTurns.get(key);
         if (turn == null) {
             turn = new UpperBodyTurn();
@@ -586,7 +642,7 @@ class GpuBattleView extends ApplicationAdapter {
         }
         int previousTwist = turn.hexsides();
         if (turn.advance(twist, playbackSpeed == UnitMotion.Speed.INSTANT ? Float.MAX_VALUE : animationSeconds())) {
-            meeple.turnUpperBody(instance, turn.degrees());
+            visual.turnUpperBody(instance, turn.degrees());
         }
         if (previousTwist != twist) {
             LOGGER.debug("[GpuTwist] {}: upper body now {} hexside(s) clockwise of the legs, was {}",
@@ -615,7 +671,7 @@ class GpuBattleView extends ApplicationAdapter {
     private void renderAnnotations() {
         annotationBatch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
               boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight));
-        var ordered = unitAnchors.entrySet().stream().sorted(Comparator
+        var ordered = unitAnchors.entrySet().stream().filter(entry -> entry.getKey().annotations() != null).sorted(Comparator
               .<Map.Entry<BoardScene.Unit, Vector3>>comparingInt(entry ->
                     entry.getKey().id() == scene.selectedId() ? 0
                           : entry.getKey().location().coords().equals(hovered) ? 1 : 2)
@@ -1223,6 +1279,17 @@ class GpuBattleView extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        playback.clear();
+        groundSurfaces.clear();
+        animators.clear();
+        unitInstances.clear();
+        unitAnchors.clear();
+        unitTints.clear();
+        unitDamage.clear();
+        equipmentAppearance.clear();
+        upperBodyTurns.clear();
+        movingFootprints.clear();
+        hover.clear();
         unitPicking.clear();
         hexTextByHeight.clear();
         textTiles = null;
@@ -1230,7 +1297,8 @@ class GpuBattleView extends ApplicationAdapter {
             ui.dispose();
         }
         source.stopKeys();
-        meeples.values().forEach(GpuMeeple::dispose);
+        spriteModels.values().forEach(GpuUnitModel::dispose);
+        spriteModels.clear();
         if (unitModels != null) {
             unitModels.dispose();
         }

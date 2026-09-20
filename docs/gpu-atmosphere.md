@@ -118,14 +118,14 @@ and Scene2D controls then draw in screen space.
 Buffers resize with the board viewport and are disposed with the GPU view.
 
 Precipitation uses a lazily allocated, shared pool of 15,360 GPU-animated quads,
-drawn in at most four calls. Maximum rain and snow each draw 4,608 particles,
-hail draws 3,072, and blowing sand draws all 15,360. Sand density scales linearly,
-so the default half-strength setting already draws 7,680 grains.
+reused across batches with distinct particle seeds. Maximum rain and snow each draw 4,608 particles,
+hail draws 3,072, and blowing sand draws 43,008 in three batches. Sand density scales linearly,
+so the default half-strength setting draws 21,504 grains.
 A curved intensity response keeps light precipitation gentle and makes downpour,
 heavy snow, and heavy hail reach full density. Rain uses fine streaks; snowflakes
 are 55% of their original diameter and fall about 71% faster with less sideways sway.
 Rain has a 64% peak opacity and hail uses faster pellets. Sand uses small grains
-with an 85% peak opacity and short trails aligned with their instantaneous motion.
+with full peak opacity and short trails aligned with their instantaneous motion.
 Dark brown centers and pale lit edges provide contrast over desert textures and shadows.
 Its base speed ranges from 14 to 34 terrain levels per second with the wind slider;
 individual speed variation and shared crosswind gusts break up uniform movement.
@@ -156,7 +156,8 @@ It also checks particle visibility, animation, immediate removal, opaque-depth
 occlusion, scenario initialization, Defaults, rain/snow toggle input, and prompt,
 visible lightning that stops immediately when disabled. A fixed-time sand render
 checks visible fine grains at half strength and increasing coverage at 60% and
-full strength without blanketing the scene, independently of haze and sky grading.
+full strength, targeting 20% changed-pixel coverage (18–22%) at maximum in the
+1280×800 fixture, independently of haze and sky grading.
 Isolated grain renders measure small footprints, fast motion at zero wind,
 acceleration with stronger wind, and travel in all four cardinal directions.
 Desert contrast checks use shipped HQ and beige sand hex textures in both camera

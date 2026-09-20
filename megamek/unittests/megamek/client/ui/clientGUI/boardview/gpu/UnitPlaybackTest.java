@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -23,6 +23,84 @@ import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Test;
 
 class UnitPlaybackTest {
+    @Test
+    void pushUsesObservedDisplacementForBothParticipantsAndNeverInventsAMove() {
+        var attacker = unit(1, 0);
+        var victim = unit(2, 1);
+        var advanced = unit(1, 1);
+        var pushed = unit(2, 2);
+        for (boolean moved : List.of(true, false)) {
+            var after = moved ? scene(advanced, pushed) : scene(attacker, victim);
+            for (var speed : List.of(UnitMotion.Speed.HALF, UnitMotion.Speed.NORMAL, UnitMotion.Speed.QUADRUPLE)) {
+                var playback = new UnitPlayback();
+                playback.accept(List.of(new BoardScene.SceneUpdate(scene(attacker, victim)),
+                      attack(attacker, victim, ResolvedAttack.Kind.PUSH, true), new BoardScene.SceneUpdate(after)), after, ignored -> false);
+                playback.advance((.65 + UnitAttack.RECOVERY_SECONDS * .5) / speed.rate, speed);
+                var visible = playback.present(after);
+                for (var unit : visible.units()) {
+                    var end = BoardGeometry.center(unit.location().coords(), 0);
+                    var position = end.cpy();
+                    playback.placeDisplacement(unit, position);
+                    var original = BoardGeometry.center((unit.id() == 1 ? attacker : victim).location().coords(), 0);
+                    assertEquals(original.lerp(end, .5f).y, position.y, .0001);
+                }
+                playback.advance(UnitAttack.RECOVERY_SECONDS / speed.rate + 1, speed);
+                assertEquals(after.units(), playback.present(after).units());
+            }
+        }
+    }
+
+    @Test
+    void destructionFinishesBeforeRemovalAtEverySpeedAndCanBePausedOrSkipped() {
+        var victim = unit(2, 5);
+        var removed = scene();
+        for (var speed : UnitMotion.Speed.values()) {
+            var playback = new UnitPlayback();
+            playback.accept(List.of(new BoardScene.SceneUpdate(scene(victim)),
+                  attack(victim, victim, ResolvedAttack.Kind.DEATH, true), new BoardScene.SceneUpdate(removed)),
+                  removed, ignored -> false);
+            playback.advance(0, speed);
+            if (speed != UnitMotion.Speed.INSTANT) {
+                playback.advance((UnitAttack.DEATH_SECONDS - .001) / speed.rate, speed);
+                assertTrue(playback.present(removed).units().contains(victim));
+                float pose = playback.attack().deathProgress();
+                playback.togglePaused();
+                playback.advance(20, speed);
+                assertEquals(pose, playback.attack().deathProgress());
+                playback.togglePaused();
+                playback.advance(.001 / speed.rate, speed);
+                assertTrue(playback.present(removed).units().isEmpty());
+                assertEquals(1, playback.holdSeconds(), 1e-5);
+                playback.advance(1.001, speed);
+            }
+            assertFalse(playback.busy());
+            assertTrue(playback.present(removed).units().isEmpty());
+        }
+    }
+
+    @Test
+    void concealmentClearsCapturedPassengersAttacksAndHistoryWithoutReplayingOnReveal() {
+        var original = unit(1, 4);
+        var victim = unit(2, 5);
+        var playback = new UnitPlayback();
+        playback.accept(List.of(new BoardScene.SceneUpdate(scene(original, victim)), move(1),
+              attack(original, victim, ResolvedAttack.Kind.SHOT, true)), scene(original, victim), ignored -> true);
+        playback.advance(.2, UnitMotion.Speed.NORMAL);
+        assertNotNull(playback.motions.get(1).sample().boarding());
+        playback.togglePaused();
+        playback.accept(List.of(new BoardScene.Concealed(1, 0), new BoardScene.SceneUpdate(scene(victim))),
+              scene(victim), ignored -> true);
+        assertTrue(playback.paused());
+        assertTrue(playback.motions.isEmpty());
+        assertTrue(playback.attacks().isEmpty());
+        assertEquals(List.of(victim), playback.present(scene(victim)).units());
+        playback.accept(List.of(new BoardScene.SceneUpdate(scene(original, victim))), scene(original, victim), ignored -> true);
+        playback.togglePaused();
+        playback.advance(10, UnitMotion.Speed.NORMAL);
+        assertFalse(playback.busy());
+        assertTrue(playback.motions.isEmpty());
+    }
+
     @Test
     void pauseFreezesTravelAttacksAndTheRealTimeCompletionHoldWhileInstantStillSkips() {
         var playback = new UnitPlayback();

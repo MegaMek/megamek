@@ -3,6 +3,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.awt.Rectangle;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -37,6 +38,11 @@ final class BoardCamera {
         camera.near = 1;
         camera.far = 100000;
         camera.zoom = 1;
+    }
+
+    /** Shared projected size for the orthographic board, including framebuffer/display scaling. */
+    static float pixelsPerUnit(OrthographicCamera camera) {
+        return Gdx.graphics.getBackBufferHeight() / (float) Math.max(1, Gdx.graphics.getHeight()) / camera.zoom;
     }
 
     void resize(int width, int height) {

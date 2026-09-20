@@ -10,11 +10,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -24,6 +27,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Matrix4;
@@ -35,7 +39,11 @@ import megamek.common.board.Coords;
 
 /** GL-owned geometry and cached text. Camera movement never rebuilds the surface meshes or label artwork. */
 final class GpuTactical implements Disposable {
+    /** White dash travel in unscaled board pixels per second. 0f is static; negative values reverse direction. */
+    static final float OUTLINE_SCROLL_SPEED = 4f;
+
     private record TextImage(BoardScene.Pixels pixels, float x, float y) { }
+    private record WallTriangle(BoardTactical.Wall wall, BoardTacticalGeometry.Triangle triangle) { }
     private final ModelBatch batch = new ModelBatch();
     private final SpriteBatch textBatch = new SpriteBatch();
     private final GpuTextures<List<BoardTactical.Text>> textures = new GpuTextures<>(true);
@@ -48,12 +56,24 @@ final class GpuTactical implements Disposable {
     private ModelInstance instance;
     private int tuning = -1;
     private long builds;
+    private final float outlineSpeed;
+    private double scrollDistance;
+
+    GpuTactical() {
+        this(OUTLINE_SCROLL_SPEED);
+    }
+
+    GpuTactical(float outlineSpeed) {
+        this.outlineSpeed = outlineSpeed;
+    }
 
     void update(BoardScene scene) {
         boolean terrainChanged = previous == null || previous.boardId() != scene.boardId()
               || previous.width() != scene.width() || previous.height() != scene.height() || !sameTerrain(scene);
         if (tuning != BoardGeometry.revision() || terrainChanged
-              || !previous.tactical().fills().equals(scene.tactical().fills())) {
+              || !previous.tactical().fills().equals(scene.tactical().fills())
+              || !previous.tactical().walls().equals(scene.tactical().walls())
+              || !previous.tactical().flatWalls().equals(scene.tactical().flatWalls())) {
             rebuild(scene);
             tuning = BoardGeometry.revision();
         }
@@ -90,28 +110,112 @@ final class GpuTactical implements Disposable {
             instance.model.dispose();
             instance = null;
         }
-        if (scene.tactical().fills().isEmpty()) {
+        if (scene.tactical().fills().isEmpty() && scene.tactical().walls().isEmpty()) {
             return;
         }
         ModelBuilder builder = new ModelBuilder();
         builder.begin();
+        builder.node().id = "surface";
+        BoardTacticalGeometry.drape(scene, triangles(builder, "tactical"));
+        Map<BasicStroke, Material> outlines = new HashMap<>();
+        walls(builder, scene, false, outlines);
+        walls(builder, scene, true, outlines);
+        var model = builder.end();
+        if (model.meshParts.isEmpty()) {
+            model.dispose();
+        } else {
+            instance = new ModelInstance(model);
+        }
+    }
+
+    private Consumer<BoardTacticalGeometry.Triangle> triangles(ModelBuilder builder, String name) {
         MeshPartBuilder[] mesh = new MeshPartBuilder[1];
         int[] count = { 0 };
-        BoardTacticalGeometry.drape(scene, triangle -> {
+        return triangle -> {
             // Three independent vertices per triangle, below the unsigned-short index limit even on large maps.
             if (count[0] % 10000 == 0) {
-                mesh[0] = builder.part("tactical-" + count[0], GL20.GL_TRIANGLES,
+                mesh[0] = builder.part(name + "-" + count[0], GL20.GL_TRIANGLES,
                       VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked, material);
             }
             Color color = color(triangle.argb());
             mesh[0].triangle(vertex(triangle.a(), color), vertex(triangle.b(), color), vertex(triangle.c(), color));
             count[0]++;
-        });
-        var model = builder.end();
-        if (count[0] == 0) {
-            model.dispose();
-        } else {
-            instance = new ModelInstance(model);
+        };
+    }
+
+    private void walls(ModelBuilder builder, BoardScene scene, boolean flat, Map<BasicStroke, Material> materials) {
+        String name = flat ? "flat-walls" : "upright-walls";
+        builder.node().id = name;
+        Map<BasicStroke, List<WallTriangle>> outlines = new LinkedHashMap<>();
+        BoardTacticalGeometry.walls(scene, flat, triangles(builder, name), (wall, triangle) ->
+              outlines.computeIfAbsent(wall.outline().stroke(), key -> new ArrayList<>()).add(new WallTriangle(wall, triangle)));
+        for (var entry : outlines.entrySet()) {
+            Material ink = materials.computeIfAbsent(entry.getKey(), stroke -> {
+                Texture texture = outlineTexture(stroke);
+                builder.manage(texture);
+                Material result = material.copy();
+                result.id = "outline-" + materials.size();
+                TextureAttribute diffuse = TextureAttribute.createDiffuse(texture);
+                diffuse.scaleU = 1 / dashPeriod(stroke);
+                result.set(diffuse);
+                return result;
+            });
+            MeshPartBuilder mesh = null;
+            for (int i = 0; i < entry.getValue().size(); i++) {
+                if (i % 10000 == 0) {
+                    mesh = builder.part(name + "-" + ink.id + "-" + i, GL20.GL_TRIANGLES,
+                          VertexAttributes.Usage.Position | VertexAttributes.Usage.ColorPacked
+                                | VertexAttributes.Usage.TextureCoordinates, ink);
+                }
+                var outlined = entry.getValue().get(i);
+                var triangle = outlined.triangle();
+                Color color = color(triangle.argb());
+                mesh.triangle(outlineVertex(outlined.wall(), triangle.a(), color),
+                      outlineVertex(outlined.wall(), triangle.b(), color), outlineVertex(outlined.wall(), triangle.c(), color));
+            }
+        }
+    }
+
+    private static MeshPartBuilder.VertexInfo outlineVertex(BoardTactical.Wall wall, Vector3 point, Color color) {
+        float dx = wall.b().x() - wall.a().x(), dy = wall.b().y() - wall.a().y();
+        float length = (float) Math.hypot(dx, dy);
+        float along = ((point.x / BoardGeometry.HEX_SCALE - wall.a().x()) * dx
+              + (-point.y / BoardGeometry.HEX_SCALE - wall.a().y()) * dy) / length;
+        return vertex(point, color).setUV(wall.outline().stroke().getDashPhase() + wall.outlineDistance() + along, 0.5f);
+    }
+
+    private static float dashPeriod(BasicStroke stroke) {
+        float[] dashes = stroke.getDashArray();
+        if (dashes == null) {
+            return 1;
+        }
+        float length = 0;
+        for (float dash : dashes) {
+            length += dash;
+        }
+        return length * (dashes.length % 2 == 0 ? 1 : 2);
+    }
+
+    private static Texture outlineTexture(BasicStroke stroke) {
+        float period = dashPeriod(stroke);
+        float[] dashes = stroke.getDashArray();
+        Pixmap pixels = new Pixmap(Math.max(1, (int) Math.ceil(period * 16)), 1, Pixmap.Format.RGBA8888);
+        try {
+            pixels.setBlending(Pixmap.Blending.None);
+            for (int x = 0; x < pixels.getWidth(); x++) {
+                float remaining = (x + 0.5f) * period / pixels.getWidth();
+                int dash = 0;
+                while (dashes != null && remaining >= dashes[dash % dashes.length]) {
+                    remaining -= dashes[dash++ % dashes.length];
+                }
+                pixels.drawPixel(x, 0, dash % 2 == 0 ? 0xFFFFFFFF : 0xFFFFFF00);
+            }
+            Texture texture = new Texture(pixels, true);
+            texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
+            texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
+            return texture;
+        } finally {
+            pixels.dispose();
         }
     }
 
@@ -124,8 +228,19 @@ final class GpuTactical implements Disposable {
               (argb & 255) / 255f, (argb >>> 24) / 255f);
     }
 
-    void render(Camera camera) {
+    void render(Camera camera, float deltaSeconds) {
+        scrollDistance += deltaSeconds * outlineSpeed;
         if (instance != null) {
+            boolean flat = GpuMarkers.flat(camera);
+            instance.getNode("flat-walls").parts.forEach(part -> part.enabled = flat);
+            instance.getNode("upright-walls").parts.forEach(part -> part.enabled = !flat);
+            for (Material part : instance.materials) {
+                TextureAttribute texture = part.get(TextureAttribute.class, TextureAttribute.Diffuse);
+                if (texture != null) {
+                    double offset = -scrollDistance * texture.scaleU;
+                    texture.offsetU = (float) (offset - Math.floor(offset));
+                }
+            }
             batch.begin(camera);
             batch.render(instance);
             batch.end();

@@ -11,24 +11,25 @@ import java.util.TreeSet;
 import megamek.client.ui.tileset.EquipmentModelPolicy;
 import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.client.ui.util.PlayerColour;
+import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.battleArmor.BattleArmor;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.BFSAssetType;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.OverlayStyle;
 import megamek.common.battlefieldSupport.StripeDirection;
-import megamek.common.alphaStrike.conversion.ASConverter;
 import megamek.common.icons.Camouflage;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
-import megamek.common.units.Infantry;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.FighterSquadron;
+import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProneCause;
-import megamek.common.units.QuadMek;
-import megamek.common.units.TripodMek;
-import megamek.common.units.Tank;
 import megamek.common.units.ProtoMek;
+import megamek.common.units.QuadMek;
+import megamek.common.units.Tank;
+import megamek.common.units.TripodMek;
 
 /** Swing-owned capture after visibility filtering. Structure changes are independent of pose and damage changes. */
 record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
@@ -63,14 +64,18 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
     /** A squadron borrows actual visible member state; it never creates additional game entities. */
     record FlightMember(int id, Structure structure) { }
 
-    record MekAnatomy(String configuration, List<String> hands, List<String> lowerArms, int size, boolean superHeavy) {
+    record MekAnatomy(String configuration, List<String> hands, List<String> lowerArms, int size, int weightClass) {
         MekAnatomy(String configuration, List<String> hands, List<String> lowerArms) {
-            this(configuration, hands, lowerArms, 3, false);
+            this(configuration, hands, lowerArms, 3, EntityWeightClass.WEIGHT_HEAVY);
         }
 
         MekAnatomy {
             hands = List.copyOf(hands);
             lowerArms = List.copyOf(lowerArms);
+        }
+
+        boolean superHeavy() {
+            return weightClass == EntityWeightClass.WEIGHT_SUPER_HEAVY;
         }
     }
 
@@ -92,7 +97,14 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
 
     record Marker(int rgb, StripeDirection direction, OverlayStyle style, BoardScene.Pixels image) { }
 
-    record Pose(ProneCause proneCause, int facing, int secondaryFacing) { }
+    record Pose(ProneCause proneCause, int facing, int secondaryFacing, megamek.common.units.UnitLocation.Form form, boolean dead) {
+        Pose(ProneCause proneCause, int facing, int secondaryFacing, megamek.common.units.UnitLocation.Form form) {
+            this(proneCause, facing, secondaryFacing, form, false);
+        }
+        Pose(ProneCause proneCause, int facing, int secondaryFacing) {
+            this(proneCause, facing, secondaryFacing, null);
+        }
+    }
 
     static UnitModelState capture(Entity entity) {
         List<UnitModelEquipment.Mount> equipment = new ArrayList<>();
@@ -132,7 +144,7 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
         MekAnatomy anatomy = entity instanceof Mek mek ? new MekAnatomy(mek instanceof QuadMek ? "quad"
               : mek instanceof TripodMek ? "tripod" : "biped",
               UnitModelEquipment.armsWith(mek, Mek.ACTUATOR_HAND), UnitModelEquipment.armsWith(mek, Mek.ACTUATOR_LOWER_ARM),
-              ASConverter.sizeFor(mek), mek.isSuperHeavy()) : null;
+              ASConverter.sizeFor(mek), mek.getWeightClass()) : null;
         List<FlightMember> fighters = new ArrayList<>();
         Map<Integer, Appearance> fighterAppearances = new HashMap<>();
         if (entity instanceof FighterSquadron squadron && entity.getGame() != null) {
@@ -142,8 +154,9 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
                 fighterAppearances.put(fighter.getId(), member.appearance());
             }
         }
+        var movement = entity instanceof megamek.common.units.QuadVee ? EntityMovementMode.QUAD : entity.getMovementMode();
         var form = new BodyForm(entity instanceof ProtoMek proto ? (proto.isQuad() ? "quad-proto"
-              : proto.isGlider() ? "glider-proto" : "proto") : entity.getMovementMode().name(),
+              : proto.isGlider() ? "glider-proto" : "proto") : movement.name(),
               anatomy != null ? anatomy.size() : ASConverter.canConvert(entity) ? ASConverter.sizeFor(entity) : 2,
               entity instanceof Tank tank ? tank.getTurretCount() : 0, fighters);
         // Meks/vehicles receive a generic rules searchlight at game start; that is not an authored lamp housing.
@@ -151,10 +164,11 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
         // already have their own equipment entries, and explicitly added lights on other families remain visible.
         boolean externalLamp = entity.hasExternalSearchlight() && (!entity.getsAutoExternalSearchlight()
               || entity.getQuirks().booleanOption(OptionsConstants.QUIRK_POS_SEARCHLIGHT));
-        return new UnitModelState(new Structure(entity.getMovementMode(), equipment, members, troopers,
+        return new UnitModelState(new Structure(movement, equipment, members, troopers,
               externalLamp, anatomy, form),
               new Appearance(inoperable, entity.isUsingSearchlight(), appearance, fighterAppearances),
               new Pose(entity instanceof Mek ? entity.getProneCause() : ProneCause.NONE,
-                    entity.getFacing(), entity.getSecondaryFacing()));
+                    entity.getFacing(), entity.getSecondaryFacing(), megamek.common.units.UnitLocation.Form.capture(entity),
+                    entity.isDestroyed() || entity.isDoomed()));
     }
 }

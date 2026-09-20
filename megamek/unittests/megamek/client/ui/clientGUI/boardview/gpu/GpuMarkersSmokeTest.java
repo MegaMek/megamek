@@ -370,7 +370,7 @@ class GpuMarkersSmokeTest {
             outlined.add(sensor);
         }
         terrain.setAtmosphere(atmosphere.lighting());
-        terrain.animate(0, units, 1, 1);
+        terrain.animate(0, units, 1);
         terrain.renderShadows(camera.camera, units);
         ScreenUtils.clear(0.03f, 0.05f, 0.07f, 1, true);
         atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0, true);

@@ -9,21 +9,26 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.ButtonGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 
 /**
- * Live geometry and atmosphere controls. Geometry is shared with picking; atmosphere belongs to this GPU window.
+ * Live board controls. Geometry is shared with picking; presentation settings belong to this GPU window.
  */
 final class GpuBoardTuning {
-    private static final float SLIDER_WIDTH = 220;
-    private static final float LABEL_WIDTH = 150;
+    private static final float SLIDER_WIDTH = 120;
+    private static final float LABEL_WIDTH = 120;
 
     private record Knob(String name, float min, float max, float step, String format) { }
     private record Control(Knob knob, Slider slider, Label reading, TextButton toggle) { }
@@ -48,8 +53,10 @@ final class GpuBoardTuning {
 
     private static final List<Knob> VISIBILITY_KNOBS = List.of(
           new Knob("Building opacity", 0, 100, 5, "%.0f%%"),
-          new Knob("Tree opacity", 0, 100, 5, "%.0f%%"),
           new Knob("See-through", 0, 100, 5, "%.0f%%"));
+
+    private static final List<Knob> FOV_KNOBS = List.of(
+          new Knob("FoV darkness", 0, 100, 5, "%.0f%%"));
 
     private static final List<Knob> EFFECT_KNOBS = List.of(
           new Knob("Rain", 0, 1, 0.05f, "%.2f"),
@@ -66,6 +73,8 @@ final class GpuBoardTuning {
     private final CheckBox normalMaps;
     private final List<Control> geometry;
     private final List<Control> visibility;
+    private final ButtonGroup<TextButton> fovModes = new ButtonGroup<>();
+    private final List<Control> fieldOfView;
     private final List<Control> weather;
     private final List<Control> effects;
     private BoardAtmosphere.Settings atmosphere = BoardAtmosphere.DEFAULTS;
@@ -73,30 +82,38 @@ final class GpuBoardTuning {
     private boolean syncing;
 
     GpuBoardTuning(Skin skin) {
-        panel.setBackground(skin.getDrawable("panel"));
+        panel.setBackground(skin.getDrawable("menu-panel"));
         panel.setTouchable(Touchable.enabled);
         panel.setName("board-tuning");
-        panel.pad(12).top();
-        panel.defaults().pad(2);
-        panel.add(new Label("Board tuning", skin, "heading")).left().row();
-        rows.top().defaults().pad(3);
-        rows.add(new Label("Geometry", skin, "heading")).colspan(3).left().row();
+        panel.pad(8).top();
+        panel.add(new Label("Board tuning", skin)).left().padBottom(6).row();
+        rows.top().defaults().pad(0, 3, 0, 3);
+        section(skin, "Geometry");
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
-        normalMaps = new CheckBox("Normal maps", skin);
+        normalMaps = new CheckBox("Normal maps", skin, "menu");
         normalMaps.setName("tuning-normal-maps");
-        normalMaps.getImageCell().size(18).padRight(7);
-        rows.add(normalMaps).colspan(3).left().padTop(6).row();
-        rows.add(new Label("Unit visibility", skin, "heading")).colspan(3).left().padTop(12).row();
+        normalMaps.getImage().setScaling(Scaling.fit);
+        normalMaps.getImageCell().size(14).padRight(5);
+        rows.add(normalMaps).colspan(3).left().height(20).row();
+        section(skin, "Unit visibility");
         visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
-        rows.add(new Label("See-through: occluded unit outline + fill (0% off)", skin)).colspan(3).left().row();
-        rows.add(new Label("Daylight & atmosphere", skin, "heading")).colspan(3).left().padTop(12).row();
-        rows.add(new Label("Visual preview - game conditions stay unchanged", skin))
-              .colspan(3).left().padBottom(6).row();
-        rows.add(new Label("Defaults restores the scenario's starting atmosphere", skin))
-              .colspan(3).left().padBottom(6).row();
+        visibility.get(1).slider().addListener(new TextTooltip(
+              "Highlights occluded units with an outline and fill. Set to 0% to turn off.", skin, "menu"));
+        section(skin, "Field of view");
+        Table modes = new Table();
+        for (GpuFieldOfView.Style style : GpuFieldOfView.Style.values()) {
+            TextButton button = new TextButton(style.label, skin, "menu-control");
+            button.setName("fov-style-" + style.name());
+            button.setUserObject(style);
+            fovModes.add(button);
+            modes.add(button).width(92).height(22).padRight(2);
+        }
+        rows.add(modes).colspan(3).left().padBottom(2).row();
+        fieldOfView = controls(skin, FOV_KNOBS, this::applyFieldOfView, 0);
+        section(skin, "Daylight & atmosphere");
         Table presets = new Table();
         for (BoardAtmosphere.Weather preset : BoardAtmosphere.Weather.values()) {
-            TextButton button = new TextButton(preset.label, skin);
+            TextButton button = new TextButton(preset.label, skin, "menu-control");
             button.setName("atmosphere-" + preset.name());
             button.setProgrammaticChangeEvents(false);
             button.addListener(new ChangeListener() {
@@ -106,15 +123,15 @@ final class GpuBoardTuning {
                     setAtmosphere(preset.apply(atmosphere));
                 }
             });
-            presets.add(button).width(100).height(28).padRight(4);
+            presets.add(button).width(68).height(22).padRight(2);
         }
-        rows.add(presets).colspan(3).left().padBottom(5).row();
+        rows.add(presets).colspan(3).left().padBottom(2).row();
         weather = controls(skin, ATMOSPHERE_KNOBS, this::applyAtmosphere, 0);
-        rows.add(new Label(String.format(Locale.ROOT, "Fog + haze share a %.0f%% opacity cap",
-              BoardAtmosphere.MAX_FOG_OPACITY * 100), skin)).colspan(3).left().row();
-        rows.add(new Label("Weather effects", skin, "heading")).colspan(3).left().padTop(12).row();
+        rows.add(new Label(String.format(Locale.ROOT, "Fog + haze opacity cap: %.0f%%",
+              BoardAtmosphere.MAX_FOG_OPACITY * 100), skin, "small")).colspan(3).left().height(18).row();
+        section(skin, "Weather effects");
         effects = controls(skin, EFFECT_KNOBS, this::applyAtmosphere, 5);
-        scroll = new ScrollPane(rows, skin);
+        scroll = new ScrollPane(rows, skin, "menu");
         scroll.setName("tuning-scroll");
         scroll.setFadeScrollBars(false);
         scroll.setScrollingDisabled(true, false);
@@ -126,9 +143,12 @@ final class GpuBoardTuning {
                 panel.getStage().setScrollFocus(scroll);
             }
         });
-        panel.add(scroll).grow().row();
-        TextButton reset = new TextButton("Defaults", skin);
+        panel.add(scroll).minHeight(0).grow().row();
+        panel.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
+        TextButton reset = new TextButton("Defaults", skin, "menu-control");
         reset.setName("tuning-defaults");
+        reset.addListener(new TextTooltip("Restore geometry, visibility, and the scenario's starting atmosphere.",
+              skin, "menu"));
         reset.setProgrammaticChangeEvents(false);
         reset.addListener(new ChangeListener() {
             @Override
@@ -138,18 +158,26 @@ final class GpuBoardTuning {
             }
         });
         Table buttons = new Table();
-        buttons.add(reset).width(96).height(28);
-        buttons.add(new Label("F9 toggles this panel", skin)).padLeft(10).row();
-        panel.add(buttons).left().padTop(8).row();
+        buttons.add(reset).width(76).height(22);
+        buttons.add(new Label("Visual preview only", skin, "small")).padLeft(10).expandX().left();
+        buttons.add(new Label("F9 to close", skin, "small")).right();
+        panel.add(buttons).growX().padTop(4).row();
         restoreDefaults();
+    }
+
+    private void section(Skin skin, String title) {
+        float spacing = rows.hasChildren() ? 8 : 0;
+        rows.add(new Label(title.toUpperCase(Locale.ROOT), skin, "kicker"))
+              .colspan(3).left().padTop(spacing).padBottom(3).row();
     }
 
     private List<Control> controls(Skin skin, List<Knob> knobs, Runnable apply, int toggleCount) {
         List<Control> result = new ArrayList<>();
         for (Knob knob : knobs) {
-            Slider slider = new Slider(knob.min(), knob.max(), knob.step(), false, skin, "default");
+            Slider slider = new Slider(knob.min(), knob.max(), knob.step(), false, skin, "menu");
             slider.setName(knob.name());
-            Label reading = new Label("", skin);
+            Label reading = new Label("", skin, "small");
+            reading.setAlignment(Align.right);
             slider.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
@@ -160,8 +188,9 @@ final class GpuBoardTuning {
             });
             TextButton toggle = null;
             if (result.size() < toggleCount) {
-                toggle = new TextButton(knob.name(), skin);
+                toggle = new TextButton(knob.name(), skin, "menu-control");
                 toggle.setName("weather-toggle-" + knob.name());
+                toggle.getLabel().setAlignment(Align.left);
                 toggle.setProgrammaticChangeEvents(false);
                 toggle.addListener(new ChangeListener() {
                     @Override
@@ -171,9 +200,9 @@ final class GpuBoardTuning {
                 });
             }
             result.add(new Control(knob, slider, reading, toggle));
-            rows.add(toggle == null ? new Label(knob.name(), skin) : toggle).left().width(LABEL_WIDTH);
+            rows.add(toggle == null ? new Label(knob.name(), skin, "menu") : toggle).left().width(LABEL_WIDTH);
             rows.add(slider).minWidth(60).prefWidth(SLIDER_WIDTH).growX().height(20);
-            rows.add(reading).width(52).left().row();
+            rows.add(reading).width(38).right().row();
         }
         return result;
     }
@@ -194,7 +223,7 @@ final class GpuBoardTuning {
     }
 
     void resize(float stageWidth, float stageHeight, float topHeight, float bottomHeight) {
-        panel.setSize(Math.min(rows.getPrefWidth() + 34, Math.max(1, stageWidth - 24)),
+        panel.setSize(Math.min(panel.getPrefWidth(), Math.max(1, stageWidth - 24)),
               Math.min(panel.getPrefHeight(), Math.max(1, stageHeight - topHeight - bottomHeight - 24)));
         panel.setPosition(Math.max(8, stageWidth - panel.getWidth() - 12),
               Math.max(bottomHeight + 8, stageHeight - topHeight - panel.getHeight() - 12));
@@ -209,8 +238,11 @@ final class GpuBoardTuning {
         setValues(geometry, values);
         applyGeometry();
         setValues(visibility, new float[] { GpuTerrain.DEFAULT_BUILDING_OPACITY * 100,
-              GpuTerrain.DEFAULT_TREE_OPACITY * 100, GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY * 100 });
+              GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY * 100 });
         updateReadings(visibility);
+        fovModes.getButtons().get(GpuFieldOfView.STYLE.ordinal()).setChecked(true);
+        setValues(fieldOfView, new float[] { GpuFieldOfView.DARKNESS * 100 });
+        applyFieldOfView();
         setAtmosphere(scenarioDefaults == null ? BoardAtmosphere.DEFAULTS : scenarioDefaults);
     }
 
@@ -234,12 +266,16 @@ final class GpuBoardTuning {
         return value(visibility, 0) / 100;
     }
 
-    float treeOpacity() {
+    float seeThrough() {
         return value(visibility, 1) / 100;
     }
 
-    float seeThrough() {
-        return value(visibility, 2) / 100;
+    GpuFieldOfView.Style fovStyle() {
+        return (GpuFieldOfView.Style) fovModes.getChecked().getUserObject();
+    }
+
+    float fovDarkness() {
+        return value(fieldOfView, 0) / 100;
     }
 
     /** Capture once per opened board; routine frame publication must not overwrite a user's preview. */
@@ -267,6 +303,10 @@ final class GpuBoardTuning {
 
     private void applyVisibility() {
         updateReadings(visibility);
+    }
+
+    private void applyFieldOfView() {
+        updateReadings(fieldOfView);
     }
 
     private void applyAtmosphere() {

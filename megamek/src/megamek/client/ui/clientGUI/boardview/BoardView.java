@@ -74,9 +74,9 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.gpu.GpuBoardWindow;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OverlayImage;
-import megamek.client.ui.clientGUI.boardview.sprite.TacticalSprite;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.sprite.*;
+import megamek.client.ui.clientGUI.boardview.sprite.TacticalSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricWreckSprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
@@ -5172,7 +5172,7 @@ public final class BoardView extends AbstractBoardView
                 for (int row = area.y; row < area.y + area.height; row++) {
                     Coords coords = new Coords(column, row);
                     drawHex(coords, graphics, false);
-                    if (GUIP.getShowWrecks()) {
+                    if (GUIP.getShowWrecks() && !GpuBoardWindow.modelsEnabled()) {
                         drawIsometricWreckSpritesForHex(coords, graphics, isometricWreckSprites, false);
                         drawIsometricWreckSpritesForHex(coords, graphics, isometricWreckSprites, true);
                     }

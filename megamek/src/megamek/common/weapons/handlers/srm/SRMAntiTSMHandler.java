@@ -122,6 +122,6 @@ public class SRMAntiTSMHandler extends SRMSmokeWarheadHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 }

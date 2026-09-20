@@ -92,7 +92,7 @@ final class InfantryMotion {
         }
     }
 
-    void bind(GpuMeeple model, ModelInstance placed) {
+    void bind(GpuUnitModel model, ModelInstance placed) {
         Map<String, Member> previous = new LinkedHashMap<>(members);
         members.clear();
         for (var rig : model.rigs()) {
@@ -123,7 +123,7 @@ final class InfantryMotion {
         return pose == null ? 0 : pose.verticalOffset;
     }
 
-    void apply(GpuMeeple model, BoardScene.Unit unit, UnitMotion.Sample motion) {
+    void apply(GpuUnitModel model, BoardScene.Unit unit, UnitMotion.Sample motion) {
         var travel = motion.boarding();
         float scale = model.horizontalScale(unit);
         var vehicles = members.values().stream().filter(member -> member.rig.transport()).toList();
@@ -176,7 +176,7 @@ final class InfantryMotion {
                     member.fit(member.node.translation, member.heading, scale);
                     if (motion.group() != null) {
                         var offset = motion.group().offset(unit.id(), member.rig.container());
-                        member.verticalOffset = offset.z / model.verticalScale(scale);
+                        member.verticalOffset = offset.z / model.verticalScale(scale, unit);
                         member.node.translation.add(offset.x / scale, offset.y / scale, member.verticalOffset);
                     }
                 } else if (motion.moving()) {

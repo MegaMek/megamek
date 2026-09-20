@@ -228,6 +228,8 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
             height += target.getElevation();
         }
 
+        reportArtilleryAnimation(targetPos, height);
+
         // According to TacOps errata, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)

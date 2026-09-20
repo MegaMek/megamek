@@ -184,6 +184,7 @@ public class SRMInfernoHandler extends SRMHandler {
         } // End missed-target
 
         // light inferno missiles all at once, if not missed
+        reportAttackAnimation(hits > 0);
         vPhaseReport.addAll(gameManager.deliverInfernoMissiles(attackingEntity,
               target,
               hits,
@@ -271,7 +272,7 @@ public class SRMInfernoHandler extends SRMHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 
     @Override

@@ -20,6 +20,7 @@ import megamek.common.Player;
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.net.enums.PacketCommand;
@@ -28,11 +29,44 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rules.RulesManager;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ResolvedAttackServerTest {
+    @Test
+    void findingATreeClubAddsEquipmentWithoutConsumingWoodlandCover() throws Exception {
+        var resolve = TWGameManager.class.getDeclaredMethod("resolveFindClub", Entity.class);
+        resolve.setAccessible(true);
+        Hex hex = manager.getGame().getHexOf(attacker);
+        for (int type : new int[] { Terrains.WOODS, Terrains.JUNGLE }) {
+            for (int density = 1; density <= 3; density++) {
+                hex.removeAllTerrains();
+                hex.addTerrain(new Terrain(type, density));
+                hex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV, 2));
+                int equipment = attacker.getEquipment().size();
+                resolve.invoke(manager, attacker);
+                assertEquals(equipment + 1, attacker.getEquipment().size());
+                assertEquals(EquipmentTypeLookup.TREE_CLUB, attacker.getEquipment().getLast().getType().getInternalName());
+                assertEquals(density, hex.terrainLevel(type), "Taking a club must not reduce cover");
+                assertEquals(2, hex.terrainLevel(Terrains.FOLIAGE_ELEV));
+            }
+        }
+    }
+
+    @Test
+    void destructionEmitsOnceAtTheRulesTransitionAndRespectsVisibility() {
+        target.setHidden(true);
+        manager.destroyEntity(target, "review", true, true);
+        assertTrue(target.isDoomed());
+        assertEquals(List.of(1), deliveries.stream().map(Delivery::player).toList());
+        assertEquals(ResolvedAttack.Kind.DEATH, deliveries.getFirst().result().kind());
+        manager.destroyEntity(target, "review repeated", true, true);
+        assertEquals(1, deliveries.size());
+    }
+
     private record Delivery(int player, ResolvedAttack result) { }
     private final List<Delivery> deliveries = new ArrayList<>();
     private RulesManager rules;
@@ -85,7 +119,10 @@ class ResolvedAttackServerTest {
         assertEquals(2, deliveries.size());
         var result = deliveries.getFirst().result();
         assertEquals(index, result.equipmentIndex());
-        assertEquals(List.of(new ResolvedAttack.Mount(attacker.getId(), index)), result.mounts());
+        assertEquals(1, result.mounts().size());
+        assertEquals(attacker.getId(), result.mounts().getFirst().entityId());
+        assertEquals(index, result.mounts().getFirst().equipmentIndex());
+        assertEquals(ResolvedAttack.Shot.capture(weapon), result.mounts().getFirst().shot());
         assertEquals(weapon.getType().getInternalName(), result.equipmentName());
         assertEquals(target.getPosition(), result.target().coords());
         assertEquals(internal, target.getInternal(Mek.LOC_CENTER_TORSO));

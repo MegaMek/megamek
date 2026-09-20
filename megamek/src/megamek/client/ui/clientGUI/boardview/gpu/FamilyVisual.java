@@ -4,8 +4,8 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.JsonValue;
 
 /** Shared rigid-body lifecycle for vehicle, aircraft, naval, ProtoMek and static fallback art. */
 final class FamilyVisual {
@@ -13,7 +13,7 @@ final class FamilyVisual {
 
     private FamilyVisual() { }
 
-    static GpuMeeple assemble(GpuUnitModels library, JsonValue descriptor, UnitModelState.Structure structure) {
+    static GpuUnitModel assemble(GpuUnitModels library, JsonValue descriptor, UnitModelState.Structure structure) {
         var form = structure.bodyForm();
         var forms = descriptor.get("forms");
         if (form != null && forms != null && forms.has(form.configuration())) {
@@ -44,7 +44,7 @@ final class FamilyVisual {
             assembled.calculateTransforms();
             var bounds = body.descriptor().bounds();
             Vector3 dimensions = UnitModelDescriptor.vector(bounds.max()).sub(UnitModelDescriptor.vector(bounds.min())).scl(scale);
-            return new GpuMeeple(assembled, null, true, bindings, 1f / 27, dimensions,
+            return new GpuUnitModel(assembled, null, true, bindings, 1f / 27, dimensions,
                   java.util.List.of(new UnitRig(body.descriptor())), UnitFamilyScale.forFamily(descriptor.getString("family")));
         } catch (RuntimeException error) {
             assembled.dispose();

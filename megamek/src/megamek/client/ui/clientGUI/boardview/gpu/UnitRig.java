@@ -31,6 +31,27 @@ record UnitRig(String family, String type, String container, Map<String, String>
         return "trooper-v1".equals(type);
     }
 
+    boolean mek() {
+        return "biped-v1".equals(type) || "quad-v1".equals(type) || "tripod-v1".equals(type);
+    }
+
+    String kickingLeg(int location) {
+        if ("quad-v1".equals(type)) {
+            return switch (location) {
+                case megamek.common.units.Mek.LOC_LEFT_ARM -> "FLL";
+                case megamek.common.units.Mek.LOC_RIGHT_ARM -> "FRL";
+                case megamek.common.units.Mek.LOC_LEFT_LEG -> "RLL";
+                default -> "RRL";
+            };
+        }
+        return switch (location) {
+            // The rules may identify the center location; visually kick with a side leg for balance.
+            case megamek.common.units.Mek.LOC_CENTER_LEG -> "leftLeg";
+            case megamek.common.units.Mek.LOC_LEFT_LEG -> "leftLeg";
+            default -> "rightLeg";
+        };
+    }
+
     boolean transport() {
         return "infantry-transport".equals(family);
     }

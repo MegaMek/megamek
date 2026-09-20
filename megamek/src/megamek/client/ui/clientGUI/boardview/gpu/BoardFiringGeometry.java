@@ -12,7 +12,7 @@ import megamek.common.board.Coords;
 /** Presentation geometry only: attack legality and the range edges arrive from the Swing board. */
 final class BoardFiringGeometry {
     /** Contour height above the highest adjoining surface, in board elevation levels. */
-    static final float RANGE_HEIGHT = 2;
+    static final float RANGE_HEIGHT = 1;
     /** Clearance above the surface, in unscaled board pixels. */
     static final float RANGE_CLEARANCE = 0.6f;
     /** tan(30 degrees), for joins between inset edges of the hex contour. */

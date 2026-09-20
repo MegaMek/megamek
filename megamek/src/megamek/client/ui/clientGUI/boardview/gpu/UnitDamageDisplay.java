@@ -32,15 +32,18 @@
  */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.io.File;
+import java.util.EnumMap;
+import java.util.EnumSet;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
+import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
@@ -56,18 +59,124 @@ import megamek.logging.MMLogger;
  * Presentation only; works on one unit's own instance and never on the shared model.
  */
 final class UnitDamageDisplay implements Disposable {
+    static final float ARMOR_WORN_LOSS = .5f;
+    static final float ARMOR_STRIPPED_LOSS = 1f;
+    static final float STRUCTURE_BATTERED_LOSS = .5f;
+    static final float BODY_DAMAGE_1 = .25f;
+    static final float BODY_DAMAGE_2 = .5f;
+    static final float BODY_DAMAGE_3 = .75f;
+    static final float BODY_DAMAGE_4 = 1f;
+
+    enum Stage {
+        ARMOR_WORN("armor-worn"), ARMOR_STRIPPED("armor-stripped"), STRUCTURE_BATTERED("structure-battered"),
+        BODY_25("body-damage-25"), BODY_50("body-damage-50"), BODY_75("body-damage-75"), BODY_100("body-damage-100");
+        final String file;
+        Stage(String file) { this.file = file; }
+    }
+
+    static Stage locationStage(float armorLoss, float structureLoss) {
+        if (structureLoss >= STRUCTURE_BATTERED_LOSS) { return Stage.STRUCTURE_BATTERED; }
+        if (armorLoss >= ARMOR_STRIPPED_LOSS) { return Stage.ARMOR_STRIPPED; }
+        return armorLoss >= ARMOR_WORN_LOSS ? Stage.ARMOR_WORN : null;
+    }
+
+    static Stage bodyStage(float loss) {
+        if (loss >= BODY_DAMAGE_4) { return Stage.BODY_100; }
+        if (loss >= BODY_DAMAGE_3) { return Stage.BODY_75; }
+        if (loss >= BODY_DAMAGE_2) { return Stage.BODY_50; }
+        return loss >= BODY_DAMAGE_1 ? Stage.BODY_25 : null;
+    }
+
+    /** Alpha is a paint mask, never mesh transparency. Instances borrow these view-owned textures. */
+    static final class Overlay extends Attribute {
+        static final long TYPE = register("unitDamageOverlay");
+        final Texture texture;
+        Overlay(Texture texture) { super(TYPE); this.texture = texture; }
+        @Override public Attribute copy() { return new Overlay(texture); }
+        @Override public int compareTo(Attribute other) {
+            return type != other.type ? Long.compare(type, other.type)
+                  : Integer.compare(texture.getTextureObjectHandle(), ((Overlay) other).texture.getTextureObjectHandle());
+        }
+    }
     /** The flat color of a burnt-out location. Dark, but not so dark that its shape is lost against a shadow. */
     static final Color WRECKED = new Color(0.22f, 0.22f, 0.22f, 1);
     static final String WRECKED_SUFFIX = "-wrecked";
     private static final MMLogger LOGGER = MMLogger.create(UnitDamageDisplay.class);
     private Texture texture;
     private boolean attempted;
+    private final EnumMap<Stage, Texture> overlays = new EnumMap<>(Stage.class);
+    private final EnumSet<Stage> attemptedOverlays = EnumSet.noneOf(Stage.class);
+
+    void applyTexture(ModelInstance instance, BoardScene.LocationDamage damage) {
+        applyTexture(instance);
+        damage.stages().forEach((location, stage) -> {
+            Texture overlay = overlay(stage);
+            if (overlay == null) { return; }
+            List<NodePart> parts = new ArrayList<>();
+            if ("*".equals(location)) { for (Node root : instance.nodes) { allParts(root, parts); } }
+            else { parts = locationParts(instance, location); }
+            for (var part : parts) { paint(part, overlay); }
+        });
+    }
+
+    private static void paint(NodePart part, Texture texture) {
+        if (!part.enabled || part.material.id.endsWith(WRECKED_SUFFIX)) { return; }
+        var current = part.material.get(Overlay.class, Overlay.TYPE);
+        if (current != null && current.texture == texture) { return; }
+        part.material = part.material.copy();
+        part.material.set(new Overlay(texture));
+    }
+
+    private static void paint(Node node, Texture texture) {
+        for (var part : node.parts) { paint(part, texture); }
+        for (var child : node.getChildren()) { paint(child, texture); }
+    }
+
+    private static void allParts(Node node, List<NodePart> parts) {
+        node.parts.forEach(parts::add);
+        node.getChildren().forEach(child -> allParts(child, parts));
+    }
+
+    private Texture overlay(Stage stage) {
+        if (attemptedOverlays.add(stage)) {
+            try {
+                Texture loaded = new Texture(new FileHandle(new File(Configuration.dataDir(),
+                      "models/units/textures/" + stage.file + ".png")), true);
+                loaded.setWrap(Texture.TextureWrap.MirroredRepeat, Texture.TextureWrap.MirroredRepeat);
+                loaded.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
+                overlays.put(stage, loaded);
+            } catch (RuntimeException error) {
+                LOGGER.warn("Cannot load unit damage overlay {}: {}", stage.file, error.getMessage());
+            }
+        }
+        return overlays.get(stage);
+    }
 
     /** GL-thread only. One view owns the shared damage texture; model instances merely borrow it. */
     void applyTexture(ModelInstance instance) {
         for (Node node : instance.nodes) {
             applyTexture(node);
         }
+    }
+
+    void wreck(ModelInstance instance, GpuUnitModel model) {
+        if (model.rigs().stream().anyMatch(UnitRig::trooper)) { return; }
+        if (model.rigs().stream().noneMatch(UnitRig::mek)) {
+            Texture overlay = overlay(Stage.BODY_100);
+            if (overlay != null) { for (var node : instance.nodes) { paint(node, overlay); } }
+            return;
+        }
+        for (var node : instance.nodes) { wreck(node); }
+        applyTexture(instance);
+    }
+
+    private static void wreck(Node node) {
+        for (var part : node.parts) {
+            if (!part.material.id.endsWith(WRECKED_SUFFIX)) {
+                part.material = wrecked(part.material);
+            }
+        }
+        node.getChildren().forEach(UnitDamageDisplay::wreck);
     }
 
     private void applyTexture(Node node) {
@@ -100,6 +209,9 @@ final class UnitDamageDisplay implements Disposable {
             texture = null;
         }
         attempted = false;
+        overlays.values().forEach(Texture::dispose);
+        overlays.clear();
+        attemptedOverlays.clear();
     }
 
     /**
@@ -164,7 +276,7 @@ final class UnitDamageDisplay implements Disposable {
         if (!copy.id.endsWith(WRECKED_SUFFIX)) {
             copy.id += WRECKED_SUFFIX;
         }
-        copy.remove(TextureAttribute.Diffuse | ColorAttribute.Emissive | TextureAttribute.Emissive);
+        copy.remove(TextureAttribute.Diffuse | ColorAttribute.Emissive | TextureAttribute.Emissive | Overlay.TYPE);
         copy.set(ColorAttribute.createDiffuse(WRECKED));
         return copy;
     }

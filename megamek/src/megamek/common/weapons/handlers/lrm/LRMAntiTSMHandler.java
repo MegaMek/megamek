@@ -140,6 +140,6 @@ public class LRMAntiTSMHandler extends LRMSmokeWarheadHandler {
         report.subject = subjectId;
         vPhaseReport.addElement(report);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 }

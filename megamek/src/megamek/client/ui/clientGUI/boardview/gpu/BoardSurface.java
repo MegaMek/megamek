@@ -10,6 +10,23 @@ import com.badlogic.gdx.math.Vector3;
 
 /** The actual topography of one hex. Rendering, road continuity, banks and picking share it. */
 final class BoardSurface {
+    /** GL-view-owned derived geometry. Pose snapshots share tiles; a board edit or tuning change invalidates it. */
+    static final class Cache {
+        private List<BoardScene.Tile> tiles;
+        private int revision = -1;
+        private final java.util.Map<BoardScene.Tile, BoardSurface> surfaces = new java.util.IdentityHashMap<>();
+
+        BoardSurface get(BoardScene scene, BoardScene.Tile tile) {
+            if (tiles != scene.tiles() || revision != BoardGeometry.revision()) {
+                clear();
+                tiles = scene.tiles();
+                revision = BoardGeometry.revision();
+            }
+            return surfaces.computeIfAbsent(tile, key -> new BoardSurface(scene, key));
+        }
+
+        void clear() { surfaces.clear(); tiles = null; }
+    }
     private static final int SHORE_SEGMENTS = 6;
     enum Finish { TOP, SHORE, BED, BANK, ICE }
     /** landEdge identifies the adjoining dry hex for bank artwork; other faces use -1. */

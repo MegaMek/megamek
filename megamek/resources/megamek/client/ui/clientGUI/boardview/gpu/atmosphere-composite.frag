@@ -87,7 +87,7 @@ vec3 fieldOfView(vec3 color, float depth) {
         bool sensor = state < 3.5;
         float amount = u_fovOptions.x * (sensor ? 0.5 : 1.0);
         float gray = dot(color, vec3(0.2126, 0.7152, 0.0722));
-        float desaturate = max(u_fovOptions.z, u_fovOptions.x > 0.0 ? (u_fovStyle > 0.5 ? 0.85 : 0.25) : 0.0);
+        float desaturate = u_fovOptions.x > 0.0 ? (u_fovStyle > 0.5 ? 0.85 : 0.25) : 0.0;
         color = mix(color, vec3(gray), desaturate);
         vec3 shade = sensor ? vec3(0.10, 0.20, 0.25) : vec3(0.025, 0.035, 0.055);
         if (u_fovOptions.w > 0.5) shade.b += 0.10;
@@ -103,6 +103,10 @@ vec3 fieldOfView(vec3 color, float depth) {
     if (u_fovOptions.x > 0.0) {
         // A contour appears only where visible hexes meet blocked/sensor hexes, not around every cell.
         color = mix(color, vec3(0.40, 0.78, 0.84), boundary * 0.60 * horizontal);
+    }
+    if (state > 2.5 && u_fovOptions.z > 0.5) {
+        // Desaturate last so sensor/spotting tints and the contour remain grayscale too.
+        color = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
     }
     return color;
 }

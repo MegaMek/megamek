@@ -26,15 +26,15 @@ import com.badlogic.gdx.graphics.PixmapIO;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import megamek.client.ui.tileset.MekTileset;
 import megamek.client.ui.tileset.EquipmentModelPolicy;
+import megamek.client.ui.tileset.MekTileset;
 import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.common.Configuration;
 import megamek.common.battleArmor.BattleArmor;
@@ -130,6 +130,7 @@ class GpuModularUnitModelsSmokeTest {
                     GpuFamilyAssemblyReview.verify(library, batch);
                     GpuLandingSupportReview.verify(library, batch);
                     GpuUnitAnimationReview.verify(library, batch);
+                    GpuFamilyMotionReview.verify(library, batch);
                     GpuJumpJetReview.verify(library, batch);
                     GpuCamouflageReview.verify(library);
                     GpuDamageReview.verify(library);
@@ -176,7 +177,7 @@ class GpuModularUnitModelsSmokeTest {
         }
         var selection = UnitModelSelection.capture(armor, -1, false, tileset);
         assertEquals(ROOT + "battle-armor.json", selection.asset());
-        GpuMeeple six = library.get(selection, armor.getId());
+        GpuUnitModel six = library.get(selection, armor.getId());
         assertNotNull(six);
         assertSame(six, library.get(selection, armor.getId()));
         assertEquals(6, six.instance.nodes.size);
@@ -233,7 +234,7 @@ class GpuModularUnitModelsSmokeTest {
         renderReview(batch, instances, "runtime-infantry", 360, 4);
     }
 
-    private static ModelInstance formationInstance(GpuMeeple model, Entity entity, BoardScene.UnitModel selection) {
+    private static ModelInstance formationInstance(GpuUnitModel model, Entity entity, BoardScene.UnitModel selection) {
         var instance = new ModelInstance(model.instance.model);
         var animator = new UnitAnimator();
         var unit = new BoardScene.Unit(entity.getId(), -1, "Formation review", new BoardScene.Waypoint(new Coords(0, 0), 0, 0),

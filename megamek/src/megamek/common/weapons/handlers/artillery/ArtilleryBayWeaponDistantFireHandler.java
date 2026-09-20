@@ -105,6 +105,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
 
     @Override
     protected void useAmmo() {
+        beginFiringMounts();
         numWeaponsHit = weapon.getBayWeapons().size();
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
@@ -123,10 +124,12 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                 if (bayWAmmo.getUsableShotsLeft() < 1) {
                     numWeaponsHit--;
                 } else {
+                    recordFiringMount(bayW);
                     bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                 }
             } else {
                 // By default, rules, we have just one ammo bin with at least 10 shots for each
+                recordFiringMount(bayW);
                 // weapon in the bay,
                 // so we'll track ammo normally and need to resolve attacks for all bay weapons.
                 for (int i = 0; i < shots; i++) {
@@ -384,6 +387,8 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
         // In the case of misses, we'll need to hit multiple hexes
         List<Coords> targets = new ArrayList<>();
         List<Integer> heights = new ArrayList<>();
+        var fired = firingMounts();
+        int firedIndex = 0;
         Hex targetHex;
 
         if (!bMissed) {
@@ -398,6 +403,7 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
             }
             targetHex = game.getBoard(target.getBoardId()).getHex(targetPos);
             heights.add((targetHex != null) ? game.getBoard(target.getBoardId()).getHex(targetPos).getLevel() : 0);
+            for (var mount : fired) { reportArtilleryAnimation(targetPos, heights.getFirst(), mount); }
             artyMsg = "Artillery hit here on round " + game.getRoundCount()
                   + ", fired by " + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
                   + " (this hex is now an auto-hit)";
@@ -460,6 +466,13 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
                     vPhaseReport.addElement(report);
                 }
                 numWeaponsHit--;
+                if (firedIndex < fired.size()) {
+                    Hex landingHex = game.getBoard(target.getBoardId()).getHex(targetPos);
+                    int landingHeight = isFlak ? asfFlak ? target.getAltitude()
+                          : (landingHex == null ? 0 : landingHex.getLevel()) + target.getElevation()
+                          : landingHex == null ? 0 : landingHex.getLevel();
+                    reportArtilleryAnimation(targetPos, landingHeight, fired.get(firedIndex++));
+                }
             }
             // If we managed to land everything off the board, stop
             if (targets.isEmpty()) {

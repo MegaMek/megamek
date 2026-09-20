@@ -15,6 +15,23 @@ import megamek.common.units.Mek;
 final class UnitModelSelection {
     private UnitModelSelection() { }
 
+    /** Reuse the tileset and captured loadout/camo for a historical form; no alternate assembly or Entity copy. */
+    static BoardScene.UnitModel inForm(BoardScene.UnitModel model, Entity entity, int part, MekTileset tileset,
+          megamek.common.units.UnitLocation.Form form) {
+        if (model == null || model.state() == null || form == null) { return model; }
+        var state = model.state();
+        var structure = state.structure();
+        var body = structure.bodyForm();
+        var pose = state.pose();
+        var movement = entity instanceof megamek.common.units.QuadVee ? megamek.common.units.EntityMovementMode.QUAD : form.movement();
+        var captured = new UnitModelState(new UnitModelState.Structure(movement, structure.equipment(),
+              structure.members(), structure.activeTroopers(), structure.externalSearchlight(), structure.anatomy(),
+              body == null ? null : new UnitModelState.BodyForm(movement.name(), body.size(), body.turrets(), body.fighters())),
+              state.appearance(), new UnitModelState.Pose(pose.proneCause(), pose.facing(), pose.secondaryFacing(), form, pose.dead()));
+        return new BoardScene.UnitModel(tileset.modelFor(entity, part, form), tileset.genericModelFor(entity, part, form),
+              model.variant(), model.figures(), model.twist(), model.damage(), captured);
+    }
+
     static BoardScene.UnitModel capture(Entity entity, int part, boolean sensor, MekTileset tileset) {
         return capture(entity, part, sensor, tileset, 0);
     }
@@ -55,11 +72,20 @@ final class UnitModelSelection {
      * @return the locations to show as lost; {@link BoardScene.LocationDamage#NONE} for anything but a Mek
      */
     static BoardScene.LocationDamage damage(Entity entity) {
+        if (entity instanceof Infantry) { return BoardScene.LocationDamage.NONE; }
         if (!(entity instanceof Mek mek)) {
-            return BoardScene.LocationDamage.NONE;
+            float original = 0, remaining = 0;
+            for (int location = 0; location < entity.locations(); location++) {
+                original += armor(entity, location, true) + Math.max(0, entity.getOInternal(location));
+                remaining += armor(entity, location, false) + Math.max(0, entity.getInternal(location));
+            }
+            var stage = UnitDamageDisplay.bodyStage(loss(remaining, original));
+            return stage == null ? BoardScene.LocationDamage.NONE
+                  : new BoardScene.LocationDamage(Set.of(), Set.of(), java.util.Map.of("*", stage));
         }
         Set<String> removed = new TreeSet<>();
         Set<String> wrecked = new TreeSet<>();
+        var stages = new java.util.HashMap<String, UnitDamageDisplay.Stage>();
         for (int location = 0; location < mek.locations(); location++) {
             if (isLost(mek, location)) {
                 addLost(mek, location, removed, wrecked);
@@ -68,9 +94,24 @@ final class UnitModelSelection {
                     addLost(mek, dependent, removed, wrecked);
                 }
             }
+            var stage = UnitDamageDisplay.locationStage(loss(armor(mek, location, false), armor(mek, location, true)),
+                  loss(mek.getInternal(location), mek.getOInternal(location)));
+            if (stage != null) { stages.put(mek.getLocationAbbr(location), stage); }
         }
-        return (removed.isEmpty() && wrecked.isEmpty()) ? BoardScene.LocationDamage.NONE
-              : new BoardScene.LocationDamage(removed, wrecked);
+        return removed.isEmpty() && wrecked.isEmpty() && stages.isEmpty() ? BoardScene.LocationDamage.NONE
+              : new BoardScene.LocationDamage(removed, wrecked, stages);
+    }
+
+    private static float armor(Entity entity, int location, boolean original) {
+        float value = Math.max(0, original ? entity.getOArmor(location) : entity.getArmor(location));
+        if (entity.hasRearArmor(location)) {
+            value += Math.max(0, original ? entity.getOArmor(location, true) : entity.getArmor(location, true));
+        }
+        return value;
+    }
+
+    private static float loss(float remaining, float original) {
+        return original <= 0 ? 0 : 1 - Math.clamp(remaining / original, 0, 1);
     }
 
     private static void addLost(Mek mek, int location, Set<String> removed, Set<String> wrecked) {

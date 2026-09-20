@@ -71,7 +71,7 @@ class GpuUnitModelsSmokeTest {
                     assertSame(library.get(selections.getFirst()), library.get(selections.getFirst()));
                     assertNotNull(library.get(new BoardScene.UnitModel("units/missing.json", "units/fallback/biped.json", "Unknown", 1)));
                     assertNull(library.get(new BoardScene.UnitModel("../outside.json", null, "Unknown", 1)));
-                    GpuMeeple empty = library.get(new BoardScene.UnitModel("units/infantry/model.json", null, "Empty", 0));
+                    GpuUnitModel empty = library.get(new BoardScene.UnitModel("units/infantry/model.json", null, "Empty", 0));
                     assertNotNull(empty);
                     assertEquals(0, empty.instance.model.meshParts.size);
                     for (var movement : Map.of("INF_MOTORIZED", "motorized", "TRACKED", "tracked",
@@ -79,7 +79,7 @@ class GpuUnitModelsSmokeTest {
                         for (int slots = 0; slots <= 6; slots++) {
                             var selection = new BoardScene.UnitModel("units/infantry/model.json", null,
                                   movement.getKey(), slots);
-                            GpuMeeple asset = library.get(selection);
+                            GpuUnitModel asset = library.get(selection);
                             assertNotNull(asset, movement.getKey());
                             assertSame(asset, library.get(selection));
                             int triangles = 0;
@@ -111,7 +111,7 @@ class GpuUnitModelsSmokeTest {
                             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
                             batch.begin(camera);
                             for (int i = 0; i < page.size(); i++) {
-                                GpuMeeple asset = library.get(page.get(i));
+                                GpuUnitModel asset = library.get(page.get(i));
                                 assertNotNull(asset, page.get(i).asset());
                                 ModelInstance instance = new ModelInstance(asset.instance.model);
                                 Vector3 position = page == mobileInfantry

@@ -428,6 +428,7 @@ public abstract class Entity extends TurnOrdered
 
     protected boolean prone = false;
     private ProneCause proneCause = ProneCause.NONE;
+    private FallSide fallSide;
     protected boolean hullDown = false;
     protected boolean climbing = false;
     protected boolean dangling = false;
@@ -2272,10 +2273,16 @@ public abstract class Entity extends TurnOrdered
     public void setProne(ProneCause cause) {
         proneCause = Objects.requireNonNull(cause);
         prone = cause != ProneCause.NONE;
+        if (cause != ProneCause.FORCED && cause != ProneCause.UNKNOWN) { fallSide = null; }
         if (prone) {
             hullDown = false;
         }
     }
+
+    /** Null for legacy saves and postures without an observed fall. */
+    public FallSide getFallSide() { return fallSide; }
+
+    public void setFallSide(FallSide side) { fallSide = side; }
 
     public boolean isHullDown() {
         return hullDown;

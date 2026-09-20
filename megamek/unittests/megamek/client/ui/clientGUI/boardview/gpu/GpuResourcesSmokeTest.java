@@ -30,8 +30,8 @@ import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.common.Configuration;
 import megamek.common.board.Coords;
 import org.junit.jupiter.api.Tag;
@@ -52,7 +52,7 @@ class GpuResourcesSmokeTest {
                     checkInteriorCourtyard();
                     checkChunkPicking();
                     checkFeatureAndWaterTransparency();
-                    checkMeepleShadows();
+                    checkModelShadows();
                     assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
                 } catch (Throwable error) {
                     failure.set(error);
@@ -154,9 +154,8 @@ class GpuResourcesSmokeTest {
         GpuBoardSkin skin = new GpuBoardSkin();
         GpuBoardTuning tuning = new GpuBoardTuning(skin.skin);
         Slider opacity = tuning.panel().findActor("Building opacity");
-        Slider treeOpacity = tuning.panel().findActor("Tree opacity");
         assertEquals(0.5f, tuning.buildingOpacity());
-        assertEquals(0.75f, tuning.treeOpacity());
+        assertNull(tuning.panel().findActor("Tree opacity"));
         ModelBatch units = new ModelBatch();
         var model = new ModelBuilder().createBox(14, 14, 10,
               new Material(ColorAttribute.createDiffuse(Color.RED)),
@@ -194,14 +193,14 @@ class GpuResourcesSmokeTest {
                 }
                 unit.transform.setToTranslation(center.x, center.y, bed + 5.5f);
                 terrain.animate(0, List.of());
-                drawMeeple(terrain, camera, units, unit);
+                drawModel(terrain, camera, units, unit);
                 terrain.renderTransparent(camera.camera);
                 int obscured = rgba(camera, new Vector3(center.x, center.y, bed + 10));
                 if (depth < 0) {
                     GpuBoardTestUi.capture(new File(System.getProperty("megamek.gpu.screenshots"), "building-opaque.png"));
                 }
                 terrain.animate(0.1f, List.of(unit));
-                drawMeeple(terrain, camera, units, unit);
+                drawModel(terrain, camera, units, unit);
                 terrain.renderTransparent(camera.camera);
                 int visible = rgba(camera, new Vector3(center.x, center.y, bed + 10));
                 int red = visible >>> 24;
@@ -219,8 +218,8 @@ class GpuResourcesSmokeTest {
                     int previousContrast = Integer.MAX_VALUE;
                     for (int percent : new int[] { 0, 25, 75, 100 }) {
                         opacity.setValue(percent);
-                        terrain.animate(0, List.of(unit), tuning.buildingOpacity(), tuning.treeOpacity());
-                        drawMeeple(terrain, camera, units, unit);
+                        terrain.animate(0, List.of(unit), tuning.buildingOpacity());
+                        drawModel(terrain, camera, units, unit);
                         terrain.renderTransparent(camera.camera);
                         int pixel = rgba(camera, new Vector3(center.x, center.y, bed + 10));
                         int contrast = (pixel >>> 24) - ((pixel >>> 16) & 255);
@@ -236,24 +235,21 @@ class GpuResourcesSmokeTest {
 
                     // Sample a column's top in the opaque pass, then move the red unit directly beneath it.
                     Vector3 strutTop = new Vector3(center).add(13.5f, 0, 3 * BoardGeometry.LEVEL);
-                    terrain.animate(0, List.of(unit), 0, 0.75f);
-                    drawMeeple(terrain, camera, units, unit);
+                    terrain.animate(0, List.of(unit), 0);
+                    drawModel(terrain, camera, units, unit);
                     int solidStrut = rgba(camera, strutTop);
                     assertTrue(Math.abs((solidStrut >>> 24) - ((solidStrut >>> 16) & 255)) < 20);
                     unit.transform.setToTranslation(strutTop.x, strutTop.y, bed + 5.5f);
                     for (float alpha : new float[] { 0, 0.25f, 0.75f }) {
-                        terrain.animate(0, List.of(unit), alpha, 0.75f);
-                        drawMeeple(terrain, camera, units, unit);
+                        terrain.animate(0, List.of(unit), alpha);
+                        drawModel(terrain, camera, units, unit);
                         assertEquals(solidStrut, rgba(camera, strutTop), "Struts must stay opaque and occlude units below");
                     }
                     unit.transform.setToTranslation(center.x, center.y, bed + 5.5f);
-                    treeOpacity.setValue(25);
-                    assertEquals(1, tuning.buildingOpacity(), "Tree tuning must not change the building setting");
                     tuning.panel().findActor("tuning-defaults").fire(new ChangeListener.ChangeEvent());
                     assertEquals(0.5f, tuning.buildingOpacity());
-                    assertEquals(0.75f, tuning.treeOpacity());
                     terrain.animate(0, List.of());
-                    drawMeeple(terrain, camera, units, unit);
+                    drawModel(terrain, camera, units, unit);
                     assertEquals(obscured, rgba(camera, new Vector3(center.x, center.y, bed + 10)),
                           "Opacity restores when a visible unit leaves");
                     terrain.animate(0, List.of(unit));
@@ -261,13 +257,13 @@ class GpuResourcesSmokeTest {
                 }
                 camera.setIsometric(true);
                 camera.fit(scene);
-                drawMeeple(terrain, camera, units, unit);
+                drawModel(terrain, camera, units, unit);
                 terrain.renderTransparent(camera.camera);
                 File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
                 assertTrue(output.isDirectory() || output.mkdirs());
                 GpuBoardTestUi.capture(new File(output, depth < 0 ? "feature-visibility.png" : "water-depth-" + depth + ".png"));
                 if (depth < 0) {
-                    checkTreeOpacity(scene, camera, units, unit, target);
+                    checkOpaqueTrees(scene, camera, units, unit, target);
                 }
             }
         } finally {
@@ -288,9 +284,9 @@ class GpuResourcesSmokeTest {
             GpuTerrain terrain = new GpuTerrain();
             try {
                 terrain.update(lit);
-                terrain.animate(0, List.of(unit), opacity, 0.75f);
+                terrain.animate(0, List.of(unit), opacity);
                 terrain.renderShadows(camera.camera, List.of(unit));
-                drawMeeple(terrain, camera, units, unit);
+                drawModel(terrain, camera, units, unit);
                 int[] samples = new int[3];
                 for (int index = 0; index < samples.length; index++) {
                     samples[index] = rgba(camera, new Vector3(center).add(50 + index * 10, 0, 0));
@@ -308,7 +304,7 @@ class GpuResourcesSmokeTest {
         }
     }
 
-    private void checkTreeOpacity(BoardScene scene, BoardCamera camera, ModelBatch units, ModelInstance unit, Coords target) {
+    private void checkOpaqueTrees(BoardScene scene, BoardCamera camera, ModelBatch units, ModelInstance unit, Coords target) {
         List<BoardScene.Tile> tiles = new ArrayList<>(scene.tiles());
         BoardScene.Tile tile = scene.tile(target);
         tiles.set(target.getX() * scene.height() + target.getY(), new BoardScene.Tile(target, 0, -1, false, 0,
@@ -321,26 +317,17 @@ class GpuResourcesSmokeTest {
             terrain.update(trees);
             camera.setIsometric(false);
             camera.fit(trees);
-            terrain.animate(0, List.of(unit), 1, 0);
-            drawMeeple(terrain, camera, units, unit);
-            terrain.renderTransparent(camera.camera);
-            int clear = rgba(camera, point);
-            assertTrue((clear >>> 24) > ((clear >>> 16) & 255) + 150, "Tree opacity 0 must expose the unit");
-            terrain.animate(0, List.of(unit), 1, 0.75f);
-            drawMeeple(terrain, camera, units, unit);
-            terrain.renderTransparent(camera.camera);
-            int faded = rgba(camera, point);
-            assertNotEquals(clear, faded, "Tree opacity must change while a unit is already inside");
-            terrain.animate(0, List.of(unit), 0, 0.75f);
-            drawMeeple(terrain, camera, units, unit);
-            terrain.renderTransparent(camera.camera);
-            assertEquals(faded, rgba(camera, point), "Building opacity must not alter trees");
-            terrain.animate(0, List.of(unit), 0, 1);
-            drawMeeple(terrain, camera, units, unit);
-            int opaque = rgba(camera, point);
             terrain.animate(0, List.of());
-            drawMeeple(terrain, camera, units, unit);
-            assertEquals(opaque, rgba(camera, point), "Tree opacity 100 must restore the normal opaque pass");
+            drawModel(terrain, camera, units, unit);
+            terrain.renderTransparent(camera.camera);
+            int opaque = rgba(camera, point);
+            assertTrue((opaque >>> 24) < ((opaque >>> 16) & 255) + 20, "The canopy must occlude the red unit");
+            for (float buildingOpacity : new float[] { 0, .5f, 1 }) {
+                terrain.animate(0, List.of(unit), buildingOpacity);
+                drawModel(terrain, camera, units, unit);
+                terrain.renderTransparent(camera.camera);
+                assertEquals(opaque, rgba(camera, point), "Occupancy and building opacity must not fade trees");
+            }
         } finally {
             terrain.dispose();
         }
@@ -387,24 +374,20 @@ class GpuResourcesSmokeTest {
         return new BoardScene.Pixels(image);
     }
 
-    private void checkMeepleShadows() {
-        BufferedImage artwork = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
-        java.awt.Graphics2D graphics = artwork.createGraphics();
-        graphics.setColor(java.awt.Color.WHITE);
-        graphics.fillRect(30, 24, 24, 24);
-        graphics.dispose();
-        BoardScene.Pixels tokenPixels = new BoardScene.Pixels(artwork);
+    private void checkModelShadows() {
         BufferedImage ground = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
-        graphics = ground.createGraphics();
+        java.awt.Graphics2D graphics = ground.createGraphics();
         graphics.setColor(java.awt.Color.WHITE);
         graphics.fillRect(0, 0, 84, 72);
         graphics.dispose();
-        GpuTextures<String> atlas = new GpuTextures<>();
         GpuTerrain terrain = new GpuTerrain();
         ModelBatch batch = new ModelBatch();
-        atlas.update(Map.of("token", tokenPixels));
-        GpuMeeple meeple = new GpuMeeple(tokenPixels, atlas.region("token"));
-        ModelInstance unit = new ModelInstance(meeple.instance.model);
+        ModelBuilder builder = new ModelBuilder();
+        builder.begin();
+        builder.part("shadow-probe", GL20.GL_TRIANGLES, VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal,
+              new Material(ColorAttribute.createDiffuse(Color.WHITE))).box(0, 0, .5f, 24, 24, 1);
+        GpuUnitModel visual = new GpuUnitModel(builder.end());
+        ModelInstance unit = new ModelInstance(visual.instance.model);
         BoardCamera camera = new BoardCamera();
         camera.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         BoardScene.Pixels floor = new BoardScene.Pixels(ground);
@@ -415,7 +398,7 @@ class GpuResourcesSmokeTest {
                 terrain.update(scene);
                 camera.setIsometric(false);
                 camera.fit(scene);
-                meeple.place(unit, camera.camera, position, 0, 2, false);
+                visual.place(unit, camera.camera, position, 0, 2, false);
                 BoundingBox bounds = unit.calculateBoundingBox(new BoundingBox()).mul(unit.transform);
                 assertEquals(2 * BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE, bounds.getDepth(), 0.001f);
                 assertEquals(0.5f, bounds.min.z, 0.001f);
@@ -423,11 +406,11 @@ class GpuResourcesSmokeTest {
                 assertEquals(24 * BoardGeometry.UNIT_SCALE, bounds.getHeight(), 0.01f,
                       "Token size must follow its artwork, not the hex scale");
                 terrain.renderShadows(camera.camera, List.of(unit));
-                drawMeeple(terrain, camera, batch, unit);
+                drawModel(terrain, camera, batch, unit);
                 int left = brightness(camera, -35);
                 int right = brightness(camera, 35);
                 assertTrue(direction > 0 ? right < left - 20 : left < right - 20,
-                      "Meeple shadow must follow light: left=" + left + ", right=" + right);
+                      "Unit shadow must follow light: left=" + left + ", right=" + right);
             }
             BoardGeometry.Tuning original = BoardGeometry.tuning();
             try {
@@ -435,13 +418,13 @@ class GpuResourcesSmokeTest {
                     for (float heightScale : new float[] { 0.4f, 1.3f }) {
                         BoardGeometry.tune(new BoardGeometry.Tuning(original.hexScale(), scale, heightScale,
                               original.levelHeight(), original.gridShade()));
-                        meeple.place(unit, camera.camera, position, 0, 2, false);
+                        visual.place(unit, camera.camera, position, 0, 2, false);
                         BoundingBox bounds = unit.calculateBoundingBox(new BoundingBox()).mul(unit.transform);
                         assertEquals(24 * scale, bounds.getWidth(), 0.01f,
                               "The unit scale must size a single-hex token footprint");
                         assertEquals(2 * BoardGeometry.LEVEL * heightScale, bounds.getDepth(), 0.001f);
 
-                        meeple.place(unit, camera.camera, position, 0, 2, true);
+                        visual.place(unit, camera.camera, position, 0, 2, true);
                         bounds = unit.calculateBoundingBox(new BoundingBox()).mul(unit.transform);
                         assertEquals(24, bounds.getWidth(), 0.01f,
                               "Multi-hex sections must keep their full artwork width at unit scale " + scale);
@@ -454,37 +437,36 @@ class GpuResourcesSmokeTest {
             } finally {
                 BoardGeometry.tune(original);
             }
-            meeple.place(unit, camera.camera, position, 0, 1, false);
+            visual.place(unit, camera.camera, position, 0, 1, false);
             assertEquals(BoardGeometry.LEVEL * BoardGeometry.UNIT_HEIGHT_SCALE,
                   unit.calculateBoundingBox(new BoundingBox()).mul(unit.transform).getDepth(), 0.001f);
-            meeple.place(unit, camera.camera, new Vector3(position).add(0, -100, 0), 0, 2, false);
+            visual.place(unit, camera.camera, new Vector3(position).add(0, -100, 0), 0, 2, false);
             terrain.renderShadows(camera.camera, List.of(unit));
-            drawMeeple(terrain, camera, batch, unit);
+            drawModel(terrain, camera, batch, unit);
             assertEquals(brightness(camera, -35), brightness(camera, 35), 3,
-                  "Moving a meeple must clear its old shadow");
+                  "Moving a visual must clear its old shadow");
 
             camera.setIsometric(true);
             camera.center(position);
             camera.zoom(0.4f);
-            meeple.place(unit, camera.camera, position, 0, 2, false);
+            visual.place(unit, camera.camera, position, 0, 2, false);
             int[] sideBrightness = new int[2];
             int index = 0;
             for (float direction : new float[] { 38, -38 }) {
                 terrain.update(shadowScene(floor, 0, new BoardScene.Light(direction, 0)));
                 terrain.renderShadows(camera.camera, List.of(unit));
-                drawMeeple(terrain, camera, batch, unit);
+                drawModel(terrain, camera, batch, unit);
                 sideBrightness[index++] = brightness(camera, new Vector3(position).add(12, 0, BoardGeometry.LEVEL));
             }
             assertTrue(Math.abs(sideBrightness[0] - sideBrightness[1]) > 20,
-                  "Meeple side normals must respond to light direction");
+                  "Unit side normals must respond to light direction");
             File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
             assertTrue(output.isDirectory() || output.mkdirs());
-            GpuBoardTestUi.capture(new File(output, "meeple-shadow.png"));
+            GpuBoardTestUi.capture(new File(output, "model-shadow.png"));
         } finally {
-            meeple.dispose();
+            visual.dispose();
             batch.dispose();
             terrain.dispose();
-            atlas.dispose();
         }
     }
 
@@ -499,7 +481,7 @@ class GpuResourcesSmokeTest {
         return new BoardScene(0, 5, 5, tiles, List.of(), List.of(), -1, "", List.of(), light);
     }
 
-    private void drawMeeple(GpuTerrain terrain, BoardCamera camera, ModelBatch batch, ModelInstance unit) {
+    private void drawModel(GpuTerrain terrain, BoardCamera camera, ModelBatch batch, ModelInstance unit) {
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
         terrain.render(camera.camera, false);

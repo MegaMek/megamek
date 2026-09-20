@@ -10,6 +10,13 @@ void main() {
         float shape = 1.0 - smoothstep(0.04, 1.0, dot(v_uv, v_uv) + lobes);
         vec3 smoke = mix(vec3(0.39, 0.43, 0.48), vec3(0.72, 0.75, 0.78), 0.5 + v_uv.y * 0.4);
         gl_FragColor = vec4(smoke, shape * v_effect.y);
+    } else if (v_effect.x > 1.5) {
+        float radius = abs(v_uv.x);
+        float turbulence = 0.08 * sin(v_uv.y * 24.0 + v_effect.x * 17.0) * sin(v_uv.x * 11.0);
+        float edge = 1.0 - smoothstep(0.15, 1.0, radius + turbulence);
+        float core = 1.0 - smoothstep(0.0, 0.45, radius);
+        vec3 flame = mix(vec3(1.0, 0.08, 0.005), vec3(1.0, 0.62, 0.05), edge);
+        gl_FragColor = vec4(mix(flame, vec3(1.0, 0.9, 0.48), core * 0.7), edge * v_effect.y);
     } else {
         float taper = 0.85 * (1.0 - v_uv.y) + 0.04;
         float radius = abs(v_uv.x) / taper;

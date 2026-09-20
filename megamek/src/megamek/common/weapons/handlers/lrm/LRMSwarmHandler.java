@@ -243,6 +243,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
 
         // Handle full-salvo hit on initial attack so we don't accidentally spawn another full shot
+        reportAttackAnimation(hits > 0);
         if (hits == weaponType.getRackSize()) {
             swarmMissilesNowLeft = 0;
         }
@@ -466,6 +467,6 @@ public class LRMSwarmHandler extends LRMHandler {
         r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
-        return missilesHit;
+        return recordMissileHits(missilesHit);
     }
 }

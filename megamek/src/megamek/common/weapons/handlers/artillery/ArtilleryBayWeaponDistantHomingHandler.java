@@ -251,12 +251,14 @@ public class ArtilleryBayWeaponDistantHomingHandler extends ArtilleryBayWeaponDi
         if (ammoType.getAmmoType() == AmmoTypeEnum.ARROW_IV) {
             gameManager.assignAMS();
         }
+        int firingIndex = 0;
         while (numWeaponsHit > 0) {
             int hits = 1;
             int nCluster = 1;
             if ((entityTarget != null) && (entityTarget.getTaggedBy() != -1)) {
                 // Do point defenses shoot down this homing missile? (Copperheads don't count)
                 hits = handleAMS(vPhaseReport, ammoUsed);
+                reportFiringMount(firingIndex, !bMissed && hits > 0, hits);
 
                 if (bMissed && !missReported) {
                     reportMiss(vPhaseReport);
@@ -273,6 +275,8 @@ public class ArtilleryBayWeaponDistantHomingHandler extends ArtilleryBayWeaponDi
                     toHit.setSideTable(entityTarget.sideTable(artilleryAttackAction.getCoords()));
                 }
             }
+
+            reportFiringMount(firingIndex++, !bMissed && hits > 0, hits);
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.

@@ -161,7 +161,7 @@ final class GpuLandingSupportReview {
               List.of(), unit.id(), "Landing support review", List.of(), new BoardScene.Light(1, -.6f));
     }
 
-    private static void pose(GpuMeeple model, ModelInstance placed, UnitAnimator animator, BoardScene scene,
+    private static void pose(GpuUnitModel model, ModelInstance placed, UnitAnimator animator, BoardScene scene,
           BoardScene.Unit unit, BoardCamera camera, float facing, UnitMotion.Sample sample) {
         animator.apply(model, placed, unit, sample, 0, 0, true, 0);
         var placement = sample.placement(unit);
@@ -181,7 +181,7 @@ final class GpuLandingSupportReview {
         return UnitModelDescriptor.vector(support.contact()).mul(placed.getNode(support.foot()).globalTransform).mul(placed.transform);
     }
 
-    private static void contacts(GpuMeeple model, ModelInstance placed, BoardScene scene) {
+    private static void contacts(GpuUnitModel model, ModelInstance placed, BoardScene scene) {
         for (var support : model.rigs().getFirst().landingSupports()) {
             Node foot = placed.getNode(support.foot()), shaft = placed.getNode(support.shaft());
             assertTrue(foot.parts.first().enabled);
@@ -196,7 +196,7 @@ final class GpuLandingSupportReview {
         }
     }
 
-    private static void lifecycle(GpuMeeple model, ModelInstance placed, UnitAnimator animator, BoardScene scene,
+    private static void lifecycle(GpuUnitModel model, ModelInstance placed, UnitAnimator animator, BoardScene scene,
           BoardScene.Unit unit, BoardCamera camera) {
         var landing = unit.location();
         var flight = new BoardScene.Waypoint(landing.coords(), 5, 0).withAeroState(BoardScene.AeroState.AIRBORNE);
@@ -222,7 +222,7 @@ final class GpuLandingSupportReview {
               unit.annotations(), unit.height(), state == BoardScene.AeroState.AIRBORNE, unit.model(), unit.outlineRgb(), unit.footprint());
     }
 
-    private static void hidden(GpuMeeple model, ModelInstance placed) {
+    private static void hidden(GpuUnitModel model, ModelInstance placed) {
         for (var support : model.rigs().getFirst().landingSupports()) {
             hidden(placed.getNode(support.node()));
             assertEquals(1, placed.getNode(support.shaft()).scale.z, .0001f, "Flight clears old reach");
@@ -235,7 +235,7 @@ final class GpuLandingSupportReview {
     }
 
     /** A close view of the real grounded gear phases, with flight travel omitted between the two shots. */
-    private static void gearCycle(GpuMeeple model, ModelInstance placed, UnitAnimator animator, ModelBatch batch,
+    private static void gearCycle(GpuUnitModel model, ModelInstance placed, UnitAnimator animator, ModelBatch batch,
           GpuTerrain terrain, BoardCamera camera, BoardScene scene, BoardScene.Unit unit) {
         var landing = unit.location().withFootprint(unit.footprint());
         var flight = new BoardScene.Waypoint(landing.coords(), 5, 0).withAeroState(BoardScene.AeroState.AIRBORNE);
@@ -278,7 +278,7 @@ final class GpuLandingSupportReview {
         }
     }
 
-    private static void stowedInsideHull(GpuMeeple model, ModelInstance placed, ModelBatch batch, GpuTerrain terrain,
+    private static void stowedInsideHull(GpuUnitModel model, ModelInstance placed, ModelBatch batch, GpuTerrain terrain,
           BoardCamera camera) {
         for (boolean top : List.of(false, true)) {
             camera.setIsometric(!top);

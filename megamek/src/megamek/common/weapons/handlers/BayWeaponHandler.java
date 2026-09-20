@@ -85,11 +85,13 @@ public class BayWeaponHandler extends WeaponHandler {
      */
     @Override
     protected int calcAttackValue() {
+        beginFiringMounts();
         double av = 0;
         int range = RangeType.rangeBracket(nRange, weaponType.getATRanges(), true, false);
 
         for (WeaponMounted m : weapon.getBayWeapons()) {
             if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                double previous = av;
                 WeaponType bayWType = m.getType();
                 // need to cycle through weapons and add av
                 if (range == WeaponType.RANGE_SHORT) {
@@ -101,6 +103,7 @@ public class BayWeaponHandler extends WeaponHandler {
                 } else if (range == WeaponType.RANGE_EXT) {
                     av = av + bayWType.getExtAV();
                 }
+                if (av > previous) { recordFiringMount(m); }
             }
         }
         if (bDirect) {

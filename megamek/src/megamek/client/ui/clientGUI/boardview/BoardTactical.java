@@ -1,21 +1,30 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview;
 
+import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.geom.Path2D;
 import java.util.List;
 import java.util.stream.Stream;
 
+import megamek.common.board.Coords;
+
 /** Immutable drawing commands in unscaled board pixels; game state remains on the Swing thread. */
-public record BoardTactical(List<Fill> fills, List<Label> labels) {
+public record BoardTactical(List<Fill> fills, List<Label> labels, List<Wall> walls, List<Fill> flatWalls) {
     public static final BoardTactical EMPTY = new BoardTactical(List.of(), List.of());
 
     /** Measurement tools stay live, unit overlays hide, and map-state markings retain their last displayed state. */
     public enum Playback { LIVE, HIDE_DURING_MOVEMENT, HOLD_DURING_PLAYBACK }
 
+    public BoardTactical(List<Fill> fills, List<Label> labels) {
+        this(fills, labels, List.of(), List.of());
+    }
+
     public BoardTactical {
         fills = List.copyOf(fills);
         labels = List.copyOf(labels);
+        walls = List.copyOf(walls);
+        flatWalls = List.copyOf(flatWalls);
     }
 
     public BoardTactical duringPlayback(BoardTactical settled, boolean hideMovement) {
@@ -24,7 +33,11 @@ public record BoardTactical(List<Fill> fills, List<Label> labels) {
               settled.fills.stream().filter(fill -> retained(fill.playback(), hideMovement)),
               fills.stream().filter(fill -> fill.playback() == Playback.LIVE)).toList(),
               Stream.concat(settled.labels.stream().filter(label -> retained(label.playback(), hideMovement)),
-                    labels.stream().filter(label -> label.playback() == Playback.LIVE)).toList());
+                    labels.stream().filter(label -> label.playback() == Playback.LIVE)).toList(),
+              Stream.concat(settled.walls.stream().filter(wall -> retained(wall.playback(), hideMovement)),
+                    walls.stream().filter(wall -> wall.playback() == Playback.LIVE)).toList(),
+              Stream.concat(settled.flatWalls.stream().filter(fill -> retained(fill.playback(), hideMovement)),
+                    flatWalls.stream().filter(fill -> fill.playback() == Playback.LIVE)).toList());
     }
 
     private static boolean retained(Playback playback, boolean hideMovement) {
@@ -32,6 +45,13 @@ public record BoardTactical(List<Fill> fills, List<Label> labels) {
     }
 
     public record Point(float x, float y) { }
+
+    /** A straight upright segment anchored to its hex's surface; height is in board elevation levels. */
+    public record Wall(Coords coords, Point a, Point b, float height, int argb, Outline outline, float outlineDistance,
+          Playback playback) { }
+
+    /** BasicStroke is immutable; retain the existing painter's line width and dash pattern. */
+    public record Outline(int argb, BasicStroke stroke) { }
 
     public record Contour(List<Point> points) {
         public Contour {

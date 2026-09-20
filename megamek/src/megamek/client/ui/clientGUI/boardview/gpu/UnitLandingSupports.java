@@ -16,6 +16,7 @@ import megamek.common.board.Coords;
 /** Per-instance landing gear. Hull placement is finished before contacts are sampled; no game state is changed. */
 final class UnitLandingSupports {
     private final ModelInstance instance;
+    private final BoardSurface.Cache surfaces;
     private final List<Support> supports = new ArrayList<>();
 
     private static final class Support {
@@ -60,8 +61,9 @@ final class UnitLandingSupports {
         }
     }
 
-    UnitLandingSupports(ModelInstance instance, ModelInstance rest, List<UnitRig> rigs) {
+    UnitLandingSupports(ModelInstance instance, ModelInstance rest, List<UnitRig> rigs, BoardSurface.Cache surfaces) {
         this.instance = instance;
+        this.surfaces = surfaces;
         for (var rig : rigs) {
             Node container = rig.container() == null ? null : instance.getNode(rig.container());
             Node original = rig.container() == null ? null : rest.getNode(rig.container());
@@ -95,7 +97,7 @@ final class UnitLandingSupports {
             }
             Vector3 contact = UnitModelDescriptor.vector(support.definition.contact())
                   .mul(support.foot.globalTransform).mul(instance.transform);
-            float ground = ground(scene, contact.x, contact.y);
+            float ground = ground(scene, contact.x, contact.y, surfaces);
             Matrix4 frame = new Matrix4(instance.transform).mul(support.parent.globalTransform);
             Vector3 up = new Vector3(Vector3.Z).rot(frame);
             // Landed shafts are vertical. Reject invalid/tilted art or an absent surface rather than stretching sideways.
@@ -118,6 +120,10 @@ final class UnitLandingSupports {
 
     /** Reuse the rendered ground/road/bank triangles. Liquid cannot carry a pad; ice can. Elevation-0 is below roofs. */
     static float ground(BoardScene scene, float x, float y) {
+        return ground(scene, x, y, null);
+    }
+
+    static float ground(BoardScene scene, float x, float y, BoardSurface.Cache surfaces) {
         if (!Float.isFinite(x) || !Float.isFinite(y)) {
             return Float.NaN;
         }
@@ -130,7 +136,8 @@ final class UnitLandingSupports {
                 if (tile == null || !BoardGeometry.contains(tile.coords(), x, y)) {
                     continue;
                 }
-                float sample = tile.frozen() ? BoardGeometry.surfaceZ(tile) : new BoardSurface(scene, tile).height(x, y);
+                float sample = tile.frozen() ? BoardGeometry.surfaceZ(tile)
+                      : (surfaces == null ? new BoardSurface(scene, tile) : surfaces.get(scene, tile)).height(x, y);
                 if (!tile.water() || tile.frozen() || sample >= BoardGeometry.waterZ(tile)) {
                     height = Math.max(height, sample);
                 }

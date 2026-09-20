@@ -20,19 +20,21 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.client.ui.clientGUI.boardview.BoardFieldOfView;
 import megamek.common.board.Coords;
 import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 /** Cliff faces lie exactly on visibility boundaries; their shading must not alternate while orbiting. */
 @Tag("on-demand")
 class GpuFieldOfViewCliffSmokeTest {
-    @Test
-    void cliffSidesKeepTheirOwningHexVisibilityThroughoutAnOrbit() {
+    @ParameterizedTest
+    @EnumSource(value = GpuFieldOfView.Style.class, names = { "DIMMED", "GRAYSCALE" })
+    void cliffSidesKeepTheirOwningHexVisibilityThroughoutAnOrbit(GpuFieldOfView.Style style) {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         new Lwjgl3Application(new ApplicationAdapter() {
             @Override
             public void create() {
                 try {
-                    checkCliffs();
+                    checkCliffs(style);
                 } catch (Throwable error) {
                     failure.set(error);
                 } finally {
@@ -45,7 +47,7 @@ class GpuFieldOfViewCliffSmokeTest {
         }
     }
 
-    private void checkCliffs() throws Exception {
+    private void checkCliffs(GpuFieldOfView.Style style) throws Exception {
         BufferedImage ground = new BufferedImage(84, 72, BufferedImage.TYPE_INT_ARGB);
         var graphics = ground.createGraphics();
         graphics.setColor(new java.awt.Color(130, 150, 110));
@@ -64,7 +66,7 @@ class GpuFieldOfViewCliffSmokeTest {
         BoardScene scene = new BoardScene(0, 7, 7, tiles, List.of(), List.of(), -1, "", List.of());
         GpuTerrain terrain = new GpuTerrain();
         GpuAtmosphere atmosphere = new GpuAtmosphere();
-        GpuFieldOfView field = new GpuFieldOfView(GpuFieldOfView.Style.DIMMED);
+        GpuFieldOfView field = new GpuFieldOfView(style);
         BoardCamera camera = new BoardCamera();
         camera.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setIsometric(true);
@@ -108,11 +110,17 @@ class GpuFieldOfViewCliffSmokeTest {
                                 if (difference(reference.getPixel(x, y), actual.getPixel(x, y)) > 3) {
                                     mismatched++;
                                 }
+                                if (blocked && style == GpuFieldOfView.Style.GRAYSCALE) {
+                                    int rgb = actual.getPixel(x, y);
+                                    assertEquals(rgb >>> 24, rgb >>> 16 & 255, 1, "Blocked cliffs must be grayscale");
+                                    assertEquals(rgb >>> 24, rgb >>> 8 & 255, 1, "Blocked cliffs must be grayscale");
+                                }
                             }
                         }
                         if (angle == 0) {
                             File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
-                            GpuBoardTestUi.capture(new File(output, "fov-cliff-" + (blocked ? "blocked" : "visible") + ".png"));
+                            GpuBoardTestUi.capture(new File(output, "fov-cliff-" + style.name().toLowerCase(java.util.Locale.ROOT)
+                                  + "-" + (blocked ? "blocked" : "visible") + ".png"));
                         }
                     } finally {
                         reference.dispose();

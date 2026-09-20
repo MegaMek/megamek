@@ -15,10 +15,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipFile;
 
-import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
@@ -27,8 +27,8 @@ import megamek.client.ui.tileset.MekTileset;
 import megamek.common.Configuration;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
-import megamek.common.units.Mek;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
 import megamek.common.units.TripodMek;
 
@@ -61,7 +61,7 @@ final class GpuMekAssemblyReview {
             mek.setId(id++);
             mek.setExternalSearchlight(entry[0].equals("warhammer") || entry[0].equals("mackie"));
             BoardScene.UnitModel selected = selection(mek, tileset, entry[0]);
-            GpuMeeple visual = library.get(selected, mek.getId());
+            GpuUnitModel visual = library.get(selected, mek.getId());
             assertNotNull(visual, entry[0]);
             assertTrue(visual.modularCoordinates());
             assertTrue(visual.turnsUpperBody());

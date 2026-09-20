@@ -246,7 +246,12 @@ public class MekTileset {
 
     /** Optional 3D descriptor, relative to data/models. Sprite-only overrides inherit the chassis model. */
     public String modelFor(Entity entity, int secondaryPos) {
-        String suffix = entity.getTilesetModeString().toUpperCase(Locale.ROOT)
+        return modelFor(entity, secondaryPos, UnitLocation.Form.capture(entity));
+    }
+
+    /** Resolve an observed conversion without changing or cloning the game Entity. */
+    public String modelFor(Entity entity, int secondaryPos, UnitLocation.Form form) {
+        String suffix = (entity instanceof QuadVee ? "" : form == null ? entity.getTilesetModeString() : form.tilesetMode()).toUpperCase(Locale.ROOT)
               + (secondaryPos == -1 ? "" : "_" + secondaryPos);
         MekEntry entry = exact.get(entity.getShortNameRaw().toUpperCase(Locale.ROOT) + suffix);
         if (entry != null && entry.getModelFile() != null) {
@@ -256,15 +261,34 @@ public class MekTileset {
         if (entry != null && entry.getModelFile() != null) {
             return entry.getModelFile();
         }
-        return genericModelFor(entity, secondaryPos);
+        return genericModelFor(entity, secondaryPos, form);
     }
 
     public String genericModelFor(Entity entity, int secondaryPos) {
-        MekEntry entry = genericFor(entity, secondaryPos);
-        return entry == null ? null : entry.getModelFile();
+        return genericModelFor(entity, secondaryPos, UnitLocation.Form.capture(entity));
+    }
+
+    public String genericModelFor(Entity entity, int secondaryPos, UnitLocation.Form form) {
+        MekEntry entry = genericFor(entity, secondaryPos, entity instanceof QuadVee ? QuadVee.CONV_MODE_MEK
+              : form == null ? entity.getConversionMode() : form.mode());
+        String model = entry == null ? null : entry.getModelFile();
+        if (model != null && entity instanceof Mek mek && model.contains("{weightClass}")) {
+            String weightClass = mek.isSuperHeavy() ? "superheavy" : switch (mek.getWeightClass()) {
+                case EntityWeightClass.WEIGHT_ULTRA_LIGHT, EntityWeightClass.WEIGHT_LIGHT -> "light";
+                case EntityWeightClass.WEIGHT_MEDIUM -> "medium";
+                case EntityWeightClass.WEIGHT_HEAVY -> "heavy";
+                default -> "assault";
+            };
+            return model.replace("{weightClass}", weightClass);
+        }
+        return model;
     }
 
     public MekEntry genericFor(Entity entity, int secondaryPos) {
+        return genericFor(entity, secondaryPos, entity.getConversionMode());
+    }
+
+    private MekEntry genericFor(Entity entity, int secondaryPos, int conversionMode) {
         if (entity instanceof BattlefieldSupportAsset asset) {
             return assetGenericFor(asset);
         } else if (entity instanceof BattleArmor) {
@@ -276,9 +300,9 @@ public class MekTileset {
         } else if (entity instanceof TripodMek) {
             return default_tripod;
         } else if (entity instanceof QuadVee) {
-            return entity.getConversionMode() == QuadVee.CONV_MODE_VEHICLE ? default_quadvee_vehicle : default_quadvee;
+            return conversionMode == QuadVee.CONV_MODE_VEHICLE ? default_quadvee_vehicle : default_quadvee;
         } else if (entity instanceof LandAirMek) {
-            return switch (entity.getConversionMode()) {
+            return switch (conversionMode) {
                 case LandAirMek.CONV_MODE_FIGHTER -> default_lam_fighter;
                 case LandAirMek.CONV_MODE_AIR_MEK -> default_lam_air_mek;
                 default -> default_lam_mek;

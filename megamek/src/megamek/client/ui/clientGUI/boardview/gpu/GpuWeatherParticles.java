@@ -20,9 +20,8 @@ import com.badlogic.gdx.utils.Disposable;
 final class GpuWeatherParticles implements Disposable {
     private static final int BASE_PARTICLES = 768;
     // 61,440 vertices keeps the shared pool within unsigned-short mesh indices.
-    private static final int MAX_DENSITY = 20;
-    private static final int[] DENSITY_MULTIPLIERS = { 6, 6, 4, MAX_DENSITY };
-    private static final int PARTICLES = BASE_PARTICLES * MAX_DENSITY;
+    private static final int PARTICLES = BASE_PARTICLES * 20;
+    private static final int[] DENSITY_MULTIPLIERS = { 6, 6, 4, 56 };
     private final ShaderProgram shader;
     private final Mesh mesh;
     private final Vector3 right = new Vector3();
@@ -100,10 +99,14 @@ final class GpuWeatherParticles implements Disposable {
                     // Blowing sand needs a continuous drift even at the normal half-strength setting.
                     // Keep the curved response for light rain, snow and hail.
                     float strength = strengths[kind];
-                    float density = kind == 3 ? strength * MAX_DENSITY
+                    float density = kind == 3 ? strength * DENSITY_MULTIPLIERS[kind]
                           : strength * (1 + (DENSITY_MULTIPLIERS[kind] - 1) * strength * strength);
                     int count = Math.max(1, Math.round(BASE_PARTICLES * density));
-                    mesh.render(shader, GL20.GL_TRIANGLES, 0, count * 6);
+                    // Reuse the bounded mesh with distinct seeds when dense sand needs more grains.
+                    for (int offset = 0; offset < count; offset += PARTICLES) {
+                        shader.setUniformf("u_batch", offset / PARTICLES);
+                        mesh.render(shader, GL20.GL_TRIANGLES, 0, Math.min(PARTICLES, count - offset) * 6);
+                    }
                 }
             }
         } finally {

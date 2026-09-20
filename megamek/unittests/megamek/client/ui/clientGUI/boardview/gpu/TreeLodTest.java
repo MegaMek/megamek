@@ -14,7 +14,6 @@ class TreeLodTest {
         assertEquals(2, TreeLod.level(0, 0));
         assertEquals("birch-snow-lod2", TreeLod.asset("birch-snow", 2));
         assertEquals("birch-snow-lod0", TreeLod.asset("birch-snow", 0));
-        assertEquals("birch-snow", TreeLod.asset("birch-snow", -1));
     }
 
     @Test

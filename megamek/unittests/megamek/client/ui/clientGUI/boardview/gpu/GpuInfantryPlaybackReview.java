@@ -28,20 +28,22 @@ final class GpuInfantryPlaybackReview {
         for (var mode : List.of(EntityMovementMode.INF_MOTORIZED, EntityMovementMode.WHEELED,
               EntityMovementMode.TRACKED, EntityMovementMode.HOVER)) {
             for (int survivors : List.of(9, 28)) {
+              for (int direction = 0; direction < 6; direction++) {
                 var infantry = new ConvInfantry();
                 infantry.setId(9400);
                 infantry.setMovementMode(mode);
                 infantry.initializeInternal(survivors, ConvInfantry.LOC_INFANTRY);
-                var origin = new BoardScene.Waypoint(new Coords(2, 5), 0, 0);
-                var firstEnd = new BoardScene.Waypoint(new Coords(4, 2), 0, 0);
+                var origin = new BoardScene.Waypoint(new Coords(5, 5), 0, 0);
+                var bend = new BoardScene.Waypoint(origin.coords().translated(direction, 3), 0, 0);
+                var firstEnd = new BoardScene.Waypoint(bend.coords().translated((direction + 1) % 6, 2), 0, 0);
                 var first = unit(infantry, tileset, firstEnd);
                 infantry.setInternal(9, ConvInfantry.LOC_INFANTRY);
                 var last = unit(infantry, tileset, origin);
                 var scene = UnitPlaybackTest.scene(last);
                 List<BoardScene.Animation> events = List.of(
-                      new BoardScene.Movement(9400, 0, List.of(origin, new BoardScene.Waypoint(new Coords(2, 3), 0, 0), firstEnd),
+                      new BoardScene.Movement(9400, 0, List.of(origin, bend, firstEnd),
                             EntityMovementType.MOVE_WALK, 0, 4, first),
-                      new BoardScene.Movement(9400, 0, List.of(firstEnd, new BoardScene.Waypoint(new Coords(3, 3), 0, 0), origin),
+                      new BoardScene.Movement(9400, 0, List.of(firstEnd, bend, origin),
                             EntityMovementType.MOVE_WALK, 0, 4, last));
                 var normal = new Formation(library).run(scene, events, false);
                 var skipped = new Formation(library).run(scene, events, true);
@@ -54,6 +56,7 @@ final class GpuInfantryPlaybackReview {
                           mode + " " + member.getKey() + " skip orientation");
                 }
                 assertEquals(1, normal.keySet().stream().filter(key -> key.startsWith("vehicle-")).count(), "The final casualty formation has one vehicle");
+              }
             }
         }
     }
@@ -68,8 +71,9 @@ final class GpuInfantryPlaybackReview {
         final UnitAnimator animator = new UnitAnimator();
         final UnitPlayback playback;
         final Map<String, Vector3> parked = new HashMap<>();
+        final Map<String, Placement> driven = new HashMap<>();
         ModelInstance instance;
-        GpuMeeple model;
+        GpuUnitModel model;
         long parkedSequence = -1;
 
         Formation(GpuUnitModels library) {
@@ -88,12 +92,27 @@ final class GpuInfantryPlaybackReview {
             if (boarding != null && !instant) {
                 if (boarding.sequence() != parkedSequence) {
                     parked.clear();
+                    driven.clear();
                     parkedSequence = boarding.sequence();
                 }
                 for (var rig : model.rigs()) {
                     var node = instance.getNode(rig.container());
                     if (rig.trooper() && boarding.stage() == UnitMotion.Stage.DRIVE) {
                         assertFalse(UnitBounds.subtree(node).isValid(), "No passengers emerge before the vehicles stop");
+                    }
+                    if (rig.transport() && boarding.stage() == UnitMotion.Stage.DRIVE) {
+                        var position = boarding.position(boarding.progress()).scl(1 / model.horizontalScale(unit)).add(node.translation);
+                        var previous = driven.put(rig.container(), new Placement(position, new Quaternion(node.rotation)));
+                        if (previous != null) {
+                            var travel = new Vector3(position).sub(previous.position());
+                            float turn = 2 * (float) Math.acos(Math.min(1, Math.abs(previous.rotation().dot(node.rotation)))) * 180 / (float) Math.PI;
+                            assertTrue(turn < 30, "Parking must not spin: " + rig.container() + " " + turn + " at " + boarding.progress());
+                            if (travel.len2() > .01f) {
+                                var forward = new Vector3(Vector3.Y).mul(node.rotation);
+                                assertTrue(Math.abs(forward.dot(travel.nor())) > .8f,
+                                      "Vehicle heading must follow its forward/reverse travel tangent at " + boarding.progress());
+                            }
+                        }
                     }
                     if (rig.transport() && boarding.stage() == UnitMotion.Stage.UNLOAD) {
                         var previous = parked.putIfAbsent(rig.container(), new Vector3(node.translation));

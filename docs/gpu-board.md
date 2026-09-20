@@ -1,7 +1,7 @@
 # GPU battle view
 
 The Java client has a libGDX/LWJGL3 board with one 3D scene, an orthographic orbit
-camera, animated unit meeples, and contextual Scene2D controls. From deployment
+camera, animated unit models, and contextual Scene2D controls. From deployment
 onward, choose **View > GPU Battle View (Experimental)**. Launch this checkout with
 `.\gradlew.bat :megamek:run` on Windows or `./gradlew :megamek:run` elsewhere.
 
@@ -116,8 +116,8 @@ rebuild only when a tree crosses a threshold, and dispose their replaced meshes.
 The original trees contain 478–480 triangles. Near opaque trees omit only faces
 strictly enclosed by another closed component, retaining every remaining vertex,
 normal, UV and color: 366–480 triangles, 8.4% fewer across the equally weighted
-catalog and up to 23.75% for one tree. Close transparent trees retain the original
-enclosed branches. The two distant levels use 238–240 and 94–96 triangles, at least
+catalog and up to 23.75% for one tree. Trees always remain opaque. The original
+meshes are visual references. The two distant levels use 238–240 and 94–96 triangles, at least
 50% and 80% below the originals. Their textures, snow materials, coordinate system
 and placement remain shared. Only used models are loaded by `GpuAssets`.
 
@@ -176,7 +176,7 @@ installation. The Gradle data-staging task includes these models and textures.
 
 A water hex's solid surface is its riverbed. Positive depth lowers it by
 `depth * LEVEL`. Depth zero makes a two-world-unit recess at default scale,
-with the water one unit below the surrounding top, so grounded meeples only wet
+with the water one unit below the surrounding top, so grounded units only wet
 their feet. Positive-depth water sits just below the hex's surface elevation.
 Water of every depth sits one world unit below the nominal surface so changing
 depth does not introduce a water-surface step. Rounded, slightly irregular
@@ -220,16 +220,21 @@ and draws an opaque captured ice surface at the game's surface elevation.
 
 ## Units, visibility, and animation
 
-Unit meeples and raised markers use sprite-alpha extrusion. `GpuCutout` triangulates their
-silhouette and merges cap runs; it is never used for terrain models. The sprite
-textures the top and its alpha-weighted color shades the sides. Camouflage and
-damage markings remain; classic generated drop shadows and smoke are omitted
-from the meeple texture.
+Units use authored bodies assembled with equipment at runtime. `GpuUnitModel` shares placement,
+rigs and annotation bounds. Extruded sprite meeples have been removed; unavailable or disabled
+models retain a flat two-triangle sprite fallback. Raised sensor/terrain symbols independently
+use `GpuCutout` to extrude their silhouettes. Those symbols do not reveal a hidden unit's model.
 
-Single-hex footprint size uses `UNIT_SCALE` independently of hex scale. Multi-hex
-unit sections always use unit scale 1 so their artwork stays joined. Thickness is the
-game's occupied height multiplied by `LEVEL * UNIT_HEIGHT_SCALE`, including
-stance. Sensor contacts use a red question mark with a fixed marker size.
+`GpuUnitInstance` hides attached equipment when its bounding diameter falls below 4 screen pixels,
+with 15% hysteresis. Larger silhouette-defining weapons persist longer. Selected units and units
+participating in current attacks show full equipment. Every pass shares that choice, including shadows
+and outlines. The actual body, embedded infantry detail, picking bounds, damage flags and emitter
+transforms are retained; changing detail never reassembles a unit or uploads a mesh.
+
+Single-hex footprint size uses `UNIT_SCALE` independently of hex scale. Multi-hex models use
+their full occupied footprint and `MULTI_HEX_UNIT_SCALE` (default 0.85), with a dedicated tuning slider.
+Family unit/height scales multiply board tuning and default to 1. Articulated models retain their authored
+proportions when prone; animation supplies the changed stance. Sensor contacts use a red question mark with a fixed marker size.
 Visibility is resolved by the existing client before the snapshot is published.
 
 Walking/running paths, jump arcs, facing, labels, and shadows use the same
@@ -237,8 +242,13 @@ Walking/running paths, jump arcs, facing, labels, and shadows use the same
 height and have a subtle independent wobble plus a tether to their hex when
 stationary. Animation and skipping never change game state.
 
+Mek and ProtoMek gait cadence follows distance traveled, including acceleration and braking.
+Their stride coefficient is 1.6 leg lengths per cycle, with 0.16 leg-length lift; longer cycles increase
+airtime and reduce cadence by 25% from the former 1.2 stride. Foot support follows ground travel.
+ProtoMek fallback art has separate foot joints, including quad and glider forms; authored triangle counts stay unchanged.
+
 A Mek is published at its secondary (torso) facing, as the classic sprite is,
-together with how many hexsides that is from its own facing. A flat meeple turns
+together with how many hexsides that is from its own facing. A flat sprite turns
 as one piece. An authored mesh whose descriptor names an `upperBodyNode` keeps
 its legs at the unit's own facing and turns only that node, easing to a new
 twist at `UpperBodyTurn.DEGREES_PER_SECOND`. A descriptor without the key turns
@@ -256,22 +266,31 @@ labels, and stay clamped to the viewport edge when their unit is offscreen.
 Normal game visibility still applies. Crowded views prioritize selected and
 hovered labels; extreme crowding can still overlap.
 
-A visible unit intersecting a feature's bounds fades the features in that hex.
-Trees default to 75% opacity, buildings and other props to 50%. The separate
-**Tuning > Building opacity** and **Tree opacity** sliders change this live from
+A visible unit intersecting a non-tree feature's bounds fades the non-tree features in that hex.
+Buildings and other props default to 50% opacity. **Tuning > Building opacity** changes this live from
 0% to 100% in 5% steps, including when the unit is already inside. Building
 floors follow the same opacity; interior struts always remain opaque, write
-depth and cast shadows. Buildings and trees cast their full, solid shadows at
+depth and cast shadows. Buildings cast their full, solid shadows at
 every opacity, including 0%. At 100%, features also retain their normal depth.
 Occupancy follows animated transforms, including movement and flight height.
 Faded surfaces do not write camera depth; normal opacity and depth return when
 the unit leaves. This uses conservative
 bounding boxes, not mesh collision, and never exposes hidden game entities.
 
+Trees have no opacity control or fading path; the unit outline handles canopy occlusion.
+Their opaque geometry stays in chunk batches, with individual CPU props retained for stable picking.
+LoD checks run per chunk using its largest tree, conservatively retaining detail on smaller trees.
+Each detail-level batch is cached on first use until the chunk is replaced or disposed. Repeated zoom
+changes reuse buffers; building cutaways have separate caches. Caching several levels costs more retained
+mesh memory. Forests skip unit occupancy/bounds checks, and unit-scale tuning does not rebuild tree geometry.
+Taking an improvised tree club adds equipment without removing scenery. Only the authoritative woods/jungle
+cover level determines tree count: ultra-heavy, heavy, light and clear progressively reduce the visible trees.
+The renderer does not calculate terrain damage or maintain a separate tree inventory.
+
 **Tuning > See-through** is an independent occlusion highlight, enabled at 75%
 by default. A thin team-colored outline, dark outer edge and faint filled silhouette
 identify the portions of a unit hidden behind higher terrain or other opaque
-geometry. It works with building and tree opacity at 100%. The slider scales
+geometry, including opaque trees and buildings with the cutaway disabled. The slider scales
 the outline and fill together from 0% (off) to 100%; normally exposed parts of
 the unit keep their original appearance. The effect does not change terrain,
 shadows, picking or game visibility. Colors follow the existing own/allied/enemy
@@ -288,6 +307,11 @@ is drawn after atmosphere/weather and before tactical annotations, with an
 outline sized in screen pixels. It shares camera-depth capture with fog when
 available and adds a depth pass when needed on a clear board. Its unit-depth
 and color buffers are reused until the viewport changes; 0% skips the highlight work.
+
+Captured camera depth is restored after atmosphere compositing with one fullscreen draw, replacing a
+second submission of every unit and terrain mesh. If no depth capture was required, the original direct
+depth pass remains. Shadow resolution and caster coverage are unchanged. Shadow transforms are reused,
+and changes only to light color, fog or exposure do not invalidate the cached shadow geometry.
 
 `GpuMarkers` owns the raised symbol artwork, shared models, and one cosmetic
 animation clock. Symbols spin once every eight seconds in
@@ -405,8 +429,12 @@ board click. Menus retain scrolling and viewport clamping; disabled explanations
 appear in tooltips instead of expanding every unavailable row. Keyboard navigation skips disabled actions.
 Camera rotation, fitting, and menu interaction do not issue game orders.
 
-Tuning defaults are hex scale 1, unit scale 0.6, unit height scale 0.87, level
-height 18, grid shade 0.8, building opacity 50%, tree opacity 75%, and see-through
+The Tuning panel shares the dropdown menus' flat styling and compact controls.
+One narrow, scrollable column keeps the board visible while adjusting geometry,
+visibility, field of view, atmosphere, and weather. Longer help text is available in tooltips.
+
+Tuning defaults are hex scale 1, unit scale 0.7, unit height scale 0.87, level
+height 18, grid shade 0.8, building opacity 50%, and see-through
 intensity 75%. Opacity is local to the GPU window and changes materials without
 rebuilding terrain. Defaults restores these values. A single geometry tuning record updates all derived
 dimensions on the render thread. No geometry tuning requires a second artwork
@@ -446,6 +474,30 @@ shapes and holes are tessellated, then clipped to the shared terrain triangles,
 including road ramps and water surfaces. Geometry is rebuilt when its shapes,
 terrain or geometry tuning change, independently of camera motion. Movement costs
 and heat-map text use compact cached artwork facing the camera.
+
+The pink visual-range marker (often clipped to the map perimeter) uses the
+existing sprite painter's straight segments as translucent upright walls.
+`SensorRangeSprite.GPU_VISUAL_RANGE_HEIGHT` sets their height in terrain levels
+(default 0.5); `GPU_VISUAL_RANGE_OPACITY` sets opacity from 0 (transparent) to 1
+(opaque), defaulting to 0.5. Color comes from `SensorRangeSprite.getColor`,
+respecting the existing visual-range color preference. The walls sit
+at the hex's surface elevation, including over water and ice, independently of
+water depth. At level changes, adjoining panels meet along a shared vertical
+span from the lower surface to half a level above the higher surface, as the
+firing contours do. They share the tactical mesh cache and movement-playback visibility.
+The original thin white dashed stroke follows the top edge of each wall.
+`GpuTactical.OUTLINE_SCROLL_SPEED` controls dash travel in unscaled board pixels
+per second (default `4f`); `0f` keeps the original static pattern, and negative
+values reverse direction. At or below `GpuMarkers.FLAT_TILT_DEGREES` (30 degrees
+from overhead), the wall becomes the original flat band on the surface. Both
+presentations share the animation clock, palette, opacity and playback visibility;
+switching between them and animating the dashes reuse the cached meshes.
+`SensorRangeSprite.GPU_RANGE_SHOW_MAP_BORDER` controls whether GPU visual and
+sensor ranges also outline the map perimeter. Its default `false` removes only
+edges facing off-map hexes; actual range limits within the battlefield remain
+visible, including where they reach the map edge. Set it to `true` to restore
+the perimeter. The setting applies to both GPU camera presentations and leaves
+the classic painter unchanged.
 
 Movement playback hides unit-dependent overlays: sensor rings, movement envelopes,
 movement and flight arrows/costs, firing solutions, C3 and attack lines, strafing
@@ -492,11 +544,17 @@ Cliff lookups move slightly inward along the reconstructed surface normal, so
 depth rounding at a shared hex edge cannot alternate between two visibility
 states while orbiting. Visibility contours remain on horizontal surfaces.
 
-`GpuFieldOfView.STYLE` selects `DIMMED` (the default) or `FOG_OF_WAR`. Both use the
-same visibility data, respect the existing FoV toggle and opacity, distinguish
-sensor range, and draw a contour where visible and blocked areas meet. The second
-style obscures blocked terrain more strongly; it does not add explored-map memory
-or change which units the game reveals. Stable masks reuse their GPU texture.
+The Tuning panel's Field of view controls select `GRAYSCALE` (the default), `DIMMED`,
+or `FOG_OF_WAR` and adjust FoV darkness from 0% to 100% immediately in either camera.
+All use the same visibility data, respect the existing FoV toggle and opacity,
+distinguish sensor range, and draw a contour where visible and blocked areas meet.
+`GRAYSCALE` fully desaturates blocked and sensor-only hex content, including its
+shading and contour. Darkness scales the existing FoV opacity in all three modes:
+0% disables darkening and 100% uses the full configured opacity. Defaults restores
+`GpuFieldOfView.STYLE` and `GpuFieldOfView.DARKNESS`. These visual settings belong to
+the open GPU window. `FOG_OF_WAR` uses a stronger darkening curve; it does not add
+explored-map memory or change which units the game reveals. Stable masks reuse
+their GPU texture, including when changing the mode or darkness.
 Terrain, unit/turn, selection, phase and LOS-preference changes refresh the shared
 result. FoV is excluded from the GPU's per-hex raster artwork.
 

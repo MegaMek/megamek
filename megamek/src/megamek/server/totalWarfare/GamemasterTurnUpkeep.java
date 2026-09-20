@@ -37,7 +37,10 @@ import java.util.List;
 
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
+import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityClassTurn;
+import megamek.common.units.UnitNumberTurn;
 import megamek.logging.MMLogger;
 
 /**
@@ -96,38 +99,58 @@ class GamemasterTurnUpkeep extends AbstractTWRuleHandler {
 
         // The current turn is usable by another unit, so only the dead unit's own share of the turns goes: any
         // turn naming it specifically, or else - each unit standing for one of its owner's turns in the phase -
-        // the last of the owner's later turns, so the owner is not asked to act with a unit they no longer have.
-        // Game.removeTurnFor cannot do this: it only drops a turn the unit is still valid for, and an ejected or
-        // doomed unit is valid for none.
+        // the last of the owner's later turns it could have taken, so the owner is not asked to act with a unit
+        // they no longer have. Game.removeTurnFor cannot do this: it only drops a turn the unit is still valid
+        // for, and an ejected or doomed unit is valid for none.
         int specificTurnsRemoved = game.removeSpecificEntityTurnsFor(entity);
         boolean turnsChanged = specificTurnsRemoved > 0;
         if (!entity.isDone() && (specificTurnsRemoved == 0)) {
-            turnsChanged = dropOwnersLastPlainTurn(game, entity.getOwnerId());
+            turnsChanged = dropOwnersLastTurnFor(game, entity);
         }
         if (turnsChanged) {
             LOGGER.info("[GMTurn] {} can no longer act; its pending turn was dropped", entity.getDisplayName());
             gameManager.send(gameManager.getPacketHelper().createTurnListPacket());
         }
+        // The owner's client may still have the dead unit selected for the current turn, and nothing else tells
+        // it to move on: a fresh turn packet makes every client start the turn over and pick a unit that can act.
+        if (currentTurn.playerId() == entity.getOwnerId()) {
+            LOGGER.info("[GMTurn] {} can no longer act during its owner's turn; resending the turn so the owner's"
+                  + " client selects another unit", entity.getDisplayName());
+            gameManager.send(gameManager.getPacketHelper().createTurnIndexPacket(entity.getOwnerId()));
+        }
         return turnsChanged;
     }
 
     /**
-     * Drops the last turn after the current one that belongs to the given player and names no unit or class in
-     * particular, which is the turn the dead unit would have taken.
+     * Drops the last turn after the current one that the given unit could have taken: one of its owner's turns
+     * that names no particular unit and, where the turn is restricted to a class of unit (the movement phase
+     * hands out Mek turns, vehicle turns and so on), admits the unit's class.
      *
      * @return {@code true} if a turn was dropped
      */
-    private boolean dropOwnersLastPlainTurn(Game game, int ownerId) {
+    private boolean dropOwnersLastTurnFor(Game game, Entity entity) {
         List<GameTurn> turns = new ArrayList<>(game.getTurnsList());
         for (int index = turns.size() - 1; index > game.getTurnIndex(); index--) {
-            GameTurn turn = turns.get(index);
-            boolean isPlainPlayerTurn = (turn.getClass() == GameTurn.class) && (turn.playerId() == ownerId);
-            if (isPlainPlayerTurn) {
+            if (couldHaveTaken(entity, turns.get(index))) {
                 turns.remove(index);
                 game.setTurnVector(turns);
                 return true;
             }
         }
         return false;
+    }
+
+    /** Whether the unit, were it still able to act, would be one of the units this turn is for. */
+    private static boolean couldHaveTaken(Entity entity, GameTurn turn) {
+        if (turn.playerId() != entity.getOwnerId()) {
+            return false;
+        }
+        if ((turn instanceof SpecificEntityTurn) || (turn instanceof UnitNumberTurn)) {
+            return false;
+        }
+        if (turn instanceof EntityClassTurn classTurn) {
+            return classTurn.isValidClass(EntityClassTurn.getClassCode(entity));
+        }
+        return true;
     }
 }

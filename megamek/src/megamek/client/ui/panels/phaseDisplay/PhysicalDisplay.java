@@ -2203,7 +2203,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()) {
-            if (currentEntity == Entity.NONE) {
+            if (needsUnitSelectedForTurn()) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
             }

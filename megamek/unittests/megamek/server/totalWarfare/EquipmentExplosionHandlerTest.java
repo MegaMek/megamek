@@ -52,6 +52,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.GameOptions;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityClassTurn;
 import megamek.common.units.Mek;
 import megamek.server.Server;
 import megamek.testUtilities.MMTestUtilities;
@@ -212,7 +213,9 @@ class EquipmentExplosionHandlerTest {
     void anEjectingExplosionLeavesTheOwnersOtherUnitItsTurn() {
         Game game = gameManager.getGame();
         Entity lanceMate = addSecondUnit(game.getPlayer(0));
-        startMovementPhase(new GameTurn(mek.getOwnerId()), new GameTurn(mek.getOwnerId()));
+        // the movement phase hands out class-restricted turns, which is the shape the Akuma playtest hung on
+        startMovementPhase(new EntityClassTurn(mek.getOwnerId(), EntityClassTurn.CLASS_MEK),
+              new EntityClassTurn(mek.getOwnerId(), EntityClassTurn.CLASS_MEK));
         padStructure();
 
         explode(loadedAmmoBin());
@@ -222,6 +225,20 @@ class EquipmentExplosionHandlerTest {
         assertEquals(lanceMate, game.getFirstEntity(), "The lance mate is the unit left to take it");
         assertEquals(1, game.getTurnsList().size(),
               "The dead unit's own later turn is dropped, so the owner is not asked to move it");
+    }
+
+    @Test
+    void aTurnOfAnotherClassIsNotDroppedForTheDeadUnit() {
+        Game game = gameManager.getGame();
+        addSecondUnit(game.getPlayer(0));
+        startMovementPhase(new EntityClassTurn(mek.getOwnerId(), EntityClassTurn.CLASS_MEK),
+              new EntityClassTurn(mek.getOwnerId(), EntityClassTurn.CLASS_TANK));
+        padStructure();
+
+        explode(loadedAmmoBin());
+
+        assertEquals(2, game.getTurnsList().size(),
+              "A vehicle turn was never the dead Mek's to take, so it stays for the owner's vehicles");
     }
 
     @Test

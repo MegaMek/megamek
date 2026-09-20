@@ -2118,7 +2118,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         if (isMyTurn()) {
-            if (currentEntity == Entity.NONE) {
+            if (needsUnitSelectedForTurn()) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
             }

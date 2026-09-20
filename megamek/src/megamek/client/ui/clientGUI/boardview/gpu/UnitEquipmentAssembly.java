@@ -58,12 +58,15 @@ final class UnitEquipmentAssembly {
         }
     }
 
+    /** Clear space kept between two stacked neighbours, matching the packer's own gap. */
+    private static final float STACK_GAP = .4f;
+
     private UnitEquipmentAssembly() { }
 
     static List<Binding> attachAll(GpuUnitModels library, JsonValue descriptor, GpuUnitModels.ModularAsset body,
           UnitModelState.Structure structure, Model assembled) {
         var catalog = new UnitEquipmentModels(library.descriptor(descriptor.getString("equipment")));
-        List<Pending> pending = arrangeBays(library, prepare(library, descriptor, body, catalog, structure));
+        List<Pending> pending = centreStacks(arrangeBays(library, prepare(library, descriptor, body, catalog, structure)));
         pending.sort(Comparator.<Pending, Boolean>comparing(item -> !item.placement().getBoolean("bay", false))
               .thenComparing(item -> item.placement().getString("family", "").isEmpty())
               .thenComparingDouble(item -> -area(item.module().descriptor().bounds()))
@@ -235,6 +238,45 @@ final class UnitEquipmentAssembly {
     }
 
     /** A bay's launchers are sized together, so its first large launcher cannot consume every remaining slot. */
+    /**
+     * Centres the weapons that share one hard point on that point's facing. Without this the first
+     * weapon takes the socket and the rest are pushed clear of it, so a pair hangs below the middle
+     * of its facing instead of straddling it. The largest sits at the top of the stack.
+     */
+    private static List<Pending> centreStacks(List<Pending> pending) {
+        Map<String, List<Pending>> stacks = new java.util.LinkedHashMap<>();
+        List<Pending> result = new ArrayList<>();
+        for (Pending item : pending) {
+            // A bay already arranged its own rows and carries the offsets for them.
+            if (item.placement().getBoolean("bay", false)) {
+                result.add(item);
+            } else {
+                stacks.computeIfAbsent(item.point().id(), ignored -> new ArrayList<>()).add(item);
+            }
+        }
+        for (List<Pending> stack : stacks.values()) {
+            if (stack.size() < 2) {
+                result.addAll(stack);
+                continue;
+            }
+            stack.sort(Comparator.comparingDouble((Pending item) -> -area(item.module().descriptor().bounds()))
+                  .thenComparingInt(item -> item.mount().index()));
+            float totalHeight = STACK_GAP * (stack.size() - 1);
+            for (Pending item : stack) {
+                totalHeight += dimension(item, 2);
+            }
+            float z = totalHeight / 2;
+            for (Pending item : stack) {
+                float height = dimension(item, 2);
+                z -= height / 2;
+                result.add(new Pending(item.mount(), item.point(), item.placement(), item.visual(), item.module(),
+                      item.scale(), item.offsetX(), item.offsetZ() + z));
+                z -= height / 2 + STACK_GAP;
+            }
+        }
+        return result;
+    }
+
     private static List<Pending> arrangeBays(GpuUnitModels library, List<Pending> pending) {
         Map<String, List<Pending>> bays = new java.util.LinkedHashMap<>();
         List<Pending> result = new ArrayList<>();

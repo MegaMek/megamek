@@ -90,11 +90,11 @@ final class BoardAtmosphere {
           float saturation, float daylight) {
         /** Exposure scale, in photographic stops, at full daylight and at full night. */
         private static final float MIDDAY_STOPS = 0.8f;
-        private static final float NIGHT_STOPS = -0.8f;
+        private static final float NIGHT_STOPS = -0.4f;
 
         float exposureScale(float compensation) {
-            float night = 1 - daylight; // night is ^2
-            return (float) Math.pow(2, compensation + (MIDDAY_STOPS * daylight) + (NIGHT_STOPS * night * night));
+            float night = 1 - daylight;
+            return (float) Math.pow(2, compensation + (MIDDAY_STOPS * daylight) + (NIGHT_STOPS * night));
         }
     }
 
@@ -109,11 +109,11 @@ final class BoardAtmosphere {
             case FULL_MOON, MOONLESS, PITCH_BLACK -> 0;
         };
         float exposure = switch (conditions.getLight()) {
-            case DAY, DUSK, FULL_MOON -> 0;
-            case GLARE -> 0.2f;
-            case SOLAR_FLARE -> 0.4f;
-            case MOONLESS -> -0.3f;
-            case PITCH_BLACK -> -0.6f;
+            case DAY, DUSK, FULL_MOON -> 0; //these are driven by exposureScale only
+            case GLARE -> 0.6f;
+            case SOLAR_FLARE -> 1.2f;
+            case MOONLESS -> -0.6f;
+            case PITCH_BLACK -> -1.0f;
         };
         boolean air = !inSpace && !conditions.getAtmosphere().isVacuum();
         // The scenario editor permits precipitation and fog only in standard or denser atmospheres.

@@ -98,15 +98,22 @@ public class DamageEditApplier {
 
     public void applyToEntity() {
         for (int i = 0; i < entity.locations(); i++) {
+            // A limb the edit brings back from blown off reads as zero in an editor that still shows it gone; the
+            // zero would destroy the returned limb, so it comes back whole instead
+            boolean isBroughtBackLimb = isBroughtBackFromBlownOff(i);
             if ((null != spec.internal) && (null != spec.internal[i])) {
                 int internal = spec.internal[i];
+                if (isBroughtBackLimb && (internal <= 0)) {
+                    internal = entity.getOInternal(i);
+                }
                 if (internal <= 0) {
                     internal = IArmorState.ARMOR_DESTROYED;
                 }
                 if ((entity instanceof Aero) && (i == 0)) {
                     ((Aero) entity).setSI(internal);
                 } else {
-                    if (internal > 0) {
+                    // a limb the edit blows off keeps its gone marks whatever structure the edit carries for it
+                    if ((internal > 0) && !isBlownOffBySpec(i)) {
                         bringBackLocationIfGone(i);
                     }
                     entity.setInternal(internal, i);
@@ -114,6 +121,9 @@ public class DamageEditApplier {
             }
             if ((null != spec.armor) && (null != spec.armor[i])) {
                 int armor = spec.armor[i];
+                if (isBroughtBackLimb && (armor <= 0)) {
+                    armor = entity.getOArmor(i);
+                }
                 if (armor <= 0) {
                     armor = IArmorState.ARMOR_DESTROYED;
                 }
@@ -121,12 +131,16 @@ public class DamageEditApplier {
             }
             if (entity.hasRearArmor(i) && (null != spec.rearArmor) && (null != spec.rearArmor[i])) {
                 int rear = spec.rearArmor[i];
+                if (isBroughtBackLimb && (rear <= 0)) {
+                    rear = entity.getOArmor(i, true);
+                }
                 if (rear <= 0) {
                     rear = IArmorState.ARMOR_DESTROYED;
                 }
                 entity.setArmor(rear, i, true);
             }
         }
+        applyBlownOffLimbs();
         for (Map.Entry<Integer, Integer> equipmentHit : spec.equipmentHits.entrySet()) {
             int equipmentNumber = equipmentHit.getKey();
             Mounted<?> mounted = entity.getEquipment(equipmentNumber);
@@ -475,6 +489,39 @@ public class DamageEditApplier {
                     + " locked {}",
               building.getShortName(), building.isPowerSwitchedOff(), building.getStunnedTurns(),
               building.allGunnersDead(), building.hasLockedTurret());
+    }
+
+    /** Whether the edit blows the given location off. */
+    private boolean isBlownOffBySpec(int location) {
+        return (spec.locationBlownOff != null) && (location < spec.locationBlownOff.length)
+              && Boolean.TRUE.equals(spec.locationBlownOff[location]);
+    }
+
+    /** Whether the edit brings the given location back from being blown off. */
+    private boolean isBroughtBackFromBlownOff(int location) {
+        return (spec.locationBlownOff != null) && (location < spec.locationBlownOff.length)
+              && Boolean.FALSE.equals(spec.locationBlownOff[location]) && entity.isLocationBlownOff(location);
+    }
+
+    /**
+     * Blows off the limbs the edit marks blown off, through the same destruction a "limb blown off" critical runs:
+     * the limb reads as gone, everything in it is marked missing, and a lost leg queues the automatic piloting
+     * failure that drops the Mek. Limbs the edit brings back were handled with the structure above. Only a Mek's
+     * arms and legs can be blown off; anything else named is a malformed spec and is left alone.
+     */
+    private void applyBlownOffLimbs() {
+        if ((spec.locationBlownOff == null) || !(entity instanceof Mek mek)) {
+            return;
+        }
+        for (int location = 0; location < Math.min(spec.locationBlownOff.length, mek.locations()); location++) {
+            boolean isLimb = mek.isArm(location) || mek.locationIsLeg(location);
+            if (!Boolean.TRUE.equals(spec.locationBlownOff[location]) || !isLimb || mek.isLocationBlownOff(location)) {
+                continue;
+            }
+            mek.destroyLocation(location, true);
+            LOGGER.info("[EquipState] GM edit: {} of {} blown off", mek.getLocationName(location),
+                  mek.getDisplayName());
+        }
     }
 
     /**

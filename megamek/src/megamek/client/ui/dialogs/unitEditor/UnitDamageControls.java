@@ -162,6 +162,8 @@ public class UnitDamageControls {
     public final Map<Integer, JCheckBox> directionalMountLocked = new HashMap<>();
     /** Whether each of a Mek's locations is hull-breached; {@code null} for other units, null elements unedited. */
     public JCheckBox[] chkLocationBreached;
+    /** Whether each of a Mek's limbs is blown off; {@code null} for other units, null elements for non-limbs. */
+    public JCheckBox[] chkLocationBlownOff;
 
     /**
      * One line of the damage summary on the general panel: the clickable label and the location whose

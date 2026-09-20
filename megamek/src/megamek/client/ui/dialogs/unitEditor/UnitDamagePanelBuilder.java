@@ -196,8 +196,11 @@ public class UnitDamagePanelBuilder {
                           controls.spnRear[location]);
                 }
             }
-            if (offersStateSwitches() && (entity instanceof Mek)) {
+            if (offersStateSwitches() && (entity instanceof Mek mek)) {
                 addBreachedRow(location);
+                if (mek.isArm(location) || mek.locationIsLeg(location)) {
+                    addBlownOffRow(location);
+                }
             }
         }
 
@@ -433,6 +436,35 @@ public class UnitDamagePanelBuilder {
         boolean breached = entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED;
         controls.chkLocationBreached[location] = addStatusRow(controls.locationPanels[location],
               "UnitEditorDialog.location.breached", breached);
+    }
+
+    /**
+     * Adds a Blown Off checkbox to a Mek limb's panel, prefilled with whether the limb is gone. Ticking it blows
+     * the limb off the way a "limb blown off" critical does; unticking it brings the limb back, and puts the
+     * limb's structure and armor spinners to full so the returned limb is whole rather than at the zero a gone
+     * limb shows.
+     */
+    private void addBlownOffRow(int location) {
+        if (controls.chkLocationBlownOff == null) {
+            controls.chkLocationBlownOff = new JCheckBox[entity.locations()];
+        }
+        JCheckBox checkBox = addStatusRow(controls.locationPanels[location],
+              "UnitEditorDialog.location.blownOff", entity.isLocationBlownOff(location));
+        checkBox.addItemListener(event -> {
+            if (!checkBox.isSelected()) {
+                restoreSpinnerToMaximum(controls.spnInternal[location]);
+                restoreSpinnerToMaximum(controls.spnArmor[location]);
+                restoreSpinnerToMaximum(controls.spnRear[location]);
+            }
+        });
+        controls.chkLocationBlownOff[location] = checkBox;
+    }
+
+    /** Sets a spinner to its model's maximum; a missing spinner is left alone. */
+    private static void restoreSpinnerToMaximum(@Nullable JSpinner spinner) {
+        if ((spinner != null) && (spinner.getModel() instanceof SpinnerNumberModel model)) {
+            spinner.setValue(model.getMaximum());
+        }
     }
 
     /** Whether the unit's stealth armor is switched on, which it is when any of its stealth equipment is. */
@@ -823,7 +855,10 @@ public class UnitDamagePanelBuilder {
         summary.setLayout(new BoxLayout(summary, BoxLayout.PAGE_AXIS));
         if (entity instanceof Mek) {
             for (int location = 0; location < entity.locations(); location++) {
-                if (entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED) {
+                if (entity.isLocationBlownOff(location)) {
+                    summary.add(stateLink(entity.getLocationName(location),
+                          Messages.getString("UnitEditorDialog.state.blownOff"), location));
+                } else if (entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED) {
                     summary.add(stateLink(entity.getLocationName(location),
                           Messages.getString("UnitEditorDialog.state.breached"), location));
                 }

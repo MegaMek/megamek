@@ -141,6 +141,56 @@ class DamageEditApplierTest {
     }
 
     @Test
+    void blownOffSwitchTakesTheLimbOffLikeACritical() {
+        int location = Mek.LOC_RIGHT_ARM;
+        DamageEditSpec spec = emptySpec();
+        spec.locationBlownOff = new Boolean[mek.locations()];
+        spec.locationBlownOff[location] = true;
+        // the editor still carries the arm's full structure, which must not bring it straight back
+        spec.internal[location] = mek.getOInternal(location);
+        spec.armor[location] = mek.getOArmor(location);
+
+        apply(spec);
+
+        assertTrue(mek.isLocationBlownOff(location), "The arm is gone");
+        assertTrue(mek.getInternal(location) < 0, "A blown-off arm reads as gone");
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == location) {
+                assertTrue(mounted.isMissing(), mounted.getName() + " went with the arm");
+            }
+        }
+    }
+
+    @Test
+    void untickingBlownOffBringsTheLimbBackWhole() {
+        int location = Mek.LOC_RIGHT_ARM;
+        mek.destroyLocation(location, true);
+        DamageEditSpec spec = emptySpec();
+        spec.locationBlownOff = new Boolean[mek.locations()];
+        spec.locationBlownOff[location] = false;
+        // an editor showing a gone limb reads zero structure and armor for it
+        spec.internal[location] = 0;
+        spec.armor[location] = 0;
+
+        apply(spec);
+
+        assertFalse(mek.isLocationBlownOff(location));
+        assertEquals(mek.getOInternal(location), mek.getInternal(location), "The returned arm is whole");
+        assertEquals(mek.getOArmor(location), mek.getArmor(location));
+    }
+
+    @Test
+    void blownOffIsRefusedOnATorso() {
+        DamageEditSpec spec = emptySpec();
+        spec.locationBlownOff = new Boolean[mek.locations()];
+        spec.locationBlownOff[Mek.LOC_LEFT_TORSO] = true;
+
+        apply(spec);
+
+        assertFalse(mek.isLocationBlownOff(Mek.LOC_LEFT_TORSO), "Only arms and legs can be blown off");
+    }
+
+    @Test
     void restoringStructureBringsBackADestroyedLocation() {
         int location = Mek.LOC_LEFT_TORSO;
         mek.destroyLocation(location, false);

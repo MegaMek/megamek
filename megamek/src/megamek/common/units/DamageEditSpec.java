@@ -148,6 +148,15 @@ public class DamageEditSpec implements Serializable {
      */
     public Boolean[] locationBreached;
 
+    /**
+     * Whether each of a Mek's limbs (arms and legs) is blown off; a {@code null} element means that limb was not
+     * edited, and the whole array is {@code null} for any unit that is not a Mek. Blowing a limb off runs the same
+     * destruction a "limb blown off" critical does, missing marks and the leg-loss piloting roll included.
+     * Clearing it brings the limb back with its structure and armor: at the values the edit carries, or in full
+     * when the edit still shows the zero a gone limb reads as.
+     */
+    public Boolean[] locationBlownOff;
+
     /*
      * The Advanced Building critical results a gamemaster can set or take back (TO:AR p. 119). These are only
      * carried for a building; every other unit type leaves them empty or {@code null}.

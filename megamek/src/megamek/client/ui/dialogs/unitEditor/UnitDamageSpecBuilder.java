@@ -197,6 +197,7 @@ public class UnitDamageSpecBuilder {
             spec.directionalMountLocked.put(mountLocked.getKey(), mountLocked.getValue().isSelected());
         }
         spec.locationBreached = checkboxValues(controls.chkLocationBreached);
+        spec.locationBlownOff = checkboxValues(controls.chkLocationBlownOff);
 
         return spec;
     }

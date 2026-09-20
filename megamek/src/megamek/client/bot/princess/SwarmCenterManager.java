@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,7 +35,6 @@ package megamek.client.bot.princess;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -209,8 +208,8 @@ public class SwarmCenterManager {
     }
 
     private Coords clipToMap(Coords coords, Board board) {
-        int x = MathUtility.clamp(coords.getX(), 0, board.getWidth() - 1);
-        int y = MathUtility.clamp(coords.getY(), 0, board.getHeight() - 1);
+        int x = Math.clamp(coords.getX(), 0, board.getWidth() - 1);
+        int y = Math.clamp(coords.getY(), 0, board.getHeight() - 1);
         return new Coords(x, y);
     }
 }

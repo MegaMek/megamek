@@ -60,7 +60,7 @@ public enum RoundWeight {
     NEXT_TON((w, e) -> Math.ceil(truncate(w))),
     /** Round kg standard to next kg, ton-standard to next half ton */
     STANDARD((w, e) -> {
-        if (null != e && usesKilogramStandard(e)) {
+        if (e != null && usesKilogramStandard(e)) {
             return RoundWeight.NEXT_KG.round(w, e);
         } else {
             return RoundWeight.NEXT_HALF_TON.round(w, e);
@@ -68,7 +68,7 @@ public enum RoundWeight {
     }),
     /** Round kg standard to nearest kg, ton-standard to nearest half ton (used for SV engine weight per TM p.133) */
     SV_ENGINE((w, e) -> {
-        if (null != e && usesKilogramStandard(e)) {
+        if (e != null && usesKilogramStandard(e)) {
             return RoundWeight.NEAREST_KG.round(w, e);
         } else {
             return RoundWeight.NEAREST_HALF_TON.round(w, e);

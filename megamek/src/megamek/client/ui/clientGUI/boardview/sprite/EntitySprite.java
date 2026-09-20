@@ -49,6 +49,9 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.VirtualRealityPilotingPod;
+import megamek.common.compute.VirtualRealityPilotingPod.Interference;
+import megamek.common.compute.VirtualRealityPilotingPod.InterferenceState;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.*;
 
@@ -597,6 +600,16 @@ public class EntitySprite extends Sprite {
 
             if (isAffectedByECM()) {
                 stStr.add(new Status(GUIP.getCautionColor(), "Jammed"));
+            }
+
+            // Virtual Reality Piloting Pod under hostile interference (IO:AE p.63)
+            if (entity instanceof Mek mek && mek.hasVirtualRealityPilotingPod()) {
+                Interference podInterference = VirtualRealityPilotingPod.getInterference(mek);
+                if (podInterference.isBlinded()) {
+                    stStr.add(new Status(GUIP.getWarningColor(), "vrppBlinded"));
+                } else if (podInterference.state() == InterferenceState.DEGRADED) {
+                    stStr.add(new Status(GUIP.getCautionColor(), "vrppDegraded"));
+                }
             }
 
             // Turret Lock

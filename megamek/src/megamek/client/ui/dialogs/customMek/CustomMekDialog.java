@@ -1808,7 +1808,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 // If the player wants to swap unit numbers, update both entities and send an update packet for the
                 // other entity.
                 Entity other = panCrewMember[i].getEntityUnitNumSwap();
-                if (null != other) {
+                if (other != null) {
                     short temp = entity.getUnitNumber();
                     entity.setUnitNumber(other.getUnitNumber());
                     other.setUnitNumber(temp);

@@ -96,7 +96,7 @@ public class BombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         BombLoadout payload = weaponAttackAction.getBombPayload();
-        if (!attackingEntity.isBomber() || (null == payload)) {
+        if (!attackingEntity.isBomber() || (payload == null)) {
             return;
         }
         for (Map.Entry<BombTypeEnum, Integer> entry : payload.entrySet()) {

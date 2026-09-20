@@ -710,7 +710,7 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
         if (clientgui.chatlounge != null) {
             ArrayList<Entity> updateEntities = clientgui.getClient().getGame().getPlayerEntities(player, false);
 
-            if (null != munitionTree && null != rp) {
+            if (munitionTree != null && rp != null) {
                 rp.friendlyFaction = faction;
                 rp.binFillPercent = (rp.isPirate) ? TeamLoadOutGenerator.UNSET_FILL_RATIO : 1.0f;
                 // Clear any bomb assignments
@@ -1034,20 +1034,20 @@ public class PlayerSettingsDialog extends AbstractButtonDialog {
                 butAutoconfigure.setEnabled(true);
             } else if (butSaveADF.equals(e.getSource())) {
                 // Save current MunitionTree off as an ADF file
-                if (null != munitionTree) {
+                if (munitionTree != null) {
                     saveLoadout(munitionTree);
-                } else if (null != originalMT) {
+                } else if (originalMT != null) {
                     saveLoadout(originalMT);
                 }
             } else if (butLoadADF.equals(e.getSource())) {
                 // Load a MunitionTree into munitionTree variable.
                 MunitionTree mt = loadLoadout();
-                if (null != mt) {
+                if (mt != null) {
                     munitionTree = mt;
                     butRestoreMT.setEnabled(true);
                 }
             } else if (butRestoreMT.equals(e.getSource())) {
-                if (null != originalMT) {
+                if (originalMT != null) {
                     munitionTree = originalMT;
                 }
                 // Bot settings button

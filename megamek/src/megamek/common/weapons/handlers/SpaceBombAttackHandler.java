@@ -83,7 +83,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
     @Override
     protected int calcAttackValue() {
         BombLoadout payload = weaponAttackAction.getBombPayload();
-        if (null == payload) {
+        if (payload == null) {
             return 0;
         }
         int numberOfBombs = payload.getTotalBombs();
@@ -108,7 +108,7 @@ public class SpaceBombAttackHandler extends WeaponHandler {
     @Override
     protected void useAmmo() {
         BombLoadout payload = weaponAttackAction.getBombPayload();
-        if (!(attackingEntity.isAero()) || null == payload || payload.isEmpty()) {
+        if (!(attackingEntity.isAero()) || payload == null || payload.isEmpty()) {
             return;
         }
 

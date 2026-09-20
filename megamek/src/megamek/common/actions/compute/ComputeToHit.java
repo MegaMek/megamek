@@ -58,16 +58,7 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.AbstractBuildingEntity;
-import megamek.common.units.ConvInfantry;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementType;
-import megamek.common.units.IBuilding;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.Tank;
-import megamek.common.units.Targetable;
-import megamek.common.units.Terrains;
+import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.battleArmor.clan.CLBALBX;
@@ -1091,7 +1082,7 @@ public class ComputeToHit {
         }
 
         // Attacks against buildings from inside automatically hit.
-        if ((null != los.getThruBldg()) && isBuilding) {
+        if ((los.getThruBldg() != null) &&isBuilding){
             return Messages.getString("WeaponAttackAction.InsideBuilding");
         }
 
@@ -1831,7 +1822,7 @@ public class ComputeToHit {
           ToHitData losMods, ToHitData toHit, WeaponType weaponType, WeaponMounted weapon, AmmoType ammoType,
           boolean isArtilleryFLAK, boolean usesAmmo, SpecialResolutionTracker srt) {
 
-        if (null == ammoType) {
+        if (ammoType == null) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "No ammo type!");
         }
         Entity te = null;

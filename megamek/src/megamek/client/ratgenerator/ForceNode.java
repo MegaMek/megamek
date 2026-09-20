@@ -160,7 +160,7 @@ public class ForceNode extends RulesetNode {
                         }
                         break;
                     case "formation":
-                        if (null == fd.getFormation()
+                        if (fd.getFormation() == null
                               || rule.predicates.containsKey("ifFormation")) {
                             // What the rule offered, captured before the pick applies its result and changes the
                             // properties the predicates were judged against.
@@ -172,7 +172,7 @@ public class ForceNode extends RulesetNode {
                             content = valueNode.getContent();
                             if (content != null) {
                                 FormationType ft = FormationType.getFormationType(content);
-                                if (null == ft) {
+                                if (ft == null) {
                                     logger.error("Could not parse formation type {}", content);
                                 }
                                 fd.setFormationType(ft);
@@ -500,7 +500,7 @@ public class ForceNode extends RulesetNode {
      * @return A description of the node
      */
     public String show() {
-        if (null == desc) {
+        if (desc == null) {
             desc = "Force Node [echelon:" + echelon + " predicates:"
                   + predicates.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
                   .collect(Collectors.joining(","))

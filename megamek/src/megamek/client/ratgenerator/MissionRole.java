@@ -49,7 +49,7 @@ public enum MissionRole {
     /* General combat roles */
     RECON, RAIDER, INCENDIARY, EW_SUPPORT, ARTILLERY, MISSILE_ARTILLERY, APC, TRAINING, COMMAND,
     /* Non-combat roles */
-    CARGO, SUPPORT, CIVILIAN,
+    CARGO, SUPPORT, CIVILIAN, RECOVERY,
     /* Ground forces */
     FIRE_SUPPORT, SR_FIRE_SUPPORT, URBAN, SPOTTER, ANTI_AIRCRAFT, ANTI_INFANTRY, INF_SUPPORT, CAVALRY,
     /* Specialized ground support roles */
@@ -286,6 +286,10 @@ public enum MissionRole {
                   (unitType >= UnitType.SMALL_CRAFT && unitType <= UnitType.SPACE_STATION) ||
                   unitType == UnitType.ADVANCED_BUILDING ||
                   unitType == UnitType.MOBILE_STRUCTURE;
+
+            // RECOVERY applies to ground vehicles. Recovering a downed Mek needs a winch and a hull to
+            // drag it with, which is a combination only combat and support vehicles carry.
+            case RECOVERY -> unitType == UnitType.TANK;
 
             // GENERATOR applies to advanced buildings which power other advanced
             // buildings
@@ -1199,6 +1203,19 @@ public enum MissionRole {
                         }
                         break;
 
+                    // Calling for RECOVERY only returns units that recover downed units, in the same
+                    // manner as MINESWEEPER/MINELAYER. Without this a request for recovery falls back on
+                    // the cargo haulers these vehicles share their other roles with.
+                    case RECOVERY:
+                        if (mRec.getRoles().contains(CIVILIAN) &&
+                              !desiredRoles.contains(CIVILIAN)) {
+                            return null;
+                        }
+                        if (!mRec.getRoles().contains(RECOVERY)) {
+                            return null;
+                        }
+                        break;
+
                     // Calling for civilian units will exclude non-civilian units, including
                     // SUPPORT (military non-combat) units.
                     case CIVILIAN:
@@ -1327,6 +1344,7 @@ public enum MissionRole {
             case "apc" -> APC;
             case "specops" -> SPECOPS;
             case "cargo" -> CARGO;
+            case "recovery" -> RECOVERY;
             case "support" -> SUPPORT;
             case "bomber" -> BOMBER;
             case "escort" -> ESCORT;

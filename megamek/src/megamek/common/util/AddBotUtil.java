@@ -34,12 +34,12 @@
 
 package megamek.common.util;
 
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -64,18 +64,18 @@ public class AddBotUtil {
     public static final String COMMAND = "replacePlayer";
     public static final String USAGE = """
           Replaces a player who is a ghost with a bot.\
-          
+
           Usage /replacePlayer <-b:Princess> <-c:Config> <-v:Verbosity> \
           <-p:>name.\
-          
+
             <-b> Specifies use if Princess. \
-          
+
             <-c> Specifies a saved configuration to be used by Princess.  If left out\
            DEFAULT will be used.\
-          
+
             <-v> Specifies the verbosity level for Princess \
           (DEBUG/INFO/WARNING/ERROR).\
-          
+
             <-p> Specifies the player name.  The '-p' is only required when the '-c' \
           or '-v' parameters are also used.""";
 
@@ -150,7 +150,7 @@ public class AddBotUtil {
 
         }
 
-        if (null == target) {
+        if (target == null) {
             results.add("No player with the name '" + playerName + "'.");
             return concatResults();
         }
@@ -171,7 +171,7 @@ public class AddBotUtil {
         if (!StringUtility.isNullOrBlank(configName)) {
             final BehaviorSettings behavior = BehaviorSettingsFactory.getInstance()
                   .getBehavior(configName.toString());
-            if (null != behavior) {
+            if (behavior != null) {
                 botClient.setBehaviorSettings(behavior);
             } else {
                 results.add("Unrecognized Behavior Setting: '" + configName + "'.  Using DEFAULT.");

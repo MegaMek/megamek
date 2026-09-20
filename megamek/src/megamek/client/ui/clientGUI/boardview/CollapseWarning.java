@@ -141,7 +141,7 @@ public final class CollapseWarning {
                 IBuilding bld = board.getBuildingAt(c);
 
                 // If a building, compare total weight and add to warning list.
-                if (null != bld) {
+                if (bld != null) {
                     if (calculateTotalTonnage(game, entity, c) > bld.getCurrentCF(c)) {
                         warnList.add(c);
                     }

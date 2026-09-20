@@ -910,7 +910,7 @@ public class Compute {
         if ((destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
               && !(entity instanceof Infantry)) {
             IBuilding bldg = board.getBuildingAt(dest);
-            boolean insideHangar = (null != bldg)
+            boolean insideHangar = (bldg != null)
                   && bldg.isIn(src)
                   && (bldg.getBldgClass() == IBuilding.HANGAR)
                   && (destHex.terrainLevel(Terrains.BLDG_ELEV) > entity
@@ -1383,7 +1383,7 @@ public class Compute {
         }
 
         // allow naval units on surface to be attacked from above or below
-        if ((null != targetEntity) && (targBottom == 0) && (targetEntity.getUnitType() == UnitType.NAVAL)) {
+        if ((targetEntity != null) && (targBottom == 0) && (targetEntity.getUnitType() == UnitType.NAVAL)) {
             targetInPartialWater = true;
         }
 
@@ -3611,7 +3611,7 @@ public class Compute {
                         weaponTarget.getPosition(),
                         allECMInfo))
                   && (wt.getDamage() == WeaponType.DAMAGE_BY_CLUSTER_TABLE)
-                  && (wt.hasFlag(WeaponType.F_MISSILE)) && null != at) {
+                && (wt.hasFlag(WeaponType.F_MISSILE)) && at != null) {
                 // Check for linked artemis guidance system
                 if ((wt.getAmmoType() == AmmoTypeEnum.LRM)
                       || (wt.getAmmoType() == AmmoTypeEnum.LRM_IMP)
@@ -4185,18 +4185,18 @@ public class Compute {
         int finalSpin = 0;
 
         // Basic protections against null values
-        if ((null == attackAction) || (null == game)) {
+        if ((attackAction == null) || (game == null)) {
             LOGGER.warn("null parameter passed to Compute.spinUpCannon");
             return finalSpin;
         }
 
         Entity shooter = attackAction.getEntity(game);
-        if (null == shooter) {
+        if (shooter == null) {
             LOGGER.warn("attack action with no shooter passed to Compute.spinUpCannon");
             return finalSpin;
         }
         Mounted<?> weapon = shooter.getEquipment(attackAction.getWeaponId());
-        if (null == weapon) {
+        if (weapon == null) {
             LOGGER.warn("attack action with an invalid weapon id passed to Compute.spinUpCannon");
             return finalSpin;
         }
@@ -4227,7 +4227,7 @@ public class Compute {
 
         // Get the to-hit number for this attack, computing it only once
         ToHitData toHitData = attackAction.toHit(game);
-        if (null == toHitData) {
+        if (toHitData == null) {
             LOGGER.warn("no to-hit data for attack action passed to Compute.spinUpCannon");
             return finalSpin;
         }
@@ -5140,12 +5140,12 @@ public class Compute {
     public static int getSensorRangeBracket(Entity ae, Targetable target, List<ECMInfo> allECMInfo) {
 
         Sensor sensor = ae.getActiveSensor();
-        if (null == sensor) {
+        if (sensor == null) {
             return 0;
         }
         // only works for entities
         Entity te = null;
-        if (null != target) {
+        if (target != null) {
             if (target.getTargetType() != Targetable.TYPE_ENTITY) {
                 return 0;
             }
@@ -5164,10 +5164,10 @@ public class Compute {
         }
 
         int check = ae.getSensorCheck();
-        if ((null != ae.getCrew()) && ae.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
+        if ((ae.getCrew() != null) && ae.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             check -= 2;
         }
-        if (null != te) {
+        if (te != null) {
             check += sensor.getModsForStealth(te);
             // Metal Content...
             if (ae.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_METAL_CONTENT)) {
@@ -5212,7 +5212,7 @@ public class Compute {
         }
 
         Sensor sensor = ae.getActiveSensor();
-        if (null == sensor) {
+        if (sensor == null) {
             return 0;
         }
 
@@ -5295,12 +5295,12 @@ public class Compute {
      */
     @Nullable
     public static SensorRangeHelper getSensorRanges(Game game, Entity e) {
-        if (null == e.getActiveSensor()) {
+        if (e.getActiveSensor() == null) {
             return null;
         }
 
         int check = e.getSensorCheck();
-        if ((null != e.getCrew()) && e.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
+        if ((e.getCrew() != null) && e.hasAbility(OptionsConstants.UNOFFICIAL_SENSOR_GEEK)) {
             check -= 2;
         }
 
@@ -5360,8 +5360,8 @@ public class Compute {
      *       units is not an aerospace unit, does not have a valid position, or the two units are not in the same hex.
      */
     public static int shouldMoveBackHex(Entity e1, Entity e2) {
-        if (null == e1.getPosition()
-              || null == e2.getPosition()
+        if (e1.getPosition() == null
+            || e2.getPosition() == null
               || e1.getBoardId() != e2.getBoardId()
               || !e1.getPosition().equals(e2.getPosition())
               || !e1.isAero()
@@ -5715,7 +5715,7 @@ public class Compute {
             }
             attackCoords = c;
         }
-        if (null == attackCoords) {
+        if (attackCoords == null) {
             attackCoords = attacker.getPosition();
         }
 
@@ -6168,7 +6168,7 @@ public class Compute {
         Entity entityWithClubs = game.getEntity(entityId);
         if (entityWithClubs != null) {
             for (Mounted<?> club : entityWithClubs.getClubs()) {
-                if (null != club) {
+                if (club != null) {
                     if (ClubAttackAction.toHit(game, entityId, target, club,
                           ToHitData.HIT_NORMAL, false).getValue() != TargetRoll.IMPOSSIBLE) {
                         return true;
@@ -7158,7 +7158,7 @@ public class Compute {
               ((unitToUnload.getAnyTypeMaxJumpMP() > 0) && !unitToUnload.isImmobileForJump()) ||
               (unitToUnload.isInfantry() && ((Infantry) unitToUnload).canExitVTOLWithGliderWings());
         return (hex != null) && !unitToUnload.isLocationProhibited(position, boardId, unitToUnload.getElevation())
-              && (null == stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()))
+               && (stackingViolation(game, unitToUnload.getId(), position, unitToUnload.climbMode()) == null)
               && ((Math.abs(hex.getLevel() - elev) < 3) || canIgnoreElevation);
     }
 
@@ -7187,7 +7187,7 @@ public class Compute {
         // the rules don't say that the unit must be facing loader, so lets take the ring
         for (Coords c : pos.allAdjacent()) {
             Hex hex = game.getBoard(boardId).getHex(c);
-            if (null == hex) {
+            if (hex == null) {
                 continue;
             }
             for (Entity other : game.getEntitiesVector(c, boardId)) {

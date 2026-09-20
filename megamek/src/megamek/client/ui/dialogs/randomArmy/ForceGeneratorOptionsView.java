@@ -32,14 +32,7 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -59,7 +52,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.swing.*;
-import javax.swing.SwingUtilities;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
@@ -161,6 +153,13 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private Integer preferredEchelon;
 
     /**
+     * Whether {@link #preferredEchelon} is still waiting to be applied. Set whenever a host states a preference and
+     * cleared once the formation combo has been pointed at it, so the preference wins over the selection the combo
+     * was born with and loses to every choice the player makes afterwards.
+     */
+    private boolean preferredEchelonPending;
+
+    /**
      * The organisation-tree node the formation mix should describe, or {@code null} to describe the force the
      * settings above it describe.
      *
@@ -180,6 +179,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private boolean forceGenerated;
 
     private JButton btnGenerate;
+    private JButton btnAddToGame;
+    private Runnable onAddToGame;
     private JButton btnExportMUL;
     private JButton btnClear;
 
@@ -590,6 +591,14 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         panGenerateOptions.add(btnFormationMix);
         lblFormationMixSummary = new JLabel(" ");
         panGenerateOptions.add(lblFormationMixSummary);
+        // Lives in this strip rather than a grid column of its own: every row above is laid out on the same four
+        // columns, so a fifth would push all of them about. Hidden until a host says what it does.
+        btnAddToGame = new JButton(Messages.getString("ForceGeneratorDialog.addToGame"));
+        btnAddToGame.setToolTipText(Messages.getString("ForceGeneratorDialog.addToGame.tooltip"));
+        btnAddToGame.addActionListener(event -> addToGameClicked());
+        btnAddToGame.setEnabled(false);
+        btnAddToGame.setVisible(false);
+        panGenerateOptions.add(btnAddToGame);
         constraints.gridx = 1;
         constraints.gridy = row;
         add(panGenerateOptions, constraints);
@@ -780,6 +789,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setPreferredEchelon(@Nullable Integer preferredEchelon) {
         this.preferredEchelon = preferredEchelon;
+        // The combo is filled during construction, so a host's preference always arrives after the ruleset default
+        // has already been selected. Marking it pending lets the next refresh apply it over that selection.
+        this.preferredEchelonPending = preferredEchelon != null;
     }
 
     /**
@@ -830,6 +842,42 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             }
         }
         return modifiedMatch;
+    }
+
+    /**
+     * What a refresh of the formation combo should select, and whether that selection is a new one.
+     *
+     * @param formation    the formation code to select, or {@code null} when neither a preference nor the previous
+     *                     selection applies and the caller falls back on the ruleset default
+     * @param applyToForce whether the selection is a new choice that {@code setFormation} has to be told about
+     */
+    record FormationChoice(@Nullable String formation, boolean applyToForce) {
+    }
+
+    /**
+     * Decides what a refresh of the formation combo does with a stated echelon preference.
+     *
+     * <p>A pending preference outranks the formation already showing, which is the point of stating one: a host
+     * that asks for a company gets a company even though the combo was filled with the ruleset default before the
+     * preference arrived. When the preference has no match and no previous selection survives, the caller falls
+     * back on the ruleset default.</p>
+     *
+     * @param preferenceIsPending whether a preference has been stated and not yet consumed by a refresh
+     * @param preferredFormation  the code matching the preference, or {@code null} when this faction fields no
+     *                            such echelon
+     * @param currentFormation    the code the combo already showed and still offers, or {@code null} otherwise
+     *
+     * @return the formation to select and whether to apply it, never {@code null}
+     */
+    static FormationChoice formationChoice(boolean preferenceIsPending, @Nullable String preferredFormation,
+          @Nullable String currentFormation) {
+        if (preferenceIsPending && (preferredFormation != null)) {
+            return new FormationChoice(preferredFormation, true);
+        }
+        if (currentFormation != null) {
+            return new FormationChoice(currentFormation, false);
+        }
+        return new FormationChoice(null, false);
     }
 
     /**
@@ -1083,8 +1131,19 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         task.execute();
     }
 
+    /**
+     * Does what the Clear Force button does: discards the generated force and leaves the panel ready for a fresh
+     * roll. A host calls this when the force on show has been dealt with and the next roll must not be folded into
+     * it, for example after its units were added to the game for one player and the next roll is for another.
+     */
+    public void clearGeneratedForce() {
+        clearForce();
+        btnExportMUL.setEnabled(false);
+        btnClear.setEnabled(false);
+    }
+
     private void clearForce() {
-        if (null != onGenerate) {
+        if (onGenerate != null) {
             onGenerate.accept(null);
         }
         clearSummaryTable();
@@ -1482,8 +1541,17 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.warn("No echelon node found.");
         }
 
-        if (hasCurrent) {
-            cbFormation.setSelectedItem(currentFormation);
+        // One refresh consumes the preference whether or not this faction fields it, so a preference the faction
+        // cannot honour never lingers to override a choice the player makes later.
+        String pendingFormation = preferredEchelonPending ? preferredEchelonItem() : null;
+        preferredEchelonPending = false;
+        FormationChoice choice = formationChoice(pendingFormation != null, pendingFormation,
+              hasCurrent ? currentFormation : null);
+        if (choice.formation() != null) {
+            cbFormation.setSelectedItem(choice.formation());
+            if (choice.applyToForce()) {
+                setFormation(choice.formation());
+            }
         } else {
             String echelon = preferredEchelonItem();
             if (echelon == null) {
@@ -1601,7 +1669,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private TOCNode findTOCNode() {
         Ruleset rs = Ruleset.findRuleset(forceDesc);
-        if (null == rs) {
+        if (rs == null) {
             return null;
         }
         TOCNode toc;
@@ -1683,9 +1751,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 exportMUL(forceDesc);
             }
         } else if (ev.getSource() == btnClear) {
-            clearForce();
-            btnExportMUL.setEnabled(false);
-            btnClear.setEnabled(false);
+            clearGeneratedForce();
         }
 
         if (changesFormationOffer(ev.getSource())) {
@@ -1736,6 +1802,35 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      */
     public void setClearButtonVisible(boolean visible) {
         btnClear.setVisible(visible);
+    }
+
+    /**
+     * Says what the Add to Game button does, and shows it. The button belongs to this strip, but what is selected
+     * lives in the host's force tree, so the host supplies the action. A host that commits the tree some other way
+     * (MekHQ's Command Designer builds a TOE from it) passes {@code null} and the button stays hidden.
+     *
+     * @param handler run when the button is pressed, or {@code null} to hide the button
+     */
+    public void setOnAddToGame(@Nullable Runnable handler) {
+        this.onAddToGame = handler;
+        btnAddToGame.setVisible(handler != null);
+    }
+
+    /**
+     * Enables the Add to Game button while there is something selected for it to add.
+     *
+     * @param enabled {@code true} when the host's force tree has a selection
+     */
+    public void setAddToGameEnabled(boolean enabled) {
+        btnAddToGame.setEnabled(enabled);
+    }
+
+    private void addToGameClicked() {
+        if (onAddToGame == null) {
+            logger.debug("[ForceGen] Add to Game pressed with no handler set; nothing to do");
+            return;
+        }
+        onAddToGame.run();
     }
 
     /**

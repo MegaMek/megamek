@@ -768,7 +768,7 @@ public class TWDamageManager implements IDamageManager {
           ModsInfo mods) {
         // This is good for shields if a shield absorbs the hit it shouldn't affect the pilot. TC SRM's that hit the
         // head do external and internal damage, but it's one hit and shouldn't cause 2 hits to the pilot.
-        mods.isHeadHit = ((mek.getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED) &&
+        mods.isHeadHit = (!mek.hasTorsoMountedCockpit() &&
               (hit.getLocation() == Mek.LOC_HEAD) &&
               ((hit.getEffect() & HitData.EFFECT_NO_CRITICAL_SLOTS) != HitData.EFFECT_NO_CRITICAL_SLOTS));
         int entityId = mek.getId();
@@ -1041,7 +1041,7 @@ public class TWDamageManager implements IDamageManager {
                             report.add(mek.getLocationName(blownOffLocation));
                             reportVec.addElement(report);
                             Hex h = game.getBoard().getHex(mek.getPosition());
-                            if (null != h) {
+                            if (h != null) {
                                 if (mek instanceof BipedMek) {
                                     if (!h.containsTerrain(Terrains.ARMS)) {
                                         h.addTerrain(new Terrain(Terrains.ARMS, 1));
@@ -1060,7 +1060,7 @@ public class TWDamageManager implements IDamageManager {
                         // Troopers riding on a location
                         // all die when the location is destroyed.
                         Entity passenger = mek.getExteriorUnitAt(hit.getLocation(), hit.isRear());
-                        if ((null != passenger) && !passenger.isDoomed()) {
+                        if ((passenger != null) && !passenger.isDoomed()) {
                             HitData passHit = passenger.getTrooperAtLocation(hit, mek);
                             // ensures a kill
                             passHit.setEffect(HitData.EFFECT_CRITICAL);
@@ -1788,7 +1788,7 @@ public class TWDamageManager implements IDamageManager {
                         // Troopers riding on a location
                         // all die when the location is destroyed.
                         Entity passenger = tank.getExteriorUnitAt(hit.getLocation(), hit.isRear());
-                        if ((null != passenger) && !passenger.isDoomed()) {
+                        if ((passenger != null) && !passenger.isDoomed()) {
                             HitData passHit = passenger.getTrooperAtLocation(hit, tank);
                             // ensures a kill
                             passHit.setEffect(HitData.EFFECT_CRITICAL);
@@ -3381,7 +3381,7 @@ public class TWDamageManager implements IDamageManager {
         Entity passenger = entity.getExteriorUnitAt(nLoc, hit.isRear());
         // Does an exterior passenger absorb some damage?
         if (!ammoExplosion &&
-              (null != passenger) &&
+            (passenger != null) &&
               !passenger.isDoomed() &&
               (damageType != DamageType.IGNORE_PASSENGER)) {
             extantDamage = manager.damageExternalPassenger(entity, hit, damage, reportVec, passenger);

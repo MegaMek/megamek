@@ -317,7 +317,7 @@ public class TransportCalculator {
             int hullsBefore = retVal.size();
             while (ledger.unmet(unitType) > 0) {
                 MekSummary dropship = drawHullFor(table, unitType, ledger);
-                if (null == dropship) {
+                if (dropship == null) {
                     LOGGER.debug("[ForceGen][Lift] no DropShip in the {} {} table carries {}; "
                                 + "{} of {} left without lift",
                           factionName, year, UnitType.getTypeName(unitType),
@@ -609,7 +609,7 @@ public class TransportCalculator {
             // It's possible to have a jump ship with no docking collars, e.g. for scout use
             MekSummary jumpship = table.generateUnit(ms -> countHardpoints(ms) > 0);
 
-            if (null == jumpship) {
+            if (jumpship == null) {
                 break; // Could not find any transport for the unit type; skip
             }
 
@@ -653,7 +653,7 @@ public class TransportCalculator {
 
         while (transportCollars * ratio > (double) currentCapacity) {
             MekSummary warship = table.generateUnit(ms -> countHardpoints(ms) > 0);
-            if (null == warship) {
+            if (warship == null) {
                 break; // No WarShips available for this faction/year/rating
             }
             currentCapacity += countHardpoints(warship);

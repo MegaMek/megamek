@@ -489,7 +489,7 @@ public class MiscType extends EquipmentType {
 
     @Override
     public double getTonnage(Entity entity, int location, double size, RoundWeight defaultRounding) {
-        if ((tonnage != TONNAGE_VARIABLE) || (null == entity)) {
+        if ((tonnage != TONNAGE_VARIABLE) || (entity == null)) {
             return tonnage;
         }
         // check for known formulas
@@ -521,7 +521,7 @@ public class MiscType extends EquipmentType {
             // pg 350, TO
             // 10% of engine weight rounded to the nearest half ton
             Engine e = entity.getEngine();
-            if (null == e) {
+            if (e == null) {
                 return 0;
             }
             return defaultRounding.round(e.getWeightEngine(entity, defaultRounding) / 10.0, entity);
@@ -536,7 +536,7 @@ public class MiscType extends EquipmentType {
             } else {
                 if (hasFlag(MiscTypeFlag.S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
-                    if (null == e) {
+                    if (e == null) {
                         return 0;
                     }
                     // pg 344, TO
@@ -1075,7 +1075,7 @@ public class MiscType extends EquipmentType {
 
     @Override
     public int getNumCriticalSlots(Entity entity, double size) {
-        if ((criticalSlots != CRITICAL_SLOTS_VARIABLE) || (null == entity)) {
+        if ((criticalSlots != CRITICAL_SLOTS_VARIABLE) || (entity == null)) {
             return criticalSlots;
         }
         // check for known formulas
@@ -1375,7 +1375,7 @@ public class MiscType extends EquipmentType {
             return 2.5 * Math.ceil(0.2 * entity.getWeight());
         }
         double returnBV = 0.0;
-        if ((bv != BV_VARIABLE) || (null == entity)) {
+        if ((bv != BV_VARIABLE) || (entity == null)) {
             returnBV = bv;
             // Mast Mounts give extra BV to equipment mounted in the mast
             if ((entity instanceof VTOL) &&

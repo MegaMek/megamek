@@ -56,6 +56,7 @@ import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.ArtilleryRange;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.compute.VirtualRealityPilotingPod;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
@@ -386,6 +387,12 @@ class ComputeToHitIsImpossible {
                 }
             }
         }
+        // A Virtual Reality Piloting Pod under hostile interference is blind, as if its sensors were destroyed
+        // (IO:AE p.63)
+        String vrppBlindedReason = VirtualRealityPilotingPod.getBlindedReason(attacker);
+        if (vrppBlindedReason != null) {
+            return vrppBlindedReason;
+        }
         // Are the sensors operational?
         // BattleMek sensors are destroyed after 2 hits, unless they have a
         // torso-mounted cockpit
@@ -511,7 +518,7 @@ class ComputeToHitIsImpossible {
         }
 
         // Must target infantry in buildings from the inside.
-        if (targetInBuilding && (entityTarget instanceof Infantry) && (null == los.getThruBldg())) {
+        if (targetInBuilding && (entityTarget instanceof Infantry) && (los.getThruBldg() == null)) {
             return Messages.getString("WeaponAttackAction.CantShootThruBuilding");
         }
 
@@ -1173,7 +1180,7 @@ class ComputeToHitIsImpossible {
                 }
                 // ADA is _fired_ by artillery but is just a Flak attack, and so bypasses these
                 // restrictions
-                if (null != ammoType && !ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                if (ammoType != null && !ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     // Direct fire artillery cannot be fired at less than 6 hexes,
                     // except at ASFs in the air (TO:AR 6th print, p153.)
                     if (!(target.isAirborne()) && (Compute.effectiveDistance(game, attacker, target) <= 6)) {
@@ -1678,7 +1685,7 @@ class ComputeToHitIsImpossible {
                         // Or split ground-to-air fire across multiple targets
                         if (prevAttack.isGroundToAir(game) &&
                               Compute.isGroundToAir(attacker, target) &&
-                              (null != entityTarget) &&
+                            (entityTarget != null) &&
                               (prevAttack.getTargetId() != entityTarget.getId())) {
                             return Messages.getString("WeaponAttackAction.OneTargetForGta");
                         }

@@ -549,13 +549,13 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
     public String printWeightEngine() {
-        return StringUtil.makeLength("Engine: " + ((null != engine) ? engine.getEngineName() : "---"),
+        return StringUtil.makeLength("Engine: " + ((engine != null) ? engine.getEngineName() : "---"),
               getPrintSize() - 5)
               + TestEntity.makeWeightString(getWeightEngine(), usesKgStandard()) + "\n";
     }
 
     public double getWeightEngine() {
-        return ((null != engine) ? engine.getWeightEngine(getEntity()) : 0);
+        return ((engine != null) ? engine.getWeightEngine(getEntity()) : 0);
     }
 
     public String printWeightStructure() {
@@ -1558,7 +1558,7 @@ public abstract class TestEntity implements TestEntityOption {
             cockpit = ((Mek) getEntity()).getCockpitTechAdvancement();
             cockpitName = ((Mek) getEntity()).getCockpitTypeString();
         }
-        if (null != cockpit) {
+        if (cockpit != null) {
             int introDate = cockpit.getIntroductionDate(getEntity().isClan());
             if (getEntity().isMixedTech()) {
                 introDate = cockpit.getIntroductionDate();
@@ -1573,7 +1573,7 @@ public abstract class TestEntity implements TestEntityOption {
         }
         if (getEntity() instanceof Mek) {
             ITechnology gyro = ((Mek) getEntity()).getGyroTechAdvancement();
-            if (null != gyro) {
+            if (gyro != null) {
                 int introDate = gyro.getIntroductionDate(getEntity().isClan());
                 if (getEntity().isMixedTech()) {
                     introDate = gyro.getIntroductionDate();

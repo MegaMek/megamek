@@ -173,7 +173,7 @@ public class Minefield implements Serializable, Cloneable {
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final Minefield other = (Minefield) obj;
@@ -209,7 +209,7 @@ public class Minefield implements Serializable, Cloneable {
     	} else if (type == TYPE_ACTIVE) {
     		return 9;
     	}
-    	
+
         if (density < 15) {
             return 9;
         } else if (density < 25) {

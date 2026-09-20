@@ -191,7 +191,7 @@ public class TestSupportVehicle extends TestEntity {
         public static double getBaseChassisValue(Entity supportVehicle) {
             SVType type = getVehicleType(supportVehicle);
 
-            if (null != type) {
+            if (type != null) {
                 return type.getBaseChassisValue(supportVehicle.getWeightClass());
             }
 
@@ -225,7 +225,7 @@ public class TestSupportVehicle extends TestEntity {
         public static double getBaseEngineValue(Entity supportVehicle) {
             SVType type = getVehicleType(supportVehicle);
 
-            if (null != type) {
+            if (type != null) {
                 return type.getBaseEngineValue(supportVehicle.getWeightClass());
             }
 
@@ -451,7 +451,7 @@ public class TestSupportVehicle extends TestEntity {
          */
         public @Nullable
         static SVEngine getEngineType(Engine engine) {
-            if (null != engine) {
+            if (engine != null) {
                 for (SVEngine svEngine : values()) {
                     if (svEngine.engine.getEngineType() == engine.getEngineType()) {
                         return svEngine;
@@ -585,7 +585,7 @@ public class TestSupportVehicle extends TestEntity {
     public static int maxArmorFactor(Entity vee) {
         SVType type = SVType.getVehicleType(vee);
 
-        if (null == type) {
+        if (type == null) {
             return 0;
         }
 
@@ -785,7 +785,7 @@ public class TestSupportVehicle extends TestEntity {
             if (mounted.getType().hasFlag(MiscType.F_CHASSIS_MODIFICATION)) {
                 ChassisModification mod = ChassisModification.getChassisMod(mounted.getType());
 
-                if (null != mod) {
+                if (mod != null) {
                     weight *= mod.multiplier;
                 } else {
                     logger.warn("Could not find multiplier for {} chassis mod.", mounted.getType().getName());
@@ -839,7 +839,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     public double getTankWeightTurret() {
-        if (null != testTank) {
+        if (testTank != null) {
             return testTank.getTankWeightTurret();
         }
 
@@ -847,7 +847,7 @@ public class TestSupportVehicle extends TestEntity {
     }
 
     public double getTankWeightDualTurret() {
-        if (null != testTank) {
+        if (testTank != null) {
             return testTank.getTankWeightDualTurret();
         }
 
@@ -932,7 +932,7 @@ public class TestSupportVehicle extends TestEntity {
 
     @Override
     public String printWeightMisc() {
-        if (null != testTank) {
+        if (testTank != null) {
             return testTank.printWeightMisc();
         } else {
             return getWeightPowerAmp() != 0 ? StringUtil.makeLength(

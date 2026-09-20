@@ -303,7 +303,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     @SuppressWarnings("unchecked")
     public @Nullable T getType() {
-        return (null != type) ? type : (type = (T) EquipmentType.get(typeName));
+        return (type != null) ? type : (type = (T) EquipmentType.get(typeName));
     }
 
     protected void setType(T type) {
@@ -1632,8 +1632,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean hasQuirk(String name) {
-        if ((null == entity) ||
-              (null == entity.getGame()) ||
+        if ((entity == null) ||
+            (entity.getGame() == null) ||
               !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
@@ -1660,8 +1660,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Returns a string of all the quirk "codes" for this entity, using sep as the separator
      */
     public String getQuirkList(String sep) {
-        if ((null == entity) ||
-              (null == entity.getGame()) ||
+        if ((entity == null) ||
+            (entity.getGame() == null) ||
               !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return "";
         }

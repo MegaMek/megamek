@@ -299,7 +299,7 @@ public class ComputeTerrainMods {
                 }
             }
         }
-        
+
         // Special Equipment
 
         // BAP Targeting rule enabled - TO:AR 6th p.97
@@ -333,7 +333,7 @@ public class ComputeTerrainMods {
                 toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
             }
         }
-        
+
         // To-hit table changes with no to-hit modifiers
 
         // Aero's in air-to-air combat can hit above and below
@@ -352,7 +352,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for elevation differences inside building.
-        if ((null != los.getThruBldg()) && (aElev != tElev)) {
+        if ((los.getThruBldg() != null) &&(aElev != tElev)){
 
             // Tanks get hit in a random side.
             if (target instanceof Tank) {
@@ -379,7 +379,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for surface naval vessels hit by underwater attacks
-        if (underWater && targetInWater && (null != entityTarget) && entityTarget.isSurfaceNaval()) {
+        if (underWater && targetInWater && (entityTarget != null) && entityTarget.isSurfaceNaval()) {
             toHit.setHitTable(HIT_UNDERWATER);
         }
 

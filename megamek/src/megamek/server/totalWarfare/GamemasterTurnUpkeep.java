@@ -55,9 +55,11 @@ import megamek.logging.MMLogger;
  * movement phase.
  * </p>
  * <p>
- * So after such an act the unit's own pending turns are dropped, the way the phase flow drops them for a unit
- * removed in the movement phase, and if the current turn is left with no unit that can take it, the turn is
- * skipped exactly as the {@code /skip} command would.
+ * So after such an act the unit's own pending turns are dropped, the way the charge, DFA and ram resolution
+ * drops them for a target it destroys ("Dead entities don't take turns" in {@link TWGameManager}), and if the
+ * current turn is left with no unit that can take it, the turn is skipped exactly as the {@code /skip} command
+ * would. The one departure from that resolution is how the turn is found: it uses {@code Game.removeTurnFor},
+ * which only drops a turn the unit is still valid for, and a unit whose crew has ejected is valid for none.
  * </p>
  */
 class GamemasterTurnUpkeep extends AbstractTWRuleHandler {

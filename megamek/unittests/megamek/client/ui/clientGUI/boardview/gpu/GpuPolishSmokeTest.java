@@ -1,7 +1,11 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.List;
@@ -9,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
@@ -20,7 +25,18 @@ import megamek.common.ResolvedAttack;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
-import megamek.common.units.*;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.FallSide;
+import megamek.common.units.LandAirMek;
+import megamek.common.units.Mek;
+import megamek.common.units.ProneCause;
+import megamek.common.units.QuadMek;
+import megamek.common.units.QuadVee;
+import megamek.common.units.Targetable;
+import megamek.common.units.TripodMek;
+import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -60,18 +76,25 @@ class GpuPolishSmokeTest {
     private static void damage(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, UnitDamageDisplay damage,
           GpuUnitCamouflage camo, MekTileset tileset, Entity atlas) {
         var unit = unit(atlas, tileset);
-        var model = library.get(unit.model(), unit.id());
         for (int stage = -1; stage < UnitDamageDisplay.Stage.values().length; stage++) {
+            var selection = stage < 3 ? unit.model() : GpuFamilyAssemblyReview.selection("tracked", List.of());
+            var model = library.get(selection, unit.id());
             var instance = new ModelInstance(model.instance.model);
-            camo.apply(instance, model.instance, unit.model().state().appearance());
+            camo.apply(instance, model.instance, selection.state().appearance());
             String name = stage < 0 ? "intact" : UnitDamageDisplay.Stage.values()[stage].file;
             if (stage >= 0) {
                 var level = UnitDamageDisplay.Stage.values()[stage];
                 var snapshot = new BoardScene.LocationDamage(Set.of(), Set.of(), Map.of(stage < 3 ? "LT" : "*", level));
-                damage.applyTexture(instance, snapshot);
-                assertFalse(UnitDamageDisplay.locationParts(model.instance, "LT").getFirst().material.has(UnitDamageDisplay.Overlay.TYPE));
-                assertTrue(UnitDamageDisplay.locationParts(instance, "LT").getFirst().material.has(UnitDamageDisplay.Overlay.TYPE));
+                damage.applyTexture(instance, snapshot, unit.id());
+                String location = stage < 3 ? "LT" : "hull";
+                assertFalse(UnitDamageDisplay.locationParts(model.instance, location).getFirst().material.has(UnitDamageDisplay.Overlay.TYPE));
+                assertTrue(UnitDamageDisplay.locationParts(instance, location).getFirst().material.has(UnitDamageDisplay.Overlay.TYPE));
                 if (stage < 3) { assertFalse(UnitDamageDisplay.locationParts(instance, "RT").getFirst().material.has(UnitDamageDisplay.Overlay.TYPE)); }
+                if (level == UnitDamageDisplay.Stage.BODY_100) {
+                    var material = instance.getNode("hull").parts.first().material;
+                    damage.wreck(instance, model, unit.id());
+                    assertSame(material, instance.getNode("hull").parts.first().material, "A wreck must reuse its final damage material");
+                }
             }
             var origin = BoardGeometry.center(unit.location().coords(), 0);
             model.place(instance, renderer.camera, origin, 180, unit);
@@ -139,6 +162,7 @@ class GpuPolishSmokeTest {
     }
 
     private static void effects(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset) throws Exception {
+        float normalFlame = 0;
         for (String weapon : List.of("Flamer", "Heavy Flamer", "ISMediumLaser", "LRM 20")) {
             var atlas = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
             atlas.setId(9100);
@@ -173,6 +197,13 @@ class GpuPolishSmokeTest {
                         effects.update(attack, library, Map.of(unit.id() + ":-1", a, target.id() + ":-1", b));
                         renderer.frame(List.of(terrain, a, b), origin.cpy().lerp(BoardGeometry.center(target.location().coords(), 1), .5f), effects,
                               "polish-shot-" + weapon.replace(' ', '-') + "-" + hit, frame);
+                        if (frame == 12 && hit) {
+                            if ("Flamer".equals(weapon)) { normalFlame = effects.flameSize(); assertTrue(normalFlame > 0); }
+                            if ("Heavy Flamer".equals(weapon)) {
+                                assertTrue(effects.flameSize() > normalFlame * 1.05f,
+                                      "The heavy flamer must have a larger plume: " + effects.flameSize() + " vs " + normalFlame);
+                            }
+                        }
                     }
                 } finally { effects.dispose(); terrain.model.dispose(); }
             }
@@ -203,6 +234,12 @@ class GpuPolishSmokeTest {
                 model.place(instance, renderer.camera, origin, 180, unit);
                 renderer.frame(List.of(instance), origin, null,
                       "polish-fallback-" + model.rigs().getFirst().type() + "-" + weight, 0);
+                entity.setProne(ProneCause.VOLUNTARY);
+                var crouch = new ModelInstance(model.instance.model);
+                new UnitAnimator().apply(model, crouch, unit(entity, tileset), UnitMotion.Sample.STILL, 0, 0, true, 0);
+                assertTrue(UnitBounds.local(crouch).getDepth() < dimensions.z * .9f,
+                      "Crouching must lower the body, including reverse-knee scouts: " + unit.model().asset());
+                entity.setProne(ProneCause.NONE);
             }
         }
     }

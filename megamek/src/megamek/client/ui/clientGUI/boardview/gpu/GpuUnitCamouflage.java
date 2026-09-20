@@ -150,6 +150,7 @@ final class GpuUnitCamouflage implements Disposable {
               uniform vec2 u_camoRotation;
               uniform vec3 u_camoRestScale;
               uniform mat4 u_markerTransform;
+              uniform vec4 u_damageTransform;
               varying vec2 v_markerUV;
               varying vec2 v_damageUV;
               void main() {
@@ -164,6 +165,9 @@ final class GpuUnitCamouflage implements Disposable {
                           v_damageUV = a_position.xz * 0.04;
                       }
                   #endif
+                  v_damageUV = vec2(u_damageTransform.x * v_damageUV.x - u_damageTransform.y * v_damageUV.y,
+                                    u_damageTransform.y * v_damageUV.x + u_damageTransform.x * v_damageUV.y)
+                        + u_damageTransform.zw;
               """).replace("v_diffuseUV = u_diffuseUVTransform.xy + a_texCoord0 * u_diffuseUVTransform.zw;", """
               vec2 restScale = vec2(1.0);
               #ifdef normalFlag
@@ -189,6 +193,20 @@ final class GpuUnitCamouflage implements Disposable {
               uniform sampler2D u_damageTexture;
               uniform float u_damageEnabled;
               varying vec2 v_damageUV;
+              // Smooth, non-periodic coordinate warping breaks the mirrored grid with one texture lookup.
+              vec2 damageHash(vec2 cell) {
+                  vec2 p = fract(cell * vec2(0.3183099, 0.3678794));
+                  p += dot(p, p.yx + vec2(17.17, 37.73));
+                  return fract(vec2(p.x * p.y, (p.x + p.y) * (p.y + 0.19)));
+              }
+              vec2 damageUV(vec2 uv) {
+                  vec2 cell = floor(uv * 0.5);
+                  vec2 f = fract(uv * 0.5);
+                  f = f * f * (3.0 - 2.0 * f);
+                  vec2 warp = mix(mix(damageHash(cell), damageHash(cell + vec2(1, 0)), f.x),
+                                  mix(damageHash(cell + vec2(0, 1)), damageHash(cell + vec2(1, 1)), f.x), f.y);
+                  return uv + (warp - 0.5) * 1.5;
+              }
               void main() {
               """).replace("#if defined(emissiveTextureFlag) && defined(emissiveColorFlag)", """
               if (u_markerEnabled > 0.5) {
@@ -196,7 +214,7 @@ final class GpuUnitCamouflage implements Disposable {
                   diffuse.rgb = mix(diffuse.rgb, marker.rgb, marker.a);
               }
               if (u_damageEnabled > 0.5) {
-                  vec4 damage = texture2D(u_damageTexture, v_damageUV);
+                  vec4 damage = texture2D(u_damageTexture, damageUV(v_damageUV));
                   diffuse.rgb = mix(diffuse.rgb, damage.rgb, damage.a);
               }
               #if defined(emissiveTextureFlag) && defined(emissiveColorFlag)
@@ -212,13 +230,17 @@ final class GpuUnitCamouflage implements Disposable {
                     private final int markerEnabled = register("u_markerEnabled");
                     private final int damageTexture = register("u_damageTexture");
                     private final int damageEnabled = register("u_damageEnabled");
+                    private final int damageTransform = register("u_damageTransform");
 
                     @Override
                     public void render(Renderable part, Attributes attributes) {
                         Paint paint = attributes.get(Paint.class, Paint.TYPE);
                         var damage = attributes.get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE);
                         set(damageEnabled, damage == null ? 0f : 1f);
-                        if (damage != null) { set(damageTexture, context.textureBinder.bind(damage.texture)); }
+                        if (damage != null) {
+                            set(damageTexture, context.textureBinder.bind(damage.texture));
+                            set(damageTransform, damage.cos, damage.sin, damage.offsetU, damage.offsetV);
+                        }
                         set(rotation, paint == null ? 1 : paint.cos, paint == null ? 0 : paint.sin);
                         set(restScale, paint == null ? 1 : paint.scale.x, paint == null ? 1 : paint.scale.y,
                               paint == null ? 1 : paint.scale.z);

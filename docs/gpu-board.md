@@ -260,6 +260,28 @@ abbreviation, which is the name of that location's node in every Mek mesh.
 a dark copy of its material, on the unit's own instance only. `[GpuDamage]`
 debug lines record each change and any location the mesh has no node for.
 
+Damage textures share one shader overlay, applied after the model's baked vertex colors so black detail
+colors cannot erase destroyed artwork. Destroyed takes priority over structure, then armor. The unit ID
+and part name seed each pattern's rotation, scale and offset; smooth coordinate warping breaks up the
+regular tiling with one damage-texture sample per shaded pixel. Textures remain shared, and the pattern
+stays attached through movement and survives model-instance rebuilds.
+
+Cockpit glazing keeps its original appearance until destroyed. The shader recognizes the exporter's
+fixed `PALETTE['glass']` vertex color before tinting, so glass can remain in the existing detail meshes
+without additional draw calls. Only the destroyed overlay ignores that mask.
+
+At the bottom of the tuning panel, an unchecked **Override visible unit damage** checkbox enables a
+**Display damage** slider from 0 to 1. Non-Meks use the existing whole-body thresholds. Meks apply the
+value to every location: 0–0.5 removes armor, then 0.5–1 removes structure with armor fully stripped.
+Destroyed or detached locations keep their priority. Disabling the preview restores actual damage;
+the game state never changes. **VSync**, beside **Normal maps**, takes effect immediately and defaults
+to enabled. The window's separate 60 FPS cap still applies. **Defaults** restores both controls.
+
+**Planetary conditions...**, beside **Daylight & atmosphere**, opens the existing planetary conditions
+editor initialized from the game's conditions. Accepting it applies the shared scenario-to-weather
+mapping to all lighting and weather controls; Cancel leaves the current preview alone. The editor
+changes only this GPU preview, and **Defaults** still restores the scenario's original appearance.
+
 Annotations use the existing entity painter, rasterized at higher resolution
 and drawn in screen space. They follow the animated unit, spread around nearby
 labels, and stay clamped to the viewport edge when their unit is offscreen.

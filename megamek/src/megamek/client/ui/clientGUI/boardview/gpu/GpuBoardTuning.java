@@ -77,6 +77,8 @@ final class GpuBoardTuning {
     private final List<Control> fieldOfView;
     private final List<Control> weather;
     private final List<Control> effects;
+    private final CheckBox overrideDamage;
+    private final List<Control> damage;
     private BoardAtmosphere.Settings atmosphere = BoardAtmosphere.DEFAULTS;
     private BoardAtmosphere.Settings scenarioDefaults;
     private boolean syncing;
@@ -90,11 +92,7 @@ final class GpuBoardTuning {
         rows.top().defaults().pad(0, 3, 0, 3);
         section(skin, "Geometry");
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
-        normalMaps = new CheckBox("Normal maps", skin, "menu");
-        normalMaps.setName("tuning-normal-maps");
-        normalMaps.getImage().setScaling(Scaling.fit);
-        normalMaps.getImageCell().size(14).padRight(5);
-        rows.add(normalMaps).colspan(3).left().height(20).row();
+        normalMaps = checkbox(skin, "Normal maps", "tuning-normal-maps");
         section(skin, "Unit visibility");
         visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
         visibility.get(1).slider().addListener(new TextTooltip(
@@ -131,6 +129,18 @@ final class GpuBoardTuning {
               BoardAtmosphere.MAX_FOG_OPACITY * 100), skin, "small")).colspan(3).left().height(18).row();
         section(skin, "Weather effects");
         effects = controls(skin, EFFECT_KNOBS, this::applyAtmosphere, 5);
+        section(skin, "Unit damage");
+        overrideDamage = checkbox(skin, "Override visible unit damage", "tuning-override-damage");
+        damage = controls(skin, List.of(new Knob("Display damage", 0, 1, 0.01f, "%.2f")), this::applyDamage, 0);
+        damage.getFirst().slider().addListener(new TextTooltip(
+              "Non-Meks: linear damage. Meks: 0-0.50 removes armor; 0.50-1 damages structure. "
+                    + "Destroyed parts take priority. Visual preview only.", skin, "menu"));
+        overrideDamage.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                applyDamage();
+            }
+        });
         scroll = new ScrollPane(rows, skin, "menu");
         scroll.setName("tuning-scroll");
         scroll.setFadeScrollBars(false);
@@ -147,7 +157,7 @@ final class GpuBoardTuning {
         panel.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
         TextButton reset = new TextButton("Defaults", skin, "menu-control");
         reset.setName("tuning-defaults");
-        reset.addListener(new TextTooltip("Restore geometry, visibility, and the scenario's starting atmosphere.",
+        reset.addListener(new TextTooltip("Restore geometry, visibility, the scenario's starting atmosphere, and disable damage preview.",
               skin, "menu"));
         reset.setProgrammaticChangeEvents(false);
         reset.addListener(new ChangeListener() {
@@ -169,6 +179,15 @@ final class GpuBoardTuning {
         float spacing = rows.hasChildren() ? 8 : 0;
         rows.add(new Label(title.toUpperCase(Locale.ROOT), skin, "kicker"))
               .colspan(3).left().padTop(spacing).padBottom(3).row();
+    }
+
+    private CheckBox checkbox(Skin skin, String label, String name) {
+        CheckBox checkbox = new CheckBox(label, skin, "menu");
+        checkbox.setName(name);
+        checkbox.getImage().setScaling(Scaling.fit);
+        checkbox.getImageCell().size(14).padRight(5);
+        rows.add(checkbox).colspan(3).left().height(20).row();
+        return checkbox;
     }
 
     private List<Control> controls(Skin skin, List<Knob> knobs, Runnable apply, int toggleCount) {
@@ -244,6 +263,9 @@ final class GpuBoardTuning {
         setValues(fieldOfView, new float[] { GpuFieldOfView.DARKNESS * 100 });
         applyFieldOfView();
         setAtmosphere(scenarioDefaults == null ? BoardAtmosphere.DEFAULTS : scenarioDefaults);
+        overrideDamage.setChecked(false);
+        setValues(damage, new float[] { 0 });
+        applyDamage();
     }
 
     private void setValues(List<Control> controls, float[] values) {
@@ -260,6 +282,11 @@ final class GpuBoardTuning {
 
     boolean normalMaps() {
         return normalMaps.isChecked();
+    }
+
+    /** Negative means the preview is disabled; otherwise this is the displayed loss from zero to one. */
+    float damageOverride() {
+        return overrideDamage.isChecked() ? value(damage, 0) : -1;
     }
 
     float buildingOpacity() {
@@ -307,6 +334,11 @@ final class GpuBoardTuning {
 
     private void applyFieldOfView() {
         updateReadings(fieldOfView);
+    }
+
+    private void applyDamage() {
+        damage.getFirst().slider().setDisabled(!overrideDamage.isChecked());
+        updateReadings(damage);
     }
 
     private void applyAtmosphere() {

@@ -243,9 +243,12 @@ final class UnitAnimator {
                 float gait = jumping || flying || UnitConversion.vehiclePose(unit) > 0 ? 0
                       : (memberStep == null ? envelope : memberStep.gait()) * (1 - stance);
                 // Authored kneeling/aiming members rise into a walking stance, then return to that same rest pose.
-                float standing = UnitConversion.vehiclePose(unit) > 0 ? 0 : memberStep == null ? envelope : memberStep.standing();
-                body.travelPitch.forEach((role, angle) -> body.rotate(role, Vector3.X, angle * standing));
-                legs(body, localPhase, gait, mek ? crouch + (quad ? fallen * .3f : 0) : 0, jumping ? envelope : 0, strideYaw);
+                float legCrouch = mek ? crouch + (quad ? fallen * .3f : 0) : 0;
+                // Absolute crouch angles must also account for the authored reverse-knee rest pose.
+                float legPose = Math.max(legCrouch, UnitConversion.vehiclePose(unit) > 0 ? 0
+                      : memberStep == null ? envelope : memberStep.standing());
+                body.travelPitch.forEach((role, angle) -> body.rotate(role, Vector3.X, angle * legPose));
+                legs(body, localPhase, gait, legCrouch, jumping ? envelope : 0, strideYaw);
                 body.rotate("leftArm", Vector3.X, -MathUtils.sin(localPhase) * 9 * gait);
                 body.rotate("rightArm", Vector3.X, MathUtils.sin(localPhase) * 9 * gait);
                 if (mek) {

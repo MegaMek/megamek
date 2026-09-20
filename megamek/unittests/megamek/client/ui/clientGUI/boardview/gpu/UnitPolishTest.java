@@ -1,15 +1,26 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import com.badlogic.gdx.math.Vector3;
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Coords;
-import megamek.common.units.*;
+import megamek.common.units.BipedMek;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.FallSide;
+import megamek.common.units.Mek;
+import megamek.common.units.ProneCause;
+import megamek.common.units.Tank;
 import megamek.common.util.SerializationHelper;
 import org.junit.jupiter.api.Test;
 

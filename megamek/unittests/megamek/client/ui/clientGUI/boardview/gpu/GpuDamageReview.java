@@ -3,7 +3,6 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static megamek.client.ui.clientGUI.boardview.gpu.GpuCamouflageReview.field;
 import static megamek.client.ui.clientGUI.boardview.gpu.GpuCamouflageReview.parts;
-import static megamek.client.ui.clientGUI.boardview.gpu.GpuCamouflageReview.texture;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -13,27 +12,28 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.units.BipedMek;
 import megamek.common.equipment.IArmorState;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -88,7 +88,7 @@ final class GpuDamageReview {
             }
             for (var part : UnitDamageDisplay.locationParts(wrecked, "LA")) {
                 assertSame(texture, texture(part), "Attached weapons and anatomy share the damage texture");
-                assertEquals(Color.WHITE, part.material.get(ColorAttribute.class, ColorAttribute.Diffuse).color);
+                assertEquals(UnitDamageDisplay.WRECKED, part.material.get(ColorAttribute.class, ColorAttribute.Diffuse).color);
                 assertFalse(part.material.has(ColorAttribute.Emissive));
             }
             assertTrue(parts(intact.nodes).stream().allMatch(part -> part.enabled && texture(part) == null));
@@ -117,6 +117,11 @@ final class GpuDamageReview {
             batch.dispose();
         }
         groundRemains(library);
+    }
+
+    private static Texture texture(NodePart part) {
+        var overlay = part.material.get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE);
+        return overlay == null ? null : overlay.texture;
     }
 
     private static void groundRemains(GpuUnitModels library) throws Exception {

@@ -383,6 +383,10 @@ final class GpuBoardUi implements Disposable {
         return tuning.normalMaps();
     }
 
+    float damageOverride() {
+        return tuning.damageOverride();
+    }
+
     float buildingOpacity() {
         return tuning.buildingOpacity();
     }

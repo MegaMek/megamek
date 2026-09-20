@@ -190,6 +190,14 @@ final class GpuAttackEffects implements Disposable {
     int missileCount() { return missiles.missileCount(); }
     int smokeCount() { return missiles.smokeCount(); }
 
+    float flameSize() {
+        float size = 0;
+        for (int index = 0; index < muzzleCount; index++) {
+            if ("flame".equals(effects[index])) { size = Math.max(size, flameSizes[index]); }
+        }
+        return size;
+    }
+
     private Vector3 origin(int index) {
         if (origins[index] == null) {
             origins[index] = new Vector3();

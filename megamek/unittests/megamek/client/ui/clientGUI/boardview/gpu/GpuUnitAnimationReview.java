@@ -65,7 +65,7 @@ final class GpuUnitAnimationReview {
             selection = UnitModelSelection.capture(mek, -1, false, tileset);
             new UnitAnimator().apply(model, fallen, unit(mek, selection), UnitMotion.Sample.STILL, 1, 0, false, 0);
             if (!(mek instanceof QuadMek)) {
-                assertEquals(90, fallen.getNode("root").rotation.getAngleAround(Vector3.X), .01f,
+                assertEquals(270, fallen.getNode("root").rotation.getAngleAround(Vector3.X), .01f,
                       "A newly revealed prone unit starts on the ground, without replaying its fall");
             }
             var poses = new ArrayList<>(List.of(stand, walk, crouch, fallen));

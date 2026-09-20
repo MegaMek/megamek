@@ -87,10 +87,11 @@ final class GpuCamouflageReview {
             damage.applyTexture(damaged);
             assertFalse(damaged.getNode("LA").parts.first().enabled);
             for (var part : UnitDamageDisplay.locationParts(damaged, "RL")) {
-                assertNotNull(texture(part), "Destroyed parts use the authored armor texture");
-                assertEquals(128, texture(part).getWidth());
-                assertEquals(128, texture(part).getHeight());
-                assertFalse(shared == texture(part), "Burnt paint must not regain the player's camouflage");
+                var overlay = part.material.get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE);
+                assertNotNull(overlay, "Destroyed parts use the authored armor texture");
+                assertEquals(128, overlay.texture.getWidth());
+                assertEquals(128, overlay.texture.getHeight());
+                assertNull(texture(part), "Burnt paint must not regain the player's camouflage");
             }
             assertTrue(parts(second.nodes).stream().allMatch(part -> part.enabled));
 

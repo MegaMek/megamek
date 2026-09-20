@@ -407,24 +407,28 @@ class GpuBattleView extends ApplicationAdapter {
                 instance = newUnitInstance(key, visual);
             }
             BoardScene.LocationDamage shownDamage = unitDamage.getOrDefault(key, BoardScene.LocationDamage.NONE);
+            boolean mek = authored && (unit.model().state() == null ? visual.turnsUpperBody()
+                  : unit.model().state().structure().anatomy() != null);
+            BoardScene.LocationDamage damage = authored
+                  ? UnitDamageDisplay.preview(unit.model().damage(), mek, ui.damageOverride()) : BoardScene.LocationDamage.NONE;
             UnitModelState.Appearance appearance = authored && unit.model().state() != null
                   ? unit.model().state().appearance() : null;
-            if (authored && (!unit.model().damage().equals(shownDamage)
+            if (authored && (!damage.equals(shownDamage)
                   || !java.util.Objects.equals(appearance, equipmentAppearance.get(key)))) {
                 UpperBodyTurn previousTurn = upperBodyTurns.get(key);
-                instance = showDamage(key, visual, unit);
+                instance = showDamage(key, visual, unit, damage);
                 if (appearance != null) {
                     visual.showEquipment(instance, appearance);
                     camouflage.apply(instance, visual.instance, appearance);
                     equipmentAppearance.put(key, appearance);
                 }
-                damageDisplay.applyTexture(instance, unit.model().damage());
+                damageDisplay.applyTexture(instance, damage, unit.id());
                 if (previousTurn != null) {
                     upperBodyTurns.put(key, previousTurn);
                     visual.turnUpperBody(instance, previousTurn.degrees());
                 }
             }
-            if (dead) { damageDisplay.wreck(instance, visual); }
+            if (dead) { damageDisplay.wreck(instance, visual, unit.id()); }
             // Presentation-only color for the see-through pass; the normal model materials retain their artwork.
             if (!(instance.userData instanceof Color)) {
                 instance.userData = new Color();
@@ -616,8 +620,7 @@ class GpuBattleView extends ApplicationAdapter {
      * Takes lost arms off the unit's model and burns out its other lost locations. Starts from a fresh instance
      * instead of undoing the old damage, which also covers a location that a game master has repaired.
      */
-    private ModelInstance showDamage(String key, GpuUnitModel visual, BoardScene.Unit unit) {
-        BoardScene.LocationDamage damage = unit.model().damage();
+    private ModelInstance showDamage(String key, GpuUnitModel visual, BoardScene.Unit unit, BoardScene.LocationDamage damage) {
         ModelInstance instance = newUnitInstance(key, visual);
         List<String> missing = UnitDamageDisplay.show(instance, damage);
         unitDamage.put(key, damage);

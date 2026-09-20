@@ -106,6 +106,9 @@ public class DamageEditApplier {
                 if ((entity instanceof Aero) && (i == 0)) {
                     ((Aero) entity).setSI(internal);
                 } else {
+                    if (internal > 0) {
+                        bringBackLocationIfGone(i);
+                    }
                     entity.setInternal(internal, i);
                 }
             }
@@ -472,6 +475,37 @@ public class DamageEditApplier {
                     + " locked {}",
               building.getShortName(), building.isPowerSwitchedOff(), building.getStunnedTurns(),
               building.allGunnersDead(), building.hasLockedTurret());
+    }
+
+    /**
+     * Brings back a location the editor is giving structure to while it stands blown off or destroyed, which
+     * setting the structure alone cannot do: a Mek reports a blown-off location as destroyed whatever its
+     * structure value says, and destroying a location marks every critical slot and piece of equipment in it
+     * missing, which none of the editor's crit controls cover. Restore Unit on a Mek with an arm blown off is
+     * the case. Hit and destroyed marks are left to the crit controls the editor sends alongside.
+     */
+    private void bringBackLocationIfGone(int location) {
+        boolean isGone = entity.isLocationBlownOff(location) || (entity.getInternalForReal(location) < 0);
+        if (!isGone) {
+            return;
+        }
+        entity.setLocationBlownOff(location, false);
+        entity.setLocationBlownOffThisPhase(location, false);
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = entity.getCritical(location, slot);
+            if ((criticalSlot != null) && criticalSlot.isMissing()) {
+                criticalSlot.setMissing(false);
+            }
+        }
+        for (Mounted<?> mounted : entity.getEquipment()) {
+            boolean isInLocation = (mounted.getLocation() == location)
+                  || (mounted.isSplit() && (mounted.getSecondLocation() == location));
+            if (isInLocation && mounted.isMissing()) {
+                mounted.setMissing(false);
+            }
+        }
+        LOGGER.info("[EquipState] GM edit: {} of {} brought back from blown off or destroyed",
+              entity.getLocationName(location), entity.getDisplayName());
     }
 
     /**

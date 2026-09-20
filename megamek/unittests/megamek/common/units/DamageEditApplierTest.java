@@ -113,6 +113,48 @@ class DamageEditApplierTest {
     }
 
     @Test
+    void restoringStructureBringsBackABlownOffLimb() {
+        int location = Mek.LOC_LEFT_ARM;
+        mek.destroyLocation(location, true);
+        assertTrue(mek.isLocationBlownOff(location));
+        assertTrue(mek.getInternal(location) < 0,
+              "A blown-off location reads as gone whatever its structure value");
+
+        DamageEditSpec spec = emptySpec();
+        spec.internal[location] = mek.getOInternal(location);
+        spec.armor[location] = mek.getOArmor(location);
+        apply(spec);
+
+        assertFalse(mek.isLocationBlownOff(location), "The limb is back on");
+        assertFalse(mek.isLocationBad(location));
+        assertEquals(mek.getOInternal(location), mek.getInternal(location));
+        assertEquals(mek.getOArmor(location), mek.getArmor(location));
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = mek.getCritical(location, slot);
+            assertTrue((criticalSlot == null) || !criticalSlot.isMissing(), "No slot of the limb stays missing");
+        }
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == location) {
+                assertFalse(mounted.isMissing(), mounted.getName() + " is back with the limb");
+            }
+        }
+    }
+
+    @Test
+    void restoringStructureBringsBackADestroyedLocation() {
+        int location = Mek.LOC_LEFT_TORSO;
+        mek.destroyLocation(location, false);
+        assertTrue(mek.getInternal(location) < 0, "The location is destroyed");
+
+        DamageEditSpec spec = emptySpec();
+        spec.internal[location] = mek.getOInternal(location);
+        apply(spec);
+
+        assertEquals(mek.getOInternal(location), mek.getInternal(location));
+        assertFalse(mek.isLocationBad(location));
+    }
+
+    @Test
     void absentValuesLeaveTheUnitAlone() {
         int armorBefore = mek.getArmor(Mek.LOC_RIGHT_ARM);
         int heatBefore = mek.heat;

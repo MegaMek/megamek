@@ -98,7 +98,9 @@ final class GpuInfantryPlaybackReview {
                     if (rig.transport() && boarding.stage() == UnitMotion.Stage.UNLOAD) {
                         var previous = parked.putIfAbsent(rig.container(), new Vector3(node.translation));
                         if (previous != null) {
-                            assertTrue(previous.epsilonEquals(node.translation, .001f), "A vehicle moved while unloading");
+                            assertTrue(previous.epsilonEquals(node.translation, .001f),
+                                  () -> "A vehicle moved while unloading: " + rig.container() + " " + previous
+                                        + " -> " + node.translation + " at " + boarding.progress() + " sequence " + boarding.sequence());
                         }
                     }
                 }

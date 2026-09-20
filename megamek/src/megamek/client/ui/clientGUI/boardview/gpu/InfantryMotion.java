@@ -1,8 +1,8 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
-import java.util.LinkedHashMap;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +19,7 @@ final class InfantryMotion {
     private static final float DEPART_END = .22f;
     private static final float PARK_START = .72f;
     private final Map<String, Member> members = new LinkedHashMap<>();
+    private float layoutScale = Float.NaN;
 
     private static final class Member {
         final UnitRig rig;
@@ -126,13 +127,13 @@ final class InfantryMotion {
         var travel = motion.boarding();
         float scale = model.horizontalScale(unit);
         var vehicles = members.values().stream().filter(member -> member.rig.transport()).toList();
-        if (travel != null && vehicles.stream().anyMatch(member -> member.sequence < 0)) {
-            fitVehicles(vehicles, false, scale);
+        boolean fitGoals = travel != null && (scale != layoutScale
+              || members.values().stream().anyMatch(member -> member.sequence != travel.sequence()));
+        layoutScale = scale;
+        if (travel != null && members.values().stream().allMatch(member -> member.sequence < 0)) {
+            fitFormation(vehicles, false, scale);
         }
         for (Member member : members.values()) {
-            if (travel != null && member.sequence < 0 && member.rig.trooper()) {
-                member.fit(member.node.translation, member.heading, scale);
-            }
             if (travel != null && member.sequence != travel.sequence()) {
                 member.sequence = travel.sequence();
                 member.start.set(member.node.translation);
@@ -147,17 +148,13 @@ final class InfantryMotion {
                       ? travel.arrivalHeading() + Math.signum(member.rest.x) * 40 + (member.reversing ? 180 : 0)
                       : watchHeading(unit.id(), member.rig.container(), member.goal, travel.destination());
             }
-            if (travel != null) {
+            if (fitGoals) {
                 member.goal.set(member.rest).rotate(Vector3.Z, -travel.arrivalHeading());
-                if (member.rig.trooper()) { member.fit(member.goal, member.goalHeading, scale); }
             }
         }
-        if (travel != null) {
-            if (!fitVehicles(vehicles, true, scale)) {
-                members.values().stream().filter(member -> member.rig.trooper()).forEach(member ->
-                      member.goal.set(member.rest).rotate(Vector3.Z, -travel.arrivalHeading()));
-            }
-            avoidVehicles(vehicles, true, scale);
+        if (fitGoals) {
+            // Keep the captured parking positions through unloading and casualty/material rebinds.
+            fitFormation(vehicles, true, scale);
         }
         for (Member member : members.values()) {
             member.node.scale.set(member.scale);
@@ -188,9 +185,7 @@ final class InfantryMotion {
                     member.node.translation.set(member.rest);
                 }
             }
-            if (!fitVehicles(vehicles, false, scale)) {
-                members.values().stream().filter(member -> member.rig.trooper()).forEach(member -> member.node.translation.set(member.rest));
-            }
+            fitVehicles(vehicles, false, scale);
             avoidVehicles(vehicles, false, scale);
             return;
         }
@@ -208,15 +203,27 @@ final class InfantryMotion {
         }
     }
 
-    private static boolean fitVehicles(List<Member> vehicles, boolean goal, float scale) {
+    private void fitFormation(List<Member> vehicles, boolean goal, float scale) {
+        for (var member : members.values()) {
+            if (member.rig.trooper()) {
+                member.fit(goal ? member.goal : member.node.translation, goal ? member.goalHeading : member.heading, scale);
+            }
+        }
+        fitVehicles(vehicles, goal, scale);
+        avoidVehicles(vehicles, goal, scale);
+    }
+
+    private static void fitVehicles(List<Member> vehicles, boolean goal, float scale) {
         if (vehicles.size() == 2) {
             var a = vehicles.get(0);
             var b = vehicles.get(1);
-            return InfantryFootprint.fitPair(goal ? a.goal : a.node.translation, a.footprint, goal ? a.goalHeading : a.heading,
+            InfantryFootprint.fitPair(goal ? a.goal : a.node.translation, a.footprint, goal ? a.goalHeading : a.heading,
                   goal ? b.goal : b.node.translation, b.footprint, goal ? b.goalHeading : b.heading, scale);
+        } else if (!vehicles.isEmpty()) {
+            var vehicle = vehicles.getFirst();
+            InfantryFootprint.fit(goal ? vehicle.goal : vehicle.node.translation, vehicle.footprint,
+                  goal ? vehicle.goalHeading : vehicle.heading, scale);
         }
-        return vehicles.isEmpty() || InfantryFootprint.fit(goal ? vehicles.getFirst().goal : vehicles.getFirst().node.translation,
-              vehicles.getFirst().footprint, goal ? vehicles.getFirst().goalHeading : vehicles.getFirst().heading, scale);
     }
 
     private void avoidVehicles(List<Member> vehicles, boolean goal, float scale) {

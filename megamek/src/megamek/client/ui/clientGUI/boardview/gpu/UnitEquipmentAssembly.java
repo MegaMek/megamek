@@ -98,7 +98,8 @@ final class UnitEquipmentAssembly {
             if (visual == null || !seen.add(mount.index())) {
                 continue;
             }
-            String form = armForm(structure.anatomy(), mount.location());
+            String location = attachmentLocation(structure.anatomy(), mount);
+            String form = armForm(structure.anatomy(), location);
             List<JsonValue> candidates = new ArrayList<>();
             int best = Integer.MIN_VALUE;
             for (JsonValue settings : descriptor.get("mounts")) {
@@ -114,7 +115,7 @@ final class UnitEquipmentAssembly {
                     default -> "weapon";
                 };
                 boolean anyLocation = point.location().equals("*");
-                if ((!anyLocation && !point.location().equals(mount.location()))
+                if ((!anyLocation && !point.location().equals(location))
                       || !point.side().equals(mount.rear() ? "rear" : "front")
                       || !point.roles().contains(role) || (!family.isEmpty() && !family.equals(visual.family()))
                       || (!requiredForm.isEmpty() && !requiredForm.equals(form))) {
@@ -136,7 +137,7 @@ final class UnitEquipmentAssembly {
                 }
                 throw new IllegalArgumentException("No hardpoint for " + mount.internalName() + " at " + mount.location());
             }
-            String bank = mount.location() + ":" + mount.rear() + ":" + visual.family() + ":" + form;
+            String bank = location + ":" + mount.rear() + ":" + visual.family() + ":" + form;
             int slot = counters.merge(bank, 1, Integer::sum) - 1;
             JsonValue settings = candidates.get(Math.min(slot, candidates.size() - 1));
             visual = catalog.resolve(mount, settings);
@@ -158,7 +159,7 @@ final class UnitEquipmentAssembly {
             }
             var point = points.get(settings.getString("hardpoint"));
             if (point.location().equals("*")) {
-                point = new UnitModelDescriptor.Hardpoint(point.id() + ":" + mount.location(), mount.location(), point.side(),
+                point = new UnitModelDescriptor.Hardpoint(point.id() + ":" + location, location, point.side(),
                       point.node(), point.position(), point.rotation(), point.size(), point.minScale(), point.maxScale(), point.roles());
             }
             pending.add(new Pending(mount, point, settings, visual, module));
@@ -351,6 +352,15 @@ final class UnitEquipmentAssembly {
             return "hand";
         }
         return anatomy.lowerArms().contains(location) ? "wrist" : "elbow";
+    }
+
+    /** Split torso/arm guns use torso firing arcs, but their visible barrel belongs to the outer arm. */
+    private static String attachmentLocation(UnitModelState.MekAnatomy anatomy, UnitModelEquipment.Mount mount) {
+        if (anatomy != null && (("LT".equals(mount.location()) && "LA".equals(mount.secondLocation()))
+              || ("RT".equals(mount.location()) && "RA".equals(mount.secondLocation())))) {
+            return mount.secondLocation();
+        }
+        return mount.location();
     }
 
 }

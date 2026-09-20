@@ -228,6 +228,11 @@ final class GpuUnitModels implements Disposable {
                     LOGGER.debug("[GpuTwist] {} has no upper body part to turn: a torso twist turns the whole unit",
                           modelPath);
                 }
+                // Say what loaded, not only what failed. Without this a unit showing its old artwork and a
+                // unit whose asset never resolved produce the same empty log, and neither can be told apart
+                // from the renderer simply not having run.
+                LOGGER.debug("[GpuModel] loaded {} ({} triangles in the bare body)", modelPath,
+                      visual.instance.model.meshParts.size);
                 models.put(modelPath, visual);
             }
             return models.get(modelPath);

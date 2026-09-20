@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.graphics.g3d.Shader;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 
@@ -14,8 +15,10 @@ final class GpuUnitShader extends DefaultShader {
     private static final String MAIN = "void main() {";
 
     private final int rotation = register("u_camoRotation");
-    private final int restScale = register("u_camoRestScale");
-    private final int markerTransform = register("u_markerTransform");
+    private final int camoEnabled = register("u_camoEnabled");
+    private final int camoImageSize = register("u_camoImageSize");
+    private final int paintTransform = register("u_paintTransform");
+    private final int paintNormalMatrix = register("u_paintNormalMatrix");
     private final int markerTexture = register("u_markerTexture");
     private final int markerEnabled = register("u_markerEnabled");
     private final int damageTexture = register("u_damageTexture");
@@ -71,12 +74,20 @@ final class GpuUnitShader extends DefaultShader {
             set(damageTransform, damage.cos, damage.sin, damage.offsetU, damage.offsetV);
         }
         set(rotation, paint == null ? 1 : paint.cos, paint == null ? 0 : paint.sin);
-        set(restScale, paint == null ? 1 : paint.scale.x, paint == null ? 1 : paint.scale.y,
-              paint == null ? 1 : paint.scale.z);
+        var diffuse = attributes.get(TextureAttribute.class, TextureAttribute.Diffuse);
+        boolean camo = paint != null && diffuse != null;
+        set(camoEnabled, camo ? 1f : 0f);
+        if (paint != null) {
+            set(paintTransform, paint.transform);
+            set(paintNormalMatrix, paint.normalMatrix);
+        }
+        if (camo) {
+            var texture = diffuse.textureDescription.texture;
+            set(camoImageSize, (float) texture.getWidth(), (float) texture.getHeight());
+        }
         boolean marker = paint != null && paint.marker != null;
         set(markerEnabled, marker ? 1f : 0f);
         if (marker) {
-            set(markerTransform, paint.transform);
             set(markerTexture, context.textureBinder.bind(paint.marker));
         }
         super.render(part, attributes);

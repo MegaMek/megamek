@@ -12,15 +12,14 @@ import java.util.Set;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -43,8 +42,9 @@ final class GpuUnitCamouflage implements Disposable {
                     break;
                 }
             }
-            var normalization = new Matrix4().setToScaling(1 / Math.max(1, area.getWidth()),
-                  -1 / Math.max(1, area.getHeight()), 1).translate(-area.min.x, -area.max.y, 0);
+            var normalization = new Matrix4().setToScaling(1 / Math.max(.0001f, area.getWidth()),
+                  -1 / Math.max(.0001f, area.getHeight()), -1 / Math.max(.0001f, area.getDepth()))
+                  .translate(-area.min.x, -area.max.y, -area.max.z);
             paint(root, effective.camo(), normalization);
         }
     }
@@ -60,8 +60,7 @@ final class GpuUnitCamouflage implements Disposable {
             }
             var material = part.material.copy();
             material.set(ColorAttribute.createDiffuse(color));
-            if (camo != null && camo.image() != null
-                  && part.meshPart.mesh.getVertexAttribute(VertexAttributes.Usage.TextureCoordinates) != null) {
+            if (camo != null && camo.image() != null) {
                 var diffuse = TextureAttribute.createDiffuse(texture(camo.image(), true));
                 float density = 10f / Math.max(1, camo.scale());
                 diffuse.scaleU = density;
@@ -72,8 +71,8 @@ final class GpuUnitCamouflage implements Disposable {
             Texture marker = camo == null || camo.marker() == null || camo.marker().image() == null
                   ? null : texture(camo.marker().image(), false);
             material.set(new Paint(camo == null ? 0 : camo.rotation(), marker,
-                  marker == null ? new Matrix4() : new Matrix4(normalization).mul(node.globalTransform),
-                  node.globalTransform.getScale(new Vector3())));
+                  new Matrix4(normalization).mul(node.globalTransform),
+                  new Matrix3().set(node.globalTransform).inv().transpose()));
             part.material = material;
         }
         node.getChildren().forEach(child -> paint(child, camo, normalization));
@@ -144,29 +143,29 @@ final class GpuUnitCamouflage implements Disposable {
         final float cos, sin;
         final Texture marker;
         final Matrix4 transform;
-        final Vector3 scale;
+        final Matrix3 normalMatrix;
 
-        Paint(float degrees, Texture marker, Matrix4 transform, Vector3 scale) {
-            this(MathUtils.cosDeg(degrees), MathUtils.sinDeg(degrees), marker, transform, scale);
+        Paint(float degrees, Texture marker, Matrix4 transform, Matrix3 normalMatrix) {
+            this(MathUtils.cosDeg(degrees), MathUtils.sinDeg(degrees), marker, transform, normalMatrix);
         }
 
-        private Paint(float cos, float sin, Texture marker, Matrix4 transform, Vector3 scale) {
+        private Paint(float cos, float sin, Texture marker, Matrix4 transform, Matrix3 normalMatrix) {
             super(TYPE);
             this.cos = cos;
             this.sin = sin;
             this.marker = marker;
             this.transform = new Matrix4(transform);
-            this.scale = new Vector3(scale);
+            this.normalMatrix = new Matrix3(normalMatrix);
         }
 
         @Override
         public Attribute copy() {
-            return new Paint(cos, sin, marker, transform, scale);
+            return new Paint(cos, sin, marker, transform, normalMatrix);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(type, cos, sin, marker, scale, Arrays.hashCode(transform.val));
+            return Objects.hash(type, cos, sin, marker, Arrays.hashCode(normalMatrix.val), Arrays.hashCode(transform.val));
         }
 
         @Override
@@ -180,13 +179,7 @@ final class GpuUnitCamouflage implements Disposable {
                 comparison = Float.compare(sin, paint.sin);
             }
             if (comparison == 0) {
-                comparison = Float.compare(scale.x, paint.scale.x);
-            }
-            if (comparison == 0) {
-                comparison = Float.compare(scale.y, paint.scale.y);
-            }
-            if (comparison == 0) {
-                comparison = Float.compare(scale.z, paint.scale.z);
+                comparison = Arrays.compare(normalMatrix.val, paint.normalMatrix.val);
             }
             if (comparison == 0) {
                 comparison = Integer.compare(marker == null ? 0 : marker.getTextureObjectHandle(),

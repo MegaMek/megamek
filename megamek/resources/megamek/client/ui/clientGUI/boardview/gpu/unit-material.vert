@@ -1,10 +1,12 @@
 // Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later
 // Inserted before libGDX's main; GpuUnitShader supplies the calls from its vertex shader.
 uniform vec2 u_camoRotation;
-uniform vec3 u_camoRestScale;
-uniform mat4 u_markerTransform;
+uniform float u_camoEnabled;
+uniform vec2 u_camoImageSize;
+uniform mat4 u_paintTransform;
+uniform mat3 u_paintNormalMatrix;
 uniform vec4 u_damageTransform;
-varying vec2 v_markerUV;
+varying vec3 v_paintPosition;
 varying vec2 v_damageUV;
 varying float v_damageMask;
 
@@ -16,7 +18,7 @@ void unitMaterialCoordinates() {
         vec3 glassDifference = a_color.rgb - vec3(0.21, 0.67, 0.73);
         v_damageMask = step(0.000025, dot(glassDifference, glassDifference));
     #endif
-    v_markerUV = (u_markerTransform * vec4(a_position, 1.0)).xy;
+    v_paintPosition = (u_paintTransform * vec4(a_position, 1.0)).xyz;
     // Rest-space projection stays fixed to each rigid part, including unpainted metal.
     v_damageUV = a_position.xy * 0.04;
     #ifdef normalFlag
@@ -34,21 +36,25 @@ void unitMaterialCoordinates() {
 
 #ifdef diffuseTextureFlag
 vec2 unitDiffuseUV() {
-    vec2 restScale = vec2(1.0);
+    // Sprite fallbacks and other authored textures retain their own UVs.
+    if (u_camoEnabled < 0.5) {
+        return u_diffuseUVTransform.xy + a_texCoord0 * u_diffuseUVTransform.zw;
+    }
+    // One image spans the complete rest-pose unit on each projection plane, including attachments.
+    // Position and normal transforms are captured before posing, so animation cannot move the paint.
+    vec2 uv = v_paintPosition.xy;
     #ifdef normalFlag
-        // Match the exporter's two least-normal axes, including its X/Y/Z tie order.
-        vec3 n = abs(a_normal);
-        if (n.x <= n.y && n.x <= n.z) {
-            restScale = vec2(u_camoRestScale.x, n.y <= n.z ? u_camoRestScale.y : u_camoRestScale.z);
-        } else if (n.y <= n.z) {
-            restScale = vec2(u_camoRestScale.y, n.x <= n.z ? u_camoRestScale.x : u_camoRestScale.z);
-        } else {
-            restScale = vec2(u_camoRestScale.z, n.x <= n.y ? u_camoRestScale.x : u_camoRestScale.y);
+        vec3 n = abs(u_paintNormalMatrix * a_normal);
+        if (n.x > n.y && n.x > n.z) {
+            uv = vec2(1.0 - v_paintPosition.y, v_paintPosition.z);
+        } else if (n.y > n.z) {
+            uv = v_paintPosition.xz;
         }
     #endif
-    vec2 centeredUV = a_texCoord0 * restScale - vec2(0.5);
+    // EntityImage rotates around the image center in pixels, preserving the image's aspect ratio.
+    vec2 centeredUV = (uv - vec2(0.5)) * u_camoImageSize;
     vec2 rotatedUV = vec2(u_camoRotation.x * centeredUV.x - u_camoRotation.y * centeredUV.y,
                          u_camoRotation.y * centeredUV.x + u_camoRotation.x * centeredUV.y);
-    return u_diffuseUVTransform.xy + (rotatedUV + vec2(0.5)) * u_diffuseUVTransform.zw;
+    return u_diffuseUVTransform.xy + (rotatedUV / u_camoImageSize + vec2(0.5)) * u_diffuseUVTransform.zw;
 }
 #endif

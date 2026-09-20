@@ -24,6 +24,33 @@ import org.junit.jupiter.api.Test;
 
 class UnitPlaybackTest {
     @Test
+    void cameraHoldStopsEveryShotAndSoundAtEachVolleyBoundaryEvenWithALargeFastFrame() {
+        var attacker = unit(1, 0);
+        var firstTarget = unit(2, 8);
+        var secondTarget = unit(3, 12);
+        var first = attack(attacker, firstTarget, ResolvedAttack.Kind.SHOT, true);
+        var second = attack(attacker, secondTarget, ResolvedAttack.Kind.SHOT, true);
+        var reply = attack(firstTarget, attacker, ResolvedAttack.Kind.SHOT, true);
+        List<UnitAttack> sounds = new ArrayList<>();
+        var playback = new UnitPlayback(ignored -> { }, (shot, contact) -> sounds.add(shot));
+        playback.accept(List.of(first, second, reply), scene(attacker, firstTarget, secondTarget), ignored -> false);
+        playback.advance(10, UnitMotion.Speed.QUADRUPLE, state -> {
+            assertEquals(2, state.attacks().size(), "The camera receives every target before any shot advances");
+            return false;
+        });
+        assertEquals(2, playback.attacks().size());
+        playback.attacks().forEach(shot -> assertTrue(shot.seconds <= 0, "Later target passes may have a launch delay"));
+        assertTrue(sounds.isEmpty());
+        assertFalse(playback.paused(), "Camera framing must not toggle the user's pause setting");
+        playback.advance(10, UnitMotion.Speed.QUADRUPLE, state -> state.attack().event == first);
+        assertSame(reply, playback.attack().event, "The next attacker also gets a camera hold within the same frame");
+        assertEquals(0, playback.attack().seconds);
+        assertTrue(sounds.stream().noneMatch(shot -> shot.event == reply));
+        playback.advance(0, UnitMotion.Speed.INSTANT, ignored -> false);
+        assertFalse(playback.busy(), "Skipping playback must also skip its camera hold");
+    }
+
+    @Test
     void movementCapturesTuningAtStartAndJumpUsesCapturedGravity() {
         var start = unit(1, 0).location();
         var end = unit(1, 40);
@@ -209,7 +236,7 @@ class UnitPlaybackTest {
 
     private static BoardScene withRanges(BoardScene scene, String label) {
         Coords coords = new Coords(0, 0);
-        var line = new BoardScene.FiringLine(unit(1, 0).location(), unit(2, 4).location(), 0x44FF88, false);
+        var line = new BoardScene.FiringLine(unit(1, 0).location(), unit(2, 4).location(), 0x44FF88, false, 1, 2);
         return new BoardScene(scene.boardId(), scene.width(), scene.height(), scene.tiles(), scene.units(),
               scene.plannedPath(), scene.selectedId(), scene.phase(), scene.commands(), scene.light(), List.of(line),
               List.of(new BoardScene.RangeBorder(coords, 63, 0x44FF88, label)), scene.markers(), scene.tactical(),

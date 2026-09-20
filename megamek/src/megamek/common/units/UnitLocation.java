@@ -45,10 +45,16 @@ import megamek.common.board.Coords;
  * @since July 5, 2005
  */
 public record UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause, Form form,
-      FallSide fallSide)
+      FallSide fallSide, Boolean hullDown)
       implements Serializable {
     @Serial
     private static final long serialVersionUID = 3989732522854387850L;
+
+    /** Null preserves the absence of a hull-down observation in older packets and saves. */
+    public UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause, Form form,
+          FallSide fallSide) {
+        this(entityId, coords, facing, elevation, boardId, proneCause, form, fallSide, null);
+    }
 
     public UnitLocation(int entityId, Coords coords, int facing, int elevation, int boardId, ProneCause proneCause, Form form) {
         this(entityId, coords, facing, elevation, boardId, proneCause, form, null);

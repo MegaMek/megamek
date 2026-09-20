@@ -112,6 +112,11 @@ final class UnitPlayback {
     }
 
     void advance(double seconds, UnitMotion.Speed speed) {
+        advance(seconds, speed, ignored -> true);
+    }
+
+    /** The view may briefly hold an action while its camera frames the participants or complete movement route. */
+    void advance(double seconds, UnitMotion.Speed speed, Predicate<UnitPlayback> cameraReady) {
         if (speed == UnitMotion.Speed.INSTANT) {
             paused = false;
             finish();
@@ -145,6 +150,7 @@ final class UnitPlayback {
                 }
             }
             if (!completed) {
+                if (!cameraReady.test(this)) { return; }
                 UnitMotion motion = active instanceof BoardScene.Movement ? motions.get(active.entityId()) : null;
                 double left = conversion != null ? UnitConversion.DURATION_SECONDS - conversion.seconds
                       : motion == null ? combatDuration - combatSeconds : motion.remainingSeconds();
@@ -197,6 +203,8 @@ final class UnitPlayback {
     UnitAttack attack() { return attack; }
 
     List<UnitAttack> attacks() { return visibleAttacks; }
+
+    BoardScene.Movement movement() { return active instanceof BoardScene.Movement move ? move : null; }
 
     /** Interpolate only a displacement actually present in the post-resolution checkpoint. */
     void placeDisplacement(BoardScene.Unit unit, com.badlogic.gdx.math.Vector3 position) {

@@ -33,6 +33,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.OverlayImage;
 import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.dialogs.clientDialogs.PlanetaryConditionsDialog;
+import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.UIUtil;
@@ -72,7 +73,15 @@ final class GpuBoardSource implements AutoCloseable {
     public record Frame(BoardScene scene, List<BoardScene.Animation> timeline, BoardScene.Context context,
           List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
           BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
-          BoardAtmosphere.Settings scenarioAtmosphere, BoardScene.Attack attack) {
+          BoardAtmosphere.Settings scenarioAtmosphere, BoardScene.Attack attack, GpuReportLog.Snapshot reports) {
+        Frame(BoardScene scene, List<BoardScene.Animation> animations, BoardScene.Context context,
+              List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
+              BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
+              BoardAtmosphere.Settings scenarioAtmosphere, BoardScene.Attack attack) {
+            this(scene, animations, context, globalCommands, hud, tooltip, centerRequest, boardGeneration, actorName,
+                  scenarioAtmosphere, attack, GpuReportLog.Snapshot.EMPTY);
+        }
+
         Frame(BoardScene scene, List<BoardScene.Animation> animations, BoardScene.Context context,
               List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
               BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
@@ -108,6 +117,7 @@ final class GpuBoardSource implements AutoCloseable {
     private final Map<AnnotationKey, EntitySprite.Annotations> unitAnnotations = new HashMap<>();
     private final Map<Image, BoardScene.Pixels> overlayImages = new IdentityHashMap<>();
     private final UnitCamouflage camouflage = new UnitCamouflage();
+    private final GpuReportLog reports = new GpuReportLog();
     private final BoardScene.PixelPool terrainImages = new BoardScene.PixelPool();
     private final List<BoardScene.Animation> pendingEvents = new ArrayList<>();
     private final Timer timer;
@@ -189,6 +199,18 @@ final class GpuBoardSource implements AutoCloseable {
         };
         gameListener = new GameListenerAdapter() {
             @Override
+            public void gameReport(megamek.common.event.GameReportEvent event) {
+                onSwing(() -> {
+                    if (!closed) {
+                        reports.capture(view.game.getAllReports(), view.game.getRoundCount(), view.game.getPhase(),
+                              GpuBoardSource.this::reportIcon);
+                        reports.live(event.getReport(), view.game.getRoundCount(), view.game.getPhase());
+                        refresh();
+                    }
+                });
+            }
+
+            @Override
             public void gameAttackResolved(megamek.common.event.GameAttackResolvedEvent event) {
                 BoardView eventView = GpuBoardSource.this.view;
                 onSwing(() -> {
@@ -209,7 +231,7 @@ final class GpuBoardSource implements AutoCloseable {
                 Entity old = event.getOldEntity();
                 UnitLocation start = old == null || old.getPosition() == null ? null
                       : new UnitLocation(old.getId(), old.getPosition(), old.getFacing(), old.getElevation(),
-                            old.getBoardId(), old.getProneCause(), UnitLocation.Form.capture(old), old.getFallSide());
+                            old.getBoardId(), old.getProneCause(), UnitLocation.Form.capture(old), old.getFallSide(), old.isHullDown());
                 int startAltitude = old == null ? 0 : old.getAltitude();
                 Entity takeoff = old == null ? event.getEntity() : old;
                 int jumpMP = type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0;
@@ -299,7 +321,7 @@ final class GpuBoardSource implements AutoCloseable {
         if (start != null && start.boardId() == view.getBoardId()) {
             points.add(pathWaypoint(entity, start.coords(), start.elevation(), start.facing(),
                   startAltitude > 0 ? startAltitude : flightAltitude, start.form()).withProneCause(start.proneCause())
-                  .withFallSide(start.fallSide()));
+                  .withFallSide(start.fallSide()).withHullDown(start.hullDown()));
         }
         for (UnitLocation location : path) {
             var observedForm = location.form() != null ? location.form() : points.isEmpty() ? null : points.getLast().form();
@@ -307,7 +329,9 @@ final class GpuBoardSource implements AutoCloseable {
                   location.facing(), flightAltitude, observedForm).withProneCause(location.proneCause() != null ? location.proneCause()
                         : points.isEmpty() ? null : points.getLast().proneCause())
                   .withFallSide(location.proneCause() != null ? location.fallSide()
-                        : points.isEmpty() ? null : points.getLast().fallSide());
+                        : points.isEmpty() ? null : points.getLast().fallSide())
+                  .withHullDown(location.hullDown() != null ? location.hullDown()
+                        : points.isEmpty() ? null : points.getLast().hullDown());
             if (points.isEmpty() || !points.getLast().equals(point)) {
                 points.add(point);
             }
@@ -317,7 +341,8 @@ final class GpuBoardSource implements AutoCloseable {
         if (!points.isEmpty() && finalForm != null && path.stream().allMatch(location -> location.form() == null)) {
             var last = path.getLast();
             points.add(pathWaypoint(entity, last.coords(), last.elevation(), last.facing(), flightAltitude, finalForm)
-                  .withProneCause(points.getLast().proneCause()).withFallSide(points.getLast().fallSide()));
+                  .withProneCause(points.getLast().proneCause()).withFallSide(points.getLast().fallSide())
+                  .withHullDown(points.getLast().hullDown()));
         }
         // Publish the final visible state and its movement together, so a frame cannot jump to the end first.
         Frame next = capture();
@@ -471,7 +496,7 @@ final class GpuBoardSource implements AutoCloseable {
                     && unit.footprint().size() > 1 && unit.location().coords().equals(point.coords())
                     && unit.location().aeroState() == BoardScene.AeroState.LANDED)
               .map(unit -> new BoardScene.Waypoint(point.coords(), unit.location().elevation(), point.facing(),
-                    point.proneCause(), point.aeroState(), unit.footprint(), point.form(), point.fallSide())).findFirst().orElse(point);
+                    point.proneCause(), point.aeroState(), unit.footprint(), point.form(), point.fallSide(), point.hullDown())).findFirst().orElse(point);
     }
 
     public void refresh() {
@@ -487,7 +512,7 @@ final class GpuBoardSource implements AutoCloseable {
     public synchronized Frame takeFrame() {
         Frame result = new Frame(frame.scene(), List.copyOf(pendingEvents), frame.context(), frame.globalCommands(),
               frame.hud(), frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
-              frame.scenarioAtmosphere(), frame.attack());
+              frame.scenarioAtmosphere(), frame.attack(), frame.reports());
         pendingEvents.clear();
         return result;
     }
@@ -520,7 +545,7 @@ final class GpuBoardSource implements AutoCloseable {
             if (frame != null && frame.scene().boardId() == view.getBoardId()) {
                 frame = new Frame(frame.scene(), frame.timeline(), frame.context(), frame.globalCommands(), nextHud,
                       frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
-                      frame.scenarioAtmosphere(), frame.attack());
+                      frame.scenarioAtmosphere(), frame.attack(), frame.reports());
             }
         }
         Board current = view.game.getBoard(view.getBoardId());
@@ -649,7 +674,41 @@ final class GpuBoardSource implements AutoCloseable {
               || visible(actor) && !sensorContact(actor));
         return new Frame(scene, List.of(), nextContext, List.copyOf(nextGlobal), nextHud, nextTooltip,
               view.getCenterRequest(), boardGeneration, knownActor ? actor.getShortName() : "",
-              BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()), actions.attackState());
+              BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()), actions.attackState(),
+              reports.capture(view.game.getAllReports(), view.game.getRoundCount(), view.game.getPhase(), this::reportIcon));
+    }
+
+    private Entity reportEntity(int id) {
+        Entity entity = view.game.getEntityFromAllSources(id);
+        return entity != null && EntityVisibilityUtils.detectedOrHasVisual(view.getLocalPlayer(), view.game, entity)
+              && !sensorContact(entity) ? entity : null;
+    }
+
+    private BoardScene.Pixels reportIcon(int id) {
+        Entity entity = reportEntity(id);
+        if (entity == null) {
+            return null;
+        }
+        Image image = view.getTileManager().imageFor(entity);
+        return image == null ? null : BoardScene.Pixels.copy(image);
+    }
+
+    /** Recheck visibility on the EDT before opening the existing live unit readout from a report link. */
+    void reportUnit(int id) {
+        SwingUtilities.invokeLater(() -> {
+            if (closed || view.getClientgui() == null || frame == null || frame.reports().entries().stream()
+                  .flatMap(entry -> entry.units().stream()).noneMatch(unit -> unit.id() == id)) {
+                return;
+            }
+            Entity entity = reportEntity(id);
+            if (entity != null) {
+                if (entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null
+                      && entity.getBoardId() == view.getBoardId()) {
+                    view.centerOnHex(entity.getPosition());
+                }
+                new LiveReadoutDialog(view.getClientgui().getFrame(), view.game, id).setVisible(true);
+            }
+        });
     }
 
     private Hud captureHud(OverlayViewport layout) {
@@ -698,7 +757,8 @@ final class GpuBoardSource implements AutoCloseable {
                     indirect |= weapon != null && weapon.curMode().isIndirect();
                 }
                 result.add(new BoardScene.FiringLine(firingEndpoint(attacker), firingEndpoint(target),
-                      attacker.getOwner().getColour().getColour().getRGB(), indirect));
+                      attacker.getOwner().getColour().getColour().getRGB(), indirect, attacker.getId(),
+                      target instanceof Entity entity ? entity.getId() : Entity.NONE));
             }
         }
         // Multiple weapons on one target share a trace, but direct and indirect fire remain distinct.
@@ -741,7 +801,8 @@ final class GpuBoardSource implements AutoCloseable {
         var state = model == null ? UnitModelState.capture(entity) : model.state();
         var pose = state.pose();
         var dead = new UnitModelState(state.structure(), state.appearance(),
-              new UnitModelState.Pose(pose.proneCause(), pose.facing(), pose.secondaryFacing(), pose.form(), true));
+              new UnitModelState.Pose(pose.proneCause(), pose.facing(), pose.secondaryFacing(), pose.form(), true,
+                    pose.armsFlipped(), pose.hullDown()));
         model = model == null ? new BoardScene.UnitModel("", "", "", 1, 0, BoardScene.LocationDamage.NONE, dead)
               : new BoardScene.UnitModel(model.asset(), model.fallback(), model.variant(), model.figures(), model.twist(), model.damage(), dead);
         Image image = view.getTileManager().wreckMarkerFor(entity, -1);
@@ -775,7 +836,7 @@ final class GpuBoardSource implements AutoCloseable {
                     : waypoint(coords, sensor ? 0 : entity.getElevation(), facing);
         if (!sensor) {
             location = location.withAeroState(aeroState(entity, entity.getElevation(), airborne))
-                  .withFallSide(entity instanceof Mek ? entity.getFallSide() : null);
+                  .withFallSide(entity instanceof Mek ? entity.getFallSide() : null).withHullDown(entity.isHullDown());
             if (location.aeroState() != null) {
                 location = location.withFootprint(footprint);
             }

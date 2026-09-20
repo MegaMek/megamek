@@ -65,8 +65,9 @@ final class UnitGroundContact {
             var member = motion.member(unit.id(), body.rig.container());
             if (member.type() == EntityMovementType.MOVE_JUMP || !UnitBounds.subtree(body.root).isValid()) { continue; }
             if (body.rig.mek() && (member.posture() != null
-                  ? member.posture().crouch() > 0 || member.posture().fallen() > 0
-                  : unit.model().state().pose().proneCause() != megamek.common.units.ProneCause.NONE)) { continue; }
+                  ? member.posture().crouch() > 0 || member.posture().fallen() > 0 || member.posture().kneel() > 0
+                  : unit.model().state().pose().proneCause() != megamek.common.units.ProneCause.NONE
+                        || UnitAnimator.hullDown(unit))) { continue; }
             var frame = new Matrix4(instance.transform).mul(body.root.globalTransform);
             var center = new Vector3(0, 0, body.bounds.min.z).mul(frame);
             float ground = UnitLandingSupports.ground(scene, center.x, center.y, surfaces);

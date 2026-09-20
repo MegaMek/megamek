@@ -2210,6 +2210,10 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     private void maybeShowMiniReport() {
+        if (GpuBoardWindow.isActiveFor(this)) {
+            setMiniReportVisible(false);
+            return;
+        }
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
@@ -2269,7 +2273,7 @@ public class ClientGUI extends AbstractClientGUI
     void setMiniReportVisible(boolean visible) {
         if (getMiniReportDisplayDialog() != null) {
             setMiniReportLocation(visible);
-            conditionalRequestFocus(visible);
+            conditionalRequestFocus(visible && !GpuBoardWindow.isActiveFor(this));
         }
     }
 
@@ -2513,6 +2517,13 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     public void setMiniReportLocation(boolean visible) {
+        // The native reader owns reports while the 3D board is presented. Preference and docking changes can
+        // reach this method even while the classic frame is hidden; never let them reopen its report dialog.
+        if (GpuBoardWindow.isActiveFor(this)) {
+            getMiniReportDisplayDialog().setVisible(false);
+            getMiniReportDisplay().setVisible(false);
+            return;
+        }
         saveSplitPaneLocations();
         setDockAxis();
 

@@ -46,6 +46,15 @@ class GpuBoardActionsTest {
     private record Controls(GpuBoardActions actions, FiringDisplay phase, WeaponPanel weapons, Entity target) { }
 
     @Test
+    void presentationTextDecodesHtmlEntitiesWithoutRemovingLiteralComparisons() {
+        assertEquals("BattleMaster (85t)  Biped Mek\nHeat < 10 & Damage > 5 — 'ready'",
+              GpuBoardActions.plainText("<html><head><style>hidden</style></head><b>BattleMaster (85t)</b>"
+                    + "&#160;&#xA0;Biped Mek<br>Heat &lt; 10 &amp; Damage &gt; 5 &mdash; &#39;ready&apos;</html>"));
+        assertEquals("A B C", GpuBoardActions.plainText("A&nbsp;B\u00A0C"));
+        assertEquals("", GpuBoardActions.plainText(null));
+    }
+
+    @Test
     void globalBoardSwitchSurvivesPhaseChangesAndStillChecksLiveMenuAvailability() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             AtomicInteger clicks = new AtomicInteger();

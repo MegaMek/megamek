@@ -160,7 +160,7 @@ class GpuOverlayPlaybackTest {
               marker(BoardMarker.Kind.OBJECTIVE, version), marker(BoardMarker.Kind.PLAYER_NOTE, version),
               marker(version.equals("old") ? BoardMarker.Kind.MINEFIELD : BoardMarker.Kind.BRIDGE_BUILD, version));
         return new BoardScene(0, 1, 1, scene.tiles(), scene.units(), move(1).path(), 1, "MOVEMENT", List.of(), null,
-              List.of(new BoardScene.FiringLine(UnitPlaybackTest.unit(1, 0).location(), UnitPlaybackTest.unit(2, 4).location(), 0, false)),
+              List.of(new BoardScene.FiringLine(UnitPlaybackTest.unit(1, 0).location(), UnitPlaybackTest.unit(2, 4).location(), 0, false, 1, 2)),
               List.of(new BoardScene.RangeBorder(coords, 63, 0, "S")), markers, tactical,
               List.of(new BoardScene.RangeLabel(coords, 0, "S")),
               new BoardFieldOfView(1, 1, List.of(new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.ORIGIN, 0x80008000)),

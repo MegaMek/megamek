@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
@@ -56,6 +57,19 @@ final class GpuUnitAnimationReview {
             assertFalse(walk.getNode(leftLeg).rotation.isIdentity());
             assertTrue(stand.getNode(leftLeg).rotation.isIdentity());
             assertFalse(walk.getNode("CT").rotation.isIdentity(), "Twist is layered on the same rig");
+            var hullDown = new ModelInstance(model.instance.model);
+            mek.setHullDown(true);
+            selection = UnitModelSelection.capture(mek, -1, false, tileset);
+            assertSame(model, library.get(selection, mek.getId()), "Posture must not rebuild the body");
+            animation.apply(model, hullDown, unit(mek, selection), UnitMotion.Sample.STILL, 1, 0, true, 0);
+            assertTrue(UnitBounds.local(hullDown).getDepth() < UnitBounds.local(stand).getDepth() * .9f);
+            assertTrue(hullDown.getNode("root").rotation.isIdentity(), "Hull-down kneels without toppling the body");
+            if (!(mek instanceof QuadMek)) {
+                var joints = model.rigs().getFirst().joints();
+                assertNotEquals(hullDown.getNode(joints.get("leftLeg")).rotation,
+                      hullDown.getNode(joints.get("rightLeg")).rotation, "One leg supports the body while the other kneels");
+            }
+            mek.setHullDown(false);
             var crouch = new ModelInstance(model.instance.model);
             mek.setProne(ProneCause.VOLUNTARY);
             selection = UnitModelSelection.capture(mek, -1, false, tileset);
@@ -68,12 +82,12 @@ final class GpuUnitAnimationReview {
                 assertEquals(270, fallen.getNode("root").rotation.getAngleAround(Vector3.X), .01f,
                       "A newly revealed prone unit starts on the ground, without replaying its fall");
             }
-            var poses = new ArrayList<>(List.of(stand, walk, crouch, fallen));
+            var poses = new ArrayList<>(List.of(stand, walk, hullDown, crouch, fallen));
             for (int index = 0; index < poses.size(); index++) {
                 var pose = poses.get(index);
-                pose.transform.setToTranslation((1.5f - index) * 75, 0, -UnitBounds.local(pose).min.z);
+                pose.transform.setToTranslation((2f - index) * 75, 0, -UnitBounds.local(pose).min.z);
             }
-            GpuModularUnitModelsSmokeTest.renderReview(batch, poses, "runtime-animation-" + model.rigs().getFirst().type(), 335, 20);
+            GpuModularUnitModelsSmokeTest.renderReview(batch, poses, "runtime-animation-" + model.rigs().getFirst().type(), 420, 20);
             assertTrue(UnitBounds.local(crouch).getDepth() < UnitBounds.local(stand).getDepth() * .9f,
                   "Crouch Z extent " + UnitBounds.local(crouch) + "; standing " + UnitBounds.local(stand)
                         + "; rig " + model.rigs().getFirst().type());
@@ -102,6 +116,7 @@ final class GpuUnitAnimationReview {
         var selection = UnitModelSelection.capture(armor, -1, false, tileset);
         var model = library.get(selection, armor.getId());
         assertEquals(6, model.rigs().size());
+        verifyTrooperPoses(model, unit(armor, selection), batch);
         var instance = new ModelInstance(model.instance.model);
         var animator = new UnitAnimator();
         animator.apply(model, instance, unit(armor, selection), UnitMotion.Sample.STILL, 0, 0, false, 0);
@@ -115,6 +130,7 @@ final class GpuUnitAnimationReview {
         assertEquals(heading, instance.getNode("trooper-3").rotation, "Gameplay facing must not rotate the formation members");
         GpuModularUnitModelsSmokeTest.renderReview(batch, List.of(instance), "runtime-animation-ba-idle", 110, 8);
         var survivorHeading = instance.getNode("trooper-6").rotation.cpy();
+        var survivorKnee = UnitAnimator.find(instance.getNode("trooper-6").getChildren(), "rightLegShin").rotation.cpy();
         for (int member = 1; member < 6; member++) {
             armor.setInternal(0, member);
         }
@@ -123,6 +139,8 @@ final class GpuUnitAnimationReview {
         instance = new ModelInstance(model.instance.model);
         animator.apply(model, instance, unit(armor, selection), UnitMotion.Sample.STILL, 0, 0, false, 0);
         assertEquals(survivorHeading, instance.getNode("trooper-6").rotation, "Casualties preserve surviving headings");
+        assertEquals(survivorKnee, UnitAnimator.find(instance.getNode("trooper-6").getChildren(), "rightLegShin").rotation,
+              "Casualties preserve each surviving member's rest stance");
 
         int direction = 0;
         for (var mode : List.of(EntityMovementMode.INF_LEG, EntityMovementMode.INF_JUMP,
@@ -136,6 +154,7 @@ final class GpuUnitAnimationReview {
             instance = new ModelInstance(model.instance.model);
             animator = new UnitAnimator();
             var unit = unit(infantry, selection);
+            if (model.rigs().stream().noneMatch(UnitRig::transport)) { verifyTrooperPoses(model, unit, batch); }
             animator.apply(model, instance, unit, UnitMotion.Sample.STILL, 0, 0, false, 0);
             assertTroopsOutward(instance);
             var start = new BoardScene.Waypoint(unit.location().coords().translated(direction++), 0, 0);
@@ -163,6 +182,53 @@ final class GpuUnitAnimationReview {
             GpuModularUnitModelsSmokeTest.renderReview(batch, List.of(instance),
                   "runtime-animation-infantry-" + mode.name().toLowerCase(java.util.Locale.ROOT), transport ? 220 : 110, 8);
         }
+        GpuInfantryPlaybackReview.verify(library, tileset);
+    }
+
+    private static void verifyTrooperPoses(GpuUnitModel model, BoardScene.Unit unit, ModelBatch batch) {
+        var placed = new ModelInstance(model.instance.model);
+        var animator = new UnitAnimator();
+        animator.apply(model, placed, unit, UnitMotion.Sample.STILL, 0, 0, true, 0);
+        var idle = new ModelInstance(placed);
+        var poses = new ArrayList<>(List.of(idle));
+        int kneeling = 0;
+        for (var rig : model.rigs()) {
+            var root = placed.getNode(rig.container());
+            var shin = UnitAnimator.find(root.getChildren(), rig.joints().get("rightShin"));
+            if (!shin.rotation.isIdentity(.001f)) {
+                kneeling++;
+                float kneeHeight = shin.globalTransform.getTranslation(new Vector3()).z;
+                assertTrue(kneeHeight < 4, "The resting knee reaches the ground: " + kneeHeight);
+            }
+            var base = model.instance.getNode(rig.container());
+            var torso = UnitAnimator.find(root.getChildren(), rig.joints().get("torso"));
+            var original = UnitAnimator.find(base.getChildren(), rig.joints().get("torso"));
+            assertSame(original.parts.first().meshPart.mesh, torso.parts.first().meshPart.mesh);
+            assertEquals(0, UnitBounds.subtree(root).min.z, .001, "Every animated member settles on the ground");
+        }
+        assertEquals(2, kneeling, "Two of six members kneel using the shared standing mesh");
+        var walk = new UnitMotion.Sample(true, EntityMovementType.MOVE_WALK, .4f, .125f, 0, 1, 0, 0, ProneCause.NONE);
+        var jump = new UnitMotion.Sample(true, EntityMovementType.MOVE_JUMP, .4f, .125f, 0, 1, 0, 0, ProneCause.NONE);
+        for (var motion : List.of(walk, jump)) {
+            animator.apply(model, placed, unit, motion, 0, 0, false, 0);
+            var first = placed.getNode(model.rigs().getFirst().container());
+            var leg = UnitAnimator.find(first.getChildren(), "leftLeg");
+            assertFalse(leg.rotation.isIdentity(.001f), "The same joints walk and tuck for flight");
+            var pose = leg.globalTransform.cpy();
+            animator.apply(model, placed, unit, motion, 0, 0, false, 0);
+            assertArrayEquals(pose.val, leg.globalTransform.val, "Paused frames do not drift");
+            poses.add(new ModelInstance(placed));
+        }
+        animator.apply(model, placed, unit, UnitMotion.Sample.STILL, 0, 0, true, 0);
+        for (var rig : model.rigs()) {
+            var before = UnitAnimator.find(idle.getNode(rig.container()).getChildren(), "rightLegShin");
+            var after = UnitAnimator.find(placed.getNode(rig.container()).getChildren(), "rightLegShin");
+            assertArrayEquals(before.globalTransform.val, after.globalTransform.val, "Skip restores the same grounded rest pose");
+        }
+        for (int index = 0; index < poses.size(); index++) {
+            poses.get(index).transform.setToTranslation((1 - index) * 70, 0, 0);
+        }
+        GpuModularUnitModelsSmokeTest.renderReview(batch, poses, "runtime-troop-poses-" + unit.id(), 235, 9);
     }
 
     private static void assertTroopsOutward(ModelInstance instance) {

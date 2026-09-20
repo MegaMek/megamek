@@ -52,6 +52,7 @@ final class GpuBoardUi implements Disposable {
     private final BoardCamera camera;
     private final GpuBoardTuning tuning;
     private final GpuAttackPanel attackPanel;
+    private final GpuReportPanel reportPanel;
     private final GpuBoardSkin theme = new GpuBoardSkin();
     private final Skin skin = theme.skin;
     private final GpuTextures<String> portraits = new GpuTextures<>();
@@ -108,6 +109,13 @@ final class GpuBoardUi implements Disposable {
         this.camera = camera;
         stage = new Stage(new ScreenViewport()) {
             @Override
+            public boolean touchDown(int x, int y, int pointer, int button) {
+                Vector2 point = screenToStageCoordinates(new Vector2(x, y));
+                dismissMenuOutside(hit(point.x, point.y, true));
+                return super.touchDown(x, y, pointer, button);
+            }
+
+            @Override
             public boolean mouseMoved(int x, int y) {
                 Vector2 point = screenToStageCoordinates(new Vector2(x, y));
                 Actor hovered = hit(point.x, point.y, true);
@@ -120,6 +128,8 @@ final class GpuBoardUi implements Disposable {
 
             @Override
             public boolean scrolled(float x, float y) {
+                Vector2 point = screenToStageCoordinates(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+                dismissMenuOutside(hit(point.x, point.y, true));
                 return GpuBoardUi.this.hit(Gdx.input.getX(), Gdx.input.getY()) && super.scrolled(x, y);
             }
         };
@@ -157,6 +167,7 @@ final class GpuBoardUi implements Disposable {
         toolbar.add(namedButton("speed", "", changeSpeed)).width(88);
         toolbar.add(namedButton("playback", Messages.getString("GpuBoard.pausePlayback"), togglePlayback)).width(76);
         toolbar.add(namedButton("tuning", "Tuning", this::toggleTuning)).width(70);
+        toolbar.add(namedButton("battle-report-toggle", "Report", this::toggleReport)).width(70);
         toolbar.add().expandX();
         status = new Label("", skin, "muted");
         status.setEllipsis(true);
@@ -279,6 +290,8 @@ final class GpuBoardUi implements Disposable {
         }, () -> open("all", "All actions", "attack-more"),
               () -> open("orders", "Planned orders", "attack-review-orders"));
         stage.addActor(attackPanel.panel());
+        reportPanel = new GpuReportPanel(skin, this::toggleReport, source::reportUnit);
+        stage.addActor(reportPanel.panel());
         stage.addActor(popup);
         tuning = new GpuBoardTuning(skin, source);
         tuning.panel().setVisible(false);
@@ -287,6 +300,10 @@ final class GpuBoardUi implements Disposable {
             @Override
             public boolean keyDown(InputEvent event, int key) {
                 if (!popup.isVisible()) {
+                    if (key == Input.Keys.ESCAPE && reportPanel.panel().isVisible()) {
+                        toggleReport();
+                        return true;
+                    }
                     return false;
                 }
                 if (key == Input.Keys.ESCAPE) {
@@ -352,6 +369,7 @@ final class GpuBoardUi implements Disposable {
         ((ScreenViewport) stage.getViewport()).setUnitsPerPixel(1 / scale);
         stage.getViewport().update(width, height, true);
         attackPanel.resize(stage.getWidth(), stage.getHeight());
+        reportPanel.resize(stage.getWidth(), stage.getHeight());
         // Match the integer board viewport so native HUD pixels are not resampled at fractional edges.
         hud.setBounds(0, bottomPixels() / scale, stage.getWidth(),
               Math.max(1, height - topPixels() - bottomPixels()) / scale);
@@ -369,6 +387,16 @@ final class GpuBoardUi implements Disposable {
             tuning.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT);
         }
         tuning.toggle();
+    }
+
+    private void toggleReport() {
+        closeMenu();
+        reportPanel.toggle();
+        stage.setKeyboardFocus(null);
+        stage.setScrollFocus(null);
+        if (frame != null) {
+            attackPanel.panel().setVisible(frame.attack() != null && !reportPanel.panel().isVisible());
+        }
     }
 
     BitmapFont font() {
@@ -426,6 +454,15 @@ final class GpuBoardUi implements Disposable {
         return Math.round(TURN_HEIGHT * scale);
     }
 
+    /** Unobstructed board width in window pixels; both side panels keep their actual, possibly resized bounds. */
+    float cameraWidth() {
+        float right = stage.getWidth();
+        for (var panel : List.of(attackPanel.panel(), reportPanel.panel())) {
+            if (panel.isVisible()) { right = Math.min(right, panel.getX() - 8); }
+        }
+        return Math.max(1, right * scale);
+    }
+
     void updateHud(GpuBoardSource.Hud next, long now) {
         if (next == null) {
             return;
@@ -478,6 +515,14 @@ final class GpuBoardUi implements Disposable {
         }
         frame = next;
         attackPanel.update(frame);
+        boolean reportWasVisible = reportPanel.panel().isVisible();
+        reportPanel.update(frame.reports(), frame.scene().selectedId());
+        if (reportWasVisible && !reportPanel.panel().isVisible()) {
+            stage.setKeyboardFocus(null);
+            stage.setScrollFocus(null);
+        }
+        attackPanel.panel().setVisible(frame.attack() != null && !reportPanel.panel().isVisible());
+        ((TextButton) stage.getRoot().findActor("battle-report-toggle")).setChecked(reportPanel.panel().isVisible());
         updateMenuBar();
         updateHud(frame.hud(), System.nanoTime());
         phase.setText(frame.scene().phase().toUpperCase(Locale.ROOT) + "  /  PHASE");
@@ -816,13 +861,20 @@ final class GpuBoardUi implements Disposable {
             return;
         }
         executeCommand(command);
-        // Weapon and target menus stay open for salvos. Board plotting remains an explicit tool choice.
+        // Weapon choices can stay open for salvos. Board plotting remains an explicit tool choice.
     }
 
     private void executeCommand(BoardScene.Command command) {
+        String leaf = command.id().substring(command.id().lastIndexOf('/') + 1);
+        if (leaf.equals("reportReport") || leaf.startsWith(ClientGUI.VIEW_ROUND_REPORT + ":")) {
+            toggleReport();
+            return;
+        }
         command.action().run();
         if (command.boardTool()) {
             plotting = true;
+        }
+        if (command.boardTool() || command.id().equals("board.useHex")) {
             closeMenu();
         }
     }
@@ -938,10 +990,24 @@ final class GpuBoardUi implements Disposable {
         popup.validate();
     }
 
+    private void dismissMenuOutside(Actor target) {
+        if (popup.isVisible() && (target == null || !target.isDescendantOf(popup))) {
+            Actor scrolling = stage.getScrollFocus();
+            closeMenu();
+            // Let the same wheel gesture continue scrolling the panel under the pointer.
+            if (scrolling != null && !scrolling.isDescendantOf(popup)) {
+                stage.setScrollFocus(scrolling);
+            }
+        }
+    }
+
     void closeMenu() {
         popup.clearActions();
         popup.setVisible(false);
-        stage.setKeyboardFocus(null);
+        Actor focus = stage.getKeyboardFocus();
+        if (focus == null || !reportPanel.panel().isVisible() || !focus.isDescendantOf(reportPanel.panel())) {
+            stage.setKeyboardFocus(null);
+        }
         stage.setScrollFocus(null);
         source.inspect(null);
     }
@@ -979,6 +1045,10 @@ final class GpuBoardUi implements Disposable {
         if (down && bindings.contains(KeyCommandBind.CANCEL)) {
             plotting = false;
         }
+        if (down && bindings.contains(KeyCommandBind.ROUND_REPORT)) {
+            toggleReport();
+            return true;
+        }
         if (down && unbound && modifiers == 0 && key == Input.Keys.F10) {
             open("all", "All actions", "all-actions");
             return true;
@@ -997,6 +1067,10 @@ final class GpuBoardUi implements Disposable {
                 tuning.toggle();
                 return true;
             }
+            if (reportPanel.panel().isVisible()) {
+                toggleReport();
+                return true;
+            }
         }
         return false;
     }
@@ -1006,7 +1080,7 @@ final class GpuBoardUi implements Disposable {
     }
 
     boolean acceptsCameraKeys() {
-        return !popup.isVisible();
+        return !popup.isVisible() && !reportPanel.panel().isVisible();
     }
 
     boolean hit(int x, int y) {
@@ -1026,5 +1100,6 @@ final class GpuBoardUi implements Disposable {
         theme.dispose();
         hudLayers.forEach(layer -> layer.textures().dispose());
         portraits.dispose();
+        reportPanel.dispose();
     }
 }

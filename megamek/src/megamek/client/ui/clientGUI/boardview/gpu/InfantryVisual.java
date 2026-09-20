@@ -25,12 +25,12 @@ final class InfantryVisual {
     static List<Part> parts(UnitModelState.Structure state, JsonValue components, int count) {
         JsonValue vehicles = components.get("vehicles");
         String vehicle = vehicles == null ? null : vehicles.getString(state.movement().name(), null);
-        JsonValue poses = state.movement() == EntityMovementMode.INF_JUMP && components.has("jumpPoses")
-              ? components.get("jumpPoses") : components.get("poses");
+        String trooper = state.movement() == EntityMovementMode.INF_JUMP
+              ? components.getString("jumpTrooper", components.getString("trooper")) : components.getString("trooper");
         if (vehicle == null) {
             List<Part> result = new ArrayList<>();
             for (int slot = 0; slot < count; slot++) {
-                result.add(figure(slot, slot, poses));
+                result.add(figure(slot, slot, trooper));
             }
             return List.copyOf(result);
         }
@@ -42,15 +42,15 @@ final class InfantryVisual {
         }
         for (int slot = 0; slot < count - transports; slot++) {
             float[] place = PASSENGER_SLOTS[slot];
-            result.add(new Part("trooper-" + slot, poses.get(slot % poses.size).asString(),
+            result.add(new Part("trooper-" + slot, trooper,
                   place[0], place[1], place[2], 1));
         }
         return List.copyOf(result);
     }
 
-    static Part figure(int member, int slot, JsonValue poses) {
+    static Part figure(int member, int slot, String trooper) {
         float[] position = FOOT_SLOTS[Math.floorMod(slot, FOOT_SLOTS.length)];
-        return new Part("trooper-" + member, poses.get(Math.floorMod(member, poses.size)).asString(),
+        return new Part("trooper-" + member, trooper,
               position[0], position[1], ((slot % 3) - 1) * .12f, 1);
     }
 }

@@ -23,6 +23,37 @@ import org.junit.jupiter.api.Test;
 
 class GpuSceneSourceTest {
     @Test
+    void hullDownPacketsRetainTheStartingPoseUntilTheQueuedTransition() throws Exception {
+        try (var fixture = GpuBoardFixture.create()) {
+            var initial = fixture.source.takeFrame();
+            SwingUtilities.invokeAndWait(() -> {
+                var at = fixture.entity.getPosition();
+                fixture.entity.setHullDown(true);
+                fixture.entity.moved = EntityMovementType.MOVE_WALK;
+                var path = new Vector<>(List.of(
+                      new UnitLocation(1, at, 0, 0, 0, megamek.common.units.ProneCause.NONE, null, null, false),
+                      new UnitLocation(1, at, 0, 0, 0, megamek.common.units.ProneCause.NONE, null, null, true)));
+                fixture.game.fireGameEvent(new GameEntityChangeEvent(fixture.game, fixture.entity, path));
+            });
+            var frame = fixture.source.takeFrame();
+            var movement = (BoardScene.Movement) frame.animations().getFirst();
+            assertEquals(false, movement.path().getFirst().hullDown());
+            assertEquals(true, movement.path().getLast().hullDown());
+            var playback = new UnitPlayback();
+            playback.accept(initial.timeline(), initial.scene(), ignored -> false);
+            playback.accept(frame.timeline(), frame.scene(), ignored -> false);
+            playback.togglePaused();
+            playback.advance(100, UnitMotion.Speed.NORMAL);
+            assertEquals(false, playback.present(frame.scene()).units().getFirst().location().hullDown());
+            playback.togglePaused();
+            playback.advance(UnitMotion.POSTURE_SECONDS / (2 * UnitMotion.Speed.NORMAL.rate), UnitMotion.Speed.NORMAL);
+            assertEquals(.5, playback.motions.get(1).sample().posture().kneel(), .001);
+            playback.advance(0, UnitMotion.Speed.INSTANT);
+            assertEquals(true, playback.present(frame.scene()).units().getFirst().location().hullDown());
+        }
+    }
+
+    @Test
     void sensorChangesPublishCheckpointsWithoutInventingVisibleMovement() throws Exception {
         try (var fixture = GpuBoardFixture.create()) {
             fixture.source.takeFrame();

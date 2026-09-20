@@ -3,6 +3,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -87,6 +88,7 @@ class GpuAttackSmokeTest {
                         display.set(new UnitDisplayPanel(gui, null));
                         when(gui.getUnitDisplay()).thenReturn(display.get());
                         firing.set(new FiringDisplay(gui));
+                        view.addBoardViewListener(firing.get());
                         when(gui.getCurrentPanel()).thenReturn(firing.get());
                         Player enemy = new Player(2, "Enemy");
                         enemy.setTeam(2);
@@ -119,20 +121,28 @@ class GpuAttackSmokeTest {
                             } else if (tick == 8) {
                                 assertBounds();
                                 assertTrue(button("fireFire").isDisabled(), "A target must be chosen before firing");
-                                // Use the same native context target commands a board click presents.
-                                source.get().inspect(new Coords(5, 3));
+                                boardUi().inspect(new Coords(5, 3), 180, 180);
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
                             } else if (tick == 16) {
-                                source.get().inspect(new Coords(5, 3));
+                                assertTrue(popup().isVisible());
+                                GpuBoardTestUi.click("board.useHex");
+                                assertFalse(popup().isVisible(), "Choosing a target dismisses the popup immediately");
+                                assertFalse(boardUi().plotting(), "Target selection must not enter a movement/twist tool");
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
-                                BoardScene.Command target = source.get().takeFrame().context().commands().stream()
-                                      .flatMap(command -> command.children().stream())
-                                      .filter(command -> command.id().contains("E|42")).findFirst().orElseThrow();
-                                target.action().run();
+                            } else if (tick == 18) {
+                                assertTrue(source.get().takeFrame().attack().targetName().contains("Atlas"));
+                                initialWeapon = source.get().takeFrame().attack().selectedWeapon();
+                                GpuBoardTestUi.click("camera");
+                                assertTrue(popup().isVisible());
+                                GpuBoardTestUi.click("attack:fireSkip");
+                                assertFalse(popup().isVisible(), "Next weapon dismisses another open popup");
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
                             } else if (tick == 20) {
-                                initialWeapon = source.get().takeFrame().attack().selectedWeapon();
+                                assertNotEquals(initialWeapon, source.get().takeFrame().attack().selectedWeapon(),
+                                      "The dismissing click must also select the next weapon");
+                                GpuBoardTestUi.click("camera");
                                 selectWeapon(2);
+                                assertFalse(popup().isVisible(), "Weapon-list clicks dismiss another open popup");
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
                             } else if (tick == 24) {
                                 assertEquals(2, source.get().takeFrame().attack().selectedWeapon());
@@ -141,12 +151,22 @@ class GpuAttackSmokeTest {
                                 assertSelectedWeaponVisible();
                                 selectWeapon(initialWeapon);
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
+                                Gdx.graphics.setWindowedMode(1280, 1040);
                             } else if (tick == 28) {
+                                ScrollPane weapons = GpuBoardTestUi.stage().getRoot().findActor("attack-weapons");
+                                ScrollPane content = GpuBoardTestUi.stage().getRoot().findActor("attack-scroll");
+                                assertTrue(weapons.getHeight() > 156, "Weapons must use the available tall-panel space");
+                                assertTrue(content.getMaxY() < 1, "The weapon list should fit the available content well");
+                                Vector2 bottom = weapons.localToAscendantCoordinates(content, new Vector2());
+                                assertTrue(bottom.y < 8, "No empty reserved area below the weapon list: " + bottom.y);
                                 assertTrue(label("attack-target").getText().toString().contains("Atlas"));
                                 assertTrue(label("attack-solution").getText().toString().contains("To Hit"));
                                 assertFalse(button("fireFire").isDisabled());
                                 GpuBoardTestUi.capture(new File(output, "attack-panel-isometric.png"));
+                                GpuBoardTestUi.click("camera");
+                                assertTrue(popup().isVisible());
                                 GpuBoardTestUi.click("attack:fireFire");
+                                assertFalse(popup().isVisible(), "Fire weapon dismisses another open popup");
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
                             } else if (tick == 40) {
                                 assertFalse(source.get().takeFrame().attack().orders().isEmpty());
@@ -190,6 +210,14 @@ class GpuAttackSmokeTest {
                     private TextButton button(String id) {
                         return GpuBoardTestUi.stage().getRoot().findActor("attack:" + id);
                     }
+
+                    private GpuBoardUi boardUi() throws ReflectiveOperationException {
+                        var field = GpuBattleView.class.getDeclaredField("ui");
+                        field.setAccessible(true);
+                        return (GpuBoardUi) field.get(this);
+                    }
+
+                    private Table popup() { return GpuBoardTestUi.stage().getRoot().findActor("tactical-menu"); }
 
                     private void selectWeapon(int index) {
                         ScrollPane pane = GpuBoardTestUi.stage().getRoot().findActor("attack-weapons");

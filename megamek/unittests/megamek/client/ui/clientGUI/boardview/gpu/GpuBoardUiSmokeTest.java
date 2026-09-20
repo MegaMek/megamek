@@ -166,6 +166,17 @@ class GpuBoardUiSmokeTest {
                             assertFalse(controls.stage.getRoot().findActor("command-search").getParent().isVisible());
                             assertEquals(menu, controls.stage.getKeyboardFocus(), "A hidden search field cannot capture typing");
                             GpuBoardTestUi.capture(new File(output, "camera-menu.png"));
+                            GpuBoardTestUi.click("playback");
+                            assertFalse(menu.isVisible(), "Toolbar clicks dismiss the popup");
+                            assertEquals(3, playbackToggles.get(), "The same click must perform the toolbar action");
+                            GpuBoardTestUi.click("camera");
+                            GpuBoardTestUi.click("all-actions");
+                            assertTrue(menu.isVisible(), "An action that opens a menu replaces the dismissed popup");
+                            assertTrue(controls.stage.getRoot().findActor("command-search").getParent().isVisible());
+                            GpuBoardTestUi.click("top");
+                            assertFalse(menu.isVisible());
+                            assertFalse(boardCamera.isIsometric());
+                            assertEquals(0, leaked.get(), "Outside UI clicks execute without leaking through to the board");
                             Gdx.app.exit();
                         }
                     } catch (Throwable error) {

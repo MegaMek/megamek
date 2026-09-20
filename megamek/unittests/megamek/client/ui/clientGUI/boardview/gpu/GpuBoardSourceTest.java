@@ -256,6 +256,22 @@ class GpuBoardSourceTest {
     }
 
     @Test
+    void hullDownIsCapturedAsPoseWithoutChangingModelStructure() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            var before = fixture.source.takeFrame().scene().units().getFirst();
+            SwingUtilities.invokeAndWait(() -> {
+                fixture.entity.setHullDown(true);
+                fixture.source.refresh();
+            });
+            var after = fixture.source.takeFrame().scene().units().getFirst();
+            assertEquals(false, before.location().hullDown());
+            assertEquals(true, after.location().hullDown());
+            assertTrue(after.model().state().pose().hullDown());
+            assertEquals(before.model().state().structure(), after.model().state().structure());
+        }
+    }
+
+    @Test
     void capturesCurrentOccupiedHeightWithoutChangingArtwork() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             BoardScene.Unit standing = fixture.source.takeFrame().scene().units().getFirst();

@@ -98,7 +98,11 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
     record Marker(int rgb, StripeDirection direction, OverlayStyle style, BoardScene.Pixels image) { }
 
     record Pose(ProneCause proneCause, int facing, int secondaryFacing, megamek.common.units.UnitLocation.Form form,
-          boolean dead, boolean armsFlipped) {
+          boolean dead, boolean armsFlipped, boolean hullDown) {
+        Pose(ProneCause proneCause, int facing, int secondaryFacing, megamek.common.units.UnitLocation.Form form,
+              boolean dead, boolean armsFlipped) {
+            this(proneCause, facing, secondaryFacing, form, dead, armsFlipped, false);
+        }
         Pose(ProneCause proneCause, int facing, int secondaryFacing, megamek.common.units.UnitLocation.Form form,
               boolean dead) {
             this(proneCause, facing, secondaryFacing, form, dead, false);
@@ -176,6 +180,6 @@ record UnitModelState(Structure structure, Appearance appearance, Pose pose) {
                     entity.getFacing(), entity.getSecondaryFacing(), megamek.common.units.UnitLocation.Form.capture(entity),
                     entity.isDestroyed() || entity.isDoomed(),
                     // Ask both: a unit that cannot flip should never be shown flipped, whatever the flag says.
-                    entity.canFlipArms() && entity.getArmsFlipped()));
+                    entity.canFlipArms() && entity.getArmsFlipped(), entity.isHullDown()));
     }
 }

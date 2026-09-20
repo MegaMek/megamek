@@ -37,6 +37,8 @@ import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
 
 /** Unlit, depth-tested tactical volumes shared by both cameras. Owns its meshes and batch on the GL thread. */
 final class GpuFireControl implements Disposable {
+    /** Positive size multiplier for firing-line thickness and the arrowhead; 1 keeps the current size. */
+    static final float TARGET_ARROW_SIZE = 1f;
     /** Blank spaces between repeated range labels on the contour. */
     static final int RANGE_LABEL_SPACES = 3;
     /** Travel along the contour in unscaled board pixels per second; negative values reverse it. */
@@ -65,15 +67,20 @@ final class GpuFireControl implements Disposable {
     private double scrollDistance;
 
     void update(BoardScene scene) {
+        update(scene, false);
+    }
+
+    void update(BoardScene scene, boolean hideArrows) {
         updateLabels(scene);
-        boolean changed = tuning != BoardGeometry.revision() || !firingLines.equals(scene.firingLines())
+        List<BoardScene.FiringLine> shownLines = hideArrows ? List.of() : scene.firingLines();
+        boolean changed = tuning != BoardGeometry.revision() || !firingLines.equals(shownLines)
               || !rangeBorders.equals(scene.rangeBorders()) || !sameTerrain(scene.tiles());
         this.scene = scene;
         if (!changed) {
             return;
         }
         tuning = BoardGeometry.revision();
-        firingLines = scene.firingLines();
+        firingLines = shownLines;
         rangeBorders = scene.rangeBorders();
         if (instance != null) {
             instance.model.dispose();
@@ -134,15 +141,21 @@ final class GpuFireControl implements Disposable {
             Color color = color(line.rgb(), 1).lerp(Color.WHITE, 0.22f);
             List<Vector3> path = BoardFiringGeometry.trajectory(scene, line);
             for (int i = 1; i < path.size(); i++) {
-                tube(mesh, path.get(i - 1), path.get(i), 1.45f * BoardGeometry.HEX_SCALE, color);
+                tube(mesh, path.get(i - 1), path.get(i), .725f * BoardGeometry.HEX_SCALE * TARGET_ARROW_SIZE, color);
             }
             Vector3 end = path.getLast();
             Vector3 direction = new Vector3(end).sub(path.get(path.size() - 2)).nor();
-            float length = Math.min(12 * BoardGeometry.HEX_SCALE, path.getFirst().dst(end) * 0.2f);
-            cone(mesh, new Vector3(end).mulAdd(direction, -length), end, length * 0.4f, color);
+            float length = Math.min(12 * BoardGeometry.HEX_SCALE, path.getFirst().dst(end) * 0.2f) * TARGET_ARROW_SIZE;
+            cone(mesh, new Vector3(end).mulAdd(direction, -length), end, length * 0.2f, color);
         }
         Model model = builder.end();
         instance = new ModelInstance(model);
+    }
+
+    /** Target bands follow the current selection's assignments independently of arrow visibility. */
+    boolean targets(int entityId) {
+        return scene != null && scene.selectedId() >= 0 && scene.firingLines().stream()
+              .anyMatch(line -> line.attackerId() == scene.selectedId() && line.targetId() == entityId);
     }
 
     private void updateLabels(BoardScene scene) {

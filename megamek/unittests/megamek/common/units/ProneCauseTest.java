@@ -29,6 +29,8 @@ class ProneCauseTest {
         var coords = new Coords(2, 3);
         path.add(new UnitLocation(23, coords, 0, 0, 0, ProneCause.NONE));
         path.add(new UnitLocation(23, coords, 0, 0, 0, ProneCause.FORCED));
+        path.add(new UnitLocation(23, coords, 0, 0, 0, ProneCause.NONE, null, null, true));
+        path.add(new UnitLocation(23, coords, 0, 0, 0, ProneCause.NONE, null, null, false));
         path.add(new UnitLocation(23, coords, 0, 0, 0, ProneCause.NONE));
         path.add(new UnitLocation(23, coords, 0, 0, 0));
         var marshaller = PacketMarshallerFactory.getInstance()
@@ -38,6 +40,7 @@ class ProneCauseTest {
         var packet = marshaller.unmarshall(new ByteArrayInputStream(bytes.toByteArray()));
         assertEquals(path, packet.getObject(2));
         assertNull(((UnitLocation) ((Vector<?>) packet.getObject(2)).getLast()).proneCause());
+        assertNull(((UnitLocation) ((Vector<?>) packet.getObject(2)).getLast()).hullDown());
     }
 
     @Test

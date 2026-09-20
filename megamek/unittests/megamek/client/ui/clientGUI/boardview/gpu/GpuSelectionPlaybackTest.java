@@ -66,14 +66,15 @@ class GpuSelectionPlaybackTest {
     void selectionBobsSmoothlyAboveItsPlaneAndReturnsAfterTheConfiguredPeriod() {
         float period = GpuBattleView.SELECTION_BOB_PERIOD_SECONDS;
         float height = GpuBattleView.SELECTION_BOB_HEIGHT_LEVELS * BoardGeometry.LEVEL;
-        assertEquals(0, GpuBattleView.selectionBob(0), .001f);
-        assertEquals(height, GpuBattleView.selectionBob(period / 2), .001f);
-        assertEquals(0, GpuBattleView.selectionBob(period), .001f);
-        float previous = 0;
+        float offset = GpuBattleView.SELECTION_BOB_HEIGHT_OFFSET;
+        assertEquals(offset, GpuBattleView.selectionBob(0), .001f);
+        assertEquals(offset + height, GpuBattleView.selectionBob(period / 2), .001f);
+        assertEquals(offset, GpuBattleView.selectionBob(period), .001f);
+        float previous = offset;
         for (int sample = 0; sample <= 100; sample++) {
             float time = period * sample / 100;
             float lift = GpuBattleView.selectionBob(time);
-            assertTrue(lift >= 0 && lift <= height, "The ring must never dip below its support plane");
+            assertTrue(lift >= offset && lift <= offset + height, "The ring must never dip below its support plane");
             assertTrue(Math.abs(lift - previous) < height / 20, "The rise and fall must not jump");
             assertEquals(lift, GpuBattleView.selectionBob(time + period), .002f);
             previous = lift;

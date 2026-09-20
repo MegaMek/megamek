@@ -25,7 +25,7 @@ final class BattleArmorVisual {
         int count = figures(state.activeTroopers());
         for (int index = 0; index < count; index++) {
             int member = state.members().get(index);
-            result.add(InfantryVisual.figure(member, member - 1, components.get("poses")));
+            result.add(InfantryVisual.figure(member, member - 1, components.getString("trooper")));
         }
         return List.copyOf(result);
     }

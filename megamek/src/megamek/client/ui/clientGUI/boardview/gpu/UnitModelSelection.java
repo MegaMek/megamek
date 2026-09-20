@@ -27,7 +27,8 @@ final class UnitModelSelection {
         var captured = new UnitModelState(new UnitModelState.Structure(movement, structure.equipment(),
               structure.members(), structure.activeTroopers(), structure.externalSearchlight(), structure.anatomy(),
               body == null ? null : new UnitModelState.BodyForm(movement.name(), body.size(), body.turrets(), body.fighters())),
-              state.appearance(), new UnitModelState.Pose(pose.proneCause(), pose.facing(), pose.secondaryFacing(), form, pose.dead()));
+              state.appearance(), new UnitModelState.Pose(pose.proneCause(), pose.facing(), pose.secondaryFacing(), form,
+                    pose.dead(), pose.armsFlipped(), pose.hullDown()));
         return new BoardScene.UnitModel(tileset.modelFor(entity, part, form), tileset.genericModelFor(entity, part, form),
               model.variant(), model.figures(), model.twist(), model.damage(), captured);
     }

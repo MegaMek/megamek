@@ -39,7 +39,7 @@ final class UnitAnimator {
     private boolean dying;
     private boolean initialized;
     private ProneCause posture = ProneCause.NONE;
-    private float crouch, fallen, airborne;
+    private float crouch, fallen, kneel, airborne;
     private megamek.common.units.FallSide fallSide;
 
     UnitAnimator() { this(new BoardSurface.Cache()); }
@@ -196,13 +196,15 @@ final class UnitAnimator {
         var sampledPosture = motion.posture();
         if (sampledPosture == null && !motion.moving()
               && (unit.location().proneCause() != null || motion.proneCause() == posture)) {
-            sampledPosture = UnitMotion.Posture.of(posture, unit.location().fallSide());
+            sampledPosture = UnitMotion.Posture.of(posture, unit.location().fallSide(), hullDown(unit));
         }
         if (sampledPosture != null && sampledPosture.side() != null) { fallSide = sampledPosture.side(); }
         else if (unit.location().fallSide() != null) { fallSide = unit.location().fallSide(); }
         float previousFall = fallen;
         crouch = sampledPosture == null ? approach(crouch, posture == ProneCause.VOLUNTARY ? 1 : 0, seconds, snap) : sampledPosture.crouch();
         fallen = sampledPosture == null ? approach(fallen, posture == ProneCause.FORCED || posture == ProneCause.UNKNOWN ? 1 : 0, seconds, snap) : sampledPosture.fallen();
+        kneel = sampledPosture == null ? approach(kneel, motion.moving() ? kneel
+              : hullDown(unit) && posture == ProneCause.NONE ? 1 : 0, seconds, snap) : sampledPosture.kneel();
         if (fallen == 0 && posture == ProneCause.NONE) { fallSide = null; }
         airborne = approach(airborne, motion.airborne(unit) ? 1 : 0, seconds, snap);
         bodies.forEach(Body::reset);
@@ -219,7 +221,8 @@ final class UnitAnimator {
                   * MathUtils.PI2 * Math.signum(bodyMotion.forward());
             int identity = 31 * unit.id() + (body.rig.container() == null ? 0 : body.rig.container().hashCode());
             // Keep the phase small: adding a large hash to a float loses sub-step movement precision.
-            float seed = Math.floorMod(identity, 4096) * (MathUtils.PI2 / 4096);
+            // Mix adjacent troop IDs so their gait, breathing and watch motions do not synchronize.
+            float seed = Math.floorMod(identity * (body.rig.trooper() ? 0x9E3779B9 : 1), 4096) * (MathUtils.PI2 / 4096);
             var memberStep = formation.step(body.rig.container());
             float distance = (memberStep == null ? bodyMotion.steps() * BoardGeometry.HEIGHT / model.horizontalScale(unit)
                   : memberStep.distance()) / body.memberScale;
@@ -233,21 +236,38 @@ final class UnitAnimator {
                 localPhase += seed;
             }
             if (mek || body.rig.trooper() || "proto-v1".equals(body.rig.type())) {
-                float stance = mek ? Math.max(crouch, fallen) : 0;
+                float stance = mek ? Math.max(kneel, Math.max(crouch, fallen)) : 0;
                 boolean quad = "quad-v1".equals(body.rig.type());
                 float gait = jumping || flying || UnitConversion.vehiclePose(unit) > 0 ? 0
                       : (memberStep == null ? envelope : memberStep.gait()) * (1 - stance);
-                // Authored kneeling/aiming members rise into a walking stance, then return to that same rest pose.
+                // Troops rise from their animated watch stance and settle only after their own arrival.
+                float activity = memberStep != null ? memberStep.standing() : smooth(bodyMotion.progress() * 12)
+                      * (bodyMotion.moving() ? 1 : 1 - smooth(bodyMotion.settledSeconds() / UnitMotion.FORMATION_SETTLE_SECONDS));
+                float bodyKneel = mek ? kneel : body.rig.trooper() && Math.floorMod(identity, 3) == 0 ? 1 - activity : 0;
+                if (body.rig.trooper()) { gait *= 1 - bodyKneel; }
                 float legCrouch = mek ? crouch + (quad ? fallen * .3f : 0) : 0;
                 // Absolute crouch angles must also account for the authored reverse-knee rest pose.
-                float legPose = Math.max(legCrouch, UnitConversion.vehiclePose(unit) > 0 ? 0
-                      : memberStep == null ? envelope : memberStep.standing());
+                float legPose = Math.max(bodyKneel, Math.max(legCrouch, UnitConversion.vehiclePose(unit) > 0 ? 0
+                      : body.rig.trooper() ? activity : envelope));
                 body.travelPitch.forEach((role, angle) -> body.rotate(role, Vector3.X, angle * legPose));
                 legs(body, localPhase, gait, legCrouch, jumping ? envelope : 0, strideYaw);
-                body.rotate("leftArm", Vector3.X, -MathUtils.sin(localPhase) * 9 * gait);
-                body.rotate("rightArm", Vector3.X, MathUtils.sin(localPhase) * 9 * gait);
+                kneelingLegs(body, bodyKneel);
+                if (body.rig.trooper()) {
+                    // Both hands keep the rifle together. The BA arm cannon already points forward at rest.
+                    float carry = "infantry".equals(body.rig.family()) ? 70 - 15 * activity + 20 * bodyKneel : 0;
+                    float sway = MathUtils.sin(localPhase) * 3 * gait;
+                    body.rotate("leftArm", Vector3.X, sway);
+                    body.rotate("rightArm", Vector3.X, sway);
+                    body.rotate("leftForearm", Vector3.X, carry);
+                    body.rotate("rightForearm", Vector3.X, carry);
+                    body.rotate("head", Vector3.Z, MathUtils.sin(clock * .55f + seed) * 4 * (1 - activity));
+                    body.rotate("torso", Vector3.X, -6 * bodyKneel + MathUtils.sin(clock * 2 + seed) * .7f * (1 - activity));
+                } else {
+                    body.rotate("leftArm", Vector3.X, -MathUtils.sin(localPhase) * 9 * gait);
+                    body.rotate("rightArm", Vector3.X, MathUtils.sin(localPhase) * 9 * gait);
+                }
                 if (mek) {
-                    body.rotate("torso", Vector3.X, -crouch * (quad ? 8 : 24));
+                    body.rotate("torso", Vector3.X, -crouch * (quad ? 8 : 24) - 6 * kneel);
                     body.rotate("leftArm", Vector3.X, crouch * 35);
                     body.rotate("rightArm", Vector3.X, crouch * 35);
                     body.rotate("leftForearm", Vector3.X, crouch * 55);
@@ -255,7 +275,7 @@ final class UnitAnimator {
                     body.rotate("torso", Vector3.Z, -twist);
                     fallenPose(body, sampledPosture != null ? sampledPosture.rising() : fallen < previousFall,
                           sampledPosture == null ? 1 - fallen : sampledPosture.progress());
-                } else {
+                } else if (!body.rig.trooper()) {
                     body.rotate("torso", Vector3.X, MathUtils.sin(clock * 2 + seed) * .7f * (1 - moving));
                 }
             }
@@ -300,6 +320,37 @@ final class UnitAnimator {
         dying = unit.model().state().pose().dead();
         if (dying) { deathPose(1); }
         settleContacts();
+    }
+
+    static boolean hullDown(BoardScene.Unit unit) {
+        return unit.location().hullDown() == null ? unit.model().state().pose().hullDown() : unit.location().hullDown();
+    }
+
+    /** One planted boot and the opposite knee carry a biped; quadrupeds lower onto all four knees. */
+    private static void kneelingLegs(Body body, float weight) {
+        if (weight <= 0) { return; }
+        if ("quad-v1".equals(body.rig.type())) {
+            legs(body, 0, 0, weight * .85f, 0, 0);
+            return;
+        }
+        for (int index = 0; index < 3; index++) {
+            String[] leg = LEGS[index];
+            Joint shin = body.joints.get(leg[1]), foot = body.joints.get(leg[2]);
+            if (shin == null || foot == null) { continue; }
+            float bend = weight * body.rig.kneeDirection(leg[0]);
+            // Match the supporting foot's reach to the other thigh, keeping the knee at ground level.
+            float hip = index == 0 ? (float) Math.acos(MathUtils.clamp(1 - Body.pitchLength(foot.translation)
+                  / Math.max(.001f, Body.pitchLength(shin.translation)), -1, 1)) * MathUtils.radiansToDegrees : 0;
+            float knee = index == 0 ? -hip : -90;
+            body.rotate(leg[0], Vector3.X, hip * bend);
+            body.rotate(leg[1], Vector3.X, knee * bend);
+            body.rotate(leg[2], Vector3.X, -(hip + knee) * bend);
+        }
+    }
+
+    private static float smooth(float value) {
+        float t = MathUtils.clamp(value, 0, 1);
+        return t * t * (3 - 2 * t);
     }
 
     private static void tiltForJump(Body body, GpuUnitModel model, BoardScene.Unit unit, UnitMotion.Sample motion) {
@@ -507,7 +558,7 @@ final class UnitAnimator {
               || dying) { return; }
         if (attack.shot()) {
             aimShots(model, unit, List.of(attack), ignored -> victim);
-        } else if (fallen < .01f && crouch < .01f && unit.model().state().structure().anatomy() != null) {
+        } else if (fallen < .01f && crouch < .01f && kneel < .01f && unit.model().state().structure().anatomy() != null) {
             physicalContact(model, attack, target);
         }
     }

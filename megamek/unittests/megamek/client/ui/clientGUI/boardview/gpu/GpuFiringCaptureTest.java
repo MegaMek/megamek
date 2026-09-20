@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.Color;
 import java.io.File;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -47,12 +49,7 @@ class GpuFiringCaptureTest {
         try {
             fixture.game.setPhase(GamePhase.FIRING);
             fixture.entity.setPosition(new Coords(2, 4));
-            Entity target = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
-            target.setId(42);
-            target.setOwner(fixture.player);
-            target.setPosition(new Coords(7, 4));
-            target.setDeployed(true);
-            fixture.game.addEntity(target, false);
+            Entity target = addTarget(fixture, 42, new Coords(7, 4));
             int direct = fixture.entity.getEquipmentNum(fixture.entity.getWeaponList().getFirst());
             fixture.view.addAttack(new WeaponAttackAction(fixture.entity.getId(), target.getId(), direct));
             fixture.view.addAttack(new WeaponAttackAction(fixture.entity.getId(), target.getId(), direct));
@@ -71,6 +68,16 @@ class GpuFiringCaptureTest {
         }
     }
 
+    static Entity addTarget(GpuBoardFixture fixture, int id, Coords coords) throws Exception {
+        Entity target = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
+        target.setId(id);
+        target.setOwner(fixture.player);
+        target.setPosition(coords);
+        target.setDeployed(true);
+        fixture.game.addEntity(target, false);
+        return target;
+    }
+
     @Test
     void nativeLinesKeepBothModesAndEntityElevationsWithoutGroundArrowPixels() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create(board())) {
@@ -84,6 +91,8 @@ class GpuFiringCaptureTest {
                 for (var line : scene.firingLines()) {
                     assertEquals(1, line.source().elevation());
                     assertEquals(3, line.target().elevation());
+                    assertEquals(fixture.entity.getId(), line.attackerId());
+                    assertEquals(42, line.targetId());
                 }
                 fixture.view.clearAllAttacks();
                 fixture.source.refresh();
@@ -94,6 +103,40 @@ class GpuFiringCaptureTest {
                       "Attack arrows must never be baked into per-hex ground markings");
                 // An already published scene remains immutable when orders are cleared on Swing.
                 assertEquals(2, scene.firingLines().size());
+            });
+        }
+    }
+
+    @Test
+    void splitFireKeepsTargetIdentityWhenUnitsShareAHexAndHiddenAttacksAreRemoved() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create(board())) {
+            SwingUtilities.invokeAndWait(() -> {
+                attacks(fixture);
+                try {
+                    for (int id : List.of(43, 44)) {
+                        addTarget(fixture, id, new Coords(7, 4));
+                    }
+                    var attacker = addTarget(fixture, 45, fixture.entity.getPosition());
+                    fixture.view.addAttack(new WeaponAttackAction(attacker.getId(), 42,
+                          attacker.getEquipmentNum(attacker.getWeaponList().getFirst())));
+                } catch (Exception error) {
+                    throw new IllegalStateException(error);
+                }
+                int weapon = fixture.entity.getEquipmentNum(fixture.entity.getWeaponList().getFirst());
+                fixture.view.addAttack(new WeaponAttackAction(fixture.entity.getId(), 43, weapon));
+                fixture.source.refresh();
+                var lines = fixture.source.takeFrame().scene().firingLines();
+                assertEquals(4, lines.size(), "Stacked attackers and targets must retain their identities");
+                assertEquals(Set.of(42, 43), lines.stream().map(BoardScene.FiringLine::targetId).collect(Collectors.toSet()));
+                assertEquals(List.of(42), lines.stream().filter(line -> line.attackerId() == 45)
+                      .map(BoardScene.FiringLine::targetId).toList());
+                assertEquals(3, lines.stream().filter(line -> line.attackerId() == fixture.entity.getId()).count(),
+                      "Repeated weapons from the same attacker still share a trace");
+                fixture.view.getAttackSprites().stream().filter(sprite -> sprite.getTargetedEntity().getId() == 42)
+                      .forEach(sprite -> sprite.setHidden(true));
+                fixture.source.refresh();
+                assertEquals(List.of(43), fixture.source.takeFrame().scene().firingLines().stream()
+                      .map(BoardScene.FiringLine::targetId).toList());
             });
         }
     }
@@ -117,6 +160,7 @@ class GpuFiringCaptureTest {
                         assertEquals(1, lines.size());
                         assertEquals(phase != GamePhase.FIRING && phase != GamePhase.FIRING_REPORT, lines.getFirst().indirect());
                         assertEquals(2.15f, lines.getFirst().target().elevation(), 0.001f);
+                        assertEquals(Entity.NONE, lines.getFirst().targetId(), "A hex target must not mark an unrelated unit");
                     }
                 } catch (Exception error) {
                     throw new IllegalStateException(error);

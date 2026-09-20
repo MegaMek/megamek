@@ -164,6 +164,19 @@ final class GpuUnitCamouflage implements Disposable {
         }
 
         @Override
+        public boolean equals(Object other) {
+            return other instanceof Paint paint
+                  && marker == paint.marker
+                  && compareTo(paint) == 0;
+        }
+
+        @Override
+        protected boolean equals(Attribute other) {
+            // libGDX material comparisons call this overload directly.
+            return equals((Object) other);
+        }
+
+        @Override
         public int hashCode() {
             return Objects.hash(type, cos, sin, marker, Arrays.hashCode(normalMatrix.val), Arrays.hashCode(transform.val));
         }

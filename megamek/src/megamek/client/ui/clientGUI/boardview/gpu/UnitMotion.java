@@ -231,14 +231,21 @@ final class UnitMotion {
         double distance() { return distances[distances.length - 1]; }
     }
     private record GearPause(int waypoint, boolean retract, double start, double end) { }
-    private record PosturePause(ProneCause from, ProneCause to, megamek.common.units.FallSide side, double start, double end) { }
-    record Posture(float crouch, float fallen, megamek.common.units.FallSide side, boolean rising, float progress) {
+    private record PosturePause(BoardScene.Waypoint from, BoardScene.Waypoint to, double start, double end) { }
+    record Posture(float crouch, float fallen, megamek.common.units.FallSide side, boolean rising, float progress, float kneel) {
         static Posture of(ProneCause cause) {
             return of(cause, null);
         }
         static Posture of(ProneCause cause, megamek.common.units.FallSide side) {
+            return of(cause, side, false);
+        }
+        static Posture of(ProneCause cause, megamek.common.units.FallSide side, boolean hullDown) {
             return new Posture(cause == ProneCause.VOLUNTARY ? 1 : 0,
-                  cause == ProneCause.FORCED || cause == ProneCause.UNKNOWN ? 1 : 0, side, false, 1);
+                  cause == ProneCause.FORCED || cause == ProneCause.UNKNOWN ? 1 : 0, side, false, 1,
+                  hullDown && (cause == null || cause == ProneCause.NONE) ? 1 : 0);
+        }
+        static Posture of(BoardScene.Waypoint point) {
+            return of(point.proneCause(), point.fallSide(), Boolean.TRUE.equals(point.hullDown()));
         }
     }
     record LandingGear(float deployment, BoardScene.Waypoint ground) { }
@@ -428,6 +435,15 @@ final class UnitMotion {
         List<Travel> travel = new ArrayList<>();
         int blockStart = 0;
         for (int i = 1; i < path.size(); i++) {
+            var from = path.get(i - 1);
+            var to = path.get(i);
+            boolean standing = changesPosture(from, to) && (to.proneCause() == null || to.proneCause() == ProneCause.NONE)
+                  && !Boolean.TRUE.equals(to.hullDown());
+            if (standing) {
+                time += rampTravel(travel, blockStart, path, speedGainPerHex);
+                time = addPosture(postures, from, to, time);
+                blockStart = travel.size();
+            }
             boolean changes = changesGear(path.get(i - 1), path.get(i));
             boolean takeoff = path.get(i - 1).aeroState() == BoardScene.AeroState.LANDED;
             if (changes && takeoff) {
@@ -456,9 +472,9 @@ final class UnitMotion {
                 time += LANDING_GEAR_SECONDS;
                 blockStart = travel.size();
             }
-            if (changesPosture(path.get(i - 1), path.get(i))) {
+            if (!standing && changesPosture(from, to)) {
                 time += rampTravel(travel, blockStart, path, speedGainPerHex);
-                time = addPosture(postures, path.get(i - 1), path.get(i), time);
+                time = addPosture(postures, from, to, time);
                 blockStart = travel.size();
             }
         }
@@ -468,15 +484,15 @@ final class UnitMotion {
     }
 
     static boolean changesPosture(BoardScene.Waypoint from, BoardScene.Waypoint to) {
-        return from != null && from.proneCause() != null && to.proneCause() != null && from.proneCause() != to.proneCause();
+        return from != null && ((from.proneCause() != null && to.proneCause() != null && from.proneCause() != to.proneCause())
+              || (from.hullDown() != null && to.hullDown() != null && !from.hullDown().equals(to.hullDown())));
     }
 
     private static double addPosture(List<PosturePause> pauses, BoardScene.Waypoint from, BoardScene.Waypoint to, double time) {
         if (!changesPosture(from, to)) {
             return time;
         }
-        pauses.add(new PosturePause(from.proneCause(), to.proneCause(),
-              to.fallSide() == null ? from.fallSide() : to.fallSide(), time, time + POSTURE_SECONDS));
+        pauses.add(new PosturePause(from, to, time, time + POSTURE_SECONDS));
         return time + POSTURE_SECONDS;
     }
 
@@ -711,8 +727,12 @@ final class UnitMotion {
         if (!isMoving() || remaining.getFirst().jump() != null) {
             return position;
         }
-        Playback playback = remaining.getFirst();
-        int index = Math.min((int) (progress(playback, elapsed) * (playback.path().size() - 1)), playback.path().size() - 2);
+        return surfacePosition(remaining.getFirst(), elapsed, position, scene);
+    }
+
+    private static Vector3 surfacePosition(Playback playback, double seconds, Vector3 position, BoardScene scene) {
+        if (playback.jump() != null) { return position; }
+        int index = Math.min((int) (progress(playback, seconds) * (playback.path().size() - 1)), playback.path().size() - 2);
         BoardScene.Waypoint from = playback.path().get(index), to = playback.path().get(index + 1);
         BoardScene.Tile start = scene.tile(from.coords()), end = scene.tile(to.coords());
         if (start == null || end == null || start.water() || end.water()
@@ -727,6 +747,32 @@ final class UnitMotion {
             }
         }
         return position;
+    }
+
+    /** Read-only camera samples use the actual travel curve, jump arc and support surfaces without advancing time. */
+    List<UnitFootprint.Pose> framingPath(BoardScene scene, BoardScene.Unit unit) {
+        if (!isMoving()) { return List.of(new UnitFootprint.Pose(unit, position, facing)); }
+        var playback = remaining.getFirst();
+        List<Double> times = new ArrayList<>();
+        if (playback.jump() != null) {
+            for (int i = 0; i <= 32; i++) { times.add(playback.jump().duration() * i / 32); }
+            times.add(playback.jump().ascent());
+            times.add(playback.jump().duration() - playback.jump().descent());
+        } else {
+            for (var leg : playback.travel()) {
+                for (int i = 0; i <= 4; i++) { times.add(leg.start() + (leg.end() - leg.start()) * i / 4); }
+            }
+            times.add(0.0);
+            times.add(playback.duration());
+        }
+        List<UnitFootprint.Pose> result = new ArrayList<>();
+        for (double time : times) {
+            var point = surfacePosition(playback, time, position(playback, time), scene);
+            float heading = facing(playback, time);
+            UnitFootprint.clearTerrain(scene, unit, point, heading, unit.airborne() || playback.jump() != null);
+            result.add(new UnitFootprint.Pose(unit, point, heading));
+        }
+        return result;
     }
 
     public Vector3 destination() {
@@ -777,7 +823,7 @@ final class UnitMotion {
             if (seconds < pause.end()) {
                 break;
             }
-            posture = pause.to();
+            posture = pause.to().proneCause();
         }
         JumpJets jets = null;
         if (playback.jump() != null && seconds < playback.jump().duration()) {
@@ -800,8 +846,8 @@ final class UnitMotion {
     }
 
     private static Posture posture(Playback playback, double seconds) {
-        ProneCause cause = playback.path().getFirst().proneCause();
-        var side = playback.path().getFirst().fallSide();
+        var point = playback.path().getFirst();
+        var side = point.fallSide();
         for (PosturePause pause : playback.postures()) {
             if (seconds < pause.start()) {
                 break;
@@ -812,12 +858,14 @@ final class UnitMotion {
                 var from = Posture.of(pause.from());
                 var to = Posture.of(pause.to());
                 return new Posture(MathUtils.lerp(from.crouch(), to.crouch(), t), MathUtils.lerp(from.fallen(), to.fallen(), t),
-                      pause.side(), from.fallen() > to.fallen(), t);
+                      to.side() == null ? from.side() : to.side(), from.fallen() > to.fallen(), t,
+                      MathUtils.lerp(from.kneel(), to.kneel(), t));
             }
-            cause = pause.to();
-            side = pause.side();
+            point = pause.to();
+            if (point.fallSide() != null) { side = point.fallSide(); }
         }
-        return cause == null ? null : Posture.of(cause, side);
+        return point.proneCause() == null && point.hullDown() == null ? null
+              : Posture.of(point.proneCause(), side, Boolean.TRUE.equals(point.hullDown()));
     }
 
     private static LandingGear landingGear(Playback playback, double seconds) {

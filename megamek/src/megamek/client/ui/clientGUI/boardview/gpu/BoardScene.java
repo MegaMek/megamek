@@ -85,7 +85,7 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
     }
 
     /** Absolute endpoint levels and displayed attack modes, copied from the existing visible attack sprites. */
-    record FiringLine(Waypoint source, Waypoint target, int rgb, boolean indirect) { }
+    record FiringLine(Waypoint source, Waypoint target, int rgb, boolean indirect, int attackerId, int targetId) { }
 
     /** The weapon handler already determines these edges, brackets and colours. No range rules live in the renderer. */
     record RangeBorder(Coords coords, int edges, int rgb, String label) { }
@@ -216,9 +216,15 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     public record Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
           AeroState aeroState, List<Coords> footprint, megamek.common.units.UnitLocation.Form form,
-          megamek.common.units.FallSide fallSide) {
+          megamek.common.units.FallSide fallSide, Boolean hullDown) {
         public Waypoint {
             footprint = List.copyOf(footprint);
+        }
+
+        public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
+              AeroState aeroState, List<Coords> footprint, megamek.common.units.UnitLocation.Form form,
+              megamek.common.units.FallSide fallSide) {
+            this(coords, elevation, facing, proneCause, aeroState, footprint, form, fallSide, null);
         }
 
         public Waypoint(Coords coords, float elevation, float facing, megamek.common.units.ProneCause proneCause,
@@ -244,23 +250,27 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         }
 
         Waypoint withProneCause(megamek.common.units.ProneCause cause) {
-            return new Waypoint(coords, elevation, facing, cause, aeroState, footprint, form, fallSide);
+            return new Waypoint(coords, elevation, facing, cause, aeroState, footprint, form, fallSide, hullDown);
         }
 
         Waypoint withAeroState(AeroState state) {
-            return new Waypoint(coords, elevation, facing, proneCause, state, footprint, form, fallSide);
+            return new Waypoint(coords, elevation, facing, proneCause, state, footprint, form, fallSide, hullDown);
         }
 
         Waypoint withFootprint(List<Coords> occupied) {
-            return new Waypoint(coords, elevation, facing, proneCause, aeroState, occupied, form, fallSide);
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, occupied, form, fallSide, hullDown);
         }
 
         Waypoint withForm(megamek.common.units.UnitLocation.Form value) {
-            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, value, fallSide);
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, value, fallSide, hullDown);
         }
 
         Waypoint withFallSide(megamek.common.units.FallSide side) {
-            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, form, side);
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, form, side, hullDown);
+        }
+
+        Waypoint withHullDown(Boolean value) {
+            return new Waypoint(coords, elevation, facing, proneCause, aeroState, footprint, form, fallSide, value);
         }
 
         /** Captured fitting metadata does not create another movement step at a queued path boundary. */
@@ -271,7 +281,7 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
         boolean samePoseExceptFacing(Waypoint other) {
             return coords.equals(other.coords) && elevation == other.elevation
                   && proneCause == other.proneCause && fallSide == other.fallSide && aeroState == other.aeroState
-                  && java.util.Objects.equals(form, other.form);
+                  && java.util.Objects.equals(form, other.form) && java.util.Objects.equals(hullDown, other.hullDown);
         }
     }
 

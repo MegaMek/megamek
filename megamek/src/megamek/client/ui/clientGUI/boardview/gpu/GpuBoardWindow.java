@@ -20,6 +20,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3WindowAdapter;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.logging.MMLogger;
 
@@ -122,10 +123,13 @@ public final class GpuBoardWindow {
         if (closing || source.isClosed()) {
             return;
         }
+        presented = true;
+        if (view.getClientgui() != null) {
+            view.getClientgui().setMiniReportLocation(false);
+        }
         if (classicWindow != null) {
             classicWindow.setVisible(false);
         }
-        presented = true;
         Toolkit.getDefaultToolkit().addAWTEventListener(dialogListener, AWTEvent.WINDOW_EVENT_MASK);
         focus();
     }
@@ -151,6 +155,9 @@ public final class GpuBoardWindow {
         // The native window is already destroyed. Never resurrect a client that is shutting down.
         if (restoreClassic && classicWindow != null && classicWindow.isDisplayable()) {
             showClassicWindow(classicWindow);
+            if (view.getClientgui() != null) {
+                view.getClientgui().setMiniReportLocation(GUIPreferences.getInstance().getMiniReportEnabled());
+            }
         }
         if (failure != null && restoreClassic) {
             reportFailure(view, failure);
@@ -168,6 +175,12 @@ public final class GpuBoardWindow {
         } else if (gui.getFrame().isDisplayable()) {
             showClassicWindow(gui.getFrame());
         }
+    }
+
+    /** Whether this client's native window currently owns the board and report UI. */
+    public static synchronized boolean isActiveFor(ClientGUI gui) {
+        return active != null && active.presented
+              && active.view.game == gui.getClient().getGame();
     }
 
     private static void showClassicWindow(Window window) {

@@ -220,6 +220,19 @@ and draws an opaque captured ice surface at the game's surface elevation.
 
 ## Units, visibility, and animation
 
+Hull-down Meks take a knee using the shared posture timeline; quadrupeds lower onto
+all four knees. Resolved movement carries hull-down observations, so units kneel
+after arrival and stand before travelling. Pausing, skipping and newly revealed
+units use that same pose. This is separate from voluntary prone and forced falls.
+
+Conventional infantry and battle armor share one articulated base mesh per equipment
+type (rifle, jump pack, or armored suit). Formation recipes reference `trooper` and
+optional `jumpTrooper` assets instead of pose variants. Idle watch motions, kneeling,
+walking and jump tucks animate those joints; the existing jump emitters follow the
+posed pack. Member identities keep idle variation stable across casualties and
+material changes. Each member rises for movement and settles into its watch stance
+after its own arrival, including transport unloading.
+
 Units use authored bodies assembled with equipment at runtime. `GpuUnitModel` shares placement,
 rigs and annotation bounds. Extruded sprite meeples have been removed; unavailable or disabled
 models retain a flat two-triangle sprite fallback. Raised sensor/terrain symbols independently
@@ -433,7 +446,7 @@ Diagnostic firing heat-map icons also remain in the board layer with their combi
 | Up/down, then Enter in a menu | Navigate enabled choices and activate |
 | Orders / Clear orders / Done or Skip | Inspect, clear, or explicitly commit through the original handlers |
 | Tuning / F9 | Adjust geometry, overlap opacity, see-through intensity, time of day, clouds, fog, haze, and exposure |
-| Speed / Space during playback | Change playback rate / finish queued animation and center on the selected unit |
+| Speed / Space during playback | Change playback rate / finish queued animation |
 
 Configured gameplay and menu shortcuts use the same handlers and availability checks as the classic board.
 This includes the other overlays, labels and coordinates, range and movement displays, unit/minimap/force/bot
@@ -594,6 +607,48 @@ LDR artwork; its postprocessing does not add another filmic contrast curve.
 Tactical markings and hex text draw after atmosphere compositing with restored
 opaque depth. HEIGHT labels are raised to the building/feature height and fit
 on the roof footprint. Other hex labels retain their terrain anchors.
+
+Declared attacks use thin arrows and optional red hex-corner bands at each target
+unit's base. Bands mark only the currently selected unit's assigned targets,
+including every target in split fire, and clear when no unit is selected.
+`GpuFireControl.TARGET_ARROW_SIZE`
+scales the line thickness and arrowhead together: `1f` keeps the current size,
+`0.5f` halves it, and `2f` doubles it. Set
+`GpuBattleView.SHOW_TARGET_MARKERS` to `true` to enable the bands, or `false` to
+disable them. Their width and shared-clock bobbing use `TARGET_BAND_WIDTH`,
+`TARGET_BOB_PERIOD_SECONDS`, `TARGET_BOB_HEIGHT_OFFSET`, and
+`TARGET_BOB_HEIGHT_LEVELS`, initially matching the selection band's values.
+`GpuBattleView.HIDE_TARGET_ARROWS_DURING_ATTACKS` defaults to `true`, hiding every
+attacker's arrows during combat playback, regardless of selection.
+`GpuBattleView.HIDE_TARGET_MARKERS_DURING_ATTACKS` defaults to `false`, keeping
+enabled target bands visible for the currently selected unit during playback.
+These switches operate independently. Weapon range contours are unaffected.
+
+Firing playback frames the attacker and every target in the current volley,
+including unit height and multi-hex footprints. The shared camera pans and zooms
+into the board area left clear by the firing or report panel, using the panel's
+actual resized width and excluding the top and bottom bars. Above
+`BoardCamera.ATTACK_TOP_VIEW_TILT_DEGREES` (30 degrees from overhead), it also
+chooses a nearby orbit along the usable area's long axis and raises very low
+viewpoints. At or below that threshold, all automatic framing leaves an already
+visible unit or action completely alone. Otherwise it only pans and zooms out as
+needed; it never zooms in, tilts or orbits.
+`BoardCamera.CAMERA_FRAMING_SECONDS` (0.4 seconds) bounds the shared eased move in
+wall-clock time; firing waits for it at every playback speed. Late volley targets
+share the original deadline. Panel or window changes after the move refit
+immediately, and manual camera input takes control.
+
+`BoardCamera.ANIMATE_CAMERA_ON_SELECTION_CHANGE`,
+`BoardCamera.ANIMATE_CAMERA_COMBAT_PLAYBACK`, and
+`BoardCamera.ANIMATE_CAMERA_ON_MOVE` all default to `true`. Setting one to `false`
+applies that context's framing immediately instead of animating it. Selection
+changes preserve the viewing angles and avoid unnecessary zooming in. Movement
+checks the start, whole rendered route and destination against the clear board
+area before advancing its clock, including the jump arc, height and footprint.
+If the route is already visible, there is no camera move or delay. Otherwise,
+the camera uses the smallest pan and any required zoom out, preserving its
+angles, then stays still throughout travel and its completion hold. Selection
+changes received during playback take effect after the final hold.
 
 Weapon ranges use translucent contours and flat `min`, `S`, `M`, `L`, and `E`
 markers at the existing firing-arc handler's positions within each range area.

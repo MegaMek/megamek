@@ -52,6 +52,7 @@ class InfantryVisualTest {
               descriptor("battle-armor"));
         var after = BattleArmorVisual.parts(state(EntityMovementMode.INF_JUMP, 1, List.of(6)), descriptor("battle-armor"));
         assertEquals(6, before.size());
+        assertEquals(1, before.stream().map(InfantryVisual.Part::asset).distinct().count(), "Every suit shares its base mesh");
         assertEquals(List.of(before.get(5)), after);
         assertEquals(0, BattleArmorVisual.parts(state(EntityMovementMode.INF_JUMP, 0, List.of()),
               descriptor("battle-armor")).size());
@@ -63,9 +64,11 @@ class InfantryVisualTest {
     void jumpInfantryUsesJumpPackMeshesAndFootInfantryStaysCompressed() {
         var jumps = InfantryVisual.parts(state(EntityMovementMode.INF_JUMP, 28, List.of()), descriptor("infantry"));
         assertEquals(6, jumps.size());
+        assertEquals(1, jumps.stream().map(InfantryVisual.Part::asset).distinct().count());
         assertEquals(6, jumps.stream().filter(part -> part.asset().contains("/jump-")).count());
         var foot = InfantryVisual.parts(state(EntityMovementMode.INF_LEG, 9, List.of()), descriptor("infantry"));
         assertEquals(3, foot.size());
+        assertEquals(1, foot.stream().map(InfantryVisual.Part::asset).distinct().count());
         assertEquals(3, foot.stream().filter(part -> part.asset().contains("/rifle-")).count());
     }
 }

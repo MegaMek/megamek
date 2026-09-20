@@ -34,6 +34,7 @@ import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.units.Entity;
+import org.apache.commons.text.StringEscapeUtils;
 
 /** Read-only descriptions of existing controls. Every execution rechecks current Swing/game state. */
 final class GpuBoardActions {
@@ -338,9 +339,10 @@ final class GpuBoardActions {
     }
 
     static String plainText(String text) {
-        return text == null ? "" : text.replaceAll("(?is)<head>.*?</head>", "")
+        String stripped = text == null ? "" : text.replaceAll("(?is)<head>.*?</head>", "")
               .replaceAll("(?i)<(?:br\\s*/?|/tr|/p|/div)>", "\n")
               .replaceAll("(?i)</t[dh]>", "  ").replaceAll("<[^>]*>", "")
-              .replace("&nbsp;", " ").replace("&lt;", "<").replace("&gt;", ">").replace("&amp;", "&").trim();
+              .replace("&apos;", "'");
+        return StringEscapeUtils.unescapeHtml4(stripped).replace('\u00A0', ' ').strip();
     }
 }

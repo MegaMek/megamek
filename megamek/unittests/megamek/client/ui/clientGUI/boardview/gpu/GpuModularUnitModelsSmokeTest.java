@@ -67,7 +67,7 @@ class GpuModularUnitModelsSmokeTest {
                     var gun = library.modular(ROOT + "equipment/ppc.json");
                     var launcher = library.modular(ROOT + "equipment/srm-6.json");
                     var lamp = library.modular(ROOT + "equipment/searchlight.json");
-                    var troop = library.modular(ROOT + "troops/rifle-kneeling.json");
+                    var troop = library.modular(ROOT + "troops/rifle-standing.json");
                     for (var asset : List.of(body, gun, launcher, lamp, troop)) {
                         assertNotNull(asset);
                     }

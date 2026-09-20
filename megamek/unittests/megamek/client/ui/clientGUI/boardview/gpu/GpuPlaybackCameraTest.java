@@ -27,7 +27,7 @@ class GpuPlaybackCameraTest {
     }
 
     @Test
-    void followsEachQueuedMoverThenTheSelectedUnitAfterTheFinalHoldInBothCameras() throws Exception {
+    void framesEachQueuedRouteBeforeTravelAndKeepsTheCameraStillDuringTravelAndHolds() throws Exception {
         var first = movement(1, 0, 2);
         var enemy = movement(2, 7, 9);
         var next = UnitPlaybackTest.unit(3, 11);
@@ -41,36 +41,44 @@ class GpuPlaybackCameraTest {
                     view.updateCameraFocus(initial, INITIAL_CENTER);
                     var latest = scene(next.id(), first.unit(), enemy.unit(), next);
                     playback.accept(List.of(first, enemy), latest, ignored -> false);
-                    playback.advance(0, speed);
+                    playback.advance(0, speed, state -> view.preparePlaybackCamera(state, latest));
                     focus(view, playback, latest);
-                    assertFocus(view, 0);
+                    view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                    var firstFrame = view.boardCamera.focus.cpy();
 
                     var motion = playback.motions.get(1);
                     playback.advance(motion.remainingSeconds() / (2 * speed.rate), speed);
                     focus(view, playback, latest);
-                    assertEquals(motion.position(), view.boardCamera.focus, "The camera follows the presented position");
+                    assertEquals(firstFrame, view.boardCamera.focus, "A framed route must not chase the moving unit");
                     playback.advance(motion.remainingSeconds() / speed.rate, speed);
                     focus(view, playback, latest);
-                    assertFocus(view, 2);
+                    assertEquals(firstFrame, view.boardCamera.focus);
                     playback.advance(UnitPlayback.COMPLETION_HOLD_SECONDS - .001, speed);
                     focus(view, playback, latest);
-                    assertFocus(view, 2);
+                    assertEquals(firstFrame, view.boardCamera.focus);
 
-                    playback.advance(.001, speed);
+                    playback.advance(.001, speed, state -> view.preparePlaybackCamera(state, latest));
                     focus(view, playback, latest);
-                    assertFocus(view, 7);
                     assertEquals(enemy.entityId(), playback.activeEntityId(), "The enemy action takes focus before the live selection");
                     motion = playback.motions.get(enemy.entityId());
+                    assertEquals(BoardGeometry.center(enemy.path().getFirst().coords(), 0), motion.position());
+                    assertTrue(view.boardCamera.isFraming());
+                    playback.advance(10, speed, state -> view.preparePlaybackCamera(state, latest));
+                    assertEquals(BoardGeometry.center(enemy.path().getFirst().coords(), 0), motion.position(),
+                          "Even a large fast frame must wait for the route to be visible");
+                    view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                    var enemyFrame = view.boardCamera.focus.cpy();
                     playback.advance(motion.remainingSeconds() / speed.rate, speed);
                     focus(view, playback, latest);
-                    assertFocus(view, 9);
+                    assertEquals(enemyFrame, view.boardCamera.focus);
                     playback.advance(UnitPlayback.COMPLETION_HOLD_SECONDS - .001, speed);
                     focus(view, playback, latest);
-                    assertFocus(view, 9);
+                    assertEquals(enemyFrame, view.boardCamera.focus);
                     playback.advance(.001, speed);
                     focus(view, playback, latest);
                     assertFalse(playback.busy());
-                    assertFocus(view, 11);
+                    view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                    BoardCameraFramingTest.assertVisible(view.boardCamera, 800, next);
 
                     view.boardCamera.pan(40, 20);
                     var panned = view.boardCamera.focus.cpy();
@@ -84,7 +92,7 @@ class GpuPlaybackCameraTest {
     }
 
     @Test
-    void firingKeepsFocusThroughAPausedHoldThenUsesTheLatestSelection() throws Exception {
+    void firingKeepsBothParticipantsInFrameThroughAPausedHoldThenUsesTheLatestSelection() throws Exception {
         var attacker = UnitPlaybackTest.unit(2, 7);
         var target = UnitPlaybackTest.unit(1, 0);
         var next = UnitPlaybackTest.unit(3, 11);
@@ -98,26 +106,30 @@ class GpuPlaybackCameraTest {
                 playback.accept(List.of(shot), initial, ignored -> false);
                 playback.advance(0, UnitMotion.Speed.NORMAL);
                 focus(view, playback, initial);
-                assertFocus(view, 7);
+                view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                BoardCameraFramingTest.assertVisible(view.boardCamera, 800, attacker);
+                BoardCameraFramingTest.assertVisible(view.boardCamera, 800, target);
+                var framed = view.boardCamera.focus.cpy();
                 playback.advance(playback.attack().duration / UnitMotion.Speed.NORMAL.rate, UnitMotion.Speed.NORMAL);
                 var latest = scene(next.id(), target, attacker, next);
                 focus(view, playback, latest);
-                assertFocus(view, 7);
+                assertEquals(framed, view.boardCamera.focus);
                 playback.togglePaused();
                 playback.advance(10, UnitMotion.Speed.NORMAL);
                 focus(view, playback, latest);
                 assertEquals(UnitPlayback.COMPLETION_HOLD_SECONDS, playback.holdSeconds(), 1e-6);
-                assertFocus(view, 7);
+                assertEquals(framed, view.boardCamera.focus);
                 playback.togglePaused();
                 playback.advance(UnitPlayback.COMPLETION_HOLD_SECONDS / 2, UnitMotion.Speed.NORMAL);
                 focus(view, playback, latest);
-                assertFocus(view, 7);
+                assertEquals(framed, view.boardCamera.focus);
                 // Another selection during the hold supersedes the earlier one, even with a stale center request.
                 latest = scene(target.id(), target, attacker, next);
                 playback.advance(UnitPlayback.COMPLETION_HOLD_SECONDS / 2, UnitMotion.Speed.NORMAL);
                 view.updateCameraFocus(playback.present(latest), new BoardView.CenterRequest(2, next.location().coords()));
                 assertFalse(playback.busy());
-                assertFocus(view, 0);
+                view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                BoardCameraFramingTest.assertVisible(view.boardCamera, 800, target);
             } finally {
                 view.dispose();
             }
@@ -125,7 +137,7 @@ class GpuPlaybackCameraTest {
     }
 
     @Test
-    void skippingPlaybackReturnsToTheSelectionEvenWhenItHasNotChanged() throws Exception {
+    void skippingMovementDoesNotStartAnotherCameraMoveWhenSelectionHasNotChanged() throws Exception {
         var selected = UnitPlaybackTest.unit(1, 0);
         var enemy = movement(2, 7, 9);
         for (Consumer<UnitPlayback> skip : List.<Consumer<UnitPlayback>>of(
@@ -138,10 +150,12 @@ class GpuPlaybackCameraTest {
                 playback.accept(List.of(enemy), latest, ignored -> false);
                 playback.advance(.1, UnitMotion.Speed.NORMAL);
                 focus(view, playback, latest);
-                assertTrue(view.boardCamera.focus.dst(BoardGeometry.center(selected.location().coords(), 0)) > BoardGeometry.HEIGHT);
+                view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                var framed = view.boardCamera.focus.cpy();
                 skip.accept(playback);
                 focus(view, playback, latest);
-                assertFocus(view, 0);
+                assertFalse(view.boardCamera.isFraming());
+                assertEquals(framed, view.boardCamera.focus);
             } finally {
                 view.dispose();
             }
@@ -149,15 +163,23 @@ class GpuPlaybackCameraTest {
     }
 
     @Test
-    void idleSelectionChangesAndExplicitRequestsStillCenterButAbsentSelectionsDoNot() {
+    void idleSelectionChangesAnimateOnceAndExplicitCenterRequestsStillTakeControl() {
         var first = UnitPlaybackTest.unit(1, 0);
         var next = UnitPlaybackTest.unit(3, 11);
         var view = view(false);
         try {
             view.updateCameraFocus(scene(first.id(), first, next), INITIAL_CENTER);
+            var before = view.boardCamera.focus.cpy();
             var latest = scene(next.id(), first, next);
             view.updateCameraFocus(latest, INITIAL_CENTER);
-            assertFocus(view, 11);
+            assertEquals(before, view.boardCamera.focus, "Selection must not snap");
+            assertTrue(view.boardCamera.isFraming());
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS / 2);
+            view.updateCameraFocus(latest, INITIAL_CENTER);
+            assertTrue(view.boardCamera.isFraming(), "Unchanged snapshots must not cancel the selection transition");
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS / 2);
+            assertFalse(view.boardCamera.isFraming());
+            BoardCameraFramingTest.assertVisible(view.boardCamera, 800, next);
             var request = new BoardView.CenterRequest(2, new Coords(0, 5));
             view.updateCameraFocus(latest, request);
             assertFocus(view, 5);

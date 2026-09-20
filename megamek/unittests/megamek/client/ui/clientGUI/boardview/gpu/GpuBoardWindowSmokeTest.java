@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
@@ -19,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +51,10 @@ import megamek.client.ui.clientGUI.CommonMenuBar;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
+import megamek.client.ui.dialogs.miniReport.MiniReportDisplayDialog;
+import megamek.client.ui.dialogs.miniReport.MiniReportDisplayPanel;
+import megamek.client.ui.entityreadout.LiveReadoutDialog;
+import megamek.common.Report;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
@@ -61,6 +67,74 @@ import org.lwjgl.glfw.GLFW;
 class GpuBoardWindowSmokeTest {
     private record ClientWindow(JFrame frame, CommonMenuBar menus, BoardView view, JMenuItem gpuChoice,
           UnitOverviewOverlay overview) { }
+
+    @Test
+    void classicReportStaysHiddenUntilReturningFromTheNativeBoard() throws Exception {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        boolean enabled = preferences.getMiniReportEnabled();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            ClientWindow ui = onSwing(() -> createClientWindow(fixture));
+            ClientGUI gui = ui.view().getClientgui();
+            MiniReportDisplayDialog report = onSwing(() -> {
+                MiniReportDisplayDialog dialog = new MiniReportDisplayDialog(ui.frame(), gui);
+                when(gui.getMiniReportDisplayDialog()).thenReturn(dialog);
+                when(gui.getMiniReportDisplay()).thenReturn(mock(MiniReportDisplayPanel.class));
+                doAnswer(invocation -> {
+                    if (GpuBoardWindow.isActiveFor(gui)) {
+                        invocation.callRealMethod();
+                    } else {
+                        // The fixture has no classic split panes. Observe the restored visibility request instead.
+                        dialog.setVisible(invocation.getArgument(0));
+                    }
+                    return null;
+                }).when(gui).setMiniReportLocation(anyBoolean());
+                preferences.setMiniReportEnabled(true);
+                dialog.setVisible(true);
+                return dialog;
+            });
+            try {
+                onSwing(() -> { ui.gpuChoice().doClick(0); return null; });
+                await(() -> onSwing(() -> !ui.frame().isVisible()));
+                onSwing(() -> {
+                    assertTrue(GpuBoardWindow.isActiveFor(gui));
+                    assertFalse(report.isVisible(), "Hide an already open classic report during the handoff");
+                    fixture.game.setPhase(GamePhase.FIRING_REPORT);
+                    fixture.game.setAllReports(List.of(List.of(new Report(3000),
+                          new Report(6065).addDesc(fixture.entity).add(10).add("Left Torso"))));
+                    gui.setMiniReportLocation(true);
+                    assertFalse(report.isVisible(), "Phase and preference updates must not reopen the legacy dialog");
+                    assertTrue(preferences.getMiniReportEnabled(), "Suppressing the old window preserves 2D preferences");
+                    return null;
+                });
+                await(() -> onGl(() -> GpuBoardTestUi.stage().getRoot().findActor("report-readout:1") != null));
+                input(() -> GpuBoardTestUi.click("report-readout:1"));
+                await(() -> onSwing(() -> java.util.Arrays.stream(ui.frame().getOwnedWindows())
+                      .anyMatch(window -> window instanceof LiveReadoutDialog && window.isVisible() && window.isAlwaysOnTop())));
+                onSwing(() -> {
+                    assertFalse(report.isVisible(), "Opening a unit's details must not revive the old report");
+                    for (var window : ui.frame().getOwnedWindows()) {
+                        if (window instanceof LiveReadoutDialog) {
+                            window.dispatchEvent(new WindowEvent(window, WindowEvent.WINDOW_CLOSING));
+                        }
+                    }
+                    GpuBoardWindow.showClassic(gui);
+                    return null;
+                });
+                await(() -> onSwing(() -> ui.frame().isVisible() && report.isVisible()));
+                assertFalse(onSwing(() -> GpuBoardWindow.isActiveFor(gui)));
+            } finally {
+                onSwing(() -> {
+                    GpuBoardWindow.closeFor(ui.view());
+                    report.dispose();
+                    ui.frame().dispose();
+                    ui.view().dispose();
+                    preferences.removePreferenceChangeListener(ui.menus());
+                    preferences.setMiniReportEnabled(enabled);
+                    return null;
+                });
+            }
+        }
+    }
 
     @Test
     void switchesExclusiveWindowsThroughMenusAndRestoresClassicOnNativeClose() throws Exception {

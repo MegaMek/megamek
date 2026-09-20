@@ -29,7 +29,7 @@ class BoardFiringGeometryTest {
 
     private static BoardScene.FiringLine line(Coords start, float startHeight, Coords end, float endHeight, boolean indirect) {
         return new BoardScene.FiringLine(new BoardScene.Waypoint(start, startHeight, 0),
-              new BoardScene.Waypoint(end, endHeight, 0), 0x00FFAA, indirect);
+              new BoardScene.Waypoint(end, endHeight, 0), 0x00FFAA, indirect, -1, -1);
     }
 
     @Test

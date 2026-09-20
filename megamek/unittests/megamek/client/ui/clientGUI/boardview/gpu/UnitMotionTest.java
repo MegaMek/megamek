@@ -416,6 +416,34 @@ class UnitMotionTest {
     }
 
     @Test
+    void hullDownKneelsAtArrivalAndStandsBeforeTravelWithoutMovingDuringEitherTransition() {
+        var standing = START.withProneCause(ProneCause.NONE).withHullDown(false);
+        var kneeling = point(2).withProneCause(ProneCause.NONE).withHullDown(true);
+        assertFalse(standing.samePose(standing.withHullDown(true)), "A posture-only step must survive deduplication");
+        assertFalse(UnitMotion.changesPosture(standing, standing.withHullDown(null)), "Missing observations cannot invent a transition");
+        var motion = new UnitMotion(standing);
+        motion.append(List.of(standing, kneeling), EntityMovementType.MOVE_WALK, 0);
+        motion.advance(motion.remainingSeconds() - UnitMotion.POSTURE_SECONDS, 1);
+        assertEquals(BoardGeometry.center(kneeling.coords(), kneeling.elevation()), motion.position());
+        assertEquals(0, motion.sample().posture().kneel(), .001);
+        motion.advance(UnitMotion.POSTURE_SECONDS / 2, 1);
+        assertEquals(.5, motion.sample().posture().kneel(), .001);
+        assertEquals(ProneCause.NONE, motion.sample().proneCause(), "Hull-down never changes the game's prone cause");
+        var paused = motion.sample();
+        motion.advance(0, 1);
+        assertEquals(paused, motion.sample());
+        motion.finish();
+        motion.append(List.of(kneeling, standing), EntityMovementType.MOVE_WALK, 0);
+        motion.advance(UnitMotion.POSTURE_SECONDS / 2, 1);
+        assertEquals(.5, motion.sample().posture().kneel(), .001);
+        assertEquals(BoardGeometry.center(kneeling.coords(), kneeling.elevation()), motion.position(), "Stand before travelling");
+        motion.advance(UnitMotion.POSTURE_SECONDS / 2 + .05, 1);
+        assertEquals(0, motion.sample().posture().kneel(), .001);
+        motion.finish();
+        assertEquals(BoardGeometry.center(standing.coords(), standing.elevation()), motion.position());
+    }
+
+    @Test
     void jumpExhaustEndsAtLandingBeforeAFallFinishes() {
         var start = START.withProneCause(ProneCause.NONE);
         var landing = point(2).withProneCause(ProneCause.FORCED);

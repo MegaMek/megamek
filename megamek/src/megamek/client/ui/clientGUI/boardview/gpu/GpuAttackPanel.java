@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.Align;
 
 /** A native attack console. Its only inputs are presentation snapshots and the existing phase commands. */
 final class GpuAttackPanel {
+    static final int WIDTH = 362;
     private static final Set<String> QUICK_ACTIONS = Set.of("fireNextTarg", "fireTwist", "fireMode");
     private static final Color AMBER = Color.valueOf("D8BC82");
     private final Skin skin;
@@ -165,7 +166,7 @@ final class GpuAttackPanel {
     }
 
     void resize(float width, float height) {
-        panel.setBounds(width - 374, GpuBoardUi.TURN_HEIGHT + 12, 362,
+        panel.setBounds(width - WIDTH - 12, GpuBoardUi.TURN_HEIGHT + 12, WIDTH,
               Math.max(1, height - GpuBoardUi.TOP_HEIGHT - GpuBoardUi.TURN_HEIGHT - 24));
     }
 
@@ -202,7 +203,7 @@ final class GpuAttackPanel {
         if (weaponScroll.isVisible()) {
             // Give the weapon list the remaining space, keeping ammo and queued orders in reach on small windows.
             float otherHeight = content.getPrefHeight() - weaponScroll.getHeight();
-            float height = Math.max(48, Math.min(156, scroll.getHeight() - otherHeight));
+            float height = Math.max(48, scroll.getHeight() - otherHeight);
             if (Math.abs(weaponScroll.getHeight() - height) > 0.5f) {
                 content.getCell(weaponScroll).height(height);
                 content.invalidateHierarchy();

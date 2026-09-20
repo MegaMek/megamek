@@ -114,11 +114,12 @@ class GpuKingCrabModelReviewTest {
                             views(renderer, instance, unit, "king-crab-stock");
                             views(renderer, bareInstance, unit, "king-crab-bare");
                             details(renderer, damage, camo, model, unit);
+                            locationDamage(renderer, damage, bare, unit);
                             firing(renderer, library, model, entity, unit);
-                            movement(renderer, model, unit, EntityMovementType.MOVE_WALK, 3);
-                            movement(renderer, model, unit, EntityMovementType.MOVE_RUN, 5);
+                            GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "king-crab", EntityMovementType.MOVE_WALK, 3);
+                            GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "king-crab", EntityMovementType.MOVE_RUN, 5);
                         } else if (entity.getModel().equals("KGC-008")) {
-                            movement(renderer, model, unit, EntityMovementType.MOVE_JUMP, 3);
+                            GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "king-crab", EntityMovementType.MOVE_JUMP, 3);
                         }
                     }
                     assertNotNull(stock);
@@ -196,51 +197,57 @@ class GpuKingCrabModelReviewTest {
         instance.calculateTransforms();
         renderer.frame(List.of(instance), center(unit), null, "king-crab-twist", 0);
         for (int i = 0; i < 4; i++) {
+            var damaged = new ModelInstance(instance);
             var stage = List.of(UnitDamageDisplay.Stage.ARMOR_WORN, UnitDamageDisplay.Stage.ARMOR_STRIPPED,
                   UnitDamageDisplay.Stage.STRUCTURE_BATTERED).get(Math.min(i, 2));
             var locations = new BoardScene.LocationDamage(i == 3 ? Set.of("LA", "HD") : Set.of(),
                   i == 3 ? Set.of("RT") : Set.of(), i == 3 ? Map.of() : Map.of("LT", stage));
-            UnitDamageDisplay.show(instance, locations);
-            damage.applyTexture(instance, locations, unit.id());
-            renderer.frame(List.of(instance), center(unit), null, "king-crab-damage", i);
+            UnitDamageDisplay.show(damaged, locations);
+            damage.applyTexture(damaged, locations, unit.id());
+            renderer.frame(List.of(damaged), center(unit), null, "king-crab-damage", i);
         }
     }
 
-    private static void movement(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit,
-          EntityMovementType mode, int speed) {
-        var motion = new UnitMotion(unit.location());
-        var to = new BoardScene.Waypoint(unit.location().coords().translated(0, 3), 0, 0);
-        motion.append(List.of(unit.location(), to), mode, mode == EntityMovementType.MOVE_JUMP ? 3 : 0, false, speed);
-        var animator = new UnitAnimator();
-        var instance = new ModelInstance(model.instance.model);
-        var jets = new GpuJumpJets();
+    /** Continuous carapaces still need four real, independently damageable regions. */
+    private static void locationDamage(GpuPlaybackReview.ReviewRenderer renderer, UnitDamageDisplay damage,
+          GpuUnitModel bare, BoardScene.Unit unit) {
+        var locations = List.of("HD", "CT", "LT", "RT");
         var originalView = renderer.viewOffset.cpy();
-        float dt = (float) motion.remainingSeconds() / 48;
         try {
-            for (int frame = 0; frame <= 48; frame++) {
-                motion.advance(frame == 0 ? 0 : dt, 1);
-                animator.apply(model, instance, unit, motion.sample(), frame * dt, dt, false, 0);
-                model.place(instance, renderer.camera, motion.position(), motion.facing(), unit);
-                jets.beginFrame();
-                jets.update("king-crab", model, instance, unit, motion.sample());
-                assertTrue(instance.calculateBoundingBox(new com.badlogic.gdx.math.collision.BoundingBox()).isValid());
-                for (String leg : List.of("LL", "RL")) {
-                    var hip = instance.getNode(leg).globalTransform.getTranslation(new Vector3());
-                    var knee = instance.getNode(leg + "-shin").globalTransform.getTranslation(new Vector3());
-                    var ankle = instance.getNode(leg + "-foot").globalTransform.getTranslation(new Vector3());
-                    var axis = ankle.sub(hip);
-                    var projected = hip.cpy().mulAdd(axis, knee.cpy().sub(hip).dot(axis) / axis.len2());
-                    assertTrue(knee.y < projected.y, mode + " frame " + frame + ": reverse knee crossed its leg axis");
+            for (String location : locations) {
+                var instance = new ModelInstance(bare.instance.model);
+                var state = new BoardScene.LocationDamage(Set.of(), Set.of(),
+                      Map.of(location, UnitDamageDisplay.Stage.ARMOR_STRIPPED));
+                damage.applyTexture(instance, state, unit.id());
+                for (String other : locations) {
+                    var parts = UnitDamageDisplay.locationParts(instance, other);
+                    assertFalse(parts.isEmpty(), other);
+                    for (var part : parts) {
+                        assertEquals(other.equals(location), part.material.has(UnitDamageDisplay.Overlay.TYPE),
+                              location + " damage must stay on its own geometry, not " + other);
+                    }
                 }
-                renderer.viewOffset.set(originalView);
-                renderer.frame(List.of(instance), motion.position(), null, jets, "king-crab-" + mode.name(), frame);
-                renderer.viewOffset.set(180, 0, 43);
-                renderer.frame(List.of(instance), motion.position(), null, jets, "king-crab-" + mode.name() + "-side", frame);
+                renderer.viewOffset.set(location.equals("LT") ? -95 : 95, 150, 105);
+                bare.place(instance, renderer.camera, center(unit), 0, unit);
+                renderer.frame(List.of(instance), center(unit), null, "king-crab-damage-" + location, 0);
+                if (location.equals("HD")) {
+                    // Partial armor damage deliberately preserves glazing; destruction affects the entire band.
+                    var wrecked = new BoardScene.LocationDamage(Set.of(), Set.of("HD"));
+                    assertTrue(UnitDamageDisplay.show(instance, wrecked).isEmpty());
+                    damage.applyTexture(instance, wrecked, unit.id());
+                    renderer.frame(List.of(instance), center(unit), null, "king-crab-head-destroyed", 0);
+                }
             }
-        } finally {
-            renderer.viewOffset.set(originalView);
-            jets.dispose();
-        }
+            var detached = new ModelInstance(bare.instance.model);
+            assertTrue(UnitDamageDisplay.show(detached, new BoardScene.LocationDamage(Set.of("HD"), Set.of())).isEmpty());
+            for (String location : locations) {
+                for (var part : UnitDamageDisplay.locationParts(detached, location)) {
+                    assertEquals(!location.equals("HD"), part.enabled, location + " after HD-only removal");
+                }
+            }
+            bare.place(detached, renderer.camera, center(unit), 0, unit);
+            renderer.frame(List.of(detached), center(unit), null, "king-crab-head-removed", 0);
+        } finally { renderer.viewOffset.set(originalView); }
     }
 
     private static void firing(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, GpuUnitModel model,

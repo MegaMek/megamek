@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.Ray;
 import com.badlogic.gdx.utils.JsonValue;
 import megamek.client.ui.tileset.EquipmentModelPolicy;
 import megamek.client.ui.tileset.UnitModelEquipment;
@@ -101,6 +102,13 @@ final class UnitEquipmentAssembly {
             if (visual == null || !seen.add(mount.index())) {
                 continue;
             }
+            if (structure.anatomy() != null && "partial-wing".equals(visual.family())) {
+                var module = library.modular(visual.asset());
+                if (validModule(module, mount)) {
+                    pending.add(partialWing(body, mount, visual, module));
+                }
+                continue;
+            }
             String location = attachmentLocation(structure.anatomy(), mount);
             String form = armForm(structure.anatomy(), location);
             List<JsonValue> candidates = new ArrayList<>();
@@ -170,6 +178,32 @@ final class UnitEquipmentAssembly {
         return pending;
     }
 
+    /** A spreadable wing is one paired assembly on the back, independent of its first critical-slot location. */
+    private static Pending partialWing(GpuUnitModels.ModularAsset body, UnitModelEquipment.Mount mount,
+          UnitEquipmentModels.Visual visual, GpuUnitModels.ModularAsset module) {
+        String torso = body.descriptor().joints().get("torso");
+        var torsoTransform = body.model().getNode(torso).globalTransform;
+        var bodyBounds = body.descriptor().bounds();
+        var position = torsoTransform.getTranslation(new Vector3());
+        position.set(position.x, bodyBounds.min().get(1) - 1,
+              bodyBounds.min().get(2) + (bodyBounds.max().get(2) - bodyBounds.min().get(2)) * .7f);
+        // Reuse the torso mount's height, then find the actual back surface (also for tapered/air-Mek bodies).
+        body.descriptor().hardpoints().stream().filter(point -> point.location().equals("CT") && point.side().equals("rear"))
+              .findFirst().ifPresent(point -> position.z = UnitModelDescriptor.vector(point.position())
+                    .mul(body.model().getNode(point.node()).globalTransform).z);
+        float distance = new UnitPicking().distance(new ModelInstance(body.model()), new Ray(position, Vector3.Y));
+        position.y += Float.isFinite(distance) ? (float) Math.sqrt(distance) : 1;
+        position.mul(new Matrix4(torsoTransform).inv());
+        var wing = module.descriptor().bounds();
+        float span = (bodyBounds.max().get(0) - bodyBounds.min().get(0)) * 1.2f;
+        float scale = span / (wing.max().get(0) - wing.min().get(0));
+        var point = new UnitModelDescriptor.Hardpoint("partial-wing", mount.location(), "rear", torso,
+              List.of(position.x, position.y, position.z), List.of(0f, 0f, 0f, 1f),
+              List.of(span + 1, (wing.max().get(1) - wing.min().get(1)) * scale + 1,
+                    (wing.max().get(2) - wing.min().get(2)) * scale + 1), scale, scale, List.of("misc"));
+        return new Pending(mount, point, DEFAULT_PLACEMENT, visual, module, scale, 0, 0);
+    }
+
     private static void attach(GpuUnitModels library, Model assembled, Pending item,
           Map<String, MountFrame> areas, List<Binding> bindings) {
         var point = item.point();
@@ -180,7 +214,9 @@ final class UnitEquipmentAssembly {
         if (!Float.isFinite(scale) || scale <= 0 || scale > point.maxScale()) {
             throw new IllegalArgumentException("Invalid mount scale: " + point.id());
         }
-        var area = areas.computeIfAbsent(point.location() + ":" + point.side(), ignored -> new MountFrame(socket));
+        // Wings span the torso and clear its rear face; they must not compete with guns or exhaust for face space.
+        var area = point.id().equals("partial-wing") ? new MountFrame(socket)
+              : areas.computeIfAbsent(point.location() + ":" + point.side(), ignored -> new MountFrame(socket));
         var module = item.module();
         String moduleAsset = item.visual().asset();
         Vector3 size = new Vector3();

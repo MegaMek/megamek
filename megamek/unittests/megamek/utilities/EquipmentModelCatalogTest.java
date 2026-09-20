@@ -68,6 +68,16 @@ class EquipmentModelCatalogTest {
     }
 
     @Test
+    void bothMekPartialWingsShareTheOptionalWingFamily() {
+        for (MiscType type : List.of(MiscType.createISPartialWing(), MiscType.createCLPartialWing())) {
+            var entry = EquipmentModelCatalog.describe(type);
+            assertEquals(EquipmentModelPolicy.OPTIONAL_MISC, entry.policy());
+            assertEquals("partial-wing", entry.family());
+            assertFalse(entry.allowsFallback());
+        }
+    }
+
+    @Test
     void unknownWeaponsRequireFallbackButLogicalArraysUseMembers() {
         WeaponType weapon = new WeaponType();
         var unknown = EquipmentModelCatalog.describe(weapon);

@@ -4,6 +4,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.spy;
 
@@ -64,6 +65,12 @@ class GpuCombatCameraSmokeTest {
                 }
             });
             var source = spy(fixture.source);
+            doAnswer(invocation -> {
+                fixture.source.setViewport(invocation.getArgument(0), invocation.getArgument(1),
+                      invocation.getArgument(2), invocation.getArgument(3));
+                SwingUtilities.invokeAndWait(fixture.source::refresh);
+                return null;
+            }).when(source).setViewport(anyInt(), anyInt(), anyInt(), anyInt());
             // Supply the existing firing-panel snapshot; this test exercises its actual native layout and viewport.
             var attackPanel = new BoardScene.Attack("Split fire: two targets", "Medium Laser", "", 0,
                   List.of("Fire at both distant targets"));
@@ -95,6 +102,9 @@ class GpuCombatCameraSmokeTest {
                         }
                         if (step == 0) {
                             var scene = (BoardScene) field(this, "scene");
+                            assertTrue(ui.cameraWidth() > boardCamera.camera.viewportWidth / 3,
+                                  "The initial fit must use the laid-out board area, not a placeholder HUD viewport");
+                            assertTrue(boardCamera.camera.zoom < 10, "Opening the window must not zoom far beyond the board");
                             var attacker = scene.units().stream().filter(unit -> unit.id() == 1).findFirst().orElseThrow();
                             shots = scene.units().stream().filter(unit -> unit.id() != 1)
                                   .<BoardScene.Animation>map(target -> UnitPlaybackTest.attack(attacker, target,

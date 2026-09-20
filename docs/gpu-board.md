@@ -627,14 +627,17 @@ These switches operate independently. Weapon range contours are unaffected.
 Firing playback frames the attacker and every target in the current volley,
 including unit height and multi-hex footprints. The shared camera pans and zooms
 into the board area left clear by the firing or report panel, using the panel's
-actual resized width and excluding the top and bottom bars. Above
+actual resized width and excluding the top and bottom bars. Both panels reserve
+the visible unit-list strip, with the same gap between strip and panel as between
+strip and window edge. This follows HUD scaling and report resizing; hiding the
+strip releases its space, and camera framing also excludes the strip. Above
 `BoardCamera.ATTACK_TOP_VIEW_TILT_DEGREES` (30 degrees from overhead), it also
 chooses a nearby orbit along the usable area's long axis and raises very low
 viewpoints. At or below that threshold, all automatic framing leaves an already
 visible unit or action completely alone. Otherwise it only pans and zooms out as
 needed; it never zooms in, tilts or orbits.
 `BoardCamera.CAMERA_FRAMING_SECONDS` (0.4 seconds) bounds the shared eased move in
-wall-clock time; firing waits for it at every playback speed. Late volley targets
+wall-clock time; animated firing waits for it. Late volley targets
 share the original deadline. Panel or window changes after the move refit
 immediately, and manual camera input takes control.
 The world-space orbit pivot stays on the action's support plane. The side-panel
@@ -653,7 +656,11 @@ area before advancing its clock, including the jump arc, height and footprint.
 If the route is already visible, there is no camera move or delay. Otherwise,
 the camera uses the smallest pan and any required zoom out, preserving its
 angles, then stays still throughout travel and its completion hold. Selection
-changes received during playback take effect after the final hold.
+changes received during playback take effect after the final hold. At Instant
+speed the queue completes first and the camera snaps once to the final action,
+or to a new selection if one arrived during playback. Intermediate actions do
+not reposition it, and switching to Instant also settles an existing camera
+transition immediately.
 
 Weapon ranges use translucent contours and flat `min`, `S`, `M`, `L`, and `E`
 markers at the existing firing-arc handler's positions within each range area.

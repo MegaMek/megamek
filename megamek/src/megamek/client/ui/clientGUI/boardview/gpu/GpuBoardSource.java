@@ -717,6 +717,11 @@ final class GpuBoardSource implements AutoCloseable {
     }
 
     private Hud captureHud(OverlayViewport layout) {
+        // The initial snapshot predates the native window's first layout. Never scale its 1px placeholder
+        // into sidebar bounds: it would reserve the entire board and make the initial camera fit enormous.
+        if (layout.size().width <= 1 || layout.size().height <= 1) {
+            return new Hud(layout.pixels().width, layout.pixels().height, List.of());
+        }
         List<OverlayImage> artwork = view.captureOverlayLayers(layout.size(), layout.pixels());
         List<HudLayer> layers = new ArrayList<>();
         Map<Image, BoardScene.Pixels> retained = new IdentityHashMap<>();

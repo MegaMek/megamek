@@ -53,6 +53,11 @@ class GpuUnitHudTest {
                 UnitOverviewOverlay overview = new UnitOverviewOverlay(gui);
                 try {
                     fixture.view.addOverlay(overview);
+                    fixture.source.refresh();
+                    var initialHud = fixture.source.takeFrame().hud();
+                    assertEquals(1, initialHud.width());
+                    assertEquals(0, initialHud.sidePanelInset(), "No sidebar layout exists before the native viewport arrives");
+                    assertTrue(initialHud.layers().isEmpty());
                     Dimension logical = new Dimension(800, 400);
                     Dimension nativeSize = new Dimension((int) (800 * density), (int) (400 * density));
                     var before = fixture.view.captureOverlayLayers(logical, nativeSize);

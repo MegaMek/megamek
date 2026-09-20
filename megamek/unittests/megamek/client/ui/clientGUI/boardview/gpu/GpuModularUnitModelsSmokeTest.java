@@ -23,6 +23,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.PixmapIO;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -302,6 +306,91 @@ class GpuModularUnitModelsSmokeTest {
             total += triangles(node.getChildren());
         }
         return total;
+    }
+
+    /** The six review angles, laid out three across: front, back, left / right, above, three-quarter. */
+    private static final String[] FULL_VIEWS = { "front", "back", "left", "right", "above", "three-quarter" };
+
+    private static void place(OrthographicCamera camera, String view, float focus) {
+        switch (view) {
+            case "front" -> camera.position.set(0, 300, focus);
+            case "back" -> camera.position.set(0, -300, focus);
+            case "left" -> camera.position.set(-300, 0, focus);
+            case "right" -> camera.position.set(300, 0, focus);
+            case "above" -> camera.position.set(0, 0, 300);
+            default -> camera.position.set(170, 210, focus + 90);
+        }
+        // Looking down needs forward as up, so the nose runs up the page like the game sprite.
+        camera.up.set("above".equals(view) ? Vector3.Y : Vector3.Z);
+        camera.lookAt(0, 0, "above".equals(view) ? 0 : focus);
+    }
+
+    /** One sheet carrying every review angle of the assembled unit, weapons included. */
+    static void renderFullReview(ModelBatch batch, List<ModelInstance> instances, String name, String unit,
+          float width, float focus) {
+        var environment = new Environment();
+        environment.set(ColorAttribute.createAmbientLight(.7f, .7f, .7f, 1));
+        environment.add(new DirectionalLight().set(.8f, .8f, .8f, -.4f, -.7f, -1));
+        // A sheet shows every side at once, so the faces turned away from the key light need a fill
+        // or the back and side cells read as flat grey.
+        environment.add(new DirectionalLight().set(.38f, .38f, .38f, .5f, .8f, -.35f));
+        File output = new File(System.getProperty("megamek.gpu.screenshots"));
+        assertTrue(output.isDirectory() || output.mkdirs());
+        int columns = 3;
+        int rows = (FULL_VIEWS.length + columns - 1) / columns;
+        int cellWidth = Gdx.graphics.getWidth() / columns;
+        int cellHeight = Gdx.graphics.getHeight() / rows;
+        var camera = new OrthographicCamera(width, width * cellHeight / (float) cellWidth);
+        camera.near = 1;
+        camera.far = 1000;
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glClearColor(.15f, .19f, .23f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+        for (int index = 0; index < FULL_VIEWS.length; index++) {
+            // A viewport does not bound glClear, so depth is cleared whole between cells; the
+            // colour buffer is left alone and each cell paints into its own rectangle.
+            Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+            Gdx.gl.glViewport((index % columns) * cellWidth,
+                  (rows - 1 - index / columns) * cellHeight, cellWidth, cellHeight);
+            place(camera, FULL_VIEWS[index], focus);
+            camera.update();
+            batch.begin(camera);
+            for (var instance : instances) {
+                batch.render(instance, environment);
+            }
+            batch.end();
+        }
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        caption(unit);
+        Pixmap pixels = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        try {
+            PixmapIO.writePNG(new FileHandle(new File(output, name + "-full.png")), pixels, -1, true);
+        } finally {
+            pixels.dispose();
+        }
+    }
+
+    /** Names the unit in the top right, so a sheet is identifiable once it leaves the build directory. */
+    private static void caption(String text) {
+        var generator = new FreeTypeFontGenerator(new FileHandle(
+              new File(Configuration.fontsDir(), "Noto Sans/NotoSans-Bold.ttf")));
+        var settings = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        settings.size = 26;
+        BitmapFont font = generator.generateFont(settings);
+        var batch = new SpriteBatch();
+        try {
+            font.setColor(1, 1, 1, .85f);
+            var layout = new GlyphLayout(font, text);
+            batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+            batch.begin();
+            font.draw(batch, layout, Gdx.graphics.getWidth() - layout.width - 18,
+                  Gdx.graphics.getHeight() - 16);
+            batch.end();
+        } finally {
+            batch.dispose();
+            font.dispose();
+            generator.dispose();
+        }
     }
 
     static void renderReview(ModelBatch batch, List<ModelInstance> instances, String name, float width, float focus) {

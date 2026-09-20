@@ -43,24 +43,34 @@ final class GpuMekAssemblyReview {
         List<ModelInstance> instances = new ArrayList<>();
         List<Model> references = new ArrayList<>();
         List<ModelInstance> comparisons = new ArrayList<>();
+        List<String> comparisonNames = new ArrayList<>();
+        List<ModelInstance> soloReviews = new ArrayList<>();
+        List<String> soloNames = new ArrayList<>();
         List<Object> evidence = new ArrayList<>();
         File referenceRoot = new File(System.getProperty("megamek.gpu.referenceModels"), "units");
         var original = new JsonReader().parse(new FileHandle(new File(referenceRoot, "manifest.json"))).get("variants");
+        // Label, body descriptor, unit file. The label names the review image, so one chassis can
+        // appear more than once to show how different loadouts sit on the same body.
         String[][] cases = {
-              { "warhammer", "3039u/Warhammer WHM-6R.mtf" },
-              { "mad-cat", "3050U/Mad Cat (Timber Wolf) Prime.mtf" },
-              { "atlas", "3039u/Atlas AS7-D.mtf" },
-              { "archer", "3039u/Archer ARC-2R.mtf" },
-              { "mackie", "3075/Mackie MSK-6S.mtf" }
+              { "warhammer", "warhammer", "3039u/Warhammer WHM-6R.mtf" },
+              { "mad-cat", "mad-cat", "3050U/Mad Cat (Timber Wolf) Prime.mtf" },
+              { "atlas", "atlas", "3039u/Atlas AS7-D.mtf" },
+              { "archer", "archer", "3039u/Archer ARC-2R.mtf" },
+              { "mackie", "mackie", "3075/Mackie MSK-6S.mtf" },
+              { "rifleman-3n", "rifleman", "3039u/Rifleman RFL-3N.mtf" },
+              { "rifleman-4d", "rifleman", "3039u/Rifleman RFL-4D.mtf" },
+              { "rifleman-3c", "rifleman", "3039u/Rifleman RFL-3C.mtf" },
+              { "battlemaster-1g", "battlemaster", "3039u/BattleMaster BLR-1G.mtf" },
+              { "battlemaster-3m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-3M.mtf" }
         };
         int id = 700;
         for (String[] entry : cases) {
             Mek mek = (Mek) new MekFileParser(new File(Configuration.dataDir(), "mekfiles/unit_files.zip"),
-                  "meks/" + entry[1]).getEntity();
-            assertNotNull(mek, entry[1]);
+                  "meks/" + entry[2]).getEntity();
+            assertNotNull(mek, entry[2]);
             mek.setId(id++);
-            mek.setExternalSearchlight(entry[0].equals("warhammer") || entry[0].equals("mackie"));
-            BoardScene.UnitModel selected = selection(mek, tileset, entry[0]);
+            mek.setExternalSearchlight(entry[1].equals("warhammer") || entry[1].equals("mackie"));
+            BoardScene.UnitModel selected = selection(mek, tileset, entry[1]);
             GpuUnitModel visual = library.get(selected, mek.getId());
             assertNotNull(visual, entry[0]);
             assertTrue(visual.modularCoordinates());
@@ -77,20 +87,28 @@ final class GpuMekAssemblyReview {
             visual.showEquipment(drawn, selected.state().appearance());
             instances.add(drawn);
             var previous = original.get(mek.getShortNameRaw());
-            assertNotNull(previous, mek.getShortNameRaw());
-            Model old = new G3dModelLoader(new JsonReader()).loadModel(new FileHandle(new File(referenceRoot,
-                  previous.getString("asset"))));
-            references.add(old);
-            var oldInstance = new ModelInstance(old);
-            oldInstance.transform.scale(1, 1, 54);
-            comparisons.add(oldInstance);
-            comparisons.add(new ModelInstance(visual.instance.model));
-            evidence.add(Map.of("chassis", entry[0], "bindings", visual.equipment()));
+            // A chassis authored after the bakes were frozen has no legacy reference to sit beside.
+            if (previous != null) {
+                Model old = new G3dModelLoader(new JsonReader()).loadModel(new FileHandle(new File(referenceRoot,
+                      previous.getString("asset"))));
+                references.add(old);
+                var oldInstance = new ModelInstance(old);
+                oldInstance.transform.scale(1, 1, 54);
+                comparisons.add(oldInstance);
+                comparisons.add(new ModelInstance(visual.instance.model));
+                comparisonNames.add(mek.getShortNameRaw());
+            } else {
+                var alone = new ModelInstance(visual.instance.model);
+                visual.showEquipment(alone, selected.state().appearance());
+                soloReviews.add(alone);
+                soloNames.add(mek.getShortNameRaw());
+            }
+            evidence.add(Map.of("unit", mek.getShortNameRaw(), "chassis", entry[1], "bindings", visual.equipment()));
             if (entry[0].equals("warhammer")) {
                 String name = mek.getShortNameRaw();
                 var added = mek.addEquipment(EquipmentType.get("ISSmallLaser"), Mek.LOC_LEFT_ARM, true);
                 assertEquals(name, mek.getShortNameRaw());
-                var refit = library.get(selection(mek, tileset, entry[0]), mek.getId());
+                var refit = library.get(selection(mek, tileset, entry[1]), mek.getId());
                 assertNotSame(visual, refit);
                 assertEquals(visual.equipment().size() + 1, refit.equipment().size());
                 var binding = refit.equipment().stream().filter(item -> item.index() == added.getEquipmentNum())
@@ -112,7 +130,8 @@ final class GpuMekAssemblyReview {
             }
         }
         for (int index = 0; index < instances.size(); index++) {
-            instances.get(index).transform.setToTranslation((1 - index % 3) * 82, (index / 3 == 0 ? 1 : -1) * 70, 0);
+            // Three to a row, so a seventh case lands on its own spot instead of over the fourth.
+            instances.get(index).transform.setToTranslation((1 - index % 3) * 82, (1 - index / 3) * 70, 0);
         }
         new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(new File(System.getProperty("megamek.gpu.screenshots"),
               "runtime-mek-bindings.json"), evidence);
@@ -124,13 +143,27 @@ final class GpuMekAssemblyReview {
                 before.transform.setTranslation(40, 0, 0);
                 after.transform.setTranslation(-40, 0, 0);
                 GpuModularUnitModelsSmokeTest.renderReview(batch, List.of(before, after),
-                      "runtime-compare-" + cases[pair][0], 180, 25);
+                      "runtime-compare-" + comparisonNames.get(pair), 180, 25);
+            }
+            for (int index = 0; index < soloReviews.size(); index++) {
+                GpuModularUnitModelsSmokeTest.renderFullReview(batch, List.of(soloReviews.get(index)),
+                      "runtime-new-" + soloNames.get(index), soloNames.get(index), 78, 25);
             }
         } finally {
             references.forEach(Model::dispose);
         }
         verifyFallbacks(library, tileset, batch);
         verifyVariants(library, tileset);
+        // Chassis name as the unit files spell it, paired with the body descriptor it resolves to.
+        String[][] sheets = {
+              { "Rifleman", "rifleman" }, { "BattleMaster", "battlemaster" }, { "Atlas", "atlas" },
+              { "Warhammer", "warhammer" }, { "Archer", "archer" }, { "Marauder", "marauder" },
+              { "Mad Cat (Timber Wolf)", "mad-cat" }, { "Locust", "locust" }, { "Mackie", "mackie" }
+        };
+        for (String[] sheet : sheets) {
+            GpuVariantSheetReview.render(library, batch, tileset, sheet[0],
+                  "units/modular/meks/" + sheet[1] + ".json");
+        }
     }
 
     private static void verifyFallbacks(GpuUnitModels library, MekTileset tileset, ModelBatch batch) throws Exception {

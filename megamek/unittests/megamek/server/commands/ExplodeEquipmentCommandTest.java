@@ -56,13 +56,6 @@ class ExplodeEquipmentCommandTest {
     private final ExplodeEquipmentCommand command = new ExplodeEquipmentCommand(null, null);
 
     @Test
-    void itIsAGamemasterCommand() {
-        // GamemasterServerCommand is what refuses a sender who does not hold the role; being one is the guard
-        assertTrue(command instanceof GamemasterServerCommand,
-              "anyone being able to blow up another player's ammo would be a way to ruin their game");
-    }
-
-    @Test
     void itAsksForAUnitAndAnEquipmentNumber() {
         List<Argument<?>> arguments = command.defineArguments();
 

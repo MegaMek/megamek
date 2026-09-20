@@ -643,7 +643,10 @@ public class DamageEditApplier {
             entity.setLocationStatus(location,
                   breached ? ILocationExposureStatus.BREACHED : ILocationExposureStatus.NORMAL, true);
             for (Mounted<?> mounted : entity.getEquipment()) {
-                if (mounted.getLocation() == location) {
+                // split equipment straddles two locations and is out of action when either is breached
+                boolean isInLocation = (mounted.getLocation() == location)
+                      || (mounted.isSplit() && (mounted.getSecondLocation() == location));
+                if (isInLocation) {
                     mounted.setBreached(breached);
                 }
             }

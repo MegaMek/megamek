@@ -419,10 +419,6 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * @return the handler that applies a gamemaster's edits to a building, created on first use for the same reason as
-     *       {@link #lobbyBoardHandler()}
-     */
-    /**
      * Sets off one piece of a unit's equipment at a gamemaster's request, as a critical hit would; the
      * {@code /explode} command's entry point. See {@link EquipmentExplosionHandler}.
      *
@@ -445,6 +441,10 @@ public class TWGameManager extends AbstractGameManager {
         new GamemasterTurnUpkeep(this).settleTurnsAfter(entity);
     }
 
+    /**
+     * @return the handler that applies a gamemaster's edits to a building, created on first use for the same reason as
+     *       {@link #lobbyBoardHandler()}
+     */
     public BuildingEditHandler buildingEditHandler() {
         if (buildingEditHandler == null) {
             buildingEditHandler = new BuildingEditHandler(this);

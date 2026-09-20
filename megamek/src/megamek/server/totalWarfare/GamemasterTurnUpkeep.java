@@ -115,7 +115,7 @@ class GamemasterTurnUpkeep extends AbstractTWRuleHandler {
         }
         // The owner's client may still have the dead unit selected for the current turn, and nothing else tells
         // it to move on: a fresh turn packet makes every client start the turn over and pick a unit that can act.
-        if (currentTurn.playerId() == entity.getOwnerId()) {
+        if ((currentTurn != null) && (currentTurn.playerId() == entity.getOwnerId())) {
             LOGGER.info("[GMTurn] {} can no longer act during its owner's turn; resending the turn so the owner's"
                   + " client selects another unit", entity.getDisplayName());
             gameManager.send(gameManager.getPacketHelper().createTurnIndexPacket(entity.getOwnerId()));

@@ -23,8 +23,10 @@ uniform float u_fovEnabled;
 uniform vec2 u_fovSize;
 uniform vec2 u_fovHexSize;
 uniform mat4 u_fovInverseView;
-uniform vec4 u_fovOptions;
-uniform float u_fovStyle;
+uniform vec2 u_fovOptions; // Distance-ring opacity, spotting tint.
+uniform vec3 u_fovEffect; // Opacity, grayscale, fog-of-war for hexes outside visual LOS.
+uniform vec3 u_sensorEffect; // Same settings for hexes outside visual and sensor coverage.
+uniform float u_dimmedDesaturation;
 uniform float u_fovEdge;
 
 vec2 fovCenter(vec2 hex) {
@@ -49,9 +51,18 @@ float fovState(vec4 value) {
     return mod(floor(value.a * 255.0 + 0.5), 8.0);
 }
 
-float fovBorder(vec2 neighbor, float distance, float state) {
-    float other = fovState(fovAt(neighbor));
+vec3 fovEffect(vec4 mask) {
+    // BLOCKED also includes ordinary LOS obstructions and previews without a selected sensor.
+    return mask.a * 255.0 >= 15.5 ? u_sensorEffect : u_fovEffect;
+}
+
+float fovBorder(vec2 neighbor, float distance, vec4 mask) {
+    float state = fovState(mask);
+    vec4 otherMask = fovAt(neighbor);
+    float other = fovState(otherMask);
     if (other < 0.5 || (state < 2.5) == (other < 2.5)) return 0.0;
+    float opacity = fovEffect(state > 2.5 ? mask : otherMask).x;
+    if (opacity <= 0.0) return 0.0;
     return 1.0 - smoothstep(u_fovEdge * 0.5, u_fovEdge * 2.0, distance);
 }
 
@@ -77,34 +88,33 @@ vec3 fieldOfView(vec3 color, float depth) {
     float northEast = 0.5 - p.x + 0.5 * p.y, southEast = 0.5 - p.x - 0.5 * p.y;
     float northWest = 0.5 + p.x + 0.5 * p.y, southWest = 0.5 + p.x - 0.5 * p.y;
     float parity = mod(hex.x, 2.0);
-    float boundary = fovBorder(hex + vec2(0, -1), north, state);
-    boundary = max(boundary, fovBorder(hex + vec2(1, parity - 1.0), northEast, state));
-    boundary = max(boundary, fovBorder(hex + vec2(1, parity), southEast, state));
-    boundary = max(boundary, fovBorder(hex + vec2(0, 1), south, state));
-    boundary = max(boundary, fovBorder(hex + vec2(-1, parity), southWest, state));
-    boundary = max(boundary, fovBorder(hex + vec2(-1, parity - 1.0), northWest, state));
+    float boundary = fovBorder(hex + vec2(0, -1), north, mask);
+    boundary = max(boundary, fovBorder(hex + vec2(1, parity - 1.0), northEast, mask));
+    boundary = max(boundary, fovBorder(hex + vec2(1, parity), southEast, mask));
+    boundary = max(boundary, fovBorder(hex + vec2(0, 1), south, mask));
+    boundary = max(boundary, fovBorder(hex + vec2(-1, parity), southWest, mask));
+    boundary = max(boundary, fovBorder(hex + vec2(-1, parity - 1.0), northWest, mask));
+    vec3 effect = fovEffect(mask);
     if (state > 2.5) {
         bool sensor = state < 3.5;
-        float amount = u_fovOptions.x * (sensor ? 0.5 : 1.0);
+        float amount = effect.x;
         float gray = dot(color, vec3(0.2126, 0.7152, 0.0722));
-        float desaturate = u_fovOptions.x > 0.0 ? (u_fovStyle > 0.5 ? 0.85 : 0.25) : 0.0;
+        float desaturate = amount > 0.0 ? (effect.z > 0.5 ? 0.85 : u_dimmedDesaturation) : 0.0;
         color = mix(color, vec3(gray), desaturate);
         vec3 shade = sensor ? vec3(0.10, 0.20, 0.25) : vec3(0.025, 0.035, 0.055);
-        if (u_fovOptions.w > 0.5) shade.b += 0.10;
-        if (u_fovStyle > 0.5) amount = 1.0 - pow(1.0 - amount, 4.0);
+        if (u_fovOptions.y > 0.5) shade.b += 0.10;
+        if (effect.z > 0.5) amount = 1.0 - pow(1.0 - amount, 4.0);
         color = mix(color, shade, amount);
-    } else if (state < 1.5 && mask.a * 255.0 > 8.0) {
-        color = mix(color, mask.rgb, u_fovOptions.y);
+    } else if (state < 1.5 && mod(floor(mask.a * 255.0 + 0.5), 16.0) > 8.0) {
+        color = mix(color, mask.rgb, u_fovOptions.x);
     }
     if (state > 1.5 && state < 2.5) {
         float edge = min(min(north, south), min(min(northEast, southEast), min(northWest, southWest)));
         color = mix(color, mask.rgb, (1.0 - smoothstep(0.015, 0.04, edge)) * 0.28 * horizontal);
     }
-    if (u_fovOptions.x > 0.0) {
-        // A contour appears only where visible hexes meet blocked/sensor hexes, not around every cell.
-        color = mix(color, vec3(0.40, 0.78, 0.84), boundary * 0.60 * horizontal);
-    }
-    if (state > 2.5 && u_fovOptions.z > 0.5) {
+    // A contour appears only where visible hexes meet an enabled blocked/sensor effect.
+    color = mix(color, vec3(0.40, 0.78, 0.84), boundary * 0.60 * horizontal);
+    if (state > 2.5 && effect.y > 0.5) {
         // Desaturate last so sensor/spotting tints and the contour remain grayscale too.
         color = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
     }

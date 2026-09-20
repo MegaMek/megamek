@@ -11,12 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 import megamek.common.ResolvedAttack;
+import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.units.BipedMek;
@@ -25,6 +27,61 @@ import megamek.common.units.ProneCause;
 import org.junit.jupiter.api.Test;
 
 class UnitAnimatorTest {
+    @Test
+    void jumpingTiltsTheBodyAndItsExhaustTowardTravelThenReturnsUpright() {
+        GdxNativesLoader.load();
+        for (float heightScale : new float[] { .6f, 1.8f }) {
+            var raw = new Model();
+            var root = new Node();
+            root.id = "root";
+            var pack = new Node();
+            pack.id = "pack";
+            root.addChild(pack);
+            raw.nodes.add(root);
+            raw.calculateTransforms();
+            var emitter = new UnitModelDescriptor.Emitter("jet", "pack", List.of(0f, 0f, 0f), List.of(0f, 0f, -1f), "exhaust", "exhaust");
+            var model = new GpuUnitModel(raw, null, true, List.of(), heightScale, new Vector3(1, 1, 1),
+                  List.of(new UnitRig("mek", "biped-v1", null, Map.of("root", "root"), List.of(), List.of())));
+            try {
+                for (int facing : new int[] { 0, 1, 3, 5 }) {
+                    var start = new BoardScene.Waypoint(new Coords(2, 5), 0, facing);
+                    var end = new BoardScene.Waypoint(new Coords(4, 3), 0, (facing + 1) % 6);
+                    var appearance = new BoardScene.UnitModel("", "", "", 1, 0, BoardScene.LocationDamage.NONE,
+                          UnitModelState.capture(new BipedMek()));
+                    var unit = new BoardScene.Unit(1, -1, "Mek", end, null, false, null, 2, false, appearance, 0);
+                    var motion = new UnitMotion(start);
+                    motion.append(List.of(start, end), EntityMovementType.MOVE_JUMP, 6);
+                    double duration = motion.remainingSeconds();
+                    motion.advance(duration * .25, 1);
+                    var instance = new ModelInstance(raw);
+                    var animator = new UnitAnimator();
+                    var camera = new OrthographicCamera();
+                    animator.apply(model, instance, unit, motion.sample(), 0, 0, false, 0);
+                    model.place(instance, camera, motion.position(), motion.facing(), unit);
+                    var exhaust = new Vector3();
+                    UnitModelAttachment.emitter(instance, emitter, new Vector3(), exhaust);
+                    var travel = BoardGeometry.center(end.coords(), 0).sub(BoardGeometry.center(start.coords(), 0)).nor();
+                    assertTrue(exhaust.dot(travel) < -.1f, "Thrust points along travel even during a sideways or backward jump");
+                    assertEquals(motion.sample().jets().tilt(), Math.toDegrees(Math.acos(-exhaust.z)), .001,
+                          "Display height scaling must preserve the intended world-space angle");
+                    var rotation = instance.getNode("root").rotation.cpy();
+                    animator.apply(model, instance, unit, motion.sample(), 0, 0, false, 0);
+                    assertTrue(rotation.equals(instance.getNode("root").rotation), "Paused frames cannot accumulate lean");
+                    motion.advance(duration * .6, 1);
+                    animator.apply(model, instance, unit, motion.sample(), 0, 0, false, 0);
+                    model.place(instance, camera, motion.position(), motion.facing(), unit);
+                    UnitModelAttachment.emitter(instance, emitter, new Vector3(), exhaust);
+                    assertTrue(exhaust.epsilonEquals(new Vector3(0, 0, -1), .001f), "The pack is upright for landing");
+                    motion.finish();
+                    animator.apply(model, instance, unit, motion.sample(), 0, 0, true, 0);
+                    assertTrue(instance.getNode("root").rotation.isIdentity(.001f), "Skip removes the flight pose");
+                }
+            } finally {
+                model.dispose();
+            }
+        }
+    }
+
     @Test
     void terminalFallFinishesBeforeTheFullCompletionBufferAtEveryPlaybackSpeed() {
         GdxNativesLoader.load();

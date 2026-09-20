@@ -64,7 +64,7 @@ class GpuScenePlaybackSmokeTest {
                         } else if (frames() == 3 || frames() == 4) {
                             var scene = (BoardScene) field(this, "scene");
                             assertEquals(0, scene.tile(changed).elevation());
-                            var poses = (Map<?, ?>) field(this, "movingFootprints");
+                            var poses = (Map<?, ?>) field(this, "unitFootprints");
                             var pose = (UnitFootprint.Pose) poses.values().iterator().next();
                             assertTrue(pose.position().epsilonEquals(playback.motions.get(1).surfacePosition(scene), .001f));
                             assertTrue(pose.position().dst(playback.motions.get(1).destination()) > BoardGeometry.HEIGHT / 2);
@@ -79,12 +79,12 @@ class GpuScenePlaybackSmokeTest {
                             }
                         } else if (frames() == 5) {
                             assertEquals(1, ((BoardScene) field(this, "scene")).tile(changed).elevation());
-                            assertTrue(((Map<?, ?>) field(this, "movingFootprints")).isEmpty());
+                            assertSettledPose(this, middle);
                             GpuBoardTestUi.capture(new File(output, "scene-playback-first-arrival.png"));
                             playback.finish();
                         } else if (frames() == 6) {
                             assertEquals(2, ((BoardScene) field(this, "scene")).tile(changed).elevation());
-                            assertTrue(((Map<?, ?>) field(this, "movingFootprints")).isEmpty());
+                            assertSettledPose(this, end);
                             Gdx.app.exit();
                         }
                         assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
@@ -96,6 +96,13 @@ class GpuScenePlaybackSmokeTest {
             }, GpuBoardWindow.configuration(false));
         }
         assertNull(failure.get(), () -> String.valueOf(failure.get()));
+    }
+
+    private static void assertSettledPose(GpuBattleView view, Coords coords) throws ReflectiveOperationException {
+        var poses = (Map<?, ?>) field(view, "unitFootprints");
+        var pose = (UnitFootprint.Pose) poses.values().iterator().next();
+        assertEquals(coords, pose.unit().location().coords());
+        assertTrue(pose.position().epsilonEquals(BoardGeometry.center(coords, pose.unit().location().elevation()), .001f));
     }
 
     private static Object field(GpuBattleView view, String name) throws ReflectiveOperationException {

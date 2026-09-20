@@ -3,6 +3,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.badlogic.gdx.math.MathUtils;
@@ -13,19 +14,30 @@ import megamek.common.units.ProneCause;
 /** A render-only timeline; advancing it never writes to Entity or MovePath. */
 final class UnitMotion {
     // Animation-clock seconds, independent of hex/model scale. Normal playback advances this clock at half real time.
-    static final double WALK_SECONDS_PER_HEX = .3;
+    static final double WALK_SECONDS_PER_HEX = .2;
     static final double RUN_SECONDS_PER_HEX = WALK_SECONDS_PER_HEX / 1.5;
     static final double SPRINT_SECONDS_PER_HEX = WALK_SECONDS_PER_HEX / 2;
-    static final double JUMP_SECONDS_PER_HEX = .4;
+    static final double JUMP_SECONDS_PER_HEX = .175;
     static final double MIN_UNIT_SPEED = .65;
     static final double MAX_UNIT_SPEED = 2.5;
-    static final double RAMP_SECONDS = .2;
+    static final double RAMP_HEXES = 3;
+    static final double DEFAULT_SPEED_GAIN_PER_HEX = .03;
+    private static final double TURN_SPEED_DROP_PER_FACING = .3;
+    private static final double MIN_CORNER_SPEED = .5;
+    private static final double CORNER_RADIUS_HEXES = .35;
     private static final double REFERENCE_MOVE_MP = 4;
     private static final double REFERENCE_JUMP_MP = 3;
     static final double TURN_SECONDS_PER_FACING = .25;
     static final double POSTURE_SECONDS = .4;
     static final float FORMATION_SETTLE_SECONDS = .3f;
     static final float JUMP_DESTINATION_CLEARANCE = 3;
+    private static final float JUMP_ARC_LIFT = 1;
+    // Visual levels per animation-clock second squared at 1g; horizontal range never scales this acceleration.
+    private static final double JUMP_GRAVITY = 20;
+    private static final double MIN_JUMP_GRAVITY = .25;
+    private static final double POWERED_JUMP_FRACTION = .2;
+    static final float MAX_JUMP_TILT = 28;
+    private static final float DESCENT_FLAME = .45f;
     static final float BOARD_SECONDS = .45f;
     static final float UNLOAD_SECONDS = .6f;
     static final double LANDING_GEAR_SECONDS = .45;
@@ -47,17 +59,56 @@ final class UnitMotion {
             return values()[(ordinal() + 1) % values().length];
         }
     }
-    private record JumpArc(float start, float end, float apex, float ascentEnd, float descentStart) {
-        float elevation(float progress) {
-            if (progress < ascentEnd) {
-                float remaining = 1 - progress / ascentEnd;
-                return apex - (apex - start) * remaining * remaining;
+    /** Vertical flight uses gravity and height; horizontal travel may add supported airtime at the apex. */
+    private record JumpArc(float start, float end, float apex, double ascent, double descent, double duration, Easing horizontal) {
+        float progress(double seconds) {
+            return horizontal.progress(seconds * horizontal.duration() / duration);
+        }
+
+        float elevation(double seconds) {
+            if (seconds < ascent) {
+                return start + (apex - start) * lift(seconds / ascent);
             }
-            if (progress > descentStart) {
-                float remaining = (progress - descentStart) / (1 - descentStart);
-                return apex - (apex - end) * remaining * remaining;
+            if (seconds > duration - descent) {
+                return end + (apex - end) * lift((duration - seconds) / descent);
             }
             return apex;
+        }
+
+        float descentProgress(double seconds) {
+            return (float) Math.clamp((seconds - duration + descent) / descent, 0, 1);
+        }
+
+        float tilt(double seconds, double horizontalDistance) {
+            // Sample the trajectory, independent of rendering frame rate; exhaust inherits the resulting body pose.
+            double delta = .001;
+            double horizontalSpeed = horizontalDistance * BoardGeometry.HEIGHT
+                  * (progress(seconds + delta) - progress(seconds - delta));
+            double verticalSpeed = BoardGeometry.LEVEL * (elevation(seconds + delta) - elevation(seconds - delta));
+            float angle = (float) Math.toDegrees(Math.atan2(horizontalSpeed, Math.max(0, verticalSpeed)));
+            double launch = Math.clamp(seconds / (ascent * POWERED_JUMP_FRACTION), 0, 1);
+            double recover = Math.clamp((seconds - ascent * .75) / (ascent * .25 + Math.min(.15, descent * .25)), 0, 1);
+            return (float) (Math.min(MAX_JUMP_TILT, angle) * launch * launch * (3 - 2 * launch)
+                  * (1 - recover * recover * (3 - 2 * recover)));
+        }
+
+        /** Brief powered launch/landing surrounds a constant-gravity parabola, with zero endpoint velocity. */
+        private static float lift(double fraction) {
+            double t = Math.clamp(fraction, 0, 1);
+            if (t < POWERED_JUMP_FRACTION) {
+                double u = t / POWERED_JUMP_FRACTION;
+                return (float) (2 * POWERED_JUMP_FRACTION * u * u * u * (1 - u / 2));
+            }
+            return (float) (1 - (1 - t) * (1 - t) / (1 - POWERED_JUMP_FRACTION));
+        }
+
+        private static double timeAtHeight(double fraction) {
+            double low = 0, high = 1;
+            for (int i = 0; i < 24; i++) {
+                double mid = (low + high) / 2;
+                if (lift(mid) < fraction) { low = mid; } else { high = mid; }
+            }
+            return (low + high) / 2;
         }
     }
     private record Playback(List<BoardScene.Waypoint> path, double duration, JumpArc jump, EntityMovementType type,
@@ -86,7 +137,97 @@ final class UnitMotion {
             return position(playback, memberTime(unit, member)).sub(position(playback, seconds));
         }
     }
-    private record Travel(double start, double end) { }
+    /** Cubic velocity ramps integrated to position; short routes lower peak speed at the same acceleration scale. */
+    private record Easing(double baseDuration, double rampUp, double rampDown, double from, double peak, double to,
+          double travelSeconds, double[] clock) {
+        static Easing of(double seconds, double distance) {
+            return of(seconds, distance, 0, 0);
+        }
+
+        static Easing of(double seconds, double distance, double from, double to) {
+            if (distance == 0) {
+                return new Easing(seconds * 2, seconds, seconds, 0, 1, 0, seconds, null);
+            }
+            double peak = Math.max(Math.max(from, to), Math.min(1,
+                  Math.sqrt((distance / RAMP_HEXES + from * from + to * to) / 2)));
+            double rampUp = 2 * RAMP_HEXES * seconds / distance * (peak - from);
+            double rampDown = 2 * RAMP_HEXES * seconds / distance * (peak - to);
+            double cruise = Math.max(0, seconds - (from + peak) * rampUp / 2 - (to + peak) * rampDown / 2) / peak;
+            return new Easing(rampUp + cruise + rampDown, rampUp, rampDown, from, peak, to, seconds, null);
+        }
+
+        double duration() { return clock == null ? baseDuration : clock[clock.length - 1]; }
+
+        double timeAtProgress(double progress) {
+            double low = 0, high = duration();
+            for (int i = 0; i < 24; i++) {
+                double mid = (low + high) / 2;
+                if (progress(mid) < progress) { low = mid; } else { high = mid; }
+            }
+            return (low + high) / 2;
+        }
+
+        /** Integrate the distance-dependent gain once; all consumers then sample this immutable clock. */
+        Easing withSpeedGain(double offset, double distance, double totalDistance, double gain) {
+            if (gain <= 0 || totalDistance <= 2 * RAMP_HEXES || distance == 0) {
+                return this;
+            }
+            int segments = Math.max(128, (int) Math.ceil(distance * 64));
+            double[] times = new double[segments + 1];
+            double step = baseDuration / segments;
+            for (int i = 1; i <= segments; i++) {
+                double traveled = offset + distance * baseProgress((i - .5) * step);
+                times[i] = times[i - 1] + step / speedGain(traveled, totalDistance, gain);
+            }
+            return new Easing(baseDuration, rampUp, rampDown, from, peak, to, travelSeconds, times);
+        }
+
+        private static double speedGain(double distance, double totalDistance, double gain) {
+            double middle = totalDistance - 2 * RAMP_HEXES;
+            double traveled = Math.clamp(distance - RAMP_HEXES, 0, middle);
+            double blend = Math.min(.5, middle / 2);
+            // Ease growth into and out of the middle, without moving either three-hex ramp boundary.
+            if (traveled < blend) {
+                traveled = blendGrowth(traveled, blend);
+            } else if (traveled > middle - blend) {
+                traveled = middle - blendGrowth(middle - traveled, blend);
+            }
+            return 1 + gain * traveled;
+        }
+
+        private static double blendGrowth(double distance, double blend) {
+            double fraction = distance / blend;
+            return distance * fraction * (2 - fraction);
+        }
+
+        float progress(double seconds) {
+            double time = clock == null ? seconds : baseDuration * distanceProgress(clock, seconds / duration());
+            return (float) baseProgress(time);
+        }
+
+        private double baseProgress(double seconds) {
+            if (baseDuration == 0) {
+                return seconds < 0 ? 0 : 1;
+            }
+            double time = Math.clamp(seconds, 0, baseDuration);
+            if (time < rampUp) {
+                return (from * time + (peak - from) * rampDistance(time, rampUp)) / travelSeconds;
+            }
+            if (time > baseDuration - rampDown) {
+                double remaining = baseDuration - time;
+                return 1 - (to * remaining + (peak - to) * rampDistance(remaining, rampDown)) / travelSeconds;
+            }
+            return ((from + peak) * rampUp / 2 + peak * (time - rampUp)) / travelSeconds;
+        }
+
+        private static double rampDistance(double time, double ramp) {
+            double t = time / ramp;
+            return ramp * t * t * t * (1 - t / 2);
+        }
+    }
+    private record Travel(double start, double end, Easing easing, double[] distances) {
+        double distance() { return distances[distances.length - 1]; }
+    }
     private record GearPause(int waypoint, boolean retract, double start, double end) { }
     private record PosturePause(ProneCause from, ProneCause to, megamek.common.units.FallSide side, double start, double end) { }
     record Posture(float crouch, float fallen, megamek.common.units.FallSide side, boolean rising, float progress) {
@@ -101,7 +242,13 @@ final class UnitMotion {
     }
     record LandingGear(float deployment, BoardScene.Waypoint ground) { }
     enum Stage { BOARD, DRIVE, UNLOAD }
-    record JumpJets(long sequence, float flame, float smoke, float seconds, float duration) { }
+    record JumpJets(long sequence, float flame, float smoke, float seconds, Playback playback) {
+        float duration() { return (float) playback.travel().getFirst().end(); }
+        float smoke(double seconds) { return 1 - progress(playback, seconds); }
+        float tilt() {
+            return playback.jump().tilt(seconds, horizontalDistance(playback.path().getFirst(), playback.path().getLast()));
+        }
+    }
     record Boarding(long sequence, Stage stage, float progress, int origin, int destination, float arrivalHeading,
           List<BoardScene.Waypoint> path) {
         Vector3 position(float progress) {
@@ -222,6 +369,11 @@ final class UnitMotion {
     }
 
     void append(List<BoardScene.Waypoint> path, EntityMovementType type, int jumpMP, boolean transport, int movementMP, int members) {
+        append(path, type, jumpMP, transport, movementMP, members, DEFAULT_SPEED_GAIN_PER_HEX, 1);
+    }
+
+    void append(List<BoardScene.Waypoint> path, EntityMovementType type, int jumpMP, boolean transport, int movementMP, int members,
+          double speedGainPerHex, double gravity) {
         if (path.isEmpty()) {
             return;
         }
@@ -242,10 +394,34 @@ final class UnitMotion {
         if (points.size() < 2) {
             return;
         }
+        if (type != EntityMovementType.MOVE_JUMP) {
+            blendTravelTurns(points);
+        }
         transport &= type != EntityMovementType.MOVE_JUMP;
         remaining.add(playback(List.copyOf(points), type, jumpMP, transport, ++sequence, movementMP,
               members > 1 && !transport ? GROUP_START_JITTER_SECONDS : 0,
-              members > 0 && !transport ? FORMATION_SETTLE_SECONDS : 0));
+              members > 0 && !transport ? FORMATION_SETTLE_SECONDS : 0, Math.max(0, speedGainPerHex), gravity));
+    }
+
+    /** Only the render copy folds intermediate facing steps into travel; explicit state changes still stop. */
+    private static void blendTravelTurns(List<BoardScene.Waypoint> path) {
+        for (int first = 1; first < path.size() - 1; first++) {
+            int last = first;
+            while (last + 1 < path.size() && path.get(first).samePoseExceptFacing(path.get(last + 1))) {
+                last++;
+            }
+            if (last > first && last < path.size() - 1
+                  && travelDistance(path.get(first - 1), path.get(first)) > 0
+                  && travelDistance(path.get(last), path.get(last + 1)) > 0
+                  && Math.abs(UpperBodyTurn.shortestTurn(heading(path.get(last), path.get(last + 1))
+                        - heading(path.get(first - 1), path.get(first)))) < 179.99
+                  && !changesGear(path.get(first - 1), path.get(first))
+                  && !changesPosture(path.get(first - 1), path.get(first))
+                  && !changesGear(path.get(last), path.get(last + 1))
+                  && !changesPosture(path.get(last), path.get(last + 1))) {
+                path.subList(first, last).clear();
+            }
+        }
     }
 
     static boolean changesGear(BoardScene.Waypoint from, BoardScene.Waypoint to) {
@@ -255,18 +431,14 @@ final class UnitMotion {
 
     /** Each leg earns its own travel time. Boarding and gear dwell never make the intervening travel faster. */
     private static Playback playback(List<BoardScene.Waypoint> path, EntityMovementType type, int jumpMP,
-          boolean transport, long sequence, int movementMP, double stagger, double settle) {
+          boolean transport, long sequence, int movementMP, double stagger, double settle, double speedGainPerHex, double gravity) {
         List<PosturePause> postures = new ArrayList<>();
         if (type == EntityMovementType.MOVE_JUMP) {
-            JumpArc arc = jumpArc(path, jumpMP);
-            double vertical = (Math.sqrt(arc.apex() - arc.start()) + Math.sqrt(arc.apex() - arc.end())) * .35;
-            double duration = Math.max(.6, Math.max(vertical,
-                  horizontalDistance(path.getFirst(), path.getLast()) * JUMP_SECONDS_PER_HEX
-                        / unitSpeed(jumpMP, REFERENCE_JUMP_MP)));
-            duration += Math.min(RAMP_SECONDS, duration);
+            JumpArc arc = jumpArc(path, jumpMP, gravity);
+            double duration = arc.duration();
             double end = addPosture(postures, path.getFirst(), path.getLast(), duration);
             return new Playback(path, end, arc, type, false, sequence,
-                  List.of(new Travel(0, duration)), List.of(), List.copyOf(postures), stagger, settle);
+                  List.of(new Travel(0, duration, null, null)), List.of(), List.copyOf(postures), stagger, settle);
         }
         double time = transport ? BOARD_SECONDS : 0;
         List<GearPause> gear = new ArrayList<>();
@@ -276,27 +448,38 @@ final class UnitMotion {
             boolean changes = changesGear(path.get(i - 1), path.get(i));
             boolean takeoff = path.get(i - 1).aeroState() == BoardScene.AeroState.LANDED;
             if (changes && takeoff) {
-                time += rampTravel(travel, blockStart);
+                time += rampTravel(travel, blockStart, path, speedGainPerHex);
                 gear.add(new GearPause(i - 1, true, time, time + LANDING_GEAR_SECONDS));
                 time += LANDING_GEAR_SECONDS;
                 blockStart = travel.size();
             }
-            double end = time + travelSeconds(path.get(i - 1), path.get(i), type, movementMP);
-            travel.add(new Travel(time, end));
+            double[] distances = travelDistances(path, i - 1);
+            double seconds = travelSeconds(path.get(i - 1), path.get(i), distances[distances.length - 1], type, movementMP);
+            boolean turningInPlace = seconds > 0 && travelDistance(path.get(i - 1), path.get(i)) == 0;
+            if (turningInPlace) {
+                time += rampTravel(travel, blockStart, path, speedGainPerHex);
+                blockStart = travel.size();
+            }
+            double end = time + seconds;
+            travel.add(new Travel(time, end, null, distances));
             time = end;
+            if (turningInPlace) {
+                time += rampTravel(travel, blockStart, path, speedGainPerHex);
+                blockStart = travel.size();
+            }
             if (changes && !takeoff) {
-                time += rampTravel(travel, blockStart);
+                time += rampTravel(travel, blockStart, path, speedGainPerHex);
                 gear.add(new GearPause(i, false, time, time + LANDING_GEAR_SECONDS));
                 time += LANDING_GEAR_SECONDS;
                 blockStart = travel.size();
             }
             if (changesPosture(path.get(i - 1), path.get(i))) {
-                time += rampTravel(travel, blockStart);
+                time += rampTravel(travel, blockStart, path, speedGainPerHex);
                 time = addPosture(postures, path.get(i - 1), path.get(i), time);
                 blockStart = travel.size();
             }
         }
-        time += rampTravel(travel, blockStart);
+        time += rampTravel(travel, blockStart, path, speedGainPerHex);
         return new Playback(path, time + (transport ? UNLOAD_SECONDS : 0), null, type, transport, sequence,
               List.copyOf(travel), List.copyOf(gear), List.copyOf(postures), stagger, settle);
     }
@@ -314,8 +497,8 @@ final class UnitMotion {
         return time + POSTURE_SECONDS;
     }
 
-    /** Reserve acceleration/braking time without raising the cruise speed or stopping at every waypoint. */
-    private static double rampTravel(List<Travel> travel, int first) {
+    /** Anticipate corners, preserve their exit momentum, and build speed through the middle of the continuous route. */
+    private static double rampTravel(List<Travel> travel, int first, List<BoardScene.Waypoint> path, double speedGainPerHex) {
         if (first == travel.size()) {
             return 0;
         }
@@ -323,13 +506,43 @@ final class UnitMotion {
         if (duration == 0) {
             return 0;
         }
-        double ramp = Math.min(RAMP_SECONDS, duration);
-        double scale = (duration + ramp) / duration;
-        for (int i = first; i < travel.size(); i++) {
-            Travel leg = travel.get(i);
-            travel.set(i, new Travel(start + (leg.start() - start) * scale, start + (leg.end() - start) * scale));
+        List<Integer> corners = new ArrayList<>();
+        corners.add(first);
+        for (int i = first + 1; i < travel.size(); i++) {
+            if (cornerSpeed(path, i) < 1) {
+                corners.add(i);
+            }
         }
-        return ramp;
+        corners.add(travel.size());
+        double[] distances = new double[corners.size() - 1];
+        double[] speeds = new double[corners.size()];
+        for (int block = 0; block < distances.length; block++) {
+            for (int i = corners.get(block); i < corners.get(block + 1); i++) {
+                distances[block] += travel.get(i).distance();
+            }
+            speeds[block + 1] = block == distances.length - 1 ? 0 : cornerSpeed(path, corners.get(block + 1));
+            speeds[block + 1] = Math.min(speeds[block + 1], Math.sqrt(speeds[block] * speeds[block] + distances[block] / RAMP_HEXES));
+        }
+        // Short stretches may never reach the corner cap; propagate braking requirements back from the destination.
+        for (int block = distances.length - 1; block >= 0; block--) {
+            speeds[block] = Math.min(speeds[block], Math.sqrt(speeds[block + 1] * speeds[block + 1] + distances[block] / RAMP_HEXES));
+        }
+        double time = start, offset = 0, totalDistance = Arrays.stream(distances).sum();
+        for (int block = 0; block < distances.length; block++) {
+            int begin = corners.get(block), end = corners.get(block + 1);
+            double oldStart = travel.get(begin).start(), seconds = travel.get(end - 1).end() - oldStart;
+            Easing easing = Easing.of(seconds, distances[block], speeds[block], speeds[block + 1])
+                  .withSpeedGain(offset, distances[block], totalDistance, speedGainPerHex);
+            offset += distances[block];
+            double scale = seconds == 0 ? 1 : easing.duration() / seconds;
+            for (int i = begin; i < end; i++) {
+                Travel leg = travel.get(i);
+                travel.set(i, new Travel(time + (leg.start() - oldStart) * scale,
+                      time + (leg.end() - oldStart) * scale, easing, leg.distances()));
+            }
+            time = travel.get(end - 1).end();
+        }
+        return time - start - duration;
     }
 
     private static double horizontalDistance(BoardScene.Waypoint from, BoardScene.Waypoint to) {
@@ -337,11 +550,17 @@ final class UnitMotion {
               BoardGeometry.centerY(to.coords()) - BoardGeometry.centerY(from.coords())) / BoardGeometry.HEIGHT;
     }
 
+    private static double travelDistance(BoardScene.Waypoint from, BoardScene.Waypoint to) {
+        double vertical = (to.elevation() - from.elevation()) * BoardGeometry.LEVEL / BoardGeometry.HEIGHT;
+        return Math.hypot(horizontalDistance(from, to), vertical);
+    }
+
     private static double unitSpeed(int mp, double reference) {
         return mp <= 0 ? 1 : Math.clamp(mp / reference, MIN_UNIT_SPEED, MAX_UNIT_SPEED);
     }
 
-    private static double travelSeconds(BoardScene.Waypoint from, BoardScene.Waypoint to, EntityMovementType type, int movementMP) {
+    private static double travelSeconds(BoardScene.Waypoint from, BoardScene.Waypoint to, double distance,
+          EntityMovementType type, int movementMP) {
         double pace = switch (type) {
             case MOVE_SPRINT, MOVE_VTOL_SPRINT, MOVE_SKID -> SPRINT_SECONDS_PER_HEX;
             case MOVE_RUN, MOVE_VTOL_RUN, MOVE_SUBMARINE_RUN, MOVE_OVER_THRUST -> RUN_SECONDS_PER_HEX;
@@ -352,15 +571,13 @@ final class UnitMotion {
             // The game already includes walking/running/sprinting and damage/heat modifiers in this MP snapshot.
             pace = WALK_SECONDS_PER_HEX / unitSpeed;
         }
-        double vertical = (to.elevation() - from.elevation()) * BoardGeometry.LEVEL / BoardGeometry.HEIGHT;
-        double translation = Math.hypot(horizontalDistance(from, to), vertical) * pace;
         double turn = Math.abs(UpperBodyTurn.shortestTurn((to.facing() - from.facing()) * 60))
               / 60 * TURN_SECONDS_PER_FACING / unitSpeed;
-        // Posture changes have their own interval after arrival; they cannot finish while the unit is still travelling.
-        return Math.max(translation, turn);
+        // Moving turns are timed by their speed cap. Only a standalone pivot needs a stationary interval.
+        return distance > 0 ? distance * pace : turn;
     }
 
-    private static JumpArc jumpArc(List<BoardScene.Waypoint> points, int jumpMP) {
+    private static JumpArc jumpArc(List<BoardScene.Waypoint> points, int jumpMP, double gravity) {
         BoardScene.Waypoint start = points.getFirst();
         BoardScene.Waypoint end = points.getLast();
         float ceiling = start.elevation() + Math.max(0, jumpMP);
@@ -369,23 +586,34 @@ final class UnitMotion {
         for (BoardScene.Waypoint point : points) {
             apex = Math.max(apex, Math.min(ceiling, point.elevation()));
         }
-        float rise = (float) Math.sqrt(apex - start.elevation());
-        float fall = (float) Math.sqrt(apex - end.elevation());
-        float ascentEnd = rise + fall == 0 ? 0 : rise / (rise + fall);
-        float descentStart = ascentEnd;
+        // At zero/very low gravity, the packs provide a bounded assisted arc and a positive landing acceleration.
+        double effectiveGravity = Math.max(MIN_JUMP_GRAVITY, Double.isFinite(gravity) ? gravity : 1);
+        float clearance = points.stream().map(BoardScene.Waypoint::elevation).max(Float::compare).orElse(0f) + JUMP_ARC_LIFT;
+        apex = (float) Math.max(clearance, start.elevation() + (apex + JUMP_ARC_LIFT - start.elevation()) / effectiveGravity);
+        double acceleration = JUMP_GRAVITY * effectiveGravity;
+        double ascent = Math.sqrt(2 * (apex - start.elevation()) / (acceleration * (1 - POWERED_JUMP_FRACTION)));
+        double descent = Math.sqrt(2 * (apex - end.elevation()) / (acceleration * (1 - POWERED_JUMP_FRACTION)));
+        double distance = horizontalDistance(start, end);
+        Easing horizontal = Easing.of(Math.max(.001, distance * JUMP_SECONDS_PER_HEX / unitSpeed(jumpMP, REFERENCE_JUMP_MP)), distance);
+        double duration = Math.max(horizontal.duration(), ascent + descent);
+        double dx = BoardGeometry.centerX(end.coords()) - BoardGeometry.centerX(start.coords());
+        double dy = BoardGeometry.centerY(end.coords()) - BoardGeometry.centerY(start.coords());
+        // Delay crossing raised intermediate waypoints until they are cleared, without slowing vertical flight.
         for (int index = 1; index < points.size() - 1; index++) {
-            float progress = index / (float) (points.size() - 1);
-            float elevation = Math.min(apex, points.get(index).elevation());
+            double progress = distance == 0 ? 0
+                  : ((BoardGeometry.centerX(points.get(index).coords()) - BoardGeometry.centerX(start.coords())) * dx
+                        + (BoardGeometry.centerY(points.get(index).coords()) - BoardGeometry.centerY(start.coords())) * dy) / (dx * dx + dy * dy);
+            if (progress <= 0 || progress >= 1) { continue; }
+            double time = horizontal.timeAtProgress(progress) / horizontal.duration();
+            float elevation = points.get(index).elevation();
             if (elevation > start.elevation()) {
-                float fraction = 1 - (float) Math.sqrt((apex - elevation) / (apex - start.elevation()));
-                ascentEnd = Math.min(ascentEnd, progress / fraction);
+                duration = Math.max(duration, ascent * JumpArc.timeAtHeight((elevation - start.elevation()) / (apex - start.elevation())) / time);
             }
             if (elevation > end.elevation()) {
-                float fraction = (float) Math.sqrt((apex - elevation) / (apex - end.elevation()));
-                descentStart = Math.max(descentStart, (progress - fraction) / (1 - fraction));
+                duration = Math.max(duration, descent * JumpArc.timeAtHeight((elevation - end.elevation()) / (apex - end.elevation())) / (1 - time));
             }
         }
-        return new JumpArc(start.elevation(), end.elevation(), apex, ascentEnd, descentStart);
+        return new JumpArc(start.elevation(), end.elevation(), apex, ascent, descent, duration, horizontal);
     }
 
     public void advance(double seconds, double speed) {
@@ -427,8 +655,19 @@ final class UnitMotion {
             return MathUtils.lerpAngleDeg(playback.path().getFirst().facing() * 60,
                   playback.path().getLast().facing() * 60, progress(playback, seconds));
         }
-        return MathUtils.lerpAngleDeg(playback.path().get(index).facing() * 60,
-              playback.path().get(index + 1).facing() * 60, step - index);
+        var from = playback.path().get(index);
+        var to = playback.path().get(index + 1);
+        var tangent = curve(playback.path(), index, step - index, true);
+        if (tangent.x == 0 && tangent.y == 0) {
+            return MathUtils.lerpAngleDeg(from.facing() * 60, to.facing() * 60, step - index);
+        }
+        float direction = MathUtils.atan2(tangent.x, tangent.y) * MathUtils.radiansToDegrees;
+        float entry = heading(from, to);
+        float exit = cornerRadius(playback.path(), index + 1) > 0
+              ? heading(to, playback.path().get(index + 2)) : entry;
+        // Heading offsets preserve reverse/lateral movement while the body follows the shared curve tangent.
+        return (direction + MathUtils.lerpAngleDeg(from.facing() * 60 - entry,
+              to.facing() * 60 - exit, step - index) + 360) % 360;
     }
 
     private static Vector3 position(Playback playback, double seconds) {
@@ -441,11 +680,11 @@ final class UnitMotion {
         float fraction = playback.jump() != null ? progress : step - index;
         position.set(BoardGeometry.center(start.coords(), start.elevation()))
               .lerp(BoardGeometry.center(end.coords(), end.elevation()), fraction);
-        if (playback.transport()) {
+        if (playback.jump() == null) {
             position.set(curve(playback.path(), index, fraction, false));
         }
         if (playback.jump() != null) {
-            position.z = playback.jump().elevation(progress) * BoardGeometry.LEVEL;
+            position.z = playback.jump().elevation(seconds) * BoardGeometry.LEVEL;
         }
         return position;
     }
@@ -537,20 +776,20 @@ final class UnitMotion {
         int index = Math.min((int) step, playback.path().size() - 2);
         var from = playback.path().get(index);
         var to = playback.path().get(index + 1);
-        float distance = 0;
-        for (int i = 1; i <= index + 1; i++) {
-            var a = playback.path().get(i - 1).coords();
-            var b = playback.path().get(i).coords();
-            float segment = (float) Math.hypot(BoardGeometry.centerX(b) - BoardGeometry.centerX(a),
-                  BoardGeometry.centerY(b) - BoardGeometry.centerY(a)) / BoardGeometry.HEIGHT;
-            distance += segment * (i == index + 1 ? step - index : 1);
-        }
+        float distance = playback.jump() == null ? 0
+              : (float) (horizontalDistance(playback.path().getFirst(), playback.path().getLast()) * progress);
         float dx = BoardGeometry.centerX(to.coords()) - BoardGeometry.centerX(from.coords());
         float dy = BoardGeometry.centerY(to.coords()) - BoardGeometry.centerY(from.coords());
-        if (playback.transport()) {
+        if (playback.jump() == null) {
+            for (int i = 1; i <= index + 1; i++) {
+                distance += distanceAt(playback.travel().get(i - 1).distances(), i == index + 1 ? step - index : 1);
+            }
             var tangent = curve(playback.path(), index, step - index, true);
             dx = tangent.x;
             dy = tangent.y;
+        } else {
+            dx = BoardGeometry.centerX(playback.path().getLast().coords()) - BoardGeometry.centerX(playback.path().getFirst().coords());
+            dy = BoardGeometry.centerY(playback.path().getLast().coords()) - BoardGeometry.centerY(playback.path().getFirst().coords());
         }
         float direction = dx == 0 && dy == 0 ? facing : MathUtils.atan2(dx, dy) * MathUtils.radiansToDegrees;
         ProneCause posture = playback.path().getFirst().proneCause();
@@ -562,17 +801,21 @@ final class UnitMotion {
         }
         JumpJets jets = null;
         if (playback.jump() != null && seconds < playback.travel().getFirst().end()) {
-            // Terrain clearance and unequal landing heights can move the apex away from the middle of the timeline.
-            float descent = MathUtils.clamp((progress - playback.jump().descentStart())
-                  / Math.max(.0001f, 1 - playback.jump().descentStart()), 0, 1);
-            jets = new JumpJets(playback.sequence(), 1 - descent * descent * (3 - 2 * descent), 1 - progress,
-                  (float) seconds, (float) playback.travel().getFirst().end());
+            float descent = playback.jump().descentProgress(seconds);
+            float flame = MathUtils.lerp(DESCENT_FLAME, 1, 1 - descent * descent * (3 - 2 * descent));
+            jets = new JumpJets(playback.sequence(), flame, 1 - progress, (float) seconds, playback);
         }
         LandingGear gear = landingGear(playback, seconds);
+        BoardScene.AeroState state = aeroState(from, to);
+        float turn = UpperBodyTurn.shortestTurn((to.facing() - from.facing()) * 60);
+        if (playback.jump() == null && (state == null || state == BoardScene.AeroState.LANDED) && travelDistance(from, to) > 0) {
+            // The curved route already drives the walking gait; adding pivot steps would jump its phase at corners.
+            turn = 0;
+        }
         return new Sample(seconds < playback.duration(), playback.type(), progress, distance,
-              UpperBodyTurn.shortestTurn((to.facing() - from.facing()) * 60),
+              turn,
               MathUtils.cosDeg(direction - facing), direction, (float) Math.max(0, seconds - playback.duration()), posture, boarding(playback, seconds), jets,
-              gear == null ? aeroState(from, to) : BoardScene.AeroState.LANDED, gear, playback.sequence(), null, posture(playback, seconds),
+              gear == null ? state : BoardScene.AeroState.LANDED, gear, playback.sequence(), null, posture(playback, seconds),
               MathUtils.sinDeg(direction - facing));
     }
 
@@ -626,18 +869,20 @@ final class UnitMotion {
 
     private static float progress(Playback playback, double seconds) {
         if (playback.jump() != null) {
-            return travelProgress(seconds, playback.travel().getFirst().end());
+            return playback.jump().progress(seconds);
         }
-        // Ease a continuous travel block once, not every hex. Gear/boarding stops delimit independent blocks.
+        // Ease continuous travel once; boarding, gear, posture and stationary turns delimit blocks.
         for (int first = 0; first < playback.travel().size();) {
             int last = first;
             while (last + 1 < playback.travel().size()
-                  && playback.travel().get(last + 1).start() == playback.travel().get(last).end()) {
+                  && playback.travel().get(last + 1).start() == playback.travel().get(last).end()
+                  && playback.travel().get(last + 1).easing() == playback.travel().get(first).easing()) {
                 last++;
             }
             double start = playback.travel().get(first).start(), end = playback.travel().get(last).end();
             if (seconds <= end) {
-                seconds = start + travelProgress(seconds - start, end - start) * (end - start);
+                Easing easing = playback.travel().get(first).easing();
+                seconds = start + (easing == null ? 1 : easing.progress(seconds - start)) * (end - start);
                 break;
             }
             first = last + 1;
@@ -646,27 +891,10 @@ final class UnitMotion {
             Travel leg = playback.travel().get(i);
             if (seconds <= leg.end()) {
                 double fraction = leg.end() == leg.start() ? 1 : Math.clamp((seconds - leg.start()) / (leg.end() - leg.start()), 0, 1);
-                return (float) ((i + fraction) / playback.travel().size());
+                return (i + distanceProgress(leg.distances(), fraction)) / playback.travel().size();
             }
         }
         return 1;
-    }
-
-    static float travelProgress(double seconds, double duration) {
-        if (duration == 0) {
-            return seconds < 0 ? 0 : 1;
-        }
-        double time = Math.clamp(seconds, 0, duration);
-        double ramp = Math.min(RAMP_SECONDS, duration / 2);
-        double distance = duration - ramp;
-        if (time < ramp) {
-            return (float) (time * time / (2 * ramp * distance));
-        }
-        if (time > duration - ramp) {
-            double remaining = duration - time;
-            return (float) (1 - remaining * remaining / (2 * ramp * distance));
-        }
-        return (float) ((time - ramp / 2) / distance);
     }
 
     private static Boarding boarding(Playback playback, double seconds) {
@@ -685,24 +913,115 @@ final class UnitMotion {
               arrivalHeading(playback.path()), playback.path());
     }
 
-    /** A short corner arc follows the same waypoints; this changes presentation only, never movement legality. */
+    private static float heading(BoardScene.Waypoint from, BoardScene.Waypoint to) {
+        return MathUtils.atan2(BoardGeometry.centerX(to.coords()) - BoardGeometry.centerX(from.coords()),
+              BoardGeometry.centerY(to.coords()) - BoardGeometry.centerY(from.coords())) * MathUtils.radiansToDegrees;
+    }
+
+    private static double turnAngle(List<BoardScene.Waypoint> path, int index) {
+        if (index <= 0 || index >= path.size() - 1) {
+            return 0;
+        }
+        var from = path.get(index - 1);
+        var at = path.get(index);
+        var to = path.get(index + 1);
+        if (horizontalDistance(from, at) == 0 || horizontalDistance(at, to) == 0
+              || changesGear(from, at) || changesGear(at, to) || changesPosture(from, at) || changesPosture(at, to)) {
+            return 0;
+        }
+        return Math.abs(UpperBodyTurn.shortestTurn(heading(at, to) - heading(from, at)));
+    }
+
+    private static double cornerSpeed(List<BoardScene.Waypoint> path, int index) {
+        double angle = turnAngle(path, index);
+        if (angle < .01) {
+            return 1;
+        }
+        // Reversing along the same line needs a stop; ordinary corners retain forward travel.
+        return angle > 179.99 ? 0 : Math.max(MIN_CORNER_SPEED, 1 - angle / 60 * TURN_SPEED_DROP_PER_FACING);
+    }
+
+    private static float cornerRadius(List<BoardScene.Waypoint> path, int index) {
+        double angle = turnAngle(path, index);
+        if (angle < .01 || angle > 179.99) {
+            return 0;
+        }
+        return (float) (BoardGeometry.HEIGHT * Math.min(CORNER_RADIUS_HEXES,
+              Math.min(horizontalDistance(path.get(index - 1), path.get(index)),
+                    horizontalDistance(path.get(index), path.get(index + 1))) / 2));
+    }
+
+    /** Tangent quadratic corners stay inside the turning hex; every ground view and transport uses this route. */
     private static Vector3 curve(List<BoardScene.Waypoint> path, int index, float t, boolean tangent) {
-        var a = point(path, index - 1);
         var b = point(path, index);
         var c = point(path, index + 1);
-        var d = point(path, index + 2);
-        float square = t * t;
-        float cube = square * t;
-        if (tangent) {
-            return a.scl(-1 + 4 * t - 3 * square).mulAdd(b, -10 * t + 9 * square)
-                  .mulAdd(c, 1 + 8 * t - 9 * square).mulAdd(d, -2 * t + 3 * square).scl(.5f);
+        float length = (float) Math.hypot(c.x - b.x, c.y - b.y);
+        float entry = cornerRadius(path, index), exit = cornerRadius(path, index + 1);
+        Vector3 result;
+        if (entry > 0 && t * length < entry) {
+            result = corner(path, index, .5f + t * length / (2 * entry), tangent);
+            if (tangent) { result.scl(length / (2 * entry)); }
+        } else if (exit > 0 && (1 - t) * length < exit) {
+            result = corner(path, index + 1, .5f - (1 - t) * length / (2 * exit), tangent);
+            if (tangent) { result.scl(length / (2 * exit)); }
+        } else {
+            result = tangent ? c.cpy().sub(b) : b.cpy().lerp(c, t);
         }
-        // Keep elevation on the original segment; road cuts/ramps remain owned by surfacePosition().
-        float elevation = MathUtils.lerp(b.z, c.z, t);
-        var result = a.scl(-t + 2 * square - cube).mulAdd(b, 2 - 5 * square + 3 * cube)
-              .mulAdd(c, t + 4 * square - 3 * cube).mulAdd(d, -square + cube).scl(.5f);
-        result.z = elevation;
+        result.z = tangent ? c.z - b.z : MathUtils.lerp(b.z, c.z, t);
         return result;
+    }
+
+    private static Vector3 corner(List<BoardScene.Waypoint> path, int index, float t, boolean tangent) {
+        var center = point(path, index);
+        var incoming = center.cpy().sub(point(path, index - 1));
+        var outgoing = point(path, index + 1).sub(center);
+        incoming.z = 0;
+        outgoing.z = 0;
+        float radius = cornerRadius(path, index);
+        incoming.nor().scl(radius);
+        outgoing.nor().scl(radius);
+        if (tangent) {
+            return incoming.scl(2 * (1 - t)).mulAdd(outgoing, 2 * t);
+        }
+        return center.mulAdd(incoming, -(1 - t) * (1 - t)).mulAdd(outgoing, t * t);
+    }
+
+    /** Arc length tables are immutable after construction, and drive both placement and gait distance. */
+    private static double[] travelDistances(List<BoardScene.Waypoint> path, int index) {
+        double distance = travelDistance(path.get(index), path.get(index + 1));
+        if (cornerRadius(path, index) == 0 && cornerRadius(path, index + 1) == 0) {
+            return new double[] { 0, distance };
+        }
+        int segments = Math.max(16, (int) Math.ceil(distance * 64));
+        double[] distances = new double[segments + 1];
+        var previous = curve(path, index, 0, false);
+        for (int i = 1; i <= segments; i++) {
+            var position = curve(path, index, i / (float) segments, false);
+            distances[i] = distances[i - 1] + previous.dst(position) / BoardGeometry.HEIGHT;
+            previous = position;
+        }
+        return distances;
+    }
+
+    private static float distanceProgress(double[] distances, double fraction) {
+        double length = distances[distances.length - 1];
+        if (length == 0) {
+            return (float) Math.clamp(fraction, 0, 1);
+        }
+        double target = Math.clamp(fraction, 0, 1) * length;
+        int index = Arrays.binarySearch(distances, target);
+        if (index >= 0) {
+            return index / (float) (distances.length - 1);
+        }
+        int next = -index - 1;
+        double progress = (target - distances[next - 1]) / (distances[next] - distances[next - 1]);
+        return (float) ((next - 1 + progress) / (distances.length - 1));
+    }
+
+    private static float distanceAt(double[] distances, float progress) {
+        float step = MathUtils.clamp(progress, 0, 1) * (distances.length - 1);
+        int index = Math.min((int) step, distances.length - 2);
+        return (float) (distances[index] + (distances[index + 1] - distances[index]) * (step - index));
     }
 
     private static Vector3 point(List<BoardScene.Waypoint> path, int index) {

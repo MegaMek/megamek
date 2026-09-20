@@ -66,7 +66,8 @@ class GpuFieldOfViewCliffSmokeTest {
         BoardScene scene = new BoardScene(0, 7, 7, tiles, List.of(), List.of(), -1, "", List.of());
         GpuTerrain terrain = new GpuTerrain();
         GpuAtmosphere atmosphere = new GpuAtmosphere();
-        GpuFieldOfView field = new GpuFieldOfView(style);
+        GpuFieldOfView field = new GpuFieldOfView();
+        field.configure(style, GpuFieldOfView.FOV_DARKNESS, style, GpuFieldOfView.SENSOR_DARKNESS);
         BoardCamera camera = new BoardCamera();
         camera.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setIsometric(true);

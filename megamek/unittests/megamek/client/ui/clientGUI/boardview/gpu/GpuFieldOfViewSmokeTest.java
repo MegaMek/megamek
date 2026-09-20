@@ -35,6 +35,7 @@ class GpuFieldOfViewSmokeTest {
         BoardFieldOfView expected = null;
         try (var options = new GpuFieldOfViewTest.Options()) {
             for (GpuFieldOfView.Style style : GpuFieldOfView.Style.values()) {
+                GpuFieldOfView.Style sensorStyle = GpuFieldOfView.Style.values()[(style.ordinal() + 1) % 3];
                 AtomicReference<Throwable> failure = new AtomicReference<>();
                 try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
                     SwingUtilities.invokeAndWait(() -> {
@@ -61,51 +62,60 @@ class GpuFieldOfViewSmokeTest {
                                 if (tick == 1) {
                                     boardCamera.setIsometric(false);
                                     GpuBoardTestUi.click("tuning");
-                                    assertTrue(modeButton(GpuFieldOfView.STYLE).isChecked());
-                                    assertEquals(GpuFieldOfView.DARKNESS * 100, darknessSlider().getValue(), 0.001f);
+                                    assertDefaults();
                                     GpuBoardTestUi.click("fov-style-" + style.name());
                                     GpuBoardTestUi.click("fov-style-" + style.name());
+                                    assertTrue(modeButton("sensor", GpuFieldOfView.SENSOR_STYLE).isChecked(),
+                                          "FoV controls must leave the sensor style unchanged");
+                                    GpuBoardTestUi.click("sensor-style-" + sensorStyle.name());
+                                    GpuBoardTestUi.click("sensor-style-" + sensorStyle.name());
                                     for (GpuFieldOfView.Style mode : GpuFieldOfView.Style.values()) {
-                                        assertEquals(mode == style, modeButton(mode).isChecked(),
+                                        assertEquals(mode == style, modeButton("fov", mode).isChecked(),
                                               "Exactly one FoV mode must remain selected, even when clicked twice");
+                                        assertEquals(mode == sensorStyle, modeButton("sensor", mode).isChecked(),
+                                              "Exactly one sensor mode must remain selected, independently of FoV");
                                     }
                                     GpuBoardTestUi.click("tuning");
-                                    probe = new GpuFieldOfView(style);
+                                    probe = new GpuFieldOfView();
+                                    probe.configure(style, GpuFieldOfView.FOV_DARKNESS, sensorStyle, GpuFieldOfView.SENSOR_DARKNESS);
                                     probe.update(mask);
                                     assertEquals(1, probe.uploads());
                                 } else if (tick == 12) {
                                     capture("top");
                                     results.put(style, appearance(fixture.source.takeFrame().scene()));
-                                    darknessSlider().setValue(0);
-                                    probe.configure(style, 0);
+                                    darknessSlider("FoV").setValue(0);
+                                    probe.configure(style, 0, sensorStyle, GpuFieldOfView.SENSOR_DARKNESS);
                                 } else if (tick == 16) {
                                     noDarkening = appearance(fixture.source.takeFrame().scene());
                                     capture("no-darkening");
-                                    darknessSlider().setValue(100);
-                                    probe.configure(style, 1);
+                                    darknessSlider("FoV").setValue(100);
+                                    probe.configure(style, 1, sensorStyle, GpuFieldOfView.SENSOR_DARKNESS);
                                 } else if (tick == 20) {
                                     Appearance darkened = appearance(fixture.source.takeFrame().scene());
                                     assertTrue(darkened.blocked() < noDarkening.blocked() * 0.9f,
                                           "The darkness slider must darken blocked content in " + style);
                                     assertEquals(noDarkening.visible(), darkened.visible(), 0.01f,
                                           "The darkness slider must leave visible content unchanged");
-                                    darknessSlider().setValue(GpuFieldOfView.DARKNESS * 100);
+                                    assertEquals(GpuFieldOfView.SENSOR_DARKNESS * 100, darknessSlider("Sensor").getValue(), 0.001f,
+                                          "FoV darkness must not change sensor darkness");
+                                    darknessSlider("FoV").setValue(GpuFieldOfView.FOV_DARKNESS * 100);
                                     boardCamera.setIsometric(true);
                                     boardCamera.fit(fixture.source.takeFrame().scene());
                                 } else if (tick == 24) {
                                     capture("isometric");
+                                    darknessSlider("FoV").setValue(50);
+                                    darknessSlider("Sensor").setValue(50);
                                     GpuBoardTestUi.click("tuning");
                                     GpuBoardTestUi.click("tuning-defaults");
                                 } else if (tick == 28) {
-                                    assertTrue(modeButton(GpuFieldOfView.STYLE).isChecked(), "Defaults must restore the FoV mode");
-                                    assertEquals(GpuFieldOfView.DARKNESS * 100, darknessSlider().getValue(), 0.001f,
-                                          "Defaults must restore FoV darkness");
+                                    assertDefaults();
                                     if (style == GpuFieldOfView.Style.GRAYSCALE) {
                                         capture("tuning");
                                     }
                                     assertEquals(mask, fixture.source.takeFrame().scene().fieldOfView(),
                                           "Presentation controls must not alter LOS/sensor data");
-                                    probe.configure(GpuFieldOfView.STYLE, GpuFieldOfView.DARKNESS);
+                                    probe.configure(GpuFieldOfView.FOV_STYLE, GpuFieldOfView.FOV_DARKNESS,
+                                          GpuFieldOfView.SENSOR_STYLE, GpuFieldOfView.SENSOR_DARKNESS);
                                     probe.update(mask);
                                     assertEquals(1, probe.uploads(), "Camera and tuning changes must reuse an unchanged mask");
                                     probe.update(BoardFieldOfView.EMPTY);
@@ -125,12 +135,19 @@ class GpuFieldOfViewSmokeTest {
                                   + "-" + camera + ".png"));
                         }
 
-                        private Slider darknessSlider() {
-                            return GpuBoardTestUi.stage().getRoot().findActor("FoV darkness");
+                        private void assertDefaults() {
+                            assertTrue(modeButton("fov", GpuFieldOfView.FOV_STYLE).isChecked());
+                            assertTrue(modeButton("sensor", GpuFieldOfView.SENSOR_STYLE).isChecked());
+                            assertEquals(GpuFieldOfView.FOV_DARKNESS * 100, darknessSlider("FoV").getValue(), 0.001f);
+                            assertEquals(GpuFieldOfView.SENSOR_DARKNESS * 100, darknessSlider("Sensor").getValue(), 0.001f);
                         }
 
-                        private TextButton modeButton(GpuFieldOfView.Style mode) {
-                            return GpuBoardTestUi.stage().getRoot().findActor("fov-style-" + mode.name());
+                        private Slider darknessSlider(String effect) {
+                            return GpuBoardTestUi.stage().getRoot().findActor(effect + " darkness");
+                        }
+
+                        private TextButton modeButton(String effect, GpuFieldOfView.Style mode) {
+                            return GpuBoardTestUi.stage().getRoot().findActor(effect + "-style-" + mode.name());
                         }
 
                         private Appearance appearance(BoardScene scene) {

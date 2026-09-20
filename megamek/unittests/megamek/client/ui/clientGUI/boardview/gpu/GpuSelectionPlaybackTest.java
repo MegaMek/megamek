@@ -44,6 +44,42 @@ class GpuSelectionPlaybackTest {
         assertEquals(new Vector3(300, 400, 50), position);
     }
 
+    @Test
+    void bothEdgesOfTheBandStayInsideTheHexAtTheUnitPlane() {
+        var unit = UnitPlaybackTest.unit(1, 4);
+        var coords = unit.location().coords();
+        var position = BoardGeometry.center(coords, 3.5f);
+        var pose = new UnitFootprint.Pose(unit, position, unit.location().facing() * 60);
+        for (int corner = 0; corner < 6; corner++) {
+            Vector3 outer = pose.outlinePoint(coords, corner);
+            Vector3 inner = pose.outlinePoint(coords, corner, BoardGeometry.MARKER_INSET + GpuBattleView.SELECTION_BAND_WIDTH);
+            assertTrue(BoardGeometry.contains(coords, outer.x, outer.y));
+            assertTrue(BoardGeometry.contains(coords, inner.x, inner.y));
+            assertTrue(inner.dst2(position) < outer.dst2(position));
+            assertTrue(inner.dst(outer) > 1, "A filled band must be wider than the old hairline");
+            assertEquals(position.z + .5f, outer.z, .001f);
+            assertEquals(outer.z, inner.z, .001f);
+        }
+    }
+
+    @Test
+    void selectionBobsSmoothlyAboveItsPlaneAndReturnsAfterTheConfiguredPeriod() {
+        float period = GpuBattleView.SELECTION_BOB_PERIOD_SECONDS;
+        float height = GpuBattleView.SELECTION_BOB_HEIGHT_LEVELS * BoardGeometry.LEVEL;
+        assertEquals(0, GpuBattleView.selectionBob(0), .001f);
+        assertEquals(height, GpuBattleView.selectionBob(period / 2), .001f);
+        assertEquals(0, GpuBattleView.selectionBob(period), .001f);
+        float previous = 0;
+        for (int sample = 0; sample <= 100; sample++) {
+            float time = period * sample / 100;
+            float lift = GpuBattleView.selectionBob(time);
+            assertTrue(lift >= 0 && lift <= height, "The ring must never dip below its support plane");
+            assertTrue(Math.abs(lift - previous) < height / 20, "The rise and fall must not jump");
+            assertEquals(lift, GpuBattleView.selectionBob(time + period), .002f);
+            previous = lift;
+        }
+    }
+
     private static Vector3 center(UnitFootprint.Pose ring, Coords occupied) {
         Vector3 sum = new Vector3();
         for (int corner = 0; corner < 6; corner++) {

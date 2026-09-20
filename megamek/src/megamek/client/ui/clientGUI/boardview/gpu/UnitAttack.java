@@ -28,6 +28,7 @@ final class UnitAttack {
     final BoardScene.Combat event;
     final float contactSeconds;
     final float duration;
+    private final float firingEndSeconds;
     private final Map<Integer, Set<Integer>> firingMounts = new HashMap<>();
     private final Map<Long, ResolvedAttack.Shot> profiles = new HashMap<>();
     private Vector3 physicalContact;
@@ -42,6 +43,9 @@ final class UnitAttack {
     private final Map<HitPoint, UnitPicking.SurfacePoint> hitPoints = new HashMap<>();
     float seconds;
     float delay;
+    float receivedAt;
+    float jitter;
+    UnitVolley.Group group;
 
     UnitAttack(BoardScene.Combat event) {
         this.event = event;
@@ -56,6 +60,8 @@ final class UnitAttack {
         contactSeconds = death() ? DEATH_SECONDS : shot() ? ANTICIPATION_SECONDS + MathUtils.clamp(distance * .05f, .18f, .7f)
               : approachSeconds + MELEE_SWING_SECONDS;
         duration = death() ? DEATH_SECONDS : contactSeconds + RECOVERY_SECONDS + (shot() ? 0 : MELEE_RUN_SECONDS);
+        firingEndSeconds = event.result().mounts().stream()
+              .anyMatch(mount -> "flame".equals(effect(mount.entityId(), mount.equipmentIndex()))) ? duration : contactSeconds;
     }
 
     boolean shot() {
@@ -70,11 +76,15 @@ final class UnitAttack {
 
     boolean fires(UnitEquipmentAssembly.Binding binding) {
         int owner = binding.memberId() < 0 ? event.attacker().id() : binding.memberId();
+        return fires(owner, binding.index());
+    }
+
+    boolean fires(int owner, int index) {
         var state = event.attacker().model() == null ? null : event.attacker().model().state();
         var appearance = state == null ? null : state.appearance();
-        if (appearance != null && binding.memberId() >= 0) { appearance = appearance.fighters().get(binding.memberId()); }
-        return firingMounts.getOrDefault(owner, Set.of()).contains(binding.index())
-              && (appearance == null || !appearance.inoperableEquipment().contains(binding.index()));
+        if (appearance != null && owner != event.entityId()) { appearance = appearance.fighters().get(owner); }
+        return firingMounts.getOrDefault(owner, Set.of()).contains(index)
+              && (appearance == null || !appearance.inoperableEquipment().contains(index));
     }
 
     /** The same visible posed endpoint is used for aiming and effects in either camera. */
@@ -230,6 +240,35 @@ final class UnitAttack {
         return profiles.getOrDefault(mountKey(owner, index), event.result().shot());
     }
 
+    /** Mesh-free effects use the same captured equipment families as model selection. */
+    String effect(int owner, int index) {
+        var state = event.attacker().model() == null ? null : event.attacker().model().state();
+        var structure = state == null ? null : state.structure();
+        if (structure != null && owner != event.entityId()) {
+            structure = structure.bodyForm() == null ? null : structure.bodyForm().fighters().stream()
+                  .filter(member -> member.id() == owner).map(UnitModelState.FlightMember::structure).findFirst().orElse(null);
+        }
+        String family = structure == null ? "" : structure.equipment().stream().filter(mount -> mount.index() == index)
+              .map(megamek.client.ui.tileset.UnitModelEquipment.Mount::family).findFirst().orElse("");
+        if (family.isEmpty() && owner == event.entityId() && index == event.result().equipmentIndex()) {
+            var type = megamek.common.equipment.EquipmentType.get(event.result().equipmentName());
+            if (type != null) { family = megamek.client.ui.tileset.UnitModelEquipment.family(type); }
+        }
+        var profile = profile(owner, index);
+        return switch (family) {
+            case "laser", "ppc", "energy", "bomb", "mine" -> family;
+            case "flamer" -> "flame";
+            case "extinguisher" -> "spray";
+            case "screen-launcher" -> "screen";
+            case "missile" -> "missile";
+            case "infantry-melee" -> "melee";
+            case "sensor" -> "none";
+            default -> profile != null && profile.ppc() ? "ppc" : "bullet";
+        };
+    }
+
+    float firingEndSeconds() { return firingEndSeconds; }
+
     /** Preserve the server's total. Division across logical group members is cosmetic, never another cluster roll. */
     int missileHits(int owner, int index, int missiles) {
         if (!event.result().hit()) { return 0; }
@@ -296,7 +335,7 @@ final class UnitAttack {
     }
 
     private float recoil(ResolvedAttack.Shot profile) {
-        int rounds = profile == null ? 1 : MathUtils.clamp(profile.shots(), 1, 16);
+        int rounds = roundCount(profile);
         float pulse = 0;
         for (int round = 0; round < rounds; round++) {
             float age = seconds - ANTICIPATION_SECONDS - roundDelay(round, rounds);
@@ -317,6 +356,8 @@ final class UnitAttack {
     float roundDelay(int round, int rounds) {
         return round * Math.min(.03f, (contactSeconds - ANTICIPATION_SECONDS) / Math.max(1, rounds) * .3f);
     }
+
+    static int roundCount(ResolvedAttack.Shot profile) { return profile == null ? 1 : MathUtils.clamp(profile.shots(), 1, 16); }
 
     /** Approach, stationary strike, recovery, then a faster return share this event's one clock. */
     float approachWeight() {
@@ -355,7 +396,7 @@ final class UnitAttack {
         return smooth((seconds - start) / .25f) * (1 - smooth((seconds - contactSeconds) / RECOVERY_SECONDS));
     }
 
-    private static float smooth(float value) {
+    static float smooth(float value) {
         float t = MathUtils.clamp(value, 0, 1);
         return t * t * (3 - 2 * t);
     }

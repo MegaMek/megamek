@@ -76,7 +76,7 @@ final class GpuJumpJets implements Disposable {
             smoke.removeIf(puff -> time - puff.birth >= SMOKE_LIFE);
             while (tick * EMISSION_STEP <= time + .00001f) {
                 float birth = tick * EMISSION_STEP;
-                float strength = 1 - UnitMotion.travelProgress(birth, power.duration());
+                float strength = power.smoke(birth);
                 int random = seed + tick++ * 7919;
                 if (noise(random) < strength && time - birth < SMOKE_LIFE) {
                     float fraction = time == previousTime ? 1 : MathUtils.clamp((birth - previousTime) / (time - previousTime), 0, 1);

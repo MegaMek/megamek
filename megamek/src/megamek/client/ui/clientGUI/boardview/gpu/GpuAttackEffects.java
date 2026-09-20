@@ -1,7 +1,6 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,8 @@ final class GpuAttackEffects implements Disposable {
     private final boolean[] arcs = new boolean[MAX_MUZZLES];
     private final boolean[] impacts = new boolean[MAX_MUZZLES];
     private final float[] flameSizes = new float[MAX_MUZZLES];
-    private final int[] rounds = new int[MAX_MUZZLES];
+    private final float[] roundDelays = new float[MAX_MUZZLES];
+    private final Trace[] emitted = new Trace[MAX_MUZZLES];
     private final ResolvedAttack.Shot[] profiles = new ResolvedAttack.Shot[MAX_MUZZLES];
     private final Vector3 target = new Vector3();
     private final Vector3 direction = new Vector3();
@@ -62,7 +62,7 @@ final class GpuAttackEffects implements Disposable {
     private final Vector3 flameWidth = new Vector3(), flameLength = new Vector3();
     private final Vector3 flameSide = new Vector3(), flameUp = new Vector3();
     private Camera camera;
-    private record Trace(Vector3 origin, Vector3 target, boolean impact) { }
+    record Trace(Vector3 origin, Vector3 forward, Vector3 target, boolean impact) { }
     private final Map<UnitAttack, Map<String, Trace>> traces = new HashMap<>();
     private final Map<UnitAttack, Map<String, GpuMissileEffects.Launch>> launches = new HashMap<>();
     private int muzzleCount, count;
@@ -89,120 +89,118 @@ final class GpuAttackEffects implements Disposable {
         var instance = instances.get(unit.id() + ":" + unit.part());
         var assembly = library == null ? null : library.loaded(unit.model(), unit.id());
         var receiving = event.target();
-        var targetInstance = receiving == null ? null : instances.get(receiving.id() + ":" + receiving.part());
+        var victim = receiving == null ? null : instances.get(receiving.id() + ":" + receiving.part());
         UnitAttack.center(instance, unit.location(), point);
-        attack.endpoint(targetInstance, point, target);
+        attack.endpoint(victim, point, target);
         var captured = launches.computeIfAbsent(attack, ignored -> new HashMap<>());
         var paths = traces.computeIfAbsent(attack, ignored -> new HashMap<>());
         captured.values().forEach(missiles::add);
-        boolean missileWeapon = !captured.isEmpty();
+        var represented = new java.util.HashSet<String>();
         if (assembly != null && instance != null) {
             for (var binding : assembly.equipment()) {
+                int owner = binding.memberId() < 0 ? event.entityId() : binding.memberId();
+                represented.add(owner + ":" + binding.index());
                 if (captured.containsKey(binding.node())) { continue; }
                 var attachment = instance.getNode(binding.node());
                 if (!attack.fires(binding) || attachment == null || !UnitBounds.subtree(attachment).isValid()) { continue; }
+                var emitters = binding.emitters().stream().filter(GpuAttackEffects::firingEmitter)
+                      .filter(emitter -> instance.getNode(emitter.node()) != null).toList();
+                if (emitters.isEmpty()) { continue; }
                 var profile = attack.profile(binding);
-                int count = profile == null ? 0 : profile.missiles();
-                if (profile == null && binding.emitters().stream().anyMatch(emitter -> "missile".equals(emitter.effect())
-                      || "cluster".equals(emitter.effect()))) { count = 1; }
+                int count = missileCount(profile, emitters.getFirst().effect());
                 if (count > 0) {
-                    missileWeapon = true;
                     if (attack.seconds < UnitAttack.ANTICIPATION_SECONDS) { continue; }
-                    List<Vector3> ports = new ArrayList<>();
-                    for (var emitter : binding.emitters()) {
-                        if (!firingEmitter(emitter) || instance.getNode(emitter.node()) == null) { continue; }
-                        var port = new Vector3();
-                        UnitModelAttachment.emitter(instance, emitter, port, direction);
-                        ports.add(port);
+                    var ports = new Vector3[emitters.size()];
+                    for (int index = 0; index < ports.length; index++) {
+                        ports[index] = new Vector3();
+                        UnitModelAttachment.emitter(instance, emitters.get(index), ports[index], direction);
                     }
-                    if (ports.isEmpty()) { continue; }
-                    int owner = binding.memberId() < 0 ? event.entityId() : binding.memberId();
-                    var launch = GpuMissileEffects.capture(attack, ports.toArray(Vector3[]::new), targetInstance, count,
-                          attack.missileHits(owner, binding.index(), count), attack.arcing(binding),
-                          binding.node().hashCode() ^ event.result().id().hashCode(), profile);
-                    captured.put(binding.node(), launch);
-                    missiles.add(launch);
+                    launch(captured, binding.node(), owner, binding.index(), ports, victim, count, profile);
                     continue;
                 }
-                int barrel = 0;
-                int barrels = (int) binding.emitters().stream().filter(GpuAttackEffects::firingEmitter).count();
-                for (var emitter : binding.emitters()) {
-                    if (muzzleCount == MAX_MUZZLES || !firingEmitter(emitter)) { continue; }
-                    int shots = profile == null ? 1 : MathUtils.clamp(profile.shots(), 1, 16);
-                    int fired = "bullet".equals(emitter.effect()) ? shots * (barrel + 1) / barrels - shots * barrel / barrels : shots;
-                    barrel++;
-                    if (fired == 0) { continue; }
-                    var node = instance.getNode(emitter.node());
-                    if (node != null) {
-                        if (muzzles[muzzleCount] == null) {
-                            muzzles[muzzleCount] = new Vector3();
-                            forwards[muzzleCount] = new Vector3();
-                        }
-                        // The flash follows the recoiling barrel; a projectile keeps its captured launch position.
-                        UnitModelAttachment.emitter(instance, node, emitter, muzzles[muzzleCount], forwards[muzzleCount]);
-                        String key = binding.node() + ":" + barrel;
-                        if (attack.seconds < UnitAttack.ANTICIPATION_SECONDS) {
-                            // Charging follows the moving barrel; capture the firing line only when it discharges.
-                            origin(muzzleCount).set(muzzles[muzzleCount]);
-                            endpoint(muzzleCount).set(target);
-                            impacts[muzzleCount] = false;
-                        } else {
-                            Trace trace = paths.get(key);
-                            if (trace == null) {
-                                var start = muzzles[muzzleCount].cpy();
-                                var finish = new Vector3();
-                                boolean contact;
-                                if ("laser".equals(emitter.effect()) || "ppc".equals(emitter.effect())) {
-                                    contact = attack.beamEndpoint(targetInstance, start, key.hashCode(), finish);
-                                } else {
-                                    attack.endpoint(targetInstance, start, !event.result().hit(), key.hashCode(), finish);
-                                    contact = true;
-                                }
-                                trace = new Trace(start, finish, contact);
-                                paths.put(key, trace);
-                            }
-                            origin(muzzleCount).set(trace.origin());
-                            endpoint(muzzleCount).set(trace.target());
-                            impacts[muzzleCount] = trace.impact();
-                        }
-                        flameSizes[muzzleCount] = MathUtils.clamp(UnitBounds.subtree(attachment).getDimensions(point).len()
-                              * instance.transform.getScaleX() * .5f, 1.5f, 14);
-                        arcs[muzzleCount] = attack.arcing(binding);
-                        rounds[muzzleCount] = fired;
-                        profiles[muzzleCount] = profile;
-                        effects[muzzleCount++] = emitter.effect();
-                    }
+                int rounds = UnitAttack.roundCount(profile);
+                boolean bullet = "bullet".equals(emitters.getFirst().effect());
+                // A physical round belongs to one barrel; its ordinal is never restarted for each barrel.
+                for (int index = 0; index < (bullet ? rounds : emitters.size()) && muzzleCount < MAX_MUZZLES; index++) {
+                    int barrel = bullet ? index % emitters.size() : index;
+                    var emitter = emitters.get(barrel);
+                    liveMuzzle();
+                    UnitModelAttachment.emitter(instance, emitter, muzzles[muzzleCount], forwards[muzzleCount]);
+                    float size = MathUtils.clamp(UnitBounds.subtree(attachment).getDimensions(point).len()
+                          * instance.transform.getScaleX() * .5f, 1.5f, 14);
+                    String key = binding.node() + ":" + (barrel + 1) + (bullet && index > 0 ? ":round-" + index : "");
+                    emission(paths, key, emitter.effect(), profile, victim, size, bullet ? attack.roundDelay(index, rounds) : 0);
                 }
             }
         }
-        if (muzzleCount == 0 && !missileWeapon && (assembly == null || instance == null || assembly.equipment().isEmpty())
-              && !event.result().mounts().isEmpty()) {
-            UnitAttack.center(instance, unit.location(), origin(0));
-            for (var mount : event.result().mounts()) {
-                var profile = attack.profile(mount.entityId(), mount.equipmentIndex());
-                if (profile != null && profile.missiles() > 0 && attack.seconds >= UnitAttack.ANTICIPATION_SECONDS) {
-                    String key = mount.entityId() + ":" + mount.equipmentIndex();
-                    var launch = captured.computeIfAbsent(key, ignored -> GpuMissileEffects.capture(attack,
-                          new Vector3[] { origin(0).cpy() }, targetInstance, profile.missiles(),
-                          attack.missileHits(mount.entityId(), mount.equipmentIndex(), profile.missiles()),
-                          profile.indirect() || profile.artillery(), key.hashCode() ^ event.result().id().hashCode(), profile));
-                    missiles.add(launch);
-                    missileWeapon = true;
+        // No mesh is required for firing. Preserve each observed physical gun, even in a mixed weapon bay.
+        for (var mount : event.result().mounts()) {
+            int owner = mount.entityId(), index = mount.equipmentIndex();
+            String key = owner + ":" + index;
+            if (represented.contains(key) || !attack.fires(owner, index) || captured.containsKey(key)) { continue; }
+            var profile = attack.profile(owner, index);
+            String effect = attack.effect(owner, index);
+            if ("none".equals(effect)) { continue; }
+            int count = missileCount(profile, effect);
+            if (count > 0) {
+                if (attack.seconds >= UnitAttack.ANTICIPATION_SECONDS) {
+                    launch(captured, key, owner, index,
+                          new Vector3[] { UnitAttack.center(instance, unit.location(), new Vector3()) }, victim, count, profile);
                 }
+                continue;
             }
-            if (!missileWeapon) {
-                endpoint(0).set(target);
-                if (muzzles[0] == null) { muzzles[0] = new Vector3(); forwards[0] = new Vector3(); }
-                muzzles[0].set(origin(0));
-                forwards[0].set(target).sub(muzzles[0]).nor();
-                var profile = event.result().shot();
-                arcs[0] = profile != null && (profile.artillery() || profile.indirect());
-                rounds[0] = profile == null ? 1 : MathUtils.clamp(profile.shots(), 1, 16);
-                profiles[0] = profile;
-                impacts[0] = true;
-                effects[muzzleCount++] = profile != null && profile.ppc() ? "ppc" : "bullet";
+            int rounds = "bullet".equals(effect) ? UnitAttack.roundCount(profile) : 1;
+            for (int round = 0; round < rounds && muzzleCount < MAX_MUZZLES; round++) {
+                liveMuzzle();
+                UnitAttack.center(instance, unit.location(), muzzles[muzzleCount]);
+                forwards[muzzleCount].set(target).sub(muzzles[muzzleCount]).nor();
+                emission(paths, key + ":round-" + round, effect, profile, victim, 2, attack.roundDelay(round, rounds));
             }
         }
+    }
+
+    private static int missileCount(ResolvedAttack.Shot profile, String effect) {
+        return profile != null && profile.missiles() > 0 ? profile.missiles()
+              : "missile".equals(effect) || "cluster".equals(effect) ? 1 : 0;
+    }
+
+    private void launch(Map<String, GpuMissileEffects.Launch> captured, String key, int owner, int index,
+          Vector3[] ports, ModelInstance victim, int count, ResolvedAttack.Shot profile) {
+        var launch = GpuMissileEffects.capture(attack, ports, victim, count, attack.missileHits(owner, index, count),
+              profile != null && (profile.indirect() || profile.artillery()), key.hashCode() ^ attack.event.result().id().hashCode(), profile);
+        captured.put(key, launch);
+        missiles.add(launch);
+    }
+
+    private void liveMuzzle() {
+        if (muzzles[muzzleCount] == null) {
+            muzzles[muzzleCount] = new Vector3();
+            forwards[muzzleCount] = new Vector3();
+        }
+    }
+
+    /** Capture each emitted round once. Beams follow the live nozzle; projectiles and released smoke do not. */
+    private void emission(Map<String, Trace> paths, String key, String effect, ResolvedAttack.Shot profile,
+          ModelInstance victim, float size, float delay) {
+        Trace trace = paths.get(key);
+        if (trace == null && attack.seconds >= UnitAttack.ANTICIPATION_SECONDS + delay) {
+            var start = muzzles[muzzleCount].cpy();
+            var finish = new Vector3();
+            boolean impact;
+            if ("laser".equals(effect) || "ppc".equals(effect)) { impact = attack.beamEndpoint(victim, start, key.hashCode(), finish); }
+            else { attack.endpoint(victim, start, !attack.event.result().hit(), key.hashCode(), finish); impact = true; }
+            trace = new Trace(start, forwards[muzzleCount].cpy(), finish, impact);
+            paths.put(key, trace);
+        }
+        origin(muzzleCount).set(trace == null ? muzzles[muzzleCount] : trace.origin());
+        endpoint(muzzleCount).set(trace == null ? target : trace.target());
+        emitted[muzzleCount] = trace;
+        impacts[muzzleCount] = trace != null && trace.impact();
+        flameSizes[muzzleCount] = size;
+        arcs[muzzleCount] = profile != null && (profile.indirect() || profile.artillery());
+        roundDelays[muzzleCount] = delay;
+        profiles[muzzleCount] = profile;
+        effects[muzzleCount++] = effect;
     }
 
     private static boolean firingEmitter(UnitModelDescriptor.Emitter emitter) {
@@ -217,6 +215,7 @@ final class GpuAttackEffects implements Disposable {
 
     int missileCount() { return missiles.missileCount(); }
     int smokeCount() { return missiles.smokeCount(); }
+    List<Trace> emissions(UnitAttack shot) { return List.copyOf(traces.getOrDefault(shot, Map.of()).values()); }
     int flameParticleCount() { return flames.size(); }
 
     float flameSize() {
@@ -284,12 +283,10 @@ final class GpuAttackEffects implements Disposable {
                     continue;
                 }
                 float cannon = UnitAttack.cannonScale(profiles[index]);
+                float age = attack.seconds - UnitAttack.ANTICIPATION_SECONDS - roundDelays[index];
+                if (age < 0 || emitted[index] == null) { continue; }
                 if (cannon > 0 && "bullet".equals(effect)) {
-                    for (int round = 0; round < rounds[index]; round++) {
-                        cannonMuzzle(muzzles[index], forwards[index], cannon,
-                              attack.seconds - UnitAttack.ANTICIPATION_SECONDS - attack.roundDelay(round, rounds[index]),
-                              index * 31 + round);
-                    }
+                    cannonMuzzle(muzzles[index], forwards[index], emitted[index], cannon, age, index * 31);
                 }
                 if (attack.seconds >= attack.contactSeconds) { continue; }
                 float t = attack.flight();
@@ -313,15 +310,10 @@ final class GpuAttackEffects implements Disposable {
                         }
                     }
                     default -> {
-                        for (int round = 0; round < rounds[index]; round++) {
-                            float delay = attack.roundDelay(round, rounds[index]);
-                            float travel = (attack.seconds - UnitAttack.ANTICIPATION_SECONDS - delay)
-                                  / (attack.contactSeconds - UnitAttack.ANTICIPATION_SECONDS - delay);
-                            if (travel < 0) { continue; }
-                            UnitAttack.projectile(start, target, travel, arcs[index], point);
-                            UnitAttack.projectile(start, target, Math.max(0, travel - .07f), arcs[index], end);
-                            line(end, point, .55f * Math.max(1, cannon), Color.YELLOW, 1);
-                        }
+                        float travel = age / (attack.contactSeconds - UnitAttack.ANTICIPATION_SECONDS - roundDelays[index]);
+                        UnitAttack.projectile(start, target, travel, arcs[index], point);
+                        UnitAttack.projectile(start, target, Math.max(0, travel - .07f), arcs[index], end);
+                        line(end, point, .55f * Math.max(1, cannon), Color.YELLOW, 1);
                     }
                 }
             }
@@ -354,20 +346,22 @@ final class GpuAttackEffects implements Disposable {
     }
 
     /** A short expanding muzzle explosion and lingering exhaust, sharing the existing bounded plume batch. */
-    private void cannonMuzzle(Vector3 muzzle, Vector3 forward, float size, float age, int seed) {
+    private void cannonMuzzle(Vector3 muzzle, Vector3 forward, Trace emission, float size, float age, int seed) {
         if (age < 0 || age >= MUZZLE_SMOKE_SECONDS) { return; }
-        flameSide.set(forward).crs(Vector3.Z).nor();
+        flameSide.set(emission.forward()).crs(Vector3.Z).nor();
         if (flameSide.isZero()) { flameSide.set(Vector3.X); }
-        flameUp.set(flameSide).crs(forward).nor();
         float time = age / MUZZLE_SMOKE_SECONDS;
         for (int puff = 0; puff < 5; puff++) {
             float angle = seed + puff * 2.399963f;
-            point.set(muzzle).mulAdd(forward, size * (1 + time * (5 + puff)))
+            point.set(emission.origin()).mulAdd(emission.forward(), size * (1 + time * (5 + puff)))
                   .mulAdd(flameSide, MathUtils.sin(angle) * size * time * 2)
                   .add(0, 0, size * time * time * 5);
             muzzlePuff(size * (1 + time * 2), 0, .24f * (1 - time));
         }
         if (age >= MUZZLE_BLAST_SECONDS) { return; }
+        flameSide.set(forward).crs(Vector3.Z).nor();
+        if (flameSide.isZero()) { flameSide.set(Vector3.X); }
+        flameUp.set(flameSide).crs(forward).nor();
         time = age / MUZZLE_BLAST_SECONDS;
         for (int puff = 0; puff < 7; puff++) {
             float angle = seed + puff * 2.399963f;

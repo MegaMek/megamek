@@ -383,6 +383,8 @@ final class GpuBoardUi implements Disposable {
         return tuning.normalMaps();
     }
 
+    double speedGainPerHex() { return tuning.speedGainPerHex(); }
+
     float damageOverride() {
         return tuning.damageOverride();
     }
@@ -401,6 +403,14 @@ final class GpuBoardUi implements Disposable {
 
     float fovDarkness() {
         return tuning.fovDarkness();
+    }
+
+    GpuFieldOfView.Style sensorStyle() {
+        return tuning.sensorStyle();
+    }
+
+    float sensorDarkness() {
+        return tuning.sensorDarkness();
     }
 
     float hudScale() {

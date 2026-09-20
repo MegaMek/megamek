@@ -166,11 +166,11 @@ public class FovHighlightingAndDarkening {
             return BoardFieldOfView.Hex.NONE;
         }
         Coords viewerPosition = null;
+        Entity viewer = boardView.getSelectedEntity();
         // In the movement phase, calc LOS based on the selected hex, otherwise use the selected Entity.
         if (boardView.game.getPhase().isMovement() && boardView.selected != null) {
             viewerPosition = boardView.selected;
-        } else if (boardView.getSelectedEntity() != null) {
-            Entity viewer = boardView.getSelectedEntity();
+        } else if (viewer != null) {
             if (viewer.isOnBoard(boardView.getBoardId())) {
                 viewerPosition = viewer.getSecondaryPositions().values().stream()
                       .min(Comparator.comparingInt(co -> co.distance(c))).orElse(viewer.getPosition());
@@ -180,13 +180,13 @@ public class FovHighlightingAndDarkening {
             return BoardFieldOfView.Hex.NONE;
         }
         boolean sensorsOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS)
-              || boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS);
+              || (boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_ADVANCED_SENSORS)
+                    && viewer != null && viewer.isSpaceborne());
         boolean doubleBlindOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND);
-        boolean inclusiveSensorsOn = boardView.game.getOptions().booleanOption(OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE);
         boolean targetIlluminated = boardView.game.getEntitiesVector(c, boardView.boardId).stream().anyMatch(Entity::isIlluminated)
               || !IlluminationLevel.determineIlluminationLevel(boardView.game, boardView.boardId, c).isNone();
-        int maxDistance = boardView.getSelectedEntity() != null && doubleBlindOn
-              ? boardView.game.getPlanetaryConditions().getVisualRange(boardView.getSelectedEntity(), targetIlluminated) : 60;
+        int maxDistance = viewer != null && doubleBlindOn
+              ? boardView.game.getPlanetaryConditions().getVisualRange(viewer, targetIlluminated) : 60;
         int distance = viewerPosition.distance(c);
         int blue = gs.getFovSpottingMode() ? 80 : 0;
         int darkenAlpha = gs.getFovDarkenAlpha();
@@ -194,33 +194,40 @@ public class FovHighlightingAndDarkening {
         if (distance == 0) {
             return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.ORIGIN, new Color(50, 80, 150, 70).getRGB());
         }
+        // Hex previews have no target entity. Use the same range calculation as SensorRangeSpriteHandler;
+        // the target-specific sensor calculation returns zero for a null target.
+        Compute.SensorRangeHelper ranges = sensorsOn && viewer != null ? Compute.getSensorRanges(boardView.game, viewer) : null;
+        boolean inSensorRange = false;
+        if (ranges != null) {
+            boolean ground = viewer.isAirborne() && boardView.game.isOnGroundMap(viewer);
+            int min = ground ? ranges.minGroundSensorRange : ranges.minSensorRange;
+            int max = ground ? ranges.maxGroundSensorRange : ranges.maxSensorRange;
+            inSensorRange = distance > min && distance <= max;
+        }
+        boolean outsideSensorRange = ranges != null && !inSensorRange;
         if (distance > maxDistance) {
-            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.BLOCKED, blockedTint);
+            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.BLOCKED, blockedTint, outsideSensorRange);
         }
         LosEffects los = getCachedLosEffects(viewerPosition, c, boardView.getBoardId());
-        int visualRange = 30, minSensorRange = 0, maxSensorRange = 0;
-        if (boardView.getSelectedEntity() != null) {
+        int visualRange = 30;
+        if (viewer != null) {
             if (los == null) {
-                los = LosEffects.calculateLOS(boardView.game, boardView.getSelectedEntity(), null);
+                los = LosEffects.calculateLOS(boardView.game, viewer, null);
             }
             if (doubleBlindOn) {
-                visualRange = Compute.getVisualRange(boardView.game, boardView.getSelectedEntity(), los, targetIlluminated);
+                visualRange = Compute.getVisualRange(boardView.game, viewer, los, targetIlluminated);
             }
-            int bracket = Compute.getSensorRangeBracket(boardView.getSelectedEntity(), null, cachedAllECMInfo);
-            int range = Compute.getSensorRangeByBracket(boardView.game, boardView.getSelectedEntity(), null, los);
-            maxSensorRange = bracket * range;
-            minSensorRange = inclusiveSensorsOn ? 0 : Math.max((bracket - 1) * range, 0);
         }
         // Visual range only constrains LOS when double blind is enabled.
         if (!doubleBlindOn) {
             visualRange = distance;
         }
         if (los != null && !los.canSee() || distance > visualRange) {
-            if (darken && sensorsOn && distance > minSensorRange && distance <= maxSensorRange) {
+            if (darken && inSensorRange) {
                 return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.SENSOR,
                       new Color(0, 0, blue, darkenAlpha / 2).getRGB());
             }
-            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.BLOCKED, blockedTint);
+            return new BoardFieldOfView.Hex(BoardFieldOfView.Visibility.BLOCKED, blockedTint, outsideSensorRange);
         }
         if (highlight) {
             Iterator<Integer> radii = ringsRadii.iterator();

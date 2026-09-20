@@ -16,15 +16,19 @@ import megamek.common.units.Terrains;
 final class UnitFootprint {
     record Layout(float width, float depth, float offsetX, float offsetY) { }
 
-    /** The same GL-frame pose used to place a moving model, never a replacement for game occupancy. */
+    /** The same GL-frame pose used to place a model, never a replacement for game occupancy. */
     record Pose(BoardScene.Unit unit, Vector3 position, float facing) {
         Pose {
             position = position.cpy();
         }
 
         Vector3 outlinePoint(Coords occupied, int corner) {
+            return outlinePoint(occupied, corner, BoardGeometry.MARKER_INSET);
+        }
+
+        Vector3 outlinePoint(Coords occupied, int corner, float inset) {
             Vector3 center = BoardGeometry.center(occupied, 0);
-            return BoardGeometry.markerPoint(BoardGeometry.corner(occupied, 0, corner), center)
+            return BoardGeometry.inset(BoardGeometry.corner(occupied, 0, corner), center, inset)
                   .sub(BoardGeometry.center(unit.location().coords(), 0))
                   .rotate(Vector3.Z, unit.location().facing() * 60 - facing).add(position).add(0, 0, .5f);
         }

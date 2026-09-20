@@ -338,8 +338,9 @@ final class GpuBoardSource implements AutoCloseable {
     /** Split only at observed conversion steps; normal travel keeps its one continuous acceleration interval. */
     private void queueMovement(Entity entity, BoardScene.Unit captured, List<BoardScene.Waypoint> points,
           EntityMovementType type, int jumpMP, int movementMP) {
+        float gravity = view.game.getPlanetaryConditions().getGravity();
         if (captured == null || captured.model() == null || points.stream().noneMatch(point -> point.form() != null)) {
-            queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), points, type, jumpMP, movementMP, captured));
+            queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), points, type, jumpMP, movementMP, captured, gravity));
             return;
         }
         List<BoardScene.Waypoint> leg = new ArrayList<>();
@@ -349,7 +350,7 @@ final class GpuBoardSource implements AutoCloseable {
                 var before = inForm(captured, entity, leg.getLast(), form);
                 var legStart = leg.getFirst();
                 if (leg.stream().anyMatch(step -> !step.samePose(legStart))) {
-                    queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), leg, type, jumpMP, movementMP, before));
+                    queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), leg, type, jumpMP, movementMP, before, gravity));
                 }
                 var after = inForm(captured, entity, point, point.form());
                 queueAnimation(new BoardScene.Conversion(view.getBoardId(), before, after));
@@ -361,7 +362,7 @@ final class GpuBoardSource implements AutoCloseable {
         }
         if (leg.size() > 1) {
             queueAnimation(new BoardScene.Movement(entity.getId(), view.getBoardId(), leg, type, jumpMP, movementMP,
-                  inForm(captured, entity, leg.getLast(), form)));
+                  inForm(captured, entity, leg.getLast(), form), gravity));
         }
     }
 

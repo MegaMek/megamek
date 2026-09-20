@@ -21,27 +21,31 @@ final class GpuFieldOfView implements Disposable {
         }
     }
 
-    /** Default presentation: all styles use the same LOS/sensor results and unit visibility. */
-    static final Style STYLE = Style.FOG_OF_WAR;
+    /** Outside visual LOS, unless a known sensor range also excludes the hex. */
+    static final Style FOV_STYLE = Style.DIMMED;
+    static final float FOV_DARKNESS = 0.65f;
+    /** Artwork desaturation before shading: 0 keeps the original colors, 1 uses their luminance. */
+    static final float DIMMED_DESATURATION = 0.25f;
 
-    /** Default FoV opacity multiplier: 0 leaves brightness unchanged, 1 uses full opacity. */
-    static final float DARKNESS = 0.25f;
+    /** Outside both visual LOS and sensor coverage. */
+    static final Style SENSOR_STYLE = Style.FOG_OF_WAR;
+    static final float SENSOR_DARKNESS = 0.25f;
 
-    private Style style;
-    private float darkness = DARKNESS;
+    private Style fovStyle = FOV_STYLE;
+    private float fovDarkness = FOV_DARKNESS;
+    private Style sensorStyle = SENSOR_STYLE;
+    private float sensorDarkness = SENSOR_DARKNESS;
     private BoardFieldOfView previous = BoardFieldOfView.EMPTY;
     private Texture mask;
     private boolean active;
     private long uploads;
 
-    GpuFieldOfView(Style style) {
-        this.style = style;
-    }
-
-    /** Render-thread presentation settings; changes reuse the current visibility mask. */
-    void configure(Style style, float darkness) {
-        this.style = style;
-        this.darkness = darkness;
+    /** Render-thread opacity multipliers and styles; changes reuse the current visibility mask. */
+    void configure(Style fovStyle, float fovDarkness, Style sensorStyle, float sensorDarkness) {
+        this.fovStyle = fovStyle;
+        this.fovDarkness = fovDarkness;
+        this.sensorStyle = sensorStyle;
+        this.sensorDarkness = sensorDarkness;
     }
 
     void update(BoardFieldOfView next) {
@@ -59,10 +63,13 @@ final class GpuFieldOfView implements Disposable {
             for (int x = 0; x < next.width(); x++) {
                 for (int y = 0; y < next.height(); y++) {
                     BoardFieldOfView.Hex hex = next.hexes().get(x * next.height() + y);
-                    // Low bits classify visibility; bit 3 says this visible hex has a distance-ring tint.
+                    // Low bits classify LOS; bit 3 marks a distance-ring tint, bit 4 is outside sensor range.
                     int state = hex.visibility().ordinal();
                     if (hex.visibility() == BoardFieldOfView.Visibility.VISIBLE && (hex.tint() >>> 24) != 0) {
                         state |= 8;
+                    }
+                    if (hex.outsideSensorRange()) {
+                        state |= 16;
                     }
                     pixels.drawPixel(x, y, (hex.tint() << 8) | state);
                 }
@@ -97,13 +104,19 @@ final class GpuFieldOfView implements Disposable {
         shader.setUniformf("u_fovSize", previous.width(), previous.height());
         shader.setUniformf("u_fovHexSize", BoardGeometry.WIDTH, BoardGeometry.HEIGHT);
         shader.setUniformMatrix("u_fovInverseView", camera.invProjectionView);
-        float opacity = previous.darken() ? previous.darkenAlpha() / 255f * darkness : 0;
-        boolean grayscale = previous.grayscale() || style == Style.GRAYSCALE && previous.darken();
-        shader.setUniformf("u_fovOptions", opacity,
-              previous.highlightAlpha() / 255f, grayscale ? 1 : 0, previous.spotting() ? 1 : 0);
-        shader.setUniformf("u_fovStyle", style == Style.FOG_OF_WAR ? 1 : 0);
+        shader.setUniformf("u_fovOptions", previous.highlightAlpha() / 255f, previous.spotting() ? 1 : 0);
+        shader.setUniformf("u_dimmedDesaturation", DIMMED_DESATURATION);
+        bindEffect(shader, "u_fovEffect", fovStyle, fovDarkness);
+        bindEffect(shader, "u_sensorEffect", sensorStyle, sensorDarkness);
         float pixel = camera instanceof OrthographicCamera ortho ? ortho.zoom / BoardGeometry.HEIGHT : 0.01f;
         shader.setUniformf("u_fovEdge", Math.max(0.004f, Math.min(0.04f, pixel * 1.5f)));
+    }
+
+    private void bindEffect(ShaderProgram shader, String uniform, Style style, float darkness) {
+        float opacity = previous.darken() ? previous.darkenAlpha() / 255f * darkness : 0;
+        // GPU styles are explicit: the classic view's grayscale preference must not override Dimmed.
+        boolean grayscale = style == Style.GRAYSCALE && previous.darken();
+        shader.setUniformf(uniform, opacity, grayscale ? 1 : 0, style == Style.FOG_OF_WAR ? 1 : 0);
     }
 
     @Override

@@ -59,6 +59,9 @@ final class GpuBoardTuning {
     private static final List<Knob> FOV_KNOBS = List.of(
           new Knob("FoV darkness", 0, 100, 5, "%.0f%%"));
 
+    private static final List<Knob> SENSOR_KNOBS = List.of(
+          new Knob("Sensor darkness", 0, 100, 5, "%.0f%%"));
+
     private static final List<Knob> EFFECT_KNOBS = List.of(
           new Knob("Rain", 0, 1, 0.05f, "%.2f"),
           new Knob("Snow", 0, 1, 0.05f, "%.2f"),
@@ -74,9 +77,12 @@ final class GpuBoardTuning {
     private final CheckBox normalMaps;
     private final CheckBox vsync;
     private final List<Control> geometry;
+    private final List<Control> movement;
     private final List<Control> visibility;
-    private final ButtonGroup<TextButton> fovModes = new ButtonGroup<>();
+    private final ButtonGroup<TextButton> fovModes;
     private final List<Control> fieldOfView;
+    private final ButtonGroup<TextButton> sensorModes;
+    private final List<Control> sensors;
     private final List<Control> weather;
     private final List<Control> effects;
     private final CheckBox overrideDamage;
@@ -109,21 +115,20 @@ final class GpuBoardTuning {
                 Gdx.graphics.setForegroundFPS(vsync.isChecked() ? 0 : 60);
             }
         });
+        section(skin, "Movement");
+        movement = controls(skin, List.of(new Knob("Speed gain / hex", 0, 10, .5f, "%.1f%%")), this::applyMovement, 0);
+        movement.getFirst().slider().addListener(new TextTooltip(
+              "Extra base speed per hex between the three-hex launch and braking ramps. Applies to new moves.", skin, "menu"));
         section(skin, "Unit visibility");
         visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
         visibility.get(1).slider().addListener(new TextTooltip(
               "Highlights occluded units with an outline and fill. Set to 0% to turn off.", skin, "menu"));
-        section(skin, "Field of view");
-        Table modes = new Table();
-        for (GpuFieldOfView.Style style : GpuFieldOfView.Style.values()) {
-            TextButton button = new TextButton(style.label, skin, "menu-control");
-            button.setName("fov-style-" + style.name());
-            button.setUserObject(style);
-            fovModes.add(button);
-            modes.add(button).width(92).height(22).padRight(2);
-        }
-        rows.add(modes).colspan(3).left().padBottom(2).row();
+        section(skin, "Outside field of view");
+        fovModes = effectModes(skin, "fov");
         fieldOfView = controls(skin, FOV_KNOBS, this::applyFieldOfView, 0);
+        section(skin, "Outside sensor range");
+        sensorModes = effectModes(skin, "sensor");
+        sensors = controls(skin, SENSOR_KNOBS, this::applyFieldOfView, 0);
         TextButton conditions = new TextButton("Planetary conditions...", skin, "menu-control");
         conditions.setName("tuning-planetary-conditions");
         conditions.setDisabled(source == null);
@@ -191,7 +196,7 @@ final class GpuBoardTuning {
         panel.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
         TextButton reset = new TextButton("Defaults", skin, "menu-control");
         reset.setName("tuning-defaults");
-        reset.addListener(new TextTooltip("Restore geometry, visibility, VSync, the scenario's starting atmosphere, and disable damage preview.",
+        reset.addListener(new TextTooltip("Restore geometry, movement, visibility, VSync, the scenario's starting atmosphere, and disable damage preview.",
               skin, "menu"));
         reset.setProgrammaticChangeEvents(false);
         reset.addListener(new ChangeListener() {
@@ -224,6 +229,20 @@ final class GpuBoardTuning {
         checkbox.getImageCell().size(14).padRight(5);
         rows.add(checkbox).colspan(3).left().height(20).row();
         return checkbox;
+    }
+
+    private ButtonGroup<TextButton> effectModes(Skin skin, String name) {
+        ButtonGroup<TextButton> group = new ButtonGroup<>();
+        Table modes = new Table();
+        for (GpuFieldOfView.Style style : GpuFieldOfView.Style.values()) {
+            TextButton button = new TextButton(style.label, skin, "menu-control");
+            button.setName(name + "-style-" + style.name());
+            button.setUserObject(style);
+            group.add(button);
+            modes.add(button).width(92).height(22).padRight(2);
+        }
+        rows.add(modes).colspan(3).left().padBottom(2).row();
+        return group;
     }
 
     private List<Control> controls(Skin skin, List<Knob> knobs, Runnable apply, int toggleCount) {
@@ -293,11 +312,15 @@ final class GpuBoardTuning {
               defaults.levelHeight(), defaults.gridShade(), defaults.multiHexUnitScale() };
         setValues(geometry, values);
         applyGeometry();
+        setValues(movement, new float[] { (float) UnitMotion.DEFAULT_SPEED_GAIN_PER_HEX * 100 });
+        applyMovement();
         setValues(visibility, new float[] { GpuTerrain.DEFAULT_BUILDING_OPACITY * 100,
               GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY * 100 });
         updateReadings(visibility);
-        fovModes.getButtons().get(GpuFieldOfView.STYLE.ordinal()).setChecked(true);
-        setValues(fieldOfView, new float[] { GpuFieldOfView.DARKNESS * 100 });
+        fovModes.getButtons().get(GpuFieldOfView.FOV_STYLE.ordinal()).setChecked(true);
+        setValues(fieldOfView, new float[] { GpuFieldOfView.FOV_DARKNESS * 100 });
+        sensorModes.getButtons().get(GpuFieldOfView.SENSOR_STYLE.ordinal()).setChecked(true);
+        setValues(sensors, new float[] { GpuFieldOfView.SENSOR_DARKNESS * 100 });
         applyFieldOfView();
         setAtmosphere(scenarioDefaults == null ? BoardAtmosphere.DEFAULTS : scenarioDefaults);
         overrideDamage.setChecked(false);
@@ -321,6 +344,8 @@ final class GpuBoardTuning {
         return normalMaps.isChecked();
     }
 
+    double speedGainPerHex() { return value(movement, 0) / 100.0; }
+
     /** Negative means the preview is disabled; otherwise this is the displayed loss from zero to one. */
     float damageOverride() {
         return overrideDamage.isChecked() ? value(damage, 0) : -1;
@@ -340,6 +365,14 @@ final class GpuBoardTuning {
 
     float fovDarkness() {
         return value(fieldOfView, 0) / 100;
+    }
+
+    GpuFieldOfView.Style sensorStyle() {
+        return (GpuFieldOfView.Style) sensorModes.getChecked().getUserObject();
+    }
+
+    float sensorDarkness() {
+        return value(sensors, 0) / 100;
     }
 
     /** Capture once per opened board; routine frame publication must not overwrite a user's preview. */
@@ -369,8 +402,13 @@ final class GpuBoardTuning {
         updateReadings(visibility);
     }
 
+    private void applyMovement() {
+        updateReadings(movement);
+    }
+
     private void applyFieldOfView() {
         updateReadings(fieldOfView);
+        updateReadings(sensors);
     }
 
     private void applyDamage() {

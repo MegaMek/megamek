@@ -52,6 +52,13 @@ class GpuBattleView extends ApplicationAdapter {
     static final float HOVER_PERIOD_SECONDS = UnitAnimator.HOVER_PERIOD_SECONDS;
     /** Height of that wave in terrain levels, so a floating token drifts off its flight height. */
     static final float HOVER_LEVELS = UnitAnimator.HOVER_LEVELS;
+    /** Width of the flat selection band as a fraction of the hex radius, extending inward from MARKER_INSET. */
+    static final float SELECTION_BAND_WIDTH = .08f;
+    /** Seconds for a complete rise and fall, on the shared animation clock. */
+    static final float SELECTION_BOB_PERIOD_SECONDS = 4;
+    /** Maximum lift above the unit's plane, in terrain levels. Zero disables bobbing. */
+    static final float SELECTION_BOB_HEIGHT_OFFSET = .15f;
+    static final float SELECTION_BOB_HEIGHT_LEVELS = .15f;
     /** Floating units are tied to their hex with this faint solid stem; solid, so it needs no blending state. */
     private static final Color TETHER_COLOR = Color.valueOf("A9B8B8");
     private static final float TILT_DEGREES_PER_SECOND = 60;
@@ -69,7 +76,8 @@ class GpuBattleView extends ApplicationAdapter {
     private final GpuJumpJets jumpJets = new GpuJumpJets();
     private final GpuUnitCamouflage camouflage = new GpuUnitCamouflage();
     private final Map<BoardScene.Unit, Vector3> unitAnchors = new HashMap<>();
-    private final Map<BoardScene.Unit, UnitFootprint.Pose> movingFootprints = new HashMap<>();
+    private final Map<BoardScene.Unit, UnitFootprint.Pose> unitFootprints = new HashMap<>();
+    private final Matrix4 selectionTransform = new Matrix4();
     private final Map<String, ModelInstance> unitInstances = new HashMap<>();
     private final UnitPicking unitPicking = new UnitPicking();
     private final Map<String, UnitModelState.Appearance> equipmentAppearance = new HashMap<>();
@@ -105,6 +113,8 @@ class GpuBattleView extends ApplicationAdapter {
     private float hoverClock;
     private long boardGeneration;
     private long centerSequence;
+    private int cameraSelection = -1;
+    private boolean cameraFollowingPlayback;
     private int layoutWidth;
     private int layoutHeight;
     private int layoutPixelWidth;
@@ -115,7 +125,7 @@ class GpuBattleView extends ApplicationAdapter {
 
     GpuBattleView(GpuBoardSource source) {
         this.source = source;
-        fieldOfView = new GpuFieldOfView(GpuFieldOfView.STYLE);
+        fieldOfView = new GpuFieldOfView();
     }
 
     @Override
@@ -196,6 +206,7 @@ class GpuBattleView extends ApplicationAdapter {
         }
         List<BoardScene.Tile> previousTiles = scene == null ? null : scene.tiles();
         scene = frame.scene();
+        playback.speedGainPerHex = ui.speedGainPerHex();
         playback.accept(frame.timeline(), scene, this::hasInfantryTransports);
         playback.advance(Gdx.graphics.getDeltaTime(), playbackSpeed);
         scene = playback.present(scene);
@@ -213,7 +224,7 @@ class GpuBattleView extends ApplicationAdapter {
         fireControl.update(scene);
         tactical.update(scene);
         fieldOfView.update(scene.fieldOfView());
-        fieldOfView.configure(ui.fovStyle(), ui.fovDarkness());
+        fieldOfView.configure(ui.fovStyle(), ui.fovDarkness(), ui.sensorStyle(), ui.sensorDarkness());
         atmosphere.configure(ui.atmosphere());
         terrain.setAtmosphere(atmosphere.lighting());
         terrain.setNormalMaps(ui.normalMaps());
@@ -237,19 +248,7 @@ class GpuBattleView extends ApplicationAdapter {
         }
         annotationTextures.update(scene.units().stream().filter(unit -> unit.annotations() != null).collect(Collectors.toMap(
               unit -> unit.id() + ":" + unit.part(), BoardScene.Unit::annotations)));
-        if (!fitted) {
-            boardCamera.fit(scene);
-            fitted = true;
-            // A unit-list click can switch boards. Do not consume its pending focus request while fitting.
-            centerSequence = 0;
-        }
-        if (!playback.busy() && centerSequence != frame.centerRequest().sequence()) {
-            centerSequence = frame.centerRequest().sequence();
-            Coords center = frame.centerRequest().coords();
-            if (center != null && scene.tile(center) != null) {
-                boardCamera.center(BoardGeometry.center(center, scene.tile(center).elevation()));
-            }
-        }
+        updateCameraFocus(scene, frame.centerRequest());
         boardCamera.advance(Gdx.graphics.getDeltaTime());
         if (source.chatActive()) {
             cameraKeys.clear();
@@ -352,7 +351,7 @@ class GpuBattleView extends ApplicationAdapter {
     private void prepareUnits() {
         hover.clear();
         unitAnchors.clear();
-        movingFootprints.clear();
+        unitFootprints.clear();
         unitInstances.keySet().retainAll(scene.units().stream().map(unit -> unit.id() + ":" + unit.part())
               .collect(Collectors.toSet()));
         unitTints.keySet().retainAll(unitInstances.keySet());
@@ -382,9 +381,7 @@ class GpuBattleView extends ApplicationAdapter {
                   && MathUtils.isEqual(position.z, tile.elevation() * BoardGeometry.LEVEL)) {
                 position.z = BoardGeometry.groundZ(tile);
             }
-            if (motion != null && motion.isMoving()) {
-                movingFootprints.put(unit, new UnitFootprint.Pose(placement, position, facing));
-            }
+            float footprintFacing = facing;
             GpuUnitModel visual = unit.sensorContact() ? markers.model(BoardMarker.Kind.SENSOR_CONTACT)
                   : unitModels == null ? null : unitModels.get(unit.model(), unit.id());
             boolean authored = !unit.sensorContact() && visual != null;
@@ -475,16 +472,62 @@ class GpuBattleView extends ApplicationAdapter {
                 float offset = hoverOffset(hoverClock, unit.id(), unit.part());
                 hover.add(new Hover(instance, offset));
                 anchor.add(0, 0, offset);
+                position.z += offset;
             }
+            unitFootprints.put(unit, new UnitFootprint.Pose(placement, position, footprintFacing));
             unitAnchors.put(unit, anchor);
+        }
+    }
+
+    /** Follow the presented action, then the live selection once the completion hold has elapsed. */
+    void updateCameraFocus(BoardScene scene, BoardView.CenterRequest request) {
+        if (!fitted) {
+            boardCamera.fit(scene);
+            fitted = true;
+            cameraSelection = scene.selectedId();
+            cameraFollowingPlayback = false;
+            // A unit-list click can switch boards. Do not consume its pending focus request while fitting.
+            centerSequence = 0;
+        }
+        // Keep the last idle selection until the entire playback, including its completion hold, ends.
+        if (playback.busy()) {
+            cameraFollowingPlayback = true;
+            var active = scene.units().stream().filter(unit -> unit.id() == playback.activeEntityId())
+                  .findFirst().orElse(null);
+            if (active != null) {
+                var motion = motions.get(active.id());
+                Vector3 position = motion != null && motion.isMoving() ? motion.surfacePosition(scene).cpy()
+                      : BoardGeometry.center(active.location().coords(), active.location().elevation());
+                playback.placeDisplacement(active, position);
+                if (!boardCamera.focus.epsilonEquals(position, .001f)) {
+                    boardCamera.center(position);
+                }
+            }
+            return;
+        }
+        Coords center = null;
+        if (cameraFollowingPlayback || cameraSelection != scene.selectedId()) {
+            center = scene.units().stream().filter(unit -> unit.id() == scene.selectedId())
+                  .map(unit -> unit.location().coords()).findFirst().orElse(null);
+        }
+        if (center == null && centerSequence != request.sequence()) {
+            center = request.coords();
+        }
+        centerSequence = request.sequence();
+        cameraSelection = scene.selectedId();
+        cameraFollowingPlayback = false;
+        if (center != null && scene.tile(center) != null) {
+            boardCamera.center(BoardGeometry.center(center, scene.tile(center).elevation()));
         }
     }
 
     private void aimAttack() {
         if (unitModels == null) { return; }
+        Set<Integer> aimed = new java.util.HashSet<>();
         for (var attack : playback.attacks()) {
-            if (attack.aimWeight() <= 0) { continue; }
+            if (!attack.shot() && attack.aimWeight() <= 0) { continue; }
             var unit = attack.event.attacker();
+            if (!aimed.add(unit.id())) { continue; }
             var key = unit.id() + ":" + unit.part();
             var animator = animators.get(key);
             if (animator == null || !unitInstances.containsKey(key) || unit.model() == null) { continue; }
@@ -495,7 +538,10 @@ class GpuBattleView extends ApplicationAdapter {
             var origin = UnitAttack.center(unitInstances.get(key), unit.location(), new Vector3());
             var endpoint = attack.shot() ? attack.endpoint(targetInstance, origin, new Vector3())
                   : attack.contact(targetInstance, origin, unitPicking, new Vector3());
-            animator.aim(model, unit, attack, endpoint, targetInstance);
+            if (attack.shot()) {
+                animator.aimShots(model, unit, playback.attacks(), shot -> shot.event.target() == null ? null
+                      : unitInstances.get(shot.event.target().id() + ":" + shot.event.target().part()));
+            } else { animator.aim(model, unit, attack, endpoint, targetInstance); }
             for (var displayed : scene.units()) {
                 if (displayed.id() == unit.id()) {
                     unitAnchors.put(displayed, model.anchor(unitInstances.get(key), boardCamera.camera));
@@ -845,34 +891,45 @@ class GpuBattleView extends ApplicationAdapter {
     private void renderSelectionOutlines() {
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
         lines.setProjectionMatrix(boardCamera.camera.combined);
-        lines.begin(ShapeRenderer.ShapeType.Line);
+        lines.begin(ShapeRenderer.ShapeType.Filled);
         for (BoardScene.Unit unit : scene.units()) {
             if (unit.id() == scene.selectedId() || (hovered != null && unit.footprint().contains(hovered))) {
                 lines.setColor(unit.sensorContact() ? Color.ORANGE : unit.id() == scene.selectedId()
                       ? Color.CYAN : Color.WHITE);
-                UnitFootprint.Pose moving = movingFootprints.get(unit);
-                if (moving != null) {
-                    for (Coords occupied : moving.unit().footprint()) {
-                        for (int corner = 0; corner < 6; corner++) {
-                            lines.line(moving.outlinePoint(occupied, corner), moving.outlinePoint(occupied, corner + 1));
-                        }
-                    }
-                } else {
-                    for (Coords occupied : unit.footprint()) {
-                        var tile = scene.tile(occupied);
-                        if (tile != null) {
-                            ring(occupied, unit.footprint().size() > 1 ? tile.elevation() : unit.location().elevation());
-                        }
-                    }
+                UnitFootprint.Pose pose = unitFootprints.get(unit);
+                float lift = unit.id() == scene.selectedId() ? selectionBob(hoverClock) : 0;
+                lines.setTransformMatrix(selectionTransform.setToTranslation(0, 0, pose.position().z + .5f + lift));
+                for (Coords occupied : pose.unit().footprint()) {
+                    selectionBand(pose, occupied);
                 }
             }
         }
+        lines.end();
+        lines.setTransformMatrix(selectionTransform.idt());
+        lines.begin(ShapeRenderer.ShapeType.Line);
         if (hovered != null && scene.tile(hovered) != null && !ui.hit(Gdx.input.getX(), Gdx.input.getY())) {
             BoardScene.Tile tile = scene.tile(hovered);
             lines.setColor(Color.WHITE);
             ring(hovered, tile.elevation());
         }
         lines.end();
+    }
+
+    /** Stay above the support plane throughout the wave, including when the unit is standing on terrain. */
+    static float selectionBob(float seconds) {
+        return SELECTION_BOB_HEIGHT_OFFSET + (SELECTION_BOB_HEIGHT_LEVELS * BoardGeometry.LEVEL
+              * (1 - MathUtils.cos(MathUtils.PI2 * seconds / SELECTION_BOB_PERIOD_SECONDS)) / 2);
+    }
+
+    private void selectionBand(UnitFootprint.Pose pose, Coords occupied) {
+        for (int edge = 0; edge < 6; edge++) {
+            Vector3 outer = pose.outlinePoint(occupied, edge);
+            Vector3 nextOuter = pose.outlinePoint(occupied, edge + 1);
+            Vector3 inner = pose.outlinePoint(occupied, edge, BoardGeometry.MARKER_INSET + SELECTION_BAND_WIDTH);
+            Vector3 nextInner = pose.outlinePoint(occupied, edge + 1, BoardGeometry.MARKER_INSET + SELECTION_BAND_WIDTH);
+            lines.triangle(outer.x, outer.y, nextOuter.x, nextOuter.y, inner.x, inner.y);
+            lines.triangle(inner.x, inner.y, nextOuter.x, nextOuter.y, nextInner.x, nextInner.y);
+        }
     }
 
     private void ring(Coords coords, float elevation) {
@@ -1291,7 +1348,7 @@ class GpuBattleView extends ApplicationAdapter {
         unitDamage.clear();
         equipmentAppearance.clear();
         upperBodyTurns.clear();
-        movingFootprints.clear();
+        unitFootprints.clear();
         hover.clear();
         unitPicking.clear();
         hexTextByHeight.clear();

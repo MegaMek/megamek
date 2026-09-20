@@ -24,6 +24,36 @@ import org.junit.jupiter.api.Test;
 
 class UnitPlaybackTest {
     @Test
+    void movementCapturesTuningAtStartAndJumpUsesCapturedGravity() {
+        var start = unit(1, 0).location();
+        var end = unit(1, 40);
+        var walk = new BoardScene.Movement(1, 0, List.of(start, end.location()), EntityMovementType.MOVE_WALK, 0, 4, end);
+        var playback = new UnitPlayback();
+        playback.speedGainPerHex = 0;
+        playback.accept(List.of(walk, walk), scene(end), ignored -> false);
+        playback.advance(0, UnitMotion.Speed.NORMAL);
+        double duration = playback.motions.get(1).remainingSeconds();
+        playback.speedGainPerHex = .06;
+        playback.advance(0, UnitMotion.Speed.NORMAL);
+        assertEquals(duration, playback.motions.get(1).remainingSeconds(), "Changing tuning cannot warp active movement");
+        playback.advance(duration / UnitMotion.Speed.NORMAL.rate + UnitPlayback.COMPLETION_HOLD_SECONDS, UnitMotion.Speed.NORMAL);
+        assertTrue(playback.motions.get(1).remainingSeconds() < duration, "The next move uses the new gain");
+        for (float gravity : new float[] { 0, .5f, 1, 2 }) {
+            var landing = unit(2, 1);
+            var jump = new BoardScene.Movement(2, 0, List.of(start, landing.location()), EntityMovementType.MOVE_JUMP, 6, 6, landing, gravity);
+            var flight = new UnitPlayback();
+            flight.accept(List.of(jump), scene(landing), ignored -> false);
+            flight.advance(0, UnitMotion.Speed.NORMAL);
+            var motion = flight.motions.get(2);
+            flight.advance(motion.remainingSeconds() / 2 / UnitMotion.Speed.NORMAL.rate, UnitMotion.Speed.NORMAL);
+            assertEquals(4 / Math.max(.25, gravity), motion.position().z / BoardGeometry.LEVEL, .001);
+            flight.finish();
+            assertFalse(flight.busy());
+            assertNull(motion.sample().jets());
+        }
+    }
+
+    @Test
     void pushUsesObservedDisplacementForBothParticipantsAndNeverInventsAMove() {
         var attacker = unit(1, 0);
         var victim = unit(2, 1);
@@ -275,7 +305,8 @@ class UnitPlaybackTest {
         var scene = scene(unit(1, 4), unit(2, 5));
         var attack = attack(unit(1, 4), unit(2, 5), ResolvedAttack.Kind.SHOT, true);
         playback.accept(List.of(move(1), attack, move(2)), scene, id -> false);
-        playback.advance(2.8, UnitMotion.Speed.NORMAL);
+        playback.advance(0, UnitMotion.Speed.NORMAL);
+        playback.advance(playback.motions.get(1).remainingSeconds() / UnitMotion.Speed.NORMAL.rate, UnitMotion.Speed.NORMAL);
         assertNull(playback.attack());
         playback.advance(1, UnitMotion.Speed.NORMAL);
         assertNotNull(playback.attack());
@@ -318,10 +349,18 @@ class UnitPlaybackTest {
         List<BoardScene.Animation> events = List.of(move(1), attack(unit(1, 4), unit(2, 5), ResolvedAttack.Kind.KICK, false), move(2));
         for (var playback : List.of(low, high, once)) {
             playback.accept(events, scene, id -> false);
+            playback.advance(0, UnitMotion.Speed.NORMAL);
         }
-        for (int i = 0; i < 150; i++) { low.advance(1.0 / 30, UnitMotion.Speed.NORMAL); }
-        for (int i = 0; i < 720; i++) { high.advance(1.0 / 144, UnitMotion.Speed.NORMAL); }
-        once.advance(5, UnitMotion.Speed.NORMAL);
+        double seconds = once.motions.get(1).remainingSeconds() / UnitMotion.Speed.NORMAL.rate
+              + UnitPlayback.COMPLETION_HOLD_SECONDS + .4;
+        for (int rate : new int[] { 30, 144 }) {
+            var playback = rate == 30 ? low : high;
+            int frames = (int) (seconds * rate);
+            for (int i = 0; i < frames; i++) { playback.advance(1.0 / rate, UnitMotion.Speed.NORMAL); }
+            playback.advance(seconds - frames / (double) rate, UnitMotion.Speed.NORMAL);
+        }
+        once.advance(seconds, UnitMotion.Speed.NORMAL);
+        assertNotNull(once.attack());
         assertEquals(once.attack().seconds, low.attack().seconds, 1e-5);
         assertEquals(once.attack().seconds, high.attack().seconds, 1e-5);
         assertEquals(0, high.attack().impact(), "A miss must not generate a hit reaction");

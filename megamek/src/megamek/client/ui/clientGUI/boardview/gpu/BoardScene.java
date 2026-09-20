@@ -265,7 +265,11 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
         /** Captured fitting metadata does not create another movement step at a queued path boundary. */
         boolean samePose(Waypoint other) {
-            return coords.equals(other.coords) && elevation == other.elevation && facing == other.facing
+            return facing == other.facing && samePoseExceptFacing(other);
+        }
+
+        boolean samePoseExceptFacing(Waypoint other) {
+            return coords.equals(other.coords) && elevation == other.elevation
                   && proneCause == other.proneCause && fallSide == other.fallSide && aeroState == other.aeroState
                   && java.util.Objects.equals(form, other.form);
         }
@@ -365,13 +369,17 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
     }
 
     public record Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP, int movementMP,
-          Unit unit) implements Animation {
+          Unit unit, float gravity) implements Animation {
         public Movement {
             path = List.copyOf(path);
         }
 
         public Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP, int movementMP) {
             this(entityId, boardId, path, type, jumpMP, movementMP, null);
+        }
+
+        public Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP, int movementMP, Unit unit) {
+            this(entityId, boardId, path, type, jumpMP, movementMP, unit, 1);
         }
 
         public Movement(int entityId, int boardId, List<Waypoint> path, EntityMovementType type, int jumpMP) {

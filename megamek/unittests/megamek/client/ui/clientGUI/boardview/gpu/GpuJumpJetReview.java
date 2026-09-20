@@ -87,13 +87,17 @@ final class GpuJumpJetReview {
                     }
                     animator.apply(model, instance, unit, motion.sample(), (float) (frame * step), (float) step, false, 0);
                     model.place(instance, camera, motion.position(), 0, unit);
+                    if (frame == 10) {
+                        assertThrustFollowsTravel(model, instance);
+                    }
                     jets.beginFrame();
                     jets.update("review", model, instance, unit, motion.sample());
                     jets.endFrame();
                     assertEquals(frame == 48 ? 0 : expected, jets.emitterCount(), family + " frame " + frame);
                     assertTrue(jets.smokeCount() <= expected * GpuJumpJets.PUFFS_PER_EMITTER);
                     if (entity instanceof BattleArmor || frame == 10 || frame == 24 || frame == 40 || frame == 48) {
-                        render(batch, camera, instance, jets, "runtime-jump-" + family + "-" + String.format("%02d", frame), frame == 24);
+                        render(batch, camera, instance, jets, "runtime-jump-" + family + "-" + String.format("%02d", frame),
+                              frame == 24 || frame == 40);
                     }
                 }
                 assertEquals(0, jets.smokeCount(), "The last frame has neither flame nor smoke");
@@ -159,6 +163,31 @@ final class GpuJumpJetReview {
         } finally {
             jets.dispose();
         }
+    }
+
+    private static void assertThrustFollowsTravel(GpuUnitModel model, ModelInstance instance) {
+        var travel = BoardGeometry.center(END.coords(), 0).sub(BoardGeometry.center(START.coords(), 0)).nor();
+        var exhaust = new Vector3();
+        int checked = 0;
+        for (var rig : model.rigs()) {
+            var container = rig.container() == null ? null : instance.getNode(rig.container());
+            for (var emitter : rig.emitters()) {
+                if (!"exhaust".equals(emitter.role())) { continue; }
+                var node = UnitAnimator.find(container == null ? instance.nodes : container.getChildren(), emitter.node());
+                UnitModelAttachment.emitter(instance, node, emitter, new Vector3(), exhaust);
+                assertTrue(exhaust.dot(travel) < -.05f && exhaust.z < -.5f, "The pack tilts with its jumping troop");
+                checked++;
+            }
+        }
+        for (var binding : model.equipment()) {
+            for (var emitter : binding.emitters()) {
+                if (!"exhaust".equals(emitter.role())) { continue; }
+                UnitModelAttachment.emitter(instance, emitter, new Vector3(), exhaust);
+                assertTrue(exhaust.dot(travel) < -.05f && exhaust.z < -.5f, "Mounted jets inherit the jumping body's tilt");
+                checked++;
+            }
+        }
+        assertTrue(checked > 0);
     }
 
     private static UnitMotion jump() {

@@ -21,11 +21,14 @@ final class UnitPlayback {
     /** Maximum spread between a unit's weapon launches, in shared animation seconds. */
     static final float VOLLEY_JITTER_SECONDS = .12f;
     final Map<Integer, UnitMotion> motions = new HashMap<>();
+    // GL-owned tuning, captured into the immutable timeline when each movement starts.
+    double speedGainPerHex = UnitMotion.DEFAULT_SPEED_GAIN_PER_HEX;
     private final ArrayDeque<BoardScene.Animation> pending = new ArrayDeque<>();
     private final Map<Integer, BoardScene.Waypoint> observed = new HashMap<>();
     private BoardScene.Animation active;
     private UnitAttack attack;
     private final List<UnitAttack> attacks = new ArrayList<>();
+    private final UnitVolley volley = new UnitVolley();
     private final List<UnitAttack> visibleAttacks = java.util.Collections.unmodifiableList(attacks);
     private double combatSeconds, combatDuration, combatContact;
     private BoardScene volleyScene;
@@ -135,6 +138,7 @@ final class UnitPlayback {
                     combatSeconds = 0;
                     combatDuration = attack.duration;
                     combatContact = attack.contactSeconds;
+                    if (attack.shot()) { volley.add(attack, 0); }
                     collectVolley();
                 } else if (active instanceof BoardScene.Conversion change) {
                     conversion = new UnitConversion(change);
@@ -149,6 +153,7 @@ final class UnitPlayback {
                     conversion.seconds = Math.min(UnitConversion.DURATION_SECONDS, conversion.seconds + (float) (step * speed.rate));
                 } else if (motion == null) {
                     combatSeconds = Math.min(combatDuration, combatSeconds + step * speed.rate);
+                    volley.advance((float) combatSeconds);
                     attacks.forEach(shot -> {
                         float previous = shot.seconds;
                         shot.seconds = Math.min(shot.duration, (float) combatSeconds - shot.delay);
@@ -183,6 +188,7 @@ final class UnitPlayback {
             active = null;
             attack = null;
             attacks.clear();
+            volley.clear();
             volleyScene = null;
             conversion = null;
         }
@@ -230,12 +236,10 @@ final class UnitPlayback {
                 }
             }
             var shot = new UnitAttack(next);
-            float jitter = (next.result().id().hashCode() & 0xFFFF) / 65535f * VOLLEY_JITTER_SECONDS;
-            shot.delay = combatSeconds < UnitAttack.ANTICIPATION_SECONDS ? jitter : (float) combatSeconds + jitter;
-            shot.seconds = (float) combatSeconds - shot.delay;
             attacks.add(shot);
-            combatDuration = Math.max(combatDuration, shot.delay + shot.duration);
-            combatContact = Math.max(combatContact, shot.delay + shot.contactSeconds);
+            volley.add(shot, (float) combatSeconds);
+            combatDuration = attacks.stream().mapToDouble(item -> item.delay + item.duration).max().orElseThrow();
+            combatContact = attacks.stream().mapToDouble(item -> item.delay + item.contactSeconds).max().orElseThrow();
             completed = false;
             hold = 0;
         }
@@ -259,6 +263,9 @@ final class UnitPlayback {
 
     boolean busy() { return active != null || !pending.isEmpty(); }
 
+    /** The action being presented retains camera focus through its completion hold. */
+    int activeEntityId() { return active == null ? -1 : active.entityId(); }
+
     double holdSeconds() { return hold; }
 
     boolean paused() { return paused; }
@@ -270,7 +277,8 @@ final class UnitPlayback {
         var unit = movement.unit();
         int members = unit != null && unit.model() != null && unit.model().state() != null
               && unit.model().state().structure().activeTroopers() > 0 ? unit.model().figures() : 0;
-        motion.append(movement.path(), movement.type(), movement.jumpMP(), transports.test(unit), movement.movementMP(), members);
+        motion.append(movement.path(), movement.type(), movement.jumpMP(), transports.test(unit), movement.movementMP(), members,
+              speedGainPerHex, movement.gravity());
         return motion;
     }
 
@@ -300,6 +308,7 @@ final class UnitPlayback {
         active = null;
         attack = null;
         attacks.clear();
+        volley.clear();
         volleyScene = null;
         conversion = null;
         hold = 0;

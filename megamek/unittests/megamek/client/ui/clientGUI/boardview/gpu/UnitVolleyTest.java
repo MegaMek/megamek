@@ -95,7 +95,7 @@ class UnitVolleyTest {
     }
 
     @Test
-    void weaponsOverlapWithOneHoldAndDamageWaitsForTheLastImpactAtEverySpeed() {
+    void targetPassesShareOneHoldAndDamageWaitsForTheLastImpactAtEverySpeed() {
         var attacker = unit(1, 0);
         var victim = unit(2, 2);
         var distant = unit(3, 12);
@@ -109,7 +109,9 @@ class UnitVolleyTest {
             playback.advance(0, speed);
             assertEquals(2, playback.attacks().size());
             var shots = List.copyOf(playback.attacks());
-            assertTrue(shots.get(1).delay <= UnitPlayback.VOLLEY_JITTER_SECONDS);
+            assertEquals(shots.getFirst().contactSeconds + UnitVolley.TARGET_SWITCH_SECONDS,
+                  shots.get(1).delay + UnitAttack.ANTICIPATION_SECONDS, 1e-5,
+                  "Different targets require a turn before the next shot");
             double impact = shots.stream().mapToDouble(shot -> shot.delay + shot.contactSeconds).max().orElseThrow();
             double end = shots.stream().mapToDouble(shot -> shot.delay + shot.duration).max().orElseThrow();
             playback.advance((impact - .001) / speed.rate, speed);
@@ -123,6 +125,57 @@ class UnitVolleyTest {
             playback.advance(.002, speed);
             assertFalse(playback.busy(), "There is one hold for the volley, not one per gun");
         }
+    }
+
+    @Test
+    void interleavedTargetsGroupTogetherAndLatePacketsNeverRetimeAnAlreadyStartedPass() {
+        var source = unit(1, 0);
+        var a = unit(2, 2);
+        var b = unit(3, 3);
+        var c = unit(4, 4);
+        var scene = scene(source, a, b, c);
+        var playback = new UnitPlayback();
+        playback.accept(List.of(attack(source, a, ResolvedAttack.Kind.SHOT, true),
+              attack(source, b, ResolvedAttack.Kind.SHOT, true), attack(source, a, ResolvedAttack.Kind.SHOT, false),
+              attack(source, c, ResolvedAttack.Kind.SHOT, true), attack(source, b, ResolvedAttack.Kind.SHOT, false)), scene, ignored -> false);
+        playback.advance(0, UnitMotion.Speed.DOUBLE);
+        var shots = List.copyOf(playback.attacks());
+        assertSame(shots.get(0).group, shots.get(2).group);
+        assertSame(shots.get(1).group, shots.get(4).group);
+        assertTrue(Math.abs(shots.get(0).delay - shots.get(2).delay) <= UnitPlayback.VOLLEY_JITTER_SECONDS);
+        assertEquals(shots.get(0).group.fireEnd(), shots.get(1).group.start, 1e-5);
+        assertEquals(shots.get(1).group.fireEnd(), shots.get(3).group.start, 1e-5);
+        float started = shots.get(1).delay;
+        playback.advance(started + UnitAttack.ANTICIPATION_SECONDS + .01, UnitMotion.Speed.DOUBLE);
+        playback.accept(List.of(attack(source, a, ResolvedAttack.Kind.SHOT, true)), scene, ignored -> false);
+        var late = playback.attacks().getLast();
+        assertEquals(started, shots.get(1).delay, "A launched projectile keeps its clock");
+        assertTrue(late.group.start >= shots.get(3).group.fireEnd(), "Late fire at an old target gets a new pass");
+        playback.togglePaused();
+        float clock = late.group.clock;
+        playback.advance(10, UnitMotion.Speed.DOUBLE);
+        assertEquals(clock, late.group.clock);
+        playback.advance(0, UnitMotion.Speed.INSTANT);
+        assertTrue(playback.attacks().isEmpty());
+    }
+
+    @Test
+    void secondTargetsCounterfireWaitsForItsIncomingPass() {
+        var source = unit(1, 0);
+        var a = unit(2, 2);
+        var b = unit(3, 3);
+        var counter = attack(b, source, ResolvedAttack.Kind.SHOT, true);
+        var raw = counter.result();
+        var defense = new ResolvedAttack.Shot("On", Set.of(), false, true, 1, 0, false);
+        counter = new BoardScene.Combat(new ResolvedAttack(raw.id(), raw.kind(), raw.attacker(), raw.target(), raw.targetType(),
+              raw.equipmentIndex(), raw.equipmentName(), raw.limb(), true, raw.mounts(), defense), b, source, source.location());
+        var playback = new UnitPlayback();
+        playback.accept(List.of(attack(source, a, ResolvedAttack.Kind.SHOT, true), counter,
+              attack(source, b, ResolvedAttack.Kind.SHOT, true)), scene(source, a, b), ignored -> false);
+        playback.advance(0, UnitMotion.Speed.DOUBLE);
+        var shots = playback.attacks();
+        assertEquals(shots.get(2).group.start, shots.get(1).group.start, 1e-5);
+        assertTrue(shots.get(1).delay >= shots.getFirst().contactSeconds);
     }
 
     @Test

@@ -3,7 +3,6 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,6 @@ final class UnitAnimator {
     private final List<Joint> mounts = new ArrayList<>();
     private final InfantryMotion formation = new InfantryMotion();
     private final Vector3 recoilDirection = new Vector3();
-    private final java.util.Set<Node> aimedNodes = new HashSet<>();
     private final Map<String, Float> mountRecoil = new HashMap<>();
     private ModelInstance instance;
     private UnitLandingSupports landingSupports;
@@ -165,7 +163,6 @@ final class UnitAnimator {
     /** A material replacement rebinds nodes but keeps playback; a new/revealed unit starts directly in its pose. */
     void apply(GpuUnitModel model, ModelInstance placed, BoardScene.Unit unit, UnitMotion.Sample motion,
           float clock, float seconds, boolean instant, float twist) {
-        aimedNodes.clear();
         mountRecoil.clear();
         if (instance != placed) {
             instance = placed;
@@ -299,10 +296,26 @@ final class UnitAnimator {
             if ("naval-v1".equals(body.rig.type())) {
                 body.rotate("hull", Vector3.Y, MathUtils.sin(clock * .8f + seed) * .8f);
             }
+            if (bodyMotion.jets() != null) {
+                tiltForJump(body, model, unit, bodyMotion);
+            }
         }
         dying = unit.model().state().pose().dead();
         if (dying) { deathPose(1); }
         settleContacts();
+    }
+
+    private static void tiltForJump(Body body, GpuUnitModel model, BoardScene.Unit unit, UnitMotion.Sample motion) {
+        Joint root = body.joints.get("root");
+        if (root == null) { return; }
+        float scale = model.horizontalScale(unit);
+        // Compensate for display height scaling so the world-space lean stays within the trajectory's tilt limit.
+        double angle = Math.atan(Math.tan(Math.toRadians(motion.jets().tilt())) * model.verticalScale(scale, unit) / scale);
+        float sine = (float) Math.sin(angle / 2), cosine = (float) Math.cos(angle / 2);
+        float forward = body.rig.trooper() ? 1 : motion.forward();
+        float lateral = body.rig.trooper() ? 0 : motion.lateral();
+        // Troop containers already face their own travel; other bodies keep their game's facing during the jump.
+        root.node().rotation.mulLeft(-forward * sine, lateral * sine, 0, cosine);
     }
 
     private void settleContacts() {
@@ -471,15 +484,7 @@ final class UnitAnimator {
             if (attack.shot()) {
                 for (var binding : model.equipment()) {
                     if (attack.fires(binding)) {
-                        Node node = instance.getNode(binding.node());
-                        Node rest = model.instance.getNode(binding.node());
-                        if (node != null && rest != null) {
-                            // Independent mount recoil. Body.apply resets joints, so always start at the mount's rest transform.
-                            var emitter = binding.emitters().isEmpty() ? null : binding.emitters().getFirst();
-                            UnitModelAttachment.barrelDirection(model.instance, rest, emitter, recoilDirection);
-                            float recoil = mountRecoil.merge(binding.node(), attack.recoil(binding), Math::max);
-                            node.translation.set(rest.translation).mulAdd(recoilDirection, -UnitAttack.RECOIL_DISTANCE * recoil);
-                        }
+                        mountRecoil.merge(binding.node(), attack.recoil(binding), Math::max);
                     }
                 }
             }
@@ -491,6 +496,7 @@ final class UnitAnimator {
             }
         }
         instance.calculateTransforms();
+        applyRecoil(model);
     }
 
     /** Add constrained target tracking after both participants have their final world placement. */
@@ -498,6 +504,31 @@ final class UnitAnimator {
         if (instance == null || attack == null || attack.event.entityId() != unit.id() || attack.aimWeight() <= 0
               || dying) { return; }
         if (attack.shot()) {
+            aimShots(model, unit, List.of(attack), ignored -> victim);
+        } else if (fallen < .01f && crouch < .01f && unit.model().state().structure().anatomy() != null) {
+            physicalContact(model, attack, target);
+        }
+    }
+
+    private record Aim(UnitAttack attack, UnitEquipmentAssembly.Binding binding, UnitModelDescriptor.Emitter emitter,
+          Node joint, float limit, ModelInstance victim) {
+        float start() { return attack.group == null ? attack.delay : attack.group.start; }
+        float clock() { return attack.group == null ? attack.seconds + attack.delay : attack.group.clock; }
+        Object group() { return attack.group == null ? attack : attack.group; }
+        float turn() { return attack.group == null ? UnitAttack.smooth(attack.seconds / UnitAttack.ANTICIPATION_SECONDS) : attack.group.turn(); }
+        float recovery(float time) {
+            return attack.group == null ? 1 - UnitAttack.smooth((time - attack.delay - attack.firingEndSeconds()) / UnitAttack.RECOVERY_SECONDS)
+                  : attack.group.recovery(time);
+        }
+    }
+
+    /** One target pass poses each shared joint once, then each gun corrects for its own hit/miss point. */
+    void aimShots(GpuUnitModel model, BoardScene.Unit unit, List<UnitAttack> attacks,
+          java.util.function.Function<UnitAttack, ModelInstance> victims) {
+        if (instance == null || dying) { return; }
+        Map<Node, List<Aim>> requests = new java.util.LinkedHashMap<>();
+        for (var attack : attacks) {
+            if (!attack.shot() || attack.event.entityId() != unit.id()) { continue; }
             for (var binding : model.equipment()) {
                 var attachment = instance.getNode(binding.node());
                 if (!attack.fires(binding) || attachment == null || !UnitBounds.subtree(attachment).isValid()) { continue; }
@@ -508,34 +539,73 @@ final class UnitAnimator {
                 float limit = 25;
                 for (Node ancestor = attachment.getParent(); ancestor != null; ancestor = ancestor.getParent()) {
                     String role = role(ancestor);
-                    if ("turret".equals(role) || "leftForearm".equals(role) || "rightForearm".equals(role)
+                    if ("turret".equals(role) || "turret2".equals(role) || "leftForearm".equals(role) || "rightForearm".equals(role)
                           || "leftArm".equals(role) || "rightArm".equals(role)) {
                         joint = ancestor;
                         // Resting arm barrels point down: reaching level fire alone can require 90 degrees.
-                        limit = "turret".equals(role) ? 180 : ARM_AIM_LIMIT_DEGREES;
+                        limit = "turret".equals(role) || "turret2".equals(role) ? 180 : ARM_AIM_LIMIT_DEGREES;
                         break;
                     }
                 }
-                if (!aimedNodes.add(joint)) { continue; }
-                var origin = new Vector3();
-                var forward = new Vector3();
-                UnitModelAttachment.emitter(instance, emitter, origin, forward);
-                var aim = target.cpy();
-                int ordinal = (binding.node() + ":1").hashCode();
-                if (attack.event.result().hit() && !attack.defensive() && !attack.arcing(binding)) {
-                    attack.hitEndpoint(victim, origin, ordinal, 0, 1, aim);
-                }
-                if (!attack.event.result().hit() && !attack.defensive()) {
-                    if ("laser".equals(emitter.effect()) || "ppc".equals(emitter.effect())) { attack.beamAim(victim, origin, ordinal, aim); }
-                    else if (!attack.arcing(binding)) { attack.endpoint(victim, origin, true, ordinal, aim); }
-                }
-                float loft = attack.arcing(binding) ? MathUtils.PI * UnitAttack.arcHeight(origin, aim) : 0;
-                var direction = aim.sub(origin).add(0, 0, loft);
-                track(joint, forward, direction.nor(), limit, attack.aimWeight());
+                requests.computeIfAbsent(joint, ignored -> new ArrayList<>())
+                      .add(new Aim(attack, binding, emitter, joint, limit, victims.apply(attack)));
             }
-        } else if (fallen < .01f && crouch < .01f && unit.model().state().structure().anatomy() != null) {
-            physicalContact(model, attack, target);
         }
+        for (var entry : requests.entrySet()) {
+            Aim current = null, previous = null;
+            for (var request : entry.getValue()) {
+                if (request.clock() >= request.start() && (current == null || request.start() > current.start())) { current = request; }
+            }
+            if (current == null) { continue; }
+            for (var request : entry.getValue()) {
+                if (request.start() < current.start() && (previous == null || request.start() > previous.start())) { previous = request; }
+            }
+            var from = previous == null ? new Quaternion()
+                  : new Quaternion().slerp(aimRotation(previous, previous.joint(), previous.limit()), previous.recovery(current.start()));
+            var rotation = from.slerp(aimRotation(current, current.joint(), current.limit()), current.turn());
+            float weight = current.recovery(current.clock());
+            entry.getKey().rotation.mulLeft(new Quaternion().slerp(rotation, weight));
+            instance.calculateTransforms();
+            for (var request : entry.getValue()) {
+                var attachment = instance.getNode(request.binding().node());
+                if (request.group() == current.group() && attachment != request.joint()) {
+                    attachment.rotation.mulLeft(new Quaternion().slerp(aimRotation(request, attachment, 25), current.turn() * weight));
+                    instance.calculateTransforms();
+                }
+            }
+        }
+        applyRecoil(model);
+    }
+
+    /** Re-evaluate after aiming as well: a gun's own correction changes its barrel direction inside the arm. */
+    private void applyRecoil(GpuUnitModel model) {
+        for (var binding : model.equipment()) {
+            Float recoil = mountRecoil.get(binding.node());
+            Node node = instance.getNode(binding.node()), rest = model.instance.getNode(binding.node());
+            if (recoil == null || node == null || rest == null) { continue; }
+            var emitter = binding.emitters().isEmpty() ? null : binding.emitters().getFirst();
+            UnitModelAttachment.barrelDirection(instance, node, emitter, recoilDirection);
+            node.translation.set(rest.translation).mulAdd(recoilDirection, -UnitAttack.RECOIL_DISTANCE * recoil);
+        }
+        instance.calculateTransforms();
+    }
+
+    private Quaternion aimRotation(Aim request, Node joint, float limit) {
+        var attack = request.attack();
+        var origin = new Vector3();
+        var forward = new Vector3();
+        UnitModelAttachment.emitter(instance, request.emitter(), origin, forward);
+        var aim = attack.endpoint(request.victim(), origin, new Vector3());
+        int ordinal = (request.binding().node() + ":1").hashCode();
+        if (attack.event.result().hit() && !attack.defensive() && !attack.arcing(request.binding())) {
+            attack.hitEndpoint(request.victim(), origin, ordinal, 0, 1, aim);
+        } else if (!attack.event.result().hit() && !attack.defensive()) {
+            if ("laser".equals(request.emitter().effect()) || "ppc".equals(request.emitter().effect())) {
+                attack.beamAim(request.victim(), origin, ordinal, aim);
+            } else if (!attack.arcing(request.binding())) { attack.endpoint(request.victim(), origin, true, ordinal, aim); }
+        }
+        float loft = attack.arcing(request.binding()) ? MathUtils.PI * UnitAttack.arcHeight(origin, aim) : 0;
+        return trackingRotation(joint, forward, aim.sub(origin).add(0, 0, loft).nor(), limit);
     }
 
     /** Deterministic rigid collapse; restored wrecks use the terminal pose without replaying an event. */
@@ -720,14 +790,18 @@ final class UnitAnimator {
     }
 
     private void track(Node joint, Vector3 forward, Vector3 target, float limit, float weight) {
+        joint.rotation.mulLeft(new Quaternion().slerp(trackingRotation(joint, forward, target, limit), weight));
+        instance.calculateTransforms();
+    }
+
+    private Quaternion trackingRotation(Node joint, Vector3 forward, Vector3 target, float limit) {
         var inverse = parentWorld(joint).inv();
         forward.rot(inverse).nor();
         target.rot(inverse).nor();
-        if (forward.isZero() || target.isZero()) { return; }
+        if (forward.isZero() || target.isZero()) { return new Quaternion(); }
         var rotation = new Quaternion().setFromCross(forward, target);
         float angle = rotation.getAngle();
-        joint.rotation.mulLeft(new Quaternion().slerp(rotation, weight * Math.min(1, limit / Math.max(.001f, angle))));
-        instance.calculateTransforms();
+        return new Quaternion().slerp(rotation, Math.min(1, limit / Math.max(.001f, angle)));
     }
 
     private static void legs(Body body, float phase, float gait, float crouch, float jump, float yaw) {

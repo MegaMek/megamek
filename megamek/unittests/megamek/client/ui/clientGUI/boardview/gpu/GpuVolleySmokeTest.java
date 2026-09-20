@@ -156,9 +156,7 @@ class GpuVolleySmokeTest {
                         animator.apply(body, source, attacker, UnitMotion.Sample.STILL, frame / 60f, 1f / 60, false, 0);
                         animator.attacks(body, attacker, playback.attacks());
                         body.place(source, renderer.camera, position, 0, attacker);
-                        for (var attack : playback.attacks()) {
-                            animator.aim(body, attacker, attack, attack.endpoint(target, position, new Vector3()), target);
-                        }
+                        animator.aimShots(body, attacker, playback.attacks(), ignored -> target);
                         effects.update(playback.attacks(), library, Map.of("9300:-1", source, "9301:-1", target));
                         renderer.frame(List.of(source, target), position.cpy().lerp(BoardGeometry.center(victim.location().coords(), 0), .5f),
                               effects, "atlas-mixed-volley", frame);

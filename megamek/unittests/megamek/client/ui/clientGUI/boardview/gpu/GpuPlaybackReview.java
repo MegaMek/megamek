@@ -306,9 +306,11 @@ final class GpuPlaybackReview {
     }
 
     private static void movementFrames(ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit, String name, boolean transports) {
-        var start = new BoardScene.Waypoint(new Coords(2, 5), 0, 0);
+        var corner = unit.location().coords().translated(4, 2);
+        var start = new BoardScene.Waypoint(corner.translated(3, 3), 0, 0);
         var motion = new UnitMotion(start);
-        motion.append(List.of(start, unit.location()), EntityMovementType.MOVE_WALK, 0, transports, 4);
+        motion.append(List.of(start, new BoardScene.Waypoint(corner, 0, 0), new BoardScene.Waypoint(corner, 0, 1),
+              new BoardScene.Waypoint(unit.location().coords(), 0, 1), unit.location()), EntityMovementType.MOVE_WALK, 0, transports, 4);
         var instance = new ModelInstance(model.instance.model);
         var animator = new UnitAnimator();
         double duration = motion.remainingSeconds() / UnitMotion.Speed.NORMAL.rate + UnitPlayback.COMPLETION_HOLD_SECONDS;

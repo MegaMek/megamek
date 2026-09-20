@@ -874,6 +874,7 @@ class GpuBoardSourceTest {
             path.add(new UnitLocation(fixture.entity.getId(), new Coords(6, 5), 1, 0, 0));
             SwingUtilities.invokeAndWait(() -> {
                 fixture.entity.moved = EntityMovementType.MOVE_JUMP;
+                fixture.game.getPlanetaryConditions().setGravity(.5f);
                 fixture.entity.setPosition(new Coords(6, 5));
                 fixture.game.fireGameEvent(new GameEntityChangeEvent(fixture.game, fixture.entity, path));
             });
@@ -881,6 +882,9 @@ class GpuBoardSourceTest {
             GpuBoardSource.Frame frame = fixture.source.takeFrame();
             assertEquals(1, frame.movements().size());
             assertEquals(EntityMovementType.MOVE_JUMP, frame.movements().getFirst().type());
+            assertEquals(.5f, frame.movements().getFirst().gravity());
+            SwingUtilities.invokeAndWait(() -> fixture.game.getPlanetaryConditions().setGravity(2));
+            assertEquals(.5f, frame.movements().getFirst().gravity(), "Queued jumps retain their captured planetary gravity");
             assertEquals(2, frame.movements().getFirst().path().size());
             assertEquals(2, path.size());
             assertEquals(new Coords(6, 5), frame.scene().units().getFirst().location().coords());

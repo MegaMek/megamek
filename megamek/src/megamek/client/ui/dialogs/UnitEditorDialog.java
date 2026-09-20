@@ -190,7 +190,7 @@ public class UnitEditorDialog extends JDialog {
             // owner chooser in the middle of their column
             panelBuilder.addSkillModifiersColumn();
             diagram = new DamageEditorDiagram(entity, controls);
-            wireFlaggedEquipmentLinks();
+            wireDamageSummaryLinks();
             wireExplodeButtons();
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -254,10 +254,10 @@ public class UnitEditorDialog extends JDialog {
     }
 
     /**
-     * Makes each line of the flagged-equipment summary open the panel of the location it names, so a gamemaster
+     * Makes each line of the damage summary open the panel of the location it names, so a gamemaster
      * gets from "Rotary AC/5 (RA): Jammed" to the right arm's controls in one click.
      */
-    private void wireFlaggedEquipmentLinks() {
+    private void wireDamageSummaryLinks() {
         for (UnitDamageControls.EquipmentStateLink link : controls.equipmentStateLinks) {
             link.label().addMouseListener(new MouseAdapter() {
                 @Override

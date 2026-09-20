@@ -146,7 +146,7 @@ public class UnitDamagePanelBuilder {
         initLocationPanels();
         initSystemCrits();
         initEquipCrits();
-        initFlaggedEquipmentSummary();
+        initDamageSummary();
     }
 
     private void initLocationPanels() {
@@ -815,7 +815,7 @@ public class UnitDamagePanelBuilder {
      * it sits in. The location panels show one location at a time, so without this list a gamemaster looking for
      * the jammed gun would have to page through every location to find it.
      */
-    private void initFlaggedEquipmentSummary() {
+    private void initDamageSummary() {
         if (!offersStateSwitches()) {
             return;
         }
@@ -842,12 +842,12 @@ public class UnitDamagePanelBuilder {
             }
         }
         if (summary.getComponentCount() == 0) {
-            summary.add(new JLabel(Messages.getString("UnitEditorDialog.flaggedEquipment.none")));
+            summary.add(new JLabel(Messages.getString("UnitEditorDialog.damageSummary.none")));
         }
-        JLabel title = new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.flaggedEquipment")
+        JLabel title = new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.damageSummary")
               + "</b></html>");
         title.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.flaggedEquipment.tooltip")));
+              Messages.getString("UnitEditorDialog.damageSummary.tooltip")));
         addRow(generalPanel(), title, summary);
     }
 
@@ -856,7 +856,7 @@ public class UnitDamagePanelBuilder {
         JLabel link = new JLabel("<html><u>" + itemName + "</u>: " + states + "</html>");
         link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         link.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.flaggedEquipment.link.tooltip")));
+              Messages.getString("UnitEditorDialog.damageSummary.link.tooltip")));
         controls.equipmentStateLinks.add(new UnitDamageControls.EquipmentStateLink(link, location));
         return link;
     }

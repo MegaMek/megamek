@@ -164,7 +164,7 @@ public class UnitDamageControls {
     public JCheckBox[] chkLocationBreached;
 
     /**
-     * One line of the flagged-equipment summary on the general panel: the clickable label and the location whose
+     * One line of the damage summary on the general panel: the clickable label and the location whose
      * panel it opens, so that a gamemaster can find a jammed or breached item without paging through every
      * location.
      *
@@ -173,7 +173,7 @@ public class UnitDamageControls {
      */
     public record EquipmentStateLink(JLabel label, int location) {}
 
-    /** The flagged-equipment summary lines, wired by the dialog to open their location on click. */
+    /** The damage summary lines, wired by the dialog to open their location on click. */
     public final List<EquipmentStateLink> equipmentStateLinks = new ArrayList<>();
 
     /**

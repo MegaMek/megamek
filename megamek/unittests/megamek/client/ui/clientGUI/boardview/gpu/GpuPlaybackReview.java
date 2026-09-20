@@ -90,6 +90,14 @@ final class GpuPlaybackReview {
                 measureVehicles(transport, unit(infantry, selected));
                 GpuInfantryPlaybackReview.verify(library, tileset);
             });
+            var original = BoardGeometry.tuning();
+            try {
+                BoardGeometry.tune(new BoardGeometry.Tuning(original.hexScale(), 1, original.unitHeightScale(),
+                      original.levelHeight(), original.gridShade(), original.multiHexUnitScale()));
+                GpuInfantryPlaybackReview.verify(library, tileset);
+            } finally {
+                BoardGeometry.tune(original);
+            }
         }
     }
 

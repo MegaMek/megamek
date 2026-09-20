@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
@@ -51,5 +53,20 @@ class InfantryFootprintTest {
         var unchanged = new Vector3(10, 20, 3);
         assertFalse(InfantryFootprint.fit(unchanged, impossible, 0, 1));
         assertEquals(new Vector3(10, 20, 3), unchanged);
+    }
+
+    @Test
+    void troopsClearParkedVehiclesEvenWhenTheyMustLeaveTheHex() {
+        var vehicle = InfantryFootprint.polygon(new BoundingBox(new Vector3(-50, -50, 0), new Vector3(50, 50, 15)), 0);
+        var troop = new BoundingBox(new Vector3(-4, -4, 0), new Vector3(4, 4, 23));
+        var position = new Vector3(35, 0, 3);
+        InfantryFootprint.avoid(position, troop, 0, List.of(vehicle), 1);
+        var shape = InfantryFootprint.polygon(troop, 0);
+        shape.setPosition(position.x, position.y);
+        assertFalse(Intersector.overlapConvexPolygons(shape, vehicle));
+        var hex = new Coords(0, 0);
+        assertFalse(BoardGeometry.contains(hex, position.x + BoardGeometry.centerX(hex), position.y + BoardGeometry.centerY(hex)));
+        assertEquals(3, position.z);
+        assertEquals(8, troop.getWidth());
     }
 }

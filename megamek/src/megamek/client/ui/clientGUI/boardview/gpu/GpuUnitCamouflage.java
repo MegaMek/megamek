@@ -14,15 +14,10 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Attribute;
-import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.Renderable;
-import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.model.Node;
-import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
-import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -144,130 +139,7 @@ final class GpuUnitCamouflage implements Disposable {
         textures.clear();
     }
 
-    /** Standard libGDX lighting/shadows with camouflage, markers and one damage overlay. */
-    static DefaultShaderProvider shaders() {
-        String vertex = DefaultShader.getDefaultVertexShader().replace("void main() {", """
-              uniform vec2 u_camoRotation;
-              uniform vec3 u_camoRestScale;
-              uniform mat4 u_markerTransform;
-              uniform vec4 u_damageTransform;
-              varying vec2 v_markerUV;
-              varying vec2 v_damageUV;
-              varying float v_damageMask;
-              void main() {
-                  v_damageMask = 1.0;
-                  #ifdef colorFlag
-                      // The exporter's PALETTE['glass'] identifies cockpit glazing inside shared detail meshes.
-                      // Test the original vertex color, before player paint, damage or lighting can change it.
-                      vec3 glassDifference = a_color.rgb - vec3(0.21, 0.67, 0.73);
-                      v_damageMask = step(0.000025, dot(glassDifference, glassDifference));
-                  #endif
-                  v_markerUV = (u_markerTransform * vec4(a_position, 1.0)).xy;
-                  // Rest-space projection stays fixed to each rigid part, including unpainted metal.
-                  v_damageUV = a_position.xy * 0.04;
-                  #ifdef normalFlag
-                      vec3 damageNormal = abs(a_normal);
-                      if (damageNormal.x > damageNormal.y && damageNormal.x > damageNormal.z) {
-                          v_damageUV = a_position.yz * 0.04;
-                      } else if (damageNormal.y > damageNormal.z) {
-                          v_damageUV = a_position.xz * 0.04;
-                      }
-                  #endif
-                  v_damageUV = vec2(u_damageTransform.x * v_damageUV.x - u_damageTransform.y * v_damageUV.y,
-                                    u_damageTransform.y * v_damageUV.x + u_damageTransform.x * v_damageUV.y)
-                        + u_damageTransform.zw;
-              """).replace("v_diffuseUV = u_diffuseUVTransform.xy + a_texCoord0 * u_diffuseUVTransform.zw;", """
-              vec2 restScale = vec2(1.0);
-              #ifdef normalFlag
-                  // Match the exporter's two least-normal axes, including its X/Y/Z tie order.
-                  vec3 n = abs(a_normal);
-                  if (n.x <= n.y && n.x <= n.z) {
-                      restScale = vec2(u_camoRestScale.x, n.y <= n.z ? u_camoRestScale.y : u_camoRestScale.z);
-                  } else if (n.y <= n.z) {
-                      restScale = vec2(u_camoRestScale.y, n.x <= n.z ? u_camoRestScale.x : u_camoRestScale.z);
-                  } else {
-                      restScale = vec2(u_camoRestScale.z, n.x <= n.y ? u_camoRestScale.x : u_camoRestScale.y);
-                  }
-              #endif
-              vec2 centeredUV = a_texCoord0 * restScale - vec2(0.5);
-              vec2 rotatedUV = vec2(u_camoRotation.x * centeredUV.x - u_camoRotation.y * centeredUV.y,
-                                   u_camoRotation.y * centeredUV.x + u_camoRotation.x * centeredUV.y);
-              v_diffuseUV = u_diffuseUVTransform.xy + (rotatedUV + vec2(0.5)) * u_diffuseUVTransform.zw;
-              """);
-        String fragment = DefaultShader.getDefaultFragmentShader().replace("void main() {", """
-              uniform sampler2D u_markerTexture;
-              uniform float u_markerEnabled;
-              varying vec2 v_markerUV;
-              uniform sampler2D u_damageTexture;
-              uniform float u_damageEnabled;
-              varying vec2 v_damageUV;
-              varying float v_damageMask;
-              // Smooth, non-periodic coordinate warping breaks the mirrored grid with one texture lookup.
-              vec2 damageHash(vec2 cell) {
-                  vec2 p = fract(cell * vec2(0.3183099, 0.3678794));
-                  p += dot(p, p.yx + vec2(17.17, 37.73));
-                  return fract(vec2(p.x * p.y, (p.x + p.y) * (p.y + 0.19)));
-              }
-              vec2 damageUV(vec2 uv) {
-                  vec2 cell = floor(uv * 0.5);
-                  vec2 f = fract(uv * 0.5);
-                  f = f * f * (3.0 - 2.0 * f);
-                  vec2 warp = mix(mix(damageHash(cell), damageHash(cell + vec2(1, 0)), f.x),
-                                  mix(damageHash(cell + vec2(0, 1)), damageHash(cell + vec2(1, 1)), f.x), f.y);
-                  return uv + (warp - 0.5) * 1.5;
-              }
-              void main() {
-              """).replace("#if defined(emissiveTextureFlag) && defined(emissiveColorFlag)", """
-              if (u_markerEnabled > 0.5) {
-                  vec4 marker = texture2D(u_markerTexture, v_markerUV);
-                  diffuse.rgb = mix(diffuse.rgb, marker.rgb, marker.a);
-              }
-              if (u_damageEnabled > 0.5 && (u_damageEnabled > 1.5 || v_damageMask > 0.5)) {
-                  vec4 damage = texture2D(u_damageTexture, damageUV(v_damageUV));
-                  diffuse.rgb = mix(diffuse.rgb, damage.rgb, damage.a);
-              }
-              #if defined(emissiveTextureFlag) && defined(emissiveColorFlag)
-              """);
-        return new DefaultShaderProvider(vertex, fragment) {
-            @Override
-            protected Shader createShader(Renderable renderable) {
-                return new DefaultShader(renderable, config) {
-                    private final int rotation = register("u_camoRotation");
-                    private final int restScale = register("u_camoRestScale");
-                    private final int markerTransform = register("u_markerTransform");
-                    private final int markerTexture = register("u_markerTexture");
-                    private final int markerEnabled = register("u_markerEnabled");
-                    private final int damageTexture = register("u_damageTexture");
-                    private final int damageEnabled = register("u_damageEnabled");
-                    private final int damageTransform = register("u_damageTransform");
-
-                    @Override
-                    public void render(Renderable part, Attributes attributes) {
-                        Paint paint = attributes.get(Paint.class, Paint.TYPE);
-                        var damage = attributes.get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE);
-                        set(damageEnabled, damage == null ? 0f
-                              : part.material.id.endsWith(UnitDamageDisplay.WRECKED_SUFFIX) ? 2f : 1f);
-                        if (damage != null) {
-                            set(damageTexture, context.textureBinder.bind(damage.texture));
-                            set(damageTransform, damage.cos, damage.sin, damage.offsetU, damage.offsetV);
-                        }
-                        set(rotation, paint == null ? 1 : paint.cos, paint == null ? 0 : paint.sin);
-                        set(restScale, paint == null ? 1 : paint.scale.x, paint == null ? 1 : paint.scale.y,
-                              paint == null ? 1 : paint.scale.z);
-                        boolean marker = paint != null && paint.marker != null;
-                        set(markerEnabled, marker ? 1f : 0f);
-                        if (marker) {
-                            set(markerTransform, paint.transform);
-                            set(markerTexture, context.textureBinder.bind(paint.marker));
-                        }
-                        super.render(part, attributes);
-                    }
-                };
-            }
-        };
-    }
-
-    private static final class Paint extends Attribute {
+    static final class Paint extends Attribute {
         static final long TYPE = register("unitCamouflage");
         final float cos, sin;
         final Texture marker;

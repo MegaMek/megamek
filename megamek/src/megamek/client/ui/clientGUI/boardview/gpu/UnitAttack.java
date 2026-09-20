@@ -17,6 +17,10 @@ import megamek.common.ResolvedAttack;
 final class UnitAttack {
     static final float ANTICIPATION_SECONDS = .2f;
     static final float RECOVERY_SECONDS = .35f;
+    static final float RECOIL_KICK_SECONDS = .035f;
+    static final float RECOIL_RECOVERY_SECONDS = .24f;
+    static final float RECOIL_DISTANCE = .9f;
+    static final float PPC_RECOIL_SCALE = 1.5f;
     static final float DEATH_SECONDS = 1.2f;
     static final float MELEE_WALK_SECONDS = 1.05f;
     static final float MELEE_RUN_SECONDS = .65f;
@@ -265,8 +269,12 @@ final class UnitAttack {
 
     static Vector3 projectile(Vector3 origin, Vector3 target, float progress, boolean arcing, Vector3 result) {
         float t = MathUtils.clamp(progress, 0, 1);
-        float arc = arcing ? Math.max(BoardGeometry.HEIGHT * .4f, origin.dst(target) * .25f) : 0;
+        float arc = arcing ? arcHeight(origin, target) : 0;
         return result.set(origin).lerp(target, t).add(0, 0, MathUtils.sin(t * MathUtils.PI) * arc);
+    }
+
+    static float arcHeight(Vector3 origin, Vector3 target) {
+        return Math.max(BoardGeometry.HEIGHT * .4f, origin.dst(target) * .25f);
     }
 
     float impact() {
@@ -274,8 +282,40 @@ final class UnitAttack {
     }
 
     float recoil() {
-        float t = (seconds - ANTICIPATION_SECONDS) / .24f;
-        return t <= 0 || t >= 1 ? 0 : MathUtils.sin(t * MathUtils.PI);
+        float strength = profiles.isEmpty() ? recoil(event.result().shot()) : 0;
+        for (var profile : profiles.values()) { strength = Math.max(strength, recoil(profile)); }
+        return strength;
+    }
+
+    float recoil(UnitEquipmentAssembly.Binding binding) { return recoil(profile(binding)); }
+
+    boolean chargingPpc() {
+        return shot() && seconds >= 0 && seconds < ANTICIPATION_SECONDS
+              && (event.result().shot() != null && event.result().shot().ppc()
+                    || profiles.values().stream().anyMatch(ResolvedAttack.Shot::ppc));
+    }
+
+    private float recoil(ResolvedAttack.Shot profile) {
+        int rounds = profile == null ? 1 : MathUtils.clamp(profile.shots(), 1, 16);
+        float pulse = 0;
+        for (int round = 0; round < rounds; round++) {
+            float age = seconds - ANTICIPATION_SECONDS - roundDelay(round, rounds);
+            if (age < 0) { continue; }
+            pulse = Math.max(pulse, age < RECOIL_KICK_SECONDS ? smooth(age / RECOIL_KICK_SECONDS)
+                  : 1 - smooth((age - RECOIL_KICK_SECONDS) / RECOIL_RECOVERY_SECONDS));
+        }
+        return pulse * (profile != null && profile.ppc() ? PPC_RECOIL_SCALE : cannonScale(profile));
+    }
+
+    /** One bounded calibre response for kick and muzzle blast; missile rack size never becomes cannon recoil. */
+    static float cannonScale(ResolvedAttack.Shot profile) {
+        if (profile == null) { return 1; }
+        return profile.ballistic() ? (float) Math.sqrt(MathUtils.clamp(profile.rackSize(), 1, 30) / 5f) : 0;
+    }
+
+    /** The projectile, recoil and flash of each round share the same firing time. */
+    float roundDelay(int round, int rounds) {
+        return round * Math.min(.03f, (contactSeconds - ANTICIPATION_SECONDS) / Math.max(1, rounds) * .3f);
     }
 
     /** Approach, stationary strike, recovery, then a faster return share this event's one clock. */

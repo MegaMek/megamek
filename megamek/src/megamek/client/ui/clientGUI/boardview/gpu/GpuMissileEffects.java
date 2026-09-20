@@ -55,7 +55,7 @@ final class GpuMissileEffects implements Disposable {
     }
 
     private final List<Launch> launches = new ArrayList<>();
-    private final GpuExhaustBatch exhaust = new GpuExhaustBatch(SMOKE_BUDGET + MISSILES_PER_BATCH);
+    private final GpuEffectBatch exhaust = new GpuEffectBatch(SMOKE_BUDGET + MISSILES_PER_BATCH);
     private final Puff[] smoke = new Puff[SMOKE_BUDGET];
     private final Vector3 point = new Vector3(), direction = new Vector3(), side = new Vector3(), up = new Vector3();
     private final Vector3 tip = new Vector3(), a = new Vector3(), b = new Vector3(), c = new Vector3();

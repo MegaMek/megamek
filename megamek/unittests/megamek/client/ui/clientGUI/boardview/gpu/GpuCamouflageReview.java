@@ -44,7 +44,7 @@ final class GpuCamouflageReview {
     static void verify(GpuUnitModels library) throws Exception {
         var paints = new GpuUnitCamouflage();
         var damage = new UnitDamageDisplay();
-        var batch = new ModelBatch(GpuUnitCamouflage.shaders());
+        var batch = new ModelBatch(GpuUnitShader.provider());
         var source = new UnitCamouflage();
         try {
             var mek = new BipedMek();
@@ -55,9 +55,11 @@ final class GpuCamouflageReview {
             assertNotNull(model);
             var first = new ModelInstance(model.instance.model);
             var second = new ModelInstance(model.instance.model);
+            var scaled = new ModelInstance(model.instance.model);
             var pixels = pattern();
             paints.apply(first, model.instance, appearance(pixels, 0, 10));
-            paints.apply(second, model.instance, appearance(pixels, 90, 20));
+            paints.apply(second, model.instance, appearance(pixels, 90, 10));
+            paints.apply(scaled, model.instance, appearance(pixels, 0, 20));
             Texture shared = texture(parts(first.nodes).stream().filter(part -> "paint".equals(part.material.id)).findFirst().orElseThrow());
             assertSame(shared, texture(parts(second.nodes).stream().filter(part -> "paint".equals(part.material.id)).findFirst().orElseThrow()));
             assertEquals(1, paints.textureCount(), "Rotation/scale must not duplicate texture uploads");
@@ -71,7 +73,8 @@ final class GpuCamouflageReview {
                 }
             }
             var rest = frame(batch, first, 0);
-            assertTrue(difference(rest, frame(batch, second, 0)) > 1000, "The shader must visibly apply rotation and scale");
+            assertTrue(difference(rest, frame(batch, second, 0)) > 1000, "The shader must visibly apply rotation at a fixed scale");
+            assertTrue(difference(rest, frame(batch, scaled, 0)) > 1000, "The shader must visibly apply scale at a fixed rotation");
             first.transform.setToTranslation(75, 0, 0);
             assertTrue(difference(rest, frame(batch, first, 75)) < 300, "Moving unit and camera together must not make paint swim");
             first.transform.idt();

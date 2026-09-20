@@ -58,8 +58,20 @@ public record ResolvedAttack(UUID id, Kind kind, UnitLocation attacker, UnitLoca
 
     /** Observed firing configuration, not another equipment matcher or attack-resolution calculation. */
     public record Shot(String mode, Set<String> munitions, boolean artillery, boolean defensive, int shots,
-          int missiles, boolean indirect, Integer missileHits, UnitLocation launch, UnitLocation impact) implements Serializable {
+          int missiles, boolean indirect, Integer missileHits, UnitLocation launch, UnitLocation impact,
+          boolean ballistic, int rackSize, boolean ppc) implements Serializable {
         public Shot { munitions = Set.copyOf(munitions); }
+
+        public Shot(String mode, Set<String> munitions, boolean artillery, boolean defensive, int shots,
+              int missiles, boolean indirect, Integer missileHits, UnitLocation launch, UnitLocation impact,
+              boolean ballistic, int rackSize) {
+            this(mode, munitions, artillery, defensive, shots, missiles, indirect, missileHits, launch, impact, ballistic, rackSize, false);
+        }
+
+        public Shot(String mode, Set<String> munitions, boolean artillery, boolean defensive, int shots,
+              int missiles, boolean indirect, Integer missileHits, UnitLocation launch, UnitLocation impact) {
+            this(mode, munitions, artillery, defensive, shots, missiles, indirect, missileHits, launch, impact, false, 0);
+        }
 
         public Shot(String mode, Set<String> munitions, boolean artillery, boolean defensive, int shots,
               int missiles, boolean indirect, Integer missileHits) {
@@ -75,16 +87,16 @@ public record ResolvedAttack(UUID id, Kind kind, UnitLocation attacker, UnitLoca
         public Shot withResolution(AmmoType ammo, Integer hits) {
             return new Shot(mode, ammo == null ? munitions : ammo.getMunitionType().stream()
                   .map(Enum::name).collect(java.util.stream.Collectors.toSet()), artillery, defensive, shots,
-                  missiles, indirect, hits, launch, impact);
+                  missiles, indirect, hits, launch, impact, ballistic, rackSize, ppc);
         }
 
         public Shot asDefensive() {
-            return new Shot(mode, munitions, artillery, true, shots, missiles, indirect, missileHits, launch, impact);
+            return new Shot(mode, munitions, artillery, true, shots, missiles, indirect, missileHits, launch, impact, ballistic, rackSize, ppc);
         }
 
         /** Artillery supplies its observed launch and resolved landing, including scatter. No client re-roll. */
         public Shot withTrajectory(UnitLocation origin, UnitLocation destination) {
-            return new Shot(mode, munitions, true, defensive, shots, missiles, true, missileHits, origin, destination);
+            return new Shot(mode, munitions, true, defensive, shots, missiles, true, missileHits, origin, destination, ballistic, rackSize, ppc);
         }
 
         public static Shot capture(Mounted<?> mount) {
@@ -96,7 +108,8 @@ public record ResolvedAttack(UUID id, Kind kind, UnitLocation attacker, UnitLoca
                   weapon.getType().hasFlag(WeaponType.F_AMS) || weapon.getType().hasFlag(WeaponType.F_AMS_BAY),
                   weapon.getCurrentShots(), weapon.getType().hasFlag(WeaponType.F_MISSILE)
                         ? weapon.getType().hasFlag(WeaponType.F_LARGE_MISSILE) ? 1 : Math.max(1, weapon.getType().getRackSize()) : 0,
-                  weapon.curMode().isIndirect());
+                  weapon.curMode().isIndirect(), null, null, null,
+                  weapon.getType().hasFlag(WeaponType.F_BALLISTIC), weapon.getType().getRackSize(), weapon.getType().hasFlag(WeaponType.F_PPC));
         }
     }
 

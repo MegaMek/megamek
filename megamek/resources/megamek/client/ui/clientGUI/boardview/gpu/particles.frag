@@ -4,6 +4,7 @@ precision mediump float;
 #endif
 varying vec2 v_uv;
 varying vec2 v_effect;
+// Kind: 0 smoke, 1 blue jet flame, 2+ turbulent fire (integer packet seed plus fractional age).
 
 float flameNoise(vec2 p) {
     vec2 cell = floor(p);
@@ -18,11 +19,7 @@ float flameNoise(vec2 p) {
 }
 
 void main() {
-    if (v_effect.x < -0.5) {
-        float edge = 1.0 - smoothstep(0.25, 1.0, abs(v_uv.x));
-        float core = 1.0 - smoothstep(0.0, 0.4, abs(v_uv.x));
-        gl_FragColor = vec4(mix(vec3(1.0, 0.015, 0.005), vec3(1.0, 0.65, 0.45), core), edge * v_effect.y);
-    } else if (v_effect.x < 0.5) {
+    if (v_effect.x < 0.5) {
         float lobes = 0.08 * sin(v_uv.x * 12.0) * sin(v_uv.y * 9.0);
         float shape = 1.0 - smoothstep(0.04, 1.0, dot(v_uv, v_uv) + lobes);
         vec3 smoke = mix(vec3(0.39, 0.43, 0.48), vec3(0.72, 0.75, 0.78), 0.5 + v_uv.y * 0.4);

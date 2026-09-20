@@ -382,7 +382,8 @@ final class GpuPlaybackReview {
 
     static final class ReviewRenderer implements AutoCloseable {
         final OrthographicCamera camera = new OrthographicCamera(180, 135);
-        final ModelBatch batch = new ModelBatch(GpuUnitCamouflage.shaders());
+        final Vector3 viewOffset = new Vector3(95, -150, 105);
+        final ModelBatch batch = new ModelBatch(GpuUnitShader.provider());
         final ShapeRenderer lines = new ShapeRenderer();
         final Environment light = new Environment();
         final FrameBuffer buffer = new FrameBuffer(Pixmap.Format.RGBA8888, 640, 480, true);
@@ -401,7 +402,9 @@ final class GpuPlaybackReview {
 
         void frame(List<ModelInstance> models, Vector3 origin, GpuAttackEffects effects, GpuJumpJets jets, String name, int frame) {
             buffer.begin();
-            camera.position.set(origin).add(topView ? 0 : 95, topView ? 0 : -150, topView ? 260 : 105);
+            camera.position.set(origin);
+            if (topView) { camera.position.add(0, 0, 260); }
+            else { camera.position.add(viewOffset); }
             camera.up.set(topView ? Vector3.Y : Vector3.Z);
             camera.lookAt(origin.x, origin.y, origin.z + 22);
             camera.update();

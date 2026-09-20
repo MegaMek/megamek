@@ -128,7 +128,7 @@ class GpuBattleView extends ApplicationAdapter {
         markers = new GpuMarkers();
         unitTextures = new GpuTextures<>();
         annotationTextures = new GpuTextures<>();
-        unitBatch = new ModelBatch(GpuUnitCamouflage.shaders(), new GpuOpaqueSorter());
+        unitBatch = new ModelBatch(GpuUnitShader.provider(), new GpuOpaqueSorter());
         annotationBatch = new SpriteBatch();
         lines = new ShapeRenderer();
         ui = new GpuBoardUi(source, boardCamera, () -> playbackSpeed = playbackSpeed.next(), playback::togglePaused);

@@ -1,4 +1,5 @@
 // Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later
+// Shared quad geometry for particle and beam programs.
 attribute vec3 a_position;
 attribute vec2 a_texCoord0;
 attribute vec2 a_texCoord1;

@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -16,6 +17,8 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxNativesLoader;
 import megamek.common.ResolvedAttack;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.units.BipedMek;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.ProneCause;
@@ -126,7 +129,7 @@ class UnitAnimatorTest {
                 var animator = new UnitAnimator();
                 animator.apply(model, placed, unit, new UnitMotion(unit.location()).sample(), 0, 0, false, 0);
                 var attack = new UnitAttack(UnitPlaybackTest.attack(unit, UnitPlaybackTest.unit(2, 2), ResolvedAttack.Kind.SHOT, true));
-                attack.seconds = UnitAttack.ANTICIPATION_SECONDS + .12f;
+                attack.seconds = UnitAttack.ANTICIPATION_SECONDS + UnitAttack.RECOIL_KICK_SECONDS;
                 var original = placed.getNode("gun").globalTransform.getTranslation(new Vector3());
                 var forward = new Vector3(0, 1, 0).rot(placed.getNode("muzzle").globalTransform).nor();
                 animator.attack(model, unit, attack);
@@ -141,5 +144,47 @@ class UnitAnimatorTest {
                 model.dispose();
             }
         }
+    }
+
+    @Test
+    void mixedGunsUseTheirOwnCalibreAndPpcKicksOnlyAfterCharging() {
+        var original = UnitPlaybackTest.attack(UnitPlaybackTest.unit(1, 1), UnitPlaybackTest.unit(2, 2), ResolvedAttack.Kind.SHOT, true);
+        var small = ResolvedAttack.Shot.capture(Mounted.createMounted(new BipedMek(), EquipmentType.get("ISAC2")));
+        var large = ResolvedAttack.Shot.capture(Mounted.createMounted(new BipedMek(), EquipmentType.get("ISAC20")));
+        var cannon = ResolvedAttack.Shot.capture(Mounted.createMounted(new BipedMek(), EquipmentType.get("ISLongTomCannon")));
+        var ppc = ResolvedAttack.Shot.capture(Mounted.createMounted(new BipedMek(), EquipmentType.get("ISPPC")));
+        var laser = ResolvedAttack.Shot.capture(Mounted.createMounted(new BipedMek(), EquipmentType.get("ISMediumLaser")));
+        var result = original.result();
+        var resolved = new ResolvedAttack(result.id(), result.kind(), result.attacker(), result.target(), result.targetType(),
+              99, "Logical group", result.limb(), true,
+              List.of(new ResolvedAttack.Mount(1, 0, small), new ResolvedAttack.Mount(1, 1, large),
+                    new ResolvedAttack.Mount(2, 0, cannon), new ResolvedAttack.Mount(2, 1, ppc), new ResolvedAttack.Mount(3, 0, laser)), large);
+        var attack = new UnitAttack(new BoardScene.Combat(resolved, original.attacker(), original.target(), original.destination()));
+        var ac2 = new UnitEquipmentAssembly.Binding(0, "RT", "ac2", "", false, List.of(), 1);
+        var ac20 = new UnitEquipmentAssembly.Binding(1, "RT", "ac20", "", false, List.of(), 1);
+        var longTom = new UnitEquipmentAssembly.Binding(0, "RT", "cannon", "", false, List.of(), 2);
+        var energy = new UnitEquipmentAssembly.Binding(1, "RT", "ppc", "", false, List.of(), 2);
+        var beam = new UnitEquipmentAssembly.Binding(0, "RT", "laser", "", false, List.of(), 3);
+        attack.seconds = UnitAttack.ANTICIPATION_SECONDS * .5f;
+        assertTrue(attack.chargingPpc());
+        assertEquals(0, attack.recoil(energy), "Charging must not recoil before the discharge");
+        attack.seconds = UnitAttack.ANTICIPATION_SECONDS;
+        assertFalse(attack.chargingPpc());
+        assertEquals(0, attack.recoil(ac20));
+        attack.seconds += UnitAttack.RECOIL_KICK_SECONDS;
+        assertTrue(attack.recoil(ac2) > 0);
+        assertTrue(attack.recoil(ac20) > attack.recoil(ac2) * 2);
+        assertEquals(attack.recoil(ac20), attack.recoil(longTom), .0001f, "Both have rack size 20");
+        assertTrue(attack.recoil(energy) > 0 && attack.recoil(energy) < attack.recoil(ac20));
+        assertEquals(0, UnitAttack.cannonScale(ppc), "PPC recoil must not turn it into a ballistic muzzle explosion");
+        assertEquals(0, attack.recoil(beam));
+        float peak = attack.recoil(ac20);
+        attack.seconds += UnitAttack.RECOIL_RECOVERY_SECONDS * .5f;
+        assertTrue(attack.recoil(ac20) > 0 && attack.recoil(ac20) < peak);
+        attack.seconds = attack.duration;
+        assertEquals(0, attack.recoil(ac20));
+        assertEquals(0, attack.recoil(energy));
+        var extreme = new ResolvedAttack.Shot("", Set.of(), false, false, 1, 0, false, null, null, null, true, 10000);
+        assertTrue(UnitAttack.cannonScale(extreme) < 3, "Large values cannot yank the gun out of its mounting");
     }
 }

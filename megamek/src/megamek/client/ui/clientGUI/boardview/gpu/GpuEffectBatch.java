@@ -10,18 +10,22 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Disposable;
 
-/** Shared smoke/flame drawing for jump packs and missiles. One bounded dynamic buffer, at most two draws. */
-final class GpuExhaustBatch implements Disposable {
+/** Shared bounded quad batching; particle and beam shaders own their distinct appearances. At most two draws. */
+final class GpuEffectBatch implements Disposable {
     private static final int STRIDE = 7;
     private final int capacity;
+    private final String fragment;
     private float[] vertices;
     private Mesh mesh;
     private ShaderProgram shader;
     private int offset;
 
-    GpuExhaustBatch(int capacity) {
-        if (capacity < 1 || capacity > 16383) { throw new IllegalArgumentException("Exhaust capacity"); }
+    GpuEffectBatch(int capacity) { this(capacity, "particles"); }
+
+    GpuEffectBatch(int capacity, String fragment) {
+        if (capacity < 1 || capacity > 16383) { throw new IllegalArgumentException("Effect capacity"); }
         this.capacity = capacity;
+        this.fragment = fragment;
     }
 
     void begin() { offset = 0; }
@@ -68,13 +72,13 @@ final class GpuExhaustBatch implements Disposable {
     }
 
     private void create() {
-        String path = "megamek/client/ui/clientGUI/boardview/gpu/jump-jets";
-        shader = new ShaderProgram(Gdx.files.classpath(path + ".vert"), Gdx.files.classpath(path + ".frag"));
+        String path = "megamek/client/ui/clientGUI/boardview/gpu/";
+        shader = new ShaderProgram(Gdx.files.classpath(path + "effects.vert"), Gdx.files.classpath(path + fragment + ".frag"));
         if (!shader.isCompiled()) {
             String log = shader.getLog();
             shader.dispose();
             shader = null;
-            throw new IllegalStateException("Exhaust shader: " + log);
+            throw new IllegalStateException(fragment + " shader: " + log);
         }
         vertices = new float[capacity * 4 * STRIDE];
         short[] indices = new short[capacity * 6];

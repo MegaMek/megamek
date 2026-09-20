@@ -44,7 +44,7 @@ final class GpuDamageReview {
 
     static void verify(GpuUnitModels library) throws Exception {
         var damage = new UnitDamageDisplay();
-        var batch = new ModelBatch(GpuUnitCamouflage.shaders());
+        var batch = new ModelBatch(GpuUnitShader.provider());
         try {
             var mek = new BipedMek();
             for (int location = 0; location < mek.locations(); location++) {

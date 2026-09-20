@@ -25,6 +25,7 @@ final class UnitAnimator {
     /** A longer distance per cycle also lengthens airtime, without changing planted-foot speed. */
     static final float MEK_STRIDE_LENGTH = 1.6f;
     static final float MEK_STEP_LIFT = .16f;
+    private static final float ARM_AIM_LIMIT_DEGREES = 120;
     private static final String[][] LEGS = { { "leftLeg", "leftShin", "leftFoot" }, { "rightLeg", "rightShin", "rightFoot" },
           { "CL", "CLShin", "CLFoot" }, { "FLL", "FLLShin", "FLLFoot" }, { "FRL", "FRLShin", "FRLFoot" },
           { "RLL", "RLLShin", "RLLFoot" }, { "RRL", "RRLShin", "RRLFoot" },
@@ -476,8 +477,8 @@ final class UnitAnimator {
                             // Independent mount recoil. Body.apply resets joints, so always start at the mount's rest transform.
                             var emitter = binding.emitters().isEmpty() ? null : binding.emitters().getFirst();
                             UnitModelAttachment.barrelDirection(model.instance, rest, emitter, recoilDirection);
-                            float recoil = mountRecoil.merge(binding.node(), attack.recoil(), Math::max);
-                            node.translation.set(rest.translation).mulAdd(recoilDirection, -.9f * recoil);
+                            float recoil = mountRecoil.merge(binding.node(), attack.recoil(binding), Math::max);
+                            node.translation.set(rest.translation).mulAdd(recoilDirection, -UnitAttack.RECOIL_DISTANCE * recoil);
                         }
                     }
                 }
@@ -510,7 +511,8 @@ final class UnitAnimator {
                     if ("turret".equals(role) || "leftForearm".equals(role) || "rightForearm".equals(role)
                           || "leftArm".equals(role) || "rightArm".equals(role)) {
                         joint = ancestor;
-                        limit = "turret".equals(role) ? 180 : 65;
+                        // Resting arm barrels point down: reaching level fire alone can require 90 degrees.
+                        limit = "turret".equals(role) ? 180 : ARM_AIM_LIMIT_DEGREES;
                         break;
                     }
                 }
@@ -524,11 +526,11 @@ final class UnitAnimator {
                     attack.hitEndpoint(victim, origin, ordinal, 0, 1, aim);
                 }
                 if (!attack.event.result().hit() && !attack.defensive()) {
-                    if ("laser".equals(emitter.effect())) { attack.beamAim(victim, origin, ordinal, aim); }
+                    if ("laser".equals(emitter.effect()) || "ppc".equals(emitter.effect())) { attack.beamAim(victim, origin, ordinal, aim); }
                     else if (!attack.arcing(binding)) { attack.endpoint(victim, origin, true, ordinal, aim); }
                 }
-                var direction = aim.sub(origin);
-                if (attack.arcing(binding)) { direction.z += direction.len() * .75f; }
+                float loft = attack.arcing(binding) ? MathUtils.PI * UnitAttack.arcHeight(origin, aim) : 0;
+                var direction = aim.sub(origin).add(0, 0, loft);
                 track(joint, forward, direction.nor(), limit, attack.aimWeight());
             }
         } else if (fallen < .01f && crouch < .01f && unit.model().state().structure().anatomy() != null) {

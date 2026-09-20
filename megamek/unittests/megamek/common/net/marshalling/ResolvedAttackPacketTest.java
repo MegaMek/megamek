@@ -11,8 +11,11 @@ import java.util.UUID;
 
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Coords;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.Mounted;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
+import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.UnitLocation;
 import org.junit.jupiter.api.Test;
@@ -37,5 +40,25 @@ class ResolvedAttackPacketTest {
             assertEquals(PacketCommand.ENTITY_ATTACK_RESOLVED, packet.command());
             assertEquals(result, packet.getObject(0));
         }
+    }
+
+    @Test
+    void cannonCalibreAndPpcIdentitySurviveResolutionAndTheNetworkFilter() throws Exception {
+        var cannon = ResolvedAttack.Shot.capture(Mounted.createMounted(new Tank(), EquipmentType.get("ISLongTomCannon")));
+        var origin = new UnitLocation(1, new Coords(2, 3), 0, 0, 0);
+        var landing = new UnitLocation(2, new Coords(2, 1), 0, 0, 0);
+        var shot = cannon.withResolution(null, null).withTrajectory(origin, landing).asDefensive();
+        assertEquals(true, shot.ballistic());
+        assertEquals(20, shot.rackSize());
+        var ppc = ResolvedAttack.Shot.capture(Mounted.createMounted(new Tank(), EquipmentType.get("ISPPC")))
+              .withResolution(null, null).asDefensive();
+        assertEquals(true, ppc.ppc());
+        assertEquals(false, ppc.ballistic());
+        var result = new ResolvedAttack(UUID.randomUUID(), ResolvedAttack.Kind.SHOT, origin, landing, Targetable.TYPE_ENTITY,
+              0, "ISLongTomCannon", 0, true, List.of(new ResolvedAttack.Mount(1, 0, shot), new ResolvedAttack.Mount(1, 1, ppc)), shot);
+        var marshaller = new NativeSerializationMarshaller();
+        var bytes = new ByteArrayOutputStream();
+        marshaller.marshall(new Packet(PacketCommand.ENTITY_ATTACK_RESOLVED, result), bytes);
+        assertEquals(result, marshaller.unmarshall(new ByteArrayInputStream(bytes.toByteArray())).getObject(0));
     }
 }

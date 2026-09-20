@@ -54,7 +54,7 @@ class GpuUnitVisibilitySmokeTest {
         GpuUnitVisibility visibility = new GpuUnitVisibility();
         GpuUnitModels models = new GpuUnitModels();
         GpuBoardSkin skin = new GpuBoardSkin();
-        ModelBatch batch = new ModelBatch(GpuUnitCamouflage.shaders());
+        ModelBatch batch = new ModelBatch(GpuUnitShader.provider());
         GpuUnitCamouflage camouflage = new GpuUnitCamouflage();
         UnitCamouflage camoSource = new UnitCamouflage();
         List<Pixmap> captures = new ArrayList<>();

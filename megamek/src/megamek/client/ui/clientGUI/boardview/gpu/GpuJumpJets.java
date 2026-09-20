@@ -25,7 +25,7 @@ final class GpuJumpJets implements Disposable {
     private final Map<String, Jet> jets = new LinkedHashMap<>();
     private final List<Puff> sortedSmoke = new ArrayList<>();
     private final Vector3 right = new Vector3(), across = new Vector3(), along = new Vector3();
-    private final GpuExhaustBatch batch = new GpuExhaustBatch(MAX_QUADS);
+    private final GpuEffectBatch batch = new GpuEffectBatch(MAX_QUADS);
 
     private static final class Puff {
         final Vector3 origin, velocity;

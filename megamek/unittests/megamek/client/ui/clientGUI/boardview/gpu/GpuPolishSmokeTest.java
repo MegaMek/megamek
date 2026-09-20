@@ -164,7 +164,9 @@ class GpuPolishSmokeTest {
 
     private static void effects(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset) throws Exception {
         float normalFlame = 0;
-        for (String weapon : List.of("Flamer", "Heavy Flamer", "ISMediumLaser", "LRM 20")) {
+        var viewOffset = renderer.viewOffset.cpy();
+        for (String weapon : List.of("Flamer", "Heavy Flamer", "ISMediumLaser", "LRM 20",
+              "ISAC2", "ISAC20", "ISLongTomCannon", "ISPPC")) {
             var atlas = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
             atlas.setId(9100);
             var mount = atlas.addEquipment(EquipmentType.get(weapon), Mek.LOC_LEFT_ARM);
@@ -180,6 +182,10 @@ class GpuPolishSmokeTest {
                 boolean hit = hits > 0;
                 var shot = ResolvedAttack.Shot.capture(mount);
                 if (shot.missiles() > 0) { shot = shot.withResolution(null, hits); }
+                if ("ISLongTomCannon".equals(weapon)) {
+                    shot = shot.withTrajectory(new UnitLocation(unit.id(), unit.location().coords(), 0, 0, 0),
+                          new UnitLocation(-1, hit ? target.location().coords() : new Coords(1, 1), 0, hit ? 1 : 0, 0));
+                }
                 String outcome = hit && hits < shot.missiles() ? hits + "-hits" : Boolean.toString(hit);
                 var event = new ResolvedAttack(new UUID(4, 301), ResolvedAttack.Kind.SHOT,
                       new UnitLocation(unit.id(), unit.location().coords(), 0, 0, 0),
@@ -199,6 +205,7 @@ class GpuPolishSmokeTest {
                 attack.landscape = ray -> BoardGeometry.hit(scene, ray);
                 var effects = new GpuAttackEffects();
                 var animator = new UnitAnimator();
+                int ppcIdlePixels = 0, ppcChargePixels = 0;
                 try {
                     for (int frame = 0; frame <= 32; frame++) {
                         attack.seconds = attack.duration * frame / 32;
@@ -209,21 +216,53 @@ class GpuPolishSmokeTest {
                         effects.update(attack, library, Map.of(unit.id() + ":-1", a, target.id() + ":-1", b));
                         renderer.frame(List.of(terrain, a, b), origin.cpy().lerp(BoardGeometry.center(target.location().coords(), 1), .5f), effects,
                               "polish-shot-" + weapon.replace(' ', '-') + "-" + outcome, frame);
+                        if (shot.ballistic() || "ISPPC".equals(weapon)) {
+                            try {
+                                renderer.camera.zoom = .6f;
+                                renderer.viewOffset.set(130, 90, 80);
+                                renderer.frame(List.of(terrain, a, b), origin.cpy().add(0, 0, 8), effects,
+                                      "polish-shot-" + weapon + "-" + outcome + "-muzzle", frame);
+                            } finally { renderer.camera.zoom = 1; renderer.viewOffset.set(viewOffset); }
+                            if (frame == 10) {
+                                var binding = model.equipment().stream().filter(attack::fires).findFirst().orElseThrow();
+                                var muzzle = new Vector3();
+                                var barrel = new Vector3();
+                                UnitModelAttachment.emitter(a, binding.emitters().getFirst(), muzzle, barrel);
+                                var landing = attack.endpoint(b, muzzle, !hit, (binding.node() + ":1").hashCode(), new Vector3());
+                                if (shot.ppc()) { attack.beamEndpoint(b, muzzle, (binding.node() + ":1").hashCode(), landing); }
+                                var tangent = UnitAttack.projectile(muzzle, landing, .001f, attack.arcing(binding), new Vector3())
+                                      .sub(muzzle).nor();
+                                assertTrue(barrel.dot(tangent) > .95f,
+                                      weapon + " barrel must follow the launch direction: " + barrel + " vs " + tangent);
+                                if (shot.ballistic()) {
+                                    assertTrue(effects.flameParticleCount() > 0, "Cannons must render muzzle flame/exhaust");
+                                } else {
+                                    assertEquals(0, effects.flameParticleCount(), "PPC uses an energy discharge, not a cannon explosion");
+                                }
+                            }
+                            if (frame == 32) { assertEquals(0, effects.flameParticleCount(), "Muzzle effects expire with the firing event"); }
+                        }
+                        if (shot.ppc()) {
+                            String clip = "ISPPC-" + outcome + "-muzzle";
+                            if (frame == 0) { ppcIdlePixels = effectPixels(clip, frame, true); }
+                            if (frame == 6) {
+                                assertTrue(attack.chargingPpc());
+                                assertEquals(0, attack.recoil());
+                                ppcChargePixels = effectPixels(clip, frame, true);
+                                assertTrue(ppcChargePixels > ppcIdlePixels + 15, "The nozzle charge must be visible before firing");
+                            }
+                            if (frame == 10) {
+                                assertTrue(attack.recoil() > 0);
+                                assertTrue(effectPixels(clip, frame, true) > ppcChargePixels * 2,
+                                      "Discharging produces a full beam, not just another muzzle glow");
+                            }
+                        }
                         if (shot.missiles() > 0 && frame == 12) {
                             assertEquals(20, effects.missileCount(), "Cluster hits do not reduce the launched rack size");
                             assertEquals(hits, attack.missileHits(unit.id(), mount.getEquipmentNum(), 20));
                         }
                         if ("ISMediumLaser".equals(weapon) && frame == 12) {
-                            var image = ImageIO.read(new File(System.getProperty("megamek.gpu.screenshots"),
-                                  "playback-polish-shot-ISMediumLaser-" + outcome + "/012.png"));
-                            int redPixels = 0;
-                            for (int y = 0; y < image.getHeight(); y++) {
-                                for (int x = 0; x < image.getWidth(); x++) {
-                                    int color = image.getRGB(x, y);
-                                    int red = color >> 16 & 255, green = color >> 8 & 255, blue = color & 255;
-                                    if (red > 180 && red > green * 1.5f && red > blue * 1.5f) { redPixels++; }
-                                }
-                            }
+                            int redPixels = effectPixels("ISMediumLaser-" + outcome, frame, false);
                             assertTrue(redPixels > 100, "The beam must be visible for both hits and long off-board misses: " + redPixels);
                         }
                         if (frame == 12 && hit) {
@@ -245,6 +284,22 @@ class GpuPolishSmokeTest {
                 } finally { effects.dispose(); terrain.model.dispose(); }
             }
         }
+    }
+
+    private static int effectPixels(String clip, int frame, boolean blueEffect) throws Exception {
+        var image = ImageIO.read(new File(System.getProperty("megamek.gpu.screenshots"),
+              "playback-polish-shot-" + clip + "/" + String.format("%03d.png", frame)));
+        int pixels = 0;
+        for (int y = 0; y < image.getHeight(); y++) {
+            for (int x = 0; x < image.getWidth(); x++) {
+                int color = image.getRGB(x, y);
+                int red = color >> 16 & 255, green = color >> 8 & 255, blue = color & 255;
+                boolean colored = blueEffect ? blue > 170 && blue > red * 1.15f && green > red * 1.1f
+                      : red > 180 && red > green * 1.5f && red > blue * 1.5f;
+                if (colored) { pixels++; }
+            }
+        }
+        return pixels;
     }
 
     private static void fallbacks(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, MekTileset tileset) {

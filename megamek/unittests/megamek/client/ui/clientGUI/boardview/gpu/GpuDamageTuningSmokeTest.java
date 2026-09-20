@@ -58,7 +58,7 @@ class GpuDamageTuningSmokeTest {
                 var model = plate(Color.BLACK);
                 var glass = plate(new Color(.21f, .67f, .73f, 1));
                 var damage = new UnitDamageDisplay();
-                var batch = new ModelBatch(GpuUnitCamouflage.shaders());
+                var batch = new ModelBatch(GpuUnitShader.provider());
                 var buffer = new FrameBuffer(Pixmap.Format.RGBA8888, 128, 128, true);
                 try {
                     var instance = new ModelInstance(model);
@@ -256,7 +256,7 @@ class GpuDamageTuningSmokeTest {
     }
 
     private static void capturePatterns(GpuBattleView view) throws Exception {
-        var batch = new ModelBatch(GpuUnitCamouflage.shaders());
+        var batch = new ModelBatch(GpuUnitShader.provider());
         try {
             var damage = (UnitDamageDisplay) field(view, "damageDisplay");
             for (float loss : new float[] { .25f, .75f, 1 }) {

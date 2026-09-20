@@ -73,6 +73,8 @@ final class GpuPlaybackReview {
                 var selected = UnitModelSelection.capture(entity, -1, false, tileset);
                 var body = library.get(selected, entity.getId());
                 measureFeet(body, unit(entity, selected));
+                withFamilyScale(UnitFamilyScale.forFamily(body.rigs().getFirst().family()),
+                      () -> measureFeet(body, unit(entity, selected)));
                 if (entity instanceof BattleArmor) {
                     groupJumpFrames(renderer, body, unit(entity, selected));
                 }
@@ -84,6 +86,22 @@ final class GpuPlaybackReview {
             measureVehicles(transport, unit(infantry, selected));
             movementFrames(renderer, transport, unit(infantry, selected), "infantry-transports", true);
             GpuInfantryPlaybackReview.verify(library, tileset);
+            withFamilyScale(UnitFamilyScale.INFANTRY, () -> {
+                measureVehicles(transport, unit(infantry, selected));
+                GpuInfantryPlaybackReview.verify(library, tileset);
+            });
+        }
+    }
+
+    private static void withFamilyScale(UnitFamilyScale family, Runnable review) {
+        float size = family.UNIT_SCALE, height = family.HEIGHT_SCALE;
+        try {
+            family.UNIT_SCALE = size * 1.25f;
+            family.HEIGHT_SCALE = height * 1.4f;
+            review.run();
+        } finally {
+            family.UNIT_SCALE = size;
+            family.HEIGHT_SCALE = height;
         }
     }
 

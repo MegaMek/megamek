@@ -40,6 +40,7 @@ import megamek.common.Configuration;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -181,18 +182,18 @@ class GpuModularUnitModelsSmokeTest {
         assertEquals(6, six.instance.nodes.size);
         assertEquals(1284, triangles(six.instance.nodes));
         assertDeferredEquipment(library, selection, 1284);
-        assertInHex(six.instance.nodes);
-        instances.add(new ModelInstance(six.instance.model));
+        instances.add(formationInstance(six, armor, selection));
         for (int member = 1; member < 6; member++) {
             armor.setInternal(0, member);
         }
-        var single = library.get(UnitModelSelection.capture(armor, -1, false, tileset), armor.getId());
+        var singleSelection = UnitModelSelection.capture(armor, -1, false, tileset);
+        var single = library.get(singleSelection, armor.getId());
         assertNotNull(single);
         assertEquals(1, single.instance.nodes.size);
         assertEquals(214, triangles(single.instance.nodes));
         assertNotNull(single.instance.getNode("trooper-6"));
         assertEquals(six.instance.getNode("trooper-6").translation, single.instance.getNode("trooper-6").translation);
-        instances.add(new ModelInstance(single.instance.model));
+        instances.add(formationInstance(single, armor, singleSelection));
         armor.setInternal(0, 6);
         var zero = library.get(UnitModelSelection.capture(armor, -1, false, tileset), armor.getId());
         assertNotNull(zero);
@@ -212,8 +213,7 @@ class GpuModularUnitModelsSmokeTest {
             assertTrue(triangles(group.instance.nodes) > 0);
             assertTrue(triangles(group.instance.nodes) <= UnitModelDescriptor.TRIANGLE_LIMIT);
             assertDeferredEquipment(library, groupSelection, triangles(group.instance.nodes));
-            assertInHex(group.instance.nodes);
-            instances.add(new ModelInstance(group.instance.model));
+            instances.add(formationInstance(group, infantry, groupSelection));
             var descriptor = new JsonReader().parse(new FileHandle(new File(Configuration.dataDir(),
                   "models/units/modular/infantry.json")));
             review.add(java.util.Map.of("movement", movement.name(), "parts",
@@ -233,6 +233,31 @@ class GpuModularUnitModelsSmokeTest {
         renderReview(batch, instances, "runtime-infantry", 360, 4);
     }
 
+    private static ModelInstance formationInstance(GpuMeeple model, Entity entity, BoardScene.UnitModel selection) {
+        var instance = new ModelInstance(model.instance.model);
+        var animator = new UnitAnimator();
+        var unit = new BoardScene.Unit(entity.getId(), -1, "Formation review", new BoardScene.Waypoint(new Coords(0, 0), 0, 0),
+              null, false, null, 1, false, selection, 0);
+        var original = BoardGeometry.tuning();
+        try {
+            for (float scale : new float[] { .7f, 1, .7f }) {
+                BoardGeometry.tune(new BoardGeometry.Tuning(original.hexScale(), scale, original.unitHeightScale(),
+                      original.levelHeight(), original.gridShade(), original.multiHexUnitScale()));
+                animator.apply(model, instance, unit, UnitMotion.Sample.STILL, 0, 0, true, 0);
+                if (model.rigs().stream().noneMatch(UnitRig::transport)) {
+                    assertInHex(instance.nodes, model.horizontalScale(unit));
+                }
+                for (var member : instance.nodes) {
+                    assertEquals(model.instance.getNode(member.id).scale, member.scale, "Layout must not shrink the artwork");
+                }
+            }
+        } finally {
+            BoardGeometry.tune(original);
+        }
+        animator.apply(model, instance, unit, UnitMotion.Sample.STILL, 0, 0, true, 0);
+        return instance;
+    }
+
     private static void assertDeferredEquipment(GpuUnitModels library, BoardScene.UnitModel selection, int expectedTriangles) {
         var original = selection.state();
         var body = original.structure();
@@ -246,7 +271,7 @@ class GpuModularUnitModelsSmokeTest {
         assertEquals(expectedTriangles, triangles(equipped.instance.nodes));
     }
 
-    private static void assertInHex(Iterable<Node> nodes) {
+    static void assertInHex(Iterable<Node> nodes, float scale) {
         Coords hex = new Coords(0, 0);
         for (Node node : nodes) {
             for (var part : node.parts) {
@@ -258,12 +283,12 @@ class GpuModularUnitModelsSmokeTest {
                 for (int index = part.meshPart.offset; index < part.meshPart.offset + part.meshPart.size; index++) {
                     int offset = Short.toUnsignedInt(indices[index]) * stride;
                     Vector3 vertex = new Vector3(vertices[offset], vertices[offset + 1], vertices[offset + 2])
-                          .mul(node.globalTransform).scl(BoardGeometry.UNIT_SCALE);
+                          .mul(node.globalTransform).scl(scale);
                     assertTrue(BoardGeometry.contains(hex, vertex.x + BoardGeometry.centerX(hex),
                           vertex.y + BoardGeometry.centerY(hex)), node.id + ": " + vertex);
                 }
             }
-            assertInHex(node.getChildren());
+            assertInHex(node.getChildren(), scale);
         }
     }
 

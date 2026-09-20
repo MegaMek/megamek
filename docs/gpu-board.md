@@ -453,14 +453,26 @@ footprints, collapse warnings, weapon ranges, and FoV shading. They resume from 
 latest snapshot when the last queued move finishes, including landing, unloading,
 and formation settling, without waiting for the final completion hold. Pause keeps
 this presentation; skipping or instant speed applies the current overlays immediately.
-The GL thread retains the last settled map-marker state during movement, including
-cargo, objectives, minefields, artillery, and engineering progress. Objective zones,
-native ECM markings, artillery drift lines, and native heat-map markings retain that
-same presentation boundary. Rulers, manual LOS cursors, and player notes stay live.
-This history is cleared when the board changes. It only delays presentation; it does
-not rewind game rules, unit visibility, terrain updates, or legacy raster artwork.
-Marker snapshots have no event IDs, so their changes are released together when
-the movement queue catches up.
+Selection and footprint rings use the same position and facing as the animated
+model, including turns, flight and multihex placement.
+
+The Swing adapter captures immutable scene checkpoints in packet order, directly
+at movement and resolved-attack callbacks. Checkpoints share the animation queue
+and consume no animation time. Terrain, buildings, bridges, legacy bitmap artwork,
+cargo, objectives, mines, artillery, engineering progress, ECM and heat-map markings
+advance at each arrival or attack impact, before recovery and the completion hold.
+Each queued action can therefore reveal its own captured changes. Sensor contacts
+and previously visible units use the same checkpoints; a later disappearance or
+contact update cannot overwrite an earlier action's appearance. Hidden paths and
+sensor-only units never create movement animations.
+
+Rulers, manual LOS cursors, player notes and game commands stay live. This history
+is presentation only: game rules and visibility checks remain on Swing, and the
+renderer only retains previously authorized snapshots. Board changes discard it;
+skip and instant speed apply the latest state. Association uses received packet
+order: updates without a corresponding movement or resolved-attack event have no
+separate animation boundary, and a state sent only at phase end cannot be split
+into outcomes the server did not transmit individually.
 
 Map-sheet borders follow continuous hex edges, with a narrow contrast backing in
 the native view. Embedded-board outlines and ECM/ECCM source outlines also have
@@ -600,6 +612,11 @@ both camera modes, twelve bearings and three board scales.
 `GpuMarkerCaptureTest` covers handler visibility, owner colours, mine/charge privacy,
 special-display filtering, engineering terrain preservation, classic sprite
 restoration, and the separate orbital blast footprint.
+`GpuSceneSourceTest` checks captures between batched movement/attack packets and
+sensor-only updates. `GpuScenePlaybackTest` checks per-arrival and per-impact
+terrain, bitmap, marker and contact changes, including pause, skip and board reset.
+`GpuSelectionPlaybackTest` checks translated and rotated footprint geometry;
+`GpuScenePlaybackSmokeTest` verifies the complete renderer in both camera views.
 
 Run from the checkout root:
 

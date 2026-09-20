@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 
 /** Cosmetic formation placement. UnitMotion alone owns route/time; these are children, never transported Entities. */
 final class InfantryMotion {
@@ -23,6 +24,7 @@ final class InfantryMotion {
         final UnitRig rig;
         final Node node;
         final Vector3 rest, scale, door;
+        final BoundingBox footprint;
         final List<NodePart> visibleParts = new ArrayList<>();
         final Vector3 start = new Vector3();
         final Vector3 goal = new Vector3();
@@ -39,6 +41,11 @@ final class InfantryMotion {
             this.node = node;
             this.rest = new Vector3(rest.translation);
             scale = new Vector3(rest.scale);
+            var shape = rest.copy();
+            shape.translation.setZero();
+            shape.rotation.idt();
+            shape.calculateTransforms(true);
+            footprint = UnitBounds.subtree(shape);
             heading = -rest.rotation.getAngleAround(Vector3.Z);
             Node marker = rig.joints().containsKey("boarding")
                   ? UnitAnimator.find(rest.getChildren(), rig.joints().get("boarding")) : null;
@@ -78,6 +85,10 @@ final class InfantryMotion {
         Vector3 doorway() {
             return new Vector3(door).scl(scale).rotate(Vector3.Z, -heading).add(node.translation);
         }
+
+        void fit(Vector3 position, float facing, float scale) {
+            InfantryFootprint.fit(position, footprint, facing, scale);
+        }
     }
 
     void bind(GpuMeeple model, ModelInstance placed) {
@@ -115,7 +126,13 @@ final class InfantryMotion {
         var travel = motion.boarding();
         float scale = model.horizontalScale(unit);
         var vehicles = members.values().stream().filter(member -> member.rig.transport()).toList();
+        if (travel != null && vehicles.stream().anyMatch(member -> member.sequence < 0)) {
+            fitVehicles(vehicles, false, scale);
+        }
         for (Member member : members.values()) {
+            if (travel != null && member.sequence < 0 && member.rig.trooper()) {
+                member.fit(member.node.translation, member.heading, scale);
+            }
             if (travel != null && member.sequence != travel.sequence()) {
                 member.sequence = travel.sequence();
                 member.start.set(member.node.translation);
@@ -130,6 +147,17 @@ final class InfantryMotion {
                       ? travel.arrivalHeading() + Math.signum(member.rest.x) * 40 + (member.reversing ? 180 : 0)
                       : watchHeading(unit.id(), member.rig.container(), member.goal, travel.destination());
             }
+            if (travel != null) {
+                member.goal.set(member.rest).rotate(Vector3.Z, -travel.arrivalHeading());
+                if (member.rig.trooper()) { member.fit(member.goal, member.goalHeading, scale); }
+            }
+        }
+        if (travel != null) {
+            if (!fitVehicles(vehicles, true, scale)) {
+                members.values().stream().filter(member -> member.rig.trooper()).forEach(member ->
+                      member.goal.set(member.rest).rotate(Vector3.Z, -travel.arrivalHeading()));
+            }
+            avoidVehicles(vehicles, true, scale);
         }
         for (Member member : members.values()) {
             member.node.scale.set(member.scale);
@@ -141,23 +169,29 @@ final class InfantryMotion {
             for (Member member : members.values()) {
                 if (member.rig.trooper()) {
                     var individual = motion.member(unit.id(), member.rig.container());
+                    float target = watchHeading(unit.id(), member.rig.container(), member.rest,
+                          unit.location().coords().hashCode());
+                    if (individual.moving() || individual.progress() != 0 || motion.group() == null) {
+                        member.orient(individual.moving() ? individual.heading() : MathUtils.lerpAngleDeg(individual.heading(), target,
+                              Math.min(1, individual.settledSeconds() / UnitMotion.FORMATION_SETTLE_SECONDS)));
+                    }
                     member.node.translation.set(member.rest);
+                    member.fit(member.node.translation, member.heading, scale);
                     if (motion.group() != null) {
                         var offset = motion.group().offset(unit.id(), member.rig.container());
                         member.verticalOffset = offset.z / model.verticalScale(scale);
-                        member.node.translation.set(member.rest).add(offset.x / scale, offset.y / scale, member.verticalOffset);
-                        if (!individual.moving() && individual.progress() == 0) {
-                            continue; // A member waiting to depart keeps its existing watch direction.
-                        }
+                        member.node.translation.add(offset.x / scale, offset.y / scale, member.verticalOffset);
                     }
-                    float target = watchHeading(unit.id(), member.rig.container(), member.node.translation,
-                          unit.location().coords().hashCode());
-                    member.orient(individual.moving() ? individual.heading() : MathUtils.lerpAngleDeg(individual.heading(), target,
-                          Math.min(1, individual.settledSeconds() / UnitMotion.FORMATION_SETTLE_SECONDS)));
                 } else if (motion.moving()) {
                     member.orient(motion.heading());
+                } else {
+                    member.node.translation.set(member.rest);
                 }
             }
+            if (!fitVehicles(vehicles, false, scale)) {
+                members.values().stream().filter(member -> member.rig.trooper()).forEach(member -> member.node.translation.set(member.rest));
+            }
+            avoidVehicles(vehicles, false, scale);
             return;
         }
         for (Member vehicle : vehicles) {
@@ -170,6 +204,33 @@ final class InfantryMotion {
                 int slot = Integer.parseInt(member.rig.container().substring("trooper-".length()));
                 Member vehicle = vehicles.get(Math.floorMod(slot, vehicles.size()));
                 passenger(member, vehicle, travel, index++);
+            }
+        }
+    }
+
+    private static boolean fitVehicles(List<Member> vehicles, boolean goal, float scale) {
+        if (vehicles.size() == 2) {
+            var a = vehicles.get(0);
+            var b = vehicles.get(1);
+            return InfantryFootprint.fitPair(goal ? a.goal : a.node.translation, a.footprint, goal ? a.goalHeading : a.heading,
+                  goal ? b.goal : b.node.translation, b.footprint, goal ? b.goalHeading : b.heading, scale);
+        }
+        return vehicles.isEmpty() || InfantryFootprint.fit(goal ? vehicles.getFirst().goal : vehicles.getFirst().node.translation,
+              vehicles.getFirst().footprint, goal ? vehicles.getFirst().goalHeading : vehicles.getFirst().heading, scale);
+    }
+
+    private void avoidVehicles(List<Member> vehicles, boolean goal, float scale) {
+        if (vehicles.isEmpty()) { return; }
+        var obstacles = vehicles.stream().map(vehicle -> {
+            var shape = InfantryFootprint.polygon(vehicle.footprint, goal ? vehicle.goalHeading : vehicle.heading);
+            var position = goal ? vehicle.goal : vehicle.node.translation;
+            shape.setPosition(position.x, position.y);
+            return shape;
+        }).toList();
+        for (var member : members.values()) {
+            if (member.rig.trooper()) {
+                InfantryFootprint.avoid(goal ? member.goal : member.node.translation, member.footprint,
+                      goal ? member.goalHeading : member.heading, obstacles, scale);
             }
         }
     }

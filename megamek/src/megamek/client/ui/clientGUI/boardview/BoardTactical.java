@@ -11,7 +11,7 @@ public record BoardTactical(List<Fill> fills, List<Label> labels) {
     public static final BoardTactical EMPTY = new BoardTactical(List.of(), List.of());
 
     /** Measurement tools stay live, unit overlays hide, and map-state markings retain their last displayed state. */
-    public enum Playback { LIVE, HIDE_DURING_MOVEMENT, HOLD_DURING_MOVEMENT }
+    public enum Playback { LIVE, HIDE_DURING_MOVEMENT, HOLD_DURING_PLAYBACK }
 
     public BoardTactical {
         fills = List.copyOf(fills);
@@ -28,7 +28,7 @@ public record BoardTactical(List<Fill> fills, List<Label> labels) {
     }
 
     private static boolean retained(Playback playback, boolean hideMovement) {
-        return playback != Playback.LIVE && (!hideMovement || playback == Playback.HOLD_DURING_MOVEMENT);
+        return playback != Playback.LIVE && (!hideMovement || playback == Playback.HOLD_DURING_PLAYBACK);
     }
 
     public record Point(float x, float y) { }

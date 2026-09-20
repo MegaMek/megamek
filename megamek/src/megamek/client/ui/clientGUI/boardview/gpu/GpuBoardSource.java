@@ -64,7 +64,7 @@ final class GpuBoardSource implements AutoCloseable {
         }
     }
     record Hud(int width, int height, List<HudLayer> layers) { }
-    public record Frame(BoardScene scene, List<BoardScene.Animation> animations, BoardScene.Context context,
+    public record Frame(BoardScene scene, List<BoardScene.Animation> timeline, BoardScene.Context context,
           List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
           BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
           BoardAtmosphere.Settings scenarioAtmosphere, BoardScene.Attack attack) {
@@ -83,7 +83,11 @@ final class GpuBoardSource implements AutoCloseable {
                   BoardAtmosphere.DEFAULTS);
         }
         List<BoardScene.Movement> movements() {
-            return animations.stream().filter(BoardScene.Movement.class::isInstance).map(BoardScene.Movement.class::cast).toList();
+            return timeline.stream().filter(BoardScene.Movement.class::isInstance).map(BoardScene.Movement.class::cast).toList();
+        }
+
+        List<BoardScene.Animation> animations() {
+            return timeline.stream().filter(event -> !(event instanceof BoardScene.SceneUpdate)).toList();
         }
     }
 
@@ -180,7 +184,7 @@ final class GpuBoardSource implements AutoCloseable {
             @Override
             public void gameAttackResolved(megamek.common.event.GameAttackResolvedEvent event) {
                 BoardView eventView = GpuBoardSource.this.view;
-                SwingUtilities.invokeLater(() -> {
+                onSwing(() -> {
                     if (GpuBoardSource.this.view == eventView) {
                         captureCombat(event);
                     }
@@ -202,11 +206,25 @@ final class GpuBoardSource implements AutoCloseable {
                 int startAltitude = old == null ? 0 : old.getAltitude();
                 Entity takeoff = old == null ? event.getEntity() : old;
                 int jumpMP = type == EntityMovementType.MOVE_JUMP ? takeoff.getAnyTypeMaxJumpMP() : 0;
-                SwingUtilities.invokeLater(() -> {
+                onSwing(() -> {
                     if (GpuBoardSource.this.view == eventView) {
-                        captureMovement(entityId, start, path, type, jumpMP, startAltitude, moveMP);
+                        if (path.isEmpty()) {
+                            refresh();
+                        } else {
+                            captureMovement(entityId, start, path, type, jumpMP, startAltitude, moveMP);
+                        }
                     }
                 });
+            }
+
+            @Override
+            public void gameEntityNew(megamek.common.event.entity.GameEntityNewEvent event) {
+                onSwing(GpuBoardSource.this::refresh);
+            }
+
+            @Override
+            public void gameEntityRemove(megamek.common.event.entity.GameEntityRemoveEvent event) {
+                onSwing(GpuBoardSource.this::refresh);
             }
         };
         view.game.addGameListener(gameListener);
@@ -229,6 +247,15 @@ final class GpuBoardSource implements AutoCloseable {
         }
     }
 
+    /** Packet handlers already run on Swing. Capturing here preserves each event inside a batched packet. */
+    private static void onSwing(Runnable action) {
+        if (SwingUtilities.isEventDispatchThread()) {
+            action.run();
+        } else {
+            SwingUtilities.invokeLater(action);
+        }
+    }
+
     private void dirtyTerrain() {
         if (SwingUtilities.isEventDispatchThread()) {
             terrainDirty = true;
@@ -246,6 +273,7 @@ final class GpuBoardSource implements AutoCloseable {
         BoardView movingView = view;
         if (entity == null || !visible(entity) || sensorContact(entity)
               || path.stream().anyMatch(p -> p.boardId() != view.getBoardId() || p.coords() == null)) {
+            refresh();
             return;
         }
         List<BoardScene.Waypoint> points = new ArrayList<>();
@@ -276,7 +304,7 @@ final class GpuBoardSource implements AutoCloseable {
                       movementMP, next.scene().units().stream()
                             .filter(unit -> unit.id() == entityId && !unit.sensorContact()).findFirst().orElse(null)));
             }
-            frame = next;
+            publishScene(next, false);
         }
     }
 
@@ -302,16 +330,46 @@ final class GpuBoardSource implements AutoCloseable {
         var destination = receiving == null
               ? waypoint(result.target().coords(), result.target().elevation(), result.target().facing())
               : receiving.location();
+        // A resolved attack packet precedes its damage packets. This checkpoint closes the preceding action.
+        Frame before = capture();
         synchronized (this) {
+            publishScene(before, true);
             queueAnimation(new BoardScene.Combat(result, firing, receiving, destination));
         }
     }
 
     private synchronized void queueAnimation(BoardScene.Animation animation) {
+        if (animation instanceof BoardScene.SceneUpdate
+              && !pendingEvents.isEmpty() && pendingEvents.getLast() instanceof BoardScene.SceneUpdate) {
+            pendingEvents.removeLast();
+        }
         if (pendingEvents.size() >= UnitPlayback.MAX_PENDING_EVENTS) {
             pendingEvents.clear();
         }
         pendingEvents.add(animation);
+    }
+
+    /** Consecutive captures share one checkpoint; animation boundaries are never coalesced. Swing owns capture. */
+    private synchronized void publishScene(Frame next, boolean detectGear) {
+        if (detectGear && frame != null && frame.boardGeneration() == next.boardGeneration()) {
+            Map<Integer, BoardScene.Unit> previous = new HashMap<>();
+            frame.scene().units().stream().filter(unit -> !unit.sensorContact())
+                  .forEach(unit -> previous.put(unit.id(), unit));
+            for (var unit : next.scene().units()) {
+                var old = previous.get(unit.id());
+                if (old != null && !unit.sensorContact() && UnitMotion.changesGear(old.location(), unit.location())) {
+                    Entity entity = view.game.getEntity(unit.id());
+                    queueAnimation(new BoardScene.Movement(unit.id(), next.scene().boardId(),
+                          List.of(old.location(), unit.location()), EntityMovementType.MOVE_SAFE_THRUST, 0,
+                          entity == null ? 0 : movementMP(entity, EntityMovementType.MOVE_SAFE_THRUST), unit));
+                }
+            }
+        }
+        if (frame == null || frame.boardGeneration() != next.boardGeneration() || !next.scene().samePlaybackState(frame.scene())
+              || (!pendingEvents.isEmpty() && !(pendingEvents.getLast() instanceof BoardScene.SceneUpdate))) {
+            queueAnimation(new BoardScene.SceneUpdate(next.scene()));
+        }
+        frame = next;
     }
 
     /** Copy the game's current capability once at the event boundary; the renderer never recalculates MP rules. */
@@ -344,7 +402,7 @@ final class GpuBoardSource implements AutoCloseable {
         if (!closed) {
             Frame next = capture();
             synchronized (this) {
-                frame = next;
+                publishScene(next, true);
             }
         }
     }
@@ -383,7 +441,7 @@ final class GpuBoardSource implements AutoCloseable {
         // so native rendering can already animate it while the rest of this scene snapshot is being prepared.
         synchronized (this) {
             if (frame != null && frame.scene().boardId() == view.getBoardId()) {
-                frame = new Frame(frame.scene(), frame.animations(), frame.context(), frame.globalCommands(), nextHud,
+                frame = new Frame(frame.scene(), frame.timeline(), frame.context(), frame.globalCommands(), nextHud,
                       frame.tooltip(), frame.centerRequest(), frame.boardGeneration(), frame.actorName(),
                       frame.scenarioAtmosphere(), frame.attack());
             }

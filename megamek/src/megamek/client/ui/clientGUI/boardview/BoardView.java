@@ -1342,7 +1342,7 @@ public final class BoardView extends AbstractBoardView
         drawSprites(graphics2D, attackSprites);
 
         // draw artillery drift lines (from the targeted hex to where the round actually landed)
-        BoardTacticalGraphics.draw(graphics2D, BoardTactical.Playback.HOLD_DURING_MOVEMENT, this::drawArtilleryDriftLines);
+        BoardTacticalGraphics.draw(graphics2D, BoardTactical.Playback.HOLD_DURING_PLAYBACK, this::drawArtilleryDriftLines);
 
         // draw movement vectors.
         if (game.useVectorMove() && game.getPhase().isMovement()) {
@@ -5126,7 +5126,7 @@ public final class BoardView extends AbstractBoardView
                 if (!heat.isEmpty()) {
                     Graphics2D local = BoardTacticalGraphics.at(graphics, getHexLocation(entry.getKey()));
                     try {
-                        BoardTacticalGraphics.draw(local, BoardTactical.Playback.HOLD_DURING_MOVEMENT, layer -> {
+                        BoardTacticalGraphics.draw(local, BoardTactical.Playback.HOLD_DURING_PLAYBACK, layer -> {
                             heat.stream().filter(this::isPredictedHeatMapMarker)
                                   .forEach(marker -> drawHeatMapPredictedHex(marker, layer, 1));
                             drawHeatMapTurnLabel(heat, layer, 1);
@@ -6775,7 +6775,7 @@ public final class BoardView extends AbstractBoardView
         for (Coords coords : marked) {
             Graphics2D local = BoardTacticalGraphics.at(graphics, getHexLocation(coords));
             try {
-                BoardTacticalGraphics.draw(local, BoardTactical.Playback.HOLD_DURING_MOVEMENT,
+                BoardTacticalGraphics.draw(local, BoardTactical.Playback.HOLD_DURING_PLAYBACK,
                       layer -> drawElectronicWarfare(layer, coords));
                 if (board.embeddedBoardCoords().contains(coords)) {
                     drawEmbeddedBoard(local);

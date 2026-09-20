@@ -255,6 +255,9 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     /** Board artwork, terrain and authorized contacts advance with the queue; interactive tools stay live. */
     BoardScene duringPlayback(BoardScene settled, boolean hideMovement) {
+        if (settled == this && !hideMovement) {
+            return this;
+        }
         BoardScene world = settled == null ? this : settled;
         var heldMarkers = settled == null ? Stream.<BoardMarker>empty() : settled.markers.stream();
         var shownMarkers = Stream.concat(heldMarkers.filter(marker ->

@@ -140,7 +140,7 @@ class GpuOverlayPlaybackTest {
         BoardTactical tactical;
         try {
             for (var timing : List.of(BoardTactical.Playback.HIDE_DURING_MOVEMENT,
-                  BoardTactical.Playback.HOLD_DURING_MOVEMENT, BoardTactical.Playback.LIVE)) {
+                  BoardTactical.Playback.HOLD_DURING_PLAYBACK, BoardTactical.Playback.LIVE)) {
                 BoardTacticalGraphics.draw(graphics, timing, layer -> {
                     Graphics2D local = BoardTacticalGraphics.at(layer, new Point(0, 0));
                     try {

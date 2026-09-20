@@ -68,6 +68,7 @@ class GpuBattleView extends ApplicationAdapter {
     private final GpuJumpJets jumpJets = new GpuJumpJets();
     private final GpuUnitCamouflage camouflage = new GpuUnitCamouflage();
     private final Map<BoardScene.Unit, Vector3> unitAnchors = new HashMap<>();
+    private final Map<BoardScene.Unit, UnitFootprint.Pose> movingFootprints = new HashMap<>();
     private final Map<String, ModelInstance> unitInstances = new HashMap<>();
     private final UnitPicking unitPicking = new UnitPicking();
     private final Map<String, UnitModelState.Appearance> equipmentAppearance = new HashMap<>();
@@ -195,11 +196,12 @@ class GpuBattleView extends ApplicationAdapter {
             hovered = null;
             fitted = false;
         }
-        boolean changedTiles = scene == null || scene.tiles() != frame.scene().tiles();
+        List<BoardScene.Tile> previousTiles = scene == null ? null : scene.tiles();
         scene = frame.scene();
-        playback.accept(frame.animations(), scene, this::hasInfantryTransports);
+        playback.accept(frame.timeline(), scene, this::hasInfantryTransports);
         playback.advance(Gdx.graphics.getDeltaTime(), playbackSpeed);
         scene = playback.present(scene);
+        boolean changedTiles = previousTiles != scene.tiles();
         camouflage.retain(scene.units());
         if (unitModels != null) {
             unitModels.retainAssemblies(scene.units().stream().filter(unit -> !unit.sensorContact())
@@ -346,6 +348,7 @@ class GpuBattleView extends ApplicationAdapter {
     private void prepareUnits() {
         hover.clear();
         unitAnchors.clear();
+        movingFootprints.clear();
         unitInstances.keySet().retainAll(scene.units().stream().map(unit -> unit.id() + ":" + unit.part())
               .collect(Collectors.toSet()));
         unitTints.keySet().retainAll(unitInstances.keySet());
@@ -373,6 +376,9 @@ class GpuBattleView extends ApplicationAdapter {
             if (tile != null && tile.waterDepth() == 0 && !tile.frozen() && !airborne
                   && MathUtils.isEqual(position.z, tile.elevation() * BoardGeometry.LEVEL)) {
                 position.z = BoardGeometry.groundZ(tile);
+            }
+            if (motion != null && motion.isMoving()) {
+                movingFootprints.put(unit, new UnitFootprint.Pose(placement, position, facing));
             }
             GpuMeeple meeple = unit.sensorContact() ? markers.model(BoardMarker.Kind.SENSOR_CONTACT)
                   : unitModels == null ? null : unitModels.get(unit.model(), unit.id());
@@ -785,10 +791,19 @@ class GpuBattleView extends ApplicationAdapter {
             if (unit.id() == scene.selectedId() || (hovered != null && unit.footprint().contains(hovered))) {
                 lines.setColor(unit.sensorContact() ? Color.ORANGE : unit.id() == scene.selectedId()
                       ? Color.CYAN : Color.WHITE);
-                for (Coords occupied : unit.footprint()) {
-                    var tile = scene.tile(occupied);
-                    if (tile != null) {
-                        ring(occupied, unit.footprint().size() > 1 ? tile.elevation() : unit.location().elevation());
+                UnitFootprint.Pose moving = movingFootprints.get(unit);
+                if (moving != null) {
+                    for (Coords occupied : moving.unit().footprint()) {
+                        for (int corner = 0; corner < 6; corner++) {
+                            lines.line(moving.outlinePoint(occupied, corner), moving.outlinePoint(occupied, corner + 1));
+                        }
+                    }
+                } else {
+                    for (Coords occupied : unit.footprint()) {
+                        var tile = scene.tile(occupied);
+                        if (tile != null) {
+                            ring(occupied, unit.footprint().size() > 1 ? tile.elevation() : unit.location().elevation());
+                        }
                     }
                 }
             }

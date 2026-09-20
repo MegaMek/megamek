@@ -304,7 +304,7 @@ final class GpuFamilyAssemblyReview {
                     assertEquals(original.getWidth() * .7f / base.multiHexUnitScale(), bounds(model.instance).getWidth(), .001f);
                     TextButton defaults = tuning.panel().findActor("tuning-defaults");
                     defaults.fire(new ChangeListener.ChangeEvent());
-                    assertEquals(.6f, normalScale.getValue(), .001f);
+                    assertEquals(BoardGeometry.DEFAULTS.unitScale(), normalScale.getValue(), .001f);
                     assertEquals(BoardGeometry.DEFAULT_MULTI_HEX_UNIT_SCALE, largeScale.getValue(), .001f);
                 } finally {
                     skin.dispose();

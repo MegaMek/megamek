@@ -211,7 +211,7 @@ public class FieldOfFireSprite extends MovementEnvelopeSprite {
 
     @Override
     public BoardTactical.Playback playback() {
-        return usesOwnColor ? BoardTactical.Playback.HOLD_DURING_MOVEMENT
+        return usesOwnColor ? BoardTactical.Playback.HOLD_DURING_PLAYBACK
               : BoardTactical.Playback.HIDE_DURING_MOVEMENT;
     }
 

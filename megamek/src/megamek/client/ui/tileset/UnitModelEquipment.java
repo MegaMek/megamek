@@ -87,6 +87,8 @@ public final class UnitModelEquipment {
         if (type instanceof MiscType misc) {
             if (misc.hasFlag(MiscType.F_JUMP_JET)) {
                 return "jump-jet";
+            } else if (misc.hasFlag(MiscType.F_PARTIAL_WING)) {
+                return "partial-wing";
             } else if (misc.hasFlag(MiscType.F_PHYSICAL_WEAPON)) {
                 return physicalFamily(misc);
             }

@@ -114,6 +114,7 @@ class GpuKingCrabModelReviewTest {
                             views(renderer, instance, unit, "king-crab-stock");
                             views(renderer, bareInstance, unit, "king-crab-bare");
                             details(renderer, damage, camo, model, unit);
+                            locationDamage(renderer, damage, bare, unit);
                             firing(renderer, library, model, entity, unit);
                             movement(renderer, model, unit, EntityMovementType.MOVE_WALK, 3);
                             movement(renderer, model, unit, EntityMovementType.MOVE_RUN, 5);
@@ -196,14 +197,57 @@ class GpuKingCrabModelReviewTest {
         instance.calculateTransforms();
         renderer.frame(List.of(instance), center(unit), null, "king-crab-twist", 0);
         for (int i = 0; i < 4; i++) {
+            var damaged = new ModelInstance(instance);
             var stage = List.of(UnitDamageDisplay.Stage.ARMOR_WORN, UnitDamageDisplay.Stage.ARMOR_STRIPPED,
                   UnitDamageDisplay.Stage.STRUCTURE_BATTERED).get(Math.min(i, 2));
             var locations = new BoardScene.LocationDamage(i == 3 ? Set.of("LA", "HD") : Set.of(),
                   i == 3 ? Set.of("RT") : Set.of(), i == 3 ? Map.of() : Map.of("LT", stage));
-            UnitDamageDisplay.show(instance, locations);
-            damage.applyTexture(instance, locations, unit.id());
-            renderer.frame(List.of(instance), center(unit), null, "king-crab-damage", i);
+            UnitDamageDisplay.show(damaged, locations);
+            damage.applyTexture(damaged, locations, unit.id());
+            renderer.frame(List.of(damaged), center(unit), null, "king-crab-damage", i);
         }
+    }
+
+    /** Continuous carapaces still need four real, independently damageable regions. */
+    private static void locationDamage(GpuPlaybackReview.ReviewRenderer renderer, UnitDamageDisplay damage,
+          GpuUnitModel bare, BoardScene.Unit unit) {
+        var locations = List.of("HD", "CT", "LT", "RT");
+        var originalView = renderer.viewOffset.cpy();
+        try {
+            for (String location : locations) {
+                var instance = new ModelInstance(bare.instance.model);
+                var state = new BoardScene.LocationDamage(Set.of(), Set.of(),
+                      Map.of(location, UnitDamageDisplay.Stage.ARMOR_STRIPPED));
+                damage.applyTexture(instance, state, unit.id());
+                for (String other : locations) {
+                    var parts = UnitDamageDisplay.locationParts(instance, other);
+                    assertFalse(parts.isEmpty(), other);
+                    for (var part : parts) {
+                        assertEquals(other.equals(location), part.material.has(UnitDamageDisplay.Overlay.TYPE),
+                              location + " damage must stay on its own geometry, not " + other);
+                    }
+                }
+                renderer.viewOffset.set(location.equals("LT") ? -95 : 95, 150, 105);
+                bare.place(instance, renderer.camera, center(unit), 0, unit);
+                renderer.frame(List.of(instance), center(unit), null, "king-crab-damage-" + location, 0);
+                if (location.equals("HD")) {
+                    // Partial armor damage deliberately preserves glazing; destruction affects the entire band.
+                    var wrecked = new BoardScene.LocationDamage(Set.of(), Set.of("HD"));
+                    assertTrue(UnitDamageDisplay.show(instance, wrecked).isEmpty());
+                    damage.applyTexture(instance, wrecked, unit.id());
+                    renderer.frame(List.of(instance), center(unit), null, "king-crab-head-destroyed", 0);
+                }
+            }
+            var detached = new ModelInstance(bare.instance.model);
+            assertTrue(UnitDamageDisplay.show(detached, new BoardScene.LocationDamage(Set.of("HD"), Set.of())).isEmpty());
+            for (String location : locations) {
+                for (var part : UnitDamageDisplay.locationParts(detached, location)) {
+                    assertEquals(!location.equals("HD"), part.enabled, location + " after HD-only removal");
+                }
+            }
+            bare.place(detached, renderer.camera, center(unit), 0, unit);
+            renderer.frame(List.of(detached), center(unit), null, "king-crab-head-removed", 0);
+        } finally { renderer.viewOffset.set(originalView); }
     }
 
     private static void movement(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit,

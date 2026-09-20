@@ -114,6 +114,17 @@ public class UnitDamageSpecBuilder {
             spec.initiativePermanent = controls.chkInitiativePermanent.isSelected();
         }
 
+        // ejection settings; the lobby's box reads "Disable", so the master switch travels inverted
+        Boolean autoEjectDisabled = checkboxValue(controls.chkAutoEjectDisabled);
+        spec.autoEject = (autoEjectDisabled == null) ? null : !autoEjectDisabled;
+        spec.conditionalEjectOnAmmoExplosion = checkboxValue(controls.chkConditionalEjectAmmo);
+        spec.conditionalEjectOnEngineExplosion = checkboxValue(controls.chkConditionalEjectEngine);
+        spec.conditionalEjectOnCenterTorsoDestroyed = checkboxValue(controls.chkConditionalEjectCenterTorso);
+        spec.conditionalEjectOnHeadshot = checkboxValue(controls.chkConditionalEjectHeadshot);
+        spec.conditionalEjectOnFuelExplosion = checkboxValue(controls.chkConditionalEjectFuel);
+        spec.conditionalEjectOnStructuralIntegrityDestroyed =
+              checkboxValue(controls.chkConditionalEjectStructuralIntegrity);
+
         spec.centerEngineHits = critHits(controls.centerEngineCrit);
         spec.leftEngineHits = critHits(controls.leftEngineCrit);
         spec.rightEngineHits = critHits(controls.rightEngineCrit);

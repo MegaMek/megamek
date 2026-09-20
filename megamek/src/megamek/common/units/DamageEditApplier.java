@@ -441,6 +441,7 @@ public class DamageEditApplier {
 
         applyCrewHits();
         applySkillModifiers();
+        applyEjectionSettings();
         applyHeat();
         applyAmmoShots();
         applyEquipmentSettings();
@@ -815,6 +816,40 @@ public class DamageEditApplier {
      * /skillMod command sets. Each modifier carries its own duration, and a delta at zero clears its modifier,
      * which is also how a gamemaster takes a change back before it runs out.
      */
+    private void applyEjectionSettings() {
+        if (spec.autoEject != null) {
+            boolean changed = AutomaticEjectionRules.setAutomaticEjection(entity, spec.autoEject);
+            if (changed) {
+                LOGGER.info("[EquipState] GM edit: {} automatic ejection set to {}", entity.getDisplayName(),
+                      spec.autoEject);
+            }
+        }
+        if (entity instanceof Mek mek) {
+            if (spec.conditionalEjectOnAmmoExplosion != null) {
+                mek.setCondEjectAmmo(spec.conditionalEjectOnAmmoExplosion);
+            }
+            if (spec.conditionalEjectOnEngineExplosion != null) {
+                mek.setCondEjectEngine(spec.conditionalEjectOnEngineExplosion);
+            }
+            if (spec.conditionalEjectOnCenterTorsoDestroyed != null) {
+                mek.setCondEjectCTDest(spec.conditionalEjectOnCenterTorsoDestroyed);
+            }
+            if (spec.conditionalEjectOnHeadshot != null) {
+                mek.setCondEjectHeadshot(spec.conditionalEjectOnHeadshot);
+            }
+        } else if (entity instanceof Aero aero) {
+            if (spec.conditionalEjectOnAmmoExplosion != null) {
+                aero.setCondEjectAmmo(spec.conditionalEjectOnAmmoExplosion);
+            }
+            if (spec.conditionalEjectOnFuelExplosion != null) {
+                aero.setCondEjectFuel(spec.conditionalEjectOnFuelExplosion);
+            }
+            if (spec.conditionalEjectOnStructuralIntegrityDestroyed != null) {
+                aero.setCondEjectSIDest(spec.conditionalEjectOnStructuralIntegrityDestroyed);
+            }
+        }
+    }
+
     private void applySkillModifiers() {
         Crew crew = entity.getCrew();
         if ((crew == null) || (spec.gunneryModifier == null)) {

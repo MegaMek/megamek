@@ -186,6 +186,7 @@ public class UnitEditorDialog extends JDialog {
         } else {
             panelBuilder.build();
             addOwnerReassign();
+            panelBuilder.addEjectionColumn();
             // after the owner row, so the modifiers form the general panel's last column instead of trapping the
             // owner chooser in the middle of their column
             panelBuilder.addSkillModifiersColumn();

@@ -131,6 +131,19 @@ public class UnitDamageControls {
     public JSpinner spnInitiativeRounds;
     public JCheckBox chkInitiativePermanent;
 
+    /*
+     * The unit's ejection settings, mirroring the lobby's Configure dialog; only a gamemaster's in-game editor
+     * builds these, and only the boxes the unit and the game options call for. The first box is "Disable
+     * Automatic ejection", ticked when the unit will NOT eject, as the lobby shows it.
+     */
+    public JCheckBox chkAutoEjectDisabled;
+    public JCheckBox chkConditionalEjectAmmo;
+    public JCheckBox chkConditionalEjectEngine;
+    public JCheckBox chkConditionalEjectCenterTorso;
+    public JCheckBox chkConditionalEjectHeadshot;
+    public JCheckBox chkConditionalEjectFuel;
+    public JCheckBox chkConditionalEjectStructuralIntegrity;
+
     /** The crits of each piece of equipment, by its equipment number. */
     public Map<Integer, CheckCritPanel> equipCrits = new HashMap<>();
 

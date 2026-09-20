@@ -180,6 +180,37 @@ class DamageEditApplierTest {
     }
 
     @Test
+    void ejectionSettingsLandOnTheMek() {
+        Mek atlas = (Mek) mek;
+        assertTrue(atlas.isAutoEject(), "Automatic ejection is on by default");
+
+        DamageEditSpec spec = emptySpec();
+        spec.autoEject = false;
+        spec.conditionalEjectOnAmmoExplosion = false;
+        spec.conditionalEjectOnEngineExplosion = true;
+        spec.conditionalEjectOnCenterTorsoDestroyed = true;
+        spec.conditionalEjectOnHeadshot = false;
+        apply(spec);
+
+        assertFalse(atlas.isAutoEject(), "The gamemaster switched automatic ejection off");
+        assertFalse(atlas.isCondEjectAmmo());
+        assertTrue(atlas.isCondEjectEngine());
+        assertTrue(atlas.isCondEjectCTDest());
+        assertFalse(atlas.isCondEjectHeadshot());
+    }
+
+    @Test
+    void absentEjectionSettingsLeaveTheMekAlone() {
+        Mek atlas = (Mek) mek;
+        atlas.setCondEjectAmmo(false);
+
+        apply(emptySpec());
+
+        assertTrue(atlas.isAutoEject());
+        assertFalse(atlas.isCondEjectAmmo(), "A setting the editor did not offer is not touched");
+    }
+
+    @Test
     void blownOffIsRefusedOnATorso() {
         DamageEditSpec spec = emptySpec();
         spec.locationBlownOff = new Boolean[mek.locations()];

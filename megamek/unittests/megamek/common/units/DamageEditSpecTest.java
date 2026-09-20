@@ -58,6 +58,8 @@ class DamageEditSpecTest {
         spec.directionalMountLocked.put(6, true);
         spec.locationBreached = new Boolean[] { null, true, false };
         spec.locationBlownOff = new Boolean[] { true, null, false };
+        spec.autoEject = false;
+        spec.conditionalEjectOnHeadshot = true;
 
         DamageEditSpec copy = roundTrip(spec);
 
@@ -67,6 +69,8 @@ class DamageEditSpecTest {
         assertEquals(spec.directionalMountLocked, copy.directionalMountLocked);
         assertArrayEquals(spec.locationBreached, copy.locationBreached);
         assertArrayEquals(spec.locationBlownOff, copy.locationBlownOff);
+        assertEquals(false, copy.autoEject);
+        assertEquals(true, copy.conditionalEjectOnHeadshot);
     }
 
     /** Writes the spec out and reads it back the way a packet does. */

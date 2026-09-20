@@ -198,6 +198,20 @@ public class DamageEditSpec implements Serializable {
     public Integer initiativeRounds;
     public boolean initiativePermanent;
 
+    /*
+     * The unit's ejection settings, the same ones the lobby's Configure dialog sets, so a gamemaster can override
+     * them in play. Each is {@code null} where the editor offered no box: a unit without an ejection system has
+     * none, and the conditional triggers only exist under the conditional ejection option. Only a gamemaster's
+     * in-game edit carries them. The first is the master switch as the unit stores it: {@code true} ejects.
+     */
+    public Boolean autoEject;
+    public Boolean conditionalEjectOnAmmoExplosion;
+    public Boolean conditionalEjectOnEngineExplosion;
+    public Boolean conditionalEjectOnCenterTorsoDestroyed;
+    public Boolean conditionalEjectOnHeadshot;
+    public Boolean conditionalEjectOnFuelExplosion;
+    public Boolean conditionalEjectOnStructuralIntegrityDestroyed;
+
     /* Mek system crit hits */
     public Integer centerEngineHits;
     public Integer leftEngineHits;

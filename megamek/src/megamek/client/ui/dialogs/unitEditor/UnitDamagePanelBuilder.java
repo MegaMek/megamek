@@ -252,6 +252,66 @@ public class UnitDamagePanelBuilder {
         initSkillModifiers(generalPanel());
     }
 
+    /**
+     * Adds the unit's ejection settings as a second column of the panel the crew sits in - a Mek's head, or the
+     * general panel for a unit whose crew has no location of its own: the same boxes the lobby's Configure
+     * dialog offers, so a gamemaster can override in play what was set in the lobby. Offered in the gamemaster's
+     * in-game editor only, for units with an ejection system, with the conditional triggers only under the
+     * conditional ejection option, exactly as the lobby offers them.
+     */
+    public void addEjectionColumn() {
+        if (!offersEquipmentSettings() || !AutomaticEjectionRules.hasEjectionSystem(entity)) {
+            return;
+        }
+        JPanel panel = targetPanel(crewLocation());
+        startNewColumn(panel);
+        JLabel header = new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.ejection") + "</b></html>");
+        header.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.ejection.tooltip")));
+        addRow(panel, header, new JLabel());
+
+        boolean isConditionalEjectionInPlay = entity.getGame().getOptions()
+              .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION);
+        String disabledTooltip = "UnitEditorDialog.ejection.autoDisabled.tooltip";
+        String conditionalTooltip = "UnitEditorDialog.ejection.conditional.tooltip";
+        if (entity instanceof Mek mek) {
+            controls.chkAutoEjectDisabled = ejectionRow(panel, "CustomMekDialog.labAutoEject", !mek.isAutoEject(),
+                  disabledTooltip);
+            if (isConditionalEjectionInPlay && mek.hasEjectSeat()) {
+                controls.chkConditionalEjectAmmo = ejectionRow(panel, "CustomMekDialog.labConditional_Ejection_Ammo",
+                      mek.isCondEjectAmmo(), conditionalTooltip);
+                controls.chkConditionalEjectEngine = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_Engine", mek.isCondEjectEngine(), conditionalTooltip);
+                controls.chkConditionalEjectCenterTorso = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_CT_Destroyed", mek.isCondEjectCTDest(),
+                      conditionalTooltip);
+                controls.chkConditionalEjectHeadshot = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_Headshot", mek.isCondEjectHeadshot(),
+                      conditionalTooltip);
+            }
+        } else if (entity instanceof Aero aero) {
+            controls.chkAutoEjectDisabled = ejectionRow(panel, "CustomMekDialog.labAutoEject", !aero.isAutoEject(),
+                  disabledTooltip);
+            if (isConditionalEjectionInPlay && aero.hasEjectSeat()) {
+                controls.chkConditionalEjectAmmo = ejectionRow(panel, "CustomMekDialog.labConditional_Ejection_Ammo",
+                      aero.isCondEjectAmmo(), conditionalTooltip);
+                controls.chkConditionalEjectFuel = ejectionRow(panel, "CustomMekDialog.labConditional_Ejection_Fuel",
+                      aero.isCondEjectFuel(), conditionalTooltip);
+                controls.chkConditionalEjectStructuralIntegrity = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_SI_Destroyed", aero.isCondEjectSIDest(),
+                      conditionalTooltip);
+            }
+        }
+    }
+
+    /** One ejection setting row: the lobby's own label for it, and a checkbox with the given tooltip. */
+    private JCheckBox ejectionRow(JPanel panel, String labelKey, boolean selected, String tooltipKey) {
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setSelected(selected);
+        checkBox.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(tooltipKey)));
+        addLabeledRow(panel, Messages.getString(labelKey), checkBox);
+        return checkBox;
+    }
+
     /** Pads the given panel's row count so the next row added to it starts at the top of a fresh column. */
     private void startNewColumn(JPanel panel) {
         int itemCount = controls.panelRows.getOrDefault(panel, 1) - 1;

@@ -25,6 +25,34 @@ import org.junit.jupiter.api.Test;
 @Tag("on-demand")
 class GpuPlaybackSmokeTest {
     @Test
+    void locustKeepsReverseKneesWhileWalkingAndRunning() {
+        var failure = new AtomicReference<Throwable>();
+        new Lwjgl3Application(new ApplicationAdapter() {
+            @Override public void create() {
+                var library = new GpuUnitModels();
+                try (var renderer = new GpuPlaybackReview.ReviewRenderer()) {
+                    var tileset = new MekTileset(Configuration.unitImagesDir());
+                    tileset.loadFromFile("mekset.txt");
+                    var locust = new MekFileParser(new File("testresources/data/mekfiles/Locust LCT-1V.mtf")).getEntity();
+                    locust.setId(9061);
+                    var selection = UnitModelSelection.capture(locust, -1, false, tileset);
+                    assertTrue(selection.asset().endsWith("meks/locust.json"));
+                    var model = library.get(selection, locust.getId());
+                    var unit = GpuPlaybackReview.unit(locust, selection);
+                    GpuPlaybackReview.measureFeet(model, unit);
+                    renderer.camera.viewportWidth = 85;
+                    renderer.camera.viewportHeight = 63.75f;
+                    renderer.viewOffset.set(95, 150, 75);
+                    GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "locust", EntityMovementType.MOVE_WALK, 8);
+                    GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "locust", EntityMovementType.MOVE_RUN, 12);
+                } catch (Throwable error) { failure.set(error); }
+                finally { library.dispose(); Gdx.app.exit(); }
+            }
+        }, GpuBoardWindow.configuration(false));
+        if (failure.get() != null) { throw new AssertionError("Locust reverse-knee review", failure.get()); }
+    }
+
+    @Test
     void plantedFeetFollowTravelWithoutSliding() {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         new Lwjgl3Application(new ApplicationAdapter() {

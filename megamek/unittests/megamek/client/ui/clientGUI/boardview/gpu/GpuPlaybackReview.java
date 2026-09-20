@@ -256,12 +256,12 @@ final class GpuPlaybackReview {
         assertEquals(1, rolled / driven, .015f, "Wheel rotation follows the vehicle's curved path, including reversing");
     }
 
-    private static BoardScene.Unit unit(Entity entity, BoardScene.UnitModel model) {
+    static BoardScene.Unit unit(Entity entity, BoardScene.UnitModel model) {
         return new BoardScene.Unit(entity.getId(), -1, entity.getShortName(), new BoardScene.Waypoint(new Coords(2, 1), 0, 0),
               null, false, null, 3, false, model, 0);
     }
 
-    private static void measureFeet(GpuUnitModel model, BoardScene.Unit unit) {
+    static void measureFeet(GpuUnitModel model, BoardScene.Unit unit) {
         for (var rig : model.rigs()) {
             var feet = rig.joints().entrySet().stream().filter(joint -> joint.getKey().endsWith("Foot"))
                   .map(Map.Entry::getValue).toList();
@@ -302,6 +302,44 @@ final class GpuPlaybackReview {
             }
             System.out.println(rig.type() + " " + rig.container() + " foot drift / travel = " + drift / travel);
             assertTrue(travel > 10 && drift / travel < .08f, rig.type() + " " + rig.container() + " drift ratio " + drift / travel);
+        }
+    }
+
+    /** Render and check the same reverse-knee contract on each authored body. */
+    static void reverseLegFrames(ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit,
+          String name, EntityMovementType mode, int speed) {
+        var motion = new UnitMotion(unit.location());
+        var to = new BoardScene.Waypoint(unit.location().coords().translated(0, 3), 0, 0);
+        motion.append(List.of(unit.location(), to), mode, mode == EntityMovementType.MOVE_JUMP ? 3 : 0, false, speed);
+        var animator = new UnitAnimator();
+        var instance = new ModelInstance(model.instance.model);
+        var jets = new GpuJumpJets();
+        var originalView = renderer.viewOffset.cpy();
+        float dt = (float) motion.remainingSeconds() / 48;
+        try {
+            for (int frame = 0; frame <= 48; frame++) {
+                motion.advance(frame == 0 ? 0 : dt, 1);
+                animator.apply(model, instance, unit, motion.sample(), frame * dt, dt, false, 0);
+                model.place(instance, renderer.camera, motion.position(), motion.facing(), unit);
+                jets.beginFrame();
+                jets.update(name, model, instance, unit, motion.sample());
+                assertTrue(instance.calculateBoundingBox(new com.badlogic.gdx.math.collision.BoundingBox()).isValid());
+                for (String leg : List.of("LL", "RL")) {
+                    var hip = instance.getNode(leg).globalTransform.getTranslation(new Vector3());
+                    var knee = instance.getNode(leg + "-shin").globalTransform.getTranslation(new Vector3());
+                    var ankle = instance.getNode(leg + "-foot").globalTransform.getTranslation(new Vector3());
+                    var axis = ankle.sub(hip);
+                    var projected = hip.cpy().mulAdd(axis, knee.cpy().sub(hip).dot(axis) / axis.len2());
+                    assertTrue(knee.y < projected.y, mode + " frame " + frame + ": reverse knee crossed its leg axis");
+                }
+                renderer.viewOffset.set(originalView);
+                renderer.frame(List.of(instance), motion.position(), null, jets, name + "-" + mode.name(), frame);
+                renderer.viewOffset.set(180, 0, 43);
+                renderer.frame(List.of(instance), motion.position(), null, jets, name + "-" + mode.name() + "-side", frame);
+            }
+        } finally {
+            renderer.viewOffset.set(originalView);
+            jets.dispose();
         }
     }
 

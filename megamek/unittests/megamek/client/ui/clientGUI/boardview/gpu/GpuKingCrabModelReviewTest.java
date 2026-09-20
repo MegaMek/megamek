@@ -116,10 +116,10 @@ class GpuKingCrabModelReviewTest {
                             details(renderer, damage, camo, model, unit);
                             locationDamage(renderer, damage, bare, unit);
                             firing(renderer, library, model, entity, unit);
-                            movement(renderer, model, unit, EntityMovementType.MOVE_WALK, 3);
-                            movement(renderer, model, unit, EntityMovementType.MOVE_RUN, 5);
+                            GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "king-crab", EntityMovementType.MOVE_WALK, 3);
+                            GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "king-crab", EntityMovementType.MOVE_RUN, 5);
                         } else if (entity.getModel().equals("KGC-008")) {
-                            movement(renderer, model, unit, EntityMovementType.MOVE_JUMP, 3);
+                            GpuPlaybackReview.reverseLegFrames(renderer, model, unit, "king-crab", EntityMovementType.MOVE_JUMP, 3);
                         }
                     }
                     assertNotNull(stock);
@@ -248,43 +248,6 @@ class GpuKingCrabModelReviewTest {
             bare.place(detached, renderer.camera, center(unit), 0, unit);
             renderer.frame(List.of(detached), center(unit), null, "king-crab-head-removed", 0);
         } finally { renderer.viewOffset.set(originalView); }
-    }
-
-    private static void movement(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModel model, BoardScene.Unit unit,
-          EntityMovementType mode, int speed) {
-        var motion = new UnitMotion(unit.location());
-        var to = new BoardScene.Waypoint(unit.location().coords().translated(0, 3), 0, 0);
-        motion.append(List.of(unit.location(), to), mode, mode == EntityMovementType.MOVE_JUMP ? 3 : 0, false, speed);
-        var animator = new UnitAnimator();
-        var instance = new ModelInstance(model.instance.model);
-        var jets = new GpuJumpJets();
-        var originalView = renderer.viewOffset.cpy();
-        float dt = (float) motion.remainingSeconds() / 48;
-        try {
-            for (int frame = 0; frame <= 48; frame++) {
-                motion.advance(frame == 0 ? 0 : dt, 1);
-                animator.apply(model, instance, unit, motion.sample(), frame * dt, dt, false, 0);
-                model.place(instance, renderer.camera, motion.position(), motion.facing(), unit);
-                jets.beginFrame();
-                jets.update("king-crab", model, instance, unit, motion.sample());
-                assertTrue(instance.calculateBoundingBox(new com.badlogic.gdx.math.collision.BoundingBox()).isValid());
-                for (String leg : List.of("LL", "RL")) {
-                    var hip = instance.getNode(leg).globalTransform.getTranslation(new Vector3());
-                    var knee = instance.getNode(leg + "-shin").globalTransform.getTranslation(new Vector3());
-                    var ankle = instance.getNode(leg + "-foot").globalTransform.getTranslation(new Vector3());
-                    var axis = ankle.sub(hip);
-                    var projected = hip.cpy().mulAdd(axis, knee.cpy().sub(hip).dot(axis) / axis.len2());
-                    assertTrue(knee.y < projected.y, mode + " frame " + frame + ": reverse knee crossed its leg axis");
-                }
-                renderer.viewOffset.set(originalView);
-                renderer.frame(List.of(instance), motion.position(), null, jets, "king-crab-" + mode.name(), frame);
-                renderer.viewOffset.set(180, 0, 43);
-                renderer.frame(List.of(instance), motion.position(), null, jets, "king-crab-" + mode.name() + "-side", frame);
-            }
-        } finally {
-            renderer.viewOffset.set(originalView);
-            jets.dispose();
-        }
     }
 
     private static void firing(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, GpuUnitModel model,

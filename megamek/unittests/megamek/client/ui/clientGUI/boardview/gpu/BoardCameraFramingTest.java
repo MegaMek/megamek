@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.GdxNativesLoader;
@@ -20,6 +21,43 @@ class BoardCameraFramingTest {
     @BeforeAll
     static void loadMathNatives() {
         GdxNativesLoader.load();
+    }
+
+    @Test
+    void animationSettingsIndependentlySnapTheirOwnContextAndFinishAnActiveTransition() {
+        var attacker = unit(1, 18, 14, 3, 2);
+        var target = unit(2, 26, 17, 3, 2);
+        var move = new BoardScene.Movement(1, 0, List.of(attacker.location(), target.location()),
+              EntityMovementType.MOVE_WALK, 0, 4, attacker);
+        List<Consumer<BoardCamera>> frames = List.of(
+              camera -> camera.frameSelection(attacker, 420),
+              camera -> camera.frameAttacks(List.of(shot(attacker, target)), 420),
+              camera -> camera.frameMovement(move, motion(move), UnitPlaybackTest.scene(attacker), 420));
+        for (int disabled = 0; disabled < frames.size(); disabled++) {
+            for (int context = 0; context < frames.size(); context++) {
+                var camera = camera(65);
+                frames.get(context).accept(camera);
+                camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS / 4);
+                assertTrue(camera.isFraming());
+                camera.animateOnSelectionChange = disabled != 0;
+                camera.animateCombatPlayback = disabled != 1;
+                camera.animateOnMove = disabled != 2;
+                camera.advance(0);
+                assertEquals(context != disabled, camera.isFraming(), "Only the disabled context stops animating");
+                camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                var targetFocus = camera.focus.cpy();
+                float targetZoom = camera.camera.zoom;
+                var next = camera(65);
+                next.animateOnSelectionChange = camera.animateOnSelectionChange;
+                next.animateCombatPlayback = camera.animateCombatPlayback;
+                next.animateOnMove = camera.animateOnMove;
+                frames.get(context).accept(next);
+                assertEquals(context != disabled, next.isFraming(), "New changes also respect the runtime setting");
+                next.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                assertTrue(targetFocus.epsilonEquals(next.focus, .01f));
+                assertEquals(targetZoom, next.camera.zoom, .01f);
+            }
+        }
     }
 
     @Test

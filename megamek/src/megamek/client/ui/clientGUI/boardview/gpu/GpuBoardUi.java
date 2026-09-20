@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -759,6 +760,18 @@ final class GpuBoardUi implements Disposable {
         row.setStyle(skin.get("menu-row", TextButton.TextButtonStyle.class));
         row.clearChildren();
         row.pad(6, 10, 6, 10);
+        Boolean checked = cameraAnimationState(command.id());
+        if (checked != null) {
+            CheckBox check = new CheckBox("", skin, "menu");
+            check.setName(command.id() + "-check");
+            check.setChecked(checked);
+            check.getImage().setScaling(Scaling.fit);
+            check.getImageCell().size(16);
+            // The row handles mouse and keyboard activation; its focus highlight is separate from the setting.
+            check.setTouchable(Touchable.disabled);
+            row.add(check).size(16).padRight(8);
+            row.addListener(new TextTooltip(Messages.getString("GpuBoard.cameraAnimationHelp"), skin, "menu"));
+        }
         String symbol = command.boardTool() ? "move" : null;
         if (command.id().equals("board.los") || command.id().startsWith("weapon")) {
             symbol = "target";
@@ -836,7 +849,30 @@ final class GpuBoardUi implements Disposable {
               new BoardScene.Command(Messages.getString("GpuBoard.rotateRight"), true, () -> camera.orbit(15, 0)),
               new BoardScene.Command(Messages.getString("GpuBoard.tiltUp"), true, () -> camera.orbit(0, -10)),
               new BoardScene.Command(Messages.getString("GpuBoard.tiltDown"), true, () -> camera.orbit(0, 10)),
-              new BoardScene.Command(Messages.getString("GpuBoard.resetCamera"), true, () -> camera.reset(frame.scene())));
+              new BoardScene.Command(Messages.getString("GpuBoard.resetCamera"), true, () -> camera.reset(frame.scene())),
+              cameraAnimation("camera-animate-selection", "GpuBoard.animateSelection",
+                    () -> camera.animateOnSelectionChange = !camera.animateOnSelectionChange),
+              cameraAnimation("camera-animate-combat", "GpuBoard.animateCombat",
+                    () -> camera.animateCombatPlayback = !camera.animateCombatPlayback),
+              cameraAnimation("camera-animate-movement", "GpuBoard.animateMovement",
+                    () -> camera.animateOnMove = !camera.animateOnMove));
+    }
+
+    private BoardScene.Command cameraAnimation(String id, String label, Runnable toggle) {
+        return new BoardScene.Command(id, Messages.getString(label), "", true, false, List.of(), () -> {
+            toggle.run();
+            menuSignature = List.of();
+            updateMenu();
+        });
+    }
+
+    private Boolean cameraAnimationState(String id) {
+        return switch (id) {
+            case "camera-animate-selection" -> camera.animateOnSelectionChange;
+            case "camera-animate-combat" -> camera.animateCombatPlayback;
+            case "camera-animate-movement" -> camera.animateOnMove;
+            default -> null;
+        };
     }
 
     private static List<BoardScene.Command> search(List<BoardScene.Command> commands, String query, String parent) {

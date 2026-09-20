@@ -39,7 +39,7 @@ final class GpuUnitShader extends DefaultShader {
     }
 
     // These four insertion points are the source contract with the pinned libGDX version.
-    // Keep lighting/shadow code upstream, and fail explicitly if an upgrade changes this contract.
+    // Keep lighting/shadow sampling upstream, and fail explicitly if an upgrade changes this contract.
     static String vertexSource(String source) {
         String declarations = Gdx.files.classpath(SHADERS + "unit-material.vert").readString("UTF-8");
         source = replaceOnce(source, MAIN, declarations + "\n" + MAIN + "\n    unitMaterialCoordinates();\n", "vertex");
@@ -51,7 +51,8 @@ final class GpuUnitShader extends DefaultShader {
         String declarations = Gdx.files.classpath(SHADERS + "unit-material.frag").readString("UTF-8");
         source = replaceOnce(source, MAIN, declarations + "\n" + MAIN, "fragment");
         String emissive = "#if defined(emissiveTextureFlag) && defined(emissiveColorFlag)";
-        return replaceOnce(source, emissive, "diffuse.rgb = unitOverlays(diffuse.rgb);\n" + emissive, "fragment");
+        source = replaceOnce(source, emissive, "diffuse.rgb = unitOverlays(diffuse.rgb);\n" + emissive, "fragment");
+        return GpuShadowShader.fragmentSource(source);
     }
 
     private static String replaceOnce(String source, String anchor, String replacement, String stage) {

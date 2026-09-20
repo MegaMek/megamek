@@ -648,8 +648,11 @@ moving the displayed board.
 
 `BoardCamera.ANIMATE_CAMERA_ON_SELECTION_CHANGE`,
 `BoardCamera.ANIMATE_CAMERA_COMBAT_PLAYBACK`, and
-`BoardCamera.ANIMATE_CAMERA_ON_MOVE` all default to `true`. Setting one to `false`
-applies that context's framing immediately instead of animating it. Selection
+`BoardCamera.ANIMATE_CAMERA_ON_MOVE` all default to `true`. These initialize the
+Camera menu's selection, combat and movement animation checkboxes for each window.
+Unchecking one applies that context's framing immediately instead of animating
+it, including a transition already in progress. The options remain independent
+of each other and of the chosen view. Selection
 changes preserve the viewing angles and avoid unnecessary zooming in. Movement
 checks the start, whole rendered route and destination against the clear board
 area before advancing its clock, including the jump arc, height and footprint.

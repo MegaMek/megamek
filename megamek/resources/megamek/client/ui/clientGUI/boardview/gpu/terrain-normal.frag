@@ -31,6 +31,12 @@ float shadowSample(vec2 offset) {
     float depth = dot(depthChannels, vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0));
     return step(v_shadowMapUv.z, depth);
 }
+
+float getShadow() {
+    float offset = u_shadowPCFOffset;
+    return 0.25 * (shadowSample(vec2(offset, offset)) + shadowSample(vec2(-offset, offset))
+          + shadowSample(vec2(offset, -offset)) + shadowSample(vec2(-offset, -offset)));
+}
 #endif
 #endif
 
@@ -58,11 +64,9 @@ void main() {
     }
 #endif
 #ifdef shadowMapFlag
-    float offset = u_shadowPCFOffset;
-    direct *= 0.25 * (shadowSample(vec2(offset, offset)) + shadowSample(vec2(-offset, offset))
-          + shadowSample(vec2(offset, -offset)) + shadowSample(vec2(-offset, -offset)));
+    direct *= getShadow();
 #endif
-    albedo *= ambient + direct;
+    albedo *= ambient * boardShadowAmbient + direct;
 #endif
     gl_FragColor = vec4(albedo, 1.0);
 }

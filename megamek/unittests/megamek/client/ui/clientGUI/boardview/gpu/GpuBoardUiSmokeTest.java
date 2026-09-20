@@ -18,6 +18,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -166,10 +167,31 @@ class GpuBoardUiSmokeTest {
                             assertFalse(controls.stage.getRoot().findActor("command-search").getParent().isVisible());
                             assertEquals(menu, controls.stage.getKeyboardFocus(), "A hidden search field cannot capture typing");
                             GpuBoardTestUi.capture(new File(output, "camera-menu.png"));
+                            for (String context : List.of("selection", "combat", "movement")) {
+                                CheckBox check = controls.stage.getRoot().findActor("camera-animate-" + context + "-check");
+                                assertTrue(check.isChecked(), "Camera animations start enabled");
+                                assertInset(check.getImage(), (TextButton) check.getParent());
+                                GpuBoardTestUi.click("camera-animate-" + context);
+                                check = controls.stage.getRoot().findActor("camera-animate-" + context + "-check");
+                                assertFalse(check.isChecked());
+                                assertTrue(menu.isVisible(), "Toggling settings keeps the Camera menu open");
+                            }
+                            assertFalse(boardCamera.animateOnSelectionChange);
+                            assertFalse(boardCamera.animateCombatPlayback);
+                            assertFalse(boardCamera.animateOnMove);
+                            for (int row = 0; row < 6; row++) { press(Input.Keys.DOWN); }
+                            assertFalse(boardCamera.animateOnSelectionChange, "Keyboard focus must not change a checkbox");
+                            press(Input.Keys.ENTER);
+                            assertTrue(boardCamera.animateOnSelectionChange);
+                            assertFalse(boardCamera.animateCombatPlayback);
+                            assertFalse(boardCamera.animateOnMove);
                             GpuBoardTestUi.click("playback");
                             assertFalse(menu.isVisible(), "Toolbar clicks dismiss the popup");
                             assertEquals(3, playbackToggles.get(), "The same click must perform the toolbar action");
                             GpuBoardTestUi.click("camera");
+                            assertTrue(((CheckBox) controls.stage.getRoot().findActor("camera-animate-selection-check")).isChecked());
+                            assertFalse(((CheckBox) controls.stage.getRoot().findActor("camera-animate-combat-check")).isChecked());
+                            assertFalse(((CheckBox) controls.stage.getRoot().findActor("camera-animate-movement-check")).isChecked());
                             GpuBoardTestUi.click("all-actions");
                             assertTrue(menu.isVisible(), "An action that opens a menu replaces the dismissed popup");
                             assertTrue(controls.stage.getRoot().findActor("command-search").getParent().isVisible());

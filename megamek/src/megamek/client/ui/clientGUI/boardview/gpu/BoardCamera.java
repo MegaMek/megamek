@@ -22,7 +22,7 @@ final class BoardCamera {
     /** One keyboard turn. Hex rows line up again every sixth of a circle, so each turn lands on a matching view. */
     static final float ROTATION_STEP = 60;
     static final float ROTATION_SECONDS = 0.25f;
-    /** Animate these automatic camera changes; false applies the same framing immediately. */
+    /** Initial Camera-menu settings; false applies the same framing immediately. */
     static final boolean ANIMATE_CAMERA_ON_SELECTION_CHANGE = true;
     static final boolean ANIMATE_CAMERA_COMBAT_PLAYBACK = true;
     static final boolean ANIMATE_CAMERA_ON_MOVE = true;
@@ -33,6 +33,10 @@ final class BoardCamera {
     private static final float FRAMING_MARGIN_PIXELS = 64;
     final OrthographicCamera camera = new OrthographicCamera();
     final Vector3 focus = new Vector3();
+    // Render-thread settings shared by both views and their Camera-menu checkboxes.
+    boolean animateOnSelectionChange = ANIMATE_CAMERA_ON_SELECTION_CHANGE;
+    boolean animateCombatPlayback = ANIMATE_CAMERA_COMBAT_PLAYBACK;
+    boolean animateOnMove = ANIMATE_CAMERA_ON_MOVE;
     private float azimuth;
     private float tilt;
     private float overviewZoom;
@@ -169,7 +173,10 @@ final class BoardCamera {
     /** Advances a camera transition in wall-clock time, independently of the combat playback speed. */
     void advance(float seconds) {
         if (framingTarget != null) {
-            framingElapsed = Math.min(framingElapsed + Math.max(0, seconds), CAMERA_FRAMING_SECONDS);
+            boolean animate = framedAction instanceof UnitAttack ? animateCombatPlayback
+                  : framedAction instanceof BoardScene.Movement ? animateOnMove : animateOnSelectionChange;
+            framingElapsed = animate ? Math.min(framingElapsed + Math.max(0, seconds), CAMERA_FRAMING_SECONDS)
+                  : CAMERA_FRAMING_SECONDS;
             float remaining = CAMERA_FRAMING_SECONDS - framingStartTime;
             float progress = remaining <= 0 ? 1 : Interpolation.smooth.apply((framingElapsed - framingStartTime) / remaining);
             focus.set(framingStart.focus()).lerp(framingTarget.focus(), progress);
@@ -275,7 +282,7 @@ final class BoardCamera {
               (attack.event.attacker().location().elevation() + attack.event.destination().elevation()) / 2)
               .average().orElse(0) * BoardGeometry.LEVEL;
         animateTo(fittedPose(points, width, bearing, inclination, topView ? camera.zoom : .5f / displayScale, !topView),
-              plane, ANIMATE_CAMERA_COMBAT_PLAYBACK);
+              plane, animateCombatPlayback);
     }
 
     /** Keep the chosen viewing angle and zoom, widening only when the selected unit cannot fit. */
@@ -286,7 +293,7 @@ final class BoardCamera {
         List<Vector3> points = new ArrayList<>();
         addUnit(points, unit);
         animateTo(fittedPose(points, availableWidth, azimuth, tilt, camera.zoom, tilt > ATTACK_TOP_VIEW_TILT_DEGREES),
-              unit.location().elevation() * BoardGeometry.LEVEL, ANIMATE_CAMERA_ON_SELECTION_CHANGE);
+              unit.location().elevation() * BoardGeometry.LEVEL, animateOnSelectionChange);
     }
 
     /** Fit the complete rendered route once, with the smallest pan and no unnecessary zoom or rotation. */
@@ -315,7 +322,7 @@ final class BoardCamera {
         }
         if (!points.isEmpty()) {
             animateTo(fittedPose(points, width, azimuth, tilt, camera.zoom, false),
-                  move.path().getFirst().elevation() * BoardGeometry.LEVEL, ANIMATE_CAMERA_ON_MOVE);
+                  move.path().getFirst().elevation() * BoardGeometry.LEVEL, animateOnMove);
         }
     }
 

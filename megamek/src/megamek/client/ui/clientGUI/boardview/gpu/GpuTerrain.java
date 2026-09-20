@@ -66,9 +66,11 @@ final class GpuTerrain implements Disposable {
     private final GpuTextures<Coords> ground = new GpuTextures<>(true);
     private final GpuTextures<Coords> decals = new GpuTextures<>();
     private final GpuTextures<Coords> tactical = new GpuTextures<>();
-    private final ModelBatch batch = new ModelBatch(new DefaultShaderProvider() {
+    private final ModelBatch batch = new ModelBatch(new DefaultShaderProvider(DefaultShader.getDefaultVertexShader(),
+          GpuShadowShader.fragmentSource(DefaultShader.getDefaultFragmentShader())) {
         private final DefaultShader.Config groundShader = new DefaultShader.Config(DefaultShader.getDefaultVertexShader(),
-              Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/terrain-normal.frag").readString());
+              GpuShadowShader.fragmentSource(Gdx.files.classpath(
+                    "megamek/client/ui/clientGUI/boardview/gpu/terrain-normal.frag").readString()));
 
         @Override
         protected Shader createShader(Renderable renderable) {

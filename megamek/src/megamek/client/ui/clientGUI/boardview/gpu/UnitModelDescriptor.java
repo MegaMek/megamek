@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /** Schema 2: independent rigid assets, +Y forward / +Z up, with no legacy Z compression. No GL resources. */
 record UnitModelDescriptor(int schema, String kind, String family, String mesh, Bounds bounds, String rig,
           Map<String, String> joints, Map<String, String> locations, List<Hardpoint> hardpoints, List<Emitter> emitters,
-          List<LandingSupport> landingSupports) {
+          List<LandingSupport> landingSupports, Map<String, String> legBends) {
     private static final ObjectMapper JSON = new ObjectMapper();
     /** Bare body/troop geometry only. Loadout modules have a separate measured cost. */
     static final int TRIANGLE_LIMIT = 1500;
@@ -40,7 +40,14 @@ record UnitModelDescriptor(int schema, String kind, String family, String mesh, 
         hardpoints = List.copyOf(hardpoints);
         emitters = List.copyOf(emitters);
         landingSupports = landingSupports == null ? List.of() : List.copyOf(landingSupports);
+        legBends = legBends == null ? Map.of() : Map.copyOf(legBends);
         require(joints.containsKey("root"), "Rig needs a root role");
+        for (var bend : legBends.entrySet()) {
+            require(Set.of("forward", "reverse").contains(bend.getValue()), "Unknown leg bend: " + bend.getValue());
+            var leg = java.util.Arrays.stream(UnitRig.LEGS).filter(roles -> roles[0].equals(bend.getKey()))
+                  .findFirst().orElseThrow(() -> new IllegalArgumentException("Unknown leg role: " + bend.getKey()));
+            require(joints.keySet().containsAll(List.of(leg)), "Leg bend needs hip, knee and foot roles: " + bend.getKey());
+        }
         require(hardpoints.stream().map(Hardpoint::id).distinct().count() == hardpoints.size(), "Duplicate hardpoint ID");
         require(emitters.stream().map(Emitter::id).distinct().count() == emitters.size(), "Duplicate emitter ID");
         require(landingSupports.isEmpty() || "body".equals(kind) && "aircraft".equals(family),
@@ -69,6 +76,15 @@ record UnitModelDescriptor(int schema, String kind, String family, String mesh, 
         Set<String> nodes = modelNodes.keySet();
         require(nodes.containsAll(joints.values()), "Rig references missing nodes");
         require(nodes.containsAll(locations.keySet()), "Location references missing nodes");
+        for (var leg : UnitRig.LEGS) {
+            if (!legBends.containsKey(leg[0])) { continue; }
+            for (int index = 0; index < 2; index++) {
+                var parent = modelNodes.get(joints.get(leg[index]));
+                var child = modelNodes.get(joints.get(leg[index + 1]));
+                require(parent.children != null && java.util.Arrays.asList(parent.children).contains(child),
+                      "Leg bend requires a hip / knee / foot chain: " + leg[0]);
+            }
+        }
         hardpoints.forEach(point -> require(nodes.contains(point.node()), "Missing hardpoint node: " + point.id()));
         emitters.forEach(emitter -> require(nodes.contains(emitter.node()), "Missing emitter node: " + emitter.id()));
         Set<String> supportNodes = new HashSet<>();

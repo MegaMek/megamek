@@ -50,11 +50,13 @@ class GpuKingCrabModelReviewTest {
                 try (var renderer = new GpuPlaybackReview.ReviewRenderer()) {
                     renderer.camera.viewportWidth = 120;
                     renderer.camera.viewportHeight = 90;
+                    renderer.viewOffset.set(95, 150, 105);
                     var tileset = new MekTileset(Configuration.unitImagesDir());
                     tileset.loadFromFile("mekset.txt");
                     var sharedBody = library.modular("units/modular/bodies/king-crab.json");
                     assertNotNull(sharedBody);
                     assertTrue(sharedBody.triangles() <= 1500);
+                    assertEquals(Map.of("leftLeg", "reverse", "rightLeg", "reverse"), sharedBody.descriptor().legBends());
                     for (String location : List.of("HD", "CT", "LT", "RT", "LA", "RA", "LL", "RL")) {
                         assertTrue(sharedBody.model().getNode(location).parts.size > 0, location);
                     }
@@ -76,6 +78,8 @@ class GpuKingCrabModelReviewTest {
                         assertNotNull(model, entity.getModel());
                         assertSame(sharedBody, library.modular("units/modular/bodies/king-crab.json"));
                         var instance = new ModelInstance(model.instance.model);
+                        var paint = new UnitModelState.Camo("", "", 0, 100, 0x94A787, null, null);
+                        camo.apply(instance, model.instance, new UnitModelState.Appearance(Set.of(), false, paint));
                         var unit = unit(entity, selection);
                         model.place(instance, renderer.camera, center(unit), 0, unit);
                         for (var mount : selection.state().structure().equipment()) {
@@ -110,6 +114,7 @@ class GpuKingCrabModelReviewTest {
                             views(renderer, instance, unit, "king-crab-stock");
                             views(renderer, bareInstance, unit, "king-crab-bare");
                             details(renderer, damage, camo, model, unit);
+                            firing(renderer, library, model, entity, unit);
                             movement(renderer, model, unit, EntityMovementType.MOVE_WALK, 3);
                             movement(renderer, model, unit, EntityMovementType.MOVE_RUN, 5);
                         } else if (entity.getModel().equals("KGC-008")) {
@@ -117,7 +122,7 @@ class GpuKingCrabModelReviewTest {
                         }
                     }
                     assertNotNull(stock);
-                    customRefit(library, tileset, stock);
+                    customRefit(library, tileset);
                     var atlas = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
                     atlas.setId(id++);
                     var atlasSelection = UnitModelSelection.capture(atlas, -1, false, tileset);
@@ -149,7 +154,14 @@ class GpuKingCrabModelReviewTest {
               1, 0, BoardScene.LocationDamage.NONE, state), id);
     }
 
-    private static void customRefit(GpuUnitModels library, MekTileset tileset, Entity entity) throws Exception {
+    private static void customRefit(GpuUnitModels library, MekTileset tileset) throws Exception {
+        var entity = new megamek.common.units.BipedMek();
+        entity.setId(9899);
+        entity.setChassis("King Crab");
+        entity.setModel("Custom refit");
+        entity.setWeight(100);
+        for (int location = 0; location < entity.locations(); location++) { entity.initializeInternal(10, location); }
+        entity.addEquipment(EquipmentType.get("ISAC2"), Mek.LOC_RIGHT_ARM);
         var added = entity.addEquipment(EquipmentType.get("ISMediumLaser"), Mek.LOC_RIGHT_ARM, true);
         var selection = UnitModelSelection.capture(entity, -1, false, tileset);
         var model = library.get(selection, entity.getId());
@@ -164,8 +176,8 @@ class GpuKingCrabModelReviewTest {
         var original = new Vector3(renderer.viewOffset);
         for (int view = 0; view < 4; view++) {
             renderer.topView = view == 3;
-            renderer.viewOffset.set(view == 1 ? new Vector3(0, 200, 90)
-                  : view == 2 ? new Vector3(210, 0, 70) : new Vector3(0, -200, 70));
+            renderer.viewOffset.set(view == 1 ? new Vector3(0, -200, 90)
+                  : view == 2 ? new Vector3(210, 0, 70) : new Vector3(0, 200, 70));
             renderer.frame(List.of(instance), center(unit), null, name + "-views", view);
         }
         renderer.topView = false;
@@ -173,9 +185,11 @@ class GpuKingCrabModelReviewTest {
     }
 
     private static void details(GpuPlaybackReview.ReviewRenderer renderer, UnitDamageDisplay damage, GpuUnitCamouflage camo,
-          GpuUnitModel model, BoardScene.Unit unit) {
+          GpuUnitModel model, BoardScene.Unit unit) throws Exception {
         var instance = new ModelInstance(model.instance.model);
-        var color = new UnitModelState.Camo("", "", 0, 100, 0x73895D, null, null);
+        var pixels = new BoardScene.Pixels(javax.imageio.ImageIO.read(new File(Configuration.camoDir(),
+              "Word of Blake/TerraSec (Camo).png")));
+        var color = new UnitModelState.Camo("Word of Blake", "TerraSec (Camo).png", 0, 10, 0xFFFFFF, pixels, null);
         camo.apply(instance, model.instance, new UnitModelState.Appearance(Set.of(), false, color));
         model.place(instance, renderer.camera, center(unit), 0, unit);
         instance.getNode("CT").rotation.set(Vector3.Z, 60);
@@ -186,7 +200,8 @@ class GpuKingCrabModelReviewTest {
                   UnitDamageDisplay.Stage.STRUCTURE_BATTERED).get(Math.min(i, 2));
             var locations = new BoardScene.LocationDamage(i == 3 ? Set.of("LA", "HD") : Set.of(),
                   i == 3 ? Set.of("RT") : Set.of(), i == 3 ? Map.of() : Map.of("LT", stage));
-            damage.apply(instance, model.instance, locations);
+            UnitDamageDisplay.show(instance, locations);
+            damage.applyTexture(instance, locations, unit.id());
             renderer.frame(List.of(instance), center(unit), null, "king-crab-damage", i);
         }
     }
@@ -195,10 +210,11 @@ class GpuKingCrabModelReviewTest {
           EntityMovementType mode, int speed) {
         var motion = new UnitMotion(unit.location());
         var to = new BoardScene.Waypoint(unit.location().coords().translated(0, 3), 0, 0);
-        motion.append(List.of(unit.location(), to), mode, 0, false, speed);
+        motion.append(List.of(unit.location(), to), mode, mode == EntityMovementType.MOVE_JUMP ? 3 : 0, false, speed);
         var animator = new UnitAnimator();
         var instance = new ModelInstance(model.instance.model);
         var jets = new GpuJumpJets();
+        var originalView = renderer.viewOffset.cpy();
         float dt = (float) motion.remainingSeconds() / 48;
         try {
             for (int frame = 0; frame <= 48; frame++) {
@@ -207,10 +223,75 @@ class GpuKingCrabModelReviewTest {
                 model.place(instance, renderer.camera, motion.position(), motion.facing(), unit);
                 jets.beginFrame();
                 jets.update("king-crab", model, instance, unit, motion.sample());
-                assertTrue(instance.transform.isValid());
+                assertTrue(instance.calculateBoundingBox(new com.badlogic.gdx.math.collision.BoundingBox()).isValid());
+                for (String leg : List.of("LL", "RL")) {
+                    var hip = instance.getNode(leg).globalTransform.getTranslation(new Vector3());
+                    var knee = instance.getNode(leg + "-shin").globalTransform.getTranslation(new Vector3());
+                    var ankle = instance.getNode(leg + "-foot").globalTransform.getTranslation(new Vector3());
+                    var axis = ankle.sub(hip);
+                    var projected = hip.cpy().mulAdd(axis, knee.cpy().sub(hip).dot(axis) / axis.len2());
+                    assertTrue(knee.y < projected.y, mode + " frame " + frame + ": reverse knee crossed its leg axis");
+                }
+                renderer.viewOffset.set(originalView);
                 renderer.frame(List.of(instance), motion.position(), null, jets, "king-crab-" + mode.name(), frame);
+                renderer.viewOffset.set(180, 0, 43);
+                renderer.frame(List.of(instance), motion.position(), null, jets, "king-crab-" + mode.name() + "-side", frame);
             }
-        } finally { jets.dispose(); }
+        } finally {
+            renderer.viewOffset.set(originalView);
+            jets.dispose();
+        }
+    }
+
+    private static void firing(GpuPlaybackReview.ReviewRenderer renderer, GpuUnitModels library, GpuUnitModel model,
+          Entity entity, BoardScene.Unit source) {
+        var victim = new BoardScene.Unit(9898, -1, "Target", new BoardScene.Waypoint(new Coords(2, 0), 0, 3),
+              null, false, null, 3, false, source.model(), 0);
+        var attacker = new ModelInstance(model.instance.model);
+        var target = new ModelInstance(model.instance.model);
+        model.place(target, renderer.camera, center(victim), 180, victim);
+        var volley = new UnitVolley();
+        var shots = new ArrayList<UnitAttack>();
+        for (var weapon : entity.getWeaponList()) {
+            var profile = megamek.common.ResolvedAttack.Shot.capture(weapon);
+            if (profile.missiles() > 0) { profile = profile.withResolution(null, 10); }
+            var result = new megamek.common.ResolvedAttack(new java.util.UUID(8, weapon.getEquipmentNum()),
+                  megamek.common.ResolvedAttack.Kind.SHOT,
+                  new megamek.common.units.UnitLocation(source.id(), source.location().coords(), 0, 0, 0),
+                  new megamek.common.units.UnitLocation(victim.id(), victim.location().coords(), 3, 0, 0),
+                  megamek.common.units.Targetable.TYPE_ENTITY, weapon.getEquipmentNum(), weapon.getType().getInternalName(),
+                  weapon.getLocation(), true, List.of(new megamek.common.ResolvedAttack.Mount(source.id(), weapon.getEquipmentNum())),
+                  profile).withImpacts(List.of(new megamek.common.ResolvedAttack.Impact("CT", false, profile.missiles() > 0 ? 10 : 1)));
+            var shot = new UnitAttack(new BoardScene.Combat(result, source, victim, victim.location()));
+            shots.add(shot);
+            volley.add(shot, 0);
+        }
+        var animator = new UnitAnimator();
+        var effects = new GpuAttackEffects();
+        float width = renderer.camera.viewportWidth, height = renderer.camera.viewportHeight;
+        renderer.camera.viewportWidth = 285;
+        renderer.camera.viewportHeight = 213.75f;
+        int launched = 0;
+        float duration = (float) shots.stream().mapToDouble(shot -> shot.delay + shot.duration).max().orElseThrow();
+        try {
+            for (int frame = 0; frame <= 48; frame++) {
+                float time = duration * frame / 48;
+                volley.advance(time);
+                shots.forEach(shot -> shot.seconds = time - shot.delay);
+                animator.apply(model, attacker, source, UnitMotion.Sample.STILL, time, duration / 48, true, 0);
+                for (var shot : shots) { animator.attack(model, source, shot); }
+                model.place(attacker, renderer.camera, center(source), 0, source);
+                animator.aimShots(model, source, shots, shot -> target);
+                effects.update(shots, library, Map.of(source.id() + ":-1", attacker, victim.id() + ":-1", target));
+                renderer.frame(List.of(attacker, target), center(source).lerp(center(victim), .5f), effects, "king-crab-volley", frame);
+                launched = Math.max(launched, effects.missileCount());
+            }
+            assertEquals(15, launched, "The dorsal stock LRM15 launches all missiles alongside the claw cannons");
+        } finally {
+            renderer.camera.viewportWidth = width;
+            renderer.camera.viewportHeight = height;
+            effects.dispose();
+        }
     }
 
     private static BoardScene.Unit unit(Entity entity, BoardScene.UnitModel selection) {

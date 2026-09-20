@@ -105,7 +105,7 @@ class UnitEquipmentAssemblyTest {
         var emitter = new UnitModelDescriptor.Emitter("muzzle", "barrel", List.of(0f, 2f, 0f), List.of(0f, 1f, 0f),
               "muzzle", "bullet");
         var weapon = new UnitModelDescriptor(2, "equipment", "ballistic", "gun.g3dj", bounds, "rigid-v1",
-              Map.of("root", "barrel"), Map.of(), List.of(), List.of(emitter), List.of());
+              Map.of("root", "barrel"), Map.of(), List.of(), List.of(emitter), List.of(), Map.of());
         when(library.modular("gun.json")).thenReturn(new GpuUnitModels.ModularAsset(weapon, gun, 1));
 
         Model assembled = new Model();
@@ -125,7 +125,7 @@ class UnitEquipmentAssemblyTest {
         }
         assembled.calculateTransforms();
         var body = new UnitModelDescriptor(2, "body", "mek", "body.g3dj", bounds, "biped-v1",
-              Map.of("root", "CT"), Map.of(), points, List.of(), List.of());
+              Map.of("root", "CT"), Map.of(), points, List.of(), List.of(), Map.of());
         var structure = new UnitModelState.Structure(EntityMovementMode.BIPED, equipment, List.of(), 0, false, anatomy);
         var bindings = UnitEquipmentAssembly.attachAll(library, recipe, new GpuUnitModels.ModularAsset(body, assembled, 1),
               structure, assembled);

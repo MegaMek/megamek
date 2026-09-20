@@ -1,6 +1,8 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import static megamek.client.ui.clientGUI.boardview.gpu.UnitRig.LEGS;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +27,6 @@ final class UnitAnimator {
     static final float MEK_STRIDE_LENGTH = 1.6f;
     static final float MEK_STEP_LIFT = .16f;
     private static final float ARM_AIM_LIMIT_DEGREES = 120;
-    private static final String[][] LEGS = { { "leftLeg", "leftShin", "leftFoot" }, { "rightLeg", "rightShin", "rightFoot" },
-          { "CL", "CLShin", "CLFoot" }, { "FLL", "FLLShin", "FLLFoot" }, { "FRL", "FRLShin", "FRLFoot" },
-          { "RLL", "RLLShin", "RLLFoot" }, { "RRL", "RRLShin", "RRLFoot" },
-          { "leg0", "leg0Shin", "leg0Foot" }, { "leg1", "leg1Shin", "leg1Foot" },
-          { "leg2", "leg2Shin", "leg2Foot" }, { "leg3", "leg3Shin", "leg3Foot" } };
     private final List<Body> bodies = new ArrayList<>();
     private final List<Joint> mounts = new ArrayList<>();
     private final InfantryMotion formation = new InfantryMotion();
@@ -362,12 +359,16 @@ final class UnitAnimator {
             if ("quad-v1".equals(body.rig.type())) { legs(body, 0, 0, kneel * .85f, 0, 0); }
             else {
                 // One foot comes underneath the hips while the other knee and both hands carry the weight.
-                body.rotate("leftLeg", Vector3.X, 85 * kneel);
-                body.rotate("leftShin", Vector3.X, -125 * kneel);
-                body.rotate("leftFoot", Vector3.X, 40 * kneel);
-                body.rotate("rightLeg", Vector3.X, 55 * kneel);
-                body.rotate("rightShin", Vector3.X, -120 * kneel);
-                body.rotate("rightFoot", Vector3.X, 65 * kneel);
+                for (int index = 0; index < 2; index++) {
+                    var leg = LEGS[index];
+                    // Blend from the authored rest angles; adding a deep bend to them can fold past 180 degrees.
+                    for (String role : leg) { body.rotate(role, Vector3.X, body.travelPitch.getOrDefault(role, 0f) * kneel); }
+                    float bend = kneel * body.rig.kneeDirection(leg[0]);
+                    float hip = (index == 0 ? 85 : 55) * bend, knee = (index == 0 ? -125 : -120) * bend;
+                    body.rotate(leg[0], Vector3.X, hip);
+                    body.rotate(leg[1], Vector3.X, knee);
+                    body.rotate(leg[2], Vector3.X, -hip - knee);
+                }
             }
             body.rotate("torso", Vector3.X, -12 * kneel);
             body.rotate("leftArm", Vector3.X, (12 + 68 * brace) * (1 - rise));
@@ -732,9 +733,10 @@ final class UnitAnimator {
             }
             case KICK -> {
                 String leg = body.rig.kickingLeg(attack.event.result().limb());
-                body.rotate(leg, Vector3.X, 30 * windup + 35 * swing);
+                float bend = body.rig.kneeDirection(leg);
+                body.rotate(leg, Vector3.X, bend * 30 * windup + 35 * swing);
                 body.rotate("leftLeg".equals(leg) ? "leftShin" : "rightLeg".equals(leg) ? "rightShin" : leg + "Shin",
-                      Vector3.X, -65 * windup + 55 * swing);
+                      Vector3.X, bend * (-65 * windup + 55 * swing));
             }
             case PUSH -> {
                 body.rotate("leftArm", Vector3.X, 65 * windup + 15 * swing);
@@ -816,8 +818,9 @@ final class UnitAnimator {
                 continue;
             }
             float swing = MathUtils.sin(phase + offset);
-            float hip = 22 * swing * gait + 62 * crouch + 22 * jump;
-            float knee = -34 * Math.max(0, swing) * gait - 112 * crouch - 48 * jump;
+            float bend = body.rig.kneeDirection(pair[0]);
+            float hip = 22 * swing * gait + bend * (62 * crouch + 22 * jump);
+            float knee = bend * (-34 * Math.max(0, swing) * gait - 112 * crouch - 48 * jump);
             body.rotate(pair[0], Vector3.X, hip);
             body.rotate(pair[1], Vector3.X, knee);
             body.rotate(pair[2], Vector3.X, -hip - knee);
@@ -853,8 +856,9 @@ final class UnitAnimator {
         float reach = (float) Math.hypot(y, z);
         float kneeCos = MathUtils.clamp((upper * upper + lower * lower - reach * reach) / (2 * upper * lower), -1, 1);
         float hipCos = MathUtils.clamp((upper * upper + reach * reach - lower * lower) / (2 * upper * reach), -1, 1);
-        float hip = (MathUtils.atan2(y, z) + (float) Math.acos(hipCos)) * MathUtils.radiansToDegrees;
-        float knee = ((float) Math.acos(kneeCos) - MathUtils.PI) * MathUtils.radiansToDegrees;
+        float bend = body.rig.kneeDirection(roles[0]);
+        float hip = (MathUtils.atan2(y, z) + bend * (float) Math.acos(hipCos)) * MathUtils.radiansToDegrees;
+        float knee = bend * ((float) Math.acos(kneeCos) - MathUtils.PI) * MathUtils.radiansToDegrees;
         // Keep the torso facing its game direction while the leg's stepping plane follows lateral travel.
         body.joints.get(roles[0]).turn(-yaw * weight);
         body.rotate(roles[0], Vector3.X, hip * weight);

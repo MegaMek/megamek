@@ -37,6 +37,8 @@ class GpuPlaybackSmokeTest {
                     var mek = new MekFileParser(new File("testresources/megamek/common/units/Atlas AS7-D.mtf")).getEntity();
                     mek.setId(9060);
                     for (var selection : List.of(UnitModelSelection.capture(mek, -1, false, tileset),
+                          UnitModelSelection.capture(new MekFileParser(new File("../../mm-data/data/mekfiles/meks/3050U/King Crab KGC-000.mtf"))
+                                .getEntity(), -1, false, tileset),
                           UnitModelSelection.capture(new MekFileParser(new File("testresources/megamek/common/units/Barghest BGS-1T.mtf"))
                                 .getEntity(), -1, false, tileset),
                           UnitModelSelection.capture(new MekFileParser(new File("testresources/megamek/common/units/Triskelion TRK-4V.mtf"))

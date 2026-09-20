@@ -7,15 +7,29 @@ import java.util.stream.Collectors;
 
 /** Authored joint roles in one body/formation member. Definitions contain no mutable playback or GPU state. */
 record UnitRig(String family, String type, String container, Map<String, String> joints,
-          List<UnitModelDescriptor.Emitter> emitters, List<UnitModelDescriptor.LandingSupport> landingSupports) {
+          List<UnitModelDescriptor.Emitter> emitters, List<UnitModelDescriptor.LandingSupport> landingSupports,
+          Map<String, String> legBends) {
+    static final String[][] LEGS = { { "leftLeg", "leftShin", "leftFoot" }, { "rightLeg", "rightShin", "rightFoot" },
+          { "CL", "CLShin", "CLFoot" }, { "FLL", "FLLShin", "FLLFoot" }, { "FRL", "FRLShin", "FRLFoot" },
+          { "RLL", "RLLShin", "RLLFoot" }, { "RRL", "RRLShin", "RRLFoot" },
+          { "leg0", "leg0Shin", "leg0Foot" }, { "leg1", "leg1Shin", "leg1Foot" },
+          { "leg2", "leg2Shin", "leg2Foot" }, { "leg3", "leg3Shin", "leg3Foot" } };
+
     UnitRig {
         joints = Map.copyOf(joints);
         emitters = List.copyOf(emitters);
         landingSupports = List.copyOf(landingSupports);
+        legBends = Map.copyOf(legBends);
+    }
+
+    UnitRig(String family, String type, String container, Map<String, String> joints,
+          List<UnitModelDescriptor.Emitter> emitters, List<UnitModelDescriptor.LandingSupport> landingSupports) {
+        this(family, type, container, joints, emitters, landingSupports, Map.of());
     }
 
     UnitRig(UnitModelDescriptor descriptor) {
-        this(descriptor.family(), descriptor.rig(), null, descriptor.joints(), descriptor.emitters(), descriptor.landingSupports());
+        this(descriptor.family(), descriptor.rig(), null, descriptor.joints(), descriptor.emitters(), descriptor.landingSupports(),
+              descriptor.legBends());
     }
 
     /** A formation adds a placement node; squadrons additionally namespace their members' authored node IDs. */
@@ -24,8 +38,11 @@ record UnitRig(String family, String type, String container, Map<String, String>
               Map.Entry::getKey, entry -> nodePrefix + entry.getValue())), emitters.stream().map(emitter ->
                     new UnitModelDescriptor.Emitter(emitter.id(), nodePrefix + emitter.node(), emitter.position(),
                           emitter.direction(), emitter.role(), emitter.effect())).toList(),
-              landingSupports.stream().map(support -> support.prefixed(nodePrefix)).toList());
+              landingSupports.stream().map(support -> support.prefixed(nodePrefix)).toList(), legBends);
     }
+
+    /** The authored knee branch, independent of travel direction. Omitted roles retain the conventional gait. */
+    float kneeDirection(String leg) { return "reverse".equals(legBends.get(leg)) ? -1 : 1; }
 
     boolean trooper() {
         return "trooper-v1".equals(type);

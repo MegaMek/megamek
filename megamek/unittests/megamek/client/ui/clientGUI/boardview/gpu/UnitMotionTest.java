@@ -401,7 +401,6 @@ class UnitMotionTest {
             assertEquals(jets.smoke(), exhaust.smoke(duration * i / 100), .0001, "Historical emission samples the same flight");
             assertTrue(jets.smoke() <= previousSmoke);
             assertEquals(duration * i / 100, jets.seconds(), .001);
-            assertEquals(duration, jets.duration(), .001);
             previousHeight = motion.position().z;
             previousFlame = jets.flame();
             previousSmoke = jets.smoke();
@@ -414,6 +413,24 @@ class UnitMotionTest {
         assertTrue(motion.sample().jets().sequence() > sequence);
         motion.finish();
         assertNull(motion.sample().jets());
+    }
+
+    @Test
+    void jumpExhaustEndsAtLandingBeforeAFallFinishes() {
+        var start = START.withProneCause(ProneCause.NONE);
+        var landing = point(2).withProneCause(ProneCause.FORCED);
+        var motion = new UnitMotion(start);
+        motion.append(List.of(start, landing), EntityMovementType.MOVE_JUMP, 3);
+        double flight = motion.remainingSeconds() - UnitMotion.POSTURE_SECONDS;
+        motion.advance(flight - .01, 1);
+        assertTrue(motion.sample().jets() != null);
+        motion.advance(.01 + UnitMotion.POSTURE_SECONDS / 2, 1);
+        assertTrue(motion.isMoving(), "The landing fall still owns the playback clock");
+        assertNull(motion.sample().jets());
+        assertEquals(BoardGeometry.center(landing.coords(), landing.elevation()), motion.position());
+        assertEquals(.5f, motion.sample().posture().fallen(), .001f);
+        motion.advance(UnitMotion.POSTURE_SECONDS / 2, 1);
+        assertFalse(motion.isMoving());
     }
 
     @Test
@@ -453,20 +470,55 @@ class UnitMotionTest {
         for (double gravity : new double[] { .5, 1, 2, 0 }) {
             var shortJump = jump(1, 0, gravity);
             var longJump = jump(20, 0, gravity);
-            double landing = shortJump.remainingSeconds() / 2;
-            shortJump.advance(shortJump.remainingSeconds() - landing, 1);
-            longJump.advance(longJump.remainingSeconds() - landing, 1);
-            for (int i = 0; i < 100; i++) {
-                assertEquals(shortJump.position().z, longJump.position().z, .001,
-                      "Equal height and gravity produce the same fall, regardless of horizontal range");
-                shortJump.advance(landing / 100, 1);
-                longJump.advance(landing / 100, 1);
+            double step = shortJump.remainingSeconds() / 1000;
+            longJump.advance(longJump.remainingSeconds() - shortJump.remainingSeconds(), 1);
+            float previous = shortJump.position().z;
+            boolean descended = false;
+            for (int i = 0; i < 1000; i++) {
+                shortJump.advance(step, 1);
+                longJump.advance(step, 1);
+                descended |= shortJump.position().z < previous;
+                if (descended) {
+                    assertEquals(shortJump.position().z, longJump.position().z, .001,
+                          "Equal height and gravity produce the same fall, regardless of horizontal range");
+                }
+                previous = shortJump.position().z;
             }
+            assertTrue(descended);
             assertFalse(shortJump.isMoving());
             assertFalse(longJump.isMoving());
         }
-        assertEquals(2.83, jump(1, 0, 1).remainingSeconds() / UnitMotion.Speed.NORMAL.rate, .01);
+        assertEquals(3.11, jump(1, 0, 1).remainingSeconds() / UnitMotion.Speed.NORMAL.rate, .01);
         assertTrue(jump(6, 0, 1).remainingSeconds() / UnitMotion.Speed.NORMAL.rate < 3.5);
+    }
+
+    @Test
+    void higherGravityReducesLaunchAccelerationAndClimbSpeedAndDelaysTheApex() {
+        double previousAcceleration = Double.POSITIVE_INFINITY, previousSpeed = Double.POSITIVE_INFINITY, previousAscent = 0;
+        for (double gravity : new double[] { 0, .5, 1, 2, 5 }) {
+            var motion = jump(1, 0, gravity);
+            motion.advance(.005, 1);
+            float firstHeight = motion.position().z;
+            motion.advance(.005, 1);
+            double acceleration = (motion.position().z - 2 * firstHeight) / (.005 * .005);
+            assertTrue(acceleration > 0 && acceleration < previousAcceleration, "Gravity resists the initial jet thrust");
+            double ascent = .01, speed = 0;
+            float previousHeight = motion.position().z;
+            while (motion.isMoving()) {
+                motion.advance(.001, 1);
+                ascent += .001;
+                float climbed = motion.position().z - previousHeight;
+                if (climbed <= 0) { break; }
+                speed = Math.max(speed, climbed / .001);
+                previousHeight = motion.position().z;
+            }
+            assertTrue(ascent > previousAscent, "Higher gravity takes longer to reach the top, despite its lower arc");
+            assertTrue(speed > 0 && speed < previousSpeed, "Climb speed decreases with gravity");
+            assertEquals(0, motion.sample().jets().tilt(), .01, "The body is upright when it reaches the apex");
+            previousAcceleration = acceleration;
+            previousSpeed = speed;
+            previousAscent = ascent;
+        }
     }
 
     private static UnitMotion jump(int hexes, float elevation, double gravity) {
@@ -486,7 +538,7 @@ class UnitMotionTest {
                 for (int i = 0; i < 1000; i++) {
                     float tilt = motion.sample().jets().tilt();
                     assertTrue(tilt >= 0 && tilt <= UnitMotion.MAX_JUMP_TILT);
-                    assertTrue(Math.abs(tilt - previous) < 1, "Flight attitude blends continuously");
+                    assertTrue(Math.abs(tilt - previous) < 1, "Flight attitude blends continuously at gravity " + gravity + " over " + hexes + " hexes");
                     peak = Math.max(peak, tilt);
                     previous = tilt;
                     if (i == 250) {
@@ -497,7 +549,11 @@ class UnitMotionTest {
                     motion.advance(duration / 1000, 1);
                 }
                 assertEquals(0, previous, .001, "Upright before touchdown");
-                if (hexes == 0) { assertEquals(0, peak); } else { assertTrue(peak > 1); }
+                if (hexes == 0) {
+                    assertEquals(0, peak);
+                } else {
+                    assertTrue(peak > 0, "Horizontal travel produces lean; a short low-gravity hop climbs almost vertically");
+                }
                 assertNull(motion.sample().jets());
             }
         }

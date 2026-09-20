@@ -18,6 +18,7 @@ final class UnitMotion {
     static final double RUN_SECONDS_PER_HEX = WALK_SECONDS_PER_HEX / 1.5;
     static final double SPRINT_SECONDS_PER_HEX = WALK_SECONDS_PER_HEX / 2;
     static final double JUMP_SECONDS_PER_HEX = .175;
+    private static final double JUMP_DURATION_SCALE = 1.1;
     static final double MIN_UNIT_SPEED = .65;
     static final double MAX_UNIT_SPEED = 2.5;
     static final double RAMP_HEXES = 3;
@@ -32,7 +33,7 @@ final class UnitMotion {
     static final float FORMATION_SETTLE_SECONDS = .3f;
     static final float JUMP_DESTINATION_CLEARANCE = 3;
     private static final float JUMP_ARC_LIFT = 1;
-    // Visual levels per animation-clock second squared at 1g; horizontal range never scales this acceleration.
+    // Reference visual acceleration at 1g, before jump pacing; horizontal range never scales it.
     private static final double JUMP_GRAVITY = 20;
     private static final double MIN_JUMP_GRAVITY = .25;
     private static final double POWERED_JUMP_FRACTION = .2;
@@ -59,7 +60,7 @@ final class UnitMotion {
             return values()[(ordinal() + 1) % values().length];
         }
     }
-    /** Vertical flight uses gravity and height; horizontal travel may add supported airtime at the apex. */
+    /** Powered ascent opposes gravity; descent follows it. Horizontal travel may add supported airtime at the apex. */
     private record JumpArc(float start, float end, float apex, double ascent, double descent, double duration, Easing horizontal) {
         float progress(double seconds) {
             return horizontal.progress(seconds * horizontal.duration() / duration);
@@ -87,12 +88,13 @@ final class UnitMotion {
             double verticalSpeed = BoardGeometry.LEVEL * (elevation(seconds + delta) - elevation(seconds - delta));
             float angle = (float) Math.toDegrees(Math.atan2(horizontalSpeed, Math.max(0, verticalSpeed)));
             double launch = Math.clamp(seconds / (ascent * POWERED_JUMP_FRACTION), 0, 1);
-            double recover = Math.clamp((seconds - ascent * .75) / (ascent * .25 + Math.min(.15, descent * .25)), 0, 1);
+            // Finish recovery at the apex, before a fast low-gravity climb flattens its trajectory.
+            double recover = Math.clamp((seconds - ascent * .75) / (ascent * .25), 0, 1);
             return (float) (Math.min(MAX_JUMP_TILT, angle) * launch * launch * (3 - 2 * launch)
                   * (1 - recover * recover * (3 - 2 * recover)));
         }
 
-        /** Brief powered launch/landing surrounds a constant-gravity parabola, with zero endpoint velocity. */
+        /** Ease into launch or out of landing, with a parabolic approach to the apex and zero endpoint velocity. */
         private static float lift(double fraction) {
             double t = Math.clamp(fraction, 0, 1);
             if (t < POWERED_JUMP_FRACTION) {
@@ -231,7 +233,6 @@ final class UnitMotion {
     private record GearPause(int waypoint, boolean retract, double start, double end) { }
     private record PosturePause(ProneCause from, ProneCause to, megamek.common.units.FallSide side, double start, double end) { }
     record Posture(float crouch, float fallen, megamek.common.units.FallSide side, boolean rising, float progress) {
-        Posture(float crouch, float fallen) { this(crouch, fallen, null, false, fallen); }
         static Posture of(ProneCause cause) {
             return of(cause, null);
         }
@@ -243,7 +244,6 @@ final class UnitMotion {
     record LandingGear(float deployment, BoardScene.Waypoint ground) { }
     enum Stage { BOARD, DRIVE, UNLOAD }
     record JumpJets(long sequence, float flame, float smoke, float seconds, Playback playback) {
-        float duration() { return (float) playback.travel().getFirst().end(); }
         float smoke(double seconds) { return 1 - progress(playback, seconds); }
         float tilt() {
             return playback.jump().tilt(seconds, horizontalDistance(playback.path().getFirst(), playback.path().getLast()));
@@ -270,28 +270,12 @@ final class UnitMotion {
           BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group, Posture posture, float lateral) {
         Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
               float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
-              BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group, Posture posture) {
-            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, boarding, jets,
-                  aeroState, gear, sequence, group, posture, 0);
-        }
-        Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
-              float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
               BoardScene.AeroState aeroState, LandingGear gear, long sequence, Group group) {
-            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, boarding, jets, aeroState, gear, sequence, group, null);
-        }
-        Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
-              float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
-              BoardScene.AeroState aeroState, LandingGear gear, long sequence) {
-            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, boarding, jets, aeroState, gear, sequence, null);
-        }
-        Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
-              float forward, float heading, float settledSeconds, ProneCause proneCause, Boarding boarding, JumpJets jets,
-              BoardScene.AeroState aeroState, LandingGear gear) {
-            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, boarding, jets, aeroState, gear, 0);
+            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, boarding, jets, aeroState, gear, sequence, group, null, 0);
         }
         Sample(boolean moving, EntityMovementType type, float progress, float steps, float turn,
               float forward, float heading, float settledSeconds, ProneCause proneCause) {
-            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, null, null, null, null);
+            this(moving, type, progress, steps, turn, forward, heading, settledSeconds, proneCause, null, null, null, null, 0, null);
         }
 
         /** Keep the grounded footprint while gear moves, even when the final game snapshot already has one flight hex. */
@@ -435,10 +419,9 @@ final class UnitMotion {
         List<PosturePause> postures = new ArrayList<>();
         if (type == EntityMovementType.MOVE_JUMP) {
             JumpArc arc = jumpArc(path, jumpMP, gravity);
-            double duration = arc.duration();
-            double end = addPosture(postures, path.getFirst(), path.getLast(), duration);
+            double end = addPosture(postures, path.getFirst(), path.getLast(), arc.duration());
             return new Playback(path, end, arc, type, false, sequence,
-                  List.of(new Travel(0, duration, null, null)), List.of(), List.copyOf(postures), stagger, settle);
+                  List.of(), List.of(), List.copyOf(postures), stagger, settle);
         }
         double time = transport ? BOARD_SECONDS : 0;
         List<GearPause> gear = new ArrayList<>();
@@ -590,9 +573,10 @@ final class UnitMotion {
         double effectiveGravity = Math.max(MIN_JUMP_GRAVITY, Double.isFinite(gravity) ? gravity : 1);
         float clearance = points.stream().map(BoardScene.Waypoint::elevation).max(Float::compare).orElse(0f) + JUMP_ARC_LIFT;
         apex = (float) Math.max(clearance, start.elevation() + (apex + JUMP_ARC_LIFT - start.elevation()) / effectiveGravity);
-        double acceleration = JUMP_GRAVITY * effectiveGravity;
-        double ascent = Math.sqrt(2 * (apex - start.elevation()) / (acceleration * (1 - POWERED_JUMP_FRACTION)));
-        double descent = Math.sqrt(2 * (apex - end.elevation()) / (acceleration * (1 - POWERED_JUMP_FRACTION)));
+        // Gravity resists the powered climb. Squared resistance lets low-g jets reach even the taller arc sooner.
+        double climbAcceleration = JUMP_GRAVITY / (effectiveGravity * effectiveGravity);
+        double ascent = Math.sqrt(2 * (apex - start.elevation()) / (climbAcceleration * (1 - POWERED_JUMP_FRACTION)));
+        double descent = Math.sqrt(2 * (apex - end.elevation()) / (JUMP_GRAVITY * effectiveGravity * (1 - POWERED_JUMP_FRACTION)));
         double distance = horizontalDistance(start, end);
         Easing horizontal = Easing.of(Math.max(.001, distance * JUMP_SECONDS_PER_HEX / unitSpeed(jumpMP, REFERENCE_JUMP_MP)), distance);
         double duration = Math.max(horizontal.duration(), ascent + descent);
@@ -613,7 +597,8 @@ final class UnitMotion {
                 duration = Math.max(duration, descent * JumpArc.timeAtHeight((elevation - end.elevation()) / (apex - end.elevation())) / (1 - time));
             }
         }
-        return new JumpArc(start.elevation(), end.elevation(), apex, ascent, descent, duration, horizontal);
+        return new JumpArc(start.elevation(), end.elevation(), apex,
+              ascent * JUMP_DURATION_SCALE, descent * JUMP_DURATION_SCALE, duration * JUMP_DURATION_SCALE, horizontal);
     }
 
     public void advance(double seconds, double speed) {
@@ -649,12 +634,13 @@ final class UnitMotion {
     }
 
     private static float facing(Playback playback, double seconds) {
-        float step = progress(playback, seconds) * (playback.path().size() - 1);
-        int index = Math.min((int) step, playback.path().size() - 2);
+        float progress = progress(playback, seconds);
         if (playback.jump() != null) {
             return MathUtils.lerpAngleDeg(playback.path().getFirst().facing() * 60,
-                  playback.path().getLast().facing() * 60, progress(playback, seconds));
+                  playback.path().getLast().facing() * 60, progress);
         }
+        float step = progress * (playback.path().size() - 1);
+        int index = Math.min((int) step, playback.path().size() - 2);
         var from = playback.path().get(index);
         var to = playback.path().get(index + 1);
         var tangent = curve(playback.path(), index, step - index, true);
@@ -671,22 +657,18 @@ final class UnitMotion {
     }
 
     private static Vector3 position(Playback playback, double seconds) {
-        Vector3 position = new Vector3();
         float progress = progress(playback, seconds);
+        if (playback.jump() != null) {
+            var start = playback.path().getFirst();
+            var end = playback.path().getLast();
+            var position = BoardGeometry.center(start.coords(), start.elevation())
+                  .lerp(BoardGeometry.center(end.coords(), end.elevation()), progress);
+            position.z = playback.jump().elevation(seconds) * BoardGeometry.LEVEL;
+            return position;
+        }
         float step = progress * (playback.path().size() - 1);
         int index = Math.min((int) step, playback.path().size() - 2);
-        BoardScene.Waypoint start = playback.jump() != null ? playback.path().getFirst() : playback.path().get(index);
-        BoardScene.Waypoint end = playback.jump() != null ? playback.path().getLast() : playback.path().get(index + 1);
-        float fraction = playback.jump() != null ? progress : step - index;
-        position.set(BoardGeometry.center(start.coords(), start.elevation()))
-              .lerp(BoardGeometry.center(end.coords(), end.elevation()), fraction);
-        if (playback.jump() == null) {
-            position.set(curve(playback.path(), index, fraction, false));
-        }
-        if (playback.jump() != null) {
-            position.z = playback.jump().elevation(seconds) * BoardGeometry.LEVEL;
-        }
-        return position;
+        return curve(playback.path(), index, step - index, false);
     }
 
     public void finish() {
@@ -706,8 +688,7 @@ final class UnitMotion {
         for (int index = path.size() - 2; index >= 0; index--) {
             var from = path.get(index);
             if (!from.coords().equals(end.coords())) {
-                return MathUtils.atan2(BoardGeometry.centerX(end.coords()) - BoardGeometry.centerX(from.coords()),
-                      BoardGeometry.centerY(end.coords()) - BoardGeometry.centerY(from.coords())) * MathUtils.radiansToDegrees;
+                return heading(from, end);
             }
         }
         return end.facing() * 60;
@@ -731,7 +712,7 @@ final class UnitMotion {
             return position;
         }
         Playback playback = remaining.getFirst();
-        int index = Math.min((int) (progress(playback) * (playback.path().size() - 1)), playback.path().size() - 2);
+        int index = Math.min((int) (progress(playback, elapsed) * (playback.path().size() - 1)), playback.path().size() - 2);
         BoardScene.Waypoint from = playback.path().get(index), to = playback.path().get(index + 1);
         BoardScene.Tile start = scene.tile(from.coords()), end = scene.tile(to.coords());
         if (start == null || end == null || start.water() || end.water()
@@ -778,8 +759,7 @@ final class UnitMotion {
         var to = playback.path().get(index + 1);
         float distance = playback.jump() == null ? 0
               : (float) (horizontalDistance(playback.path().getFirst(), playback.path().getLast()) * progress);
-        float dx = BoardGeometry.centerX(to.coords()) - BoardGeometry.centerX(from.coords());
-        float dy = BoardGeometry.centerY(to.coords()) - BoardGeometry.centerY(from.coords());
+        float dx, dy;
         if (playback.jump() == null) {
             for (int i = 1; i <= index + 1; i++) {
                 distance += distanceAt(playback.travel().get(i - 1).distances(), i == index + 1 ? step - index : 1);
@@ -800,7 +780,7 @@ final class UnitMotion {
             posture = pause.to();
         }
         JumpJets jets = null;
-        if (playback.jump() != null && seconds < playback.travel().getFirst().end()) {
+        if (playback.jump() != null && seconds < playback.jump().duration()) {
             float descent = playback.jump().descentProgress(seconds);
             float flame = MathUtils.lerp(DESCENT_FLAME, 1, 1 - descent * descent * (3 - 2 * descent));
             jets = new JumpJets(playback.sequence(), flame, 1 - progress, (float) seconds, playback);
@@ -861,10 +841,6 @@ final class UnitMotion {
         }
         return from.aeroState() == BoardScene.AeroState.LANDED && to.aeroState() == BoardScene.AeroState.LANDED
               ? BoardScene.AeroState.LANDED : BoardScene.AeroState.ELEVATED;
-    }
-
-    private float progress(Playback playback) {
-        return progress(playback, elapsed);
     }
 
     private static float progress(Playback playback, double seconds) {
@@ -1025,7 +1001,7 @@ final class UnitMotion {
     }
 
     private static Vector3 point(List<BoardScene.Waypoint> path, int index) {
-        var point = path.get(Math.clamp(index, 0, path.size() - 1));
+        var point = path.get(index);
         return BoardGeometry.center(point.coords(), point.elevation());
     }
 }

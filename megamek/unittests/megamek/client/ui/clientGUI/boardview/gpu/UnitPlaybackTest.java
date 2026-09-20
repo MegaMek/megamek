@@ -45,8 +45,13 @@ class UnitPlaybackTest {
             flight.accept(List.of(jump), scene(landing), ignored -> false);
             flight.advance(0, UnitMotion.Speed.NORMAL);
             var motion = flight.motions.get(2);
-            flight.advance(motion.remainingSeconds() / 2 / UnitMotion.Speed.NORMAL.rate, UnitMotion.Speed.NORMAL);
-            assertEquals(4 / Math.max(.25, gravity), motion.position().z / BoardGeometry.LEVEL, .001);
+            double step = motion.remainingSeconds() / 1000 / UnitMotion.Speed.NORMAL.rate;
+            float highest = 0;
+            for (int i = 0; i < 1000; i++) {
+                flight.advance(step, UnitMotion.Speed.NORMAL);
+                highest = Math.max(highest, motion.position().z);
+            }
+            assertEquals(4 / Math.max(.25, gravity), highest / BoardGeometry.LEVEL, .001);
             flight.finish();
             assertFalse(flight.busy());
             assertNull(motion.sample().jets());

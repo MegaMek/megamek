@@ -311,9 +311,10 @@ final class UnitAnimator {
         float scale = model.horizontalScale(unit);
         // Compensate for display height scaling so the world-space lean stays within the trajectory's tilt limit.
         double angle = Math.atan(Math.tan(Math.toRadians(motion.jets().tilt())) * model.verticalScale(scale, unit) / scale);
-        float sine = (float) Math.sin(angle / 2), cosine = (float) Math.cos(angle / 2);
         float forward = body.rig.trooper() ? 1 : motion.forward();
         float lateral = body.rig.trooper() ? 0 : motion.lateral();
+        // Lookup-table sine/cosine are not an exactly unit-length axis, which nonuniform height scaling amplifies.
+        float sine = (float) (Math.sin(angle / 2) / Math.hypot(forward, lateral)), cosine = (float) Math.cos(angle / 2);
         // Troop containers already face their own travel; other bodies keep their game's facing during the jump.
         root.node().rotation.mulLeft(-forward * sine, lateral * sine, 0, cosine);
     }

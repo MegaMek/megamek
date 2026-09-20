@@ -62,7 +62,7 @@ class UnitAnimatorTest {
                     UnitModelAttachment.emitter(instance, emitter, new Vector3(), exhaust);
                     var travel = BoardGeometry.center(end.coords(), 0).sub(BoardGeometry.center(start.coords(), 0)).nor();
                     assertTrue(exhaust.dot(travel) < -.1f, "Thrust points along travel even during a sideways or backward jump");
-                    assertEquals(motion.sample().jets().tilt(), Math.toDegrees(Math.acos(-exhaust.z)), .1,
+                    assertEquals(motion.sample().jets().tilt(), Math.toDegrees(Math.acos(-exhaust.z)), .001,
                           "Display height scaling must preserve the intended world-space angle");
                     var rotation = instance.getNode("root").rotation.cpy();
                     animator.apply(model, instance, unit, motion.sample(), 0, 0, false, 0);

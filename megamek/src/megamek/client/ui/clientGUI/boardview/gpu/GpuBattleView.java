@@ -83,6 +83,7 @@ class GpuBattleView extends ApplicationAdapter {
     private final Map<String, UnitModelState.Appearance> equipmentAppearance = new HashMap<>();
     private final Map<String, BoardScene.Pixels> unitTints = new HashMap<>();
     private final Map<String, UpperBodyTurn> upperBodyTurns = new HashMap<>();
+    private final Map<String, ArmFlip> armFlips = new HashMap<>();
     private final Map<String, UnitAnimator> animators = new HashMap<>();
     private final Map<String, BoardScene.LocationDamage> unitDamage = new HashMap<>();
     private final Map<Integer, KeyCommandBind> cameraKeys = new HashMap<>();
@@ -356,6 +357,7 @@ class GpuBattleView extends ApplicationAdapter {
               .collect(Collectors.toSet()));
         unitTints.keySet().retainAll(unitInstances.keySet());
         upperBodyTurns.keySet().retainAll(unitInstances.keySet());
+        armFlips.keySet().retainAll(unitInstances.keySet());
         animators.keySet().retainAll(unitInstances.keySet());
         unitDamage.keySet().retainAll(unitInstances.keySet());
         equipmentAppearance.keySet().retainAll(unitInstances.keySet());
@@ -444,6 +446,9 @@ class GpuBattleView extends ApplicationAdapter {
                     }
                 }
                 unitTints.put(key, unit.image());
+            }
+            if (authored && visual.flipsArms()) {
+                flipArms(visual, instance, key, unit);
             }
             if (authored && visual.turnsUpperBody()) {
                 // A movement replay already follows the legs, so only a unit standing still shows its twist.
@@ -657,6 +662,7 @@ class GpuBattleView extends ApplicationAdapter {
         unitInstances.put(key, instance);
         unitTints.remove(key);
         upperBodyTurns.remove(key);
+        armFlips.remove(key);
         unitDamage.remove(key);
         equipmentAppearance.remove(key);
         return instance;
@@ -683,6 +689,23 @@ class GpuBattleView extends ApplicationAdapter {
      *
      * @return the degrees to take off the displayed facing to get the facing of the legs
      */
+    /**
+     * Swings one unit's arms toward the pose its firing arc calls for, a step at a time, and poses the model again
+     * when the shown angle moves. The game state holds the arc; this only shows it.
+     */
+    private void flipArms(GpuUnitModel visual, ModelInstance instance, String key, BoardScene.Unit unit) {
+        var state = unit.model().state();
+        boolean wanted = (state != null) && (state.pose() != null) && state.pose().armsFlipped();
+        ArmFlip flip = armFlips.computeIfAbsent(key, ignored -> new ArmFlip());
+        boolean previous = flip.flipped();
+        if (flip.advance(wanted, playbackSpeed == UnitMotion.Speed.INSTANT ? Float.MAX_VALUE : animationSeconds())) {
+            visual.flipArms(instance, flip.degrees());
+        }
+        if (previous != wanted) {
+            LOGGER.debug("[GpuArmFlip] {}: arms now {}", unit.name(), wanted ? "flipped to the rear" : "forward");
+        }
+    }
+
     private float turnUpperBody(GpuUnitModel visual, ModelInstance instance, String key, BoardScene.Unit unit, int twist) {
         UpperBodyTurn turn = upperBodyTurns.get(key);
         if (turn == null) {
@@ -1348,6 +1371,7 @@ class GpuBattleView extends ApplicationAdapter {
         unitDamage.clear();
         equipmentAppearance.clear();
         upperBodyTurns.clear();
+        armFlips.clear();
         unitFootprints.clear();
         hover.clear();
         unitPicking.clear();

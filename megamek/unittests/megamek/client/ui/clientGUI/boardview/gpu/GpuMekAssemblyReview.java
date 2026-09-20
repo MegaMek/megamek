@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.utils.JsonReader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import megamek.client.ui.tileset.MekTileset;
@@ -34,6 +35,9 @@ import megamek.common.units.TripodMek;
 
 /** Native review uses the production assembler and actual loaded units, including an unbaked same-name refit. */
 final class GpuMekAssemblyReview {
+    /** Steps in the rendered arm-flip sweep; 12 gives a frame every 15 degrees. */
+    private static final int FLIP_FRAMES = 12;
+
     private GpuMekAssemblyReview() { }
 
     static void verify(GpuUnitModels library, ModelBatch batch) throws Exception {
@@ -153,17 +157,84 @@ final class GpuMekAssemblyReview {
             references.forEach(Model::dispose);
         }
         verifyFallbacks(library, tileset, batch);
+        verifyArmFlip(library, tileset, batch);
         verifyVariants(library, tileset);
         // Chassis name as the unit files spell it, paired with the body descriptor it resolves to.
         String[][] sheets = {
               { "Rifleman", "rifleman" }, { "BattleMaster", "battlemaster" }, { "Atlas", "atlas" },
               { "Warhammer", "warhammer" }, { "Archer", "archer" }, { "Marauder", "marauder" },
-              { "Mad Cat (Timber Wolf)", "mad-cat" }, { "Locust", "locust" }, { "Mackie", "mackie" }
+              { "Mad Cat (Timber Wolf)", "mad-cat" }, { "Locust", "locust" }, { "Mackie", "mackie" },
+              { "King Crab", "king-crab" }
         };
         for (String[] sheet : sheets) {
             GpuVariantSheetReview.render(library, batch, tileset, sheet[0],
                   "units/modular/meks/" + sheet[1] + ".json");
         }
+    }
+
+    /**
+     * A Rifleman carries its guns at the elbow, so flipping its arms is the only way it brings them onto a rear arc.
+     * Checks the pose the renderer actually produces: each arm's guns must finish behind the shoulder they hang
+     * from, and must get there without the arm leaving the space it already occupied to either side.
+     */
+    private static void verifyArmFlip(GpuUnitModels library, MekTileset tileset, ModelBatch batch) throws Exception {
+        Mek mek = (Mek) new MekFileParser(new File(Configuration.dataDir(), "mekfiles/unit_files.zip"),
+              "meks/3039u/Rifleman RFL-3N.mtf").getEntity();
+        assertNotNull(mek);
+        mek.setId(760);
+        assertTrue(mek.canFlipArms(), "a Rifleman has no lower arm or hand actuators, so it can flip");
+        BoardScene.UnitModel selected = selection(mek, tileset, "rifleman");
+        GpuUnitModel visual = library.get(selected, mek.getId());
+        assertTrue(visual.flipsArms(), "the authored body must carry LA and RA nodes");
+
+        var posed = new ModelInstance(visual.instance.model);
+        visual.showEquipment(posed, selected.state().appearance());
+        Vector3 forward = armReach(posed, "RA");
+        float restWidth = armSpan(posed, "RA");
+
+        visual.flipArms(posed, 180);
+        Vector3 flipped = armReach(posed, "RA");
+        assertTrue(flipped.y < forward.y, "flipped arms must reach behind where they reached in front: "
+              + forward + " -> " + flipped);
+        assertEquals(restWidth, armSpan(posed, "RA"), .01f,
+              "a turn about the shoulder's own left-right axis must not move the arm sideways");
+
+        // Half way over is the moment the arm is clear of its housing; it must still be the same arm.
+        visual.flipArms(posed, 90);
+        assertEquals(restWidth, armSpan(posed, "RA"), .01f);
+        visual.flipArms(posed, 0);
+        assertEquals(forward.y, armReach(posed, "RA").y, .01f, "returning to zero must restore the resting pose");
+
+        visual.flipArms(posed, 180);
+        GpuModularUnitModelsSmokeTest.renderFullReview(batch, List.of(posed), "runtime-flip-Rifleman",
+              "Rifleman RFL-3N arms flipped", 78, 25);
+
+        // A frame every 15 degrees through the swing, so the movement can be watched rather than inferred.
+        // This is where a clash would show: the arm leaves its housing around half way over.
+        for (int step = 0; step <= FLIP_FRAMES; step++) {
+            float degrees = step * 180f / FLIP_FRAMES;
+            visual.flipArms(posed, degrees);
+            // Wide enough to hold the whole sweep: half way over, the arms stand above the antenna.
+            GpuModularUnitModelsSmokeTest.renderReview(batch, List.of(posed),
+                  String.format("flip-frame-%02d", step), 135, 28);
+        }
+        visual.flipArms(posed, 0);
+    }
+
+    /** @return the furthest point the named arm reaches, in the model's own coordinates */
+    private static Vector3 armReach(ModelInstance posed, String arm) {
+        BoundingBox box = new BoundingBox();
+        posed.getNode(arm).calculateBoundingBox(box, true);
+        Vector3 corner = new Vector3();
+        posed.getNode(arm).globalTransform.getTranslation(corner);
+        return new Vector3(box.getCenterX(), box.min.y, box.getCenterZ()).add(corner);
+    }
+
+    /** @return how wide the named arm sits, which a flip about the lateral axis must leave alone */
+    private static float armSpan(ModelInstance posed, String arm) {
+        BoundingBox box = new BoundingBox();
+        posed.getNode(arm).calculateBoundingBox(box, true);
+        return box.getWidth();
     }
 
     private static void verifyFallbacks(GpuUnitModels library, MekTileset tileset, ModelBatch batch) throws Exception {

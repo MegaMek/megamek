@@ -29,6 +29,9 @@ final class GpuUnitModel implements Disposable {
     private final Model model;
     final ModelInstance instance;
     private final BoundingBox bounds;
+    /** The arm nodes an authored Mek body carries, named as the game names those locations. */
+    private static final String[] ARM_NODES = { "LA", "RA" };
+
     private final String upperBodyNode;
     private final boolean modularCoordinates;
     private final List<UnitEquipmentAssembly.Binding> equipment;
@@ -160,6 +163,38 @@ final class GpuUnitModel implements Disposable {
         // Facings run clockwise and rotation about Z runs the other way, as in place().
         upperBody.rotation.set(Vector3.Z, -degrees);
         placed.calculateTransforms();
+    }
+
+    /**
+     * Shows flipped arms: swings both arms about their own shoulder pivots and leaves the rest of the model alone.
+     * The rotation is about each arm node's left-right axis, so an arm rises forward, passes over the shoulder and
+     * comes to rest reaching behind the unit - the movement a Mek makes to bring its arm weapons onto a rear arc.
+     * <p>
+     * Half a turn maps each arm onto the space it already occupied, mirrored front to back, so the flipped pose
+     * needs no more room around the shoulder than the resting pose does.
+     * </p>
+     *
+     * @param placed  an instance of this model
+     * @param degrees how far over the arms are swung, {@code 0} for forward and {@code 180} for fully flipped
+     */
+    void flipArms(ModelInstance placed, float degrees) {
+        for (String arm : ARM_NODES) {
+            Node node = placed.getNode(arm);
+            if (node != null) {
+                node.rotation.set(Vector3.X, degrees);
+            }
+        }
+        placed.calculateTransforms();
+    }
+
+    /** @return {@code true} if this model has arms that can be shown flipped */
+    boolean flipsArms() {
+        for (String arm : ARM_NODES) {
+            if (instance.getNode(arm) != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     Vector3 place(ModelInstance placed, Camera camera, Vector3 ground, float facing, int height, boolean multiHex) {

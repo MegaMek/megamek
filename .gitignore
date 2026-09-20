@@ -94,6 +94,7 @@ equipment.txt
 units.cache
 
 # Local design / issue notes (working docs, not part of the repo)
+AGENTS.md
 /docs/issues/
 /docs/Princess/
 /.work

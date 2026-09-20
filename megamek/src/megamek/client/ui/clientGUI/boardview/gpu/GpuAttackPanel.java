@@ -165,8 +165,9 @@ final class GpuAttackPanel {
         return panel;
     }
 
-    void resize(float width, float height) {
-        panel.setBounds(width - WIDTH - 12, GpuBoardUi.TURN_HEIGHT + 12, WIDTH,
+    void resize(float width, float height, float rightInset) {
+        float panelWidth = Math.min(WIDTH, Math.max(1, width - rightInset - GpuBoardUi.SIDE_PANEL_MARGIN));
+        panel.setBounds(width - panelWidth - rightInset, GpuBoardUi.TURN_HEIGHT + 12, panelWidth,
               Math.max(1, height - GpuBoardUi.TOP_HEIGHT - GpuBoardUi.TURN_HEIGHT - 24));
     }
 

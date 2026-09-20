@@ -64,6 +64,10 @@ class GpuUnitHudTest {
                     fixture.source.setViewport(logical.width, logical.height, nativeSize.width, nativeSize.height);
                     fixture.source.refresh();
                     var pixels = fixture.source.takeFrame().hud();
+                    var card = pixels.layers().getFirst();
+                    float outsideGap = pixels.width() - card.x() - card.pixels().width();
+                    assertEquals(outsideGap, card.x() - (pixels.width() - pixels.sidePanelInset()), 1,
+                          "The captured sidebar reservation includes a matching inner gap at every pixel density");
                     fixture.source.refresh();
                     assertSame(pixels.layers().getFirst().pixels(), fixture.source.takeFrame().hud().layers().getFirst().pixels());
 
@@ -81,6 +85,8 @@ class GpuUnitHudTest {
 
                     prefs.setShowUnitOverview(false);
                     assertTrue(fixture.view.captureOverlayLayers(logical, nativeSize).isEmpty());
+                    fixture.source.refresh();
+                    assertEquals(0, fixture.source.takeFrame().hud().sidePanelInset());
                     prefs.setShowUnitOverview(true);
                     assertEquals(2, fixture.view.captureOverlayLayers(logical, nativeSize).size());
                 } finally {

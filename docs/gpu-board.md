@@ -637,6 +637,11 @@ needed; it never zooms in, tilts or orbits.
 wall-clock time; firing waits for it at every playback speed. Late volley targets
 share the original deadline. Panel or window changes after the move refit
 immediately, and manual camera input takes control.
+The world-space orbit pivot stays on the action's support plane. The side-panel
+offset is applied separately to the camera, so manual orbit and tilt stay centered
+in the clear board area, panning remains on that plane, and pointer zoom stays
+anchored under the cursor. Changing panel width repositions the pivot without
+moving the displayed board.
 
 `BoardCamera.ANIMATE_CAMERA_ON_SELECTION_CHANGE`,
 `BoardCamera.ANIMATE_CAMERA_COMBAT_PLAYBACK`, and

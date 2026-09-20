@@ -143,6 +143,11 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         return ICON_WIDTH + DIST_SIDE;
     }
 
+    /** Space for the visible unit strip and the same gap on either side, in overlay layout units. */
+    public int sidePanelInset() {
+        return visible && unitIds.length > 0 ? getUIWidth() + DIST_SIDE : 0;
+    }
+
     private final Image scrollUpG;
     private final Image scrollDownG;
     private final Image pageUpG;

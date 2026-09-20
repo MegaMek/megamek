@@ -46,6 +46,7 @@ final class GpuBoardUi implements Disposable {
     private static final int MENU_BAR_HEIGHT = 36;
     static final int TOP_HEIGHT = MENU_BAR_HEIGHT + 48;
     static final int TURN_HEIGHT = 100;
+    static final int SIDE_PANEL_MARGIN = 12;
     private static final int MENU_WIDTH = 360;
     private static final int DROPDOWN_WIDTH = 300;
     private final GpuBoardSource source;
@@ -368,8 +369,7 @@ final class GpuBoardUi implements Disposable {
         hudScale = scale / source.uiPreferences.scale();
         ((ScreenViewport) stage.getViewport()).setUnitsPerPixel(1 / scale);
         stage.getViewport().update(width, height, true);
-        attackPanel.resize(stage.getWidth(), stage.getHeight());
-        reportPanel.resize(stage.getWidth(), stage.getHeight());
+        resizePanels();
         // Match the integer board viewport so native HUD pixels are not resampled at fractional edges.
         hud.setBounds(0, bottomPixels() / scale, stage.getWidth(),
               Math.max(1, height - topPixels() - bottomPixels()) / scale);
@@ -387,6 +387,16 @@ final class GpuBoardUi implements Disposable {
             tuning.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT);
         }
         tuning.toggle();
+    }
+
+    private float sidebarInset() {
+        return hudFrame == null ? 0 : hudFrame.sidePanelInset() * stage.getWidth() / Math.max(1, hudFrame.width());
+    }
+
+    private void resizePanels() {
+        float inset = Math.max(SIDE_PANEL_MARGIN, sidebarInset());
+        attackPanel.resize(stage.getWidth(), stage.getHeight(), inset);
+        reportPanel.resize(stage.getWidth(), stage.getHeight(), inset);
     }
 
     private void toggleReport() {
@@ -456,7 +466,7 @@ final class GpuBoardUi implements Disposable {
 
     /** Unobstructed board width in window pixels; both side panels keep their actual, possibly resized bounds. */
     float cameraWidth() {
-        float right = stage.getWidth();
+        float right = stage.getWidth() - sidebarInset();
         for (var panel : List.of(attackPanel.panel(), reportPanel.panel())) {
             if (panel.isVisible()) { right = Math.min(right, panel.getX() - 8); }
         }
@@ -468,6 +478,7 @@ final class GpuBoardUi implements Disposable {
             return;
         }
         if (hudFrame != next) {
+            float previousInset = sidebarInset();
             while (hudLayers.size() > next.layers().size()) {
                 HudActor removed = hudLayers.removeLast();
                 removed.image().remove();
@@ -486,6 +497,7 @@ final class GpuBoardUi implements Disposable {
                 layer.image().setDrawable(new TextureRegionDrawable(layer.textures().region(0)));
             }
             hudFrame = next;
+            if (!MathUtils.isEqual(previousInset, sidebarInset())) { resizePanels(); }
         }
         float scaleX = hud.getWidth() / next.width();
         float scaleY = hud.getHeight() / next.height();

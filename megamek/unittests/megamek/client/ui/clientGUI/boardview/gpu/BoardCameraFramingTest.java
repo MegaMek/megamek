@@ -23,6 +23,76 @@ class BoardCameraFramingTest {
     }
 
     @Test
+    void manualOrbitTiltPanAndPointerZoomKeepTheBoardPivotAfterEveryAutomaticFramingMode() {
+        var attacker = unit(1, 18, 14, 3, 2);
+        var target = unit(2, 26, 17, 3, 2);
+        var move = new BoardScene.Movement(1, 0, List.of(attacker.location(), target.location()),
+              EntityMovementType.MOVE_WALK, 0, 4, attacker);
+        for (int mode = 0; mode < 3; mode++) {
+            var camera = camera(65);
+            if (mode == 0) {
+                camera.frameAttacks(List.of(shot(attacker, target)), 420);
+            } else if (mode == 1) {
+                camera.frameSelection(attacker, 420);
+            } else {
+                camera.frameMovement(move, motion(move), UnitPlaybackTest.scene(attacker), 420);
+            }
+            camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+            assertEquals(3 * BoardGeometry.LEVEL, camera.focus.z, .002f,
+                  "A screen-space fit must not lift the manual orbit pivot away from the board support plane");
+            var pivot = camera.focus.cpy();
+            assertPivotScreen(camera, pivot, 420);
+            camera.orbit(70, 10);
+            assertPivotScreen(camera, pivot, 420);
+            camera.tilt(-15);
+            assertPivotScreen(camera, pivot, 420);
+            camera.rotateStep(-1);
+            camera.advance(BoardCamera.ROTATION_SECONDS);
+            assertPivotScreen(camera, pivot, 420);
+            var before = project(camera, pivot);
+            camera.pan(45, -25);
+            var after = project(camera, pivot);
+            assertEquals(45, after.x - before.x, .02f, "Grounded panning follows the horizontal drag");
+            assertEquals(25, after.y - before.y, .02f, "Grounded panning follows the vertical drag");
+            assertEquals(pivot.z, camera.focus.z);
+            var anchored = camera.focus.cpy().add(15, 20, 0);
+            before = project(camera, anchored);
+            camera.zoomAt(.75f, before.x, before.y);
+            after = project(camera, anchored);
+            assertEquals(before.x, after.x, .02f, "Pointer zoom must account for the side-panel offset");
+            assertEquals(before.y, after.y, .02f);
+        }
+    }
+
+    @Test
+    void changingThePanelWidthMovesTheOrbitPivotWithoutMovingTheVisibleBoard() {
+        var camera = camera(55);
+        var point = camera.focus.cpy().add(30, 25, 0);
+        var before = project(camera, point);
+        camera.viewableWidth(400);
+        var after = project(camera, point);
+        assertEquals(before.x, after.x, .02f);
+        assertEquals(before.y, after.y, .02f);
+        assertFalse(camera.isFraming());
+        assertPivotScreen(camera, camera.focus.cpy(), 400);
+        camera.viewableWidth(1200);
+        after = project(camera, point);
+        assertEquals(before.x, after.x, .02f);
+        assertEquals(before.y, after.y, .02f);
+    }
+
+    private static Vector3 project(BoardCamera camera, Vector3 point) {
+        return camera.camera.project(point.cpy(), 0, 0, camera.camera.viewportWidth, camera.camera.viewportHeight);
+    }
+
+    private static void assertPivotScreen(BoardCamera camera, Vector3 pivot, float width) {
+        assertEquals(pivot, camera.focus, "Manual orbit and tilt must keep the same world-space pivot");
+        var screen = project(camera, pivot);
+        assertEquals(width / 2, screen.x, .02f, "Orbit around the clear board area, not behind the side panel");
+        assertEquals(camera.camera.viewportHeight / 2, screen.y, .02f);
+    }
+
+    @Test
     void visibleTopViewSelectionsAndVolleysNeverMoveOrZoomIn() {
         var attacker = unit(1, 4, 4, 0, 2);
         var target = unit(2, 6, 6, 1, 2);
@@ -32,6 +102,7 @@ class BoardCameraFramingTest {
             camera.orbit(21, tilt);
             camera.center(BoardGeometry.center(attacker.location().coords(), 0));
             camera.zoom(3);
+            camera.viewableWidth(900);
             var pivot = camera.focus.cpy();
             assertVisible(camera, 900, attacker);
             assertVisible(camera, 900, target);
@@ -57,6 +128,7 @@ class BoardCameraFramingTest {
         camera.setIsometric(true);
         camera.center(BoardGeometry.center(new Coords(0, 6), 0));
         camera.zoom(2);
+        camera.viewableWidth(900);
         var pivot = camera.focus.cpy();
         double duration = motion.remainingSeconds();
         var scene = UnitPlaybackTest.scene(move.unit());
@@ -77,6 +149,7 @@ class BoardCameraFramingTest {
         var camera = new BoardCamera();
         camera.resize(1200, 800);
         camera.center(BoardGeometry.center(new Coords(0, 6), 0));
+        camera.viewableWidth(700);
         var pivot = camera.focus.cpy();
         for (var point : List.of(move.path().getFirst(), move.path().getLast())) {
             var screen = camera.camera.project(BoardGeometry.center(point.coords(), 0), 0, 0, 1200, 800);
@@ -91,12 +164,12 @@ class BoardCameraFramingTest {
         assertEquals(pivot.y, camera.focus.y, .001f, "Do not move an axis that already fits");
         assertEquals(0, camera.tilt());
         assertEquals(0, camera.azimuth());
-        assertPathVisible(camera, 700, motion, move.unit(), scene);
         var rightmost = motion.framingPath(scene, move.unit()).stream()
               .flatMap(pose -> java.util.stream.IntStream.range(0, 6)
                     .mapToObj(corner -> camera.camera.project(pose.outlinePoint(move.unit().location().coords(), corner, 0),
                           0, 0, 1200, 800))).mapToDouble(point -> point.x).max().orElseThrow();
         assertEquals(700 - 64, rightmost, .02, "Pan to the padded edge, not the viewport center");
+        assertPathVisible(camera, 700, motion, move.unit(), scene);
     }
 
     @Test
@@ -137,7 +210,9 @@ class BoardCameraFramingTest {
 
     private static void assertPathVisible(BoardCamera camera, float width, UnitMotion motion, BoardScene.Unit unit,
           BoardScene scene) {
-        for (var pose : motion.framingPath(scene, unit)) {
+        double step = motion.remainingSeconds() / 256;
+        for (int sample = 0; sample <= 256; sample++) {
+            var pose = new UnitFootprint.Pose(unit, motion.surfacePosition(scene), motion.facing());
             for (var coords : unit.footprint()) {
                 for (int corner = 0; corner < 6; corner++) {
                     for (float height : new float[] { 0, unit.height() * BoardGeometry.LEVEL }) {
@@ -148,6 +223,7 @@ class BoardCameraFramingTest {
                     }
                 }
             }
+            motion.advance(step, 1);
         }
     }
 

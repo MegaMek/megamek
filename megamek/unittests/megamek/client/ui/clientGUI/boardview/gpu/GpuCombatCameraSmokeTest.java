@@ -22,7 +22,10 @@ import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.common.Hex;
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Board;
@@ -40,11 +43,17 @@ class GpuCombatCameraSmokeTest {
         assertTrue(output.isDirectory() || output.mkdirs());
         AtomicReference<Throwable> failure = new AtomicReference<>();
         AtomicReference<List<BoardScene.Animation>> pending = new AtomicReference<>(List.of());
+        var preferences = GUIPreferences.getInstance();
+        boolean overviewVisible = preferences.getShowUnitOverview();
+        AtomicReference<UnitOverviewOverlay> overview = new AtomicReference<>();
         Hex[] hexes = new Hex[20 * 20];
         for (int i = 0; i < hexes.length; i++) { hexes[i] = new Hex(i % 20 >= 14 ? 2 : 0); }
         try (var fixture = GpuBoardFixture.create(new Board(20, 20, hexes))) {
             SwingUtilities.invokeAndWait(() -> {
                 try {
+                    preferences.setShowUnitOverview(true);
+                    overview.set(new UnitOverviewOverlay(GpuUnitHudTest.gui(fixture)));
+                    fixture.view.addOverlay(overview.get());
                     fixture.game.setPhase(GamePhase.FIRING);
                     fixture.entity.setPosition(new Coords(2, 3));
                     GpuFiringCaptureTest.addTarget(fixture, 42, new Coords(17, 5));
@@ -142,8 +151,28 @@ class GpuCombatCameraSmokeTest {
                                 playback.togglePaused();
                                 assertCoverage(ui, "battle-report");
                                 GpuBoardTestUi.capture(new File(output, "combat-camera-report-top.png"));
-                                Gdx.app.exit();
+                                float scale = Gdx.graphics.getWidth() / ui.stage.getWidth();
+                                var hud = fixture.source.takeFrame().hud();
+                                for (float density : new float[] { 1, 1.5f, 2 }) {
+                                    ui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), density);
+                                    ui.updateHud(hud, System.nanoTime());
+                                    assertSidebarGap(ui, panel("battle-report"));
+                                }
+                                ui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), scale);
+                                ui.updateHud(hud, System.nanoTime());
+                                dragReportWidth(5000);
+                                assertEquals(GpuBoardUi.SIDE_PANEL_MARGIN, panel("battle-report").getX(), 1);
+                                assertSidebarGap(ui, panel("battle-report"));
+                                SwingUtilities.invokeAndWait(() -> {
+                                    preferences.setShowUnitOverview(false);
+                                    fixture.source.refresh();
+                                });
+                                step++;
                             }
+                        } else if (step == 7) {
+                            assertEquals(GpuBoardUi.SIDE_PANEL_MARGIN,
+                                  ui.stage.getWidth() - panel("battle-report").getRight(), .01f);
+                            Gdx.app.exit();
                         }
                     } catch (Throwable error) {
                         failure.set(error);
@@ -164,6 +193,7 @@ class GpuCombatCameraSmokeTest {
                 private void assertCoverage(GpuBoardUi ui, String panelName) throws Exception {
                     var panel = panel(panelName);
                     assertTrue(panel.isVisible());
+                    assertSidebarGap(ui, panel);
                     float scale = Gdx.graphics.getWidth() / ui.stage.getWidth();
                     assertEquals((panel.getX() - 8) * scale, ui.cameraWidth(), .01f);
                     assertTrue(ui.cameraWidth() < boardCamera.camera.viewportWidth - 200);
@@ -186,12 +216,27 @@ class GpuCombatCameraSmokeTest {
                     }
                 }
             }, GpuBoardWindow.configuration(false));
+        } finally {
+            SwingUtilities.invokeAndWait(() -> {
+                if (overview.get() != null) { preferences.removePreferenceChangeListener(overview.get()); }
+                preferences.setShowUnitOverview(overviewVisible);
+            });
         }
         if (failure.get() != null) { throw new AssertionError("Combat camera framing failed", failure.get()); }
     }
 
     private static boolean firing(UnitPlayback playback) {
         return playback.attack() != null && playback.attack().seconds > UnitAttack.ANTICIPATION_SECONDS;
+    }
+
+    private static void assertSidebarGap(GpuBoardUi ui, Table panel) {
+        Group hud = (Group) ui.stage.getRoot().getChildren().first();
+        Actor card = hud.getChildren().first();
+        // Native artwork has symmetric transparent padding around each card, so its two gutters stay equal too.
+        float outside = ui.stage.getWidth() - card.getRight();
+        assertTrue(outside > 0);
+        assertEquals(outside, card.getX() - panel.getRight(), 1,
+              "The unit strip must have equal gaps to the panel and the window edge");
     }
 
     private static Table panel(String name) { return GpuBoardTestUi.stage().getRoot().findActor(name); }

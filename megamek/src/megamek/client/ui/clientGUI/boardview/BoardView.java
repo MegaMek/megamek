@@ -75,6 +75,7 @@ import megamek.client.ui.clientGUI.boardview.gpu.GpuBoardWindow;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.OverlayImage;
 import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
+import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.clientGUI.boardview.sprite.*;
 import megamek.client.ui.clientGUI.boardview.sprite.TacticalSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.isometric.IsometricSprite;
@@ -5328,6 +5329,12 @@ public final class BoardView extends AbstractBoardView
             gpuTileset.clearHex(flat);
         }
         return image;
+    }
+
+    /** Read after overlay capture, on Swing's thread, so hidden or empty unit strips reserve no space. */
+    public int sidePanelInset() {
+        return overlays.stream().filter(UnitOverviewOverlay.class::isInstance)
+              .map(UnitOverviewOverlay.class::cast).mapToInt(UnitOverviewOverlay::sidePanelInset).max().orElse(0);
     }
 
     /** Preserves painter order while keeping cached text and its fade separate for native compositing. */

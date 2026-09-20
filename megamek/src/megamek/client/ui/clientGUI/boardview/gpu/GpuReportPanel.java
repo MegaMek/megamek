@@ -193,9 +193,9 @@ final class GpuReportPanel implements Disposable {
 
     Table panel() { return panel; }
 
-    void resize(float width, float height) {
-        float panelWidth = Math.min(preferredWidth, Math.max(1, width - 24));
-        panel.setBounds(width - panelWidth - 12, GpuBoardUi.TURN_HEIGHT + 12, panelWidth,
+    void resize(float width, float height, float rightInset) {
+        float panelWidth = Math.min(preferredWidth, Math.max(1, width - rightInset - GpuBoardUi.SIDE_PANEL_MARGIN));
+        panel.setBounds(width - panelWidth - rightInset, GpuBoardUi.TURN_HEIGHT + 12, panelWidth,
               Math.max(1, height - GpuBoardUi.TOP_HEIGHT - GpuBoardUi.TURN_HEIGHT - 24));
         resizeHandle.setBounds(0, 0, 10, panel.getHeight());
         boolean narrow = panelWidth < 520;
@@ -248,10 +248,11 @@ final class GpuReportPanel implements Disposable {
             @Override
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
                 float stageWidth = panel.getStage().getWidth();
-                float maximum = Math.max(1, stageWidth - 24);
+                float rightInset = stageWidth - panel.getRight();
+                float maximum = Math.max(1, panel.getRight() - GpuBoardUi.SIDE_PANEL_MARGIN);
                 preferredWidth = MathUtils.clamp(startWidth + startX - event.getStageX(),
                       Math.min(GpuAttackPanel.WIDTH, maximum), maximum);
-                resize(stageWidth, panel.getStage().getHeight());
+                resize(stageWidth, panel.getStage().getHeight(), rightInset);
             }
 
             @Override

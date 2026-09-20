@@ -41,6 +41,7 @@ import megamek.client.ui.clientGUI.boardview.BoardMarker;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.util.KeyCommandBind;
+import megamek.common.ResolvedAttack;
 import megamek.common.board.Coords;
 import megamek.logging.MMLogger;
 
@@ -224,7 +225,9 @@ class GpuBattleView extends ApplicationAdapter {
         playback.accept(frame.timeline(), scene, this::hasInfantryTransports);
         ui.update(frame, Messages.getString("GpuBoard.speed",
               playbackSpeed == UnitMotion.Speed.INSTANT ? Messages.getString("GpuBoard.instant") : playbackSpeed.label));
+        boardCamera.viewableWidth(ui.cameraWidth());
         if (!fitted) { updateCameraFocus(scene, frame.centerRequest()); }
+        var instantAction = playbackSpeed == UnitMotion.Speed.INSTANT ? playback.lastAction() : null;
         playback.advance(Gdx.graphics.getDeltaTime(), playbackSpeed, state -> preparePlaybackCamera(state, scene));
         scene = playback.present(scene);
         boolean changedTiles = previousTiles != scene.tiles();
@@ -263,7 +266,7 @@ class GpuBattleView extends ApplicationAdapter {
         }
         annotationTextures.update(scene.units().stream().filter(unit -> unit.annotations() != null).collect(Collectors.toMap(
               unit -> unit.id() + ":" + unit.part(), BoardScene.Unit::annotations)));
-        updateCameraFocus(scene, frame.centerRequest());
+        updateCameraFocus(scene, frame.centerRequest(), instantAction);
         boardCamera.advance(Gdx.graphics.getDeltaTime());
         if (source.chatActive()) {
             cameraKeys.clear();
@@ -514,6 +517,10 @@ class GpuBattleView extends ApplicationAdapter {
 
     /** Frame the presented action; selection changes during playback take effect after its final hold. */
     void updateCameraFocus(BoardScene scene, BoardView.CenterRequest request) {
+        updateCameraFocus(scene, request, null);
+    }
+
+    void updateCameraFocus(BoardScene scene, BoardView.CenterRequest request, BoardScene.Animation instantAction) {
         if (!fitted) {
             boardCamera.fit(scene);
             fitted = true;
@@ -523,12 +530,17 @@ class GpuBattleView extends ApplicationAdapter {
             centerSequence = 0;
         }
         boolean firing = playback.attack() != null && playback.attack().shot();
-        if (!firing && playback.movement() == null) { boardCamera.clearPlaybackFrame(); }
+        boolean instant = playbackSpeed == UnitMotion.Speed.INSTANT;
+        if (!instant && !firing && playback.movement() == null) { boardCamera.clearPlaybackFrame(); }
         // Keep the last idle selection until the entire playback, including its completion hold, ends.
         if (playback.busy()) {
             if (playback.movement() != null) {
                 // The complete route is already framed. Do not chase the unit or recenter it on arrival.
                 cameraFollowingPlayback = false;
+                // The classic board auto-centers each move's start; do not replay that request after arrival.
+                if (playback.movement().path().getFirst().coords().equals(request.coords())) {
+                    centerSequence = request.sequence();
+                }
                 boardCamera.frameMovement(playback.movement(), motions.get(playback.activeEntityId()), scene, cameraWidth());
                 return;
             }
@@ -551,7 +563,7 @@ class GpuBattleView extends ApplicationAdapter {
             return;
         }
         BoardScene.Unit selection = null;
-        if (cameraFollowingPlayback || cameraSelection != scene.selectedId()) {
+        if (cameraSelection != scene.selectedId() || cameraFollowingPlayback && instantAction == null) {
             selection = scene.units().stream().filter(unit -> unit.id() == scene.selectedId()).findFirst().orElse(null);
         }
         Coords center = selection == null && centerSequence != request.sequence() ? request.coords() : null;
@@ -560,8 +572,18 @@ class GpuBattleView extends ApplicationAdapter {
         cameraFollowingPlayback = false;
         if (selection != null) {
             boardCamera.frameSelection(selection, cameraWidth());
+        } else if (instantAction instanceof BoardScene.Combat combat && combat.result().kind() == ResolvedAttack.Kind.SHOT) {
+            boardCamera.frameAttacks(List.of(new UnitAttack(combat)), cameraWidth());
+        } else if (instantAction != null) {
+            scene.units().stream().filter(unit -> unit.id() == instantAction.entityId()).findFirst()
+                  .ifPresent(unit -> boardCamera.frameSelection(unit, cameraWidth()));
         } else if (center != null && scene.tile(center) != null) {
             boardCamera.center(BoardGeometry.center(center, scene.tile(center).elevation()));
+        }
+        if (instant) {
+            // Replace any old transition with the final requested view before snapping it, never visiting each event.
+            if (boardCamera.isFraming()) { boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS); }
+            boardCamera.clearPlaybackFrame();
         }
     }
 

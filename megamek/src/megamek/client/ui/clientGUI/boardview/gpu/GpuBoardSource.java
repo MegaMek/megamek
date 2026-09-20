@@ -69,7 +69,12 @@ final class GpuBoardSource implements AutoCloseable {
             this(pixels, x, y, fade, OverlayImage.Transition.ZERO);
         }
     }
-    record Hud(int width, int height, List<HudLayer> layers) { }
+    /** Immutable Swing layout snapshot; the GL thread scales the sidebar reservation with its HUD artwork. */
+    record Hud(int width, int height, List<HudLayer> layers, float sidePanelInset) {
+        Hud(int width, int height, List<HudLayer> layers) {
+            this(width, height, layers, 0);
+        }
+    }
     public record Frame(BoardScene scene, List<BoardScene.Animation> timeline, BoardScene.Context context,
           List<BoardScene.Command> globalCommands, Hud hud, String tooltip,
           BoardView.CenterRequest centerRequest, long boardGeneration, String actorName,
@@ -728,7 +733,8 @@ final class GpuBoardSource implements AutoCloseable {
         }
         overlayImages.clear();
         overlayImages.putAll(retained);
-        return new Hud(layout.pixels().width, layout.pixels().height, List.copyOf(layers));
+        return new Hud(layout.pixels().width, layout.pixels().height, List.copyOf(layers),
+              view.sidePanelInset() * layout.pixels().width / (float) Math.max(1, layout.size().width));
     }
 
     private boolean visible(Entity entity) {

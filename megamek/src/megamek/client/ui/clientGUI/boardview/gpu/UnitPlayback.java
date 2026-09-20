@@ -271,6 +271,16 @@ final class UnitPlayback {
 
     boolean busy() { return active != null || !pending.isEmpty(); }
 
+    /** The final queued action lets Instant playback settle its camera once, after the whole queue is applied. */
+    BoardScene.Animation lastAction() {
+        var events = pending.descendingIterator();
+        while (events.hasNext()) {
+            var event = events.next();
+            if (!(event instanceof BoardScene.SceneUpdate)) { return event; }
+        }
+        return active;
+    }
+
     /** The action being presented retains camera focus through its completion hold. */
     int activeEntityId() { return active == null ? -1 : active.entityId(); }
 

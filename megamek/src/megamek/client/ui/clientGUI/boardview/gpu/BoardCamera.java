@@ -40,6 +40,8 @@ final class BoardCamera {
     private boolean overviewFit;
     private boolean fitToWindow;
     private float displayScale = 1;
+    /** Screen composition only: focus remains the world-space orbit pivot in the unobstructed board area. */
+    private float viewOffsetPixels;
     private long revision;
     private float rotationStart;
     private float rotationSweep;
@@ -80,6 +82,24 @@ final class BoardCamera {
         if (fitToWindow && scene != null) {
             fit(scene);
         }
+        update();
+    }
+
+    /** Move the orbit pivot to the usable area's center without moving the displayed board. */
+    void viewableWidth(float availableWidth) {
+        float offset = (camera.viewportWidth - MathUtils.clamp(availableWidth, 1, camera.viewportWidth)) / 2;
+        if (MathUtils.isEqual(viewOffsetPixels, offset)) { return; }
+        float shift = viewOffsetPixels - offset;
+        Vector3 right = new Vector3(camera.direction).crs(camera.up).nor();
+        focus.mulAdd(right, shift * camera.zoom);
+        if (framingTarget != null) {
+            Vector3 outward = new Vector3(), up = new Vector3();
+            orientation(framingTarget.azimuth(), framingTarget.tilt(), outward, up);
+            framingTarget.focus().mulAdd(up.crs(outward).nor(), shift * framingTarget.zoom());
+            framingStart = new Pose(focus.cpy(), camera.zoom, azimuth, tilt);
+            framingStartTime = framingElapsed;
+        }
+        viewOffsetPixels = offset;
         update();
     }
 
@@ -224,6 +244,7 @@ final class BoardCamera {
             return;
         }
         float width = MathUtils.clamp(availableWidth, 1, camera.viewportWidth);
+        viewableWidth(width);
         if (!beginFrame(attacks.getFirst(), attacks.size(), width)) { return; }
         List<Vector3> points = new ArrayList<>();
         Vector3 axis = new Vector3();
@@ -250,23 +271,28 @@ final class BoardCamera {
             bearing = wrapDegrees(azimuth + turn);
         }
         float inclination = topView ? tilt : Math.min(tilt, ISOMETRIC_TILT);
+        float plane = (float) attacks.stream().mapToDouble(attack ->
+              (attack.event.attacker().location().elevation() + attack.event.destination().elevation()) / 2)
+              .average().orElse(0) * BoardGeometry.LEVEL;
         animateTo(fittedPose(points, width, bearing, inclination, topView ? camera.zoom : .5f / displayScale, !topView),
-              ANIMATE_CAMERA_COMBAT_PLAYBACK);
+              plane, ANIMATE_CAMERA_COMBAT_PLAYBACK);
     }
 
     /** Keep the chosen viewing angle and zoom, widening only when the selected unit cannot fit. */
     void frameSelection(BoardScene.Unit unit, float availableWidth) {
+        viewableWidth(availableWidth);
         clearPlaybackFrame();
         framingElapsed = 0;
         List<Vector3> points = new ArrayList<>();
         addUnit(points, unit);
         animateTo(fittedPose(points, availableWidth, azimuth, tilt, camera.zoom, tilt > ATTACK_TOP_VIEW_TILT_DEGREES),
-              ANIMATE_CAMERA_ON_SELECTION_CHANGE);
+              unit.location().elevation() * BoardGeometry.LEVEL, ANIMATE_CAMERA_ON_SELECTION_CHANGE);
     }
 
     /** Fit the complete rendered route once, with the smallest pan and no unnecessary zoom or rotation. */
     void frameMovement(BoardScene.Movement move, UnitMotion motion, BoardScene scene, float availableWidth) {
         float width = MathUtils.clamp(availableWidth, 1, camera.viewportWidth);
+        viewableWidth(width);
         if (!beginFrame(move, move.path().size(), width)) { return; }
         var unit = move.unit() != null ? move.unit() : scene.units().stream()
               .filter(candidate -> candidate.id() == move.entityId()).findFirst().orElse(null);
@@ -288,7 +314,8 @@ final class BoardCamera {
             }
         }
         if (!points.isEmpty()) {
-            animateTo(fittedPose(points, width, azimuth, tilt, camera.zoom, false), ANIMATE_CAMERA_ON_MOVE);
+            animateTo(fittedPose(points, width, azimuth, tilt, camera.zoom, false),
+                  move.path().getFirst().elevation() * BoardGeometry.LEVEL, ANIMATE_CAMERA_ON_MOVE);
         }
     }
 
@@ -309,33 +336,37 @@ final class BoardCamera {
             minY = Math.min(minY, y);
             maxY = Math.max(maxY, y);
         }
-        if (!centered && minX >= -camera.viewportWidth * camera.zoom / 2
-              && maxX <= (width - camera.viewportWidth / 2) * camera.zoom
+        if (!centered && minX >= -width * camera.zoom / 2
+              && maxX <= width * camera.zoom / 2
               && minY >= -camera.viewportHeight * camera.zoom / 2 && maxY <= camera.viewportHeight * camera.zoom / 2) {
             return new Pose(focus.cpy(), camera.zoom, azimuth, tilt);
         }
         float margin = Math.min(FRAMING_MARGIN_PIXELS * displayScale, Math.min(width, camera.viewportHeight) * .2f);
         float zoom = Math.max(minimumZoom, Math.max((maxX - minX) / (width - 2 * margin),
               (maxY - minY) / (camera.viewportHeight - 2 * margin)));
-        // The projection still fills the full viewport; place the action at the unobstructed area's center.
-        float x = (minX + maxX) / 2 + (camera.viewportWidth - width) * zoom / 2;
+        float x = (minX + maxX) / 2;
         float y = (minY + maxY) / 2;
         if (!centered) {
             // Clamp the current pivot to the interval that fits the route, rather than centering it.
-            x = MathUtils.clamp(0, maxX - (width - margin - camera.viewportWidth / 2) * zoom,
-                  minX + (camera.viewportWidth / 2 - margin) * zoom);
+            x = MathUtils.clamp(0, maxX - (width / 2 - margin) * zoom,
+                  minX + (width / 2 - margin) * zoom);
             y = MathUtils.clamp(0, maxY - (camera.viewportHeight / 2 - margin) * zoom,
                   minY + (camera.viewportHeight / 2 - margin) * zoom);
         }
         return new Pose(new Vector3(origin).mulAdd(right, x).mulAdd(up, y), zoom, bearing, inclination);
     }
 
-    private void animateTo(Pose target, boolean animate) {
+    private void animateTo(Pose target, float plane, boolean animate) {
         if (focus.epsilonEquals(target.focus(), .001f) && MathUtils.isEqual(camera.zoom, target.zoom())
               && MathUtils.isEqual(azimuth, target.azimuth()) && MathUtils.isEqual(tilt, target.tilt())) {
             stopFraming();
             return;
         }
+        // The projected fit does not determine depth. Put its orbit pivot on the action's support plane,
+        // sliding along the viewing ray so the fit stays unchanged on screen.
+        Vector3 outward = new Vector3(), up = new Vector3();
+        orientation(target.azimuth(), target.tilt(), outward, up);
+        target.focus().mulAdd(outward, (plane - target.focus().z) / outward.z);
         stopRotation();
         fitToWindow = false;
         framingStart = new Pose(new Vector3(focus), camera.zoom, azimuth, tilt);
@@ -383,7 +414,8 @@ final class BoardCamera {
         float before = camera.zoom;
         zoom(factor);
         float difference = before - camera.zoom;
-        moveOnBoard((x - camera.viewportWidth / 2) * difference, (y - camera.viewportHeight / 2) * difference);
+        moveOnBoard((x - camera.viewportWidth / 2 + viewOffsetPixels) * difference,
+              (y - camera.viewportHeight / 2) * difference);
         update();
     }
 
@@ -416,8 +448,8 @@ final class BoardCamera {
                 }
             }
         }
-        focus.mulAdd(right, (minX + maxX) / 2).mulAdd(camera.up, (minY + maxY) / 2);
-        camera.zoom = Math.max((maxX - minX) / camera.viewportWidth,
+        moveOnBoard((minX + maxX) / 2, (minY + maxY) / 2);
+        camera.zoom = Math.max((maxX - minX) / Math.max(1, camera.viewportWidth - 2 * viewOffsetPixels),
               (maxY - minY) / camera.viewportHeight) * 1.15f;
         update();
     }
@@ -495,9 +527,10 @@ final class BoardCamera {
     }
 
     void update() {
-        orientation(azimuth, tilt, camera.position, camera.up);
-        camera.position.scl(10000).add(focus);
-        camera.lookAt(focus);
+        orientation(azimuth, tilt, camera.direction, camera.up);
+        camera.direction.scl(-1);
+        camera.position.set(camera.direction).scl(-10000).add(focus);
+        camera.position.mulAdd(new Vector3(camera.direction).crs(camera.up).nor(), viewOffsetPixels * camera.zoom);
         camera.update();
         revision++;
     }

@@ -163,6 +163,28 @@ class TWGameManagerDamageEditTest {
     }
 
     @Test
+    void ejectionSettingsLandOnTheEditedUnitOnly() {
+        Entity lanceMate = MMTestUtilities.getEntityForUnitTesting("Enforcer III ENF-6M", false);
+        assertNotNull(lanceMate);
+        lanceMate.setId(UNIT_ID + 1);
+        lanceMate.setOwner(game.getPlayer(OWNER_CONNECTION_ID));
+        game.addEntity(lanceMate);
+        Mek edited = (Mek) mek;
+        Mek untouched = (Mek) lanceMate;
+        assertTrue(edited.isAutoEject() && untouched.isAutoEject(), "Both start with automatic ejection on");
+
+        DamageEditSpec spec = emptySpec();
+        spec.autoEject = false;
+        spec.conditionalEjectOnEngineExplosion = false;
+        sendDamageEdit(GAME_MASTER_CONNECTION_ID, spec);
+
+        assertFalse(edited.isAutoEject(), "The edited unit's ejection is off");
+        assertFalse(edited.isCondEjectEngine());
+        assertTrue(untouched.isAutoEject(), "The lance mate keeps its own ejection setting");
+        assertTrue(untouched.isCondEjectEngine());
+    }
+
+    @Test
     void gameMasterJamLandsOnTheServerUnit() {
         WeaponMounted weapon = jammableWeapon();
         DamageEditSpec spec = emptySpec();

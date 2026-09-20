@@ -82,6 +82,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.logging.MMLogger;
 
 /**
  * Builds the controls of the unit damage editor: a panel per unit location holding that location's armor and
@@ -92,6 +93,8 @@ import megamek.common.weapons.attacks.InfantryAttack;
  * </p>
  */
 public class UnitDamagePanelBuilder {
+
+    private static final MMLogger LOGGER = MMLogger.create(UnitDamagePanelBuilder.class);
 
     /** The most heat that can be set, matching the range the lobby's heat menu offers. */
     public static final int MAX_HEAT = 40;
@@ -274,6 +277,12 @@ public class UnitDamagePanelBuilder {
         String disabledTooltip = "UnitEditorDialog.ejection.autoDisabled.tooltip";
         String conditionalTooltip = "UnitEditorDialog.ejection.conditional.tooltip";
         if (entity instanceof Mek mek) {
+            // which unit the column was read from, and what it held, so a playtest log can show whether a
+            // setting was already wrong before the gamemaster touched it
+            LOGGER.info("[EquipState] ejection column for {} (id {}): auto {}, ammo {}, engine {}, center torso {},"
+                        + " headshot {}", mek.getDisplayName(), mek.getId(), mek.isAutoEject(),
+                  mek.isCondEjectAmmo(), mek.isCondEjectEngine(), mek.isCondEjectCTDest(),
+                  mek.isCondEjectHeadshot());
             controls.chkAutoEjectDisabled = ejectionRow(panel, "CustomMekDialog.labAutoEject", !mek.isAutoEject(),
                   disabledTooltip);
             if (isConditionalEjectionInPlay && mek.hasEjectSeat()) {

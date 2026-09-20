@@ -837,6 +837,11 @@ public class DamageEditApplier {
             if (spec.conditionalEjectOnHeadshot != null) {
                 mek.setCondEjectHeadshot(spec.conditionalEjectOnHeadshot);
             }
+            if (spec.conditionalEjectOnAmmoExplosion != null) {
+                LOGGER.info("[EquipState] GM edit: {} (id {}) conditional ejection now ammo {}, engine {}, center"
+                            + " torso {}, headshot {}", mek.getDisplayName(), mek.getId(), mek.isCondEjectAmmo(),
+                      mek.isCondEjectEngine(), mek.isCondEjectCTDest(), mek.isCondEjectHeadshot());
+            }
         } else if (entity instanceof Aero aero) {
             if (spec.conditionalEjectOnAmmoExplosion != null) {
                 aero.setCondEjectAmmo(spec.conditionalEjectOnAmmoExplosion);

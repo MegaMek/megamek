@@ -178,13 +178,25 @@ final class GpuUnitModel implements Disposable {
      * @param degrees how far over the arms are swung, {@code 0} for forward and {@code 180} for fully flipped
      */
     void flipArms(ModelInstance placed, float degrees) {
+        // Zero means the arms are forward, and the animator owns them: leave its walk sway alone
+        // rather than pinning both arms to their rest pose on every unflipped unit, every frame.
+        if (degrees == 0) {
+            return;
+        }
+        boolean posed = false;
         for (String arm : ARM_NODES) {
             Node node = placed.getNode(arm);
-            if (node != null) {
-                node.rotation.set(Vector3.X, degrees);
+            Node rest = model.getNode(arm);
+            if (node != null && rest != null) {
+                // Build from the authored rest pose, not from whatever the animator left behind, so
+                // running every frame holds the arm at one angle instead of winding it further round.
+                node.rotation.set(rest.rotation).mul(new Quaternion(Vector3.X, degrees));
+                posed = true;
             }
         }
-        placed.calculateTransforms();
+        if (posed) {
+            placed.calculateTransforms();
+        }
     }
 
     /** @return {@code true} if this model has arms that can be shown flipped */

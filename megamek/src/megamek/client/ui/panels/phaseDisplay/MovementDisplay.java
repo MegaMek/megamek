@@ -5078,7 +5078,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     /** Updates the status of the Tow and Disconnect buttons. */
     private void updateTowingButtons() {
         final Entity currentEntity = currentEntity();
-        if ((currentEntity == null) || (currentEntity instanceof SmallCraft)) {
+        if ((currentEntity == null) || (currentEntity instanceof SmallCraft) || currentEntity.getPosition() == null) {
             setTowEnabled(false);
             setDisconnectEnabled(false);
             return;

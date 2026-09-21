@@ -83,7 +83,21 @@ public class ObjectiveMarker extends GroundObject {
     private boolean destroyed = false;
     private boolean insideBuilding = false;
     private boolean buildingLinkInitialized = false;
+    /**
+     * What a successful scan of this point tells the scanning side, written by a game master, a scenario file or
+     * MekHQ: "The scan reveals..." Empty when there is nothing to say. Sent only to the side that scanned.
+     */
+    private String scanRevealsNote = "";
     private boolean destructionProcessed = false;
+    /**
+     * Which side the mission says this point belongs to, which is not the same question as who put it on the
+     * board. A scan point is read by the other side, so it commonly belongs to nobody or to an opponent of the
+     * player who placed it, while {@link #getOwnerId()} stays with the placer and drives visibility, removal
+     * permission and the return to the lobby. Two fields rather than one, because a point can legitimately belong
+     * to nobody and an unset int cannot be told apart from player zero in a save written before this existed.
+     */
+    private boolean belongsToSideChosen = false;
+    private int belongsToPlayerId = Player.PLAYER_NONE;
     private int controllingTeam = NO_CONTROLLER;
     private int controllingPlayerId = NO_CONTROLLER;
     // the pre-set lobby placement position; null when the marker has no pre-set position
@@ -136,6 +150,23 @@ public class ObjectiveMarker extends GroundObject {
         }
     }
 
+    /**
+     * @return the player whose side this point belongs to, or {@link Player#PLAYER_NONE} when it belongs to
+     *       nobody. Falls back to whoever placed it while no side has been chosen, which is how every point
+     *       behaved before the choice existed.
+     */
+    public int getBelongsToPlayerId() {
+        return belongsToSideChosen ? belongsToPlayerId : getOwnerId();
+    }
+
+    /**
+     * @param playerId the player whose side this point belongs to, or {@link Player#PLAYER_NONE} for nobody
+     */
+    public void setBelongsToPlayerId(int playerId) {
+        this.belongsToPlayerId = playerId;
+        this.belongsToSideChosen = true;
+    }
+
     /** @return The control radius of this objective in hexes (0 = only the objective's own hex) */
     public int getControlRadius() {
         return controlRadius;
@@ -159,6 +190,16 @@ public class ObjectiveMarker extends GroundObject {
     /** @return The victory points this objective is worth when it scores (default 1) */
     public int getVictoryPointValue() {
         return victoryPointValue;
+    }
+
+    /** @return the note a successful scan of this point delivers to the scanning side; empty when there is none */
+    public String getScanRevealsNote() {
+        return (scanRevealsNote == null) ? "" : scanRevealsNote;
+    }
+
+    /** @param scanRevealsNote what the scan reveals, or empty for nothing; {@code null} is treated as empty */
+    public void setScanRevealsNote(String scanRevealsNote) {
+        this.scanRevealsNote = (scanRevealsNote == null) ? "" : scanRevealsNote.trim();
     }
 
     public void setVictoryPointValue(int victoryPointValue) {

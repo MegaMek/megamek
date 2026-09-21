@@ -35,6 +35,7 @@ package megamek.client.ui.clientGUI.boardview.sprite;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 
 import megamek.MMConstants;
@@ -44,7 +45,9 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Player;
 import megamek.common.actions.LayExplosivesAttackAction;
+import megamek.common.actions.ScanAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -368,6 +371,51 @@ public class EntitySprite extends Sprite {
     }
 
     // Happy little class to hold status info until it gets drawn
+    /**
+     * Whether this unit is under orders to scan something in the End Phase. The label is drawn only for the player
+     * who gave the order, because a scan order is not something the other side should be able to read off the board.
+     *
+     * @param entity the unit this sprite is drawn for
+     *
+     * @return {@code true} when the scanning label belongs on this unit
+     */
+    private boolean hasOrderedAScan(Entity entity) {
+        return (entity.getPendingScan() != null) && isOwnedByTheLocalPlayer(entity);
+    }
+
+    /**
+     * Whether one of the local player's units has been told to scan this unit in the End Phase. A scan aimed at a
+     * hex marks nothing here, which is why the scout carries its own label as well.
+     *
+     * @param entity the unit this sprite is drawn for
+     *
+     * @return {@code true} when the scanned label belongs on this unit
+     */
+    private boolean isTheTargetOfAnOrderedScan(Entity entity) {
+        for (Entity scanner : bv.game.getEntitiesVector()) {
+            ScanAction order = scanner.getPendingScan();
+            boolean ordersThisUnit = (order != null)
+                  && order.isUnitTarget()
+                  && (order.getTargetId() == entity.getId());
+            if (ordersThisUnit && isOwnedByTheLocalPlayer(scanner)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param entity the unit to check
+     *
+     * @return {@code true} when the unit belongs to the player sitting at this client
+     */
+    private boolean isOwnedByTheLocalPlayer(Entity entity) {
+        Player localPlayer = bv.getLocalPlayer();
+        // The null check earns its place rather than duplicating Objects.equals: with no local player this has
+        // to be false, and Objects.equals would call a missing local player equal to an ownerless unit.
+        return (localPlayer != null) && Objects.equals(localPlayer, entity.getOwner());
+    }
+
     private class Status {
         final Color color;
         final String status;
@@ -572,6 +620,16 @@ public class EntitySprite extends Sprite {
 
             if (entity.isHidden()) {
                 stStr.add(new Status(GUIP.getPrecautionColor(), "HIDDEN"));
+            }
+
+            // A scan ordered for the End Phase, marked on the scout and on what it was pointed at, so a player can
+            // see the order took without reading the status bar
+            if (hasOrderedAScan(entity)) {
+                stStr.add(new Status(GUIP.getPrecautionColor(), "SCANNING"));
+            }
+
+            if (isTheTargetOfAnOrderedScan(entity)) {
+                stStr.add(new Status(GUIP.getPrecautionColor(), "SCANNED"));
             }
 
             if (entity.isGyroDestroyed()) {

@@ -106,6 +106,9 @@ class LobbyMekPopup {
     static final String LMP_NO_HIDE = "NOHIDE";
     static final String LMP_HIDE = "HIDE";
     static final String LMP_HIDDEN = "HIDDEN";
+    static final String LMP_SCAN_TARGET = "SCAN_TARGET";
+    static final String LMP_SCAN_WANTED = "SCAN_WANTED";
+    static final String LMP_SCAN_NOT_WANTED = "SCAN_NOT_WANTED";
     static final String LMP_F_ASSIGN_ONLY = "FASSIGNONLY";
     static final String LMP_F_ASSIGN = "FASSIGN";
     static final String LMP_RAPID_FIRE_MG_OFF = "RAPIDFIREMG_OFF";
@@ -602,6 +605,24 @@ class LobbyMekPopup {
     }
 
     /**
+     * The mission's scan targets are a game master's to set, and only matter in a game that uses objectives, so the
+     * submenu is offered to nobody else.
+     */
+    private static boolean isScanTargetMenuUseful(ClientGUI clientGui) {
+        Player personAtTheKeyboard = clientGui.getClient().getLocalPlayer();
+        if ((personAtTheKeyboard == null) || !personAtTheKeyboard.isGameMaster()) {
+            logger.debug("[Scan] Scan target items hidden: {} is not a game master",
+                  (personAtTheKeyboard == null) ? "no local player" : personAtTheKeyboard.getName());
+            return false;
+        }
+        if (!clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            logger.debug("[Scan] Scan target items hidden: the game does not use objectives");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Returns the "Deploy" submenu, allowing late deployment
      */
     private static JMenu deployMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
@@ -615,6 +636,24 @@ class LobbyMekPopup {
                 boolean anyNotHidden = entities.stream().anyMatch(e -> !e.isHidden());
                 menu.add(menuItem("Hidden", LMP_HIDDEN + "|" + LMP_HIDE + eIds, anyNotHidden, listener));
                 menu.add(menuItem("Not Hidden", LMP_HIDDEN + "|" + LMP_NO_HIDE + eIds, anyHidden, listener));
+                menu.add(ScalingPopup.spacer());
+            }
+
+            // The mission's scan targets are a game master's to set, and only matter in a game with objectives
+            if (isScanTargetMenuUseful(clientGui)) {
+                boolean anyWanted = false;
+                boolean anyNotWanted = false;
+                for (Entity entity : entities) {
+                    if (entity.isDesignatedScanTarget()) {
+                        anyWanted = true;
+                    } else {
+                        anyNotWanted = true;
+                    }
+                }
+                menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.wanted"),
+                      LMP_SCAN_TARGET + "|" + LMP_SCAN_WANTED + eIds, anyNotWanted, listener));
+                menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.notWanted"),
+                      LMP_SCAN_TARGET + "|" + LMP_SCAN_NOT_WANTED + eIds, anyWanted, listener));
                 menu.add(ScalingPopup.spacer());
             }
 

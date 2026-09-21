@@ -42,10 +42,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import megamek.common.board.Coords;
-import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
+import megamek.common.jacksonAdapters.ObjectiveDeserializer.ObjectiveInfo;
 import org.junit.jupiter.api.Test;
 
 class ObjectiveDeserializerTest {
@@ -230,6 +230,47 @@ class ObjectiveDeserializerTest {
         assertEquals(SchemePreset.CAPTURE, scheme.getPreset());
         assertEquals(4, scheme.getThreshold());
         assertEquals(2, scheme.getRatePerTurn());
+    }
+
+    @Test
+    void testScanSchemePaysOnExitUnlessTheMissionSaysOtherwise() throws Exception {
+        ObjectiveInfo carried = ObjectiveDeserializer.parse(parseYaml("""
+              name: Research Station
+              at: [ 4, 4 ]
+              scheme: scan
+              """));
+        assertEquals(SchemePreset.SCAN, carried.marker().getScoringScheme().getPreset());
+        assertEquals(ObjectiveScoringScheme.ScanPayout.ON_EXIT, carried.marker().getScoringScheme().getScanPayout(),
+              "the reading must reach home by default");
+
+        ObjectiveInfo untilLost = ObjectiveDeserializer.parse(parseYaml("""
+              name: Research Station
+              at: [ 4, 4 ]
+              scheme: scan
+              payout: scanUntilLost
+              """));
+        assertEquals(ObjectiveScoringScheme.ScanPayout.ON_SCAN_UNTIL_LOST,
+              untilLost.marker().getScoringScheme().getScanPayout());
+
+        ObjectiveInfo immediate = ObjectiveDeserializer.parse(parseYaml("""
+              name: Research Station
+              at: [ 4, 4 ]
+              scheme: scan
+              payout: scan
+              """));
+        assertEquals(ObjectiveScoringScheme.ScanPayout.ON_SCAN, immediate.marker().getScoringScheme().getScanPayout());
+    }
+
+    @Test
+    void testAScanPointCanCarryTheNoteTheScanReveals() throws Exception {
+        ObjectiveInfo info = ObjectiveDeserializer.parse(parseYaml("""
+              name: Research Station
+              at: [ 4, 4 ]
+              scheme: scan
+              reveals: The station is a front for a Word of Blake listening post.
+              """));
+        assertEquals("The station is a front for a Word of Blake listening post.",
+              info.marker().getScanRevealsNote());
     }
 
     @Test

@@ -27,6 +27,18 @@ class UnitLandingSupportsTest {
     }
 
     @Test
+    void flatIconsRestOnTheVisibleWaterOrIceWithoutCreatingLandingSupport() {
+        Vector3 point = BoardGeometry.center(center, 0);
+        var water = scene(1, 2, false);
+        var ice = scene(1, 2, true);
+        var cache = new BoardSurface.Cache();
+        assertEquals(BoardGeometry.waterZ(water.tile(center)), UnitLandingSupports.surface(water, point.x, point.y, cache));
+        assertTrue(Float.isNaN(UnitLandingSupports.ground(water, point.x, point.y, cache)));
+        assertEquals(BoardGeometry.LEVEL, UnitLandingSupports.surface(ice, point.x, point.y, cache));
+        assertTrue(Float.isNaN(UnitLandingSupports.surface(ice, -1000, 1000, cache)));
+    }
+
+    @Test
     void padsFollowTheExistingRoadRampInsteadOfTheFlatHexLevelOrAFeatureRoof() {
         var neighbor = center.translated(2);
         var tiles = new ArrayList<BoardScene.Tile>();

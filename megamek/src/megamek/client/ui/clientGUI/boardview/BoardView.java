@@ -4835,9 +4835,9 @@ public final class BoardView extends AbstractBoardView
     /** Flat terrain and decals; solid feature models are captured separately from the Hex. */
     public record PlanarHex(Coords coords, BufferedImage terrain, BufferedImage normals, BufferedImage decals,
           BufferedImage decalsWithoutLimbs, BufferedImage tactical, List<HexText> text,
-          Map<Integer, String> structureModels) { }
+          Map<Integer, String> structureModels, BufferedImage foliage) { }
 
-    private record DecalArtwork(BufferedImage full, BufferedImage withoutLimbs) { }
+    private record DecalArtwork(BufferedImage full, BufferedImage withoutLimbs, BufferedImage foliage) { }
 
     /** Use scrolling text on GPU range contours instead of flat, camera-facing range markers. */
     public static final boolean GPU_SCROLLING_RANGE_LABELS = false;
@@ -4958,7 +4958,7 @@ public final class BoardView extends AbstractBoardView
                 marking = copy;
             }
             result.add(new PlanarHex(hex.coords(), hex.terrain(), hex.normals(), hex.decals(), hex.decalsWithoutLimbs(),
-                  marking, hex.text(), hex.structureModels()));
+                  marking, hex.text(), hex.structureModels(), hex.foliage()));
         });
         result.sort(Comparator.comparingInt((PlanarHex hex) -> hex.coords().getX())
               .thenComparingInt(hex -> hex.coords().getY()));
@@ -5068,7 +5068,7 @@ public final class BoardView extends AbstractBoardView
                                   ground == null ? null : ground.normal(),
                                   decals == null ? null : decals.full(), decals == null ? null : decals.withoutLimbs(),
                                   null, hexText(coords, hex, getBoard()),
-                                  includeArtwork ? structureModels(hex) : Map.of());
+                                  includeArtwork ? structureModels(hex) : Map.of(), decals == null ? null : decals.foliage());
                             if (includeTactical) {
                                 artwork.put(coords, art);
                             } else {
@@ -5220,7 +5220,7 @@ public final class BoardView extends AbstractBoardView
                 int top = point.y - pixels.y;
                 PlanarHex art = artwork.get(coords);
                 consumer.accept(new PlanarHex(coords, art.terrain(), art.normals(), art.decals(),
-                      art.decalsWithoutLimbs(), markingImage(tactical, left, top), art.text(), art.structureModels()));
+                      art.decalsWithoutLimbs(), markingImage(tactical, left, top), art.text(), art.structureModels(), art.foliage()));
             }
         }
     }
@@ -5328,6 +5328,15 @@ public final class BoardView extends AbstractBoardView
     private DecalArtwork captureDecals(Coords coords) {
         return featureArtwork.computeIfAbsent(coords, key -> {
             Hex flat = game.getBoard(boardId).getHex(key).duplicate();
+            BufferedImage foliage = null;
+            if (flat.containsAnyTerrainOf(Terrains.WOODS, Terrains.JUNGLE)) {
+                Hex trees = flat.duplicate();
+                trees.removeAllTerrains();
+                for (int type : new int[] { Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV, Terrains.FLUFF }) {
+                    if (flat.containsTerrain(type)) { trees.addTerrain(flat.getTerrain(type)); }
+                }
+                foliage = drawDecals(trees);
+            }
             for (int terrain : GROUND_TERRAINS) {
                 flat.removeTerrain(terrain);
             }
@@ -5342,7 +5351,7 @@ public final class BoardView extends AbstractBoardView
                 withoutLimbs = drawDecals(flat);
             }
             // The GPU chooses the filtered image only after successfully loading the replacement mesh.
-            return new DecalArtwork(full, withoutLimbs);
+            return new DecalArtwork(full, withoutLimbs, foliage);
         });
     }
 

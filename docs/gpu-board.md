@@ -382,17 +382,22 @@ Cockpit glazing keeps its original appearance until destroyed. The shader recogn
 fixed `PALETTE['glass']` vertex color before tinting, so glass can remain in the existing detail meshes
 without additional draw calls. Only the destroyed overlay ignores that mask.
 
-At the bottom of the tuning panel, an unchecked **Override visible unit damage** checkbox enables a
-**Display damage** slider from 0 to 1. Non-Meks use the existing whole-body thresholds. Meks apply the
-value to every location: 0–0.5 removes armor, then 0.5–1 removes structure with armor fully stripped.
+Under **Tuning > General > Unit damage**, **Override visible unit damage** enables a
+**Display damage** slider from 0 to 1 and a **Damage location** selector (default **All locations**).
+The preview applies across the board: segmented models use the chosen location, while models without
+locations always use the whole body. Locations absent from a particular model are skipped, and other
+locations retain their actual damage. Meks use 0–0.5 for armor, then 0.5–1 for structure with armor fully
+stripped; other bodies retain their linear thresholds. Infantry and battle armor show a proportional
+number of fallen figures, rounded to their representative formation size, using the existing death pose.
+Lowering or disabling the preview restores live poses without rebuilding the formation or changing troop counts.
 Destroyed or detached locations keep their priority. Disabling the preview restores actual damage;
 the game state never changes. **VSync**, beside **Normal maps**, takes effect immediately and defaults
 to enabled. The window's separate 60 FPS cap still applies. **Defaults** restores both controls.
 
 **Planetary conditions...**, beside **Atmosphere presets**, opens the existing planetary conditions
-editor initialized from the game's conditions. Accepting it applies the shared scenario-to-weather
-mapping to all lighting and weather controls; Cancel leaves the current preview alone. The editor
-changes only this GPU preview, and **Defaults** still restores the scenario's original appearance.
+editor initialized from the active visual conditions. Apply always reapplies the shared scenario-to-weather
+mapping and resets extra atmospheric controls, even for unchanged conditions; Cancel leaves the preview alone.
+This affects visual weather and jump gravity only. **Defaults** restores the game's current conditions.
 
 Annotations use the existing entity painter, rasterized at higher resolution
 and drawn in screen space. They follow the animated unit, spread around nearby
@@ -586,9 +591,32 @@ board click. Menus retain scrolling and viewport clamping; disabled explanations
 appear in tooltips instead of expanding every unavailable row. Keyboard navigation skips disabled actions.
 Camera rotation, fitting, and menu interaction do not issue game orders.
 
-The Tuning panel shares the dropdown menus' flat styling and compact controls.
-One narrow, scrollable column keeps the board visible while adjusting geometry,
-visibility, field of view, atmosphere, and weather. Longer help text is available in tooltips.
+The Tuning panel has two tabs. **General** contains geometry, family sizes, overview icons, visibility, field of view,
+sensor range and damage preview. **Atmosphere** contains planetary presets, lighting, planetary properties,
+weather and light/fog effects. Each tab retains its scroll position; the shared **Defaults** button resets
+both. Longer help text is available in tooltips.
+
+**Unit family sizes** exposes the existing `UnitFamilyScale` multipliers, all neutral at **1.0**.
+Infantry, battle armor, vehicles, aircraft, naval, ProtoMeks, static and other models each have their own
+uniform size control. Meks have an overall multiplier plus light (including ultralight), medium, heavy,
+assault and superheavy multipliers. These multiply the general Unit scale and preserve authored proportions;
+placement, picking and attachments share the resulting transform. **Fixed sun/moon** is available in both
+**Camera** and **Tuning > Atmosphere**, backed by the same setting.
+
+**Camera > Distant top-view icons** is opt-in. Within 30 degrees of overhead (the same rule as flat
+markers), zooming out switches units to their classic 2D sprites and woods/jungle to the tileset's
+matching terrain artwork. Both lie in the board plane. Forest sprites retain the full rectangular
+image and its transparent edges, including canopy pixels extending outside the hex. Zooming in or
+tilting past 30 degrees restores the models. **Tuning > General > Overview icons** shares the checkbox
+and adjusts the switch threshold: 56 window pixels per hex by default, with a 15% margin when zooming
+back in to prevent flicker. `GpuUnitIcons` owns these defaults.
+
+Icons follow the existing animated positions and facing; airborne units project onto the visible
+ground, water or ice. Labels and picking follow the icons. Hidden units and trees leave the model,
+depth and shadow draws, while the original animation timeline continues. The icons reuse the existing
+tactical batches and add no fullscreen effect or render target. `GpuOverviewIconsSmokeTest` exercises
+the real Camera toggle, artwork, switching, picking and shadow restoration, and checks that canopy
+pixels outside the hex survive the native render.
 
 Tuning defaults are hex scale 1, unit scale 0.7, unit height scale 0.87, level
 height 18, grid shade 0.8, building opacity 50%, and see-through

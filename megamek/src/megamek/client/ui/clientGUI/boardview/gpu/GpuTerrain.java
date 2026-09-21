@@ -76,6 +76,7 @@ final class GpuTerrain implements Disposable {
     private final BoardRim rims = new BoardRim();
     private final GpuTextures<Coords> decals = new GpuTextures<>();
     private final GpuTextures<Coords> tactical = new GpuTextures<>();
+    private final GpuTextures<Coords> foliage = new GpuTextures<>(true);
     private final ModelBatch batch = new ModelBatch(new DefaultShaderProvider(
           GpuCloudShadow.vertex(DefaultShader.getDefaultVertexShader()),
           GpuCloudShadow.fragment(DefaultShader.getDefaultFragmentShader(), false)) {
@@ -176,6 +177,7 @@ final class GpuTerrain implements Disposable {
     private float wetness;
     private float detailPixelsPerUnit = Float.NaN;
     private boolean hasCutaways;
+    private boolean flatTrees;
 
     /** Tiny shared, mipmapped field: mask and sky variation; allocated once, never updated per frame. */
     private static Texture rainNoise() {
@@ -286,6 +288,7 @@ final class GpuTerrain implements Disposable {
         final List<ModelInstance> water = new ArrayList<>();
         final List<LiquidSurface> liquidMaterials = new ArrayList<>();
         final List<ModelInstance> tactical = new ArrayList<>();
+        final List<ModelInstance> flatTrees = new ArrayList<>();
         final List<Prop> props = new ArrayList<>();
         final List<Prop> cutaways = new ArrayList<>();
         final List<Array<Renderable>> treeRenderables = List.of(new Array<>(), new Array<>(), new Array<>());
@@ -385,7 +388,7 @@ final class GpuTerrain implements Disposable {
             disposePropMeshes(propRenderables);
             disposePropMeshes(shadowPropRenderables);
             treeRenderables.forEach(Chunk::disposePropMeshes);
-            for (List<ModelInstance> layer : List.of(opaque, scatter, overlays, water, tactical)) {
+            for (List<ModelInstance> layer : List.of(opaque, scatter, overlays, water, tactical, flatTrees)) {
                 layer.forEach(instance -> instance.model.dispose());
             }
         }
@@ -428,6 +431,7 @@ final class GpuTerrain implements Disposable {
         Map<GroundSlot, BoardScene.Pixels> normalPixels = new HashMap<>();
         Map<Coords, BoardScene.Pixels> decalPixels = new HashMap<>();
         Map<Coords, BoardScene.Pixels> tacticalPixels = new HashMap<>();
+        Map<Coords, BoardScene.Pixels> foliagePixels = new HashMap<>();
         float nextFloor = BoardGeometry.floor(scene);
         boolean rebuildAll = changedTuning || tiles == null || tiles.size() != scene.tiles().size() || nextFloor != floor;
         boolean changedFlow = rebuildAll;
@@ -458,6 +462,7 @@ final class GpuTerrain implements Disposable {
             if (tile.tactical() != null) {
                 tacticalPixels.put(tile.coords(), tile.tactical());
             }
+            if (tile.foliage() != null) { foliagePixels.put(tile.coords(), tile.foliage()); }
             if (!rebuildAll) {
                 if (changedLimbScale && tile.features().stream().anyMatch(feature -> feature.kind() == BoardScene.FeatureKind.LIMB)) {
                     dirtyChunk(changedChunks, tile.coords());
@@ -500,6 +505,7 @@ final class GpuTerrain implements Disposable {
         rims.retainUsed();
         rebuildAll |= ground.update(terrainPixels, normalPixels);
         rebuildAll |= decals.update(decalPixels);
+        rebuildAll |= foliage.update(foliagePixels);
         boolean markingsChanged = tactical.update(tacticalPixels);
         tiles = scene.tiles();
         tuning = nextTuning;
@@ -543,6 +549,7 @@ final class GpuTerrain implements Disposable {
         Layer scatter = new Layer();
         Material scatterMaterial = new Material(ColorAttribute.createDiffuse(Color.WHITE));
         Layer overlay = new Layer();
+        Layer trees = new Layer();
         Layer liquid = new Layer();
         Map<String, LiquidSurface> animations = new HashMap<>();
         for (int x = startX; x < Math.min(scene.width(), startX + CHUNK_SIZE); x++) {
@@ -575,6 +582,15 @@ final class GpuTerrain implements Disposable {
                         TextureRegion art = decals.region(tile.coords());
                         overlay.add(material(art.getTexture(), true), mesh -> surface(mesh, tile.coords(), face, art, 0.08f));
                     }
+                }
+                if (tile.foliage() != null) {
+                    TextureRegion art = foliage.region(tile.coords());
+                    trees.add(material(art.getTexture(), true), mesh -> foliage(mesh, tile, art));
+                    float height = BoardGeometry.surfaceZ(tile) + .16f * BoardGeometry.HEX_SCALE;
+                    chunk.bounds.ext(BoardGeometry.centerX(tile.coords()) - BoardGeometry.WIDTH / 2,
+                          BoardGeometry.centerY(tile.coords()) - BoardGeometry.HEIGHT / 2, height);
+                    chunk.bounds.ext(BoardGeometry.centerX(tile.coords()) + BoardGeometry.WIDTH / 2,
+                          BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2, height);
                 }
                 if (!tile.liquid().present() && tile.roadExits() == 0 && surface.ramps == 0 && BoardGeometry.tuning().gridShade() < 1) {
                     solid.add(groundMaterial(top.getTexture(), tile),
@@ -691,6 +707,7 @@ final class GpuTerrain implements Disposable {
         solid.finish(chunk.opaque);
         scatter.finish(chunk.scatter);
         overlay.finish(chunk.overlays);
+        trees.finish(chunk.flatTrees);
         liquid.finish(chunk.water);
         // The floating markings remain visible when only their raised edge enters the viewport.
         chunk.bounds.ext(chunk.bounds.max.x, chunk.bounds.max.y, chunk.bounds.max.z + BoardGeometry.LEVEL / 3);
@@ -822,6 +839,17 @@ final class GpuTerrain implements Disposable {
         float v = 0.5f - (point.y - BoardGeometry.centerY(coords)) / BoardGeometry.HEIGHT;
         return vertex(point, Vector3.Z, region.getU() + u * (region.getU2() - region.getU()),
               region.getV() + v * (region.getV2() - region.getV()), Color.WHITE);
+    }
+
+    /** Preserve the full transparent sprite: canopies extend beyond the hex's diagonal edges. */
+    private static void foliage(MeshPartBuilder mesh, BoardScene.Tile tile, TextureRegion art) {
+        var center = BoardGeometry.center(tile.coords(), 0);
+        center.z = BoardGeometry.surfaceZ(tile) + .16f * BoardGeometry.HEX_SCALE;
+        float halfWidth = BoardGeometry.WIDTH / 2, halfHeight = BoardGeometry.HEIGHT / 2;
+        mesh.rect(markingVertex(new Vector3(center).add(-halfWidth, -halfHeight, 0), tile.coords(), art),
+              markingVertex(new Vector3(center).add(halfWidth, -halfHeight, 0), tile.coords(), art),
+              markingVertex(new Vector3(center).add(halfWidth, halfHeight, 0), tile.coords(), art),
+              markingVertex(new Vector3(center).add(-halfWidth, halfHeight, 0), tile.coords(), art));
     }
 
     private static void surface(MeshPartBuilder mesh, Coords coords, BoardSurface.Face face,
@@ -1101,6 +1129,7 @@ final class GpuTerrain implements Disposable {
             return null;
         }
         for (Prop prop : chunks.get(index).props) {
+            if (flatTrees && prop.tree()) { continue; }
             if (prop.coords().equals(coords)
                   && (result == null || prop.bounds().max.z > result.max.z)) {
                 result = prop.bounds();
@@ -1135,6 +1164,7 @@ final class GpuTerrain implements Disposable {
                 }
             }
             for (Prop prop : chunk.props) {
+                if (flatTrees && prop.tree()) { continue; }
                 if (!Intersector.intersectRayBoundsFast(ray, prop.bounds())) {
                     continue;
                 }
@@ -1175,6 +1205,14 @@ final class GpuTerrain implements Disposable {
         return result;
     }
 
+    void setFlatTrees(boolean enabled) {
+        if (flatTrees != enabled) {
+            flatTrees = enabled;
+            shadowDirty = true;
+            detailPixelsPerUnit = Float.NaN;
+        }
+    }
+
     /** Opaque world first. Tactical overlays are a separate final pass. */
     void render(Camera camera, boolean drawTactical) {
         if (!drawTactical) {
@@ -1186,6 +1224,7 @@ final class GpuTerrain implements Disposable {
                 continue;
             }
             if (drawTactical) {
+                if (flatTrees) { chunk.flatTrees.forEach(instance -> batch.render(instance)); }
                 chunk.tactical.forEach(instance -> batch.render(instance));
             } else {
                 chunk.opaque.forEach(instance -> batch.render(instance, environment));
@@ -1193,7 +1232,7 @@ final class GpuTerrain implements Disposable {
                     chunk.scatter.forEach(instance -> batch.render(instance, environment));
                 }
                 batch.render(chunk.solidProps, environment);
-                batch.render(chunk.trees, environment);
+                if (!flatTrees) { batch.render(chunk.trees, environment); }
             }
         }
         batch.end();
@@ -1300,7 +1339,7 @@ final class GpuTerrain implements Disposable {
                     chunk.scatter.forEach(pass::render);
                 }
                 pass.render(shadows ? chunk.shadowProps : chunk.solidProps);
-                pass.render(chunk.trees);
+                if (!flatTrees) { pass.render(chunk.trees); }
             }
         }
         for (ModelInstance unit : units) {
@@ -1316,7 +1355,7 @@ final class GpuTerrain implements Disposable {
     void renderShadows(OrthographicCamera view, List<ModelInstance> units) {
         if (view != null) {
             updateDetail(view);
-        } else {
+        } else if (!flatTrees) {
             chunks.forEach(chunk -> chunk.cacheTrees(assets));
         }
         if (shadow == null || environment.shadowMap == null) {
@@ -1384,6 +1423,7 @@ final class GpuTerrain implements Disposable {
                 shadowDirty = true;
             }
             // Largest tree wins: smaller neighbors may retain extra detail, never lose it early.
+            if (flatTrees) { continue; }
             int next = TreeLod.level(chunk.treeDiameter * pixelsPerUnit, chunk.treeLod);
             if (next != chunk.treeLod) {
                 chunk.treeLod = next;
@@ -1475,6 +1515,7 @@ final class GpuTerrain implements Disposable {
         rims.clear();
         decals.dispose();
         tactical.dispose();
+        foliage.dispose();
         batch.dispose();
         depthBatch.dispose();
         if (shadow != null) {

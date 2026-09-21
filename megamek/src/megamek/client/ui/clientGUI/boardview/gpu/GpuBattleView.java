@@ -99,6 +99,7 @@ class GpuBattleView extends ApplicationAdapter {
     private final UnitDamageDisplay damageDisplay = new UnitDamageDisplay();
     private final GpuJumpJets jumpJets = new GpuJumpJets();
     private final GpuUnitCamouflage camouflage = new GpuUnitCamouflage();
+    private final GpuUnitIcons unitIcons = new GpuUnitIcons();
     private final Map<BoardScene.Unit, Vector3> unitAnchors = new HashMap<>();
     private final Map<BoardScene.Unit, UnitFootprint.Pose> unitFootprints = new HashMap<>();
     private final Matrix4 selectionTransform = new Matrix4();
@@ -381,12 +382,16 @@ class GpuBattleView extends ApplicationAdapter {
         for (var attack : playback.attacks()) { attack.landscape = ray -> terrain.hit(scene, ray); }
         aimAttack();
         updateEquipmentDetail();
-        markers.update(unitInstances.values(), boardCamera.camera);
+        if (unitIcons.update(ui.overviewIcons(), ui.overviewHexPixels(), boardCamera.camera,
+              scene, unitFootprints, unitAnchors, groundSurfaces)) { unitPicking.clear(); }
+        terrain.setFlatTrees(unitIcons.active());
+        markers.update(unitIcons.active() ? unitIcons.instances() : unitInstances.values(), boardCamera.camera);
         updateJumpJets();
         attackEffects.update(playback.attacks(), unitModels, unitInstances);
         unitBounds.begin();
-        List<ModelInstance> units = new ArrayList<>(unitInstances.values());
+        List<ModelInstance> units = new ArrayList<>(unitIcons.active() ? unitIcons.instances() : unitInstances.values());
         List<ModelInstance> outlined = scene.units().stream()
+              .filter(unit -> !unitIcons.active())
               .filter(unit -> !unit.sensorContact() || GpuMarkers.outlineEnabled(BoardMarker.Kind.SENSOR_CONTACT))
               .map(unit -> unitInstances.get(unit.id() + ":" + unit.part()))
               .collect(Collectors.toCollection(ArrayList::new));
@@ -398,7 +403,7 @@ class GpuBattleView extends ApplicationAdapter {
         terrain.setAtmosphere(atmosphere.lighting());
         terrain.animate(Gdx.graphics.getDeltaTime(), units, ui.buildingOpacity());
         renderStage("geometry shadows");
-        terrain.renderShadows(boardCamera.camera, units);
+        terrain.renderShadows(boardCamera.camera, unitIcons.active() ? List.of() : units);
         renderStage("cloud transmission");
         atmosphere.prepareClouds(terrain, scene, Gdx.graphics.getDeltaTime());
         renderStage("opaque terrain");
@@ -409,9 +414,9 @@ class GpuBattleView extends ApplicationAdapter {
         renderStage("units");
         renderUnits();
         renderStage("transparent effects");
-        renderTethers();
+        if (!unitIcons.active()) { renderTethers(); }
         terrain.renderTransparent(boardCamera.camera);
-        jumpJets.render(boardCamera.camera);
+        if (!unitIcons.active()) { jumpJets.render(boardCamera.camera); }
         attackEffects.render(boardCamera.camera);
         renderStage("atmosphere composite");
         atmosphere.end(boardCamera.camera, terrain, scene, ui.bottomPixels(), fieldOfView);
@@ -422,7 +427,7 @@ class GpuBattleView extends ApplicationAdapter {
         renderStage("tactical overlays");
         terrain.render(boardCamera.camera, true);
         fireControl.render(boardCamera.camera, Gdx.graphics.getDeltaTime());
-        tactical.render(boardCamera.camera, Gdx.graphics.getDeltaTime());
+        tactical.render(boardCamera.camera, Gdx.graphics.getDeltaTime(), unitIcons.active() ? unitIcons.instances() : List.of());
         renderHexText();
         fireControl.renderLabels(boardCamera.camera);
         renderSelectionOutlines();
@@ -535,8 +540,9 @@ class GpuBattleView extends ApplicationAdapter {
             BoardScene.LocationDamage shownDamage = unitDamage.getOrDefault(key, BoardScene.LocationDamage.NONE);
             boolean mek = authored && (unit.model().state() == null ? visual.turnsUpperBody()
                   : unit.model().state().structure().anatomy() != null);
-            BoardScene.LocationDamage damage = authored
-                  ? UnitDamageDisplay.preview(unit.model().damage(), mek, ui.damageOverride()) : BoardScene.LocationDamage.NONE;
+            BoardScene.LocationDamage damage = authored ? visual.infantry() ? unit.model().damage()
+                  : UnitDamageDisplay.preview(unit.model().damage(), mek, ui.damageOverride(), visual.damageLocation(ui.damageLocation()))
+                  : BoardScene.LocationDamage.NONE;
             UnitModelState.Appearance appearance = authored && unit.model().state() != null
                   ? unit.model().state().appearance() : null;
             if (authored && (!damage.equals(shownDamage)
@@ -589,6 +595,7 @@ class GpuBattleView extends ApplicationAdapter {
                       playbackSpeed == UnitMotion.Speed.INSTANT, turn == null ? 0 : turn.degrees());
                 animators.get(key).attacks(visual, unit, playback.attacks());
                 animators.get(key).conversion(playback.conversion(), unit);
+                if (visual.infantry()) { animators.get(key).previewCasualties(ui.damageOverride()); }
             }
             // After the animator, never before it: the animator resets every joint to its rest pose
             // each frame and then poses leftArm and rightArm itself, which are the same nodes a flip
@@ -906,13 +913,15 @@ class GpuBattleView extends ApplicationAdapter {
 
     private void renderUnits() {
         unitBatch.begin(boardCamera.camera);
-        for (BoardScene.Unit unit : unitAnchors.keySet()) {
-            ModelInstance instance = unitInstances.get(unit.id() + ":" + unit.part());
-            if (boardCamera.camera.frustum.boundsInFrustum(unitBounds.get(instance))) {
-                if (unit.sensorContact()) {
-                    unitBatch.render(instance);
-                } else {
-                    unitBatch.render(instance, terrain.environment());
+        if (!unitIcons.active()) {
+            for (BoardScene.Unit unit : unitAnchors.keySet()) {
+                ModelInstance instance = unitInstances.get(unit.id() + ":" + unit.part());
+                if (boardCamera.camera.frustum.boundsInFrustum(unitBounds.get(instance))) {
+                    if (unit.sensorContact()) {
+                        unitBatch.render(instance);
+                    } else {
+                        unitBatch.render(instance, terrain.environment());
+                    }
                 }
             }
         }
@@ -1135,7 +1144,8 @@ class GpuBattleView extends ApplicationAdapter {
 
     private void unitBand(BoardScene.Unit unit, float width, float lift, boolean dashed) {
         UnitFootprint.Pose pose = unitFootprints.get(unit);
-        lines.setTransformMatrix(selectionTransform.setToTranslation(0, 0, pose.position().z + .5f + lift));
+        float base = unitIcons.active() ? unitIcons.instance(unit).transform.getTranslation(new Vector3()).z : pose.position().z;
+        lines.setTransformMatrix(selectionTransform.setToTranslation(0, 0, base + .5f + lift));
         for (Coords occupied : pose.unit().footprint()) {
             hexBand(pose, occupied, width, dashed);
         }
@@ -1214,11 +1224,13 @@ class GpuBattleView extends ApplicationAdapter {
             var ground = terrain.hit(scene, ray);
             float nearest = ground == null ? Float.POSITIVE_INFINITY : ground.distance();
             Coords coords = ground == null ? null : ground.coords();
+            float nearestUnit = unitIcons.active() ? Float.POSITIVE_INFINITY : nearest;
             for (BoardScene.Unit unit : scene.units()) {
-                var instance = unitInstances.get(unit.id() + ":" + unit.part());
+                var instance = unitIcons.active() ? unitIcons.instance(unit) : unitInstances.get(unit.id() + ":" + unit.part());
                 if (instance != null) {
                     float distance = unitPicking.distance(instance, ray);
-                    if (distance < nearest) {
+                    if (distance < nearestUnit) {
+                        nearestUnit = distance;
                         nearest = distance;
                         coords = unit.location().coords();
                     }
@@ -1631,6 +1643,7 @@ class GpuBattleView extends ApplicationAdapter {
         camouflage.dispose();
         damageDisplay.dispose();
         jumpJets.dispose();
+        unitIcons.dispose();
         attackEffects.dispose();
         if (unitBatch != null) {
             unitBatch.dispose();

@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +39,12 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import megamek.common.board.Coords;
 import megamek.common.equipment.IArmorState;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Mek;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -159,6 +162,13 @@ class GpuDamageTuningSmokeTest {
                     tank.setPosition(new Coords(6, 5));
                     tank.setDeployed(true);
                     fixture.game.addEntity(tank, false);
+                    var infantry = new ConvInfantry();
+                    infantry.setId(3);
+                    infantry.setOwner(fixture.player);
+                    infantry.setPosition(new Coords(4, 5));
+                    infantry.setDeployed(true);
+                    infantry.initializeInternal(28, ConvInfantry.LOC_INFANTRY);
+                    fixture.game.addEntity(infantry, false);
                     fixture.source.refresh();
                 } catch (Exception error) { throw new IllegalStateException(error); }
             });
@@ -187,6 +197,9 @@ class GpuDamageTuningSmokeTest {
         assertFalse(vsync.isChecked());
         CheckBox override = GpuBoardTestUi.stage().getRoot().findActor("tuning-override-damage");
         Slider slider = GpuBoardTestUi.stage().getRoot().findActor("Display damage");
+        SelectBox<UnitDamageDisplay.Location> location = GpuBoardTestUi.stage().getRoot().findActor("tuning-damage-location");
+        assertTrue(location.isDisabled());
+        assertEquals(UnitDamageDisplay.Location.ALL, location.getSelected());
         var actual = displayedDamage(view, 1);
         assertFalse(override.isChecked());
         assertTrue(slider.isDisabled());
@@ -196,6 +209,8 @@ class GpuDamageTuningSmokeTest {
         GpuBoardTestUi.click("tuning-override-damage");
         assertTrue(override.isChecked());
         assertFalse(slider.isDisabled());
+        assertFalse(location.isDisabled());
+        ModelInstance infantryInstance = instance(view, 3);
         float[] levels = { .25f, .50f, .75f, 1, .50f, 0 };
         UnitDamageDisplay.Stage[] mekStages = { UnitDamageDisplay.Stage.ARMOR_WORN,
               UnitDamageDisplay.Stage.ARMOR_STRIPPED, UnitDamageDisplay.Stage.STRUCTURE_BATTERED,
@@ -207,6 +222,8 @@ class GpuDamageTuningSmokeTest {
             view.render();
             assertMaterials(view, 1, mekStages[index]);
             assertMaterials(view, 2, bodyStages[index]);
+            assertInfantry(view, levels[index]);
+            assertSame(infantryInstance, instance(view, 3), "Casualty preview reuses the existing formation");
             assertTrue(UnitDamageDisplay.locationParts(instance(view, 1), "LA").stream().noneMatch(part -> part.enabled));
             assertTrue(UnitDamageDisplay.locationParts(instance(view, 1), "RL").stream()
                   .allMatch(part -> part.material.id.endsWith(UnitDamageDisplay.WRECKED_SUFFIX)));
@@ -233,11 +250,41 @@ class GpuDamageTuningSmokeTest {
                 GpuBoardTestUi.capture(new File(output, "damage-tuning-panel.png"));
             }
         }
+        location.setSelected(UnitDamageDisplay.Location.RIGHT_ARM);
+        slider.setValue(.75f);
+        view.render();
+        var targetedStages = new HashMap<>(actual.stages());
+        targetedStages.put("RA", UnitDamageDisplay.Stage.STRUCTURE_BATTERED);
+        assertEquals(targetedStages, displayedDamage(view, 1).stages());
+        assertNull(UnitDamageDisplay.locationParts(instance(view, 1), "CT").getFirst().material
+              .get(UnitDamageDisplay.Overlay.class, UnitDamageDisplay.Overlay.TYPE));
+        assertMaterials(view, 2, UnitDamageDisplay.Stage.BODY_75);
+        assertInfantry(view, .75f);
+        slider.setValue(1);
+        view.render();
+        assertEquals(Set.of("RL", "RA"), displayedDamage(view, 1).wrecked());
+        assertFalse(UnitDamageDisplay.locationParts(instance(view, 1), "CT").getFirst().material.id.endsWith(UnitDamageDisplay.WRECKED_SUFFIX));
+        location.setSelected(UnitDamageDisplay.Location.CENTER_LEG);
+        view.render();
+        assertEquals(actual, displayedDamage(view, 1), "A biped has no center leg; its other locations stay unchanged");
+        location.setSelected(UnitDamageDisplay.Location.RIGHT_ARM);
+        slider.setValue(.5f);
+        view.render();
+        captureInfantry(view);
+        view.render();
+        GpuBoardTestUi.click("tuning-damage-location");
+        assertTrue(location.getScrollPane().hasParent());
+        GpuBoardTestUi.stage().act(.3f);
+        GpuBoardTestUi.stage().draw();
+        GpuBoardTestUi.capture(new File(System.getProperty("megamek.gpu.screenshots"), "damage-location-choices.png"));
+        location.hideList();
+        GpuBoardTestUi.stage().act(.3f);
         GpuBoardTestUi.click("tuning-override-damage");
         view.render();
         assertTrue(slider.isDisabled());
         assertEquals(actual, displayedDamage(view, 1), "Disabling the preview restores actual damage");
         assertTrue(displayedDamage(view, 2).isNone());
+        assertInfantry(view, 0);
 
         GpuBoardTestUi.click("tuning-override-damage");
         slider.setValue(1);
@@ -246,10 +293,13 @@ class GpuDamageTuningSmokeTest {
         view.render();
         assertTrue(vsync.isChecked(), "Defaults re-enables VSync");
         assertFalse(override.isChecked());
+        assertTrue(location.isDisabled());
+        assertEquals(UnitDamageDisplay.Location.ALL, location.getSelected());
         assertTrue(slider.isDisabled());
         assertEquals(0, slider.getValue());
         assertEquals(actual, displayedDamage(view, 1), "Defaults restores actual damage after the destroyed preview");
         SwingUtilities.invokeAndWait(() -> assertEquals(actual, UnitModelSelection.damage(fixture.entity)));
+        SwingUtilities.invokeAndWait(() -> assertEquals(28, ((ConvInfantry) fixture.game.getEntity(3)).getActiveTroopers()));
         assertEquals(0, fixture.clicks.get(), "Tuning does not issue game commands");
         capturePatterns(view);
         assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
@@ -272,6 +322,30 @@ class GpuDamageTuningSmokeTest {
                 GpuModularUnitModelsSmokeTest.renderReview(batch, List.of(first, second),
                       "damage-pattern-" + Math.round(loss * 100), 170, 28);
             }
+        } finally { batch.dispose(); }
+    }
+
+    private static void assertInfantry(GpuBattleView view, float loss) throws Exception {
+        ModelInstance infantry = instance(view, 3);
+        int figures = 0, fallen = 0;
+        for (var container : infantry.nodes) {
+            if (!container.id.startsWith("trooper-")) { continue; }
+            figures++;
+            var root = container.getChild(0);
+            var up = new Vector3(Vector3.Z).rot(root.localTransform);
+            if (Math.abs(up.z) < .1f) { fallen++; }
+        }
+        assertEquals(6, figures, "The full platoon uses six representative figures");
+        assertEquals(Math.round(figures * loss), fallen, "Damage previews proportional casualties");
+        assertTrue(displayedDamage(view, 3).isNone(), "Troop casualties never use burnt armor overlays");
+    }
+
+    private static void captureInfantry(GpuBattleView view) throws Exception {
+        var preview = new ModelInstance(instance(view, 3));
+        preview.transform.setTranslation(0, 0, 0);
+        var batch = new ModelBatch(GpuUnitShader.provider());
+        try {
+            GpuModularUnitModelsSmokeTest.renderReview(batch, List.of(preview), "infantry-half-casualties", 90, 8);
         } finally { batch.dispose(); }
     }
 

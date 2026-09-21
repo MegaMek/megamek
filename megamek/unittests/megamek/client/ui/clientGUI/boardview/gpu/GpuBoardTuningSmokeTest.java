@@ -70,6 +70,27 @@ class GpuBoardTuningSmokeTest {
             dock.show(tuning.panel());
             stage.act(0);
             stage.draw();
+            assertTrue(tuning.panel().findActor("tuning-general-scroll").isVisible());
+            assertFalse(tuning.panel().findActor("tuning-scroll").isVisible());
+            for (var family : UnitFamilyScale.values()) {
+                Slider slider = tuning.panel().findActor("tuning-size-" + family.name());
+                assertEquals(1, slider.getValue(), "Family sizes start neutral");
+                slider.setValue(1.5f);
+                assertEquals(1.5f, family.UNIT_SCALE);
+                assertEquals(family.heightScale(), family.HEIGHT_SCALE, "Uniform size does not change height proportions");
+            }
+            capture(stage, "tuning-general.png");
+            GpuBoardTestUi.click("tuning-defaults");
+            for (var family : UnitFamilyScale.values()) { assertEquals(1, family.UNIT_SCALE); }
+            ScrollPane generalScroll = tuning.panel().findActor("tuning-general-scroll");
+            generalScroll.setScrollPercentY(0.6f);
+            generalScroll.updateVisualScroll();
+            float generalPosition = generalScroll.getScrollY();
+            GpuBoardTestUi.click("tuning-tab-atmosphere");
+            assertFalse(generalScroll.isVisible());
+            assertTrue(tuning.panel().findActor("tuning-scroll").isVisible());
+            GpuBoardTestUi.click("tuning-tab-general");
+            assertEquals(generalPosition, generalScroll.getScrollY(), "Each tab preserves its scroll position");
             var defaultEffects = tuning.atmosphereOptions();
             assertNull(tuning.panel().findActor("Speed gain / hex"));
             set(tuning, "God rays", 0.8f);
@@ -151,6 +172,9 @@ class GpuBoardTuningSmokeTest {
                 GpuBoardTestUi.assertHorizontalBounds(tuning.panel(), tuning.panel());
                 assertTrue(tuning.panel().getTop() <= size[1] - 30);
                 assertTrue(tuning.panel().getY() >= 45);
+                GpuBoardTestUi.click("tuning-tab-general");
+                GpuBoardTestUi.assertHorizontalBounds(tuning.panel(), tuning.panel());
+                GpuBoardTestUi.click("tuning-tab-atmosphere");
             }
             GpuBoardTestUi.click("atmosphere-DAWN");
             capture(stage, "tuning-presets-small.png");

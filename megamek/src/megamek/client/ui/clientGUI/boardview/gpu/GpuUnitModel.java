@@ -39,6 +39,7 @@ final class GpuUnitModel implements Disposable {
     private final float levelsPerModelUnit;
     private final Vector3 restDimensions;
     private final UnitFamilyScale familyScale;
+    private final boolean damageLocations;
 
     GpuUnitModel(Model model) {
         this(model, null);
@@ -81,6 +82,8 @@ final class GpuUnitModel implements Disposable {
         this.upperBodyNode = ((upperBodyNode != null) && (model.getNode(upperBodyNode) != null))
               ? upperBodyNode : null;
         this.model = model;
+        damageLocations = java.util.Arrays.stream(UnitDamageDisplay.Location.values())
+              .anyMatch(location -> location != UnitDamageDisplay.Location.ALL && model.getNode(location.node) != null);
         instance = new ModelInstance(model);
         bounds = instance.calculateBoundingBox(new BoundingBox());
         if (!bounds.isValid()) {
@@ -118,6 +121,15 @@ final class GpuUnitModel implements Disposable {
 
     List<UnitRig> rigs() {
         return rigs;
+    }
+
+    boolean infantry() {
+        return familyScale == UnitFamilyScale.INFANTRY || familyScale == UnitFamilyScale.BATTLE_ARMOR;
+    }
+
+    String damageLocation(UnitDamageDisplay.Location selected) {
+        if (!damageLocations || selected == UnitDamageDisplay.Location.ALL) { return "*"; }
+        return model.getNode(selected.node) == null ? null : selected.node;
     }
 
     /** Apply to a fresh instance, alongside location damage, so repairs restore the original shared artwork. */

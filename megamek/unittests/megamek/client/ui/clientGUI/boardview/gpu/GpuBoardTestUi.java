@@ -88,6 +88,11 @@ final class GpuBoardTestUi {
 
     private static void clickActor(Actor actor) {
         assertTrue(actor != null, "Missing UI action");
+        // Switch tuning tabs through pointer input before scrolling a control into view.
+        for (Actor parent = actor.getParent(); parent != null; parent = parent.getParent()) {
+            if (!parent.isVisible() && "tuning-scroll".equals(parent.getName())) { click("tuning-tab-atmosphere"); }
+            if (!parent.isVisible() && "tuning-general-scroll".equals(parent.getName())) { click("tuning-tab-general"); }
+        }
         // Controls can move below the fold as the tuning panel grows. Scroll them into view before real input.
         for (Actor parent = actor.getParent(); parent != null; parent = parent.getParent()) {
             if (parent instanceof ScrollPane scroll) {

@@ -37,8 +37,6 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.BiConsumer;
 
 import com.badlogic.gdx.files.FileHandle;
@@ -62,6 +60,21 @@ import megamek.logging.MMLogger;
  * Presentation only; works on one unit's own instance and never on the shared model.
  */
 final class UnitDamageDisplay implements Disposable {
+    /** Authored location node IDs, shared by the preview selector and location-aware models. */
+    enum Location {
+        ALL("*", "All locations"), HEAD("HD", "Head"), CENTER_TORSO("CT", "Center torso"),
+        LEFT_TORSO("LT", "Left torso"), RIGHT_TORSO("RT", "Right torso"),
+        LEFT_ARM("LA", "Left arm"), RIGHT_ARM("RA", "Right arm"),
+        LEFT_LEG("LL", "Left leg"), RIGHT_LEG("RL", "Right leg"), CENTER_LEG("CL", "Center leg (tripod)"),
+        FRONT_LEFT_LEG("FLL", "Front left leg (quad)"), FRONT_RIGHT_LEG("FRL", "Front right leg (quad)"),
+        REAR_LEFT_LEG("RLL", "Rear left leg (quad)"), REAR_RIGHT_LEG("RRL", "Rear right leg (quad)");
+
+        final String node;
+        private final String label;
+        Location(String node, String label) { this.node = node; this.label = label; }
+        @Override public String toString() { return label; }
+    }
+
     static final float ARMOR_WORN_LOSS = .5f;
     static final float ARMOR_STRIPPED_LOSS = 1f;
     static final float STRUCTURE_BATTERED_LOSS = .5f;
@@ -93,12 +106,23 @@ final class UnitDamageDisplay implements Disposable {
 
     /** Render-thread preview only. Actual destroyed/detached locations retain priority over the slider. */
     static BoardScene.LocationDamage preview(BoardScene.LocationDamage actual, boolean mek, float loss) {
-        if (loss < 0) { return actual; }
+        return preview(actual, mek, loss, "*");
+    }
+
+    static BoardScene.LocationDamage preview(BoardScene.LocationDamage actual, boolean mek, float loss, String location) {
+        if (loss < 0 || location == null) { return actual; }
+        boolean all = "*".equals(location);
+        var stages = new java.util.HashMap<>(actual.stages());
+        if (all) { stages.clear(); }
+        else { stages.remove(location); }
         if (mek && loss >= 1) {
-            return new BoardScene.LocationDamage(actual.removed(), Set.of("*"));
+            var wrecked = new java.util.HashSet<>(actual.wrecked());
+            wrecked.add(location);
+            return new BoardScene.LocationDamage(actual.removed(), wrecked, stages);
         }
         Stage stage = mek ? locationStage(Math.min(1, loss * 2), Math.max(0, loss * 2 - 1)) : bodyStage(loss);
-        return new BoardScene.LocationDamage(actual.removed(), actual.wrecked(), stage == null ? Map.of() : Map.of("*", stage));
+        if (stage != null) { stages.put(location, stage); }
+        return new BoardScene.LocationDamage(actual.removed(), actual.wrecked(), stages);
     }
 
     /** Alpha is a paint mask, never mesh transparency. Instances borrow these view-owned textures. */

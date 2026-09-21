@@ -31,7 +31,9 @@ final class GpuAtmosphere implements Disposable {
     /** Thins the spaces between fog banks; 0 gives a uniform layer, 1 permits clear gaps. */
     static final float FOG_DENSITY_VARIATION = 0.85f;
     /** Gentle intrinsic fog travel in hex widths per second when the scenario wind is calm. */
-    static final float FOG_CALM_DRIFT = 0.06f;
+    static final float FOG_CALM_DRIFT = 0.2f;
+    /** Fog travel at full wind strength, in hex widths per second: the whole layer's speed ceiling. */
+    static final float FOG_WIND_DRIFT = 0.6f;
     static final float MAX_SAND_OPACITY = 0.25f;
 
     /** Local visual controls; weather and pressure still come from the scenario snapshot. */
@@ -136,8 +138,8 @@ final class GpuAtmosphere implements Disposable {
             float angle = 35 + 30 * (float) Math.sin((fogSeconds + elapsed * 0.5) * Math.PI * 2 / 48);
             fogSeconds = (fogSeconds + elapsed) % 48;
             float windBlend = MathUtils.clamp(effects.wind() / 0.2f, 0, 1);
-            float fogX = MathUtils.lerp(MathUtils.sinDeg(angle) * calmDrift, x * effects.wind() * 0.3f, windBlend);
-            float fogY = MathUtils.lerp(MathUtils.cosDeg(angle) * calmDrift, y * effects.wind() * 0.3f, windBlend);
+            float fogX = MathUtils.lerp(MathUtils.sinDeg(angle) * calmDrift, x * effects.wind() * FOG_WIND_DRIFT, windBlend);
+            float fogY = MathUtils.lerp(MathUtils.cosDeg(angle) * calmDrift, y * effects.wind() * FOG_WIND_DRIFT, windBlend);
             move(fog, fogX, fogY, elapsed * 0.5f);
             float travel = elapsed * (0.65f + 1.5f * effects.wind());
             move(sand, x, y, travel * 0.5f);

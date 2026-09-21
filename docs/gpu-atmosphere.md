@@ -1,6 +1,6 @@
 # GPU daylight and atmosphere
 
-Open **Tuning** (F9) in the GPU battle view. Atmosphere controls are grouped into
+Open **Tuning** (F9) and select **Atmosphere** in the GPU battle view. Atmosphere controls are grouped into
 **Atmosphere presets**, **Lighting**, **Planet properties**, **Clouds and ground air**,
 **Weather effects**, and **Light and fog effects**.
 The panel scrolls when the available space is small; Defaults stays visible.
@@ -15,7 +15,7 @@ change. Opening another board captures its starting conditions.
 | Control | Visual effect |
 | --- | --- |
 | Time of day | Starts at a random quarter-hour within the planetary lighting window; the slider overrides it. 00:00 and 24:00 both mean midnight |
-| Fixed sun/moon | Off by default. Keep the source at the same screen direction through camera rotation, tilt, pan and zoom; terrain, units, cloud shadows and rays share that direction |
+| Fixed sun/moon | Off by default. Also available in the Camera menu, synchronized with this checkbox. Keep the source at the same screen direction through camera rotation, tilt, pan and zoom; terrain, units, cloud shadows and rays share that direction |
 | Atmosphere presets | Complete previews of real planetary-condition combinations; replace the visual atmosphere and reset the extra atmosphere controls to their constants |
 | Planetary conditions... | Opens the currently selected visual conditions; Apply always reapplies every derived value and resets the extra atmosphere controls, even for unchanged conditions. Cancel preserves all tuning |
 | Moonlight at night | Enable/disable the directional night source, independently of clock and exposure; daytime sunlight remains available |

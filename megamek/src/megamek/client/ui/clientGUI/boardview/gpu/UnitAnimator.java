@@ -664,25 +664,40 @@ final class UnitAnimator {
     /** Deterministic rigid collapse; restored wrecks use the terminal pose without replaying an event. */
     private void deathPose(float progress) {
         for (Body body : bodies) {
-            Joint root = body.joints.get("root");
-            if (root == null) { continue; }
-            body.reset();
-            if (body.rig.mek() || body.rig.trooper() || "proto-v1".equals(body.rig.type())) {
-                // Outward-looking troops fall forward, preserving space between the formation's bodies.
-                root.rotate(Vector3.X, (body.rig.trooper() ? -90 : "quad-v1".equals(body.rig.type()) ? 65 : 90) * progress);
-                body.rotate("leftArm", Vector3.X, -22 * progress);
-                body.rotate("rightArm", Vector3.X, 18 * progress);
-                body.rotate("head", Vector3.Y, 18 * progress);
-            } else if ("naval-v1".equals(body.rig.type())) {
-                root.rotate(Vector3.Y, 28 * progress);
-                root.node().translation.z -= body.restHeight * .6f * progress;
-            } else if ("static-v1".equals(body.rig.type())) {
-                root.node().scale.z *= 1 - .6f * progress;
-            } else {
-                root.rotate(Vector3.Y, ("aircraft-v1".equals(body.rig.type()) ? 32 : 12) * progress);
-                body.rotate("turret", Vector3.Z, 24 * progress);
-            }
+            deathPose(body, progress);
         }
+    }
+
+    private static void deathPose(Body body, float progress) {
+        Joint root = body.joints.get("root");
+        if (root == null) { return; }
+        body.reset();
+        if (body.rig.mek() || body.rig.trooper() || "proto-v1".equals(body.rig.type())) {
+            // Outward-looking troops fall forward, preserving space between the formation's bodies.
+            root.rotate(Vector3.X, (body.rig.trooper() ? -90 : "quad-v1".equals(body.rig.type()) ? 65 : 90) * progress);
+            body.rotate("leftArm", Vector3.X, -22 * progress);
+            body.rotate("rightArm", Vector3.X, 18 * progress);
+            body.rotate("head", Vector3.Y, 18 * progress);
+        } else if ("naval-v1".equals(body.rig.type())) {
+            root.rotate(Vector3.Y, 28 * progress);
+            root.node().translation.z -= body.restHeight * .6f * progress;
+        } else if ("static-v1".equals(body.rig.type())) {
+            root.node().scale.z *= 1 - .6f * progress;
+        } else {
+            root.rotate(Vector3.Y, ("aircraft-v1".equals(body.rig.type()) ? 32 : 12) * progress);
+            body.rotate("turret", Vector3.Z, 24 * progress);
+        }
+    }
+
+    /** A cosmetic casualty ratio, rounded to representative figures; the next apply restores their live poses. */
+    void previewCasualties(float loss) {
+        if (loss <= 0 || dying) { return; }
+        int casualties = Math.round(bodies.size() * MathUtils.clamp(loss, 0, 1));
+        if (casualties == 0) { return; }
+        for (int index = bodies.size() - casualties; index < bodies.size(); index++) {
+            deathPose(bodies.get(index), 1);
+        }
+        settleContacts();
     }
 
     private record StrikePart(Joint upper, Joint lower, Node tip, Vector3 point) {

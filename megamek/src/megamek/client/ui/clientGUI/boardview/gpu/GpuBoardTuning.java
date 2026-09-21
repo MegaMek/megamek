@@ -2,6 +2,7 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -18,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
@@ -77,11 +79,14 @@ final class GpuBoardTuning {
           new Knob("Wind direction", 0, 360, 15, "%.0f"));
 
     private final Table panel = new Table();
-    private final Table rows = new Table();
-    private final ScrollPane scroll;
+    /** Construction cursor only; each tab owns its own rows and scroll position. */
+    private Table rows = new Table();
     private final CheckBox normalMaps;
     private final CheckBox vsync;
     private final List<Control> geometry;
+    private final List<Control> familySizes;
+    private final CheckBox overviewIcons;
+    private final List<Control> overview;
     private final List<Control> visibility;
     private final ButtonGroup<TextButton> fovModes;
     private final List<Control> fieldOfView;
@@ -98,6 +103,7 @@ final class GpuBoardTuning {
     private final List<Control> effects;
     private final List<Control> rendering;
     private final CheckBox overrideDamage;
+    private final SelectBox<UnitDamageDisplay.Location> damageLocation;
     private final List<Control> damage;
     private BoardAtmosphere.Settings atmosphere = BoardAtmosphere.DEFAULTS;
     private BoardAtmosphere.Settings lastScenario;
@@ -114,6 +120,7 @@ final class GpuBoardTuning {
         panel.setName("board-tuning");
         panel.pad(8).top();
         panel.add(new Label("Board tuning", skin)).left().padBottom(6).row();
+        Table general = rows;
         rows.top().defaults().pad(0, 3, 0, 3);
         section(skin, "Geometry");
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
@@ -129,6 +136,23 @@ final class GpuBoardTuning {
                 // Gdx.graphics.setForegroundFPS(vsync.isChecked() ? 0 : 60);
             }
         });
+        section(skin, "Unit family sizes");
+        familySizes = controls(skin, Arrays.stream(UnitFamilyScale.values())
+              .map(family -> new Knob(family.label, 0.25f, 3, 0.05f, "%.2f")).toList(), this::applyFamilySizes, 0);
+        for (int index = 0; index < familySizes.size(); index++) {
+            var slider = familySizes.get(index).slider();
+            slider.setName("tuning-size-" + UnitFamilyScale.values()[index].name());
+            slider.addListener(new TextTooltip("Uniform size multiplier; 1.00 is neutral. Stacks with Unit scale. "
+                  + "Mek weight classes also multiply All Meks; ultralight Meks use Light Meks.", skin, "menu"));
+        }
+        section(skin, "Overview icons");
+        overviewIcons = checkbox(skin, "Distant top-view icons", "tuning-overview-icons");
+        overviewIcons.addListener(new TextTooltip("Replace units and trees with flat board artwork when zoomed out "
+              + "within 15 degrees of overhead. Also available in the Camera menu.", skin, "menu"));
+        overview = controls(skin, List.of(new Knob("Icon switch hex px (0 = always)", 0, 256, 2, "%.0f")),
+              this::applyOverview, 0);
+        overview.getFirst().slider().addListener(new TextTooltip("Switch to icons when a hex is this many window pixels wide. "
+              + "Zoom in 15% further to return to models, avoiding flicker at the boundary.", skin, "menu"));
         section(skin, "Unit visibility");
         visibility = controls(skin, VISIBILITY_KNOBS, this::applyVisibility, 0);
         visibility.get(1).slider().addListener(new TextTooltip(
@@ -139,6 +163,9 @@ final class GpuBoardTuning {
         section(skin, "Outside sensor range");
         sensorModes = effectModes(skin, "sensor");
         sensors = controls(skin, SENSOR_KNOBS, this::applyFieldOfView, 0);
+        Table atmospheric = new Table();
+        rows = atmospheric;
+        rows.top().defaults().pad(0, 3, 0, 3);
         TextButton conditions = new TextButton("Planetary conditions...", skin, "menu-control");
         conditions.setName("tuning-planetary-conditions");
         conditions.setDisabled(source == null);
@@ -201,13 +228,13 @@ final class GpuBoardTuning {
         gravity.getFirst().slider().addListener(new TextTooltip(
               "Visual gravity controls the height and timing of newly starting jump animations. "
                     + "Moves and gameplay rules stay unchanged; an airborne jump finishes its existing arc.", skin, "menu"));
-        pressure = choice(skin, "Air pressure", "tuning-atmosphere-pressure", Atmosphere.values());
+        pressure = choice(skin, "Air pressure", "tuning-atmosphere-pressure", Atmosphere.values(), this::applyAtmosphere);
         pressure.addListener(new TextTooltip("Visual atmosphere pressure: controls sky scattering, clouds and permitted weather. "
               + "Vacuum clears atmospheric effects; changing pressure never changes the game's rules.", skin, "menu"));
         temperature = controls(skin, List.of(new Knob("Temperature (C)", -200, 200, 1, "%.0f")), this::applyAtmosphere, 0);
         temperature.getFirst().slider().addListener(new TextTooltip(
               "Scenario temperature controls rain wetness: freezing or colder keeps the ground dry. Visual preview only.", skin, "menu"));
-        atmosphericTaint = choice(skin, "Atmospheric taint", "tuning-atmospheric-taint", AtmosphericTaint.values());
+        atmosphericTaint = choice(skin, "Atmospheric taint", "tuning-atmospheric-taint", AtmosphericTaint.values(), this::applyAtmosphere);
         atmosphericTaint.addListener(new TextTooltip("Select the atmospheric palette to preview. Taint strength scales its color. "
               + "This does not change gameplay exposure, fire or damage rules.", skin, "menu"));
         section(skin, "Clouds and ground air");
@@ -266,11 +293,16 @@ final class GpuBoardTuning {
         rendering.get(8).slider().addListener(new TextTooltip(
               "Intrinsic fog speed in hex widths per second when calm. A gently changing vector blends into the wind. "
                     + "0 disables calm drift; wind still moves the fog.", skin, "menu"));
+        rows = general;
         section(skin, "Unit damage");
         overrideDamage = checkbox(skin, "Override visible unit damage", "tuning-override-damage");
+        damageLocation = choice(skin, "Damage location", "tuning-damage-location", UnitDamageDisplay.Location.values(), this::applyDamage);
+        damageLocation.addListener(new TextTooltip("Applies to matching model locations across the board. Models without locations "
+              + "always use All locations. Other locations keep their actual damage.", skin, "menu"));
         damage = controls(skin, List.of(new Knob("Display damage", 0, 1, 0.01f, "%.2f")), this::applyDamage, 0);
         damage.getFirst().slider().addListener(new TextTooltip(
               "Non-Meks: linear damage. Meks: 0-0.50 removes armor; 0.50-1 damages structure. "
+                    + "Infantry: proportion of troops fallen (rounded to visible figures). "
                     + "Destroyed parts take priority. Visual preview only.", skin, "menu"));
         overrideDamage.addListener(new ChangeListener() {
             @Override
@@ -278,23 +310,20 @@ final class GpuBoardTuning {
                 applyDamage();
             }
         });
-        scroll = new ScrollPane(rows, skin, "menu");
-        scroll.setName("tuning-scroll");
-        scroll.setFadeScrollBars(false);
-        scroll.setScrollingDisabled(true, false);
-        scroll.setFlickScroll(false);
-        // Keep wheel gestures in this panel and allow sliders to retain their complete drag gesture.
-        scroll.addListener(new InputListener() {
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                panel.getStage().setScrollFocus(scroll);
-            }
-        });
-        panel.add(scroll).minHeight(0).grow().row();
+        ScrollPane generalScroll = scroll(skin, general, "tuning-general-scroll");
+        ScrollPane atmosphereScroll = scroll(skin, atmospheric, "tuning-scroll");
+        Table tabs = new Table();
+        ButtonGroup<TextButton> tabGroup = new ButtonGroup<>();
+        tab(skin, tabs, tabGroup, "General", generalScroll, atmosphereScroll);
+        tab(skin, tabs, tabGroup, "Atmosphere", atmosphereScroll, generalScroll);
+        atmosphereScroll.setVisible(false);
+        panel.add(tabs).growX().padBottom(6).row();
+        panel.add(new Stack(generalScroll, atmosphereScroll)).minHeight(0).grow().row();
         panel.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
         TextButton reset = new TextButton("Defaults", skin, "menu-control");
         reset.setName("tuning-defaults");
-        reset.addListener(new TextTooltip("Restore geometry, visibility, VSync, light/fog effects, the game's current planetary conditions, and disable damage preview.",
+        reset.addListener(new TextTooltip("Restore both tabs: geometry, family sizes, visibility, VSync, light/fog effects, "
+              + "the game's current planetary conditions, and disable damage preview.",
               skin, "menu"));
         reset.setProgrammaticChangeEvents(false);
         reset.addListener(new ChangeListener() {
@@ -312,6 +341,43 @@ final class GpuBoardTuning {
         buttons.add(new Label("F9 to close", skin, "small")).right();
         panel.add(buttons).growX().padTop(4).row();
         restoreDefaults();
+    }
+
+    private ScrollPane scroll(Skin skin, Table content, String name) {
+        ScrollPane scroll = new ScrollPane(content, skin, "menu");
+        scroll.setName(name);
+        scroll.setFadeScrollBars(false);
+        scroll.setScrollingDisabled(true, false);
+        scroll.setFlickScroll(false);
+        scroll.addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                panel.getStage().setScrollFocus(scroll);
+            }
+        });
+        return scroll;
+    }
+
+    private void tab(Skin skin, Table tabs, ButtonGroup<TextButton> group, String label, ScrollPane page, ScrollPane other) {
+        TextButton button = new TextButton(label, skin, "menu-control");
+        button.setName("tuning-tab-" + label.toLowerCase(Locale.ROOT));
+        group.add(button);
+        button.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (!button.isChecked()) { return; }
+                if (panel.getStage() != null) {
+                    panel.getStage().unfocus(other);
+                    panel.getStage().setScrollFocus(page);
+                }
+                damageLocation.hideList();
+                pressure.hideList();
+                atmosphericTaint.hideList();
+                page.setVisible(true);
+                other.setVisible(false);
+            }
+        });
+        tabs.add(button).growX().height(26).padRight(2);
     }
 
     private Table section(Skin skin, String title) {
@@ -333,7 +399,7 @@ final class GpuBoardTuning {
         return checkbox;
     }
 
-    private <T> SelectBox<T> choice(Skin skin, String label, String name, T[] values) {
+    private <T> SelectBox<T> choice(Skin skin, String label, String name, T[] values, Runnable apply) {
         SelectBox<T> choice = new SelectBox<>(skin, "menu");
         choice.setName(name);
         choice.setItems(values);
@@ -341,7 +407,7 @@ final class GpuBoardTuning {
         choice.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (!syncing) { applyAtmosphere(); }
+                if (!syncing) { apply.run(); }
             }
         });
         rows.add(new Label(label, skin, "menu")).left().width(LABEL_WIDTH);
@@ -413,6 +479,15 @@ final class GpuBoardTuning {
               defaults.levelHeight(), defaults.gridShade(), defaults.multiHexUnitScale() };
         setValues(geometry, values);
         applyGeometry();
+        float[] familyDefaults = new float[familySizes.size()];
+        for (int index = 0; index < familyDefaults.length; index++) {
+            familyDefaults[index] = UnitFamilyScale.values()[index].defaultUnitScale;
+        }
+        setValues(familySizes, familyDefaults);
+        applyFamilySizes();
+        overviewIcons.setChecked(GpuUnitIcons.DEFAULT_ENABLED);
+        setValues(overview, new float[] { GpuUnitIcons.DEFAULT_HEX_PIXELS });
+        updateReadings(overview);
         setValues(visibility, new float[] { GpuTerrain.DEFAULT_BUILDING_OPACITY * 100,
               GpuUnitVisibility.DEFAULT_OUTLINE_INTENSITY * 100 });
         updateReadings(visibility);
@@ -424,6 +499,7 @@ final class GpuBoardTuning {
         setRenderingOptions(GpuAtmosphere.Options.DEFAULTS);
         setAtmosphere(lastScenario == null ? BoardAtmosphere.DEFAULTS : lastScenario);
         overrideDamage.setChecked(false);
+        damageLocation.setSelected(UnitDamageDisplay.Location.ALL);
         setValues(damage, new float[] { 0 });
         applyDamage();
     }
@@ -465,6 +541,24 @@ final class GpuBoardTuning {
 
     boolean normalMaps() {
         return normalMaps.isChecked();
+    }
+
+    boolean fixedSun() {
+        return fixedSun.isChecked();
+    }
+
+    boolean overviewIcons() { return overviewIcons.isChecked(); }
+
+    void setOverviewIcons(boolean enabled) { overviewIcons.setChecked(enabled); }
+
+    float overviewHexPixels() { return value(overview, 0); }
+
+    void setFixedSun(boolean fixed) {
+        fixedSun.setChecked(fixed);
+    }
+
+    UnitDamageDisplay.Location damageLocation() {
+        return damageLocation.getSelected();
     }
 
     /** Negative means the preview is disabled; otherwise this is the displayed loss from zero to one. */
@@ -560,9 +654,18 @@ final class GpuBoardTuning {
         updateReadings(geometry);
     }
 
+    private void applyFamilySizes() {
+        for (int index = 0; index < familySizes.size(); index++) {
+            UnitFamilyScale.values()[index].UNIT_SCALE = value(familySizes, index);
+        }
+        updateReadings(familySizes);
+    }
+
     private void applyVisibility() {
         updateReadings(visibility);
     }
+
+    private void applyOverview() { updateReadings(overview); }
 
     private void applyFieldOfView() {
         updateReadings(fieldOfView);
@@ -571,6 +674,7 @@ final class GpuBoardTuning {
 
     private void applyDamage() {
         damage.getFirst().slider().setDisabled(!overrideDamage.isChecked());
+        damageLocation.setDisabled(!overrideDamage.isChecked());
         updateReadings(damage);
     }
 

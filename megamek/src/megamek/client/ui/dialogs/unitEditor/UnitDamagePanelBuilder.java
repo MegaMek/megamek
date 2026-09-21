@@ -371,12 +371,21 @@ public class UnitDamagePanelBuilder {
                         controls.chkInitiativePermanent));
         }
 
-        // the gamemaster's target movement modifier change lasts this round only, so it has no duration controls
+        // the gamemaster's target movement modifier change lasts this round only, so it has no duration controls;
+        // the modifier the unit earned by moving is shown beside it, since a reduction cannot go below zero and a
+        // unit that stood still has nothing to reduce
         controls.spnTargetModifier = targetModifierSpinner(entity.getGamemasterTargetModifier());
+        int earnedModifier = Compute.getEarnedTargetMovementModifier(entity.getGame(), entity.getId()).getValue();
         JPanel targetRow = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
         targetRow.add(controls.spnTargetModifier);
-        targetRow.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.thisRound")));
+        targetRow.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.target.earned",
+              signedModifier(earnedModifier))));
         addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.target"), targetRow);
+    }
+
+    /** A modifier with its sign, {@code +2} or {@code -1}, as the to-hit breakdown shows them. */
+    private static String signedModifier(int modifier) {
+        return (modifier > 0) ? "+" + modifier : String.valueOf(modifier);
     }
 
     /**

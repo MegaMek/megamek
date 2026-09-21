@@ -2934,14 +2934,16 @@ public class Compute {
     }
 
     /**
-     * Modifier to attacks due to target movement, as the unit earned it by moving this round.
+     * Modifier to attacks due to target movement, as the unit earned it by moving this round, before any
+     * gamemaster change. The damage editor shows this beside its Target Modifier control, so a gamemaster can see
+     * what a reduction has to work with: a unit that earned nothing cannot be taken below nothing.
      *
      * @param game     current game
      * @param entityId targetId
      *
      * @return toHitData for the target's movement modifiers
      */
-    private static ToHitData getEarnedTargetMovementModifier(Game game, int entityId) {
+    public static ToHitData getEarnedTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
 
         if (entity == null) {

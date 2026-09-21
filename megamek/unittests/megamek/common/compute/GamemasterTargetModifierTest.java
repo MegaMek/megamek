@@ -100,7 +100,9 @@ class GamemasterTargetModifierTest {
         ToHitData toHit = targetModifier();
 
         assertEquals(4, toHit.getValue());
-        assertTrue(toHit.getDesc().contains("gamemaster"), "The change is its own line in the breakdown");
+        // the resolved text, not the key: a key that misses its bundle shows as !Compute.gamemasterTargetModifier!
+        assertTrue(toHit.getDesc().contains("gamemaster target modifier"),
+              "The change is its own line in the breakdown, in words");
     }
 
     @Test

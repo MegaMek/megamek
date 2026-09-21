@@ -77,7 +77,7 @@ final class GpuVariantSheetReview {
         target.begin();
         try {
             Gdx.gl.glViewport(0, 0, width, height);
-            Gdx.gl.glClearColor(.42f, .46f, .53f, 1);
+            Gdx.gl.glClearColor(.47f, .37f, .33f, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
             for (int index = 0; index < variants.size(); index++) {
                 // Cells run left to right from the top, under the heading band.

@@ -344,7 +344,7 @@ class GpuModularUnitModelsSmokeTest {
         camera.near = 1;
         camera.far = 1000;
         Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClearColor(.15f, .19f, .23f, 1);
+        Gdx.gl.glClearColor(.24f, .16f, .13f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         for (int index = 0; index < FULL_VIEWS.length; index++) {
             // A viewport does not bound glClear, so depth is cleared whole between cells; the
@@ -408,7 +408,7 @@ class GpuModularUnitModelsSmokeTest {
             camera.lookAt(0, 5, top ? 0 : focus);
             camera.update();
             Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-            Gdx.gl.glClearColor(.15f, .19f, .23f, 1);
+            Gdx.gl.glClearColor(.24f, .16f, .13f, 1);
             Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
             batch.begin(camera);
             for (var instance : instances) {

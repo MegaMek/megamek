@@ -24,6 +24,33 @@ class UnitModelMountAreaTest {
     }
 
     @Test
+    void mirroredFacesPackTheirSecondWeaponAsAMirrorImage() {
+        // Two weapons on one socket, once on each side of the centre line, each told to step inward.
+        var right = new UnitModelMountArea();
+        right.place(9, 0, 2, 2, 7, 16, .4f, -1);
+        var rightSecond = right.place(9, 0, 2, 2, 7, 16, .4f, -1);
+        var left = new UnitModelMountArea();
+        left.place(-9, 0, 2, 2, 7, 16, .4f, 1);
+        var leftSecond = left.place(-9, 0, 2, 2, 7, 16, .4f, 1);
+        assertNotNull(rightSecond);
+        assertNotNull(leftSecond);
+        assertEquals(-rightSecond.x(), leftSecond.x(), .001f, "the left torso must mirror the right, not copy it");
+        assertEquals(rightSecond.z(), leftSecond.z(), .001f);
+    }
+
+    @Test
+    void theDefaultTieBreakIsUnchangedForExistingCallers() {
+        var legacy = new UnitModelMountArea();
+        legacy.place(0, 0, 2, 2, 7, 16, .4f);
+        var explicit = new UnitModelMountArea();
+        explicit.place(0, 0, 2, 2, 7, 16, .4f, -1);
+        var legacySecond = legacy.place(0, 0, 2, 2, 7, 16, .4f);
+        var explicitSecond = explicit.place(0, 0, 2, 2, 7, 16, .4f, -1);
+        assertEquals(legacySecond.x(), explicitSecond.x(), .001f);
+        assertEquals(legacySecond.z(), explicitSecond.z(), .001f);
+    }
+
+    @Test
     void crowdedAreasFailExplicitlyAndFailedAttemptsDoNotReserveSpace() {
         var area = new UnitModelMountArea();
         assertNull(area.place(0, 0, 100, 100, 6, 6, .4f));

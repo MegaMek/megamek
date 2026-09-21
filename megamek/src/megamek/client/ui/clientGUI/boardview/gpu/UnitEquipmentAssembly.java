@@ -407,7 +407,21 @@ final class UnitEquipmentAssembly {
             size.z = Math.min(size.z, 3 * scale);
         }
         return frame.area().place(center.x, center.z, size.x, size.z, item.point().size().get(0), item.point().size().get(2),
-              Math.min(1, item.point().minScale() / scale));
+              Math.min(1, item.point().minScale() / scale), towardCentreLine(frame, transform));
+    }
+
+    /**
+     * Which way along a face's own x points at the Mek's centre line. A crowded weapon steps that way, so the left
+     * and right torsos pack their weapons as mirror images rather than as copies of one another. A socket already
+     * on the centre line keeps the default.
+     */
+    private static float towardCentreLine(MountFrame frame, Matrix4 socket) {
+        float x = socket.getTranslation(new Vector3()).x;
+        if (Math.abs(x) < .01f) {
+            return -1;
+        }
+        Vector3 inward = new Vector3(-Math.signum(x), 0, 0).rot(frame.inverse());
+        return inward.x >= 0 ? 1 : -1;
     }
 
     private static Matrix4 moduleTransform(Matrix4 socket, Pending item, GpuUnitModels.ModularAsset module, float scale) {

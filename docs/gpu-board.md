@@ -225,23 +225,34 @@ Banks at the board boundary use the water hex's own ground artwork.
 River mouths use roughly 33 of the hex edge's 42 world units at default scale;
 their sandy fade starts at the edge corners. Connected channels retain this
 width through bends, while isolated basins keep their rounded land banks.
+A mouth that spills does not reach the shared edge: its water stops a lip short,
+so the fall can curve down over that gap from inside. Non-falling mouths keep the
+matching contours exactly.
 Hexes with exactly two nonadjacent water neighbors use a curved channel with
 consistent width instead of a bay around each hex centre. The bed remains at
 full depth beneath the hex centre, keeping grounded units on the riverbed.
 Concave channels are triangulated from their outline for both rendering and
 picking. Junctions, adjacent openings and isolated pools retain the bay contours.
 
-An open mouth leading to a lower, unfrozen water hex generates one vertical
-waterfall from the upper surface to the lower surface. It uses the upper hex's
-water palette with vertically repeating coordinates scrolling downward, at
-80% opacity on the outward face and 40% on the inward face. Viewed from upstream,
+An open mouth leading to a lower, unfrozen water hex generates one waterfall from
+the upper surface to the lower surface. Its water stops a lip short of the shared
+edge and the sheet curves down over that gap to the edge's own plane, where it hangs
+just clear of the wall; its foot then spreads into the water it lands in. Nothing is
+left hanging beyond the mouth and both joins are tangent, so neither the silhouette
+nor the shading cuts. The lip radius stays inside half the drop and 0.045 hex widths,
+the foot uses half of it, and the sheet's spread is part of the chunk's cull bounds.
+It uses the upper hex's water palette, and the procedural pattern keeps the pool's own
+field, carried down the sheet by the height it has fallen, so it crosses the lip
+without a seam. Opacity is 80% on the outward face and 40% on the inward face, and
+vertically repeating coordinates drive the artwork fallback. Viewed from upstream,
 the back remains visible through the upper water surface with a softer tint.
 The waterfall carries the pool's color mixture over the lip: its animated liquid
 color is mixed with the actual bed material's average using the shared surface
 opacity. This avoids exposing raw blue water artwork when the pool itself appears
 green/brown through its bed. The bed average is calculated once per asset, with
-no per-frame readback or extra texture sample. Lighting still follows the vertical
-face, so brightness can change without switching to an unrelated palette.
+no per-frame readback or extra texture sample. Lighting follows the sheet's own
+normal, which turns from up at the water's edge, around to outward along the
+hanging sheet, and back to up where it lands.
 In the GIF fallback, water artwork extends into the transparent hex corners so
 scrolling changes only the flow pattern, never the waterfall's width. Its fixed
 edges match the river mouth. Equal surface levels and frozen connections do not generate falls.

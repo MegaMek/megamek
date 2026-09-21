@@ -26,7 +26,12 @@ void main() {
     bool spray = !falling && v_normal.z < 0.5;
     vec2 position = v_cloudPosition.xy * u_rainScale;
     vec2 flow = position - u_waterMotion.xy * u_rainTime;
-    if (falling) flow = vec2(v_diffuseUV.x * 0.6, v_diffuseUV.y + u_rainTime * 0.8);
+    if (falling) {
+        // A fall keeps the surface's own field: the same world mapping, carried down by the height it has
+        // fallen, so the pattern crosses the lip without a seam. Field units per second are unchanged.
+        float fallen = u_waterMotion.w - v_cloudPosition.z * u_rainScale;
+        flow = vec2(position.x, position.y - fallen + u_rainTime * 0.8);
+    }
     // Two bounded, differently phased deformations evolve in place when there is no downstream current.
     vec2 phaseA = vec2(sin(u_rainTime * 0.71), cos(u_rainTime * 0.53)) * 0.006;
     vec2 phaseB = vec2(cos(u_rainTime * 0.47), sin(u_rainTime * 0.83)) * 0.008;

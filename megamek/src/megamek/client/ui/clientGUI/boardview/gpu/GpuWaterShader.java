@@ -58,7 +58,8 @@ final class GpuWaterShader extends Attribute {
             }
         }
         impacts = List.copyOf(hits);
-        if (impacts.isEmpty()) { motion[3] = 0; }
+        // A fall keeps its own surface height for the pattern's continuity across the lip; spray needs the pool's.
+        if (!falling && impacts.isEmpty()) { motion[3] = 0; }
     }
 
     private GpuWaterShader(GpuWaterShader original) {

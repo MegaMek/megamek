@@ -63,6 +63,11 @@ final class GpuTerrain implements Disposable {
     static final int CHUNK_SIZE = 16;
     static final int SHADOW_RESOLUTION = 2048;
     static final float DEFAULT_BUILDING_OPACITY = 0.5f;
+    /** A fall curves over its lip and spreads into the water it lands in; both arcs' step count. */
+    private static final int FALL_LIP_SEGMENTS = 4;
+    private static final int FALL_FOOT_SEGMENTS = 4;
+    /** Wall clearance of the hanging sheet, in hex-scale units; the flat fall used the same offset. */
+    private static final float FALL_CLEARANCE = .06f;
     private static final long ATTRIBUTES = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal
           | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.ColorPacked;
     private final GpuAssets assets;
@@ -639,8 +644,12 @@ final class GpuTerrain implements Disposable {
                         for (BoardSurface.Side drop : surface.waterfalls) {
                             destination.add(fall, mesh -> waterfall(mesh, drop));
                             if (back != null) { destination.add(back, mesh -> waterfall(mesh, drop)); }
-                            chunk.bounds.ext(drop.a().x, drop.a().y, drop.lowA());
-                            chunk.bounds.ext(drop.b().x, drop.b().y, drop.lowB());
+                            // The landing water spreads into the receiving hex, so its reach belongs in the bounds.
+                            Vector3 outward = fallOutward(drop);
+                            float spread = .5f * BoardSurface.fallLip(drop.a().z, drop.lowA())
+                                  + FALL_CLEARANCE * BoardGeometry.HEX_SCALE;
+                            chunk.bounds.ext(drop.a().x + outward.x * spread, drop.a().y + outward.y * spread, drop.lowA());
+                            chunk.bounds.ext(drop.b().x + outward.x * spread, drop.b().y + outward.y * spread, drop.lowB());
                         }
                     }
                 }
@@ -962,17 +971,71 @@ final class GpuTerrain implements Disposable {
         return weight == 0 ? new Color(Color.WHITE) : new Color(red / weight, green / weight, blue / weight, 1);
     }
 
+    /** Outward plane of a fall, shared with its wall: away from the higher hex, into the receiving one. */
+    private static Vector3 fallOutward(BoardSurface.Side drop) {
+        return new Vector3(drop.b().x - drop.a().x, drop.b().y - drop.a().y, 0).crs(Vector3.Z).nor();
+    }
+
+    /** Unit normal along a fall's profile: angle zero faces along the surface, ninety degrees along the sheet. */
+    private static Vector3 arcNormal(Vector3 outward, float angle) {
+        return new Vector3(outward).scl(MathUtils.sin(angle)).add(0, 0, MathUtils.cos(angle));
+    }
+
+    /** Angle zero lies on the water surface, ninety degrees on the hanging sheet; the centre sits below. */
+    private static Vector3 lipPoint(Vector3 mouth, Vector3 outward, float lip, float reach, float angle) {
+        return new Vector3(mouth.x, mouth.y, mouth.z - reach).mulAdd(outward, -lip)
+              .mulAdd(arcNormal(outward, angle), reach);
+    }
+
+    /** Angle zero meets the receiving surface, ninety degrees joins the hanging sheet; the centre sits outside. */
+    private static Vector3 footPoint(Vector3 sheet, float surface, Vector3 outward, float foot, float angle) {
+        return new Vector3(sheet.x, sheet.y, surface + foot).mulAdd(outward, foot)
+              .mulAdd(arcNormal(outward, angle), -foot);
+    }
+
+    private static MeshPartBuilder.VertexInfo arcVertex(Vector3 point, Vector3 normal, float u, float repeat) {
+        return vertex(point, normal, u, point.z / repeat, Color.WHITE);
+    }
+
+    /**
+     * A fall leaves the upper surface inside its mouth and lands inside the receiving hex. The water stops short
+     * of the shared edge, the sheet curves over that gap to the edge's own plane, hangs there and then spreads
+     * into the water it lands in, so nothing is left hanging beyond the mouth. Only positions move: V stays
+     * proportional to world height, so the animated downward scroll keeps its speed and the lip cannot break the
+     * pool's palette mixture.
+     */
     private static void waterfall(MeshPartBuilder mesh, BoardSurface.Side drop) {
-        Vector3 normal = new Vector3(drop.b()).sub(drop.a()).crs(Vector3.Z).nor();
-        Vector3 a = new Vector3(drop.a()).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
-        Vector3 b = new Vector3(drop.b()).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
+        Vector3 outward = fallOutward(drop);
+        float clearance = FALL_CLEARANCE * BoardGeometry.HEX_SCALE;
         float repeat = 48 * BoardGeometry.HEX_SCALE;
-        float u = a.dst(b) / (24 * BoardGeometry.HEX_SCALE);
-        // Increasing V samples upward in world space. A positive animated offset makes the artwork fall downward.
-        mesh.rect(vertex(a, normal, 0, a.z / repeat, Color.WHITE),
-              vertex(new Vector3(a.x, a.y, drop.lowA()), normal, 0, drop.lowA() / repeat, Color.WHITE),
-              vertex(new Vector3(b.x, b.y, drop.lowB()), normal, u, drop.lowB() / repeat, Color.WHITE),
-              vertex(b, normal, u, b.z / repeat, Color.WHITE));
+        float u = drop.a().dst(drop.b()) / (24 * BoardGeometry.HEX_SCALE);
+        float lip = BoardSurface.fallLip(drop.a().z, drop.lowA());
+        float foot = .5f * lip;
+        // The lip reaches one radius upstream and one radius higher, ending at the sheet's own clearance.
+        float reach = lip + clearance;
+        Vector3 hangA = new Vector3(drop.a().x, drop.a().y, drop.a().z - reach).mulAdd(outward, clearance);
+        Vector3 hangB = new Vector3(drop.b().x, drop.b().y, drop.b().z - reach).mulAdd(outward, clearance);
+        Vector3 footA = new Vector3(hangA.x, hangA.y, drop.lowA() + foot);
+        Vector3 footB = new Vector3(hangB.x, hangB.y, drop.lowB() + foot);
+        for (int segment = 0; segment < FALL_LIP_SEGMENTS; segment++) {
+            float from = MathUtils.PI / 2 * segment / FALL_LIP_SEGMENTS;
+            float to = MathUtils.PI / 2 * (segment + 1) / FALL_LIP_SEGMENTS;
+            mesh.rect(arcVertex(lipPoint(drop.a(), outward, lip, reach, from), arcNormal(outward, from), 0, repeat),
+                  arcVertex(lipPoint(drop.a(), outward, lip, reach, to), arcNormal(outward, to), 0, repeat),
+                  arcVertex(lipPoint(drop.b(), outward, lip, reach, to), arcNormal(outward, to), u, repeat),
+                  arcVertex(lipPoint(drop.b(), outward, lip, reach, from), arcNormal(outward, from), u, repeat));
+        }
+        // The hanging sheet stays in the mouth's own plane, clear of the wall.
+        mesh.rect(arcVertex(hangA, outward, 0, repeat), arcVertex(footA, outward, 0, repeat),
+              arcVertex(footB, outward, u, repeat), arcVertex(hangB, outward, u, repeat));
+        for (int segment = 0; segment < FALL_FOOT_SEGMENTS; segment++) {
+            float from = MathUtils.PI / 2 * segment / FALL_FOOT_SEGMENTS;
+            float to = MathUtils.PI / 2 * (segment + 1) / FALL_FOOT_SEGMENTS;
+            mesh.rect(arcVertex(footPoint(hangA, drop.lowA(), outward, foot, to), arcNormal(outward, to), 0, repeat),
+                  arcVertex(footPoint(hangA, drop.lowA(), outward, foot, from), arcNormal(outward, from), 0, repeat),
+                  arcVertex(footPoint(hangB, drop.lowB(), outward, foot, from), arcNormal(outward, from), u, repeat),
+                  arcVertex(footPoint(hangB, drop.lowB(), outward, foot, to), arcNormal(outward, to), u, repeat));
+        }
     }
 
     /** A short transparent curtain carries animated droplets above each receiving pool; no particle objects. */

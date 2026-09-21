@@ -17600,6 +17600,9 @@ public abstract class Entity extends TurnOrdered
         // Check each Entity in the train for working hitches. When found, add the hex that Entity is in and the hex
         // the hitch faces.
         for (Entity e : thisTrain) {
+            if (e.getPosition() == null) {
+                continue;
+            }
             for (Transporter t : e.getTransports()) {
                 if ((t instanceof TankTrailerHitch) && (t.getUnused() > 0)) {
                     trailerPos.add(e.getPosition());

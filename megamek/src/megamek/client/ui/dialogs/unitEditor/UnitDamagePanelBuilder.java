@@ -372,9 +372,10 @@ public class UnitDamagePanelBuilder {
         }
 
         // the gamemaster's target movement modifier change lasts this round only, so it has no duration controls;
-        // the modifier the unit earned by moving is shown beside it, since a reduction cannot go below zero and a
-        // unit that stood still has nothing to reduce
-        controls.spnTargetModifier = targetModifierSpinner(entity.getGamemasterTargetModifier());
+        // the modifier the unit earned by moving is shown beside it and is as far down as the control goes, since
+        // a reduction cannot go below zero and a unit that stood still has nothing to reduce
+        controls.spnTargetModifier = targetModifierSpinner(entity.getGamemasterTargetModifier(),
+              Compute.minGamemasterTargetModifier(entity.getGame(), entity.getId()));
         int earnedModifier = Compute.getEarnedTargetMovementModifier(entity.getGame(), entity.getId()).getValue();
         JPanel targetRow = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
         targetRow.add(controls.spnTargetModifier);
@@ -389,15 +390,17 @@ public class UnitDamagePanelBuilder {
     }
 
     /**
-     * A spinner for the gamemaster's target movement modifier change, running over the whole range a change could
-     * ever matter in; the total is held to the movement table's range when it is read, so a larger value would
-     * only ever reach the same floor or ceiling.
+     * A spinner for the gamemaster's target movement modifier change. It goes down only as far as the modifier the
+     * unit earned by moving, so every reduction it offers applies in full; upward it runs over the whole range a
+     * change could ever matter in, since the total is held to the movement table's ceiling when it is read.
+     *
+     * @param delta        the change the unit already carries this round, which the spinner starts on
+     * @param lowestUseful the largest reduction that still does something, zero or negative
      */
-    private JSpinner targetModifierSpinner(int delta) {
-        int startingDelta = Math.clamp(delta, -Compute.MAX_GAMEMASTER_TARGET_MODIFIER,
-              Compute.MAX_GAMEMASTER_TARGET_MODIFIER);
+    private JSpinner targetModifierSpinner(int delta, int lowestUseful) {
+        int startingDelta = Math.clamp(delta, lowestUseful, Compute.MAX_GAMEMASTER_TARGET_MODIFIER);
         JSpinner spinner = new JSpinner(new SpinnerNumberModel(startingDelta,
-              -Compute.MAX_GAMEMASTER_TARGET_MODIFIER, Compute.MAX_GAMEMASTER_TARGET_MODIFIER, 1));
+              lowestUseful, Compute.MAX_GAMEMASTER_TARGET_MODIFIER, 1));
         spinner.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.skillModifier.target.tooltip")));
         return spinner;

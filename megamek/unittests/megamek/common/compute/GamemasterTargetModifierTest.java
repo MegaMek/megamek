@@ -144,6 +144,32 @@ class GamemasterTargetModifierTest {
     }
 
     @Test
+    void theLargestUsefulReductionIsTheEarnedModifier() {
+        walked(5);
+
+        assertEquals(-2, Compute.minGamemasterTargetModifier(game, mek.getId()),
+              "+2 earned can be taken back down by 2, to no modifier, and no further");
+    }
+
+    @Test
+    void anUnmovedUnitOffersNoReduction() {
+        walked(0);
+
+        assertEquals(0, Compute.minGamemasterTargetModifier(game, mek.getId()));
+    }
+
+    @Test
+    void theStandingStillPenaltyOffersNoReduction() {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_STANDING_STILL).setValue(true);
+        walked(0);
+
+        assertEquals(-1, Compute.getEarnedTargetMovementModifier(game, mek.getId()).getValue(),
+              "Standing still earns -1 under the option");
+        assertEquals(0, Compute.minGamemasterTargetModifier(game, mek.getId()),
+              "The -1 is already the floor, so there is nothing to reduce");
+    }
+
+    @Test
     void theChangeLastsTheRoundOnly() {
         mek.setGamemasterTargetModifier(3);
 

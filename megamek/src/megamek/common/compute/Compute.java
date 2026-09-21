@@ -2934,6 +2934,23 @@ public class Compute {
     }
 
     /**
+     * The largest reduction a gamemaster's target movement modifier change can make on this unit this round: the
+     * earned modifier taken back down to the floor {@link #getTargetMovementModifier(Game, int)} holds the total
+     * to. A unit that earned {@code +2} by moving can be reduced by {@code 2}; one that earned nothing, or the
+     * {@code -1} for standing still, cannot be reduced at all. The damage editor uses this as the bottom of its
+     * Target Modifier control, so every reduction it offers applies in full.
+     *
+     * @param game     current game
+     * @param entityId targetId
+     *
+     * @return the lowest delta that still changes the modifier, zero or negative
+     */
+    public static int minGamemasterTargetModifier(Game game, int entityId) {
+        int earned = getEarnedTargetMovementModifier(game, entityId).getValue();
+        return Math.min(0, earned) - earned;
+    }
+
+    /**
      * Modifier to attacks due to target movement, as the unit earned it by moving this round, before any
      * gamemaster change. The damage editor shows this beside its Target Modifier control, so a gamemaster can see
      * what a reduction has to work with: a unit that earned nothing cannot be taken below nothing.

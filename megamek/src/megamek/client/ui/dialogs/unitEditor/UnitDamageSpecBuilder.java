@@ -113,6 +113,7 @@ public class UnitDamageSpecBuilder {
             spec.initiativeRounds = (Integer) controls.spnInitiativeRounds.getValue();
             spec.initiativePermanent = controls.chkInitiativePermanent.isSelected();
         }
+        spec.targetModifier = spinnerValue(controls.spnTargetModifier);
 
         // ejection settings; the lobby's box reads "Disable", so the master switch travels inverted
         Boolean autoEjectDisabled = checkboxValue(controls.chkAutoEjectDisabled);

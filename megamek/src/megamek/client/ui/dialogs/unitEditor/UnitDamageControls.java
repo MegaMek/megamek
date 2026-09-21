@@ -130,6 +130,8 @@ public class UnitDamageControls {
     public JSpinner spnInitiativeModifier;
     public JSpinner spnInitiativeRounds;
     public JCheckBox chkInitiativePermanent;
+    /** The gamemaster's target movement modifier delta for this round; {@code null} outside a running game. */
+    public JSpinner spnTargetModifier;
 
     /*
      * The unit's ejection settings, mirroring the lobby's Configure dialog; only a gamemaster's in-game editor

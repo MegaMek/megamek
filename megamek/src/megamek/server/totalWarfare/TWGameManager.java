@@ -363,6 +363,7 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new OrbitalBombardmentCommand(server, this));
         commands.add(new ChangeOwnershipCommand(server, this));
         commands.add(new SkillModifierCommand(server, this));
+        commands.add(new TargetModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
         commands.add(new ChangeTerrainCommand(server, this));

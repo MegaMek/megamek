@@ -441,6 +441,7 @@ public class DamageEditApplier {
 
         applyCrewHits();
         applySkillModifiers();
+        applyTargetModifier();
         applyEjectionSettings();
         applyHeat();
         applyAmmoShots();
@@ -856,6 +857,21 @@ public class DamageEditApplier {
                 aero.setCondEjectSIDest(spec.conditionalEjectOnStructuralIntegrityDestroyed);
             }
         }
+    }
+
+    /**
+     * Writes the gamemaster's target movement modifier delta back to the unit, where it lasts the rest of the
+     * round; zero clears it. The clamp to the movement table's range is applied when a to-hit reads it.
+     */
+    private void applyTargetModifier() {
+        if (spec.targetModifier == null) {
+            return;
+        }
+        if (entity.getGamemasterTargetModifier() != spec.targetModifier) {
+            LOGGER.info("[EquipState] GM edit: {} target movement modifier delta set to {} for this round",
+                  entity.getDisplayName(), spec.targetModifier);
+        }
+        entity.setGamemasterTargetModifier(spec.targetModifier);
     }
 
     private void applySkillModifiers() {

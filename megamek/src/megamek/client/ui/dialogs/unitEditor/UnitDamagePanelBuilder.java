@@ -67,6 +67,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
+import megamek.common.compute.Compute;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -369,6 +370,28 @@ public class UnitDamagePanelBuilder {
                   modifierRow(controls.spnInitiativeModifier, controls.spnInitiativeRounds,
                         controls.chkInitiativePermanent));
         }
+
+        // the gamemaster's target movement modifier change lasts this round only, so it has no duration controls
+        controls.spnTargetModifier = targetModifierSpinner(entity.getGamemasterTargetModifier());
+        JPanel targetRow = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
+        targetRow.add(controls.spnTargetModifier);
+        targetRow.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.thisRound")));
+        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.target"), targetRow);
+    }
+
+    /**
+     * A spinner for the gamemaster's target movement modifier change, running over the whole range a change could
+     * ever matter in; the total is held to the movement table's range when it is read, so a larger value would
+     * only ever reach the same floor or ceiling.
+     */
+    private JSpinner targetModifierSpinner(int delta) {
+        int startingDelta = Math.clamp(delta, -Compute.MAX_GAMEMASTER_TARGET_MODIFIER,
+              Compute.MAX_GAMEMASTER_TARGET_MODIFIER);
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(startingDelta,
+              -Compute.MAX_GAMEMASTER_TARGET_MODIFIER, Compute.MAX_GAMEMASTER_TARGET_MODIFIER, 1));
+        spinner.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.skillModifier.target.tooltip")));
+        return spinner;
     }
 
     /**

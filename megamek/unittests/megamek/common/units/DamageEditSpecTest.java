@@ -60,6 +60,7 @@ class DamageEditSpecTest {
         spec.locationBlownOff = new Boolean[] { true, null, false };
         spec.autoEject = false;
         spec.conditionalEjectOnHeadshot = true;
+        spec.targetModifier = -2;
 
         DamageEditSpec copy = roundTrip(spec);
 
@@ -71,6 +72,7 @@ class DamageEditSpecTest {
         assertArrayEquals(spec.locationBlownOff, copy.locationBlownOff);
         assertEquals(false, copy.autoEject);
         assertEquals(true, copy.conditionalEjectOnHeadshot);
+        assertEquals(-2, copy.targetModifier);
     }
 
     /** Writes the spec out and reads it back the way a packet does. */

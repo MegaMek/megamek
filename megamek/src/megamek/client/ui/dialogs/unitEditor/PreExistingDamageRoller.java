@@ -171,6 +171,7 @@ public class PreExistingDamageRoller {
         setSpinnerToZero(controls.spnGunneryModifier);
         setSpinnerToZero(controls.spnPilotingModifier);
         setSpinnerToZero(controls.spnInitiativeModifier);
+        setSpinnerToZero(controls.spnTargetModifier);
         resetModifierDuration(controls.spnGunneryRounds, controls.chkGunneryPermanent);
         resetModifierDuration(controls.spnPilotingRounds, controls.chkPilotingPermanent);
         resetModifierDuration(controls.spnInitiativeRounds, controls.chkInitiativePermanent);

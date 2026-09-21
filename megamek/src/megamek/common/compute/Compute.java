@@ -2871,7 +2871,31 @@ public class Compute {
 
 
     /**
-     * Modifier to attacks due to target movement
+     * The most a gamemaster can add to or take from a unit's target movement modifier: the whole range of the
+     * movement table under the option with the wider one, plus the jump bonus. A larger delta could never do more
+     * than reach the floor or the ceiling that {@link #getTargetMovementModifier(Game, int)} holds the total to.
+     */
+    public static final int MAX_GAMEMASTER_TARGET_MODIFIER = 8;
+
+    /**
+     * The highest target movement modifier a ground unit can earn in this game: the top of the movement table, +6
+     * or +7 under the MaxTech movement modifiers option, plus the +1 for jumping or being airborne. A gamemaster's
+     * change is held to this ceiling.
+     *
+     * @param game the game whose options decide the table, or {@code null} for the standard table
+     *
+     * @return the ceiling of the target movement modifier
+     */
+    public static int maxTargetMovementModifier(@Nullable Game game) {
+        boolean usesMaxTechTable = (game != null)
+              && game.getOptions().booleanOption(OptionsConstants.ADVANCED_MAX_TECH_MOVEMENT_MODS);
+        return (usesMaxTechTable ? 7 : 6) + 1;
+    }
+
+    /**
+     * Modifier to attacks due to target movement, with any gamemaster change for the round applied on top and the
+     * total held between no modifier and {@link #maxTargetMovementModifier(Game)}. Aerospace targets take no
+     * movement modifier here and so take no gamemaster change either.
      *
      * @param game     current game
      * @param entityId targetId
@@ -2881,6 +2905,43 @@ public class Compute {
      * @see ToHitData
      */
     public static ToHitData getTargetMovementModifier(Game game, int entityId) {
+        ToHitData toHit = getEarnedTargetMovementModifier(game, entityId);
+        Entity entity = game.getEntity(entityId);
+        if ((entity != null) && !entity.isAero()) {
+            appendGamemasterTargetModifier(toHit, entity, game);
+        }
+        return toHit;
+    }
+
+    /**
+     * Adds the gamemaster's change to the earned movement modifier, as the one line that makes the total land
+     * where the clamp says: never below zero (or below the -1 a unit that did not move earns under the standing
+     * still option), never above the movement table's ceiling, and never lower than a gamemaster asked for. A
+     * change that ends up making no difference adds no line.
+     */
+    private static void appendGamemasterTargetModifier(ToHitData toHit, Entity entity, Game game) {
+        int delta = entity.getGamemasterTargetModifier();
+        if (delta == 0) {
+            return;
+        }
+        int earned = toHit.getValue();
+        int floor = Math.min(0, earned);
+        int ceiling = Math.max(earned, maxTargetMovementModifier(game));
+        int held = Math.clamp((long) earned + delta, floor, ceiling);
+        if (held != earned) {
+            toHit.addModifier(held - earned, Messages.getString("Compute.gamemasterTargetModifier"));
+        }
+    }
+
+    /**
+     * Modifier to attacks due to target movement, as the unit earned it by moving this round.
+     *
+     * @param game     current game
+     * @param entityId targetId
+     *
+     * @return toHitData for the target's movement modifiers
+     */
+    private static ToHitData getEarnedTargetMovementModifier(Game game, int entityId) {
         Entity entity = game.getEntity(entityId);
 
         if (entity == null) {

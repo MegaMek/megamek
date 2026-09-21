@@ -197,6 +197,11 @@ public class DamageEditSpec implements Serializable {
     public Integer initiativeModifier;
     public Integer initiativeRounds;
     public boolean initiativePermanent;
+    /**
+     * The gamemaster's change to the unit's target movement modifier for the rest of the round, or {@code null}
+     * where the editor offered no such control. Zero clears it. See {@code Entity#setGamemasterTargetModifier}.
+     */
+    public Integer targetModifier;
 
     /*
      * The unit's ejection settings, the same ones the lobby's Configure dialog sets, so a gamemaster can override

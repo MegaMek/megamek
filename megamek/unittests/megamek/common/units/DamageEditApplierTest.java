@@ -180,6 +180,22 @@ class DamageEditApplierTest {
     }
 
     @Test
+    void targetModifierLandsOnTheUnitAndZeroClearsIt() {
+        DamageEditSpec spec = emptySpec();
+        spec.targetModifier = 3;
+        apply(spec);
+        assertEquals(3, mek.getGamemasterTargetModifier());
+
+        DamageEditSpec clear = emptySpec();
+        clear.targetModifier = 0;
+        apply(clear);
+        assertEquals(0, mek.getGamemasterTargetModifier(), "Zero clears the change");
+
+        apply(emptySpec());
+        assertEquals(0, mek.getGamemasterTargetModifier(), "An absent value leaves the unit alone");
+    }
+
+    @Test
     void ejectionSettingsLandOnTheMek() {
         Mek atlas = (Mek) mek;
         assertTrue(atlas.isAutoEject(), "Automatic ejection is on by default");

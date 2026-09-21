@@ -2,11 +2,14 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.clearInvocations;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -40,6 +43,76 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class GpuUnitHudTest {
+    @ParameterizedTest
+    @ValueSource(doubles = { 1, 1.5, 2 })
+    void enemyStripSharesCardsAndNavigationWithoutExposingHiddenUnitsOrSensorDetails(double density) throws Exception {
+        var prefs = GUIPreferences.getInstance();
+        boolean shown = prefs.getShowUnitOverview();
+        try (var fixture = GpuBoardFixture.create()) {
+            var units = addUnits(fixture, 4);
+            SwingUtilities.invokeAndWait(() -> {
+                prefs.setShowUnitOverview(true);
+                ClientGUI gui = gui(fixture);
+                var own = new UnitOverviewOverlay(gui);
+                var enemies = new UnitOverviewOverlay(gui, true);
+                try {
+                    Player enemy = new Player(2, "Enemy");
+                    enemy.setTeam(2);
+                    fixture.game.addPlayer(enemy.getId(), enemy);
+                    units.forEach(unit -> unit.setOwner(enemy));
+                    units.get(0).addBeenSeenBy(fixture.player);
+                    units.get(1).addBeenDetectedBy(fixture.player);
+                    units.get(3).addBeenSeenBy(fixture.player);
+                    units.get(3).setBoardId(1);
+                    fixture.game.getOptions().getOption(OptionsConstants.ADVANCED_DOUBLE_BLIND).setValue(true);
+                    fixture.game.getOptions().getOption(OptionsConstants.ADVANCED_TAC_OPS_SENSORS).setValue(true);
+                    fixture.game.getOptions().getOption(OptionsConstants.ADVANCED_HIDDEN_UNITS).setValue(true);
+                    fixture.view.addOverlay(own);
+                    fixture.view.addOverlay(enemies);
+                    Dimension logical = new Dimension(800, 400);
+                    Dimension pixels = new Dimension((int) (800 * density), (int) (400 * density));
+                    var cards = fixture.view.captureOverlayLayers(logical, pixels);
+                    assertEquals(3, cards.size(), "Own unit plus the visible enemy and sensor contact, on this board only");
+                    assertTrue(cards.get(0).x() > 700 * density);
+                    assertTrue(cards.get(1).x() < 10 * density);
+                    assertEquals(cards.get(1).x(), cards.get(2).x());
+                    fixture.source.setViewport(logical.width, logical.height, pixels.width, pixels.height);
+                    fixture.source.refresh();
+                    var hud = fixture.source.takeFrame().hud();
+                    assertEquals(66 * density, hud.leftPanelInset(), .01);
+                    assertEquals(hud.sidePanelInset(), hud.leftPanelInset());
+
+                    assertTrue(enemies.isHit(new Point(30, 25), logical));
+                    verify(gui).centerOnUnit(units.get(0));
+                    assertTrue(enemies.isHit(new Point(30, 75), logical));
+                    verify(gui).centerOnUnit(units.get(1));
+                    units.get(1).setProne(true);
+                    units.get(1).heat = 25;
+                    units.get(1).setArmor(0, Mek.LOC_CENTER_TORSO);
+                    var changed = fixture.view.captureOverlayLayers(logical, pixels);
+                    assertSame(cards.get(2).image(), changed.get(2).image(),
+                          "Sensor portraits must not contain the unit's identity, armor, heat or condition");
+                    units.get(1).addBeenSeenBy(fixture.player);
+                    assertNotSame(changed.get(2).image(), fixture.view.captureOverlayLayers(logical, pixels).get(2).image());
+
+                    clearInvocations(gui);
+                    units.get(0).setHidden(true);
+                    assertTrue(enemies.isHit(new Point(30, 25), logical));
+                    verify(gui, never()).centerOnUnit(units.get(0));
+                    units.get(1).setHidden(true);
+                    fixture.source.refresh();
+                    assertEquals(0, fixture.source.takeFrame().hud().leftPanelInset());
+                    assertFalse(enemies.isDragged(new Point(30, 25), logical));
+                    assertTrue(fixture.view.sidePanelInset() > 0, "The friendly strip stays independent");
+                } finally {
+                    prefs.removePreferenceChangeListener(own);
+                    prefs.removePreferenceChangeListener(enemies);
+                    prefs.setShowUnitOverview(shown);
+                }
+            });
+        }
+    }
+
     @ParameterizedTest
     @ValueSource(doubles = { 1, 1.5, 2 })
     void overviewUsesSmallIndependentImagesAndKeepsClicksAligned(double density) throws Exception {

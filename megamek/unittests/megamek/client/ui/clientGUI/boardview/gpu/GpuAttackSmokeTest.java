@@ -157,8 +157,9 @@ class GpuAttackSmokeTest {
                                 ScrollPane content = GpuBoardTestUi.stage().getRoot().findActor("attack-scroll");
                                 assertTrue(weapons.getHeight() > 156, "Weapons must use the available tall-panel space");
                                 assertTrue(content.getMaxY() < 1, "The weapon list should fit the available content well");
-                                Vector2 bottom = weapons.localToAscendantCoordinates(content, new Vector2());
-                                assertTrue(bottom.y < 8, "No empty reserved area below the weapon list: " + bottom.y);
+                                Actor orders = GpuBoardTestUi.stage().getRoot().findActor("attack-review-orders");
+                                Vector2 bottom = orders.localToAscendantCoordinates(content, new Vector2());
+                                assertTrue(bottom.y >= 0 && bottom.y < 8, "Orders use the space below the weapon list: " + bottom.y);
                                 assertTrue(label("attack-target").getText().toString().contains("Atlas"));
                                 assertTrue(label("attack-solution").getText().toString().contains("To Hit"));
                                 assertFalse(button("fireFire").isDisabled());
@@ -169,6 +170,7 @@ class GpuAttackSmokeTest {
                                 assertFalse(popup().isVisible(), "Fire weapon dismisses another open popup");
                                 SwingUtilities.invokeAndWait(source.get()::refresh);
                             } else if (tick == 40) {
+                                assertBounds();
                                 assertFalse(source.get().takeFrame().attack().orders().isEmpty());
                                 assertFalse(label("attack-orders").getText().toString().equals("No attacks queued."));
                                 GpuBoardTestUi.capture(new File(output, "attack-panel-queued.png"));
@@ -246,6 +248,7 @@ class GpuAttackSmokeTest {
                         assertTrue(panel.getTop() <= GpuBoardTestUi.stage().getHeight() - GpuBoardUi.TOP_HEIGHT);
                         assertTrue(panel.getY() >= GpuBoardUi.TURN_HEIGHT);
                         assertTrue(panel.getRight() <= GpuBoardTestUi.stage().getWidth());
+                        GpuBoardTestUi.assertHorizontalBounds(panel, panel);
                         Actor fire = button("fireFire");
                         assertTrue(fire.getWidth() > 100 && fire.getHeight() >= 40);
                         assertEquals(44, fire.getHeight());

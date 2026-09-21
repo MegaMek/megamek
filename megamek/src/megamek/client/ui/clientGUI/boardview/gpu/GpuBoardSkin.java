@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -140,6 +141,13 @@ final class GpuBoardSkin implements Disposable {
         menuScroll.vScrollKnob.setMinWidth(4);
         menuScroll.vScrollKnob.setMinHeight(24);
         skin.add("menu", menuScroll);
+        var menuList = new com.badlogic.gdx.scenes.scene2d.ui.List.ListStyle(small, TEXT, TEXT,
+              skin.newDrawable("white", Color.valueOf("405258")));
+        menuList.background = skin.getDrawable("menu-panel");
+        var menuChoice = new SelectBox.SelectBoxStyle(small, TEXT,
+              choiceBackground("2B383D"), menuScroll, menuList);
+        menuChoice.backgroundOver = choiceBackground("35474D");
+        skin.add("menu", menuChoice);
 
         ScrollPane.ScrollPaneStyle scrolling = new ScrollPane.ScrollPaneStyle();
         scrolling.vScroll = skin.newDrawable("white", Color.valueOf("151A1B"));
@@ -204,6 +212,23 @@ final class GpuBoardSkin implements Disposable {
     }
 
     /** One quiet surface for a menu, with a single-pixel edge instead of a frame around every row. */
+    private Drawable choiceBackground(String color) {
+        Drawable background = skin.newDrawable("white", Color.valueOf(color));
+        Drawable arrow = skin.newDrawable("white", MUTED);
+        BaseDrawable result = new BaseDrawable() {
+            @Override
+            public void draw(Batch batch, float x, float y, float width, float height) {
+                background.draw(batch, x, y, width, height);
+                for (int row = 0; row < 4; row++) {
+                    arrow.draw(batch, x + width - 13 + row, y + height / 2 + 1 - row, 7 - row * 2, 1);
+                }
+            }
+        };
+        result.setLeftWidth(5);
+        result.setRightWidth(18);
+        return result;
+    }
+
     private NinePatchDrawable menuPanel() {
         Pixmap pixels = new Pixmap(3, 3, Pixmap.Format.RGBA8888);
         pixels.setColor(Color.valueOf("46565D"));

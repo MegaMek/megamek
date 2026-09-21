@@ -23,9 +23,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener.ChangeEvent;
+import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.Report;
 import megamek.common.enums.GamePhase;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.preference.PreferenceManager;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
@@ -37,10 +39,15 @@ class GpuReportSmokeTest {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         File output = new File(System.getProperty("megamek.gpu.screenshots"));
         assertTrue(output.isDirectory() || output.mkdirs());
+        var preferences = PreferenceManager.getClientPreferences();
+        String oldKeywords = preferences.getReportKeywords();
+        String oldFilters = preferences.getReportFilterKeywords();
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             var atlas = new MekFileParser(new File("testresources/data/mekfiles/Atlas AS7-D.mtf")).getEntity();
             var locust = new MekFileParser(new File("testresources/data/mekfiles/Locust LCT-1V.mtf")).getEntity();
             SwingUtilities.invokeAndWait(() -> {
+                preferences.setReportKeywords("LRM\nER Large Laser");
+                preferences.setReportFilterKeywords("LRM Laser\nLRM");
                 var shooter = fixture.entity;
                 atlas.setId(42);
                 locust.setId(43);
@@ -73,8 +80,9 @@ class GpuReportSmokeTest {
                         } else if (tick == 8) {
                             assertTrue(panel().isVisible(), "Report phases open the native reader");
                             assertStatus("12 events");
+                            assertKeywordShortcuts();
                             assertBounds();
-                            assertEquals(GpuAttackPanel.WIDTH, panel().getWidth(), 1,
+                            assertEquals(GpuPanelDock.WIDTH, panel().getWidth(), 1,
                                   "The report starts at the same width as the fire panel");
                             Table readout = panel().findActor("report-readout:42");
                             assertTrue(readout.getChildren().first() instanceof Image icon && icon.getDrawable() != null,
@@ -103,7 +111,7 @@ class GpuReportSmokeTest {
                             assertEquals(GpuBoardTestUi.stage().getWidth() - 24, panel().getWidth(), 1,
                                   "Dragging beyond the window clamps the report to the viewport");
                             dragWidth(0);
-                            assertEquals(GpuAttackPanel.WIDTH, panel().getWidth(), 1,
+                            assertEquals(GpuPanelDock.WIDTH, panel().getWidth(), 1,
                                   "The minimum width keeps the filters and event text usable");
                             dragWidth(480);
                             chosenWidth = panel().getWidth();
@@ -169,12 +177,50 @@ class GpuReportSmokeTest {
 
                 private TextField search() { return panel().findActor("report-search"); }
 
+                private void assertKeywordShortcuts() {
+                    GpuBoardTestUi.stage().setKeyboardFocus(null);
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_NEXT);
+                    assertStatus("12 events  /  Match 1 of 6");
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_NEXT);
+                    assertStatus("12 events  /  Match 2 of 6");
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_PREV);
+                    assertStatus("12 events  /  Match 1 of 6");
+                    GpuBoardTestUi.stage().setKeyboardFocus(search());
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_SELECT_NEXT);
+                    SelectBox<?> keyword = panel().findActor("report-keyword");
+                    assertEquals("ER Large Laser", keyword.getSelected());
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_SELECT_PREVIOUS);
+                    assertEquals("LRM", keyword.getSelected());
+                    assertEquals("", search().getText());
+                    GpuBoardTestUi.stage().setKeyboardFocus(null);
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_FILTER);
+                    assertStatus("12 events");
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_FILTER_KEY_SELECT_NEXT);
+                    assertStatus("6 events");
+                    GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_FILTER);
+                    assertStatus("12 events");
+                    int oldKey = KeyCommandBind.REPORT_KEY_NEXT.key;
+                    try {
+                        KeyCommandBind.REPORT_KEY_NEXT.key = java.awt.event.KeyEvent.VK_F8;
+                        GpuBoardTestUi.press(KeyCommandBind.REPORT_KEY_NEXT);
+                        assertStatus("12 events  /  Match 1 of 6");
+                    } finally {
+                        KeyCommandBind.REPORT_KEY_NEXT.key = oldKey;
+                    }
+                    GpuBoardTestUi.click("report-latest");
+                }
+
                 private void clickInformation() {
                     GpuReportText body = panel().findActor("report-text:0");
                     for (int y = 0; y < body.getHeight(); y++) {
                         for (int x = 0; x < body.getWidth(); x++) {
                             var link = body.linkAt(x, y);
                             if (link != null && link.detail().contains("gunnery")) {
+                                ScrollPane scroll = panel().findActor("report-scroll");
+                                Vector2 inRows = body.localToAscendantCoordinates(scroll.getWidget(), new Vector2(x, y));
+                                scroll.scrollTo(inRows.x, inRows.y, 1, 1);
+                                scroll.updateVisualScroll();
+                                GpuBoardTestUi.stage().draw();
                                 Vector2 point = body.localToStageCoordinates(new Vector2(x, y));
                                 GpuBoardTestUi.stage().stageToScreenCoordinates(point);
                                 var input = Gdx.input.getInputProcessor();
@@ -189,7 +235,7 @@ class GpuReportSmokeTest {
                 }
 
                 private void dragWidth(float width) {
-                    Actor edge = panel().findActor("report-resize");
+                    Actor edge = panel().findActor("dock-resize");
                     Vector2 from = edge.localToStageCoordinates(new Vector2(edge.getWidth() / 2, edge.getHeight() / 2));
                     Vector2 to = from.cpy().add(panel().getWidth() - width, 0);
                     GpuBoardTestUi.stage().stageToScreenCoordinates(from);
@@ -212,6 +258,11 @@ class GpuReportSmokeTest {
                           "The right edge stays anchored while resizing");
                 }
             }, GpuBoardWindow.configuration(false));
+        } finally {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setReportKeywords(oldKeywords);
+                preferences.setReportFilterKeywords(oldFilters);
+            });
         }
         if (failure.get() != null) {
             throw new AssertionError("Native report reader failed", failure.get());

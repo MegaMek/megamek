@@ -13,12 +13,16 @@ import java.util.function.Supplier;
 import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GameCommandsMenu;
 import megamek.client.ui.clientGUI.MapMenu;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.dialogs.unitDisplay.WeaponPanel;
@@ -52,6 +56,35 @@ final class GpuBoardActions {
         this.panel = panel;
         this.closed = closed;
         this.changed = changed;
+    }
+
+    record PhaseStatus(String text, boolean blocking) { }
+
+    /** Read presentation text from the existing phase controller on the EDT, including startup and waiting panels. */
+    static PhaseStatus phaseStatus(JComponent panel) {
+        if (panel instanceof StatusBarPhaseDisplay phase) {
+            return new PhaseStatus(plainText(phase.getStatusBarText()), false);
+        }
+        List<String> labels = new ArrayList<>();
+        collectStatusLabels(panel, labels);
+        String text = String.join("\n", labels);
+        return new PhaseStatus(text, !text.isEmpty());
+    }
+
+    private static void collectStatusLabels(Container panel, List<String> labels) {
+        if (panel == null) {
+            return;
+        }
+        for (Component child : panel.getComponents()) {
+            if (child.isVisible() && child instanceof JLabel label) {
+                String text = plainText(label.getText());
+                if (text.codePoints().anyMatch(Character::isLetter)) {
+                    labels.add(text);
+                }
+            } else if (child.isVisible() && child instanceof Container nested) {
+                collectStatusLabels(nested, labels);
+            }
+        }
     }
 
     int actorId() {
@@ -239,8 +272,8 @@ final class GpuBoardActions {
                   }
               })));
         if (view.getClientgui() != null) {
-            result.addAll(menuCommands(new MapMenu(coords, view.getBoardId(), owner.panel(), view.getClientgui()),
-                  owner, coords, List.of()));
+            Supplier<Container> menu = () -> new MapMenu(coords, view.getBoardId(), owner.panel(), view.getClientgui());
+            result.addAll(menuCommands(menu.get(), menu, owner, List.of()));
             BoardScene.Command weapons = weaponCommands(owner);
             if (weapons != null) {
                 result.add(weapons);
@@ -250,8 +283,19 @@ final class GpuBoardActions {
     }
 
     List<BoardScene.Command> globalCommands() {
-        return view.getClientgui() == null || view.getClientgui().getMenuBar() == null ? List.of()
-              : menuCommands(view.getClientgui().getMenuBar(), turn(), null, List.of());
+        ClientGUI gui = view.getClientgui();
+        if (gui == null || gui.getMenuBar() == null) {
+            return List.of();
+        }
+        List<BoardScene.Command> result = menuCommands(gui.getMenuBar(), gui::getMenuBar, null, List.of());
+        if (gui.getClient() instanceof megamek.client.Client) {
+            Supplier<Container> commands = () -> view.game.getPhase().isOnMap() || view.game.getPhase().isReport()
+                  ? new GameCommandsMenu(gui).createPopup() : new JPopupMenu();
+            List<BoardScene.Command> children = menuCommands(commands.get(), commands, null, List.of());
+            result.add(new BoardScene.Command("game-commands", Messages.getString("GameCommands.title"),
+                  Messages.getString("GameCommands.tooltip"), !children.isEmpty(), false, children, () -> { }));
+        }
+        return result;
     }
 
     /** The native window cannot trigger Swing accelerators, so invoke the current menu item on the EDT. */
@@ -263,7 +307,8 @@ final class GpuBoardActions {
 
     private static boolean menuShortcut(Container menu, KeyStroke key) {
         for (Component component : menu.getComponents()) {
-            if (!(component instanceof JMenuItem item) || !item.isVisible() || !item.isEnabled()) {
+            if (!(component instanceof JMenuItem item) || !item.isVisible() || !item.isEnabled()
+                  || ClientGUI.VIEW_UNIT_OVERVIEW.equals(item.getActionCommand())) {
                 continue;
             }
             if (item instanceof JMenu group) {
@@ -278,25 +323,25 @@ final class GpuBoardActions {
         return false;
     }
 
-    private List<BoardScene.Command> menuCommands(Container menu, Turn owner, Coords coords, List<String> parents) {
+    private List<BoardScene.Command> menuCommands(Container menu, Supplier<Container> refresh, Turn owner,
+          List<String> parents) {
         List<BoardScene.Command> result = new ArrayList<>();
         for (Component component : menu.getComponents()) {
-            if (!(component instanceof JMenuItem item) || !item.isVisible()) {
+            if (!(component instanceof JMenuItem item) || !item.isVisible()
+                  || ClientGUI.VIEW_UNIT_OVERVIEW.equals(item.getActionCommand())) {
                 continue;
             }
             String key = menuKey(item);
             List<String> path = new ArrayList<>(parents);
             path.add(key);
             List<BoardScene.Command> children = item instanceof JMenu group
-                  ? menuCommands(group.getPopupMenu(), owner, coords, path) : List.of();
+                  ? menuCommands(group.getPopupMenu(), refresh, owner, path) : List.of();
             result.add(describe(String.join("/", path), item, false, children, () -> {
-                if (coords != null && !current(owner)) {
+                if (owner != null && !current(owner)) {
                     return;
                 }
                 // Rebuild contextual choices to check visibility, targets and availability at execution time.
-                Container fresh = coords == null ? view.getClientgui().getMenuBar()
-                      : new MapMenu(coords, view.getBoardId(), owner.panel(), view.getClientgui());
-                JMenuItem action = findItem(fresh, path);
+                JMenuItem action = findItem(refresh.get(), path);
                 if (action != null && action.isEnabled()) {
                     action.doClick(0);
                 }

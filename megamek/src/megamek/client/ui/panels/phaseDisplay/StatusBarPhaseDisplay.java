@@ -334,6 +334,11 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
         labStatus.setText(text);
     }
 
+    /** The active visualization presents the same phase and waiting-player message. */
+    public String getStatusBarText() {
+        return labStatus == null ? "" : labStatus.getText();
+    }
+
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.BUTTONS_PER_ROW)) {

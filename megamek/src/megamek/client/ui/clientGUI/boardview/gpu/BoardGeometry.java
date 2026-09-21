@@ -118,9 +118,9 @@ final class BoardGeometry {
         return inset(point, center, MARKER_INSET);
     }
 
-    /** Riverbeds include a two-world-unit recess even at game depth zero. */
+    /** Liquid beds include a two-world-unit visual recess even without positive game water depth. */
     static float groundZ(BoardScene.Tile tile) {
-        return tile.elevation() * LEVEL - (tile.water() ? Math.max(2 * HEX_SCALE, tile.waterDepth() * LEVEL) : 0);
+        return tile.elevation() * LEVEL - (tile.liquid().present() ? Math.max(2 * HEX_SCALE, tile.waterDepth() * LEVEL) : 0);
     }
 
     static float waterZ(BoardScene.Tile tile) {
@@ -131,7 +131,7 @@ final class BoardGeometry {
         if (tile.frozen()) {
             return tile.elevation() * LEVEL;
         }
-        return tile.water() ? waterZ(tile) : groundZ(tile);
+        return tile.liquid().present() ? waterZ(tile) : groundZ(tile);
     }
 
     static float floor(BoardScene scene) {
@@ -173,9 +173,7 @@ final class BoardGeometry {
             float high = tile.elevation() * LEVEL;
             for (int direction = 0; direction < 6; direction++) {
                 BoardScene.Tile neighbor = scene.tile(tile.coords().translated(direction));
-                if (neighbor != null) {
-                    high = Math.max(high, neighbor.elevation() * LEVEL);
-                }
+                high = Math.max(high, BoardSurface.roadEdgeElevation(tile, neighbor, direction) * LEVEL);
             }
             if (!Intersector.intersectRayBoundsFast(ray,
                   new Vector3(centerX(tile.coords()), centerY(tile.coords()), (floor + high) / 2),

@@ -132,9 +132,9 @@ class GpuFieldOfViewEffectsSmokeTest {
           BoardCamera camera, BoardFieldOfView mask) {
         field.update(mask);
         ScreenUtils.clear(0, 0, 0, 1, true);
-        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0, true);
+        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0);
         terrain.render(camera.camera, false);
-        atmosphere.end(camera.camera, terrain, List.of(), scene, 0, field);
+        atmosphere.end(camera.camera, terrain, scene, 0, field);
         Pixmap pixels = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
         try {
             return new Samples(sample(pixels, camera, 1), sample(pixels, camera, 4), sample(pixels, camera, 7));

@@ -89,7 +89,9 @@ class GpuTerrainNormalsSmokeTest {
                         assertTrue(tuning.normalMaps(), "Normal maps start enabled");
                         stage = new Stage(new ScreenViewport());
                         stage.addActor(tuning.panel());
-                        tuning.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0);
+                        var dock = new GpuPanelDock(skin.skin, () -> { }, null, tuning.panel());
+                        dock.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0, 0, 0, 0);
+                        dock.show(tuning.panel());
                         Gdx.input.setInputProcessor(new InputMultiplexer(stage));
                         stage.act(0);
                         stage.draw();

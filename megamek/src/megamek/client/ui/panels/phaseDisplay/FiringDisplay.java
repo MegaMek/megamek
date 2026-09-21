@@ -2686,7 +2686,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
                 clientgui.maybeShowUnitDisplay();
                 clientgui.getUnitDisplay().displayEntity(entity);
                 if (entity.isDeployed()) {
-                    clientgui.centerOnHex(entity.getBoardLocation());
+                    clientgui.centerOnUnit(entity);
                 }
             }
         }

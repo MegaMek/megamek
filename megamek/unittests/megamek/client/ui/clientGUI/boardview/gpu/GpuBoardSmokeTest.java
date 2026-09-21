@@ -69,6 +69,12 @@ class GpuBoardSmokeTest {
                 private final List<Double> frameMillis = new ArrayList<>();
 
                 @Override
+                public void create() {
+                    super.create();
+                    boardCamera.setIsometric(false);
+                }
+
+                @Override
                 public void render() {
                     try {
                         super.render();

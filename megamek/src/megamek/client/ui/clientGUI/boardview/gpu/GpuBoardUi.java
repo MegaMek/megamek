@@ -47,7 +47,6 @@ final class GpuBoardUi implements Disposable {
     private static final int MENU_BAR_HEIGHT = 36;
     static final int TOP_HEIGHT = MENU_BAR_HEIGHT + 48;
     static final int TURN_HEIGHT = 100;
-    static final int SIDE_PANEL_MARGIN = 12;
     private static final int MENU_WIDTH = 360;
     private static final int DROPDOWN_WIDTH = 300;
     private final GpuBoardSource source;
@@ -55,6 +54,7 @@ final class GpuBoardUi implements Disposable {
     private final GpuBoardTuning tuning;
     private final GpuAttackPanel attackPanel;
     private final GpuReportPanel reportPanel;
+    private final GpuPanelDock dock;
     private final GpuBoardSkin theme = new GpuBoardSkin();
     private final Skin skin = theme.skin;
     private final GpuTextures<String> portraits = new GpuTextures<>();
@@ -78,6 +78,8 @@ final class GpuBoardUi implements Disposable {
     private final Label actorMeta;
     private final Image portrait = new Image();
     private final Label help;
+    private final Table phaseNotice = new Table();
+    private final Label phaseMessage;
     private final Label details;
     private final ScrollPane scroll;
     private final TextButton back;
@@ -101,6 +103,7 @@ final class GpuBoardUi implements Disposable {
     private float anchorX;
     private float anchorTop;
     private String menuTriggerName;
+    private boolean reportOpenedForPhase;
 
     GpuBoardUi(GpuBoardSource source, BoardCamera camera, Runnable changeSpeed) {
         this(source, camera, changeSpeed, () -> { });
@@ -222,6 +225,17 @@ final class GpuBoardUi implements Disposable {
         turn.add(footer).colspan(5).minWidth(0).growX().height(16).padTop(4);
         root.add(turn).height(TURN_HEIGHT).growX();
 
+        phaseMessage = new Label("", skin);
+        phaseMessage.setName("board-phase-message");
+        phaseMessage.setWrap(true);
+        phaseMessage.setAlignment(Align.center);
+        phaseNotice.setName("board-phase-notice");
+        phaseNotice.setBackground(skin.getDrawable("panel"));
+        phaseNotice.setTouchable(Touchable.enabled);
+        phaseNotice.add(phaseMessage).minWidth(0).growX().pad(32);
+        phaseNotice.setVisible(false);
+        stage.addActor(phaseNotice);
+
         popup.setBackground(skin.getDrawable("menu-panel"));
         popup.setName("tactical-menu");
         popup.setTouchable(Touchable.enabled);
@@ -296,8 +310,9 @@ final class GpuBoardUi implements Disposable {
         stage.addActor(reportPanel.panel());
         stage.addActor(popup);
         tuning = new GpuBoardTuning(skin, source);
-        tuning.panel().setVisible(false);
         stage.addActor(tuning.panel());
+        dock = new GpuPanelDock(skin, reportPanel::layout, reportPanel.panel(),
+              attackPanel.panel(), reportPanel.panel(), tuning.panel());
         stage.addListener(new InputListener() {
             @Override
             public boolean keyDown(InputEvent event, int key) {
@@ -378,36 +393,34 @@ final class GpuBoardUi implements Disposable {
             menuSignature = List.of();
             updateMenu();
         }
-        if (tuning.visible()) {
-            tuning.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT);
-        }
     }
 
     private void toggleTuning() {
-        if (!tuning.visible()) {
-            tuning.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT);
-        }
-        tuning.toggle();
+        togglePanel(tuning.panel());
     }
 
     private float sidebarInset() {
         return hudFrame == null ? 0 : hudFrame.sidePanelInset() * stage.getWidth() / Math.max(1, hudFrame.width());
     }
 
+    private float leftSidebarInset() {
+        return hudFrame == null ? 0 : hudFrame.leftPanelInset() * stage.getWidth() / Math.max(1, hudFrame.width());
+    }
+
     private void resizePanels() {
-        float inset = Math.max(SIDE_PANEL_MARGIN, sidebarInset());
-        attackPanel.resize(stage.getWidth(), stage.getHeight(), inset);
-        reportPanel.resize(stage.getWidth(), stage.getHeight(), inset);
+        dock.resize(stage.getWidth(), stage.getHeight(), TOP_HEIGHT, TURN_HEIGHT, leftSidebarInset(), sidebarInset());
+        phaseNotice.setBounds(0, TURN_HEIGHT, stage.getWidth(),
+              Math.max(0, stage.getHeight() - TOP_HEIGHT - TURN_HEIGHT));
     }
 
     private void toggleReport() {
+        togglePanel(reportPanel.panel());
+    }
+
+    private void togglePanel(Table panel) {
         closeMenu();
-        reportPanel.toggle();
-        stage.setKeyboardFocus(null);
-        stage.setScrollFocus(null);
-        if (frame != null) {
-            attackPanel.panel().setVisible(frame.attack() != null && !reportPanel.panel().isVisible());
-        }
+        reportOpenedForPhase = false;
+        dock.toggle(panel);
     }
 
     BitmapFont font() {
@@ -418,11 +431,17 @@ final class GpuBoardUi implements Disposable {
         return tuning.atmosphere();
     }
 
+    float gravityOverride() {
+        return tuning.gravityOverride();
+    }
+
+    GpuAtmosphere.Options atmosphereOptions() {
+        return tuning.atmosphereOptions();
+    }
+
     boolean normalMaps() {
         return tuning.normalMaps();
     }
-
-    double speedGainPerHex() { return tuning.speedGainPerHex(); }
 
     float damageOverride() {
         return tuning.damageOverride();
@@ -465,13 +484,11 @@ final class GpuBoardUi implements Disposable {
         return Math.round(TURN_HEIGHT * scale);
     }
 
-    /** Unobstructed board width in window pixels; both side panels keep their actual, possibly resized bounds. */
+    /** Unobstructed board area in window pixels, derived from the shared dock and captured unit strips. */
+    float cameraLeft() { return leftSidebarInset() * scale; }
+
     float cameraWidth() {
-        float right = stage.getWidth() - sidebarInset();
-        for (var panel : List.of(attackPanel.panel(), reportPanel.panel())) {
-            if (panel.isVisible()) { right = Math.min(right, panel.getX() - 8); }
-        }
-        return Math.max(1, right * scale);
+        return Math.max(1, (dock.cameraRight(stage.getWidth(), sidebarInset()) - leftSidebarInset()) * scale);
     }
 
     void updateHud(GpuBoardSource.Hud next, long now) {
@@ -479,7 +496,7 @@ final class GpuBoardUi implements Disposable {
             return;
         }
         if (hudFrame != next) {
-            float previousInset = sidebarInset();
+            float previousInset = sidebarInset(), previousLeft = leftSidebarInset();
             while (hudLayers.size() > next.layers().size()) {
                 HudActor removed = hudLayers.removeLast();
                 removed.image().remove();
@@ -498,7 +515,9 @@ final class GpuBoardUi implements Disposable {
                 layer.image().setDrawable(new TextureRegionDrawable(layer.textures().region(0)));
             }
             hudFrame = next;
-            if (!MathUtils.isEqual(previousInset, sidebarInset())) { resizePanels(); }
+            if (!MathUtils.isEqual(previousInset, sidebarInset()) || !MathUtils.isEqual(previousLeft, leftSidebarInset())) {
+                resizePanels();
+            }
         }
         float scaleX = hud.getWidth() / next.width();
         float scaleY = hud.getHeight() / next.height();
@@ -526,16 +545,24 @@ final class GpuBoardUi implements Disposable {
             closeMenu();
             plotting = false;
         }
+        boolean changedPhase = frame == null || frame.reports().phase() != next.reports().phase()
+              || frame.reports().round() != next.reports().round();
         frame = next;
-        attackPanel.update(frame);
-        boolean reportWasVisible = reportPanel.panel().isVisible();
-        reportPanel.update(frame.reports(), frame.scene().selectedId());
-        if (reportWasVisible && !reportPanel.panel().isVisible()) {
-            stage.setKeyboardFocus(null);
-            stage.setScrollFocus(null);
+        dock.fallback(frame.attack() == null ? null : attackPanel.panel());
+        if (changedPhase && frame.reports().phase().isReport()) {
+            reportOpenedForPhase |= !dock.isShowing(reportPanel.panel());
+            dock.show(reportPanel.panel());
+        } else if (changedPhase && reportOpenedForPhase) {
+            dock.restore();
+            reportOpenedForPhase = false;
         }
-        attackPanel.panel().setVisible(frame.attack() != null && !reportPanel.panel().isVisible());
+        attackPanel.update(frame);
+        reportPanel.update(frame.reports(), frame.scene().selectedId());
+        reportPanel.updateKeywords(source.uiPreferences);
+        phaseMessage.setText(source.phaseStatus.text());
+        phaseNotice.setVisible(source.phaseStatus.blocking());
         ((TextButton) stage.getRoot().findActor("battle-report-toggle")).setChecked(reportPanel.panel().isVisible());
+        ((TextButton) stage.getRoot().findActor("tuning")).setChecked(tuning.panel().isVisible());
         updateMenuBar();
         updateHud(frame.hud(), System.nanoTime());
         phase.setText(frame.scene().phase().toUpperCase(Locale.ROOT) + "  /  PHASE");
@@ -548,6 +575,9 @@ final class GpuBoardUi implements Disposable {
         help.setText(plotting ? "BOARD TOOL ACTIVE   /   Click to plot or select   \u00b7   Right-click: commands   \u00b7   Esc: exit tool"
               : "Click: commands   \u00b7   Right-drag: pan   \u00b7   Shift + right-drag: orbit   \u00b7   Wheel: zoom");
         help.setColor(plotting ? GpuBoardSkin.ACCENT : Color.WHITE);
+        if (!plotting && !source.phaseStatus.text().isBlank() && !source.phaseStatus.blocking()) {
+            help.setText(source.phaseStatus.text());
+        }
         List<BoardScene.Command> commits = frame.scene().commands().stream().filter(BoardScene.Command::commit).toList();
         List<String> ids = commits.stream().map(command -> command.id() + command.label()).toList();
         if (!ids.equals(completionIds)) {
@@ -1030,8 +1060,9 @@ final class GpuBoardUi implements Disposable {
         } else {
             float upperEdge = stage.getHeight() - TOP_HEIGHT - 8;
             height = Math.min(height, Math.max(1, upperEdge - TURN_HEIGHT - 8));
-            float right = attackPanel.panel().isVisible() ? attackPanel.panel().getX() - 8 : stage.getWidth();
-            x = MathUtils.clamp(anchorX, 8, Math.max(8, right - menuWidth() - 8));
+            float left = Math.max(8, leftSidebarInset());
+            float right = dock.cameraRight(stage.getWidth(), sidebarInset());
+            x = MathUtils.clamp(anchorX, left, Math.max(left, right - menuWidth() - 8));
             y = MathUtils.clamp(anchorTop - height, TURN_HEIGHT + 8, upperEdge - height);
         }
         popup.setBounds(x, y, menuWidth(), height);
@@ -1097,6 +1128,9 @@ final class GpuBoardUi implements Disposable {
             toggleReport();
             return true;
         }
+        if (down && !popup.isVisible() && reportPanel.key(bindings)) {
+            return true;
+        }
         if (down && unbound && modifiers == 0 && key == Input.Keys.F10) {
             open("all", "All actions", "all-actions");
             return true;
@@ -1111,8 +1145,8 @@ final class GpuBoardUi implements Disposable {
                 closeMenu();
                 return true;
             }
-            if (tuning.visible()) {
-                tuning.toggle();
+            if (dock.isShowing(tuning.panel())) {
+                toggleTuning();
                 return true;
             }
             if (reportPanel.panel().isVisible()) {
@@ -1128,7 +1162,11 @@ final class GpuBoardUi implements Disposable {
     }
 
     boolean acceptsCameraKeys() {
-        return !popup.isVisible() && !reportPanel.panel().isVisible();
+        return !phaseNotice.isVisible() && !popup.isVisible() && !reportPanel.panel().isVisible() && !tuning.panel().isVisible();
+    }
+
+    boolean isTextEditing() {
+        return stage.getKeyboardFocus() instanceof TextField;
     }
 
     boolean hit(int x, int y) {

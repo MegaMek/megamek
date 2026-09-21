@@ -591,7 +591,7 @@ public class ShortBattleReportGenerator {
         if (planetaryConditions.getLight().isDuskOrFullMoonOrMoonlessOrPitchBack()) {
             return ATMOSPHERE_KEYS[7];
         }
-        if (planetaryConditions.getLight().isDusk()) {
+        if (planetaryConditions.getLight().isDuskDawn()) {
             return ATMOSPHERE_KEYS[8];
         }
         if (planetaryConditions.getAtmosphere().isVacuum()) {

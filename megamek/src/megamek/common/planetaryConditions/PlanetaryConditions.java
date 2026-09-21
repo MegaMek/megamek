@@ -302,7 +302,7 @@ public class PlanetaryConditions implements Serializable {
     public int getLightHitPenalty(boolean isWeapon) {
         int penalty = 0;
         if (isWeapon) {
-            if (getLight().isDusk()) {
+            if (getLight().isDuskDawn()) {
                 penalty = 1;
             } else if (getLight().isFullMoonOrGlare()) {
                 penalty = 2;
@@ -327,7 +327,7 @@ public class PlanetaryConditions implements Serializable {
      */
     public int getLightHeatBonus(int heat) {
         double divisor = 10000.0;
-        if (getLight().isDusk()) {
+        if (getLight().isDuskDawn()) {
             divisor = 25.0;
         } else if (getLight().isFullMoonOrGlare()) {
             divisor = 20.0;
@@ -831,7 +831,7 @@ public class PlanetaryConditions implements Serializable {
             } else {
                 lightRange = 5;
             }
-        } else if (getLight().isDusk()) {
+        } else if (getLight().isDuskDawn()) {
             if (isMekOrVee || isLowAltitudeAero) {
                 lightRange = 15;
             } else if (isAero) {

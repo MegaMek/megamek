@@ -493,7 +493,7 @@ public class InfantryVsInfantryCombatDisplay extends AttackPhaseDisplay {
         clientgui.setSelectedEntityNum(entityId);
         clientgui.getUnitDisplay().displayEntity(game.getEntity(entityId));
         clientgui.getBoardView().highlight(game.getEntity(entityId).getPosition());
-        clientgui.getBoardView().centerOnHex(game.getEntity(entityId).getPosition());
+        clientgui.getBoardView().centerOn(game.getEntity(entityId));
 
         updateButtons();
     }

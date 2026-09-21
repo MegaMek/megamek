@@ -82,7 +82,7 @@ public class PlanetaryConditionsDeserializer extends StdDeserializer<PlanetaryCo
           "light", Fog.FOG_LIGHT, "heavy", Fog.FOG_HEAVY);
 
     static final Map<String, Light> LIGHT_VALUES = Map.of("none", Light.DAY,
-          "dusk", Light.DUSK, "full moon", Light.FULL_MOON,
+          "dusk", Light.DUSK_DAWN, "full moon", Light.FULL_MOON,
           "moonless", Light.MOONLESS, "pitchblack", Light.PITCH_BLACK);
 
     static final Map<String, Wind> WIND_VALUES = Map.of("none", Wind.CALM,

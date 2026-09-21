@@ -11,13 +11,13 @@ uniform float u_bias;
 uniform float u_intensity;
 
 float depthAt(sampler2D map, vec2 uv) {
-    return min(1.0, dot(texture2D(map, uv), vec4(1.0, 1.0 / 255.0, 1.0 / 65025.0, 1.0 / 16581375.0)));
+    return texture2D(map, uv).r;
 }
 
 float hiddenAt(vec2 uv) {
     if (min(uv.x, uv.y) < 0.0 || max(uv.x, uv.y) > 1.0) return 0.0;
     float unit = depthAt(u_unitDepth, uv);
-    return (1.0 - step(0.99999, unit)) * step(depthAt(u_sceneDepth, uv) + u_bias, unit);
+    return (1.0 - step(0.99999, unit)) * step(texture2D(u_sceneDepth, uv).r + u_bias, unit);
 }
 
 void main() {

@@ -2190,7 +2190,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     public boolean canSpot() {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
-                  game.getPlanetaryConditions().getLight().isDayOrDusk();
+                  game.getPlanetaryConditions().getLight().isDayOrDuskDawn();
             return !isAirborne() ||
                   hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
                   hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||

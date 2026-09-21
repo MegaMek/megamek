@@ -151,9 +151,9 @@ class GpuFieldOfViewCliffSmokeTest {
           BoardCamera camera, BoardFieldOfView mask) {
         field.update(mask);
         ScreenUtils.clear(0, 0, 0, 1, true);
-        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0, true);
+        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0);
         terrain.render(camera.camera, false);
-        atmosphere.end(camera.camera, terrain, List.of(), scene, 0, field);
+        atmosphere.end(camera.camera, terrain, scene, 0, field);
         return Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
     }
 

@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.Align;
 
 /** A native attack console. Its only inputs are presentation snapshots and the existing phase commands. */
 final class GpuAttackPanel {
-    static final int WIDTH = 362;
     private static final Set<String> QUICK_ACTIONS = Set.of("fireNextTarg", "fireTwist", "fireMode");
     private static final Color AMBER = Color.valueOf("D8BC82");
     private final Skin skin;
@@ -56,6 +55,7 @@ final class GpuAttackPanel {
         panel.setBackground(skin.getDrawable("panel"));
         panel.setTouchable(Touchable.enabled);
         panel.pad(12).top();
+        panel.defaults().minWidth(0);
 
         // Flat instrument rows keep the list quiet; reserve the authored metal button for firing.
         rowStyle = new TextButton.TextButtonStyle(skin.get("toolbar", TextButton.TextButtonStyle.class));
@@ -72,17 +72,18 @@ final class GpuAttackPanel {
         Image reticle = new Image(skin.getDrawable("icon-target"));
         reticle.setColor(AMBER);
         heading.add(reticle).size(18).padRight(9);
-        heading.add(new Label("ATTACK CONTROL", skin, "kicker")).left();
-        heading.add().growX();
+        Label title = new Label("ATTACK CONTROL", skin, "kicker");
+        title.setWrap(true);
+        heading.add(title).minWidth(0).growX();
         heading.add(button("attack-more", "Controls  >", controlStyle, moreControls)).width(82).height(26);
         panel.add(heading).growX().row();
         panel.add(rule()).growX().height(1).padTop(6).padBottom(8).row();
         target = new Label("", new Label.LabelStyle(skin.getFont("bold-font"), GpuBoardSkin.TEXT));
         target.setName("attack-target");
-        target.setEllipsis(true);
+        target.setWrap(true);
         panel.add(target).minWidth(0).growX().padBottom(8).row();
 
-        content.top().defaults().growX();
+        content.top().defaults().minWidth(0).growX();
         content.setBackground(skin.newDrawable("white", Color.valueOf("141B1E")));
         content.pad(6);
         solution = text("attack-solution");
@@ -103,16 +104,14 @@ final class GpuAttackPanel {
         scroll = new ScrollPane(content, scrollStyle());
         configureScroll(scroll, "attack-scroll");
         panel.add(scroll).minHeight(0).grow().row();
-        panel.add(ammunition).growX().row();
+        content.add(ammunition).row();
         TextButton review = button("attack-review-orders", "", rowStyle, reviewOrders);
         orders = review.getLabel();
         orders.setName("attack-orders");
-        orders.setWrap(false);
-        orders.setEllipsis(true);
         orders.setAlignment(Align.left);
         orderTooltip = new TextTooltip("", skin);
         review.addListener(orderTooltip);
-        panel.add(review).growX().height(26).padTop(6).row();
+        content.add(review).minHeight(26).padTop(6).row();
         panel.add(firing).growX().padTop(8);
         panel.setVisible(false);
     }
@@ -150,6 +149,7 @@ final class GpuAttackPanel {
         button.setName(name);
         button.setProgrammaticChangeEvents(false);
         button.getLabel().setWrap(true);
+        button.getLabelCell().minWidth(0);
         button.pad(6, 10, 6, 10);
         button.addListener(new ChangeListener() {
             @Override
@@ -165,15 +165,8 @@ final class GpuAttackPanel {
         return panel;
     }
 
-    void resize(float width, float height, float rightInset) {
-        float panelWidth = Math.min(WIDTH, Math.max(1, width - rightInset - GpuBoardUi.SIDE_PANEL_MARGIN));
-        panel.setBounds(width - panelWidth - rightInset, GpuBoardUi.TURN_HEIGHT + 12, panelWidth,
-              Math.max(1, height - GpuBoardUi.TOP_HEIGHT - GpuBoardUi.TURN_HEIGHT - 24));
-    }
-
     void update(GpuBoardSource.Frame frame) {
         BoardScene.Attack attack = frame.attack();
-        panel.setVisible(attack != null);
         commands = frame.scene().commands();
         if (attack == null) {
             actorId = -1;
@@ -256,14 +249,14 @@ final class GpuAttackPanel {
                     TextButton row = commandButton(choice, rowStyle);
                     row.getLabel().setAlignment(Align.left);
                     row.setChecked(choice.id().equals("weapon:" + attack.selectedWeapon()));
-                    weapons.add(row).growX().minHeight(28).padBottom(1).row();
+                    weapons.add(row).minWidth(0).growX().minHeight(28).padBottom(1).row();
                 } else {
                     String selected = choice.children().stream().map(BoardScene.Command::label)
                           .filter(label -> label.startsWith("* ")).map(label -> label.substring(2)).findFirst().orElse("—");
                     TextButton selector = button("attack:" + choice.id(), choice.label() + ": " + selected + "  >",
                           controlStyle, () -> openWeapons.accept(choice.id()));
                     selector.setDisabled(!choice.enabled());
-                    ammunition.add(selector).growX().minHeight(32).padBottom(3).row();
+                    ammunition.add(selector).minWidth(0).growX().minHeight(32).padBottom(3).row();
                 }
             }
         }
@@ -277,9 +270,9 @@ final class GpuAttackPanel {
                 if (command.id().equals("fireFire")) {
                     fire.getLabel().setColor(AMBER);
                 }
-                firing.add(fire).growX().height(44).padRight(4);
+                firing.add(fire).minWidth(0).growX().uniformX().minHeight(44).padRight(4);
             } else if (!hasWeapons || QUICK_ACTIONS.contains(command.id())) {
-                controls.add(commandButton(command, controlStyle)).growX().uniformX().minHeight(28).pad(1);
+                controls.add(commandButton(command, controlStyle)).minWidth(0).growX().uniformX().minHeight(28).pad(1);
                 if (++count % (hasWeapons ? 3 : 2) == 0) {
                     controls.row();
                 }

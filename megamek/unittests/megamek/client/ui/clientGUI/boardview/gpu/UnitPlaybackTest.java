@@ -51,20 +51,17 @@ class UnitPlaybackTest {
     }
 
     @Test
-    void movementCapturesTuningAtStartAndJumpUsesCapturedGravity() {
+    void movementUsesConstantAccelerationAndJumpUsesCapturedGravity() {
         var start = unit(1, 0).location();
         var end = unit(1, 40);
         var walk = new BoardScene.Movement(1, 0, List.of(start, end.location()), EntityMovementType.MOVE_WALK, 0, 4, end);
         var playback = new UnitPlayback();
-        playback.speedGainPerHex = 0;
-        playback.accept(List.of(walk, walk), scene(end), ignored -> false);
+        playback.accept(List.of(walk), scene(end), ignored -> false);
         playback.advance(0, UnitMotion.Speed.NORMAL);
         double duration = playback.motions.get(1).remainingSeconds();
-        playback.speedGainPerHex = .06;
-        playback.advance(0, UnitMotion.Speed.NORMAL);
-        assertEquals(duration, playback.motions.get(1).remainingSeconds(), "Changing tuning cannot warp active movement");
-        playback.advance(duration / UnitMotion.Speed.NORMAL.rate + UnitPlayback.COMPLETION_HOLD_SECONDS, UnitMotion.Speed.NORMAL);
-        assertTrue(playback.motions.get(1).remainingSeconds() < duration, "The next move uses the new gain");
+        var expected = new UnitMotion(start);
+        expected.append(walk.path(), walk.type(), walk.jumpMP(), false, walk.movementMP(), 0);
+        assertEquals(expected.remainingSeconds(), duration, "Playback must use UnitMotion's constant acceleration");
         for (float gravity : new float[] { 0, .5f, 1, 2 }) {
             var landing = unit(2, 1);
             var jump = new BoardScene.Movement(2, 0, List.of(start, landing.location()), EntityMovementType.MOVE_JUMP, 6, 6, landing, gravity);
@@ -82,6 +79,48 @@ class UnitPlaybackTest {
             flight.finish();
             assertFalse(flight.busy());
             assertNull(motion.sample().jets());
+        }
+    }
+
+    @Test
+    void visualGravityChangesNewJumpArcsAndTimingWithoutChangingCapturedMoves() {
+        var start = unit(1, 0).location();
+        var landing = unit(1, 1);
+        var jump = new BoardScene.Movement(1, 0, List.of(start, landing.location()), EntityMovementType.MOVE_JUMP, 6, 6, landing, 1);
+        double lowDuration = 0;
+        float lowApex = 0;
+        for (float gravity : new float[] { 0.5f, 2 }) {
+            var flight = new UnitPlayback();
+            flight.gravityOverride = gravity;
+            flight.accept(List.of(jump), scene(landing), ignored -> false);
+            flight.advance(0, UnitMotion.Speed.NORMAL);
+            var motion = flight.motions.get(1);
+            double duration = motion.remainingSeconds();
+            float apex = 0;
+            // Changing the preview while airborne must not snap or rebuild an already started jump.
+            flight.gravityOverride = 10;
+            for (int i = 0; i < 1000; i++) {
+                flight.advance(duration / 1000 / UnitMotion.Speed.NORMAL.rate, UnitMotion.Speed.NORMAL);
+                apex = Math.max(apex, motion.position().z);
+            }
+            assertEquals(4 / gravity, apex / BoardGeometry.LEVEL, .001);
+            if (gravity < 1) {
+                lowDuration = duration;
+                lowApex = apex;
+            } else {
+                assertTrue(lowApex > apex, "Lower preview gravity produces a taller jump");
+                assertTrue(Math.abs(lowDuration - duration) > .01, "Preview gravity must also change jump timing");
+            }
+            assertEquals(1, jump.gravity(), "The game movement snapshot must remain untouched");
+            assertEquals(landing.location(), jump.path().getLast());
+            flight.finish();
+            flight.gravityOverride = Float.NaN;
+            flight.accept(List.of(jump), scene(landing), ignored -> false);
+            flight.advance(0, UnitMotion.Speed.NORMAL);
+            var captured = new UnitMotion(start);
+            captured.append(jump.path(), jump.type(), jump.jumpMP(), false, jump.movementMP(), 0);
+            assertEquals(captured.remainingSeconds(), motion.remainingSeconds(), .00001,
+                  "Removing the preview restores captured game gravity on the next jump");
         }
     }
 

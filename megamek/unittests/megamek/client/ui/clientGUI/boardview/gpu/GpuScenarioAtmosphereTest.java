@@ -2,10 +2,12 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import javax.swing.SwingUtilities;
 
+import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.planetaryConditions.Fog;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.Weather;
@@ -17,20 +19,29 @@ class GpuScenarioAtmosphereTest {
     @Test
     void sourcePublishesImmutableEffectiveConditionsWithoutChangingTheScenario() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            float dayHour = fixture.source.takeFrame().scenarioAtmosphere().hour();
+            assertTrue(dayHour >= 8 && dayHour <= 17);
             SwingUtilities.invokeAndWait(() -> {
                 var conditions = fixture.game.getPlanetaryConditions();
                 conditions.setLight(Light.FULL_MOON);
                 conditions.setWeather(Weather.HEAVY_SNOW);
                 conditions.setFog(Fog.FOG_HEAVY);
+                conditions.setAtmosphericTaint(AtmosphericTaint.TAINTED_CAUSTIC);
                 conditions.setWind(Wind.STRONG_GALE);
                 conditions.setWindDirection(WindDirection.NORTH);
                 fixture.source.refresh();
             });
             var initial = fixture.source.takeFrame().scenarioAtmosphere();
-            assertEquals(0, initial.hour());
+            assertEquals(AtmosphericTaint.TAINTED_CAUSTIC, initial.taint());
+            float nightHour = initial.hour();
+            assertTrue(initial.hour() >= 20 || initial.hour() <= 4);
             assertTrue(initial.effects().snow() > 0);
             assertTrue(initial.effects().wind() > 0);
             assertTrue(initial.fog() > 0 && initial.haze() > 0);
+            SwingUtilities.invokeAndWait(() -> {
+                for (int update = 0; update < 5; update++) { fixture.source.refresh(); }
+            });
+            assertEquals(initial, fixture.source.takeFrame().scenarioAtmosphere(), "Routine refreshes must not reroll the clock");
             SwingUtilities.invokeAndWait(() -> {
                 var conditions = fixture.game.getPlanetaryConditions();
                 assertEquals(Light.FULL_MOON, conditions.getLight());
@@ -52,16 +63,29 @@ class GpuScenarioAtmosphereTest {
                 conditions.setLight(Light.DAY);
                 conditions.setWeather(Weather.CLEAR);
                 conditions.setFog(Fog.FOG_NONE);
+                conditions.setAtmosphericTaint(AtmosphericTaint.TOXIC_POISON);
                 fixture.source.refresh();
             });
             var changed = fixture.source.takeFrame().scenarioAtmosphere();
-            assertEquals(13, changed.hour());
+            assertEquals(AtmosphericTaint.TOXIC_POISON, changed.taint());
+            assertEquals(AtmosphericTaint.TAINTED_CAUSTIC, initial.taint(), "Published taint stays immutable");
+            assertEquals(dayHour, changed.hour(), "Returning to daylight retains this view's original time choice");
             assertEquals(0, changed.effects().snow());
             assertEquals(0, changed.fog());
             assertEquals(0, changed.haze());
-            assertEquals(0, initial.hour(), "Published snapshots must not share mutable planetary conditions");
+            assertEquals(nightHour, initial.hour(), "Published snapshots must not share mutable planetary conditions");
             assertTrue(initial.effects().snow() > 0);
             assertTrue(initial.fog() > 0 && initial.haze() > 0);
+            for (Light darkness : new Light[] { Light.MOONLESS, Light.PITCH_BLACK }) {
+                SwingUtilities.invokeAndWait(() -> {
+                    fixture.game.getPlanetaryConditions().setLight(darkness);
+                    fixture.source.refresh();
+                });
+                var dark = fixture.source.takeFrame().scenarioAtmosphere();
+                assertFalse(dark.moonlight());
+                assertFalse(BoardAtmosphere.lighting(dark).hasDirectLight());
+                assertTrue(initial.moonlight(), "The older full-moon snapshot stays immutable");
+            }
         }
     }
 }

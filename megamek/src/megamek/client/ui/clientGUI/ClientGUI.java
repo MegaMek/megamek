@@ -388,6 +388,8 @@ public class ClientGUI extends AbstractClientGUI
     private MapMenu popup;
     private RulerDialog ruler;
     protected JComponent curPanel;
+    /** Open the default board once per game; later phase changes preserve a manual choice or rendering fallback. */
+    private boolean boardViewChosen;
     public ChatLounge chatlounge;
     private OffBoardTargetOverlay offBoardOverlay;
     private BoardToastOverlay toastOverlay;
@@ -497,6 +499,7 @@ public class ClientGUI extends AbstractClientGUI
         super(client);
         this.client = client;
         controller = c;
+        boardViewsContainer.setClassicViewEnabled(client instanceof BotClient || !GUIP.getUse3DBoard());
         initializeSpriteHandlers();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
@@ -1060,7 +1063,7 @@ public class ClientGUI extends AbstractClientGUI
         RulerDialog.color2 = GUIP.getRulerColor2();
 
         setBotCommandsDialog(new BotCommandsDialog(frame, this));
-        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, null, this);
+        botCommandsPanel = new BotCommandsPanel(getClient(), audioService, controller, this);
         // The command bar holds the Commands button and is the strip the bot commands panel docks into, so it is put
         // in place first; it stays even when the bot commands panel is off or floating.
         commandBarPanel = new CommandBarPanel(this);
@@ -1073,6 +1076,7 @@ public class ClientGUI extends AbstractClientGUI
             controller.registerCommandAction(KeyCommandBind.BOT_COMMANDS.cmd, GUIP::toggleBotCommandsEnabled);
         }
 
+        showDefaultBoard(CG_DEFAULT);
         client.changePhase(GamePhase.UNKNOWN);
         MekSummaryCache mekSummaryCache = MekSummaryCache.getInstance();
         UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame, mekSummaryCache);
@@ -1082,7 +1086,7 @@ public class ClientGUI extends AbstractClientGUI
         mekSelectorDialog = new MegaMekUnitSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(frame, this);
         new Thread(mekSelectorDialog, Messages.getString("ClientGUI.mekSelectorDialog")).start();
-        frame.setVisible(true);
+        frame.setVisible(!GpuBoardWindow.isActiveFor(this));
         GUIP.addPreferenceChangeListener(this);
     }
 
@@ -1528,11 +1532,12 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews.get(0).zoomIn();
                 break;
             case VIEW_GPU_BOARD:
-                getCurrentBoardView().filter(BoardView.class::isInstance).map(BoardView.class::cast)
-                      .ifPresent(board -> GpuBoardWindow.open(
-                            board, () -> curPanel));
+                GUIP.setUse3DBoard(true);
+                openGpuBoard();
                 break;
             case VIEW_CLASSIC_BOARD:
+                boardViewChosen = true;
+                GUIP.setUse3DBoard(false);
                 GpuBoardWindow.showClassic(this);
                 break;
             case VIEW_ZOOM_OUT:
@@ -1715,6 +1720,7 @@ public class ClientGUI extends AbstractClientGUI
         }
 
         // Tell all the displays to remove themselves as listeners.
+        GpuBoardWindow.closeFor(this);
         boolean reportHandled = false;
         boardViews().forEach(IBoardView::dispose);
 
@@ -1826,6 +1832,7 @@ public class ClientGUI extends AbstractClientGUI
                 break;
         }
 
+        showDefaultBoard(mainNames.get(name));
         maybeShowMinimap();
         maybeShowCommandBar();
         maybeShowBotCommands();
@@ -1862,6 +1869,50 @@ public class ClientGUI extends AbstractClientGUI
         if (GUIP.getFocus() && !(client instanceof BotClient)) {
             curPanel.requestFocus();
         }
+    }
+
+    /** Keep the lounge in its own UI; the selected board owns loading screens and subsequent game phases. */
+    void showDefaultBoard(String mainPanel) {
+        if (getClient() instanceof BotClient) {
+            return;
+        }
+        if (CG_CHAT_LOUNGE.equals(mainPanel)) {
+            boardViewChosen = false;
+            GpuBoardWindow.showClassic(this);
+        } else if (!boardViewChosen) {
+            if (GUIP.getUse3DBoard()) {
+                openGpuBoard();
+            } else {
+                boardViewChosen = true;
+                GpuBoardWindow.showClassic(this);
+            }
+        }
+    }
+
+    private void openGpuBoard() {
+        boardViewChosen = true;
+        GpuBoardWindow.open(this, () -> curPanel);
+    }
+
+    /** Construct the legacy map components only when that visualization is requested. */
+    public void setClassicBoardViewEnabled(boolean enabled) {
+        boardViewsContainer.setClassicViewEnabled(enabled);
+        if (!enabled) {
+            boardViews().stream().filter(BoardView.class::isInstance).map(BoardView.class::cast)
+                  .forEach(BoardView::releaseClassicView);
+        }
+    }
+
+    /** Reapply auxiliary window presentation after changing board windows, without changing saved docking choices. */
+    public void refreshAuxiliaryWindows() {
+        setUnitDisplayVisible(GUIP.getUnitDisplayEnabled());
+        setForceDisplayVisible(GUIP.getForceDisplayEnabled());
+        setMiniReportLocation(GUIP.getMiniReportEnabled());
+        maybeShowMinimap();
+        setMapVisible(GUIP.getMinimapEnabled());
+        setPlayerListVisible(GUIP.getPlayerListEnabled());
+        setRoundsInAirVisible(GUIP.getRoundsInAirEnabled());
+        maybeShowBotCommands();
     }
 
     public void updateButtonPanel(GamePhase phase) {
@@ -2119,7 +2170,7 @@ public class ClientGUI extends AbstractClientGUI
      *                previously focused, focus will be requested.
      */
     private void conditionalRequestFocus(boolean visible) {
-        if (wasBoardFocused && visible) {
+        if (wasBoardFocused && visible && !GpuBoardWindow.isActiveFor(this)) {
             requestFocus();
         }
     }
@@ -2188,6 +2239,9 @@ public class ClientGUI extends AbstractClientGUI
 
     /** Shows or hides the minimap based on the current menu setting. */
     private void maybeShowMinimap() {
+        if (!boardViewsContainer.isClassicViewEnabled() && !GpuBoardWindow.isActiveFor(this)) {
+            return;
+        }
         GamePhase phase = getClient().getGame().getPhase();
 
         if (phase.isReport()) {
@@ -2382,7 +2436,8 @@ public class ClientGUI extends AbstractClientGUI
         if ((botCommandsPanel == null) || (getBotCommandsDialog() == null) || (commandBarPanel == null)) {
             return;
         }
-        boolean docked = GUIP.getBotCommandsLocation() == BOT_COMMANDS_LOCATION_DOCKED;
+        boolean docked = !GpuBoardWindow.isActiveFor(this)
+              && GUIP.getBotCommandsLocation() == BOT_COMMANDS_LOCATION_DOCKED;
         botCommandsPanel.setDockedLayout(docked);
         if (docked) {
             getBotCommandsDialog().setVisible(false);
@@ -2461,6 +2516,16 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     public void setUnitDisplayLocation(boolean visible) {
+        // The same inspector floats over the native board; its saved 2D docking choice remains unchanged.
+        if (GpuBoardWindow.isActiveFor(this)) {
+            getUnitDisplayDialog().add(getUnitDisplay(), BorderLayout.CENTER);
+            getUnitDisplay().setTitleVisible(false);
+            getUnitDisplay().setVisible(visible);
+            getUnitDisplayDialog().setVisible(visible);
+            getUnitDisplayDialog().revalidate();
+            getUnitDisplayDialog().repaint();
+            return;
+        }
         saveSplitPaneLocations();
         setDockAxis();
 
@@ -3226,10 +3291,10 @@ public class ClientGUI extends AbstractClientGUI
                           ClientGUI.this,
                           null,
                           boardId));
-                    // A board arriving during the lounge (lobby-built battlefield) must not pop up the minimap;
-                    // the boards are re-sent at game start (EXCHANGE), which shows it as usual.
                     boolean isInLounge = client.getGame().getPhase().isLounge();
-                    newMinimap.setVisible(!isInLounge);
+                    newMinimap.setVisible(!isInLounge
+                          && (boardViewsContainer.isClassicViewEnabled() || GpuBoardWindow.isActiveFor(ClientGUI.this))
+                          && GUIP.getMinimapEnabled());
                     miniMaps.put(boardId, newMinimap);
                     boardViews.put(boardId, boardView);
                     boardView.getPanel().setPreferredSize(clientGuiPanel.getSize());
@@ -3239,6 +3304,7 @@ public class ClientGUI extends AbstractClientGUI
                     boardView.getPanel().addKeyListener(cb2);
                     boardView.addOverlay(cb2);
                     boardView.addOverlay(new UnitOverviewOverlay(ClientGUI.this));
+                    boardView.addOverlay(new UnitOverviewOverlay(ClientGUI.this, true));
                     boardView.addOverlay(offBoardOverlay);
                     boardView.addOverlay(new KeyBindingsOverlay(boardView));
                     boardView.addOverlay(new PlanetaryConditionsOverlay(boardView));
@@ -3249,6 +3315,9 @@ public class ClientGUI extends AbstractClientGUI
                     boardViewsContainer.updateMapTabs();
                     ruler = new RulerDialog(frame, boardView, client.getGame());
                     boardView.addBoardViewListener(ClientGUI.this);
+                    if (CG_BOARD_VIEW.equals(mainNames.get(client.getGame().getPhase().toString()))) {
+                        showDefaultBoard(CG_BOARD_VIEW);
+                    }
                 } catch (IOException ex) {
                     // this is likely fatal anyway
                     throw new RuntimeException(ex);
@@ -3684,7 +3753,7 @@ public class ClientGUI extends AbstractClientGUI
                         return;
                     }
                     // If this is the client to handle the PBS, take care of it
-                    getBoardView().centerOnHex(attacker.getPosition());
+                    getBoardView().centerOn(attacker);
                     getBoardView().highlight(attacker.getPosition());
                     getBoardView().select(target.getPosition());
                     getBoardView().cursor(target.getPosition());
@@ -4420,9 +4489,18 @@ public class ClientGUI extends AbstractClientGUI
      * @param boardLocation The location to show and center on
      */
     public void centerOnHex(@Nullable BoardLocation boardLocation) {
-        if (client.getGame().hasBoardLocation(boardLocation)) {
+        centerOn(boardLocation, null);
+    }
+
+    private void centerOn(@Nullable BoardLocation boardLocation, @Nullable Entity entity) {
+        if (getClient().getGame().hasBoardLocation(boardLocation)) {
             showBoardView(boardLocation.boardId());
-            getBoardView(boardLocation).centerOnHex(boardLocation.coords());
+            BoardView board = getBoardView(boardLocation);
+            if (entity == null) {
+                board.centerOnHex(boardLocation.coords());
+            } else {
+                board.centerOn(entity);
+            }
         }
     }
 
@@ -4433,7 +4511,7 @@ public class ClientGUI extends AbstractClientGUI
      */
     public void centerOnUnit(@Nullable Targetable targetable) {
         if (targetable != null) {
-            centerOnHex(targetable.getBoardLocation());
+            centerOn(targetable.getBoardLocation(), targetable instanceof Entity entity ? entity : null);
         }
     }
 

@@ -43,6 +43,7 @@ class GpuMeasurementSmokeTest {
             });
             GpuBoardSource source = mock(GpuBoardSource.class);
             source.uiPreferences = fixture.source.uiPreferences;
+            source.phaseStatus = fixture.source.phaseStatus;
             when(source.takeFrame()).thenAnswer(invocation -> fixture.source.takeFrame());
             doAnswer(invocation -> {
                 invocation.getArgument(3, Runnable.class).run();

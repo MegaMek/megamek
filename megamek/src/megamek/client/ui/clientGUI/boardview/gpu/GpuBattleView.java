@@ -35,7 +35,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardMarker;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -43,6 +48,7 @@ import megamek.client.ui.clientGUI.boardview.sprite.EntitySprite;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Coords;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /** GPU board and Scene2D controls. The source remains the sole bridge to the existing client. */
@@ -77,7 +83,11 @@ class GpuBattleView extends ApplicationAdapter {
     private static final Color TETHER_COLOR = Color.valueOf("A9B8B8");
     private static final float TILT_DEGREES_PER_SECOND = 60;
     private static final MMLogger LOGGER = MMLogger.create(GpuBattleView.class);
-    private final GpuBoardSource source;
+    private GpuBoardSource source;
+    private Stage loadingStage;
+    private GpuBoardSkin loadingTheme;
+    private Label loadingLabel;
+    private volatile String loadingMessage = Messages.getString("ClientGUI.waitingOnTheServer");
     private final GpuDisplayScale displayScale = new GpuDisplayScale();
     final BoardCamera boardCamera = new BoardCamera();
     private final UnitPlayback playback = new UnitPlayback(this::completeMovement);
@@ -93,6 +103,7 @@ class GpuBattleView extends ApplicationAdapter {
     private final Map<BoardScene.Unit, UnitFootprint.Pose> unitFootprints = new HashMap<>();
     private final Matrix4 selectionTransform = new Matrix4();
     private final Map<String, ModelInstance> unitInstances = new HashMap<>();
+    private final UnitBounds.Frame unitBounds = new UnitBounds.Frame();
     private final UnitPicking unitPicking = new UnitPicking();
     private final Map<String, UnitModelState.Appearance> equipmentAppearance = new HashMap<>();
     private final Map<String, BoardScene.Pixels> unitTints = new HashMap<>();
@@ -127,7 +138,9 @@ class GpuBattleView extends ApplicationAdapter {
     private long frames;
     private float hoverClock;
     private long boardGeneration;
-    private long centerSequence;
+    private long centerSequence = -1;
+    private boolean entrancePending;
+    private boolean entranceStarting;
     private int cameraSelection = -1;
     private boolean cameraFollowingPlayback;
     private int layoutWidth;
@@ -143,9 +156,55 @@ class GpuBattleView extends ApplicationAdapter {
         fieldOfView = new GpuFieldOfView();
     }
 
+    void setLoadingMessage(String message) {
+        loadingMessage = message;
+    }
+
+    /** Attach the first map after the native loading window is already visible. Runs on the render thread. */
+    void attachSource(GpuBoardSource next) {
+        source = next;
+        createBoard();
+        loadingStage.dispose();
+        loadingStage = null;
+        loadingTheme.dispose();
+        loadingTheme = null;
+    }
+
+    void prepareEntrance() {
+        entrancePending = true;
+    }
+
+    void startEntrance() {
+        entrancePending = false;
+        entranceStarting = true;
+        if (scene != null) {
+            boardCamera.enter(scene);
+        }
+    }
+
     @Override
     public void create() {
-        terrain = new GpuTerrain(unitModels);
+        if (source == null) {
+            loadingTheme = new GpuBoardSkin();
+            loadingStage = new Stage(new ScreenViewport());
+            Table content = new Table();
+            content.setFillParent(true);
+            loadingLabel = new Label(loadingMessage, loadingTheme.skin);
+            loadingLabel.setName("board-loading-message");
+            loadingLabel.setWrap(true);
+            loadingLabel.setAlignment(Align.center);
+            content.add(new Label("MEGAMEK", loadingTheme.skin, "kicker")).padBottom(18).row();
+            content.add(loadingLabel).width(600);
+            loadingStage.addActor(content);
+            Gdx.input.setInputProcessor(new InputMultiplexer(loadingStage));
+            return;
+        }
+        createBoard();
+    }
+
+    private void createBoard() {
+        boardCamera.setIsometric(true);
+        terrain = new GpuTerrain(unitModels, unitBounds);
         fireControl = new GpuFireControl();
         tactical = new GpuTactical();
         atmosphere = new GpuAtmosphere();
@@ -159,6 +218,12 @@ class GpuBattleView extends ApplicationAdapter {
         ui = new GpuBoardUi(source, boardCamera, () -> playbackSpeed = playbackSpeed.next(), playback::togglePaused);
         Gdx.input.setInputProcessor(new InputMultiplexer(ui.stage, boardInput) {
             @Override
+            public boolean keyDown(int key) {
+                // Window commands precede Scene2D focus; ordinary typing and navigation stay with the focused control.
+                return isWindowShortcut(key) ? boardInput.keyDown(key) : super.keyDown(key);
+            }
+
+            @Override
             public boolean keyUp(int key) {
                 // A menu may have taken focus after keyDown; always release the original board command.
                 boolean handled = boardInput.keyUp(key);
@@ -170,6 +235,9 @@ class GpuBattleView extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
+        if (loadingStage != null && width > 0 && height > 0) {
+            loadingStage.getViewport().update(width, height, true);
+        }
         if (ui == null || width <= 0 || height <= 0) {
             return;
         }
@@ -196,6 +264,13 @@ class GpuBattleView extends ApplicationAdapter {
 
     @Override
     public void render() {
+        if (source == null) {
+            ScreenUtils.clear(.045f, .065f, .075f, 1, true);
+            loadingLabel.setText(loadingMessage);
+            loadingStage.act(Math.min(Gdx.graphics.getDeltaTime(), .1f));
+            loadingStage.draw();
+            return;
+        }
         if (source.isClosed()) {
             Gdx.app.exit();
             return;
@@ -209,6 +284,7 @@ class GpuBattleView extends ApplicationAdapter {
         if (frame.scene() == null) {
             return;
         }
+        renderStage("scene update");
         if (scene != null && (boardGeneration != frame.boardGeneration() || scene.boardId() != frame.scene().boardId() || scene.width() != frame.scene().width()
               || scene.height() != frame.scene().height())) {
             playback.clear();
@@ -221,11 +297,11 @@ class GpuBattleView extends ApplicationAdapter {
         }
         List<BoardScene.Tile> previousTiles = scene == null ? null : scene.tiles();
         scene = frame.scene();
-        playback.speedGainPerHex = ui.speedGainPerHex();
         playback.accept(frame.timeline(), scene, this::hasInfantryTransports);
         ui.update(frame, Messages.getString("GpuBoard.speed",
               playbackSpeed == UnitMotion.Speed.INSTANT ? Messages.getString("GpuBoard.instant") : playbackSpeed.label));
-        boardCamera.viewableWidth(ui.cameraWidth());
+        playback.gravityOverride = ui.gravityOverride();
+        boardCamera.viewableArea(ui.cameraLeft(), ui.cameraWidth());
         if (!fitted) { updateCameraFocus(scene, frame.centerRequest()); }
         var instantAction = playbackSpeed == UnitMotion.Speed.INSTANT ? playback.lastAction() : null;
         playback.advance(Gdx.graphics.getDeltaTime(), playbackSpeed, state -> preparePlaybackCamera(state, scene));
@@ -244,7 +320,7 @@ class GpuBattleView extends ApplicationAdapter {
         fieldOfView.update(scene.fieldOfView());
         fieldOfView.configure(ui.fovStyle(), ui.fovDarkness(), ui.sensorStyle(), ui.sensorDarkness());
         atmosphere.configure(ui.atmosphere());
-        terrain.setAtmosphere(atmosphere.lighting());
+        atmosphere.setOptions(ui.atmosphereOptions());
         terrain.setNormalMaps(ui.normalMaps());
         if (unitTextures.update(scene.units().stream().filter(unit -> !unit.sensorContact()
               && (unitModels == null || unitModels.get(unit.model(), unit.id()) == null)).map(BoardScene.Unit::image).distinct()
@@ -267,7 +343,9 @@ class GpuBattleView extends ApplicationAdapter {
         annotationTextures.update(scene.units().stream().filter(unit -> unit.annotations() != null).collect(Collectors.toMap(
               unit -> unit.id() + ":" + unit.part(), BoardScene.Unit::annotations)));
         updateCameraFocus(scene, frame.centerRequest(), instantAction);
-        boardCamera.advance(Gdx.graphics.getDeltaTime());
+        // The first visible frame's delta may still include the hidden window's loading time.
+        boardCamera.advance(entranceStarting ? 0 : Gdx.graphics.getDeltaTime());
+        entranceStarting = false;
         if (source.chatActive()) {
             cameraKeys.clear();
         }
@@ -296,6 +374,7 @@ class GpuBattleView extends ApplicationAdapter {
             boardInput.mouseMoved(Gdx.input.getX(), Gdx.input.getY());
         }
         hoverClock += animationSeconds();
+        renderStage("unit poses");
         markers.beginFrame(scene.markers(), Gdx.graphics.getDeltaTime());
         prepareUnits();
         applyHover();
@@ -305,31 +384,42 @@ class GpuBattleView extends ApplicationAdapter {
         markers.update(unitInstances.values(), boardCamera.camera);
         updateJumpJets();
         attackEffects.update(playback.attacks(), unitModels, unitInstances);
+        unitBounds.begin();
         List<ModelInstance> units = new ArrayList<>(unitInstances.values());
-        List<ModelInstance> sceneObjects = new ArrayList<>(units);
-        sceneObjects.addAll(markers.instances());
         List<ModelInstance> outlined = scene.units().stream()
               .filter(unit -> !unit.sensorContact() || GpuMarkers.outlineEnabled(BoardMarker.Kind.SENSOR_CONTACT))
               .map(unit -> unitInstances.get(unit.id() + ":" + unit.part()))
               .collect(Collectors.toCollection(ArrayList::new));
         outlined.addAll(markers.outlinedInstances());
-        outlined.removeIf(instance -> instance == null || !boardCamera.camera.frustum.boundsInFrustum(UnitBounds.world(instance)));
+        outlined.removeIf(instance -> instance == null || !boardCamera.camera.frustum.boundsInFrustum(unitBounds.get(instance)));
         float seeThrough = ui.seeThrough();
+        renderStage("cutaways and light");
+        atmosphere.updateLight(boardCamera.camera);
+        terrain.setAtmosphere(atmosphere.lighting());
         terrain.animate(Gdx.graphics.getDeltaTime(), units, ui.buildingOpacity());
+        renderStage("geometry shadows");
         terrain.renderShadows(boardCamera.camera, units);
+        renderStage("cloud transmission");
+        atmosphere.prepareClouds(terrain, scene, Gdx.graphics.getDeltaTime());
+        renderStage("opaque terrain");
         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
         atmosphere.begin((int) boardCamera.camera.viewportWidth, (int) boardCamera.camera.viewportHeight,
-              Gdx.graphics.getDeltaTime(), fieldOfView.active() || seeThrough > 0 && !outlined.isEmpty());
+              Gdx.graphics.getDeltaTime());
         terrain.render(boardCamera.camera, false);
+        renderStage("units");
         renderUnits();
+        renderStage("transparent effects");
         renderTethers();
         terrain.renderTransparent(boardCamera.camera);
         jumpJets.render(boardCamera.camera);
         attackEffects.render(boardCamera.camera);
-        atmosphere.end(boardCamera.camera, terrain, sceneObjects, scene, ui.bottomPixels(), fieldOfView);
-        atmosphere.restoreDepth(boardCamera.camera, terrain, sceneObjects);
+        renderStage("atmosphere composite");
+        atmosphere.end(boardCamera.camera, terrain, scene, ui.bottomPixels(), fieldOfView);
+        renderStage("weather particles");
         atmosphere.renderWeather(boardCamera.camera, scene);
-        unitVisibility.render(boardCamera.camera, outlined, atmosphere.depthTexture(), ui.bottomPixels(), seeThrough, layoutScale);
+        renderStage("unit outlines");
+        unitVisibility.render(boardCamera.camera, outlined, atmosphere.depthTexture(), ui.bottomPixels(), seeThrough, layoutScale, unitBounds);
+        renderStage("tactical overlays");
         terrain.render(boardCamera.camera, true);
         fireControl.render(boardCamera.camera, Gdx.graphics.getDeltaTime());
         tactical.render(boardCamera.camera, Gdx.graphics.getDeltaTime());
@@ -338,9 +428,29 @@ class GpuBattleView extends ApplicationAdapter {
         renderSelectionOutlines();
         Gdx.gl.glDisable(GL20.GL_DEPTH_TEST);
         tactical.renderLabels(boardCamera.camera);
+        renderStage("annotations and UI");
         renderAnnotations();
+        renderEntrance();
         ui.draw();
+        renderStage(null);
         frames++;
+    }
+
+    /** Benchmark boundary only. Normal gameplay does not allocate queries, read clocks or wait for the GPU. */
+    void renderStage(String stage) { }
+
+    private void renderEntrance() {
+        float opacity = entrancePending ? 0 : boardCamera.entranceOpacity();
+        if (opacity >= 1) { return; }
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        lines.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+              boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight));
+        lines.begin(ShapeRenderer.ShapeType.Filled);
+        lines.setColor(0.035f, 0.055f, 0.075f, 1 - opacity);
+        lines.rect(0, 0, boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight);
+        lines.end();
+        Gdx.gl.glDisable(GL20.GL_BLEND);
     }
 
     private void updateJumpJets() {
@@ -526,8 +636,9 @@ class GpuBattleView extends ApplicationAdapter {
             fitted = true;
             cameraSelection = scene.selectedId();
             cameraFollowingPlayback = false;
-            // A unit-list click can switch boards. Do not consume its pending focus request while fitting.
-            centerSequence = 0;
+            // Start with the whole map, ignoring any earlier classic-board centering. Later board switches
+            // can follow a unit-list click, whose pending focus request must still be applied.
+            centerSequence = centerSequence < 0 ? request.sequence() : 0;
         }
         boolean firing = playback.attack() != null && playback.attack().shot();
         boolean instant = playbackSpeed == UnitMotion.Speed.INSTANT;
@@ -538,7 +649,8 @@ class GpuBattleView extends ApplicationAdapter {
                 // The complete route is already framed. Do not chase the unit or recenter it on arrival.
                 cameraFollowingPlayback = false;
                 // The classic board auto-centers each move's start; do not replay that request after arrival.
-                if (playback.movement().path().getFirst().coords().equals(request.coords())) {
+                if (request.entityId() == Entity.NONE
+                      && playback.movement().path().getFirst().coords().equals(request.coords())) {
                     centerSequence = request.sequence();
                 }
                 boardCamera.frameMovement(playback.movement(), motions.get(playback.activeEntityId()), scene, cameraWidth());
@@ -562,11 +674,14 @@ class GpuBattleView extends ApplicationAdapter {
             }
             return;
         }
-        BoardScene.Unit selection = null;
-        if (cameraSelection != scene.selectedId() || cameraFollowingPlayback && instantAction == null) {
-            selection = scene.units().stream().filter(unit -> unit.id() == scene.selectedId()).findFirst().orElse(null);
+        boolean requested = centerSequence != request.sequence();
+        boolean changedSelection = cameraSelection != scene.selectedId() || cameraFollowingPlayback && instantAction == null;
+        var selection = changedSelection && scene.selectedId() != Entity.NONE
+              ? scene.units().stream().filter(unit -> unit.id() == scene.selectedId()).findFirst().orElse(null) : null;
+        if (selection == null && requested && request.entityId() != Entity.NONE) {
+            selection = scene.units().stream().filter(unit -> unit.id() == request.entityId()).findFirst().orElse(null);
         }
-        Coords center = selection == null && centerSequence != request.sequence() ? request.coords() : null;
+        Coords center = selection == null && requested && request.entityId() == Entity.NONE ? request.coords() : null;
         centerSequence = request.sequence();
         cameraSelection = scene.selectedId();
         cameraFollowingPlayback = false;
@@ -578,7 +693,7 @@ class GpuBattleView extends ApplicationAdapter {
             scene.units().stream().filter(unit -> unit.id() == instantAction.entityId()).findFirst()
                   .ifPresent(unit -> boardCamera.frameSelection(unit, cameraWidth()));
         } else if (center != null && scene.tile(center) != null) {
-            boardCamera.center(BoardGeometry.center(center, scene.tile(center).elevation()));
+            boardCamera.frameLocation(BoardGeometry.center(center, scene.tile(center).elevation()), cameraWidth());
         }
         if (instant) {
             // Replace any old transition with the final requested view before snapping it, never visiting each event.
@@ -683,6 +798,7 @@ class GpuBattleView extends ApplicationAdapter {
     private void renderTethers() {
         Vector3 center = new Vector3();
         Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(false);
         lines.setProjectionMatrix(boardCamera.camera.combined);
         lines.begin(ShapeRenderer.ShapeType.Line);
         lines.setColor(TETHER_COLOR);
@@ -700,6 +816,7 @@ class GpuBattleView extends ApplicationAdapter {
             }
         }
         lines.end();
+        Gdx.gl.glDepthMask(true);
     }
 
     /** One render-only selection shared by color, depth, outlines and shadows. */
@@ -788,7 +905,7 @@ class GpuBattleView extends ApplicationAdapter {
         unitBatch.begin(boardCamera.camera);
         for (BoardScene.Unit unit : unitAnchors.keySet()) {
             ModelInstance instance = unitInstances.get(unit.id() + ":" + unit.part());
-            if (boardCamera.camera.frustum.boundsInFrustum(UnitBounds.world(instance))) {
+            if (boardCamera.camera.frustum.boundsInFrustum(unitBounds.get(instance))) {
                 if (unit.sensorContact()) {
                     unitBatch.render(instance);
                 } else {
@@ -1235,10 +1352,13 @@ class GpuBattleView extends ApplicationAdapter {
             }
             int awt = awtKey(key);
             int modifiers = modifiers();
+            if (ui.isTextEditing() && !isWindowShortcut(key)) {
+                return true;
+            }
             if (!source.chatActive() && ui.key(key, true)) {
                 return true;
             }
-            if (!ui.acceptsCameraKeys()) {
+            if (!ui.acceptsCameraKeys() && !isWindowShortcut(key)) {
                 return true;
             }
             if (!source.chatActive()) {
@@ -1319,6 +1439,27 @@ class GpuBattleView extends ApplicationAdapter {
             source.keyTyped(character);
             return true;
         }
+    }
+
+    private boolean isWindowShortcut(int key) {
+        if (source.chatActive()) {
+            return false;
+        }
+        int modifiers = modifiers();
+        int awt = awtKey(key);
+        if (ui.isTextEditing() && (modifiers & (InputEvent.CTRL_DOWN_MASK | InputEvent.ALT_DOWN_MASK
+              | InputEvent.META_DOWN_MASK)) == 0 && !(awt >= KeyEvent.VK_F1 && awt <= KeyEvent.VK_F12)
+              && !(awt >= KeyEvent.VK_F13 && awt <= KeyEvent.VK_F24)) {
+            return false;
+        }
+        return KeyCommandBind.getAllBindsByKey(awt, modifiers).stream().anyMatch(command -> switch (command) {
+            case ZOOM_IN, ZOOM_OUT, ZOOM_OVERVIEW_TOGGLE, TOGGLE_ISO -> false;
+            case UD_GENERAL, UD_PILOT, UD_ARMOR, UD_WEAPONS, UD_SYSTEMS, UD_EXTRAS,
+                 BOT_COMMANDS, PAUSE, UNPAUSE, EXTEND_TURN_TIMER,
+                 REPORT_KEY_NEXT, REPORT_KEY_PREV, REPORT_KEY_SELECT_NEXT, REPORT_KEY_SELECT_PREVIOUS,
+                 REPORT_FILTER_KEY_SELECT_NEXT, REPORT_KEY_FILTER -> true;
+            default -> command.isMenuBar;
+        });
     }
 
     static int awtKey(int key) {
@@ -1421,7 +1562,9 @@ class GpuBattleView extends ApplicationAdapter {
         cameraKeys.clear();
         boardInput.pressedKeys.clear();
         boardInput.reset();
-        source.stopKeys();
+        if (source != null) {
+            source.stopKeys();
+        }
     }
 
     static int modifiers() {
@@ -1451,10 +1594,15 @@ class GpuBattleView extends ApplicationAdapter {
 
     @Override
     public void dispose() {
+        if (loadingStage != null) {
+            loadingStage.dispose();
+            loadingTheme.dispose();
+        }
         playback.clear();
         groundSurfaces.clear();
         animators.clear();
         unitInstances.clear();
+        unitBounds.begin();
         unitAnchors.clear();
         unitTints.clear();
         unitDamage.clear();
@@ -1469,7 +1617,9 @@ class GpuBattleView extends ApplicationAdapter {
         if (ui != null) {
             ui.dispose();
         }
-        source.stopKeys();
+        if (source != null) {
+            source.stopKeys();
+        }
         spriteModels.values().forEach(GpuUnitModel::dispose);
         spriteModels.clear();
         if (unitModels != null) {
@@ -1513,6 +1663,8 @@ class GpuBattleView extends ApplicationAdapter {
             lines.dispose();
         }
         fieldOfView.dispose();
-        source.close();
+        if (source != null) {
+            source.close();
+        }
     }
 }

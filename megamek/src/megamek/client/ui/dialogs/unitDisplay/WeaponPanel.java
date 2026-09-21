@@ -1219,18 +1219,25 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         return ((WeaponListModel) weaponList.getModel()).getWeaponAt(selected);
     }
 
-    /** Existing target and to-hit presentation for alternative board UIs. */
+    /** Existing target and to-hit presentation as a complete HTML tooltip. */
     public String getTargetSummary() {
-        return wTargetInfo.getText() + "<br>" + getFiringSolution();
+        return UnitToolTip.wrapWithHTML(htmlFragment(wTargetInfo.getText()) + "<br>" + getFiringSolution());
     }
 
     public String getTargetName() {
         return target == null ? Messages.getString("MekDisplay.NoTarget") : target.getDisplayName();
     }
 
+    /** Already-computed firing solution as an HTML fragment. */
     public String getFiringSolution() {
-        return Messages.getString("MekDisplay.Range") + " " + wRangeR.getText() + "<br>"
-              + toHitText.getText() + "<br>" + wTargetExtraInfo.getText();
+        return Messages.getString("MekDisplay.Range") + " " + htmlFragment(wRangeR.getText()) + "<br>"
+              + htmlFragment(toHitText.getText()) + "<br>" + htmlFragment(wTargetExtraInfo.getText());
+    }
+
+    private static String htmlFragment(@Nullable String text) {
+        // Text panes serialize complete HTML documents; closing one would truncate the combined tooltip.
+        return Objects.toString(text, "").replaceAll("(?is)<head\\b[^>]*>.*?</head>", "")
+              .replaceAll("(?i)</?(?:html|body)\\b[^>]*>", "");
     }
 
     /** Already-computed weapon statistics, including special infantry and aerospace presentations. */

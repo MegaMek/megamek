@@ -2,6 +2,7 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -45,12 +46,13 @@ class GpuDeploymentSmokeTest {
                 fixture.source.refresh();
             });
             BoardScene scene = fixture.source.takeFrame().scene();
-            assertTrue(scene.tiles().stream().anyMatch(tile -> tile.tactical() != null));
+            assertFalse(scene.tactical().fills().isEmpty(), "Deployment borders use native tactical geometry");
             new Lwjgl3Application(new ApplicationAdapter() {
                 @Override
                 public void create() {
                     GpuTerrain terrain = new GpuTerrain();
                     GpuAtmosphere atmosphere = new GpuAtmosphere();
+                    GpuTactical tactical = new GpuTactical();
                     BoardGeometry.Tuning original = BoardGeometry.tuning();
                     try {
                         BoardCamera camera = new BoardCamera();
@@ -58,12 +60,14 @@ class GpuDeploymentSmokeTest {
                         File output = new File(System.getProperty("megamek.gpu.screenshots"));
                         assertTrue(output.isDirectory() || output.mkdirs());
                         terrain.update(scene);
+                        tactical.update(scene);
                         terrain.setAtmosphere(atmosphere.lighting());
                         for (boolean isometric : new boolean[] { true, false }) {
                             camera.setIsometric(isometric);
                             camera.fit(scene);
                             drawWorld(terrain, atmosphere, camera, scene);
                             terrain.render(camera.camera, true);
+                            tactical.render(camera.camera, 0);
                             GpuBoardTestUi.capture(new File(output, "deployment-depth-" + (isometric ? "isometric" : "top") + ".png"));
                         }
                         // Exercise the normal dimensions and a changed level/hex scale, using the same scene.
@@ -92,6 +96,7 @@ class GpuDeploymentSmokeTest {
                         BoardGeometry.tune(original);
                         terrain.dispose();
                         atmosphere.dispose();
+                        tactical.dispose();
                         Gdx.app.exit();
                     }
                 }
@@ -136,8 +141,7 @@ class GpuDeploymentSmokeTest {
         atmosphere.begin(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), 0);
         terrain.render(camera.camera, false);
         terrain.renderTransparent(camera.camera);
-        atmosphere.end(camera.camera, terrain, List.of(), scene, 0);
-        atmosphere.restoreDepth(camera.camera, terrain, List.of());
+        atmosphere.end(camera.camera, terrain, scene, 0);
     }
 
     private static void checkProbe(GpuTerrain terrain, GpuAtmosphere atmosphere, BoardCamera camera, BoardScene source,

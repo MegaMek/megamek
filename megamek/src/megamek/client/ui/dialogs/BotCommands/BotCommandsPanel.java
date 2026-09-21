@@ -224,8 +224,8 @@ public class BotCommandsPanel extends JPanel {
         miscButton.setEnabled(false);
         miscButton.setVisible(false);
         if (controller != null) {
-            controller.registerCommandAction(KeyCommandBind.UNPAUSE.cmd, this::pauseUnpause);
-            controller.registerCommandAction(KeyCommandBind.PAUSE.cmd, this::pauseUnpause);
+            controller.registerCommandAction(KeyCommandBind.UNPAUSE, pauseContinue::isEnabled, this::pauseUnpause);
+            controller.registerCommandAction(KeyCommandBind.PAUSE, pauseContinue::isEnabled, this::pauseUnpause);
         }
         updateButtonStates();
         client.getGame().addGameListener(new GameListenerAdapter() {

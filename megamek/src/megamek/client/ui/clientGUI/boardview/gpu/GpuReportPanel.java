@@ -11,13 +11,8 @@ import java.util.Set;
 import java.util.function.IntConsumer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Cursor.SystemCursor;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -37,6 +32,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
+import megamek.client.ui.util.KeyCommandBind;
 
 /** Native report reader. Filters and disclosure state belong to this view; resolution text comes from the client. */
 final class GpuReportPanel implements Disposable {
@@ -56,11 +52,13 @@ final class GpuReportPanel implements Disposable {
     private final Table panel = new Table();
     private final Table filters = new Table();
     private final Table rows = new Table();
-    private final Table resizeHandle = new Table();
     private final ScrollPane scroll;
     private final SelectBox<Turn> turns;
     private final SelectBox<String> phases;
     private final SelectBox<GpuReportLog.Unit> units;
+    private final SelectBox<String> keywords;
+    private final SelectBox<String> filterKeywords;
+    private final TextButton keywordFilter;
     private final TextField search;
     private final Label status;
     private final Label current;
@@ -69,15 +67,17 @@ final class GpuReportPanel implements Disposable {
     private final Set<String> collapsed = new HashSet<>();
     private final Map<GpuReportLog.Entry, Boolean> detailOverrides = new LinkedHashMap<>();
     private final Map<GpuReportLog.Entry, GpuReportLog.Link> detailLinks = new LinkedHashMap<>();
+    private final Map<Integer, Table> eventRows = new LinkedHashMap<>();
+    private GpuBoardSource.UiPreferences keywordPreferences;
+    private int keywordMatch = -1;
     private GpuReportLog.Snapshot snapshot = GpuReportLog.Snapshot.EMPTY;
     private List<GpuReportLog.Entry> filtered = List.of();
     private int selectedId = -1;
     private boolean changing;
     private boolean followLatest = true;
     private boolean showDetails;
-    private boolean openedForPhase;
     private boolean narrowFilters;
-    private float preferredWidth = GpuAttackPanel.WIDTH;
+    private boolean keywordFilterEnabled;
 
     GpuReportPanel(Skin skin, Runnable close, IntConsumer inspectUnit) {
         this.skin = skin;
@@ -107,6 +107,8 @@ final class GpuReportPanel implements Disposable {
         turns = new SelectBox<>(selectStyle);
         phases = new SelectBox<>(selectStyle);
         units = new SelectBox<>(selectStyle);
+        keywords = new SelectBox<>(selectStyle);
+        filterKeywords = new SelectBox<>(selectStyle);
         search = new TextField("", skin);
         turns.setName("report-turn");
         phases.setName("report-phase");
@@ -150,6 +152,8 @@ final class GpuReportPanel implements Disposable {
             changing = false;
             followLatest = false;
             collapsed.clear();
+            keywordFilterEnabled = false;
+            keywordMatch = -1;
             rebuild(false);
         })).height(28).padLeft(6);
         panel.add(searchRow).growX().padBottom(4).row();
@@ -165,6 +169,30 @@ final class GpuReportPanel implements Disposable {
                 }
             }
         });
+        keywords.setName("report-keyword");
+        filterKeywords.setName("report-filter-keyword");
+        for (SelectBox<String> box : List.of(keywords, filterKeywords)) {
+            box.setMaxListCount(8);
+            box.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    if (!changing) {
+                        keywordMatch = -1;
+                        rebuild(true);
+                    }
+                }
+            });
+        }
+        Table keywordRow = new Table();
+        keywordRow.add(selector(keywords)).minWidth(0).growX().height(28).padRight(4);
+        keywordRow.add(button("report-keyword-prev", "Previous", () -> findKeyword(-1))).height(26).padRight(4);
+        keywordRow.add(button("report-keyword-next", "Next", () -> findKeyword(1))).height(26);
+        panel.add(keywordRow).growX().padBottom(4).row();
+        Table filterRow = new Table();
+        filterRow.add(selector(filterKeywords)).minWidth(0).growX().height(28).padRight(4);
+        keywordFilter = button("report-keyword-filter", "Keyword filter", this::toggleKeywordFilter);
+        filterRow.add(keywordFilter).height(26);
+        panel.add(filterRow).growX().padBottom(4).row();
         Table tools = new Table();
         status = new Label("", skin, "small");
         status.setName("report-status");
@@ -187,18 +215,92 @@ final class GpuReportPanel implements Disposable {
         scroll.setFadeScrollBars(false);
         scroll.setFlickScroll(false);
         panel.add(scroll).minHeight(0).grow();
-        addResizeHandle();
         panel.setVisible(false);
     }
 
     Table panel() { return panel; }
 
-    void resize(float width, float height, float rightInset) {
-        float panelWidth = Math.min(preferredWidth, Math.max(1, width - rightInset - GpuBoardUi.SIDE_PANEL_MARGIN));
-        panel.setBounds(width - panelWidth - rightInset, GpuBoardUi.TURN_HEIGHT + 12, panelWidth,
-              Math.max(1, height - GpuBoardUi.TOP_HEIGHT - GpuBoardUi.TURN_HEIGHT - 24));
-        resizeHandle.setBounds(0, 0, 10, panel.getHeight());
-        boolean narrow = panelWidth < 520;
+    void updateKeywords(GpuBoardSource.UiPreferences preferences) {
+        if (keywordPreferences == preferences) {
+            return;
+        }
+        keywordPreferences = preferences;
+        changing = true;
+        setKeywords(keywords, preferences.reportKeywords());
+        setKeywords(filterKeywords, preferences.reportFilterKeywords());
+        changing = false;
+        rebuild(true);
+    }
+
+    private static void setKeywords(SelectBox<String> box, String preference) {
+        String selected = box.getSelected();
+        box.setItems(new Array<>(preference.lines().map(String::strip).filter(word -> !word.isEmpty())
+              .distinct().toArray(String[]::new)));
+        if (selected != null && box.getItems().contains(selected, false)) {
+            box.setSelected(selected);
+        }
+        box.setDisabled(box.getItems().isEmpty());
+    }
+
+    /** The legacy report shortcuts act on the native reader and use the same user-configured keyword lists. */
+    boolean key(List<KeyCommandBind> bindings) {
+        if (!panel.isVisible()) {
+            return false;
+        }
+        for (KeyCommandBind binding : bindings) {
+            switch (binding) {
+                case REPORT_KEY_NEXT -> findKeyword(1);
+                case REPORT_KEY_PREV -> findKeyword(-1);
+                case REPORT_KEY_SELECT_NEXT -> cycleKeyword(keywords, 1);
+                case REPORT_KEY_SELECT_PREVIOUS -> cycleKeyword(keywords, -1);
+                case REPORT_FILTER_KEY_SELECT_NEXT -> cycleKeyword(filterKeywords, 1);
+                case REPORT_KEY_FILTER -> toggleKeywordFilter();
+                default -> { continue; }
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private static void cycleKeyword(SelectBox<String> box, int direction) {
+        if (box.getItems().notEmpty()) {
+            box.setSelectedIndex(Math.floorMod(box.getSelectedIndex() + direction, box.getItems().size));
+        }
+    }
+
+    private void toggleKeywordFilter() {
+        keywordFilterEnabled = !keywordFilterEnabled && filterKeywords.getSelected() != null;
+        followLatest = false;
+        keywordMatch = -1;
+        rebuild(false);
+    }
+
+    private void findKeyword(int direction) {
+        String keyword = keywords.getSelected();
+        if (keyword == null) {
+            return;
+        }
+        List<Integer> matches = java.util.stream.IntStream.range(0, filtered.size())
+              .filter(entry -> filtered.get(entry).matches(0, "", -1, keyword)).boxed().toList();
+        int index = matches.indexOf(keywordMatch);
+        keywordMatch = matches.isEmpty() ? -1 : matches.get(index < 0 ? (direction > 0 ? 0 : matches.size() - 1)
+              : Math.floorMod(index + direction, matches.size()));
+        if (keywordMatch >= 0) {
+            GpuReportLog.Entry entry = filtered.get(keywordMatch);
+            collapsed.remove("Turn " + entry.round() + "  /  " + entry.phase());
+        }
+        rebuild(true);
+        Table row = eventRows.get(keywordMatch);
+        if (row != null) {
+            scroll.scrollTo(row.getX(), row.getY(), row.getWidth(), row.getHeight(), false, true);
+            scroll.updateVisualScroll();
+        }
+        status.setText(filtered.size() + " events  /  " + (matches.isEmpty() ? "No matches"
+              : "Match " + (matches.indexOf(keywordMatch) + 1) + " of " + matches.size()) + " · " + keyword);
+    }
+
+    void layout() {
+        boolean narrow = panel.getWidth() < 520;
         if (narrow != narrowFilters) {
             Actor turnField = turns.getParent();
             Actor phaseField = phases.getParent();
@@ -217,96 +319,14 @@ final class GpuReportPanel implements Disposable {
         turns.hideList();
         phases.hideList();
         units.hideList();
+        keywords.hideList();
+        filterKeywords.hideList();
         panel.validate();
-    }
-
-    private void addResizeHandle() {
-        resizeHandle.setName("report-resize");
-        resizeHandle.setTouchable(Touchable.enabled);
-        Image grip = new Image(skin.getDrawable("white"));
-        grip.setColor(GpuBoardSkin.MUTED);
-        resizeHandle.add(grip).size(2, 32);
-        resizeHandle.addListener(new TextTooltip("Drag the left edge to resize the report", skin));
-        resizeHandle.addListener(new InputListener() {
-            private float startX;
-            private float startWidth;
-            private boolean dragging;
-
-            @Override
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (button != Input.Buttons.LEFT) {
-                    return false;
-                }
-                startX = event.getStageX();
-                startWidth = panel.getWidth();
-                dragging = true;
-                grip.setColor(AMBER);
-                Gdx.graphics.setSystemCursor(SystemCursor.HorizontalResize);
-                return true;
-            }
-
-            @Override
-            public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                float stageWidth = panel.getStage().getWidth();
-                float rightInset = stageWidth - panel.getRight();
-                float maximum = Math.max(1, panel.getRight() - GpuBoardUi.SIDE_PANEL_MARGIN);
-                preferredWidth = MathUtils.clamp(startWidth + startX - event.getStageX(),
-                      Math.min(GpuAttackPanel.WIDTH, maximum), maximum);
-                resize(stageWidth, panel.getStage().getHeight(), rightInset);
-            }
-
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                dragging = false;
-                grip.setColor(GpuBoardSkin.MUTED);
-                Gdx.graphics.setSystemCursor(SystemCursor.Arrow);
-            }
-
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                if (pointer == -1) {
-                    grip.setColor(AMBER);
-                    Gdx.graphics.setSystemCursor(SystemCursor.HorizontalResize);
-                }
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                if (pointer == -1 && !dragging) {
-                    grip.setColor(GpuBoardSkin.MUTED);
-                    Gdx.graphics.setSystemCursor(SystemCursor.Arrow);
-                }
-            }
-        });
-        panel.addActor(resizeHandle);
-    }
-
-    void toggle() {
-        openedForPhase = false;
-        panel.setVisible(!panel.isVisible());
-        if (panel.isVisible()) {
-            rebuild(true);
-        } else {
-            turns.hideList();
-            phases.hideList();
-            units.hideList();
-        }
     }
 
     void update(GpuReportLog.Snapshot next, int actorId) {
         boolean changedActor = selectedId != actorId;
         selectedId = actorId;
-        boolean changedPhase = next.phase() != snapshot.phase() || next.round() != snapshot.round();
-        if (changedPhase && next.phase().isReport()) {
-            openedForPhase = openedForPhase || !panel.isVisible();
-            panel.setVisible(true);
-        } else if (changedPhase && openedForPhase) {
-            panel.setVisible(false);
-            turns.hideList();
-            phases.hideList();
-            units.hideList();
-            openedForPhase = false;
-        }
         if (next == snapshot) {
             if (changedActor) {
                 selected.setDisabled(snapshot.entries().stream().flatMap(entry -> entry.units().stream())
@@ -353,6 +373,8 @@ final class GpuReportPanel implements Disposable {
         selectLatest();
         units.setSelected(ALL_UNITS);
         search.setText("");
+        keywordFilterEnabled = false;
+        keywordMatch = -1;
         collapsed.clear();
         changing = false;
         rebuild(false);
@@ -383,16 +405,26 @@ final class GpuReportPanel implements Disposable {
         }
         int chosenRound = round;
         String phase = phases.getSelected().equals(ALL_PHASES) ? "" : phases.getSelected();
+        List<GpuReportLog.Entry> previous = filtered;
         filtered = snapshot.entries().stream()
-              .filter(entry -> entry.matches(chosenRound, phase, units.getSelected().id(), search.getText())).toList();
+              .filter(entry -> entry.matches(chosenRound, phase, units.getSelected().id(), search.getText()))
+              .filter(entry -> !keywordFilterEnabled || filterKeywords.getSelected() == null
+                    || java.util.Arrays.stream(filterKeywords.getSelected().split("\\s+"))
+                          .anyMatch(word -> entry.matches(0, "", -1, word))).toList();
+        if (!filtered.equals(previous)) {
+            keywordMatch = -1;
+        }
         status.setText(filtered.size() + " events  /  " + filtered.stream().flatMap(entry -> entry.units().stream())
               .map(GpuReportLog.Unit::id).distinct().count() + " units  ·  Click a unit to filter");
         latest.setChecked(followLatest);
+        keywordFilter.setChecked(keywordFilterEnabled);
         ((TextButton) panel.findActor("report-details")).setChecked(showDetails);
         rows.clearChildren();
-        Map<String, List<GpuReportLog.Entry>> sections = new LinkedHashMap<>();
-        for (GpuReportLog.Entry entry : filtered) {
-            sections.computeIfAbsent("Turn " + entry.round() + "  /  " + entry.phase(), key -> new ArrayList<>()).add(entry);
+        eventRows.clear();
+        Map<String, List<Integer>> sections = new LinkedHashMap<>();
+        for (int index = 0; index < filtered.size(); index++) {
+            GpuReportLog.Entry entry = filtered.get(index);
+            sections.computeIfAbsent("Turn " + entry.round() + "  /  " + entry.phase(), key -> new ArrayList<>()).add(index);
         }
         int index = 0;
         for (var section : sections.entrySet()) {
@@ -412,10 +444,14 @@ final class GpuReportPanel implements Disposable {
             if (collapsed.contains(key)) {
                 continue;
             }
-            for (GpuReportLog.Entry entry : section.getValue()) {
+            for (int entryIndex : section.getValue()) {
+                GpuReportLog.Entry entry = filtered.get(entryIndex);
                 Table event = new Table();
                 event.setName("report-event:" + index);
-                event.setBackground(skin.newDrawable("white", Color.valueOf(index++ % 2 == 0 ? "171F23" : "1C262A")));
+                event.setBackground(skin.newDrawable("white", entryIndex == keywordMatch ? Color.valueOf("3B3A2D")
+                      : Color.valueOf(index % 2 == 0 ? "171F23" : "1C262A")));
+                index++;
+                eventRows.put(entryIndex, event);
                 event.pad(5, 8, 6, 8).defaults().growX().left();
                 if (!entry.heading().isBlank() && entry.units().isEmpty()) {
                     Label heading = new Label(entry.heading(), skin, "kicker");

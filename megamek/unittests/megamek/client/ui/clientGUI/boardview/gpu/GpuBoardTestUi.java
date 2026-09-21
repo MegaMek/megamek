@@ -2,7 +2,10 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import java.awt.event.InputEvent;
 import java.io.File;
 
 import com.badlogic.gdx.Gdx;
@@ -17,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import megamek.client.ui.util.KeyCommandBind;
 
 /** Shared native UI input and artwork assertions; all calls run on the GL thread. */
 final class GpuBoardTestUi {
@@ -24,6 +28,38 @@ final class GpuBoardTestUi {
 
     static Stage stage() {
         return (Stage) ((InputMultiplexer) Gdx.input.getInputProcessor()).getProcessors().first();
+    }
+
+    static void press(KeyCommandBind bind) {
+        Input original = Gdx.input;
+        Input keyboard = mock(Input.class);
+        when(keyboard.getInputProcessor()).thenReturn(original.getInputProcessor());
+        when(keyboard.isKeyPressed(Input.Keys.CONTROL_LEFT)).thenReturn((bind.modifiers & InputEvent.CTRL_DOWN_MASK) != 0);
+        when(keyboard.isKeyPressed(Input.Keys.SHIFT_LEFT)).thenReturn((bind.modifiers & InputEvent.SHIFT_DOWN_MASK) != 0);
+        when(keyboard.isKeyPressed(Input.Keys.ALT_LEFT)).thenReturn((bind.modifiers & InputEvent.ALT_DOWN_MASK) != 0);
+        when(keyboard.isKeyPressed(Input.Keys.SYM)).thenReturn((bind.modifiers & InputEvent.META_DOWN_MASK) != 0);
+        int key = java.util.stream.IntStream.rangeClosed(1, Input.Keys.MAX_KEYCODE)
+              .filter(candidate -> GpuBattleView.awtKey(candidate) == bind.key).findFirst().orElseThrow();
+        Gdx.input = keyboard;
+        try {
+            original.getInputProcessor().keyDown(key);
+            original.getInputProcessor().keyUp(key);
+        } finally {
+            Gdx.input = original;
+        }
+    }
+
+    static void assertHorizontalBounds(Group group, Actor bounds) {
+        for (Actor actor : group.getChildren()) {
+            if (!actor.isVisible()) { continue; }
+            Vector2 point = actor.localToAscendantCoordinates(bounds, new Vector2());
+            assertTrue(point.x >= -1 && point.x + actor.getWidth() <= bounds.getWidth() + 1,
+                  actor.getName() + " overflows its panel: x=" + point.x + ", width=" + actor.getWidth()
+                        + ", panel=" + bounds.getWidth());
+            if (actor instanceof Group child) {
+                assertHorizontalBounds(child, bounds);
+            }
+        }
     }
 
     static void click(String name) {

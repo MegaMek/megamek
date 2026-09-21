@@ -97,7 +97,7 @@ final class GpuTactical implements Disposable {
         for (int i = 0; i < scene.tiles().size(); i++) {
             BoardScene.Tile a = previous.tiles().get(i), b = scene.tiles().get(i);
             if (a.elevation() != b.elevation() || a.waterDepth() != b.waterDepth() || a.frozen() != b.frozen()
-                  || a.roadExits() != b.roadExits()) {
+                  || a.roadExits() != b.roadExits() || !a.features().equals(b.features())) {
                 return false;
             }
         }

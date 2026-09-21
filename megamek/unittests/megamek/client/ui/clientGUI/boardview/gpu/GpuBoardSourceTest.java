@@ -4,6 +4,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -54,6 +55,55 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class GpuBoardSourceTest {
+    @Test
+    void minimapNavigationAndViewportRecreationDoNotDependOnAnInactiveRenderer() throws Exception {
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                assertNull(fixture.view.getPanel().getParent());
+                fixture.view.centerOnPointRel(1, 1);
+                Coords corner = new Coords(fixture.game.getBoard().getWidth() - 1,
+                      fixture.game.getBoard().getHeight() - 1);
+                assertEquals(corner, fixture.view.getCenterRequest().coords());
+                fixture.source.refresh();
+                assertEquals(fixture.view.getCenterRequest(), fixture.source.takeFrame().centerRequest());
+                assertNull(fixture.view.getPanel().getParent());
+                var classic = fixture.view.getComponent();
+                fixture.view.releaseClassicView();
+                assertNull(fixture.view.getPanel().getParent());
+                assertEquals(corner, fixture.view.getCenterRequest().coords());
+                assertNotSame(classic, fixture.view.getComponent(), "Switching back creates a new classic viewport");
+            });
+        }
+    }
+
+    @Test
+    void captureNavigationAndBoardExportsDoNotNeedAClassicViewport() throws Exception {
+        GUIPreferences preferences = GUIPreferences.getInstance();
+        boolean softCenter = preferences.getSoftCenter();
+        try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
+            SwingUtilities.invokeAndWait(() -> {
+                assertNull(fixture.view.getPanel().getParent());
+                assertFalse(fixture.view.getPanel().isDisplayable());
+                for (boolean smooth : new boolean[] { false, true }) {
+                    preferences.setSoftCenter(smooth);
+                    fixture.view.centerOn(fixture.entity);
+                    fixture.source.refresh();
+                    var frame = fixture.source.takeFrame();
+                    assertEquals(fixture.entity.getPosition(), frame.centerRequest().coords());
+                    assertEquals(fixture.entity.getId(), frame.centerRequest().entityId());
+                    assertFalse(frame.scene().tiles().isEmpty());
+                    assertFalse(frame.scene().units().isEmpty());
+                }
+                BufferedImage image = fixture.view.getEntireBoardImage(false, true);
+                assertTrue(image.getWidth() > 0 && image.getHeight() > 0);
+                assertNull(fixture.view.getPanel().getParent());
+                assertFalse(fixture.view.getPanel().isDisplayable());
+            });
+        } finally {
+            SwingUtilities.invokeAndWait(() -> preferences.setSoftCenter(softCenter));
+        }
+    }
+
     @Test
     void deploymentEcmFillsTheWholeHexForFriendlyAndEnemyUnits() throws Exception {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
@@ -557,7 +607,7 @@ class GpuBoardSourceTest {
                     public boolean isHit(Point point, Dimension size) {
                         if (new Rectangle(20, 30, 80, 40).contains(point)) {
                             hit.incrementAndGet();
-                            fixture.view.centerOnHex(fixture.entity.getPosition());
+                            fixture.view.centerOn(fixture.entity);
                             return true;
                         }
                         return false;
@@ -578,6 +628,8 @@ class GpuBoardSourceTest {
             assertEquals(0, board.get());
             assertEquals(fixture.view.getCenterRequest(), fixture.source.takeFrame().centerRequest(),
                   "An overlay focus request must be published immediately with its handled input");
+            assertEquals(fixture.entity.getId(), fixture.source.takeFrame().centerRequest().entityId(),
+                  "The render snapshot must retain the requested unit, not just its hex");
             fixture.source.overlayInput(MouseEvent.MOUSE_PRESSED, 150, 80, board::incrementAndGet);
             SwingUtilities.invokeAndWait(() -> { });
             assertEquals(1, board.get());

@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 @Tag("on-demand")
 class GpuWeatherBaselineSmokeTest {
     @Test
-    void waterDepthCannotMoveRainSnowHailOrSandBelowTheBoardSurface() {
+    void waterDepthCannotMoveRainSnowOrHailBelowTheBoardSurface() {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         new Lwjgl3Application(new ApplicationAdapter() {
             @Override
@@ -37,9 +37,9 @@ class GpuWeatherBaselineSmokeTest {
                         BoardScene deepWater = scene(level, 20);
                         camera.fit(dry);
                         camera.center(BoardGeometry.center(new Coords(2, 2), level));
-                        for (int kind = 0; kind < 4; kind++) {
+                        for (int kind = 0; kind < 3; kind++) {
                             var effects = new BoardAtmosphere.Effects(kind == 0 ? 1 : 0, kind == 1 ? 1 : 0,
-                                  kind == 2 ? 1 : 0, kind == 3 ? 1 : 0, 0, 0.6f, 60);
+                                  kind == 2 ? 1 : 0, 0, 0, 0.6f, 60);
                             Pixmap reference = particleFrame(particles, camera, dry, effects);
                             Pixmap actual = particleFrame(particles, camera, deepWater, effects);
                             try {

@@ -3,6 +3,7 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doAnswer;
@@ -28,6 +29,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.common.Hex;
+import megamek.common.Player;
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -47,6 +49,7 @@ class GpuCombatCameraSmokeTest {
         var preferences = GUIPreferences.getInstance();
         boolean overviewVisible = preferences.getShowUnitOverview();
         AtomicReference<UnitOverviewOverlay> overview = new AtomicReference<>();
+        AtomicReference<UnitOverviewOverlay> enemies = new AtomicReference<>();
         Hex[] hexes = new Hex[20 * 20];
         for (int i = 0; i < hexes.length; i++) { hexes[i] = new Hex(i % 20 >= 14 ? 2 : 0); }
         try (var fixture = GpuBoardFixture.create(new Board(20, 20, hexes))) {
@@ -55,10 +58,15 @@ class GpuCombatCameraSmokeTest {
                     preferences.setShowUnitOverview(true);
                     overview.set(new UnitOverviewOverlay(GpuUnitHudTest.gui(fixture)));
                     fixture.view.addOverlay(overview.get());
+                    enemies.set(new UnitOverviewOverlay(GpuUnitHudTest.gui(fixture), true));
+                    fixture.view.addOverlay(enemies.get());
                     fixture.game.setPhase(GamePhase.FIRING);
                     fixture.entity.setPosition(new Coords(2, 3));
-                    GpuFiringCaptureTest.addTarget(fixture, 42, new Coords(17, 5));
-                    GpuFiringCaptureTest.addTarget(fixture, 43, new Coords(13, 17));
+                    Player enemy = new Player(2, "Opponent");
+                    enemy.setTeam(2);
+                    fixture.game.addPlayer(enemy.getId(), enemy);
+                    GpuFiringCaptureTest.addTarget(fixture, 42, new Coords(17, 5)).setOwner(enemy);
+                    GpuFiringCaptureTest.addTarget(fixture, 43, new Coords(13, 17)).setOwner(enemy);
                     fixture.source.refresh();
                 } catch (Exception error) {
                     throw new IllegalStateException(error);
@@ -86,6 +94,7 @@ class GpuCombatCameraSmokeTest {
                 private int step;
                 private int ticks;
                 private int resizedAt;
+                private boolean checkedTuning;
                 private List<BoardScene.Animation> shots;
 
                 @Override
@@ -130,8 +139,26 @@ class GpuCombatCameraSmokeTest {
                             step++;
                         } else if (step == 3) {
                             assertEquals(620, panel("battle-report").getWidth(), 1);
-                            assertCoverage(ui, "battle-report");
-                            GpuBoardTestUi.capture(new File(output, "combat-camera-report-oblique.png"));
+                            if (!checkedTuning) {
+                                assertCoverage(ui, "battle-report");
+                                GpuBoardTestUi.capture(new File(output, "combat-camera-report-oblique.png"));
+                                GpuBoardTestUi.click("tuning");
+                                checkedTuning = true;
+                                return;
+                            }
+                            assertTrue(panel("board-tuning").isVisible());
+                            assertFalse(panel("battle-report").isVisible());
+                            assertFalse(panel("attack-panel").isVisible());
+                            assertEquals(GpuPanelDock.WIDTH, panel("board-tuning").getWidth(), 1);
+                            assertNull(panel("board-tuning").findActor("dock-resize"));
+                            assertCoverage(ui, "board-tuning");
+                            GpuBoardTestUi.capture(new File(output, "shared-dock-tuning.png"));
+                            GpuBoardTestUi.click("tuning");
+                            assertTrue(panel("attack-panel").isVisible(), "Closing a utility panel restores attack controls");
+                            assertEquals(GpuPanelDock.WIDTH, panel("attack-panel").getWidth(), 1,
+                                  "Resizing Report must not change firing declarations");
+                            assertNull(panel("attack-panel").findActor("dock-resize"));
+                            GpuBoardTestUi.click("battle-report-toggle");
                             resizedAt = ticks;
                             step++;
                             // A native resize may reenter render before setWindowedMode returns.
@@ -167,11 +194,15 @@ class GpuCombatCameraSmokeTest {
                                     ui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), density);
                                     ui.updateHud(hud, System.nanoTime());
                                     assertSidebarGap(ui, panel("battle-report"));
+                                    assertEquals(panel("battle-report").getRight(), panel("board-tuning").getRight());
+                                    assertEquals(Math.min(GpuPanelDock.WIDTH, panel("battle-report").getWidth()),
+                                          panel("attack-panel").getWidth());
                                 }
                                 ui.resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), scale);
                                 ui.updateHud(hud, System.nanoTime());
                                 dragReportWidth(5000);
-                                assertEquals(GpuBoardUi.SIDE_PANEL_MARGIN, panel("battle-report").getX(), 1);
+                                assertEquals(ui.cameraLeft() / scale, panel("battle-report").getX(), 1,
+                                      "The dock cannot be dragged across the enemy strip");
                                 assertSidebarGap(ui, panel("battle-report"));
                                 SwingUtilities.invokeAndWait(() -> {
                                     preferences.setShowUnitOverview(false);
@@ -180,7 +211,7 @@ class GpuCombatCameraSmokeTest {
                                 step++;
                             }
                         } else if (step == 7) {
-                            assertEquals(GpuBoardUi.SIDE_PANEL_MARGIN,
+                            assertEquals(GpuPanelDock.MARGIN,
                                   ui.stage.getWidth() - panel("battle-report").getRight(), .01f);
                             Gdx.app.exit();
                         }
@@ -205,7 +236,7 @@ class GpuCombatCameraSmokeTest {
                     assertTrue(panel.isVisible());
                     assertSidebarGap(ui, panel);
                     float scale = Gdx.graphics.getWidth() / ui.stage.getWidth();
-                    assertEquals((panel.getX() - 8) * scale, ui.cameraWidth(), .01f);
+                    assertEquals((panel.getX() - GpuPanelDock.CAMERA_GAP) * scale - ui.cameraLeft(), ui.cameraWidth(), .01f);
                     assertTrue(ui.cameraWidth() < boardCamera.camera.viewportWidth - 200);
                     var instances = (Map<String, ModelInstance>) field(this, "unitInstances");
                     for (int id : new int[] { 1, 42, 43 }) {
@@ -217,7 +248,7 @@ class GpuCombatCameraSmokeTest {
                                 for (float z : new float[] { bounds.min.z, bounds.max.z }) {
                                     var point = boardCamera.camera.project(new Vector3(x, y, z), 0, 0,
                                           boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight);
-                                    assertTrue(point.x > 0 && point.x < ui.cameraWidth() && point.y > 0
+                                    assertTrue(point.x > ui.cameraLeft() && point.x < ui.cameraLeft() + ui.cameraWidth() && point.y > 0
                                           && point.y < boardCamera.camera.viewportHeight,
                                           () -> "Unit " + id + " clipped or behind " + panelName + ": " + point);
                                 }
@@ -229,6 +260,7 @@ class GpuCombatCameraSmokeTest {
         } finally {
             SwingUtilities.invokeAndWait(() -> {
                 if (overview.get() != null) { preferences.removePreferenceChangeListener(overview.get()); }
+                if (enemies.get() != null) { preferences.removePreferenceChangeListener(enemies.get()); }
                 preferences.setShowUnitOverview(overviewVisible);
             });
         }
@@ -253,7 +285,7 @@ class GpuCombatCameraSmokeTest {
 
     private static void dragReportWidth(float width) {
         Table panel = panel("battle-report");
-        Actor edge = panel.findActor("report-resize");
+        Actor edge = panel.findActor("dock-resize");
         Vector2 from = edge.localToStageCoordinates(new Vector2(edge.getWidth() / 2, edge.getHeight() / 2));
         Vector2 to = from.cpy().add(panel.getWidth() - width, 0);
         GpuBoardTestUi.stage().stageToScreenCoordinates(from);

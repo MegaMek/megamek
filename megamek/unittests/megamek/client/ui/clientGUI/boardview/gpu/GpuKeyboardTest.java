@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,9 +38,11 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ChatterBoxOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.KeyBindingsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.PlanetaryConditionsOverlay;
+import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.common.KeyBindParser;
+import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -190,6 +193,9 @@ class GpuKeyboardTest {
         SwingUtilities.invokeAndWait(() -> collectAccelerators(menu, items));
         assertTrue(items.size() > 20, "Audit the whole game menu, not just the two overlay toggles");
         for (JMenuItem item : items) {
+            if (ClientGUI.VIEW_UNIT_OVERVIEW.equals(item.getActionCommand())) {
+                continue;
+            }
             SwingUtilities.invokeAndWait(() -> {
                 for (var listener : item.getActionListeners()) {
                     item.removeActionListener(listener);
@@ -203,6 +209,26 @@ class GpuKeyboardTest {
             KeyStroke accelerator = item.getAccelerator();
             press(accelerator.getKeyCode(), accelerator.getModifiers());
             assertEquals(before + 1, clicks.get(), item.getText());
+        }
+    }
+
+    @Test
+    void nativeUnitOverviewHasNoToggleAndPreservesTheClassicPreference() throws Exception {
+        boolean original = preferences.getShowUnitOverview();
+        AtomicInteger clicks = new AtomicInteger();
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                preferences.setShowUnitOverview(false);
+                findItem(ClientGUI.VIEW_UNIT_OVERVIEW).addActionListener(event -> clicks.incrementAndGet());
+                source.refresh();
+            });
+            press(KeyCommandBind.UNIT_OVERVIEW);
+            assertEquals(0, clicks.get());
+            assertFalse(preferences.getShowUnitOverview());
+            assertFalse(source.takeFrame().globalCommands().stream().flatMap(command -> command.children().stream())
+                  .anyMatch(command -> command.id().contains(ClientGUI.VIEW_UNIT_OVERVIEW + ":")));
+        } finally {
+            SwingUtilities.invokeAndWait(() -> preferences.setShowUnitOverview(original));
         }
     }
 
@@ -247,6 +273,49 @@ class GpuKeyboardTest {
             press(bind);
             assertEquals(1, performed.get(), bind.cmd);
         }
+    }
+
+    @Test
+    void botPauseShortcutsUseTheSameAvailabilityAsTheActualPanel() throws Exception {
+        SwingUtilities.invokeAndWait(() -> new BotCommandsPanel(client, null, controller, gui));
+        press(KeyCommandBind.PAUSE);
+        verify(client, never()).sendPause();
+        SwingUtilities.invokeAndWait(() -> {
+            fixture.player.setBot(true);
+            fixture.game.setPhase(GamePhase.FIRING);
+        });
+        press(KeyCommandBind.PAUSE);
+        verify(client).sendPause();
+        press(KeyCommandBind.UNPAUSE);
+        verify(client).sendUnpause();
+    }
+
+    @Test
+    void commandBarActionsAreAvailableAndRecheckTheGameMasterBeforeExecuting() throws Exception {
+        BoardScene.Command commands = source.takeFrame().globalCommands().stream()
+              .filter(command -> command.id().equals("game-commands")).findFirst().orElseThrow();
+        assertTrue(commands.children().stream().anyMatch(command -> command.id().contains("Report a Bug")));
+        BoardScene.Command checkBv = commands.children().stream()
+              .filter(command -> command.label().equals(megamek.client.ui.Messages.getString("GameCommands.CheckBvPlayers.title")))
+              .findFirst().orElseThrow();
+        checkBv.action().run();
+        SwingUtilities.invokeAndWait(() -> verify(client).sendChat("/checkbv"));
+        BoardScene.Command skip = commands.children().stream()
+              .filter(command -> command.label().equals(megamek.client.ui.Messages.getString("GameCommands.SkipTurn.title")))
+              .findFirst().orElseThrow();
+        SwingUtilities.invokeAndWait(() -> {
+            Player gameMaster = new Player(77, "Referee");
+            gameMaster.setGameMaster(true);
+            fixture.game.addPlayer(gameMaster.getId(), gameMaster);
+        });
+        skip.action().run();
+        SwingUtilities.invokeAndWait(() -> {
+            verify(client, never()).sendChat("/skip");
+            source.refresh();
+        });
+        assertFalse(source.takeFrame().globalCommands().stream()
+              .filter(command -> command.id().equals("game-commands")).flatMap(command -> command.children().stream())
+              .anyMatch(command -> command.id().equals(skip.id())), "A stale privileged command disappears immediately");
     }
 
     @Test

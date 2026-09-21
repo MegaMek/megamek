@@ -26,7 +26,6 @@ import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.g3d.model.NodePart;
 import com.badlogic.gdx.graphics.g3d.shaders.DepthShader;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
-import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
 import com.badlogic.gdx.math.Vector3;
@@ -245,10 +244,12 @@ class GpuDetailSmokeTest {
     private static void depthAndShadows() throws Exception {
         var terrain = new GpuTerrain();
         var atmosphere = new GpuAtmosphere();
+        var visibility = new GpuUnitVisibility();
         var library = new GpuUnitModels();
         var config = new DepthShader.Config();
         config.defaultCullFace = GL20.GL_BACK;
         var reference = new ModelBatch(new DepthShaderProvider(config), new GpuOpaqueSorter());
+        var colors = new ModelBatch(GpuUnitShader.provider(), new GpuOpaqueSorter());
         var profiler = new GLProfiler(Gdx.graphics);
         try {
             var scene = forest();
@@ -262,30 +263,52 @@ class GpuDetailSmokeTest {
             var model = library.get(UnitModelSelection.capture(entity, -1, false, tileset));
             var instance = new GpuUnitInstance(model);
             List<ModelInstance> units = List.of(instance);
+            var frameBounds = new UnitBounds.Frame();
+            frameBounds.begin();
+            var borrowed = frameBounds.get(instance);
+            var originalBounds = new com.badlogic.gdx.math.collision.BoundingBox(borrowed);
+            assertSame(borrowed, frameBounds.get(instance), "All passes borrow the same posed bounds within a frame");
+            instance.transform.translate(3, 4, 5);
+            instance.nodes.first().translation.add(1, 2, 3);
+            instance.calculateTransforms();
+            assertEquals(originalBounds.min, borrowed.min, "A frame is a snapshot, not authoritative pose state");
+            frameBounds.begin();
+            var expectedBounds = UnitBounds.world(instance);
+            assertEquals(expectedBounds.min, frameBounds.get(instance).min, "The next frame must include movement and articulation");
+            assertEquals(expectedBounds.max, frameBounds.get(instance).max);
+            var armParts = UnitDamageDisplay.locationParts(instance, "RA");
+            var enabledParts = armParts.stream().map(part -> part.enabled).toList();
+            assertTrue(enabledParts.contains(true), "The bounds fixture must have a visible arm to remove");
+            UnitDamageDisplay.show(instance, new BoardScene.LocationDamage(Set.of("RA"), Set.of()));
+            frameBounds.begin();
+            assertEquals(UnitBounds.world(instance).max, frameBounds.get(instance).max, "Disabled parts must update bounds");
+            // Damage application intentionally cannot regrow limbs; restore this fixture before the shadow checks.
+            for (int i = 0; i < armParts.size(); i++) { armParts.get(i).enabled = enabledParts.get(i); }
+            instance.nodes.first().translation.sub(1, 2, 3);
+            instance.calculateTransforms();
             for (boolean top : new boolean[] { true, false }) {
                 camera.setIsometric(!top);
                 camera.fit(scene);
                 model.place(instance, camera.camera, BoardGeometry.center(new Coords(7, 7), 2), 60, 2, false);
-                atmosphere.begin(width, height, 0, true);
+                atmosphere.begin(width, height, 0);
                 terrain.render(camera.camera, false);
-                atmosphere.end(camera.camera, terrain, units, scene, 64);
-                var capturedBuffer = (FrameBuffer) GpuMixedUnitBenchmarkSmokeTest.field(atmosphere, "sceneDepth");
-                capturedBuffer.begin();
+                colors.begin(camera.camera);
+                colors.render(units, terrain.environment());
+                colors.end();
                 float[] captured = depth(width, height, 0);
-                capturedBuffer.end();
+                profiler.enable();
+                profiler.reset();
+                atmosphere.end(camera.camera, terrain, scene, 64);
+                assertEquals(1, profiler.getDrawCalls(), "One composite must transfer both color and depth, without redrawing geometry");
+                profiler.disable();
+                visibility.render(camera.camera, units, atmosphere.depthTexture(), 64, .55f, 1);
+                float[] actual = depth(width, height, 64);
                 HdpiUtils.glViewport(0, 64, width, height);
                 Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
                 Gdx.gl.glColorMask(false, false, false, false);
                 terrain.renderDepth(camera.camera, units, reference);
                 Gdx.gl.glColorMask(true, true, true, true);
                 float[] expected = depth(width, height, 64);
-                Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
-                profiler.enable();
-                profiler.reset();
-                atmosphere.restoreDepth(camera.camera, terrain, units);
-                assertEquals(1, profiler.getDrawCalls(), "Depth restoration must use one fullscreen draw");
-                profiler.disable();
-                float[] actual = depth(width, height, 64);
                 int geometry = 0;
                 int mismatches = 0;
                 float maximum = 0;
@@ -313,8 +336,43 @@ class GpuDetailSmokeTest {
             terrain.setAtmosphere(BoardAtmosphere.lighting(new BoardAtmosphere.Settings(14, .8f, .2f, 2.5f, .1f, 1)));
             terrain.renderShadows(camera.camera, units);
             assertTrue(profiler.getDrawCalls() > 0, "Changing light direction must update shadows");
+            profiler.disable();
+            camera.setIsometric(false);
+            camera.fit(scene);
+            camera.camera.zoom *= 2;
+            camera.camera.update();
+            terrain.renderShadows(camera.camera, units);
+            var lightMatrix = terrain.environment().shadowMap.getProjViewTrans().cpy();
+            var viewMatrix = camera.camera.combined.cpy();
+            camera.pan(.5f, 0);
+            assertFalse(java.util.Arrays.equals(viewMatrix.val, camera.camera.combined.val));
+            profiler.enable();
+            profiler.reset();
+            terrain.renderShadows(camera.camera, units);
+            assertEquals(0, profiler.getDrawCalls(), "A changed view with the same fitted shadow projection must reuse the map");
+            assertArrayEquals(lightMatrix.val, terrain.environment().shadowMap.getProjViewTrans().val,
+                  "Skipping the draw must retain the biased light matrix exactly");
+            camera.camera.zoom *= .2f;
+            camera.camera.update();
+            terrain.renderShadows(camera.camera, units);
+            assertTrue(profiler.getDrawCalls() > 0, "A changed fitted projection must refresh the map");
+            profiler.reset();
+            instance.transform.translate(1, 0, 0);
+            terrain.renderShadows(camera.camera, units);
+            assertTrue(profiler.getDrawCalls() > 0, "Moving a caster must invalidate the map even with a fixed camera");
+            profiler.reset();
+            instance.nodes.first().translation.add(0, 0, 1);
+            instance.calculateTransforms();
+            terrain.renderShadows(camera.camera, units);
+            assertTrue(profiler.getDrawCalls() > 0, "Articulating a caster must invalidate the map");
+            profiler.reset();
+            terrain.renderShadows(camera.camera, units);
+            assertEquals(0, profiler.getDrawCalls(), "An unchanged pose and camera reuse the map");
+            UnitDamageDisplay.show(instance, new BoardScene.LocationDamage(Set.of("RA"), Set.of()));
+            terrain.renderShadows(camera.camera, units);
+            assertTrue(profiler.getDrawCalls() > 0, "Losing a part must remove its shadow without moving the camera");
         } finally {
-            profiler.disable(); reference.dispose(); library.dispose(); atmosphere.dispose(); terrain.dispose();
+            profiler.disable(); visibility.dispose(); colors.dispose(); reference.dispose(); library.dispose(); atmosphere.dispose(); terrain.dispose();
         }
     }
 

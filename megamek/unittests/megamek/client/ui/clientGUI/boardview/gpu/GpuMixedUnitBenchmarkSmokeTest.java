@@ -21,6 +21,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.profiling.GLProfiler;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.Hex;
 import megamek.common.ResolvedAttack;
 import megamek.common.board.Board;
@@ -46,11 +48,15 @@ class GpuMixedUnitBenchmarkSmokeTest {
         boolean compareLod = Boolean.getBoolean("megamek.gpu.compareLod");
         int views = battalion ? 4 : 2;
         int[] counts = battalion ? new int[] { 72, 144 } : new int[] { 64, 256, 512 };
+        StringBuilder stages = new StringBuilder("CPU submission and asynchronous GPU timestamp intervals, milliseconds.\n")
+              .append("GPU intervals include command-stream idle time; CPU and GPU values overlap and must not be added.\n")
+              .append("The existing whole-frame glFinish remains outside every measured stage; query reads never wait.\n");
         StringBuilder report = new StringBuilder("Mixed production board, terrain/shadows/camouflage/poses/effects enabled.\n")
               .append("1280x900; 45 warmup + 64 samples per view; submission + glFinish; GLProfiler outside timing.\n")
               .append("Allocation is render-thread Java allocation; heap is process-wide, not retained GPU memory.\n")
               .append("The Swing capture timer is stopped after the fixture snapshot; source changes are explicit.\n")
               .append("Warmup includes travel; measured frames repeatedly fire the first unit's actual loadout, bypassing completion holds.\n")
+              .append("Camera framing is disabled for repeatable top/isometric views; preview time is fixed at 13:00.\n")
               .append("units,view,distance,equipment,drawCalls,shaderSwitches,medianMs,p95Ms,p99Ms,KiBperFrame,heapMiB,firstFrameMs\n");
         for (int count : counts) {
             AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -96,10 +102,19 @@ class GpuMixedUnitBenchmarkSmokeTest {
                     final double[] samples = new double[64];
                     final com.sun.management.ThreadMXBean allocation = (com.sun.management.ThreadMXBean) ManagementFactory.getThreadMXBean();
                     GLProfiler profiler;
+                    GpuStageTimings timings;
                     long allocated;
                     double first;
                     int frame;
                     List<BoardScene.Animation> firing = List.of();
+
+                    @Override
+                    boolean preparePlaybackCamera(UnitPlayback state, BoardScene scene) { return true; }
+
+                    @Override
+                    void updateCameraFocus(BoardScene scene, BoardView.CenterRequest request, BoardScene.Animation action) {
+                        if (frame == 0) { super.updateCameraFocus(scene, request, action); }
+                    }
 
                     @Override
                     void updateEquipmentDetail() {
@@ -118,11 +133,17 @@ class GpuMixedUnitBenchmarkSmokeTest {
                     public void create() {
                         super.create();
                         profiler = new GLProfiler(Gdx.graphics);
+                        timings = new GpuStageTimings();
                         allocation.setThreadAllocatedMemoryEnabled(true);
                         if (count == counts[0]) {
                             report.insert(0, "Renderer: " + Gdx.gl.glGetString(GL20.GL_RENDERER) + "\nGL: "
                                   + Gdx.gl.glGetString(GL20.GL_VERSION) + "\nCPU: " + System.getenv("PROCESSOR_IDENTIFIER") + "\n");
                         }
+                    }
+
+                    @Override
+                    void renderStage(String stage) {
+                        if (frame % 111 >= 45 && frame % 111 < 109) { timings.stage(stage); }
                     }
 
                     @Override
@@ -138,6 +159,7 @@ class GpuMixedUnitBenchmarkSmokeTest {
                                 }
                             }
                             if (phase == 110) { profiler.reset(); profiler.enable(); }
+                            if (phase >= 45 && phase < 109) { timings.beginFrame(); }
                             long bytes = allocation.getThreadAllocatedBytes(Thread.currentThread().threadId());
                             long start = System.nanoTime();
                             super.render();
@@ -149,6 +171,7 @@ class GpuMixedUnitBenchmarkSmokeTest {
                                 allocated += allocation.getThreadAllocatedBytes(Thread.currentThread().threadId()) - bytes;
                             }
                             if (phase == 1) {
+                                ((Slider) GpuBoardTestUi.stage().getRoot().findActor("Time of day")).setValue(13);
                                 var scene = (BoardScene) field(this, "scene");
                                 assertEquals(count, scene.units().size());
                                 boardCamera.setIsometric(battalion ? view % views >= 2 : view % views == 1);
@@ -174,8 +197,12 @@ class GpuMixedUnitBenchmarkSmokeTest {
                                 firing = events.stream().filter(event -> event instanceof BoardScene.Combat).toList();
                             }
                             if (phase == 110) {
+                                assertEquals(battalion ? view % views >= 2 : view % views == 1, boardCamera.isIsometric(),
+                                      "Combat playback must not change the benchmark camera");
                                 int draws = profiler.getDrawCalls(), switches = profiler.getShaderSwitches();
                                 profiler.disable();
+                                timings.appendReport(stages, count + " units, " + (boardCamera.isIsometric() ? "isometric" : "top")
+                                      + ", view " + view);
                                 Arrays.sort(samples);
                                 report.append(String.format(Locale.ROOT, "%d,%s,%s,%s,%d,%d,%.3f,%.3f,%.3f,%.1f,%.1f,%.1f%n",
                                       count, boardCamera.isIsometric() ? "isometric" : "top", battalion && view % 2 == 1 ? "close" : "far",
@@ -199,6 +226,7 @@ class GpuMixedUnitBenchmarkSmokeTest {
                     public void dispose() {
                         try {
                             var library = field(this, "unitModels");
+                            timings.close();
                             super.dispose();
                             for (String cache : List.of("assemblies", "modular", "models", "descriptors", "failed")) {
                                 Object value = field(library, cache);
@@ -211,6 +239,7 @@ class GpuMixedUnitBenchmarkSmokeTest {
             assertNull(failure.get(), () -> String.valueOf(failure.get()));
             Files.writeString(output.toPath().resolve((compareLod ? "equipment-lod" : battalion ? "battalion" : "mixed-unit")
                   + "-board-benchmark.txt"), report);
+            Files.writeString(output.toPath().resolve("mixed-unit-stage-timing.txt"), stages);
         }
         System.out.print(report);
     }

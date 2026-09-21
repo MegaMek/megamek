@@ -67,6 +67,8 @@ final class UnitEquipmentAssembly {
     static List<Binding> attachAll(GpuUnitModels library, JsonValue descriptor, GpuUnitModels.ModularAsset body,
           UnitModelState.Structure structure, Model assembled) {
         var catalog = new UnitEquipmentModels(library.descriptor(descriptor.getString("equipment")));
+        // Two held weapons in one hand share its hard point, so the stacking below sets them over-under like a
+        // double-barrelled gun, the larger on top, both leaving from the front of the one gun body.
         List<Pending> pending = centreStacks(arrangeBays(library, prepare(library, descriptor, body, catalog, structure)));
         pending.sort(Comparator.<Pending, Boolean>comparing(item -> !item.placement().getBoolean("bay", false))
               .thenComparing(item -> item.placement().getString("family", "").isEmpty())
@@ -74,11 +76,25 @@ final class UnitEquipmentAssembly {
               .thenComparingInt(item -> item.mount().index()));
         Map<String, MountFrame> areas = new HashMap<>();
         List<Binding> bindings = new ArrayList<>();
+        Set<String> holding = new HashSet<>();
         for (Pending item : pending) {
-            attach(library, assembled, item, areas, bindings);
+            if (item.visual().held()) {
+                holding.add(item.point().location());
+            }
+        }
+        for (Pending item : pending) {
+            attach(library, assembled, item, areas, bindings, holding.contains(item.point().location()));
+        }
+        // An arm holding a gun shows the chassis's gun body in place of its hand; any other arm keeps its hand.
+        for (String arm : new String[] { "LA", "RA" }) {
+            Node unused = assembled.getNode(arm + (holding.contains(arm) ? "@hand" : "@held"), true);
+            if (unused != null) {
+                unused.detach();
+            }
         }
         return bindings;
     }
+
 
     private static List<Pending> prepare(GpuUnitModels library, JsonValue descriptor, GpuUnitModels.ModularAsset body,
           UnitEquipmentModels catalog, UnitModelState.Structure structure) {
@@ -204,11 +220,26 @@ final class UnitEquipmentAssembly {
         return new Pending(mount, point, DEFAULT_PLACEMENT, visual, module, scale, 0, 0);
     }
 
+    /**
+     * @param holdingGun {@code true} when this arm holds a gun, so the chassis's gun body stands where the fist was
+     */
     private static void attach(GpuUnitModels library, Model assembled, Pending item,
-          Map<String, MountFrame> areas, List<Binding> bindings) {
+          Map<String, MountFrame> areas, List<Binding> bindings, boolean holdingGun) {
         var point = item.point();
         Node parent = assembled.getNode(point.node());
-        Matrix4 socket = new Matrix4(parent.globalTransform).mul(point.transform());
+        Matrix4 socket = new Matrix4(parent.globalTransform);
+        if (holdingGun) {
+            // Every weapon in a hand that holds a gun leaves from the front face of the gun body, not the centre of
+            // the fist: the held barrel, and any other weapon in that hand, which would otherwise sit buried inside
+            // the body. Weapons on the arm's other sockets carry no step and stay put. The step is in the arm's own
+            // frame, before the socket's aim is applied.
+            JsonValue step = item.placement().get("heldOffset");
+            if (step != null) {
+                float[] offset = step.asFloatArray();
+                socket.translate(offset[0], offset[1], offset[2]);
+            }
+        }
+        socket.mul(point.transform());
         socket.translate(item.offsetX(), 0, item.offsetZ());
         float scale = item.scale();
         if (!Float.isFinite(scale) || scale <= 0 || scale > point.maxScale()) {
@@ -425,7 +456,8 @@ final class UnitEquipmentAssembly {
     }
 
     private static Matrix4 moduleTransform(Matrix4 socket, Pending item, GpuUnitModels.ModularAsset module, float scale) {
-        float length = item.placement().getFloat("length", 0);
+        // A held gun is authored at its finished size; a barrel-length override would crush it front to back.
+        float length = item.visual().held() ? 0 : item.placement().getFloat("length", 0);
         float depthScale = length > 0 ? length / module.descriptor().bounds().max().get(1) : scale;
         return new Matrix4(socket).scale(scale, depthScale, scale);
     }

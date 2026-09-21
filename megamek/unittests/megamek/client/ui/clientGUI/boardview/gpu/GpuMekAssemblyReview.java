@@ -65,7 +65,13 @@ final class GpuMekAssemblyReview {
               { "rifleman-4d", "rifleman", "3039u/Rifleman RFL-4D.mtf" },
               { "rifleman-3c", "rifleman", "3039u/Rifleman RFL-3C.mtf" },
               { "battlemaster-1g", "battlemaster", "3039u/BattleMaster BLR-1G.mtf" },
-              { "battlemaster-3m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-3M.mtf" }
+              { "battlemaster-3m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-3M.mtf" },
+              // Each holds a different family of gun in the right hand: Heavy PPC, Gauss rifle, rotary autocannon.
+              { "battlemaster-6g", "battlemaster", "Rec Guides ilClan/Vol 3/BattleMaster BLR-6G.mtf" },
+              { "battlemaster-4s", "battlemaster", "3085u/Phoenix/BattleMaster BLR-4S.mtf" },
+              { "battlemaster-6r", "battlemaster", "Rec Guides ilClan/Vol 3/BattleMaster BLR-6R.mtf" },
+              // Two guns in one hand, a Light Gauss Rifle and an ER Large Laser: only the larger is held.
+              { "battlemaster-5m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-5M.mtf" }
         };
         int id = 700;
         for (String[] entry : cases) {

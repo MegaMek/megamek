@@ -43,7 +43,10 @@ final class MekVisual {
                 String arm = child.id.substring(0, separator);
                 String part = child.id.substring(separator + 1);
                 String form = UnitEquipmentAssembly.armForm(anatomy, arm);
-                boolean keep = part.equals(form) || (part.equals("forearm") && !form.equals("elbow"));
+                // A gun body can only be held in a hand; whether it or the hand is shown is settled once the
+                // equipment is attached and it is known whether this arm holds a gun.
+                boolean keep = part.equals(form) || (part.equals("forearm") && !form.equals("elbow"))
+                      || (part.equals("held") && form.equals("hand"));
                 if (!keep) {
                     node.removeChild(child);
                     continue;

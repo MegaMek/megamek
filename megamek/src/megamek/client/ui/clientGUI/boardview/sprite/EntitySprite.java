@@ -35,6 +35,7 @@ package megamek.client.ui.clientGUI.boardview.sprite;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 
 import megamek.MMConstants;
@@ -410,7 +411,9 @@ public class EntitySprite extends Sprite {
      */
     private boolean isOwnedByTheLocalPlayer(Entity entity) {
         Player localPlayer = bv.getLocalPlayer();
-        return (localPlayer != null) && localPlayer.equals(entity.getOwner());
+        // The null check earns its place rather than duplicating Objects.equals: with no local player this has
+        // to be false, and Objects.equals would call a missing local player equal to an ownerless unit.
+        return (localPlayer != null) && Objects.equals(localPlayer, entity.getOwner());
     }
 
     private class Status {

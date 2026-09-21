@@ -108,7 +108,7 @@ public class ScanSprite extends Sprite {
      */
     private void locate() {
         double angle = scannerPosition.radian(targetPosition) + (Math.PI * 1.5);
-        int clearance = (int) (CLEARANCE * bv.getScale());
+        int clearance = (int) (CLEARANCE * boardScale());
         scannerPoint = hexCentre(scannerPosition);
         targetPoint = hexCentre(targetPosition);
         scannerPoint.translate((int) Math.round(Math.cos(angle) * clearance),
@@ -118,21 +118,31 @@ public class ScanSprite extends Sprite {
     }
 
     /**
+     * The board's zoom factor. Named rather than read inline, because the field it comes from is called
+     * {@code bv} on {@link Sprite} and reads as battle value in a BattleTech codebase, which it is not.
+     *
+     * @return how many screen pixels one unscaled pixel is drawn as
+     */
+    private double boardScale() {
+        return bv.getScale();
+    }
+
+    /**
      * @param coords the hex to locate
      *
      * @return the centre of that hex in board pixels
      */
     private Point hexCentre(Coords coords) {
         Point corner = bv.getHexLocation(coords);
-        corner.translate((int) (HexTileset.HEX_W / 2.0 * bv.getScale()),
-              (int) (HexTileset.HEX_H / 2.0 * bv.getScale()));
+        corner.translate((int) (HexTileset.HEX_W / 2.0 * boardScale()),
+              (int) (HexTileset.HEX_H / 2.0 * boardScale()));
         return corner;
     }
 
     @Override
     public Rectangle getBounds() {
         locate();
-        int pad = (int) ((WIDEST_ARC + 4) * bv.getScale());
+        int pad = (int) ((WIDEST_ARC + 4) * boardScale());
         bounds = new Rectangle(Math.min(scannerPoint.x, targetPoint.x) - pad,
               Math.min(scannerPoint.y, targetPoint.y) - pad,
               Math.abs(targetPoint.x - scannerPoint.x) + (pad * 2),
@@ -148,7 +158,7 @@ public class ScanSprite extends Sprite {
      * @return the top left of this sprite's bounds, in board pixels
      */
     private Point boundsOrigin() {
-        int pad = (int) ((WIDEST_ARC + 4) * bv.getScale());
+        int pad = (int) ((WIDEST_ARC + 4) * boardScale());
         return new Point(Math.min(scannerPoint.x, targetPoint.x) - pad,
               Math.min(scannerPoint.y, targetPoint.y) - pad);
     }
@@ -168,6 +178,7 @@ public class ScanSprite extends Sprite {
         locate();
         Graphics2D graphics2D = (Graphics2D) graphics.create();
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        double scale = boardScale();
 
         Point origin = boundsOrigin();
         double startX = scannerPoint.x - (double) origin.x;
@@ -175,7 +186,7 @@ public class ScanSprite extends Sprite {
         double runX = targetPoint.x - (double) scannerPoint.x;
         double runY = targetPoint.y - (double) scannerPoint.y;
         double length = Math.hypot(runX, runY);
-        double spacing = Math.max(6.0, ARC_SPACING * bv.getScale());
+        double spacing = Math.max(6.0, ARC_SPACING * scale);
         // Measured from the scout end, starting half a gap out, so the run is evenly spaced from the unit to its
         // target. Spacing the arcs as fractions of the line instead left a double-width gap at each end, which
         // read as a missing arc next to the scout.
@@ -189,7 +200,7 @@ public class ScanSprite extends Sprite {
         // Screen degrees run anticlockwise from east while the screen's y axis runs down, so the sweep's facing is
         // the negated travel angle. Each arc opens toward the target.
         double facingDegrees = Math.toDegrees(Math.atan2(-runY, runX));
-        Stroke stroke = new BasicStroke(Math.max(2.5f, (float) (STROKE_WIDTH * bv.getScale())),
+        Stroke stroke = new BasicStroke(Math.max(2.5f, (float) (STROKE_WIDTH * scale)),
               BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         graphics2D.setStroke(stroke);
 
@@ -200,7 +211,7 @@ public class ScanSprite extends Sprite {
             // the sweep widens and strengthens as it travels, so the run reads as a direction rather than a
             // ladder of identical marks, and the eye is pulled toward what is being read
             double growth = NARROWEST_FRACTION + ((1.0 - NARROWEST_FRACTION) * along);
-            double radius = Math.max(4.0, WIDEST_ARC * bv.getScale() * growth);
+            double radius = Math.max(4.0, WIDEST_ARC * scale * growth);
             Arc2D arc = new Arc2D.Double(centreX - radius, centreY - radius, radius * 2, radius * 2,
                   facingDegrees - (SWEEP_DEGREES / 2.0), SWEEP_DEGREES, Arc2D.OPEN);
             int alpha = (int) (NEAR_ALPHA + ((FAR_ALPHA - NEAR_ALPHA) * along));

@@ -21601,7 +21601,13 @@ public class TWGameManager extends AbstractGameManager {
                         }
                         Mounted<?> mounted = slot1.getMount();
                         if (mounted.equals(equipmentHit)) {
-                            aero.hitAllCriticalSlots(loc, i);
+                            slot1.setHit(true);
+                            if (mounted.getType() instanceof ACWeapon) {
+                                Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, aero.getId());
+                            }
+                            if (slot1.isHit()) {
+                                aero.hitAllCriticalSlots(loc, i);
+                            }
                             break;
                         }
                     }
@@ -21618,7 +21624,14 @@ public class TWGameManager extends AbstractGameManager {
                                 }
                                 Mounted<?> mounted = slot1.getMount();
                                 if (mounted.equals(bayWeapon)) {
-                                    aero.hitAllCriticalSlots(loc, i);
+                                    slot1.setHit(true);
+                                    if (mounted.getType() instanceof ACWeapon) {
+                                        Game.rulesManager.getRulesWeapons()
+                                                         .setACHit(slot1, mounted, reports, aero.getId());
+                                    }
+                                    if (slot1.isHit()) {
+                                        aero.hitAllCriticalSlots(loc, i);
+                                    }
                                     break;
                                 }
                             }
@@ -22431,7 +22444,13 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     Mounted<?> mounted = slot1.getMount();
                     if (mounted.equals(weapon)) {
-                        tank.hitAllCriticalSlots(loc, i);
+                        slot1.setHit(true);
+                        if (mounted.getType() instanceof ACWeapon) {
+                            Game.rulesManager.getRulesWeapons().setACHit(slot1, mounted, reports, tank.getId());
+                        }
+                        if (slot1.isHit()) {
+                            tank.hitAllCriticalSlots(loc, i);
+                        }
                         break;
                     }
                 }

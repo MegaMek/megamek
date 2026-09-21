@@ -10,7 +10,18 @@ final class UnitEquipmentModels {
     private final JsonValue equipment;
     private final JsonValue fallbacks;
 
-    record Visual(String asset, String compact, String family, boolean fallback) { }
+    /**
+     * @param held {@code true} when the asset is the weapon drawn as a gun gripped in the fist. That shape is built
+     *             at its finished size, so a mount's barrel length does not stretch it.
+     */
+    record Visual(String asset, String compact, String family, boolean fallback, boolean held) {
+        Visual(String asset, String compact, String family, boolean fallback) {
+            this(asset, compact, family, fallback, false);
+        }
+    }
+
+    /** The placement profile that asks for a weapon to be drawn held in the fist. */
+    static final String HELD = "held";
 
     UnitEquipmentModels(JsonValue catalog) {
         if (catalog.getInt("schema", 0) != 2 || catalog.get("equipment") == null || catalog.get("fallbacks") == null) {
@@ -47,11 +58,17 @@ final class UnitEquipmentModels {
             model = styles.getString(style, model);
         }
         JsonValue profiles = entry.get("profiles");
+        boolean held = false;
         if (profiles != null) {
-            model = profiles.getString(placement.getString("profile", ""), model);
+            String profile = placement.getString("profile", "");
+            String profiled = profiles.getString(profile, null);
+            if (profiled != null) {
+                model = profiled;
+                held = HELD.equals(profile);
+            }
         }
         return new Visual(model, entry.getString("lowDetail", fallback(mount)), family(mount),
-              entry.getBoolean("fallback", false));
+              entry.getBoolean("fallback", false), held);
     }
 
     String fallback(UnitModelEquipment.Mount mount) {

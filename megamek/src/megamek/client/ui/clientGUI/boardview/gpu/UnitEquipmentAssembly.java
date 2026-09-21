@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -26,6 +27,12 @@ import megamek.logging.MMLogger;
 final class UnitEquipmentAssembly {
     private static final MMLogger LOGGER = MMLogger.create(UnitEquipmentAssembly.class);
     private static final JsonValue DEFAULT_PLACEMENT = new JsonValue(JsonValue.ValueType.object);
+    private static final Pattern HEAT_SINK = Pattern.compile("(?i)heat ?sink");
+    private static final List<String> TORSO = List.of("CT", "LT", "RT");
+    /** House rule: at most two vents on the front and two on the back. */
+    private static final int VENTS_PER_FACE = 2;
+    /** Clear space kept around a vent, so a weapon beside it does not sit on its edge. */
+    private static final float VENT_MARGIN = .3f;
 
     /** Pack in the mount's cross-section, so a side-facing gun reserves its width, not its barrel length. */
     private record MountFrame(UnitModelMountArea area, Matrix4 rotation, Matrix4 inverse) {
@@ -67,6 +74,8 @@ final class UnitEquipmentAssembly {
     static List<Binding> attachAll(GpuUnitModels library, JsonValue descriptor, GpuUnitModels.ModularAsset body,
           UnitModelState.Structure structure, Model assembled) {
         var catalog = new UnitEquipmentModels(library.descriptor(descriptor.getString("equipment")));
+        // Two held weapons in one hand share its hard point, so the stacking below sets them over-under like a
+        // double-barrelled gun, the larger on top, both leaving from the front of the one gun body.
         List<Pending> pending = centreStacks(arrangeBays(library, prepare(library, descriptor, body, catalog, structure)));
         pending.sort(Comparator.<Pending, Boolean>comparing(item -> !item.placement().getBoolean("bay", false))
               .thenComparing(item -> item.placement().getString("family", "").isEmpty())
@@ -74,11 +83,147 @@ final class UnitEquipmentAssembly {
               .thenComparingInt(item -> item.mount().index()));
         Map<String, MountFrame> areas = new HashMap<>();
         List<Binding> bindings = new ArrayList<>();
+        Set<String> holding = new HashSet<>();
         for (Pending item : pending) {
-            attach(library, assembled, item, areas, bindings);
+            if (item.visual().held()) {
+                holding.add(item.point().location());
+            }
         }
+        for (Pending item : pending) {
+            attach(library, assembled, item, areas, bindings, holding.contains(item.point().location()));
+        }
+        // An arm holding a gun shows the chassis's gun body in place of its hand; any other arm keeps its hand.
+        for (String arm : new String[] { "LA", "RA" }) {
+            Node unused = assembled.getNode(arm + (holding.contains(arm) ? "@hand" : "@held"), true);
+            if (unused != null) {
+                unused.detach();
+            }
+        }
+        chooseVents(descriptor, structure, assembled, bindings);
         return bindings;
     }
+
+    /**
+     * Weapons first, vents after. The body offers vent spots: the ones the chassis author drew, listed first, and
+     * spares on the flat of each torso face. Vents go in the torsos holding this variant's slotted heat sinks, the two
+     * with the most, or both in one when only one holds any; a variant whose sinks all sit in the engine keeps the
+     * author's vents where the author put them. Each vent takes the first spot of its torso that no weapon covers and
+     * no other vent has taken. A vent with no free spot is left off, and every unused spot is removed.
+     */
+    private static void chooseVents(JsonValue descriptor, UnitModelState.Structure structure, Model assembled,
+          List<Binding> bindings) {
+        JsonValue vents = descriptor.get("vents");
+        if (vents == null) {
+            return;
+        }
+        assembled.calculateTransforms();
+        List<BoundingBox> weapons = new ArrayList<>();
+        for (Binding binding : bindings) {
+            Node node = binding.embedded() ? null : assembled.getNode(binding.node(), true);
+            if (node != null) {
+                BoundingBox box = new BoundingBox().inf();
+                node.extendBoundingBox(box, true);
+                if (box.isValid()) {
+                    weapons.add(box);
+                }
+            }
+        }
+        Map<String, Integer> sinks = new HashMap<>();
+        for (var mount : structure.equipment()) {
+            if (TORSO.contains(mount.location()) && HEAT_SINK.matcher(mount.internalName()).find()) {
+                sinks.merge(mount.location(), 1, Integer::sum);
+            }
+        }
+        Set<String> kept = new HashSet<>();
+        for (String side : new String[] { "front", "rear" }) {
+            List<BoundingBox> placed = new ArrayList<>();
+            for (String location : ventLocations(vents, side, sinks)) {
+                boolean found = false;
+                for (JsonValue vent : vents) {
+                    String name = vent.getString("node");
+                    if (!side.equals(vent.getString("side")) || !location.equals(vent.getString("location"))
+                          || kept.contains(name)) {
+                        continue;
+                    }
+                    BoundingBox box = ventBox(assembled, vent);
+                    if (box == null || overlapsAny(box, weapons)) {
+                        LOGGER.debug("Vent spot {} is covered by a weapon", name);
+                        continue;
+                    }
+                    if (overlapsAny(box, placed)) {
+                        LOGGER.debug("Vent spot {} is taken by another vent", name);
+                        continue;
+                    }
+                    kept.add(name);
+                    placed.add(box);
+                    found = true;
+                    LOGGER.debug("Vent kept at {} ({} {}, {})", name, location, side,
+                          vent.getBoolean("authored", false) ? "authored spot" : "spare spot");
+                    break;
+                }
+                if (!found) {
+                    LOGGER.debug("Vent for {} {} left off: every spot is covered", location, side);
+                }
+            }
+        }
+        for (JsonValue vent : vents) {
+            String name = vent.getString("node");
+            Node node = assembled.getNode(name, true);
+            if (node != null && !kept.contains(name)) {
+                node.detach();
+            }
+        }
+    }
+
+    /**
+     * The torso each vent on this face belongs in, one entry per vent. The torsos with the most slotted heat sinks
+     * win; with none slotted, the author's own vents keep their places.
+     */
+    private static List<String> ventLocations(JsonValue vents, String side, Map<String, Integer> sinks) {
+        List<String> wanted = new ArrayList<>();
+        if (sinks.isEmpty()) {
+            for (JsonValue vent : vents) {
+                if (side.equals(vent.getString("side")) && vent.getBoolean("authored", false)
+                      && wanted.size() < VENTS_PER_FACE) {
+                    wanted.add(vent.getString("location"));
+                }
+            }
+            return wanted;
+        }
+        List<String> ranked = new ArrayList<>(TORSO);
+        ranked.removeIf(location -> !sinks.containsKey(location));
+        ranked.sort(Comparator.comparingInt(location -> -sinks.get(location)));
+        for (String location : ranked) {
+            if (wanted.size() < VENTS_PER_FACE) {
+                wanted.add(location);
+            }
+        }
+        if (wanted.size() == 1) {
+            wanted.add(wanted.getFirst());
+        }
+        return wanted;
+    }
+
+    private static BoundingBox ventBox(Model assembled, JsonValue vent) {
+        Node node = assembled.getNode(vent.getString("node"), true);
+        if (node == null) {
+            return null;
+        }
+        float[] low = vent.get("min").asFloatArray();
+        float[] high = vent.get("max").asFloatArray();
+        return new BoundingBox(new Vector3(low[0] - VENT_MARGIN, low[1], low[2] - VENT_MARGIN),
+              new Vector3(high[0] + VENT_MARGIN, high[1], high[2] + VENT_MARGIN)).mul(node.globalTransform);
+    }
+
+    private static boolean overlapsAny(BoundingBox box, List<BoundingBox> others) {
+        for (BoundingBox other : others) {
+            if (box.intersects(other)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     private static List<Pending> prepare(GpuUnitModels library, JsonValue descriptor, GpuUnitModels.ModularAsset body,
           UnitEquipmentModels catalog, UnitModelState.Structure structure) {
@@ -107,6 +252,11 @@ final class UnitEquipmentAssembly {
                 if (validModule(module, mount)) {
                     pending.add(partialWing(body, mount, visual, module));
                 }
+                continue;
+            }
+            Pending ruled = ruled(library, descriptor, points, catalog, mount);
+            if (ruled != null) {
+                pending.add(ruled);
                 continue;
             }
             String location = attachmentLocation(structure.anatomy(), mount);
@@ -178,6 +328,42 @@ final class UnitEquipmentAssembly {
         return pending;
     }
 
+    /**
+     * A chassis rule draws one weapon with another weapon's art at a spot of its own, whichever location carries it:
+     * every Atlas LRM 20 is drawn as a five-tube rack stood on the waist. The weapon keeps its own location, so it
+     * still goes with that location when the location is destroyed.
+     *
+     * @return the placed weapon, or {@code null} when no rule of this chassis covers it
+     */
+    private static Pending ruled(GpuUnitModels library, JsonValue descriptor,
+          Map<String, UnitModelDescriptor.Hardpoint> points, UnitEquipmentModels catalog, UnitModelEquipment.Mount mount) {
+        JsonValue rules = descriptor.get("rules");
+        if (rules == null || mount.rear()) {
+            return null;
+        }
+        for (JsonValue rule : rules) {
+            String exclude = rule.getString("exclude", "");
+            if (!Pattern.compile(rule.getString("match")).matcher(mount.internalName()).find()
+                  || (!exclude.isEmpty() && Pattern.compile(exclude).matcher(mount.internalName()).find())) {
+                continue;
+            }
+            JsonValue placement = rule.get("placement");
+            var drawnAs = new UnitModelEquipment.Mount(mount.index(), rule.getString("drawAs"), mount.location(),
+                  mount.secondLocation(), mount.rear(), mount.omniPod(), mount.size(), mount.policy(), mount.family(),
+                  mount.members());
+            var visual = catalog.resolve(drawnAs, placement);
+            GpuUnitModels.ModularAsset module = visual == null ? null : library.modular(visual.asset());
+            var point = points.get(placement.getString("hardpoint"));
+            if (point == null || !validModule(module, mount)) {
+                LOGGER.warn("Chassis rule for {} has no usable art or spot; placing it normally", mount.internalName());
+                return null;
+            }
+            LOGGER.debug("Chassis rule draws {} at {} as {}", mount.internalName(), point.id(), rule.getString("drawAs"));
+            return new Pending(mount, point, placement, visual, module);
+        }
+        return null;
+    }
+
     /** A spreadable wing is one paired assembly on the back, independent of its first critical-slot location. */
     private static Pending partialWing(GpuUnitModels.ModularAsset body, UnitModelEquipment.Mount mount,
           UnitEquipmentModels.Visual visual, GpuUnitModels.ModularAsset module) {
@@ -204,18 +390,35 @@ final class UnitEquipmentAssembly {
         return new Pending(mount, point, DEFAULT_PLACEMENT, visual, module, scale, 0, 0);
     }
 
+    /**
+     * @param holdingGun {@code true} when this arm holds a gun, so the chassis's gun body stands where the fist was
+     */
     private static void attach(GpuUnitModels library, Model assembled, Pending item,
-          Map<String, MountFrame> areas, List<Binding> bindings) {
+          Map<String, MountFrame> areas, List<Binding> bindings, boolean holdingGun) {
         var point = item.point();
         Node parent = assembled.getNode(point.node());
-        Matrix4 socket = new Matrix4(parent.globalTransform).mul(point.transform());
+        Matrix4 socket = new Matrix4(parent.globalTransform);
+        if (holdingGun) {
+            // Every weapon in a hand that holds a gun leaves from the front face of the gun body, not the centre of
+            // the fist: the held barrel, and any other weapon in that hand, which would otherwise sit buried inside
+            // the body. Weapons on the arm's other sockets carry no step and stay put. The step is in the arm's own
+            // frame, before the socket's aim is applied.
+            JsonValue step = item.placement().get("heldOffset");
+            if (step != null) {
+                float[] offset = step.asFloatArray();
+                socket.translate(offset[0], offset[1], offset[2]);
+            }
+        }
+        socket.mul(point.transform());
         socket.translate(item.offsetX(), 0, item.offsetZ());
         float scale = item.scale();
         if (!Float.isFinite(scale) || scale <= 0 || scale > point.maxScale()) {
             throw new IllegalArgumentException("Invalid mount scale: " + point.id());
         }
         // Wings span the torso and clear its rear face; they must not compete with guns or exhaust for face space.
-        var area = point.id().equals("partial-wing") ? new MountFrame(socket)
+        // A chassis rule's spot is its own, so it neither takes room from nor gives room to that location's face.
+        var area = point.id().equals("partial-wing") || item.placement().getBoolean("rule", false)
+              ? new MountFrame(socket)
               : areas.computeIfAbsent(point.location() + ":" + point.side(), ignored -> new MountFrame(socket));
         var module = item.module();
         String moduleAsset = item.visual().asset();
@@ -407,11 +610,26 @@ final class UnitEquipmentAssembly {
             size.z = Math.min(size.z, 3 * scale);
         }
         return frame.area().place(center.x, center.z, size.x, size.z, item.point().size().get(0), item.point().size().get(2),
-              Math.min(1, item.point().minScale() / scale));
+              Math.min(1, item.point().minScale() / scale), towardCentreLine(frame, transform));
+    }
+
+    /**
+     * Which way along a face's own x points at the Mek's centre line. A crowded weapon steps that way, so the left
+     * and right torsos pack their weapons as mirror images rather than as copies of one another. A socket already
+     * on the centre line keeps the default.
+     */
+    private static float towardCentreLine(MountFrame frame, Matrix4 socket) {
+        float x = socket.getTranslation(new Vector3()).x;
+        if (Math.abs(x) < .01f) {
+            return -1;
+        }
+        Vector3 inward = new Vector3(-Math.signum(x), 0, 0).rot(frame.inverse());
+        return inward.x >= 0 ? 1 : -1;
     }
 
     private static Matrix4 moduleTransform(Matrix4 socket, Pending item, GpuUnitModels.ModularAsset module, float scale) {
-        float length = item.placement().getFloat("length", 0);
+        // A held gun is authored at its finished size; a barrel-length override would crush it front to back.
+        float length = item.visual().held() ? 0 : item.placement().getFloat("length", 0);
         float depthScale = length > 0 ? length / module.descriptor().bounds().max().get(1) : scale;
         return new Matrix4(socket).scale(scale, depthScale, scale);
     }

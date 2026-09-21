@@ -574,9 +574,6 @@ class GpuBattleView extends ApplicationAdapter {
                 }
                 unitTints.put(key, unit.image());
             }
-            if (authored && visual.flipsArms()) {
-                flipArms(visual, instance, key, unit);
-            }
             if (authored && visual.turnsUpperBody()) {
                 // A movement replay already follows the legs, so only a unit standing still shows its twist.
                 boolean isMoving = (motion != null) && motion.isMoving();
@@ -592,6 +589,12 @@ class GpuBattleView extends ApplicationAdapter {
                       playbackSpeed == UnitMotion.Speed.INSTANT, turn == null ? 0 : turn.degrees());
                 animators.get(key).attacks(visual, unit, playback.attacks());
                 animators.get(key).conversion(playback.conversion(), unit);
+            }
+            // After the animator, never before it: the animator resets every joint to its rest pose
+            // each frame and then poses leftArm and rightArm itself, which are the same nodes a flip
+            // turns. Setting the flip first meant it was overwritten before anything was drawn.
+            if (authored && visual.flipsArms()) {
+                flipArms(visual, instance, key, unit);
             }
             Vector3 anchor = unit.sensorContact()
                   ? markers.placeSensor(unit.location().coords(), instance, boardCamera.camera, position)

@@ -359,6 +359,14 @@
             <AppenderRef ref="UnifiedLog" />
             <AppenderRef ref="MegaMekLog" />
         </Logger>
+        <!-- The GPU battle view reports what it resolved and how it posed each unit at debug. At the
+             root's info level none of it reaches the log, so a unit drawn from its fallback, a unit
+             whose asset never loaded and a view that never ran all look identical: empty. -->
+        <Logger name="megamek.client.ui.clientGUI.boardview.gpu" level="debug" additivity="false">
+            <AppenderRef ref="${env:mm.profile:-null}" />
+            <AppenderRef ref="UnifiedLog" />
+        </Logger>
+
         <Root level="info">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

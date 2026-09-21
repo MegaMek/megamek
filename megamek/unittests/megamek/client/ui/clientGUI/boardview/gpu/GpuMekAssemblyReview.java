@@ -65,7 +65,13 @@ final class GpuMekAssemblyReview {
               { "rifleman-4d", "rifleman", "3039u/Rifleman RFL-4D.mtf" },
               { "rifleman-3c", "rifleman", "3039u/Rifleman RFL-3C.mtf" },
               { "battlemaster-1g", "battlemaster", "3039u/BattleMaster BLR-1G.mtf" },
-              { "battlemaster-3m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-3M.mtf" }
+              { "battlemaster-3m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-3M.mtf" },
+              // Each holds a different family of gun in the right hand: Heavy PPC, Gauss rifle, rotary autocannon.
+              { "battlemaster-6g", "battlemaster", "Rec Guides ilClan/Vol 3/BattleMaster BLR-6G.mtf" },
+              { "battlemaster-4s", "battlemaster", "3085u/Phoenix/BattleMaster BLR-4S.mtf" },
+              { "battlemaster-6r", "battlemaster", "Rec Guides ilClan/Vol 3/BattleMaster BLR-6R.mtf" },
+              // Two guns in one hand, a Light Gauss Rifle and an ER Large Laser: only the larger is held.
+              { "battlemaster-5m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-5M.mtf" }
         };
         int id = 700;
         for (String[] entry : cases) {
@@ -202,8 +208,20 @@ final class GpuMekAssemblyReview {
         // Half way over is the moment the arm is clear of its housing; it must still be the same arm.
         visual.flipArms(posed, 90);
         assertEquals(restWidth, armSpan(posed, "RA"), .01f);
+
+        // The board view poses this every frame, after the animator has reset each joint to its rest
+        // pose. Asking for the same angle twice must land in the same place: an arm built from the
+        // previous frame's rotation rather than from the rest pose winds further round every frame.
+        visual.flipArms(posed, 180);
+        Vector3 once = armReach(posed, "RA");
+        visual.flipArms(posed, 180);
+        assertEquals(once.y, armReach(posed, "RA").y, .01f, "posing the same angle twice must not accumulate");
+        assertEquals(flipped.y, once.y, .01f, "and must match the pose reached by way of 90 degrees");
+
+        // Zero is deliberately a no-op: forward arms belong to the animator's walk cycle, and pinning
+        // them to the rest pose here would flatten it on every unflipped unit on the board.
         visual.flipArms(posed, 0);
-        assertEquals(forward.y, armReach(posed, "RA").y, .01f, "returning to zero must restore the resting pose");
+        assertEquals(once.y, armReach(posed, "RA").y, .01f, "zero must leave the arms to the animator");
 
         visual.flipArms(posed, 180);
         GpuModularUnitModelsSmokeTest.renderFullReview(batch, List.of(posed), "runtime-flip-Rifleman",

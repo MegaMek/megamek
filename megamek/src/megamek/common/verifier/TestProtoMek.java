@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,13 +70,13 @@ public class TestProtoMek extends TestEntity {
     public static final double MAX_TONNAGE = 15.0;
 
     /**
-     * Minimum walk MP for glider ProtoMek
+     * Minimum flanking MP for glider ProtoMek
      */
-    public static final int GLIDER_MIN_MP = 4;
+    public static final int GLIDER_MIN_FLANK_MP = 4;
     /**
-     * Minimum walk MP for a quad ProtoMek
+     * Minimum running MP for a quad ProtoMek
      */
-    public static final int QUAD_MIN_MP = 3;
+    public static final int QUAD_MIN_RUN_MP = 3;
 
     private final ProtoMek proto;
     private final String fileString;
@@ -444,11 +444,11 @@ public class TestProtoMek extends TestEntity {
      */
     public boolean correctMovement(StringBuffer buffer) {
         boolean correct = true;
-        if (proto.isGlider() && (proto.getOriginalWalkMP() < GLIDER_MIN_MP)) {
-            buffer.append("Glider ProtoMeks have a minimum cruising MP of " + GLIDER_MIN_MP + ".\n");
+        if (proto.isGlider() && (proto.getOriginalRunMP() < GLIDER_MIN_FLANK_MP)) {
+            buffer.append("Glider ProtoMeks have a minimum flanking MP of " + GLIDER_MIN_FLANK_MP + ".\n");
             correct = false;
-        } else if (proto.isQuad() && (proto.getOriginalWalkMP() < QUAD_MIN_MP)) {
-            buffer.append("Quad ProtoMeks have a minimum walk MP of " + QUAD_MIN_MP + ".\n");
+        } else if (proto.isQuad() && (proto.getOriginalRunMP() < QUAD_MIN_RUN_MP)) {
+            buffer.append("Quad ProtoMeks have a minimum running MP of " + QUAD_MIN_RUN_MP + ".\n");
             correct = false;
         }
         int maxJump = maxJumpMP(proto);
@@ -466,7 +466,7 @@ public class TestProtoMek extends TestEntity {
     @Override
     public StringBuffer printEntity() {
         StringBuffer buff = new StringBuffer();
-        buff.append("Protomek: ").append(proto.getDisplayName()).append("\n");
+        buff.append("ProtoMek: ").append(proto.getDisplayName()).append("\n");
         buff.append("Found in: ").append(fileString).append("\n");
         buff.append(printTechLevel());
         buff.append("Intro year: ").append(proto.getYear()).append("\n");
@@ -551,7 +551,7 @@ public class TestProtoMek extends TestEntity {
         if (quadOrGlider) {
             moveFactor -= 2;
         }
-        int rating = Math.clamp((int) (moveFactor * tonnage), 1, 400);
+        int rating = (int) (moveFactor * tonnage);
         if (rating > 40) {
             int modFive = rating % 5;
             if (modFive > 0) {
@@ -630,8 +630,8 @@ public class TestProtoMek extends TestEntity {
     /**
      * The maximum total weight that can be mounted in a given location.
      *
-     * @param loc   The Protomek location
-     * @param proto The Protomek
+     * @param loc   The ProtoMek location
+     * @param proto The ProtoMek
      *
      * @return The weight limit for that location, in tons.
      */
@@ -642,7 +642,7 @@ public class TestProtoMek extends TestEntity {
     /**
      * The maximum total weight that can be mounted in a given location.
      *
-     * @param loc   The Protomek location
+     * @param loc   The ProtoMek location
      * @param quad  Whether the protoMek is a quad
      * @param ultra Whether the protoMek is ultraheavy
      *

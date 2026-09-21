@@ -93,6 +93,7 @@ import megamek.common.units.*;
 import megamek.common.verifier.TestEntity;
 import megamek.common.weapons.bayWeapons.ArtilleryBayWeapon;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
+import megamek.logging.MMLogger;
 import megamek.server.ServerBoardHelper;
 
 /**
@@ -162,6 +163,9 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final JCheckBox chDeployDugIn = new JCheckBox();
     private final JLabel labHidden = new JLabel(Messages.getString("CustomMekDialog.labHidden"), SwingConstants.RIGHT);
     private final JCheckBox chHidden = new JCheckBox();
+    private final JLabel labScanTarget = new JLabel(Messages.getString("CustomMekDialog.labScanTarget"),
+          SwingConstants.RIGHT);
+    private final JCheckBox chScanTarget = new JCheckBox();
 
     private final JLabel labDeployStealth = new JLabel(Messages.getString("CustomMekDialog.labDeployStealth"),
                                                        SwingConstants.RIGHT);
@@ -202,6 +206,8 @@ public class CustomMekDialog extends AbstractButtonDialog
     private final List<Entity> entities;
     private boolean okay;
     private int status = CustomMekDialog.DONE;
+
+    private static final MMLogger LOGGER = MMLogger.create(CustomMekDialog.class);
 
     private final ClientGUI clientGUI;
     private final Client client;
@@ -1856,6 +1862,9 @@ public class CustomMekDialog extends AbstractButtonDialog
         // Apply multiple-entity settings
         for (Entity entity : entities) {
             entity.setHidden(chHidden.isSelected());
+            if (isScanTargetSettable()) {
+                entity.setDesignatedScanTarget(chScanTarget.isSelected());
+            }
             setStealth(entity, chDeployStealth.isSelected());
 
             if (chOffBoard.isSelected()) {
@@ -2459,6 +2468,15 @@ public class CustomMekDialog extends AbstractButtonDialog
             chHidden.setSelected(entity.isHidden());
         }
 
+        // Which units the mission wants scanned is the game master's to decide, so nobody else is shown the box
+        if (isScanTargetSettable()) {
+            labScanTarget.setToolTipText(Messages.getString("CustomMekDialog.labScanTarget.tooltip"));
+            chScanTarget.setToolTipText(Messages.getString("CustomMekDialog.labScanTarget.tooltip"));
+            panDeploy.add(labScanTarget, GBC.std());
+            panDeploy.add(chScanTarget, GBC.eol());
+            chScanTarget.setSelected(entity.isDesignatedScanTarget());
+        }
+
         if (hasStealth) {
             panDeploy.add(labDeployStealth, GBC.std());
             panDeploy.add(chDeployStealth, GBC.std());
@@ -2523,6 +2541,7 @@ public class CustomMekDialog extends AbstractButtonDialog
             chDeployHullDown.setEnabled(false);
             chCommander.setEnabled(false);
             chHidden.setEnabled(false);
+            chScanTarget.setEnabled(false);
             chDeployStealth.setEnabled(false);
             chOffBoard.setEnabled(false);
             choOffBoardDirection.setEnabled(false);
@@ -2554,6 +2573,27 @@ public class CustomMekDialog extends AbstractButtonDialog
         panButtons.add(butCancel);
         panButtons.add(butNext);
         return panButtons;
+    }
+
+    /**
+     * @return {@code true} when this dialog should offer the scan target box: a game master, in a game that uses
+     *       objectives. A game master may set it for any unit, their own side's or the enemy's, because the mission
+     *       is theirs to write.
+     */
+    private boolean isScanTargetSettable() {
+        // Ask the person at the keyboard, not the unit's owner. For a local bot's unit the lobby opens this dialog
+        // with the bot's client, whose player is the bot, so the dialog's own client would never be a game master.
+        Player personAtTheKeyboard = getClient().getLocalPlayer();
+        if ((personAtTheKeyboard == null) || !personAtTheKeyboard.isGameMaster()) {
+            LOGGER.debug("[Scan] Scan target box hidden: {} is not a game master",
+                  (personAtTheKeyboard == null) ? "no local player" : personAtTheKeyboard.getName());
+            return false;
+        }
+        if (!gameOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            LOGGER.debug("[Scan] Scan target box hidden: the game does not use objectives");
+            return false;
+        }
+        return true;
     }
 
     private GameOptions gameOptions() {

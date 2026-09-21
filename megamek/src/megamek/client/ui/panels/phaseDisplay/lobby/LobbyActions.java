@@ -62,9 +62,10 @@ import megamek.client.ui.dialogs.abstractDialogs.ASStatsDialog;
 import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetConfigDialog;
 import megamek.client.ui.dialogs.customMek.BattlefieldSupportAssetDamageDialog;
 import megamek.client.ui.dialogs.customMek.CustomMekDialog;
-import megamek.client.ui.dialogs.lobby.TrainOrderDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
+import megamek.client.ui.dialogs.lobby.TrainOrderDialog;
 import megamek.common.Player;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.Bay;
 import megamek.common.enums.Gender;
 import megamek.common.enums.VariableRangeTargetingMode;
@@ -80,7 +81,6 @@ import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.options.OptionsConstants;
 import megamek.common.strategicBattleSystems.SBFFormationConverter;
 import megamek.common.units.Crew;
-import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
 import megamek.common.units.LandAirMek;
@@ -157,6 +157,36 @@ public class LobbyActions {
             if (entity.isHidden() != newHidden) {
                 entity.setHidden(newHidden);
                 updateCandidates.add(entity);
+            }
+        }
+        sendUpdates(updateCandidates);
+    }
+
+    /**
+     * Marks the given units as ones the mission wants scanned, or takes the marking off, and tells the server.
+     * Only a game master gets here, because only a game master sees the menu and only a game master may edit
+     * another side's units. Once any unit in the game is marked, only marked units are worth scanning, so this is
+     * how a convoy becomes the objective and its escort does not (Objectives series).
+     *
+     * @param entities the units to mark
+     * @param wanted   {@code true} to ask for them to be scanned, {@code false} to drop the request
+     */
+    void applyScanTarget(Collection<Entity> entities, boolean wanted) {
+        if (!validateUpdate(entities)) {
+            logger.debug("[Scan] Scan target change refused for {} unit(s): the lobby would not allow the update",
+                  entities.size());
+            return;
+        }
+        Set<Entity> updateCandidates = new HashSet<>();
+        for (Entity entity : entities) {
+            if (entity.isDesignatedScanTarget() != wanted) {
+                entity.setDesignatedScanTarget(wanted);
+                updateCandidates.add(entity);
+                // a local bot's unit is sent through the bot's own client, so name the sender for a playtest log
+                Client sender = correctSender(entity);
+                logger.info("[Scan] {} {} wanted for scanning, owned by {}, sent by {}", entity.getShortName(),
+                      wanted ? "marked" : "unmarked", entity.getOwner().getName(),
+                      (sender == null) ? "nobody" : sender.getLocalPlayer().getName());
             }
         }
         sendUpdates(updateCandidates);

@@ -56,6 +56,7 @@ import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
 /**
@@ -173,10 +174,17 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
     private void handleHexClick(Coords coords) {
         ObjectiveMarker existingMarker = findMarkerAt(coords);
         if (existingMarker != null) {
-            if (existingMarker.getOwnerId() != player.getId()) {
+            boolean isOwnPoint = existingMarker.getOwnerId() == player.getId();
+            // a game master authors the mission for every side, so any point is theirs to open
+            boolean isGameMaster = player.isGameMaster();
+            if (!isOwnPoint && !isGameMaster) {
                 clientgui.addToast(ToastLevel.WARNING,
                       Messages.getString("VictorySetupDisplay.notYourPoint"));
                 return;
+            }
+            if (!isOwnPoint) {
+                VICTORY_HEX_LOGGER.info("[VictoryHex] game master {} opens the point at {} owned by player {}",
+                      player.getName(), coords.getBoardNum(), existingMarker.getOwnerId());
             }
             editMarker(coords, existingMarker);
             return;
@@ -192,8 +200,10 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
     }
 
     private void editMarker(Coords coords, ObjectiveMarker marker) {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        boolean isGameMaster = (localPlayer != null) && localPlayer.isGameMaster();
         VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(clientgui.getFrame(), marker,
-              game().getPlayersList());
+              game().getPlayersList(), isGameMaster);
         if (result == VictoryHexPropertiesPane.Result.REMOVED) {
             game().removeGroundObject(coords, marker);
             VICTORY_HEX_LOGGER.info("[VictoryHex] {} removed in the Victory Setup phase", coords.getBoardNum());
@@ -338,6 +348,14 @@ public class VictorySetupDisplay extends StatusBarPhaseDisplay {
             }
         }
         if ((pointsOnBoard > 0) && (pointsStillToPlace == 0)) {
+            return true;
+        }
+
+        // A Sensor Check mission scores off enemy units, not off control points, so a player with none to place is
+        // not making a mistake and must not be told that nothing can be scored without them.
+        boolean scanningCanScoreOnItsOwn = game().getOptions()
+              .booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        if ((pointsStillToPlace == 0) && scanningCanScoreOnItsOwn) {
             return true;
         }
         String message = (pointsStillToPlace > 0)

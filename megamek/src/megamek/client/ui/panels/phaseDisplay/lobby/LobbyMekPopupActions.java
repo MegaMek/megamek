@@ -139,6 +139,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_HIDDEN:
             case LMP_STAND:
             case LMP_PRIORITY_TARGET:
+            case LMP_SCAN_TARGET:
                 if (!entities.isEmpty()) {
                     multiEntityAction(command, entities, info);
                 }
@@ -340,6 +341,9 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
 
                 case LMP_HIDDEN:
                     lobby.lobbyActions.applyHidden(entities, info.equals(LMP_HIDE));
+                    break;
+                case LMP_SCAN_TARGET:
+                    lobby.lobbyActions.applyScanTarget(entities, info.equals(LMP_SCAN_WANTED));
                     break;
 
                 case LMP_STAND:

@@ -1238,6 +1238,18 @@ public class TWGameManager extends AbstractGameManager {
                 case ENTITY_DEPLOY_BRIDGE:
                     receiveDeployBridge(packet, connectionId);
                     break;
+                case ENTITY_SCAN_ORDER:
+                    new ObjectiveScanHandler(this).receiveScanOrder(packet.data()[0], connectionId);
+                    break;
+                case OBJECTIVE_EDIT:
+                    new ObjectivePlacementHandler(this).receiveObjectiveEdit(packet, connectionId);
+                    break;
+                case SCAN_DESIGNATION:
+                    new ObjectiveScanHandler(this).receiveScanDesignation(packet, connectionId);
+                    break;
+                case ENTITY_SCAN_WITHDRAW:
+                    new ObjectiveScanHandler(this).receiveScanWithdraw(packet, connectionId);
+                    break;
                 case INFANTRY_ACTION_DECLARATION:
                     receiveInfantryActionDeclaration(packet, connectionId);
                     break;
@@ -1714,6 +1726,8 @@ public class TWGameManager extends AbstractGameManager {
             report.add(game.getVictoryTeam());
         }
         addReport(report);
+
+        new ObjectiveScanHandler(this).reportTheScanRecord();
 
         bvReports(false);
 
@@ -10291,6 +10305,8 @@ public class TWGameManager extends AbstractGameManager {
                     entity.setSpotting(true);
                     entity.setSpotTargetId(spotAction.getTargetId());
                 }
+                // a scan is resolved in the End Phase; a later order from the same unit replaces this one
+                case ScanAction scanAction -> entity.setPendingScan(scanAction);
                 default ->
                     // add to the normal attack list.
                       game.addAction(ea);
@@ -16356,6 +16372,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveObjectives() {
         new ObjectiveResolutionHandler(this).resolveObjectives();
+    }
+
+    /**
+     * Resolves the scans units ordered this turn and settles the readings of units that have left. Delegates to
+     * {@link ObjectiveScanHandler} so the scanning rules do not add to this already very large class.
+     */
+    void resolveScans() {
+        new ObjectiveScanHandler(this).resolveScans();
     }
 
     /**

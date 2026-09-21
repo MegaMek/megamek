@@ -28,7 +28,7 @@ change. Opening another board captures its starting conditions.
 | Ground layer height | Shared fog and sand vertical falloff in terrain levels (1–8), starting at the board's lowest hex LEVEL |
 | Fog height variation | Maximum local deviation from that height, in terrain levels (0–4); default 1.25. Zero gives constant height |
 | Fog density variation | Thin the spaces between fog banks (0–1); default 0.85. Zero gives uniform density, one permits clear gaps; the 25% opacity cap remains |
-| Fog calm drift | Default from `GpuAtmosphere.FOG_CALM_DRIFT = 0.06f` hex widths/second; gentle intrinsic movement when wind is calm. Zero disables calm drift; wind still moves the fog |
+| Fog calm drift | Default from `GpuAtmosphere.FOG_CALM_DRIFT = 0.2f` hex widths/second; gentle intrinsic movement when wind is calm. Zero disables calm drift; wind still moves the fog |
 | Haze | Add more uniform atmospheric extinction |
 | Exposure (EV) | Brighten or darken the scene by up to two stops; neutral daylight includes a +0.8-stop lift, fading to -0.4 EV at night |
 | Rain / Snow / Hail / Blowing sand / Lightning | Buttons toggle each effect; adjacent sliders adjust intensity (zero is off). Turning an effect back on sets it to half strength |
@@ -266,10 +266,12 @@ the analytic integral of exponential height density, stopping at opaque geometry
 Four samples through the air column vary local height and density into broad, correlated banks.
 Each uses two smooth volume-noise octaves and an analytic height integral within its interval.
 Their world-space coordinates follow integrated motion, with no frame-random jitter
-or clock-wrap discontinuity. Calm fog drifts at `GpuAtmosphere.FOG_CALM_DRIFT = 0.06f`
+or clock-wrap discontinuity. Calm fog drifts at `GpuAtmosphere.FOG_CALM_DRIFT = 0.2f`
 hex widths per second along a gently bending vector. Its direction varies smoothly
-over 48 seconds and blends into the selected wind vector by light-gale strength;
-wind strength one moves banks at 0.3 hex widths per second. This updates only the
+over 48 seconds. The wind vector replaces it as wind rises, fully taking over at wind
+strength 0.2; from there bank travel scales with wind up to
+`GpuAtmosphere.FOG_WIND_DRIFT = 0.6f` hex widths per second, so the blend is a
+lerp between the two speeds rather than a plain increase. This updates only the
 existing noise offset on the CPU, adding no shader samples or render passes.
 Defaults are `GpuAtmosphere.FOG_HEIGHT_VARIATION = 1.25f`
 and `FOG_DENSITY_VARIATION = 0.85f`, also exposed in Tuning. Set both to zero for uniform fog.

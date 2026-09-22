@@ -32,6 +32,18 @@
  */
 package megamek.common.actions.compute;
 
+import static megamek.common.ToHitData.HIT_ABOVE;
+import static megamek.common.ToHitData.HIT_BELOW;
+import static megamek.common.ToHitData.HIT_PARTIAL_COVER;
+import static megamek.common.ToHitData.HIT_UNDERWATER;
+import static megamek.common.ToHitData.SIDE_FRONT;
+import static megamek.common.ToHitData.SIDE_LEFT;
+import static megamek.common.ToHitData.SIDE_RANDOM;
+import static megamek.common.ToHitData.SIDE_REAR;
+import static megamek.common.ToHitData.SIDE_RIGHT;
+
+import java.util.List;
+
 import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -57,18 +69,6 @@ import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.logging.MMLogger;
-
-import java.util.List;
-
-import static megamek.common.ToHitData.HIT_ABOVE;
-import static megamek.common.ToHitData.HIT_BELOW;
-import static megamek.common.ToHitData.HIT_PARTIAL_COVER;
-import static megamek.common.ToHitData.HIT_UNDERWATER;
-import static megamek.common.ToHitData.SIDE_FRONT;
-import static megamek.common.ToHitData.SIDE_LEFT;
-import static megamek.common.ToHitData.SIDE_RANDOM;
-import static megamek.common.ToHitData.SIDE_REAR;
-import static megamek.common.ToHitData.SIDE_RIGHT;
 
 public class ComputeTerrainMods {
 

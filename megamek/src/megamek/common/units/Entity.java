@@ -36,10 +36,9 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -75,8 +74,6 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.*;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BankedScan;
-import megamek.common.equipment.ScanMission;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
@@ -1420,6 +1417,10 @@ public abstract class Entity extends TurnOrdered
      */
     public void setModel(String model) {
         this.model = model;
+        // shortName and displayName are derived from the model; invalidate the cached copies so they are
+        // regenerated on next access (see setChassis).
+        shortName = null;
+        displayName = null;
     }
 
     /**
@@ -1443,6 +1444,11 @@ public abstract class Entity extends TurnOrdered
      */
     public void setChassis(String chassis) {
         this.chassis = chassis;
+        // shortName and displayName are derived from the chassis; invalidate the cached copies so they are
+        // regenerated on next access. Otherwise a name generated before the chassis was set (e.g. during
+        // construction) sticks around, which is how AbstractBuildingEntity units ended up displaying "null".
+        shortName = null;
+        displayName = null;
     }
 
     /** Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf". */

@@ -1000,8 +1000,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     private void setArmorForRelativeCoords(int armor, @Nullable CubeCoords relativeCoords) {
         if (relativeCoords == null) {
+            // getShortNameRaw() rather than getShortName() on purpose: this can run during construction, before the
+            // chassis is set, and getShortName() would cache the resulting "null" name (see Entity#setChassis).
             logger.debug("[BuildingDamage] {}: armor set to {} ignored, that location is not part of a hex yet",
-                  getShortName(), armor);
+                  getShortNameRaw(), armor);
             return;
         }
 
@@ -1033,8 +1035,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     private void setConstructionFactorForRelativeCoords(int constructionFactor,
           @Nullable CubeCoords relativeCoords) {
         if (relativeCoords == null) {
+            // getShortNameRaw() rather than getShortName() on purpose: this can run during construction, before the
+            // chassis is set, and getShortName() would cache the resulting "null" name (see Entity#setChassis).
             logger.debug("[BuildingDamage] {}: Construction Factor set to {} ignored, that location is not part of"
-                  + " a hex yet", getShortName(), constructionFactor);
+                  + " a hex yet", getShortNameRaw(), constructionFactor);
             return;
         }
 

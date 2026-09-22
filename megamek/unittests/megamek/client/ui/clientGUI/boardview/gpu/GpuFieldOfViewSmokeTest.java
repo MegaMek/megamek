@@ -63,6 +63,9 @@ class GpuFieldOfViewSmokeTest {
                                     boardCamera.setIsometric(false);
                                     GpuBoardTestUi.click("tuning");
                                     assertDefaults();
+                                    // Compare FoV at one hour, independently of each window's sampled scenario time.
+                                    Slider time = GpuBoardTestUi.stage().getRoot().findActor("Time of day");
+                                    time.setValue(13);
                                     GpuBoardTestUi.click("fov-style-" + style.name());
                                     GpuBoardTestUi.click("fov-style-" + style.name());
                                     assertTrue(modeButton("sensor", GpuFieldOfView.SENSOR_STYLE).isChecked(),
@@ -168,6 +171,11 @@ class GpuFieldOfViewSmokeTest {
                                           .add(BoardGeometry.WIDTH * 0.10f, BoardGeometry.HEIGHT * 0.08f, 0);
                                     boardCamera.camera.project(point, 0, Math.round(GpuBoardUi.TURN_HEIGHT * scale),
                                           boardCamera.camera.viewportWidth, boardCamera.camera.viewportHeight);
+                                    // The camera can retain a zoom that puts edge hexes behind the toolbar or turn panel.
+                                    float bottom = Math.round(GpuBoardUi.TURN_HEIGHT * scale);
+                                    if (point.y < bottom || point.y >= bottom + boardCamera.camera.viewportHeight) {
+                                        continue;
+                                    }
                                     int x = Math.round(point.x * pixels.getWidth() / Gdx.graphics.getWidth());
                                     int y = Math.round(point.y * pixels.getHeight() / Gdx.graphics.getHeight());
                                     if (x < 0 || y < 0 || x >= pixels.getWidth() || y >= pixels.getHeight()) {
@@ -189,7 +197,8 @@ class GpuFieldOfViewSmokeTest {
                                         blockedCount++;
                                         if (style == GpuFieldOfView.Style.GRAYSCALE) {
                                             assertTrue(chroma <= 1 / 255f,
-                                                  "Blocked hex content must be grayscale at " + tile.coords());
+                                                  "Blocked hex content must be grayscale at " + tile.coords()
+                                                        + "; pixel " + x + "," + y + "; RGB " + red + "," + green + "," + blue);
                                         }
                                     }
                                 }

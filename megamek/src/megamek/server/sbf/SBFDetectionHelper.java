@@ -152,7 +152,7 @@ record SBFDetectionHelper(SBFGameManager gameManager) implements SBFGameManagerH
         // TODO: this is missing quite a few conditions
         if (light.isMoonlessOrPitchBack()) {
             return 4;
-        } else if (light.isDusk() || weather.isSleet() || sand) {
+        } else if (light.isDuskDawn() || weather.isSleet() || sand) {
             return 3;
         } else if (weather.isAnyRain() || weather.isAnySnowfall() || !fog.isFogNone()) {
             return 2;

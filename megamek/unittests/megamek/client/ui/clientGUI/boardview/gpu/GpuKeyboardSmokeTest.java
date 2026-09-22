@@ -3,8 +3,11 @@ package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -19,6 +22,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import megamek.client.ui.util.KeyCommandBind;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -32,6 +36,7 @@ class GpuKeyboardSmokeTest {
         try (GpuBoardFixture fixture = GpuBoardFixture.create()) {
             GpuBoardSource source = mock(GpuBoardSource.class);
             source.uiPreferences = fixture.source.uiPreferences;
+            source.phaseStatus = fixture.source.phaseStatus;
             when(source.takeFrame()).thenAnswer(invocation -> fixture.source.takeFrame());
             new Lwjgl3Application(new GpuBattleView(source) {
                 private int tick;
@@ -57,7 +62,7 @@ class GpuKeyboardSmokeTest {
                                   KeyCommandBind.TOGGLE_ISO, KeyCommandBind.ZOOM_IN, KeyCommandBind.ZOOM_OUT,
                                   KeyCommandBind.ZOOM_OVERVIEW_TOGGLE);
                             for (KeyCommandBind bind : KeyCommandBind.values()) {
-                                if (camera.contains(bind)) {
+                                if (camera.contains(bind) || bind == KeyCommandBind.ROUND_REPORT) {
                                     continue;
                                 }
                                 int nativeKey = nativeKey(bind.key);
@@ -72,6 +77,39 @@ class GpuKeyboardSmokeTest {
                                 verify(source).key(bind.key, true, bind.modifiers);
                                 verify(source).key(bind.key, false, bind.modifiers);
                             }
+
+                            GpuBoardTestUi.click("battle-report-toggle");
+                            var stage = GpuBoardTestUi.stage();
+                            TextField reportSearch = stage.getRoot().findActor("report-search");
+                            stage.setKeyboardFocus(reportSearch);
+                            for (KeyCommandBind bind : new KeyCommandBind[] {
+                                  KeyCommandBind.UNIT_DISPLAY, KeyCommandBind.FORCE_DISPLAY, KeyCommandBind.MINIMAP,
+                                  KeyCommandBind.BOT_COMMANDS, KeyCommandBind.PAUSE, KeyCommandBind.UNPAUSE,
+                                  KeyCommandBind.UD_GENERAL, KeyCommandBind.UD_PILOT, KeyCommandBind.UD_ARMOR,
+                                  KeyCommandBind.UD_WEAPONS, KeyCommandBind.UD_SYSTEMS, KeyCommandBind.UD_EXTRAS,
+                                  KeyCommandBind.KEY_BINDS, KeyCommandBind.PLANETARY_CONDITIONS }) {
+                                setModifiers(keyboard, bind.modifiers);
+                                clearInvocations(source);
+                                processor.keyDown(nativeKey(bind.key));
+                                processor.keyUp(nativeKey(bind.key));
+                                verify(source).key(bind.key, true, bind.modifiers);
+                                verify(source).key(bind.key, false, bind.modifiers);
+                                assertEquals("", reportSearch.getText());
+                            }
+                            setModifiers(keyboard, 0);
+                            clearInvocations(source);
+                            processor.keyDown(Input.Keys.N);
+                            processor.keyTyped('n');
+                            processor.keyUp(Input.Keys.N);
+                            assertEquals("n", reportSearch.getText(), "Report navigation must not steal ordinary typing");
+                            verify(source, never()).key(anyInt(), anyBoolean(), anyInt());
+                            verify(source, never()).keyTyped('n');
+                            setModifiers(keyboard, KeyCommandBind.ROUND_REPORT.modifiers);
+                            processor.keyDown(nativeKey(KeyCommandBind.ROUND_REPORT.key));
+                            processor.keyUp(nativeKey(KeyCommandBind.ROUND_REPORT.key));
+                            assertFalse(((Table) stage.getRoot().findActor("battle-report")).isVisible(),
+                                  "The configured report toggle works while its search field has focus");
+                            stage.setKeyboardFocus(null);
 
                             setModifiers(keyboard, InputEvent.SHIFT_DOWN_MASK);
                             clearInvocations(source);

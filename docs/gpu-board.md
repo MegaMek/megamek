@@ -1,14 +1,27 @@
 # GPU battle view
 
 The Java client has a libGDX/LWJGL3 board with one 3D scene, an orthographic orbit
-camera, animated unit models, and contextual Scene2D controls. From deployment
-onward, choose **View > GPU Battle View (Experimental)**. Launch this checkout with
+camera, animated unit models, and contextual Scene2D controls. The client remembers
+the last board visualization, with 3D as the initial default. Its isometric camera fits closely
+around the whole map. A 1.2-second ease-out entrance zooms in from a wider view as the board
+fades in; camera input interrupts the entrance. Launch this checkout with
 `.\gradlew.bat :megamek:run` on Windows or `./gradlew :megamek:run` elsewhere.
 
-The classic window hides after the first GPU frame. **View > Classic Board**, or
-closing the GPU window, disposes the renderer and restores the existing client.
-The game, pending orders, and phase controls remain the same. Startup failure
-leaves the classic interface available; closing the game does not reopen it.
+The native loading window appears before a scenario or server delivers its first map.
+Starting-scenario, receiving-data and waiting messages come from the existing phase
+panels and appear in that same native window. Normal phase status and waiting-player
+messages also appear in the native footer. Board selection does not depend on Swing
+map tabs; the classic viewport is neither constructed nor shown during native startup.
+The first **View** entry is a single switch: **2D Board** in 3D, or **3D Board** in 2D.
+The choice persists through phase changes, lobby visits and future games. Switching
+releases the inactive renderer: the classic viewport and artwork caches are dropped,
+or the native window and GPU resources are disposed. The game, pending orders and
+shared client controls remain the same.
+Closing either board runs the same save-and-quit flow. Cancelling the prompt or
+cancelling a save keeps the current board open; closing never switches visualizations.
+Rendering failures offer an explicit retry, board switch or quit choice.
+The source adapter still reuses `BoardView`'s shared artwork, tactical state, overlays,
+and client commands; it does not need its classic component or a classic paint pass.
 The bottom-right corner shows the measured rendering FPS, refreshed once per second.
 
 ## Terrain and assets
@@ -20,15 +33,18 @@ the lower hex, meeting at a shared edge height. Across a difference of at most
 two levels, an exit from either dry hex gives a road end a continuous approach
 onto unpaved ground. Larger differences require connecting road exits on both
 sides; otherwise the road ends flat and the cliff remains intact. A road exit
-meeting a bridge arm at the road's elevation stays level with its deck, without
-cutting the road or raising the ground beneath the bridge.
+aligned with a bridge arm within one level of its deck ramps up or down to meet
+the deck at the shared edge, including bridges over water. Equal elevations stay
+flat, and the ground beneath the bridge keeps its original shape. An aligned road
+or deck at the same elevation takes priority, followed by a connecting road on
+dry land at a different elevation; a sloped bridge approach is the last fallback.
 Grounded movement follows that surface. Other terrain retains its actual level
 step. There are no gaps, global inset/interpolation settings, or stretched top
 textures on walls.
 
 The GPU board always uses its own Saxarba tileset at
 `mm-data/data/models/board/tileset/saxarba.tileset`, independently of the classic
-board preference. Its 7,269 copied files include the recursive include tree and
+board preference. Its 7,295 copied files include the recursive include tree and
 referenced art outside the Saxarba directory. They are ordinary independent
 files, so editing them does not change the 2D board.
 
@@ -155,7 +171,7 @@ World-scaled UVs repeat once per 96 units in both directions, independently of
 rim depth. Short and sloping walls clip the rim instead of squeezing or stretching
 its texture. The profile meets at corners, and changed ground pixels refresh
 the affected chunk's rim colors.
-Concrete retains its rim and incline overlay, including between paved hexes.
+Concrete retains its rim and cliff-top detail, including between paved hexes.
 Its rim has a straight lower edge at a constant nine-world-unit depth; all
 other materials keep the irregular profile.
 
@@ -164,15 +180,31 @@ sides at its original scale. Grass, snow, sand and rocky/earth materials use
 their corresponding art; concrete uses the neutral rocky edge. Each patch is
 oriented to its actual edge and clipped around road approaches. All orientations
 use the same source instead of alternating baked bright `01` and dark `08`
-variants. The original small-scale shading remains in the artwork, blended
-over the ground; scene lighting and shadows remain dynamic.
+variants. `BoardRim` combines unlit ground and rim color at the existing 62%
+opacity, and combines their normals with reoriented normal mapping before
+lighting. The normal directions rotate with the artwork. Coverage comes from
+the shared `BoardSurface` top triangles and exposed side segments, preserving
+road mouths and corners. The resulting color/normal pair occupies one aligned
+ground-atlas slot, so the rim receives ground lighting, shadows and the normal
+map toggle without a separately lit transparent top mesh.
+
+Materials are composed when terrain inputs change, cached by their source
+pixels and local footprint, and shared across matching tiles. Unused combinations
+are released after each terrain update. Camera and light changes reuse the
+unlit maps. Original images stay separate and editable; banks borrow the ground
+without its cliff-top decoration. The vertical cornice remains a separate mesh.
+Offline `normals/High_Incline/` maps provide restrained relief derived from the
+existing painted artwork. Painted brightness is an approximation to height and
+its original baked shading remains; authored height/normal data would improve
+physical accuracy without changing the material path. Missing custom rim normals
+preserve the ground's existing relief.
 
 Blender source, reproducible exporter, texture prompts, model counts, and
 Quaternius CC0 attribution are recorded in the asset directory's README and
 `mm-data/tools/`. Runtime loads indexed G3DJ files and requires no Blender
 installation. The Gradle data-staging task includes these models and textures.
 
-## Water
+## Liquids
 
 A water hex's solid surface is its riverbed. Positive depth lowers it by
 `depth * LEVEL`. Depth zero makes a two-world-unit recess at default scale,
@@ -193,25 +225,103 @@ Banks at the board boundary use the water hex's own ground artwork.
 River mouths use roughly 33 of the hex edge's 42 world units at default scale;
 their sandy fade starts at the edge corners. Connected channels retain this
 width through bends, while isolated basins keep their rounded land banks.
+A mouth that spills does not reach the shared edge: its water stops a lip short,
+so the fall can curve down over that gap from inside. Non-falling mouths keep the
+matching contours exactly.
 Hexes with exactly two nonadjacent water neighbors use a curved channel with
 consistent width instead of a bay around each hex centre. The bed remains at
 full depth beneath the hex centre, keeping grounded units on the riverbed.
 Concave channels are triangulated from their outline for both rendering and
 picking. Junctions, adjacent openings and isolated pools retain the bay contours.
 
-An open mouth leading to a lower, unfrozen water hex generates one vertical
-waterfall from the upper surface to the lower surface. It uses the upper hex's
-animated water artwork with vertically repeating UVs scrolling downward, at
-80% opacity. Water artwork extends into the GIF's transparent hex corners so
+An open mouth leading to a lower, unfrozen water hex generates one waterfall from
+the upper surface to the lower surface. Its water stops a lip short of the shared
+edge and the sheet curves down over that gap to the edge's own plane, where it hangs
+just clear of the wall; its foot then spreads into the water it lands in. Nothing is
+left hanging beyond the mouth and both joins are tangent, so neither the silhouette
+nor the shading cuts. The lip radius stays inside half the drop and 0.045 hex widths,
+the foot uses half of it, and the sheet's spread is part of the chunk's cull bounds.
+It uses the upper hex's water palette, and the procedural pattern keeps the pool's own
+field, carried down the sheet by the height it has fallen, so it crosses the lip
+without a seam. Opacity is 80% on the outward face and 40% on the inward face, and
+vertically repeating coordinates drive the artwork fallback. Viewed from upstream,
+the back remains visible through the upper water surface with a softer tint.
+The waterfall carries the pool's color mixture over the lip: its animated liquid
+color is mixed with the actual bed material's average using the shared surface
+opacity. This avoids exposing raw blue water artwork when the pool itself appears
+green/brown through its bed. The bed average is calculated once per asset, with
+no per-frame readback or extra texture sample. Lighting follows the sheet's own
+normal, which turns from up at the water's edge, around to outward along the
+hanging sheet, and back to up where it lands.
+In the GIF fallback, water artwork extends into the transparent hex corners so
 scrolling changes only the flow pattern, never the waterfall's width. Its fixed
 edges match the river mouth. Equal surface levels and frozen connections do not generate falls.
 These are lightweight animated surfaces, not a fluid simulation.
 
-The renderer composes offset/transparent GIF patches into complete frames and
-decodes the supplied Saxarba `anim_water_0.gif` through
-`anim_water_4.gif`, respecting frame delays and sharing frames between hexes
-of equal depth. Depth two uses the depth-two animation. Depths greater than four
-keep their actual bed depth and use the deepest supplied artwork.
+`GpuWaterShader.USE_PROCEDURAL_WATER` selects procedural water color instead of
+uploaded GIF frames. It defaults to `false`: the native comparison found no
+consistent render-time improvement from replacing the artwork, so the authored appearance
+is retained. Set it to `true` to avoid water GIF storage and uploads. The shared
+64x64 RGB noise field then drives changing caustic
+patterns and surface normals, with palettes matched to Saxarba's shallow green,
+deep blue, Mars and volcanic water. Rapids and torrents add more foam. Animation
+deforms in place unless elevation identifies a downstream current. Water normals,
+rain impacts, specular lighting, sky reflection, foam and splash spray are shaded
+together, with geometry and cloud shadows. Sky reflection is approximate; there
+is no scene capture, refraction buffer or fluid simulation.
+
+Set `USE_PROCEDURAL_WATER` to `false` and rebuild to restore Saxarba
+`anim_water_0.gif` through `anim_water_4.gif`, plus Mars/volcanic variants and
+authored transparent rapids/torrent foam. This preserves the same rain, flow and
+splash effects. Depths greater than four retain their actual bed depth and use
+the deepest palette/artwork. The procedural path does not load water GIF frames;
+it borrows the noise texture already owned by `GpuTerrain`.
+
+For magma and the optional water GIF path, `GpuLiquidShader.USE_SHADER_ANIMATION`
+defaults to `true`: retain all authored
+animation frames and blend the current and next frame in the shader, respecting
+their delays and the loop boundary. Ripples, foam, and molten shapes change in
+place. Set the constant to `false` and rebuild for the original discrete GIF
+timing (32 frames, 3.2 seconds per loop). Both modes share the same uploaded
+textures; interpolation adds a texture sample, with no texture-memory saving
+or claimed frame-rate improvement. GIF patches are composed with their offsets
+and disposal once, and transparent hex margins are filled before repeating the
+image. Foam is alpha-composited at upload, not drawn as another mesh.
+
+`BoardFlow` derives visual currents from connected liquid surface elevations.
+Flat channel reaches drain toward their lower outlet, and bend directions blend
+their incoming and outgoing paths. A higher inlet can also identify a single
+boundary outlet or the lake into which a reach empties. Completely flat rivers
+with no elevation evidence have no assumed direction. Broad bays keep their
+surface animation in place, except immediately at a lower outlet. Rapids and
+torrents flow faster; molten material flows more slowly. The final three connected
+hexes before a waterfall accelerate toward the lip. Larger drops increase this
+boost, capped at four levels; unrelated nearby rivers are unaffected.
+Falls scroll downward. Receiving water adds animated boiling foam and outward
+wakes, plus a short transparent curtain of shader-animated spray droplets. The
+impact footprint grows with drop height and is restricted to the lower pool.
+It works without rain and disappears when the drop is removed or frozen. These
+small spray meshes share the receiving water material and transparent pass;
+there are no per-droplet CPU objects. Magma does not receive water splashes.
+This is a channel/bay topology heuristic, not a fluid simulation or game-rule
+change. Ice and incompatible liquid types break connections. An outlet edit
+recomputes the field and rebuilds affected reaches even across chunk boundaries;
+ordinary animation and tactical updates do not recompute flow.
+
+Hazardous liquid uses the existing water geometry, depth, animation, and
+transparency with a green material tint. Its hazard level (0–3) describes game
+behavior, never water depth; an accompanying WATER terrain supplies the depth.
+Without WATER, it uses the shallow visual recess and changes no game depth.
+Static hazardous-liquid overlays are excluded from 3D decals. Ordinary, themed,
+and hazardous water can share open mouths and falls.
+
+MAGMA level 2 uses `base/base_magma_anim_-3.gif` through
+`base/base_magma_anim_10.gif`, selected by clamped surface elevation. It shares
+the pool and fall geometry with water, with rocky bed/bank materials, opaque
+depth writes, and emissive color. Magma mouths connect only to magma; a rocky
+shore separates it from water. Emission keeps magma visible at night; it does
+not cast additional light onto nearby objects. MAGMA level 1 (crust), mud,
+swamp, and quicksand retain their existing solid surfaces and static artwork.
 
 Water renders after units with 48% opacity, depth testing, and no depth writes.
 The bed remains opaque, so underwater units are visible through water without
@@ -283,17 +393,22 @@ Cockpit glazing keeps its original appearance until destroyed. The shader recogn
 fixed `PALETTE['glass']` vertex color before tinting, so glass can remain in the existing detail meshes
 without additional draw calls. Only the destroyed overlay ignores that mask.
 
-At the bottom of the tuning panel, an unchecked **Override visible unit damage** checkbox enables a
-**Display damage** slider from 0 to 1. Non-Meks use the existing whole-body thresholds. Meks apply the
-value to every location: 0–0.5 removes armor, then 0.5–1 removes structure with armor fully stripped.
+Under **Tuning > General > Unit damage**, **Override visible unit damage** enables a
+**Display damage** slider from 0 to 1 and a **Damage location** selector (default **All locations**).
+The preview applies across the board: segmented models use the chosen location, while models without
+locations always use the whole body. Locations absent from a particular model are skipped, and other
+locations retain their actual damage. Meks use 0–0.5 for armor, then 0.5–1 for structure with armor fully
+stripped; other bodies retain their linear thresholds. Infantry and battle armor show a proportional
+number of fallen figures, rounded to their representative formation size, using the existing death pose.
+Lowering or disabling the preview restores live poses without rebuilding the formation or changing troop counts.
 Destroyed or detached locations keep their priority. Disabling the preview restores actual damage;
 the game state never changes. **VSync**, beside **Normal maps**, takes effect immediately and defaults
 to enabled. The window's separate 60 FPS cap still applies. **Defaults** restores both controls.
 
-**Planetary conditions...**, beside **Daylight & atmosphere**, opens the existing planetary conditions
-editor initialized from the game's conditions. Accepting it applies the shared scenario-to-weather
-mapping to all lighting and weather controls; Cancel leaves the current preview alone. The editor
-changes only this GPU preview, and **Defaults** still restores the scenario's original appearance.
+**Planetary conditions...**, beside **Atmosphere presets**, opens the existing planetary conditions
+editor initialized from the active visual conditions. Apply always reapplies the shared scenario-to-weather
+mapping and resets extra atmospheric controls, even for unchanged conditions; Cancel leaves the preview alone.
+This affects visual weather and jump gravity only. **Defaults** restores the game's current conditions.
 
 Annotations use the existing entity painter, rasterized at higher resolution
 and drawn in screen space. They follow the animated unit, spread around nearby
@@ -322,7 +437,7 @@ Taking an improvised tree club adds equipment without removing scenery. Only the
 cover level determines tree count: ultra-heavy, heavy, light and clear progressively reduce the visible trees.
 The renderer does not calculate terrain damage or maintain a separate tree inventory.
 
-**Tuning > See-through** is an independent occlusion highlight, enabled at 75%
+**Tuning > See-through** is an independent occlusion highlight, enabled at 55%
 by default. A thin team-colored outline, dark outer edge and faint filled silhouette
 identify the portions of a unit hidden behind higher terrain or other opaque
 geometry, including opaque trees and buildings with the cutaway disabled. The slider scales
@@ -339,13 +454,18 @@ highlighting a unit's own rear surfaces or overlapping limbs. Superimposed units
 share the nearest surface at each pixel. Surfaces already made transparent by
 the opacity controls use their existing see-through rendering. The highlight
 is drawn after atmosphere/weather and before tactical annotations, with an
-outline sized in screen pixels. It shares camera-depth capture with fog when
-available and adds a depth pass when needed on a clear board. Its unit-depth
-and color buffers are reused until the viewport changes; 0% skips the highlight work.
+outline sized in screen pixels. It shares the hardware scene depth with fog and
+adds no camera-depth geometry pass, even on a clear board. One unit capture writes
+team color and hardware depth together; the outline composite visits only the
+projected unit bounds plus the full halo. Its framebuffer and attachments are
+reused until the viewport changes; 0% skips the highlight work. The battle view
+shares each unit's posed bounds across culling, cutaways, shadows and outlines,
+resetting that cache after animation every frame. See
+[the rendering cost audit](gpu-weather-performance.md) for benchmark stage timings.
 
-Captured camera depth is restored after atmosphere compositing with one fullscreen draw, replacing a
-second submission of every unit and terrain mesh. If no depth capture was required, the original direct
-depth pass remains. Shadow resolution and caster coverage are unchanged. Shadow transforms are reused,
+Scene color and 24-bit depth are captured in one geometry pass. The atmosphere composite writes both
+color and depth to the board viewport in one fullscreen draw. There is no separate camera-depth
+geometry pass or restoration shader. Shadow resolution and caster coverage are unchanged. Shadow transforms are reused,
 and changes only to light color, fog or exposure do not invalidate the cached shadow geometry.
 
 `GpuMarkers` owns the raised symbol artwork, shared models, and one cosmetic
@@ -443,6 +563,13 @@ Diagnostic firing heat-map icons also remain in the board layer with their combi
 | Tab / Shift+Tab | Select the next / previous unit through the current phase's controls |
 | Enter / slash | Activate the existing chat box / start a chat command |
 | Ctrl+K / Ctrl+P | Toggle the keyboard shortcuts / planetary conditions overlay |
+| Ctrl+D / Ctrl+F | Toggle the existing Unit Display / Force Display dialogs above the board |
+| Ctrl+M / Ctrl+Shift+G | Toggle the minimap / Bot Commands window |
+| F1–F6 | Select the existing Unit Display tabs while the inspector is open |
+| Ctrl+Shift+P / Ctrl+Alt+P | Existing bot-game pause/continue actions, with the panel's availability checks |
+| N / Shift+N in reports | Find the next / previous event containing the selected report keyword |
+| Ctrl+N / Ctrl+Shift+N in reports | Select the next / previous configured report keyword |
+| Shift+F / Ctrl+Shift+F in reports | Toggle keyword filtering / select the next configured filter |
 | Up/down, then Enter in a menu | Navigate enabled choices and activate |
 | Orders / Clear orders / Done or Skip | Inspect, clear, or explicitly commit through the original handlers |
 | Tuning / F9 | Adjust geometry, overlap opacity, see-through intensity, time of day, clouds, fog, haze, and exposure |
@@ -452,7 +579,18 @@ Configured gameplay and menu shortcuts use the same handlers and availability ch
 This includes the other overlays, labels and coordinates, range and movement displays, unit/minimap/force/bot
 panels, reports, settings, saves, and loads. Camera bindings control the native camera. F9 and F10 open the
 GPU tools only when those keys have no configured binding. Text entry and open menus take keyboard focus;
-closing them restores the board shortcuts. Keypad navigation honors Num Lock, including the weapon-mode keys.
+closing them restores the board shortcuts. Window/menu shortcuts, inspector tabs and bot controls remain
+accessible from reports, tuning and command searches. Ordinary typing stays in the focused text field.
+Unit Display and Bot Commands float while in 3D and return to their saved docking locations in 2D.
+Minimap, player list and artillery windows retain their enabled state across board switches. The minimap
+publishes camera requests to the same native navigation path without creating a classic viewport.
+The native **Commands** menu reuses the old command bar's game and Game Master actions, including
+Report a Bug; every action checks the live menu again before executing. Reopened dialogs are raised above the native board; their original
+always-on-top setting is restored when leaving 3D. Keypad navigation honors Num Lock, including the weapon-mode keys.
+
+Report keyword controls use the same user-configured keyword lists as the legacy report. Navigation highlights
+and scrolls to matching events; multiword keyword filters retain events matching any of the words. The native
+reader preserves complete events rather than cutting the legacy HTML into individual matching lines.
 
 The HUD retains the configured MegaMek skin and its original action-button artwork.
 Menu bars, dropdowns and context menus use separate flat controls: compact rows on
@@ -464,9 +602,32 @@ board click. Menus retain scrolling and viewport clamping; disabled explanations
 appear in tooltips instead of expanding every unavailable row. Keyboard navigation skips disabled actions.
 Camera rotation, fitting, and menu interaction do not issue game orders.
 
-The Tuning panel shares the dropdown menus' flat styling and compact controls.
-One narrow, scrollable column keeps the board visible while adjusting geometry,
-visibility, field of view, atmosphere, and weather. Longer help text is available in tooltips.
+The Tuning panel has two tabs. **General** contains geometry, family sizes, overview icons, visibility, field of view,
+sensor range and damage preview. **Atmosphere** contains planetary presets, lighting, planetary properties,
+weather and light/fog effects. Each tab retains its scroll position; the shared **Defaults** button resets
+both. Longer help text is available in tooltips.
+
+**Unit family sizes** exposes the existing `UnitFamilyScale` multipliers, all neutral at **1.0**.
+Infantry, battle armor, vehicles, aircraft, naval, ProtoMeks, static and other models each have their own
+uniform size control. Meks have an overall multiplier plus light (including ultralight), medium, heavy,
+assault and superheavy multipliers. These multiply the general Unit scale and preserve authored proportions;
+placement, picking and attachments share the resulting transform. **Fixed sun/moon** is available in both
+**Camera** and **Tuning > Atmosphere**, backed by the same setting.
+
+**Camera > Distant top-view icons** is opt-in. Within 30 degrees of overhead (the same rule as flat
+markers), zooming out switches units to their classic 2D sprites and woods/jungle to the tileset's
+matching terrain artwork. Both lie in the board plane. Forest sprites retain the full rectangular
+image and its transparent edges, including canopy pixels extending outside the hex. Zooming in or
+tilting past 30 degrees restores the models. **Tuning > General > Overview icons** shares the checkbox
+and adjusts the switch threshold: 56 window pixels per hex by default, with a 15% margin when zooming
+back in to prevent flicker. `GpuUnitIcons` owns these defaults.
+
+Icons follow the existing animated positions and facing; airborne units project onto the visible
+ground, water or ice. Labels and picking follow the icons. Hidden units and trees leave the model,
+depth and shadow draws, while the original animation timeline continues. The icons reuse the existing
+tactical batches and add no fullscreen effect or render target. `GpuOverviewIconsSmokeTest` exercises
+the real Camera toggle, artwork, switching, picking and shadow restoration, and checks that canopy
+pixels outside the hex survive the native render.
 
 Tuning defaults are hex scale 1, unit scale 0.7, unit height scale 0.87, level
 height 18, grid shade 0.8, building opacity 50%, and see-through
@@ -624,13 +785,28 @@ attacker's arrows during combat playback, regardless of selection.
 enabled target bands visible for the currently selected unit during playback.
 These switches operate independently. Weapon range contours are unaffected.
 
+`UnitOverviewOverlay` supplies both boards' unit strips: owned units on the right
+and visible enemies on the left, with independent scrolling. Enemy cards use the
+existing visibility checks, show anonymous radar portraits for sensor contacts,
+and recheck visibility before navigating. Both strips use the existing client selection/centering commands.
+They remain visible in 3D, so its menus omit the Unit Overview toggle and ignore its shortcut (Ctrl+U by default).
+The legacy 2D view retains its Unit Overview visibility preference.
+
+`GpuPanelDock` owns the right panels' placement, visibility and camera clearance.
+Only Report has a resize handle and remembers its chosen width; firing declarations
+and tuning keep the standard 362-unit width. Reports, attack controls and tuning occupy the
+same dock, one at a time; closing a utility panel restores attack controls when
+available. New panels join this dock instead of implementing their own bounds or
+resize gestures. The dock leaves the same gap on both sides of the right unit
+strip, and cannot be widened over the enemy strip. Window resizing and HUD scaling
+use the strips' captured layout; hiding an empty or disabled strip releases its space.
+Attack names, weapon and ammunition choices, and queued orders wrap within that
+width. The details scroll vertically when needed, keeping the fire buttons accessible.
+
 Firing playback frames the attacker and every target in the current volley,
 including unit height and multi-hex footprints. The shared camera pans and zooms
-into the board area left clear by the firing or report panel, using the panel's
-actual resized width and excluding the top and bottom bars. Both panels reserve
-the visible unit-list strip, with the same gap between strip and panel as between
-strip and window edge. This follows HUD scaling and report resizing; hiding the
-strip releases its space, and camera framing also excludes the strip. Above
+into the area between the enemy strip and the dock, using their actual bounds
+and excluding the top and bottom bars. Above
 `BoardCamera.ATTACK_TOP_VIEW_TILT_DEGREES` (30 degrees from overhead), it also
 chooses a nearby orbit along the usable area's long axis and raises very low
 viewpoints. At or below that threshold, all automatic framing leaves an already
@@ -652,8 +828,12 @@ moving the displayed board.
 Camera menu's selection, combat and movement animation checkboxes for each window.
 Unchecking one applies that context's framing immediately instead of animating
 it, including a transition already in progress. The options remain independent
-of each other and of the chosen view. Selection
-changes preserve the viewing angles and avoid unnecessary zooming in. Movement
+of each other and of the chosen view. Selection changes, sidebar navigation, and
+unit-centering commands share the same framing and selection-animation setting,
+including before a unit has a turn. Unit requests retain their identity and elevation;
+repeated clicks neither teleport nor restart an unfinished camera transition.
+Explicit hex navigation uses the same transition. Selection changes preserve the
+viewing angles and avoid unnecessary zooming in. Movement
 checks the start, whole rendered route and destination against the clear board
 area before advancing its clock, including the jump arc, height and footprint.
 If the route is already visible, there is no camera move or delay. Otherwise,
@@ -711,6 +891,8 @@ the classic board keeps its ground labels.
 - `BoardGeometry` owns dimensions and terrain picking; `BoardSurface` defines
   the physical roads, banks, beds and exposed sides.
 - `GpuAssets` owns shared feature meshes, repeating textures, and water frames.
+  `BoardRim` owns cached cliff-top color/normal composition; `GpuTextures` owns
+  its GPU atlas storage and the undecorated ground slots used by riverbanks.
 - `GpuTerrain` batches terrain and opaque features in 16 by 16 chunks. Changes to
   a tile's height/material/features rebuild its chunk and affected neighbors;
   atlas-layout, board-size, floor, and tuning changes rebuild the required
@@ -733,6 +915,10 @@ the classic board keeps its ground labels.
 - One 2048-pixel directional shadow map includes terrain, opaque features, and
   units. Its coverage follows the camera's visible receivers, keeping closeup
   detail independent of map size while including offscreen shadow casters.
+  Packed shadow depth uses each face's slope in shadow texels for its bias,
+  preventing self-shadow bands on cliffs at grazing angles. Camera depth stays
+  unbiased. `GpuShadowSmokeTest` checks sunlit walls across orbits, tilts and zooms,
+  and verifies that their cast shadows remain attached at the foot of the cliff.
   The light grid aligns to texels to stabilize panning. Geometry, lighting,
   occupancy, unit transforms and camera changes invalidate the cached map.
 - GL resources are created and disposed on the render thread. Shared assets own
@@ -828,12 +1014,18 @@ checks mesh reuse and clearing, and captures `hex-overlays-*` views.
 `GpuRiverSmokeTest` captures straight/bent channels, textured elevation drops,
 mixed woodland, snow variants, low rubble and a zero-elevation textured bridge
 over the riverbank in both camera views. A pixel sample on the vertical waterfall
-verifies that the fall itself animates.
+verifies that the fall itself animates; a rear-view capture checks its appearance
+through the upper water surface.
 `GpuTerrainRimTest` checks fixed texel scale on sloping and clipped rims at
 three board scales. `GpuTerrainMaterialsSmokeTest` renders all six 128 by 128
 rim materials with the actual Saxarba themes and shallow/deep water. It also
 checks that a ground-pixel change refreshes a rendered rim's color without an
 atlas layout change. Its screenshots are named `terrain-*-rim.png`.
+`BoardRimTest` checks normal composition, all six edge rotations at three board
+scales, road openings, cache release and custom-texture fallbacks.
+`GpuRimMaterialSmokeTest` checks the actual rim artwork under opposing lights
+in both camera views, including the live normal toggle and an untouched flat
+centre. Its screenshots are named `rim-flat-*` and `rim-normal-*`.
 
 ## Scope and limits
 

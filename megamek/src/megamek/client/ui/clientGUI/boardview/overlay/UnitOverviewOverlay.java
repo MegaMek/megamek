@@ -55,6 +55,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
+import megamek.client.ui.clientGUI.boardview.gpu.GpuBoardWindow;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.picmap.PMUtil;
 import megamek.common.Configuration;
@@ -67,6 +68,7 @@ import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityVisibilityUtils;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
@@ -124,13 +126,13 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     private int[] unitIds = new int[0];
     private boolean isHit = false;
-    private boolean visible;
     private boolean scroll = false;
     private int unitsPerPage = UNKNOWN_UNITS_PER_PAGE;
     private int actUnitsPerPage = 0;
     private int scrollOffset = 0;
 
     private final ClientGUI clientgui;
+    private final boolean enemies;
 
     private final FontMetrics fm;
 
@@ -145,8 +147,14 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     /** Space for the visible unit strip and the same gap on either side, in overlay layout units. */
     public int sidePanelInset() {
-        return visible && unitIds.length > 0 ? getUIWidth() + DIST_SIDE : 0;
+        return isVisible() && unitIds.length > 0 ? getUIWidth() + DIST_SIDE : 0;
     }
+
+    private boolean isVisible() {
+        return GUIP.getShowUnitOverview() || GpuBoardWindow.isActiveFor(clientgui);
+    }
+
+    public boolean isOnLeft() { return enemies; }
 
     private final Image scrollUpG;
     private final Image scrollDownG;
@@ -156,7 +164,13 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     public UnitOverviewOverlay(ClientGUI clientgui) {
+        this(clientgui, false);
+    }
+
+    /** Both board views use the same cards and navigation; each strip owns only its scroll position. */
+    public UnitOverviewOverlay(ClientGUI clientgui, boolean enemies) {
         this.clientgui = clientgui;
+        this.enemies = enemies;
         fm = clientgui.getMainPanel().getFontMetrics(FONT);
 
         Toolkit toolkit = clientgui.getMainPanel().getToolkit();
@@ -177,7 +191,6 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         pageDownG = toolkit.getImage(new MegaMekFile(Configuration.widgetsDir(), "pageDown2_G.png").toString());
         PMUtil.setImage(pageDownG, clientgui.getMainPanel());
 
-        visible = GUIP.getShowUnitOverview();
         GUIP.addPreferenceChangeListener(this);
     }
 
@@ -191,7 +204,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     @Override
     public List<OverlayImage> captureLayers(Graphics2D graph, Rectangle clipBounds) {
-        if (!visible) {
+        if (!isVisible()) {
             cards.clear();
             buttons.clear();
             return List.of();
@@ -206,8 +219,9 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
             buttons.clear();
         }
         computeUnitsPerPage(clipBounds.getSize());
-        List<Entity> units = clientgui.getClient().getGame()
-              .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
+        List<Entity> units = enemies ? clientgui.getClient().getGame().getEntitiesVector().stream()
+              .filter(this::visibleEnemy).toList() : clientgui.getClient().getGame()
+                    .getPlayerEntities(clientgui.getClient().getLocalPlayer(), true);
         unitIds = units.stream().mapToInt(Entity::getId).toArray();
         Set<Integer> retained = new HashSet<>();
         units.forEach(entity -> retained.add(entity.getId()));
@@ -217,7 +231,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         scrollOffset = Math.max(0, Math.min(scrollOffset, units.size() - actUnitsPerPage));
 
         List<OverlayImage> layers = new ArrayList<>();
-        int x = clipBounds.x + clipBounds.width - DIST_SIDE - ICON_WIDTH;
+        int x = clipBounds.x + stripX(clipBounds.width);
         int y = clipBounds.y + DIST_TOP;
         if (scroll) {
             layers.add(buttonLayer(graph, scrollOffset > 0 ? pageUp : pageUpG, x, y));
@@ -279,7 +293,23 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         return graph;
     }
 
+    private int stripX(int width) { return enemies ? DIST_SIDE : width - DIST_SIDE - ICON_WIDTH; }
+
+    private boolean visibleEnemy(Entity entity) {
+        var client = clientgui.getClient();
+        var player = client.getLocalPlayer();
+        return player != null && entity.getOwner().isEnemyOf(player) && entity.getPosition() != null
+              && clientgui.getCurrentBoardView().filter(view -> view.getBoardId() == entity.getBoardId()).isPresent()
+              && EntityVisibilityUtils.detectedOrHasVisual(player, client.getGame(), entity);
+    }
+
     private Card card(Entity entity) {
+        if (enemies && EntityVisibilityUtils.onlyDetectedBySensors(clientgui.getClient().getLocalPlayer(), entity)) {
+            Image radar = clientgui.getCurrentBoardView().map(view -> ((BoardView) view).getRadarBlipImage()).orElse(null);
+            return new Card(radar,
+                  List.of(outlinedText(adjustString(Messages.getString("BoardView1.sensorReturn"), fm), 3, 46)),
+                  null, null, -1, GUIP.getEnemyUnitColor(), null);
+        }
         Image icon = clientgui.getCurrentBoardView()
               .map(bv -> ((BoardView) bv).getTilesetManager().iconFor(entity)).orElse(null);
         List<Text> texts = new ArrayList<>();
@@ -307,7 +337,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         Graphics2D graph = painter(result);
         try {
             graph.translate(CARD_MARGIN, CARD_MARGIN);
-            graph.drawImage(card.icon(), 0, 0, null);
+            graph.drawImage(card.icon(), 0, 0, ICON_WIDTH, ICON_HEIGHT, null);
             card.texts().getFirst().draw(graph);
             drawBar(graph, card.armor(), 3);
             drawBar(graph, card.internal(), 6);
@@ -335,7 +365,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     @Override
     public boolean isHit(Point p, Dimension size) {
-        if (!visible) {
+        if (!isVisible()) {
             return false;
         }
 
@@ -343,7 +373,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
         int x = p.x;
         int y = p.y;
-        int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
+        int xOffset = stripX(size.width);
         int yOffset = DIST_TOP;
 
         if ((x < xOffset) || (x > xOffset + ICON_WIDTH) || (y < yOffset)
@@ -367,10 +397,14 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
         for (int i = scrollOffset; (i < unitIds.length)
               && (i < actUnits + scrollOffset); i++) {
             if ((y > yOffset) && (y < yOffset + ICON_HEIGHT)) {
-                clientgui.getBoardView().processBoardViewEvent(new BoardViewEvent(
-                      clientgui.getBoardView(), BoardViewEvent.SELECT_UNIT, unitIds[i]));
+                Entity entity = clientgui.getClient().getGame().getEntity(unitIds[i]);
+                if (entity == null || enemies && !visibleEnemy(entity)) { return true; }
+                if (!enemies || !EntityVisibilityUtils.onlyDetectedBySensors(clientgui.getClient().getLocalPlayer(), entity)) {
+                    clientgui.getBoardView().processBoardViewEvent(new BoardViewEvent(
+                          clientgui.getBoardView(), BoardViewEvent.SELECT_UNIT, entity.getId()));
+                }
                 // Navigation must work even when this phase cannot select the clicked unit to act.
-                clientgui.centerOnUnit(clientgui.getClient().getGame().getEntity(unitIds[i]));
+                clientgui.centerOnUnit(entity);
                 isHit = true;
                 return true;
             }
@@ -396,9 +430,10 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     @Override
     public boolean isDragged(Point p, Dimension size) {
+        if (!isVisible() || unitIds.length == 0) { return false; }
         int x = p.x;
         int y = p.y;
-        int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
+        int xOffset = stripX(size.width);
         int yOffset = DIST_TOP;
 
         return (x >= xOffset) && (x <= xOffset + ICON_WIDTH) && (y >= yOffset)
@@ -407,7 +442,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
 
     @Override
     public boolean isReleased() {
-        if (!visible) {
+        if (!isVisible()) {
             return false;
         }
 
@@ -454,6 +489,7 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
     }
 
     private Color getFrameColor(Entity entity) {
+        if (enemies) { return GUIP.getEnemyUnitColor(); }
         if (!clientgui.getClient().isMyTurn() || !entity.isSelectableThisTurn()) {
             return Color.DARK_GRAY;
         }
@@ -591,7 +627,6 @@ public class UnitOverviewOverlay implements IDisplayable, IPreferenceChangeListe
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         if (e.getName().equals(GUIPreferences.SHOW_UNIT_OVERVIEW)) {
-            visible = GUIP.getShowUnitOverview();
             clientgui.getCurrentBoardView().ifPresent(IBoardView::refreshDisplayables);
         }
     }

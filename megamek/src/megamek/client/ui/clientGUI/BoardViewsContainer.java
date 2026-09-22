@@ -70,6 +70,9 @@ public class BoardViewsContainer {
     protected final Map<Component, Integer> shownBoardViews = new HashMap<>();
 
     private final AbstractClientGUI clientGUI;
+    private Integer selectedBoardId;
+    private boolean classicViewEnabled = true;
+    private boolean updatingTabs;
 
     /**
      * Returns a new BoardViewsContainer. Call {@link #updateMapTabs()} after construction to make it reflect the
@@ -96,18 +99,37 @@ public class BoardViewsContainer {
      * Updates the BoardViewsContainer to reflect the current state of ClientGUI's BoardViews.
      */
     public void updateMapTabs() {
-        boardViewsContainer.removeAll();
-        shownBoardViews.clear();
-        if (clientGUI.boardViews.size() > 1) {
-            arrangeMultipleBoardViews();
-        } else if (clientGUI.boardViews.size() == 1) {
-            arrangeSingleBoardView();
+        updateSelection();
+        updatingTabs = true;
+        try {
+            boardViewsContainer.removeAll();
+            mapTabPane.removeAll();
+            shownBoardViews.clear();
+            if (classicViewEnabled) {
+                if (clientGUI.boardViews.size() > 1) {
+                    arrangeMultipleBoardViews();
+                    showBoardView(selectedBoardId);
+                } else if (clientGUI.boardViews.size() == 1) {
+                    arrangeSingleBoardView();
+                }
+            }
+        } finally {
+            updatingTabs = false;
         }
+        updateBoardViewKeyStatus();
         boardViewsContainer.validate();
+        boardViewsContainer.repaint();
+    }
+
+    /** The native board needs selection, but never needs to construct the legacy map components. */
+    public void setClassicViewEnabled(boolean enabled) {
+        if (classicViewEnabled != enabled) {
+            classicViewEnabled = enabled;
+            updateMapTabs();
+        }
     }
 
     private void arrangeMultipleBoardViews() {
-        mapTabPane.removeAll();
         for (int boardId : clientGUI.boardViews.keySet()) {
             Component boardComponent = boardView(boardId).getComponent();
             boardComponent.setName(String.valueOf(boardId));
@@ -139,30 +161,14 @@ public class BoardViewsContainer {
     }
 
     /**
-     * Returns the currently shown {@link megamek.client.ui.clientGUI.boardview.BoardView}. If there is only a single
-     * {@link megamek.client.ui.clientGUI.boardview.BoardView} (no tabbed pane), this will be returned. With multiple
-     * {@link megamek.client.ui.clientGUI.boardview.BoardView}'s, the one in the currently selected tab is returned.
-     * <p>
-     * Unfortunately it is possible to have no selected tab in a JTabbedPane; also, theoretically, there could be no
-     * {@link megamek.client.ui.clientGUI.boardview.BoardView}. Therefore, the result is returned as an Optional.
+     * Returns the selected board independently of the visualization. Classic tabs reflect this selection only when
+     * enabled; native startup and navigation do not depend on a Swing component being constructed or painted.
      *
      * @return The currently shown {@link megamek.client.ui.clientGUI.boardview.BoardView}, if any
      */
     public Optional<IBoardView> getCurrentBoardView() {
-        if ((clientGUI.boardViews.size() > 1)) {
-            Component shownComponent = mapTabPane.getSelectedComponent();
-            // The components that the tabbed pane shows are JScrollPanes that wrap the board views
-            if ((shownComponent != null) && shownBoardViews.containsKey(shownComponent)) {
-                int boardId = shownBoardViews.get(shownComponent);
-                return Optional.of(boardView(boardId));
-            } else {
-                return Optional.empty();
-            }
-        } else if (clientGUI.boardViews.size() == 1) {
-            return Optional.of(boardView(clientGUI.boardViews.keySet().iterator().next()));
-        } else {
-            return Optional.empty();
-        }
+        updateSelection();
+        return Optional.ofNullable(clientGUI.boardViews.get(selectedBoardId));
     }
 
     public void setName(String name) {
@@ -170,7 +176,12 @@ public class BoardViewsContainer {
     }
 
     public void showBoardView(int boardId) {
-        if (mapTabPane.getTabCount() > 1) {
+        if (!clientGUI.boardViews.containsKey(boardId)) {
+            return;
+        }
+        selectedBoardId = boardId;
+        updateBoardViewKeyStatus();
+        if (classicViewEnabled && mapTabPane.getTabCount() > 1) {
             String componentName = String.valueOf(boardId);
             for (int i = 0; i < mapTabPane.getTabCount(); i++) {
                 if (componentName.equals(mapTabPane.getComponentAt(i).getName())) {
@@ -197,18 +208,30 @@ public class BoardViewsContainer {
      * @param changeEvent The changeEvent (not used)
      */
     private void updateBoardViewKeyStatus(ChangeEvent changeEvent) {
-        if (clientGUI.boardViews.size() > 1) {
-            // Set all board views to ignore key presses
-            for (IBoardView boardView : clientGUI.boardViews()) {
-                if (boardView instanceof BoardView bv) {
-                    bv.setShouldIgnoreKeys(true);
-                }
-            }
-            // set the currently visible boardview to process key presses
-            Optional<IBoardView> ibv = getCurrentBoardView();
-            if (ibv.isPresent() && (ibv.get() instanceof BoardView bv)) {
-                bv.setShouldIgnoreKeys(false);
+        if (!updatingTabs) {
+            Integer boardId = shownBoardViews.get(mapTabPane.getSelectedComponent());
+            if (boardId != null) {
+                selectedBoardId = boardId;
+                updateBoardViewKeyStatus();
             }
         }
+    }
+
+    public boolean isClassicViewEnabled() {
+        return classicViewEnabled;
+    }
+
+    private void updateSelection() {
+        if (!clientGUI.boardViews.containsKey(selectedBoardId)) {
+            selectedBoardId = clientGUI.boardViews.keySet().stream().min(Integer::compareTo).orElse(null);
+        }
+    }
+
+    private void updateBoardViewKeyStatus() {
+        clientGUI.boardViews.forEach((id, view) -> {
+            if (view instanceof BoardView boardView) {
+                boardView.setShouldIgnoreKeys(!id.equals(selectedBoardId));
+            }
+        });
     }
 }

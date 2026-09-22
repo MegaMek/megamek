@@ -6,7 +6,9 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +19,7 @@ import javax.imageio.stream.ImageInputStream;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -27,25 +30,36 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.JsonReader;
 import megamek.common.Configuration;
 
-/** GL-thread ownership of shared models, repeating terrain materials, and animated water frames. */
+/** GL-thread ownership of shared models, repeating terrain materials, and animated liquid frames. */
 final class GpuAssets implements Disposable {
     private final File root = new File(Configuration.dataDir(), "models/board");
     private final Map<String, Model> models = new HashMap<>();
     private final Map<Interior, Model> interiors = new HashMap<>();
     private final Map<String, Texture> materials = new HashMap<>();
-    private final Map<Integer, Water> water = new HashMap<>();
+    private final Map<String, Color> materialTints = new HashMap<>();
+    private final Map<BoardLiquid.Textures, Animation<Texture>> liquids = new HashMap<>();
+    private final Map<BoardScene.Surface, BoardRim.Images> inclines = new HashMap<>();
 
     private record Interior(String asset, int levels) { }
 
-    private record Water(List<Texture> frames, float[] ends, float duration) {
-        Texture at(float time) {
+    record Animation<T>(List<T> frames, float[] ends, float duration) {
+        T at(float time) {
+            return frames.get(index(time));
+        }
+
+        int index(float time) {
             float position = time % duration;
             for (int index = 0; index < ends.length; index++) {
                 if (position < ends[index]) {
-                    return frames.get(index);
+                    return index;
                 }
             }
-            return frames.getLast();
+            return frames.size() - 1;
+        }
+
+        float blend(float time, int index) {
+            float start = index == 0 ? 0 : ends[index - 1];
+            return Math.clamp((time % duration - start) / (ends[index] - start), 0, 1);
         }
     }
 
@@ -65,19 +79,56 @@ final class GpuAssets implements Disposable {
     }
 
     Texture material(String name) {
-        return texture(new FileHandle(new File(root, "textures/" + name + ".png")));
+        return texture(materialFile(name));
+    }
+
+    /** Average the source once; callers can match its palette without drawing its surface detail elsewhere. */
+    Color materialTint(String name) {
+        return materialTints.computeIfAbsent(name, key -> {
+            Pixmap pixels = new Pixmap(materialFile(key));
+            long red = 0, green = 0, blue = 0, weight = 0;
+            try {
+                for (int y = 0; y < pixels.getHeight(); y++) {
+                    for (int x = 0; x < pixels.getWidth(); x++) {
+                        int rgba = pixels.getPixel(x, y), alpha = rgba & 255;
+                        red += (long) (rgba >>> 24) * alpha;
+                        green += (long) ((rgba >>> 16) & 255) * alpha;
+                        blue += (long) ((rgba >>> 8) & 255) * alpha;
+                        weight += alpha;
+                    }
+                }
+                return weight == 0 ? new Color(Color.WHITE)
+                      : new Color(red / (255f * weight), green / (255f * weight), blue / (255f * weight), 1);
+            } finally { pixels.dispose(); }
+        });
+    }
+
+    private FileHandle materialFile(String name) {
+        return new FileHandle(new File(root, "textures/" + name + ".png"));
     }
 
     /** Reuse only the south-edge artwork, so rotating a cliff never selects a baked sunlit variant. */
-    Texture incline(BoardScene.Surface surface) {
-        String path = switch (surface) {
+    static String inclinePath(BoardScene.Surface surface) {
+        return "High_Incline/" + switch (surface) {
             case GRASS -> "Default/High_Incline_Top_Grass_08.png";
             case DIRT -> "Mars/High_Incline_Top_Mars_08.png";
             case SAND -> "Desert/High_Incline_Top_08.png";
             case ROCK, CONCRETE -> "Lunar/High_Incline_Top_Lunar_08.png";
             case SNOW -> "Snow/High_Incline_Top_Snow_08.png";
         };
-        return texture(new FileHandle(new File(root, "tileset/High_Incline/" + path)));
+    }
+
+    BoardRim.Images inclineImages(BoardScene.Surface surface) {
+        return inclines.computeIfAbsent(surface, key -> {
+            String path = inclinePath(key);
+            try {
+                File normal = new File(root, "normals/" + path + ".png");
+                return new BoardRim.Images(new BoardScene.Pixels(ImageIO.read(new File(root, "tileset/" + path))),
+                      normal.isFile() ? new BoardScene.Pixels(ImageIO.read(normal)) : null);
+            } catch (IOException error) {
+                throw new UncheckedIOException("Cannot load cliff-top material " + path, error);
+            }
+        });
     }
 
     private Texture texture(FileHandle file) {
@@ -98,44 +149,70 @@ final class GpuAssets implements Disposable {
         });
     }
 
-    Texture water(int depth, float time) {
-        // Saxarba provides depths 0..4. Deeper water retains its real geometry and uses the deepest artwork.
-        return water.computeIfAbsent(Math.min(4, Math.max(0, depth)), this::loadWater).at(time);
+    Texture liquid(BoardLiquid.Textures source, float time) {
+        return liquidAnimation(source).at(time);
     }
 
-    record WaterFrames(List<BoardScene.Pixels> frames, float[] ends, float duration) { }
+    Animation<Texture> liquidAnimation(BoardLiquid.Textures source) {
+        return liquids.computeIfAbsent(source, this::loadLiquid);
+    }
 
-    private Water loadWater(int depth) {
-        File file = new File(root, "tileset/saxarba/anim_water_" + depth + ".gif");
-        WaterFrames decoded = readWater(file);
+    private Animation<Texture> loadLiquid(BoardLiquid.Textures source) {
+        Animation<BoardScene.Pixels> decoded = readWater(new File(root, "tileset/" + source.base()));
+        Animation<BoardScene.Pixels> foam = source.foam().isEmpty() ? null
+              : readAnimation(new File(root, "tileset/" + source.foam()), false);
+        if (foam != null && !Arrays.equals(decoded.ends(), foam.ends())) {
+            throw new IllegalStateException("Liquid and foam GIF timelines must match: " + source);
+        }
         List<Texture> frames = new ArrayList<>();
         try {
-            for (BoardScene.Pixels image : decoded.frames()) {
+            for (int index = 0; index < decoded.frames().size(); index++) {
+                BoardScene.Pixels image = decoded.frames().get(index);
+                BoardScene.Pixels overlay = foam == null ? null : foam.frames().get(index);
+                if (overlay != null && (overlay.width() != image.width() || overlay.height() != image.height())) {
+                    throw new IllegalStateException("Liquid and foam GIF dimensions must match: " + source);
+                }
                 Pixmap pixmap = new Pixmap(image.width(), image.height(), Pixmap.Format.RGBA8888);
                 try {
                     pixmap.setBlending(Pixmap.Blending.None);
                     for (int y = 0; y < image.height(); y++) {
                         for (int x = 0; x < image.width(); x++) {
-                            pixmap.drawPixel(x, y, image.rgba(y * image.width() + x));
+                            int pixel = y * image.width() + x;
+                            pixmap.drawPixel(x, y, overlay == null ? image.rgba(pixel)
+                                  : blend(image.rgba(pixel), overlay.rgba(pixel)));
                         }
                     }
-                    Texture texture = new Texture(pixmap);
-                    texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+                    Texture texture = new Texture(pixmap, true);
+                    texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
                     texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
                     frames.add(texture);
                 } finally {
                     pixmap.dispose();
                 }
             }
-            return new Water(List.copyOf(frames), decoded.ends(), decoded.duration());
+            return new Animation<>(List.copyOf(frames), decoded.ends(), decoded.duration());
         } catch (RuntimeException error) {
             frames.forEach(Texture::dispose);
             throw error;
         }
     }
 
-    /** GIF frames can be transparent, offset patches; compose them before uploading full-size water textures. */
-    static WaterFrames readWater(File file) {
+    private static int blend(int base, int overlay) {
+        float alpha = (overlay & 255) / 255f;
+        int result = base & 255;
+        for (int shift = 24; shift >= 8; shift -= 8) {
+            int a = (base >>> shift) & 255, b = (overlay >>> shift) & 255;
+            result |= Math.round(a + (b - a) * alpha) << shift;
+        }
+        return result;
+    }
+
+    static Animation<BoardScene.Pixels> readWater(File file) {
+        return readAnimation(file, true);
+    }
+
+    /** Compose optimized GIF patches with their disposal and timing; foam retains its transparent coverage. */
+    static Animation<BoardScene.Pixels> readAnimation(File file, boolean fillEdges) {
         ImageReader reader = ImageIO.getImageReadersByFormatName("gif").next();
         try (ImageInputStream input = ImageIO.createImageInputStream(file)) {
             reader.setInput(input);
@@ -162,7 +239,7 @@ final class GpuAssets implements Disposable {
                 Graphics2D graphics = canvas.createGraphics();
                 try {
                     graphics.drawImage(patch, left, top, null);
-                    frames.add(waterFrame(canvas));
+                    frames.add(fillEdges ? waterFrame(canvas) : new BoardScene.Pixels(canvas));
                     if (disposal.equals("restoreToBackgroundColor")) {
                         graphics.setComposite(AlphaComposite.Clear);
                         graphics.fillRect(left, top, patch.getWidth(), patch.getHeight());
@@ -176,9 +253,9 @@ final class GpuAssets implements Disposable {
                 duration += Math.max(0.02f, attribute(control, "delayTime") / 100f);
                 ends[index] = duration;
             }
-            return new WaterFrames(List.copyOf(frames), ends, duration);
+            return new Animation<>(List.copyOf(frames), ends, duration);
         } catch (IOException | RuntimeException exception) {
-            throw new IllegalStateException("Cannot decode board water " + file, exception);
+            throw new IllegalStateException("Cannot decode board liquid animation " + file, exception);
         } finally {
             reader.dispose();
         }
@@ -187,6 +264,7 @@ final class GpuAssets implements Disposable {
     /** The mesh defines the shoreline; repeating hex-shaped alpha would pinch a scrolling waterfall. */
     private static BoardScene.Pixels waterFrame(BufferedImage canvas) {
         BufferedImage frame = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        List<Integer> filledRows = new ArrayList<>();
         for (int y = 0; y < canvas.getHeight(); y++) {
             int left = 0, right = canvas.getWidth() - 1;
             while (left < right && (canvas.getRGB(left, y) >>> 24) == 0) {
@@ -195,9 +273,25 @@ final class GpuAssets implements Disposable {
             while (right > left && (canvas.getRGB(right, y) >>> 24) == 0) {
                 right--;
             }
+            if ((canvas.getRGB(left, y) >>> 24) == 0) { continue; }
+            filledRows.add(y);
+            int color = canvas.getRGB(left, y);
             for (int x = 0; x < canvas.getWidth(); x++) {
-                frame.setRGB(x, y, canvas.getRGB(Math.max(left, Math.min(right, x)), y));
+                int pixel = canvas.getRGB(Math.max(left, Math.min(right, x)), y);
+                // Mars water dithers transparency inside the hex too; material opacity replaces that 2D mask.
+                if ((pixel >>> 24) != 0) { color = pixel; }
+                frame.setRGB(x, y, color);
             }
+        }
+        if (filledRows.isEmpty()) { throw new IllegalArgumentException("Empty liquid image"); }
+        // Some themed GIFs also have a completely transparent row above or below the hex.
+        for (int y = 0; y < canvas.getHeight(); y++) {
+            if ((frame.getRGB(0, y) >>> 24) != 0) { continue; }
+            int nearest = filledRows.getFirst();
+            for (int row : filledRows) {
+                if (Math.abs(row - y) < Math.abs(nearest - y)) { nearest = row; }
+            }
+            for (int x = 0; x < canvas.getWidth(); x++) { frame.setRGB(x, y, frame.getRGB(x, nearest)); }
         }
         return new BoardScene.Pixels(frame);
     }
@@ -227,9 +321,11 @@ final class GpuAssets implements Disposable {
         interiors.clear();
         models.values().forEach(Model::dispose);
         materials.values().forEach(Texture::dispose);
-        water.values().forEach(animation -> animation.frames().forEach(Texture::dispose));
+        liquids.values().forEach(animation -> animation.frames().forEach(Texture::dispose));
         models.clear();
         materials.clear();
-        water.clear();
+        materialTints.clear();
+        liquids.clear();
+        inclines.clear();
     }
 }

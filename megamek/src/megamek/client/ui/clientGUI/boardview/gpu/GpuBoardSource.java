@@ -14,7 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -49,6 +51,7 @@ import megamek.common.event.board.BoardEvent;
 import megamek.common.event.board.BoardListenerAdapter;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.moves.MovePath;
+import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceManager;
@@ -63,16 +66,26 @@ import megamek.common.units.UnitLocation;
 
 /** Thin Swing adapter. Reuses MegaMek's tileset, visibility checks, movement path, and actual phase buttons. */
 final class GpuBoardSource implements AutoCloseable {
-    public record UiPreferences(float scale) { }
+    /** Immutable preference snapshot published to the render thread. */
+    public record UiPreferences(float scale, String reportKeywords, String reportFilterKeywords) {
+        static UiPreferences capture() {
+            var preferences = PreferenceManager.getClientPreferences();
+            return new UiPreferences(GUIPreferences.getInstance().getGUIScale(),
+                  preferences.getReportKeywords(), preferences.getReportFilterKeywords());
+        }
+    }
     record HudLayer(BoardScene.Pixels pixels, int x, int y, OverlayImage.Fade fade, OverlayImage.Transition shiftY) {
         HudLayer(BoardScene.Pixels pixels, int x, int y, OverlayImage.Fade fade) {
             this(pixels, x, y, fade, OverlayImage.Transition.ZERO);
         }
     }
     /** Immutable Swing layout snapshot; the GL thread scales the sidebar reservation with its HUD artwork. */
-    record Hud(int width, int height, List<HudLayer> layers, float sidePanelInset) {
+    record Hud(int width, int height, List<HudLayer> layers, float sidePanelInset, float leftPanelInset) {
         Hud(int width, int height, List<HudLayer> layers) {
-            this(width, height, layers, 0);
+            this(width, height, layers, 0, 0);
+        }
+        Hud(int width, int height, List<HudLayer> layers, float sidePanelInset) {
+            this(width, height, layers, sidePanelInset, 0);
         }
     }
     public record Frame(BoardScene scene, List<BoardScene.Animation> timeline, BoardScene.Context context,
@@ -117,12 +130,15 @@ final class GpuBoardSource implements AutoCloseable {
     private final Supplier<JComponent> phasePanel;
     private GpuBoardActions actions;
     volatile UiPreferences uiPreferences;
+    volatile GpuBoardActions.PhaseStatus phaseStatus = new GpuBoardActions.PhaseStatus("", false);
     private final Map<Image, BoardScene.Pixels> unitImages = new IdentityHashMap<>();
     private record AnnotationKey(int entityId, int part) { }
     private final Map<AnnotationKey, EntitySprite.Annotations> unitAnnotations = new HashMap<>();
     private final Map<Image, BoardScene.Pixels> overlayImages = new IdentityHashMap<>();
     private final UnitCamouflage camouflage = new UnitCamouflage();
     private final GpuReportLog reports = new GpuReportLog();
+    /** Local presentation only: refreshes, board changes and modal previews all retain this time choice. */
+    private final double atmosphereTimeSample = ThreadLocalRandom.current().nextDouble();
     private final BoardScene.PixelPool terrainImages = new BoardScene.PixelPool();
     private final List<BoardScene.Animation> pendingEvents = new ArrayList<>();
     private final Timer timer;
@@ -131,8 +147,9 @@ final class GpuBoardSource implements AutoCloseable {
     private final IPreferenceChangeListener preferenceListener = event -> {
         if (ClientPreferences.MAP_TILESET.equals(event.getName())) {
             dirtyTerrain();
-        } else if (GUIPreferences.GUI_SCALE.equals(event.getName())) {
-            uiPreferences = new UiPreferences(GUIPreferences.getInstance().getGUIScale());
+        } else if (Set.of(GUIPreferences.GUI_SCALE, ClientPreferences.REPORT_KEYWORDS,
+              ClientPreferences.REPORT_FILTER_KEYWORDS).contains(event.getName())) {
+            uiPreferences = UiPreferences.capture();
         }
     };
     private Board board;
@@ -141,6 +158,9 @@ final class GpuBoardSource implements AutoCloseable {
     private boolean terrainDirty = true;
     private volatile boolean closed;
     private PlanetaryConditionsDialog conditionsDialog;
+    /** Swing-owned visual selection for reopening the editor; never written to the game. */
+    private PlanetaryConditions previewConditions;
+    private double previewTimeSample = atmosphereTimeSample;
     /** Swing publishes chat focus for native camera/menu input; the BoardView owns the actual state. */
     private volatile boolean chatActive;
     private boolean suppressChatCharacter;
@@ -184,7 +204,7 @@ final class GpuBoardSource implements AutoCloseable {
         this.view = view;
         this.phasePanel = phasePanel;
         GUIPreferences preferences = GUIPreferences.getInstance();
-        uiPreferences = new UiPreferences(preferences.getGUIScale());
+        uiPreferences = UiPreferences.capture();
         actions = new GpuBoardActions(view, phasePanel, () -> closed || this.view != view, this::refresh);
         boardListener = new BoardListenerAdapter() {
             @Override
@@ -523,6 +543,7 @@ final class GpuBoardSource implements AutoCloseable {
     }
 
     private Frame capture() {
+        phaseStatus = GpuBoardActions.phaseStatus(phasePanel.get());
         if (view.getClientgui() != null) {
             BoardView selectedView = view.getClientgui().getCurrentBoardView()
                   .filter(BoardView.class::isInstance).map(BoardView.class::cast).orElse(view);
@@ -560,6 +581,8 @@ final class GpuBoardSource implements AutoCloseable {
             }
             board = current;
             boardGeneration++;
+            previewConditions = null;
+            previewTimeSample = atmosphereTimeSample;
             synchronized (this) {
                 pendingEvents.clear();
                 receivedAttacks.clear();
@@ -584,7 +607,7 @@ final class GpuBoardSource implements AutoCloseable {
                 if (old.tactical() != null && !area.contains(old.coords().getX(), old.coords().getY())) {
                     painted.set(index, new BoardScene.Tile(old.coords(), old.elevation(), old.waterDepth(), old.frozen(),
                           old.roadExits(), old.surface(), old.ground(), old.normals(), old.decals(), old.decalsWithoutLimbs(),
-                          null, old.features(), old.text()));
+                          null, old.features(), old.text(), old.liquid(), old.foliage()));
                 }
             }
             view.capturePlanarTactical(area, hex -> {
@@ -592,7 +615,7 @@ final class GpuBoardSource implements AutoCloseable {
                 BoardScene.Tile old = tiles.get(index);
                 BoardScene.Tile next = new BoardScene.Tile(old.coords(), old.elevation(), old.waterDepth(), old.frozen(),
                       old.roadExits(), old.surface(), old.ground(), old.normals(), old.decals(), old.decalsWithoutLimbs(),
-                      terrainImages.capture(hex.tactical(), old.tactical()), old.features(), hex.text());
+                      terrainImages.capture(hex.tactical(), old.tactical()), old.features(), hex.text(), old.liquid(), old.foliage());
                 if (!next.equals(old)) {
                     painted.set(index, next);
                 }
@@ -679,7 +702,7 @@ final class GpuBoardSource implements AutoCloseable {
               || visible(actor) && !sensorContact(actor));
         return new Frame(scene, List.of(), nextContext, List.copyOf(nextGlobal), nextHud, nextTooltip,
               view.getCenterRequest(), boardGeneration, knownActor ? actor.getShortName() : "",
-              BoardAtmosphere.fromScenario(view.game.getPlanetaryConditions(), board.isSpace()), actions.attackState(),
+              atmosphereFor(view.game.getPlanetaryConditions(), board.isSpace()), actions.attackState(),
               reports.capture(view.game.getAllReports(), view.game.getRoundCount(), view.game.getPhase(), this::reportIcon));
     }
 
@@ -709,7 +732,7 @@ final class GpuBoardSource implements AutoCloseable {
             if (entity != null) {
                 if (entity.isDeployed() && !entity.isOffBoard() && entity.getPosition() != null
                       && entity.getBoardId() == view.getBoardId()) {
-                    view.centerOnHex(entity.getPosition());
+                    view.centerOn(entity);
                 }
                 new LiveReadoutDialog(view.getClientgui().getFrame(), view.game, id).setVisible(true);
             }
@@ -739,7 +762,8 @@ final class GpuBoardSource implements AutoCloseable {
         overlayImages.clear();
         overlayImages.putAll(retained);
         return new Hud(layout.pixels().width, layout.pixels().height, List.copyOf(layers),
-              view.sidePanelInset() * layout.pixels().width / (float) Math.max(1, layout.size().width));
+              view.sidePanelInset() * layout.pixels().width / (float) Math.max(1, layout.size().width),
+              view.leftPanelInset() * layout.pixels().width / (float) Math.max(1, layout.size().width));
     }
 
     private boolean visible(Entity entity) {
@@ -799,7 +823,8 @@ final class GpuBoardSource implements AutoCloseable {
               terrainImages.captureOverlay(pixels.decals(), previous == null ? null : previous.decals()),
               terrainImages.capture(pixels.decalsWithoutLimbs(), previous == null ? null : previous.decalsWithoutLimbs()),
               terrainImages.capture(pixels.tactical(), previous == null ? null : previous.tactical()),
-              BoardFeatures.capture(hex, pixels.coords(), pixels.structureModels()), pixels.text());
+              BoardFeatures.capture(hex, pixels.coords(), pixels.structureModels()), pixels.text(), BoardLiquid.capture(hex),
+              terrainImages.captureOverlay(pixels.foliage(), previous == null ? null : previous.foliage()));
     }
 
     private boolean sensorContact(Entity entity) {
@@ -939,17 +964,48 @@ final class GpuBoardSource implements AutoCloseable {
             try {
                 var owner = view.getClientgui() == null ? SwingUtilities.getWindowAncestor(view.getPanel())
                       : view.getClientgui().getFrame();
-                conditionsDialog = new PlanetaryConditionsDialog(owner instanceof JFrame frame ? frame : null,
-                      view.game.getPlanetaryConditions());
+                var initial = new PlanetaryConditions(previewConditions == null ? view.game.getPlanetaryConditions() : previewConditions);
+                conditionsDialog = new PlanetaryConditionsDialog(owner instanceof JFrame frame ? frame : null, initial);
                 conditionsDialog.setAlwaysOnTop(true);
                 if (conditionsDialog.showDialog() && !closed && view == initialView && board == initialBoard) {
-                    settings = BoardAtmosphere.fromScenario(conditionsDialog.getConditions(), initialBoard.isSpace());
+                    var selected = conditionsDialog.getConditions();
+                    if (selected.getLight() != initial.getLight()) { previewTimeSample = atmosphereTimeSample; }
+                    previewConditions = new PlanetaryConditions(selected);
+                    settings = BoardAtmosphere.fromScenario(previewConditions, initialBoard.isSpace(), previewTimeSample);
                 }
             } finally {
                 if (conditionsDialog != null) { conditionsDialog.dispose(); }
                 conditionsDialog = null;
                 completed.accept(settings);
             }
+        });
+    }
+
+    /** Map a conditions snapshot or preview using this window's fixed visual time selection. */
+    BoardAtmosphere.Settings atmosphereFor(PlanetaryConditions conditions, boolean inSpace) {
+        return BoardAtmosphere.fromScenario(conditions, inSpace, atmosphereTimeSample);
+    }
+
+    /** Presets own their conditions and reuse the same immutable time sample as the scenario/editor. */
+    BoardAtmosphere.Settings atmosphereFor(AtmospherePreset preset) {
+        return preset.settings(atmosphereTimeSample);
+    }
+
+    /** Remember a complete visual selection on Swing, alongside the immediate immutable GL settings. */
+    BoardAtmosphere.Settings preview(AtmospherePreset preset) {
+        onSwing(() -> {
+            if (closed) { return; }
+            previewConditions = preset.conditions();
+            previewTimeSample = preset.timeSample(atmosphereTimeSample);
+        });
+        return atmosphereFor(preset);
+    }
+
+    void resetConditionsPreview() {
+        onSwing(() -> {
+            if (closed) { return; }
+            previewConditions = null;
+            previewTimeSample = atmosphereTimeSample;
         });
     }
 

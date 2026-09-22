@@ -934,21 +934,26 @@ public final class BoardView extends AbstractBoardView
         controller.registerCommandAction(KeyCommandBind.CENTER_ON_SELECTED, this, this::centerOnSelected);
 
         controller.registerCommandAction(KeyCommandBind.SCROLL_NORTH,
-              this::shouldReceiveKeyCommands,
+              this::canScrollClassicView,
               this::scrollNorth,
               this::pingMinimap);
         controller.registerCommandAction(KeyCommandBind.SCROLL_SOUTH,
-              this::shouldReceiveKeyCommands,
+              this::canScrollClassicView,
               this::scrollSouth,
               this::pingMinimap);
         controller.registerCommandAction(KeyCommandBind.SCROLL_EAST,
-              this::shouldReceiveKeyCommands,
+              this::canScrollClassicView,
               this::scrollEast,
               this::pingMinimap);
         controller.registerCommandAction(KeyCommandBind.SCROLL_WEST,
-              this::shouldReceiveKeyCommands,
+              this::canScrollClassicView,
               this::scrollWest,
               this::pingMinimap);
+    }
+
+    private boolean canScrollClassicView() {
+        return scrollPane != null && shouldReceiveKeyCommands()
+              && (clientgui == null || !GpuBoardWindow.isActiveFor(clientgui));
     }
 
     private void scrollNorth() {
@@ -2456,7 +2461,7 @@ public final class BoardView extends AbstractBoardView
             zoom();
         }
 
-        Image entireBoard = boardPanel.createImage(boardSize.width, boardSize.height);
+        BufferedImage entireBoard = new BufferedImage(boardSize.width, boardSize.height, BufferedImage.TYPE_INT_RGB);
         Graphics2D boardGraph = (Graphics2D) entireBoard.getGraphics();
         boardGraph.setClip(0, 0, boardSize.width, boardSize.height);
         UIUtil.setHighQualityRendering(boardGraph);
@@ -2478,7 +2483,7 @@ public final class BoardView extends AbstractBoardView
         zoomIndex = oldZoom;
         zoom();
 
-        return (BufferedImage) entireBoard;
+        return entireBoard;
     }
 
     private void drawHexes(Graphics2D graphics2D, Rectangle view) {
@@ -3307,7 +3312,7 @@ public final class BoardView extends AbstractBoardView
                 gr = gy + gr / 5;
                 bl = gy + bl / 5;
                 break;
-            case DUSK:
+            case DUSK_DAWN:
                 bl = bl * 3 / 4;
                 break;
             default:
@@ -3929,16 +3934,26 @@ public final class BoardView extends AbstractBoardView
      */
     public void centerOn(@Nullable Entity entity) {
         if (entity != null) {
-            centerOnHex(entity.getPosition());
+            centerOnHex(entity.getPosition(), entity.getId());
         }
     }
 
     @Override
     public void centerOnHex(@Nullable Coords coords) {
+        centerOnHex(coords, Entity.NONE);
+    }
+
+    private void centerOnHex(@Nullable Coords coords, int entityId) {
         if (coords == null) {
             return;
         }
-        centerRequest = new CenterRequest(centerRequest.sequence() + 1, coords);
+        centerRequest = new CenterRequest(centerRequest.sequence() + 1, coords, entityId);
+
+        // A native camera request must not construct or move the legacy viewport.
+        if (scrollPane == null || (clientgui != null && GpuBoardWindow.isActiveFor(clientgui))) {
+            stopSoftCentering();
+            return;
+        }
 
         if (GUIP.getSoftCenter()) {
             // Soft Centering:
@@ -4014,7 +4029,7 @@ public final class BoardView extends AbstractBoardView
 
     private void adjustVisiblePosition(@Nullable Coords coords, @Nullable Point dispPoint, double inHexDeltaX,
           double inHexDeltaY) {
-        if ((coords == null) || (dispPoint == null)) {
+        if (scrollPane == null || (coords == null) || (dispPoint == null)) {
             return;
         }
 
@@ -4037,11 +4052,7 @@ public final class BoardView extends AbstractBoardView
      *                  The method will clip both values to this range.
      */
     public void centerOnPointRel(double xRelative, double yRelative) {
-        // safety check to ensure we avoid NPEs when scrollpane doesn't exist for whatever reason.
-        if (scrollPane == null) {
-            return;
-        }
-
+        updateBoardSize();
         // restrict both values to between 0 and 1
         xRelative = Math.max(0, xRelative);
         xRelative = Math.min(1, xRelative);
@@ -4049,6 +4060,15 @@ public final class BoardView extends AbstractBoardView
         yRelative = Math.min(1, yRelative);
         Point point = new Point((int) (boardSize.getWidth() * xRelative) + HEX_W,
               (int) (boardSize.getHeight() * yRelative) + HEX_H);
+        if (scrollPane == null || (clientgui != null && GpuBoardWindow.isActiveFor(clientgui))) {
+            Coords coords = getCoordsAt(point);
+            if (!getBoard().contains(coords)) {
+                coords = new Coords(Math.clamp((int) (xRelative * getBoard().getWidth()), 0, getBoard().getWidth() - 1),
+                      Math.clamp((int) (yRelative * getBoard().getHeight()), 0, getBoard().getHeight() - 1));
+            }
+            centerOnHex(coords);
+            return;
+        }
         JScrollBar verticalScroll = scrollPane.getVerticalScrollBar();
         verticalScroll.setValue(point.y - (verticalScroll.getVisibleAmount() / 2));
         JScrollBar horizontalScroll = scrollPane.getHorizontalScrollBar();
@@ -4066,6 +4086,9 @@ public final class BoardView extends AbstractBoardView
      *       values can be outside [0;1]
      */
     public double[] getVisibleArea() {
+        if (scrollPane == null) {
+            return new double[] { 0, 0, 1, 1 };
+        }
         double[] values = new double[4];
         double x = scrollPane.getViewport().getViewPosition().getX();
         double y = scrollPane.getViewport().getViewPosition().getY();
@@ -4812,9 +4835,9 @@ public final class BoardView extends AbstractBoardView
     /** Flat terrain and decals; solid feature models are captured separately from the Hex. */
     public record PlanarHex(Coords coords, BufferedImage terrain, BufferedImage normals, BufferedImage decals,
           BufferedImage decalsWithoutLimbs, BufferedImage tactical, List<HexText> text,
-          Map<Integer, String> structureModels) { }
+          Map<Integer, String> structureModels, BufferedImage foliage) { }
 
-    private record DecalArtwork(BufferedImage full, BufferedImage withoutLimbs) { }
+    private record DecalArtwork(BufferedImage full, BufferedImage withoutLimbs, BufferedImage foliage) { }
 
     /** Use scrolling text on GPU range contours instead of flat, camera-facing range markers. */
     public static final boolean GPU_SCROLLING_RANGE_LABELS = false;
@@ -4840,7 +4863,12 @@ public final class BoardView extends AbstractBoardView
         featureArtwork.clear();
     }
 
-    public record CenterRequest(long sequence, Coords coords) { }
+    /** Immutable navigation intent from the client; a unit request retains its identity even in a stacked hex. */
+    public record CenterRequest(long sequence, Coords coords, int entityId) {
+        public CenterRequest(long sequence, Coords coords) {
+            this(sequence, coords, Entity.NONE);
+        }
+    }
     private CenterRequest centerRequest = new CenterRequest(0, null);
 
     public CenterRequest getCenterRequest() {
@@ -4930,7 +4958,7 @@ public final class BoardView extends AbstractBoardView
                 marking = copy;
             }
             result.add(new PlanarHex(hex.coords(), hex.terrain(), hex.normals(), hex.decals(), hex.decalsWithoutLimbs(),
-                  marking, hex.text(), hex.structureModels()));
+                  marking, hex.text(), hex.structureModels(), hex.foliage()));
         });
         result.sort(Comparator.comparingInt((PlanarHex hex) -> hex.coords().getX())
               .thenComparingInt(hex -> hex.coords().getY()));
@@ -5040,7 +5068,7 @@ public final class BoardView extends AbstractBoardView
                                   ground == null ? null : ground.normal(),
                                   decals == null ? null : decals.full(), decals == null ? null : decals.withoutLimbs(),
                                   null, hexText(coords, hex, getBoard()),
-                                  includeArtwork ? structureModels(hex) : Map.of());
+                                  includeArtwork ? structureModels(hex) : Map.of(), decals == null ? null : decals.foliage());
                             if (includeTactical) {
                                 artwork.put(coords, art);
                             } else {
@@ -5192,7 +5220,7 @@ public final class BoardView extends AbstractBoardView
                 int top = point.y - pixels.y;
                 PlanarHex art = artwork.get(coords);
                 consumer.accept(new PlanarHex(coords, art.terrain(), art.normals(), art.decals(),
-                      art.decalsWithoutLimbs(), markingImage(tactical, left, top), art.text(), art.structureModels()));
+                      art.decalsWithoutLimbs(), markingImage(tactical, left, top), art.text(), art.structureModels(), art.foliage()));
             }
         }
     }
@@ -5300,6 +5328,15 @@ public final class BoardView extends AbstractBoardView
     private DecalArtwork captureDecals(Coords coords) {
         return featureArtwork.computeIfAbsent(coords, key -> {
             Hex flat = game.getBoard(boardId).getHex(key).duplicate();
+            BufferedImage foliage = null;
+            if (flat.containsAnyTerrainOf(Terrains.WOODS, Terrains.JUNGLE)) {
+                Hex trees = flat.duplicate();
+                trees.removeAllTerrains();
+                for (int type : new int[] { Terrains.WOODS, Terrains.JUNGLE, Terrains.FOLIAGE_ELEV, Terrains.FLUFF }) {
+                    if (flat.containsTerrain(type)) { trees.addTerrain(flat.getTerrain(type)); }
+                }
+                foliage = drawDecals(trees);
+            }
             for (int terrain : GROUND_TERRAINS) {
                 flat.removeTerrain(terrain);
             }
@@ -5314,7 +5351,7 @@ public final class BoardView extends AbstractBoardView
                 withoutLimbs = drawDecals(flat);
             }
             // The GPU chooses the filtered image only after successfully loading the replacement mesh.
-            return new DecalArtwork(full, withoutLimbs);
+            return new DecalArtwork(full, withoutLimbs, foliage);
         });
     }
 
@@ -5333,8 +5370,17 @@ public final class BoardView extends AbstractBoardView
 
     /** Read after overlay capture, on Swing's thread, so hidden or empty unit strips reserve no space. */
     public int sidePanelInset() {
+        return unitStripInset(false);
+    }
+
+    public int leftPanelInset() {
+        return unitStripInset(true);
+    }
+
+    private int unitStripInset(boolean left) {
         return overlays.stream().filter(UnitOverviewOverlay.class::isInstance)
-              .map(UnitOverviewOverlay.class::cast).mapToInt(UnitOverviewOverlay::sidePanelInset).max().orElse(0);
+              .map(UnitOverviewOverlay.class::cast).filter(strip -> strip.isOnLeft() == left)
+              .mapToInt(UnitOverviewOverlay::sidePanelInset).max().orElse(0);
     }
 
     /** Preserves painter order while keeping cached text and its fade separate for native compositing. */
@@ -5407,7 +5453,7 @@ public final class BoardView extends AbstractBoardView
           Terrains.ROUGH, Terrains.RUBBLE };
 
     /** These have geometry in 3D; painted cliffs and slopes would duplicate the actual faces. */
-    private static final int[] MODEL_TERRAINS = { Terrains.WATER, Terrains.WATER_FLUFF,
+    private static final int[] MODEL_TERRAINS = { Terrains.WATER, Terrains.WATER_FLUFF, Terrains.RAPIDS, Terrains.HAZARDOUS_LIQUID,
           Terrains.BUILDING, Terrains.BLDG_CF, Terrains.BLDG_ELEV, Terrains.BLDG_FLUFF, Terrains.BLDG_ARMOR,
           Terrains.FUEL_TANK, Terrains.FUEL_TANK_CF, Terrains.FUEL_TANK_ELEV, Terrains.FUEL_TANK_MAGN,
           Terrains.BRIDGE, Terrains.BRIDGE_CF, Terrains.BRIDGE_ELEV, Terrains.BRIDGE_REPAIRED,
@@ -6122,6 +6168,22 @@ public final class BoardView extends AbstractBoardView
         return scrollPane;
     }
 
+    /** Drop the inactive Swing viewport and its artwork; shared game interaction remains owned by this board adapter. */
+    public void releaseClassicView() {
+        stopSoftCentering();
+        if (scrollPane != null) {
+            scrollPane.setViewportView(null);
+            scrollPane = null;
+        }
+        verticalBar = null;
+        horizontalBar = null;
+        scrollPaneBgBuffer = null;
+        scrollPaneBgImg = null;
+        bvBgImage = null;
+        shadowMap = null;
+        hexImageCache.clear();
+    }
+
     AbstractAction DoNothing = new AbstractAction() {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
@@ -6580,7 +6642,12 @@ public final class BoardView extends AbstractBoardView
 
     @Override
     public void dispose() {
-        GpuBoardWindow.closeFor(this);
+        // The native window belongs to the client, so replacing a map must not close it.
+        if (getClientgui() == null) {
+            GpuBoardWindow.closeFor(this);
+        }
+        overlays.stream().filter(UnitOverviewOverlay.class::isInstance).map(UnitOverviewOverlay.class::cast)
+              .forEach(GUIP::removePreferenceChangeListener);
         super.dispose();
         redrawTimerTask.cancel();
         fovHighlightingAndDarkening.die();

@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
@@ -19,9 +18,8 @@ import com.badlogic.gdx.utils.Disposable;
 /** A bounded, GPU-animated particle pool. Shares the world's depth buffer and never covers the tactical UI. */
 final class GpuWeatherParticles implements Disposable {
     private static final int BASE_PARTICLES = 768;
-    // 61,440 vertices keeps the shared pool within unsigned-short mesh indices.
-    private static final int PARTICLES = BASE_PARTICLES * 20;
-    private static final int[] DENSITY_MULTIPLIERS = { 6, 6, 4, 56 };
+    private static final int PARTICLES = BASE_PARTICLES * 6;
+    private static final int[] DENSITY_MULTIPLIERS = { 6, 6, 4 };
     private final ShaderProgram shader;
     private final Mesh mesh;
     private final Vector3 right = new Vector3();
@@ -83,33 +81,28 @@ final class GpuWeatherParticles implements Disposable {
             shader.setUniformf("u_up", camera.up);
             shader.setUniformf("u_clock", clock);
             shader.setUniformf("u_level", BoardGeometry.LEVEL);
-            // Give subpixel sand a filtered footprint without turning distant grains into large flakes.
-            shader.setUniformf("u_pixelSize", camera.frustum.planePoints[0].dst(camera.frustum.planePoints[1])
-                  / Math.max(1, HdpiUtils.toBackBufferX((int) camera.viewportWidth)));
             shader.setUniformf("u_light", Math.min(1, light.r + 0.25f), Math.min(1, light.g + 0.25f),
                   Math.min(1, light.b + 0.25f));
-            float[] strengths = { effects.rain(), effects.snow(), effects.hail(), effects.sand() };
-            for (int kind = 0; kind < strengths.length; kind++) {
-                if (strengths[kind] > 0) {
+            float windX = MathUtils.sinDeg(effects.windDirection());
+            float windY = MathUtils.cosDeg(effects.windDirection());
+            mesh.bind(shader);
+            for (int kind = 0; kind < DENSITY_MULTIPLIERS.length; kind++) {
+                float strength = switch (kind) {
+                    case 0 -> effects.rain();
+                    case 1 -> effects.snow();
+                    default -> effects.hail();
+                };
+                if (strength > 0) {
                     shader.setUniformf("u_kind", kind);
-                    // Sand needs a fast horizontal stream even when the shared wind slider is at zero.
-                    float wind = kind == 3 ? 14 + effects.wind() * 20 : effects.wind() * 5;
-                    shader.setUniformf("u_wind", MathUtils.sinDeg(effects.windDirection()) * wind,
-                          MathUtils.cosDeg(effects.windDirection()) * wind);
-                    // Blowing sand needs a continuous drift even at the normal half-strength setting.
-                    // Keep the curved response for light rain, snow and hail.
-                    float strength = strengths[kind];
-                    float density = kind == 3 ? strength * DENSITY_MULTIPLIERS[kind]
-                          : strength * (1 + (DENSITY_MULTIPLIERS[kind] - 1) * strength * strength);
+                    float wind = effects.wind() * 5;
+                    shader.setUniformf("u_wind", windX * wind, windY * wind);
+                    float density = strength * (1 + (DENSITY_MULTIPLIERS[kind] - 1) * strength * strength);
                     int count = Math.max(1, Math.round(BASE_PARTICLES * density));
-                    // Reuse the bounded mesh with distinct seeds when dense sand needs more grains.
-                    for (int offset = 0; offset < count; offset += PARTICLES) {
-                        shader.setUniformf("u_batch", offset / PARTICLES);
-                        mesh.render(shader, GL20.GL_TRIANGLES, 0, Math.min(PARTICLES, count - offset) * 6);
-                    }
+                    mesh.render(shader, GL20.GL_TRIANGLES, 0, count * 6, false);
                 }
             }
         } finally {
+            mesh.unbind(shader);
             Gdx.gl.glDepthMask(true);
             Gdx.gl.glDisable(GL20.GL_BLEND);
         }
@@ -134,7 +127,8 @@ final class GpuWeatherParticles implements Disposable {
         float maxX = Float.NEGATIVE_INFINITY, maxY = Float.NEGATIVE_INFINITY;
         for (int corner = 0; corner < 4; corner++) {
             Vector3 near = camera.frustum.planePoints[corner];
-            for (float height : new float[] { bottom, top }) {
+            for (int end = 0; end < 2; end++) {
+                float height = end == 0 ? bottom : top;
                 float distance = (height - near.z) / camera.direction.z;
                 float x = near.x + distance * camera.direction.x;
                 float y = near.y + distance * camera.direction.y;

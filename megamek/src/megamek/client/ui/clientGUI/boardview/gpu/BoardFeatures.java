@@ -20,6 +20,7 @@ final class BoardFeatures {
 
     static BoardScene.Surface surface(Hex hex) {
         String theme = hex.getTheme() == null ? "" : hex.getTheme().toLowerCase(Locale.ROOT);
+        if (hex.containsTerrain(Terrains.MAGMA)) { return BoardScene.Surface.ROCK; }
         if (hex.containsTerrain(Terrains.SNOW) || theme.contains("snow")) {
             return BoardScene.Surface.SNOW;
         }

@@ -130,20 +130,96 @@ class BoardSurfaceTest {
 
     @ParameterizedTest
     @ValueSource(ints = { 0, 1, 2, 3, 4, 5 })
+    void roadsRampUpAndDownToAlignedBridgeDecksOverLandAndWater(int direction) {
+        for (int roadElevation : new int[] { 0, 1, 2 }) {
+            for (boolean water : List.of(false, true)) {
+                BoardScene scene = bridgeScene(direction, (direction + 3) % 6, 1, water, roadElevation, 0, water);
+                Coords neighbor = FIRST.translated(direction);
+                BoardSurface road = new BoardSurface(scene, scene.tile(FIRST));
+                BoardSurface belowBridge = new BoardSurface(scene, scene.tile(neighbor));
+                Vector3 center = BoardGeometry.center(FIRST, roadElevation);
+                Vector3 gate = new Vector3(center).lerp(BoardGeometry.center(neighbor, 1), 0.5f);
+                assertEquals(BoardGeometry.LEVEL, road.height(gate.x, gate.y), 0.01f,
+                      "The road must reach the deck's full height at the shared edge");
+                assertEquals(center.z, road.height(center.x, center.y), 0.01f);
+                assertEquals(0, belowBridge.height(gate.x, gate.y), 0.01f,
+                      "The bridge approach must not deform the ground beneath the deck");
+                Vector3 bridgeCenter = BoardGeometry.center(neighbor, 0);
+                assertEquals(BoardGeometry.groundZ(scene.tile(neighbor)),
+                      belowBridge.height(bridgeCenter.x, bridgeCenter.y), 0.01f);
+                Vector3 approach = new Vector3(gate).lerp(center, 0.25f);
+                float height = (roadElevation + 1) * BoardGeometry.LEVEL / 2;
+                assertEquals(height, road.height(approach.x, approach.y), 0.01f,
+                      "The existing road corridor must slope between the unchanged hub and the deck");
+                BoardGeometry.Hit hit = BoardGeometry.hit(scene,
+                      new Ray(new Vector3(approach.x, approach.y, 200), new Vector3(0, 0, -1)));
+                assertNotNull(hit);
+                assertEquals(FIRST, hit.coords());
+                assertEquals(200 - height, Math.sqrt(hit.distance()), 0.01);
+                if (roadElevation == 0) {
+                    Vector3 inward = new Vector3(center.x - gate.x, center.y - gate.y, 0).nor();
+                    Vector3 origin = new Vector3(approach.x, approach.y, height).mulAdd(inward, -2);
+                    hit = BoardGeometry.hit(scene, new Ray(origin, inward));
+                    assertNotNull(hit, "Picking bounds must include a ramp above both hexes' ground levels");
+                    assertEquals(FIRST, hit.coords());
+                    assertEquals(2, Math.sqrt(hit.distance()), 0.01);
+                }
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2, 3, 4, 5 })
+    void aConnectingLandRoadWinsOverABridgeAtADifferentLevel(int direction) {
+        for (int roadElevation : new int[] { 0, 2 }) {
+            for (int bridgeHeight : new int[] { 1, 3 }) {
+                BoardScene scene = bridgeScene(direction, (direction + 3) % 6, bridgeHeight, true,
+                      roadElevation, 0, false);
+                Coords neighbor = FIRST.translated(direction);
+                Vector3 gate = BoardGeometry.center(FIRST, 0).lerp(BoardGeometry.center(neighbor, 0), 0.5f);
+                float height = roadElevation * BoardGeometry.LEVEL / 2;
+                assertEquals(height, new BoardSurface(scene, scene.tile(FIRST)).height(gate.x, gate.y), 0.01f);
+                assertEquals(height, new BoardSurface(scene, scene.tile(neighbor)).height(gate.x, gate.y), 0.01f,
+                      "Both ground roads must meet, even when an aligned bridge is within one level");
+            }
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2, 3, 4, 5 })
+    void aBridgeRampRequiresARoadExitTowardTheBridge(int direction) {
+        for (int exits : new int[] { 0, 1 << ((direction + 1) % 6) }) {
+            BoardScene scene = bridgeScene(direction, (direction + 3) % 6, 1, false, 0, 0, true);
+            List<BoardScene.Tile> tiles = new ArrayList<>(scene.tiles());
+            BoardScene.Tile tile = scene.tile(FIRST);
+            tiles.set(FIRST.getX() * scene.height() + FIRST.getY(), new BoardScene.Tile(FIRST, 0, -1, false,
+                  exits, tile.surface(), tile.ground(), null, null, List.of(), List.of()));
+            scene = new BoardScene(0, scene.width(), scene.height(), tiles, List.of(), List.of(), -1, "", List.of());
+            Vector3 gate = BoardGeometry.center(FIRST, 0)
+                  .lerp(BoardGeometry.center(FIRST.translated(direction), 0), 0.5f);
+            assertEquals(0, new BoardSurface(scene, scene.tile(FIRST)).height(gate.x, gate.y), 0.01f);
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = { 0, 1, 2, 3, 4, 5 })
     void unrelatedBridgeArmsAndOverpassesKeepTheGroundRoadApproach(int direction) {
         int reverse = (direction + 3) % 6;
         for (int bridgeDirection = 0; bridgeDirection < 6; bridgeDirection++) {
-            for (int bridgeHeight : new int[] { 1, 2, 3 }) {
-                if (bridgeDirection == reverse && bridgeHeight == 2) {
-                    continue;
+            for (int bridgeHeight : new int[] { 0, 1, 2, 3, 4 }) {
+                for (boolean roadUnderBridge : List.of(false, true)) {
+                    if (bridgeDirection == reverse && Math.abs(bridgeHeight - 2) <= 1
+                          && (bridgeHeight == 2 || !roadUnderBridge)) {
+                        continue;
+                    }
+                    BoardScene scene = bridgeScene(direction, bridgeDirection, bridgeHeight, roadUnderBridge);
+                    Coords neighbor = FIRST.translated(direction);
+                    Vector3 gate = BoardGeometry.center(FIRST, 0).lerp(BoardGeometry.center(neighbor, 0), 0.5f);
+                    assertEquals(-BoardGeometry.LEVEL,
+                          new BoardSurface(scene, scene.tile(FIRST)).height(gate.x, gate.y), 0.01f);
+                    assertEquals(-BoardGeometry.LEVEL,
+                          new BoardSurface(scene, scene.tile(neighbor)).height(gate.x, gate.y), 0.01f);
                 }
-                BoardScene scene = bridgeScene(direction, bridgeDirection, bridgeHeight, true);
-                Coords neighbor = FIRST.translated(direction);
-                Vector3 gate = BoardGeometry.center(FIRST, 0).lerp(BoardGeometry.center(neighbor, 0), 0.5f);
-                assertEquals(-BoardGeometry.LEVEL,
-                      new BoardSurface(scene, scene.tile(FIRST)).height(gate.x, gate.y), 0.01f);
-                assertEquals(-BoardGeometry.LEVEL,
-                      new BoardSurface(scene, scene.tile(neighbor)).height(gate.x, gate.y), 0.01f);
             }
         }
     }
@@ -374,15 +450,20 @@ class BoardSurfaceTest {
     }
 
     private static BoardScene bridgeScene(int direction, int bridgeDirection, int bridgeHeight, boolean roadUnderBridge) {
-        BoardScene scene = scene(false, direction, true, roadUnderBridge, 0);
+        return bridgeScene(direction, bridgeDirection, bridgeHeight, roadUnderBridge, 0, -2, false);
+    }
+
+    private static BoardScene bridgeScene(int direction, int bridgeDirection, int bridgeHeight, boolean roadUnderBridge,
+          int roadElevation, int bridgeElevation, boolean water) {
+        BoardScene scene = scene(false, direction, true, roadUnderBridge, roadElevation);
         Coords coords = FIRST.translated(direction);
-        Hex hex = new Hex(-2);
+        Hex hex = new Hex(bridgeElevation);
         hex.addTerrain(new Terrain(Terrains.BRIDGE, 2, true, 1 << bridgeDirection));
         hex.addTerrain(new Terrain(Terrains.BRIDGE_ELEV, bridgeHeight));
         BoardScene.Tile tile = scene.tile(coords);
         List<BoardScene.Tile> tiles = new ArrayList<>(scene.tiles());
         tiles.set(coords.getX() * scene.height() + coords.getY(), new BoardScene.Tile(coords, hex.getLevel(),
-              -1, false, tile.roadExits(), tile.surface(), tile.ground(), null, null,
+              water ? 1 : -1, false, tile.roadExits(), tile.surface(), tile.ground(), null, null,
               BoardFeatures.capture(hex, coords, Map.of()), List.of()));
         return new BoardScene(0, scene.width(), scene.height(), tiles, List.of(), List.of(), -1, "", List.of());
     }

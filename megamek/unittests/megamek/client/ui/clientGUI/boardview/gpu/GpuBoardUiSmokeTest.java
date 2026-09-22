@@ -167,6 +167,15 @@ class GpuBoardUiSmokeTest {
                             assertFalse(controls.stage.getRoot().findActor("command-search").getParent().isVisible());
                             assertEquals(menu, controls.stage.getKeyboardFocus(), "A hidden search field cannot capture typing");
                             GpuBoardTestUi.capture(new File(output, "camera-menu.png"));
+                            CheckBox fixedSun = controls.stage.getRoot().findActor("tuning-fixed-sun");
+                            assertEquals(fixedSun.isChecked(), controls.stage.getRoot().<CheckBox>findActor("camera-fixed-sun-check").isChecked());
+                            GpuBoardTestUi.click("camera-fixed-sun");
+                            assertTrue(fixedSun.isChecked());
+                            assertTrue(controls.atmosphereOptions().fixedSun());
+                            fixedSun.setChecked(false);
+                            controls.update(snapshot, "Speed: 1x");
+                            assertFalse(controls.stage.getRoot().<CheckBox>findActor("camera-fixed-sun-check").isChecked(),
+                                  "Changes from Tuning must refresh an already open Camera menu");
                             for (String context : List.of("selection", "combat", "movement")) {
                                 CheckBox check = controls.stage.getRoot().findActor("camera-animate-" + context + "-check");
                                 assertTrue(check.isChecked(), "Camera animations start enabled");
@@ -179,7 +188,7 @@ class GpuBoardUiSmokeTest {
                             assertFalse(boardCamera.animateOnSelectionChange);
                             assertFalse(boardCamera.animateCombatPlayback);
                             assertFalse(boardCamera.animateOnMove);
-                            for (int row = 0; row < 6; row++) { press(Input.Keys.DOWN); }
+                            for (int row = 0; row < 8; row++) { press(Input.Keys.DOWN); }
                             assertFalse(boardCamera.animateOnSelectionChange, "Keyboard focus must not change a checkbox");
                             press(Input.Keys.ENTER);
                             assertTrue(boardCamera.animateOnSelectionChange);

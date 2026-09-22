@@ -81,7 +81,8 @@ class GpuResourcesSmokeTest {
                 assertTrue(bounds.isValid() && bounds.getWidth() > 0 && bounds.getDepth() > 0, name);
             }
             for (int depth = 0; depth <= 4; depth++) {
-                assertNotSame(assets.water(depth, 0), assets.water(depth, 0.25f), "GIF frames must advance");
+                var source = BoardLiquid.WATER.textures(depth, 0);
+                assertNotSame(assets.liquid(source, 0), assets.liquid(source, 0.25f), "GIF frames must advance");
             }
         } finally {
             assets.dispose();
@@ -153,10 +154,7 @@ class GpuResourcesSmokeTest {
         GpuTerrain terrain = new GpuTerrain();
         GpuBoardSkin skin = new GpuBoardSkin();
         GpuBoardTuning tuning = new GpuBoardTuning(skin.skin);
-        Slider acceleration = tuning.panel().findActor("Speed gain / hex");
-        assertEquals(UnitMotion.DEFAULT_SPEED_GAIN_PER_HEX, tuning.speedGainPerHex(), .0001);
-        acceleration.setValue(6);
-        assertEquals(.06, tuning.speedGainPerHex(), .0001);
+        assertNull(tuning.panel().findActor("Speed gain / hex"));
         Slider opacity = tuning.panel().findActor("Building opacity");
         assertEquals(0.5f, tuning.buildingOpacity());
         assertNull(tuning.panel().findActor("Tree opacity"));
@@ -251,7 +249,7 @@ class GpuResourcesSmokeTest {
                     }
                     unit.transform.setToTranslation(center.x, center.y, bed + 5.5f);
                     tuning.panel().findActor("tuning-defaults").fire(new ChangeListener.ChangeEvent());
-                    assertEquals(UnitMotion.DEFAULT_SPEED_GAIN_PER_HEX, tuning.speedGainPerHex(), .0001);
+                    assertNull(tuning.panel().findActor("Speed gain / hex"));
                     assertEquals(0.5f, tuning.buildingOpacity());
                     terrain.animate(0, List.of());
                     drawModel(terrain, camera, units, unit);

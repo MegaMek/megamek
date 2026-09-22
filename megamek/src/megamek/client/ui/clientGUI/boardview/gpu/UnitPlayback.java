@@ -21,8 +21,8 @@ final class UnitPlayback {
     /** Maximum spread between a unit's weapon launches, in shared animation seconds. */
     static final float VOLLEY_JITTER_SECONDS = .12f;
     final Map<Integer, UnitMotion> motions = new HashMap<>();
-    // GL-owned tuning, captured into the immutable timeline when each movement starts.
-    double speedGainPerHex = UnitMotion.DEFAULT_SPEED_GAIN_PER_HEX;
+    /** GL-owned visual preview; NaN keeps each event's captured game gravity. Read only when a jump starts. */
+    float gravityOverride = Float.NaN;
     private final ArrayDeque<BoardScene.Animation> pending = new ArrayDeque<>();
     private final Map<Integer, BoardScene.Waypoint> observed = new HashMap<>();
     private BoardScene.Animation active;
@@ -296,7 +296,7 @@ final class UnitPlayback {
         int members = unit != null && unit.model() != null && unit.model().state() != null
               && unit.model().state().structure().activeTroopers() > 0 ? unit.model().figures() : 0;
         motion.append(movement.path(), movement.type(), movement.jumpMP(), transports.test(unit), movement.movementMP(), members,
-              speedGainPerHex, movement.gravity());
+              UnitMotion.DEFAULT_SPEED_GAIN_PER_HEX, Float.isFinite(gravityOverride) ? gravityOverride : movement.gravity());
         return motion;
     }
 

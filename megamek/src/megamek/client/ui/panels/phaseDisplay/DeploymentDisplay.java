@@ -1434,7 +1434,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     }
                     selectEntity(e.getId());
                     if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
-                        clientgui.getBoardView(e).centerOnHex(e.getPosition());
+                        clientgui.getBoardView(e).centerOn(e);
                     }
                 }
             }
@@ -1442,7 +1442,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             clientgui.maybeShowUnitDisplay();
             clientgui.getUnitDisplay().displayEntity(e);
             if (game.hasBoardLocation(e.getPosition(), e.getBoardId())) {
-                clientgui.getBoardView(e).centerOnHex(e.getPosition());
+                clientgui.getBoardView(e).centerOn(e);
             }
         }
     }

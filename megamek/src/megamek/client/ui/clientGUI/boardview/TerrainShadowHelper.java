@@ -116,7 +116,7 @@ class TerrainShadowHelper {
         if (conditions.getLight().isMoonlessOrPitchBack()) {
             return new Point(0, 0);
         }
-        return conditions.getLight().isDusk() ? new Point(-38, 14) : new Point(-19, 7);
+        return conditions.getLight().isDuskDawn() ? new Point(-38, 14) : new Point(-19, 7);
     }
 
     @Nullable

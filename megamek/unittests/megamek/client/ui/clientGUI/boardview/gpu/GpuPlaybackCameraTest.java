@@ -27,6 +27,123 @@ class GpuPlaybackCameraTest {
     }
 
     @Test
+    void initialFitIgnoresOldClassicCenterRequestsButNewRequestsStillWork() {
+        var unit = UnitPlaybackTest.unit(1, 0);
+        var view = view(true);
+        try {
+            BoardScene scene = scene(unit.id(), unit);
+            view.updateCameraFocus(scene, INITIAL_CENTER);
+            for (var tile : scene.tiles()) {
+                for (int corner = 0; corner < 6; corner++) {
+                    var point = view.boardCamera.camera.project(BoardGeometry.corner(tile.coords(), tile.elevation(), corner),
+                          0, 0, 800, 600);
+                    assertTrue(point.x > 0 && point.x < 800 && point.y > 0 && point.y < 600,
+                          "The initial view must fit the map even if the classic board had centered a unit");
+                }
+            }
+            view.updateCameraFocus(scene, new BoardView.CenterRequest(2, unit.location().coords()));
+            assertTrue(view.boardCamera.isFraming());
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+            assertFocus(view, 0);
+        } finally {
+            view.dispose();
+        }
+    }
+
+    @Test
+    void unitNavigationUsesTheSameTransitionBeforeAndDuringAnActingTurnWithoutRepeatClickSnaps() {
+        var first = UnitPlaybackTest.unit(1, 0);
+        var next = UnitPlaybackTest.unit(3, 11);
+        for (boolean actingTurn : List.of(false, true)) {
+            var view = view(true);
+            try {
+                view.updateCameraFocus(scene(actingTurn ? first.id() : -1, first, next), INITIAL_CENTER);
+                view.boardCamera.center(BoardGeometry.center(first.location().coords(), 0));
+                var before = view.boardCamera.focus.cpy();
+                var latest = scene(actingTurn ? next.id() : -1, first, next);
+                view.updateCameraFocus(latest, new BoardView.CenterRequest(2, next.location().coords(), next.id()));
+                assertEquals(before, view.boardCamera.focus, "Sidebar navigation must never teleport, even without an acting unit");
+                assertTrue(view.boardCamera.isFraming());
+                view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS / 4);
+                var halfway = view.boardCamera.focus.cpy();
+                view.updateCameraFocus(latest, new BoardView.CenterRequest(3, next.location().coords(), next.id()));
+                assertEquals(halfway, view.boardCamera.focus, "A repeated click must not snap an unfinished transition");
+                view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS * .75f);
+                assertFalse(view.boardCamera.isFraming(), "Repeated clicks must not restart the animation deadline");
+                var settled = view.boardCamera.focus.cpy();
+                view.updateCameraFocus(latest, new BoardView.CenterRequest(4, next.location().coords(), next.id()));
+                assertFalse(view.boardCamera.isFraming());
+                assertTrue(settled.epsilonEquals(view.boardCamera.focus, .001f));
+                BoardCameraFramingTest.assertVisible(view.boardCamera, 800, next);
+
+                view.boardCamera.pan(300, 300);
+                var panned = view.boardCamera.focus.cpy();
+                view.updateCameraFocus(latest, new BoardView.CenterRequest(5, next.location().coords(), next.id()));
+                assertEquals(panned, view.boardCamera.focus);
+                assertTrue(view.boardCamera.isFraming(), "Clicking after manual panning must still navigate to the unit");
+                view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                assertTrue(settled.epsilonEquals(view.boardCamera.focus, .001f));
+            } finally {
+                view.dispose();
+            }
+        }
+    }
+
+    @Test
+    void unitIdentityDeterminesFramingInAStackedHexAndMissingUnitsAreNotInferredFromCoordinates() {
+        var ground = UnitPlaybackTest.unit(1, 2);
+        var raised = new BoardScene.Unit(2, -1, "Raised unit", new BoardScene.Waypoint(ground.location().coords(), 8, 0),
+              null, false, null, 5, true);
+        var view = view(true);
+        try {
+            var scene = scene(-1, ground, raised);
+            view.updateCameraFocus(scene, INITIAL_CENTER);
+            view.updateCameraFocus(scene, new BoardView.CenterRequest(2, raised.location().coords(), raised.id()));
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+            assertEquals(8 * BoardGeometry.LEVEL, view.boardCamera.focus.z, .001f);
+            BoardCameraFramingTest.assertVisible(view.boardCamera, 800, raised);
+            var settled = view.boardCamera.focus.cpy();
+            view.updateCameraFocus(scene, new BoardView.CenterRequest(3, ground.location().coords(), 999));
+            assertEquals(settled, view.boardCamera.focus);
+            assertFalse(view.boardCamera.isFraming());
+            view.updateCameraFocus(scene(999, ground, raised),
+                  new BoardView.CenterRequest(4, ground.location().coords(), ground.id()));
+            assertTrue(view.boardCamera.isFraming(), "An actor absent from this board must not swallow valid navigation");
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+            assertEquals(0, view.boardCamera.focus.z, .001f);
+        } finally {
+            view.dispose();
+        }
+    }
+
+    @Test
+    void unitNavigationDuringMovementWaitsForPlaybackEvenAtTheMovesStartingHex() throws Exception {
+        var move = movement(1, 0, 2);
+        var other = new BoardScene.Unit(2, -1, "Other unit", new BoardScene.Waypoint(new Coords(0, 0), 3, 0),
+              null, false, null, 2, true);
+        var view = view(true);
+        try {
+            var playback = playback(view);
+            view.updateCameraFocus(scene(-1, UnitPlaybackTest.unit(1, 0), other), INITIAL_CENTER);
+            var latest = scene(-1, move.unit(), other);
+            playback.accept(List.of(move), latest, ignored -> false);
+            playback.advance(0, UnitMotion.Speed.NORMAL, state -> view.preparePlaybackCamera(state, latest));
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+            var duringMove = view.boardCamera.focus.cpy();
+            var request = new BoardView.CenterRequest(2, other.location().coords(), other.id());
+            view.updateCameraFocus(playback.present(latest), request);
+            assertEquals(duringMove, view.boardCamera.focus, "Navigation cannot interrupt movement playback");
+            playback.finish();
+            view.updateCameraFocus(latest, request);
+            assertTrue(view.boardCamera.isFraming(), "An explicit unit request is not a legacy move-start auto-center");
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+            assertEquals(3 * BoardGeometry.LEVEL, view.boardCamera.focus.z, .001f);
+        } finally {
+            view.dispose();
+        }
+    }
+
+    @Test
     void instantSelectionSnapsAndSwitchingSpeedFinishesAnExistingTransition() throws Exception {
         var first = UnitPlaybackTest.unit(1, 0);
         var next = UnitPlaybackTest.unit(3, 11);
@@ -34,6 +151,7 @@ class GpuPlaybackCameraTest {
             var view = view(false);
             try {
                 view.updateCameraFocus(scene(first.id(), first, next), INITIAL_CENTER);
+                view.boardCamera.center(BoardGeometry.center(first.location().coords(), 0));
                 var latest = scene(next.id(), first, next);
                 if (alreadyAnimating) {
                     view.updateCameraFocus(latest, INITIAL_CENTER);
@@ -176,6 +294,7 @@ class GpuPlaybackCameraTest {
                     var playback = playback(view);
                     var initial = scene(1, UnitPlaybackTest.unit(1, 0), UnitPlaybackTest.unit(2, 7), next);
                     view.updateCameraFocus(initial, INITIAL_CENTER);
+                    view.boardCamera.center(BoardGeometry.center(first.path().getFirst().coords(), 0));
                     var latest = scene(next.id(), first.unit(), enemy.unit(), next);
                     playback.accept(List.of(first, enemy), latest, ignored -> false);
                     playback.advance(0, speed, state -> view.preparePlaybackCamera(state, latest));
@@ -306,6 +425,7 @@ class GpuPlaybackCameraTest {
         var view = view(false);
         try {
             view.updateCameraFocus(scene(first.id(), first, next), INITIAL_CENTER);
+            view.boardCamera.center(BoardGeometry.center(first.location().coords(), 0));
             var before = view.boardCamera.focus.cpy();
             var latest = scene(next.id(), first, next);
             view.updateCameraFocus(latest, INITIAL_CENTER);
@@ -319,10 +439,15 @@ class GpuPlaybackCameraTest {
             BoardCameraFramingTest.assertVisible(view.boardCamera, 800, next);
             var request = new BoardView.CenterRequest(2, new Coords(0, 5));
             view.updateCameraFocus(latest, request);
+            var navigating = view.boardCamera.focus.cpy();
+            assertTrue(view.boardCamera.isFraming());
+            view.updateCameraFocus(latest, new BoardView.CenterRequest(3, request.coords()));
+            assertEquals(navigating, view.boardCamera.focus);
+            view.boardCamera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
             assertFocus(view, 5);
-            view.updateCameraFocus(scene(-1, first, next), request);
+            view.updateCameraFocus(scene(-1, first, next), new BoardView.CenterRequest(3, request.coords()));
             assertFocus(view, 5);
-            view.updateCameraFocus(scene(99, first, next), request);
+            view.updateCameraFocus(scene(99, first, next), new BoardView.CenterRequest(3, request.coords()));
             assertFocus(view, 5);
         } finally {
             view.dispose();

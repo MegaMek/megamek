@@ -28,6 +28,9 @@ final class BoardSurface {
         void clear() { surfaces.clear(); tiles = null; }
     }
     private static final int SHORE_SEGMENTS = 6;
+    /** A fall's lip: the water stops this far short of the mouth so the sheet can curve down to the shared edge. */
+    private static final float FALL_LIP_WIDTH = .045f;
+    private static final float FALL_LIP_DROP = .5f;
     enum Finish { TOP, SHORE, BED, BANK, ICE }
     /** landEdge identifies the adjoining dry hex for bank artwork; other faces use -1. */
     record Face(Vector3 a, Vector3 b, Vector3 c, Finish finish, int landEdge) {
@@ -55,12 +58,12 @@ final class BoardSurface {
         int exits = 0;
         for (int direction = 0; direction < 6; direction++) {
             BoardScene.Tile neighbor = scene.tile(tile.coords().translated(direction));
-            if (hasRoadApproach(tile, neighbor, direction) && tile.elevation() != neighbor.elevation()) {
+            if (roadEdgeElevation(tile, neighbor, direction) != tile.elevation()) {
                 exits |= 1 << direction;
             }
         }
         ramps = exits;
-        if (tile.water()) {
+        if (tile.liquid().present()) {
             river(scene);
         } else if (ramps != 0) {
             road(scene);
@@ -69,38 +72,66 @@ final class BoardSurface {
         }
     }
 
+    /** A bridge approach reaches the deck at the edge; ordinary roads share their height change across both hexes. */
+    static float roadEdgeElevation(BoardScene.Tile tile, BoardScene.Tile neighbor, int direction) {
+        if (neighbor == null || tile.liquid().present()) {
+            return tile.elevation();
+        }
+        var bridge = connectingBridge(tile, neighbor, direction);
+        if (bridge != null) {
+            return neighbor.elevation() + bridge.elevation();
+        }
+        return hasRoadApproach(tile, neighbor, direction)
+              ? (tile.elevation() + neighbor.elevation()) / 2f : tile.elevation();
+    }
+
     /** Presentation only: a road end can meet unpaved ground across at most two levels. */
     static boolean hasRoadApproach(BoardScene.Tile tile, BoardScene.Tile neighbor, int direction) {
-        if (neighbor == null || tile.water() || neighbor.water()) {
+        if (neighbor == null || tile.liquid().present() || neighbor.liquid().present()) {
             return false;
         }
         boolean exit = (tile.roadExits() & (1 << direction)) != 0;
         int reverse = (direction + 3) % 6;
         boolean continuation = (neighbor.roadExits() & (1 << reverse)) != 0;
-        // A road meeting a bridge deck must not cut or fill the ground below it, on either side.
-        if ((exit && meetsBridge(neighbor, reverse, tile.elevation()))
-              || (continuation && meetsBridge(tile, direction, neighbor.elevation()))) {
+        // A bridge approach changes only the road hex, leaving the ground beneath the deck intact.
+        if (connectingBridge(tile, neighbor, direction) != null
+              || connectingBridge(neighbor, tile, reverse) != null) {
             return false;
         }
         return (exit && continuation)
               || ((exit || continuation) && Math.abs(tile.elevation() - neighbor.elevation()) <= 2);
     }
 
-    private static boolean meetsBridge(BoardScene.Tile tile, int direction, int elevation) {
+    private static BoardScene.Feature connectingBridge(BoardScene.Tile road, BoardScene.Tile bridge, int direction) {
+        if (road.liquid().present() || (road.roadExits() & (1 << direction)) == 0) {
+            return null;
+        }
+        int reverse = (direction + 3) % 6;
+        boolean continuation = !bridge.liquid().present() && (bridge.roadExits() & (1 << reverse)) != 0;
+        if (continuation && road.elevation() == bridge.elevation()) {
+            return null;
+        }
+        // A level deck wins over a sloped ground road; a sloped deck is the last connected-road fallback.
         // Captured bridge arms point north before rotation; hex directions run clockwise.
-        return tile.features().stream().anyMatch(feature -> feature.asset().equals("bridge")
-              && tile.elevation() + feature.elevation() == elevation
-              && Math.floorMod(Math.round(-feature.rotation() / 60), 6) == direction);
+        return bridge.features().stream().filter(feature -> feature.asset().equals("bridge")
+              && Math.abs(bridge.elevation() + feature.elevation() - road.elevation()) <= 1
+              && (!continuation || bridge.elevation() + feature.elevation() == road.elevation())
+              && Math.floorMod(Math.round(-feature.rotation() / 60), 6) == reverse).findFirst().orElse(null);
     }
 
     private void river(BoardScene scene) {
         float[] shore = new float[6];
+        float[] lip = new float[6];
         List<Integer> mouths = new ArrayList<>();
         for (int edge = 0; edge < 6; edge++) {
             BoardScene.Tile neighbor = scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(edge)));
-            shore[edge] = neighbor == null || !neighbor.water() ? 8 * BoardGeometry.HEX_SCALE : 0;
+            shore[edge] = neighbor == null || !tile.liquid().connects(neighbor.liquid()) ? 8 * BoardGeometry.HEX_SCALE : 0;
             if (shore[edge] == 0) {
                 mouths.add(edge);
+                // A fall owns the last stretch of its mouth: the water stops short so the sheet can curve down.
+                if (!tile.frozen() && !neighbor.frozen() && tile.elevation() > neighbor.elevation()) {
+                    lip[edge] = fallLip(BoardGeometry.waterZ(tile), BoardGeometry.waterZ(neighbor));
+                }
             }
         }
         boolean channel = mouths.size() == 2 && mouths.getLast() - mouths.getFirst() >= 2
@@ -135,17 +166,52 @@ final class BoardSurface {
         if (tile.frozen()) {
             fan(corners, center.z, Finish.ICE);
         } else {
-            water.addAll(List.of(waterline));
-            polygon(waterline, Finish.TOP, waterFaces);
+            // The water recedes from a falling mouth; the sheet's lip curves back down to the shared edge.
+            Vector3[] surface = pulledBack(waterline, lip);
+            water.addAll(List.of(surface));
+            polygon(surface, Finish.TOP, waterFaces);
             for (int edge = 0; edge < 6; edge++) {
-                BoardScene.Tile neighbor = scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(edge)));
-                if (shore[edge] == 0 && !neighbor.frozen() && tile.elevation() > neighbor.elevation()) {
-                    float bottom = BoardGeometry.waterZ(neighbor);
-                    waterfalls.add(new Side(waterline[edge * SHORE_SEGMENTS],
-                          waterline[((edge + 1) % 6) * SHORE_SEGMENTS], bottom, bottom, edge));
+                if (lip[edge] <= 0) {
+                    continue;
                 }
+                float bottom = BoardGeometry.waterZ(scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(edge))));
+                waterfalls.add(new Side(waterline[edge * SHORE_SEGMENTS],
+                      waterline[((edge + 1) % 6) * SHORE_SEGMENTS], bottom, bottom, edge));
             }
         }
+    }
+
+    /** Radius of the curve where a fall leaves the upper surface, bounded by half the drop and one hex width. */
+    static float fallLip(float surface, float bottom) {
+        return Math.min(Math.max(0, surface - bottom) * FALL_LIP_DROP, FALL_LIP_WIDTH * BoardGeometry.WIDTH);
+    }
+
+    /** Inward normal of one edge: the direction a falling mouth pulls its water back from the shared edge. */
+    private Vector3 edgeInward(int edge) {
+        return new Vector3(corners[(edge + 1) % 6]).sub(corners[edge]).crs(Vector3.Z).nor().scl(-1);
+    }
+
+    /** Pull the water surface back from each falling mouth, leaving the lip's room for the sheet to fill. */
+    private Vector3[] pulledBack(Vector3[] waterline, float[] lip) {
+        Vector3[] result = waterline.clone();
+        for (int index = 0; index < waterline.length; index++) {
+            int edge = index / SHORE_SEGMENTS;
+            // An anchor also ends the previous edge, whose fall pulls the shared corner by its own inward.
+            int previous = (edge + 5) % 6;
+            boolean anchor = index % SHORE_SEGMENTS == 0;
+            if (lip[edge] <= 0 && !(anchor && lip[previous] > 0)) {
+                continue;
+            }
+            Vector3 inward = new Vector3();
+            if (lip[edge] > 0) {
+                inward.mulAdd(edgeInward(edge), lip[edge]);
+            }
+            if (anchor && lip[previous] > 0) {
+                inward.mulAdd(edgeInward(previous), lip[previous]);
+            }
+            result[index] = new Vector3(waterline[index]).add(inward);
+        }
+        return result;
     }
 
     private Vector3 shoreLip(Vector3 waterline, Vector3 boundary) {
@@ -201,8 +267,8 @@ final class BoardSurface {
         Vector3 a = new Vector3(corners[from]).lerp(corners[(from + 1) % 6], 0.5f);
         Vector3 b = new Vector3(corners[to]).lerp(corners[(to + 1) % 6], 0.5f);
         a.z = b.z = anchors[from].z;
-        Vector3 inA = new Vector3(corners[(from + 1) % 6]).sub(corners[from]).crs(Vector3.Z).nor().scl(-1);
-        Vector3 inB = new Vector3(corners[(to + 1) % 6]).sub(corners[to]).crs(Vector3.Z).nor().scl(-1);
+        Vector3 inA = edgeInward(from);
+        Vector3 inB = edgeInward(to);
         // A gentle bend keeps the inner bank from folding back across itself.
         float handle = a.dst(b) * 0.4f;
         Vector3 c1 = new Vector3(a).mulAdd(inA, handle);
@@ -291,7 +357,7 @@ final class BoardSurface {
             quad(innerRight, right, corners[next], hub[next], Finish.TOP);
             Vector3 roadLeft = new Vector3(left);
             Vector3 roadRight = new Vector3(right);
-            roadLeft.z = roadRight.z = (tile.elevation() + neighbor.elevation()) * BoardGeometry.LEVEL / 2;
+            roadLeft.z = roadRight.z = roadEdgeElevation(tile, neighbor, direction) * BoardGeometry.LEVEL;
             quad(innerLeft, roadLeft, roadRight, innerRight, Finish.TOP);
             triangle(innerLeft, left, roadLeft, Finish.BANK);
             triangle(innerRight, roadRight, right, Finish.BANK);

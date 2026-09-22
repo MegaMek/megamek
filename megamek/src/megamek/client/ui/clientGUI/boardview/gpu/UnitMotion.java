@@ -21,7 +21,7 @@ final class UnitMotion {
     private static final double JUMP_DURATION_SCALE = 1.1;
     static final double MIN_UNIT_SPEED = .65;
     static final double MAX_UNIT_SPEED = 2.5;
-    static final double RAMP_HEXES = 3;
+    static final double RAMP_HEXES = 2.5;
     static final double DEFAULT_SPEED_GAIN_PER_HEX = .03;
     private static final double TURN_SPEED_DROP_PER_FACING = .3;
     private static final double MIN_CORNER_SPEED = .5;

@@ -5,31 +5,35 @@ import megamek.common.units.EntityWeightClass;
 
 /** Visual fine-tuning on top of BoardGeometry; keys follow the existing asset families. */
 enum UnitFamilyScale {
-    MEK(1.0f, 1.0f),
+    MEK("All Meks", 1.0f, 1.0f),
     // Weight-class multipliers stack with MEK and the model's authored proportions.
-    MEK_LIGHT(MEK, 1.0f, 1.0f),
-    MEK_MEDIUM(MEK, 1.0f, 1.0f),
-    MEK_HEAVY(MEK, 1.0f, 1.0f),
-    MEK_ASSAULT(MEK, 1.0f, 1.0f),
-    MEK_SUPER_HEAVY(MEK, 1.0f, 1.0f),
-    INFANTRY(1.0f, 1.0f),
-    BATTLE_ARMOR(1.0f, 1.0f),
-    VEHICLE(1.0f, 1.0f),
-    AIRCRAFT(1.0f, 1.0f),
-    NAVAL(1.0f, 1.0f),
-    PROTOMEK(1.0f, 1.0f),
-    STATIC(1.0f, 1.0f),
-    DEFAULT(1.0f, 1.0f);
+    MEK_LIGHT("Light Meks", MEK, 1.0f, 1.0f),
+    MEK_MEDIUM("Medium Meks", MEK, 1.0f, 1.0f),
+    MEK_HEAVY("Heavy Meks", MEK, 1.0f, 1.0f),
+    MEK_ASSAULT("Assault Meks", MEK, 1.0f, 1.0f),
+    MEK_SUPER_HEAVY("Superheavy Meks", MEK, 1.0f, 1.0f),
+    INFANTRY("Infantry", 1.0f, 1.0f),
+    BATTLE_ARMOR("Battle armor", 1.0f, 1.0f),
+    VEHICLE("Vehicles", 1.0f, 1.0f),
+    AIRCRAFT("Aircraft", 1.0f, 1.0f),
+    NAVAL("Naval", 1.0f, 1.0f),
+    PROTOMEK("ProtoMeks", 1.0f, 1.0f),
+    STATIC("Static units", 1.0f, 1.0f),
+    DEFAULT("Other models", 1.0f, 1.0f);
 
+    final String label;
+    final float defaultUnitScale;
     float UNIT_SCALE;
     float HEIGHT_SCALE;
     private final UnitFamilyScale parent;
 
-    UnitFamilyScale(float unitScale, float heightScale) {
-        this(null, unitScale, heightScale);
+    UnitFamilyScale(String label, float unitScale, float heightScale) {
+        this(label, null, unitScale, heightScale);
     }
 
-    UnitFamilyScale(UnitFamilyScale parent, float unitScale, float heightScale) {
+    UnitFamilyScale(String label, UnitFamilyScale parent, float unitScale, float heightScale) {
+        this.label = label;
+        defaultUnitScale = unitScale;
         this.parent = parent;
         UNIT_SCALE = unitScale;
         HEIGHT_SCALE = heightScale;

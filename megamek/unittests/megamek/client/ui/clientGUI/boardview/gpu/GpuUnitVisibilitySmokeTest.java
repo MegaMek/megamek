@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -17,11 +19,18 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.HdpiUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.BufferUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.common.board.Coords;
 import org.junit.jupiter.api.Tag;
@@ -48,7 +57,7 @@ class GpuUnitVisibilitySmokeTest {
         assertNull(failure.get(), () -> String.valueOf(failure.get()));
     }
 
-    private void checkVisibility() {
+    private void checkVisibility() throws Exception {
         GpuTerrain terrain = new GpuTerrain();
         GpuAtmosphere atmosphere = new GpuAtmosphere();
         GpuUnitVisibility visibility = new GpuUnitVisibility();
@@ -95,6 +104,8 @@ class GpuUnitVisibilitySmokeTest {
             Pixmap low = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0.25f, captures);
             Pixmap high = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0.75f, captures);
             capture("see-through-ridge.png");
+            assertEquals(0, difference(high, draw(terrain, atmosphere, visibility, batch, camera, scene, units, .75f,
+                  captures, true, 1)), "Restricting the outline to projected bounds must preserve every pixel");
             assertTrue(difference(off, high) > 10000, "A unit behind higher terrain must have a visible silhouette");
             assertTrue(difference(off, high) > difference(off, low) * 2,
                   "Intensity must control both the fill and outline without altering the scene");
@@ -121,6 +132,8 @@ class GpuUnitVisibilitySmokeTest {
             Pixmap partialOn = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0.75f, captures);
             assertTrue(difference(partialOff, partialOn) > 1000, "Partial occlusion must also reveal the hidden section");
             capture("see-through-partial.png");
+            assertEquals(0, difference(partialOn, draw(terrain, atmosphere, visibility, batch, camera, scene, units, .75f,
+                  captures, true, 1)), "The bounds must include the halo around articulated, partially hidden geometry");
 
             // Nearest-surface depth must suppress self-occlusion between the Atlas's arms, torso and legs.
             atlas.place(unit, camera.camera, BoardGeometry.center(new Coords(3, 4), 4), 0, 2, false);
@@ -136,6 +149,35 @@ class GpuUnitVisibilitySmokeTest {
             assertEquals(0, difference(empty, draw(terrain, atmosphere, visibility, batch, camera, scene, List.of(), 1, captures)),
                   "Removed or game-hidden units must leave no stale silhouette");
 
+            // A sprite's transparent hole must be absent from both attachments of the combined capture.
+            Pixmap art = new Pixmap(32, 32, Pixmap.Format.RGBA8888);
+            art.setColor(Color.WHITE); art.fill();
+            art.setBlending(Pixmap.Blending.None);
+            art.setColor(Color.CLEAR); art.fillRectangle(8, 8, 16, 16);
+            Texture texture = new Texture(art);
+            art.dispose();
+            var sprite = GpuUnitModel.sprite(new BoardScene.Pixels(new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB)),
+                  new TextureRegion(texture));
+            try {
+                Vector3 center = BoardGeometry.center(new Coords(3, 2), 1);
+                sprite.instance.transform.setToTranslation(center).scale(.2f, .2f, .2f);
+                draw(terrain, atmosphere, visibility, batch, camera, scene, List.of(sprite.instance), .75f, captures);
+                var target = (FrameBuffer) GpuMixedUnitBenchmarkSmokeTest.field(visibility, "unitColors");
+                target.begin();
+                Pixmap colors = Pixmap.createFromFrameBuffer(0, 0, target.getWidth(), target.getHeight());
+                try {
+                    for (boolean hole : new boolean[] { true, false }) {
+                        Vector3 point = camera.camera.project(new Vector3(center).add(hole ? 0 : 2.4f, 0, 0),
+                              0, 0, target.getWidth(), target.getHeight());
+                        int x = (int) point.x, y = (int) point.y;
+                        var depth = BufferUtils.newFloatBuffer(1);
+                        Gdx.gl.glReadPixels(x, y, 1, 1, GL30.GL_DEPTH_COMPONENT, GL20.GL_FLOAT, depth);
+                        assertEquals(hole ? 0 : 255, colors.getPixel(x, y) & 255, "Color must follow the sprite alpha cutout");
+                        assertEquals(hole, depth.get(0) == 1, "Depth must follow the identical cutout");
+                    }
+                } finally { colors.dispose(); target.end(); }
+            } finally { sprite.dispose(); texture.dispose(); }
+
             // Resize both buffers and exercise depth sharing with fog enabled, then disabled again.
             camera.resize(900, 480);
             camera.setIsometric(true);
@@ -147,6 +189,14 @@ class GpuUnitVisibilitySmokeTest {
                 Pixmap before = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0, captures);
                 Pixmap after = draw(terrain, atmosphere, visibility, batch, camera, scene, units, 0.75f, captures);
                 assertTrue(difference(before, after) > 1000, "See-through must survive viewport resizing and fog changes");
+                assertEquals(0, difference(after, draw(terrain, atmosphere, visibility, batch, camera, scene, units, .75f,
+                      captures, true, 1)), "Resizing and fog must not change the clipping result");
+            }
+            for (float pan : new float[] { -260, 520, -260 }) {
+                camera.pan(pan, 0);
+                Pixmap clipped = draw(terrain, atmosphere, visibility, batch, camera, scene, units, .75f, captures, false, 2);
+                Pixmap full = draw(terrain, atmosphere, visibility, batch, camera, scene, units, .75f, captures, true, 2);
+                assertEquals(0, difference(clipped, full), "Viewport edges and larger UI scale must retain the complete halo");
             }
             Coords wooded = new Coords(3, 2);
             List<BoardScene.Tile> groveTiles = scene.tiles().stream().map(tile -> new BoardScene.Tile(tile.coords(),
@@ -181,21 +231,55 @@ class GpuUnitVisibilitySmokeTest {
 
     private Pixmap draw(GpuTerrain terrain, GpuAtmosphere atmosphere, GpuUnitVisibility visibility, ModelBatch batch,
           BoardCamera camera, BoardScene scene, List<ModelInstance> units, float intensity, List<Pixmap> captures) {
+        return draw(terrain, atmosphere, visibility, batch, camera, scene, units, intensity, captures, false, 1);
+    }
+
+    private Pixmap draw(GpuTerrain terrain, GpuAtmosphere atmosphere, GpuUnitVisibility visibility, ModelBatch batch,
+          BoardCamera camera, BoardScene scene, List<ModelInstance> units, float intensity, List<Pixmap> captures,
+          boolean fullViewport, float scale) {
         terrain.setAtmosphere(atmosphere.lighting());
         // The effect must work with opaque terrain and the building cutaway disabled.
         terrain.animate(0, units, 1);
         terrain.renderShadows(camera.camera, units);
         ScreenUtils.clear(0.02f, 0.03f, 0.04f, 1, true);
-        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0,
-              intensity > 0 && !units.isEmpty());
+        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0);
         terrain.render(camera.camera, false);
         batch.begin(camera.camera);
         units.forEach(unit -> batch.render(unit, terrain.environment()));
         batch.end();
         terrain.renderTransparent(camera.camera);
-        atmosphere.end(camera.camera, terrain, units, scene, 60);
-        atmosphere.restoreDepth(camera.camera, terrain, units);
-        visibility.render(camera.camera, units, atmosphere.depthTexture(), 60, intensity, 1);
+        atmosphere.end(camera.camera, terrain, scene, 60);
+        GL20 original = Gdx.gl;
+        int[] capturesAndScissor = new int[2];
+        GL20 watched = (GL20) Proxy.newProxyInstance(GL20.class.getClassLoader(), new Class<?>[] { GL20.class },
+              (proxy, method, args) -> {
+                  if (method.getName().equals("glClear")) { capturesAndScissor[0]++; }
+                  if (method.getName().equals("glScissor")) {
+                      capturesAndScissor[1] = (int) args[2] * (int) args[3];
+                      if (fullViewport) {
+                          original.glScissor(0, HdpiUtils.toBackBufferY(60), atmosphere.depthTexture().getWidth(),
+                                atmosphere.depthTexture().getHeight());
+                          return null;
+                      }
+                  }
+                  try { return method.invoke(original, args); }
+                  catch (InvocationTargetException error) { throw error.getCause(); }
+              });
+        Gdx.graphics.setGL20(watched);
+        Gdx.gl = Gdx.gl20 = watched;
+        try {
+            visibility.render(camera.camera, units, atmosphere.depthTexture(), 60, intensity, scale);
+            if (capturesAndScissor[1] > 0) {
+                assertEquals(1, capturesAndScissor[0], "Outline depth and team colors must share one geometry capture");
+                if (units.size() == 1 && scale == 1) {
+                    assertTrue(capturesAndScissor[1] < atmosphere.depthTexture().getWidth() * atmosphere.depthTexture().getHeight() / 2,
+                          "A single unit must not scan most of the viewport");
+                }
+            }
+        } finally {
+            Gdx.graphics.setGL20(original);
+            Gdx.gl = Gdx.gl20 = original;
+        }
         Pixmap result = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
         captures.add(result);
         return result;

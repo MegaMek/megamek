@@ -63,6 +63,7 @@ class GpuBoardActionsTest {
             SwingUtilities.invokeAndWait(() -> {
                 menus.set(CommonMenuBar.getMenuBarForGame());
                 menus.get().setPhase(GamePhase.MOVEMENT);
+                menus.get().setBoardView3D(true);
                 menus.get().addActionListener(event -> clicks.incrementAndGet());
                 ClientGUI gui = mock(ClientGUI.class);
                 when(gui.getMenuBar()).thenReturn(menus.get());
@@ -76,8 +77,8 @@ class GpuBoardActionsTest {
                 find(commands.get(), Messages.getString("CommonMenuBar.viewClassicBoard")).action().run();
                 SwingUtilities.invokeAndWait(() -> { });
                 assertEquals(1, clicks.get(), "Returning to classic is a global action, independent of the old phase");
-                SwingUtilities.invokeAndWait(() -> menus.get().setPhase(GamePhase.UNKNOWN));
-                find(commands.get(), Messages.getString("CommonMenuBar.viewGpuBoard")).action().run();
+                SwingUtilities.invokeAndWait(() -> menus.get().setPhase(GamePhase.LOUNGE));
+                find(commands.get(), Messages.getString("CommonMenuBar.viewClassicBoard")).action().run();
                 SwingUtilities.invokeAndWait(() -> { });
                 assertEquals(1, clicks.get(), "An unavailable global menu item must not execute a stale callback");
             } finally {

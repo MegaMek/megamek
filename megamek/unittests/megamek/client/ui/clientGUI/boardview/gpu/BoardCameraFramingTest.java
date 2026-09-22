@@ -24,6 +24,32 @@ class BoardCameraFramingTest {
     }
 
     @Test
+    void unitAndHexNavigationShareTheSelectionSettingAndTakeOverTheEntrance() {
+        var unit = unit(1, 18, 14, 3, 2);
+        List<Consumer<BoardCamera>> navigation = List.of(
+              camera -> camera.frameSelection(unit, 700),
+              camera -> camera.frameLocation(BoardGeometry.center(unit.location().coords(), 3), 700));
+        for (boolean animate : List.of(false, true)) {
+            for (var navigate : navigation) {
+                var camera = camera(55);
+                camera.enter(UnitPlaybackTest.scene(unit));
+                camera.advance(.1f);
+                camera.animateOnSelectionChange = animate;
+                var position = BoardGeometry.center(unit.location().coords(), 3);
+                var before = project(camera, position);
+                navigate.accept(camera);
+                assertEquals(1, camera.entranceOpacity(), "Navigation must cancel the competing startup zoom");
+                assertEquals(animate, camera.isFraming());
+                if (animate) { assertTrue(before.epsilonEquals(project(camera, position), .02f)); }
+                camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+                var settled = camera.focus.cpy();
+                camera.advance(BoardCamera.ENTRANCE_SECONDS);
+                assertEquals(settled, camera.focus, "The startup animation must not resume after navigation");
+            }
+        }
+    }
+
+    @Test
     void animationSettingsIndependentlySnapTheirOwnContextAndFinishAnActiveTransition() {
         var attacker = unit(1, 18, 14, 3, 2);
         var target = unit(2, 26, 17, 3, 2);
@@ -117,6 +143,47 @@ class BoardCameraFramingTest {
         after = project(camera, point);
         assertEquals(before.x, after.x, .02f);
         assertEquals(before.y, after.y, .02f);
+    }
+
+    @Test
+    void unitStripsOnBothSidesShareTheFitAndSelectionViewportWithoutMovingTheBoardOnLayoutChanges() {
+        var unit = unit(1, 18, 14, 3, 2);
+        var camera = camera(55);
+        var position = BoardGeometry.center(unit.location().coords(), 3);
+        var before = project(camera, position);
+        camera.viewableArea(80, 640);
+        assertTrue(before.epsilonEquals(project(camera, position), .02f));
+        camera.frameSelection(unit, 640);
+        camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+        assertEquals(400, project(camera, camera.focus).x, .02f);
+        camera.fit(UnitPlaybackTest.scene(unit));
+        for (var tile : UnitPlaybackTest.scene(unit).tiles()) {
+            for (int corner = 0; corner < 6; corner++) {
+                var point = project(camera, BoardGeometry.corner(tile.coords(), tile.elevation(), corner));
+                assertTrue(point.x > 80 && point.x < 720, "The full map fits between the enemy strip and the dock");
+            }
+        }
+        before = project(camera, position);
+        camera.viewableArea(0, 1200);
+        assertTrue(before.epsilonEquals(project(camera, position), .02f));
+
+        var target = unit(2, 26, 17, 3, 2);
+        var volley = List.of(shot(unit, target));
+        camera.viewableArea(0, 400);
+        camera.frameAttacks(volley, 400);
+        camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+        camera.viewableArea(200, 400);
+        camera.frameAttacks(volley, 400);
+        camera.advance(BoardCamera.CAMERA_FRAMING_SECONDS);
+        for (var participant : List.of(unit, target)) {
+            for (int corner = 0; corner < 6; corner++) {
+                for (float elevation : new float[] { 3, 6 }) {
+                    var point = project(camera, BoardGeometry.corner(participant.location().coords(), elevation, corner));
+                    assertTrue(point.x > 200 && point.x < 600,
+                          "Playback must reframe when the free area shifts, even if its width is unchanged");
+                }
+            }
+        }
     }
 
     private static Vector3 project(BoardCamera camera, Vector3 point) {

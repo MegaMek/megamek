@@ -37,7 +37,7 @@ import megamek.common.Messages;
 
 public enum Light {
     DAY("LIGHT_DAY", "PlanetaryConditions.DisplayableName.Light.Daylight", "\u2600"),
-    DUSK("LIGHT_DUSK", "PlanetaryConditions.DisplayableName.Light.Dusk", "\u263D \u263C"),
+    DUSK_DAWN("LIGHT_DUSK", "PlanetaryConditions.DisplayableName.Light.Dusk", "\u263D \u263C"),
     FULL_MOON("LIGHT_FULL_MOON", "PlanetaryConditions.DisplayableName.Light.FullMoonNight", "\u26AB"),
     GLARE("LIGHT_GLARE", "PlanetaryConditions.DisplayableName.Light.Glare", "\u27E1"),
     MOONLESS("LIGHT_MOONLESS", "PlanetaryConditions.DisplayableName.Light.MoonlessNight", "\u26AA"),
@@ -71,8 +71,8 @@ public enum Light {
         return this == DAY;
     }
 
-    public boolean isDusk() {
-        return this == DUSK;
+    public boolean isDuskDawn() {
+        return this == DUSK_DAWN;
     }
 
     public boolean isFullMoon() {
@@ -95,8 +95,8 @@ public enum Light {
         return this == PITCH_BLACK;
     }
 
-    public boolean isDayOrDusk() {
-        return isDay() || isDusk();
+    public boolean isDayOrDuskDawn() {
+        return isDay() || isDuskDawn();
     }
 
     public boolean isFullMoonOrGlare() {
@@ -120,7 +120,7 @@ public enum Light {
     }
 
     public boolean isDuskOrFullMoonOrMoonlessOrPitchBack() {
-        return isDusk() || isFullMoon() || isMoonless() || isPitchBack();
+        return isDuskDawn() || isFullMoon() || isMoonless() || isPitchBack();
     }
 
     public boolean isFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack() {
@@ -128,7 +128,7 @@ public enum Light {
     }
 
     public boolean isDuskOrFullMoonOrGlareOrMoonlessOrSolarFlareOrPitchBack() {
-        return isDusk() || isFullMoon() || isGlare() || isMoonless() || isSolarFlare() || isPitchBack();
+        return isDuskDawn() || isFullMoon() || isGlare() || isMoonless() || isSolarFlare() || isPitchBack();
     }
 
     public static Light getLight(int i) {

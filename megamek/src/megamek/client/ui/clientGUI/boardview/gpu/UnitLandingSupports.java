@@ -124,6 +124,15 @@ final class UnitLandingSupports {
     }
 
     static float ground(BoardScene scene, float x, float y, BoardSurface.Cache surfaces) {
+        return surface(scene, x, y, surfaces, false);
+    }
+
+    /** The visible hex surface, including liquid, for flat tactical artwork. */
+    static float surface(BoardScene scene, float x, float y, BoardSurface.Cache surfaces) {
+        return surface(scene, x, y, surfaces, true);
+    }
+
+    private static float surface(BoardScene scene, float x, float y, BoardSurface.Cache surfaces, boolean includeLiquid) {
         if (!Float.isFinite(x) || !Float.isFinite(y)) {
             return Float.NaN;
         }
@@ -138,7 +147,8 @@ final class UnitLandingSupports {
                 }
                 float sample = tile.frozen() ? BoardGeometry.surfaceZ(tile)
                       : (surfaces == null ? new BoardSurface(scene, tile) : surfaces.get(scene, tile)).height(x, y);
-                if (!tile.water() || tile.frozen() || sample >= BoardGeometry.waterZ(tile)) {
+                if (includeLiquid && tile.liquid().present()) { sample = Math.max(sample, BoardGeometry.waterZ(tile)); }
+                if (!tile.liquid().present() || tile.frozen() || sample >= BoardGeometry.waterZ(tile)) {
                     height = Math.max(height, sample);
                 }
             }

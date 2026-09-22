@@ -426,7 +426,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
             if (!clientgui.getBoardView(entity).isMovingUnits() && !entity.isOffBoard()) {
                 clientgui.showBoardView(entity.getBoardId());
-                clientgui.getBoardView(entity).centerOnHex(entity.getPosition());
+                clientgui.getBoardView(entity).centerOn(entity);
             }
 
             setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
@@ -1008,7 +1008,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             return;
         }
 
-        clientgui.getBoardView(targ).centerOnHex(targ.getPosition());
+        clientgui.getBoardView(targ).centerOn(targ);
         clientgui.getBoardView(targ).select(targ.getPosition());
 
         target(targ);
@@ -1041,7 +1041,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             return;
         }
 
-        clientgui.getBoardView(targ).centerOnHex(targ.getPosition());
+        clientgui.getBoardView(targ).centerOn(targ);
         clientgui.getBoardView(targ).select(targ.getPosition());
 
         target(targ);
@@ -1508,9 +1508,9 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         if (clientgui.getClient().isMyTurn() && (currentEntity() != null)) {
             clientgui.maybeShowUnitDisplay();
-            IBoardView bv = clientgui.getBoardView(currentEntity());
+            var bv = clientgui.getBoardView(currentEntity());
             if (bv != null) {
-                bv.centerOnHex(currentEntity().getPosition());
+                bv.centerOn(currentEntity());
             }
         }
     }
@@ -1532,7 +1532,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 clientgui.maybeShowUnitDisplay();
                 clientgui.getUnitDisplay().displayEntity(entity);
                 if (entity.isDeployed()) {
-                    clientgui.getBoardView(entity).centerOnHex(entity.getPosition());
+                    clientgui.getBoardView(entity).centerOn(entity);
                 }
             }
         }

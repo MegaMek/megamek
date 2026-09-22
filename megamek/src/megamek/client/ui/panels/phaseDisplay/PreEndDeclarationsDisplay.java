@@ -847,7 +847,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         clientgui.setSelectedEntityNum(entityId);
         clientgui.getUnitDisplay().displayEntity(selected);
         clientgui.getBoardView().highlight(selected.getPosition());
-        clientgui.getBoardView().centerOnHex(selected.getPosition());
+        clientgui.getBoardView().centerOn(selected);
 
         updateButtons();
     }

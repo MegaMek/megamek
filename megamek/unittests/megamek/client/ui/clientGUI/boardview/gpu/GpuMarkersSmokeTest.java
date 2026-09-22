@@ -373,14 +373,13 @@ class GpuMarkersSmokeTest {
         terrain.animate(0, units, 1);
         terrain.renderShadows(camera.camera, units);
         ScreenUtils.clear(0.03f, 0.05f, 0.07f, 1, true);
-        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0, true);
+        atmosphere.begin((int) camera.camera.viewportWidth, (int) camera.camera.viewportHeight, 0);
         terrain.render(camera.camera, false);
         batch.begin(camera.camera);
         objects.forEach(batch::render);
         batch.end();
         terrain.renderTransparent(camera.camera);
-        atmosphere.end(camera.camera, terrain, objects, scene, 0);
-        atmosphere.restoreDepth(camera.camera, terrain, objects);
+        atmosphere.end(camera.camera, terrain, scene, 0);
         visibility.render(camera.camera, outlined, atmosphere.depthTexture(), 0, strength, 1);
         Pixmap result = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
         captures.add(result);

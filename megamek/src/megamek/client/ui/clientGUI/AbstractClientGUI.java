@@ -137,18 +137,18 @@ public abstract class AbstractClientGUI implements IClientGUI, IClientCommandHan
 
     public void handleExit() {
         if (!GUIP.getNoSaveNag()) {
-            int savePrompt = JOptionPane.showConfirmDialog(null,
+            int savePrompt = JOptionPane.showConfirmDialog(getFrame(),
                   Messages.getString("ClientGUI.gameSaveDialogMessage"),
                   Messages.getString("ClientGUI.gameSaveFirst"),
                   JOptionPane.YES_NO_CANCEL_OPTION,
                   JOptionPane.WARNING_MESSAGE);
-            if ((savePrompt == JOptionPane.CANCEL_OPTION)
+            if ((savePrompt == JOptionPane.CANCEL_OPTION) || (savePrompt == JOptionPane.CLOSED_OPTION)
                   || ((savePrompt == JOptionPane.YES_OPTION) && !saveGame())) {
                 // When the user clicked YES but did not actually save the game, don't close the game
                 return;
             }
         } // We should wait here until the save game packet arrives.
-        frame.setVisible(false);
+        getFrame().setVisible(false);
         saveSettings();
         die();
     }

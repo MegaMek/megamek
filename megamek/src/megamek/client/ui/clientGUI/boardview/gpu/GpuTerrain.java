@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -18,9 +19,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -33,10 +36,12 @@ import com.badlogic.gdx.graphics.g3d.Shader;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalShadowLight;
 import com.badlogic.gdx.graphics.g3d.model.Node;
+import com.badlogic.gdx.graphics.g3d.shaders.BaseShader;
 import com.badlogic.gdx.graphics.g3d.shaders.DefaultShader;
 import com.badlogic.gdx.graphics.g3d.utils.DefaultShaderProvider;
 import com.badlogic.gdx.graphics.g3d.utils.DepthShaderProvider;
@@ -58,35 +63,97 @@ final class GpuTerrain implements Disposable {
     static final int CHUNK_SIZE = 16;
     static final int SHADOW_RESOLUTION = 2048;
     static final float DEFAULT_BUILDING_OPACITY = 0.5f;
+    /** A fall curves over its lip and spreads into the water it lands in; both arcs' step count. */
+    private static final int FALL_LIP_SEGMENTS = 4;
+    private static final int FALL_FOOT_SEGMENTS = 4;
+    /** Wall clearance of the hanging sheet, in hex-scale units; the flat fall used the same offset. */
+    private static final float FALL_CLEARANCE = .06f;
     private static final long ATTRIBUTES = VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal
           | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.ColorPacked;
-    private final GpuAssets assets = new GpuAssets();
+    private final GpuAssets assets;
+    private final boolean liquidShaderAnimation;
+    private final boolean proceduralWater;
+    private final Texture rainNoise = rainNoise();
     private final GpuUnitModels unitModels;
     private Model limbModel;
-    private final GpuTextures<Coords> ground = new GpuTextures<>(true);
+    private record GroundSlot(Coords coords, boolean rims) { }
+    private final GpuTextures<GroundSlot> ground = new GpuTextures<>(true);
+    private final BoardRim rims = new BoardRim();
     private final GpuTextures<Coords> decals = new GpuTextures<>();
     private final GpuTextures<Coords> tactical = new GpuTextures<>();
-    private final ModelBatch batch = new ModelBatch(new DefaultShaderProvider() {
-        private final DefaultShader.Config groundShader = new DefaultShader.Config(DefaultShader.getDefaultVertexShader(),
-              Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/terrain-normal.frag").readString());
+    private final GpuTextures<Coords> foliage = new GpuTextures<>(true);
+    private final ModelBatch batch = new ModelBatch(new DefaultShaderProvider(
+          GpuCloudShadow.vertex(DefaultShader.getDefaultVertexShader()),
+          GpuCloudShadow.fragment(DefaultShader.getDefaultFragmentShader(), false)) {
+        private final DefaultShader.Config groundShader = new DefaultShader.Config(config.vertexShader,
+              rainFragment(GpuCloudShadow.fragment(Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/terrain-normal.frag")
+                    .readString(), true)));
+        private final DefaultShader.Config waterShader = new DefaultShader.Config(config.vertexShader,
+              rainFragment(GpuCloudShadow.fragment(Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/water-surface.frag")
+                    .readString(), true)));
+        private final DefaultShader.Config liquidShader = new DefaultShader.Config(config.vertexShader,
+              GpuLiquidShader.fragment(config.fragmentShader));
+        private final DefaultShader.Config waterLiquidShader = new DefaultShader.Config(config.vertexShader,
+              GpuLiquidShader.fragment(waterShader.fragmentShader));
 
         @Override
         protected Shader createShader(Renderable renderable) {
-            if (!renderable.material.has(TextureAttribute.Normal)) {
-                return super.createShader(renderable);
-            }
-            return new DefaultShader(renderable, groundShader) {
+            DefaultShader.Config chosen = renderable.material.has(Ground.TYPE) ? groundShader
+                  : renderable.material.has(GpuLiquidShader.Frame.TYPE)
+                        ? renderable.material.has(GpuWaterShader.TYPE) ? waterLiquidShader : liquidShader
+                  : renderable.material.has(GpuWaterShader.TYPE) ? waterShader : config;
+            DefaultShader result = new DefaultShader(renderable, chosen, GpuCloudShadow.prefix(renderable, chosen)) {
                 private final int normalMapsUniform = register("u_normalMaps");
+                private final int wetnessUniform = register("u_wetness");
+                private final int viewDirectionUniform = register("u_viewDirection");
+                private final int rainNoiseUniform = register("u_rainNoise");
+                private final int rainScaleUniform = register("u_rainScale");
+                private final int rainTimeUniform = register("u_rainTime");
+                private final int rippleDetailUniform = register("u_rippleDetail");
+                private final int rainDetailUniform = register("u_rainDetail");
+                private final int skyUniform = register("u_rainSky");
+                private final int horizonUniform = register("u_rainHorizon");
+                private final int waterEffectsUniform = register("u_waterEffects");
 
                 @Override
                 public void begin(Camera camera, RenderContext context) {
                     super.begin(camera, context);
                     set(normalMapsUniform, normalMaps ? 1f : 0f);
+                    set(wetnessUniform, wetness);
+                    set(viewDirectionUniform, camera.direction);
+                    set(waterEffectsUniform, waterEffects ? 1f : 0f);
+                    if (chosen == groundShader || chosen == waterShader || chosen == waterLiquidShader) {
+                        set(rainNoiseUniform, rainNoise);
+                        set(rainScaleUniform, 1f / BoardGeometry.WIDTH);
+                        set(rainTimeUniform, clock);
+                        float zoom = camera instanceof OrthographicCamera ortho ? ortho.zoom : 1;
+                        float hexPixels = BoardGeometry.WIDTH * Gdx.graphics.getBackBufferWidth()
+                              / (camera.viewportWidth * zoom);
+                        set(rippleDetailUniform, MathUtils.clamp((hexPixels * Math.abs(camera.direction.z) - 28) / 60, 0, 1));
+                        set(rainDetailUniform, MathUtils.clamp((hexPixels - 12) / 28, 0, 1));
+                        Color sky = atmosphere == null ? Color.GRAY : atmosphere.sky();
+                        Color horizon = atmosphere == null ? Color.LIGHT_GRAY : atmosphere.horizon();
+                        set(skyUniform, sky.r, sky.g, sky.b);
+                        set(horizonUniform, horizon.r, horizon.g, horizon.b);
+                    }
                 }
             };
+            GpuCloudShadow.register(result);
+            GpuLiquidShader.register(result);
+            GpuWaterShader.register(result);
+            result.register("u_groundResponse", new BaseShader.LocalSetter() {
+                @Override
+                public void set(BaseShader target, int id, Renderable renderable, Attributes attributes) {
+                    Ground ground = attributes.get(Ground.class, Ground.TYPE);
+                    if (ground != null) { target.set(id, ground.value); }
+                }
+            });
+            return result;
         }
     });
-    private final ModelBatch depthBatch = new ModelBatch(new DepthShaderProvider(), new GpuOpaqueSorter());
+    private final ModelBatch depthBatch = new ModelBatch(new DepthShaderProvider(null,
+          Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/shadow-depth.frag").readString()),
+          new GpuOpaqueSorter());
     private final Environment environment = new Environment();
     private final List<Chunk> chunks = new ArrayList<>();
     private final List<Model> shadowModels = new ArrayList<>();
@@ -95,7 +162,12 @@ final class GpuTerrain implements Disposable {
     private final Map<Model, List<Vector3>> featureTriangles = new HashMap<>();
     private final BoundingBox shadowBounds = new BoundingBox();
     private final Matrix4 shadowView = new Matrix4();
+    private final Matrix4 shadowProjection = new Matrix4();
+    private final OrthographicCamera shadowFit = new OrthographicCamera();
+    private final UnitBounds.Frame frameBounds;
+    private boolean shadowViewPresent;
     private List<BoardScene.Tile> tiles;
+    private Map<Coords, BoardFlow.Current> currents = Map.of();
     private BoardScene.Light light;
     private BoardAtmosphere.Lighting atmosphere;
     private DirectionalShadowLight shadow;
@@ -106,16 +178,71 @@ final class GpuTerrain implements Disposable {
     private int chunkRows;
     private float buildingOpacity = DEFAULT_BUILDING_OPACITY;
     private boolean normalMaps = true;
+    private boolean waterEffects = true;
+    private float wetness;
     private float detailPixelsPerUnit = Float.NaN;
     private boolean hasCutaways;
+    private boolean flatTrees;
+
+    /** Tiny shared, mipmapped field: mask and sky variation; allocated once, never updated per frame. */
+    private static Texture rainNoise() {
+        Pixmap pixels = new Pixmap(64, 64, Pixmap.Format.RGBA8888);
+        Random random = new Random(0x7261696eL);
+        Random waterRandom = new Random(0x7761746572L);
+        try {
+            for (int y = 0; y < 64; y++) {
+                for (int x = 0; x < 64; x++) {
+                    int value = random.nextInt(256);
+                    // Keep the existing red-channel puddle field; water borrows independent green/blue noise.
+                    pixels.drawPixel(x, y, (value << 24) | (waterRandom.nextInt(256) << 16) | (waterRandom.nextInt(256) << 8) | 255);
+                }
+            }
+            Texture texture = new Texture(pixels, true);
+            texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
+            texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+            return texture;
+        } finally {
+            pixels.dispose();
+        }
+    }
+
+    /** Ground and water use the same rain field, lighting and geometry-shadow response. */
+    private static String rainFragment(String source) {
+        String functions = Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/rain-surface.glsl").readString();
+        functions += Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/surface-lighting.glsl").readString();
+        return source.replace("void main() {", functions + "\nvoid main() {");
+    }
 
     GpuTerrain() {
         this(null);
     }
 
+    /** Lets native integration checks exercise the GIF fallback without changing the production constant. */
+    GpuTerrain(boolean liquidShaderAnimation) {
+        this(liquidShaderAnimation, false);
+    }
+
+    /** Native A/B checks share all effects and differ only in the source of the water color. */
+    GpuTerrain(boolean liquidShaderAnimation, boolean proceduralWater) {
+        this(null, null, liquidShaderAnimation, proceduralWater);
+    }
+
     /** The battle view owns this library; terrain borrows the equipment buffers without disposing them. */
     GpuTerrain(GpuUnitModels unitModels) {
+        this(unitModels, null);
+    }
+
+    /** Borrow the battle view's bounds only between its post-animation begin and the end of that render frame. */
+    GpuTerrain(GpuUnitModels unitModels, UnitBounds.Frame frameBounds) {
+        this(unitModels, frameBounds, GpuLiquidShader.USE_SHADER_ANIMATION, GpuWaterShader.USE_PROCEDURAL_WATER);
+    }
+
+    private GpuTerrain(GpuUnitModels unitModels, UnitBounds.Frame frameBounds, boolean liquidShaderAnimation, boolean proceduralWater) {
         this.unitModels = unitModels;
+        this.frameBounds = frameBounds;
+        this.liquidShaderAnimation = liquidShaderAnimation;
+        this.proceduralWater = proceduralWater;
+        assets = new GpuAssets();
     }
 
     private static final class Prop {
@@ -141,7 +268,21 @@ final class GpuTerrain implements Disposable {
         boolean tree() { return treeAsset != null; }
 
     }
-    private record WaterSurface(Material material, int depth, boolean falling) { }
+    private record LiquidSurface(Material material, BoardLiquid.Textures source, boolean falling, BoardFlow.Current current) { }
+
+    /** Marks exposed ground and carries its water-film response; negative excludes snow, ice and water. */
+    private static final class Ground extends FloatAttribute {
+        static final long TYPE = register("boardGround");
+
+        Ground(float response) {
+            super(TYPE, response);
+        }
+
+        @Override
+        public Ground copy() {
+            return new Ground(value);
+        }
+    }
 
     private static final class Chunk implements Disposable {
         final List<ModelInstance> opaque = new ArrayList<>();
@@ -150,8 +291,9 @@ final class GpuTerrain implements Disposable {
         boolean scatterVisible = true;
         final List<ModelInstance> overlays = new ArrayList<>();
         final List<ModelInstance> water = new ArrayList<>();
-        final List<WaterSurface> waterMaterials = new ArrayList<>();
+        final List<LiquidSurface> liquidMaterials = new ArrayList<>();
         final List<ModelInstance> tactical = new ArrayList<>();
+        final List<ModelInstance> flatTrees = new ArrayList<>();
         final List<Prop> props = new ArrayList<>();
         final List<Prop> cutaways = new ArrayList<>();
         final List<Array<Renderable>> treeRenderables = List.of(new Array<>(), new Array<>(), new Array<>());
@@ -251,7 +393,7 @@ final class GpuTerrain implements Disposable {
             disposePropMeshes(propRenderables);
             disposePropMeshes(shadowPropRenderables);
             treeRenderables.forEach(Chunk::disposePropMeshes);
-            for (List<ModelInstance> layer : List.of(opaque, scatter, overlays, water, tactical)) {
+            for (List<ModelInstance> layer : List.of(opaque, scatter, overlays, water, tactical, flatTrees)) {
                 layer.forEach(instance -> instance.model.dispose());
             }
         }
@@ -290,12 +432,14 @@ final class GpuTerrain implements Disposable {
             tuning = nextTuning;
             return;
         }
-        Map<Coords, BoardScene.Pixels> terrainPixels = new HashMap<>();
-        Map<Coords, BoardScene.Pixels> normalPixels = new HashMap<>();
+        Map<GroundSlot, BoardScene.Pixels> terrainPixels = new HashMap<>();
+        Map<GroundSlot, BoardScene.Pixels> normalPixels = new HashMap<>();
         Map<Coords, BoardScene.Pixels> decalPixels = new HashMap<>();
         Map<Coords, BoardScene.Pixels> tacticalPixels = new HashMap<>();
+        Map<Coords, BoardScene.Pixels> foliagePixels = new HashMap<>();
         float nextFloor = BoardGeometry.floor(scene);
         boolean rebuildAll = changedTuning || tiles == null || tiles.size() != scene.tiles().size() || nextFloor != floor;
+        boolean changedFlow = rebuildAll;
         Set<Coords> changedChunks = new HashSet<>();
         for (int index = 0; index < scene.tiles().size(); index++) {
             BoardScene.Tile tile = scene.tiles().get(index);
@@ -304,9 +448,18 @@ final class GpuTerrain implements Disposable {
                 var limb = unitModels.equipment("Limb Club");
                 limbModel = limb == null ? null : limb.model();
             }
-            terrainPixels.put(tile.coords(), tile.ground());
+            BoardRim.Images material = rims.material(scene, tile, nextFloor, assets);
+            GroundSlot topSlot = new GroundSlot(tile.coords(), true);
+            GroundSlot baseSlot = new GroundSlot(tile.coords(), false);
+            terrainPixels.put(topSlot, material.color());
+            // Riverbanks borrow adjacent ground art, never its cliff-top decoration.
+            // The atlas shares these slots whenever the top has no rim.
+            terrainPixels.put(baseSlot, tile.ground());
+            if (material.normal() != null) {
+                normalPixels.put(topSlot, material.normal());
+            }
             if (tile.normals() != null) {
-                normalPixels.put(tile.coords(), tile.normals());
+                normalPixels.put(baseSlot, tile.normals());
             }
             if (decals(tile) != null) {
                 decalPixels.put(tile.coords(), decals(tile));
@@ -314,11 +467,14 @@ final class GpuTerrain implements Disposable {
             if (tile.tactical() != null) {
                 tacticalPixels.put(tile.coords(), tile.tactical());
             }
+            if (tile.foliage() != null) { foliagePixels.put(tile.coords(), tile.foliage()); }
             if (!rebuildAll) {
                 if (changedLimbScale && tile.features().stream().anyMatch(feature -> feature.kind() == BoardScene.FeatureKind.LIMB)) {
                     dirtyChunk(changedChunks, tile.coords());
                 }
                 BoardScene.Tile before = tiles.get(index);
+                changedFlow |= !before.coords().equals(tile.coords()) || before.elevation() != tile.elevation()
+                      || before.frozen() != tile.frozen() || !before.liquid().equals(tile.liquid());
                 // Rim vertex colors come from the selected ground artwork, not the atlas texture.
                 if (!before.ground().equals(tile.ground())) {
                     dirtyChunk(changedChunks, tile.coords());
@@ -327,6 +483,7 @@ final class GpuTerrain implements Disposable {
                     rebuildAll = true;
                 } else if (before.elevation() != tile.elevation()
                       || before.waterDepth() != tile.waterDepth() || before.frozen() != tile.frozen()
+                      || !before.liquid().equals(tile.liquid())
                       || before.roadExits() != tile.roadExits()
                       || before.surface() != tile.surface()
                       || !before.features().equals(tile.features())) {
@@ -340,8 +497,20 @@ final class GpuTerrain implements Disposable {
                 }
             }
         }
+        if (changedFlow) {
+            Map<Coords, BoardFlow.Current> next = BoardFlow.calculate(scene);
+            // An outlet edit can reverse a distant flat reach, beyond the edited hex's immediate neighbors.
+            Set<Coords> affected = new HashSet<>(currents.keySet());
+            affected.addAll(next.keySet());
+            for (Coords coords : affected) {
+                if (!Objects.equals(currents.get(coords), next.get(coords))) { dirtyChunk(changedChunks, coords); }
+            }
+            currents = next;
+        }
+        rims.retainUsed();
         rebuildAll |= ground.update(terrainPixels, normalPixels);
         rebuildAll |= decals.update(decalPixels);
+        rebuildAll |= foliage.update(foliagePixels);
         boolean markingsChanged = tactical.update(tacticalPixels);
         tiles = scene.tiles();
         tuning = nextTuning;
@@ -385,75 +554,109 @@ final class GpuTerrain implements Disposable {
         Layer scatter = new Layer();
         Material scatterMaterial = new Material(ColorAttribute.createDiffuse(Color.WHITE));
         Layer overlay = new Layer();
+        Layer trees = new Layer();
         Layer liquid = new Layer();
+        Map<String, LiquidSurface> animations = new HashMap<>();
         for (int x = startX; x < Math.min(scene.width(), startX + CHUNK_SIZE); x++) {
             for (int y = startY; y < Math.min(scene.height(), startY + CHUNK_SIZE); y++) {
                 BoardScene.Tile tile = scene.tile(new Coords(x, y));
                 BoardSurface surface = new BoardSurface(scene, tile);
-                TextureRegion top = ground.region(tile.coords());
+                TextureRegion top = ground.region(new GroundSlot(tile.coords(), true));
                 for (BoardSurface.Face face : surface.faces) {
-                    boolean artwork = face.finish() == BoardSurface.Finish.TOP || face.finish() == BoardSurface.Finish.ICE
-                          || face.finish() == BoardSurface.Finish.SHORE;
+                    boolean artwork = !tile.liquid().molten() && (face.finish() == BoardSurface.Finish.TOP
+                          || face.finish() == BoardSurface.Finish.ICE || face.finish() == BoardSurface.Finish.SHORE);
                     BoardScene.Tile land = face.landEdge() < 0 ? null
                           : scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(face.landEdge())));
-                    if (land != null && !land.water()) {
-                        TextureRegion bankArt = ground.region(land.coords());
-                        solid.add(groundMaterial(bankArt.getTexture()),
+                    if (land != null && !land.liquid().present()) {
+                        TextureRegion bankArt = ground.region(new GroundSlot(land.coords(), false));
+                        solid.add(groundMaterial(bankArt.getTexture(), land),
                               mesh -> bank(mesh, tile.coords(), face, land.coords(), bankArt));
                     } else {
-                        Texture texture = artwork ? top.getTexture()
-                              : assets.material(face.finish() == BoardSurface.Finish.BED ? "bed" : tile.water() ? "terrain/sand" : tile.surface().wall);
-                        solid.add(artwork ? groundMaterial(texture) : material(texture, false),
+                        Texture texture = artwork ? top.getTexture() : assets.material(tile.liquid().molten() ? "terrain/rock"
+                              : face.finish() == BoardSurface.Finish.BED ? "bed"
+                              : tile.liquid().present() ? "terrain/sand" : tile.surface().wall);
+                        solid.add(artwork ? groundMaterial(texture, tile) : material(texture, false),
                               mesh -> surface(mesh, tile.coords(), face, artwork ? top : null, 0));
                     }
                     chunk.bounds.ext(face.a()).ext(face.b()).ext(face.c());
                     if (face.finish() == BoardSurface.Finish.SHORE) {
-                        overlay.add(material(assets.material("terrain/sand"), true), mesh -> shore(mesh, tile, face));
+                        overlay.add(material(assets.material(tile.liquid().molten() ? "terrain/rock" : "terrain/sand"), true),
+                              mesh -> shore(mesh, tile, face));
                     }
                     if (decals(tile) != null && artwork) {
                         TextureRegion art = decals.region(tile.coords());
                         overlay.add(material(art.getTexture(), true), mesh -> surface(mesh, tile.coords(), face, art, 0.08f));
                     }
                 }
-                if (!tile.water() && tile.roadExits() == 0 && surface.ramps == 0 && BoardGeometry.tuning().gridShade() < 1) {
-                    solid.add(groundMaterial(top.getTexture()),
+                if (tile.foliage() != null) {
+                    TextureRegion art = foliage.region(tile.coords());
+                    trees.add(material(art.getTexture(), true), mesh -> foliage(mesh, tile, art));
+                    float height = BoardGeometry.surfaceZ(tile) + .16f * BoardGeometry.HEX_SCALE;
+                    chunk.bounds.ext(BoardGeometry.centerX(tile.coords()) - BoardGeometry.WIDTH / 2,
+                          BoardGeometry.centerY(tile.coords()) - BoardGeometry.HEIGHT / 2, height);
+                    chunk.bounds.ext(BoardGeometry.centerX(tile.coords()) + BoardGeometry.WIDTH / 2,
+                          BoardGeometry.centerY(tile.coords()) + BoardGeometry.HEIGHT / 2, height);
+                }
+                if (!tile.liquid().present() && tile.roadExits() == 0 && surface.ramps == 0 && BoardGeometry.tuning().gridShade() < 1) {
+                    solid.add(groundMaterial(top.getTexture(), tile),
                           mesh -> grid(mesh, tile.coords(), BoardGeometry.groundZ(tile), top));
                 }
                 for (BoardSurface.Side side : surface.sides(scene, floor)) {
                     Texture wall = assets.material(tile.surface().wall);
                     solid.add(material(wall, false), mesh -> wall(mesh, side));
                     chunk.bounds.ext(side.a().x, side.a().y, side.lowA()).ext(side.b().x, side.b().y, side.lowB());
-                    if (!tile.water()) {
+                    if (!tile.liquid().present()) {
                         overlay.add(material(assets.material(tile.surface().rim), true), mesh -> cornice(mesh, tile, side));
-                        Material incline = material(assets.incline(tile.surface()), true);
-                        incline.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.62f));
-                        overlay.add(incline, mesh -> incline(mesh, surface, side));
                     }
                 }
                 if (!surface.water.isEmpty()) {
-                    Material water = material(assets.water(tile.waterDepth(), 0), true);
-                    water.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.48f));
-                    water.id = "water-" + tile.waterDepth();
-                    TextureRegion waterArt = new TextureRegion(assets.water(tile.waterDepth(), 0));
+                    BoardLiquid.Textures source = tile.liquid().textures(tile.waterDepth(), tile.elevation());
+                    BoardFlow.Current current = currents.getOrDefault(tile.coords(), BoardFlow.Current.STILL);
+                    Material water = liquidMaterial(scene, surface, source, false, current);
+                    water.id += ":" + current;
+                    boolean animatedFrames = !proceduralWater || tile.liquid().molten();
+                    if (animatedFrames) { animations.put(water.id, new LiquidSurface(water, source, false, current)); }
+                    TextureRegion waterArt = new TextureRegion(water.get(TextureAttribute.class, TextureAttribute.Diffuse).textureDescription.texture);
+                    // Molten material writes opaque depth; water and hazardous pools reveal their beds and units.
+                    Layer destination = tile.liquid().molten() ? solid : liquid;
                     for (BoardSurface.Face face : surface.waterFaces) {
-                        liquid.add(water, mesh -> surface(mesh, tile.coords(), face, waterArt, 0));
+                        destination.add(water, mesh -> surface(mesh, tile.coords(), face, waterArt, 0));
                         chunk.bounds.ext(face.a()).ext(face.b()).ext(face.c());
                     }
+                    GpuWaterShader waterSurface = water.get(GpuWaterShader.class, GpuWaterShader.TYPE);
+                    if (waterSurface != null) {
+                        for (GpuWaterShader.Impact impact : waterSurface.impacts) {
+                            destination.add(water, mesh -> splash(mesh, impact));
+                            chunk.bounds.ext(impact.center().x, impact.center().y, impact.center().z + impact.radius());
+                        }
+                    }
                     if (!surface.waterfalls.isEmpty()) {
-                        Material fall = material(assets.water(tile.waterDepth(), 0), true);
-                        fall.id = "falls-" + tile.waterDepth();
-                        fall.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.8f));
+                        Material fall = liquidMaterial(scene, surface, source, true, BoardFlow.Current.STILL);
+                        if (animatedFrames) { animations.put(fall.id, new LiquidSurface(fall, source, true, BoardFlow.Current.STILL)); }
+                        Material back = null;
+                        if (!tile.liquid().molten()) {
+                            fall.set(IntAttribute.createCullFace(GL20.GL_BACK));
+                            // Keep the inward face visible through the upper surface, with half the front's opacity.
+                            back = new Material(fall);
+                            back.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA, 0.4f));
+                            back.set(IntAttribute.createCullFace(GL20.GL_FRONT));
+                        }
                         for (BoardSurface.Side drop : surface.waterfalls) {
-                            liquid.add(fall, mesh -> waterfall(mesh, drop));
-                            chunk.bounds.ext(drop.a().x, drop.a().y, drop.lowA());
-                            chunk.bounds.ext(drop.b().x, drop.b().y, drop.lowB());
+                            destination.add(fall, mesh -> waterfall(mesh, drop));
+                            if (back != null) { destination.add(back, mesh -> waterfall(mesh, drop)); }
+                            // The landing water spreads into the receiving hex, so its reach belongs in the bounds.
+                            Vector3 outward = fallOutward(drop);
+                            float spread = .5f * BoardSurface.fallLip(drop.a().z, drop.lowA())
+                                  + FALL_CLEARANCE * BoardGeometry.HEX_SCALE;
+                            chunk.bounds.ext(drop.a().x + outward.x * spread, drop.a().y + outward.y * spread, drop.lowA());
+                            chunk.bounds.ext(drop.b().x + outward.x * spread, drop.b().y + outward.y * spread, drop.lowB());
                         }
                     }
                 }
                 for (BoardScene.Feature feature : tile.features()) {
                     if (feature.kind() == BoardScene.FeatureKind.SCATTER) {
                         // Road approaches can extend into a hex that has no road terrain of its own.
-                        if (!tile.water() && surface.ramps == 0) {
+                        if (!tile.liquid().present() && surface.ramps == 0) {
                             scatter.add(scatterMaterial, mesh -> GpuScatter.build(mesh, tile, surface, feature));
                             chunk.scatterDiameter = Math.max(chunk.scatterDiameter, GpuScatter.diameter(feature));
                             chunk.bounds.ext(BoardGeometry.centerX(tile.coords()), BoardGeometry.centerY(tile.coords()),
@@ -513,15 +716,20 @@ final class GpuTerrain implements Disposable {
         solid.finish(chunk.opaque);
         scatter.finish(chunk.scatter);
         overlay.finish(chunk.overlays);
+        trees.finish(chunk.flatTrees);
         liquid.finish(chunk.water);
         // The floating markings remain visible when only their raised edge enters the viewport.
         chunk.bounds.ext(chunk.bounds.max.x, chunk.bounds.max.y, chunk.bounds.max.z + BoardGeometry.LEVEL / 3);
         buildMarkings(scene, chunk, startX, startY);
         // ModelInstance copies materials; animate those owned by the rendered instances.
-        for (ModelInstance instance : chunk.water) {
-            for (Material material : instance.materials) {
-                chunk.waterMaterials.add(new WaterSurface(material, Integer.parseInt(material.id.substring(6)),
-                      material.id.startsWith("falls-")));
+        for (List<ModelInstance> layer : List.of(chunk.opaque, chunk.water)) {
+            for (ModelInstance instance : layer) {
+                for (Material material : instance.materials) {
+                    LiquidSurface animation = animations.get(material.id);
+                    if (animation != null) {
+                        chunk.liquidMaterials.add(new LiquidSurface(material, animation.source(), animation.falling(), animation.current()));
+                    }
+                }
             }
         }
         for (Prop prop : chunk.props) {
@@ -555,8 +763,17 @@ final class GpuTerrain implements Disposable {
         marks.finish(chunk.tactical);
     }
 
-    private Material groundMaterial(Texture texture) {
+    private Material groundMaterial(Texture texture, BoardScene.Tile tile) {
         Material material = material(texture, false);
+        float response = tile.liquid().present() || tile.frozen() ? -1 : switch (tile.surface()) {
+            case SNOW -> -1;
+            case SAND -> 0.05f;
+            case DIRT -> 0.15f;
+            case GRASS -> 0.25f;
+            case ROCK -> 0.7f;
+            case CONCRETE -> 1;
+        };
+        material.set(new Ground(response));
         Texture normal = ground.normal(texture);
         if (normal != null) {
             material.set(TextureAttribute.createNormal(normal));
@@ -574,14 +791,40 @@ final class GpuTerrain implements Disposable {
         return material;
     }
 
+    private Material liquidMaterial(BoardScene scene, BoardSurface surface, BoardLiquid.Textures source, boolean falling, BoardFlow.Current current) {
+        BoardLiquid liquid = surface.tile.liquid();
+        boolean procedural = proceduralWater && !liquid.molten();
+        Texture texture = procedural ? rainNoise : assets.liquid(source, 0);
+        Material material = material(texture, !liquid.molten());
+        material.id = (falling ? "falls:" : "liquid:") + liquid.kind() + ":" + source.base() + ":" + source.foam();
+        if (liquidShaderAnimation && !procedural) {
+            material.set(new GpuLiquidShader.Frame(texture), new FloatAttribute(GpuLiquidShader.Frame.BLEND, 0));
+        }
+        if (liquid.molten()) {
+            material.set(ColorAttribute.createDiffuse(0.35f, 0.35f, 0.35f, 1));
+            material.set(TextureAttribute.createEmissive(texture), ColorAttribute.createEmissive(0.65f, 0.65f, 0.65f, 1));
+        } else {
+            material.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA,
+                  falling ? 0.8f : GpuWaterShader.SURFACE_OPACITY));
+            if (falling) { material.set(ColorAttribute.createAmbient(assets.materialTint("bed"))); }
+            GpuWaterShader water = new GpuWaterShader(scene, surface, procedural, falling, current);
+            material.set(water);
+            if (!water.impacts.isEmpty()) { material.id += ":splash:" + surface.tile.coords(); }
+            if (liquid.kind() == BoardLiquid.Kind.HAZARDOUS) {
+                material.set(ColorAttribute.createDiffuse(0.4f, 1, 0.12f, 1));
+            }
+        }
+        return material;
+    }
+
     private static MeshPartBuilder.VertexInfo vertex(Vector3 p, Vector3 normal, float u, float v, Color color) {
         return new MeshPartBuilder.VertexInfo().setPos(p).setNor(normal).setUV(u, v).setCol(color);
     }
 
     private static MeshPartBuilder.VertexInfo topVertex(Vector3 p, Coords coords, TextureRegion region, Color color) {
         // Sample just inside the artwork's alpha border, without moving the actual geometry.
-        float u = 0.5f + (p.x - BoardGeometry.centerX(coords)) / BoardGeometry.WIDTH * 0.96f;
-        float v = 0.5f - (p.y - BoardGeometry.centerY(coords)) / BoardGeometry.HEIGHT * 0.96f;
+        float u = 0.5f + (p.x - BoardGeometry.centerX(coords)) / BoardGeometry.WIDTH * BoardRim.GROUND_UV_SCALE;
+        float v = 0.5f - (p.y - BoardGeometry.centerY(coords)) / BoardGeometry.HEIGHT * BoardRim.GROUND_UV_SCALE;
         return vertex(p, Vector3.Z, region.getU() + u * (region.getU2() - region.getU()),
               region.getV() + v * (region.getV2() - region.getV()), color);
     }
@@ -605,6 +848,17 @@ final class GpuTerrain implements Disposable {
         float v = 0.5f - (point.y - BoardGeometry.centerY(coords)) / BoardGeometry.HEIGHT;
         return vertex(point, Vector3.Z, region.getU() + u * (region.getU2() - region.getU()),
               region.getV() + v * (region.getV2() - region.getV()), Color.WHITE);
+    }
+
+    /** Preserve the full transparent sprite: canopies extend beyond the hex's diagonal edges. */
+    private static void foliage(MeshPartBuilder mesh, BoardScene.Tile tile, TextureRegion art) {
+        var center = BoardGeometry.center(tile.coords(), 0);
+        center.z = BoardGeometry.surfaceZ(tile) + .16f * BoardGeometry.HEX_SCALE;
+        float halfWidth = BoardGeometry.WIDTH / 2, halfHeight = BoardGeometry.HEIGHT / 2;
+        mesh.rect(markingVertex(new Vector3(center).add(-halfWidth, -halfHeight, 0), tile.coords(), art),
+              markingVertex(new Vector3(center).add(halfWidth, -halfHeight, 0), tile.coords(), art),
+              markingVertex(new Vector3(center).add(halfWidth, halfHeight, 0), tile.coords(), art),
+              markingVertex(new Vector3(center).add(-halfWidth, halfHeight, 0), tile.coords(), art));
     }
 
     private static void surface(MeshPartBuilder mesh, Coords coords, BoardSurface.Face face,
@@ -688,35 +942,6 @@ final class GpuTerrain implements Disposable {
               + 3 * (float) Math.sin(y * 0.65f - x * 0.43f)) * BoardGeometry.HEX_SCALE;
     }
 
-    /** Orient one material's 08 edge patch on each exposed segment, leaving road mouths open. */
-    private static void incline(MeshPartBuilder mesh, BoardSurface surface, BoardSurface.Side side) {
-        Vector3 a = BoardGeometry.corner(surface.tile.coords(), surface.tile.elevation(), side.edge());
-        Vector3 b = BoardGeometry.corner(surface.tile.coords(), surface.tile.elevation(), side.edge() + 1);
-        Vector3 along = new Vector3(b).sub(a).nor();
-        Vector3 inward = new Vector3(Vector3.Z).crs(along);
-        float length = a.dst(b);
-        for (BoardSurface.Face face : surface.faces) {
-            if (face.finish() != BoardSurface.Finish.TOP) {
-                continue;
-            }
-            List<Vector3> polygon = List.of(face.a(), face.b(), face.c());
-            // Keep the original artwork's footprint, rotated onto the actual top surface.
-            polygon = clip(polygon, inward, a.dot(inward) + 26 * BoardGeometry.HEX_SCALE, false);
-            if (!side.a().epsilonEquals(a, 0.02f)) {
-                polygon = clip(polygon, along, side.a().dot(along), true);
-            }
-            if (!side.b().epsilonEquals(b, 0.02f)) {
-                polygon = clip(polygon, along, side.b().dot(along), false);
-            }
-            Vector3 normal = new Vector3(face.b()).sub(face.a()).crs(new Vector3(face.c()).sub(face.a())).nor();
-            for (int index = 1; index + 1 < polygon.size(); index++) {
-                mesh.triangle(inclineVertex(polygon.getFirst(), a, along, inward, normal, length),
-                      inclineVertex(polygon.get(index), a, along, inward, normal, length),
-                      inclineVertex(polygon.get(index + 1), a, along, inward, normal, length));
-            }
-        }
-    }
-
     private static MeshPartBuilder.VertexInfo corniceVertex(Vector3 edge, float depth, float fullDepth,
           Vector3 normal, float u, Color color) {
         Vector3 point = new Vector3(edge).add(0, 0, -depth).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
@@ -746,46 +971,81 @@ final class GpuTerrain implements Disposable {
         return weight == 0 ? new Color(Color.WHITE) : new Color(red / weight, green / weight, blue / weight, 1);
     }
 
+    /** Outward plane of a fall, shared with its wall: away from the higher hex, into the receiving one. */
+    private static Vector3 fallOutward(BoardSurface.Side drop) {
+        return new Vector3(drop.b().x - drop.a().x, drop.b().y - drop.a().y, 0).crs(Vector3.Z).nor();
+    }
+
+    /** Unit normal along a fall's profile: angle zero faces along the surface, ninety degrees along the sheet. */
+    private static Vector3 arcNormal(Vector3 outward, float angle) {
+        return new Vector3(outward).scl(MathUtils.sin(angle)).add(0, 0, MathUtils.cos(angle));
+    }
+
+    /** Angle zero lies on the water surface, ninety degrees on the hanging sheet; the centre sits below. */
+    private static Vector3 lipPoint(Vector3 mouth, Vector3 outward, float lip, float reach, float angle) {
+        return new Vector3(mouth.x, mouth.y, mouth.z - reach).mulAdd(outward, -lip)
+              .mulAdd(arcNormal(outward, angle), reach);
+    }
+
+    /** Angle zero meets the receiving surface, ninety degrees joins the hanging sheet; the centre sits outside. */
+    private static Vector3 footPoint(Vector3 sheet, float surface, Vector3 outward, float foot, float angle) {
+        return new Vector3(sheet.x, sheet.y, surface + foot).mulAdd(outward, foot)
+              .mulAdd(arcNormal(outward, angle), -foot);
+    }
+
+    private static MeshPartBuilder.VertexInfo arcVertex(Vector3 point, Vector3 normal, float u, float repeat) {
+        return vertex(point, normal, u, point.z / repeat, Color.WHITE);
+    }
+
+    /**
+     * A fall leaves the upper surface inside its mouth and lands inside the receiving hex. The water stops short
+     * of the shared edge, the sheet curves over that gap to the edge's own plane, hangs there and then spreads
+     * into the water it lands in, so nothing is left hanging beyond the mouth. Only positions move: V stays
+     * proportional to world height, so the animated downward scroll keeps its speed and the lip cannot break the
+     * pool's palette mixture.
+     */
     private static void waterfall(MeshPartBuilder mesh, BoardSurface.Side drop) {
-        Vector3 normal = new Vector3(drop.b()).sub(drop.a()).crs(Vector3.Z).nor();
-        Vector3 a = new Vector3(drop.a()).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
-        Vector3 b = new Vector3(drop.b()).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
+        Vector3 outward = fallOutward(drop);
+        float clearance = FALL_CLEARANCE * BoardGeometry.HEX_SCALE;
         float repeat = 48 * BoardGeometry.HEX_SCALE;
-        float u = a.dst(b) / (24 * BoardGeometry.HEX_SCALE);
-        // Increasing V samples upward in world space. A positive animated offset makes the artwork fall downward.
-        mesh.rect(vertex(a, normal, 0, a.z / repeat, Color.WHITE),
-              vertex(new Vector3(a.x, a.y, drop.lowA()), normal, 0, drop.lowA() / repeat, Color.WHITE),
-              vertex(new Vector3(b.x, b.y, drop.lowB()), normal, u, drop.lowB() / repeat, Color.WHITE),
-              vertex(b, normal, u, b.z / repeat, Color.WHITE));
+        float u = drop.a().dst(drop.b()) / (24 * BoardGeometry.HEX_SCALE);
+        float lip = BoardSurface.fallLip(drop.a().z, drop.lowA());
+        float foot = .5f * lip;
+        // The lip reaches one radius upstream and one radius higher, ending at the sheet's own clearance.
+        float reach = lip + clearance;
+        Vector3 hangA = new Vector3(drop.a().x, drop.a().y, drop.a().z - reach).mulAdd(outward, clearance);
+        Vector3 hangB = new Vector3(drop.b().x, drop.b().y, drop.b().z - reach).mulAdd(outward, clearance);
+        Vector3 footA = new Vector3(hangA.x, hangA.y, drop.lowA() + foot);
+        Vector3 footB = new Vector3(hangB.x, hangB.y, drop.lowB() + foot);
+        for (int segment = 0; segment < FALL_LIP_SEGMENTS; segment++) {
+            float from = MathUtils.PI / 2 * segment / FALL_LIP_SEGMENTS;
+            float to = MathUtils.PI / 2 * (segment + 1) / FALL_LIP_SEGMENTS;
+            mesh.rect(arcVertex(lipPoint(drop.a(), outward, lip, reach, from), arcNormal(outward, from), 0, repeat),
+                  arcVertex(lipPoint(drop.a(), outward, lip, reach, to), arcNormal(outward, to), 0, repeat),
+                  arcVertex(lipPoint(drop.b(), outward, lip, reach, to), arcNormal(outward, to), u, repeat),
+                  arcVertex(lipPoint(drop.b(), outward, lip, reach, from), arcNormal(outward, from), u, repeat));
+        }
+        // The hanging sheet stays in the mouth's own plane, clear of the wall.
+        mesh.rect(arcVertex(hangA, outward, 0, repeat), arcVertex(footA, outward, 0, repeat),
+              arcVertex(footB, outward, u, repeat), arcVertex(hangB, outward, u, repeat));
+        for (int segment = 0; segment < FALL_FOOT_SEGMENTS; segment++) {
+            float from = MathUtils.PI / 2 * segment / FALL_FOOT_SEGMENTS;
+            float to = MathUtils.PI / 2 * (segment + 1) / FALL_FOOT_SEGMENTS;
+            mesh.rect(arcVertex(footPoint(hangA, drop.lowA(), outward, foot, to), arcNormal(outward, to), 0, repeat),
+                  arcVertex(footPoint(hangA, drop.lowA(), outward, foot, from), arcNormal(outward, from), 0, repeat),
+                  arcVertex(footPoint(hangB, drop.lowB(), outward, foot, from), arcNormal(outward, from), u, repeat),
+                  arcVertex(footPoint(hangB, drop.lowB(), outward, foot, to), arcNormal(outward, to), u, repeat));
+        }
     }
 
-    private static List<Vector3> clip(List<Vector3> polygon, Vector3 normal, float distance, boolean positive) {
-        if (polygon.isEmpty()) {
-            return polygon;
-        }
-        List<Vector3> result = new ArrayList<>();
-        Vector3 previous = polygon.getLast();
-        float before = (previous.dot(normal) - distance) * (positive ? 1 : -1);
-        for (Vector3 point : polygon) {
-            float after = (point.dot(normal) - distance) * (positive ? 1 : -1);
-            if ((before >= 0) != (after >= 0)) {
-                result.add(new Vector3(previous).lerp(point, before / (before - after)));
-            }
-            if (after >= 0) {
-                result.add(point);
-            }
-            previous = point;
-            before = after;
-        }
-        return result;
-    }
-
-    private static MeshPartBuilder.VertexInfo inclineVertex(Vector3 point, Vector3 a, Vector3 along,
-          Vector3 inward, Vector3 normal, float length) {
-        Vector3 offset = new Vector3(point).sub(a);
-        float u = 0.25f + offset.dot(along) / (2 * length);
-        float v = 1 - offset.dot(inward) / BoardGeometry.HEIGHT;
-        return vertex(new Vector3(point).add(0, 0, 0.1f * BoardGeometry.HEX_SCALE), normal, u, v, Color.WHITE);
+    /** A short transparent curtain carries animated droplets above each receiving pool; no particle objects. */
+    private static void splash(MeshPartBuilder mesh, GpuWaterShader.Impact impact) {
+        Vector3 center = new Vector3(impact.center()).mulAdd(impact.inward(), BoardGeometry.WIDTH * 0.025f);
+        Vector3 tangent = new Vector3(impact.inward().y, -impact.inward().x, 0).scl(impact.halfWidth());
+        Vector3 a = new Vector3(center).sub(tangent), b = new Vector3(center).add(tangent);
+        mesh.rect(vertex(a, impact.inward(), 0, 0, Color.WHITE), vertex(b, impact.inward(), 1, 0, Color.WHITE),
+              vertex(new Vector3(b).add(0, 0, impact.radius()), impact.inward(), 1, 1, Color.WHITE),
+              vertex(new Vector3(a).add(0, 0, impact.radius()), impact.inward(), 0, 1, Color.WHITE));
     }
 
     /** Continue the neighboring land's selected artwork across the edge, beneath the existing sand fade. */
@@ -835,7 +1095,7 @@ final class GpuTerrain implements Disposable {
     }
 
     private BoundingBox unitBounds(ModelInstance unit) {
-        return UnitBounds.world(unit);
+        return frameBounds == null ? UnitBounds.world(unit) : frameBounds.get(unit);
     }
 
     /** Unit instances already contain the shared animation's current position; hidden units never enter this list. */
@@ -851,11 +1111,26 @@ final class GpuTerrain implements Disposable {
         List<BoundingBox> occupied = hasCutaways && buildingOpacity < 1
               ? units.stream().map(this::unitBounds).toList() : List.of();
         for (Chunk chunk : chunks) {
-            for (WaterSurface water : chunk.waterMaterials) {
-                TextureAttribute texture = water.material().get(TextureAttribute.class, TextureAttribute.Diffuse);
-                texture.textureDescription.texture = assets.water(water.depth(), clock);
-                if (water.falling()) {
-                    texture.offsetV = clock % 1;
+            for (LiquidSurface liquid : chunk.liquidMaterials) {
+                GpuAssets.Animation<Texture> frames = assets.liquidAnimation(liquid.source());
+                int index = frames.index(clock);
+                Texture frame = frames.frames().get(index);
+                TextureAttribute texture = liquid.material().get(TextureAttribute.class, TextureAttribute.Diffuse);
+                TextureAttribute emission = liquid.material().get(TextureAttribute.class, TextureAttribute.Emissive);
+                float offsetU = (clock * liquid.current().u()) % 1;
+                float offsetV = liquid.falling() ? (clock * (emission == null ? 1 : 0.25f)) % 1 : (clock * liquid.current().v()) % 1;
+                texture.textureDescription.texture = frame;
+                texture.offsetU = offsetU;
+                texture.offsetV = offsetV;
+                if (liquidShaderAnimation) {
+                    liquid.material().get(TextureAttribute.class, GpuLiquidShader.Frame.TYPE).textureDescription.texture
+                          = frames.frames().get((index + 1) % frames.frames().size());
+                    liquid.material().get(FloatAttribute.class, GpuLiquidShader.Frame.BLEND).value = frames.blend(clock, index);
+                }
+                if (emission != null) {
+                    emission.textureDescription.texture = frame;
+                    emission.offsetU = offsetU;
+                    emission.offsetV = offsetV;
                 }
             }
             if (chunk.cutaways.isEmpty()) { continue; }
@@ -917,6 +1192,7 @@ final class GpuTerrain implements Disposable {
             return null;
         }
         for (Prop prop : chunks.get(index).props) {
+            if (flatTrees && prop.tree()) { continue; }
             if (prop.coords().equals(coords)
                   && (result == null || prop.bounds().max.z > result.max.z)) {
                 result = prop.bounds();
@@ -951,6 +1227,7 @@ final class GpuTerrain implements Disposable {
                 }
             }
             for (Prop prop : chunk.props) {
+                if (flatTrees && prop.tree()) { continue; }
                 if (!Intersector.intersectRayBoundsFast(ray, prop.bounds())) {
                     continue;
                 }
@@ -991,6 +1268,14 @@ final class GpuTerrain implements Disposable {
         return result;
     }
 
+    void setFlatTrees(boolean enabled) {
+        if (flatTrees != enabled) {
+            flatTrees = enabled;
+            shadowDirty = true;
+            detailPixelsPerUnit = Float.NaN;
+        }
+    }
+
     /** Opaque world first. Tactical overlays are a separate final pass. */
     void render(Camera camera, boolean drawTactical) {
         if (!drawTactical) {
@@ -1002,6 +1287,7 @@ final class GpuTerrain implements Disposable {
                 continue;
             }
             if (drawTactical) {
+                if (flatTrees) { chunk.flatTrees.forEach(instance -> batch.render(instance)); }
                 chunk.tactical.forEach(instance -> batch.render(instance));
             } else {
                 chunk.opaque.forEach(instance -> batch.render(instance, environment));
@@ -1009,7 +1295,7 @@ final class GpuTerrain implements Disposable {
                     chunk.scatter.forEach(instance -> batch.render(instance, environment));
                 }
                 batch.render(chunk.solidProps, environment);
-                batch.render(chunk.trees, environment);
+                if (!flatTrees) { batch.render(chunk.trees, environment); }
             }
         }
         batch.end();
@@ -1059,6 +1345,13 @@ final class GpuTerrain implements Disposable {
         normalMaps = enabled;
     }
 
+    void setWetness(float wetness) {
+        this.wetness = wetness;
+    }
+
+    /** Isolate authored frame interpolation from surface deformation in native reference comparisons. */
+    void setWaterEffects(boolean enabled) { waterEffects = enabled; }
+
     private void applyLight() {
         if (light == null && atmosphere == null) {
             if (shadow != null) {
@@ -1070,8 +1363,17 @@ final class GpuTerrain implements Disposable {
             environment.set(ColorAttribute.createAmbientLight(0.85f, 0.85f, 0.85f, 1));
             return;
         }
+        if (atmosphere != null && !atmosphere.hasDirectLight()) {
+            // Moonless and pitch-black nights retain ambient readability, but have no directional source.
+            if (shadow != null) { environment.remove(shadow); }
+            environment.shadowMap = null;
+            environment.set(ColorAttribute.createAmbientLight(atmosphere.ambient()));
+            return;
+        }
         if (shadow == null) {
             shadow = new DirectionalShadowLight(SHADOW_RESOLUTION, SHADOW_RESOLUTION, 1, 1, 1, 2);
+        }
+        if (environment.shadowMap != shadow) {
             environment.add(shadow);
             environment.shadowMap = shadow;
         }
@@ -1100,7 +1402,7 @@ final class GpuTerrain implements Disposable {
                     chunk.scatter.forEach(pass::render);
                 }
                 pass.render(shadows ? chunk.shadowProps : chunk.solidProps);
-                pass.render(chunk.trees);
+                if (!flatTrees) { pass.render(chunk.trees); }
             }
         }
         for (ModelInstance unit : units) {
@@ -1116,46 +1418,53 @@ final class GpuTerrain implements Disposable {
     void renderShadows(OrthographicCamera view, List<ModelInstance> units) {
         if (view != null) {
             updateDetail(view);
-        } else {
+        } else if (!flatTrees) {
             chunks.forEach(chunk -> chunk.cacheTrees(assets));
         }
-        if (shadow == null) {
+        if (shadow == null || environment.shadowMap == null) {
             return;
         }
-        boolean changed = shadowDirty || units.size() != shadowModels.size()
-              || (view != null && !Arrays.equals(view.combined.val, shadowView.val));
+        boolean changed = shadowDirty || units.size() != shadowModels.size();
         for (int index = 0; !changed && index < units.size(); index++) {
             changed = units.get(index).model != shadowModels.get(index)
                   || !Arrays.equals(units.get(index).transform.val, shadowTransforms.get(index).val)
                   || shadowPose(units.get(index)) != shadowPoses.get(index);
         }
-        if (!changed) {
+        boolean viewChanged = (view != null) != shadowViewPresent
+              || (view != null && !Arrays.equals(view.combined.val, shadowView.val));
+        if (!changed && !viewChanged) {
             return;
         }
+        BoundingBox bounds = new BoundingBox(shadowBounds);
+        for (ModelInstance unit : units) { bounds.ext(unitBounds(unit)); }
+        fitShadowCamera(view, shadowFit, bounds, shadow.direction);
+        shadowViewPresent = view != null;
+        if (view != null) { shadowView.set(view.combined); }
+        // Compare the fitted texel grid, not the viewing camera, before invalidating the cached shadow map.
+        if (!changed && Arrays.equals(shadowFit.combined.val, shadowProjection.val)) { return; }
+        Camera lightCamera = shadow.getCamera();
+        lightCamera.position.set(shadowFit.position);
+        lightCamera.direction.set(shadowFit.direction);
+        lightCamera.up.set(shadowFit.up);
+        lightCamera.viewportWidth = shadowFit.viewportWidth;
+        lightCamera.viewportHeight = shadowFit.viewportHeight;
+        lightCamera.near = shadowFit.near;
+        lightCamera.far = shadowFit.far;
+        lightCamera.update();
+        shadowProjection.set(lightCamera.combined);
         shadowModels.clear();
         shadowPoses.clear();
         while (shadowTransforms.size() > units.size()) { shadowTransforms.removeLast(); }
-        BoundingBox bounds = new BoundingBox(shadowBounds);
         for (int index = 0; index < units.size(); index++) {
             ModelInstance unit = units.get(index);
             shadowModels.add(unit.model);
             if (index == shadowTransforms.size()) { shadowTransforms.add(new Matrix4()); }
             shadowTransforms.get(index).set(unit.transform);
             shadowPoses.add(shadowPose(unit));
-            bounds.ext(unitBounds(unit));
-        }
-        fitShadowCamera(view, shadow.getCamera(), bounds, shadow.direction);
-        if (view != null) {
-            shadowView.set(view.combined);
         }
         shadow.begin();
         renderDepth(shadow.getCamera(), units, depthBatch, true);
         shadow.end();
-        float slope = (float) Math.hypot(shadow.direction.x, shadow.direction.y) / Math.abs(shadow.direction.z);
-        Camera lightCamera = shadow.getCamera();
-        float texel = Math.max(lightCamera.viewportWidth, lightCamera.viewportHeight) / SHADOW_RESOLUTION;
-        shadow.getProjViewTrans().val[Matrix4.M23] -= 3 * Math.max(1, slope) * texel
-              / (lightCamera.far - lightCamera.near);
         shadowDirty = false;
     }
 
@@ -1177,6 +1486,7 @@ final class GpuTerrain implements Disposable {
                 shadowDirty = true;
             }
             // Largest tree wins: smaller neighbors may retain extra detail, never lose it early.
+            if (flatTrees) { continue; }
             int next = TreeLod.level(chunk.treeDiameter * pixelsPerUnit, chunk.treeLod);
             if (next != chunk.treeLod) {
                 chunk.treeLod = next;
@@ -1265,14 +1575,17 @@ final class GpuTerrain implements Disposable {
         chunks.forEach(Chunk::dispose);
         chunks.clear();
         ground.dispose();
+        rims.clear();
         decals.dispose();
         tactical.dispose();
+        foliage.dispose();
         batch.dispose();
         depthBatch.dispose();
         if (shadow != null) {
             shadow.dispose();
         }
         assets.dispose();
+        rainNoise.dispose();
         featureTriangles.clear();
     }
 }

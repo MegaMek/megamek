@@ -176,6 +176,30 @@ class UnitDamageDisplayTest {
     }
 
     @Test
+    void selectedLocationPreservesActualDamageElsewhereAndCanBeRepaired() {
+        var actual = new BoardScene.LocationDamage(Set.of("LA"), Set.of("RL"),
+              Map.of("LT", UnitDamageDisplay.Stage.ARMOR_STRIPPED, "RA", UnitDamageDisplay.Stage.ARMOR_WORN));
+        var preview = UnitDamageDisplay.preview(actual, true, .75f, "RA");
+        assertEquals(Map.of("LT", UnitDamageDisplay.Stage.ARMOR_STRIPPED, "RA", UnitDamageDisplay.Stage.STRUCTURE_BATTERED),
+              preview.stages());
+        assertEquals(actual.removed(), preview.removed());
+        assertEquals(actual.wrecked(), preview.wrecked());
+        var repaired = UnitDamageDisplay.preview(actual, true, 0, "RA");
+        assertEquals(Map.of("LT", UnitDamageDisplay.Stage.ARMOR_STRIPPED), repaired.stages());
+        assertSame(actual, UnitDamageDisplay.preview(actual, true, -1, "RA"));
+
+        var destroyed = UnitDamageDisplay.preview(actual, true, 1, "RA");
+        assertEquals(Set.of("RL", "RA"), destroyed.wrecked());
+        assertEquals(repaired.stages(), destroyed.stages());
+        ModelInstance instance = biped();
+        UnitDamageDisplay.show(instance, destroyed);
+        assertTrue(isWrecked(instance, "RA"));
+        assertFalse(isWrecked(instance, "CT"));
+        assertFalse(instance.getNode("LA").parts.first().enabled);
+        assertEquals(UnitDamageDisplay.Stage.ARMOR_WORN, actual.stages().get("RA"));
+    }
+
+    @Test
     void structureWinsOverArmorAndDestroyedRemovesTheOverlay() {
         assertEquals(UnitDamageDisplay.Stage.STRUCTURE_BATTERED, UnitDamageDisplay.locationStage(1, .5f));
         Material material = new Material("paint", new UnitDamageDisplay.Overlay(mock(Texture.class)));

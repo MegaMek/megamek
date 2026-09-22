@@ -206,6 +206,10 @@ class GpuRiverSmokeTest {
                             camera.center(BoardGeometry.center(new Coords(0, 3), 2));
                         } else if (frames == 28) {
                             GpuBoardTestUi.capture(new File(output, "woods-light-grass.png"));
+                            camera.center(BoardGeometry.center(new Coords(2, 3), 2));
+                            camera.orbit(180, 0);
+                        } else if (frames == 31) {
+                            GpuBoardTestUi.capture(new File(output, "waterfall-from-behind.png"));
                             assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
                             Gdx.app.exit();
                         }

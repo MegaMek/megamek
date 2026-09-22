@@ -1,6 +1,11 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
+import java.util.ArrayList;
+import java.util.IdentityHashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.math.Matrix4;
@@ -12,8 +17,11 @@ final class UnitBounds {
     private UnitBounds() { }
 
     static BoundingBox local(ModelInstance instance) {
-        BoundingBox result = new BoundingBox().inf();
-        var corner = new Vector3();
+        return local(instance, new BoundingBox(), new Vector3());
+    }
+
+    private static BoundingBox local(ModelInstance instance, BoundingBox result, Vector3 corner) {
+        result.inf();
         for (var node : instance.nodes) { extend(result, node, corner); }
         if (!result.isValid()) {
             result.set(Vector3.Zero, Vector3.Zero);
@@ -23,6 +31,26 @@ final class UnitBounds {
 
     static BoundingBox world(ModelInstance instance) {
         return local(instance).mul(instance.transform);
+    }
+
+    /** Render-thread snapshot. Begin after all poses/part visibility settle; returned boxes are borrowed until next begin. */
+    static final class Frame {
+        private final Map<ModelInstance, BoundingBox> bounds = new IdentityHashMap<>();
+        private final List<BoundingBox> pool = new ArrayList<>();
+        private final Vector3 corner = new Vector3();
+
+        void begin() { bounds.clear(); }
+
+        BoundingBox get(ModelInstance instance) {
+            BoundingBox result = bounds.get(instance);
+            if (result == null) {
+                int index = bounds.size();
+                if (index == pool.size()) { pool.add(new BoundingBox()); }
+                result = local(instance, pool.get(index), corner).mul(instance.transform);
+                bounds.put(instance, result);
+            }
+            return result;
+        }
     }
 
     static BoundingBox subtree(Node node) {

@@ -86,6 +86,8 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
 
     /** The keybinds to be shown in all phases during any player's turn */
     private static final List<KeyCommandBind> BINDS_ANY_TURN = Arrays.asList(KeyCommandBind.TOGGLE_CHAT,
+          KeyCommandBind.UNIT_DISPLAY,
+          KeyCommandBind.FORCE_DISPLAY,
           KeyCommandBind.DRAW_LABELS,
           KeyCommandBind.HEX_COORDS);
 
@@ -172,7 +174,7 @@ public class KeyBindingsOverlay extends AbstractBoardViewOverlay {
 
     @Override
     protected int getDistSide(Rectangle clipBounds, int overlayWidth) {
-        return 30;
+        return Math.max(30, boardView.leftPanelInset() + 10);
     }
 
     @Override

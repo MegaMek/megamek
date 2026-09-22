@@ -125,7 +125,20 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
     /** Water depth -1 means dry. Ground and decals are independent from solid feature geometry. */
     record Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
           Pixels normals, Pixels decals, Pixels decalsWithoutLimbs,
-          Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
+          Pixels tactical, List<Feature> features, List<BoardView.HexText> text, BoardLiquid liquid, Pixels foliage) {
+        Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
+              Pixels normals, Pixels decals, Pixels decalsWithoutLimbs,
+              Pixels tactical, List<Feature> features, List<BoardView.HexText> text, BoardLiquid liquid) {
+            this(coords, elevation, waterDepth, frozen, roadExits, surface, ground, normals, decals, decalsWithoutLimbs,
+                  tactical, features, text, liquid, null);
+        }
+        Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
+              Pixels normals, Pixels decals, Pixels decalsWithoutLimbs,
+              Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
+            this(coords, elevation, waterDepth, frozen, roadExits, surface, ground, normals, decals, decalsWithoutLimbs,
+                  tactical, features, text, waterDepth >= 0 ? BoardLiquid.WATER : BoardLiquid.NONE);
+        }
+
         Tile(Coords coords, int elevation, int waterDepth, boolean frozen, int roadExits, Surface surface, Pixels ground,
               Pixels normals, Pixels decals, Pixels tactical, List<Feature> features, List<BoardView.HexText> text) {
             this(coords, elevation, waterDepth, frozen, roadExits, surface, ground, normals, decals, null, tactical, features, text);
@@ -516,6 +529,7 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
                 used.add(tile.decals());
                 used.add(tile.decalsWithoutLimbs());
                 used.add(tile.tactical());
+                used.add(tile.foliage());
             }
             images.keySet().retainAll(used);
         }

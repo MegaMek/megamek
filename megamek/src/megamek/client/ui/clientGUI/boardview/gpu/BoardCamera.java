@@ -18,6 +18,8 @@ final class BoardCamera {
     // Manual orthographic zoom limits: smaller values zoom in, larger values zoom out.
     private static final float MIN_ZOOM = 0.1f;
     private static final float MAX_ZOOM = 20f;
+    static final float ENTRANCE_SECONDS = 1.2f;
+    private static final float ENTRANCE_ZOOM = 1.35f;
     static final float MAX_TILT = 80;
     /** One keyboard turn. Hex rows line up again every sixth of a circle, so each turn lands on a matching view. */
     static final float ROTATION_STEP = 60;
@@ -44,22 +46,31 @@ final class BoardCamera {
     private boolean overviewFit;
     private boolean fitToWindow;
     private float displayScale = 1;
+    private float entranceElapsed = ENTRANCE_SECONDS;
+    private float entranceZoom;
     /** Screen composition only: focus remains the world-space orbit pivot in the unobstructed board area. */
     private float viewOffsetPixels;
+    private float viewLeftPixels;
     private long revision;
     private float rotationStart;
     private float rotationSweep;
     private float rotationTarget;
     private float rotationElapsed = ROTATION_SECONDS;
     /** Render-owned endpoints of one camera move; later volley targets keep its original deadline. */
-    private record Pose(Vector3 focus, float zoom, float azimuth, float tilt) { }
+    private record Pose(Vector3 focus, float zoom, float azimuth, float tilt) {
+        boolean sameAs(Pose other) {
+            return other != null && focus.epsilonEquals(other.focus(), .001f)
+                  && MathUtils.isEqual(zoom, other.zoom()) && MathUtils.isEqual(azimuth, other.azimuth())
+                  && MathUtils.isEqual(tilt, other.tilt());
+        }
+    }
     private Pose framingStart;
     private Pose framingTarget;
     private float framingElapsed;
     private float framingStartTime;
     private Object framedAction;
     private int framedCount;
-    private float framedWidth, framedViewportWidth, framedHeight;
+    private float framedWidth, framedLeft, framedViewportWidth, framedHeight;
     private int framedGeometry;
 
     BoardCamera() {
@@ -84,14 +95,26 @@ final class BoardCamera {
         overviewZoom *= displayScale / scale;
         displayScale = scale;
         if (fitToWindow && scene != null) {
+            float elapsed = entranceElapsed;
             fit(scene);
+            if (elapsed < ENTRANCE_SECONDS) {
+                entranceElapsed = elapsed;
+                entranceZoom = camera.zoom;
+                updateEntrance();
+            }
         }
         update();
     }
 
+    /** The UI owns the unobstructed area's left edge; later framing uses the same area. */
+    void viewableArea(float left, float availableWidth) {
+        viewLeftPixels = left;
+        viewableWidth(availableWidth);
+    }
+
     /** Move the orbit pivot to the usable area's center without moving the displayed board. */
     void viewableWidth(float availableWidth) {
-        float offset = (camera.viewportWidth - MathUtils.clamp(availableWidth, 1, camera.viewportWidth)) / 2;
+        float offset = (camera.viewportWidth - MathUtils.clamp(availableWidth, 1, camera.viewportWidth)) / 2 - viewLeftPixels;
         if (MathUtils.isEqual(viewOffsetPixels, offset)) { return; }
         float shift = viewOffsetPixels - offset;
         Vector3 right = new Vector3(camera.direction).crs(camera.up).nor();
@@ -172,6 +195,12 @@ final class BoardCamera {
 
     /** Advances a camera transition in wall-clock time, independently of the combat playback speed. */
     void advance(float seconds) {
+        if (entranceElapsed < ENTRANCE_SECONDS) {
+            entranceElapsed = Math.min(ENTRANCE_SECONDS, entranceElapsed + Math.max(0, seconds));
+            updateEntrance();
+            update();
+            return;
+        }
         if (framingTarget != null) {
             boolean animate = framedAction instanceof UnitAttack ? animateCombatPlayback
                   : framedAction instanceof BoardScene.Movement ? animateOnMove : animateOnSelectionChange;
@@ -211,6 +240,7 @@ final class BoardCamera {
     }
 
     private void stopFraming() {
+        entranceElapsed = ENTRANCE_SECONDS;
         framingStart = null;
         framingTarget = null;
         framingElapsed = CAMERA_FRAMING_SECONDS;
@@ -226,7 +256,7 @@ final class BoardCamera {
     /** A render-owned action identity prevents repeated frames and late packets from restarting the deadline. */
     private boolean beginFrame(Object action, int count, float width) {
         boolean changedAction = framedAction != action;
-        if (!changedAction && framedCount == count && framedWidth == width
+        if (!changedAction && framedCount == count && framedWidth == width && framedLeft == viewLeftPixels
               && framedViewportWidth == camera.viewportWidth && framedHeight == camera.viewportHeight
               && framedGeometry == BoardGeometry.revision()) {
             return false;
@@ -238,6 +268,7 @@ final class BoardCamera {
         framedAction = action;
         framedCount = count;
         framedWidth = width;
+        framedLeft = viewLeftPixels;
         framedViewportWidth = camera.viewportWidth;
         framedHeight = camera.viewportHeight;
         framedGeometry = BoardGeometry.revision();
@@ -289,11 +320,17 @@ final class BoardCamera {
     void frameSelection(BoardScene.Unit unit, float availableWidth) {
         viewableWidth(availableWidth);
         clearPlaybackFrame();
-        framingElapsed = 0;
         List<Vector3> points = new ArrayList<>();
         addUnit(points, unit);
         animateTo(fittedPose(points, availableWidth, azimuth, tilt, camera.zoom, tilt > ATTACK_TOP_VIEW_TILT_DEGREES),
               unit.location().elevation() * BoardGeometry.LEVEL, animateOnSelectionChange);
+    }
+
+    /** Explicit hex navigation shares the selection transition and animation setting. */
+    void frameLocation(Vector3 position, float availableWidth) {
+        viewableWidth(availableWidth);
+        clearPlaybackFrame();
+        animateTo(new Pose(position.cpy(), camera.zoom, azimuth, tilt), position.z, animateOnSelectionChange);
     }
 
     /** Fit the complete rendered route once, with the smallest pan and no unnecessary zoom or rotation. */
@@ -364,8 +401,8 @@ final class BoardCamera {
     }
 
     private void animateTo(Pose target, float plane, boolean animate) {
-        if (focus.epsilonEquals(target.focus(), .001f) && MathUtils.isEqual(camera.zoom, target.zoom())
-              && MathUtils.isEqual(azimuth, target.azimuth()) && MathUtils.isEqual(tilt, target.tilt())) {
+        var current = new Pose(focus.cpy(), camera.zoom, azimuth, tilt);
+        if (current.sameAs(target)) {
             stopFraming();
             return;
         }
@@ -374,9 +411,14 @@ final class BoardCamera {
         Vector3 outward = new Vector3(), up = new Vector3();
         orientation(target.azimuth(), target.tilt(), outward, up);
         target.focus().mulAdd(outward, (plane - target.focus().z) / outward.z);
+        if (target.sameAs(framingTarget)) {
+            return; // Repeated selection/centering notifications keep the same move and its original deadline.
+        }
+        if (framedAction == null) { framingElapsed = 0; }
+        entranceElapsed = ENTRANCE_SECONDS;
         stopRotation();
         fitToWindow = false;
-        framingStart = new Pose(new Vector3(focus), camera.zoom, azimuth, tilt);
+        framingStart = current;
         framingTarget = target;
         framingStartTime = framingElapsed;
         if (!animate) { framingElapsed = CAMERA_FRAMING_SECONDS; }
@@ -407,6 +449,23 @@ final class BoardCamera {
         overviewFocus = null;
         setIsometric(true);
         fit(scene);
+    }
+
+    /** A presentation-only entrance; manual camera input immediately takes control. */
+    void enter(BoardScene scene) {
+        reset(scene);
+        entranceZoom = camera.zoom;
+        entranceElapsed = 0;
+        updateEntrance();
+        update();
+    }
+
+    float entranceOpacity() {
+        return Interpolation.pow3Out.apply(entranceElapsed / ENTRANCE_SECONDS);
+    }
+
+    private void updateEntrance() {
+        camera.zoom = MathUtils.lerp(entranceZoom * ENTRANCE_ZOOM, entranceZoom, entranceOpacity());
     }
 
     void zoom(float factor) {
@@ -456,8 +515,8 @@ final class BoardCamera {
             }
         }
         moveOnBoard((minX + maxX) / 2, (minY + maxY) / 2);
-        camera.zoom = Math.max((maxX - minX) / Math.max(1, camera.viewportWidth - 2 * viewOffsetPixels),
-              (maxY - minY) / camera.viewportHeight) * 1.15f;
+        camera.zoom = Math.max((maxX - minX) / Math.max(1, camera.viewportWidth - 2 * (viewOffsetPixels + viewLeftPixels)),
+              (maxY - minY) / camera.viewportHeight) * 1.05f;
         update();
     }
 

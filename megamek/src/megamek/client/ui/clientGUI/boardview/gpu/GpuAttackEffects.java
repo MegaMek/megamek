@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.BlendingAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.DepthTestAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.MathUtils;
@@ -499,7 +500,8 @@ final class GpuAttackEffects implements Disposable {
             return;
         }
         model = new ModelBuilder().createSphere(1, 1, 1, 6, 4,
-              new Material(ColorAttribute.createDiffuse(Color.WHITE), new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE, 1)),
+              new Material(ColorAttribute.createDiffuse(Color.WHITE), new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE, 1),
+                    new DepthTestAttribute(GL20.GL_LEQUAL, false)),
               VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
         for (int i = 0; i < particles.length; i++) {
             particles[i] = new ModelInstance(model);

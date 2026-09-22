@@ -182,8 +182,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JCheckBoxMenuItem viewPlanetaryConditionsOverlay = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
-    private final JMenuItem viewGpuBoard = new JMenuItem(getString("CommonMenuBar.viewGpuBoard"));
-    private final JMenuItem viewClassicBoard = new JMenuItem(getString("CommonMenuBar.viewClassicBoard"));
+    private final JMenuItem viewBoard = new JMenuItem(getString("CommonMenuBar.viewGpuBoard"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
     private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
@@ -372,8 +371,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         menu = new JMenu(Messages.getString("CommonMenuBar.ViewMenu"));
         menu.setMnemonic(VK_V);
         add(menu);
-        initMenuItem(viewClassicBoard, menu, VIEW_CLASSIC_BOARD);
-        initMenuItem(viewGpuBoard, menu, VIEW_GPU_BOARD);
+        initMenuItem(viewBoard, menu, VIEW_GPU_BOARD);
         menu.addSeparator();
         initMenuItem(viewClientSettings, menu, VIEW_CLIENT_SETTINGS, VK_S);
         initMenuItem(viewIncGUIScale, menu, VIEW_INC_GUI_SCALE);
@@ -583,9 +581,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boolean isInGame = isGame && phase.isDuringOrAfter(GamePhase.DEPLOYMENT);
         boolean isInGameBoardView = isInGame && phase.isOnMap();
         boolean isBoardView = isInGameBoardView || isBoardEditor;
-        viewGpuBoard.setEnabled(isInGame);
-        // Returning to the classic UI must remain possible through reports and phase transitions.
-        viewClassicBoard.setEnabled(isGame);
+        viewBoard.setEnabled(isGame && !isLobby);
+        viewBoard.setVisible(isGame);
         boolean canSave = !phase.isUnknown()
               && !phase.isSelection()
               && !phase.isExchange()
@@ -673,8 +670,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewTurnDetailsOverlay.setEnabled(isInGameBoardView);
         viewMovModEnvelope.setEnabled(isInGameBoardView);
         gameRoundReport.setEnabled(isInGame);
-        viewMekDisplay.setEnabled(isInGameBoardView);
-        viewForceDisplay.setEnabled(isInGameBoardView);
+        viewMekDisplay.setEnabled(isInGame);
+        viewForceDisplay.setEnabled(isInGame);
         fireSaveWeaponOrder.setEnabled(isInGameBoardView);
         viewBotCommands.setEnabled(isInGame);
     }
@@ -689,6 +686,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     public synchronized void setPhase(GamePhase current) {
         phase = current;
         updateEnabledStates();
+    }
+
+    /** The first View entry always switches to the other visualization. */
+    public synchronized void setBoardView3D(boolean active) {
+        itemMap.remove(viewBoard.getActionCommand());
+        viewBoard.setText(getString(active ? "CommonMenuBar.viewClassicBoard" : "CommonMenuBar.viewGpuBoard"));
+        viewBoard.setActionCommand(active ? VIEW_CLASSIC_BOARD : VIEW_GPU_BOARD);
+        itemMap.put(viewBoard.getActionCommand(), viewBoard);
     }
 
     public synchronized void setEnabled(String command, boolean enabled) {

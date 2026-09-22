@@ -26,11 +26,13 @@ final class GpuUnitShader extends DefaultShader {
     private final int damageTransform = register("u_damageTransform");
 
     private GpuUnitShader(Renderable renderable, Config config) {
-        super(renderable, config);
+        super(renderable, config, GpuCloudShadow.prefix(renderable, config));
+        GpuCloudShadow.register(this);
     }
 
     static DefaultShaderProvider provider() {
-        return new DefaultShaderProvider(vertexSource(getDefaultVertexShader()), fragmentSource(getDefaultFragmentShader())) {
+        return new DefaultShaderProvider(GpuCloudShadow.vertex(vertexSource(getDefaultVertexShader())),
+              GpuCloudShadow.fragment(fragmentSource(getDefaultFragmentShader()), false)) {
             @Override
             protected Shader createShader(Renderable renderable) {
                 return new GpuUnitShader(renderable, config);

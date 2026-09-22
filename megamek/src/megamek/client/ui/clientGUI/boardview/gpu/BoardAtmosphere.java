@@ -15,16 +15,18 @@ final class BoardAtmosphere {
     static final float STANDARD_GROUND_LAYER_HEIGHT = 2.0f;
     static final Settings DEFAULTS = new Settings(13, 0, 0, STANDARD_GROUND_LAYER_HEIGHT, 0, 0);
     static final float MAX_FOG_OPACITY = 0.25f;
+    /** Blowing sand keeps at least this much ground fog, so its dust reads even with fog none. */
+    static final float MIN_SAND_FOG = 0.05f;
     /** Fraction of ambient fill moved into visible sunlight, bounded by the LDR directional-light budget. */
     static final float DAYLIGHT_SHADOW_CONTRAST = 0.25f;
     /** Fraction of ambient fill moved into visible moonlight; 0 restores the original full-moon shadows. */
     static final float MOONLIGHT_SHADOW_CONTRAST = 0.7f;
     /** Artistic palette blends, not gas opacity or a change to gameplay visibility. */
-    static final float TAINTED_COLOR_STRENGTH = 0.4f;
+    static final float TAINTED_COLOR_STRENGTH = 0.45f;
     static final float TOXIC_COLOR_STRENGTH = 1.0f;
-    static final float DEFAULT_TAINT_STRENGTH = 3.0f;
+    static final float DEFAULT_TAINT_STRENGTH = 1.0f;
     /** How much of the air's palette blend reaches the display-space grade that covers every drawn surface. */
-    static final float TAINT_GRADE_SHARE = 0.5f;
+    static final float TAINT_GRADE_SHARE = 0.75f;
 
     private static final int CAUSTIC_TAINT_COLOR = 0xc4c07aff;
     private static final int POISON_TAINT_COLOR = 0x9e8aa6ff;
@@ -286,8 +288,12 @@ final class BoardAtmosphere {
         };
         float height = fogDensity > 0 ? Math.max(MIN_GROUND_LAYER_HEIGHT, STANDARD_GROUND_LAYER_HEIGHT - pressureReduction)
               : DEFAULTS.groundLayerHeight();
-        // Sand supplies its own bounded veil in the composite; it does not need the fog/haze pass.
+        // Sand supplies its own bounded veil in the composite; it adds no haze of its own.
         float haze = fogDensity;
+        // Blowing sand still keeps a light ground fog of its own, wherever the air permits fog.
+        if (weather && sand > 0) {
+            fogDensity = Math.max(fogDensity, MIN_SAND_FOG);
+        }
         return new Settings(hour, clouds, fogDensity, height, haze, exposure,
               new Effects(rain, snow, hail, sand, lightning, wind, direction),
               inSpace ? Atmosphere.VACUUM : conditions.getAtmosphere(), conditions.getTemperature(),
@@ -394,13 +400,14 @@ final class BoardAtmosphere {
                 case BREATHABLE -> throw new IllegalStateException("Breathable air has no taint palette");
             });
             // Warm horizon light owns dawn and dusk, so the palette recedes while it shines.
-            float strength = (settings.taint().isToxic() ? TOXIC_COLOR_STRENGTH : TAINTED_COLOR_STRENGTH)
+            float toxicityStrength = (settings.taint().isToxic() ? TOXIC_COLOR_STRENGTH : TAINTED_COLOR_STRENGTH);
+            float strength = toxicityStrength
                   * MathUtils.clamp(taintStrength, 0, 10) * scattering
                   * MathUtils.lerp(0.4f, 1, daylight) * (1 - warmth * 0.75f);
             // Existing gradients/volumes provide depth. Weather alone decides whether scattering is rendered.
-            tintAtmosphere(sky, palette, strength * 0.35f);
-            tintAtmosphere(horizon, palette, strength);
-            tintAtmosphere(fog, palette, strength);
+            tintAtmosphere(sky, palette, strength); // upper skybox
+            tintAtmosphere(horizon, palette, Math.max(strength, toxicityStrength)); // lower skybox
+            tintAtmosphere(fog, palette, toxicityStrength);
             // The composite grades every drawn surface, so the air reaches the board and not only the sky.
             tintAtmosphere(tint, palette, strength * TAINT_GRADE_SHARE);
         }

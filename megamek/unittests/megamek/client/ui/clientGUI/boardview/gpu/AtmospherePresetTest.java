@@ -68,7 +68,7 @@ class AtmospherePresetTest {
         var sand = AtmospherePreset.SAND_STORM.settings(0.5);
         assertTrue(sand.effects().sand() > 0 && sand.effects().wind() > 0);
         assertEquals(0, sand.effects().rain());
-        assertEquals(0, sand.fog());
+        assertEquals(BoardAtmosphere.MIN_SAND_FOG, sand.fog());
         assertEquals(0, sand.haze());
         var lunar = AtmospherePreset.LUNAR.settings(0.5);
         assertEquals(Atmosphere.VACUUM, lunar.pressure());

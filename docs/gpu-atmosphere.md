@@ -154,7 +154,7 @@ the GPU window can choose a new time. No gameplay random rolls are consumed.
 | Light / Heavy hail | Increasing ice-pellet intensity; heavy hail uses the maximum slider value |
 | Lightning storm | Rain and a visible illumination strike within half a second of enabling; repeat at seven-second intervals with a short attack and longer decay |
 | None / Light / Heavy fog | None disables ground fog. Light uses 0.2 ground fog/haze; Heavy uses 1.0 for both. Fog banks and haze share an opacity cap. Light fog also lifts cloud cover to 0.10 and Heavy to 0.25, as haze implies a duller sky |
-| Blowing sand | Wind-aligned grain noise and a warm, height-limited veil, only when the game's `isBlowingSandActive()` says it is effective; does not automatically enable haze or its render pass |
+| Blowing sand | Wind-aligned grain noise and a warm, height-limited veil, only when the game's `isBlowingSandActive()` says it is effective; keeps at least `BoardAtmosphere.MIN_SAND_FOG` (0.06) ground fog in fog-permitting air and adds no haze of its own |
 | Calm / Light gale / Moderate gale / Strong gale / Storm / Tornado F1–F3 / Tornado F4 | Increasing wind drift, capped at storm-scale visual motion for tornadoes; no tornado funnel geometry |
 | Six wind directions / Random | Use the game's resolved direction; unresolved Random uses the existing visual 0° direction for minimum cloud drift, without consuming or resolving game wind rolls |
 | Vacuum / Trace / Thin / Standard / High / Very high pressure | Vacuum disables atmospheric weather, wind, clouds and shafts, and uses a dark sky. Trace disables clouds; Thin permits light cloud shade. Trace and Thin suppress precipitation and fog. Standard and denser air permit weather-shaped cloud shadows. Scenario fog starts at `STANDARD_GROUND_LAYER_HEIGHT`; High and Very High lower it by 0.75 and 1.5 levels respectively, with a minimum of 1.0 |
@@ -200,7 +200,9 @@ above the highest terrain and features, with opaque terrain hiding particles beh
 Fog and haze share a **25% maximum opacity**, including at maximum slider values.
 Their sliders control density, not opacity: nearby or elevated surfaces can still
 receive less fog at full density. At least 75% of scene color is retained before
-color grading. The Tuning panel shows the shared cap. The Clear preset
+color grading. The Tuning panel shows the shared cap. Blowing sand keeps at least
+`BoardAtmosphere.MIN_SAND_FOG` (0.06) ground fog in fog-permitting air, even with
+the scenario's fog set to none, so its dust reads in the air. The Clear preset
 sets cloud cover and both densities to zero and bypasses the depth and fog passes. Full Moon uses a
 cool directional source and ambient fill; diffuse twilight fill prevents a dark dip
 as directional sunlight and moonlight exchange positions.

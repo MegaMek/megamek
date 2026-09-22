@@ -495,7 +495,9 @@ class BoardAtmosphereTest {
         conditions.setWind(Wind.STORM);
         var blowingSand = BoardAtmosphere.fromScenario(conditions, false, 0.5);
         assertTrue(blowingSand.effects().sand() > 0);
-        assertEquals(0, blowingSand.haze(), "Sand has its own veil and must not enable the fog pass");
+        assertEquals(BoardAtmosphere.MIN_SAND_FOG, blowingSand.fog(),
+              "Blowing sand must keep a minimum ground fog even with fog none");
+        assertEquals(0, blowingSand.haze(), "Sand has its own bounded veil and adds no haze");
     }
 
     @Test

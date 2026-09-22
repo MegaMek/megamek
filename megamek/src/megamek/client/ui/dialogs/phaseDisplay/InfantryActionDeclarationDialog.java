@@ -76,6 +76,11 @@ import megamek.common.units.Infantry;
  */
 public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
 
+    /** How much larger than its content the dialog opens, so wrapped text is never cut off. */
+    private static final double CONTENT_MARGIN = 1.15;
+    private static final int MINIMUM_WIDTH = 414;
+    private static final int MINIMUM_HEIGHT = 276;
+
     private final Game game;
     private final Player player;
     private final AbstractBuildingEntity building;
@@ -102,7 +107,22 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         this.defends = InfantryActionStrengths.defends(player, building);
         initialize();
         setTitle(Messages.getString(titleKey(), building.getDisplayName()));
-        setMinimumSize(new Dimension(UIUtil.scaleForGUI(360), UIUtil.scaleForGUI(240)));
+        setMinimumSize(new Dimension(UIUtil.scaleForGUI(MINIMUM_WIDTH), UIUtil.scaleForGUI(MINIMUM_HEIGHT)));
+        growToFitContent();
+    }
+
+    /**
+     * Opens the dialog with room to spare around its text. The packed size is exactly what the content asks for,
+     * and wrapped text asks for too little height, so the last lines were cut off; a size the player saved earlier
+     * can be smaller still. Either is grown to the content's size plus a margin, and a larger saved size is kept.
+     */
+    private void growToFitContent() {
+        Dimension contentSize = getPreferredSize();
+        int roomyWidth = (int) Math.ceil(contentSize.width * CONTENT_MARGIN);
+        int roomyHeight = (int) Math.ceil(contentSize.height * CONTENT_MARGIN);
+        Dimension currentSize = getSize();
+        setSize(Math.max(currentSize.width, roomyWidth), Math.max(currentSize.height, roomyHeight));
+        fitAndCenter();
     }
 
     /** Defend, attack, reinforce a running attack, or, with nothing left to add, continue or withdraw from it. */

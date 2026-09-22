@@ -199,17 +199,21 @@ deliberate restart of that phase, so a mask's silhouette must not carry a hard f
 at the very ends of a strip. Nothing else shapes it: the strip's own alpha ends the
 skirt, so no separate depth profile or concrete rule remains.
 
-The cliff-top rim uses one mask for every family, `textures/terrain/high_incline_dark`.
-Like a skirt strip it carries no palette: alpha is its coverage and gray is lightness
-about mid gray, so 128 leaves the top layer alone and the dark mask shades the rim it
-lands on, weighted by its own alpha. It is mapped to each exposed edge and clipped
-around road approaches, so one image serves every orientation instead of per-material
-south-edge variants. Coverage comes from the shared `BoardSurface` top triangles and
-exposed side segments, preserving road mouths and corners. The composed color
-occupies one aligned ground-atlas slot, so the rim receives ground lighting, geometry
-shadows and the normal-map toggle without a separately lit transparent top mesh.
+The cliff-top rim uses one pair of masks for every family. An exposed edge whose
+adjacent hex sits no more than two levels lower wears `textures/terrain/incline_dark`;
+anything deeper is a high incline and wears the coarser
+`textures/terrain/high_incline_dark`, exactly the board's own split, and a board-edge
+drop is judged by its own depth. Like a skirt strip both carry no palette: alpha is
+their coverage and gray is lightness about mid gray, so 128 leaves the top layer alone
+and a dark mask shades the rim it lands on, weighted by its own alpha. Each is mapped
+to its own exposed edge and clipped around road approaches, so one image serves every
+orientation instead of per-material south-edge variants. Coverage comes from the shared
+`BoardSurface` top triangles and exposed side segments, preserving road mouths and
+corners. The composed color occupies one aligned ground-atlas slot, so the rim receives
+ground lighting, geometry shadows and the normal-map toggle without a separately lit
+transparent top mesh.
 
-The dark mask carries no detail normals, so the rim keeps whatever relief the top
+The dark masks carry no detail normals, so the rim keeps whatever relief the top
 layer's own normal map already has. Should a normal variant arrive, `BoardRim` still
 composes it with reoriented normal mapping and rotates its directions to the edge.
 

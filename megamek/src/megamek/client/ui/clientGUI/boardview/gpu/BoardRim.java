@@ -26,7 +26,7 @@ final class BoardRim {
                   && cross(ax - cx, ay - cy, x - cx, y - cy) >= -0.0001f;
         }
     }
-    private record Patch(int edge, float from, float to) { }
+    private record Patch(int edge, float from, float to, boolean high) { }
     private record Key(Images ground, BoardScene.Surface surface, List<Triangle> faces, List<Patch> patches) { }
 
     private final Map<Key, Images> cache = new HashMap<>();
@@ -57,11 +57,24 @@ final class BoardRim {
                   : quantize(new Vector3(side.a()).sub(a).dot(along) / BoardGeometry.HEX_SCALE);
             float to = side.b().epsilonEquals(b, 0.02f) ? Float.POSITIVE_INFINITY
                   : quantize(new Vector3(side.b()).sub(a).dot(along) / BoardGeometry.HEX_SCALE);
-            patches.add(new Patch(side.edge(), from, to));
+            patches.add(new Patch(side.edge(), from, to, highDrop(scene, tile, side)));
         }
         Key key = new Key(ground, tile.surface(), List.copyOf(faces), List.copyOf(patches));
         used.add(key);
-        return cache.computeIfAbsent(key, ignored -> compose(key, assets.inclineMask()));
+        return cache.computeIfAbsent(key,
+              ignored -> compose(key, assets.inclineMask(), assets.highInclineMask()));
+    }
+
+    /**
+     * The board's own incline split, per edge: a drop of up to two levels is an incline, anything deeper is a
+     * high incline. A board-edge drop has no adjacent hex and is judged by its own depth instead.
+     */
+    private static boolean highDrop(BoardScene scene, BoardScene.Tile tile, BoardSurface.Side side) {
+        BoardScene.Tile neighbor = scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(side.edge())));
+        if (neighbor != null) {
+            return tile.elevation() - neighbor.elevation() > 2;
+        }
+        return Math.round(Math.max(side.a().z - side.lowA(), side.b().z - side.lowB()) / BoardGeometry.LEVEL) > 2;
     }
 
     /** End of one terrain snapshot update; keep only combinations used by that snapshot. */
@@ -88,7 +101,7 @@ final class BoardRim {
         return ax * by - ay * bx;
     }
 
-    private static Images compose(Key key, Images rim) {
+    private static Images compose(Key key, Images incline, Images high) {
         BoardScene.Pixels ground = key.ground().color();
         int width = Math.max(ground.width(), (int) BoardGeometry.TILE_WIDTH);
         int height = Math.max(ground.height(), (int) BoardGeometry.TILE_HEIGHT);
@@ -133,6 +146,7 @@ final class BoardRim {
                         float position = (px - a.x) * tx + (py - a.y) * ty;
                         if (distance > 26 || position < patch.from() || position > patch.to()) { continue; }
                         coveredEdges |= 1 << patch.edge();
+                        Images rim = patch.high() ? high : incline;
                         float u = 0.25f + position / (2 * length);
                         float v = 1 - distance / BoardGeometry.TILE_HEIGHT;
                         sample(rim.color(), u, v, albedo);

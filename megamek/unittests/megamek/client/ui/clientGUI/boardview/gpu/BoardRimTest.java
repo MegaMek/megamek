@@ -102,6 +102,21 @@ class BoardRimTest {
     }
 
     @Test
+    void usesTheInclineMaskUpToTwoLevelsAndTheHighMaskBeyond() {
+        GpuAssets assets = assets(pixels(0xff606060), null, pixels(0xffc0c0c0), null);
+        BoardScene twoLevels = scene(0, false, 0, ground, neutral);
+        BoardRim.Images gentle = new BoardRim().material(twoLevels, twoLevels.tile(CENTER),
+              BoardGeometry.floor(twoLevels), assets);
+        assertEquals(Math.round(0x50 * shade(0x60, 1)), gentle.color().rgba(probe(0, 0.5f, 9)) >>> 24, 1,
+              "A two-level drop wears the incline mask");
+        BoardScene threeLevels = scene(0, false, -1, ground, neutral);
+        BoardRim.Images steep = new BoardRim().material(threeLevels, threeLevels.tile(CENTER),
+              BoardGeometry.floor(threeLevels), assets);
+        assertEquals(Math.round(0x50 * shade(0xc0, 1)), steep.color().rgba(probe(0, 0.5f, 9)) >>> 24, 1,
+              "A three-level drop wears the high mask");
+    }
+
+    @Test
     void reusesMaterialsForUnchangedInputsAndReleasesUnusedCombinations() {
         GpuAssets assets = assets(pixels(0xfff0f0f0), neutral);
         BoardRim rims = new BoardRim();
@@ -136,13 +151,18 @@ class BoardRimTest {
     }
 
     private BoardScene scene(int edge, boolean road, boolean level, BoardScene.Pixels color, BoardScene.Pixels normal) {
+        return scene(edge, road, level ? 2 : 0, color, normal);
+    }
+
+    /** A level board except the one neighbor across {@code edge} sits at {@code neighborElevation}. */
+    private BoardScene scene(int edge, boolean road, int neighborElevation, BoardScene.Pixels color, BoardScene.Pixels normal) {
         List<BoardScene.Tile> tiles = new ArrayList<>();
         int direction = BoardGeometry.edgeDirection(edge);
         Coords low = CENTER.translated(direction);
         for (int x = 0; x < 7; x++) {
             for (int y = 0; y < 7; y++) {
                 Coords coords = new Coords(x, y);
-                tiles.add(new BoardScene.Tile(coords, !level && coords.equals(low) ? 0 : 2, -1, false,
+                tiles.add(new BoardScene.Tile(coords, coords.equals(low) ? neighborElevation : 2, -1, false,
                       road && coords.equals(CENTER) ? 1 << direction : 0, BoardScene.Surface.GRASS,
                       color, normal, null, null, List.of(), List.of()));
             }
@@ -160,8 +180,14 @@ class BoardRimTest {
     }
 
     private static GpuAssets assets(BoardScene.Pixels mask, BoardScene.Pixels normal) {
+        return assets(mask, normal, mask, normal);
+    }
+
+    private static GpuAssets assets(BoardScene.Pixels incline, BoardScene.Pixels inclineNormal,
+          BoardScene.Pixels high, BoardScene.Pixels highNormal) {
         GpuAssets assets = mock(GpuAssets.class);
-        when(assets.inclineMask()).thenReturn(new BoardRim.Images(mask, normal));
+        when(assets.inclineMask()).thenReturn(new BoardRim.Images(incline, inclineNormal));
+        when(assets.highInclineMask()).thenReturn(new BoardRim.Images(high, highNormal));
         return assets;
     }
 

@@ -39,6 +39,7 @@ final class GpuAssets implements Disposable {
     private final Map<String, Color> materialTints = new HashMap<>();
     private final Map<BoardLiquid.Textures, Animation<Texture>> liquids = new HashMap<>();
     private BoardRim.Images incline;
+    private BoardRim.Images highIncline;
 
     private record Interior(String asset, int levels) { }
 
@@ -123,19 +124,30 @@ final class GpuAssets implements Disposable {
     }
 
     /**
-     * The cliff-top rim is one mask for every family: alpha is its coverage and gray its lightness about mid
-     * gray, so one dark mask shades the exposed rim of any material. It carries no detail normals.
+     * The rim masks serve every family: alpha is coverage and gray is lightness about mid gray, so a dark mask
+     * shades the exposed rim of any material. A drop of up to two levels wears this incline mask.
      */
     BoardRim.Images inclineMask() {
         if (incline == null) {
-            try {
-                incline = new BoardRim.Images(new BoardScene.Pixels(
-                      ImageIO.read(materialFile("terrain/high_incline_dark").file())), null);
-            } catch (IOException error) {
-                throw new UncheckedIOException("Cannot load the cliff-top rim mask", error);
-            }
+            incline = loadRimMask("terrain/incline_dark");
         }
         return incline;
+    }
+
+    /** The coarser rim of a drop above two levels, the board's own high-incline split. Neither carries normals. */
+    BoardRim.Images highInclineMask() {
+        if (highIncline == null) {
+            highIncline = loadRimMask("terrain/high_incline_dark");
+        }
+        return highIncline;
+    }
+
+    private BoardRim.Images loadRimMask(String asset) {
+        try {
+            return new BoardRim.Images(new BoardScene.Pixels(ImageIO.read(materialFile(asset).file())), null);
+        } catch (IOException error) {
+            throw new UncheckedIOException("Cannot load the cliff-top rim mask", error);
+        }
     }
 
     private Texture texture(FileHandle file) {
@@ -334,5 +346,6 @@ final class GpuAssets implements Disposable {
         materialTints.clear();
         liquids.clear();
         incline = null;
+        highIncline = null;
     }
 }

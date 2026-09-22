@@ -137,7 +137,7 @@ final class UnitEquipmentAssembly {
         Set<String> kept = new HashSet<>();
         for (String side : new String[] { "front", "rear" }) {
             List<BoundingBox> placed = new ArrayList<>();
-            for (String location : ventLocations(vents, side, sinks)) {
+            for (String location : ventLocations(descriptor, vents, side, sinks)) {
                 boolean found = false;
                 for (JsonValue vent : vents) {
                     String name = vent.getString("node");
@@ -179,9 +179,15 @@ final class UnitEquipmentAssembly {
      * The torso each vent on this face belongs in, one entry per vent. The torsos with the most slotted heat sinks
      * win; with none slotted, the author's own vents keep their places.
      */
-    private static List<String> ventLocations(JsonValue vents, String side, Map<String, Integer> sinks) {
+    private static List<String> ventLocations(JsonValue descriptor, JsonValue vents, String side,
+          Map<String, Integer> sinks) {
         List<String> wanted = new ArrayList<>();
         if (sinks.isEmpty()) {
+            // A chassis can keep its author's vents to some faces only, as the Panther keeps them to its back.
+            JsonValue defaults = descriptor.get("ventDefaultSides");
+            if (defaults != null && !List.of(defaults.asStringArray()).contains(side)) {
+                return wanted;
+            }
             for (JsonValue vent : vents) {
                 if (side.equals(vent.getString("side")) && vent.getBoolean("authored", false)
                       && wanted.size() < VENTS_PER_FACE) {

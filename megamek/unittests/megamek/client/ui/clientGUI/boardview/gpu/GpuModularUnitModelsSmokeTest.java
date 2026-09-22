@@ -92,15 +92,22 @@ class GpuModularUnitModelsSmokeTest {
                     var emitter = gun.descriptor().emitters().getFirst();
                     float tip = emitter.position().get(1);
                     UnitModelAttachment.emitter(barrel, emitter, point, direction);
-                    // The Warhammer body is drawn at 0.95 of its authored size (its recipe's bodyScale), so its sockets sit at
-                    // 0.95 of the authored (-20, 9, 32); the barrel's own tip is not scaled.
-                    assertTrue(point.epsilonEquals(new Vector3(13 - 2 * (8.55f + tip), -31, 64.8f), .01f), point.toString());
+                    // The socket is read from the body rather than written in, because the Warhammer is drawn at its recipe's
+                    // bodyScale and that changes whenever the class heights are tuned. At the authored size the socket sits at
+                    // (-20, 9, 32); the barrel's own tip is never scaled.
+                    var hardpoint = socket(body, "LA-front");
+                    var rest = second.getNode(hardpoint.node()).globalTransform.getTranslation(new Vector3())
+                          .add(UnitModelDescriptor.vector(hardpoint.position()));
+                    float grown = -rest.x / 20;
+                    assertTrue(point.epsilonEquals(new Vector3(13 - 2 * (rest.y + tip), 7 + 2 * rest.x, 4 + 2 * rest.z), .01f),
+                          point.toString());
                     first.getNode("CT").rotation.set(Vector3.Z, 90);
                     first.getNode("LA-forearm").rotation.set(Vector3.X, 90);
                     first.calculateTransforms();
                     attachment.update();
                     UnitModelAttachment.emitter(barrel, emitter, point, direction);
-                    assertTrue(point.epsilonEquals(new Vector3(51, 5.1f, 87.6f + 2 * tip), .01f), point.toString());
+                    assertTrue(point.epsilonEquals(new Vector3(13 + 40 * grown, 7 - 2 * grown, 4 + 88 * grown + 2 * tip), .01f),
+                          point.toString());
                     assertTrue(direction.epsilonEquals(Vector3.Z, .001f), direction.toString());
                     assertTrue(second.getNode("CT").rotation.isIdentity());
                     UnitDamageDisplay.show(second, new BoardScene.LocationDamage(Set.of("LA"), Set.of("RL")));

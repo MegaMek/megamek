@@ -78,7 +78,11 @@ final class GpuMekAssemblyReview {
               { "locust-5v", "locust", "3085u/Phoenix/Locust LCT-5V.mtf" },
               { "locust-3m", "locust", "Rec Guides ilClan/Vol 16/Locust LCT-3M.mtf" },
               // The only Locust with a head weapon: it shares the chin turret with the centre torso's.
-              { "locust-6m", "locust", "3085u/Phoenix/Locust LCT-6M.mtf" }
+              { "locust-6m", "locust", "3085u/Phoenix/Locust LCT-6M.mtf" },
+              { "panther-9r", "panther", "3039u/Panther PNT-9R.mtf" },
+              // Two launchers stacked over and under in the centre torso.
+              { "panther-10k2", "panther", "3085u/Cutting Edge/Panther PNT-10K2.mtf" },
+              { "panther-16k", "panther", "3050U/Panther PNT-16K.mtf" }
         };
         int id = 700;
         for (String[] entry : cases) {
@@ -106,7 +110,7 @@ final class GpuMekAssemblyReview {
             var previous = original.get(mek.getShortNameRaw());
             // A chassis authored after the bakes were frozen has no legacy reference to sit beside.
             // The Locust hangs its guns under its pods, which only the six-view sheet shows from below.
-            if (previous != null && !entry[0].startsWith("locust")) {
+            if (previous != null && !entry[0].startsWith("locust") && !entry[0].startsWith("panther")) {
                 Model old = new G3dModelLoader(new JsonReader()).loadModel(new FileHandle(new File(referenceRoot,
                       previous.getString("asset"))));
                 references.add(old);
@@ -165,9 +169,9 @@ final class GpuMekAssemblyReview {
             }
             for (int index = 0; index < soloReviews.size(); index++) {
                 // A twenty-tonner framed like an assault Mek fills a sliver of its cell, so it is framed closer.
-                boolean small = soloNames.get(index).startsWith("Locust");
+                boolean small = soloNames.get(index).startsWith("Locust") || soloNames.get(index).startsWith("Panther");
                 GpuModularUnitModelsSmokeTest.renderFullReview(batch, List.of(soloReviews.get(index)),
-                      "runtime-new-" + soloNames.get(index), soloNames.get(index), small ? 46 : 78, small ? 20 : 25);
+                      "runtime-new-" + soloNames.get(index), soloNames.get(index), small ? 52 : 78, small ? 23 : 25);
             }
         } finally {
             references.forEach(Model::dispose);
@@ -180,7 +184,7 @@ final class GpuMekAssemblyReview {
               { "Rifleman", "rifleman" }, { "BattleMaster", "battlemaster" }, { "Atlas", "atlas" },
               { "Warhammer", "warhammer" }, { "Archer", "archer" }, { "Marauder", "marauder" },
               { "Mad Cat (Timber Wolf)", "mad-cat" }, { "Locust", "locust" }, { "Mackie", "mackie" },
-              { "King Crab", "king-crab" }
+              { "King Crab", "king-crab" }, { "Panther", "panther" }
         };
         for (String[] sheet : sheets) {
             GpuVariantSheetReview.render(library, batch, tileset, sheet[0],

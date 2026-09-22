@@ -68,13 +68,13 @@ final class GpuVariantSheetReview {
         // Framed to the chassis: an assault Mek fills the full frame, and a light one is drawn closer rather than
         // shrinking to a speck in the corner of its cell. The weight lineup is where sizes are compared.
         var bounds = variants.getFirst().instance().calculateBoundingBox(new com.badlogic.gdx.math.collision.BoundingBox());
-        float frame = Math.min(FRAME, Math.max(bounds.getHeight(), bounds.getWidth()) * 1.75f);
+        float frame = Math.min(FRAME, Math.max(bounds.getHeight(), bounds.getWidth()) * 2.3f);
         var camera = new OrthographicCamera(frame, frame);
         camera.near = 1;
         camera.far = 1000;
         camera.position.set(170, 210, 115);
         camera.up.set(Vector3.Z);
-        camera.lookAt(0, 0, Math.min(25, bounds.getHeight() / 2));
+        camera.lookAt(0, 0, Math.min(25, bounds.getHeight() * .6f));
         camera.update();
 
         var target = new FrameBuffer(Pixmap.Format.RGBA8888, width, height, true);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -30,60 +30,59 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
 package megamek.server.commands;
 
 import java.util.List;
 
 import megamek.client.ui.Messages;
+import megamek.common.compute.Compute;
+import megamek.common.units.Entity;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.BooleanArgument;
+import megamek.server.commands.arguments.IntegerArgument;
 import megamek.server.commands.arguments.UnitArgument;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
- * @author Luana Coppio
+ * Gives a unit a gamemaster's change to its target movement modifier for the rest of the round: added to the
+ * modifier the unit earns by moving, then held to the range the movement table allows, so attackers never see
+ * less than no modifier or more than the table's top. Zero clears it. The Edit Damage dialog's Target Modifier
+ * spinner sets the same value.
  */
-public class KillCommand extends GamemasterServerCommand {
+public class TargetModifierCommand extends GamemasterServerCommand {
 
     public static final String UNIT_ID = "unitID";
-    public static final String EJECT = "eject";
+    public static final String DELTA = "delta";
 
-    /** Creates new KillCommand */
-    public KillCommand(Server server, TWGameManager gameManager) {
-        super(server, gameManager, "kill", Messages.getString("Gamemaster.cmd.kill.help"),
-              Messages.getString("Gamemaster.cmd.kill.longName"));
+    public TargetModifierCommand(Server server, TWGameManager gameManager) {
+        super(server, gameManager, "targetMod", Messages.getString("Gamemaster.cmd.targetMod.help"),
+              Messages.getString("Gamemaster.cmd.targetMod.longName"));
     }
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.kill.unitID")),
-              new BooleanArgument(EJECT, Messages.getString("Gamemaster.cmd.kill.eject"), false));
+        return List.of(new UnitArgument(UNIT_ID, Messages.getString("Gamemaster.cmd.targetMod.unitID")),
+              new IntegerArgument(DELTA, Messages.getString("Gamemaster.cmd.targetMod.delta"),
+                    -Compute.MAX_GAMEMASTER_TARGET_MODIFIER, Compute.MAX_GAMEMASTER_TARGET_MODIFIER, 0));
     }
 
-    /**
-     * Run this command with the arguments supplied
-     */
     @Override
     protected void runCommand(int connId, Arguments args) {
         int unitId = (int) args.get(UNIT_ID).getValue();
-        // is the unit on the board?
-        var unit = gameManager.getGame().getEntity(unitId);
-        if (unit == null) {
+        int delta = (int) args.get(DELTA).getValue();
+        Entity entity = gameManager.getGame().getEntity(unitId);
+        if (entity == null) {
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.missingUnit"));
             return;
         }
-        boolean eject = (boolean) args.get(EJECT).getValue();
-        if (eject) {
-            // The crew must leave before the unit is destroyed: a crew that is already dead or doomed cannot
-            // abandon it, and destroying a unit this way is not survivable.
-            gameManager.addReport(gameManager.abandonEntity(unit));
+        entity.setGamemasterTargetModifier(delta);
+        if (delta == 0) {
+            server.sendServerChat(Messages.getString("Gamemaster.cmd.targetMod.cleared", entity.getDisplayName()));
+        } else {
+            server.sendServerChat(Messages.getString("Gamemaster.cmd.targetMod.success", entity.getDisplayName(),
+                  (delta > 0) ? "+" + delta : String.valueOf(delta)));
         }
-        gameManager.destroyEntity(unit, Messages.getString("Gamemaster.cmd.kill.reason"), false, false);
-        // a unit killed while holding the current turn would otherwise keep it and stall the game
-        gameManager.settleTurnsAfterGamemasterAct(unit);
-        server.sendServerChat(unit.getDisplayName() + Messages.getString("Gamemaster.cmd.kill.success"));
+        gameManager.entityUpdate(entity.getId());
     }
 }

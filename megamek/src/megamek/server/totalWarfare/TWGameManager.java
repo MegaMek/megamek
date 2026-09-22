@@ -359,9 +359,11 @@ public class TWGameManager extends AbstractGameManager {
         commands.add(new CheckBVTeamCommand(server));
         commands.add(new NukeCommand(server, this));
         commands.add(new KillCommand(server, this));
+        commands.add(new ExplodeEquipmentCommand(server, this));
         commands.add(new OrbitalBombardmentCommand(server, this));
         commands.add(new ChangeOwnershipCommand(server, this));
         commands.add(new SkillModifierCommand(server, this));
+        commands.add(new TargetModifierCommand(server, this));
         commands.add(new DisasterCommand(server, this));
         commands.add(new FirestarterCommand(server, this));
         commands.add(new ChangeTerrainCommand(server, this));
@@ -415,6 +417,29 @@ public class TWGameManager extends AbstractGameManager {
             hexEditHandler = new HexEditHandler(this);
         }
         return hexEditHandler;
+    }
+
+    /**
+     * Sets off one piece of a unit's equipment at a gamemaster's request, as a critical hit would; the
+     * {@code /explode} command's entry point. See {@link EquipmentExplosionHandler}.
+     *
+     * @param entity  the unit carrying the equipment
+     * @param mounted the equipment to set off
+     *
+     * @return what happened, for the gamemaster to be told
+     */
+    public EquipmentExplosionHandler.Outcome explodeEquipmentForGamemaster(Entity entity, Mounted<?> mounted) {
+        return new EquipmentExplosionHandler(this).explode(entity, mounted);
+    }
+
+    /**
+     * Keeps the turn order sound after a gamemaster act took a unit out of action mid-phase; see
+     * {@link GamemasterTurnUpkeep}.
+     *
+     * @param entity the unit the gamemaster acted on
+     */
+    public void settleTurnsAfterGamemasterAct(Entity entity) {
+        new GamemasterTurnUpkeep(this).settleTurnsAfter(entity);
     }
 
     /**
@@ -26846,6 +26871,7 @@ public class TWGameManager extends AbstractGameManager {
             sendServerChat(ServerLobbyHelper.entityUpdateMessage(entity, game));
         } else {
             destroyEntityIfFatallyDamaged(entity);
+            settleTurnsAfterGamemasterAct(entity);
             // Editing a unit's damage in play is a gamemaster act, but it arrives as a unit update rather than a
             // command, so it is announced here with the same toast the gamemaster commands use.
             if (sender.isGameMaster()) {
@@ -26883,6 +26909,7 @@ public class TWGameManager extends AbstractGameManager {
         new DamageEditApplier(entity, spec).applyToEntity();
         entityUpdate(entity.getId());
         destroyEntityIfFatallyDamaged(entity);
+        settleTurnsAfterGamemasterAct(entity);
         // Editing a unit's damage in play is a gamemaster act, but it arrives as its own packet rather than a
         // command, so it is announced here with the same toast the gamemaster commands use.
         sendToast(GameToastEvent.Level.GAMEMASTER,

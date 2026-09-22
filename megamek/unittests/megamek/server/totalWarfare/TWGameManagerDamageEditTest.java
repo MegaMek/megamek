@@ -33,7 +33,9 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -43,6 +45,7 @@ import static org.mockito.Mockito.verify;
 import megamek.common.Player;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
@@ -157,5 +160,59 @@ class TWGameManagerDamageEditTest {
         assertEquals(TRAITOR_TARGET_PLAYER_ID, mek.getTraitorId(),
               "The edit carries no ownership change, so the pending switch must survive it");
         assertEquals(5, mek.heat);
+    }
+
+    @Test
+    void ejectionSettingsLandOnTheEditedUnitOnly() {
+        Entity lanceMate = MMTestUtilities.getEntityForUnitTesting("Enforcer III ENF-6M", false);
+        assertNotNull(lanceMate);
+        lanceMate.setId(UNIT_ID + 1);
+        lanceMate.setOwner(game.getPlayer(OWNER_CONNECTION_ID));
+        game.addEntity(lanceMate);
+        Mek edited = (Mek) mek;
+        Mek untouched = (Mek) lanceMate;
+        assertTrue(edited.isAutoEject() && untouched.isAutoEject(), "Both start with automatic ejection on");
+
+        DamageEditSpec spec = emptySpec();
+        spec.autoEject = false;
+        spec.conditionalEjectOnEngineExplosion = false;
+        sendDamageEdit(GAME_MASTER_CONNECTION_ID, spec);
+
+        assertFalse(edited.isAutoEject(), "The edited unit's ejection is off");
+        assertFalse(edited.isCondEjectEngine());
+        assertTrue(untouched.isAutoEject(), "The lance mate keeps its own ejection setting");
+        assertTrue(untouched.isCondEjectEngine());
+    }
+
+    @Test
+    void gameMasterJamLandsOnTheServerUnit() {
+        WeaponMounted weapon = jammableWeapon();
+        DamageEditSpec spec = emptySpec();
+        spec.weaponJammed.put(mek.getEquipmentNum(weapon), true);
+
+        sendDamageEdit(GAME_MASTER_CONNECTION_ID, spec);
+
+        assertTrue(weapon.isJammed(), "The gamemaster's jam lands on the server's copy of the unit");
+    }
+
+    @Test
+    void nonGameMasterJamIsDropped() {
+        WeaponMounted weapon = jammableWeapon();
+        DamageEditSpec spec = emptySpec();
+        spec.weaponJammed.put(mek.getEquipmentNum(weapon), true);
+
+        sendDamageEdit(OWNER_CONNECTION_ID, spec);
+
+        assertFalse(weapon.isJammed(), "A jam from a player who is not the gamemaster must not be applied");
+    }
+
+    /** A weapon of the test unit that some rule can jam, so that a jam on it is not refused for the wrong reason. */
+    private WeaponMounted jammableWeapon() {
+        for (WeaponMounted weapon : mek.getWeaponList()) {
+            if (weapon.canJam()) {
+                return weapon;
+            }
+        }
+        throw new AssertionError("The test unit must carry a weapon that can jam");
     }
 }

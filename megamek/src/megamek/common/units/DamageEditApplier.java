@@ -48,6 +48,7 @@ import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.logging.MMLogger;
 
 /**
@@ -97,19 +98,32 @@ public class DamageEditApplier {
 
     public void applyToEntity() {
         for (int i = 0; i < entity.locations(); i++) {
+            // A limb the edit brings back from blown off reads as zero in an editor that still shows it gone; the
+            // zero would destroy the returned limb, so it comes back whole instead
+            boolean isBroughtBackLimb = isBroughtBackFromBlownOff(i);
             if ((spec.internal != null) && (spec.internal[i] != null)) {
                 int internal = spec.internal[i];
+                if (isBroughtBackLimb && (internal <= 0)) {
+                    internal = entity.getOInternal(i);
+                }
                 if (internal <= 0) {
                     internal = IArmorState.ARMOR_DESTROYED;
                 }
                 if ((entity instanceof Aero) && (i == 0)) {
                     ((Aero) entity).setSI(internal);
                 } else {
+                    // a limb the edit blows off keeps its gone marks whatever structure the edit carries for it
+                    if ((internal > 0) && !isBlownOffBySpec(i)) {
+                        bringBackLocationIfGone(i);
+                    }
                     entity.setInternal(internal, i);
                 }
             }
             if ((spec.armor != null) && (spec.armor[i] != null)) {
                 int armor = spec.armor[i];
+                if (isBroughtBackLimb && (armor <= 0)) {
+                    armor = entity.getOArmor(i);
+                }
                 if (armor <= 0) {
                     armor = IArmorState.ARMOR_DESTROYED;
                 }
@@ -117,12 +131,16 @@ public class DamageEditApplier {
             }
             if (entity.hasRearArmor(i) && (spec.rearArmor != null) && (spec.rearArmor[i] != null)) {
                 int rear = spec.rearArmor[i];
+                if (isBroughtBackLimb && (rear <= 0)) {
+                    rear = entity.getOArmor(i, true);
+                }
                 if (rear <= 0) {
                     rear = IArmorState.ARMOR_DESTROYED;
                 }
                 entity.setArmor(rear, i, true);
             }
         }
+        applyBlownOffLimbs();
         for (Map.Entry<Integer, Integer> equipmentHit : spec.equipmentHits.entrySet()) {
             int equipmentNumber = equipmentHit.getKey();
             Mounted<?> mounted = entity.getEquipment(equipmentNumber);
@@ -423,12 +441,16 @@ public class DamageEditApplier {
 
         applyCrewHits();
         applySkillModifiers();
+        applyTargetModifier();
+        applyEjectionSettings();
         applyHeat();
         applyAmmoShots();
         applyEquipmentSettings();
         applyEquipmentActivation();
         applyStatus();
         applyBuildingCriticalState();
+        applyWeaponStates();
+        applyLocationBreaches();
         logAppliedEdits();
     }
 
@@ -458,14 +480,6 @@ public class DamageEditApplier {
                 building.setTurretLocked(weapon, turretLocked.getValue());
             }
         }
-        for (Map.Entry<Integer, Boolean> weaponJammed : spec.buildingWeaponJammed.entrySet()) {
-            // Only a weapon can jam; the editor builds the switch for weapons alone, so anything else named
-            // here is a malformed spec and is left untouched
-            if (building.getEquipment(weaponJammed.getKey()) instanceof WeaponMounted weapon) {
-                // immediately, rather than from the next phase: the gamemaster is stating the condition now
-                weapon.setJammedImmediately(weaponJammed.getValue());
-            }
-        }
 
         // The power switch stands in for the shutdown checkbox on a building: with power it runs, without power
         // it is down. Reconciled here rather than left to the next applyDamage so the switch takes effect at once,
@@ -477,6 +491,175 @@ public class DamageEditApplier {
                     + " locked {}",
               building.getShortName(), building.isPowerSwitchedOff(), building.getStunnedTurns(),
               building.allGunnersDead(), building.hasLockedTurret());
+    }
+
+    /** Whether the edit blows the given location off. */
+    private boolean isBlownOffBySpec(int location) {
+        return (spec.locationBlownOff != null) && (location < spec.locationBlownOff.length)
+              && Boolean.TRUE.equals(spec.locationBlownOff[location]);
+    }
+
+    /** Whether the edit brings the given location back from being blown off. */
+    private boolean isBroughtBackFromBlownOff(int location) {
+        return (spec.locationBlownOff != null) && (location < spec.locationBlownOff.length)
+              && Boolean.FALSE.equals(spec.locationBlownOff[location]) && entity.isLocationBlownOff(location);
+    }
+
+    /**
+     * Blows off the limbs the edit marks blown off, through the same destruction a "limb blown off" critical runs:
+     * the limb reads as gone, everything in it is marked missing, and a lost leg queues the automatic piloting
+     * failure that drops the Mek. Limbs the edit brings back were handled with the structure above. Only a Mek's
+     * arms and legs can be blown off; anything else named is a malformed spec and is left alone.
+     */
+    private void applyBlownOffLimbs() {
+        if ((spec.locationBlownOff == null) || !(entity instanceof Mek mek)) {
+            return;
+        }
+        for (int location = 0; location < Math.min(spec.locationBlownOff.length, mek.locations()); location++) {
+            boolean isLimb = mek.isArm(location) || mek.locationIsLeg(location);
+            if (!Boolean.TRUE.equals(spec.locationBlownOff[location]) || !isLimb || mek.isLocationBlownOff(location)) {
+                continue;
+            }
+            mek.destroyLocation(location, true);
+            LOGGER.info("[EquipState] GM edit: {} of {} blown off", mek.getLocationName(location),
+                  mek.getDisplayName());
+        }
+    }
+
+    /**
+     * Brings back a location the editor is giving structure to while it stands blown off or destroyed, which
+     * setting the structure alone cannot do: a Mek reports a blown-off location as destroyed whatever its
+     * structure value says, and destroying a location marks every critical slot and piece of equipment in it
+     * missing, which none of the editor's crit controls cover. Restore Unit on a Mek with an arm blown off is
+     * the case. Hit and destroyed marks are left to the crit controls the editor sends alongside.
+     */
+    private void bringBackLocationIfGone(int location) {
+        boolean isGone = entity.isLocationBlownOff(location) || (entity.getInternalForReal(location) < 0);
+        if (!isGone) {
+            return;
+        }
+        entity.setLocationBlownOff(location, false);
+        entity.setLocationBlownOffThisPhase(location, false);
+        for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = entity.getCritical(location, slot);
+            if ((criticalSlot != null) && criticalSlot.isMissing()) {
+                criticalSlot.setMissing(false);
+            }
+        }
+        for (Mounted<?> mounted : entity.getEquipment()) {
+            boolean isInLocation = (mounted.getLocation() == location)
+                  || (mounted.isSplit() && (mounted.getSecondLocation() == location));
+            if (isInLocation && mounted.isMissing()) {
+                mounted.setMissing(false);
+            }
+        }
+        LOGGER.info("[EquipState] GM edit: {} of {} brought back from blown off or destroyed",
+              entity.getLocationName(location), entity.getDisplayName());
+    }
+
+    /**
+     * Writes the gamemaster's weapon states back outright: a jam on any weapon, the fired state of a one-shot
+     * launcher, and the lock on a Directional Torso Mount. The spec is network input, so each entry is checked
+     * against the weapon it names and refused, with the reason logged, where the state does not apply. The turn
+     * bookkeeping on a mount - used this round, AMS used, the TSEMP downtime turn - is deliberately not here; the
+     * note on the weapon states in {@link DamageEditSpec} says why.
+     */
+    private void applyWeaponStates() {
+        for (Map.Entry<Integer, Boolean> weaponJammed : spec.weaponJammed.entrySet()) {
+            // Only a weapon can jam; the editor builds the switch for weapons alone, so anything else named
+            // here is a malformed spec and is left untouched
+            if (!(entity.getEquipment(weaponJammed.getKey()) instanceof WeaponMounted weapon)
+                  || (weaponJammed.getValue() == null)) {
+                continue;
+            }
+            // a jam on a weapon no rule can jam would be a state nothing in play can produce or clear
+            if (!weapon.canJam()) {
+                LOGGER.warn("[EquipState] GM edit refused: {} on {} cannot jam, jammed stays {}",
+                      weapon.getName(), entity.getDisplayName(), weapon.isJammed());
+                continue;
+            }
+            if (weapon.isJammed() != weaponJammed.getValue()) {
+                LOGGER.info("[EquipState] GM edit: {} on {} {}", weapon.getName(), entity.getDisplayName(),
+                      weaponJammed.getValue() ? "jammed" : "jam cleared");
+            }
+            // immediately, rather than from the next phase: the gamemaster is stating the condition now
+            weapon.setJammedImmediately(weaponJammed.getValue());
+        }
+        for (Map.Entry<Integer, Boolean> weaponFired : spec.weaponFired.entrySet()) {
+            if (!(entity.getEquipment(weaponFired.getKey()) instanceof WeaponMounted weapon)
+                  || (weaponFired.getValue() == null)) {
+                continue;
+            }
+            // a TSEMP's fired flag is round bookkeeping that the next round resets, not a state to hand-set
+            if (!weapon.isOneShot()) {
+                LOGGER.warn("[EquipState] GM edit refused: {} on {} is not a one-shot weapon, fired stays {}",
+                      weapon.getName(), entity.getDisplayName(), weapon.isFired());
+                continue;
+            }
+            if (weapon.isFired() != weaponFired.getValue()) {
+                LOGGER.info("[EquipState] GM edit: one-shot {} on {} {}", weapon.getName(),
+                      entity.getDisplayName(), weaponFired.getValue() ? "marked fired" : "reloaded");
+            }
+            weapon.setFired(weaponFired.getValue());
+        }
+        for (Map.Entry<Integer, Boolean> mountLocked : spec.directionalMountLocked.entrySet()) {
+            if (!(entity.getEquipment(mountLocked.getKey()) instanceof WeaponMounted weapon)
+                  || (mountLocked.getValue() == null)) {
+                continue;
+            }
+            if (!weapon.hasDirectionalTorsoMount()) {
+                LOGGER.warn("[EquipState] GM edit refused: {} on {} is not in a Directional Torso Mount",
+                      weapon.getName(), entity.getDisplayName());
+                continue;
+            }
+            if (weapon.isDirectionalMountLocked() != mountLocked.getValue()) {
+                LOGGER.info("[EquipState] GM edit: directional mount of {} on {} {}", weapon.getName(),
+                      entity.getDisplayName(), mountLocked.getValue() ? "locked" : "freed");
+            }
+            weapon.setDirectionalMountLocked(mountLocked.getValue());
+        }
+    }
+
+    /**
+     * Marks a Mek's locations hull-breached or clears the breach, the way the server's breach resolution marks
+     * them (TW p.122): the location's exposure, every piece of equipment in it and every critical slot. Only the
+     * marks are set here. A breach in play can also destroy the unit (center torso) or doom the crew (head), and
+     * that is left to the gamemaster's Destroy Unit button rather than done behind a checkbox; clearing a breach
+     * likewise only lifts the marks, it does not undo any crit the breach caused in play.
+     */
+    private void applyLocationBreaches() {
+        if ((spec.locationBreached == null) || !(entity instanceof Mek)) {
+            return;
+        }
+        for (int location = 0; location < Math.min(spec.locationBreached.length, entity.locations()); location++) {
+            Boolean breached = spec.locationBreached[location];
+            if (breached == null) {
+                continue;
+            }
+            boolean isBreached = entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED;
+            if (breached == isBreached) {
+                continue;
+            }
+            // allowChange: a breached location is otherwise pinned, which is what a gamemaster is here to undo
+            entity.setLocationStatus(location,
+                  breached ? ILocationExposureStatus.BREACHED : ILocationExposureStatus.NORMAL, true);
+            for (Mounted<?> mounted : entity.getEquipment()) {
+                // split equipment straddles two locations and is out of action when either is breached
+                boolean isInLocation = (mounted.getLocation() == location)
+                      || (mounted.isSplit() && (mounted.getSecondLocation() == location));
+                if (isInLocation) {
+                    mounted.setBreached(breached);
+                }
+            }
+            for (int slot = 0; slot < entity.getNumberOfCriticalSlots(location); slot++) {
+                CriticalSlot criticalSlot = entity.getCritical(location, slot);
+                if (criticalSlot != null) {
+                    criticalSlot.setBreached(breached);
+                }
+            }
+            LOGGER.info("[EquipState] GM edit: {} of {} {}", entity.getLocationName(location),
+                  entity.getDisplayName(), breached ? "breached" : "breach cleared");
+        }
     }
 
     /**
@@ -637,6 +820,60 @@ public class DamageEditApplier {
      * /skillMod command sets. Each modifier carries its own duration, and a delta at zero clears its modifier,
      * which is also how a gamemaster takes a change back before it runs out.
      */
+    private void applyEjectionSettings() {
+        if (spec.autoEject != null) {
+            boolean changed = AutomaticEjectionRules.setAutomaticEjection(entity, spec.autoEject);
+            if (changed) {
+                LOGGER.info("[EquipState] GM edit: {} automatic ejection set to {}", entity.getDisplayName(),
+                      spec.autoEject);
+            }
+        }
+        if (entity instanceof Mek mek) {
+            if (spec.conditionalEjectOnAmmoExplosion != null) {
+                mek.setCondEjectAmmo(spec.conditionalEjectOnAmmoExplosion);
+            }
+            if (spec.conditionalEjectOnEngineExplosion != null) {
+                mek.setCondEjectEngine(spec.conditionalEjectOnEngineExplosion);
+            }
+            if (spec.conditionalEjectOnCenterTorsoDestroyed != null) {
+                mek.setCondEjectCTDest(spec.conditionalEjectOnCenterTorsoDestroyed);
+            }
+            if (spec.conditionalEjectOnHeadshot != null) {
+                mek.setCondEjectHeadshot(spec.conditionalEjectOnHeadshot);
+            }
+            if (spec.conditionalEjectOnAmmoExplosion != null) {
+                LOGGER.info("[EquipState] GM edit: {} (id {}) conditional ejection now ammo {}, engine {}, center"
+                            + " torso {}, headshot {}", mek.getDisplayName(), mek.getId(), mek.isCondEjectAmmo(),
+                      mek.isCondEjectEngine(), mek.isCondEjectCTDest(), mek.isCondEjectHeadshot());
+            }
+        } else if (entity instanceof Aero aero) {
+            if (spec.conditionalEjectOnAmmoExplosion != null) {
+                aero.setCondEjectAmmo(spec.conditionalEjectOnAmmoExplosion);
+            }
+            if (spec.conditionalEjectOnFuelExplosion != null) {
+                aero.setCondEjectFuel(spec.conditionalEjectOnFuelExplosion);
+            }
+            if (spec.conditionalEjectOnStructuralIntegrityDestroyed != null) {
+                aero.setCondEjectSIDest(spec.conditionalEjectOnStructuralIntegrityDestroyed);
+            }
+        }
+    }
+
+    /**
+     * Writes the gamemaster's target movement modifier delta back to the unit, where it lasts the rest of the
+     * round; zero clears it. The clamp to the movement table's range is applied when a to-hit reads it.
+     */
+    private void applyTargetModifier() {
+        if (spec.targetModifier == null) {
+            return;
+        }
+        if (entity.getGamemasterTargetModifier() != spec.targetModifier) {
+            LOGGER.info("[EquipState] GM edit: {} target movement modifier delta set to {} for this round",
+                  entity.getDisplayName(), spec.targetModifier);
+        }
+        entity.setGamemasterTargetModifier(spec.targetModifier);
+    }
+
     private void applySkillModifiers() {
         Crew crew = entity.getCrew();
         if ((crew == null) || (spec.gunneryModifier == null)) {

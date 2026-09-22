@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.unitEditor;
 
 import java.awt.*;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.*;
@@ -170,9 +171,47 @@ public class PreExistingDamageRoller {
         setSpinnerToZero(controls.spnGunneryModifier);
         setSpinnerToZero(controls.spnPilotingModifier);
         setSpinnerToZero(controls.spnInitiativeModifier);
+        setSpinnerToZero(controls.spnTargetModifier);
         resetModifierDuration(controls.spnGunneryRounds, controls.chkGunneryPermanent);
         resetModifierDuration(controls.spnPilotingRounds, controls.chkPilotingPermanent);
         resetModifierDuration(controls.spnInitiativeRounds, controls.chkInitiativePermanent);
+        clearDamageStates();
+    }
+
+    /**
+     * Unticks every state that is damage by another name: breached and blown-off locations, jammed weapons, spent
+     * one-shot launchers, locked directional mounts, and a building's locked turrets and killed gunners. The
+     * settings switches - ejection, burst fire, hot-loading, modes - are how the unit is set up rather than what
+     * has happened to it, so they stay as they are.
+     */
+    private void clearDamageStates() {
+        untickAll(controls.chkLocationBreached);
+        untickAll(controls.chkLocationBlownOff);
+        untickAll(controls.weaponJammed.values());
+        untickAll(controls.weaponFired.values());
+        untickAll(controls.directionalMountLocked.values());
+        untickAll(controls.buildingTurretLocked.values());
+        untickAll(controls.buildingGunnersKilled.values());
+        setSpinnerToZero(controls.spnBuildingStunnedTurns);
+    }
+
+    /** Unticks each checkbox of a row that may be missing or hold gaps. */
+    private static void untickAll(@Nullable JCheckBox[] checkboxes) {
+        if (checkboxes == null) {
+            return;
+        }
+        for (JCheckBox checkbox : checkboxes) {
+            if (checkbox != null) {
+                checkbox.setSelected(false);
+            }
+        }
+    }
+
+    /** Unticks each checkbox in the collection. */
+    private static void untickAll(Collection<JCheckBox> checkboxes) {
+        for (JCheckBox checkbox : checkboxes) {
+            checkbox.setSelected(false);
+        }
     }
 
     /** Puts one modifier's duration controls back to their fresh state: the default rounds, not permanent. */

@@ -1251,7 +1251,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         if (game.getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
-                if (currentEntity == Entity.NONE) {
+                if (needsUnitSelectedForTurn()) {
                     beginMyTurn();
                 }
                 String t = (phase.isTargeting()) ? Messages.getString("TargetingPhaseDisplay.its_your_turn")

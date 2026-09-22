@@ -493,6 +493,13 @@ public abstract class Entity extends TurnOrdered
      */
     private HeatBreakdown heatBreakdown = new HeatBreakdown();
     public int delta_distance = 0;
+
+    /**
+     * The gamemaster's change to this unit's target movement modifier for the current round; zero when none is
+     * set. Added to the modifier the unit earns by moving and held to the movement table's range when a to-hit
+     * reads it, and cleared at the next round.
+     */
+    private int gamemasterTargetModifier = 0;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
@@ -2238,6 +2245,24 @@ public abstract class Entity extends TurnOrdered
         }
 
         return isActive;
+    }
+
+    /**
+     * @return the gamemaster's change to this unit's target movement modifier for the current round, or zero when
+     *       none is set. {@code Compute.getTargetMovementModifier} adds it to the earned modifier and holds the
+     *       total to the movement table's range; {@link #newRound(int)} clears it.
+     */
+    public int getGamemasterTargetModifier() {
+        return gamemasterTargetModifier;
+    }
+
+    /**
+     * Sets the gamemaster's change to this unit's target movement modifier for the rest of the current round.
+     *
+     * @param delta the change; positive makes the unit harder to hit, negative easier, zero clears it
+     */
+    public void setGamemasterTargetModifier(int delta) {
+        gamemasterTargetModifier = delta;
     }
 
     /**
@@ -8065,6 +8090,8 @@ public abstract class Entity extends TurnOrdered
         if (crew != null) {
             crew.getSkillModifiers().newRound();
         }
+        // a gamemaster's target movement modifier change lasts the round it was set in and no longer
+        gamemasterTargetModifier = 0;
 
         // Update the inferno tracker.
         infernos.newRound(roundNumber);

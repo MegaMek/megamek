@@ -6747,7 +6747,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Can the player unload entities stranded on immobile transports?
             if (clientgui.getClient().canUnloadStranded()) {
                 unloadStranded();
-            } else if (currentEntity == Entity.NONE) {
+            } else if (needsUnitSelectedForTurn()) {
                 setStatusBarText(Messages.getString("MovementDisplay.its_your_turn") + s);
                 beginMyTurn();
             }

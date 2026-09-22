@@ -1108,13 +1108,17 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // Vehicles don't have ejection systems, so crews abandon, and must enter a valid hex. If they cannot,
             // they can't abandon as per TO pg 197.
             Coords position = currentEntity().getPosition();
-            Infantry infantry = new ConvInfantry();
-            infantry.setGame(game);
-            boolean hasLegalHex = !infantry.isLocationProhibited(position);
-            for (int i = 0; i < 6; i++) {
-                hasLegalHex |= !infantry.isLocationProhibited(position.translated(i));
+            boolean hasLegalHex;
+            if (position == null) {
+                hasLegalHex = false;
+            } else {
+                Infantry infantry = new ConvInfantry();
+                infantry.setGame(game);
+                hasLegalHex = !infantry.isLocationProhibited(position);
+                for (int i = 0; i < 6; i++) {
+                    hasLegalHex |= !infantry.isLocationProhibited(position.translated(i));
+                }
             }
-
             setEjectEnabled(hasLegalHex);
         } else {
             setEjectEnabled(((isMEK &&

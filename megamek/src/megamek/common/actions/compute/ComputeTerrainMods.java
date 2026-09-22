@@ -32,18 +32,6 @@
  */
 package megamek.common.actions.compute;
 
-import static megamek.common.ToHitData.HIT_ABOVE;
-import static megamek.common.ToHitData.HIT_BELOW;
-import static megamek.common.ToHitData.HIT_PARTIAL_COVER;
-import static megamek.common.ToHitData.HIT_UNDERWATER;
-import static megamek.common.ToHitData.SIDE_FRONT;
-import static megamek.common.ToHitData.SIDE_LEFT;
-import static megamek.common.ToHitData.SIDE_RANDOM;
-import static megamek.common.ToHitData.SIDE_REAR;
-import static megamek.common.ToHitData.SIDE_RIGHT;
-
-import java.util.List;
-
 import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
@@ -69,6 +57,18 @@ import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.artillery.ArtilleryCannonWeapon;
 import megamek.logging.MMLogger;
+
+import java.util.List;
+
+import static megamek.common.ToHitData.HIT_ABOVE;
+import static megamek.common.ToHitData.HIT_BELOW;
+import static megamek.common.ToHitData.HIT_PARTIAL_COVER;
+import static megamek.common.ToHitData.HIT_UNDERWATER;
+import static megamek.common.ToHitData.SIDE_FRONT;
+import static megamek.common.ToHitData.SIDE_LEFT;
+import static megamek.common.ToHitData.SIDE_RANDOM;
+import static megamek.common.ToHitData.SIDE_REAR;
+import static megamek.common.ToHitData.SIDE_RIGHT;
 
 public class ComputeTerrainMods {
 
@@ -239,12 +239,16 @@ public class ComputeTerrainMods {
 
         // target in water?
         boolean targetInWater = (targetHex != null) && targetHex.containsTerrain(Terrains.WATER);
-        if (PartialCover.isInPartialWater(entityTarget, targetHex, targEl)) {
+        boolean targetInWaterPartialCover = PartialCover.isInPartialWater(entityTarget, targetHex, targEl);
+        if (targetInWaterPartialCover) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
 
+        // Skips partial cover if using semi-guided direct against a tagged target and not in water partial cover.
+        boolean semiguidedNoWater = semiGuidedDirectVsTaggedTarget && !targetInWaterPartialCover;
+
         // Change hit table for partial cover, accommodate for partial underwater (legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE && !(semiGuidedDirectVsTaggedTarget && !underWater)) {
+        if (los.getTargetCover() != LosEffects.COVER_NONE && !semiguidedNoWater) {
             if (underWater && (targetInWater && (targEl == 0) && (entityTarget != null && entityTarget.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(HIT_PARTIAL_COVER);

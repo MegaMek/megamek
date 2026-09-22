@@ -163,13 +163,16 @@ closely. Building facades and geology ship as 128 by 128 PNGs under
 folder's `full-resolution/` subdirectory. `tools/prepare_board_textures.py`
 rebuilds those runtime copies. Light-building window spacing is
 eight windows per 128 world units. Exposed sides carry a skirt: a
-`textures/terrain/cornice_*` strip hangs from the upper edge. Its art is a mask
-rather than a palette: alpha is the strip's shape, including the fade at its lower
+`textures/terrain/cornice_*` strip hangs from the upper edge. Its art is normally a
+mask rather than a palette: alpha is the strip's shape, including the fade at its lower
 end, and gray is lightness about mid gray, so the tint arrives unchanged at 128 and
 darkens or lightens either side of it. That tint is the color of the top layer the
 strip hangs from, averaged from the opaque texels just inside the hex's own edge, so
-a cliff wears the color of the hex above it. Every family has its own mask, and each
-configures its skirt's height in terrain levels: a positive value resizes that strip
+a cliff wears the color of the hex above it. A family whose art is authored in color
+instead sets `Surface.corniceColorized`: the strip then draws the art's own RGB as it
+is, samples no tint at all, and is still shaped by the same alpha and wet by the same
+rain film. Every shipped family keeps the mask. Each family configures its skirt's
+height in terrain levels: a positive value resizes that strip
 to exactly those levels, keeping the aspect so its texels stay square, and zero draws
 it at its own art's scale, one strip width per hex edge. Concrete is the only family
 that configures a height; the rest hang as their art is. A water hex has no land

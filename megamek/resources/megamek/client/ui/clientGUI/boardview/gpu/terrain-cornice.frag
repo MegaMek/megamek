@@ -1,5 +1,5 @@
 // Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later
-// Skirt strips only. Their art is a mask, tinted by the top layer they hang from and blended with its alpha.
+// Skirt strips only. Their art is a mask tinted by the top layer they hang from, or its own authored color.
 // V stays inside the strip (see GpuAssets.cornice), so a mask's opposite edges are never blended together.
 // DefaultShader owns the uniforms, material binding and directional shadow map.
 #ifdef GL_ES
@@ -11,17 +11,20 @@ varying vec3 v_normal;
 varying vec4 v_color;
 uniform sampler2D u_diffuseTexture;
 uniform float u_groundResponse;
+// Zero draws a mask tinted by the tile beneath it; one draws the art's own color, taken as it is.
+uniform float u_corniceColorized;
 // Rivulets across one strip width, their travel in strip heights per second, and what they darken.
 const float RUNOFF_COLUMNS = 16.0;
 const float RUNOFF_SPEED = 1.2;
 const float RUNOFF_DARKENING = 0.22;
 
 void main() {
-    vec4 mask = texture2D(u_diffuseTexture, v_diffuseUV);
-    // Alpha is the strip's shape, including the fade at its lower end. Gray is lightness about mid gray, so
-    // the tint arrives unchanged at 128, darkens into the shadowed rows and lightens on the lit ones.
-    vec3 albedo = v_color.rgb * mask.rgb * 2.0;
-    float alpha = mask.a * v_color.a;
+    vec4 art = texture2D(u_diffuseTexture, v_diffuseUV);
+    // Alpha is the strip's shape, including the fade at its lower end. On a mask, gray is lightness about mid
+    // gray, so the tint arrives unchanged at 128, darkens into the shadowed rows and lightens on the lit ones;
+    // on colorized art the same channels already carry the strip's color, which is therefore left alone.
+    vec3 albedo = mix(v_color.rgb * art.rgb * 2.0, art.rgb, u_corniceColorized);
+    float alpha = art.a * v_color.a;
     vec3 normal = normalize(v_normal);
     // A skirt is a vertical face, so it takes the rain film the ground shares with it, using its own
     // material's response. It skips the ground's face-up gate and puddles: nothing pools on a wall.

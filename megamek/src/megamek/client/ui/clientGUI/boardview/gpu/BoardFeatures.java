@@ -30,8 +30,7 @@ final class BoardFeatures {
         if (desert(hex)) {
             return BoardScene.Surface.SAND;
         }
-        if (hex.containsAnyTerrainOf(Terrains.ROUGH, Terrains.RUBBLE)
-              || theme.contains("lunar") || theme.contains("rock") || theme.contains("volcan")) {
+        if (theme.contains("lunar") || theme.contains("rock") || theme.contains("volcan")) {
             return BoardScene.Surface.ROCK;
         }
         if (hex.containsAnyTerrainOf(Terrains.MUD, Terrains.SWAMP) || theme.contains("dirt") || theme.contains("mars")) {

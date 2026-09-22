@@ -770,6 +770,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         // instead of being auto-hidden on every phase change.
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, MANUAL);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, MANUAL);
+        // The minimap needs the same defaults: without them both values read 0 (= HIDE) and the minimap is closed
+        // again on every phase change, so opening it with Ctrl+M never lasts.
+        store.setDefault(MINI_MAP_AUTO_DISPLAY_REPORT_PHASE, MANUAL);
+        store.setDefault(MINI_MAP_AUTO_DISPLAY_NON_REPORT_PHASE, MANUAL);
         store.setDefault(SPLIT_PANE_A_DIVIDER_LOCATION, 300);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_1, DEFAULT_HEAT_1_COLOR);
         setDefault(UNIT_DISPLAY_HEAT_COLOR_2, DEFAULT_HEAT_2_COLOR);

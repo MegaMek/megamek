@@ -135,7 +135,7 @@ class BoardAtmosphericTaintTest {
         assertThrows(IllegalArgumentException.class, () -> options(Float.POSITIVE_INFINITY));
         assertEquals(0, options(-1).taintStrength());
         assertEquals(3, options(3).taintStrength());
-        assertEquals(20, options(50).taintStrength(), "The knob's full travel must be usable");
+        assertEquals(10, options(50).taintStrength(), "The knob's full travel must be usable");
     }
 
     private static GpuAtmosphere.Options options(float strength) {

@@ -97,13 +97,20 @@ class GpuAtmosphericTaintSmokeTest {
                         int y = Math.round(ground.y * pixels.getHeight() / camera.camera.viewportHeight);
                         long skyColor = patch(pixels, 5, pixels.getHeight() - 6);
                         long groundColor = patch(pixels, x, y);
+                        report.append("  ").append(taint.name()).append(" fog=").append(fog)
+                              .append(" at ").append(x).append(',').append(y)
+                              .append(" sky=").append(Long.toHexString(skyColor))
+                              .append(" ground=").append(Long.toHexString(groundColor))
+                              .append(" size=").append(pixels.getWidth()).append('x').append(pixels.getHeight())
+                              .append('\n');
                         if (taint.isBreathable()) {
                             originalSky = skyColor;
                             originalGround = groundColor;
                         } else {
                             assertNotEquals(originalSky, skyColor, "Existing sky uniforms must carry the taint palette");
                             assertNotEquals(originalGround, groundColor,
-                                  "Taint must grade the board, not only the sky and fog");
+                                  "Taint must grade the board at " + x + "," + y + " of " + pixels.getWidth() + 'x'
+                                        + pixels.getHeight() + " for " + taint.name());
                         }
                     } finally {
                         pixels.dispose();

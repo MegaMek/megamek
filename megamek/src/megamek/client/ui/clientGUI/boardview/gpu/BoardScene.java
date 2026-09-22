@@ -100,12 +100,12 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     /** A material family determines the exposed geology and the overhanging surface cover. */
     enum Surface {
-        GRASS("terrain/dirt", "terrain/cornice_grass", 0),
-        DIRT("terrain/dirt", "terrain/cornice_dirt", 0),
-        SAND("terrain/sand", "terrain/cornice_sand", 0),
-        ROCK("terrain/rock", "terrain/cornice_rock", 0),
-        CONCRETE("terrain/concrete", "terrain/cornice_concrete", 1),
-        SNOW("terrain/snow", "terrain/cornice_snow", 0);
+        GRASS("terrain/dirt", "terrain/cornice_grass", 0, false),
+        DIRT("terrain/dirt", "terrain/cornice_dirt", 0, false),
+        SAND("terrain/sand", "terrain/cornice_sand", 0, false),
+        ROCK("terrain/rock", "terrain/cornice_rock", 0, false),
+        CONCRETE("terrain/concrete", "terrain/cornice_concrete", 1, false),
+        SNOW("terrain/snow", "terrain/cornice_snow", 0, false);
 
         final String wall;
         /** Skirt strip hanging from an exposed edge; families without their own art reuse the grass strip. */
@@ -115,11 +115,18 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
          * width per hex edge. A positive value resizes the strip, keeping its aspect so its texels stay square.
          */
         final float corniceLevels;
+        /**
+         * How that strip's own art is read. {@code false} reads a mask: alpha is the strip's shape and gray its
+         * lightness about mid gray, so the tint of the top layer it hangs from reaches it unchanged at 128.
+         * {@code true} reads the art's own authored color, drawn as it is with alpha still shaping the strip.
+         */
+        final boolean corniceColorized;
 
-        Surface(String wall, String cornice, float corniceLevels) {
+        Surface(String wall, String cornice, float corniceLevels, boolean corniceColorized) {
             this.wall = wall;
             this.cornice = cornice;
             this.corniceLevels = corniceLevels;
+            this.corniceColorized = corniceColorized;
         }
     }
 

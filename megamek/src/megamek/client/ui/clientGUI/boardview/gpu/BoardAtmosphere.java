@@ -20,14 +20,12 @@ final class BoardAtmosphere {
     /** Fraction of ambient fill moved into visible moonlight; 0 restores the original full-moon shadows. */
     static final float MOONLIGHT_SHADOW_CONTRAST = 0.7f;
     /** Artistic palette blends, not gas opacity or a change to gameplay visibility. */
-    /** Palette weight per severity unit: the toxic blend is twice its tainted counterpart, and the default
-     * multiplier of {@link #DEFAULT_TAINT_STRENGTH} stays below the 1.0 blend ceiling so severities and
-     * pressures remain distinguishable. */
-    static final float TAINTED_COLOR_STRENGTH = 0.1f;
-    static final float TOXIC_COLOR_STRENGTH = 0.2f;
-    static final float DEFAULT_TAINT_STRENGTH = 2.0f;
-    /** Share of the palette blend that reaches the display-space grade applied to every drawn surface. */
-    static final float TAINT_GRADE_SHARE = 0.25f;
+    static final float TAINTED_COLOR_STRENGTH = 0.3f;
+    static final float TOXIC_COLOR_STRENGTH = 0.9f;
+    static final float DEFAULT_TAINT_STRENGTH = 3.0f;
+    /** How much of the air's palette blend reaches the display-space grade that covers every drawn surface. */
+    static final float TAINT_GRADE_SHARE = 0.75f;
+
     private static final int CAUSTIC_TAINT_COLOR = 0xc4c07aff;
     private static final int POISON_TAINT_COLOR = 0x9e8aa6ff;
     private static final int FLAMMABLE_TAINT_COLOR = 0xc58e68ff;

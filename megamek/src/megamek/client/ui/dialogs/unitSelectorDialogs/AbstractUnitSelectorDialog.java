@@ -42,6 +42,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -323,6 +325,16 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
                       refreshUnitView();
                   }
               });
+        // Double-clicking a row is the standard "pick and close" gesture, matching buttonSelectClose. Only when
+        // something is selected, so that double-clicking empty table space does not close the dialog.
+        tableUnits.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                if ((event.getClickCount() == 2) && (event.getButton() == MouseEvent.BUTTON1) && hasSelectedRows()) {
+                    select(true);
+                }
+            }
+        });
 
         for (int i = 0; i < unitModel.getColumnCount(); i++) {
             tableUnits.getColumnModel().getColumn(i).setPreferredWidth(unitModel.getPreferredWidth(i));

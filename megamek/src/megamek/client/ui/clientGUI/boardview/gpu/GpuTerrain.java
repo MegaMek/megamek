@@ -23,7 +23,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -162,6 +161,13 @@ final class GpuTerrain implements Disposable {
                     if (ground != null) { target.set(id, ground.value); }
                 }
             });
+            result.register("u_corniceColorized", new BaseShader.LocalSetter() {
+                @Override
+                public void set(BaseShader target, int id, Renderable renderable, Attributes attributes) {
+                    Cornice cornice = attributes.get(Cornice.class, Cornice.TYPE);
+                    if (cornice != null) { target.set(id, cornice.value); }
+                }
+            });
             return result;
         }
     });
@@ -298,22 +304,21 @@ final class GpuTerrain implements Disposable {
         }
     }
 
-    /** Marks a skirt: its art is a mask whose alpha is the shape and whose gray is lightness about mid gray. */
-    private static final class Cornice extends Attribute {
+    /** Marks a skirt and carries how the shader reads its art: a gray mask, or the art's own authored color. */
+    private static final class Cornice extends FloatAttribute {
         static final long TYPE = register("boardCornice");
+        /** The family's art is a mask, so the strip takes the tint of the layer it hangs from. */
+        static final float MASK = 0;
+        /** The family's art is already colorized, so the strip draws its own color as authored. */
+        static final float COLORIZED = 1;
 
-        Cornice() {
-            super(TYPE);
+        Cornice(float colorized) {
+            super(TYPE, colorized);
         }
 
         @Override
         public Cornice copy() {
-            return new Cornice();
-        }
-
-        @Override
-        public int compareTo(Attribute other) {
-            return Long.compare(type, other.type);
+            return new Cornice(value);
         }
     }
 
@@ -640,13 +645,15 @@ final class GpuTerrain implements Disposable {
                     chunk.bounds.ext(side.a().x, side.a().y, side.lowA()).ext(side.b().x, side.b().y, side.lowB());
                     if (hangsSkirt(surface, side)) {
                         Texture skirt = assets.cornice(tile.surface().cornice);
-                        // Its own art is a mask, tinted by the top layer and shaped by the family's height.
+                        // Its own art is a mask tinted by the top layer, or its own color, shaped by the family's height.
+                        float colorized = tile.surface().corniceColorized ? Cornice.COLORIZED : Cornice.MASK;
                         float aspect = (float) skirt.getWidth() / skirt.getHeight();
-                        Material mask = material(skirt, true);
+                        Material strip = material(skirt, true);
                         // A skirt faces outward, and the wall it hangs on is double-sided and nearer from behind,
                         // so its own back faces are only rasterised to fail the depth test: cull them instead.
-                        mask.set(new Cornice(), new Ground(groundResponse(tile)), IntAttribute.createCullFace(GL20.GL_BACK));
-                        overlay.add(mask, mesh -> cornice(mesh, tile, side, aspect));
+                        strip.set(new Cornice(colorized), new Ground(groundResponse(tile)),
+                              IntAttribute.createCullFace(GL20.GL_BACK));
+                        overlay.add(strip, mesh -> cornice(mesh, tile, side, aspect));
                     }
                 }
                 if (!surface.water.isEmpty()) {
@@ -958,6 +965,8 @@ final class GpuTerrain implements Disposable {
         Vector3 normal = new Vector3(direction).crs(Vector3.Z);
         // A configured height resizes the strip to those levels; zero hangs the art at its own scale instead.
         float levels = tile.surface().corniceLevels;
+        // Art that carries its own color needs no tint; a mask takes the tint of the layer it hangs from.
+        boolean colorized = tile.surface().corniceColorized;
         float height = levels > 0 ? levels * BoardGeometry.LEVEL
               : CORNICE_REPEAT * BoardGeometry.HEX_SCALE / aspect;
         float repeat = height * aspect;
@@ -974,7 +983,8 @@ final class GpuTerrain implements Disposable {
             lowB = Math.max(lowB, b.z - height);
             float startU = u + length * from / repeat, endU = u + length * to / repeat;
             // The tint belongs to the edge point, so it is sampled once for the two vertices that share it.
-            Color colorA = corniceColor(tile, a), colorB = corniceColor(tile, b);
+            Color colorA = colorized ? Color.WHITE : corniceColor(tile, a);
+            Color colorB = colorized ? Color.WHITE : corniceColor(tile, b);
             // V is zero along the upper edge and grows downward, so a clipped skirt loses its lower rows
             // instead of being scaled: a taller level makes the cliff deeper, never the strip taller.
             mesh.rect(corniceVertex(a, 0, normal, startU, 0, colorA),
@@ -991,7 +1001,7 @@ final class GpuTerrain implements Disposable {
         return vertex(point, normal, u, v, color);
     }
 
-    /** The strip's art is only a mask, so its palette comes from the top layer the skirt hangs from. */
+    /** A mask strip has no palette of its own, so it takes the color of the top layer the skirt hangs from. */
     private static Color corniceColor(BoardScene.Tile tile, Vector3 edge) {
         BoardScene.Pixels art = tile.ground();
         if (art == null) {

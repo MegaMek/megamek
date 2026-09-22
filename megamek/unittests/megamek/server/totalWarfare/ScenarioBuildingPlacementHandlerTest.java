@@ -33,6 +33,7 @@
 package megamek.server.totalWarfare;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -150,6 +151,31 @@ class ScenarioBuildingPlacementHandlerTest extends GameBoardTestCase {
 
         assertDoesNotThrow(() -> new BuildingTarget(TOWER_HEX, board, Targetable.TYPE_BUILDING),
               "the firing-arc display built exactly this target and got 'No building at' before the fix");
+    }
+
+    @Test
+    @DisplayName("Every hex of a multi-hex building is written in, not just the one it stands on")
+    void multiHexBuildingIsWrittenIntoEveryHex() {
+        BuildingEntity bunker = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
+        bunker.setGame(game);
+        bunker.getInternalBuilding().setBuildingHeight(1);
+        bunker.getInternalBuilding().addHex(CubeCoords.ZERO, 40, 0, BasementType.NONE, false);
+        bunker.getInternalBuilding().addHex(new CubeCoords(1, -1, 0), 40, 0, BasementType.NONE, false);
+        bunker.refreshLocations();
+        bunker.refreshAdditionalLocations();
+        bunker.setOwner(game.getPlayer(0));
+        bunker.setId(2);
+        game.addEntity(bunker);
+        bunker.setPosition(TOWER_HEX);
+        bunker.setDeployed(true);
+        assertEquals(2, bunker.getCoordsList().size(), "the setup must really be two hexes");
+
+        new ScenarioBuildingPlacementHandler(gameManager).placePreDeployedBuildings();
+
+        for (Coords bunkerHex : bunker.getCoordsList()) {
+            assertTrue(board.getHex(bunkerHex).containsTerrain(Terrains.BUILDING), "missing at " + bunkerHex);
+            assertNotNull(board.getBuildingAt(bunkerHex));
+        }
     }
 
     @Test

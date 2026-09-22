@@ -20,9 +20,14 @@ final class BoardAtmosphere {
     /** Fraction of ambient fill moved into visible moonlight; 0 restores the original full-moon shadows. */
     static final float MOONLIGHT_SHADOW_CONTRAST = 0.7f;
     /** Artistic palette blends, not gas opacity or a change to gameplay visibility. */
-    static final float TAINTED_COLOR_STRENGTH = 0.10f;
-    static final float TOXIC_COLOR_STRENGTH = 0.25f;
-    static final float DEFAULT_TAINT_STRENGTH = 1.0f;
+    /** Palette weight per severity unit: the toxic blend is twice its tainted counterpart, and the default
+     * multiplier of {@link #DEFAULT_TAINT_STRENGTH} stays below the 1.0 blend ceiling so severities and
+     * pressures remain distinguishable. */
+    static final float TAINTED_COLOR_STRENGTH = 0.1f;
+    static final float TOXIC_COLOR_STRENGTH = 0.2f;
+    static final float DEFAULT_TAINT_STRENGTH = 2.0f;
+    /** Share of the palette blend that reaches the display-space grade applied to every drawn surface. */
+    static final float TAINT_GRADE_SHARE = 0.25f;
     private static final int CAUSTIC_TAINT_COLOR = 0xc4c07aff;
     private static final int POISON_TAINT_COLOR = 0x9e8aa6ff;
     private static final int FLAMMABLE_TAINT_COLOR = 0xc58e68ff;
@@ -114,7 +119,11 @@ final class BoardAtmosphere {
         }
     }
 
-    /** Derived afresh when settings change. Colors and direction are read-only to consumers. */
+    /**
+     * Derived afresh when settings change. Colors and direction are read-only to consumers. {@code sky},
+     * {@code horizon} and {@code fog} color the air itself; {@code tint} and {@code saturation} grade every drawn
+     * surface in the composite, which is the only stage that sees the board and the sky together.
+     */
     record Lighting(Vector3 direction, Color direct, Color ambient, Color fog, Color sky, Color horizon, Color tint,
           float saturation, float daylight, boolean sunlight) {
         /** Exposure scale, in photographic stops, at full daylight and at full night. */
@@ -371,6 +380,13 @@ final class BoardAtmosphere {
               .lerp(new Color(0.48f, 0.32f, 0.34f, 1), twilight * 0.55f);
         sky.lerp(overcast, clouds * 0.92f);
         horizon.lerp(overcast, clouds * 0.10f);
+        if (settings.pressure().isVacuum()) {
+            sky.set(0.002f, 0.003f, 0.006f, 1);
+            horizon.set(sky);
+            fog.set(sky);
+        }
+        Color tint = new Color(0.82f, 0.92f, 1.1f, 1).lerp(Color.WHITE, daylight)
+              .lerp(new Color(1.12f, 0.93f, 0.82f, 1), warmth * 0.85f);
         if (!settings.taint().isBreathable() && scattering > 0 && taintStrength > 0) {
             // Hazard categories do not specify gas composition: these restrained hues are visual cues only.
             Color palette = new Color(switch (settings.taint()) {
@@ -379,21 +395,17 @@ final class BoardAtmosphere {
                 case TAINTED_FLAME, TOXIC_FLAME -> FLAMMABLE_TAINT_COLOR;
                 case BREATHABLE -> throw new IllegalStateException("Breathable air has no taint palette");
             });
+            // Warm horizon light owns dawn and dusk, so the palette recedes while it shines.
             float strength = (settings.taint().isToxic() ? TOXIC_COLOR_STRENGTH : TAINTED_COLOR_STRENGTH)
-                  * MathUtils.clamp(taintStrength, 0, 2) * scattering
-                  * MathUtils.lerp(0.2f, 1, daylight) * (1 - warmth * 0.45f);
+                  * MathUtils.clamp(taintStrength, 0, 10) * scattering
+                  * MathUtils.lerp(0.2f, 1, daylight) * (1 - warmth * 0.75f);
             // Existing gradients/volumes provide depth. Weather alone decides whether scattering is rendered.
             tintAtmosphere(sky, palette, strength * 0.35f);
             tintAtmosphere(horizon, palette, strength);
             tintAtmosphere(fog, palette, strength);
+            // The composite grades every drawn surface, so the air reaches the board and not only the sky.
+            tintAtmosphere(tint, palette, strength * TAINT_GRADE_SHARE);
         }
-        if (settings.pressure().isVacuum()) {
-            sky.set(0.002f, 0.003f, 0.006f, 1);
-            horizon.set(sky);
-            fog.set(sky);
-        }
-        Color tint = new Color(0.82f, 0.92f, 1.1f, 1).lerp(Color.WHITE, daylight)
-              .lerp(new Color(1.12f, 0.93f, 0.82f, 1), warmth * 0.85f);
         return new Lighting(direction, direct, ambient, fog, sky, horizon, tint,
               0.78f + 0.22f * daylight, daylight, sunlight);
     }
@@ -402,10 +414,13 @@ final class BoardAtmosphere {
         return 0.2126f * color.r + 0.7152f * color.g + 0.0722f * color.b;
     }
 
-    /** Change atmospheric hue at its existing brightness; never add emission or grade surfaces/UI. */
+    /** Blend a palette into a color at that color's own luminance: tinting adds no emission or exposure. */
     private static void tintAtmosphere(Color color, Color palette, float strength) {
+        // Above 1 the lerp overshoots the luminance-matched target and channel clamping would then break it.
+        float blend = MathUtils.clamp(strength, 0, 1);
+        if (blend <= 0) { return; }
         float energy = luminance(color) / luminance(palette);
-        color.lerp(new Color(palette).mul(energy, energy, energy, 1), strength);
+        color.lerp(new Color(palette).mul(energy, energy, energy, 1), blend);
     }
 
     private static float smooth(float low, float high, float value) {

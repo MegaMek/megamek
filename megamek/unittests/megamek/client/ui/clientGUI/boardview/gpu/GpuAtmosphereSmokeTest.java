@@ -175,7 +175,9 @@ class GpuAtmosphereSmokeTest {
             assertTrue(night.b > night.r, "Moonlit gray ground must have a blue tint");
             assertSame(shadow, terrain.environment().shadowMap, "Changing time must reuse the shadow framebuffer");
             GpuBoardTestUi.capture(new File(output, "atmosphere-night.png"));
-            for (float hour : new float[] { 4, 5, 5.5f, 6, 6.5f, 7, 17, 17.5f, 18, 18.5f, 19, 20 }) {
+            // Twilight is the sun's lowest lit window: 6:00-6:45 at dawn, 17:15-18:00 at dusk. Earlier and later
+            // hours are night, which is darker by design, so only the twilight hours have to stay readable.
+            for (float hour : new float[] { 6, 6.25f, 6.5f, 6.75f, 17.25f, 17.5f, 17.75f, 18 }) {
                 draw(atmosphere, terrain, batch, tower, camera, scene,
                       new BoardAtmosphere.Settings(hour, 1, 0, 1.5f, 0, 0));
                 Color twilight = sample(camera, ground);
@@ -1036,8 +1038,9 @@ class GpuAtmosphereSmokeTest {
                             assertEquals(GpuClouds.MAX_SHADOW_STRENGTH, value("Cloud shadow max"), 0.0001f);
                             assertEquals(initial.effects().wind(), value("Wind strength"));
                             CheckBox fixed = GpuBoardTestUi.stage().getRoot().findActor("tuning-fixed-sun");
-                            assertFalse(fixed.isChecked(), "Defaults restores world-space lighting");
-                            assertEquals(BoardAtmosphere.lighting(initial).direction(), renderedAtmosphere(this).lighting().direction());
+                            assertTrue(fixed.isChecked(), "Defaults keeps the fixed sun/moon frame the user chose");
+                            assertNotEquals(BoardAtmosphere.lighting(BoardAtmosphere.DEFAULTS).direction(),
+                                  renderedAtmosphere(this).lighting().direction());
                             assertEquals(initial.hour(), value("Time of day"), "Defaults restores the original moonlit time");
                             assertEquals(1, value("Snow"), "Defaults restores scenario snowfall");
                             assertEquals(0, value("Rain"));

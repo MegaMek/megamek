@@ -162,42 +162,63 @@ closely. Building facades and geology ship as 128 by 128 PNGs under
 `textures/buildings/` and `textures/terrain/`; untouched originals live in each
 folder's `full-resolution/` subdirectory. `tools/prepare_board_textures.py`
 rebuilds those runtime copies. Light-building window spacing is
-eight windows per 128 world units. Six 128 by 128 rim maps add material-specific
-turf, soil, sand, rock, concrete and snow detail, tinted from opaque pixels just
-inside the selected hex's ground artwork. This keeps desert, volcanic, lunar,
-Martian and snow palettes tied to the actual tileset. A shared irregular mesh
-profile descends 4–14 world units and fades over its final 1.5 units.
-World-scaled UVs repeat once per 96 units in both directions, independently of
-rim depth. Short and sloping walls clip the rim instead of squeezing or stretching
-its texture. The profile meets at corners, and changed ground pixels refresh
-the affected chunk's rim colors.
-Concrete retains its rim and cliff-top detail, including between paved hexes.
-Its rim has a straight lower edge at a constant nine-world-unit depth; all
-other materials keep the irregular profile.
+eight windows per 128 world units. Exposed sides carry a skirt: a
+`textures/terrain/cornice_*` strip hangs from the upper edge. Its art is a mask
+rather than a palette: alpha is the strip's shape, including the fade at its lower
+end, and gray is lightness about mid gray, so the tint arrives unchanged at 128 and
+darkens or lightens either side of it. That tint is the color of the top layer the
+strip hangs from, averaged from the opaque texels just inside the hex's own edge, so
+a cliff wears the color of the hex above it. Every family has its own mask, and each
+configures its skirt's height in terrain levels: a positive value resizes that strip
+to exactly those levels, keeping the aspect so its texels stay square, and zero draws
+it at its own art's scale, one strip width per hex edge. Concrete is the only family
+that configures a height; the rest hang as their art is. A water hex has no land
+artwork of its own, so it wears the family its terrain type detects: that family's mask
+and height, tinted by the same rule from the hex's own artwork edge, so a raised
+lake's shore matches the land it cuts through. Only an open mouth hangs none: liquid
+continues across it at the same surface, so that edge has no bank and the wall it
+exposes is the bed a fall's own sheet already covers.
+The depth of a wall never scales a skirt: a taller cliff shows the wall below it, and
+V is zero along the upper edge growing downward, so a wall shorter than the strip
+crops it rather than squeezing it. V is also clamped rather than repeating, because a
+mask's transparent rows must never filter into the strip's own edge, and the mask is
+uploaded premultiplied with a source blend factor of one for the same reason: a mask
+fades to black as it fades out, and straight alpha would drag that black into the
+visible edge. The strip also takes the same rain film the ground takes,
+by its own material's response, so a wet cliff darkens and glosses with the weather;
+it skips the ground's face-up gate and its puddles, since nothing pools on a wall.
+Rain instead drains down the strip as rivulets: the shared noise field the ground's
+puddles use, scrolled down the strip's own V, darkening the film and catching the
+light as it runs; a rivulet takes the whole film, standing water being as wet as a
+wall gets. U is anchored to world position along each edge, so collinear edges of
+neighbouring hexes continue one pattern and their strips line up; a hex corner is a
+deliberate restart of that phase, so a mask's silhouette must not carry a hard feature
+at the very ends of a strip. Nothing else shapes it: the strip's own alpha ends the
+skirt, so no separate depth profile or concrete rule remains.
 
-The copied `High_Incline` south-edge (`08`) artwork adds top detail along exposed
-sides at its original scale. Grass, snow, sand and rocky/earth materials use
-their corresponding art; concrete uses the neutral rocky edge. Each patch is
-oriented to its actual edge and clipped around road approaches. All orientations
-use the same source instead of alternating baked bright `01` and dark `08`
-variants. `BoardRim` combines unlit ground and rim color at the existing 62%
-opacity, and combines their normals with reoriented normal mapping before
-lighting. The normal directions rotate with the artwork. Coverage comes from
-the shared `BoardSurface` top triangles and exposed side segments, preserving
-road mouths and corners. The resulting color/normal pair occupies one aligned
-ground-atlas slot, so the rim receives ground lighting, shadows and the normal
-map toggle without a separately lit transparent top mesh.
+The cliff-top rim uses one mask for every family, `textures/terrain/high_incline_dark`.
+Like a skirt strip it carries no palette: alpha is its coverage and gray is lightness
+about mid gray, so 128 leaves the top layer alone and the dark mask shades the rim it
+lands on, weighted by its own alpha. It is mapped to each exposed edge and clipped
+around road approaches, so one image serves every orientation instead of per-material
+south-edge variants. Coverage comes from the shared `BoardSurface` top triangles and
+exposed side segments, preserving road mouths and corners. The composed color
+occupies one aligned ground-atlas slot, so the rim receives ground lighting, geometry
+shadows and the normal-map toggle without a separately lit transparent top mesh.
+
+The dark mask carries no detail normals, so the rim keeps whatever relief the top
+layer's own normal map already has. Should a normal variant arrive, `BoardRim` still
+composes it with reoriented normal mapping and rotates its directions to the edge.
 
 Materials are composed when terrain inputs change, cached by their source
 pixels and local footprint, and shared across matching tiles. Unused combinations
 are released after each terrain update. Camera and light changes reuse the
 unlit maps. Original images stay separate and editable; banks borrow the ground
 without its cliff-top decoration. The vertical cornice remains a separate mesh.
-Offline `normals/High_Incline/` maps provide restrained relief derived from the
-existing painted artwork. Painted brightness is an approximation to height and
-its original baked shading remains; authored height/normal data would improve
-physical accuracy without changing the material path. Missing custom rim normals
-preserve the ground's existing relief.
+A neutral mid gray in the rim mask keeps a tile's top layer untouched, so only the
+authored dark band shades a cliff top; brighter masks would lighten it by the same
+rule. Rim shading is a property of the material, so it keeps its ratio to the surface
+under any light.
 
 Blender source, reproducible exporter, texture prompts, model counts, and
 Quaternius CC0 attribution are recorded in the asset directory's README and
@@ -222,6 +243,8 @@ A blended sandy band fades from the land into damp sand along the waterline.
 Each bank continues the adjoining dry hex's selected terrain artwork into that
 fade, so sand, snow and other terrain retain their own shoreline palette.
 Banks at the board boundary use the water hex's own ground artwork.
+An exposed side that drops hangs the skirt of the family the hex's terrain type
+detects, exactly as dry ground of that family does; an open mouth hangs none.
 River mouths use roughly 33 of the hex edge's 42 world units at default scale;
 their sandy fade starts at the edge corners. Connected channels retain this
 width through bends, while isolated basins keep their rounded land banks.
@@ -1016,16 +1039,21 @@ mixed woodland, snow variants, low rubble and a zero-elevation textured bridge
 over the riverbank in both camera views. A pixel sample on the vertical waterfall
 verifies that the fall itself animates; a rear-view capture checks its appearance
 through the upper water surface.
-`GpuTerrainRimTest` checks fixed texel scale on sloping and clipped rims at
-three board scales. `GpuTerrainMaterialsSmokeTest` renders all six 128 by 128
-rim materials with the actual Saxarba themes and shallow/deep water. It also
-checks that a ground-pixel change refreshes a rendered rim's color without an
-atlas layout change. Its screenshots are named `terrain-*-rim.png`.
-`BoardRimTest` checks normal composition, all six edge rotations at three board
-scales, road openings, cache release and custom-texture fallbacks.
-`GpuRimMaterialSmokeTest` checks the actual rim artwork under opposing lights
-in both camera views, including the live normal toggle and an untouched flat
-centre. Its screenshots are named `rim-flat-*` and `rim-normal-*`.
+`GpuTerrainCorniceTest` checks a skirt's configured level height and its own art scale,
+its upper-edge anchor, the top layer's tint on its vertices, cropping on
+sloping, short and deep walls at three board scales, and that a water hex hangs its
+skirt from its shore but not across an open mouth.
+`GpuTerrainMaterialsSmokeTest` renders the six skirt mask strips
+with the actual Saxarba themes and shallow/deep water. It also checks that a
+ground-pixel change retints the skirt that hangs from those pixels and that a wet
+cliff takes the rain film, without an
+atlas layout change. Its screenshots are named `terrain-skirt-*.png`, including the
+`terrain-skirt-dry`/`-wet` pair that shows the run-off close up.
+`BoardRimTest` checks the mask's lightness rule, mid-gray neutrality, alpha weighting,
+all six edge rotations at three board scales, road openings, cache release and
+custom-texture fallbacks.
+`GpuRimMaterialSmokeTest` checks the rim mask's shading of an exposed top layer under
+both light directions in both camera views. Its screenshots are named `rim-lit-*`.
 
 ## Scope and limits
 

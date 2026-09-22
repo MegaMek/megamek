@@ -84,8 +84,8 @@ final class GpuAtmosphere implements Disposable {
             fogHeightVariation = MathUtils.clamp(fogHeightVariation, 0, 4);
             fogDensityVariation = MathUtils.clamp(fogDensityVariation, 0, 1);
             moonShadowContrast = MathUtils.clamp(moonShadowContrast, 0, 1);
-            taintStrength = MathUtils.clamp(taintStrength, 0, 2);
-            fogCalmDrift = MathUtils.clamp(fogCalmDrift, 0, 0.3f);
+            taintStrength = MathUtils.clamp(taintStrength, 0, 10);
+            fogCalmDrift = MathUtils.clamp(fogCalmDrift, 0, 2);
         }
 
         float cloudShadowStrength(float cover) {

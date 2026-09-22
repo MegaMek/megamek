@@ -2,6 +2,7 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,6 +31,9 @@ import org.junit.jupiter.api.Test;
 /** Actual Saxarba themes at several cliff heights, with shallow/deep beds and all six small rim maps. */
 @Tag("on-demand")
 class GpuTerrainMaterialsSmokeTest {
+    /** Edge length of the skirt region the run-off check fingerprints, in pixels. */
+    private static final int REGION = 64;
+
     @Test
     void rendersSmallRimMaterialsAndRiverbedsAcrossThemes() throws Exception {
         String[] themes = { "grass", "mars", "desert", "lunar", "grass", "snow" };
@@ -59,7 +63,11 @@ class GpuTerrainMaterialsSmokeTest {
                 GpuTerrain terrain;
                 BoardCamera camera;
                 int frame;
+                int skirtPixel;
+                int drySkirtPixel;
+                long wetSkirtRegion;
                 int concreteRimPixel;
+                float delta;
 
                 @Override
                 public void create() {
@@ -67,12 +75,14 @@ class GpuTerrainMaterialsSmokeTest {
                         GpuAssets assets = new GpuAssets();
                         try {
                             for (BoardScene.Surface surface : BoardScene.Surface.values()) {
-                                Texture texture = assets.material(surface.rim);
+                                Texture texture = assets.cornice(surface.cornice);
+                                // One hex edge wide; the mask's own height is the artwork's business.
                                 assertEquals(128, texture.getWidth());
-                                assertEquals(128, texture.getHeight());
-                                assertEquals(Texture.TextureWrap.Repeat, texture.getVWrap());
+                                // U tiles along the edge; V stays inside the strip and must not wrap.
+                                assertEquals(Texture.TextureWrap.Repeat, texture.getUWrap());
+                                assertEquals(Texture.TextureWrap.ClampToEdge, texture.getVWrap());
                             }
-                            assertEquals(128, assets.material("bed").getWidth());
+                            assertEquals(128, assets.material("terrain/water_bed").getWidth());
                         } finally {
                             assets.dispose();
                         }
@@ -94,7 +104,7 @@ class GpuTerrainMaterialsSmokeTest {
                         return;
                     }
                     try {
-                        terrain.animate(0, List.of());
+                        terrain.animate(delta, List.of());
                         terrain.renderShadows(List.of());
                         ScreenUtils.clear(0.035f, 0.055f, 0.075f, 1, true);
                         terrain.render(camera.camera, false);
@@ -102,7 +112,7 @@ class GpuTerrainMaterialsSmokeTest {
                         if (frame <= 6) {
                             String name = frame == 0 ? "terrain-rims-isometric"
                                   : frame == 5 ? "terrain-concrete-rim-straight"
-                                  : "terrain-" + BoardScene.Surface.values()[frame - 1].rim;
+                                  : "terrain-skirt-" + BoardScene.Surface.values()[frame - 1].name();
                             GpuBoardTestUi.capture(new File(System.getProperty("megamek.gpu.screenshots"), name + ".png"));
                         }
                         assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
@@ -111,22 +121,38 @@ class GpuTerrainMaterialsSmokeTest {
                             camera.camera.zoom = 0.2f;
                             camera.center(BoardGeometry.center(new Coords(0, 0), 3));
                         } else if (frame == 7) {
-                            int pixel = rimPixel(camera);
-                            assertTrue(((pixel >>> 16) & 255) > (pixel >>> 24) * 2, "The rim starts green");
+                            skirtPixel = rimPixel(camera);
+                            // The strip is a mask, so a new top-layer color must retint the skirt hanging from it.
                             terrain.update(tintScene(0xffb43232));
                         } else if (frame == 8) {
-                            int pixel = rimPixel(camera);
-                            assertTrue((pixel >>> 24) > ((pixel >>> 16) & 255) * 2,
-                                  "Changing only ground pixels must refresh the rim's tint without a layout change");
+                            assertNotEquals(skirtPixel, rimPixel(camera),
+                                  "Changing only ground pixels must retint the mask that hangs from them");
                             terrain.update(pavedStep(true));
                         } else if (frame == 9) {
                             concreteRimPixel = rimPixel(camera);
-                            assertTrue(((concreteRimPixel >>> 16) & 255) > (concreteRimPixel >>> 24) * 2,
-                                  "Concrete retains its ground-tinted rim even between paved hexes");
                             terrain.update(pavedStep(false));
                         } else if (frame == 10) {
                             assertEquals(concreteRimPixel, rimPixel(camera),
-                                  "The concrete rim also remains present next to natural terrain");
+                                  "The concrete skirt also remains present next to natural terrain");
+                            terrain.setWetness(0);
+                            terrain.update(tintScene(0xff32b432));
+                            // Close on the strip itself, so the dry and wet review frames show the run-off.
+                            camera.camera.zoom = 0.07f;
+                            camera.center(skirtPoint());
+                        } else if (frame == 11) {
+                            GpuBoardTestUi.capture(new File(System.getProperty("megamek.gpu.screenshots"), "terrain-skirt-dry.png"));
+                            drySkirtPixel = rimPixel(camera);
+                            terrain.setWetness(1);
+                        } else if (frame == 12) {
+                            GpuBoardTestUi.capture(new File(System.getProperty("megamek.gpu.screenshots"), "terrain-skirt-wet.png"));
+                            assertNotEquals(drySkirtPixel, rimPixel(camera),
+                                  "A wet cliff must take the same rain film as the ground it faces");
+                            wetSkirtRegion = skirtRegion(camera);
+                            // Two seconds of run-off: the rivulets must have travelled down by the next frame.
+                            delta = 2;
+                        } else if (frame == 13) {
+                            assertNotEquals(wetSkirtRegion, skirtRegion(camera),
+                                  "Run-off must travel down a wet cliff");
                             Gdx.app.exit();
                         } else if (frame < 6) {
                             boolean concretePreview = frame == 4;
@@ -159,7 +185,7 @@ class GpuTerrainMaterialsSmokeTest {
     }
 
     private static BoardScene pavedStep(boolean pavedNeighbor) {
-        // Green top artwork makes the rim distinguishable from the neutral concrete side.
+        // Both tiles share one top-layer color, so only the neighbours' own skirts can differ.
         BoardScene.Pixels pixels = solidPixels(0xff32b432);
         BoardScene.Tile high = new BoardScene.Tile(new Coords(0, 0), 3, -1, false, 0, BoardScene.Surface.CONCRETE,
               pixels, null, null, List.of(), List.of());
@@ -179,14 +205,36 @@ class GpuTerrainMaterialsSmokeTest {
         return new BoardScene.Pixels(image);
     }
 
-    private static int rimPixel(BoardCamera camera) {
+    /** The skirt patch every check samples: mid-edge, clear of the wall and below the cliff top. */
+    private static Vector3 skirtPoint() {
         Coords coords = new Coords(0, 0);
         Vector3 point = BoardGeometry.corner(coords, 3, 4).lerp(BoardGeometry.corner(coords, 3, 5), 0.5f);
-        point.add(0, -0.06f, -3);
-        Vector3 screen = camera.camera.project(point);
+        return point.add(0, -0.06f, -3);
+    }
+
+    private static int rimPixel(BoardCamera camera) {
+        Vector3 screen = camera.camera.project(skirtPoint());
         Pixmap pixels = ScreenUtils.getFrameBufferPixmap((int) screen.x, (int) screen.y, 1, 1);
         try {
             return pixels.getPixel(0, 0);
+        } finally {
+            pixels.dispose();
+        }
+    }
+
+    /** Fingerprint of the skirt band around the sample point, so no travelling pattern is missed to its phase. */
+    private static long skirtRegion(BoardCamera camera) {
+        Vector3 screen = camera.camera.project(skirtPoint());
+        int originX = Math.max(0, (int) screen.x - REGION / 2), originY = Math.max(0, (int) screen.y - REGION / 2);
+        Pixmap pixels = ScreenUtils.getFrameBufferPixmap(originX, originY, REGION, REGION);
+        try {
+            long hash = 0;
+            for (int y = 0; y < REGION; y++) {
+                for (int x = 0; x < REGION; x++) {
+                    hash = hash * 31 + pixels.getPixel(x, y);
+                }
+            }
+            return hash;
         } finally {
             pixels.dispose();
         }

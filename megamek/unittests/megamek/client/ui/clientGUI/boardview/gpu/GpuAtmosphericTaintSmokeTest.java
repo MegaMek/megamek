@@ -34,7 +34,7 @@ import megamek.common.planetaryConditions.AtmosphericTaint;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-/** Native palette propagation, unchanged draw budget, surface colors, and the live tuning control. */
+/** Native palette propagation, unchanged draw budget, graded board surfaces, and the live tuning control. */
 @Tag("on-demand")
 class GpuAtmosphericTaintSmokeTest {
     private final File output = new File(System.getProperty("megamek.gpu.screenshots", "build/gpu-board-review"));
@@ -73,7 +73,7 @@ class GpuAtmosphericTaintSmokeTest {
             atmosphere.setOptions(new GpuAtmosphere.Options(0, false, 0, 0, 0));
             profiler.enable();
             for (float fog : new float[] { 0, 0.8f }) {
-                int originalSky = 0, originalGround = 0;
+                long originalSky = 0, originalGround = 0;
                 for (var taint : AtmosphericTaint.values()) {
                     var settings = settings(12, fog, taint, Atmosphere.STANDARD);
                     atmosphere.configure(settings);
@@ -95,18 +95,15 @@ class GpuAtmosphericTaintSmokeTest {
                         var ground = camera.camera.project(BoardGeometry.center(new Coords(4, 4), 0));
                         int x = Math.round(ground.x * pixels.getWidth() / camera.camera.viewportWidth);
                         int y = Math.round(ground.y * pixels.getHeight() / camera.camera.viewportHeight);
-                        int skyColor = pixels.getPixel(5, pixels.getHeight() - 6);
-                        int groundColor = pixels.getPixel(x, y);
+                        long skyColor = patch(pixels, 5, pixels.getHeight() - 6);
+                        long groundColor = patch(pixels, x, y);
                         if (taint.isBreathable()) {
                             originalSky = skyColor;
                             originalGround = groundColor;
                         } else {
                             assertNotEquals(originalSky, skyColor, "Existing sky uniforms must carry the taint palette");
-                            if (fog == 0) {
-                                assertEquals(originalGround, groundColor, "Clear-air taint must preserve terrain paint");
-                            } else {
-                                assertNotEquals(originalGround, groundColor, "Existing fog must inherit the taint color");
-                            }
+                            assertNotEquals(originalGround, groundColor,
+                                  "Taint must grade the board, not only the sky and fog");
                         }
                     } finally {
                         pixels.dispose();
@@ -123,6 +120,18 @@ class GpuAtmosphericTaintSmokeTest {
             atmosphere.dispose();
             terrain.dispose();
         }
+    }
+
+    /** A patch rather than one pixel: the taint grades smoothly, so a single texel can round to the same value. */
+    private static long patch(Pixmap pixels, int x, int y) {
+        long sum = 0;
+        for (int dy = -12; dy <= 12; dy++) {
+            for (int dx = -12; dx <= 12; dx++) {
+                sum += pixels.getPixel(Math.clamp(x + dx, 0, pixels.getWidth() - 1),
+                      Math.clamp(y + dy, 0, pixels.getHeight() - 1)) & 0xffffff;
+            }
+        }
+        return sum;
     }
 
     private void checkTuning(GpuAtmosphere atmosphere) throws Exception {

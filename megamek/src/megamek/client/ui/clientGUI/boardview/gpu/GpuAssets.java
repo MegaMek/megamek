@@ -38,7 +38,7 @@ final class GpuAssets implements Disposable {
     private final Map<String, Texture> materials = new HashMap<>();
     private final Map<String, Color> materialTints = new HashMap<>();
     private final Map<BoardLiquid.Textures, Animation<Texture>> liquids = new HashMap<>();
-    private final Map<BoardScene.Surface, BoardRim.Images> inclines = new HashMap<>();
+    private BoardRim.Images incline;
 
     private record Interior(String asset, int levels) { }
 
@@ -82,6 +82,21 @@ final class GpuAssets implements Disposable {
         return texture(materialFile(name));
     }
 
+    /**
+     * A skirt strip covers V from zero at the cliff top to one at its lower edge, so it tiles only along U.
+     * Clamping there stops the sampler from wrapping the last row into the first one and ringing its edge.
+     * The art is uploaded as authored: straight alpha, as the skirt material blends it.
+     */
+    Texture cornice(String name) {
+        FileHandle file = materialFile(name);
+        return materials.computeIfAbsent("cornice:" + file.file().toPath().normalize(), key -> {
+            Texture texture = new Texture(file, true);
+            texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
+            texture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.ClampToEdge);
+            return texture;
+        });
+    }
+
     /** Average the source once; callers can match its palette without drawing its surface detail elsewhere. */
     Color materialTint(String name) {
         return materialTints.computeIfAbsent(name, key -> {
@@ -107,28 +122,20 @@ final class GpuAssets implements Disposable {
         return new FileHandle(new File(root, "textures/" + name + ".png"));
     }
 
-    /** Reuse only the south-edge artwork, so rotating a cliff never selects a baked sunlit variant. */
-    static String inclinePath(BoardScene.Surface surface) {
-        return "High_Incline/" + switch (surface) {
-            case GRASS -> "Default/High_Incline_Top_Grass_08.png";
-            case DIRT -> "Mars/High_Incline_Top_Mars_08.png";
-            case SAND -> "Desert/High_Incline_Top_08.png";
-            case ROCK, CONCRETE -> "Lunar/High_Incline_Top_Lunar_08.png";
-            case SNOW -> "Snow/High_Incline_Top_Snow_08.png";
-        };
-    }
-
-    BoardRim.Images inclineImages(BoardScene.Surface surface) {
-        return inclines.computeIfAbsent(surface, key -> {
-            String path = inclinePath(key);
+    /**
+     * The cliff-top rim is one mask for every family: alpha is its coverage and gray its lightness about mid
+     * gray, so one dark mask shades the exposed rim of any material. It carries no detail normals.
+     */
+    BoardRim.Images inclineMask() {
+        if (incline == null) {
             try {
-                File normal = new File(root, "normals/" + path + ".png");
-                return new BoardRim.Images(new BoardScene.Pixels(ImageIO.read(new File(root, "tileset/" + path))),
-                      normal.isFile() ? new BoardScene.Pixels(ImageIO.read(normal)) : null);
+                incline = new BoardRim.Images(new BoardScene.Pixels(
+                      ImageIO.read(materialFile("terrain/high_incline_dark").file())), null);
             } catch (IOException error) {
-                throw new UncheckedIOException("Cannot load cliff-top material " + path, error);
+                throw new UncheckedIOException("Cannot load the cliff-top rim mask", error);
             }
-        });
+        }
+        return incline;
     }
 
     private Texture texture(FileHandle file) {
@@ -326,6 +333,6 @@ final class GpuAssets implements Disposable {
         materials.clear();
         materialTints.clear();
         liquids.clear();
-        inclines.clear();
+        incline = null;
     }
 }

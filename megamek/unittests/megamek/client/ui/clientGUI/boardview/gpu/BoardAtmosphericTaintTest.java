@@ -30,13 +30,21 @@ class BoardAtmosphericTaintTest {
                     assertEquals(before.direction(), after.direction());
                     assertEquals(before.direct(), after.direct());
                     assertEquals(before.ambient(), after.ambient());
-                    assertEquals(before.tint(), after.tint());
                     assertEquals(before.saturation(), after.saturation());
                     assertEquals(before.exposureScale(0), after.exposureScale(0));
                     assertBrightness(before.sky(), after.sky());
                     assertBrightness(before.horizon(), after.horizon());
                     assertBrightness(before.fog(), after.fog());
-                    if (strength == 0 || taint.isBreathable()) { assertEquals(before, after); }
+                    // The display grade carries the same air onto every drawn surface. Its luminance is the exposure
+                    // reference, so it may only drift where a palette channel meets the LDR ceiling, as at night.
+                    assertEquals(luminance(before.tint()), luminance(after.tint()), 0.01f);
+                    float gradeShift = distance(before.tint(), after.tint());
+                    if (strength == 0 || taint.isBreathable()) {
+                        assertEquals(0, gradeShift, "Clear or untinted air must leave the grade alone");
+                        assertEquals(before, after);
+                    } else {
+                        assertTrue(gradeShift > 0, "Taint must grade the board, not only the sky and fog: " + taint);
+                    }
                 }
             }
         }
@@ -72,6 +80,8 @@ class BoardAtmosphericTaintTest {
             var tainted = BoardAtmosphere.lighting(settings(12, 0, Atmosphere.STANDARD, mild[i]));
             var stronger = BoardAtmosphere.lighting(settings(12, 0, Atmosphere.STANDARD, toxic[i]));
             assertTrue(distance(clear.horizon(), stronger.horizon()) > distance(clear.horizon(), tainted.horizon()));
+            assertTrue(distance(clear.tint(), stronger.tint()) > distance(clear.tint(), tainted.tint()),
+                  "A toxic atmosphere must grade the board more than its tainted counterpart");
         }
     }
 
@@ -124,7 +134,8 @@ class BoardAtmosphericTaintTest {
         assertThrows(IllegalArgumentException.class, () -> options(Float.NaN));
         assertThrows(IllegalArgumentException.class, () -> options(Float.POSITIVE_INFINITY));
         assertEquals(0, options(-1).taintStrength());
-        assertEquals(2, options(3).taintStrength());
+        assertEquals(3, options(3).taintStrength());
+        assertEquals(20, options(50).taintStrength(), "The knob's full travel must be usable");
     }
 
     private static GpuAtmosphere.Options options(float strength) {

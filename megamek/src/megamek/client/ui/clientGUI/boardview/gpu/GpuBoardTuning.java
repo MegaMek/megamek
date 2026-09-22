@@ -126,6 +126,8 @@ final class GpuBoardTuning {
         geometry = controls(skin, KNOBS, this::applyGeometry, 0);
         normalMaps = checkbox(skin, "Normal maps", "tuning-normal-maps");
         vsync = checkbox(skin, "VSync", "tuning-vsync");
+        // The window's own preference, shown once here and then left to the user; Defaults never touches it.
+        vsync.setChecked(GpuBoardWindow.DEFAULT_VSYNC);
         vsync.addListener(new TextTooltip("Synchronize with the monitor's refresh rate. FPS stays capped at 60.",
               skin, "menu"));
         vsync.addListener(new ChangeListener() {
@@ -146,10 +148,10 @@ final class GpuBoardTuning {
                   + "Mek weight classes also multiply All Meks; ultralight Meks use Light Meks.", skin, "menu"));
         }
         section(skin, "Overview icons");
-        overviewIcons = checkbox(skin, "Distant top-view icons", "tuning-overview-icons");
+        overviewIcons = checkbox(skin, "Tactical View (Top-View only)", "tuning-overview-icons");
         overviewIcons.addListener(new TextTooltip("Replace units and trees with flat board artwork when zoomed out "
               + "within 15 degrees of overhead. Also available in the Camera menu.", skin, "menu"));
-        overview = controls(skin, List.of(new Knob("Icon switch hex px (0 = always)", 0, 256, 2, "%.0f")),
+        overview = controls(skin, List.of(new Knob("Icon switch hex px", 0, 256, 2, "%.0f")),
               this::applyOverview, 0);
         overview.getFirst().slider().addListener(new TextTooltip("Switch to icons when a hex is this many window pixels wide. "
               + "Zoom in 15% further to return to models, avoiding flicker at the boundary.", skin, "menu"));
@@ -256,8 +258,8 @@ final class GpuBoardTuning {
               new Knob("Fog height variation", 0, 4, 0.05f, "%.2f"),
               new Knob("Fog density variation", 0, 1, 0.05f, "%.2f"),
               new Knob("Moon shadow contrast", 0, 1, 0.05f, "%.2f"),
-              new Knob("Taint strength", 0, 2, 0.05f, "%.2f"),
-              new Knob("Fog calm drift", 0, 0.3f, 0.01f, "%.2f")), this::applyRendering, 0);
+              new Knob("Taint strength", 0, 10, 0.05f, "%.2f"),
+              new Knob("Fog calm drift", 0, 2, 0.01f, "%.2f")), this::applyRendering, 0);
         rendering.get(0).slider().addListener(new TextTooltip(
               "Sunlight scattered through cloud openings. 0 disables shafts; haze and viewing angle affect visibility.", skin, "menu"));
         rendering.get(1).slider().addListener(new TextTooltip(
@@ -287,8 +289,9 @@ final class GpuBoardTuning {
               "Strengthens Full Moon shadows while preserving the brightness of lit level ground. "
                     + "0 restores the original softer shadows. Moonless and Pitch Black have no moonlight.", skin, "menu"));
         rendering.get(7).slider().addListener(new TextTooltip(
-              "Scale the selected taint's sky and existing fog colors. 1 uses its tainted/toxic palette; 0 disables the tint. "
-                    + "Keeps brightness and fog density unchanged. Weaker in thin air; disabled in vacuum or breathable air.",
+              "Scale the selected taint's palette across the sky, existing fog and the board itself; "
+                    + "0 disables the tint. Keeps brightness and fog density unchanged. Fades at dawn and dusk, "
+                    + "weaker in thin air, and disabled in vacuum or breathable air.",
               skin, "menu"));
         rendering.get(8).slider().addListener(new TextTooltip(
               "Intrinsic fog speed in hex widths per second when calm. A gently changing vector blends into the wind. "
@@ -322,7 +325,7 @@ final class GpuBoardTuning {
         panel.add(new Image(skin.getDrawable("rule"))).height(1).growX().padTop(6).row();
         TextButton reset = new TextButton("Defaults", skin, "menu-control");
         reset.setName("tuning-defaults");
-        reset.addListener(new TextTooltip("Restore both tabs: geometry, family sizes, visibility, VSync, light/fog effects, "
+        reset.addListener(new TextTooltip("Restore both tabs: geometry, family sizes, visibility, light/fog effects, "
               + "the game's current planetary conditions, and disable damage preview.",
               skin, "menu"));
         reset.setProgrammaticChangeEvents(false);
@@ -470,10 +473,13 @@ final class GpuBoardTuning {
         return panel;
     }
 
-    /** Writes the current board values into the sliders, as the initial state and after a reset. */
+    /**
+     * Writes the current board values into the sliders, as the initial state and after a reset. VSync and the
+     * fixed sun/moon frame are the user's window preferences, not board values, so a reset leaves them alone.
+     */
     private void restoreDefaults() {
         normalMaps.setChecked(true);
-        vsync.setChecked(GpuBoardWindow.DEFAULT_VSYNC);
+        boolean fixedSunKept = fixedSun.isChecked();
         BoardGeometry.Tuning defaults = BoardGeometry.DEFAULTS;
         float[] values = { defaults.hexScale(), defaults.unitScale(), defaults.unitHeightScale(),
               defaults.levelHeight(), defaults.gridShade(), defaults.multiHexUnitScale() };
@@ -497,6 +503,8 @@ final class GpuBoardTuning {
         setValues(sensors, new float[] { GpuFieldOfView.SENSOR_DARKNESS * 100 });
         applyFieldOfView();
         setRenderingOptions(GpuAtmosphere.Options.DEFAULTS);
+        // Restored board values must not move the light back out of the frame the user chose for it.
+        fixedSun.setChecked(fixedSunKept);
         setAtmosphere(lastScenario == null ? BoardAtmosphere.DEFAULTS : lastScenario);
         overrideDamage.setChecked(false);
         damageLocation.setSelected(UnitDamageDisplay.Location.ALL);

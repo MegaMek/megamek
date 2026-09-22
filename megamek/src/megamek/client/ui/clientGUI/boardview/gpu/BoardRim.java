@@ -12,9 +12,9 @@ import java.util.Set;
 import com.badlogic.gdx.math.Vector3;
 import megamek.common.board.Coords;
 
-/** Render-owned, unlit cliff-top materials. Original artwork and game snapshots remain immutable. */
+/** Render-owned cliff-top rim composition. Original artwork and game snapshots remain immutable. */
 final class BoardRim {
-    static final float OPACITY = 0.7f;
+    static final float BLEND_OPACITY = 0.7f;
     static final float GROUND_UV_SCALE = 0.96f; // MUST NOT TOUCH!!! With 1.0f we have some black pixels in the textures around the borders!
 
     record Images(BoardScene.Pixels color, BoardScene.Pixels normal) { }
@@ -61,7 +61,7 @@ final class BoardRim {
         }
         Key key = new Key(ground, tile.surface(), List.copyOf(faces), List.copyOf(patches));
         used.add(key);
-        return cache.computeIfAbsent(key, ignored -> compose(key, assets.inclineImages(tile.surface())));
+        return cache.computeIfAbsent(key, ignored -> compose(key, assets.inclineMask()));
     }
 
     /** End of one terrain snapshot update; keep only combinations used by that snapshot. */
@@ -136,11 +136,14 @@ final class BoardRim {
                         float u = 0.25f + position / (2 * length);
                         float v = 1 - distance / BoardGeometry.TILE_HEIGHT;
                         sample(rim.color(), u, v, albedo);
-                        float alpha = albedo[3] / 255f * OPACITY;
+                        float alpha = albedo[3] / 255f * BLEND_OPACITY;
                         if (alpha <= 0) { continue; }
-                        red += (albedo[0] - red) * alpha;
-                        green += (albedo[1] - green) * alpha;
-                        blue += (albedo[2] - blue) * alpha;
+                        // The rim is a mask: gray is lightness about mid gray, so it leaves the top layer as it
+                        // is at 128 and shades it darker or lighter where it lands, weighted by its own alpha.
+                        float shade = 1 + alpha * (albedo[0] / 128f - 1);
+                        red *= shade;
+                        green *= shade;
+                        blue *= shade;
                         if (rim.normal() != null) {
                             sample(rim.normal(), u, v, detail);
                             float nx = (detail[0] - 128) / 127f, ny = (detail[1] - 128) / 127f;

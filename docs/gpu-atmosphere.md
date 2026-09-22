@@ -36,7 +36,7 @@ change. Opening another board captures its starting conditions.
 | God rays | Default 0.5; scale shaft density from 0 to 2; zero disables the shaft pass when ordinary fog/haze is also off |
 | Sun glare | Default 0.35, range 0–1; bright golden glare, a warm veil and soft lens reflections when facing the sun, strongest near dawn/dusk. Zero disables it. This lens effect remains available in vacuum |
 | Moon shadow contrast | Default from `BoardAtmosphere.MOONLIGHT_SHADOW_CONTRAST`, range 0–1; strengthen Full Moon shadows while preserving lit level-ground RGB. Zero restores the original moonlight balance; disabled when moonlight is off |
-| Taint strength | Default 1, range 0–2; scale the selected taint's sky/horizon and existing fog/haze palette. Zero disables the tint; disabled for breathable air and vacuum |
+| Taint strength | Default 4, range 0–20; scale the selected taint's palette across the sky/horizon, existing fog/haze and the board's display grade. Zero disables the tint and higher values stop at the palette; disabled for breathable air and vacuum |
 | Cloud shadow min / max | Defaults from `GpuClouds.MIN_SHADOW_STRENGTH` / `MAX_SHADOW_STRENGTH`; interpolate the cloud-patch opacity cap from sparse cover to full overcast, without changing density or ambient light |
 | Defaults | Return to the current game conditions and restore geometry and all extra visual controls to their constants |
 
@@ -101,24 +101,34 @@ Atmospheric taint is copied into the immutable visual snapshot from the scenario
 Manual weather controls preserve it; the **Atmospheric taint** selector can
 override its type. Changed scenario taint follows the game until overridden;
 the local **Taint strength** multiplier remains independent.
-Defaults restores the game's current atmosphere and a multiplier of 1.
+Defaults restores the game's current atmosphere and the default multiplier.
 
 Caustic air uses pale sulfur/olive (`CAUSTIC_TAINT_COLOR`), radiological/poisonous
 air muted grey-violet (`POISON_TAINT_COLOR`), and flammable air copper/amber
 (`FLAMMABLE_TAINT_COLOR`). These are artistic cues, not a claim about a gas's
 chemical color, density, or emissions. Breathable air keeps the original palette.
-`BoardAtmosphere.TAINTED_COLOR_STRENGTH = 0.10f` and `TOXIC_COLOR_STRENGTH = 0.25f`
-set the baseline blends. Taint is strongest near the horizon and in existing fog;
-the overhead blend is 35% as strong. Trace/thin air scales the effect to 15%/45%,
-vacuum and space suppress it, and night and dawn/dusk reduce it further.
+`BoardAtmosphere.TAINTED_COLOR_STRENGTH = 0.1f` and `TOXIC_COLOR_STRENGTH = 0.2f`
+set the palette weight per severity unit and `DEFAULT_TAINT_STRENGTH = 4f` the default
+multiplier, which stays below the blend ceiling so severities and pressures remain
+distinguishable. Taint is strongest near the horizon and in existing fog, the overhead
+blend is 35% as strong, and the display grade that covers every drawn surface uses
+`TAINT_GRADE_SHARE = 0.25f` of it. Trace/thin air scales the effect to 15%/45%,
+vacuum and space suppress it, and night and dawn/dusk reduce it: the warm horizon
+light owns the twilight windows, so the palette fades there rather than cooling the
+dawn and dusk horizon. Every blend is clamped to the palette, because a longer blend
+overshoots the luminance-matched target and channel clipping would then change
+brightness.
 
-The palette calculation preserves each atmospheric color's luminance and leaves
-surface lighting, shadow contrast, exposure and scene grading unchanged. Fog/haze
-density and their activation still come from weather; taint alone adds no fog,
-clouds, wind or precipitation. Wind-driven fog banks inherit the same color.
-Colors are calculated on the CPU only when settings or palette controls change,
-then supplied through existing uniforms. There are no shader changes, extra
-texture samples, particles, framebuffers or render passes for taint.
+Every blend preserves the luminance of the color it tints, so the palette never
+adds emission or changes exposure. It does grade the scene now: the taint is mixed
+into `Lighting.tint`, the display-space grade the atmosphere composite applies to
+every drawn surface - terrain, units, water, effects - while hex labels, tactical
+overlays and UI are drawn after the composite and stay ungraded. Fog/haze density
+and their activation still come from weather; taint alone adds no fog, clouds, wind
+or precipitation. Wind-driven fog banks inherit the same color. Colors are
+calculated on the CPU only when settings or palette controls change, then supplied
+through existing uniforms. There are no new shader changes, extra texture samples,
+particles, framebuffers or render passes for taint.
 
 Scenario lighting stores categories, not an exact time or astronomical date.
 Each GPU window samples its visual time once, using 15-minute choices within the
@@ -150,7 +160,7 @@ the GPU window can choose a new time. No gameplay random rolls are consumed.
 | Vacuum / Trace / Thin / Standard / High / Very high pressure | Vacuum disables atmospheric weather, wind, clouds and shafts, and uses a dark sky. Trace disables clouds; Thin permits light cloud shade. Trace and Thin suppress precipitation and fog. Standard and denser air permit weather-shaped cloud shadows. Scenario fog starts at `STANDARD_GROUND_LAYER_HEIGHT`; High and Very High lower it by 0.75 and 1.5 levels respectively, with a minimum of 1.0 |
 | Space and high-altitude space boards | Suppress atmospheric precipitation, clouds, fog, haze, and wind across the board |
 | Temperature | Above 0°C, liquid rain can wet exposed terrain in standard or denser air; freezing suppresses the liquid-water preview |
-| Atmospheric taint | Restrained palette for the sky/horizon and existing fog/haze, scaled by severity and pressure; no new scattering pass or particles |
+| Atmospheric taint | Restrained palette for the sky/horizon, existing fog/haze and the board's display grade, scaled by severity and pressure; no new scattering pass or particles |
 | Gravity | Captured game gravity drives jumps by default. A local gravity override or complete conditions preview drives new visual jump arcs and timing without changing the recorded move, jump MP or game rules |
 | EMI | Existing game rules and tactical indicators remain authoritative; no added screen distortion |
 | Terrain affected / Wind-shift flags | Consume the game's resulting terrain and effective wind; the renderer does not simulate accumulation, freezing, wind rolls, or terrain changes |

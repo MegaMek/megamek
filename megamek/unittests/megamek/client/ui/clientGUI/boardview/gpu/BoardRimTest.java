@@ -2,6 +2,7 @@
 package megamek.client.ui.clientGUI.boardview.gpu;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -43,14 +44,15 @@ class BoardRimTest {
 
     @Test
     void rotatesDetailOnAllSixEdgesAndKeepsTheCentreUntouchedAtDifferentScales() {
-        GpuAssets assets = assets(pixels(0xfff0f0f0), pixels(0xffc080ee));
+        GpuAssets assets = assets(pixels(0xff606060), pixels(0xffc080ee));
         for (float scale : new float[] { 0.5f, 1, 2 }) {
             BoardGeometry.tune(new BoardGeometry.Tuning(scale, 0.7f, 1, 18, 0.8f));
             for (int edge = 0; edge < 6; edge++) {
                 BoardScene scene = scene(edge, false, false);
                 BoardRim.Images material = new BoardRim().material(scene, scene.tile(CENTER), BoardGeometry.floor(scene), assets);
                 int index = probe(edge, 0.5f, 9);
-                assertEquals(179, material.color().rgba(index) >>> 24, 1, "The existing 62% color blend is retained");
+                assertEquals(Math.round(0x50 * shade(0x60, 1)), material.color().rgba(index) >>> 24, 1,
+                      "A dark mask shades the top layer by its lightness about mid gray");
                 int encoded = material.normal().rgba(index);
                 Vector3 normal = new Vector3((encoded >>> 24) - 128, (encoded >>> 16 & 255) - 128,
                       (encoded >>> 8 & 255) - 128).nor();
@@ -65,15 +67,33 @@ class BoardRimTest {
     }
 
     @Test
+    void midGrayLeavesTheTopLayerAloneAndCoverageWeightsTheShade() {
+        BoardScene scene = scene(0, false, false);
+        int index = probe(0, 0.5f, 9);
+        BoardRim.Images neutral = new BoardRim().material(scene, scene.tile(CENTER), BoardGeometry.floor(scene),
+              assets(pixels(0xff808080), null));
+        assertEquals(ground.rgba(index), neutral.color().rgba(index), "Mid gray must leave the top layer as it is");
+        BoardRim.Images faded = new BoardRim().material(scene, scene.tile(CENTER), BoardGeometry.floor(scene),
+              assets(pixels(0x80606060), null));
+        assertEquals(Math.round(0x50 * shade(0x60, 0x80 / 255f)), faded.color().rgba(index) >>> 24, 1,
+              "Half coverage takes half the shade");
+    }
+
+    /** What one rim sample does to a top-layer channel: gray about mid gray, weighted by coverage and opacity. */
+    private static float shade(int gray, float coverage) {
+        return 1 + coverage * BoardRim.BLEND_OPACITY * (gray / 128f - 1);
+    }
+
+    @Test
     void roadMouthStaysOpenAndRemovingTheCliffRestoresOriginalMaps() {
-        GpuAssets assets = assets(pixels(0xfff0f0f0), neutral);
+        GpuAssets assets = assets(pixels(0xff606060), neutral);
         BoardRim rims = new BoardRim();
         for (int edge = 0; edge < 6; edge++) {
             BoardScene scene = scene(edge, true, false);
             BoardRim.Images material = rims.material(scene, scene.tile(CENTER), BoardGeometry.floor(scene), assets);
             int middle = probe(edge, 0.5f, 3);
             assertEquals(ground.rgba(middle), material.color().rgba(middle), "Keep the road approach clear at edge " + edge);
-            assertTrue(material.color().rgba(probe(edge, 0.12f, 3)) >>> 24 > 100,
+            assertNotEquals(ground.rgba(probe(edge, 0.12f, 3)), material.color().rgba(probe(edge, 0.12f, 3)),
                   "The exposed shoulder keeps its rim at edge " + edge);
         }
         BoardScene level = scene(0, false, true);
@@ -102,10 +122,10 @@ class BoardRimTest {
         BoardScene.Pixels smallNormal = pixels(0xffb060ee, 2, 2);
         BoardScene scene = scene(0, false, false, smallGround, smallNormal);
         BoardRim.Images material = new BoardRim().material(scene, scene.tile(CENTER), BoardGeometry.floor(scene),
-              assets(pixels(0xfff0f0f0), null));
+              assets(pixels(0xff606060), null));
         assertEquals(84, material.color().width());
         assertEquals(72, material.color().height());
-        assertEquals(179, material.color().rgba(probe(0, 0.5f, 9)) >>> 24, 1);
+        assertEquals(Math.round(0x50 * shade(0x60, 1)), material.color().rgba(probe(0, 0.5f, 9)) >>> 24, 1);
         assertEquals(smallGround.rgba(0), material.color().rgba(36 * 84 + 42));
         for (int index = 0; index < 84 * 72; index++) {
             assertEquals(smallNormal.rgba(0), material.normal().rgba(index));
@@ -140,9 +160,9 @@ class BoardRimTest {
         return (int) (v * 72) * 84 + (int) (u * 84);
     }
 
-    private static GpuAssets assets(BoardScene.Pixels color, BoardScene.Pixels normal) {
+    private static GpuAssets assets(BoardScene.Pixels mask, BoardScene.Pixels normal) {
         GpuAssets assets = mock(GpuAssets.class);
-        when(assets.inclineImages(any())).thenReturn(new BoardRim.Images(color, normal));
+        when(assets.inclineMask()).thenReturn(new BoardRim.Images(mask, normal));
         return assets;
     }
 

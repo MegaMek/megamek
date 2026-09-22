@@ -100,15 +100,26 @@ record BoardScene(int boardId, int width, int height, List<Tile> tiles, List<Uni
 
     /** A material family determines the exposed geology and the overhanging surface cover. */
     enum Surface {
-        GRASS("terrain/dirt", "grass-rim"), DIRT("terrain/dirt", "dirt-rim"), SAND("terrain/sand", "sand-rim"),
-        ROCK("terrain/rock", "rock-rim"), CONCRETE("terrain/concrete", "concrete-rim"), SNOW("terrain/rock", "snow-rim");
+        GRASS("terrain/dirt", "terrain/cornice_grass", 0),
+        DIRT("terrain/dirt", "terrain/cornice_dirt", 0),
+        SAND("terrain/sand", "terrain/cornice_sand", 0),
+        ROCK("terrain/rock", "terrain/cornice_rock", 0),
+        CONCRETE("terrain/concrete", "terrain/cornice_concrete", 1),
+        SNOW("terrain/snow", "terrain/cornice_snow", 0);
 
         final String wall;
-        final String rim;
+        /** Skirt strip hanging from an exposed edge; families without their own art reuse the grass strip. */
+        final String cornice;
+        /**
+         * Height of that skirt in terrain levels, or zero to hang the strip at its own art's scale: one strip
+         * width per hex edge. A positive value resizes the strip, keeping its aspect so its texels stay square.
+         */
+        final float corniceLevels;
 
-        Surface(String wall, String rim) {
+        Surface(String wall, String cornice, float corniceLevels) {
             this.wall = wall;
-            this.rim = rim;
+            this.cornice = cornice;
+            this.corniceLevels = corniceLevels;
         }
     }
 

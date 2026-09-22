@@ -46,6 +46,11 @@ final class BoardSurface {
     final List<Face> waterFaces = new ArrayList<>();
     final List<Side> waterfalls = new ArrayList<>();
     final int ramps;
+    /**
+     * Open mouths by edge: connected liquid continues there, so no bank rises across that edge and a wall exposed
+     * on it starts at the bed rather than at the hex's own top.
+     */
+    private int openMouths;
     private final Vector3 center;
     private final Vector3[] corners = new Vector3[6];
 
@@ -127,6 +132,7 @@ final class BoardSurface {
             BoardScene.Tile neighbor = scene.tile(tile.coords().translated(BoardGeometry.edgeDirection(edge)));
             shore[edge] = neighbor == null || !tile.liquid().connects(neighbor.liquid()) ? 8 * BoardGeometry.HEX_SCALE : 0;
             if (shore[edge] == 0) {
+                openMouths |= 1 << edge;
                 mouths.add(edge);
                 // A fall owns the last stretch of its mouth: the water stops short so the sheet can curve down.
                 if (!tile.frozen() && !neighbor.frozen() && tile.elevation() > neighbor.elevation()) {
@@ -432,6 +438,11 @@ final class BoardSurface {
                 }
             }
         }
+    }
+
+    /** Whether connected liquid continues across this edge, which a bank never crosses and only a fall descends. */
+    boolean mouth(int edge) {
+        return (openMouths & 1 << edge) != 0;
     }
 
     /** Only the higher column contributes a shared wall; road gates meet at the same height. */

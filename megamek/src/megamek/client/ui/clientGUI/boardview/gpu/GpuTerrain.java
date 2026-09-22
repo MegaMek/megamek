@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.Attribute;
 import com.badlogic.gdx.graphics.g3d.Attributes;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -63,6 +64,13 @@ final class GpuTerrain implements Disposable {
     static final int CHUNK_SIZE = 16;
     static final int SHADOW_RESOLUTION = 2048;
     static final float DEFAULT_BUILDING_OPACITY = 0.5f;
+    /**
+     * The art's own scale, used by a skirt family that configures no height in levels: one strip width spans one
+     * hex edge, so the strip hangs exactly as far as its own art hangs with its texels square. Deliberately
+     * independent of the wall's depth, so a taller cliff shows the wall below the skirt instead of stretching it.
+     */
+    private static final float CORNICE_REPEAT = (float) Math.hypot(BoardGeometry.TILE_WIDTH / 4,
+          BoardGeometry.TILE_HEIGHT / 2);
     /** A fall curves over its lip and spreads into the water it lands in; both arcs' step count. */
     private static final int FALL_LIP_SEGMENTS = 4;
     private static final int FALL_FOOT_SEGMENTS = 4;
@@ -88,6 +96,9 @@ final class GpuTerrain implements Disposable {
         private final DefaultShader.Config groundShader = new DefaultShader.Config(config.vertexShader,
               rainFragment(GpuCloudShadow.fragment(Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/terrain-normal.frag")
                     .readString(), true)));
+        private final DefaultShader.Config corniceShader = new DefaultShader.Config(config.vertexShader,
+              rainFragment(GpuCloudShadow.fragment(Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/terrain-cornice.frag")
+                    .readString(), true)));
         private final DefaultShader.Config waterShader = new DefaultShader.Config(config.vertexShader,
               rainFragment(GpuCloudShadow.fragment(Gdx.files.classpath("megamek/client/ui/clientGUI/boardview/gpu/water-surface.frag")
                     .readString(), true)));
@@ -98,7 +109,8 @@ final class GpuTerrain implements Disposable {
 
         @Override
         protected Shader createShader(Renderable renderable) {
-            DefaultShader.Config chosen = renderable.material.has(Ground.TYPE) ? groundShader
+            DefaultShader.Config chosen = renderable.material.has(Cornice.TYPE) ? corniceShader
+                  : renderable.material.has(Ground.TYPE) ? groundShader
                   : renderable.material.has(GpuLiquidShader.Frame.TYPE)
                         ? renderable.material.has(GpuWaterShader.TYPE) ? waterLiquidShader : liquidShader
                   : renderable.material.has(GpuWaterShader.TYPE) ? waterShader : config;
@@ -122,7 +134,9 @@ final class GpuTerrain implements Disposable {
                     set(wetnessUniform, wetness);
                     set(viewDirectionUniform, camera.direction);
                     set(waterEffectsUniform, waterEffects ? 1f : 0f);
-                    if (chosen == groundShader || chosen == waterShader || chosen == waterLiquidShader) {
+                    if (chosen == groundShader || chosen == waterShader || chosen == waterLiquidShader
+                          || chosen == corniceShader) {
+                        // The shared rain field drives the ground's ripples, open water and a skirt's run-off.
                         set(rainNoiseUniform, rainNoise);
                         set(rainScaleUniform, 1f / BoardGeometry.WIDTH);
                         set(rainTimeUniform, clock);
@@ -281,6 +295,25 @@ final class GpuTerrain implements Disposable {
         @Override
         public Ground copy() {
             return new Ground(value);
+        }
+    }
+
+    /** Marks a skirt: its art is a mask whose alpha is the shape and whose gray is lightness about mid gray. */
+    private static final class Cornice extends Attribute {
+        static final long TYPE = register("boardCornice");
+
+        Cornice() {
+            super(TYPE);
+        }
+
+        @Override
+        public Cornice copy() {
+            return new Cornice();
+        }
+
+        @Override
+        public int compareTo(Attribute other) {
+            return Long.compare(type, other.type);
         }
     }
 
@@ -573,7 +606,7 @@ final class GpuTerrain implements Disposable {
                               mesh -> bank(mesh, tile.coords(), face, land.coords(), bankArt));
                     } else {
                         Texture texture = artwork ? top.getTexture() : assets.material(tile.liquid().molten() ? "terrain/rock"
-                              : face.finish() == BoardSurface.Finish.BED ? "bed"
+                              : face.finish() == BoardSurface.Finish.BED ? "terrain/water_bed"
                               : tile.liquid().present() ? "terrain/sand" : tile.surface().wall);
                         solid.add(artwork ? groundMaterial(texture, tile) : material(texture, false),
                               mesh -> surface(mesh, tile.coords(), face, artwork ? top : null, 0));
@@ -605,8 +638,15 @@ final class GpuTerrain implements Disposable {
                     Texture wall = assets.material(tile.surface().wall);
                     solid.add(material(wall, false), mesh -> wall(mesh, side));
                     chunk.bounds.ext(side.a().x, side.a().y, side.lowA()).ext(side.b().x, side.b().y, side.lowB());
-                    if (!tile.liquid().present()) {
-                        overlay.add(material(assets.material(tile.surface().rim), true), mesh -> cornice(mesh, tile, side));
+                    if (hangsSkirt(surface, side)) {
+                        Texture skirt = assets.cornice(tile.surface().cornice);
+                        // Its own art is a mask, tinted by the top layer and shaped by the family's height.
+                        float aspect = (float) skirt.getWidth() / skirt.getHeight();
+                        Material mask = material(skirt, true);
+                        // A skirt faces outward, and the wall it hangs on is double-sided and nearer from behind,
+                        // so its own back faces are only rasterised to fail the depth test: cull them instead.
+                        mask.set(new Cornice(), new Ground(groundResponse(tile)), IntAttribute.createCullFace(GL20.GL_BACK));
+                        overlay.add(mask, mesh -> cornice(mesh, tile, side, aspect));
                     }
                 }
                 if (!surface.water.isEmpty()) {
@@ -765,7 +805,17 @@ final class GpuTerrain implements Disposable {
 
     private Material groundMaterial(Texture texture, BoardScene.Tile tile) {
         Material material = material(texture, false);
-        float response = tile.liquid().present() || tile.frozen() ? -1 : switch (tile.surface()) {
+        material.set(new Ground(groundResponse(tile)));
+        Texture normal = ground.normal(texture);
+        if (normal != null) {
+            material.set(TextureAttribute.createNormal(normal));
+        }
+        return material;
+    }
+
+    /** How much water film a tile's own exposed material takes; negative excludes snow, ice and water. */
+    private static float groundResponse(BoardScene.Tile tile) {
+        return tile.liquid().present() || tile.frozen() ? -1 : switch (tile.surface()) {
             case SNOW -> -1;
             case SAND -> 0.05f;
             case DIRT -> 0.15f;
@@ -773,12 +823,6 @@ final class GpuTerrain implements Disposable {
             case ROCK -> 0.7f;
             case CONCRETE -> 1;
         };
-        material.set(new Ground(response));
-        Texture normal = ground.normal(texture);
-        if (normal != null) {
-            material.set(TextureAttribute.createNormal(normal));
-        }
-        return material;
     }
 
     private static Material material(Texture texture, boolean blend) {
@@ -806,7 +850,7 @@ final class GpuTerrain implements Disposable {
         } else {
             material.set(new BlendingAttribute(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA,
                   falling ? 0.8f : GpuWaterShader.SURFACE_OPACITY));
-            if (falling) { material.set(ColorAttribute.createAmbient(assets.materialTint("bed"))); }
+            if (falling) { material.set(ColorAttribute.createAmbient(assets.materialTint("terrain/water_bed"))); }
             GpuWaterShader water = new GpuWaterShader(scene, surface, procedural, falling, current);
             material.set(water);
             if (!water.impacts.isEmpty()) { material.id += ":splash:" + surface.tile.coords(); }
@@ -896,16 +940,28 @@ final class GpuTerrain implements Disposable {
               vertex(b, normal, endU, -b.z / repeat, Color.WHITE));
     }
 
-    /** Cover geometry clips a fixed-scale material; changing its depth never stretches the texture. */
-    static void cornice(MeshPartBuilder mesh, BoardScene.Tile tile, BoardSurface.Side side) {
+    /**
+     * Whether a wall on this edge hangs a skirt, at the family this hex's terrain type detects. Every wall does,
+     * except one across an open mouth: liquid continues at the same surface there, so the edge has no bank and the
+     * wall it exposes starts at the bed, where a fall's own sheet hangs instead.
+     */
+    static boolean hangsSkirt(BoardSurface surface, BoardSurface.Side side) {
+        return !surface.mouth(side.edge());
+    }
+
+    /** One skirt hangs from an exposed edge at the height its own material family configures. */
+    static void cornice(MeshPartBuilder mesh, BoardScene.Tile tile, BoardSurface.Side side, float aspect) {
         Vector3 direction = new Vector3(side.b()).sub(side.a());
         direction.z = 0;
         float length = direction.len();
         direction.scl(1 / length);
         Vector3 normal = new Vector3(direction).crs(Vector3.Z);
-        float repeat = 96 * BoardGeometry.HEX_SCALE;
+        // A configured height resizes the strip to those levels; zero hangs the art at its own scale instead.
+        float levels = tile.surface().corniceLevels;
+        float height = levels > 0 ? levels * BoardGeometry.LEVEL
+              : CORNICE_REPEAT * BoardGeometry.HEX_SCALE / aspect;
+        float repeat = height * aspect;
         float u = side.a().dot(direction) / repeat;
-        float fade = 1.5f * BoardGeometry.HEX_SCALE;
         int segments = Math.max(1, (int) Math.ceil(length / (6 * BoardGeometry.HEX_SCALE)));
         for (int segment = 0; segment < segments; segment++) {
             float from = segment / (float) segments, to = (segment + 1f) / segments;
@@ -913,54 +969,43 @@ final class GpuTerrain implements Disposable {
             Vector3 b = new Vector3(side.a()).lerp(side.b(), to);
             float lowA = side.lowA() + (side.lowB() - side.lowA()) * from;
             float lowB = side.lowA() + (side.lowB() - side.lowA()) * to;
-            float depthA = corniceDepth(tile.surface(), a), depthB = corniceDepth(tile.surface(), b);
-            lowA = Math.max(lowA, a.z - depthA);
-            lowB = Math.max(lowB, b.z - depthB);
-            Color colorA = corniceColor(tile, a), colorB = corniceColor(tile, b);
+            // Only the strip's own height or the exposed wall limits a skirt; the art fades it out.
+            lowA = Math.max(lowA, a.z - height);
+            lowB = Math.max(lowB, b.z - height);
             float startU = u + length * from / repeat, endU = u + length * to / repeat;
-            for (int band = 0; band < 2; band++) {
-                float startA = band == 0 ? 0 : Math.min(a.z - lowA, depthA - fade);
-                float startB = band == 0 ? 0 : Math.min(b.z - lowB, depthB - fade);
-                float endA = Math.min(a.z - lowA, band == 0 ? depthA - fade : depthA);
-                float endB = Math.min(b.z - lowB, band == 0 ? depthB - fade : depthB);
-                if (endA > startA || endB > startB) {
-                    mesh.rect(corniceVertex(a, startA, depthA, normal, startU, colorA),
-                          corniceVertex(a, endA, depthA, normal, startU, colorA),
-                          corniceVertex(b, endB, depthB, normal, endU, colorB),
-                          corniceVertex(b, startB, depthB, normal, endU, colorB));
-                }
-            }
+            // The tint belongs to the edge point, so it is sampled once for the two vertices that share it.
+            Color colorA = corniceColor(tile, a), colorB = corniceColor(tile, b);
+            // V is zero along the upper edge and grows downward, so a clipped skirt loses its lower rows
+            // instead of being scaled: a taller level makes the cliff deeper, never the strip taller.
+            mesh.rect(corniceVertex(a, 0, normal, startU, 0, colorA),
+                  corniceVertex(a, a.z - lowA, normal, startU, (a.z - lowA) / height, colorA),
+                  corniceVertex(b, b.z - lowB, normal, endU, (b.z - lowB) / height, colorB),
+                  corniceVertex(b, 0, normal, endU, 0, colorB));
         }
     }
 
-    private static float corniceDepth(BoardScene.Surface surface, Vector3 point) {
-        if (surface == BoardScene.Surface.CONCRETE) {
-            return 9 * BoardGeometry.HEX_SCALE;
-        }
-        float x = point.x / BoardGeometry.HEX_SCALE, y = point.y / BoardGeometry.HEX_SCALE;
-        return (9 + 2 * (float) Math.sin(x * 0.09f + y * 0.05f)
-              + 3 * (float) Math.sin(y * 0.65f - x * 0.43f)) * BoardGeometry.HEX_SCALE;
-    }
-
-    private static MeshPartBuilder.VertexInfo corniceVertex(Vector3 edge, float depth, float fullDepth,
-          Vector3 normal, float u, Color color) {
+    private static MeshPartBuilder.VertexInfo corniceVertex(Vector3 edge, float depth, Vector3 normal, float u, float v,
+          Color color) {
+        // Clear of the wall so the skirt never fights its own cliff face for depth.
         Vector3 point = new Vector3(edge).add(0, 0, -depth).mulAdd(normal, 0.06f * BoardGeometry.HEX_SCALE);
-        float alpha = Math.clamp((fullDepth - depth) / (1.5f * BoardGeometry.HEX_SCALE), 0, 1);
-        return vertex(point, normal, u, -point.z / (96 * BoardGeometry.HEX_SCALE), color)
-              .setCol(color.r, color.g, color.b, alpha);
+        return vertex(point, normal, u, v, color);
     }
 
-    /** Pale neutral rim detail takes its palette from opaque pixels just inside the selected hex's edge. */
+    /** The strip's art is only a mask, so its palette comes from the top layer the skirt hangs from. */
     private static Color corniceColor(BoardScene.Tile tile, Vector3 edge) {
-        BoardScene.Pixels pixels = tile.ground();
+        BoardScene.Pixels art = tile.ground();
+        if (art == null) {
+            return Color.WHITE;
+        }
         float u = 0.5f + (edge.x - BoardGeometry.centerX(tile.coords())) / BoardGeometry.WIDTH * 0.9f;
         float v = 0.5f - (edge.y - BoardGeometry.centerY(tile.coords())) / BoardGeometry.HEIGHT * 0.9f;
-        int centerX = Math.round(u * (pixels.width() - 1)), centerY = Math.round(v * (pixels.height() - 1));
+        int centerX = Math.round(u * (art.width() - 1)), centerY = Math.round(v * (art.height() - 1));
         float red = 0, green = 0, blue = 0, weight = 0;
+        // Average the opaque texels just inside the edge: that is the color the exposed face wears.
         for (int y = centerY - 1; y <= centerY + 1; y++) {
             for (int x = centerX - 1; x <= centerX + 1; x++) {
-                int rgba = pixels.rgba(Math.clamp(y, 0, pixels.height() - 1) * pixels.width()
-                      + Math.clamp(x, 0, pixels.width() - 1));
+                int rgba = art.rgba(Math.clamp(y, 0, art.height() - 1) * art.width()
+                      + Math.clamp(x, 0, art.width() - 1));
                 float alpha = (rgba & 255) / 255f;
                 red += (rgba >>> 24) * alpha;
                 green += ((rgba >>> 16) & 255) * alpha;

@@ -291,7 +291,7 @@ class GpuDamageTuningSmokeTest {
         view.render();
         GpuBoardTestUi.click("tuning-defaults");
         view.render();
-        assertTrue(vsync.isChecked(), "Defaults re-enables VSync");
+        assertFalse(vsync.isChecked(), "Defaults keeps the VSync preference the user set");
         assertFalse(override.isChecked());
         assertTrue(location.isDisabled());
         assertEquals(UnitDamageDisplay.Location.ALL, location.getSelected());

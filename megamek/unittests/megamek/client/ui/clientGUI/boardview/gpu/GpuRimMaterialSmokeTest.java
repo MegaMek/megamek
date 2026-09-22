@@ -22,11 +22,11 @@ import megamek.common.board.Coords;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-/** Authored rim artwork and composed normal maps must respond together to the real terrain shader's light. */
+/** The rim mask shades an exposed top layer, and that shading belongs to the material, not to the light. */
 @Tag("on-demand")
 class GpuRimMaterialSmokeTest {
     @Test
-    void rimReliefRespondsToMovingLightAndTheNormalMapToggle() {
+    void rimMaskShadesExposedEdgesUnderEitherLight() {
         AtomicReference<Throwable> failure = new AtomicReference<>();
         new Lwjgl3Application(new ApplicationAdapter() {
             @Override
@@ -85,37 +85,38 @@ class GpuRimMaterialSmokeTest {
             assertTrue(output.isDirectory() || output.mkdirs());
             for (boolean isometric : new boolean[] { false, true }) {
                 camera.setIsometric(isometric);
-                int[][] changes = new int[2][];
+                int centreIndex = probes.size() - 1;
+                int[][] light = new int[2][];
                 for (int direction = 0; direction < 2; direction++) {
-                    Vector3 light = new Vector3(direction == 0 ? -1 : 1, 0, -0.5f).nor();
-                    terrain.setAtmosphere(new BoardAtmosphere.Lighting(light, new Color(0.7f, 0.7f, 0.7f, 1),
+                    Vector3 direction3 = new Vector3(direction == 0 ? -1 : 1, 0, -0.5f).nor();
+                    terrain.setAtmosphere(new BoardAtmosphere.Lighting(direction3, new Color(0.7f, 0.7f, 0.7f, 1),
                           new Color(0.25f, 0.25f, 0.25f, 1), Color.BLACK, Color.BLACK, Color.BLACK, Color.WHITE, 1, 1, true));
                     terrain.renderShadows(camera.camera, List.of());
-                    terrain.setNormalMaps(false);
-                    int[] without = samples(terrain, camera, probes);
-                    GpuBoardTestUi.capture(new File(output, "rim-flat-" + isometric + "-" + direction + ".png"));
-                    terrain.setNormalMaps(true);
-                    int[] with = samples(terrain, camera, probes);
-                    GpuBoardTestUi.capture(new File(output, "rim-normal-" + isometric + "-" + direction + ".png"));
-                    changes[direction] = new int[probes.size()];
-                    int changed = 0;
-                    for (int index = 0; index < probes.size(); index++) {
-                        changes[direction][index] = (with[index] >>> 24) - (without[index] >>> 24);
-                        if (Math.abs(changes[direction][index]) > 1) { changed++; }
-                    }
-                    assertTrue(changed > 20, "The normal toggle must affect actual rim pixels: " + changed);
-                    assertEquals(without[without.length - 1], with[with.length - 1], "The flat centre keeps its original normal");
+                    light[direction] = samples(terrain, camera, probes);
+                    GpuBoardTestUi.capture(new File(output, "rim-lit-" + isometric + "-" + direction + ".png"));
                 }
-                int reversed = 0;
-                for (int index = 0; index < probes.size(); index++) {
-                    if (changes[0][index] * changes[1][index] < 0) { reversed++; }
+                // Ratios against the untouched centre cancel the lighting, so a shade can be compared across lights.
+                int darkest = 0;
+                int shaded = 0;
+                for (int index = 0; index < centreIndex; index++) {
+                    if (ratio(light[0], index, centreIndex) < 0.98f) { shaded++; }
+                    if (ratio(light[0], index, centreIndex) < ratio(light[0], darkest, centreIndex)) { darkest = index; }
                 }
-                assertTrue(reversed > 20, "Rim relief must change its light response when the light reverses: " + reversed);
+                assertTrue(shaded > centreIndex / 4, "The rim must shade the exposed edges: " + shaded + " of " + centreIndex);
+                assertTrue(ratio(light[0], darkest, centreIndex) < 0.9f, "The rim must shade visibly");
+                // The mask multiplies the material's own colour, so its ratio survives any lighting.
+                assertEquals(ratio(light[0], darkest, centreIndex), ratio(light[1], darkest, centreIndex), 0.05f,
+                      "A rim shade belongs to the material, not to the light");
             }
             assertEquals(GL20.GL_NO_ERROR, Gdx.gl.glGetError());
         } finally {
             terrain.dispose();
         }
+    }
+
+    /** Red-channel sample at a probe, relative to the untouched centre of the raised tile. */
+    private static float ratio(int[] samples, int index, int centreIndex) {
+        return (samples[index] >>> 24) / (float) (samples[centreIndex] >>> 24);
     }
 
     private static int[] samples(GpuTerrain terrain, BoardCamera camera, List<Vector3> probes) {

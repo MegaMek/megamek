@@ -51,14 +51,18 @@ public final class AutomaticEjectionRules {
     }
 
     /**
-     * Whether this unit has an ejection system at all, and so has a setting worth showing the player.
+     * Whether this unit has an ejection system at all, and so has a setting worth showing the player. Large craft
+     * (small craft, DropShips, JumpShips, WarShips and space stations) have none: their crews abandon ship rather
+     * than eject, their automatic ejection switch is fixed off, and the lobby's Configure dialog offers them no
+     * ejection settings. ProtoMeks are not Meks and have no ejection system either.
      *
      * @param entity the unit to check, or {@code null}
      *
-     * @return {@code true} for BattleMeks and aerospace units
+     * @return {@code true} for BattleMeks and fighters
      */
     public static boolean hasEjectionSystem(@Nullable Entity entity) {
-        return (entity instanceof Mek) || (entity instanceof Aero);
+        boolean isLargeCraft = (entity instanceof SmallCraft) || (entity instanceof Jumpship);
+        return (entity instanceof Mek) || ((entity instanceof Aero) && !isLargeCraft);
     }
 
     /**

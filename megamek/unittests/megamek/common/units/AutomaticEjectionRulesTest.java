@@ -81,6 +81,23 @@ class AutomaticEjectionRulesTest {
     }
 
     @Test
+    void aFighterHasAnEjectionSystem() {
+        assertTrue(AutomaticEjectionRules.hasEjectionSystem(new AeroSpaceFighter()));
+    }
+
+    @Test
+    void largeCraftHaveNoEjectionSystem() {
+        assertFalse(AutomaticEjectionRules.hasEjectionSystem(new Dropship()), "DropShip crews abandon ship");
+        assertFalse(AutomaticEjectionRules.hasEjectionSystem(new Jumpship()));
+        assertFalse(AutomaticEjectionRules.hasEjectionSystem(new SpaceStation()));
+    }
+
+    @Test
+    void aProtoMekHasNoEjectionSystem() {
+        assertFalse(AutomaticEjectionRules.hasEjectionSystem(new ProtoMek()));
+    }
+
+    @Test
     void nothingHasAnEjectionSystem() {
         assertFalse(AutomaticEjectionRules.hasEjectionSystem(null));
     }

@@ -71,7 +71,14 @@ final class GpuMekAssemblyReview {
               { "battlemaster-4s", "battlemaster", "3085u/Phoenix/BattleMaster BLR-4S.mtf" },
               { "battlemaster-6r", "battlemaster", "Rec Guides ilClan/Vol 3/BattleMaster BLR-6R.mtf" },
               // Two guns in one hand, a Light Gauss Rifle and an ER Large Laser: only the larger is held.
-              { "battlemaster-5m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-5M.mtf" }
+              { "battlemaster-5m", "battlemaster", "3085u/Phoenix/BattleMaster BLR-5M.mtf" },
+              // Guns hang under the gun pods and under the chin: machine guns, an SRM rack, a laser mix.
+              { "locust-1v", "locust", "3039u/Locust LCT-1V.mtf" },
+              { "locust-1v2", "locust", "3085u/Phoenix/Locust LCT-1V2.mtf" },
+              { "locust-5v", "locust", "3085u/Phoenix/Locust LCT-5V.mtf" },
+              { "locust-3m", "locust", "Rec Guides ilClan/Vol 16/Locust LCT-3M.mtf" },
+              // The only Locust with a head weapon: it shares the chin turret with the centre torso's.
+              { "locust-6m", "locust", "3085u/Phoenix/Locust LCT-6M.mtf" }
         };
         int id = 700;
         for (String[] entry : cases) {
@@ -98,7 +105,8 @@ final class GpuMekAssemblyReview {
             instances.add(drawn);
             var previous = original.get(mek.getShortNameRaw());
             // A chassis authored after the bakes were frozen has no legacy reference to sit beside.
-            if (previous != null) {
+            // The Locust hangs its guns under its pods, which only the six-view sheet shows from below.
+            if (previous != null && !entry[0].startsWith("locust")) {
                 Model old = new G3dModelLoader(new JsonReader()).loadModel(new FileHandle(new File(referenceRoot,
                       previous.getString("asset"))));
                 references.add(old);
@@ -156,8 +164,10 @@ final class GpuMekAssemblyReview {
                       "runtime-compare-" + comparisonNames.get(pair), 180, 25);
             }
             for (int index = 0; index < soloReviews.size(); index++) {
+                // A twenty-tonner framed like an assault Mek fills a sliver of its cell, so it is framed closer.
+                boolean small = soloNames.get(index).startsWith("Locust");
                 GpuModularUnitModelsSmokeTest.renderFullReview(batch, List.of(soloReviews.get(index)),
-                      "runtime-new-" + soloNames.get(index), soloNames.get(index), 78, 25);
+                      "runtime-new-" + soloNames.get(index), soloNames.get(index), small ? 46 : 78, small ? 20 : 25);
             }
         } finally {
             references.forEach(Model::dispose);

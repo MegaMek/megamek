@@ -419,7 +419,10 @@ final class UnitEquipmentAssembly {
         // A chassis rule's spot is its own, so it neither takes room from nor gives room to that location's face.
         var area = point.id().equals("partial-wing") || item.placement().getBoolean("rule", false)
               ? new MountFrame(socket)
-              : areas.computeIfAbsent(point.location() + ":" + point.side(), ignored -> new MountFrame(socket));
+              // Two locations can share one face, as a Locust's head and centre weapons share its chin turret; the
+              // packer then keeps them apart instead of drawing one over the other.
+              : areas.computeIfAbsent(item.placement().getString("area", point.location()) + ":" + point.side(),
+                    ignored -> new MountFrame(socket));
         var module = item.module();
         String moduleAsset = item.visual().asset();
         Vector3 size = new Vector3();
@@ -500,6 +503,10 @@ final class UnitEquipmentAssembly {
             }
             stack.sort(Comparator.comparingDouble((Pending item) -> -area(item.module().descriptor().bounds()))
                   .thenComparingInt(item -> item.mount().index()));
+            if ("rows".equals(stack.getFirst().placement().getString("stack", ""))) {
+                result.addAll(inRows(stack));
+                continue;
+            }
             float totalHeight = STACK_GAP * (stack.size() - 1);
             for (Pending item : stack) {
                 totalHeight += dimension(item, 2);
@@ -514,6 +521,65 @@ final class UnitEquipmentAssembly {
             }
         }
         return result;
+    }
+
+    /**
+     * Lays the weapons sharing a hard point out in rows, side by side, as a chassis asks for with a stack setting of
+     * "rows": a pair of lasers on a gun pod sits across its face rather than one above the other. A row takes weapons,
+     * largest first, while they fit the face's width, and the next starts below it. The block is centred on the face,
+     * each row across it, and each row runs outward from the centre line so the left and right sides mirror.
+     */
+    private static List<Pending> inRows(List<Pending> stack) {
+        float faceWidth = stack.getFirst().point().size().get(0);
+        List<List<Pending>> rows = new ArrayList<>();
+        List<Pending> row = new ArrayList<>();
+        float rowWidth = 0;
+        for (Pending item : stack) {
+            float width = dimension(item, 0);
+            if (!row.isEmpty() && rowWidth + STACK_GAP + width > faceWidth) {
+                rows.add(row);
+                row = new ArrayList<>();
+                rowWidth = 0;
+            }
+            rowWidth += (row.isEmpty() ? 0 : STACK_GAP) + width;
+            row.add(item);
+        }
+        rows.add(row);
+        float totalHeight = STACK_GAP * (rows.size() - 1);
+        for (List<Pending> line : rows) {
+            totalHeight += rowHeight(line);
+        }
+        // A face's x runs the same world direction on both sides of the Mek, so the left side lays its row the
+        // other way to run outward from the centre line too.
+        boolean left = stack.getFirst().point().location().startsWith("L");
+        List<Pending> result = new ArrayList<>();
+        float z = totalHeight / 2;
+        for (List<Pending> line : rows) {
+            float height = rowHeight(line);
+            z -= height / 2;
+            float width = STACK_GAP * (line.size() - 1);
+            for (Pending item : line) {
+                width += dimension(item, 0);
+            }
+            float x = -width / 2;
+            for (Pending item : line) {
+                float itemWidth = dimension(item, 0);
+                float offset = x + itemWidth / 2;
+                result.add(new Pending(item.mount(), item.point(), item.placement(), item.visual(), item.module(),
+                      item.scale(), item.offsetX() + (left ? -offset : offset), item.offsetZ() + z));
+                x += itemWidth + STACK_GAP;
+            }
+            z -= height / 2 + STACK_GAP;
+        }
+        return result;
+    }
+
+    private static float rowHeight(List<Pending> row) {
+        float height = 0;
+        for (Pending item : row) {
+            height = Math.max(height, dimension(item, 2));
+        }
+        return height;
     }
 
     private static List<Pending> arrangeBays(GpuUnitModels library, List<Pending> pending) {
@@ -609,7 +675,13 @@ final class UnitEquipmentAssembly {
             size.x = Math.min(size.x, 3 * scale);
             size.z = Math.min(size.z, 3 * scale);
         }
-        return frame.area().place(center.x, center.z, size.x, size.z, item.point().size().get(0), item.point().size().get(2),
+        float z = center.z;
+        if (item.placement().getBoolean("hang", false)) {
+            // A hanging socket marks an underside: the weapon hangs from it, its top against the surface above,
+            // however tall it is, instead of being centred on the socket.
+            z = transform.getTranslation(new Vector3()).mul(frame.inverse()).z - size.z / 2;
+        }
+        return frame.area().place(center.x, z, size.x, size.z, item.point().size().get(0), item.point().size().get(2),
               Math.min(1, item.point().minScale() / scale), towardCentreLine(frame, transform));
     }
 

@@ -20,11 +20,11 @@ final class BoardAtmosphere {
     /** Fraction of ambient fill moved into visible moonlight; 0 restores the original full-moon shadows. */
     static final float MOONLIGHT_SHADOW_CONTRAST = 0.7f;
     /** Artistic palette blends, not gas opacity or a change to gameplay visibility. */
-    static final float TAINTED_COLOR_STRENGTH = 0.3f;
-    static final float TOXIC_COLOR_STRENGTH = 0.9f;
+    static final float TAINTED_COLOR_STRENGTH = 0.4f;
+    static final float TOXIC_COLOR_STRENGTH = 1.0f;
     static final float DEFAULT_TAINT_STRENGTH = 3.0f;
     /** How much of the air's palette blend reaches the display-space grade that covers every drawn surface. */
-    static final float TAINT_GRADE_SHARE = 0.75f;
+    static final float TAINT_GRADE_SHARE = 0.5f;
 
     private static final int CAUSTIC_TAINT_COLOR = 0xc4c07aff;
     private static final int POISON_TAINT_COLOR = 0x9e8aa6ff;
@@ -396,7 +396,7 @@ final class BoardAtmosphere {
             // Warm horizon light owns dawn and dusk, so the palette recedes while it shines.
             float strength = (settings.taint().isToxic() ? TOXIC_COLOR_STRENGTH : TAINTED_COLOR_STRENGTH)
                   * MathUtils.clamp(taintStrength, 0, 10) * scattering
-                  * MathUtils.lerp(0.2f, 1, daylight) * (1 - warmth * 0.75f);
+                  * MathUtils.lerp(0.4f, 1, daylight) * (1 - warmth * 0.75f);
             // Existing gradients/volumes provide depth. Weather alone decides whether scattering is rendered.
             tintAtmosphere(sky, palette, strength * 0.35f);
             tintAtmosphere(horizon, palette, strength);

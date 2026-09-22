@@ -119,7 +119,8 @@ class GpuTargetingSmokeTest {
                             }
                         } else if (frames() == 5) {
                             assertTrue(playback.attack() != null);
-                            checkOverlays(this, false, Set.of(42, 43));
+                            // The playing attack is unit 1 at unit 42, so only its target carries bands.
+                            checkOverlays(this, false, Set.of(42));
                             GpuBoardTestUi.capture(new File(output, "targeting-hidden-during-fire.png"));
                             // Disabling arrow hiding restores every attacker's arrows without changing the marker targets.
                             var control = (GpuFireControl) field(this, "fireControl");
@@ -132,8 +133,9 @@ class GpuTargetingSmokeTest {
                         } else if (frames() == 6) {
                             assertTrue(playback.attack() != null);
                             assertEquals(44, scene.selectedId());
-                            checkOverlays(this, false, Set.of(43, 45));
-                            GpuBoardTestUi.capture(new File(output, "targeting-markers-during-fire-second-attacker.png"));
+                            // Selecting another unit mid-playback must not move the bands to its assignments.
+                            checkOverlays(this, false, Set.of(42));
+                            GpuBoardTestUi.capture(new File(output, "targeting-markers-during-fire-selected-other-unit.png"));
                             playback.finish();
                         } else if (frames() == 7) {
                             assertEquals(44, scene.selectedId());
@@ -180,6 +182,7 @@ class GpuTargetingSmokeTest {
     private static void checkOverlays(GpuBattleView view, boolean visible, Set<Integer> targets) throws ReflectiveOperationException {
         var scene = (BoardScene) field(view, "scene");
         var control = (GpuFireControl) field(view, "fireControl");
+        var playback = (UnitPlayback) field(view, "playback");
         checkArrows(control, scene, visible);
         var poses = (Map<?, ?>) field(view, "unitFootprints");
         var camera = view.boardCamera.camera;
@@ -190,7 +193,10 @@ class GpuTargetingSmokeTest {
         Pixmap pixels = Pixmap.createFromFrameBuffer(0, 0, Gdx.graphics.getBackBufferWidth(), Gdx.graphics.getBackBufferHeight());
         try {
             for (int id : List.of(42, 43, 45)) {
-                assertEquals(targets.contains(id), control.targets(id), "Only the selected attacker's targets should be marked");
+                if (playback.attacks().isEmpty()) {
+                    assertEquals(targets.contains(id), control.targets(id),
+                          "Idle bands must mark the selected unit's assigned targets");
+                }
                 var unit = scene.units().stream().filter(candidate -> candidate.id() == id).findFirst().orElseThrow();
                 var pose = (UnitFootprint.Pose) poses.get(unit);
                 int corners = 0, gaps = 0;

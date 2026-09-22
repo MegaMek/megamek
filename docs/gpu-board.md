@@ -796,9 +796,11 @@ opaque depth. HEIGHT labels are raised to the building/feature height and fit
 on the roof footprint. Other hex labels retain their terrain anchors.
 
 Declared attacks use thin arrows and optional red hex-corner bands at each target
-unit's base. Bands mark only the currently selected unit's assigned targets,
-including every target in split fire, and clear when no unit is selected.
-`GpuFireControl.TARGET_ARROW_SIZE`
+unit's base. Bands mark the selected unit's assigned targets, including every
+target in split fire, and clear when no unit is selected. While combat playback
+shows an attack, bands mark the targets of the unit that is firing, because the
+camera follows each attacker in turn while the selection stays where the game put
+it. `GpuFireControl.TARGET_ARROW_SIZE`
 scales the line thickness and arrowhead together: `1f` keeps the current size,
 `0.5f` halves it, and `2f` doubles it. Set
 `GpuBattleView.SHOW_TARGET_MARKERS` to `true` to enable the bands, or `false` to
@@ -808,7 +810,7 @@ disable them. Their width and shared-clock bobbing use `TARGET_BAND_WIDTH`,
 `GpuBattleView.HIDE_TARGET_ARROWS_DURING_ATTACKS` defaults to `true`, hiding every
 attacker's arrows during combat playback, regardless of selection.
 `GpuBattleView.HIDE_TARGET_MARKERS_DURING_ATTACKS` defaults to `false`, keeping
-enabled target bands visible for the currently selected unit during playback.
+enabled target bands visible for the currently firing unit during playback.
 These switches operate independently. Weapon range contours are unaffected.
 
 `UnitOverviewOverlay` supplies both boards' unit strips: owned units on the right

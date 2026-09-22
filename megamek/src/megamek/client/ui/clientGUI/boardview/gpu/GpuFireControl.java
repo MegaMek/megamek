@@ -152,7 +152,7 @@ final class GpuFireControl implements Disposable {
         instance = new ModelInstance(model);
     }
 
-    /** Target bands follow the current selection's assignments independently of arrow visibility. */
+    /** The selected unit's targets, drawn independently of arrow visibility; playback marks the firing unit's own. */
     boolean targets(int entityId) {
         return scene != null && scene.selectedId() >= 0 && scene.firingLines().stream()
               .anyMatch(line -> line.attackerId() == scene.selectedId() && line.targetId() == entityId);

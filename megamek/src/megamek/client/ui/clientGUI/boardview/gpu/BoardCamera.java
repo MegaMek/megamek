@@ -16,7 +16,7 @@ import megamek.common.board.Coords;
 final class BoardCamera {
     private static final float ISOMETRIC_TILT = 54.73561f;
     // Manual orthographic zoom limits: smaller values zoom in, larger values zoom out.
-    private static final float MIN_ZOOM = 0.1f;
+    private static final float MIN_ZOOM = 0.05f;
     private static final float MAX_ZOOM = 20f;
     static final float ENTRANCE_SECONDS = 1.2f;
     private static final float ENTRANCE_ZOOM = 1.35f;

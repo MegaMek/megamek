@@ -77,7 +77,7 @@ class GpuBattleView extends ApplicationAdapter {
     static final boolean SHOW_TARGET_MARKERS = true;
     /** Hide all declared firing arrows while combat is playing, regardless of selection. */
     static final boolean HIDE_TARGET_ARROWS_DURING_ATTACKS = true;
-    /** Hide the selected unit's target bands while combat is playing. */
+    /** Hide every target band while combat is playing, regardless of the firing or selected unit. */
     static final boolean HIDE_TARGET_MARKERS_DURING_ATTACKS = false;
     /** Floating units are tied to their hex with this faint solid stem; solid, so it needs no blending state. */
     private static final Color TETHER_COLOR = Color.valueOf("A9B8B8");
@@ -1113,7 +1113,7 @@ class GpuBattleView extends ApplicationAdapter {
                 float lift = unit.id() == scene.selectedId() ? selectionBob(hoverClock) : 0;
                 unitBand(unit, SELECTION_BAND_WIDTH, lift, false);
             }
-            if (showTargets && fireControl.targets(unit.id())) {
+            if (showTargets && showsTargetBand(unit.id())) {
                 lines.setColor(Color.RED);
                 unitBand(unit, TARGET_BAND_WIDTH, targetBob(hoverClock), true);
             }
@@ -1127,6 +1127,19 @@ class GpuBattleView extends ApplicationAdapter {
             ring(hovered, tile.elevation());
         }
         lines.end();
+    }
+
+    /**
+     * Combat playback moves the camera from one attacking unit to the next while the game keeps its selection, so
+     * the bands mark the targets of the unit that is firing now. At rest they follow the selected unit's assignments,
+     * exactly as the arrows do. A death event names its own unit as attacker and target and marks nothing.
+     */
+    private boolean showsTargetBand(int entityId) {
+        if (playback.attacks().isEmpty()) {
+            return fireControl.targets(entityId);
+        }
+        return playback.attacks().stream().anyMatch(attack -> attack.event.target() != null
+              && attack.event.target().id() == entityId && entityId != attack.event.entityId());
     }
 
     /** Stay above the support plane throughout the wave, including when the unit is standing on terrain. */

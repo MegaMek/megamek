@@ -272,6 +272,14 @@ public class BotMemory {
      * @param record       the strengths as the bot sees them this round
      */
     void rememberFightOdds(int buildingId, String buildingName, OddsRecord record) {
+        // In the round an action starts the bot looks before the defender has declared, so the defence reads as
+        // nothing and the odds as limitless. Noting that would make the first real figure count as a fall.
+        boolean isBothSidesCommitted = (record.attackerPoints() > 0) && (record.defenderPoints() > 0);
+        if (!isBothSidesCommitted) {
+            LOGGER.debug("[BotMemory] round {}: action in {} not noted yet: {} against {}, one side has not "
+                  + "committed", record.round(), buildingName, record.attackerPoints(), record.defenderPoints());
+            return;
+        }
         FightMemory fight = fightMemories.computeIfAbsent(buildingId, FightMemory::new);
         fight.rememberOdds(record);
         LOGGER.debug("[BotMemory] round {}: action in {} stands at {} against {}; {} round(s) noted",

@@ -9,8 +9,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.client.ui.tileset.EquipmentModelPolicy;
+import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;

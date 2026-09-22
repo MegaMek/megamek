@@ -14,16 +14,16 @@ import javax.swing.SwingUtilities;
 
 import megamek.common.Configuration;
 import megamek.common.Hex;
-import megamek.common.board.Coords;
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.loaders.MekFileParser;
+import megamek.common.units.Aero;
+import megamek.common.units.Dropship;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
-import megamek.common.loaders.MekFileParser;
-import megamek.common.units.Dropship;
-import megamek.common.units.Aero;
-import megamek.common.units.EntityMovementType;
 import megamek.common.units.UnitLocation;
-import megamek.common.event.entity.GameEntityChangeEvent;
 import org.junit.jupiter.api.Test;
 
 class UnitFootprintTest {

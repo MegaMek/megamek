@@ -11,8 +11,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.Vector;
 
-import megamek.common.game.Game;
 import megamek.common.board.Coords;
+import megamek.common.game.Game;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.marshalling.PacketMarshaller;
 import megamek.common.net.marshalling.PacketMarshallerFactory;

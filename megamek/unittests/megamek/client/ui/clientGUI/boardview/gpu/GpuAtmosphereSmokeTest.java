@@ -1,8 +1,8 @@
 /* Copyright (C) 2026 The MegaMek Team. SPDX-License-Identifier: GPL-3.0-or-later */
 package megamek.client.ui.clientGUI.boardview.gpu;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -45,8 +45,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.utils.ScreenUtils;
 import megamek.common.board.Coords;
-import megamek.common.planetaryConditions.Fog;
 import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.Fog;
 import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Weather;

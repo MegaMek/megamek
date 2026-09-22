@@ -5,24 +5,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
-import javax.swing.JPanel;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
+import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingUtilities;
 
 import megamek.client.Client;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.board.Board;
-import megamek.common.game.Game;
 import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import org.junit.jupiter.api.Test;
 
 class BoardViewsContainerTest {

@@ -43,8 +43,8 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.StraightArrowPolygon;
-import megamek.common.compute.Compute;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.units.Entity;
 
 /**

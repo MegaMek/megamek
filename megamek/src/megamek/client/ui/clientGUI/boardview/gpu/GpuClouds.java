@@ -25,7 +25,7 @@ final class GpuClouds implements Disposable {
     /** Clouds vector motion speed */
     static final float MIN_MOTION_STRENGTH = 0.3f;
     static final float MAX_MOTION_STRENGTH = 1.0f;
-    
+
 
     private final ShaderProgram shadowShader;
     private final Texture noise;

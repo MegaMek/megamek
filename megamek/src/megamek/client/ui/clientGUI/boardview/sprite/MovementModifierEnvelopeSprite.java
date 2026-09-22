@@ -44,8 +44,8 @@ import megamek.client.ui.clientGUI.boardview.BoardTacticalGraphics;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.compute.DefensiveMovementModifier;
 import megamek.common.Facing;
+import megamek.common.compute.DefensiveMovementModifier;
 import megamek.common.moves.MovePath;
 
 /**

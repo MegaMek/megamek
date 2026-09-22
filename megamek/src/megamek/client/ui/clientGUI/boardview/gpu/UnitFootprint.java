@@ -6,9 +6,9 @@ import java.util.List;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector3;
+import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.Hex;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Terrains;
 

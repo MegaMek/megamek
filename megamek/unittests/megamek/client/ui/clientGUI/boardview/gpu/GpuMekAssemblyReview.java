@@ -82,7 +82,9 @@ final class GpuMekAssemblyReview {
               { "panther-9r", "panther", "3039u/Panther PNT-9R.mtf" },
               // Two launchers stacked over and under in the centre torso.
               { "panther-10k2", "panther", "3085u/Cutting Edge/Panther PNT-10K2.mtf" },
-              { "panther-16k", "panther", "3050U/Panther PNT-16K.mtf" }
+              { "panther-16k", "panther", "3050U/Panther PNT-16K.mtf" },
+              // An Arrow IV split across the right arm and right torso.
+              { "urbanmech-aiv", "urbanmech", "3085u/ONN/UrbanMech UM-AIV.mtf" }
         };
         int id = 700;
         for (String[] entry : cases) {
@@ -110,7 +112,8 @@ final class GpuMekAssemblyReview {
             var previous = original.get(mek.getShortNameRaw());
             // A chassis authored after the bakes were frozen has no legacy reference to sit beside.
             // The Locust hangs its guns under its pods, which only the six-view sheet shows from below.
-            if (previous != null && !entry[0].startsWith("locust") && !entry[0].startsWith("panther")) {
+            if (previous != null && !entry[0].startsWith("locust") && !entry[0].startsWith("panther")
+                  && !entry[0].startsWith("urbanmech")) {
                 Model old = new G3dModelLoader(new JsonReader()).loadModel(new FileHandle(new File(referenceRoot,
                       previous.getString("asset"))));
                 references.add(old);
@@ -169,7 +172,8 @@ final class GpuMekAssemblyReview {
             }
             for (int index = 0; index < soloReviews.size(); index++) {
                 // A twenty-tonner framed like an assault Mek fills a sliver of its cell, so it is framed closer.
-                boolean small = soloNames.get(index).startsWith("Locust") || soloNames.get(index).startsWith("Panther");
+                boolean small = soloNames.get(index).startsWith("Locust") || soloNames.get(index).startsWith("Panther")
+                      || soloNames.get(index).startsWith("UrbanMe");
                 GpuModularUnitModelsSmokeTest.renderFullReview(batch, List.of(soloReviews.get(index)),
                       "runtime-new-" + soloNames.get(index), soloNames.get(index), small ? 52 : 78, small ? 23 : 25);
             }

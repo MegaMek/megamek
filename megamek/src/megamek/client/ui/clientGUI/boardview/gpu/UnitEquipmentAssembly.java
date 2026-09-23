@@ -581,7 +581,8 @@ final class UnitEquipmentAssembly {
                 result.addAll(inRows(stack));
                 continue;
             }
-            float totalHeight = STACK_GAP * (stack.size() - 1);
+            float gap = stackGap(stack.getFirst().placement());
+            float totalHeight = gap * (stack.size() - 1);
             for (Pending item : stack) {
                 totalHeight += dimension(item, 2);
             }
@@ -591,10 +592,27 @@ final class UnitEquipmentAssembly {
                 z -= height / 2;
                 result.add(new Pending(item.mount(), item.point(), item.placement(), item.visual(), item.module(),
                       item.scale(), item.offsetX(), item.offsetZ() + z));
-                z -= height / 2 + STACK_GAP;
+                z -= height / 2 + gap;
             }
         }
         return result;
+    }
+
+    /**
+     * The room between weapons sharing a hard point. A chassis can set its own for a location (stackGap), so a group
+     * on a small pod packs tighter; a negative gap lets rounded weapons nest into each other's bounding boxes.
+     */
+    static float stackGap(JsonValue placement) {
+        return placement.getFloat("stackGap", STACK_GAP);
+    }
+
+    /**
+     * How wide one row of weapons may run before the next starts below it. By default the hard point's face width; a
+     * chassis can set its own (rowWidth) to shape a group, such as a large laser alone over a pair, without narrowing
+     * the face every weapon is fitted to.
+     */
+    static float rowWidth(JsonValue placement, float faceWidth) {
+        return placement.getFloat("rowWidth", faceWidth);
     }
 
     /**
@@ -604,22 +622,23 @@ final class UnitEquipmentAssembly {
      * each row across it, and each row runs outward from the centre line so the left and right sides mirror.
      */
     private static List<Pending> inRows(List<Pending> stack) {
-        float faceWidth = stack.getFirst().point().size().get(0);
+        float faceWidth = rowWidth(stack.getFirst().placement(), stack.getFirst().point().size().get(0));
+        float gap = stackGap(stack.getFirst().placement());
         List<List<Pending>> rows = new ArrayList<>();
         List<Pending> row = new ArrayList<>();
         float rowWidth = 0;
         for (Pending item : stack) {
             float width = dimension(item, 0);
-            if (!row.isEmpty() && rowWidth + STACK_GAP + width > faceWidth) {
+            if (!row.isEmpty() && rowWidth + gap + width > faceWidth) {
                 rows.add(row);
                 row = new ArrayList<>();
                 rowWidth = 0;
             }
-            rowWidth += (row.isEmpty() ? 0 : STACK_GAP) + width;
+            rowWidth += (row.isEmpty() ? 0 : gap) + width;
             row.add(item);
         }
         rows.add(row);
-        float totalHeight = STACK_GAP * (rows.size() - 1);
+        float totalHeight = gap * (rows.size() - 1);
         for (List<Pending> line : rows) {
             totalHeight += rowHeight(line);
         }
@@ -631,7 +650,7 @@ final class UnitEquipmentAssembly {
         for (List<Pending> line : rows) {
             float height = rowHeight(line);
             z -= height / 2;
-            float width = STACK_GAP * (line.size() - 1);
+            float width = gap * (line.size() - 1);
             for (Pending item : line) {
                 width += dimension(item, 0);
             }
@@ -641,9 +660,9 @@ final class UnitEquipmentAssembly {
                 float offset = x + itemWidth / 2;
                 result.add(new Pending(item.mount(), item.point(), item.placement(), item.visual(), item.module(),
                       item.scale(), item.offsetX() + (left ? -offset : offset), item.offsetZ() + z));
-                x += itemWidth + STACK_GAP;
+                x += itemWidth + gap;
             }
-            z -= height / 2 + STACK_GAP;
+            z -= height / 2 + gap;
         }
         return result;
     }

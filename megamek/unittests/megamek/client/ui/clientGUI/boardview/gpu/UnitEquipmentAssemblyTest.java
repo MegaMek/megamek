@@ -26,6 +26,7 @@ import megamek.client.ui.tileset.EquipmentModelPolicy;
 import megamek.client.ui.tileset.UnitModelEquipment;
 import megamek.common.units.EntityMovementMode;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -33,6 +34,18 @@ import org.junit.jupiter.params.provider.CsvSource;
 class UnitEquipmentAssemblyTest {
     @BeforeAll
     static void loadMathNatives() { GdxNativesLoader.load(); }
+
+    @Test
+    void weaponsSharingAHardPointKeepTheStandardGapUnlessTheChassisSetsItsOwn() {
+        assertEquals(.4f, UnitEquipmentAssembly.stackGap(new JsonReader().parse("{}")), 1e-6);
+        assertEquals(-.2f, UnitEquipmentAssembly.stackGap(new JsonReader().parse("{\"stackGap\":-0.2}")), 1e-6);
+    }
+
+    @Test
+    void rowsRunTheFaceWidthUnlessTheChassisSetsARowWidth() {
+        assertEquals(5f, UnitEquipmentAssembly.rowWidth(new JsonReader().parse("{}"), 5f), 1e-6);
+        assertEquals(3.4f, UnitEquipmentAssembly.rowWidth(new JsonReader().parse("{\"rowWidth\":3.4}"), 5f), 1e-6);
+    }
 
     @ParameterizedTest
     @CsvSource({ "LT, LA, hand", "RT, RA, hand", "LT, LA, wrist", "RT, RA, wrist", "LT, LA, elbow", "RT, RA, elbow" })

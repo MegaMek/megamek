@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -105,7 +106,19 @@ final class GpuMekAssemblyReview {
                           entry[0] + ": " + mount.internalName());
                 }
             }
-            assertTrue(visual.equipment().stream().noneMatch(UnitEquipmentAssembly.Binding::embedded), entry[0]);
+            // An extra jump jet in a location shares the drawn jet's nozzle and is bound as embedded on purpose (see
+            // UnitEquipmentAssembly.shareJumpJets); any other embedded equipment is buried in the body.
+            Set<Integer> jumpJetIndexes = new HashSet<>();
+            for (var mount : selected.state().structure().equipment()) {
+                if ("jump-jet".equals(mount.family())) {
+                    jumpJetIndexes.add(mount.index());
+                }
+            }
+            for (UnitEquipmentAssembly.Binding binding : visual.equipment()) {
+                boolean isSharedJumpJet = jumpJetIndexes.contains(binding.index());
+                assertFalse(binding.embedded() && !isSharedJumpJet,
+                      entry[0] + ": equipment " + binding.index() + " is embedded in the body");
+            }
             var drawn = new ModelInstance(visual.instance.model);
             visual.showEquipment(drawn, selected.state().appearance());
             instances.add(drawn);

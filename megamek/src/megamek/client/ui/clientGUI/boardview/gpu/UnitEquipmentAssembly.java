@@ -29,6 +29,12 @@ final class UnitEquipmentAssembly {
     private static final JsonValue DEFAULT_PLACEMENT = new JsonValue(JsonValue.ValueType.object);
     private static final Pattern HEAT_SINK = Pattern.compile("(?i)heat ?sink");
     private static final List<String> TORSO = List.of("CT", "LT", "RT");
+    private static final String JUMP_JET = "jump-jet";
+    /**
+     * Legs take vents only on the front, and only on a body that offers a vent spot there (the Griffin's shins):
+     * back vents stay on the torso, and a chassis without leg spots is unchanged.
+     */
+    private static final List<String> LEGS = List.of("LL", "RL");
     /** House rule: at most two vents on the front and two on the back. */
     private static final int VENTS_PER_FACE = 2;
     /** Clear space kept around a vent, so a weapon beside it does not sit on its edge. */
@@ -74,9 +80,22 @@ final class UnitEquipmentAssembly {
     static List<Binding> attachAll(GpuUnitModels library, JsonValue descriptor, GpuUnitModels.ModularAsset body,
           UnitModelState.Structure structure, Model assembled) {
         var catalog = new UnitEquipmentModels(library.descriptor(descriptor.getString("equipment")));
+        // House rule: one jump jet graphic shows that a location has jump jets, however many its unit file lists.
+        // The first jet in each location is drawn; the others share its nozzle (see shareJumpJets).
+        Map<String, Integer> drawnJets = new HashMap<>();
+        List<Pending> sharedJets = new ArrayList<>();
+        List<Pending> drawn = new ArrayList<>();
+        for (Pending item : prepare(library, descriptor, body, catalog, structure)) {
+            if (JUMP_JET.equals(item.mount().family())
+                  && drawnJets.putIfAbsent(item.mount().location(), item.mount().index()) != null) {
+                sharedJets.add(item);
+            } else {
+                drawn.add(item);
+            }
+        }
         // Two held weapons in one hand share its hard point, so the stacking below sets them over-under like a
         // double-barrelled gun, the larger on top, both leaving from the front of the one gun body.
-        List<Pending> pending = centreStacks(arrangeBays(library, prepare(library, descriptor, body, catalog, structure)));
+        List<Pending> pending = centreStacks(arrangeBays(library, drawn));
         pending.sort(Comparator.<Pending, Boolean>comparing(item -> !item.placement().getBoolean("bay", false))
               .thenComparing(item -> item.placement().getString("family", "").isEmpty())
               .thenComparingDouble(item -> -area(item.module().descriptor().bounds()))
@@ -92,6 +111,7 @@ final class UnitEquipmentAssembly {
         for (Pending item : pending) {
             attach(library, assembled, item, areas, bindings, holding.contains(item.point().location()));
         }
+        shareJumpJets(assembled, sharedJets, drawnJets, bindings);
         // An arm holding a gun shows the chassis's gun body in place of its hand; any other arm keeps its hand.
         for (String arm : new String[] { "LA", "RA" }) {
             Node unused = assembled.getNode(arm + (holding.contains(arm) ? "@hand" : "@held"), true);
@@ -105,7 +125,8 @@ final class UnitEquipmentAssembly {
 
     /**
      * Weapons first, vents after. The body offers vent spots: the ones the chassis author drew, listed first, and
-     * spares on the flat of each torso face. Vents go in the torsos holding this variant's slotted heat sinks, the two
+     * spares on the flat of each torso face. Vents go in the torsos holding this variant's slotted heat sinks (and on
+     * the front, in legs holding them when the body offers a spot on that leg), the two
      * with the most, or both in one when only one holds any; a variant whose sinks all sit in the engine keeps the
      * author's vents where the author put them. Each vent takes the first spot of its torso that no weapon covers and
      * no other vent has taken. A vent with no free spot is left off, and every unused spot is removed.
@@ -130,7 +151,8 @@ final class UnitEquipmentAssembly {
         }
         Map<String, Integer> sinks = new HashMap<>();
         for (var mount : structure.equipment()) {
-            if (TORSO.contains(mount.location()) && HEAT_SINK.matcher(mount.internalName()).find()) {
+            boolean ventable = TORSO.contains(mount.location()) || LEGS.contains(mount.location());
+            if (ventable && HEAT_SINK.matcher(mount.internalName()).find()) {
                 sinks.merge(mount.location(), 1, Integer::sum);
             }
         }
@@ -197,6 +219,13 @@ final class UnitEquipmentAssembly {
             return wanted;
         }
         List<String> ranked = new ArrayList<>(TORSO);
+        if ("front".equals(side)) {
+            for (String leg : LEGS) {
+                if (hasSpot(vents, side, leg)) {
+                    ranked.add(leg);
+                }
+            }
+        }
         ranked.removeIf(location -> !sinks.containsKey(location));
         ranked.sort(Comparator.comparingInt(location -> -sinks.get(location)));
         for (String location : ranked) {
@@ -208,6 +237,45 @@ final class UnitEquipmentAssembly {
             wanted.add(wanted.getFirst());
         }
         return wanted;
+    }
+
+    /**
+     * Binds each jump jet that is not drawn to the one drawn jet of its location. It gets an empty node of its own
+     * inside the drawn jet, so a destroyed extra jet never wrecks the shared graphic, and it keeps its own exhaust
+     * emitters at the drawn jet's nozzle, so every working jet still shows its exhaust when the unit jumps.
+     */
+    private static void shareJumpJets(Model assembled, List<Pending> sharedJets, Map<String, Integer> drawnJets,
+          List<Binding> bindings) {
+        for (Pending extra : sharedJets) {
+            int drawnIndex = drawnJets.get(extra.mount().location());
+            Binding shown = null;
+            for (Binding binding : bindings) {
+                if (binding.index() == drawnIndex) {
+                    shown = binding;
+                    break;
+                }
+            }
+            Node parent = shown == null ? null : assembled.getNode(shown.node(), true);
+            if (parent == null) {
+                LOGGER.warn("Jump jet {} has no drawn jet in {} to share", extra.mount().index(),
+                      extra.mount().location());
+                continue;
+            }
+            Node placement = new Node();
+            placement.id = extra.point().location() + "-equipment-" + extra.mount().index();
+            parent.addChild(placement);
+            bindings.add(new Binding(extra.mount().index(), extra.mount().location(), placement.id, shown.asset(),
+                  true, shown.emitters()));
+        }
+    }
+
+    private static boolean hasSpot(JsonValue vents, String side, String location) {
+        for (JsonValue vent : vents) {
+            if (side.equals(vent.getString("side")) && location.equals(vent.getString("location"))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static BoundingBox ventBox(Model assembled, JsonValue vent) {
@@ -622,7 +690,10 @@ final class UnitEquipmentAssembly {
             for (float height : heights) {
                 totalHeight += height * fit;
             }
-            float z = -totalHeight / 2;
+            // A standing bay rests on its socket, as a Griffin's launcher drum sits on its shoulder: the stack builds
+            // upward from the socket, so a launcher of any size touches the surface. Otherwise it is centred on it.
+            boolean standing = bay.getFirst().placement().getBoolean("stand", false);
+            float z = standing ? 0 : -totalHeight / 2;
             for (int row = 0; row < heights.length; row++) {
                 int count = Math.min(columns, bay.size() - row * columns);
                 for (int col = 0; col < count; col++) {

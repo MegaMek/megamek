@@ -36,6 +36,22 @@ class UnitEquipmentModelsTest {
               .resolve(mount("future-misc", EquipmentModelPolicy.OPTIONAL_MISC), placement));
     }
 
+    @Test
+    void lightWeaponsTakeTheMountsLightStyleAndOthersKeepItsStyle() {
+        var catalog = new UnitEquipmentModels(new JsonReader().parse("""
+              {"schema":2,"equipment":{
+              "medium":{"model":"medium.json","light":true,"styles":{"short":"medium-short.json","long":"medium-long.json"}},
+              "large":{"model":"large.json","styles":{"short":"large-short.json","long":"large-long.json"}}},
+              "fallbacks":{"weapon":"weapon.json"}}
+              """));
+        var armMount = new JsonReader().parse("{\"style\":\"long\",\"lightStyle\":\"short\"}");
+        assertEquals("medium-short.json", catalog.resolve(mount("medium", EquipmentModelPolicy.WEAPON), armMount).asset());
+        assertEquals("large-long.json", catalog.resolve(mount("large", EquipmentModelPolicy.WEAPON), armMount).asset());
+        // Without a light style at the mount, a light weapon keeps the mount's own style.
+        var plainMount = new JsonReader().parse("{\"style\":\"long\"}");
+        assertEquals("medium-long.json", catalog.resolve(mount("medium", EquipmentModelPolicy.WEAPON), plainMount).asset());
+    }
+
     private static UnitEquipmentModels catalog(String id, String model) {
         return new UnitEquipmentModels(new JsonReader().parse("""
               {"schema":2,"equipment":{"%s":{"model":"%s"}},

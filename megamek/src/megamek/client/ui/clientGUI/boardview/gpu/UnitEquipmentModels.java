@@ -53,6 +53,11 @@ final class UnitEquipmentModels {
         }
         String model = entry.getString("model");
         String style = placement.getString("style", mount.location().endsWith("A") ? "long" : "");
+        // A light weapon (small and medium lasers) can take a style of its own at a mount, so one socket can draw
+        // its heavy lasers long and its light ones short.
+        if (entry.getBoolean("light", false) && placement.has("lightStyle")) {
+            style = placement.getString("lightStyle");
+        }
         JsonValue styles = entry.get("styles");
         if (styles != null) {
             model = styles.getString(style, model);

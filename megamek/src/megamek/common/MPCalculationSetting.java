@@ -93,7 +93,7 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
           .noCargo()
           .noWeather()
           .build();
-    
+
     /**
      * A setting for testing if a unit is permanently immobilized. It excludes transient effects such as being grounded
      * for Aero's and the effects of heat and cargo.
@@ -124,7 +124,6 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
           .noWeather()
           .noHeat()
           .noCargo()
-          .noShield()
           .noDWP()
           .noGrounded()
           .noOptionalRules()

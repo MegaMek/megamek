@@ -44,6 +44,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.moves.MobileStructureLinkage;
+import megamek.common.moves.MountPathHelper;
 
 /** Door-based mounting and dismounting, including sinking vessels (TO:AUE pp.29,36,84; TW pp.89–90). */
 public final class MobileStructureCargoRules {
@@ -340,8 +341,8 @@ public final class MobileStructureCargoRules {
               && passenger.getBoardId() == carrier.getBoardId() && passenger.getPosition() != null
               && board.contains(passenger.getPosition()) && passenger.isLoadableThisTurn() && !passenger.isDone()
               && passenger.moved != EntityMovementType.MOVE_RUN && passenger.moved != EntityMovementType.MOVE_VTOL_RUN
-              && (passenger.mpUsed == 0 || passenger.mpUsed + (passenger.getWalkMP() + 1) / 2
-                    <= passenger.getWalkMP())
+              && MountPathHelper.mountRestriction(passenger, carrier, passenger.getWalkMP(), passenger.mpUsed,
+                    passenger.moved == EntityMovementType.MOVE_JUMP) == MountPathHelper.MountRestriction.NONE
               && canMount(carrier, passenger, passenger.getPosition(), board.getHex(passenger.getPosition()).getLevel()
                     + passenger.getElevation(), pose)).toList();
     }

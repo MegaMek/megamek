@@ -66,6 +66,7 @@ import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class MobileStructureBayDoorDamageTest {
@@ -162,7 +163,7 @@ class MobileStructureBayDoorDamageTest {
         assertNotNull(MobileStructureCargoRules.exit(mobile, second, south));
     }
 
-    @Test void unloadingUsesCurrentWalkingMpAfterHeatReduction() {
+    @Test void unloadingUsesStandardWalkingMpAfterHeatReduction() {
         var originalRules = Game.rulesManager;
         Game.rulesManager = new TWRulesManager();
         try {
@@ -171,7 +172,7 @@ class MobileStructureBayDoorDamageTest {
             assertEquals(5, f.first().getOriginalWalkMP());
             assertEquals(3, f.first().getWalkMP());
             assertTrue(f.manager().unloadUnit(f.mobile(), f.first(), ORIGIN.translated(0), 0, 0));
-            assertEquals(2, f.first().mpUsed, "half of current Walking MP, rounded up");
+            assertEquals(3, f.first().mpUsed, "TO:AUE p.38 / TW p.91: half of standard Walking MP, rounded up");
             assertEquals(1, f.first().delta_distance);
             assertFalse(f.first().isDone());
         } finally {
@@ -419,7 +420,7 @@ class MobileStructureBayDoorDamageTest {
               "the connected taller module still projects above the surface");
     }
 
-    @Test void carrierLoadUsesCurrentMovementAndRejectsCompletedOrExhaustedPassengers() {
+    @Test void carrierLoadUsesStandardMovementCostAndRejectsCompletedOrExhaustedPassengers() {
         var f = fixture(IBuilding.FORTRESS, 2, List.of(NORTH, SOUTH));
         var passenger = f.first();
         assertTrue(f.mobile().unload(passenger));
@@ -435,7 +436,7 @@ class MobileStructureBayDoorDamageTest {
         passenger.setDone(true);
         assertFalse(MobileStructureCargoRules.loadableUnits(f.mobile(), pose).contains(passenger));
         passenger.setDone(false);
-        passenger.mpUsed = 2;
+        passenger.mpUsed = 1;
         assertFalse(MobileStructureCargoRules.loadableUnits(f.mobile(), pose).contains(passenger));
         passenger.mpUsed = 0;
         assertTrue(MobileStructureCargoRules.loadableUnits(f.mobile(), pose).contains(passenger));
@@ -450,7 +451,7 @@ class MobileStructureBayDoorDamageTest {
         new MobileStructureMovementHandler(f.manager()).process(f.mobile(), new MovePath(f.manager().getGame(), f.mobile())
               .addStep(MoveStepType.LOAD, passenger, passenger.getPosition()));
         assertEquals(f.mobile().getId(), passenger.getTransportId());
-        assertEquals(2, passenger.mpUsed, "half current Walking MP, rounded up");
+        assertEquals(3, passenger.mpUsed, "half standard Walking MP, rounded up, despite heat reduction");
     }
 
     @Test void explicitNavalMissileEjectionPacketMakesBattleArmorJumpDismountAvailable() throws Exception {
@@ -524,8 +525,8 @@ class MobileStructureBayDoorDamageTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 2})
-    void passengerMountRequiresHalfOfCurrentWalkingMpAfterApproachingTheDoor(int movementMp) {
+    @CsvSource({"0,2,true", "0,3,false", "10,0,true", "10,1,false", "20,0,true"})
+    void passengerMountPaysStandardCostFromCurrentWalkingMp(int heat, int movementMp, boolean legal) {
         var originalRules = Game.rulesManager;
         Game.rulesManager = new TWRulesManager();
         try {
@@ -536,11 +537,12 @@ class MobileStructureBayDoorDamageTest {
             passenger.setUnloaded(false);
             passenger.setDone(false);
             passenger.setDeployed(true);
-            passenger.heat = 10;
+            passenger.heat = heat;
             passenger.setFacing(3);
             passenger.setPosition(ORIGIN.translated(0, movementMp + 1));
             f.bay().resetCounts();
-            assertEquals(3, passenger.getWalkMP());
+            assertEquals(5, passenger.getOriginalWalkMP());
+            assertEquals(5 - heat / 5, passenger.getWalkMP());
 
             var path = new MovePath(f.manager().getGame(), passenger);
             for (int i = 0; i < movementMp; i++) {
@@ -550,8 +552,11 @@ class MobileStructureBayDoorDamageTest {
             assertEquals(movementMp, path.getMpUsed());
             assertTrue(Compute.getMountableUnits(passenger, path.getFinalCoords(), 0, 0,
                   f.manager().getGame()).contains(f.mobile()));
-            assertEquals(movementMp == 1, path.addStep(MoveStepType.MOUNT, f.mobile()).isMoveLegal(),
-                  "Approaching the door must leave two of the three current Walking MP available for boarding");
+            path.addStep(MoveStepType.MOUNT, f.mobile());
+            assertEquals(3, path.getLastStep().getMp(), "Boarding always costs half the standard five Walking MP");
+            assertEquals(movementMp + 3, path.getMpUsed());
+            assertEquals(legal, path.isMoveLegal(),
+                  "Current MP must cover the approach and standard boarding cost, except when starting at the door");
         } finally {
             Game.rulesManager = originalRules;
         }

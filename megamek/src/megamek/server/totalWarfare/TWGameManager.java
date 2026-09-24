@@ -4083,8 +4083,7 @@ public class TWGameManager extends AbstractGameManager {
             unit.setDone(false);
 
             // unit uses half of walk mp, cost rounded up (TW p.91, errata v11.01), and is treated as moving one hex
-            unit.mpUsed = MountPathHelper.mountOrDismountMpCost(
-                  unloader instanceof MobileStructure ? unit.getWalkMP() : unit.getOriginalWalkMP());
+            unit.mpUsed = MountPathHelper.mountOrDismountMpCost(unit.getOriginalWalkMP());
             unit.delta_distance = 1;
         }
 

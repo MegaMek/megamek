@@ -53,6 +53,7 @@ import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
 import megamek.common.moves.MobileStructureLinkage;
 import megamek.common.moves.MobileStructureMovement;
+import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
@@ -155,10 +156,11 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
                           .stream().filter(bay -> cargo.getTargetBay() < 0 || bay.getBayNumber() == cargo.getTargetBay())
                           .findFirst().orElse(null);
                     if (selectedBay == null) { continue; }
+                    int mountingMp = MountPathHelper.mountMpCost(cargo, unit);
                     gameManager.loadUnit(unit, cargo, selectedBay.getBayNumber());
                   Bay bay = unit.getBay(cargo);
                     if (bay != null) {
-                        cargo.mpUsed += (cargo.getWalkMP() + 1) / 2;
+                        cargo.mpUsed += mountingMp;
                         cargo.moved = megamek.common.units.EntityMovementType.MOVE_WALK;
                         cargo.delta_distance = 1;
                         cargo.setDone(true);

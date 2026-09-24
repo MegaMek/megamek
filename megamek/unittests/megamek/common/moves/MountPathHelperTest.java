@@ -91,6 +91,8 @@ class MountPathHelperTest extends GameBoardTestCase {
         assertEquals(HEX_BESIDE_DROPSHIP, movePath.getFinalCoords(), "The path should stop beside the DropShip");
 
         movePath.addStep(MoveStepType.MOUNT, transport);
+        assertEquals(4, movePath.getLastStep().getMp(), "Boarding costs half the Mek's standard eight Walking MP");
+        assertEquals(7, movePath.getMpUsed(), "The path includes both the three-hex approach and boarding");
         movePath.clipToPossible();
         assertEquals(4, movePath.length(), "The walk and the mount step should all survive clipping");
     }
@@ -150,11 +152,13 @@ class MountPathHelperTest extends GameBoardTestCase {
     void mekMountsWithinWalkingMp() {
         BipedMek mek = new BipedMek();
         Dropship carrier = new Dropship();
+        mek.setOriginalWalkMP(4);
 
         assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 4, 2, false),
               "Walk 4: 2 MP spent + 2 to mount = 4, which fits");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
               MountPathHelper.mountRestriction(mek, carrier, 4, 3, false), "Walk 4: 3 MP spent + 2 to mount = 5, too many");
+        mek.setOriginalWalkMP(5);
         assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 5, 2, false),
               "Walk 5: 2 MP spent + 3 to mount = 5, which fits");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
@@ -167,9 +171,10 @@ class MountPathHelperTest extends GameBoardTestCase {
     void unmovedUnitMountsThroughMinimumMovement() {
         BipedMek mek = new BipedMek();
         Dropship carrier = new Dropship();
+        mek.setOriginalWalkMP(5);
 
         assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 1, 0, false),
-              "Walk 1 costs 1 to mount, which a unit that has not moved may always spend");
+              "A unit starting beside the carrier can pay three standard MP even with only one current MP");
         assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 0, 0, false),
               "A unit with no Walking MP left may still mount from where it started");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
@@ -188,6 +193,10 @@ class MountPathHelperTest extends GameBoardTestCase {
         assertEquals(MountPathHelper.MountRestriction.CRANE_ONLY,
               MountPathHelper.mountRestriction(new SmallCraft(), carrier, 3, 0, false),
               "A grounded small craft must be loaded by crane");
+        MobileStructure mobile = new MobileStructure(BuildingType.HEAVY, IBuilding.FORTRESS);
+        assertEquals(MountPathHelper.MountRestriction.CRANE_ONLY,
+              MountPathHelper.mountRestriction(new VTOL(), mobile, 6, 0, false),
+              "A building target alone does not replace the required flight deck transfer");
     }
 
     @Test
@@ -216,15 +225,16 @@ class MountPathHelperTest extends GameBoardTestCase {
     }
 
     @Test
-    void buildingBaysKeepHalfMpInfantryBoardingWithoutAllowingJumping() {
+    void buildingBaysUseTheSameInfantryBoardingRulesAsGroundedDropships() {
         MobileStructure carrier = new MobileStructure(BuildingType.HEAVY, IBuilding.FORTRESS);
         ConvInfantry infantry = new ConvInfantry();
+        infantry.setOriginalWalkMP(3);
 
         assertEquals(MountPathHelper.MountRestriction.NONE,
-              MountPathHelper.mountRestriction(infantry, carrier, 3, 1, false),
-              "Building infantry may spend one MP before paying two MP to board");
-        assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
-              MountPathHelper.mountRestriction(infantry, carrier, 3, 2, false));
+              MountPathHelper.mountRestriction(infantry, carrier, 3, 0, false));
+        assertEquals(3, MountPathHelper.mountMpCost(infantry, carrier), "Infantry spends all its movement boarding");
+        assertEquals(MountPathHelper.MountRestriction.INFANTRY_ALREADY_MOVED,
+              MountPathHelper.mountRestriction(infantry, carrier, 3, 1, false));
         assertEquals(MountPathHelper.MountRestriction.JUMPED,
               MountPathHelper.mountRestriction(infantry, carrier, 3, 1, true));
     }

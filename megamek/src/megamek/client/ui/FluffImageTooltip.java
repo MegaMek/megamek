@@ -45,7 +45,6 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.UIUtil;

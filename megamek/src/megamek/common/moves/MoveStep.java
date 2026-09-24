@@ -2563,7 +2563,9 @@ public class MoveStep implements Serializable {
 
         // check for valid walk/run mp; BRACE is a special case for ProtoMeks
         // 0 MP infantry with fast movement have runMPMax > 0 even when tmpWalkMP is 0
-        if (!isJumping() &&
+        // MOUNT uses its own walking/minimum-movement check below; its cost must not activate MP boosters.
+        if (stepType != MoveStepType.MOUNT &&
+            !isJumping() &&
             !entity.isStuck() &&
             ((tmpWalkMP > 0) || (runMPMax > 0)) &&
             ((getMp() > 0) || (stepType == MoveStepType.BRACE))) {

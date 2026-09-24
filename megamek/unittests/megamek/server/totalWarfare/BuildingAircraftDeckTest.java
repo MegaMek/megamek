@@ -200,6 +200,8 @@ class BuildingAircraftDeckTest {
         assertEquals(5, fighter.getElevation());
         assertEquals(0, fighter.getAltitude());
         assertNotNull(BuildingFlightDeckRules.onDeck(fighter));
+        assertEquals(0, fighter.mpUsed, "the deck elevators stage the fighter without spending its own MP");
+        assertEquals(0, fighter.delta_distance);
         assertTrue(BuildingFlightDeckRules.canEnterBay(fighter));
     }
 

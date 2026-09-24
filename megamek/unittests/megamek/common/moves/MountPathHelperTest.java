@@ -33,8 +33,10 @@
 package megamek.common.moves;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
@@ -42,17 +44,24 @@ import megamek.common.bays.MekBay;
 import megamek.common.board.Coords;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
 import megamek.common.units.MobileStructure;
 import megamek.common.units.SmallCraft;
 import megamek.common.units.VTOL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Clicking a friendly DropShip should plot a path that stops beside it, so the unit can mount. The Mek starts at
@@ -179,6 +188,39 @@ class MountPathHelperTest extends GameBoardTestCase {
               "A unit with no Walking MP left may still mount from where it started");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
               MountPathHelper.mountRestriction(mek, carrier, 1, 1, false), "Walk 1 that already moved has nothing left");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void minimumBoardingDoesNotActivateArmedMpBoosters(boolean supercharger) throws Exception {
+        var originalRules = Game.rulesManager;
+        Game.rulesManager = new TWRulesManager();
+        try {
+            Dropship carrier = placeDropShip(true);
+            BipedMek mek = new BipedMek();
+            mek.setId(5);
+            mek.setOwner(getGame().getPlayer(0));
+            mek.setWeight(50);
+            mek.setEngine(new Engine(350, Engine.NORMAL_ENGINE, 0));
+            mek.setOriginalWalkMP(7);
+            mek.heat = 25;
+            mek.setDeployed(true);
+            getGame().addEntity(mek);
+            mek.setPosition(HEX_BESIDE_DROPSHIP);
+            mek.addEquipment(supercharger ? MiscType.createISSuperCharger() : MiscType.createISMASC(), BipedMek.LOC_RIGHT_TORSO);
+            assertEquals(2, mek.getWalkMP());
+            assertEquals(3, mek.getRunMPWithoutMASC());
+            assertEquals(4, mek.getRunMP());
+
+            MovePath path = new MovePath(getGame(), mek).addStep(MoveStepType.MOUNT, carrier);
+            assertTrue(path.isMoveLegal(), "Minimum movement permits boarding from beside the carrier");
+            assertEquals(4, path.getMpUsed(), "Boarding still pays half the standard seven Walking MP");
+            assertEquals(EntityMovementType.MOVE_WALK, path.getLastStepMovementType());
+            assertFalse(path.hasActiveMASC(), "Boarding must not cause a MASC failure roll");
+            assertFalse(path.hasActiveSupercharger(), "Boarding must not cause a supercharger failure roll");
+        } finally {
+            Game.rulesManager = originalRules;
+        }
     }
 
     @Test

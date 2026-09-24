@@ -4082,9 +4082,12 @@ public class TWGameManager extends AbstractGameManager {
             unit.setUnloaded(false);
             unit.setDone(false);
 
-            // unit uses half of walk mp, cost rounded up (TW p.91, errata v11.01), and is treated as moving one hex
-            unit.mpUsed = MountPathHelper.mountOrDismountMpCost(unit.getOriginalWalkMP());
-            unit.delta_distance = 1;
+            // Deck elevators move aircraft without spending their own MP (TO:AUE p.124).
+            if (megamek.common.units.BuildingFlightDeckRules.onDeck(unit) == null) {
+                // Ground dismount uses half standard Walking MP, rounded up, and counts as one hex (TW p.91).
+                unit.mpUsed = MountPathHelper.mountOrDismountMpCost(unit.getOriginalWalkMP());
+                unit.delta_distance = 1;
+            }
         }
 
         // If we unloaded during deployment, allow a turn

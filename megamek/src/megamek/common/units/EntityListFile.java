@@ -1730,6 +1730,8 @@ public class EntityListFile {
               crew.isHasNaturalAptitudeArtillery(pos));
         writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_PILOTING,
               crew.isHasNaturalAptitudePiloting(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_SMALL_ARMS,
+              crew.isHasNaturalAptitudeSmallArms(pos));
 
         if (crew.getToughness(0) != 0) {
             output.write("\" " + MULParser.ATTR_TOUGH + "=\"");

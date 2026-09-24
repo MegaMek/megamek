@@ -69,6 +69,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
+import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
@@ -308,6 +309,18 @@ public class WeaponFireInfo {
         this.probabilityToHit = probabilityToHit;
     }
 
+    /**
+     * Whether the shooter's Natural Aptitude applies to this weapon. Asked per weapon, rather than from the shooter's
+     * {@link EntityState}, as artillery weapons may use a different aptitude from direct fire weapons.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private boolean isUseNaturalAptitudeGunnery() {
+        Crew crew = getShooter().getCrew();
+        return (crew != null) && crew.isUseNaturalAptitudeGunnery(getGame(), getWeapon());
+    }
+
     Entity getShooter() {
         return shooter;
     }
@@ -435,7 +448,7 @@ public class WeaponFireInfo {
         ToHitData strafeToHit = strafeAction.toHit(getGame());
         setToHit(strafeToHit);
         setProbabilityToHit(Compute.oddsAbove(strafeToHit.getValue(),
-              getShooterState().hasNaturalAptGun()) / 100.0);
+              isUseNaturalAptitudeGunnery()) / 100.0);
         if (!firstShot) {
             setHeat(0);
         }
@@ -936,11 +949,11 @@ public class WeaponFireInfo {
             return;
         }
 
-        if (debugEnabled && getShooterState().hasNaturalAptGun()) {
+        if (debugEnabled && isUseNaturalAptitudeGunnery()) {
             msg.append("\n\tAttacker has Natural Aptitude Gunnery");
         }
 
-        setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
+        setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), isUseNaturalAptitudeGunnery()) / 100);
 
         if (debugEnabled) {
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
@@ -1090,7 +1103,7 @@ public class WeaponFireInfo {
         // Set the ammoId for calcs.
         getAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
         setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
-              getShooterState().hasNaturalAptGun()) / 100.0);
+              isUseNaturalAptitudeGunnery()) / 100.0);
         return getAction();
     }
 

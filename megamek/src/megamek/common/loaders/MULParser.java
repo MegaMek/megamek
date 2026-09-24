@@ -191,6 +191,7 @@ public class MULParser {
     public static final String ATTR_NATURAL_APTITUDE_GUNNERY = "naturalAptitudeGunnery";
     public static final String ATTR_NATURAL_APTITUDE_ARTILLERY = "naturalAptitudeArtillery";
     public static final String ATTR_NATURAL_APTITUDE_PILOTING = "naturalAptitudePiloting";
+    public static final String ATTR_NATURAL_APTITUDE_SMALL_ARMS = "naturalAptitudeSmallArms";
     public static final String ATTR_TOUGH = "toughness";
     public static final String ATTR_FATIGUE = "fatigue";
     public static final String ATTR_INIT_B = "initB";
@@ -1397,6 +1398,10 @@ public class MULParser {
         }
         if (attributes.containsKey(ATTR_NATURAL_APTITUDE_PILOTING)) {
             crew.setHasNaturalAptitudePiloting(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING),
+                  slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_SMALL_ARMS)) {
+            crew.setHasNaturalAptitudeSmallArms(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_SMALL_ARMS),
                   slot);
         }
     }

@@ -63,6 +63,7 @@ public record CrewRefBreak(Crew originalCrew) implements RefBreak<Crew> {
             newCrewRef.setHasNaturalAptitudeGunnery(originalCrew.isHasNaturalAptitudeGunnery(i), i);
             newCrewRef.setHasNaturalAptitudeArtillery(originalCrew.isHasNaturalAptitudeArtillery(i), i);
             newCrewRef.setHasNaturalAptitudePiloting(originalCrew.isHasNaturalAptitudePiloting(i), i);
+            newCrewRef.setHasNaturalAptitudeSmallArms(originalCrew.isHasNaturalAptitudeSmallArms(i), i);
         }
         return newCrewRef;
     }

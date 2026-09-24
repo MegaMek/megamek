@@ -105,6 +105,7 @@ public class Crew implements Serializable {
     private boolean[] naturalAptitudesGunnery;
     private boolean[] naturalAptitudesArtillery;
     private boolean[] naturalAptitudesPiloting;
+    private boolean[] naturalAptitudesSmallArms;
     private final int[] hits; // hits taken
 
     private final String[] externalId;
@@ -332,6 +333,7 @@ public class Crew implements Serializable {
         Arrays.fill(naturalAptitudesArtillery, hasNaturalAptitudeArtillery);
         naturalAptitudesPiloting = new boolean[slots];
         Arrays.fill(naturalAptitudesPiloting, hasNaturalAptitudePiloting);
+        naturalAptitudesSmallArms = new boolean[slots];
 
         initBonus = 0;
         commandBonus = 0;
@@ -908,6 +910,34 @@ public class Crew implements Serializable {
             naturalAptitudesPiloting = new boolean[getSlotCount()];
         }
         return naturalAptitudesPiloting;
+    }
+
+    private boolean[] getNaturalAptitudesSmallArms() {
+        if (naturalAptitudesSmallArms == null) {
+            naturalAptitudesSmallArms = new boolean[getSlotCount()];
+        }
+        return naturalAptitudesSmallArms;
+    }
+
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead, which uses
+     * this aptitude once the crew is on foot using their Small Arms skill.
+     *
+     * @return whether the crew member has a Natural Aptitude in Small Arms
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeSmallArms(int pos) {
+        return getNaturalAptitudesSmallArms()[pos];
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudeSmallArms(boolean hasNaturalAptitudeSmallArms, int pos) {
+        getNaturalAptitudesSmallArms()[pos] = hasNaturalAptitudeSmallArms;
     }
 
     public int getPiloting() {
@@ -1990,8 +2020,9 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Determines whether the Natural Aptitude matching the skill used for this weapon applies. Artillery weapons use
-     * the Artillery aptitude when the Artillery skill game option is enabled, mirroring the skill selection in
+     * Determines whether the Natural Aptitude matching the skill used for this weapon applies. A crew on foot using
+     * their Small Arms skill uses their Small Arms aptitude. Otherwise, artillery weapons use the Artillery aptitude
+     * when the Artillery skill game option is enabled, mirroring the skill selection in
      * {@link megamek.common.actions.compute.ComputeToHit}.
      *
      * @param game   the current game; may only be {@code null} when {@code weapon} is also {@code null}
@@ -2003,6 +2034,10 @@ public class Crew implements Serializable {
      * @since 0.51.01
      */
     public boolean isUseNaturalAptitudeGunnery(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        if (usesSmallArms()) {
+            return isHasNaturalAptitudeSmallArms(gunnerPos);
+        }
+
         if (isUsingArtillerySkill(game, weapon)) {
             return isHasNaturalAptitudeArtillery();
         }

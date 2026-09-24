@@ -63,7 +63,6 @@ public class EntityState {
     private boolean building;
     private boolean aero;
     private boolean airborne;
-    private final boolean naturalAptGun;
     private final boolean naturalAptPilot;
 
     /**
@@ -83,7 +82,6 @@ public class EntityState {
         setSecondaryFacing(0);
         building = (target instanceof BuildingTarget);
         aero = false;
-        naturalAptGun = false;
         naturalAptPilot = false;
     }
 
@@ -102,7 +100,6 @@ public class EntityState {
         building = false;
         aero = entity.isAero();
         airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-        naturalAptGun = entity.getCrew().isUseNaturalAptitudeGunnery();
         naturalAptPilot = entity.getCrew().isUseNaturalAptitudePiloting(entity);
     }
 
@@ -131,7 +128,6 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().getCrew().isUseNaturalAptitudeGunnery();
         naturalAptPilot = path.getEntity().getCrew().isUseNaturalAptitudePiloting(path.getEntity());
         setSecondaryFacing(getFacing());
     }
@@ -227,10 +223,6 @@ public class EntityState {
         return aero && airborne;
     }
 
-    public boolean hasNaturalAptGun() {
-        return naturalAptGun;
-    }
-
     public boolean hasNaturalAptPiloting() {
         return naturalAptPilot;
     }
@@ -238,8 +230,8 @@ public class EntityState {
     @Override
     public String toString() {
         return new ParameterizedMessage("EntityState{ position = {}, movementType = {}, facing = {}, secondaryFacing" +
-              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, building" +
-              " = {}, aero = {}, airborne = {}, naturalAptGun = {}, naturalAptPilot = {}, }",
+              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, jumping = {}, building" +
+              " = {}, aero = {}, airborne = {}, naturalAptPilot = {}, }",
               position,
               movementType,
               facing,
@@ -252,7 +244,6 @@ public class EntityState {
               building,
               aero,
               airborne,
-              naturalAptGun,
               naturalAptPilot).getFormattedMessage();
     }
 }

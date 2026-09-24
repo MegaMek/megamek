@@ -136,6 +136,7 @@ public class LAMPilot extends Crew {
         pilot.setArmorKitName(crew.getArmorKitName(0), 0);
         pilot.setSidearmName(crew.getSidearmName(0), 0);
         pilot.setSmallArms(crew.getSmallArms(0), 0);
+        pilot.setHasNaturalAptitudeSmallArms(crew.isHasNaturalAptitudeSmallArms(0), 0);
 
         pilot.setExternalIdAsString(crew.getExternalIdAsString(0), 0);
 
@@ -477,11 +478,15 @@ public class LAMPilot extends Crew {
      */
     @Override
     public boolean isUseNaturalAptitudeGunnery(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        if (usesSmallArms()) {
+            return isHasNaturalAptitudeSmallArms(0);
+        }
+
         if (isUsingArtillerySkill(game, weapon)) {
             return isHasNaturalAptitudeArtillery();
         }
 
-        if (!usesSmallArms() && useAeroGunnery()) {
+        if (useAeroGunnery()) {
             return isHasNaturalAptitudeGunneryAero();
         }
 

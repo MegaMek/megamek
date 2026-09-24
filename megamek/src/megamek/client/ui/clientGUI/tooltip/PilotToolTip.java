@@ -58,6 +58,7 @@ import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.Crew;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.LAMPilot;
@@ -226,7 +227,8 @@ public final class PilotToolTip {
 
     /**
      * Lists a crew member's Natural Aptitudes, e.g. "Natural Aptitude: Piloting, Gunnery". The Artillery aptitude is
-     * only listed when the separate Artillery skill is in use, as otherwise artillery is fired with Gunnery.
+     * only listed when the separate Artillery skill is in use, as otherwise artillery is fired with Gunnery, and the
+     * Small Arms aptitude only when the crew could end up fighting on foot.
      *
      * @param entity the unit
      * @param pos    the crew slot
@@ -263,6 +265,11 @@ public final class PilotToolTip {
         }
         if (isUseArtillerySkill && crew.isHasNaturalAptitudeArtillery(pos)) {
             naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Artillery"));
+        }
+        // Small Arms is only used once the crew is on foot, which only happens with the personal equipment rule
+        boolean isSmallArmsInPlay = CrewArmorKitRules.isRuleInPlay(game) && CrewArmorKitRules.canWearArmorKit(entity);
+        if (isSmallArmsInPlay && crew.isHasNaturalAptitudeSmallArms(pos)) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.SmallArms"));
         }
 
         if (naturalAptitudes.isEmpty()) {

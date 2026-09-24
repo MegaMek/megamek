@@ -134,4 +134,20 @@ class EjectionEdgeTest {
         verify(entity.getCrew(), never()).decreaseEdge();
         assertTrue(reports.isEmpty(), "No Edge-use report should be added when the trigger is disabled");
     }
+
+    @Test
+    @DisplayName("The Edge reroll is made by the crew member who failed to eject, with their own Natural Aptitude")
+    void rerollIsMadeByTheEjectingCrewMember() {
+        int gunnerPos = 1;
+        Roll gunnersReroll = rollOf(10);
+        Entity entity = ejectingUnit(true, rollOf(3));
+        lenient().when(entity.getCrew().rollPilotingSkill(entity, gunnerPos)).thenReturn(gunnersReroll);
+        Vector<Report> reports = new Vector<>();
+
+        Roll result = gameManager.applyEjectionEdge(entity, gunnerPos, target(), rollOf(4), reports);
+
+        assertSame(gunnersReroll, result, "The reroll should come from the ejecting crew member's slot");
+        verify(entity.getCrew(), times(1)).rollPilotingSkill(entity, gunnerPos);
+        verify(entity.getCrew(), never()).rollPilotingSkill(entity, CREW_POS);
+    }
 }

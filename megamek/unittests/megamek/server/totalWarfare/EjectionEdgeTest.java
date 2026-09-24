@@ -81,7 +81,7 @@ class EjectionEdgeTest {
         PilotOptions crewOptions = mock(PilotOptions.class);
         lenient().when(crewOptions.intOption(OptionsConstants.EDGE)).thenReturn(1);
         lenient().when(crew.getOptions()).thenReturn(crewOptions);
-        lenient().when(crew.rollPilotingSkill(entity, CREW_POS)).thenReturn(rerollResult);
+        lenient().when(crew.rollPilotingSkill(CREW_POS)).thenReturn(rerollResult);
         lenient().when(entity.getCrew()).thenReturn(crew);
         lenient().when(entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_EJECT_FAILS)).thenReturn(ejectTrigger);
         return entity;
@@ -141,13 +141,13 @@ class EjectionEdgeTest {
         int gunnerPos = 1;
         Roll gunnersReroll = rollOf(10);
         Entity entity = ejectingUnit(true, rollOf(3));
-        lenient().when(entity.getCrew().rollPilotingSkill(entity, gunnerPos)).thenReturn(gunnersReroll);
+        lenient().when(entity.getCrew().rollPilotingSkill(gunnerPos)).thenReturn(gunnersReroll);
         Vector<Report> reports = new Vector<>();
 
         Roll result = gameManager.applyEjectionEdge(entity, gunnerPos, target(), rollOf(4), reports);
 
         assertSame(gunnersReroll, result, "The reroll should come from the ejecting crew member's slot");
-        verify(entity.getCrew(), times(1)).rollPilotingSkill(entity, gunnerPos);
-        verify(entity.getCrew(), never()).rollPilotingSkill(entity, CREW_POS);
+        verify(entity.getCrew(), times(1)).rollPilotingSkill(gunnerPos);
+        verify(entity.getCrew(), never()).rollPilotingSkill(CREW_POS);
     }
 }

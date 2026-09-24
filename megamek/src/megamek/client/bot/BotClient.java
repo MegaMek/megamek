@@ -1324,7 +1324,7 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean hasNaturalAptitudePiloting = entity.getCrew().isUseNaturalAptitudePiloting(entity);
+        boolean hasNaturalAptitudePiloting = entity.getCrew().isUseNaturalAptitudePiloting();
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), hasNaturalAptitudePiloting) / 100);
         return potentialDmg * oddsTakeDmg;
     }

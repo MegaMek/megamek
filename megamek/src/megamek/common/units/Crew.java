@@ -812,7 +812,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)} instead.
+     * Generally you want to use {@link #isUseNaturalAptitudePiloting()} instead.
      *
      * @return whether the current pilot has a Natural Aptitude in Piloting or Driving
      *
@@ -1679,22 +1679,21 @@ public class Crew implements Serializable {
         return Compute.rollD6(2);
     }
 
-    public Roll rollPilotingSkill(Entity pilotedEntity) {
-        return rollPilotingSkill(pilotedEntity, pilotPos);
+    public Roll rollPilotingSkill() {
+        return rollPilotingSkill(pilotPos);
     }
 
     /**
      * Rolls a piloting skill check for a specific crew member, such as when each crew member rolls for themselves
-     * during ejection or a fall. Use {@link #rollPilotingSkill(Entity)} for rolls made by whoever is piloting.
+     * during ejection or a fall. Use {@link #rollPilotingSkill()} for rolls made by whoever is piloting.
      *
-     * @param pilotedEntity the unit being piloted
-     * @param pos           the crew slot making the roll
+     * @param pos the crew slot making the roll
      *
      * @author Illiani
      * @since 0.51.01
      */
-    public Roll rollPilotingSkill(Entity pilotedEntity, int pos) {
-        if (isUseNaturalAptitudePiloting(pilotedEntity, pos)) {
+    public Roll rollPilotingSkill(int pos) {
+        if (isUseNaturalAptitudePiloting(pos)) {
             return Compute.rollD6(3, 2);
         }
 
@@ -2061,29 +2060,26 @@ public class Crew implements Serializable {
     /**
      * Determines whether the current pilot's Natural Aptitude for the piloting skill currently in use applies.
      *
-     * @param pilotedEntity the unit being piloted
-     *
      * @return {@code true} if the roll should be made with Natural Aptitude
      *
      * @author Illiani
      * @since 0.51.01
      */
-    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity) {
-        return isUseNaturalAptitudePiloting(pilotedEntity, pilotPos);
+    public boolean isUseNaturalAptitudePiloting() {
+        return isUseNaturalAptitudePiloting(pilotPos);
     }
 
     /**
      * Determines whether a specific crew member's Natural Aptitude for the piloting skill currently in use applies.
      *
-     * @param pilotedEntity the unit being piloted
-     * @param pos           the crew slot making the roll
+     * @param pos the crew slot making the roll
      *
      * @return {@code true} if the roll should be made with Natural Aptitude
      *
      * @author Illiani
      * @since 0.51.01
      */
-    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity, int pos) {
+    public boolean isUseNaturalAptitudePiloting(int pos) {
         return isHasNaturalAptitudePiloting(pos);
     }
 }

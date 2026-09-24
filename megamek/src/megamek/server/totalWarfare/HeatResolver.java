@@ -1244,7 +1244,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                                     break;
                             }
                         }
-                        Roll diceRoll = entity.getCrew().rollPilotingSkill(entity);
+                        Roll diceRoll = entity.getCrew().rollPilotingSkill();
                         report = new Report(5050);
                         report.subject = entity.getId();
                         report.addDesc(entity);

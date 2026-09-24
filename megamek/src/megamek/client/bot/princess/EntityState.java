@@ -100,7 +100,7 @@ public class EntityState {
         building = false;
         aero = entity.isAero();
         airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-        naturalAptPilot = entity.getCrew().isUseNaturalAptitudePiloting(entity);
+        naturalAptPilot = entity.getCrew().isUseNaturalAptitudePiloting();
     }
 
     /**
@@ -128,7 +128,7 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptPilot = path.getEntity().getCrew().isUseNaturalAptitudePiloting(path.getEntity());
+        naturalAptPilot = path.getEntity().getCrew().isUseNaturalAptitudePiloting();
         setSecondaryFacing(getFacing());
     }
 

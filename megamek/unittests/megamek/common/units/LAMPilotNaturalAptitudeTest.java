@@ -212,16 +212,16 @@ class LAMPilotNaturalAptitudeTest {
         void mekModeUsesMekAptitude() {
             LandAirMek lam = lamIn(LandAirMek.CONV_MODE_MEK);
 
-            assertTrue(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting(lam));
-            assertFalse(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting(lam));
+            assertTrue(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting());
+            assertFalse(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting());
         }
 
         @Test
         void fighterModeUsesAeroAptitude() {
             LandAirMek lam = lamIn(LandAirMek.CONV_MODE_FIGHTER);
 
-            assertTrue(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting(lam));
-            assertFalse(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting(lam));
+            assertTrue(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting());
+            assertFalse(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting());
         }
 
         @Test
@@ -229,8 +229,8 @@ class LAMPilotNaturalAptitudeTest {
             LandAirMek lam = lamIn(LandAirMek.CONV_MODE_AIR_MEK);
             when(lam.isAirborneVTOLorWIGE()).thenReturn(true);
 
-            assertTrue(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting(lam));
-            assertFalse(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting(lam));
+            assertTrue(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting());
+            assertFalse(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting());
         }
 
         @Test
@@ -238,16 +238,16 @@ class LAMPilotNaturalAptitudeTest {
             LandAirMek lam = lamIn(LandAirMek.CONV_MODE_AIR_MEK);
             when(lam.isAirborneVTOLorWIGE()).thenReturn(false);
 
-            assertTrue(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting(lam));
-            assertFalse(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting(lam));
+            assertTrue(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting());
+            assertFalse(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting());
         }
 
         @Test
         void specificSlotFollowsTheModeToo() {
             LandAirMek lam = lamIn(LandAirMek.CONV_MODE_FIGHTER);
 
-            assertTrue(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting(lam, 0));
-            assertFalse(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting(lam, 0));
+            assertTrue(pilot(lam, false, false, false, true).isUseNaturalAptitudePiloting(0));
+            assertFalse(pilot(lam, false, true, false, false).isUseNaturalAptitudePiloting(0));
         }
 
         @Test
@@ -262,7 +262,7 @@ class LAMPilotNaturalAptitudeTest {
                           Gender.FEMALE, false, null);
 
                     boolean isUsingAeroSkill = lamPilot.getPiloting() == 7;
-                    assertTrue(isUsingAeroSkill == lamPilot.isUseNaturalAptitudePiloting(lam),
+                    assertTrue(isUsingAeroSkill == lamPilot.isUseNaturalAptitudePiloting(),
                           "mode " + mode + ", airborne " + isAirborne);
                 }
             }

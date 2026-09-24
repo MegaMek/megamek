@@ -242,7 +242,7 @@ public class LAMPilot extends Crew {
     }
 
     /**
-     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)} instead.
+     * Generally you want to use {@link #isUseNaturalAptitudePiloting()} instead.
      *
      * @author Illiani
      * @since 0.51.01
@@ -498,7 +498,7 @@ public class LAMPilot extends Crew {
      * mode.
      */
     @Override
-    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity, int pos) {
+    public boolean isUseNaturalAptitudePiloting(int pos) {
         if (useAeroPiloting()) {
             return isHasNaturalAptitudePilotingAero();
         }

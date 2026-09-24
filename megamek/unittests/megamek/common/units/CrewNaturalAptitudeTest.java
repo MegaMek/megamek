@@ -35,7 +35,6 @@ package megamek.common.units;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -395,40 +394,35 @@ class CrewNaturalAptitudeTest {
     class PilotingAptitudeSelection {
         @Test
         void usesTheCurrentPilotsAptitude() {
-            Entity entity = mock(Entity.class);
-
-            assertTrue(crewWith(false, false, true, false).isUseNaturalAptitudePiloting(entity));
-            assertFalse(crewWith(true, true, false, true).isUseNaturalAptitudePiloting(entity));
+            assertTrue(crewWith(false, false, true, false).isUseNaturalAptitudePiloting());
+            assertFalse(crewWith(true, true, false, true).isUseNaturalAptitudePiloting());
         }
 
         @Test
         void specificSlotUsesThatSlotsAptitude() {
-            Entity entity = mock(Entity.class);
             Crew crew = new Crew(CrewType.TRIPOD);
             crew.setHasNaturalAptitudePiloting(true, 1);
 
-            assertFalse(crew.isUseNaturalAptitudePiloting(entity, 0));
-            assertTrue(crew.isUseNaturalAptitudePiloting(entity, 1));
+            assertFalse(crew.isUseNaturalAptitudePiloting(0));
+            assertTrue(crew.isUseNaturalAptitudePiloting(1));
         }
 
         @Test
         void rollingForTheCurrentPilotChecksTheCurrentPilotsSlot() {
-            Entity entity = mock(Entity.class);
             Crew crew = spy(new Crew(CrewType.TRIPOD));
 
-            crew.rollPilotingSkill(entity);
+            crew.rollPilotingSkill();
 
-            verify(crew).isUseNaturalAptitudePiloting(entity, CrewType.TRIPOD.getPilotPos());
+            verify(crew).isUseNaturalAptitudePiloting(CrewType.TRIPOD.getPilotPos());
         }
 
         @Test
         void rollingForASpecificSlotChecksThatSlot() {
-            Entity entity = mock(Entity.class);
             Crew crew = spy(new Crew(CrewType.TRIPOD));
 
-            crew.rollPilotingSkill(entity, 1);
+            crew.rollPilotingSkill(1);
 
-            verify(crew).isUseNaturalAptitudePiloting(eq(entity), eq(1));
+            verify(crew).isUseNaturalAptitudePiloting(1);
         }
 
         @Test

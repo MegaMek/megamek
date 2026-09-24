@@ -14,13 +14,13 @@
             <PatternLayout pattern="${layout}" />
             <Policies>
                 <OnStartupTriggeringPolicy minSize="1" />
-                <SizeBasedTriggeringPolicy size="1MB" />
+                <SizeBasedTriggeringPolicy size="5MB" />
             </Policies>
 
-            <DefaultRolloverStrategy max="10">
+            <DefaultRolloverStrategy max="20">
                 <Delete basePath="logs" maxDepth="1">
                     <IfFileName regex="(unified_log|bot_path_ranker)_\d+\.log(\.gz)?$" />
-                    <IfAccumulatedFileSize exceeds="15MB" />
+                    <IfAccumulatedFileSize exceeds="100MB" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -32,13 +32,13 @@
             <PatternLayout pattern="${tsvLayout}" />
             <Policies>
                 <OnStartupTriggeringPolicy minSize="1" />
-                <SizeBasedTriggeringPolicy size="1MB" />
+                <SizeBasedTriggeringPolicy size="5MB" />
             </Policies>
 
-            <DefaultRolloverStrategy max="5">
+            <DefaultRolloverStrategy max="20">
                 <Delete basePath="logs" maxDepth="1">
                     <IfFileName regex="(unified_log|bot_path_ranker)_\d+\.log(\.gz)?$" />
-                    <IfAccumulatedFileSize exceeds="15MB" />
+                    <IfAccumulatedFileSize exceeds="100MB" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
@@ -50,19 +50,37 @@
             <PatternLayout pattern="${layout}" />
             <Policies>
                 <OnStartupTriggeringPolicy minSize="1" />
-                <SizeBasedTriggeringPolicy size="5MB" />
+                <SizeBasedTriggeringPolicy size="20MB" />
             </Policies>
 
-            <DefaultRolloverStrategy max="5">
+            <DefaultRolloverStrategy max="20">
                 <Delete basePath="logs" maxDepth="1">
                     <IfFileName regex="princess_\d+\.log(\.gz)?$" />
-                    <IfAccumulatedFileSize exceeds="25MB" />
+                    <IfAccumulatedFileSize exceeds="200MB" />
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
-        <File name="MegaMekLog" fileName="logs/megamek.log" append="false">
+        <!--
+          Each launch starts a fresh megamek.log and keeps the previous sessions as megamek_N.log.gz, so a
+          playtest log is not lost when the game is started again or a test run writes to the same folder.
+        -->
+        <RollingFile name="MegaMekLog"
+                     fileName="logs/megamek.log"
+                     filePattern="logs/megamek_%i.log.gz"
+                     append="true"
+                     bufferedIO="false">
             <PatternLayout pattern="${layout}" />
-        </File>
+            <Policies>
+                <OnStartupTriggeringPolicy minSize="1" />
+                <SizeBasedTriggeringPolicy size="20MB" />
+            </Policies>
+            <DefaultRolloverStrategy max="10">
+                <Delete basePath="logs" maxDepth="1">
+                    <IfFileName regex="megamek_\d+\.log(\.gz)?$" />
+                    <IfAccumulatedFileSize exceeds="100MB" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
         <File name="MegaMekLabLog" fileName="logs/megameklab.log" append="false">
             <PatternLayout pattern="${layout}" />
         </File>

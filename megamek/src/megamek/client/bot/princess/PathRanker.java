@@ -526,7 +526,7 @@ public abstract class PathRanker implements IPathRanker {
             } else if (rollDescription.contains("careful stand")) {
                 continue;
             }
-            boolean naturalAptPilot = movePath.getEntity().getCrew().isUseNaturalAptitudePiloting();
+            boolean naturalAptPilot = movePath.getEntity().isUseNaturalAptitudePiloting();
             if (naturalAptPilot) {
                 logger.trace("Pilot has Natural Aptitude Piloting");
             }

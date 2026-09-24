@@ -29866,7 +29866,7 @@ public class TWGameManager extends AbstractGameManager {
                 // If we're punching while prone (at a Tank,
                 // duh), then we can only use one arm.
                 if (attackingEntity.isProne()) {
-                    boolean hasNaturalAptitudePiloting = attackingEntity.getCrew().isUseNaturalAptitudePiloting();
+                    boolean hasNaturalAptitudePiloting = attackingEntity.isUseNaturalAptitudePiloting();
                     double oddsLeft = Compute.oddsAbove(toHit.getValue(), hasNaturalAptitudePiloting);
                     double oddsRight = Compute.oddsAbove(toHitRight.getValue(), hasNaturalAptitudePiloting);
                     // Use the best attack.

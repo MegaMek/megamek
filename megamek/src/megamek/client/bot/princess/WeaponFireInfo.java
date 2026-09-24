@@ -69,7 +69,6 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
-import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
@@ -317,8 +316,7 @@ public class WeaponFireInfo {
      * @since 0.51.01
      */
     private boolean isUseNaturalAptitudeGunnery() {
-        Crew crew = getShooter().getCrew();
-        return (crew != null) && crew.isUseNaturalAptitudeGunnery(getGame(), getWeapon());
+        return getShooter().isUseNaturalAptitudeGunnery(getGame(), getWeapon());
     }
 
     Entity getShooter() {

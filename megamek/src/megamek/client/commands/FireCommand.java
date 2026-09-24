@@ -315,7 +315,7 @@ public class FireCommand extends ClientCommand {
             } else {
                 str += " To hit: " + toHit.getValueAsString() + " ("
                       + Compute.oddsAbove(toHit.getValue(),
-                      currentEntity().getCrew().isUseNaturalAptitudeGunnery(getClient().getGame(), m)) + "%)";
+                      currentEntity().isUseNaturalAptitudeGunnery(getClient().getGame(), m)) + "%)";
             }
             str += " To Hit modifiers: " + toHit.getDesc();
         }

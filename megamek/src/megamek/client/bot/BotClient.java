@@ -1324,7 +1324,7 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean hasNaturalAptitudePiloting = entity.getCrew().isUseNaturalAptitudePiloting();
+        boolean hasNaturalAptitudePiloting = entity.isUseNaturalAptitudePiloting();
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), hasNaturalAptitudePiloting) / 100);
         return potentialDmg * oddsTakeDmg;
     }
@@ -1364,7 +1364,7 @@ public abstract class BotClient extends Client {
         if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             fChance = 1.0f;
         } else {
-            boolean isUseNaturalAptitude = attacker.getCrew().isUseNaturalAptitudeGunnery(game, weaponAttackAction);
+            boolean isUseNaturalAptitude = attacker.isUseNaturalAptitudeGunnery(game, weaponAttackAction);
             fChance = (float) Compute.oddsAbove(hitData.getValue(), isUseNaturalAptitude) / 100.0f;
         }
 

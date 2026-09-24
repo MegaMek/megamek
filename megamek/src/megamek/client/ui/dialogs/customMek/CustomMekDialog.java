@@ -33,7 +33,13 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -1784,6 +1790,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 } else {
                     entity.getCrew().setArtillery(entity.getCrew().getGunnery(i), i);
                 }
+                panCrewMember[i].applyNaturalAptitudes(entity.getCrew());
                 entity.getCrew().setMissing(missing, i);
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setCrewFatigue(fatigue, i);

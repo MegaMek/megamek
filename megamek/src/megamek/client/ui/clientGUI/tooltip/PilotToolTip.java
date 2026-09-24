@@ -42,6 +42,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.imageio.ImageIO;
@@ -57,7 +59,10 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.LAMPilot;
 import megamek.common.units.MekWarrior;
+import megamek.common.units.Tank;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.logging.MMLogger;
 
@@ -198,11 +203,60 @@ public final class PilotToolTip {
         if (!implantAdjustments.isEmpty()) {
             result.append("<BR>").append(implantAdjustments);
         }
+        String naturalAptitudes = naturalAptitudesDescription(entity);
+        if (!naturalAptitudes.isEmpty()) {
+            result.append("<BR>").append(naturalAptitudes);
+        }
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = new StringBuilder(UIUtil.tag("span", fontSizeAttr, result.toString()));
         String col = UIUtil.tag("TD", "align=\"left\"", result.toString());
 
         return new StringBuilder().append(col);
+    }
+
+    /**
+     * Lists the crew's Natural Aptitudes, e.g. "Natural Aptitude: Piloting, Gunnery". The Artillery aptitude is only
+     * listed when the separate Artillery skill is in use, as otherwise artillery is fired with Gunnery.
+     *
+     * @return the description, or an empty String if the crew has no Natural Aptitudes
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static String naturalAptitudesDescription(final Entity entity) {
+        Crew crew = entity.getCrew();
+        Game game = entity.getGame();
+        boolean isUseArtillerySkill = (game != null)
+              && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
+
+        List<String> naturalAptitudes = new ArrayList<>();
+        if (crew.isHasNaturalAptitudePiloting()) {
+            String pilotingKey = "BoardView1.Tooltip.NaturalAptitude.Piloting";
+            if (entity instanceof Tank) {
+                pilotingKey = "BoardView1.Tooltip.NaturalAptitude.Driving";
+            } else if (entity instanceof Infantry) {
+                pilotingKey = "BoardView1.Tooltip.NaturalAptitude.AntiMek";
+            }
+            naturalAptitudes.add(Messages.getString(pilotingKey));
+        }
+        if ((crew instanceof LAMPilot lamPilot) && lamPilot.isHasNaturalAptitudePilotingAero()) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.PilotingAero"));
+        }
+        if (crew.isHasNaturalAptitudeGunnery()) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Gunnery"));
+        }
+        if ((crew instanceof LAMPilot lamPilot) && lamPilot.isHasNaturalAptitudeGunneryAero()) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.GunneryAero"));
+        }
+        if (isUseArtillerySkill && crew.isHasNaturalAptitudeArtillery()) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Artillery"));
+        }
+
+        if (naturalAptitudes.isEmpty()) {
+            return "";
+        }
+
+        return Messages.getString("BoardView1.Tooltip.NaturalAptitudes") + ' ' + String.join(", ", naturalAptitudes);
     }
 
     /** Returns a tooltip part with any pilots picked up by this unit. */

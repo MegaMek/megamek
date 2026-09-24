@@ -32,7 +32,12 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -111,6 +116,17 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldArtillery = new JTextField(4);
     private final JTextField fldTough = new JTextField(4);
     private final JTextField fldFatigue = new JTextField(4);
+
+    // Natural Aptitudes belong to the crew as a whole, not a slot: piloting shows on the pilot's panel, gunnery and
+    // artillery on the gunner's. For single-pilot units both are the same panel.
+    private final JCheckBox chkNaturalAptitudePiloting = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudePilotingAero = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeGunnery = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeGunneryAero = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeArtillery = new JCheckBox();
+    private boolean showsPilotingAptitudes;
+    private boolean showsGunneryAptitudes;
+    private boolean showsArtilleryAptitude;
 
     private final JComboBox<String> cbBackup = new JComboBox<>();
 
@@ -219,6 +235,11 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldArtillery.setEnabled(false);
             fldTough.setEnabled(false);
             fldFatigue.setEnabled(false);
+            chkNaturalAptitudePiloting.setEnabled(false);
+            chkNaturalAptitudePilotingAero.setEnabled(false);
+            chkNaturalAptitudeGunnery.setEnabled(false);
+            chkNaturalAptitudeGunneryAero.setEnabled(false);
+            chkNaturalAptitudeArtillery.setEnabled(false);
         }
 
         missingToggled();
@@ -629,7 +650,103 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
+        addNaturalAptitudeRows(skillsSection, slot,
+              parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL));
+
         return skillsSection;
+    }
+
+    /**
+     * Adds the Natural Aptitude checkboxes to the skills section. As aptitudes are tracked for the crew as a whole,
+     * piloting aptitudes are only shown on the pilot's panel and gunnery aptitudes on the gunner's, so multi-crew
+     * cockpits don't present the same setting on several tabs.
+     *
+     * @param skillsSection       the section to add the rows to
+     * @param slot                the crew slot this panel edits
+     * @param isUseArtillerySkill whether the separate Artillery skill game option is on
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void addNaturalAptitudeRows(JPanel skillsSection, int slot, boolean isUseArtillerySkill) {
+        Crew crew = entity.getCrew();
+        showsPilotingAptitudes = slot == crew.getCrewType().getPilotPos();
+        showsGunneryAptitudes = slot == crew.getCrewType().getGunnerPos();
+        showsArtilleryAptitude = showsGunneryAptitudes && isUseArtillerySkill;
+        LAMPilot lamPilot = (crew instanceof LAMPilot pilot) ? pilot : null;
+
+        if (showsPilotingAptitudes) {
+            String pilotingKey = "CustomMekDialog.labNaturalAptitudePiloting";
+            if (entity instanceof Tank) {
+                pilotingKey = "CustomMekDialog.labNaturalAptitudeDriving";
+            } else if (entity instanceof Infantry) {
+                pilotingKey = "CustomMekDialog.labNaturalAptitudeAntiMek";
+            }
+            addNaturalAptitudeRow(skillsSection, pilotingKey, chkNaturalAptitudePiloting,
+                  crew.isHasNaturalAptitudePiloting());
+            if (lamPilot != null) {
+                addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudePilotingAero",
+                      chkNaturalAptitudePilotingAero, lamPilot.isHasNaturalAptitudePilotingAero());
+            }
+        }
+
+        if (showsGunneryAptitudes) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunnery",
+                  chkNaturalAptitudeGunnery, crew.isHasNaturalAptitudeGunnery());
+            if (lamPilot != null) {
+                addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunneryAero",
+                      chkNaturalAptitudeGunneryAero, lamPilot.isHasNaturalAptitudeGunneryAero());
+            }
+        }
+
+        if (showsArtilleryAptitude) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeArtillery",
+                  chkNaturalAptitudeArtillery, crew.isHasNaturalAptitudeArtillery());
+        }
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void addNaturalAptitudeRow(JPanel skillsSection, String labelKey, JCheckBox checkBox,
+          boolean hasNaturalAptitude) {
+        String tooltip = UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.naturalAptitude.tooltip"));
+        JLabel label = new JLabel(Messages.getString(labelKey), SwingConstants.RIGHT);
+        label.setToolTipText(tooltip);
+        checkBox.setToolTipText(tooltip);
+        checkBox.setSelected(hasNaturalAptitude);
+        skillsSection.add(label, GBC.std());
+        skillsSection.add(checkBox, GBC.eol());
+    }
+
+    /**
+     * Writes the Natural Aptitudes shown on this panel back onto the crew. Aptitudes shown on another crew member's
+     * panel are left alone. When the separate Artillery skill isn't in use, artillery is fired with Gunnery, so the
+     * Artillery aptitude follows the Gunnery aptitude.
+     *
+     * @param crew the crew to update
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void applyNaturalAptitudes(Crew crew) {
+        if (showsPilotingAptitudes) {
+            crew.setHasNaturalAptitudePiloting(chkNaturalAptitudePiloting.isSelected());
+            if (crew instanceof LAMPilot lamPilot) {
+                lamPilot.setHasNaturalAptitudePilotingAero(chkNaturalAptitudePilotingAero.isSelected());
+            }
+        }
+
+        if (showsGunneryAptitudes) {
+            crew.setHasNaturalAptitudeGunnery(chkNaturalAptitudeGunnery.isSelected());
+            if (crew instanceof LAMPilot lamPilot) {
+                lamPilot.setHasNaturalAptitudeGunneryAero(chkNaturalAptitudeGunneryAero.isSelected());
+            }
+            crew.setHasNaturalAptitudeArtillery(showsArtilleryAptitude ?
+                                                      chkNaturalAptitudeArtillery.isSelected() :
+                                                      chkNaturalAptitudeGunnery.isSelected());
+        }
     }
 
     /**

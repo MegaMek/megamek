@@ -267,7 +267,7 @@ public class Ruleset {
         // Count what survived rather than what was asked for: a formation can be assigned legally and still fail its
         // own requirements once units are drawn, at which point it reverts to an ordinary lance.
         fd.setFormationMixReport(FormationBudgetAllocator.tallyAchieved(fd, formationAssignment));
-        if (null != l) {
+        if (l != null) {
             l.updateProgress(0, "Finalizing formation");
         }
         fd.recalcWeightClass();
@@ -284,7 +284,7 @@ public class Ruleset {
         fd.assignCommanders();
         fd.assignPositions();
 
-        if (null != l) {
+        if (l != null) {
             l.updateProgress(PROGRESS_FINALIZE, "Finalizing formation");
         }
         // Stamp every node with a unique force id before loading entities, so the force strings
@@ -294,7 +294,7 @@ public class Ruleset {
         // fd.assignBloodnames();
 
         ForceDescriptor transports = fd.assignTransport();
-        if (null != transports) {
+        if (transports != null) {
             // Attach first so the transports' parent is set, then number and load them; their force
             // strings then correctly nest the transport force under the force it carries.
             fd.addAttached(transports);
@@ -310,7 +310,7 @@ public class Ruleset {
             transports.loadEntities(l, 0);
         }
 
-        if (null != l) {
+        if (l != null) {
             l.updateProgress(0, "Complete");
         }
 
@@ -474,7 +474,7 @@ public class Ruleset {
          * sub.assignBloodnames();
          * }
          */
-        if (count == 0 && null != l) {
+        if (count == 0 && l != null) {
             l.updateProgress(progress, "Building force tree");
         }
     }

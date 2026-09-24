@@ -1062,7 +1062,25 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
+    /**
+     * Returns whether a unit that finished a move can have that move animated. A unit that mounted a DropShip, was
+     * recovered by a carrier or left the board during its move has no position left, so there is no hex to draw its
+     * ghost sprite in.
+     *
+     * @param entity the unit that finished a move
+     *
+     * @return {@code true} when the unit still has a position to animate from
+     */
+    static boolean canAnimateMove(@Nullable Entity entity) {
+        return (entity != null) && (entity.getPosition() != null);
+    }
+
     void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
+        if (!canAnimateMove(entity)) {
+            LOGGER.debug("Move animation skipped: {} has no position (loaded or off board)",
+                  (entity == null) ? "null entity" : entity.getShortName());
+            return;
+        }
         if (!movePath.isEmpty() && isOnThisBord(entity)) {
             MovingUnit m = new MovingUnit(entity, movePath);
             movingUnits.add(m);
@@ -2747,7 +2765,7 @@ public final class BoardView extends AbstractBoardView
         if (!supersUnderShadow) {
             if (supers != null) {
                 for (Image image : supers) {
-                    if (null != image) {
+                    if (image != null) {
                         if (animatedImages.contains(image.hashCode())) {
                             dontCache = true;
                         }
@@ -4185,7 +4203,7 @@ public final class BoardView extends AbstractBoardView
         for (ListIterator<MoveStep> i = movePath.getSteps();
               i.hasNext(); ) {
             final MoveStep step = i.next();
-            if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
+            if ((previousStep != null) && ((step.getType() == MoveStepType.UP)
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
                   || (step.getType() == MoveStepType.DEC)
@@ -5609,6 +5627,15 @@ public final class BoardView extends AbstractBoardView
         }
 
         zoomIndex--;
+        zoom();
+    }
+
+    /**
+     * Reset the zoom level to the BASE_ZOOM_INDEX
+     */
+    @Override
+    public void zoomReset() {
+        zoomIndex = BASE_ZOOM_INDEX;
         zoom();
     }
 

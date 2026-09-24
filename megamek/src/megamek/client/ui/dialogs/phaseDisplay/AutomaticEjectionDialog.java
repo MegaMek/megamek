@@ -41,9 +41,11 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -57,8 +59,11 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.planetaryConditions.EjectionHazard;
 import megamek.common.units.AutomaticEjectionRules;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
@@ -153,6 +158,10 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
               + "</b></html>"), constraints);
         constraints.gridx = 1;
         unitPanel.add(new JLabel("<html><b>"
+              + Messages.getString("AutomaticEjectionDialog.crewHeader")
+              + "</b></html>"), constraints);
+        constraints.gridx = 2;
+        unitPanel.add(new JLabel("<html><b>"
               + Messages.getString("AutomaticEjectionDialog.ejectionHeader")
               + "</b></html>"), constraints);
 
@@ -164,6 +173,9 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
             unitPanel.add(new JLabel(entity.getShortName()), constraints);
 
             constraints.gridx = 1;
+            unitPanel.add(new JLabel(crewStatus(entity)), constraints);
+
+            constraints.gridx = 2;
             boolean willEject = AutomaticEjectionRules.willEjectAutomatically(entity, game);
             JCheckBox ejectionBox = new JCheckBox(Messages.getString("AutomaticEjectionDialog.ejectAutomatically"));
             ejectionBox.setSelected(willEject);
@@ -178,6 +190,34 @@ public class AutomaticEjectionDialog extends JDialog implements ActionListener {
         int listHeight = Math.clamp(contentHeight, MINIMUM_LIST_HEIGHT, MAXIMUM_LIST_HEIGHT);
         scrollPane.setPreferredSize(UIUtil.scaleForGUI(LIST_WIDTH, listHeight));
         return scrollPane;
+    }
+
+    /**
+     * What this unit's crew is wearing, and whether it is enough for what is out there.
+     *
+     * <p>Names the kit rather than just saying "protected", so a player can see which of their crews still need
+     * one. When a crew has a kit that does not answer everything, the gap is named: a combat suit supplies air but
+     * holds no pressure, so it is worth saying that vacuum is still going to kill them.</p>
+     *
+     * @param entity the unit whose crew is being described
+     *
+     * @return the text for the crew column
+     */
+    private String crewStatus(Entity entity) {
+        EquipmentType armorKit = CrewArmorKitRules.crewArmorKit(entity, game);
+        if (armorKit == null) {
+            return Messages.getString("AutomaticEjectionDialog.crewHasNoKit");
+        }
+        Set<EjectionHazard> unanswered = CrewArmorKitRules.unansweredBy(entity, game);
+        if (unanswered.isEmpty()) {
+            return armorKit.getName();
+        }
+        List<String> hazardNames = new ArrayList<>();
+        for (EjectionHazard hazard : unanswered) {
+            hazardNames.add(hazard.getDisplayName());
+        }
+        return Messages.getString("AutomaticEjectionDialog.crewKitGap",
+              armorKit.getName(), String.join(", ", hazardNames));
     }
 
     /**

@@ -162,6 +162,23 @@ class MobileStructureBayDoorDamageTest {
         assertNotNull(MobileStructureCargoRules.exit(mobile, second, south));
     }
 
+    @Test void unloadingUsesCurrentWalkingMpAfterHeatReduction() {
+        var originalRules = Game.rulesManager;
+        Game.rulesManager = new TWRulesManager();
+        try {
+            var f = fixture(IBuilding.FORTRESS, 2, List.of(NORTH, SOUTH));
+            f.first().heat = 10;
+            assertEquals(5, f.first().getOriginalWalkMP());
+            assertEquals(3, f.first().getWalkMP());
+            assertTrue(f.manager().unloadUnit(f.mobile(), f.first(), ORIGIN.translated(0), 0, 0));
+            assertEquals(2, f.first().mpUsed, "half of current Walking MP, rounded up");
+            assertEquals(1, f.first().delta_distance);
+            assertFalse(f.first().isDone());
+        } finally {
+            Game.rulesManager = originalRules;
+        }
+    }
+
     @Test void twoHangarDoorsOnOneEdgeAreDamagedSeparately() {
         var f = fixture(IBuilding.HANGAR, 3, List.of(NORTH, NORTH, SOUTH));
         assertTrue(BuildingBayDoors.damage(f.mobile(), f.bay(), NORTH));
@@ -504,6 +521,40 @@ class MobileStructureBayDoorDamageTest {
         assertNull(MobileStructureCargoRules.exit(f.mobile(), f.first(), destination));
         dropship.setAltitude(1);
         assertNotNull(MobileStructureCargoRules.exit(f.mobile(), f.first(), destination));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {1, 2})
+    void passengerMountRequiresHalfOfCurrentWalkingMpAfterApproachingTheDoor(int movementMp) {
+        var originalRules = Game.rulesManager;
+        Game.rulesManager = new TWRulesManager();
+        try {
+            var f = fixture(IBuilding.FORTRESS, 2, List.of(NORTH, SOUTH));
+            var passenger = f.first();
+            assertTrue(f.mobile().unload(passenger));
+            passenger.setTransportId(Entity.NONE);
+            passenger.setUnloaded(false);
+            passenger.setDone(false);
+            passenger.setDeployed(true);
+            passenger.heat = 10;
+            passenger.setFacing(3);
+            passenger.setPosition(ORIGIN.translated(0, movementMp + 1));
+            f.bay().resetCounts();
+            assertEquals(3, passenger.getWalkMP());
+
+            var path = new MovePath(f.manager().getGame(), passenger);
+            for (int i = 0; i < movementMp; i++) {
+                path.addStep(MoveStepType.FORWARDS);
+            }
+            assertEquals(ORIGIN.translated(0), path.getFinalCoords());
+            assertEquals(movementMp, path.getMpUsed());
+            assertTrue(Compute.getMountableUnits(passenger, path.getFinalCoords(), 0, 0,
+                  f.manager().getGame()).contains(f.mobile()));
+            assertEquals(movementMp == 1, path.addStep(MoveStepType.MOUNT, f.mobile()).isMoveLegal(),
+                  "Approaching the door must leave two of the three current Walking MP available for boarding");
+        } finally {
+            Game.rulesManager = originalRules;
+        }
     }
 
     @Test void passengerMountActionSelectsTheBayWhoseDoorItActuallyApproaches() {

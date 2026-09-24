@@ -95,7 +95,6 @@ import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
-import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
@@ -569,11 +568,10 @@ public abstract class BotClient extends Client {
                   null;
 
             if (transport != null && transport.isPermanentlyImmobilized(true)) {
-                boolean stackingViolation = null !=
-                      Compute.stackingViolation(game,
+                boolean stackingViolation = Compute.stackingViolation(game,
                             currentEntity.getId(),
                             transport.getPosition(),
-                            currentEntity.climbMode());
+                                                                      currentEntity.climbMode()) != null;
                 boolean unloadFatal = currentEntity.isBoardProhibited(getGame().getBoard(transport)) ||
                       currentEntity.isLocationProhibited(transport.getPosition()) ||
                       currentEntity.isLocationDeadly(transport.getPosition());
@@ -927,7 +925,7 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase().isPhysical()) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
-                if (null != po) {
+                if (po != null) {
                     sendAttackData(po.attacker.getId(), po.getVector());
                 } else {
                     // Send a "no attack" to clear the game turn, if any.
@@ -1008,7 +1006,7 @@ public abstract class BotClient extends Client {
 
             // Make sure we don't overload any buildings in this hex.
             IBuilding building = game.getBoard(deployedUnit).getBuildingAt(dest);
-            if (null != building) {
+            if (building != null) {
                 double mass = getMassOfAllInBuilding(game, dest, deployedUnit.getBoardId()) + deployedUnit.getWeight();
                 if (mass > building.getCurrentCF(dest)) {
                     continue;
@@ -1348,8 +1346,8 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
+        boolean hasNaturalAptitudePiloting = entity.isUseNaturalAptitudePiloting();
+        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), hasNaturalAptitudePiloting) / 100);
         return potentialDmg * oddsTakeDmg;
     }
 
@@ -1378,7 +1376,6 @@ public abstract class BotClient extends Client {
             return 0.0f;
         }
 
-        boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted<?> weapon = attacker.getEquipment(weaponAttackAction.getWeaponId());
         ToHitData hitData = weaponAttackAction.toHit(game, allECMInfo);
         if (hitData.getValue() > 12) {
@@ -1389,7 +1386,8 @@ public abstract class BotClient extends Client {
         if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             fChance = 1.0f;
         } else {
-            fChance = (float) Compute.oddsAbove(hitData.getValue(), naturalAptGunnery) / 100.0f;
+            boolean isUseNaturalAptitude = attacker.isUseNaturalAptitudeGunnery(game, weaponAttackAction);
+            fChance = (float) Compute.oddsAbove(hitData.getValue(), isUseNaturalAptitude) / 100.0f;
         }
 
         // TODO : update for BattleArmor.

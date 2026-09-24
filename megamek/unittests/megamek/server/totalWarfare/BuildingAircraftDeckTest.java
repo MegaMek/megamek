@@ -175,6 +175,8 @@ class BuildingAircraftDeckTest {
         manager.getGame().setRoundCount(6);
         assertTrue(MobileStructureCargoRules.canMount(carrier, fighter, ORIGIN, 5));
         assertTrue(Compute.getMountableUnits(fighter, ORIGIN, 0, 5, manager.getGame()).contains(carrier));
+        assertTrue(new MovePath(manager.getGame(), fighter).addStep(MoveStepType.MOUNT, carrier).isMoveLegal(),
+              "a building deck stows its fighter without the cranes required by a Small Craft carrier");
         assertFalse(BuildingFlightDeckRules.canTakeOff(fighter, false));
         manager.getGame().setRoundCount(7);
         assertTrue(BuildingFlightDeckRules.canTakeOff(fighter, false));

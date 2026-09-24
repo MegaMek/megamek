@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.randomArmy;
 
 import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.applyFormationMixContext;
+import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.formationChoice;
 import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.preferredEchelonItem;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.FormationChoice;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -162,6 +164,46 @@ class ForceGeneratorOptionsViewEchelonTest {
     @Test
     void aNullProbeIsReturnedUntouched() {
         assertNull(applyFormationMixContext(null, descriptor(UNIT_TYPE_MEK, 3, false)));
+    }
+
+    @Test
+    void aPendingPreferenceOutranksWhatTheComboAlreadyShows() {
+        FormationChoice choice = formationChoice(true, "4", "6");
+
+        assertEquals("4", choice.formation(), "a host asking for a company gets a company, not the regiment shown");
+        assertTrue(choice.applyToForce(), "the new size has to reach the force descriptor, not just the combo");
+    }
+
+    @Test
+    void aConsumedPreferenceNeverOverridesTheSelectionAgain() {
+        FormationChoice choice = formationChoice(false, "4", "6");
+
+        assertEquals("6", choice.formation(), "a player who picked a regiment keeps it on later refreshes");
+        assertFalse(choice.applyToForce(), "the selection is unchanged, so the force descriptor already has it");
+    }
+
+    @Test
+    void aPreferenceTheFactionCannotFieldKeepsTheCurrentSelection() {
+        FormationChoice choice = formationChoice(true, null, "5");
+
+        assertEquals("5", choice.formation(), "a faction with no company falls back on what is already shown");
+        assertFalse(choice.applyToForce());
+    }
+
+    @Test
+    void noPreferenceAndNoSurvivingSelectionLeavesTheRulesetDefaultInCharge() {
+        FormationChoice choice = formationChoice(false, null, null);
+
+        assertNull(choice.formation(), "a null formation is the caller's signal to use the ruleset default");
+        assertFalse(choice.applyToForce());
+    }
+
+    @Test
+    void aPendingPreferenceAppliesEvenWithNothingSelectedYet() {
+        FormationChoice choice = formationChoice(true, "4", null);
+
+        assertEquals("4", choice.formation(), "the preference beats the ruleset default on the opening refresh");
+        assertTrue(choice.applyToForce());
     }
 
     private static final int UNIT_TYPE_MEK = 0;

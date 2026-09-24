@@ -303,7 +303,7 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      */
     @SuppressWarnings("unchecked")
     public @Nullable T getType() {
-        return (null != type) ? type : (type = (T) EquipmentType.get(typeName));
+        return (type != null) ? type : (type = (T) EquipmentType.get(typeName));
     }
 
     protected void setType(T type) {
@@ -893,6 +893,24 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
 
     public boolean isJammed() {
         return jammed;
+    }
+
+    /**
+     * Whether a critical hit on this equipment would set off an explosion right now, judged the way the server's
+     * critical-hit resolution judges it: the equipment is explosive by type and state (ammo with shots left, a
+     * hyper-velocity autocannon, a jammed rotary autocannon, a charged capacitor), or it is a launcher holding
+     * hot-loaded ammo, and the explosion would deal damage. Destroyed equipment cannot explode again, and a
+     * powered-down gauss rifle or an empty bin would explode for nothing. The gamemaster's Explode button is
+     * offered exactly where this holds, and the server refuses the explosion where it does not.
+     *
+     * @return {@code true} if exploding this equipment now would do something
+     */
+    public boolean wouldExplodeWhenHit() {
+        if (isDestroyed()) {
+            return false;
+        }
+        boolean isExplosiveNow = getType().isExplosive(this) || isHotLoaded() || (hasChargedCapacitor() != 0);
+        return isExplosiveNow && (getExplosionDamage() > 0);
     }
 
     public void setJammed(boolean j) {
@@ -1614,8 +1632,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
     }
 
     public boolean hasQuirk(String name) {
-        if ((null == entity) ||
-              (null == entity.getGame()) ||
+        if ((entity == null) ||
+            (entity.getGame() == null) ||
               !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return false;
         }
@@ -1642,8 +1660,8 @@ public class Mounted<T extends EquipmentType> implements Serializable, RoundUpda
      * Returns a string of all the quirk "codes" for this entity, using sep as the separator
      */
     public String getQuirkList(String sep) {
-        if ((null == entity) ||
-              (null == entity.getGame()) ||
+        if ((entity == null) ||
+            (entity.getGame() == null) ||
               !entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             return "";
         }

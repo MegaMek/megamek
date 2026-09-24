@@ -78,6 +78,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
@@ -607,8 +608,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // end my turn, then.
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isPhysical() &&
-              (null != next) &&
-              (null != currentEntity()) &&
+            (next != null) &&
+            (currentEntity() != null) &&
               (next.getOwnerId() != currentEntity().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
@@ -657,10 +658,11 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             }
         }
 
-        if (needNagForDishonor() && HonorNagHelper.wouldBeDishonored(game, attacks)) {
+        String dishonorWarning = needNagForDishonor() ? HonorNagHelper.warningFor(game, attacks) : null;
+        if (dishonorWarning != null) {
             // confirm this action
             String title = Messages.getString("HonorNag.title");
-            String body = Messages.getString("HonorNag.message");
+            String body = dishonorWarning;
             if (checkNagForDishonor(title, body)) {
                 return true;
             }
@@ -713,8 +715,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
         final Entity en = currentEntity();
-        final boolean isAptPiloting = (en.getCrew() != null)
-              && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isAptPiloting = en.isUseNaturalAptitudePiloting();
         final boolean canZweihander = (en instanceof BipedMek)
               && ((BipedMek) en).canZweihander()
               && ComputeArc.isInArc(en.getPosition(), en.getSecondaryFacing(), target, en.getForwardArc());
@@ -921,7 +922,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             return;
         }
         final Entity en = currentEntity();
-        final boolean isAptPiloting = (en.getCrew() != null) && en.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isAptPiloting = en.isUseNaturalAptitudePiloting();
         final boolean isMeleeMaster = (en.getCrew() != null) && en.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
 
         ToHitData leftLeg = KickAttackAction.toHit(clientgui.getClient().getGame(),
@@ -1000,7 +1001,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.PushDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.PushDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc());
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -1025,7 +1026,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.TripDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.TripDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc());
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -1055,14 +1056,14 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.GrappleDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.GrappleDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc());
         if (counter) {
             message = Messages.getString("PhysicalDisplay.CounterGrappleDialog.message",
                   target.getDisplayName(),
                   toHit.getValueAsString(),
                   Compute.oddsAbove(toHit.getValue(),
-                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                        currentEntity().isUseNaturalAptitudePiloting()),
                   toHit.getDesc());
         }
 
@@ -1083,7 +1084,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.BreakGrappleDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.BreakGrappleDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc());
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
@@ -1109,7 +1110,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.BAVibroClawDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.BAVibroClawDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc(),
               currentEntity().getVibroClaws() + toHit.getTableDesc());
 
@@ -1133,7 +1134,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.PheromoneDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.PheromoneDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc());
 
         // Give the user a chance to cancel the attack.
@@ -1157,7 +1158,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.ToxinDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ToxinDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc(),
               damage);
 
@@ -1193,10 +1194,10 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             int d_right = JumpJetAttackAction.getDamageFor(currentEntity(), JumpJetAttackAction.RIGHT);
             if ((d_left *
                   Compute.oddsAbove(left.getValue(),
-                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING))) >
+                        currentEntity().isUseNaturalAptitudePiloting())) >
                   (d_right *
                         Compute.oddsAbove(right.getValue(),
-                              currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)))) {
+                              currentEntity().isUseNaturalAptitudePiloting()))) {
                 toHit = left;
                 leg = JumpJetAttackAction.LEFT;
                 damage = d_left;
@@ -1210,7 +1211,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.JumpJetDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.JumpJetDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc(),
               damage);
         if (clientgui.doYesNoDialog(title, message)) {
@@ -1370,7 +1371,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * Club that target!
      */
     public void club(MiscMounted club) {
-        if (null == club) {
+        if (club == null) {
             return;
         }
         if (currentEntity() == null) {
@@ -1378,8 +1379,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
         final Entity attacker = currentEntity();
 
-        final boolean isAptPiloting = (attacker.getCrew() != null)
-              && attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        final boolean isAptPiloting = attacker.isUseNaturalAptitudePiloting();
         final boolean isMeleeMaster = (attacker.getCrew() != null)
               && attacker.hasAbility(OptionsConstants.PILOT_MELEE_MASTER);
         final boolean canZweihander = (attacker instanceof BipedMek bipedMek)
@@ -1467,7 +1467,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
               target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.ProtoMekAttackDialog.message",
               proto.getValueAsString(),
-              Compute.oddsAbove(proto.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(proto.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               proto.getDesc(),
               ProtoMekPhysicalAttackAction.getDamageFor(currentEntity(), target) + proto.getTableDesc());
         if (clientgui.doYesNoDialog(title, message)) {
@@ -1671,7 +1671,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             left = Messages.getString("PhysicalDisplay.LAHit",
                   toHitLeft.getValueAsString(),
                   Compute.oddsAbove(toHitLeft.getValue(),
-                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                        currentEntity().isUseNaturalAptitudePiloting()),
                   damageLeft);
         }
 
@@ -1682,7 +1682,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             right = Messages.getString("PhysicalDisplay.RAHit",
                   toHitRight.getValueAsString(),
                   Compute.oddsAbove(toHitRight.getValue(),
-                        currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                        currentEntity().isUseNaturalAptitudePiloting()),
                   damageRight);
         }
 
@@ -1788,7 +1788,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         String title = Messages.getString("PhysicalDisplay.TrashDialog.title", target.getDisplayName());
         String message = Messages.getString("PhysicalDisplay.TrashDialog.message",
               toHit.getValueAsString(),
-              Compute.oddsAbove(toHit.getValue(), currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)),
+              Compute.oddsAbove(toHit.getValue(), currentEntity().isUseNaturalAptitudePiloting()),
               toHit.getDesc(),
               ThrashAttackAction.getDamageFor(currentEntity()) + toHit.getTableDesc());
 
@@ -2159,6 +2159,24 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     //
     // GameListener
     //
+    /**
+     * Keeps the shown to-hit in step with the units it is between: a gamemaster edit in the physical phase changes
+     * the number without any action of this player's, and the display would otherwise keep showing the one it
+     * computed when the target was picked.
+     */
+    @Override
+    public void gameEntityChange(GameEntityChangeEvent event) {
+        if (isIgnoringEvents() || (target == null) || (event.getEntity() == null)) {
+            return;
+        }
+        int changedId = event.getEntity().getId();
+        boolean isTarget = target.getId() == changedId;
+        boolean isAttacker = currentEntity == changedId;
+        if (isTarget || isAttacker) {
+            updateTarget();
+        }
+    }
+
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
@@ -2202,7 +2220,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()) {
-            if (currentEntity == Entity.NONE) {
+            if (needsUnitSelectedForTurn()) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
             }

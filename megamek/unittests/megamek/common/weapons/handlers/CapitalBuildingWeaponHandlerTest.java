@@ -39,6 +39,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -61,14 +62,17 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BipedMek;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.DamageType;
+import megamek.common.weapons.handlers.lrm.LRMSwarmHandler;
 import megamek.common.weapons.handlers.plasma.PlasmaCannonHandler;
 import megamek.common.weapons.lrms.innerSphere.ISLRM20;
+import megamek.common.weapons.missiles.innerSphere.thunderbolt.ISThunderbolt20;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISERPPC;
 import megamek.server.totalWarfare.TWGameManager;
@@ -261,6 +265,66 @@ class CapitalBuildingWeaponHandlerTest {
         infantry.setElevation(4);
         assertTrue(handler.calcDamagePerHit() > 1);
         assertEquals(1, handler.calcHits(new Vector<>()), "Exposed infantry still receive the salvo in one group");
+    }
+
+    @Test
+    void thunderboltMinimumRangeFollowsTheRulesBeforeApplyingInfantryProtection() throws Exception {
+        ConvInfantry infantry = infantry();
+        WeaponMounted thunderbolt = (WeaponMounted) attacker.addEquipment(new ISThunderbolt20(), Mek.LOC_RIGHT_TORSO);
+        thunderbolt.setLinked(attacker.addEquipment(EquipmentType.get("IS Ammo Thunderbolt-20"), Mek.LOC_LEFT_TORSO));
+        WeaponAttackAction action = new WeaponAttackAction(attacker.getId(), infantry.getId(),
+              attacker.getEquipmentNum(thunderbolt));
+        ThunderBoltWeaponHandler handler = new ThunderBoltWeaponHandler(new ToHitData(), action,
+              manager.getGame(), manager);
+
+        assertEquals(10, handler.calcDamagePerHit(), "TW halves the structural hit within minimum range");
+        infantry.setElevation(4);
+        assertEquals(2, handler.calcDamagePerHit(), "Exposed infantry also apply the infantry damage table");
+
+        try {
+            manager.getGame().initializeRulesManager(OptionsConstants.RULES_CORE);
+            infantry.setElevation(0);
+            assertEquals(20, handler.calcDamagePerHit(), "Core Rules retain full structural damage at minimum range");
+            infantry.setElevation(4);
+            assertEquals(4, handler.calcDamagePerHit(), "Core Rules still apply exposed infantry damage conversion");
+        } finally {
+            manager.getGame().initializeRulesManager(OptionsConstants.RULES_TW);
+        }
+    }
+
+    @Test
+    void swarmMissilesKeepStructuralClustersButStopAfterHittingExposedInfantry() throws Exception {
+        ConvInfantry infantry = infantry();
+        WeaponMounted lrm = (WeaponMounted) attacker.addEquipment(new ISLRM20(), Mek.LOC_RIGHT_TORSO);
+        lrm.setLinked(attacker.addEquipment(EquipmentType.get("IS Ammo LRM-20"), Mek.LOC_LEFT_TORSO));
+        WeaponAttackAction action = new WeaponAttackAction(attacker.getId(), infantry.getId(),
+              attacker.getEquipmentNum(lrm));
+        action.setSwarmingMissiles(true);
+        action.setSwarmMissiles(12);
+        WeaponHandler handler = spy(new LRMSwarmHandler(new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Test"),
+              action, manager.getGame(), manager));
+        doReturn(true).when(handler).allShotsHit();
+
+        assertEquals(1, handler.calcDamagePerHit());
+        assertEquals(12, handler.calcHits(new Vector<>()), "Only the remaining missiles hit the capital structure");
+        assertEquals(5, handler.calculateNumCluster());
+
+        // Leave missiles pending from a structural hit, then ensure the infantry result ends that flight.
+        doReturn(false).when(handler).allShotsHit();
+        doReturn(-12).when(handler).getClusterModifiers(false);
+        assertTrue(handler.calcHits(new Vector<>()) < 12);
+        infantry.setElevation(4);
+        assertEquals(3, handler.calcDamagePerHit());
+        assertEquals(1, handler.calcHits(new Vector<>()));
+
+        doNothing().when(handler).handleEntityDamage(any(), any(), any(), anyInt(), anyInt(), anyInt());
+        target.addTargetedBySwarm(attacker.getId(), action.getWeaponId());
+        attacker.addTargetedBySwarm(attacker.getId(), action.getWeaponId());
+        Vector<Report> reports = new Vector<>();
+        handler.handle(GamePhase.FIRING, reports);
+        assertTrue(reports.stream().noneMatch(report -> report.messageId == 3420
+                    || report.messageId == 3425 || report.messageId == 3426),
+              "An infantry hit consumes the flight rather than reporting or retargeting leftover missiles");
     }
 
     @Test

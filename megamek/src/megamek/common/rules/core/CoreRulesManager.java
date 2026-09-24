@@ -33,9 +33,9 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rules.*;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.RulesTarget;
-import megamek.common.rules.*;
 
 public class CoreRulesManager implements RulesManager {
     private CoreRulesTarget coreRulesTarget = new CoreRulesTarget();
@@ -53,6 +53,7 @@ public class CoreRulesManager implements RulesManager {
     private CoreRulesPhysical coreRulesPhysical = new CoreRulesPhysical();
     private CoreRulesPilot coreRulesPilot = new CoreRulesPilot();
     private CoreRulesPSR coreRulesPSR = new CoreRulesPSR();
+    private CoreRulesScanning coreRulesScanning = new CoreRulesScanning();
     private CoreRulesTerrain coreRulesTerrain = new CoreRulesTerrain();
     private CoreRulesUnderwater coreRulesUnderwater = new CoreRulesUnderwater();
     private CoreRulesUnits coreRulesUnits = new CoreRulesUnits();
@@ -147,6 +148,13 @@ public class CoreRulesManager implements RulesManager {
      * Returns the Core Rules implementation for Piloting Skill Rolls (PSRs).
      */
     public RulesPSR getRulesPSR() { return coreRulesPSR; }
+
+    /**
+     * {@inheritDoc}
+     * Returns the Core Rules implementation for scanning objectives and units.
+     */
+    @Override
+    public RulesScanning getRulesScanning() { return coreRulesScanning; }
 
     /**
      * {@inheritDoc}

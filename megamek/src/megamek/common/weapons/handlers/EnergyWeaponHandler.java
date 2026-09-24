@@ -39,13 +39,13 @@ import static java.lang.Math.floor;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.HitData;
 import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -65,7 +65,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
     public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_ENERGY;
     }
 
     /**

@@ -40,9 +40,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
@@ -52,6 +54,7 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.preference.IPreferenceStore;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
@@ -455,6 +458,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAPON_SORT_ORDER = "DefaultWeaponSortOrder";
+    public static final String SENSOR_PREFERENCE_ORDER = "SensorPreferenceOrder";
     public static final String UI_THEME = "UITheme";
     public static final String BOARD_EDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARD_EDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
@@ -982,6 +986,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
+        store.setDefault(SENSOR_PREFERENCE_ORDER, joinSensorPreference(SensorFamily.defaultOrder()));
         store.setDefault(SHOW_DAMAGE_LEVEL, true);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
@@ -1873,6 +1878,41 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return WeaponSortOrder.valueOf(store.getString(DEFAULT_WEAPON_SORT_ORDER));
     }
 
+    /**
+     * Returns the player's sensor families in preference order, most preferred first. A unit deploys using the first
+     * family on this list that it actually carries a sensor for.
+     *
+     * <p>The stored value is tolerated rather than trusted: unknown names left over from an older or newer build are
+     * dropped, duplicates are ignored, and any family the stored list does not mention is appended in
+     * {@link SensorFamily#defaultOrder()} order. The returned list therefore always holds every family exactly
+     * once.</p>
+     *
+     * @return every sensor family, most preferred first
+     */
+    public List<SensorFamily> getSensorPreferenceOrder() {
+        List<SensorFamily> order = new ArrayList<>();
+        for (String familyName : store.getString(SENSOR_PREFERENCE_ORDER).split(",")) {
+            String trimmedName = familyName.trim();
+            if (trimmedName.isEmpty()) {
+                continue;
+            }
+            try {
+                SensorFamily family = SensorFamily.valueOf(trimmedName);
+                if (!order.contains(family)) {
+                    order.add(family);
+                }
+            } catch (IllegalArgumentException ignored) {
+                // A family that no longer exists; the default order below fills the gap
+            }
+        }
+        for (SensorFamily family : SensorFamily.defaultOrder()) {
+            if (!order.contains(family)) {
+                order.add(family);
+            }
+        }
+        return order;
+    }
+
     public String getAsCardFont() {
         return store.getString(AS_CARD_FONT);
     }
@@ -1944,6 +1984,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDefaultWeaponSortOrder(final WeaponSortOrder weaponSortOrder) {
         store.setValue(DEFAULT_WEAPON_SORT_ORDER, weaponSortOrder.name());
+    }
+
+    /**
+     * Stores the sensor families in preference order, most preferred first.
+     *
+     * @param sensorPreferenceOrder the families, most preferred first
+     */
+    public void setSensorPreferenceOrder(final List<SensorFamily> sensorPreferenceOrder) {
+        store.setValue(SENSOR_PREFERENCE_ORDER, joinSensorPreference(sensorPreferenceOrder));
+    }
+
+    private static String joinSensorPreference(List<SensorFamily> sensorPreferenceOrder) {
+        StringJoiner joiner = new StringJoiner(",");
+        for (SensorFamily family : sensorPreferenceOrder) {
+            joiner.add(family.name());
+        }
+        return joiner.toString();
     }
 
     public boolean getBoardEdRndStart() {

@@ -80,10 +80,10 @@ public class ChangeOwnershipCommand extends GamemasterServerCommand {
 
         Entity ent = gameManager.getGame().getEntity(unitID.getValue());
         Player player = server.getGame().getPlayer(playerID.getValue());
-        if (null == ent) {
+        if (ent == null) {
             LOGGER.info("[Traitor] /changeOwner rejected: no unit with id {}", unitID.getValue());
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.unitNotFound"));
-        } else if (null == player) {
+        } else if (player == null) {
             LOGGER.info("[Traitor] /changeOwner rejected: no player with id {}", playerID.getValue());
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeOwnership.playerNotFound"));
         } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {

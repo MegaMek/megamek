@@ -32,6 +32,8 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
@@ -40,9 +42,6 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
-import megamek.common.units.Mek;
-
-import java.util.Vector;
 
 public class TWRulesWeapons extends RulesWeapons {
 
@@ -106,7 +105,7 @@ public class TWRulesWeapons extends RulesWeapons {
     /**
      * What is the cluster modifier for MRMs?
      * MRMs have no cluster modifier, but with Apollo they do
-     * 
+     *
      * @param apollo true if Apollo fire control is used
      * @return the MRM cluster modifier
      */
@@ -198,5 +197,20 @@ public class TWRulesWeapons extends RulesWeapons {
             return true;
         }
         return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     * TW halves thunderbolt damage under minimum range
+     */
+    @Override
+    public double thunderboltMinimum(final double toReturn,
+                                     final int nRange,
+                                     final int minRange,
+                                     final boolean hotLoaded) {
+        if ((nRange <= minRange) && !hotLoaded) {
+            return (Math.floor(toReturn / 2));
+        }
+        return toReturn;
     }
 }

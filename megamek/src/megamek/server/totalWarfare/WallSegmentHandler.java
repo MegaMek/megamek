@@ -39,6 +39,7 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
+import megamek.common.enums.HitDamageType;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -86,7 +87,7 @@ final class WallSegmentHandler {
                     if (suffered > 0) {
                         HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                               backwards ? ToHitData.SIDE_REAR : ToHitData.SIDE_FRONT);
-                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                         hit.setEffect(hit.getEffect() & ~HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                         reports.addAll(manager.damageEntity(entity, hit, suffered));
                     }

@@ -45,9 +45,14 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.common.Report;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.SkillLevel;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -78,14 +83,29 @@ public class Crew implements Serializable {
     private final String[] nicknames;
     private final Gender[] genders;
     private final boolean[] clanPilots;
-    /** Whether each crew member is wearing a MekWarrior Combat Suit, TO:AUE p.129. */
+    /** The internal name of the armor kit each crew member wears, or {@code null} for none. */
     // Deliberately not final: a Crew deserialized from a stream written before this field existed restores as
     // null, because Java deserialization skips field initializers. getArmorKitNames() fills it in on first use.
     private String[] armorKitNames;
+    /** The internal name of the sidearm each crew member carries, or {@code null} for none. Same caveat as above. */
+    private String[] sidearmNames;
+    /**
+     * Each crew member's Small Arms skill, used in place of gunnery once they are on foot, or
+     * {@link #SMALL_ARMS_UNSET} where none was recorded. Same caveat as above.
+     */
+    private int[] smallArms;
+    /** Whether the crew personal equipment rule was on when this crew left their unit; see {@link #usesSmallArms}. */
+    private boolean smallArmsInPlay;
     private final Portrait[] portraits;
 
     private final int[] gunnery;
     private final int[] piloting;
+    // Natural Aptitudes are tracked per slot, like the skills they modify. Deliberately not final, for the same
+    // reason as armorKitNames above; the accessors fill them in on first use.
+    private boolean[] naturalAptitudesGunnery;
+    private boolean[] naturalAptitudesArtillery;
+    private boolean[] naturalAptitudesPiloting;
+    private boolean[] naturalAptitudesSmallArms;
     private final int[] hits; // hits taken
 
     private final String[] externalId;
@@ -115,10 +135,10 @@ public class Crew implements Serializable {
     private final int[] gunneryM;
     private final int[] gunneryB;
     private boolean[] pendingConRolls;
-    
+
     // Separate artillery skill
     private final int[] artillery;
-    
+
     // init bonuses
     // bonus for individual initiative
     private int initBonus;
@@ -196,20 +216,27 @@ public class Crew implements Serializable {
      * Defines the maximum value a Crew can have in any skill
      */
     public static final int MAX_SKILL = 8;
+    /** The Small Arms value meaning no skill was recorded, so the crew fires on foot with their gunnery. */
+    public static final int SMALL_ARMS_UNSET = -1;
+
+    /** The base 1-in-N chance of a generated crew having a Natural Aptitude; reduced by experience level. */
+    public static final int NATURAL_APTITUDE_CHANCE = 1000;
     // endregion Variable Declarations
 
     // region Constructors
-    
+
     /**
      * Creates a nameless P5/G4 crew of the given size.
      *
      * @param crewType the crew type to use.
      */
     public Crew(CrewType crewType) {
-        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, 5, Gender.FEMALE, false, null);
+        this(crewType, "Unnamed", crewType.getCrewSlots(), 4, false, false, 5, false, Gender.FEMALE, false, null);
     }
 
     /**
+     * Creates a crew with no Natural Aptitudes.
+     *
      * @param crewType  the type of crew
      * @param name      the name of the crew or commander.
      * @param size      the crew size.
@@ -221,23 +248,47 @@ public class Crew implements Serializable {
      */
     public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender, boolean clanPilot,
           Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, piloting, gender, clanPilot, extraData);
+        this(crewType, name, size, gunnery, false, false, piloting, false, gender, clanPilot, extraData);
     }
 
     /**
-     * @param crewType  the type of crew.
-     * @param name      the name of the crew or commander.
-     * @param size      the crew size.
-     * @param gunneryL  the crew's "laser" Gunnery skill.
-     * @param gunneryM  the crew's "missile" Gunnery skill.
-     * @param gunneryB  the crew's "ballistic" Gunnery skill.
-     * @param piloting  the crew's Piloting or Driving skill.
+     * @param crewType                    the type of crew
+     * @param name                        the name of the crew or commander.
+     * @param size                        the crew size.
+     * @param gunnery                     the crew's Gunnery skill.
+     * @param hasNaturalAptitudeGunnery   whether each crew member has a Natural Aptitude in Gunnery
+     * @param hasNaturalAptitudeArtillery whether each crew member has a Natural Aptitude in Artillery
+     * @param piloting                    the crew's Piloting or Driving skill.
+     * @param hasNaturalAptitudePiloting  whether each crew member has a Natural Aptitude in Piloting or Driving
+     * @param gender                      the gender of the crew or commander
+     * @param clanPilot                   if the crew or commander is a clanPilot
+     * @param extraData                   any extra data passed to be stored with this Crew.
+     */
+    public Crew(CrewType crewType, String name, int size, int gunnery, boolean hasNaturalAptitudeGunnery,
+          boolean hasNaturalAptitudeArtillery, int piloting, boolean hasNaturalAptitudePiloting, Gender gender,
+          boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, hasNaturalAptitudeGunnery, hasNaturalAptitudeArtillery,
+              piloting, hasNaturalAptitudePiloting, gender, clanPilot, extraData);
+    }
+
+    /**
+     * @param crewType                    the type of crew.
+     * @param name                        the name of the crew or commander.
+     * @param size                        the crew size.
+     * @param gunneryL                    the crew's "laser" Gunnery skill.
+     * @param gunneryM                    the crew's "missile" Gunnery skill.
+     * @param gunneryB                    the crew's "ballistic" Gunnery skill.
+     * @param hasNaturalAptitudeGunnery   whether each crew member has a Natural Aptitude in Gunnery
+     * @param hasNaturalAptitudeArtillery whether each crew member has a Natural Aptitude in Artillery
+     * @param piloting                    the crew's Piloting or Driving skill.
+     * @param hasNaturalAptitudePiloting  whether each crew member has a Natural Aptitude in Piloting or Driving
      * @param gender    the gender of the crew or commander
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB, int piloting,
-          Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+    public Crew(CrewType crewType, String name, int size, int gunneryL, int gunneryM, int gunneryB,
+          boolean hasNaturalAptitudeGunnery, boolean hasNaturalAptitudeArtillery, int piloting,
+          boolean hasNaturalAptitudePiloting, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
         this.crewType = crewType;
         this.size = Math.max(size, crewType.getCrewSlots());
         this.currentSize = size;
@@ -254,6 +305,9 @@ public class Crew implements Serializable {
         setGender(gender, 0);
         clanPilots = new boolean[slots];
         armorKitNames = new String[slots];
+        sidearmNames = new String[slots];
+        smallArms = new int[slots];
+        Arrays.fill(smallArms, SMALL_ARMS_UNSET);
         Arrays.fill(getClanPilots(), clanPilot);
         portraits = new Portrait[slots];
         for (int i = 0; i < slots; i++) {
@@ -273,6 +327,13 @@ public class Crew implements Serializable {
         Arrays.fill(this.artillery, avGunnery);
         this.piloting = new int[slots];
         Arrays.fill(this.piloting, piloting);
+        naturalAptitudesGunnery = new boolean[slots];
+        Arrays.fill(naturalAptitudesGunnery, hasNaturalAptitudeGunnery);
+        naturalAptitudesArtillery = new boolean[slots];
+        Arrays.fill(naturalAptitudesArtillery, hasNaturalAptitudeArtillery);
+        naturalAptitudesPiloting = new boolean[slots];
+        Arrays.fill(naturalAptitudesPiloting, hasNaturalAptitudePiloting);
+        naturalAptitudesSmallArms = new boolean[slots];
 
         initBonus = 0;
         commandBonus = 0;
@@ -283,7 +344,7 @@ public class Crew implements Serializable {
         koThisRound = new boolean[slots];
         toughness = new int[slots];
         fatigue = new int[slots];
-        
+
         this.pendingConRolls = new boolean[slots];
         Arrays.fill(this.pendingConRolls, false);
 
@@ -359,7 +420,7 @@ public class Crew implements Serializable {
         return (pos < getGenders().length) ? getGenders()[pos] : Gender.RANDOMIZE;
     }
 
-    public boolean hasPendingConRolls() { 
+    public boolean hasPendingConRolls() {
         for (int i = 0; i < pendingConRolls.length; i++) {
             if (pendingConRolls[i]) {
                 return true;
@@ -367,11 +428,11 @@ public class Crew implements Serializable {
         }
         return false;
     }
-    
+
     public boolean hasPendingConRoll(final int pos) {
         return pendingConRolls[pos];
     }
-    
+
     public void setPendingConRolls(final boolean pendingConRolls, int crewPos) {
         this.pendingConRolls[crewPos] = pendingConRolls;
     }
@@ -384,7 +445,7 @@ public class Crew implements Serializable {
             pendingConRolls[i] = false;
         }
     }
-    
+
     public void setGender(final Gender gender, final int pos) {
         getGenders()[pos] = gender;
     }
@@ -450,6 +511,129 @@ public class Crew implements Serializable {
 
     public void setArmorKitName(final @Nullable String armorKitName, final int position) {
         getArmorKitNames()[position] = armorKitName;
+    }
+
+    /**
+     * @return one entry per crew slot, holding the internal name of the sidearm that crew member carries, or
+     *       {@code null} where they carry none
+     */
+    public String[] getSidearmNames() {
+        if (sidearmNames == null) {
+            // An older save game or a unit cached before this field existed. Nobody was carrying anything then.
+            sidearmNames = new String[getSlotCount()];
+        }
+        return sidearmNames;
+    }
+
+    /**
+     * The sidearm this crew member carries, by internal name: the infantry weapon they hold if they end up outside
+     * their unit on foot. A name rather than the weapon itself, for the same reason as the armor kit.
+     *
+     * @param position the crew slot to ask about
+     *
+     * @return the weapon's internal name, or {@code null} if that crew member carries none
+     */
+    public @Nullable String getSidearmName(final int position) {
+        String[] sidearms = getSidearmNames();
+        return (position < sidearms.length) ? sidearms[position] : sidearms[0];
+    }
+
+    /**
+     * The sidearm carried by anyone aboard. A vehicle or vessel crew is a single collective in MegaMek however many
+     * people MekHQ assigned to it, so one slot answers for all of them, as it does for the armor kit.
+     *
+     * @return the first sidearm found, or {@code null} if nobody carries one
+     */
+    public @Nullable String getAnySidearmName() {
+        for (String sidearmName : getSidearmNames()) {
+            if ((sidearmName != null) && !sidearmName.isBlank()) {
+                return sidearmName;
+            }
+        }
+        return null;
+    }
+
+    public void setSidearmName(final @Nullable String sidearmName, final int position) {
+        getSidearmNames()[position] = sidearmName;
+    }
+
+    /**
+     * @return one entry per crew slot, holding that crew member's Small Arms skill, or {@link #SMALL_ARMS_UNSET}
+     *       where none was recorded
+     */
+    public int[] getSmallArmsSkills() {
+        if (smallArms == null) {
+            // An older save game or a unit cached before this field existed. Nobody had the skill recorded then.
+            smallArms = new int[getSlotCount()];
+            Arrays.fill(smallArms, SMALL_ARMS_UNSET);
+        }
+        return smallArms;
+    }
+
+    /**
+     * Whether a Small Arms skill was recorded for this crew member. When none was, they fire on foot with the same
+     * gunnery they used aboard, which is how every crew fired before the skill existed.
+     *
+     * @param position the crew slot to ask about
+     *
+     * @return {@code true} if a Small Arms skill was recorded
+     */
+    public boolean hasSmallArms(final int position) {
+        int[] skills = getSmallArmsSkills();
+        int index = (position < skills.length) ? position : 0;
+        return skills[index] != SMALL_ARMS_UNSET;
+    }
+
+    /**
+     * The Small Arms skill recorded for this crew member, as stored. This is what a unit list writes out and the
+     * lobby edits; the skill actually used to fire comes from {@link #getGunnery()} once the crew is on foot.
+     *
+     * @param position the crew slot to ask about
+     *
+     * @return the skill, or {@link #SMALL_ARMS_UNSET} if none was recorded
+     */
+    public int getSmallArms(final int position) {
+        int[] skills = getSmallArmsSkills();
+        return (position < skills.length) ? skills[position] : skills[0];
+    }
+
+    /**
+     * Records a Small Arms skill for this crew member, or clears it with {@link #SMALL_ARMS_UNSET}.
+     *
+     * @param smallArmsSkill the skill, 0 to {@link #MAX_SKILL}, or {@link #SMALL_ARMS_UNSET}
+     * @param position       the crew slot to set
+     */
+    public void setSmallArms(final int smallArmsSkill, final int position) {
+        getSmallArmsSkills()[position] = smallArmsSkill;
+    }
+
+    /**
+     * Whether the crew personal equipment rule was in force when this crew left their unit. Recorded by the
+     * server at ejection, and carried with the crew so clients and saves agree, because the crew has no game to
+     * ask and a Small Arms value may have been written by a campaign that never looked at the option.
+     *
+     * @param inPlay {@code true} if the rule is on, so a recorded Small Arms skill is used on foot
+     */
+    public void setSmallArmsInPlay(final boolean inPlay) {
+        smallArmsInPlay = inPlay;
+    }
+
+    /**
+     * @return {@code true} if the crew personal equipment rule was in force when this crew left their unit
+     */
+    public boolean isSmallArmsInPlay() {
+        return smallArmsInPlay;
+    }
+
+    /**
+     * Whether this crew now fires with Small Arms rather than gunnery: they have left their unit under the crew
+     * personal equipment rule, and a Small Arms skill was recorded for whoever is shooting. Mirrors how a LAM pilot
+     * switches skills on conversion, with the ejection the server already records as the switch.
+     *
+     * @return {@code true} if Small Arms replaces every gunnery figure
+     */
+    protected boolean usesSmallArms() {
+        return ejected && smallArmsInPlay && hasSmallArms(gunnerPos);
     }
 
     public Portrait[] getPortraits() {
@@ -527,7 +711,7 @@ public class Crew implements Serializable {
     // return the raw stored skill and are what unit-list export and lobby customization read.
 
     public int getGunnery() {
-        return getSkillModifiers().adjustGunnery(gunnery[gunnerPos]);
+        return getSkillModifiers().adjustGunnery(rawGunnery());
     }
 
     /**
@@ -574,22 +758,45 @@ public class Crew implements Serializable {
      * The stored skill each effective getter adjusts. LAMPilot overrides the effective getters with its own
      * mode-dependent skills, so it overrides these to match; without that, the applied-modifier math above would
      * subtract the wrong base.
+     *
+     * Once the crew is on foot with a Small Arms skill recorded, that one skill stands in for every gunnery
+     * flavour: a pistol is fired with Small Arms whether the game splits gunnery into L/M/B or not.
      */
 
     protected int rawGunnery() {
-        return gunnery[gunnerPos];
+        return usesSmallArms() ? getSmallArms(gunnerPos) : gunnery[gunnerPos];
     }
 
     protected int rawGunneryL() {
-        return gunneryL[gunnerPos];
+        return usesSmallArms() ? getSmallArms(gunnerPos) : gunneryL[gunnerPos];
     }
 
     protected int rawGunneryM() {
-        return gunneryM[gunnerPos];
+        return usesSmallArms() ? getSmallArms(gunnerPos) : gunneryM[gunnerPos];
     }
 
     protected int rawGunneryB() {
-        return gunneryB[gunnerPos];
+        return usesSmallArms() ? getSmallArms(gunnerPos) : gunneryB[gunnerPos];
+    }
+
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     *
+     * @return whether the current gunner has a Natural Aptitude in Gunnery
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeGunnery() {
+        return isHasNaturalAptitudeGunnery(gunnerPos);
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeGunnery(int pos) {
+        return getNaturalAptitudesGunnery()[pos];
     }
 
     protected int rawArtillery() {
@@ -604,12 +811,32 @@ public class Crew implements Serializable {
         return piloting[pilotPos];
     }
 
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudePiloting()} instead.
+     *
+     * @return whether the current pilot has a Natural Aptitude in Piloting or Driving
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudePiloting() {
+        return isHasNaturalAptitudePiloting(pilotPos);
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudePiloting(int pos) {
+        return getNaturalAptitudesPiloting()[pos];
+    }
+
     public int getGunnery(int pos) {
         return gunnery[pos];
     }
 
     public int getGunneryL() {
-        return getSkillModifiers().adjustGunnery(gunneryL[gunnerPos]);
+        return getSkillModifiers().adjustGunnery(rawGunneryL());
     }
 
     public int getGunneryL(int pos) {
@@ -617,7 +844,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryM() {
-        return getSkillModifiers().adjustGunnery(gunneryM[gunnerPos]);
+        return getSkillModifiers().adjustGunnery(rawGunneryM());
     }
 
     public int getGunneryM(int pos) {
@@ -625,7 +852,7 @@ public class Crew implements Serializable {
     }
 
     public int getGunneryB() {
-        return getSkillModifiers().adjustGunnery(gunneryB[gunnerPos]);
+        return getSkillModifiers().adjustGunnery(rawGunneryB());
     }
 
     public int getGunneryB(int pos) {
@@ -638,6 +865,80 @@ public class Crew implements Serializable {
 
     public int getArtillery(int pos) {
         return artillery[pos];
+    }
+
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     *
+     * @return whether the current gunner has a Natural Aptitude in Artillery
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeArtillery() {
+        return isHasNaturalAptitudeArtillery(gunnerPos);
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeArtillery(int pos) {
+        return getNaturalAptitudesArtillery()[pos];
+    }
+
+    /**
+     * Crews deserialized from before Natural Aptitudes were tracked restore these arrays as null. Nobody had an
+     * aptitude back then, so an empty array is correct. Sized like the constructor's arrays, which always have at least
+     * one slot even for {@link CrewType#NONE}.
+     */
+    private boolean[] getNaturalAptitudesGunnery() {
+        if (naturalAptitudesGunnery == null) {
+            naturalAptitudesGunnery = new boolean[Math.max(1, getSlotCount())];
+        }
+        return naturalAptitudesGunnery;
+    }
+
+    private boolean[] getNaturalAptitudesArtillery() {
+        if (naturalAptitudesArtillery == null) {
+            naturalAptitudesArtillery = new boolean[Math.max(1, getSlotCount())];
+        }
+        return naturalAptitudesArtillery;
+    }
+
+    private boolean[] getNaturalAptitudesPiloting() {
+        if (naturalAptitudesPiloting == null) {
+            naturalAptitudesPiloting = new boolean[Math.max(1, getSlotCount())];
+        }
+        return naturalAptitudesPiloting;
+    }
+
+    private boolean[] getNaturalAptitudesSmallArms() {
+        if (naturalAptitudesSmallArms == null) {
+            naturalAptitudesSmallArms = new boolean[Math.max(1, getSlotCount())];
+        }
+        return naturalAptitudesSmallArms;
+    }
+
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead, which uses
+     * this aptitude once the crew is on foot using their Small Arms skill.
+     *
+     * @return whether the crew member has a Natural Aptitude in Small Arms
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeSmallArms(int pos) {
+        return getNaturalAptitudesSmallArms()[pos];
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudeSmallArms(boolean hasNaturalAptitudeSmallArms, int pos) {
+        getNaturalAptitudesSmallArms()[pos] = hasNaturalAptitudeSmallArms;
     }
 
     public int getPiloting() {
@@ -802,12 +1103,36 @@ public class Crew implements Serializable {
         gunneryB[pos] = gunnery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery, int pos) {
+        getNaturalAptitudesGunnery()[pos] = hasNaturalAptitudeGunnery;
+    }
+
     public void setArtillery(int artillery, int pos) {
         this.artillery[pos] = artillery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery, int pos) {
+        getNaturalAptitudesArtillery()[pos] = hasNaturalAptitudeArtillery;
+    }
+
     public void setPiloting(int piloting, int pos) {
         this.piloting[pos] = piloting;
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting, int pos) {
+        getNaturalAptitudesPiloting()[pos] = hasNaturalAptitudePiloting;
     }
 
     public void setHits(int hits, int pos) {
@@ -1346,8 +1671,8 @@ public class Crew implements Serializable {
         }
     }
 
-    public Roll rollGunnerySkill() {
-        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_GUNNERY)) {
+    public Roll rollGunnerySkill(Game game, WeaponAttackAction action) {
+        if (isUseNaturalAptitudeGunnery(game, action)) {
             return Compute.rollD6(3, 2);
         }
 
@@ -1355,7 +1680,20 @@ public class Crew implements Serializable {
     }
 
     public Roll rollPilotingSkill() {
-        if (getOptions().booleanOption(OptionsConstants.PILOT_APTITUDE_PILOTING)) {
+        return rollPilotingSkill(pilotPos);
+    }
+
+    /**
+     * Rolls a piloting skill check for a specific crew member, such as when each crew member rolls for themselves
+     * during ejection or a fall. Use {@link #rollPilotingSkill()} for rolls made by whoever is piloting.
+     *
+     * @param pos the crew slot making the roll
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public Roll rollPilotingSkill(int pos) {
+        if (isUseNaturalAptitudePiloting(pos)) {
             return Compute.rollD6(3, 2);
         }
 
@@ -1629,4 +1967,119 @@ public class Crew implements Serializable {
         return getCrewType() != null && getCrewType().equals(CrewType.NONE);
     }
 
+    /**
+     * Randomly determines whether a generated (non-campaign) crew member has a Natural Aptitude in a skill. The base
+     * chance of 1 in {@link #NATURAL_APTITUDE_CHANCE} is improved by the crew's experience level, so better crews are
+     * more likely to be naturally talented.
+     *
+     * @param skillLevel the crew's experience level
+     *
+     * @return {@code true} if the crew member should have a Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public static boolean rollNaturalAptitude(SkillLevel skillLevel) {
+        int experienceLevel = skillLevel.getExperienceLevel();
+        if (experienceLevel <= 0) {
+            return false;
+        }
+
+        return Compute.randomInt(NATURAL_APTITUDE_CHANCE / experienceLevel) == 0;
+    }
+
+    /**
+     * Determines whether the Natural Aptitude for general (non-artillery) weapon fire applies, taking into account
+     * which gunnery skill the crew is currently using. Use this when no specific weapon is known.
+     *
+     * @return {@code true} if a general weapon attack should be rolled with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery() {
+        return isUseNaturalAptitudeGunnery(null, (Mounted<?>) null);
+    }
+
+    /**
+     * Determines whether the Natural Aptitude matching the skill used for this weapon attack applies.
+     *
+     * @param game               the current game
+     * @param weaponAttackAction the attack being rolled
+     *
+     * @return {@code true} if the attack should be rolled with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery(Game game, WeaponAttackAction weaponAttackAction) {
+        Entity attackingEntity = weaponAttackAction.getEntity(game);
+        Mounted<?> weapon = (attackingEntity == null) ? null :
+              attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
+        return isUseNaturalAptitudeGunnery(game, weapon);
+    }
+
+    /**
+     * Determines whether the Natural Aptitude matching the skill used for this weapon applies. A crew on foot using
+     * their Small Arms skill uses their Small Arms aptitude. Otherwise, artillery weapons use the Artillery aptitude
+     * when the Artillery skill game option is enabled, mirroring the skill selection in
+     * {@link megamek.common.actions.compute.ComputeToHit}.
+     *
+     * @param game   the current game; may only be {@code null} when {@code weapon} is also {@code null}
+     * @param weapon the weapon being fired, or {@code null} if unknown (in which case Gunnery is assumed)
+     *
+     * @return {@code true} if the attack should be rolled with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        if (usesSmallArms()) {
+            return isHasNaturalAptitudeSmallArms(gunnerPos);
+        }
+
+        if (isUsingArtillerySkill(game, weapon)) {
+            return isHasNaturalAptitudeArtillery();
+        }
+
+        return isHasNaturalAptitudeGunnery();
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    protected static boolean isUsingArtillerySkill(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        return (weapon != null)
+              && (weapon.getType() instanceof WeaponType weaponType)
+              && weaponType.hasFlag(WeaponType.F_ARTILLERY)
+              && (game != null)
+              && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
+    }
+
+    /**
+     * Determines whether the current pilot's Natural Aptitude for the piloting skill currently in use applies.
+     *
+     * @return {@code true} if the roll should be made with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudePiloting() {
+        return isUseNaturalAptitudePiloting(pilotPos);
+    }
+
+    /**
+     * Determines whether a specific crew member's Natural Aptitude for the piloting skill currently in use applies.
+     *
+     * @param pos the crew slot making the roll
+     *
+     * @return {@code true} if the roll should be made with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudePiloting(int pos) {
+        return isHasNaturalAptitudePiloting(pos);
+    }
 }

@@ -36,13 +36,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import java.awt.FontMetrics;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.swing.JTextField;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -196,4 +199,26 @@ class SearchableComboBoxTest {
         assertEquals("LRM 20 Thunder-Inferno", editorText(comboBox));
         assertEquals(3, comboBox.getSelectedIndex());
     }
+
+    @Test
+    @DisplayName("The box is sized for the widest entry measured in pixels, not in characters")
+    void theBoxIsSizedForTheWidestEntryInPixels() {
+        // "Machine Gun [Full]" has the same character count as "Machine Gun [Half]" but renders narrower, and
+        // real MegaMek ammo lists contain pairs exactly like it. Picking by character count therefore sizes the
+        // box too small and clips the entry that is genuinely the widest.
+        Munition full = new Munition("MG-F", "Machine Gun [Full]");
+        Munition half = new Munition("MG-H", "Machine Gun [Half]");
+        List<Munition> munitions = List.of(full, half);
+
+        SearchableComboBox<Munition> comboBox = new SearchableComboBox<>("mg", munitions, Munition::label);
+        FontMetrics fontMetrics = comboBox.getFontMetrics(comboBox.getFont());
+        assumeTrue(fontMetrics.stringWidth(half.label()) > fontMetrics.stringWidth(full.label()),
+              "This font must render the two labels at different widths for the test to mean anything");
+
+        Object prototype = comboBox.getPrototypeDisplayValue();
+
+        assertEquals(half, prototype,
+              "The prototype must be the entry that renders widest, not the first one with the most characters");
+    }
+
 }

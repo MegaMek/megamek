@@ -256,7 +256,7 @@ public class AvailabilityRating {
      * @param fRec faction-specific record, for equipment levels (typically A/B/C/D/F)
      */
     public void setRatingByNumericLevel(FactionRecord fRec) {
-        if (null != fRec) {
+        if (fRec != null) {
             if (hasMultipleRatings()) {
                 Collection<String> levelNames = ratingByLevel.keySet();
 

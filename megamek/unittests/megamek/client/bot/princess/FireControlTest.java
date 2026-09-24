@@ -237,6 +237,7 @@ class FireControlTest {
 
         mockBoard = mock(Board.class);
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
+        when(mockBoard.getBuildingsVector()).thenReturn(new Vector<>());
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
 
         mockGame = mock(Game.class);

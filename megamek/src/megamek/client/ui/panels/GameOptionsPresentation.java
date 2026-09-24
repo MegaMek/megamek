@@ -160,7 +160,8 @@ final class GameOptionsPresentation {
               OptionsConstants.BASE_BLIND_DROP,
               OptionsConstants.BASE_REAL_BLIND_DROP,
               OptionsConstants.BASE_SET_ARTY_PLAYER_HOME_EDGE,
-              OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0);
+              OptionsConstants.BASE_SET_PLAYER_DEPLOYMENT_TO_PLAYER_0,
+              OptionsConstants.BASE_WALK_ON_DEPLOYMENT);
         register(BASIC, GENERAL_MATCH_SETUP, "general.matchSetup.interface",
               OptionsConstants.BASE_LOBBY_AMMO_DUMP,
               OptionsConstants.BASE_DUMPING_FROM_ROUND,
@@ -225,7 +226,9 @@ final class GameOptionsPresentation {
               OptionsConstants.VICTORY_GAME_KILL_COUNT,
               OptionsConstants.VICTORY_USE_OBJECTIVES,
               OptionsConstants.VICTORY_VP_WIN_THRESHOLD,
-              OptionsConstants.VICTORY_VP_SUDDEN_DEATH);
+              OptionsConstants.VICTORY_VP_SUDDEN_DEATH,
+              OptionsConstants.VICTORY_USE_SENSOR_CHECK,
+              OptionsConstants.VICTORY_SCAN_EXIT_TURN);
 
         register(ALLOWED_UNITS, GENERAL_UNITS_AND_TECHNOLOGY, "allowedUnits.availability",
               OptionsConstants.ALLOWED_CANON_ONLY,
@@ -254,6 +257,7 @@ final class GameOptionsPresentation {
         register(ADVANCED_RULES, RULES_SENSORS, "rules.sensors.detection",
               OptionsConstants.ADVANCED_TAC_OPS_SENSORS,
               OptionsConstants.ADVANCED_TAC_OPS_BAP,
+              OptionsConstants.ADVANCED_TAC_OPS_SCANNING,
               OptionsConstants.ADVANCED_INCLUSIVE_SENSOR_RANGE,
               OptionsConstants.ADVANCED_SENSORS_DETECT_ALL,
               OptionsConstants.ADVANCED_MAG_SCAN_NO_HILLS,
@@ -550,6 +554,7 @@ final class GameOptionsPresentation {
           int order) {
         return new PageDefinition(id, categoryId, iconGroupId, "", advanced, order);
     }
+
     private static PageDefinition directPage(String id, String iconGroupId, boolean advanced, int order) {
         return new PageDefinition(id, "", iconGroupId, "", advanced, order);
     }

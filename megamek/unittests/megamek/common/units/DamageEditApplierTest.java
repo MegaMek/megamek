@@ -37,15 +37,20 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import megamek.common.CriticalSlot;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.GameOptions;
+import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.testUtilities.MMTestUtilities;
 import org.junit.jupiter.api.BeforeAll;
@@ -105,6 +110,145 @@ class DamageEditApplierTest {
         apply(spec);
 
         assertEquals(IArmorState.ARMOR_DESTROYED, mek.getInternal(Mek.LOC_LEFT_LEG));
+    }
+
+    @Test
+    void restoringStructureBringsBackABlownOffLimb() {
+        int location = Mek.LOC_LEFT_ARM;
+        mek.destroyLocation(location, true);
+        assertTrue(mek.isLocationBlownOff(location));
+        assertTrue(mek.getInternal(location) < 0,
+              "A blown-off location reads as gone whatever its structure value");
+
+        DamageEditSpec spec = emptySpec();
+        spec.internal[location] = mek.getOInternal(location);
+        spec.armor[location] = mek.getOArmor(location);
+        apply(spec);
+
+        assertFalse(mek.isLocationBlownOff(location), "The limb is back on");
+        assertFalse(mek.isLocationBad(location));
+        assertEquals(mek.getOInternal(location), mek.getInternal(location));
+        assertEquals(mek.getOArmor(location), mek.getArmor(location));
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = mek.getCritical(location, slot);
+            assertTrue((criticalSlot == null) || !criticalSlot.isMissing(), "No slot of the limb stays missing");
+        }
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == location) {
+                assertFalse(mounted.isMissing(), mounted.getName() + " is back with the limb");
+            }
+        }
+    }
+
+    @Test
+    void blownOffSwitchTakesTheLimbOffLikeACritical() {
+        int location = Mek.LOC_RIGHT_ARM;
+        DamageEditSpec spec = emptySpec();
+        spec.locationBlownOff = new Boolean[mek.locations()];
+        spec.locationBlownOff[location] = true;
+        // the editor still carries the arm's full structure, which must not bring it straight back
+        spec.internal[location] = mek.getOInternal(location);
+        spec.armor[location] = mek.getOArmor(location);
+
+        apply(spec);
+
+        assertTrue(mek.isLocationBlownOff(location), "The arm is gone");
+        assertTrue(mek.getInternal(location) < 0, "A blown-off arm reads as gone");
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == location) {
+                assertTrue(mounted.isMissing(), mounted.getName() + " went with the arm");
+            }
+        }
+    }
+
+    @Test
+    void untickingBlownOffBringsTheLimbBackWhole() {
+        int location = Mek.LOC_RIGHT_ARM;
+        mek.destroyLocation(location, true);
+        DamageEditSpec spec = emptySpec();
+        spec.locationBlownOff = new Boolean[mek.locations()];
+        spec.locationBlownOff[location] = false;
+        // an editor showing a gone limb reads zero structure and armor for it
+        spec.internal[location] = 0;
+        spec.armor[location] = 0;
+
+        apply(spec);
+
+        assertFalse(mek.isLocationBlownOff(location));
+        assertEquals(mek.getOInternal(location), mek.getInternal(location), "The returned arm is whole");
+        assertEquals(mek.getOArmor(location), mek.getArmor(location));
+    }
+
+    @Test
+    void targetModifierLandsOnTheUnitAndZeroClearsIt() {
+        DamageEditSpec spec = emptySpec();
+        spec.targetModifier = 3;
+        apply(spec);
+        assertEquals(3, mek.getGamemasterTargetModifier());
+
+        DamageEditSpec clear = emptySpec();
+        clear.targetModifier = 0;
+        apply(clear);
+        assertEquals(0, mek.getGamemasterTargetModifier(), "Zero clears the change");
+
+        apply(emptySpec());
+        assertEquals(0, mek.getGamemasterTargetModifier(), "An absent value leaves the unit alone");
+    }
+
+    @Test
+    void ejectionSettingsLandOnTheMek() {
+        Mek atlas = (Mek) mek;
+        assertTrue(atlas.isAutoEject(), "Automatic ejection is on by default");
+
+        DamageEditSpec spec = emptySpec();
+        spec.autoEject = false;
+        spec.conditionalEjectOnAmmoExplosion = false;
+        spec.conditionalEjectOnEngineExplosion = true;
+        spec.conditionalEjectOnCenterTorsoDestroyed = true;
+        spec.conditionalEjectOnHeadshot = false;
+        apply(spec);
+
+        assertFalse(atlas.isAutoEject(), "The gamemaster switched automatic ejection off");
+        assertFalse(atlas.isCondEjectAmmo());
+        assertTrue(atlas.isCondEjectEngine());
+        assertTrue(atlas.isCondEjectCTDest());
+        assertFalse(atlas.isCondEjectHeadshot());
+    }
+
+    @Test
+    void absentEjectionSettingsLeaveTheMekAlone() {
+        Mek atlas = (Mek) mek;
+        atlas.setCondEjectAmmo(false);
+
+        apply(emptySpec());
+
+        assertTrue(atlas.isAutoEject());
+        assertFalse(atlas.isCondEjectAmmo(), "A setting the editor did not offer is not touched");
+    }
+
+    @Test
+    void blownOffIsRefusedOnATorso() {
+        DamageEditSpec spec = emptySpec();
+        spec.locationBlownOff = new Boolean[mek.locations()];
+        spec.locationBlownOff[Mek.LOC_LEFT_TORSO] = true;
+
+        apply(spec);
+
+        assertFalse(mek.isLocationBlownOff(Mek.LOC_LEFT_TORSO), "Only arms and legs can be blown off");
+    }
+
+    @Test
+    void restoringStructureBringsBackADestroyedLocation() {
+        int location = Mek.LOC_LEFT_TORSO;
+        mek.destroyLocation(location, false);
+        assertTrue(mek.getInternal(location) < 0, "The location is destroyed");
+
+        DamageEditSpec spec = emptySpec();
+        spec.internal[location] = mek.getOInternal(location);
+        apply(spec);
+
+        assertEquals(mek.getOInternal(location), mek.getInternal(location));
+        assertFalse(mek.isLocationBad(location));
     }
 
     @Test
@@ -439,5 +583,171 @@ class DamageEditApplierTest {
         assertTrue(ecm.isModeTurnedOff());
         assertEquals(Mounted.MODE_OFF, stealth.curMode().getName(),
               "Stealth armor cannot run without an operating ECM, so it goes down with it");
+    }
+
+    @Test
+    void jamLandsOnTheWeaponAtOnce() {
+        WeaponMounted weapon = jammableWeapon();
+        int equipmentNumber = mek.getEquipmentNum(weapon);
+        assertFalse(weapon.isJammed(), "A freshly loaded weapon is not jammed");
+
+        DamageEditSpec jamSpec = emptySpec();
+        jamSpec.weaponJammed.put(equipmentNumber, true);
+        apply(jamSpec);
+        assertTrue(weapon.isJammed(), "The gamemaster's jam bites at once, with no phase turnover");
+
+        DamageEditSpec clearSpec = emptySpec();
+        clearSpec.weaponJammed.put(equipmentNumber, false);
+        apply(clearSpec);
+        assertFalse(weapon.isJammed(), "A gamemaster must be able to clear a jam");
+        assertFalse(weapon.jammedThisPhase(), "A cleared jam does not come back at the next phase");
+    }
+
+    @Test
+    void jamIsRefusedOnAWeaponThatCannotJam() {
+        WeaponMounted missileRack = null;
+        for (WeaponMounted weapon : mek.getWeaponList()) {
+            if (weapon.getType().getAmmoType() == AmmoType.AmmoTypeEnum.LRM) {
+                missileRack = weapon;
+            }
+        }
+        assertNotNull(missileRack, "The test unit carries an LRM rack");
+        assertFalse(missileRack.canJam(), "No rule jams a missile rack");
+
+        DamageEditSpec spec = emptySpec();
+        spec.weaponJammed.put(mek.getEquipmentNum(missileRack), true);
+        apply(spec);
+
+        assertFalse(missileRack.isJammed(), "A jam is refused on a weapon that cannot jam");
+    }
+
+    @Test
+    void firedLandsOnAOneShotLauncher() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Mounted<?> launcher = addEquipment(bipedMek, "ISSRM2OS", Mek.LOC_LEFT_TORSO);
+        int equipmentNumber = bipedMek.getEquipmentNum(launcher);
+        assertTrue(launcher.isOneShot(), "The test launcher must be a one-shot weapon");
+
+        applyWeaponFired(bipedMek, equipmentNumber, true);
+        assertTrue(launcher.isFired());
+
+        applyWeaponFired(bipedMek, equipmentNumber, false);
+        assertFalse(launcher.isFired(), "Clearing Fired reloads the launcher");
+    }
+
+    @Test
+    void firedIsRefusedOnAWeaponThatIsNotOneShot() {
+        Mounted<?> weapon = mek.getWeaponList().get(0);
+        assertFalse(weapon.isOneShot());
+
+        applyWeaponFired(mek, mek.getEquipmentNum(weapon), true);
+
+        assertFalse(weapon.isFired(), "Fired is a lasting state on one-shot weapons alone");
+    }
+
+    @Test
+    void directionalMountLockLandsOnAMountedWeapon() throws LocationFullException {
+        BipedMek bipedMek = new BipedMek();
+        Game game = new Game();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS).setValue(true);
+        bipedMek.setGame(game);
+        Mounted<?> laser = addEquipment(bipedMek, "ISERLargeLaser", Mek.LOC_RIGHT_TORSO);
+        laser.getQuirks().getOption(OptionsConstants.QUIRK_WEAPON_POS_DIRECT_TORSO_MOUNT).setValue(true);
+        assertTrue(laser.hasDirectionalTorsoMount(), "The test laser must sit in a Directional Torso Mount");
+        int equipmentNumber = bipedMek.getEquipmentNum(laser);
+
+        applyMountLock(bipedMek, equipmentNumber, true);
+        assertTrue(laser.isDirectionalMountLocked());
+
+        applyMountLock(bipedMek, equipmentNumber, false);
+        assertFalse(laser.isDirectionalMountLocked(), "A gamemaster must be able to free a locked mount");
+    }
+
+    @Test
+    void directionalMountLockIsRefusedWithoutAMount() {
+        Mounted<?> weapon = mek.getWeaponList().get(0);
+        assertFalse(weapon.hasDirectionalTorsoMount());
+
+        applyMountLock(mek, mek.getEquipmentNum(weapon), true);
+
+        assertFalse(weapon.isDirectionalMountLocked(), "Only a Directional Torso Mount can be locked");
+    }
+
+    @Test
+    void breachMarksTheLocationAndEverythingInIt() {
+        applyBreach(Mek.LOC_LEFT_TORSO, true);
+
+        assertEquals(ILocationExposureStatus.BREACHED, mek.getLocationStatus(Mek.LOC_LEFT_TORSO));
+        assertEquals(ILocationExposureStatus.NORMAL, mek.getLocationStatus(Mek.LOC_RIGHT_TORSO),
+              "Only the edited location is breached");
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == Mek.LOC_LEFT_TORSO) {
+                assertTrue(mounted.isBreached(), mounted.getName() + " in the breached location is out of action");
+            } else if (mounted.getLocation() == Mek.LOC_RIGHT_TORSO) {
+                assertFalse(mounted.isBreached(), mounted.getName() + " outside the breach is untouched");
+            }
+        }
+        assertTrue(allCriticalSlotsBreached(Mek.LOC_LEFT_TORSO, true));
+    }
+
+    @Test
+    void clearingABreachPutsTheLocationBackInService() {
+        applyBreach(Mek.LOC_LEFT_TORSO, true);
+
+        applyBreach(Mek.LOC_LEFT_TORSO, false);
+
+        assertEquals(ILocationExposureStatus.NORMAL, mek.getLocationStatus(Mek.LOC_LEFT_TORSO),
+              "A breached location is pinned in play, so the gamemaster's clear has to force it back");
+        for (Mounted<?> mounted : mek.getEquipment()) {
+            if (mounted.getLocation() == Mek.LOC_LEFT_TORSO) {
+                assertFalse(mounted.isBreached(), mounted.getName() + " is back in service");
+            }
+        }
+        assertTrue(allCriticalSlotsBreached(Mek.LOC_LEFT_TORSO, false));
+    }
+
+    /** A weapon of the test Mek that some rule can jam: its AC/20. */
+    private WeaponMounted jammableWeapon() {
+        for (WeaponMounted weapon : mek.getWeaponList()) {
+            if (weapon.canJam()) {
+                return weapon;
+            }
+        }
+        throw new AssertionError("The test unit must carry a weapon that can jam");
+    }
+
+    /** A spec holding only the given Fired state, applied to the given unit. */
+    private static void applyWeaponFired(Entity target, int equipmentNumber, boolean fired) {
+        DamageEditSpec spec = new DamageEditSpec();
+        spec.entityId = target.getId();
+        spec.weaponFired.put(equipmentNumber, fired);
+        new DamageEditApplier(target, spec).applyToEntity();
+    }
+
+    /** A spec holding only the given Directional Torso Mount lock, applied to the given unit. */
+    private static void applyMountLock(Entity target, int equipmentNumber, boolean locked) {
+        DamageEditSpec spec = new DamageEditSpec();
+        spec.entityId = target.getId();
+        spec.directionalMountLocked.put(equipmentNumber, locked);
+        new DamageEditApplier(target, spec).applyToEntity();
+    }
+
+    /** A spec breaching or sealing one location of the test Mek and nothing else. */
+    private void applyBreach(int location, boolean breached) {
+        DamageEditSpec spec = emptySpec();
+        spec.locationBreached = new Boolean[mek.locations()];
+        spec.locationBreached[location] = breached;
+        apply(spec);
+    }
+
+    /** Whether every occupied critical slot of the location carries the given breach mark. */
+    private boolean allCriticalSlotsBreached(int location, boolean breached) {
+        for (int slot = 0; slot < mek.getNumberOfCriticalSlots(location); slot++) {
+            CriticalSlot criticalSlot = mek.getCritical(location, slot);
+            if ((criticalSlot != null) && (criticalSlot.isBreached() != breached)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -52,6 +52,7 @@ import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.VirtualRealityPilotingPod;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
@@ -3165,7 +3166,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                   hit.getSpecCrit(), hit.isFromFront(),
                   hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_HEAD -> {
-                if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+                if (hasTorsoMountedCockpit()) {
                     yield new HitData(LOC_NONE);
                 }
                 yield new HitData(LOC_DESTROYED);
@@ -4169,6 +4170,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 roll.addModifier(4,
                       "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
+        } else if (hasVirtualRealityPilotingPod()) {
+            // IO:AE p.63: the pod's own piloting bonus, or the penalty while hostile interference disrupts it
+            VirtualRealityPilotingPod.addPilotingModifier(this, roll);
         } else if (getCockpitType() == Mek.COCKPIT_DUAL) {
             // Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner
             // acting as pilot.
@@ -4653,11 +4657,27 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
+     * @return {@code true} if the cockpit sits in the center torso: either a torso-mounted cockpit (TO:AR p.112) or a
+     *       Virtual Reality Piloting Pod (IO:AE p.63), which is built on one and shares its head-hit protection,
+     *       heat vulnerability and lack of an ejection seat
+     */
+    public boolean hasTorsoMountedCockpit() {
+        return (getCockpitType() == COCKPIT_TORSO_MOUNTED) || (getCockpitType() == COCKPIT_VRRP);
+    }
+
+    /**
+     * @return {@code true} if the cockpit is a Virtual Reality Piloting Pod (IO:AE p.63)
+     */
+    public boolean hasVirtualRealityPilotingPod() {
+        return getCockpitType() == COCKPIT_VRRP;
+    }
+
+    /**
      * @return unit has an ejection seat
      */
     public boolean hasEjectSeat() {
         // Ejection Seat
-        boolean result = getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED
+        boolean result = !hasTorsoMountedCockpit()
               && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
         // torso mounted cockpits don't have an ejection seat
         if (isIndustrial()) {
@@ -6439,8 +6459,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     public boolean hasArmoredCockpit() {
 
-        int location = getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED ? Mek.LOC_CENTER_TORSO
-              : Mek.LOC_HEAD;
+        int location = hasTorsoMountedCockpit() ? Mek.LOC_CENTER_TORSO : Mek.LOC_HEAD;
 
         for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
@@ -7126,7 +7145,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public boolean isEjectionPossible() {
-        return (getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
+        return !hasTorsoMountedCockpit()
               && getCrew().isActive() && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 

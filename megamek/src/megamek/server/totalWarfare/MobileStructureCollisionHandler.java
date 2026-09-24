@@ -43,6 +43,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.moves.MobileStructureGeometry;
 import megamek.common.moves.MobileStructureLinkage;
 import megamek.common.moves.MobileStructureMovement;
@@ -646,7 +647,7 @@ final class MobileStructureCollisionHandler extends AbstractTWRuleHandler {
         } else {
             while (damage > 0) {
                 HitData hit = target.rollHitLocation(ToHitData.HIT_NORMAL, target.sideTable(attacker.getPosition()));
-                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
                 addReport(gameManager.damageEntity(target, hit, Math.min(10, damage)));
                 damage -= Math.min(10, damage);
             }

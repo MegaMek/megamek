@@ -33,9 +33,7 @@
 package megamek.client.ui.dialogs.unitEditor;
 
 import java.util.Map;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JSpinner;
+import javax.swing.*;
 
 import megamek.client.ui.buttons.StateToggleButton;
 import megamek.common.annotations.Nullable;
@@ -102,7 +100,7 @@ public class UnitDamageSpecBuilder {
             spec.equipmentCharged.put(charged.getKey(), charged.getValue().isSelected());
         }
 
-        if (null != controls.spnGunneryModifier) {
+        if (controls.spnGunneryModifier != null) {
             spec.gunneryModifier = (Integer) controls.spnGunneryModifier.getValue();
             spec.gunneryRounds = (Integer) controls.spnGunneryRounds.getValue();
             spec.gunneryPermanent = controls.chkGunneryPermanent.isSelected();
@@ -111,11 +109,23 @@ public class UnitDamageSpecBuilder {
             spec.pilotingPermanent = controls.chkPilotingPermanent.isSelected();
         }
         // offered separately: the initiative row only exists under individual initiative
-        if (null != controls.spnInitiativeModifier) {
+        if (controls.spnInitiativeModifier != null) {
             spec.initiativeModifier = (Integer) controls.spnInitiativeModifier.getValue();
             spec.initiativeRounds = (Integer) controls.spnInitiativeRounds.getValue();
             spec.initiativePermanent = controls.chkInitiativePermanent.isSelected();
         }
+        spec.targetModifier = spinnerValue(controls.spnTargetModifier);
+
+        // ejection settings; the lobby's box reads "Disable", so the master switch travels inverted
+        Boolean autoEjectDisabled = checkboxValue(controls.chkAutoEjectDisabled);
+        spec.autoEject = (autoEjectDisabled == null) ? null : !autoEjectDisabled;
+        spec.conditionalEjectOnAmmoExplosion = checkboxValue(controls.chkConditionalEjectAmmo);
+        spec.conditionalEjectOnEngineExplosion = checkboxValue(controls.chkConditionalEjectEngine);
+        spec.conditionalEjectOnCenterTorsoDestroyed = checkboxValue(controls.chkConditionalEjectCenterTorso);
+        spec.conditionalEjectOnHeadshot = checkboxValue(controls.chkConditionalEjectHeadshot);
+        spec.conditionalEjectOnFuelExplosion = checkboxValue(controls.chkConditionalEjectFuel);
+        spec.conditionalEjectOnStructuralIntegrityDestroyed =
+              checkboxValue(controls.chkConditionalEjectStructuralIntegrity);
 
         spec.centerEngineHits = critHits(controls.centerEngineCrit);
         spec.leftEngineHits = critHits(controls.leftEngineCrit);
@@ -124,17 +134,17 @@ public class UnitDamageSpecBuilder {
         spec.sensorHits = critHits(controls.sensorCrit);
         spec.lifeSupportHits = critHits(controls.lifeSupportCrit);
         spec.cockpitHits = critHits(controls.cockpitCrit);
-        if (null != controls.lamAvionicsCrit) {
+        if (controls.lamAvionicsCrit != null) {
             for (Map.Entry<Integer, CheckCritPanel> avionicsCrit : controls.lamAvionicsCrit.entrySet()) {
                 spec.lamAvionicsHits.put(avionicsCrit.getKey(), avionicsCrit.getValue().getHits());
             }
         }
-        if (null != controls.lamLandingGearCrit) {
+        if (controls.lamLandingGearCrit != null) {
             for (Map.Entry<Integer, CheckCritPanel> landingGearCrit : controls.lamLandingGearCrit.entrySet()) {
                 spec.lamLandingGearHits.put(landingGearCrit.getKey(), landingGearCrit.getValue().getHits());
             }
         }
-        if (null != controls.actuatorCrits) {
+        if (controls.actuatorCrits != null) {
             spec.actuatorHits = new Integer[controls.actuatorCrits.length][];
             for (int i = 0; i < controls.actuatorCrits.length; i++) {
                 spec.actuatorHits[i] = critHitsRow(controls.actuatorCrits[i]);
@@ -156,10 +166,10 @@ public class UnitDamageSpecBuilder {
         spec.kfBoomHits = critHits(controls.kfBoomCrit);
         spec.dockCollarHits = critHits(controls.dockCollarCrit);
         spec.gravDeckHits = critHits(controls.gravDeckCrit);
-        if (null != controls.bayDamage) {
+        if (controls.bayDamage != null) {
             spec.bayCapacityRemaining = new Double[controls.bayDamage.length];
             for (int i = 0; i < controls.bayDamage.length; i++) {
-                if (null != controls.bayDamage[i]) {
+                if (controls.bayDamage[i] != null) {
                     spec.bayCapacityRemaining[i] = ((Number) controls.bayDamage[i].getValue()).doubleValue();
                 }
             }
@@ -186,16 +196,38 @@ public class UnitDamageSpecBuilder {
         for (Map.Entry<Integer, JCheckBox> turretLocked : controls.buildingTurretLocked.entrySet()) {
             spec.buildingTurretLocked.put(turretLocked.getKey(), turretLocked.getValue().isSelected());
         }
-        for (Map.Entry<Integer, JCheckBox> weaponJammed : controls.buildingWeaponJammed.entrySet()) {
-            spec.buildingWeaponJammed.put(weaponJammed.getKey(), weaponJammed.getValue().isSelected());
+
+        // the weapon and location states a gamemaster sets outright
+        for (Map.Entry<Integer, JCheckBox> weaponJammed : controls.weaponJammed.entrySet()) {
+            spec.weaponJammed.put(weaponJammed.getKey(), weaponJammed.getValue().isSelected());
         }
+        for (Map.Entry<Integer, JCheckBox> weaponFired : controls.weaponFired.entrySet()) {
+            spec.weaponFired.put(weaponFired.getKey(), weaponFired.getValue().isSelected());
+        }
+        for (Map.Entry<Integer, JCheckBox> mountLocked : controls.directionalMountLocked.entrySet()) {
+            spec.directionalMountLocked.put(mountLocked.getKey(), mountLocked.getValue().isSelected());
+        }
+        spec.locationBreached = checkboxValues(controls.chkLocationBreached);
+        spec.locationBlownOff = checkboxValues(controls.chkLocationBlownOff);
 
         return spec;
     }
 
+    /** The states of a row of checkboxes; {@code null} for a missing row, with null elements for missing boxes. */
+    private @Nullable Boolean[] checkboxValues(@Nullable JCheckBox[] checkboxes) {
+        if (null == checkboxes) {
+            return null;
+        }
+        Boolean[] values = new Boolean[checkboxes.length];
+        for (int i = 0; i < checkboxes.length; i++) {
+            values[i] = checkboxValue(checkboxes[i]);
+        }
+        return values;
+    }
+
     /** The values of a row of spinners; {@code null} for a missing row, with null elements for missing spinners. */
     private @Nullable Integer[] spinnerValues(@Nullable JSpinner[] spinners) {
-        if (null == spinners) {
+        if (spinners == null) {
             return null;
         }
         Integer[] values = new Integer[spinners.length];
@@ -207,27 +239,27 @@ public class UnitDamageSpecBuilder {
 
     /** A spinner's value; {@code null} for a missing spinner, which means the unit has nothing for it to edit. */
     private @Nullable Integer spinnerValue(@Nullable JSpinner spinner) {
-        return (null == spinner) ? null : (Integer) spinner.getValue();
+        return (spinner == null) ? null : (Integer) spinner.getValue();
     }
 
     /** A spinner's value as an integer whatever its model's number type, for the models that hold doubles. */
     private @Nullable Integer numberValue(@Nullable JSpinner spinner) {
-        return (null == spinner) ? null : ((Number) spinner.getValue()).intValue();
+        return (spinner == null) ? null : ((Number) spinner.getValue()).intValue();
     }
 
     /** A checkbox's state; {@code null} for a missing checkbox, which means the unit has nothing for it to edit. */
     private @Nullable Boolean checkboxValue(@Nullable JCheckBox checkbox) {
-        return (null == checkbox) ? null : checkbox.isSelected();
+        return (checkbox == null) ? null : checkbox.isSelected();
     }
 
     /** A crit control's hits; {@code null} for a missing control, which means the unit has no such system. */
     private @Nullable Integer critHits(@Nullable CheckCritPanel crit) {
-        return (null == crit) ? null : crit.getHits();
+        return (crit == null) ? null : crit.getHits();
     }
 
     /** The hits of a row of crit controls; {@code null} for a missing row, with null elements for missing crits. */
     private @Nullable Integer[] critHitsRow(@Nullable CheckCritPanel[] crits) {
-        if (null == crits) {
+        if (crits == null) {
             return null;
         }
         Integer[] hits = new Integer[crits.length];

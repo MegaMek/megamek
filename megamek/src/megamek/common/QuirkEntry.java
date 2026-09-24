@@ -161,7 +161,7 @@ public record QuirkEntry(String code, String value, String location, int slot, S
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final QuirkEntry other = (QuirkEntry) obj;

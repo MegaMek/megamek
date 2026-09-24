@@ -49,12 +49,16 @@ import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
 
     protected MegaMekButton butSkipTurn;
+
+    private static final MMLogger LOGGER = MMLogger.create(ActionPhaseDisplay.class);
 
     /** The currently selected unit for taking action. Not necessarily equal to the unit shown in the unit viewer. */
     protected int currentEntity = Entity.NONE;
@@ -326,6 +330,31 @@ public abstract class ActionPhaseDisplay extends StatusBarPhaseDisplay {
      */
     public final Entity currentEntity() {
         return game.getEntity(currentEntity);
+    }
+
+    /**
+     * Whether a turn change has to pick a unit for the player: none is selected, or the selected one can no
+     * longer take the current turn. The second case comes from a gamemaster act mid-turn - a unit destroyed, or
+     * its crew ejected, by an explode, kill or fatal damage edit - which the server follows with a fresh turn
+     * packet so that the display moves on to a unit that can act instead of offering moves the server will refuse.
+     * A selection that cannot act is dropped here, so a display that does not auto-select a unit is left with
+     * none selected rather than with a dead one.
+     *
+     * @return {@code true} if the display should begin the turn afresh and select a unit
+     */
+    protected boolean needsUnitSelectedForTurn() {
+        if (currentEntity == Entity.NONE) {
+            return true;
+        }
+        Entity selected = currentEntity();
+        GameTurn turn = game.getTurn();
+        boolean canTakeTurn = (selected != null) && (turn != null) && turn.isValidEntity(selected, game, false);
+        if (!canTakeTurn) {
+            LOGGER.info("[GMTurn] {} can no longer take the current turn; selecting another unit",
+                  (selected == null) ? "the selected unit" : selected.getDisplayName());
+            currentEntity = Entity.NONE;
+        }
+        return !canTakeTurn;
     }
 
     protected void clearMovementSprites() {

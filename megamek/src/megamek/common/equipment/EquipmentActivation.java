@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Entity;
 
 /**
@@ -225,5 +226,54 @@ public final class EquipmentActivation {
             label.append(" #").append(suiteNumber);
         }
         return label.append(" (").append(entity.getLocationName(ecmSuite.getLocation())).append(')').toString();
+    }
+
+    /**
+     * Returns whether a weapon's linked fire control enhancement is both intact and switched on, so it applies its
+     * effect to a shot.
+     *
+     * <p>Covers the guidance systems a player may switch off per BMM p.12: Artemis IV, Artemis V, Proto Artemis and
+     * the Apollo MRM FCS. Equipment that defines no {@code "Off"} mode reports as switched on, so passing any other
+     * flag behaves exactly as the intact-and-installed check did before this method existed.</p>
+     *
+     * <p>Example: a Mad Dog Prime fires an LRM 20 with Artemis IV and Artemis-capable ammo. Normally that is a -1
+     * to hit and the missiles roll on a better cluster row. With the Artemis switched off, the shot resolves as a
+     * plain LRM 20 with unguided ammo instead.</p>
+     *
+     * @param linker the equipment the weapon is linked by, which may be {@code null} when nothing is linked
+     * @param flag   the fire control flag to look for
+     *
+     * @return {@code true} when the linked equipment carries that flag, is undamaged, and is not switched off
+     */
+    public static boolean isGuidanceActive(@Nullable Mounted<?> linker, MiscTypeFlag flag) {
+        return (linker != null)
+              && (linker.getType() instanceof MiscType)
+              && linker.getType().hasFlag(flag)
+              && !linker.isDestroyed()
+              && !linker.isMissing()
+              && !linker.isBreached()
+              && !linker.isModeTurnedOff();
+    }
+
+    /**
+     * Returns whether a unit mounts at least one fire control enhancement of the given kind that is intact and
+     * switched on.
+     *
+     * <p>Used to decide whether to offer the player an option that needs working guidance at all, such as the MRM
+     * saturation attack an Apollo allows. Whether a particular shot gets the benefit is a per-weapon question, which
+     * {@link #isGuidanceActive(Mounted, MiscTypeFlag)} answers.</p>
+     *
+     * @param entity the unit to check
+     * @param flag   the fire control flag to look for
+     *
+     * @return {@code true} when at least one such system is mounted, undamaged, and not switched off
+     */
+    public static boolean hasActiveGuidance(Entity entity, MiscTypeFlag flag) {
+        for (MiscMounted equipment : entity.getMisc()) {
+            if (isGuidanceActive(equipment, flag)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

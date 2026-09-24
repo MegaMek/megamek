@@ -176,6 +176,8 @@ public class MULParser {
     public static final String ATTR_PICKUP_ID = "pickUpId";
     public static final String ATTR_CLAN_PILOT = "clanperson";
     public static final String ATTR_ARMOR_KIT = "armorkit";
+    public static final String ATTR_SIDEARM = "sidearm";
+    public static final String ATTR_SMALL_ARMS = "smallarms";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";
@@ -186,6 +188,13 @@ public class MULParser {
     public static final String ATTR_GUNNERY_B = "gunneryB";
     public static final String ATTR_PILOTING = "piloting";
     public static final String ATTR_ARTILLERY = "artillery";
+    public static final String ATTR_NATURAL_APTITUDE_GUNNERY = "naturalAptitudeGunnery";
+    public static final String ATTR_NATURAL_APTITUDE_ARTILLERY = "naturalAptitudeArtillery";
+    public static final String ATTR_NATURAL_APTITUDE_PILOTING = "naturalAptitudePiloting";
+    public static final String ATTR_NATURAL_APTITUDE_SMALL_ARMS = "naturalAptitudeSmallArms";
+    // The retired Natural Aptitude SPAs, still found in the advantages of older unit lists
+    private static final String LEGACY_NATURAL_APTITUDE_GUNNERY = "aptitude_gunnery";
+    private static final String LEGACY_NATURAL_APTITUDE_PILOTING = "aptitude_piloting";
     public static final String ATTR_TOUGH = "toughness";
     public static final String ATTR_FATIGUE = "fatigue";
     public static final String ATTR_INIT_B = "initB";
@@ -309,6 +318,8 @@ public class MULParser {
     public static final String ATTR_GUNNERY_AERO_M = "gunneryAeroM";
     public static final String ATTR_GUNNERY_AERO_B = "gunneryAeroB";
     public static final String ATTR_PILOTING_AERO = "pilotingAero";
+    public static final String ATTR_NATURAL_APTITUDE_GUNNERY_AERO = "naturalAptitudeGunneryAero";
+    public static final String ATTR_NATURAL_APTITUDE_PILOTING_AERO = "naturalAptitudePilotingAero";
     public static final String ATTR_CREW_TYPE = "crewType";
     public static final String ATTR_FILENAME = "filename";
 
@@ -1244,7 +1255,7 @@ public class MULParser {
         }
 
         Crew crew;
-        if (null != entity) {
+        if (entity != null) {
             crew = new Crew(entity.getCrew().getCrewType());
         } else {
             crew = new Crew(CrewType.SINGLE);
@@ -1271,6 +1282,16 @@ public class MULParser {
             ((LAMPilot) crew).setGunneryAeroB(aeroCrew.getGunneryB());
             ((LAMPilot) crew).setGunneryAeroL(aeroCrew.getGunneryL());
             ((LAMPilot) crew).setPilotingAero(aeroCrew.getPiloting());
+            // convertToLAMPilot copies the Mek aptitudes to Aero, which is what we want for files written before the
+            // Aero aptitudes were saved separately
+            if (attributes.containsKey(ATTR_NATURAL_APTITUDE_GUNNERY_AERO)) {
+                ((LAMPilot) crew).setHasNaturalAptitudeGunneryAero(
+                      parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_GUNNERY_AERO));
+            }
+            if (attributes.containsKey(ATTR_NATURAL_APTITUDE_PILOTING_AERO)) {
+                ((LAMPilot) crew).setHasNaturalAptitudePilotingAero(
+                      parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING_AERO));
+            }
             entity.setCrew(crew);
         }
         pilots.add(crew);
@@ -1353,6 +1374,84 @@ public class MULParser {
     }
 
     /**
+     * @return {@code true} if the attribute is present and set to {@code true}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static boolean parseBooleanAttribute(final Map<String, String> attributes, final String key) {
+        return attributes.containsKey(key) && Boolean.parseBoolean(attributes.get(key));
+    }
+
+    /**
+     * Reads a crew member's Natural Aptitudes. Absent attributes are left alone rather than cleared, so a legacy SPA
+     * converted by {@link #convertLegacyNaturalAptitudes(Crew, Map)} isn't undone regardless of which runs first.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void setNaturalAptitudeAttributes(final Crew crew, final int slot,
+          final Map<String, String> attributes) {
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_GUNNERY)) {
+            crew.setHasNaturalAptitudeGunnery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_GUNNERY), slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_ARTILLERY)) {
+            crew.setHasNaturalAptitudeArtillery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_ARTILLERY),
+                  slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_PILOTING)) {
+            crew.setHasNaturalAptitudePiloting(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING),
+                  slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_SMALL_ARMS)) {
+            crew.setHasNaturalAptitudeSmallArms(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_SMALL_ARMS),
+                  slot);
+        }
+    }
+
+    /**
+     * @return {@code true} if the advantage name is one of the retired Natural Aptitude SPAs
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static boolean isLegacyNaturalAptitude(final String advantageName) {
+        return LEGACY_NATURAL_APTITUDE_GUNNERY.equals(advantageName)
+              || LEGACY_NATURAL_APTITUDE_PILOTING.equals(advantageName);
+    }
+
+    /**
+     * Natural Aptitude used to be a pair of SPAs. Files written before it became a property of the crew's skills
+     * store it in the advantages list instead; convert those into the new crew flags. The old Gunnery SPA applied to
+     * every gunnery roll, including artillery, so it grants both the Gunnery and Artillery aptitudes. SPAs were held
+     * by the crew as a whole, so every crew member receives the aptitude.
+     *
+     * <p>This is done regardless of whether pilot advantages are enabled, as Natural Aptitude is no longer an
+     * SPA.</p>
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void convertLegacyNaturalAptitudes(final Crew crew, final Map<String, String> attributes) {
+        if (!attributes.containsKey(ATTR_ADVANTAGES) || attributes.get(ATTR_ADVANTAGES).isBlank()) {
+            return;
+        }
+
+        StringTokenizer st = new StringTokenizer(attributes.get(ATTR_ADVANTAGES), "::");
+        while (st.hasMoreTokens()) {
+            String advantageName = Crew.parseAdvantageName(st.nextToken());
+            for (int slot = 0; slot < crew.getSlotCount(); slot++) {
+                if (LEGACY_NATURAL_APTITUDE_GUNNERY.equals(advantageName)) {
+                    crew.setHasNaturalAptitudeGunnery(true, slot);
+                    crew.setHasNaturalAptitudeArtillery(true, slot);
+                } else if (LEGACY_NATURAL_APTITUDE_PILOTING.equals(advantageName)) {
+                    crew.setHasNaturalAptitudePiloting(true, slot);
+                }
+            }
+        }
+    }
+
+    /**
      * Helper method that sets field values for the crew as a whole, either from a
      * <pilot> element
      * (single/collective crews) or a <crew> element (multi-crew cockpits). If an
@@ -1395,7 +1494,7 @@ public class MULParser {
 
                 }
                 crew.setSize(crewSize);
-            } else if (null != entity) {
+            } else if (entity != null) {
                 crew.setSize(Compute.getFullCrewSize(entity));
                 // Reset the currentSize equal to the max size
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
@@ -1411,7 +1510,7 @@ public class MULParser {
 
                 }
                 crew.setCurrentSize(crewCurrentSize);
-            } else if (null != entity) {
+            } else if (entity != null) {
                 // Reset the currentSize equal to the max size
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
             }
@@ -1420,6 +1519,8 @@ public class MULParser {
         crew.setInitBonus(initBVal);
         crew.setCommandBonus(commandBVal);
 
+        convertLegacyNaturalAptitudes(crew, attributes);
+
         if ((options != null) && options.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)
               && attributes.containsKey(ATTR_ADVANTAGES) && !attributes.get(ATTR_ADVANTAGES).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ATTR_ADVANTAGES), "::");
@@ -1427,6 +1528,11 @@ public class MULParser {
                 String adv = st.nextToken();
                 String advName = Crew.parseAdvantageName(adv);
                 Object value = Crew.parseAdvantageValue(adv);
+
+                if (isLegacyNaturalAptitude(advName)) {
+                    // Handled by convertLegacyNaturalAptitudes
+                    continue;
+                }
 
                 try {
                     crew.getOptions().getOption(advName).setValue(value);
@@ -1490,7 +1596,7 @@ public class MULParser {
             crew.setEjected(Boolean.parseBoolean(attributes.get(ATTR_EJECTED)));
         }
 
-        if (null != entity) {
+        if (entity != null) {
             // Set the crew for this entity.
             entity.setCrew(crew);
 
@@ -1589,6 +1695,33 @@ public class MULParser {
                 }
             }
         }
+    }
+
+    /**
+     * Reads a crew member's Small Arms skill, if the file carries one. A missing or blank attribute leaves the
+     * skill unset, so the crew member fires on foot with their gunnery; a value outside the skill range is reported
+     * and ignored rather than trusted.
+     *
+     * @param crew       the crew being filled in
+     * @param slot       the crew slot these attributes belong to
+     * @param attributes the attributes read for that slot
+     */
+    private void setSmallArmsAttribute(final Crew crew, final int slot, final Map<String, String> attributes) {
+        if (!attributes.containsKey(ATTR_SMALL_ARMS) || attributes.get(ATTR_SMALL_ARMS).isBlank()) {
+            return;
+        }
+        int smallArmsValue;
+        try {
+            smallArmsValue = Integer.parseInt(attributes.get(ATTR_SMALL_ARMS));
+        } catch (NumberFormatException ignored) {
+            warning.append("Found invalid small arms value: ").append(attributes.get(ATTR_SMALL_ARMS)).append(".\n");
+            return;
+        }
+        if ((smallArmsValue < 0) || (smallArmsValue > Crew.MAX_SKILL)) {
+            warning.append("Found invalid small arms value: ").append(attributes.get(ATTR_SMALL_ARMS)).append(".\n");
+            return;
+        }
+        crew.setSmallArms(smallArmsValue, slot);
     }
 
     /**
@@ -1743,6 +1876,7 @@ public class MULParser {
             crew.setPiloting(pilotVal, slot);
             crew.setToughness(toughVal, slot);
             crew.setCrewFatigue(fatigueVal, slot);
+            setNaturalAptitudeAttributes(crew, slot, attributes);
 
             if ((attributes.containsKey(ATTR_NAME)) && !attributes.get(ATTR_NAME).isBlank()) {
                 crew.setName(attributes.get(ATTR_NAME), slot);
@@ -1768,6 +1902,13 @@ public class MULParser {
             if ((attributes.containsKey(ATTR_ARMOR_KIT)) && !attributes.get(ATTR_ARMOR_KIT).isBlank()) {
                 crew.setArmorKitName(attributes.get(ATTR_ARMOR_KIT), slot);
             }
+
+            // The sidearm and the Small Arms skill cross on the same seam. A blank or absent attribute leaves the
+            // crew member unarmed and firing with their gunnery on foot, which is what every older file means.
+            if ((attributes.containsKey(ATTR_SIDEARM)) && !attributes.get(ATTR_SIDEARM).isBlank()) {
+                crew.setSidearmName(attributes.get(ATTR_SIDEARM), slot);
+            }
+            setSmallArmsAttribute(crew, slot, attributes);
 
             if ((attributes.containsKey(ATTR_CAT_PORTRAIT)) && !attributes.get(ATTR_CAT_PORTRAIT).isBlank()) {
                 crew.getPortrait(slot).setCategory(attributes.get(ATTR_CAT_PORTRAIT));

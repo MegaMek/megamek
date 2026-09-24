@@ -197,7 +197,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
         Coords finalPos;
 
         // Handle counter-battery on fleeing/fled off-board targets.
-        if (null == targetPos) {
+        if (targetPos == null) {
             logger.error("Artillery Target {} is missing; off-board target fled?", weaponAttackAction.getTargetId());
             return false;
         }

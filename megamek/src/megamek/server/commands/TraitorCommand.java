@@ -71,11 +71,11 @@ public class TraitorCommand extends ServerCommand {
             Entity ent = gameManager.getGame().getEntity(eid);
             int pid = Integer.parseInt(args[2]);
             Player player = server.getGame().getPlayer(pid);
-            if (null == ent) {
+            if (ent == null) {
                 server.sendServerChat(connId, "No such entity.");
             } else if (ent.getOwner().getId() != connId) {
                 server.sendServerChat(connId, "You must own an entity to make it switch sides.");
-            } else if (null == player) {
+            } else if (player == null) {
                 server.sendServerChat(connId, "No such player.");
             } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 server.sendServerChat(connId, "Player must be assigned a team.");

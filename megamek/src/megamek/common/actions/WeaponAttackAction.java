@@ -519,7 +519,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 eiStatus = 1;
             }
         }
-        
+
         ToHitData losMods = los.losModifiers(game, eiStatus, attackingEntity.isUnderwater());
         ToHitData toHit = new ToHitData(0, Messages.getString("WeaponAttackAction.BaseToHit"));
 
@@ -786,7 +786,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
     @Override
     public String toAccessibilityDescription(Client client) {
-        if (null == client || null == getTarget(client.getGame())) {
+        if (client == null || getTarget(client.getGame()) == null) {
             LOGGER.warn("Unable to construct WAA displayable string due to null reference");
             return "Attacking Null Target with id " + getTargetId() + " using Weapon with id " + weaponId;
         }

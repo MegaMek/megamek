@@ -126,7 +126,9 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 if (gameManager.getGame().getBoard().isGround()) {
                     List<GameTurn> victorySetupTurns = new ArrayList<>();
                     for (Player player : gameManager.getGame().getPlayersList()) {
-                        boolean canPlaceObjectives = !player.isObserver() && !player.isGhost();
+                        // a game master with no units of their own is an observer, but still authors the mission
+                        boolean canPlaceObjectives = (!player.isObserver() || player.isGameMaster())
+                              && !player.isGhost();
                         if (canPlaceObjectives) {
                             victorySetupTurns.add(new GameTurn(player.getId()));
                         }
@@ -256,6 +258,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.checkLayExplosives();
                 gameManager.checkBuildBridges();
                 gameManager.checkClearRubble();
+                gameManager.checkCraneOperations();
                 gameManager.checkDeployBridges();
                 gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();

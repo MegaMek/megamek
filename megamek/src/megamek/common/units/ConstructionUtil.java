@@ -123,7 +123,7 @@ public class ConstructionUtil {
                 removeCriticalSlots(unit, a);
                 Mounted<?> moveTo = findUnallocatedAmmo(unit, a.getType());
 
-                if (null != moveTo) {
+                if (moveTo != null) {
                     moveTo.setShotsLeft(moveTo.getBaseShotsLeft() + a.getBaseShotsLeft());
                     removeMounted(unit, a);
                 }

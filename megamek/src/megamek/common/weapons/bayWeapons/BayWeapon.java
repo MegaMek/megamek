@@ -116,7 +116,7 @@ public abstract class BayWeapon extends Weapon {
         int mrange = RANGE_SHORT;
         Entity ae = weapon.getEntity();
         AmmoMounted mAmmo;
-        if (null != ae) {
+        if (ae != null) {
             for (WeaponMounted bayW : weapon.getBayWeapons()) {
                 mAmmo = (ammo != null) ? ammo : bayW.getLinkedAmmo();
                 WeaponType bayWType = bayW.getType();

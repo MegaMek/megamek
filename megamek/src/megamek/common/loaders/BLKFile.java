@@ -605,7 +605,7 @@ public class BLKFile {
             for (String line : dataFile.getDataAsString("systemManufacturers")) {
                 String[] fields = line.split(":");
                 System comp = System.parse(fields[0]);
-                if ((null != comp) && (fields.length > 1)) {
+                if ((comp != null) && (fields.length > 1)) {
                     e.getFluff().setSystemManufacturer(comp, fields[1]);
                 }
             }
@@ -615,7 +615,7 @@ public class BLKFile {
             for (String line : dataFile.getDataAsString("systemModels")) {
                 String[] fields = line.split(":");
                 System comp = System.parse(fields[0]);
-                if ((null != comp) && (fields.length > 1)) {
+                if ((comp != null) && (fields.length > 1)) {
                     e.getFluff().setSystemModel(comp, fields[1]);
                 }
             }
@@ -1174,13 +1174,13 @@ public class BLKFile {
                 if (infantry.getSecondaryWeaponsPerSquad() > 0) {
                     blk.writeBlockData("secondn", infantry.getSecondaryWeaponsPerSquad());
                 }
-                if (null != infantry.getPrimaryWeapon()) {
+                if (infantry.getPrimaryWeapon() != null){
                     blk.writeBlockData("Primary", infantry.getPrimaryWeapon().getInternalName());
                 }
-                if (null != infantry.getSecondaryWeapon()) {
+                if (infantry.getSecondaryWeapon() != null){
                     blk.writeBlockData("Secondary", infantry.getSecondaryWeapon().getInternalName());
                 }
-                if (null != infantry.getDisposableWeapon()) {
+                if (infantry.getDisposableWeapon() != null){
                     blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
                 }
                 if (infantry.getCustomArmorName() != null) {

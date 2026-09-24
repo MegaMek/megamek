@@ -32,6 +32,8 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
@@ -39,8 +41,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;
 import megamek.common.units.Entity;
-
-import java.util.Vector;
+import megamek.common.units.Mek;
 
 public class CoreRulesWeapons extends RulesWeapons {
 
@@ -81,7 +82,7 @@ public class CoreRulesWeapons extends RulesWeapons {
                          Vector<Report> reports,
                          int entityId) {
         if (!mounted.isAutocannonHit()) {
-            if (mounted.getNumCriticalSlots() == 1) {
+            if (mounted.getNumCriticalSlots() == 1 || !(mounted.getEntity() instanceof Mek)) {
                 cs.setHit(false);
             }
             mounted.setHit(false);
@@ -182,5 +183,17 @@ public class CoreRulesWeapons extends RulesWeapons {
     @Override
     public boolean getApolloSaturationMode() {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Core does not halve damage under minimums
+     */
+    @Override
+    public double thunderboltMinimum(final double toReturn,
+                                     final int nRange,
+                                     final int minRange,
+                                     final boolean hotLoaded) {
+        return toReturn;
     }
 }

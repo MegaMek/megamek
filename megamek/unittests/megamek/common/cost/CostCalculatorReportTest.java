@@ -75,7 +75,10 @@ class CostCalculatorReportTest {
         assertNotNull(report.result("Chassis"));
         assertNotNull(report.result("Engine"));
         assertNotNull(report.result("Armor"));
-        assertEquals(NumberFormat.getInstance().format(returnedCost), report.total());
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        assertEquals(costFormatter.format(returnedCost), report.total());
     }
 
     @Test
@@ -86,7 +89,7 @@ class CostCalculatorReportTest {
 
         double returnedCost = CombatVehicleCostCalculator.calculateCost(tank, report, true);
 
-        assertEquals("N/A", report.result("Flotation Hull/Environmental Sealing multiplier"));
+        assertEquals("N/A", report.result("Flotation Hull/Environmental Sealing Multiplier"));
         assertEquals("x 1.2", report.result("Off-Road Multiplier"));
         assertReportTotalMatchesReturnedCost(returnedCost, report);
     }
@@ -99,7 +102,7 @@ class CostCalculatorReportTest {
 
         double returnedCost = CombatVehicleCostCalculator.calculateCost(tank, report, true);
 
-        assertEquals("300", report.result("Extra Crew Seats"));
+        assertEquals("300.00", report.result("Extra Crew Seats"));
         assertReportTotalMatchesReturnedCost(returnedCost, report);
     }
 
@@ -114,7 +117,7 @@ class CostCalculatorReportTest {
               .filter(mount -> mount.getType().hasFlag(MiscType.F_HEAD_TURRET))
               .findFirst()
               .orElseThrow();
-        assertEquals(10000, headTurret.getCost());
+        assertEquals(10000.00, headTurret.getCost());
         assertReportTotalMatchesReturnedCost(returnedCost, report);
     }
 
@@ -123,10 +126,13 @@ class CostCalculatorReportTest {
         CostRun noCollar = calculateDropShipCost(Dropship.COLLAR_NO_BOOM);
         CostRun standard = calculateDropShipCost(Dropship.COLLAR_STANDARD);
         CostRun prototype = calculateDropShipCost(Dropship.COLLAR_PROTOTYPE);
-
         assertEquals("N/A", noCollar.report().result("Docking Collar"));
-        assertEquals(NumberFormat.getInstance().format(10000), standard.report().result("Docking Collar"));
-        assertEquals(NumberFormat.getInstance().format(1010000), prototype.report().result("Docking Collar"));
+
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        assertEquals(costFormatter.format(10000.00), standard.report().result("Docking Collar"));
+        assertEquals(costFormatter.format(1010000.00), prototype.report().result("Docking Collar"));
         assertEquals(noCollar.report().result("Bays"), standard.report().result("Bays"));
         assertEquals(noCollar.report().result("Bays"), prototype.report().result("Bays"));
         assertEquals(noCollar.report().result("Quarters"), standard.report().result("Quarters"));
@@ -135,8 +141,8 @@ class CostCalculatorReportTest {
         assertEquals("x 28", noCollar.report().result("Final Multiplier"));
         assertEquals("x 28", standard.report().result("Final Multiplier"));
         assertEquals("x 28", prototype.report().result("Final Multiplier"));
-        assertEquals(280000, standard.cost() - noCollar.cost());
-        assertEquals(28280000, prototype.cost() - noCollar.cost());
+        assertEquals(280000.00, standard.cost() - noCollar.cost());
+        assertEquals(28280000.00, prototype.cost() - noCollar.cost());
         assertReportTotalMatchesReturnedCost(noCollar);
         assertReportTotalMatchesReturnedCost(standard);
         assertReportTotalMatchesReturnedCost(prototype);
@@ -150,11 +156,17 @@ class CostCalculatorReportTest {
     }
 
     private static void assertReportTotalMatchesReturnedCost(CostRun run) {
-        assertEquals(NumberFormat.getInstance().format(run.cost()), run.report().total());
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        assertEquals(costFormatter.format(run.cost()), run.report().total());
     }
 
     private static void assertReportTotalMatchesReturnedCost(double cost, RecordingCalculationReport report) {
-        assertEquals(NumberFormat.getInstance().format(cost), report.total());
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        assertEquals(costFormatter.format(cost), report.total());
     }
 
     private static Entity loadUnit(String filename) throws Exception {
@@ -175,7 +187,7 @@ class CostCalculatorReportTest {
 
         @Override
         public CalculationReport addResultLine(String type, String calculation, String result) {
-            if ("Total Cost:".equals(type)) {
+            if ("Total Cost (C-bills)".equals(type)) {
                 total = result;
             }
             return this;

@@ -164,8 +164,6 @@ public class OptionsConstants {
     public static final String QUIRK_WEAPON_NEG_MIS_REPLACED = "misreplaced_weapon";
 
     // PILOTING SKILLS
-    public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery";
-    public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting";
     public static final String PILOT_ANIMAL_MIMIC = "animal_mimic";
     public static final String PILOT_CROSS_COUNTRY = "cross_country";
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";
@@ -240,6 +238,7 @@ public class OptionsConstants {
     public static final String EDGE_WHEN_KO = "edge_when_ko";
     public static final String EDGE_WHEN_EXPLOSION = "edge_when_explosion";
     public static final String EDGE_WHEN_MASC_FAILS = "edge_when_masc_fails";
+    public static final String EDGE_WHEN_SCAN_FAILS = "edge_when_scan_fails";
     // Aero Triggers
     public static final String EDGE_WHEN_AERO_ALT_LOSS = "edge_when_aero_alt_loss";
     public static final String EDGE_WHEN_AERO_EXPLOSION = "edge_when_aero_explosion";
@@ -340,6 +339,7 @@ public class OptionsConstants {
     public static final String BASE_GM_CONTROLS_DONE_REPORT_PHASE = "gm_controls_done_report_phase";
     public static final String BASE_HIDE_UNOFFICIAL = "hide_unofficial";
     public static final String BASE_HIDE_LEGACY = "hide_legacy";
+    public static final String BASE_WALK_ON_DEPLOYMENT = "walk_on_deployment";
 
     public static final String VICTORY_SKIP_FORCED_VICTORY = "skip_forced_victory";
     public static final String VICTORY_CHECK_VICTORY = "check_victory";
@@ -356,6 +356,8 @@ public class OptionsConstants {
     public static final String VICTORY_USE_OBJECTIVES = "use_objectives";
     public static final String VICTORY_VP_WIN_THRESHOLD = "vp_win_threshold";
     public static final String VICTORY_VP_SUDDEN_DEATH = "vp_sudden_death";
+    public static final String VICTORY_USE_SENSOR_CHECK = "use_sensor_check";
+    public static final String VICTORY_SCAN_EXIT_TURN = "scan_exit_turn";
 
     public static final String ALLOWED_CANON_ONLY = "canon_only";
     public static final String ALLOWED_YEAR = "year";
@@ -378,6 +380,7 @@ public class OptionsConstants {
     public static final String ADVANCED_SUPPRESS_DB_BV = "suppress_double_blind_bv";
     public static final String ADVANCED_TEAM_VISION = "team_vision";
     public static final String ADVANCED_TAC_OPS_BAP = "tacops_bap";
+    public static final String ADVANCED_TAC_OPS_SCANNING = "tacops_scanning";
     public static final String ADVANCED_TAC_OPS_ECCM = "tacops_eccm";
     public static final String ADVANCED_TAC_OPS_C3_EMERGENCY_MASTER = "tacops_c3_emergency_master";
     public static final String ADVANCED_TAC_OPS_GHOST_TARGET = "tacops_ghost_target";

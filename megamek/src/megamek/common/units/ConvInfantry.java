@@ -1136,21 +1136,21 @@ public class ConvInfantry extends Infantry {
                   && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                   && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
                   && !hasNonEncumberingSecondaryWeaponSpecialization()
-                  && (null != secondaryWeapon)
+                && (secondaryWeapon != null)
                   && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
                   && !getMovementMode().isTracked()
                   && !getMovementMode().isJumpInfantry()) {
                 mp = Math.max(mp - 1, 0);
             }
             // PL-MASC IntOps p.84
-            if ((null != getCrew())
+            if ((getCrew() != null)
                   && hasAbility(OptionsConstants.MD_PL_MASC)
                   && getMovementMode().isLegInfantry()
                   && isConventionalInfantry()) {
                 mp += 1;
             }
 
-            if ((null != getCrew())
+            if ((getCrew() != null)
                   && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                   && getMovementMode().isJumpOrLegInfantry()) {
                 mp += 1;
@@ -1161,7 +1161,7 @@ public class ConvInfantry extends Infantry {
             }
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -1410,7 +1410,7 @@ public class ConvInfantry extends Infantry {
 
     public void setSecondaryWeapon(InfantryWeapon w) {
         secondaryWeapon = w;
-        if (null == w) {
+        if (w == null) {
             secondName = null;
         } else {
             secondName = w.getInternalName();
@@ -1498,7 +1498,7 @@ public class ConvInfantry extends Infantry {
     }
 
     public double getDamagePerTrooper() {
-        if (null == primaryWeapon) {
+        if (primaryWeapon == null) {
             return 0;
         }
 
@@ -1512,7 +1512,7 @@ public class ConvInfantry extends Infantry {
             adjustedDamage = 0;
         }
         double damage = adjustedDamage * (squadSize - secondaryWeaponsPerSquad);
-        if ((null != secondaryWeapon)
+        if ((secondaryWeapon != null)
               && !(energyDisabled && secondaryWeapon.hasFlag(WeaponType.F_ENERGY))) {
             damage += secondaryWeapon.getInfantryDamage() * secondaryWeaponsPerSquad;
         }
@@ -1610,16 +1610,16 @@ public class ConvInfantry extends Infantry {
     public void restore() {
         super.restore();
 
-        if (null != primaryName) {
+        if (primaryName != null) {
             primaryWeapon = restoreInfantryWeapon(primaryName);
-            if (null != primaryWeapon) {
+            if (primaryWeapon != null) {
                 primaryName = primaryWeapon.getInternalName();
             }
         }
 
-        if (null != secondName) {
+        if (secondName != null) {
             secondaryWeapon = restoreInfantryWeapon(secondName);
-            if (null != secondaryWeapon) {
+            if (secondaryWeapon != null) {
                 secondName = secondaryWeapon.getInternalName();
             }
         }
@@ -1710,7 +1710,7 @@ public class ConvInfantry extends Infantry {
                   !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
                   !hasNonEncumberingSecondaryWeaponSpecialization() &&
                   !getMovementMode().isSubmarine() &&
-                  (null != secondaryWeapon) &&
+                (secondaryWeapon != null) &&
                   secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
                 mp = Math.max(mp - 1, 0);
             } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
@@ -1722,7 +1722,7 @@ public class ConvInfantry extends Infantry {
             mp = applyGravityEffectsOnMP(mp);
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                 return 0;
@@ -1770,10 +1770,10 @@ public class ConvInfantry extends Infantry {
     @Override
     public double getAlternateCost() {
         double cost = 0;
-        if (null != primaryWeapon) {
+        if (primaryWeapon != null) {
             cost += primaryWeapon.getCost(this, false, -1) * (squadSize - secondaryWeaponsPerSquad);
         }
-        if (null != secondaryWeapon) {
+        if (secondaryWeapon != null) {
             cost += secondaryWeapon.getCost(this, false, -1) * secondaryWeaponsPerSquad;
         }
         cost = cost / squadSize;

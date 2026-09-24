@@ -149,7 +149,7 @@ public class BayWeaponHandler extends WeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
               : null;
 
-        if ((((null == entityTarget) || entityTarget.isAirborne())
+        if ((((entityTarget == null) || entityTarget.isAirborne())
               && (target != null)
               && (target.getTargetType() != Targetable.TYPE_HEX_CLEAR
               && target.getTargetType() != Targetable.TYPE_HEX_IGNITE
@@ -613,7 +613,7 @@ public class BayWeaponHandler extends WeaponHandler {
                     if (vPhaseReport.size() > replaceReport) {
                         // fix the reporting - is there a better way to do this
                         Report currentReport = vPhaseReport.get(replaceReport);
-                        while (null != currentReport) {
+                        while (currentReport != null) {
                             vPhaseReport.remove(replaceReport);
                             if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
                                 currentReport = null;

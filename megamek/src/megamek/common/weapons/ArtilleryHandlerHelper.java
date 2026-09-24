@@ -70,7 +70,7 @@ public final class ArtilleryHandlerHelper {
               spottersBefore, playerId, target);
 
         // Are there any valid spotters?
-        if (null != spottersBefore) {
+        if (spottersBefore != null) {
             // fetch possible spotters now
             Iterator<Entity> spottersAfter = game.getSelectedEntities(entity -> {
                 Integer id = entity.getId();

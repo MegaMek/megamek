@@ -34,14 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -56,6 +49,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -147,6 +141,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.event.board.GameBoardChangeEvent;
@@ -255,6 +250,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_ZOOM_RESET = "viewZoomReset";
     public static final String VIEW_ZOOM_OVERVIEW_TOGGLE = "viewZoomOverviewToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
     public static final String VIEW_TOGGLE_HEX_COORDS = "viewToggleHexCoords";
@@ -962,12 +958,15 @@ public class ClientGUI extends AbstractClientGUI
               client.getGame());
         BridgeDeploySpriteHandler bridgeDeploySpriteHandler = new BridgeDeploySpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
+        ScanSpriteHandler scanSpriteHandler = new ScanSpriteHandler(this, client);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
         FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
         DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
         RubbleClearSpriteHandler rubbleClearSpriteHandler = new RubbleClearSpriteHandler(this, client.getGame());
+        CraneOperationSpriteHandler craneOperationSpriteHandler = new CraneOperationSpriteHandler(this,
+              client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
@@ -979,12 +978,14 @@ public class ClientGUI extends AbstractClientGUI
               bridgeRepairedSpriteHandler,
               bridgeDeploySpriteHandler,
               groundObjectSpriteHandler,
+              scanSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
               fleeZoneSpriteHandler,
               fortifyBuildSpriteHandler,
               dugInSpriteHandler,
-              rubbleClearSpriteHandler));
+              rubbleClearSpriteHandler,
+              craneOperationSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
@@ -1526,6 +1527,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
+                break;
+            case VIEW_ZOOM_RESET:
+                boardViews.get(0).zoomReset();
                 break;
             case VIEW_ZOOM_OVERVIEW_TOGGLE:
                 boardViews.get(0).zoomOverviewToggle();
@@ -3017,7 +3021,7 @@ public class ClientGUI extends AbstractClientGUI
         // from the same directory that MM is in
         var mmlPath = CP.getMmlPath();
         var autodetect = false;
-        if (null == mmlPath || mmlPath.isBlank()) {
+        if (mmlPath == null || mmlPath.isBlank()) {
             autodetect = true;
             mmlPath = "MegaMekLab.jar";
         }
@@ -3160,6 +3164,38 @@ public class ClientGUI extends AbstractClientGUI
                   && ((!entity.isDeployed()) || (prefChange))) {
                 entity.setWeaponSortOrder(GUIP.getDefaultWeaponSortOrder());
                 client.sendEntityWeaponOrderUpdate(entity);
+            }
+        }
+    }
+
+    /**
+     * Applies the player's sensor preference to their own units, picking for each one the first sensor family on the
+     * preference list that the unit actually carries a sensor for.
+     *
+     * <p>Example: the preference lists Active Probe, then Infrared, then Magscan. A Marauder MAD-3R carries Mek
+     * Radar, Mek IR, Mek Magscan and Mek Seismic but no probe, so it deploys on Mek IR instead of the Mek Radar it
+     * would otherwise have defaulted to. A Cicada CDA-3M carrying a Beagle Active Probe still deploys on the
+     * probe.</p>
+     *
+     * <p>Units belonging to anyone else are left alone, bots included, so this never changes what Princess or CASPAR
+     * do. A unit whose sensor the player picked by hand is left alone as well, in the lobby or in round zero.</p>
+     *
+     * <p>A unit that has already deployed is never touched. Changing the preference part-way through a game switches
+     * the sensors of reinforcements still waiting to come on, and nothing that is already on the board.</p>
+     */
+    private void setSensorPrefs() {
+        List<SensorFamily> preferenceOrder = GUIP.getSensorPreferenceOrder();
+        Player localPlayer = client.getLocalPlayer();
+        for (Entity entity : client.getGame().getEntitiesVector()) {
+            if (!entity.getOwner().equals(localPlayer)
+                  || entity.hasCustomSensorChoice()
+                  || entity.isDeployed()) {
+                continue;
+            }
+            int preferredSensorIndex = SensorFamily.preferredSensorIndex(entity, preferenceOrder);
+            if (preferredSensorIndex >= 0) {
+                entity.setNextSensor(entity.getSensors().elementAt(preferredSensorIndex));
+                client.sendSensorChange(entity.getId(), preferredSensorIndex);
             }
         }
     }
@@ -3313,6 +3349,7 @@ public class ClientGUI extends AbstractClientGUI
 
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);
+                setSensorPrefs();
             }
 
             menuBar.setPhase(phase);
@@ -4069,7 +4106,7 @@ public class ClientGUI extends AbstractClientGUI
             // An experimental bot that fails to stand up must not leave the seat empty: the player asked
             // for a bot in that slot, so Princess takes it instead. Guarded like the first attempt, so a
             // failure here degrades to an empty seat and a log line rather than a crash.
-            if ((null == botClient) && (AIType.PRINCESS != aiType)) {
+            if ((botClient == null) && (AIType.PRINCESS != aiType)) {
                 message.append(" Falling back to Princess. ");
                 try {
                     botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName),
@@ -4141,6 +4178,10 @@ public class ClientGUI extends AbstractClientGUI
             }
             case GUIPreferences.DEFAULT_WEAPON_SORT_ORDER -> {
                 setWeaponOrderPrefs(true);
+                getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
+            }
+            case GUIPreferences.SENSOR_PREFERENCE_ORDER -> {
+                setSensorPrefs();
                 getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
             }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,

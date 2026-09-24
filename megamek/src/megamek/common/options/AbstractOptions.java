@@ -90,7 +90,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements(); ) {
                 IOption option = j.nextElement();
 
-                if (null != option && option.booleanValue()) {
+                if (option != null && option.booleanValue()) {
                     count++;
                 }
             }
@@ -108,7 +108,7 @@ public abstract class AbstractOptions implements Serializable, IGameOptions {
     public String getOptionListString(String separator, String groupKey) {
         StringBuilder listBuilder = new StringBuilder();
 
-        if (null == separator) {
+        if (separator == null) {
             separator = "";
         }
 

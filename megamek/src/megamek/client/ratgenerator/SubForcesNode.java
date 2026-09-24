@@ -206,7 +206,7 @@ public class SubForcesNode extends RulesetNode {
         }
         LOGGER.debug("[ForceGen][GenRule] block of {} child(ren) under '{}' generates by '{}'",
               subs.size(), forceDescriptor.getName(), rule);
-        if (null == forceDescriptor.getGenerationRule()) {
+        if (forceDescriptor.getGenerationRule() == null){
             forceDescriptor.setGenerationRule(rule);
         }
     }
@@ -221,7 +221,7 @@ public class SubForcesNode extends RulesetNode {
     private String findGenerateProperty(RulesetNode... nodes) {
         for (RulesetNode n : nodes) {
             final String prop = n.assertions.getProperty("generate");
-            if (null != prop) {
+            if (prop != null) {
                 return prop;
             }
         }

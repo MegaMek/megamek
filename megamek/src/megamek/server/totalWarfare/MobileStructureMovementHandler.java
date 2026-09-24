@@ -95,24 +95,31 @@ final class MobileStructureMovementHandler extends AbstractTWRuleHandler {
     }
 
     void process(MobileStructure unit, MovePath path) {
+        // MovePathHandler has already placed walk-on units; retain the entry cost before executing their movement.
+        List<MoveStep> steps = new ArrayList<>(path.getStepVector());
+        MoveStep deployment = steps.stream().filter(step -> step.getType() == megamek.common.enums.MoveStepType.DEPLOY)
+              .findFirst().orElse(null);
+        steps.removeIf(step -> step.getType() == megamek.common.enums.MoveStepType.DEPLOY);
         List<MobileStructure> modules = MobileStructureLinkage.group(unit);
         if (modules.stream().anyMatch(MobileStructure::isDone)) {
             return;
         }
-        if (path.length() == 1 && megamek.common.moves.MobileStructureAirMovement.isAction(path.getLastStep().getType())) {
-            new MobileStructureAirMovementHandler(gameManager).process(unit, path.getLastStep().getType(), this);
+        if (deployment != null) {
+            modules.forEach(module -> module.mpUsed = deployment.getMpUsed());
+        }
+        if (steps.size() == 1 && megamek.common.moves.MobileStructureAirMovement.isAction(steps.getFirst().getType())) {
+            new MobileStructureAirMovementHandler(gameManager).process(unit, steps.getFirst().getType(), this);
             finishMovement(unit, modules);
             return;
         }
-        boolean hovering = path.length() == 0 && megamek.common.moves.MobileStructureAirMovement.isAirborne(unit);
-        if (path.getStepVector().isEmpty() && !hovering) {
+        boolean hovering = steps.isEmpty() && megamek.common.moves.MobileStructureAirMovement.isAirborne(unit);
+        if (steps.isEmpty() && !hovering) {
             modules.forEach(MobileStructure::cancelMovementProgress);
         }
-        modules.forEach(m -> m.delta_distance = 0);
+        modules.forEach(m -> m.delta_distance = deployment == null ? 0 : deployment.getDistance());
         int budget = modules.stream().mapToInt(m -> m.isWaterStructure()
               ? m.declareWaterSpeed(path.getMobileSpeedQuarters() == null ? path.getMpUsed()
                     : path.getMobileSpeedQuarters(), getGame().getRoundCount()) : m.getMaximumMPQuarters()).min().orElse(0);
-          List<MoveStep> steps = new ArrayList<>(path.getStepVector());
         if (hovering) {
             steps.add(new MovePath(getGame(), unit).addStep(megamek.common.enums.MoveStepType.HOVER).getLastStep());
         }

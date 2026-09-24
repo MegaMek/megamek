@@ -81,6 +81,12 @@ public final class ObjectiveDeserializer {
     private static final String SCHEME_HOLD = "hold";
     private static final String SCHEME_DEFEND = "defend";
     private static final String SCHEME_CAPTURE = "capture";
+    private static final String SCHEME_SCAN = "scan";
+    private static final String SCAN_PAYOUT = "payout";
+    private static final String PAYOUT_ON_SCAN = "scan";
+    private static final String PAYOUT_ON_SCAN_UNTIL_LOST = "scanUntilLost";
+    private static final String PAYOUT_ON_EXIT = "exit";
+    private static final String SCAN_REVEALS = "reveals";
     private static final String HOLD_TURNS = "turns";
     private static final String HOLD_COUNTING = "counting";
     private static final String COUNTING_CUMULATIVE = "cumulative";
@@ -126,6 +132,9 @@ public final class ObjectiveDeserializer {
             marker.setInvulnerable(!node.get(DESTRUCTIBLE).asBoolean());
         }
         parseScheme(marker, node);
+        if (node.hasNonNull(SCAN_REVEALS)) {
+            marker.setScanRevealsNote(node.get(SCAN_REVEALS).asText());
+        }
         parseVariants(marker, node);
         if (marker.isPotential() && marker.isFalseObjective()) {
             throw new IllegalArgumentException("Objective " + marker.generalName()
@@ -133,6 +142,24 @@ public final class ObjectiveDeserializer {
         }
 
         return new ObjectiveInfo(marker, readPosition(marker, node));
+    }
+
+    /**
+     * @return the objective's {@code payout:} - {@code scan}, {@code scanUntilLost} or {@code exit} - with exit, the
+     *       reading carried home, as the default
+     */
+    private static ObjectiveScoringScheme.ScanPayout parseScanPayout(ObjectiveMarker marker, JsonNode node) {
+        if (!node.hasNonNull(SCAN_PAYOUT)) {
+            return ObjectiveScoringScheme.ScanPayout.ON_EXIT;
+        }
+        String payout = node.get(SCAN_PAYOUT).asText();
+        return switch (payout) {
+            case PAYOUT_ON_SCAN -> ObjectiveScoringScheme.ScanPayout.ON_SCAN;
+            case PAYOUT_ON_SCAN_UNTIL_LOST -> ObjectiveScoringScheme.ScanPayout.ON_SCAN_UNTIL_LOST;
+            case PAYOUT_ON_EXIT -> ObjectiveScoringScheme.ScanPayout.ON_EXIT;
+            default -> throw new IllegalArgumentException("Unknown scan payout " + payout + " for objective "
+                  + marker.generalName() + " - use scan, scanUntilLost or exit");
+        };
     }
 
     private static Coords readPosition(ObjectiveMarker marker, JsonNode node) {
@@ -179,6 +206,7 @@ public final class ObjectiveDeserializer {
             case SCHEME_CAPTURE -> ObjectiveScoringScheme.capture(
                   node.hasNonNull(CAPTURE_POINTS) ? node.get(CAPTURE_POINTS).asInt() : 1,
                   node.hasNonNull(CAPTURE_RATE) ? node.get(CAPTURE_RATE).asInt() : 1);
+            case SCHEME_SCAN -> ObjectiveScoringScheme.scan(parseScanPayout(marker, node));
             default -> throw new IllegalArgumentException("Unknown scoring scheme " + scheme
                   + " for objective " + marker.generalName());
         });

@@ -136,11 +136,51 @@ public class VictoryHelper implements Serializable {
             // this could be made optional to allow the game to continue once alone if there's a use case
             VictoryResult battlefieldControlVR = battlefieldControlVC.checkVictory(game, context);
             if (battlefieldControlVR.isVictory()) {
-                return battlefieldControlVR;
+                return resolveLastSideStanding(game, context, battlefieldControlVR);
             }
         }
 
         return VictoryResult.noResult();
+    }
+
+    /**
+     * Decides who won a game that ended because only one side is still on the board.
+     *
+     * <p>Being the last side standing is the right moment to end the game but not always the right way to decide
+     * it. A side counts as standing only while it has living units deployed, so a scout that carried its readings
+     * off the battlefield stops counting. Without this, the side that did exactly what a Sensor Check mission asked
+     * would lose to the side that merely stayed where it was, and the victory points it scored would never be
+     * looked at. So when objectives are in play and someone has actually scored, the tally decides the winner and
+     * the last side standing only breaks a tie.</p>
+     *
+     * @param game                   the game that is ending
+     * @param context                the victory context holding the {@link VictoryPointTracker}
+     * @param lastSideStandingResult the result battlefield control produced
+     *
+     * @return the victory point result when points settle it, the battlefield control result otherwise
+     */
+    private VictoryResult resolveLastSideStanding(Game game, Map<String, Object> context,
+          VictoryResult lastSideStandingResult) {
+        if (!game.getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            return lastSideStandingResult;
+        }
+        // Asked before resolving, because resolving pays out end-of-game Raid points and must not happen for a
+        // game whose winner the tally has no say in
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(context);
+        boolean anySideScored = (tracker != null) && tracker.hasAnyScore();
+        if (!anySideScored) {
+            return lastSideStandingResult;
+        }
+
+        VictoryResult victoryPointResult = victoryPointVictory.checkAtGameEnd(game, context);
+        if (!victoryPointResult.isVictory() || victoryPointResult.isDraw()) {
+            LOGGER.info("[VP] Only one side is left on the board and the victory points are level, so the side "
+                  + "still standing wins");
+            return lastSideStandingResult;
+        }
+        LOGGER.info("[VP] Only one side is left on the board, but victory points were scored, so the tally "
+              + "decides the winner");
+        return victoryPointResult;
     }
 
     /**

@@ -106,6 +106,9 @@ class LobbyMekPopup {
     static final String LMP_NO_HIDE = "NOHIDE";
     static final String LMP_HIDE = "HIDE";
     static final String LMP_HIDDEN = "HIDDEN";
+    static final String LMP_SCAN_TARGET = "SCAN_TARGET";
+    static final String LMP_SCAN_WANTED = "SCAN_WANTED";
+    static final String LMP_SCAN_NOT_WANTED = "SCAN_NOT_WANTED";
     static final String LMP_F_ASSIGN_ONLY = "FASSIGNONLY";
     static final String LMP_F_ASSIGN = "FASSIGN";
     static final String LMP_RAPID_FIRE_MG_OFF = "RAPIDFIREMG_OFF";
@@ -602,6 +605,24 @@ class LobbyMekPopup {
     }
 
     /**
+     * The mission's scan targets are a game master's to set, and only matter in a game that uses objectives, so the
+     * submenu is offered to nobody else.
+     */
+    private static boolean isScanTargetMenuUseful(ClientGUI clientGui) {
+        Player personAtTheKeyboard = clientGui.getClient().getLocalPlayer();
+        if ((personAtTheKeyboard == null) || !personAtTheKeyboard.isGameMaster()) {
+            logger.debug("[Scan] Scan target items hidden: {} is not a game master",
+                  (personAtTheKeyboard == null) ? "no local player" : personAtTheKeyboard.getName());
+            return false;
+        }
+        if (!clientGui.getClient().getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+            logger.debug("[Scan] Scan target items hidden: the game does not use objectives");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Returns the "Deploy" submenu, allowing late deployment
      */
     private static JMenu deployMenu(ClientGUI clientGui, boolean enabled, ActionListener listener,
@@ -615,6 +636,24 @@ class LobbyMekPopup {
                 boolean anyNotHidden = entities.stream().anyMatch(e -> !e.isHidden());
                 menu.add(menuItem("Hidden", LMP_HIDDEN + "|" + LMP_HIDE + eIds, anyNotHidden, listener));
                 menu.add(menuItem("Not Hidden", LMP_HIDDEN + "|" + LMP_NO_HIDE + eIds, anyHidden, listener));
+                menu.add(ScalingPopup.spacer());
+            }
+
+            // The mission's scan targets are a game master's to set, and only matter in a game with objectives
+            if (isScanTargetMenuUseful(clientGui)) {
+                boolean anyWanted = false;
+                boolean anyNotWanted = false;
+                for (Entity entity : entities) {
+                    if (entity.isDesignatedScanTarget()) {
+                        anyWanted = true;
+                    } else {
+                        anyNotWanted = true;
+                    }
+                }
+                menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.wanted"),
+                      LMP_SCAN_TARGET + "|" + LMP_SCAN_WANTED + eIds, anyNotWanted, listener));
+                menu.add(menuItem(Messages.getString("ChatLounge.ScanTarget.notWanted"),
+                      LMP_SCAN_TARGET + "|" + LMP_SCAN_NOT_WANTED + eIds, anyWanted, listener));
                 menu.add(ScalingPopup.spacer());
             }
 
@@ -642,6 +681,12 @@ class LobbyMekPopup {
 
             // Late deployment
             JMenu lateMenu = new JMenu("Deployment round");
+            if (Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+                lateMenu.add(menuItem(Messages.getString("ChatLounge.deploysPreGame"),
+                      LMP_DEPLOY + "|" + Entity.DEPLOY_ROUND_PRE_GAME + eIds,
+                      true,
+                      listener));
+            }
             lateMenu.add(menuItem("At game start", LMP_DEPLOY + "|0" + eIds, true, listener));
             for (int i = 1; i < 11; i++) {
                 lateMenu.add(menuItem("Before round " + i, LMP_DEPLOY + "|" + i + eIds, true, listener));
@@ -800,7 +845,7 @@ class LobbyMekPopup {
 
                     } else if (!entity.isC3CompanyCommander()
                           && (entity.hasC3M() ? lanceRolesCompatible(game, entity, other)
-                                : other.isC3IndependentMaster())) {
+                          : other.isC3IndependentMaster())) {
                         // Slaves connect to lance masters; masters connect to company commanders or - forming an
                         // All-C3-Master lance (CR p.199) - to lance masters whose dependents are all masters too.
                         String item = "<HTML>Connect to " + other.getShortNameRaw() + idString(game, other.getId());
@@ -823,9 +868,9 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns true when the joining unit's role fits the dependents already connected to the given master. A lance
-     * is homogeneous (CR p.199): all C3 Slaves, or - under the All-C3-Master rule - all C3 Masters in slave roles,
-     * so a master may not join a lance of slaves and vice versa.
+     * Returns true when the joining unit's role fits the dependents already connected to the given master. A lance is
+     * homogeneous (CR p.199): all C3 Slaves, or - under the All-C3-Master rule - all C3 Masters in slave roles, so a
+     * master may not join a lance of slaves and vice versa.
      */
     private static boolean lanceRolesCompatible(Game game, Entity joiningUnit, Entity master) {
         boolean joinerIsMaster = joiningUnit.hasC3M();

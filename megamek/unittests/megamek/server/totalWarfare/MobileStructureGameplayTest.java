@@ -63,6 +63,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class MobileStructureGameplayTest {
     private static final CubeCoords EAST = new CubeCoords(1, 0, -1);
@@ -108,6 +109,31 @@ class MobileStructureGameplayTest {
         unit.setPosition(ORIGIN);
         unit.updateBuildingEntityHexes(0, manager);
         return manager;
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void walkOnDeploymentCompilesAndExecutesFollowingMobileMovement(boolean air) {
+        var mobile = unit(3, List.of(CubeCoords.ZERO, EAST));
+        mobile.setMaximumMP(2);
+        if (air) {
+            mobile.setMovementMode(EntityMovementMode.VTOL);
+            mobile.setElevation(3);
+        }
+        var manager = manager(mobile, 0);
+        var path = new MovePath(manager.getGame(), mobile).addStep(MoveStepType.DEPLOY)
+              .addStep(MoveStepType.FORWARDS);
+
+        assertEquals(EntityMovementType.MOVE_NONE, path.getStep(0).getMovementType(false));
+        assertEquals(air ? 0 : 4, path.getStep(0).getMpUsed());
+        assertTrue(path.isMoveLegal());
+        new MobileStructureMovementHandler(manager).process(mobile, path);
+
+        assertEquals(ORIGIN.translated(0), mobile.getPosition());
+        assertEquals(air ? 4 : 8, mobile.mpUsed, "ground entry and subsequent movement both consume MP");
+        assertEquals(air ? 1 : 2, mobile.delta_distance);
+        assertTrue(path.contains(MoveStepType.DEPLOY), "execution must not rewrite the submitted path");
+        assertEquals(2, path.length());
     }
 
     @Test void printedFreighterFuelDoesNotGainATonFromFloatingPointNoise() {

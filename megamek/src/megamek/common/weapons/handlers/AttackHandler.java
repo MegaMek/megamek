@@ -130,7 +130,7 @@ public interface AttackHandler {
           boolean targetStickingOutOfBuilding,
           int nDamage) {
         // Castles Brian resolve external hits through the building's threshold rule; internal combat stays unscaled.
-        if ((null != bldg) && !bldg.usesCapitalScale()
+        if ((bldg != null) && !bldg.usesCapitalScale()
               && !targetStickingOutOfBuilding && (entityTarget.isInBuilding())) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }

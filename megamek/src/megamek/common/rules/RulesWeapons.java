@@ -32,13 +32,13 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
-
-import java.util.Vector;
 
 public abstract class RulesWeapons {
     /**
@@ -144,4 +144,18 @@ public abstract class RulesWeapons {
     public boolean getApolloSaturationMode() {
         return false;
     }
+
+    /**
+     * Do thunderbolts halve their damage under minimums
+     *
+     * @param toReturn  the damage
+     * @param nRange    the range
+     * @param minRange  minimum range
+     * @param hotLoaded are they hotloaded
+     * @return return the modified damage
+     */
+    public abstract double thunderboltMinimum(final double toReturn,
+                                              final int nRange,
+                                              final int minRange,
+                                              final boolean hotLoaded);
 }

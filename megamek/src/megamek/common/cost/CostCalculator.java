@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -113,7 +113,9 @@ public class CostCalculator {
      */
     static long getWeaponsAndEquipmentCost(Entity entity, CalculationReport costReport, boolean ignoreAmmo) {
         long cost = 0;
-        NumberFormat commaFormatter = NumberFormat.getInstance();
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
 
         Map<String, Integer> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
@@ -156,7 +158,7 @@ public class CostCalculator {
         }
         for (String weapon : weaponsNumberMap.keySet()) {
             costReport.addLine(weaponsNumberMap.get(weapon) + " " + weapon, "",
-                  commaFormatter.format(weaponsCostMap.get(weapon)));
+                  costFormatter.format(weaponsCostMap.get(weapon)));
         }
 
         int count = entity.implicitClanCASE();
@@ -164,7 +166,7 @@ public class CostCalculator {
             long itemCost = 50000;
             cost += count * itemCost;
             for (int i = 0; i < count; i++) {
-                costReport.addLine("CASE", "", commaFormatter.format(itemCost));
+                costReport.addLine("CASE", "", costFormatter.format(itemCost));
             }
         }
         // Large craft have a separate section for bays
@@ -183,15 +185,15 @@ public class CostCalculator {
             }
             if (seatCost > 0) {
                 cost += seatCost;
-                costReport.addLine("Seating", "", commaFormatter.format(seatCost));
+                costReport.addLine("Seating", "", costFormatter.format(seatCost));
             }
             if (quartersCost > 0) {
                 cost += quartersCost;
-                costReport.addLine("Quarters", "", commaFormatter.format(quartersCost));
+                costReport.addLine("Quarters", "", costFormatter.format(quartersCost));
             }
             if (bayCost > 0) {
                 cost += bayCost;
-                costReport.addLine("Bays", "", commaFormatter.format(bayCost));
+                costReport.addLine("Bays", "", costFormatter.format(bayCost));
             }
         }
         return cost;
@@ -214,32 +216,35 @@ public class CostCalculator {
     static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
           String[] systemNames, int equipIndex, double cost, double[] costs) {
           fillInReport(costReport, entity, ignoreAmmo, systemNames, equipIndex, 0, cost, costs);
-        }
+    }
 
-        /**
-         * Fills in a cost report while identifying leading rows that are inputs to a later rolled-up cost rather than
-         * independently additive costs.
-         *
-         * @param costStartIndex the first system-cost index included directly in the unit's running total
-         */
-        static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo,
-            String[] systemNames, int equipIndex, int costStartIndex, double cost, double[] costs) {
-        NumberFormat commaFormatter = NumberFormat.getInstance();
-        commaFormatter.setMaximumFractionDigits(10);
-        costReport.addHeader("Cost Calculations For " + entity.getChassis() + " " + entity.getModel());
+    /**
+     * Fills in a cost report while identifying leading rows that are inputs to a later rolled-up cost rather than
+     * independently additive costs.
+     *
+     * @param costStartIndex the first system-cost index included directly in the unit's running total
+     */
+    static void fillInReport(CalculationReport costReport, Entity entity, boolean ignoreAmmo, String[] systemNames,
+          int equipIndex, int costStartIndex, double cost, double[] costs) {
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        NumberFormat multiplierFormatter = NumberFormat.getInstance();
+        multiplierFormatter.setMaximumFractionDigits(10);
+        costReport.addHeader("Cost Calculation for " + entity.getChassis() + " " + entity.getModel());
         for (int l = 0; l < systemNames.length; l++) {
             if (l == equipIndex) {
                 CostCalculator.getWeaponsAndEquipmentCost(entity, costReport, ignoreAmmo);
                 if ((entity instanceof Tank tank) && (tank.getExtraCrewSeats() > 0)) {
                     costReport.addLine("Extra Crew Seats", "",
-                          commaFormatter.format(tank.getExtraCrewSeats() * 100L));
+                          costFormatter.format(tank.getExtraCrewSeats() * 100L));
                 }
             } else {
-                String result = commaFormatter.format(costs[l]);
+                String result = costFormatter.format(costs[l]);
                 if (costs[l] == 0) {
                     result = "N/A";
                 } else if (costs[l] < 0) {
-                    result = "x " + commaFormatter.format(-costs[l]);
+                    result = "x " + multiplierFormatter.format(-costs[l]);
                 }
                 if (l < costStartIndex) {
                     costReport.addInformationalLine(systemNames[l], "", result);
@@ -248,7 +253,7 @@ public class CostCalculator {
                 }
             }
         }
-        costReport.addResultLine("Total Cost:", "", commaFormatter.format(cost));
+        costReport.addResultLine("Total Cost (C-bills)", "", costFormatter.format(cost));
     }
 
 
@@ -262,7 +267,7 @@ public class CostCalculator {
     public static void addNoReportNote(@Nullable CalculationReport costReport, @Nullable Entity entity) {
         if (costReport != null) {
             if (entity != null) {
-                costReport.addHeader("Cost Calculations For");
+                costReport.addHeader("Cost Calculation for");
                 costReport.addHeader(entity.getChassis() + " " + entity.getModel());
                 costReport.addLine("There is currently no report available for units of this type.");
             } else {

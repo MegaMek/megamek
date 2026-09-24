@@ -276,7 +276,7 @@ public interface IAero {
             // equipment or add new ones if there is none
             Set<String> newSet = groups.keySet();
             for (String key : newSet) {
-                if (null != getWeaponGroups().get(key)) {
+                if (getWeaponGroups().get(key) != null) {
                     // then this equipment is already loaded, so we just need to
                     // correctly update the number of weapons
                     ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(groups.get(key));
@@ -454,7 +454,7 @@ public interface IAero {
         Coords pos = ((Entity) this).getPosition();
         Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
         if (BuildingFlightDeckRules.onDeck((Entity) this) != null
-              || (null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+              || (hex != null) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
 
@@ -839,7 +839,7 @@ public interface IAero {
                 hex = board.getHex(pos);
                 // if the hex is null, then we are offboard. Don't let units
                 // take off offboard.
-                if (null == hex) {
+                if (hex == null) {
                     return "Not enough room on map" + lenString;
                 }
                 if (!hex.isClearForTakeoff()) {
@@ -907,7 +907,7 @@ public interface IAero {
                 }
                 hex = board.getHex(position);
                 // if the hex is null, then we are offboard. Don't let units land offboard.
-                if (null == hex) {
+                if (hex == null) {
                     return "Not enough room on map" + lenString;
                 }
                 // landing must contain only acceptable terrain
@@ -945,7 +945,7 @@ public interface IAero {
         }
         // if the hex is null, then we are offboard. Don't let units
         // land offboard.
-        if (null == hex) {
+        if (hex == null) {
             return "landing area not on the map";
         }
         // landing must contain only acceptable terrain

@@ -47,6 +47,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -69,7 +70,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     /**

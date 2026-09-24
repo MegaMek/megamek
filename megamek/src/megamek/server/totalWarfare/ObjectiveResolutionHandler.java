@@ -50,6 +50,7 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
+import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.event.GameToastEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -444,6 +445,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         if (marker.isDestroyed()) {
             return false;
         }
+        if (marker.getScoringScheme().getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN) {
+            // read, not held: the scan pass scores it, and there is no zone to resolve control over
+            return false;
+        }
         if (marker.isPotential() && !marker.isConfirmed()) {
             LOGGER.debug("[Objective] {} at {} is an unconfirmed objective candidate - it cannot score until "
                   + "confirmed by a scan", marker.generalName(), objective.position());
@@ -804,11 +809,16 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         List<PlacedObjective> objectives = findAllObjectives();
-        if (objectives.isEmpty()) {
+        boolean isSensorCheckMission = getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_SENSOR_CHECK);
+        if (objectives.isEmpty() && !isSensorCheckMission) {
             return;
         }
         addReport(new Report(REPORT_VICTORY_CONDITIONS_HEADER, Report.PUBLIC));
         reportVictoryPointTotals();
+        new ObjectiveScanHandler(gameManager).reportReadingsCarried();
+        if (objectives.isEmpty()) {
+            return;
+        }
         addReport(new Report(REPORT_STANDINGS_INTRO, Report.PUBLIC));
         for (PlacedObjective objective : objectives) {
             ObjectiveMarker marker = objective.marker();
@@ -837,21 +847,47 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     private String standingHolder(ObjectiveMarker marker) {
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        boolean isScanPoint = scheme.getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN;
         if (scheme.isDecided()) {
             int securedTeam = scheme.getSecuredTeam();
             int securedPlayer = scheme.getSecuredPlayerId();
             String securedBy = (securedTeam != ObjectiveScoringScheme.NO_SIDE)
                   ? teamDisplayName(securedTeam)
                   : playerName(securedPlayer);
-            return "secured by " + securedBy;
+            return isScanPoint
+                  ? Messages.getString(scannedKeyFor(scheme.getScanPayout()), securedBy)
+                  : Messages.getString("VictoryHex.standing.secured", securedBy);
+        }
+        if (isScanPoint) {
+            // A scan point is read, not held: who is standing in it says nothing about it. Only a point that
+            // has to be carried home can be waiting on a trip home; the other payouts are simply unread.
+            return Messages.getString(scheme.getScanPayout() == ScanPayout.ON_EXIT
+                  ? "VictoryHex.standing.notReportedHome"
+                  : "VictoryHex.standing.notScanned");
         }
         if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
-            return "held by " + teamDisplayName(marker.getControllingTeam());
+            return Messages.getString("VictoryHex.standing.held", teamDisplayName(marker.getControllingTeam()));
         }
         if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
-            return "held by " + playerName(marker.getControllingPlayerId());
+            return Messages.getString("VictoryHex.standing.held", playerName(marker.getControllingPlayerId()));
         }
-        return "uncontrolled";
+        return Messages.getString("VictoryHex.standing.uncontrolled");
+    }
+
+    /**
+     * A scan point that has been decided says so in the terms of its own payout. Saying it was reported home
+     * reads as nonsense on a point that paid the moment it was read and asked nobody to carry anything.
+     *
+     * @param payout when this point pays
+     *
+     * @return the message key for the decided line
+     */
+    private static String scannedKeyFor(ScanPayout payout) {
+        return switch (payout) {
+            case ON_SCAN -> "VictoryHex.standing.scanned";
+            case ON_SCAN_UNTIL_LOST -> "VictoryHex.standing.scannedWhileScoutLives";
+            case ON_EXIT -> "VictoryHex.standing.scannedAndHome";
+        };
     }
 
     /**

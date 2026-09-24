@@ -41,6 +41,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.AbstractBuildingEntity;
@@ -90,7 +91,7 @@ final class OpenSpaceCollapseHandler extends AbstractTWRuleHandler {
                         int cluster = Math.min(5, remaining);
                         HitData hit = occupant.rollHitLocation(occupant instanceof ProtoMek ? ToHitData.HIT_SPECIAL_PROTO
                               : ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL_NONATTACK);
+                        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                         reports.addAll(gameManager.damageEntity(occupant, hit, cluster));
                         remaining -= cluster;
                     }

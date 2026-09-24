@@ -33,6 +33,8 @@
 package megamek.client.ui.comboBoxes;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
@@ -59,6 +61,7 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.plaf.basic.ComboPopup;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -81,6 +84,9 @@ import megamek.common.annotations.Nullable;
  * @param <E> the type of item held by the combo box
  */
 public class SearchableComboBox<E> extends JComboBox<E> {
+
+    /** Unscaled pixels added beside the widest entry so its text does not sit against the drop-down arrow. */
+    private static final int WIDTH_BREATHING_ROOM = 12;
 
     private static final String ACTION_ACCEPT_SEARCH = "acceptSearch";
     private static final String ACTION_CANCEL_SEARCH = "cancelSearch";
@@ -148,14 +154,48 @@ public class SearchableComboBox<E> extends JComboBox<E> {
     }
 
     /**
+     * Also puts the tooltip on the editor field, which is what the pointer is actually over on an editable combo box.
+     *
+     * <p>Without this, a caller's tooltip never shows: the constructor puts the "type to search" hint on the editor,
+     * and that hint sits in front of whatever the caller sets on the combo box itself.</p>
+     *
+     * @param text the tooltip to show, or {@code null} to fall back to the search hint
+     */
+    @Override
+    public void setToolTipText(@Nullable String text) {
+        super.setToolTipText(text);
+        if (editorField != null) {
+            editorField.setToolTipText((text == null) ? Messages.getString("SearchableComboBox.tooltip") : text);
+        }
+    }
+
+    /**
      * Sizes the box for its widest entry, so narrowing the list while typing does not make the box shrink and
      * grow with every keystroke.
+     *
+     * <p>Width is measured in pixels rather than in characters. Character count is a poor stand-in for width in a
+     * proportional font, and it picks the wrong entry often enough to matter: for machine gun ammo it chooses
+     * "Machine Gun [Full]" over the wider "Machine Gun [Half]", and for LRMs it is short by 13 pixels, which clips
+     * the name that is actually the longest.</p>
      */
     private void keepWidthOfWidestEntry() {
+        FontMetrics fontMetrics = getFontMetrics(getFont());
         Optional<E> widestEntry = filteredModel.getAllItems()
               .stream()
-              .max(Comparator.comparingInt(item -> filteredModel.getDisplayText(item).length()));
+              .max(Comparator.comparingInt(item -> fontMetrics.stringWidth(filteredModel.getDisplayText(item))));
         widestEntry.ifPresent(this::setPrototypeDisplayValue);
+    }
+
+    /**
+     * Adds a little breathing room to the width the prototype entry asks for.
+     *
+     * <p>Sizing to the widest entry alone leaves the text touching the drop-down arrow, which reads as clipped even
+     * when every character is present. The gap scales with the GUI scale setting, like every other spacing value.</p>
+     */
+    @Override
+    public Dimension getPreferredSize() {
+        Dimension preferredSize = super.getPreferredSize();
+        return new Dimension(preferredSize.width + UIUtil.scaleForGUI(WIDTH_BREATHING_ROOM), preferredSize.height);
     }
 
     /**

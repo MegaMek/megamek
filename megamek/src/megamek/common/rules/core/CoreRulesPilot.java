@@ -32,6 +32,9 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.Report;
 import megamek.common.TargetRollModifier;
 import megamek.common.annotations.Nullable;
@@ -44,9 +47,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPilot;
 import megamek.common.units.Entity;
-
-import java.util.List;
-import java.util.Vector;
 
 public class CoreRulesPilot extends RulesPilot {
 
@@ -121,14 +121,14 @@ public class CoreRulesPilot extends RulesPilot {
             boolean wasGunner = entity.getCrew().getCurrentGunnerIndex() == crewPos;
             entity.getCrew().setUnconscious(true, crewPos);
             Report r = createCrewTakeoverReport(entity, crewPos, wasPilot, wasGunner);
-            if (null != r) {
+            if (r != null) {
                 vDesc.add(r);
             }
             return vDesc;
         }
         return vDesc;
     }
-    
+
     /**
      * {@inheritDoc}
      * Handle pilot hits. Core p.117. Only the highest roll is performed.
@@ -147,15 +147,15 @@ public class CoreRulesPilot extends RulesPilot {
             r.addDesc(e);
             r.add(e.getCrew().getName(crewPos));
             vDesc.add(r);
-            
+
             e.getCrew().setPendingConRolls(true, crewPos);
             return vDesc;
         }
-        
+
         e.getCrew().setPendingConRolls(false, crewPos);
-        
+
         vDesc = (rollPilotHits(e, totalHits, crewPos, toughness));
-        
+
         return vDesc;
     }
 
@@ -171,7 +171,7 @@ public class CoreRulesPilot extends RulesPilot {
                     vDesc.addAll(rollPilotHits(entity, entity.getCrew().getHits(pos), pos, toughness));
                     entity.getCrew().setPendingConRolls(false, pos);
                 }
-                
+
             }
         }
         if (!vDesc.isEmpty()) {

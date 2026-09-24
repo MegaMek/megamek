@@ -36,7 +36,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -64,7 +63,6 @@ public class EntityState {
     private boolean building;
     private boolean aero;
     private boolean airborne;
-    private final boolean naturalAptGun;
     private final boolean naturalAptPilot;
 
     /**
@@ -84,7 +82,6 @@ public class EntityState {
         setSecondaryFacing(0);
         building = (target instanceof BuildingTarget);
         aero = false;
-        naturalAptGun = false;
         naturalAptPilot = false;
     }
 
@@ -103,8 +100,7 @@ public class EntityState {
         building = false;
         aero = entity.isAero();
         airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-        naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptPilot = entity.isUseNaturalAptitudePiloting();
     }
 
     /**
@@ -132,8 +128,7 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptPilot = path.getEntity().isUseNaturalAptitudePiloting();
         setSecondaryFacing(getFacing());
     }
 
@@ -228,10 +223,6 @@ public class EntityState {
         return aero && airborne;
     }
 
-    public boolean hasNaturalAptGun() {
-        return naturalAptGun;
-    }
-
     public boolean hasNaturalAptPiloting() {
         return naturalAptPilot;
     }
@@ -239,8 +230,8 @@ public class EntityState {
     @Override
     public String toString() {
         return new ParameterizedMessage("EntityState{ position = {}, movementType = {}, facing = {}, secondaryFacing" +
-              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, building" +
-              " = {}, aero = {}, airborne = {}, naturalAptGun = {}, naturalAptPilot = {}, }",
+              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, jumping = {}, building" +
+              " = {}, aero = {}, airborne = {}, naturalAptPilot = {}, }",
               position,
               movementType,
               facing,
@@ -253,7 +244,6 @@ public class EntityState {
               building,
               aero,
               airborne,
-              naturalAptGun,
               naturalAptPilot).getFormattedMessage();
     }
 }

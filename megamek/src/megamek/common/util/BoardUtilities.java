@@ -1661,41 +1661,41 @@ public class BoardUtilities {
 
                 // Update the road exits in the swapped hexes.
                 terr = newHex.getTerrain(Terrains.ROAD);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
                 terr = oldHex.getTerrain(Terrains.ROAD);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
 
                 // Update the building exits in the swapped hexes.
                 terr = newHex.getTerrain(Terrains.BUILDING);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
                 terr = oldHex.getTerrain(Terrains.BUILDING);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
 
                 // Update the fuel tank exits in the swapped hexes.
                 terr = newHex.getTerrain(Terrains.FUEL_TANK);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
                 terr = oldHex.getTerrain(Terrains.FUEL_TANK);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
 
                 // Update the bridge exits in the swapped hexes.
                 terr = newHex.getTerrain(Terrains.BRIDGE);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
                 terr = oldHex.getTerrain(Terrains.BRIDGE);
-                if (null != terr) {
+                if (terr != null) {
                     terr.flipExits(horiz, vert);
                 }
             }

@@ -192,6 +192,9 @@ public class MULParser {
     public static final String ATTR_NATURAL_APTITUDE_ARTILLERY = "naturalAptitudeArtillery";
     public static final String ATTR_NATURAL_APTITUDE_PILOTING = "naturalAptitudePiloting";
     public static final String ATTR_NATURAL_APTITUDE_SMALL_ARMS = "naturalAptitudeSmallArms";
+    // The retired Natural Aptitude SPAs, still found in the advantages of older unit lists
+    private static final String LEGACY_NATURAL_APTITUDE_GUNNERY = "aptitude_gunnery";
+    private static final String LEGACY_NATURAL_APTITUDE_PILOTING = "aptitude_piloting";
     public static final String ATTR_TOUGH = "toughness";
     public static final String ATTR_FATIGUE = "fatigue";
     public static final String ATTR_INIT_B = "initB";
@@ -1413,8 +1416,8 @@ public class MULParser {
      * @since 0.51.01
      */
     private static boolean isLegacyNaturalAptitude(final String advantageName) {
-        return OptionsConstants.PILOT_APTITUDE_GUNNERY.equals(advantageName)
-              || OptionsConstants.PILOT_APTITUDE_PILOTING.equals(advantageName);
+        return LEGACY_NATURAL_APTITUDE_GUNNERY.equals(advantageName)
+              || LEGACY_NATURAL_APTITUDE_PILOTING.equals(advantageName);
     }
 
     /**
@@ -1438,10 +1441,10 @@ public class MULParser {
         while (st.hasMoreTokens()) {
             String advantageName = Crew.parseAdvantageName(st.nextToken());
             for (int slot = 0; slot < crew.getSlotCount(); slot++) {
-                if (OptionsConstants.PILOT_APTITUDE_GUNNERY.equals(advantageName)) {
+                if (LEGACY_NATURAL_APTITUDE_GUNNERY.equals(advantageName)) {
                     crew.setHasNaturalAptitudeGunnery(true, slot);
                     crew.setHasNaturalAptitudeArtillery(true, slot);
-                } else if (OptionsConstants.PILOT_APTITUDE_PILOTING.equals(advantageName)) {
+                } else if (LEGACY_NATURAL_APTITUDE_PILOTING.equals(advantageName)) {
                     crew.setHasNaturalAptitudePiloting(true, slot);
                 }
             }

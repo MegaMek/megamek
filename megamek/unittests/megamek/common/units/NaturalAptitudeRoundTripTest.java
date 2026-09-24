@@ -57,6 +57,9 @@ import org.junit.jupiter.api.Test;
  * holding the retired Natural Aptitude SPAs are converted, and that copied crews keep their aptitudes.
  */
 class NaturalAptitudeRoundTripTest {
+    // The retired Natural Aptitude SPAs, as they appear in the advantages of older unit lists
+    private static final String LEGACY_GUNNERY_SPA = "aptitude_gunnery";
+    private static final String LEGACY_PILOTING_SPA = "aptitude_piloting";
 
     private Game game;
 
@@ -214,7 +217,7 @@ class NaturalAptitudeRoundTripTest {
     @Test
     void legacyGunnerySpaBecomesGunneryAndArtilleryAptitudes() throws Exception {
         String mul = withPilotAttribute(toMul(pilotOnFoot()), MULParser.ATTR_ADVANTAGES,
-              OptionsConstants.PILOT_APTITUDE_GUNNERY);
+              LEGACY_GUNNERY_SPA);
 
         Crew readBack = crewReadBackFrom(mul);
 
@@ -226,7 +229,7 @@ class NaturalAptitudeRoundTripTest {
     @Test
     void legacyPilotingSpaBecomesPilotingAptitude() throws Exception {
         String mul = withPilotAttribute(toMul(pilotOnFoot()), MULParser.ATTR_ADVANTAGES,
-              OptionsConstants.PILOT_APTITUDE_PILOTING);
+              LEGACY_PILOTING_SPA);
 
         Crew readBack = crewReadBackFrom(mul);
 
@@ -237,8 +240,8 @@ class NaturalAptitudeRoundTripTest {
 
     @Test
     void bothLegacySpasAreConvertedAlongsideOtherAdvantages() throws Exception {
-        String advantages = OptionsConstants.PILOT_APTITUDE_GUNNERY + "::" + OptionsConstants.PILOT_MELEE_MASTER
-              + "::" + OptionsConstants.PILOT_APTITUDE_PILOTING;
+        String advantages = LEGACY_GUNNERY_SPA + "::" + OptionsConstants.PILOT_MELEE_MASTER
+              + "::" + LEGACY_PILOTING_SPA;
         String mul = withPilotAttribute(toMul(pilotOnFoot()), MULParser.ATTR_ADVANTAGES, advantages);
 
         Crew readBack = crewReadBackFrom(mul);
@@ -252,7 +255,7 @@ class NaturalAptitudeRoundTripTest {
     void legacySpaIsKeptWhenTheFileHasNoAptitudeAttributes() throws Exception {
         // Reading the (absent) per-crew-member attributes must not clear an aptitude converted from the old SPA
         String mul = withPilotAttribute(toMul(pilotOnFoot()), MULParser.ATTR_ADVANTAGES,
-              OptionsConstants.PILOT_APTITUDE_PILOTING);
+              LEGACY_PILOTING_SPA);
 
         assertFalse(mul.contains(MULParser.ATTR_NATURAL_APTITUDE_PILOTING + "=\""), mul);
         assertTrue(crewReadBackFrom(mul).isHasNaturalAptitudePiloting(0));
@@ -261,7 +264,7 @@ class NaturalAptitudeRoundTripTest {
     @Test
     void legacySpaIsNotReportedAsAnUnknownAdvantage() throws Exception {
         String mul = withPilotAttribute(toMul(pilotOnFoot()), MULParser.ATTR_ADVANTAGES,
-              OptionsConstants.PILOT_APTITUDE_GUNNERY);
+              LEGACY_GUNNERY_SPA);
         MULParser parser = new MULParser(new ByteArrayInputStream(mul.getBytes(StandardCharsets.UTF_8)), null);
 
         assertFalse(parser.getWarningMessage() != null && parser.getWarningMessage().contains("aptitude"),

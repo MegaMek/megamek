@@ -61,8 +61,9 @@
             </DefaultRolloverStrategy>
         </RollingFile>
         <!--
-          Each launch starts a fresh megamek.log and keeps the previous sessions as megamek_N.log.gz, so a
-          playtest log is not lost when the game is started again or a test run writes to the same folder.
+          megamek.log rolls over to megamek_N.log.gz at every launch and whenever it reaches 20 MB, so a playtest
+          log is not lost when the game is started again or a test run writes to the same folder. Up to 10 rolled
+          files are kept, 100 MB at most, so a very long session can push out older sessions sooner.
         -->
         <RollingFile name="MegaMekLog"
                      fileName="logs/megamek.log"

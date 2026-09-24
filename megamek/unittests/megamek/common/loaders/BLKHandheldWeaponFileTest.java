@@ -34,11 +34,15 @@
 package megamek.common.loaders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
+import megamek.common.verifier.TestHandheldWeapon;
+import megamek.common.verifier.TestXMLOption;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -64,5 +68,25 @@ public class BLKHandheldWeaponFileTest {
         assertEquals(6, e.getAmmo().getFirst().getOriginalShots(), "Failed to load ammo");
         assertEquals(12.0, e.getWeight(), "Failed to load weight");
 
+    }
+
+    @Test
+    void integralOneShotAmmoDoesNotCountAsDuplicateBins() throws Exception {
+        HandheldWeapon weapon = new HandheldWeapon();
+        for (int i = 0; i < 4; i++) {
+            weapon.addEquipment(EquipmentType.get("RL10"), HandheldWeapon.LOC_GUN);
+        }
+        assertEquals(4, weapon.getAmmo().size());
+        assertTrue(weapon.getAmmo().stream().allMatch(ammo -> ammo.isOneShotAmmo()));
+        TestHandheldWeapon verifier = new TestHandheldWeapon(weapon, new TestXMLOption(), "");
+        StringBuffer messages = new StringBuffer();
+        assertFalse(verifier.hasIllegalEquipmentCombinations(messages), messages::toString);
+
+        // The separate-bin restriction still applies to ordinary ammunition.
+        weapon.addEquipment(EquipmentType.get("IS Ammo MG - Full"), HandheldWeapon.LOC_GUN);
+        weapon.addEquipment(EquipmentType.get("IS Ammo MG - Full"), HandheldWeapon.LOC_GUN);
+        StringBuffer duplicateMessages = new StringBuffer();
+        assertTrue(verifier.hasIllegalEquipmentCombinations(duplicateMessages));
+        assertTrue(duplicateMessages.toString().contains("single ammo bin for a given kind"));
     }
 }

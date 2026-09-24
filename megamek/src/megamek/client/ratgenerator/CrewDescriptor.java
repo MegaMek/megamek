@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,8 +34,10 @@ package megamek.client.ratgenerator;
 
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
+import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.SkillLevel;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.UnitType;
@@ -51,13 +53,36 @@ public class CrewDescriptor {
     public static final int SKILL_VETERAN = 2;
     public static final int SKILL_ELITE = 3;
 
+    /**
+     * How much better a Clan warrior-caste crew is than the same rating elsewhere, which is what puts
+     * a Clan Regular Mek crew at 3/4 where an Inner Sphere one sits at 4/5.
+     *
+     * <p>Doubles as the ceiling on the whole Clan modifier: the rating scaling may pull a crew below
+     * it but not push one past it. See {@code setSkills}.</p>
+     */
+    private static final int CLAN_WARRIOR_CASTE_BONUS = 2;
+
+    /** The Word of Blake Shadow Divisions, whose crews are a cut above the rest of the faction. */
+    private static final String SHADOW_DIVISION_FACTION = "WOB.SD";
+
+    // Skill values for the two levels above elite, matching megamek.common.enums.SkillLevel's
+    // gunnery/piloting pairs. Kept here rather than derived so the escalation below cannot drift from
+    // the thresholds the rest of the codebase reports against.
+    private static final int HEROIC_GUNNERY = 1;
+    private static final int HEROIC_PILOTING = 2;
+    private static final int LEGENDARY_GUNNERY = 0;
+    private static final int LEGENDARY_PILOTING = 1;
+
     private String name;
     private String bloodname;
     private Gender gender;
     private int rank;
     private ForceDescriptor assignment;
     private int gunnery;
+    private boolean hasNaturalAptitudeGunnery;
+    private boolean hasNaturalAptitudeArtillery;
     private int piloting;
+    private boolean hasNaturalAptitudePiloting;
     private String title;
 
     public CrewDescriptor(ForceDescriptor assignment) {
@@ -101,68 +126,162 @@ public class CrewDescriptor {
         boolean clan = RATGenerator.getInstance().getFaction(assignment.getFaction()).isClan();
 
         int experience;
-        if (null == assignment.getExperience()) {
+        if (assignment.getExperience() == null){
             experience = randomExperienceLevel();
         } else {
             experience = SKILL_GREEN + assignment.getExperience();
         }
 
-        int bonus = 0;
         int ratingLevel = assignment.getRatingLevel();
-        // StratOps gives a +1 for A and -1 for F. There are a few IS factions that
-        // don't have
-        // A-F ratings, so we give +1 to the best and -1 to the worst, unless there is
-        // only one.
-        // For Clan units we give a +/-1 for each rating level above or below second
-        // line. This
-        // is an expansion of the StratOps table which only included FL, SL, and
-        // Solahma.
-        int levels = assignment.getFactionRec().getRatingLevels().size();
-        if (clan) {
-            bonus = ratingLevel - levels / 2;
-        } else if (levels > 1) {
+        int ratingLevels = assignment.getFactionRec().getRatingLevels().size();
+        boolean isSupportRole = assignment.getRoles().contains(MissionRole.SUPPORT);
+        int bonus = clan
+                          ? clanSkillBonus(ratingLevel, ratingLevels, assignment.getUnitType(),
+                                isSupportRole)
+                          : innerSphereSkillBonus(ratingLevel, ratingLevels, isSupportRole,
+                                assignment.getFaction());
+
+        gunnery = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
+        boolean hasPilotingSkill = (assignment.getUnitType() == null)
+              || !assignment.getUnitType().equals(UnitType.INFANTRY)
+              || assignment.getRoles().contains(MissionRole.ANTI_MEK);
+        if (hasPilotingSkill) {
+            piloting = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
+        } else {
+            piloting = 8;
+        }
+
+        int[] escalated = escalateExceptionalCrew(experience, gunnery, piloting, hasPilotingSkill);
+        gunnery = escalated[0];
+        piloting = escalated[1];
+
+        // Experience rows start at Green; the separate Artillery skill defaults to Gunnery, so its aptitude does too
+        SkillLevel skillLevel = SkillLevel.parseFromInteger(Math.clamp(
+              SkillLevel.GREEN.getExperienceLevel() + experience,
+              SkillLevel.GREEN.getExperienceLevel(),
+              SkillLevel.LEGENDARY.getExperienceLevel()));
+        hasNaturalAptitudeGunnery = Crew.rollNaturalAptitude(skillLevel);
+        hasNaturalAptitudeArtillery = hasNaturalAptitudeGunnery;
+        hasNaturalAptitudePiloting = hasPilotingSkill && Crew.rollNaturalAptitude(skillLevel);
+    }
+
+    /**
+     * Gives an elite crew a rare chance of being genuinely exceptional.
+     *
+     * <p>The skill tables stop at the elite row, and a plain 1d6 into that row reaches Heroic at best -
+     * Legendary needs the highest columns, which only a force with the top equipment rating can roll
+     * into. That made Legendary crews unreachable for most commands and guaranteed-ish for a few,
+     * rather than rare everywhere.</p>
+     *
+     * <p>An elite crew therefore rolls once to escalate to Heroic, and again to reach Legendary, giving
+     * roughly one Heroic in six elite crews and one Legendary in thirty-six. This mirrors how MekHQ
+     * already produces exceptional support staff, so a standout MekWarrior is as plausible as a
+     * standout technician.</p>
+     *
+     * <p>Skills are only ever improved: a crew that already rolled into the top columns keeps what it
+     * earned.</p>
+     *
+     * @param experience       the crew's experience row
+     * @param gunnery          the gunnery skill rolled from the tables
+     * @param piloting         the piloting skill rolled from the tables
+     * @param hasPilotingSkill whether this crew has a real piloting skill; foot infantry carry a fixed
+     *                         value that must not be improved
+     *
+     * @return the possibly improved {@code { gunnery, piloting }} pair
+     */
+    static int[] escalateExceptionalCrew(int experience, int gunnery, int piloting,
+          boolean hasPilotingSkill) {
+        if ((experience < SKILL_ELITE) || (Compute.d6() < 6)) {
+            return new int[] { gunnery, piloting };
+        }
+        int escalatedGunnery = Math.min(gunnery, HEROIC_GUNNERY);
+        int escalatedPiloting = hasPilotingSkill ? Math.min(piloting, HEROIC_PILOTING) : piloting;
+
+        if (Compute.d6() < 6) {
+            return new int[] { escalatedGunnery, escalatedPiloting };
+        }
+        return new int[] { Math.min(escalatedGunnery, LEGENDARY_GUNNERY),
+                           hasPilotingSkill ? Math.min(escalatedPiloting, LEGENDARY_PILOTING)
+                                            : escalatedPiloting };
+    }
+
+    /**
+     * The modifier added to a Clan crew's skill roll.
+     *
+     * <p>The warrior caste's advantage puts a Clan Regular Mek crew at 3/4 where an Inner Sphere one
+     * sits at 4/5, and the rating scaling moves a crew around that - Solahma below it, front-line
+     * formations towards it. That scaling is an expansion of the StratOps table, which named only
+     * front-line, second-line and Solahma.</p>
+     *
+     * <p>The caste advantage is the ceiling rather than another step to climb on top of. Left
+     * uncapped the two stacked, a front-line or Keshik formation reached +3 or +4, and that walks
+     * clean off the good end of whichever experience row was asked for: at +4 a force generated as
+     * Regular could not produce a single Regular crew, every one of them coming out Veteran or
+     * better. Capped, the ladder lands where it should - Green 4/5, Regular 3/4, Veteran 2/3,
+     * Elite 1/2 - while a poor rating still pulls a crew below it, which is the half of the scaling
+     * that was doing real work.</p>
+     *
+     * @param ratingLevel   the formation's equipment rating
+     * @param ratingLevels  how many ratings the faction has
+     * @param unitType      what the crew fights in, or {@code null} where the force has not said
+     * @param isSupportRole whether the formation is a support formation
+     *
+     * @return the modifier to add to the crew's skill roll
+     */
+    static int clanSkillBonus(int ratingLevel, int ratingLevels, @Nullable Integer unitType,
+          boolean isSupportRole) {
+        int bonus = ratingLevel - (ratingLevels / 2);
+        if (unitType != null) {
+            switch (unitType) {
+                case UnitType.MEK, UnitType.BATTLE_ARMOR -> bonus += CLAN_WARRIOR_CASTE_BONUS;
+                case UnitType.TANK, UnitType.VTOL, UnitType.NAVAL, UnitType.INFANTRY,
+                      UnitType.CONV_FIGHTER -> bonus--;
+                default -> {
+                    // Every other unit type takes the rating scaling alone.
+                }
+            }
+        }
+        // Capped before the support penalty rather than after, so that a support formation is still a
+        // step below a line one. Capping last swallowed the penalty whole for any formation already
+        // at the ceiling, which quietly crewed a front-line support star as well as the line stars.
+        bonus = Math.min(bonus, CLAN_WARRIOR_CASTE_BONUS);
+        if (isSupportRole) {
+            bonus--;
+        }
+        return bonus;
+    }
+
+    /**
+     * The modifier added to an Inner Sphere crew's skill roll.
+     *
+     * <p>StratOps gives +1 for an A rating and -1 for an F. A few factions have no A-F ratings, so
+     * the best rating takes the +1 and the worst the -1, unless there is only one rating to have.</p>
+     *
+     * @param ratingLevel   the formation's equipment rating
+     * @param ratingLevels  how many ratings the faction has
+     * @param isSupportRole whether the formation is a support formation
+     * @param faction       the faction the force is generated for
+     *
+     * @return the modifier to add to the crew's skill roll
+     */
+    static int innerSphereSkillBonus(int ratingLevel, int ratingLevels, boolean isSupportRole,
+          String faction) {
+        int bonus = 0;
+        if (ratingLevels > 1) {
             if (ratingLevel == 0) {
                 bonus--;
             }
-            if (ratingLevel == levels - 1) {
+            if (ratingLevel == (ratingLevels - 1)) {
                 bonus++;
             }
         }
-        if (clan) {
-            if (assignment.getUnitType() != null) {
-                switch (assignment.getUnitType()) {
-                    case UnitType.MEK:
-                    case UnitType.BATTLE_ARMOR:
-                        bonus += 2;
-                        break;
-                    case UnitType.TANK:
-                    case UnitType.VTOL:
-                    case UnitType.NAVAL:
-                    case UnitType.INFANTRY:
-                    case UnitType.CONV_FIGHTER:
-                        bonus--;
-                        break;
-                }
-            }
-            if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
-                bonus--;
-            }
-        } else {
-            if (assignment.getRoles().contains(MissionRole.SUPPORT)) {
-                bonus--;
-            }
-            if (assignment.getFaction().equals("WOB.SD")) {
-                bonus++;
-            }
+        if (isSupportRole) {
+            bonus--;
         }
-
-        gunnery = randomSkillRating(GUNNERY_SKILL_TABLE, experience, bonus);
-        if (assignment.getUnitType() != null && assignment.getUnitType().equals(UnitType.INFANTRY)
-              && !assignment.getRoles().contains(MissionRole.ANTI_MEK)) {
-            piloting = 8;
-        } else {
-            piloting = randomSkillRating(PILOTING_SKILL_TABLE, experience, bonus);
+        if (SHADOW_DIVISION_FACTION.equals(faction)) {
+            bonus++;
         }
+        return bonus;
     }
 
     /**
@@ -276,6 +395,38 @@ public class CrewDescriptor {
         this.gunnery = gunnery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeGunnery() {
+        return hasNaturalAptitudeGunnery;
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery) {
+        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeArtillery() {
+        return hasNaturalAptitudeArtillery;
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery) {
+        this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
+    }
+
     public int getPiloting() {
         return piloting;
     }
@@ -284,27 +435,65 @@ public class CrewDescriptor {
         this.piloting = piloting;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudePiloting() {
+        return hasNaturalAptitudePiloting;
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting) {
+        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
+    }
+
+    /**
+     * Copies the most recently generated skills and Natural Aptitudes into one crew slot.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void setCrewMemberSkills(Crew crew, int slot) {
+        crew.setPiloting(piloting, slot);
+        crew.setHasNaturalAptitudePiloting(hasNaturalAptitudePiloting, slot);
+        crew.setGunnery(gunnery, slot);
+        crew.setHasNaturalAptitudeGunnery(hasNaturalAptitudeGunnery, slot);
+        crew.setHasNaturalAptitudeArtillery(hasNaturalAptitudeArtillery, slot);
+    }
+
     public Crew createCrew(CrewType crewType) {
-        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, piloting, gender,
-              assignment.getFactionRec().isClan(), null);
+        Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, hasNaturalAptitudeGunnery,
+              hasNaturalAptitudeArtillery, piloting,
+              hasNaturalAptitudePiloting, gender, assignment.getFactionRec().isClan(), null);
         // Randomize names and skills of crew, then assign the piloting and
         // gunnery skills generated for the unit to the correct slot.
         if (crewType.getCrewSlots() > 1) {
             int oldPiloting = crew.getPiloting();
             int oldGunnery = crew.getGunnery();
+            boolean oldHasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
+            boolean oldHasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+            boolean oldHasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
             setSkills();
-            crew.setPiloting(piloting, 0);
-            crew.setGunnery(gunnery, 0);
+            setCrewMemberSkills(crew, 0);
             for (int i = 1; i < crew.getSlotCount(); i++) {
                 crew.setName(generateName(Gender.RANDOMIZE), i);
                 setSkills();
-                crew.setPiloting(piloting, i);
-                crew.setGunnery(gunnery, i);
+                setCrewMemberSkills(crew, i);
             }
             crew.setPiloting(oldPiloting, crew.getCurrentPilotIndex());
+            crew.setHasNaturalAptitudePiloting(oldHasNaturalAptitudePiloting, crew.getCurrentPilotIndex());
             crew.setGunnery(oldGunnery, crew.getCurrentGunnerIndex());
+            crew.setHasNaturalAptitudeGunnery(oldHasNaturalAptitudeGunnery, crew.getCurrentGunnerIndex());
+            crew.setHasNaturalAptitudeArtillery(oldHasNaturalAptitudeArtillery, crew.getCurrentGunnerIndex());
             setPiloting(oldPiloting);
+            setHasNaturalAptitudePiloting(oldHasNaturalAptitudePiloting);
             setGunnery(oldGunnery);
+            setHasNaturalAptitudeGunnery(oldHasNaturalAptitudeGunnery);
+            setHasNaturalAptitudeArtillery(oldHasNaturalAptitudeArtillery);
         }
         return crew;
     }

@@ -1,0 +1,53 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+# Test fixture for nested subunits. Exercises key composition, inheritance of tags and the
+# name generator, a subunit overriding what it inherits, an explicit subunit key, and a
+# second level of nesting.
+key: TESTCMD
+name: Test Parent Command
+yearsActive:
+  - start: 2600
+tags:
+  - CLAN
+nameGenerator: Clan
+ratingLevels:
+  - Provisional Garrison
+  - Second Line
+  - Front Line
+fallBackFactions:
+  - CBS
+subunits:
+  1st:
+    name: 1st Test Regiment
+    yearsActive:
+      - start: 2300
+  2nd:
+    name: 2nd Test Regiment
+    tags:
+      - IS
+    nameGenerator: Generic
+    fallBackFactions:
+      - CBS
+  3rd:
+    key: TESTCMD.CustomKey
+    name: 3rd Test Regiment
+  4th:
+    name: 4th Test Regiment
+    subunits:
+      A:
+        name: A Battalion, 4th Test Regiment

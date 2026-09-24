@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.laser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,7 @@ public class InfantrySupportLaserUltraHeavyWeapon extends InfantryWeapon {
         crew = 4;
         ammoWeight = 0.003;
         shots = 5;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         tonnage = .250;
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3055, 3062, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CBR)

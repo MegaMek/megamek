@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,7 +45,9 @@ import java.util.stream.Collectors;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.StructureType;
+import megamek.common.interfaces.ITechnology;
 import megamek.common.weapons.bayWeapons.TeleOperatedMissileBayWeapon;
 import org.junit.jupiter.api.Test;
 
@@ -96,6 +98,21 @@ class EquipmentTypeTest {
     }
 
     @Test
+    void structureTechAdvancementForUnitsWithoutStructureIsBlank() {
+        EquipmentType.initializeTypes();
+
+        // Battle armor and conventional infantry carry no internal structure type; the answer must be a blank
+        // advancement rather than a name lookup that scans every equipment type and misses anyway.
+        TechAdvancement unknownStructure = EquipmentType.getStructureTechAdvancement(
+              EquipmentType.T_STRUCTURE_UNKNOWN, false);
+        TechAdvancement endoSteel = EquipmentType.getStructureTechAdvancement(
+              EquipmentType.T_STRUCTURE_ENDO_STEEL, false);
+
+        assertEquals(ITechnology.DATE_NONE, unknownStructure.getIntroductionDate());
+        assertTrue(endoSteel.getIntroductionDate() > 0, "a real structure type still resolves");
+    }
+
+    @Test
     void allEquipmentLookupNamesAreUnique() {
         EquipmentType.initializeTypes();
 
@@ -118,6 +135,13 @@ class EquipmentTypeTest {
         assertEquals(prototypeFerroAluminum, EquipmentType.getArmorFromName("IS Ferro-Alum Armor Prototype"));
         assertEquals(prototypeFerroAluminum, EquipmentType.getArmorFromName(" prototype ferro-aluminum "));
         assertNull(EquipmentType.getArmorFromName("Unknown Armor Type"));
+    }
+
+    @Test
+    void allShieldSizesHaveShieldFlag() {
+        assertTrue(MiscType.createISSmallShield().hasFlag(MiscType.F_SHIELD));
+        assertTrue(MiscType.createISMediumShield().hasFlag(MiscType.F_SHIELD));
+        assertTrue(MiscType.createISLargeShield().hasFlag(MiscType.F_SHIELD));
     }
 
     private static class EquipmentTypeWithInheritedLookupNames extends EquipmentType {

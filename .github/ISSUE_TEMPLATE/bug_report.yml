@@ -1,108 +1,110 @@
-name: "Report an Issue"
+name: "Report a Bug"
 description: >
-  Please make sure you're opening the issue on the correct repo;
-  you've checked to make sure this isn't a duplicate, and checked
-  on the Discord that there is an issue and not working as intended.
-title: "[Issue]"
+  Something in MegaMek is broken or behaving incorrectly. Please check that you are on the
+  right repository and that nobody has reported this already.
+type: "Bug"
 labels:
-  - bug
+  - Bug
 
 body:
+  - type: markdown
+    attributes:
+      value: |
+        The quickest way to file this is the **Report a Bug** button in MegaMek - on the Help menu, on
+        the Commands button above the board, or beside the Done button. It saves your game, gathers the
+        logs into a single ZIP, and fills in the version fields below for you.
+
+        If your version does not have that button yet, attach your save and the contents of the `logs`
+        folder by hand.
+
   - type: textarea
     id: brief-description
     attributes:
-      label: "Brief Description *"
+      label: "What went wrong"
       description: |
-        Please describe the issue in detail.
+        Describe what you saw. Screenshots help.
 
-        For more detailed instructions, check out
+        If it is a rules problem, name the rulebook and its edition, give the page number, and quote the
+        relevant text. For more detail, see
         [our wiki](https://github.com/MegaMek/megamek/wiki/Creating-an-Issue-(Bug-Report%2C-Request-for-Enhancement%2C-Errata)).
+      placeholder: "Describe the problem here..."
+    validations:
+      required: true
 
-        1. Provide in-game screenshots if possible.
-        2. If it's a rules-related issue:
-           - Specify the rulebook edition
-           - Include the page number
-           - Quote the relevant text
-      placeholder: "Describe the issue here..."
+  - type: textarea
+    id: expected-behaviour
+    attributes:
+      label: "What you expected instead"
+      description: "One line is enough. This is what separates a bug from a rule working as written."
+      placeholder: "I expected..."
     validations:
       required: true
 
   - type: textarea
     id: steps-to-reproduce
     attributes:
-      label: "3. Steps to Reproduce"
-      description: "Provide a detailed numbered list of steps."
-      placeholder: "1. Step one\n2. Step two\n3. Step three"
+      label: "Steps to reproduce"
+      description: >
+        A numbered list, if you can make it happen again. If it happened once and never came back,
+        say so - that is still worth reporting.
+      placeholder: "1. ...\n2. ...\n3. ..."
+
+  - type: upload
+    id: report-files
+    attributes:
+      label: "Attach your files"
+      description: >
+        The ZIP from the Report a Bug button, or your save game and the files from the logs folder.
+        Archives up to 25 MB, video up to 100 MB.
+    validations:
+      required: false
+      accept: ".zip,.gz,.log,.txt,.csv,.png,.jpg,.jpeg,.gif,.mp4,.mov"
 
   - type: textarea
-    id: attached-files
+    id: log-excerpt
     attributes:
-      label: "Attach Files"
-      description: "Please provide all the logs from the logs folder (zipped) and any other relevant files."
-      placeholder: "Drag and drop or click to upload relevant files."
-
-  - type: dropdown
-    id: severity
-    attributes:
-      label: "Severity *"
-      description: "Choose the severity of the bug."
-      options:
-        - "Critical (Game-breaking/Crash): The game crashes or a core feature (like saving, loading, or network connection) is completely unusable."
-        - "High (Major Disruption): A major feature is broken or incorrect, but a workaround exists."
-        - "Medium (Gameplay Limitation): Non-core functionality is impaired, providing a suboptimal but playable experience."
-        - "Low (Minor/Nuisance): Minor glitches or cosmetic issues that don't affect gameplay and occur rarely."
-    validations:
-      required: true
-
-  - type: markdown
-    attributes:
-      value: |
-        ## User Environment
-        For the next sections, go to the "logs" folder. Find the MegaMek.log file and open it with a text editor. The information in the header will be needed.
-
-  - type: markdown
-    attributes:
-      value: |
-        ![Alt text](https://i.imgur.com/KD8cnvf.png)
+      label: "Relevant log lines"
+      description: "Only needed if you cannot attach the files. Paste the stack trace, or the lines around the problem."
+      render: text
 
   - type: input
     id: custom-megamek-version
     attributes:
-      label: "MegaMek Suite Version *"
-      description: "Enter your MegaMek version here"
-      placeholder: "Example: 0.50.02"
+      label: "MegaMek Suite Version"
+      description: >
+        Filled in for you if you opened this form from the program. By hand: open logs/megamek.log in a
+        text editor and read the header.
+      placeholder: "Example: 0.51.0"
     validations:
       required: true
 
   - type: input
     id: operating-system
     attributes:
-      label: "Operating System *"
-      description: "Select your operating system"
-      placeholder: "Please be specific with the OS, e.g. Windows 11, macOS 15 Sequoia, Linux (Ubuntu)"
+      label: "Operating System"
+      description: "Please be specific - Windows 11, macOS 15 Sequoia, Ubuntu 24.04."
+      placeholder: "Example: Windows 11 (10.0.26200) amd64"
     validations:
       required: true
 
   - type: input
     id: java-version
     attributes:
-      label: "Java Version *"
-      description: "Enter the Java version from the .log file"
-      placeholder: "Example: Java Vendor: Eclipse Adoptium     Java Version: 21.0.5"
+      label: "Java Version"
+      description: "From the same log header."
+      placeholder: "Example: Eclipse Adoptium 21.0.8+9"
     validations:
       required: true
 
   - type: checkboxes
     id: final-checks
     attributes:
-      label: "Final Verification"
-      description: "Please confirm the following before submitting"
+      label: "Before you submit"
       options:
-        - label: "I confirm this is a single, unique issue that hasn't been reported before"
+        - label: "This report only contains one issue or request, and I haven't already reported it"
           required: true
-        - label: "I have included all necessary information and files to help reproduce this issue"
+        - label: >
+            I am on the right repository - MegaMek for battles, MegaMekLab for unit design, MekHQ for
+            campaigns, mm-data for unit and planet data
           required: true
-        - label: "I have asked on MegaMek Discord about this issue"
-          required: true
-        - label: "I have confirmed this issue is being opened on the correct repository: MegaMek, MegaMekLab, or MekHQ"
-          required: true
+        - label: "I have asked about this on the MegaMek Discord (optional)"

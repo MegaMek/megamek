@@ -36,17 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import megamek.client.bot.Messages;
@@ -63,7 +53,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
@@ -171,9 +160,24 @@ public class BasicPathRanker extends PathRanker {
     protected static final int REPRESENTATIVE_TO_HIT = 8;
 
     /**
+     * The indifference band: how much better a destination must score before leaving a held firing
+     * position is worth it. The ranker re-estimates every hex every round, and the estimate of the SAME
+     * hex moves round to round as enemies shift - measured on 30-game mirror runs, a unit standing still
+     * sees its own hex's score change by a median of about five points per round. A destination that beats
+     * the current hex by less than that is indistinguishable from the noise, and chasing it pays the
+     * attacker movement modifier for nothing. The margin is the measured median (estimate_wobble.py,
+     * re-measured whenever the estimators change), added to the stationary path's hold credit: real
+     * improvements - fresh cover against a new threat, a range advantage - typically score well past it
+     * and still win.
+     */
+    protected static final double ESTIMATE_NOISE_MARGIN = 5.0;
+
+    /**
      * How much of a turn of advance the hold credit may reach under each posture: an attacking force
      * keeps the credit modest so a good hex never outbids the advance, while a defending force holds
-     * harder. Both keep the credit strictly below one turn of advance.
+     * harder. Both keep the credit below one turn of advance at default aggression; a final clamp in
+     * {@link #calculatePositionHoldMod} holds that bound across the whole aggression slider, where the
+     * fixed {@link #ESTIMATE_NOISE_MARGIN} would otherwise overtake the shrinking yardstick.
      */
     protected static final double HOLD_CREDIT_ATTACK_CAP_FACTOR = 0.4;
     protected static final double HOLD_CREDIT_DEFEND_CAP_FACTOR = 0.8;
@@ -269,6 +273,24 @@ public class BasicPathRanker extends PathRanker {
               enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, myFacing)) ||
               enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 1) % 6)) ||
               enemyFacingSet.contains(CoordFacingCombo.createCoordFacingCombo(rightFlank, (myFacing + 2) % 6));
+    }
+
+    /**
+     * Doctrine seam for atmospheric aerospace movement, overridden by CASPAR's aerospace ranker.
+     *
+     * <p>Returns 0 here, so the stock utility total is exactly what it was before this seam existed. It is a
+     * seam rather than a term because none of the modifiers above has any concept of altitude: they price
+     * distance, facing and cover on a flat board, while what decides an air-to-air engagement is whether the
+     * two units are close enough in altitude to shoot at all (TW p.241).</p>
+     *
+     * @param path    the path being ranked
+     * @param game    the current game
+     * @param enemies the enemies being weighed against this path
+     *
+     * @return the doctrine adjustment to this path's utility, 0 in the stock ranker
+     */
+    protected double calculateAerospaceMod(MovePath path, Game game, List<Entity> enemies) {
+        return 0;
     }
 
     /**
@@ -451,12 +473,27 @@ public class BasicPathRanker extends PathRanker {
         return posture;
     }
 
+    /**
+     * The posture already resolved for this board this round, without resolving one if none has been.
+     *
+     * <p>Deliberately does not call {@link #resolvePosture}: that announces the force's intent in the chat
+     * when it changes, so resolving merely to write a log line would make the bot say things it had not
+     * otherwise decided.</p>
+     */
+    @Override
+    protected @Nullable CombatPosture resolvedPostureFor(Game game, int boardId) {
+        if (game.getCurrentRound() != postureResolvedRound) {
+            return null;
+        }
+        return postureByBoard.get(boardId);
+    }
+
     /** The positions of the given units that are deployed on the given board; the rest have no say. */
     static List<Coords> deployedPositions(List<Entity> units, int boardId) {
         List<Coords> positions = new ArrayList<>(units.size());
         for (Entity unit : units) {
             Coords position = unit.getPosition();
-            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
+            if ((position != null) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
                 positions.add(position);
             }
         }
@@ -2028,6 +2065,8 @@ public class BasicPathRanker extends PathRanker {
         scores.put("sprintExposurePenalty", sprintExposurePenalty);
 
         double offBoardMod = calculateOffBoardMod(pathCopy);
+        // Atmospheric aerospace doctrine. Zero in the stock ranker, so Princess's total is unchanged.
+        double aerospaceMod = calculateAerospaceMod(pathCopy, game, enemies);
         // if we're an aircraft, we want to devalue paths that will force us off the board on the subsequent turn.
         double utility = -fallMod;
         utility += braveryMod;
@@ -2040,6 +2079,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= selfPreservationMod;
         utility -= sprintExposurePenalty;
         utility += positionHoldMod;
+        utility += aerospaceMod;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")
@@ -2161,7 +2201,7 @@ public class BasicPathRanker extends PathRanker {
      *
      * <p>Dormant outside {@link #THREAT_CONTACT_RANGE}: on the approach there is no exchange to hold and
      * the force should move loose and fast. Withdrawing units are leaving, not holding. The credit is
-     * capped strictly below one turn of advance, harder under DEFEND than ATTACK
+     * capped so it never exceeds one turn of advance, harder under DEFEND than ATTACK
      * ({@link #HOLD_CREDIT_DEFEND_CAP_FACTOR}, {@link #HOLD_CREDIT_ATTACK_CAP_FACTOR}).</p>
      *
      * @param path                the path being ranked (a copy, safe to inspect)
@@ -2199,7 +2239,15 @@ public class BasicPathRanker extends PathRanker {
         double capFactor = (CombatPosture.DEFEND == resolvePosture(game, movingUnit.getBoardId()))
               ? HOLD_CREDIT_DEFEND_CAP_FACTOR
               : HOLD_CREDIT_ATTACK_CAP_FACTOR;
-        double holdCredit = capFactor * Math.min(quality, TEMPO_REFERENCE_MP * aggression);
+        // The noise margin sits outside the cap: it is estimator distrust, not position value. At default
+        // aggression the combined ceiling (cap + margin, 35 for a defender) sits below the 37.5-point
+        // turn of advance; at the low end of the slider the fixed margin would overtake the shrinking
+        // yardstick, so the final clamp keeps the Eisenhower governor true across the whole range: no
+        // position ever outbids the advance.
+        double turnOfAdvance = TEMPO_REFERENCE_MP * aggression;
+        double holdCredit = Math.min(
+              capFactor * Math.min(quality, turnOfAdvance) + ESTIMATE_NOISE_MARGIN,
+              turnOfAdvance);
         lastPositionHoldMod = holdCredit;
         return holdCredit;
     }
@@ -2599,10 +2647,10 @@ public class BasicPathRanker extends PathRanker {
         // unit's ledger said stay, turn after turn. Price the water for the hex the unit stays in. The
         // elevation check keeps this to units actually in the water - a stationary path reports MOVE_NONE,
         // so a hovering VTOL would otherwise read as drowning.
-        if (null == previousCoords) {
+        if (previousCoords == null) {
             Coords finalCoords = path.getFinalCoords();
-            Hex finalHex = (null == finalCoords) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
-            if ((null != finalHex) && finalHex.containsTerrain(Terrains.WATER)
+            Hex finalHex = (finalCoords == null) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
+            if ((finalHex != null) && finalHex.containsTerrain(Terrains.WATER)
                   && !finalHex.containsTerrain(Terrains.ICE) && (movingUnit.getElevation() < 0)) {
                 totalHazard += waterHazard(movingUnit, finalHex, movingUnit.getElevation(),
                       movingUnit.isProne(), true, null);
@@ -2854,11 +2902,11 @@ public class BasicPathRanker extends PathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
-        // Unsealed unit will drown.
-        if (movingUnit instanceof Mek &&
-              ((Mek) movingUnit).isIndustrial() &&
-              !movingUnit.hasEnvironmentalSealing() &&
-              (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+        // An IndustrialMek needs both the Environmental Sealing and a non-air-breathing engine to be completely
+        // submerged; lacking either, it drowns (TW p.52, Movement Costs Table footnote 8).
+        if ((movingUnit instanceof Mek industrialMek) &&
+              industrialMek.isIndustrial() &&
+              !EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek) &&
               hex.depth() >= 1 &&
               endsInHex) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
@@ -2894,7 +2942,7 @@ public class BasicPathRanker extends PathRanker {
         // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
         // the fall probability lazily so a fully-armored unit never triggers it. A unit standing still makes
         // no water-entry roll, so there is nothing to fall from.
-        if (null != movePath) {
+        if (movePath != null) {
             double fallProbability = -1;
             for (int location : submergedWhileProne) {
                 if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
@@ -2988,7 +3036,7 @@ public class BasicPathRanker extends PathRanker {
         if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
             return 0.0;
         }
-        boolean naturalAptPilot = movingUnit.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean naturalAptPilot = movingUnit.isUseNaturalAptitudePiloting();
         return 1.0 - (Compute.oddsAbove(waterRoll.getValue(), naturalAptPilot) / 100.0);
     }
 

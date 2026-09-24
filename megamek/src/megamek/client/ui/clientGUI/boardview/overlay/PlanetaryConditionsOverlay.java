@@ -54,6 +54,8 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
     private static final String MSG_LIGHT = Messages.getString("PlanetaryConditionsOverlay.Light");
     private static final String MSG_ATMOSPHERIC_PRESSURE = Messages.getString(
           "PlanetaryConditionsOverlay.AtmosphericPressure");
+    private static final String MSG_ATMOSPHERIC_TAINT = Messages.getString(
+          "PlanetaryConditionsOverlay.AtmosphericTaint");
     private static final String MSG_EMI = Messages.getString("PlanetaryConditionsOverlay.EMI");
     private static final String MSG_WEATHER = Messages.getString("PlanetaryConditionsOverlay.Weather");
     private static final String MSG_WIND = Messages.getString("PlanetaryConditionsOverlay.Wind");
@@ -133,6 +135,13 @@ public class PlanetaryConditionsOverlay extends AbstractBoardViewOverlay {
                 tmpStr = (showLabel ? MSG_ATMOSPHERIC_PRESSURE + "  " : "");
                 tmpStr = tmpStr + (showValue ? conditions.getAtmosphere().toString() + "  " : "");
                 tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphere().getIndicator() : "");
+                result.add(tmpStr);
+            }
+
+            if (showDefaultConditions || !conditions.getAtmosphericTaint().isBreathable()) {
+                tmpStr = (showLabel ? MSG_ATMOSPHERIC_TAINT + "  " : "");
+                tmpStr = tmpStr + (showValue ? conditions.getAtmosphericTaint().toString() + "  " : "");
+                tmpStr = tmpStr + (showIndicator ? conditions.getAtmosphericTaint().getIndicator() : "");
                 result.add(tmpStr);
             }
 

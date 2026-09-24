@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -52,19 +53,20 @@ public class InfantryLaserPistolBrightStarL15 extends InfantryWeapon {
     public InfantryLaserPistolBrightStarL15() {
         super();
 
-        name = "Laser Pistol (BrightStar L-15)";
-        setInternalName(name);
+        name = "Laser Pistol (Brightstar L-15)";
+        setInternalName("Laser Pistol (BrightStar L-15)");
+        addLookupName(name);
         addLookupName("BRIGHTSTARL15");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1750;
         bv = 0.056;
         tonnage = 0.0014;
-        infantryDamage = 0.19;
+        infantryDamage = 0.056;
         infantryRange = 3;
         shots = 2;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
 
         techAdvancement
               .setTechBase(TechBase.CLAN)

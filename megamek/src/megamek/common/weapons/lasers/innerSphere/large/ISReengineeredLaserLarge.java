@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.innerSphere.large;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -76,11 +77,9 @@ public class ISReengineeredLaserLarge extends ReengineeredLaserWeapon {
         shortAV = 9;
         medAV = 9;
         maxRange = RANGE_MED;
-        rulesRefs = "83, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 83);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D)
               .setISAdvancement(3120, 3130, DATE_NONE, DATE_NONE, DATE_NONE)

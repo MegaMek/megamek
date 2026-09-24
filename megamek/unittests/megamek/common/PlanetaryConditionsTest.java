@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,7 +93,10 @@ class PlanetaryConditionsTest {
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         Entity mockEntity = mock(Infantry.class);
         when(mockEntity.doomedInVacuum()).thenReturn(true);
-        assertEquals("vacuum", planetaryConditions.whyDoomed(mockEntity, mockGame));
+        // The reason now names which of the three causes it is, and comes from the message bundle, so the exact
+        // wording is translatable and not worth pinning here. EnvironmentalSealingRulesTest covers the three apart.
+        assertNotNull(planetaryConditions.whyDoomed(mockEntity, mockGame),
+              "a unit doomed in vacuum must be given a reason");
         reset(mockEntity, mockGame);
 
         // Trace atmosphere - Entity not doomed in vacuum/trace atmosphere

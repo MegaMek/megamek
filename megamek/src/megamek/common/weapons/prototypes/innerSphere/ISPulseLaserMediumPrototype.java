@@ -42,6 +42,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -94,10 +95,8 @@ public class ISPulseLaserMediumPrototype extends PulseLaserWeapon {
         criticalSlots = 1;
         bv = 43;
         cost = 300000;
-        rulesRefs = "67, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(2595, DATE_NONE, DATE_NONE, 2609, DATE_NONE)

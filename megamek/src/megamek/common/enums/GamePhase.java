@@ -69,7 +69,8 @@ public enum GamePhase {
     VICTORY("GamePhase.VICTORY.text"),
     DEPLOY_MINEFIELDS("GamePhase.DEPLOY_MINEFIELDS.text"),
     STARTING_SCENARIO("GamePhase.STARTING_SCENARIO.text"),
-    SET_ARTILLERY_AUTO_HIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text");
+    SET_ARTILLERY_AUTO_HIT_HEXES("GamePhase.SET_ARTILLERY_AUTOHIT_HEXES.text"),
+    VICTORY_SETUP("GamePhase.VICTORY_SETUP.text");
 
     private final String name;
 
@@ -194,6 +195,10 @@ public enum GamePhase {
         return this == SET_ARTILLERY_AUTO_HIT_HEXES;
     }
 
+    public boolean isVictorySetup() {
+        return this == VICTORY_SETUP;
+    }
+
     // endregion
 
     public boolean isReport() {
@@ -219,8 +224,9 @@ public enum GamePhase {
      */
     public boolean usesTurns() {
         return switch (this) {
-            case SET_ARTILLERY_AUTO_HIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT, MOVEMENT, PRE_FIRING, FIRING,
-                 PHYSICAL, TARGETING, OFFBOARD, PREEND_DECLARATIONS, INFANTRY_VS_INFANTRY_COMBAT -> true;
+            case VICTORY_SETUP, SET_ARTILLERY_AUTO_HIT_HEXES, DEPLOY_MINEFIELDS, DEPLOYMENT, PREMOVEMENT,
+                 MOVEMENT, PRE_FIRING, FIRING, PHYSICAL, TARGETING, OFFBOARD, PREEND_DECLARATIONS,
+                 INFANTRY_VS_INFANTRY_COMBAT -> true;
             default -> false;
         };
     }

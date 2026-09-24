@@ -42,16 +42,7 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import megamek.client.generator.RandomCallsignGenerator;
@@ -59,18 +50,29 @@ import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
+import megamek.client.ui.comboBoxes.SearchableComboBox;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.MiscType;
+import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.icons.Portrait;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.EjectionHazard;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewArmorKitRules;
+import megamek.common.units.CrewSidearmRules;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
 import megamek.common.units.Infantry;
 import megamek.common.units.LAMPilot;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;
+import megamek.common.weapons.infantry.InfantryWeapon;
 
 /**
  * Controls for customizing crew in the chat lounge. For most crew types this is part of the pilot tab. For multi-crew
@@ -91,6 +93,16 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldName = new JTextField(30);
     private final JTextField fldNick = new JTextField(30);
     private final JCheckBox chkClanPilot = new JCheckBox(Messages.getString("CustomMekDialog.chkClanPilot"));
+    /**
+     * The kit and sidearm choosers, searchable by typing like the munition choosers because both lists run long.
+     * The searchable box takes its whole list at construction, so each starts as a placeholder holding only the
+     * "none" entry and is rebuilt with the real list once the rule is known to be on for this crew.
+     */
+    private SearchableComboBox<EquipmentChoice> choArmorKit = new SearchableComboBox<>("choArmorKit",
+          List.of(EquipmentChoice.NO_KIT), EquipmentChoice::displayName);
+    private SearchableComboBox<EquipmentChoice> choSidearm = new SearchableComboBox<>("choSidearm",
+          List.of(EquipmentChoice.NO_SIDEARM), EquipmentChoice::displayName);
+    private final JTextField fldSmallArms = new JTextField(4);
     private final JTextField fldGunnery = new JTextField(4);
     private final JTextField fldGunneryL = new JTextField(4);
     private final JTextField fldGunneryM = new JTextField(4);
@@ -105,6 +117,14 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldTough = new JTextField(4);
     private final JTextField fldFatigue = new JTextField(4);
 
+    private final JCheckBox chkNaturalAptitudePiloting = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudePilotingAero = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeGunnery = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeGunneryAero = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeArtillery = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeSmallArms = new JCheckBox();
+    private boolean showsArtilleryAptitude;
+
     private final JComboBox<String> cbBackup = new JComboBox<>();
 
     private final List<Entity> entityUnitNum = new ArrayList<>();
@@ -118,8 +138,10 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      * (initiative, commander) through {@link #addAdvancedRow(String, JComponent)}.
      */
     private JPanel advancedSection;
-    private static final int ADVANCED_PAIRS_PER_ROW = 3;
+    private static final int ADVANCED_PAIRS_PER_ROW = 2;
     private int advancedPairCount = 0;
+    /** Whether the kit, sidearm and Small Arms controls are shown: the rule is on and this crew can leave on foot. */
+    private boolean showsPersonalEquipment;
     private final int sectionGap = UIUtil.scaleForGUI(10);
 
     private Portrait portrait;
@@ -141,9 +163,13 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         // too-narrow window now clips at the row's right edge instead of crushing the inputs.
         for (JTextField inputField : List.of(fldName, fldNick, fldGunnery, fldGunneryL, fldGunneryM, fldGunneryB,
               fldPiloting, fldGunneryAero, fldGunneryAeroL, fldGunneryAeroM, fldGunneryAeroB, fldPilotingAero,
-              fldArtillery, fldTough, fldFatigue)) {
+              fldArtillery, fldTough, fldFatigue, fldSmallArms)) {
             inputField.setMinimumSize(inputField.getPreferredSize());
         }
+
+        // Worked out before the sections are built, as the skills section needs it for the Small Arms aptitude
+        showsPersonalEquipment = CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
+              && CrewArmorKitRules.canWearArmorKit(entity);
 
         // Sections sit side by side at their natural width in fixed grid columns; the trailing glue absorbs the
         // leftover row width and packs them to the left. The Advanced section goes below the identity section in
@@ -152,22 +178,33 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         sectionsRow.add(buildSkillsSection(parent, slot), sectionConstraints(1));
 
         advancedSection = buildAdvancedSection();
-        chkClanPilot.setText("");
-        chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
-        if (entity.getCrew().getSlotCount() > 1) {
-            // Multi-crew: this panel is a per-member tab with no command controls, so add the flag right away.
-            // Single pilot: the dialog calls addClanPilotAdvancedRow() while interleaving its command controls,
-            // placing the flag after Commander Initiative.
-            addClanPilotAdvancedRow();
+        // The Advanced section reads two pairs to a row, in this order: the kit and the sidearm, then the
+        // command controls beside Small Arms, then toughness and fatigue. The first row is added here; for a
+        // single pilot the dialog adds its command controls next and then calls addCrewMemberRows(), for a
+        // multi-crew member tab there are no command controls and the rest follows at once.
+        if (showsPersonalEquipment) {
+            choArmorKit = buildArmorKitChooser(parent.getClient().getGame(), entity, slot);
+            refreshArmorKitTooltip();
+            choArmorKit.addActionListener(event -> refreshArmorKitTooltip());
+            addAdvancedRow(Messages.getString("CustomMekDialog.choArmorKit"), choArmorKit);
+            choSidearm = buildSidearmChooser(parent.getClient().getGame(), entity, slot);
+            choSidearm.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.choSidearm.tooltip")));
+            addAdvancedRow(Messages.getString("CustomMekDialog.choSidearm"), choSidearm);
         }
-        if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
-            addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
+        // Likewise the Small Arms field opens on the unit's default when nothing was recorded. Filled only when
+        // the field is shown, so a hidden field never carries a default back onto the crew.
+        if (showsPersonalEquipment) {
+            int smallArmsShown = entity.getCrew().hasSmallArms(slot)
+                  ? entity.getCrew().getSmallArms(slot)
+                  : CrewSidearmRules.defaultSmallArms(entity);
+            fldSmallArms.setText((smallArmsShown == Crew.SMALL_ARMS_UNSET) ? "" : Integer.toString(smallArmsShown));
         }
         fldTough.setText(Integer.toString(entity.getCrew().getToughness(slot)));
-        if (parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)) {
-            addAdvancedRow(Messages.getString("CustomMekDialog.labFatigue"), fldFatigue);
-        }
         fldFatigue.setText(Integer.toString(entity.getCrew().getCrewFatigue(slot)));
+        if (entity.getCrew().getSlotCount() > 1) {
+            addCrewMemberRows(parent.getClient().getGame());
+        }
 
         JPanel crewRoleSection = buildCrewRoleSection(parent, slot);
         if (crewRoleSection.getComponentCount() > 0) {
@@ -181,6 +218,9 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldName.setEnabled(false);
             fldNick.setEnabled(false);
             chkClanPilot.setEnabled(false);
+            choArmorKit.setEnabled(false);
+            choSidearm.setEnabled(false);
+            fldSmallArms.setEnabled(false);
             fldGunnery.setEnabled(false);
             fldGunneryL.setEnabled(false);
             fldGunneryM.setEnabled(false);
@@ -194,6 +234,12 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldArtillery.setEnabled(false);
             fldTough.setEnabled(false);
             fldFatigue.setEnabled(false);
+            chkNaturalAptitudePiloting.setEnabled(false);
+            chkNaturalAptitudePilotingAero.setEnabled(false);
+            chkNaturalAptitudeGunnery.setEnabled(false);
+            chkNaturalAptitudeGunneryAero.setEnabled(false);
+            chkNaturalAptitudeArtillery.setEnabled(false);
+            chkNaturalAptitudeSmallArms.setEnabled(false);
         }
 
         missingToggled();
@@ -205,23 +251,179 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
               .anchor(GridBagConstraints.NORTHWEST).insets(0, 0, sectionGap, 0);
     }
 
-    /** Puts the Advanced section under the identity section at its full width, once, on the first row added. */
+    /**
+     * Puts the Advanced section under the whole sections row, once, on the first row added. It spans every
+     * column rather than sitting in the identity section's column: in one column its width became the identity
+     * section's width, which pushed the skills section to the far right of the dialog.
+     */
     private void attachAdvancedSection() {
         if (advancedSection.getParent() == null) {
             sectionsRow.add(advancedSection, GBC.std().gridX(0).gridY(1)
+                  .gridWidth(GridBagConstraints.REMAINDER)
                   .anchor(GridBagConstraints.NORTHWEST)
-                  .fill(GridBagConstraints.HORIZONTAL).weightX(0)
+                  .fill(GridBagConstraints.NONE).weightX(0)
                   .insets(0, 6, sectionGap, 0));
             sectionsRow.revalidate();
         }
     }
 
     /**
-     * Adds the clan pilot flag as an Advanced pair. Called at construction for multi-crew units; for single-pilot
-     * units the dialog calls it at the agreed point while interleaving its command controls.
+     * Builds the armor kit chooser with every kit available in the year being played, plus an entry for wearing
+     * none, opened on whatever this crew member already wears. Searchable by typing, like the munition choosers,
+     * because the kit list runs to dozens of entries.
+     *
+     * @param game   the game whose year decides what has been invented
+     * @param entity the unit whose crew is being configured
+     * @param slot   the crew slot this panel is for
+     *
+     * @return the chooser
      */
-    public void addClanPilotAdvancedRow() {
-        addAdvancedRow(Messages.getString("CustomMekDialog.chkClanPilot"), chkClanPilot);
+    private SearchableComboBox<EquipmentChoice> buildArmorKitChooser(Game game, Entity entity, int slot) {
+        List<EquipmentChoice> choices = new ArrayList<>();
+        choices.add(EquipmentChoice.NO_KIT);
+        for (EquipmentType armorKit : CrewArmorKitRules.availableArmorKits()) {
+            if (!CrewArmorKitRules.isAvailableIn(armorKit, entity, game)) {
+                continue;
+            }
+            choices.add(new EquipmentChoice(armorKit.getName(), armorKit.getInternalName()));
+        }
+        SearchableComboBox<EquipmentChoice> chooser =
+              new SearchableComboBox<>("choArmorKit", choices, EquipmentChoice::displayName);
+        String wornKitName = entity.getCrew().getArmorKitName(slot);
+        EquipmentType wornKit = (wornKitName == null) ? null : EquipmentType.get(wornKitName);
+        EquipmentChoice worn = (wornKit == null)
+              ? EquipmentChoice.NO_KIT
+              : new EquipmentChoice(wornKit.getName(), wornKit.getInternalName());
+        chooser.setSelectedItem(choices.contains(worn) ? worn : EquipmentChoice.NO_KIT);
+        return chooser;
+    }
+
+    /**
+     * Rewrites the armor kit tooltip for whatever kit is selected: what it does for a crew that ejects, then the
+     * general note on the rule. Called at construction and again whenever the selection changes, so hovering the
+     * dropdown always describes the kit the crew member would actually leave in.
+     */
+    private void refreshArmorKitTooltip() {
+        String chosenKitName = getArmorKitName();
+        EquipmentType chosenKit = (chosenKitName == null) ? null : EquipmentType.get(chosenKitName);
+        String kitDescription = (chosenKit == null)
+              ? Messages.getString("CustomMekDialog.choArmorKit.tooltip.none")
+              : describeArmorKit(chosenKit);
+        choArmorKit.setToolTipText(UIUtil.formatSideTooltip(
+              kitDescription + "<br><br>" + Messages.getString("CustomMekDialog.choArmorKit.tooltip")));
+    }
+
+    /**
+     * One entry in the kit or sidearm dropdown: what the player reads, and the internal name the crew is given.
+     *
+     * <p>{@link #NO_KIT} and {@link #NO_SIDEARM} stand for having nothing, carrying a {@code null} internal name
+     * so the caller can hand it straight back without a special case.</p>
+     *
+     * @param displayName  the equipment's name as the player sees it
+     * @param internalName the name the crew records, or {@code null} for none
+     */
+    private record EquipmentChoice(String displayName, @Nullable String internalName) {
+
+        private static final EquipmentChoice NO_KIT =
+              new EquipmentChoice(Messages.getString("CustomMekDialog.choArmorKit.none"), null);
+        private static final EquipmentChoice NO_SIDEARM =
+              new EquipmentChoice(Messages.getString("CustomMekDialog.choSidearm.none"), null);
+    }
+
+    /**
+     * What a kit is worth to a crew on foot, in the order a player asks: how much damage it turns, which lethal
+     * conditions it keeps them alive in, which it does not, and whether it slows them.
+     *
+     * @param armorKit the kit to describe
+     *
+     * @return the description, as HTML fragments joined by line breaks
+     */
+    private static String describeArmorKit(EquipmentType armorKit) {
+        List<String> lines = new ArrayList<>();
+        lines.add("<b>" + armorKit.getName() + "</b>");
+        if (armorKit instanceof MiscType miscType) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.divisor", miscType.getDamageDivisor()));
+        }
+        List<EjectionHazard> answered = CrewArmorKitRules.hazardsAnswered(armorKit);
+        if (answered.isEmpty()) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.answersNothing"));
+        } else {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.answers", hazardList(answered)));
+        }
+        List<EjectionHazard> unanswered = CrewArmorKitRules.hazardsNotAnswered(armorKit);
+        if (!unanswered.isEmpty()) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.leaves", hazardList(unanswered)));
+        }
+        if (armorKit.hasFlag(MiscTypeFlag.S_ENCUMBERING)) {
+            lines.add(Messages.getString("CustomMekDialog.choArmorKit.tooltip.encumbering"));
+        }
+        return String.join("<br>", lines);
+    }
+
+    private static String hazardList(List<EjectionHazard> hazards) {
+        List<String> names = new ArrayList<>();
+        for (EjectionHazard hazard : hazards) {
+            names.add(hazard.getDisplayName());
+        }
+        return String.join(", ", names);
+    }
+
+    /**
+     * Builds the sidearm chooser with every one-person weapon available in the year being played, plus an entry
+     * for carrying none, opened on whatever this crew member already carries. Searchable by typing, because the
+     * list runs to well over a hundred pistols, rifles, blades, shotguns and submachine guns.
+     *
+     * @param game   the game whose year decides what has been invented
+     * @param entity the unit whose crew is being configured
+     * @param slot   the crew slot this panel is for
+     *
+     * @return the chooser
+     */
+    private SearchableComboBox<EquipmentChoice> buildSidearmChooser(Game game, Entity entity, int slot) {
+        List<EquipmentChoice> choices = new ArrayList<>();
+        choices.add(EquipmentChoice.NO_SIDEARM);
+        for (InfantryWeapon sidearm : CrewSidearmRules.availableSidearms()) {
+            if (!CrewSidearmRules.isAvailableIn(sidearm, entity, game)) {
+                continue;
+            }
+            choices.add(new EquipmentChoice(sidearm.getName(), sidearm.getInternalName()));
+        }
+        SearchableComboBox<EquipmentChoice> chooser =
+              new SearchableComboBox<>("choSidearm", choices, EquipmentChoice::displayName);
+        // A crew member with nothing recorded opens on their unit's default, which is what they would step out
+        // with anyway; pressing OK then records it, and None is still there to choose.
+        String carriedName = entity.getCrew().getSidearmName(slot);
+        if ((carriedName == null) || carriedName.isBlank()) {
+            carriedName = CrewSidearmRules.defaultSidearmName(entity);
+        }
+        EquipmentType carried = (carriedName == null) ? null : EquipmentType.get(carriedName);
+        EquipmentChoice carriedChoice = (carried == null)
+              ? EquipmentChoice.NO_SIDEARM
+              : new EquipmentChoice(carried.getName(), carried.getInternalName());
+        chooser.setSelectedItem(choices.contains(carriedChoice) ? carriedChoice : EquipmentChoice.NO_SIDEARM);
+        return chooser;
+    }
+
+    /**
+     * Adds the rest of this crew member's Advanced pairs: the Small Arms skill under the sidearm, then the
+     * option-gated toughness and fatigue fields. For a single pilot the dialog calls this after it has added its
+     * command controls, so that Small Arms lands beside them on the second row; for a multi-crew member tab the
+     * constructor calls it directly.
+     *
+     * @param game the game whose options say which fields are shown
+     */
+    public void addCrewMemberRows(Game game) {
+        if (showsPersonalEquipment) {
+            fldSmallArms.setToolTipText(
+                  UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.labSmallArms.tooltip")));
+            addAdvancedRow(Messages.getString("CustomMekDialog.labSmallArms"), fldSmallArms);
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.RPG_TOUGHNESS)) {
+            addAdvancedRow(Messages.getString("CustomMekDialog.labTough"), fldTough);
+        }
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_FATIGUE)) {
+            addAdvancedRow(Messages.getString("CustomMekDialog.labFatigue"), fldFatigue);
+        }
     }
 
     /**
@@ -237,7 +439,11 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         control.setMinimumSize(control.getPreferredSize());
         int pairIndex = advancedPairCount % ADVANCED_PAIRS_PER_ROW;
         int rowIndex = advancedPairCount / ADVANCED_PAIRS_PER_ROW;
-        advancedSection.add(new JLabel(labelText, SwingConstants.RIGHT),
+        JLabel pairLabel = new JLabel(labelText, SwingConstants.RIGHT);
+        // A tick box is a few pixels wide, so a tooltip only on the control is easy to miss. The label carries the
+        // same one, which is what a reader hovers over.
+        pairLabel.setToolTipText(control.getToolTipText());
+        advancedSection.add(pairLabel,
               GBC.std().gridX(pairIndex * 2).gridY(rowIndex)
                     .anchor(GridBagConstraints.EAST).insets((pairIndex == 0) ? 0 : 15, 0, 5, 2));
         advancedSection.add(control,
@@ -410,6 +616,13 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             }
         }
 
+        // Clan Pilot reads under gunnery: it is a fact about the person, like their skills, not an option
+        skillsSection.add(new JLabel(Messages.getString("CustomMekDialog.chkClanPilot"), SwingConstants.RIGHT),
+              GBC.std());
+        skillsSection.add(chkClanPilot, GBC.eol());
+        chkClanPilot.setText("");
+        chkClanPilot.setSelected(entity.getCrew().isClanPilot(slot));
+
         if (entity.getCrew() instanceof LAMPilot pilot) {
             fldGunneryL.setText(Integer.toString(pilot.getGunneryMekL()));
             fldGunneryM.setText(Integer.toString(pilot.getGunneryMekM()));
@@ -437,7 +650,98 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
+        addNaturalAptitudeRows(skillsSection, slot,
+              parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL));
+
         return skillsSection;
+    }
+
+    /**
+     * Adds this crew member's Natural Aptitude checkboxes to the skills section.
+     *
+     * @param skillsSection       the section to add the rows to
+     * @param slot                the crew slot this panel edits
+     * @param isUseArtillerySkill whether the separate Artillery skill game option is on
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void addNaturalAptitudeRows(JPanel skillsSection, int slot, boolean isUseArtillerySkill) {
+        Crew crew = entity.getCrew();
+        showsArtilleryAptitude = isUseArtillerySkill;
+
+        String pilotingKey = "CustomMekDialog.labNaturalAptitudePiloting";
+        if (entity instanceof Tank) {
+            pilotingKey = "CustomMekDialog.labNaturalAptitudeDriving";
+        } else if (entity instanceof Infantry) {
+            pilotingKey = "CustomMekDialog.labNaturalAptitudeAntiMek";
+        }
+        addNaturalAptitudeRow(skillsSection, pilotingKey, chkNaturalAptitudePiloting,
+              crew.isHasNaturalAptitudePiloting(slot));
+        if (crew instanceof LAMPilot lamPilot) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudePilotingAero",
+                  chkNaturalAptitudePilotingAero, lamPilot.isHasNaturalAptitudePilotingAero());
+        }
+
+        addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunnery",
+              chkNaturalAptitudeGunnery, crew.isHasNaturalAptitudeGunnery(slot));
+        if (crew instanceof LAMPilot lamPilot) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunneryAero",
+                  chkNaturalAptitudeGunneryAero, lamPilot.isHasNaturalAptitudeGunneryAero());
+        }
+
+        if (showsArtilleryAptitude) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeArtillery",
+                  chkNaturalAptitudeArtillery, crew.isHasNaturalAptitudeArtillery(slot));
+        }
+
+        // Small Arms is only used once the crew is on foot, which only matters with the personal equipment rule
+        if (showsPersonalEquipment) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeSmallArms",
+                  chkNaturalAptitudeSmallArms, crew.isHasNaturalAptitudeSmallArms(slot));
+        }
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void addNaturalAptitudeRow(JPanel skillsSection, String labelKey, JCheckBox checkBox,
+          boolean hasNaturalAptitude) {
+        String tooltip = UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.naturalAptitude.tooltip"));
+        JLabel label = new JLabel(Messages.getString(labelKey), SwingConstants.RIGHT);
+        label.setToolTipText(tooltip);
+        checkBox.setToolTipText(tooltip);
+        checkBox.setSelected(hasNaturalAptitude);
+        skillsSection.add(label, GBC.std());
+        skillsSection.add(checkBox, GBC.eol());
+    }
+
+    /**
+     * Writes this crew member's Natural Aptitudes back onto the crew. When the separate Artillery skill isn't in use,
+     * artillery is fired with Gunnery, so the Artillery aptitude follows the Gunnery aptitude.
+     *
+     * @param crew the crew to update
+     * @param slot the crew slot this panel edits
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void applyNaturalAptitudes(Crew crew, int slot) {
+        crew.setHasNaturalAptitudePiloting(chkNaturalAptitudePiloting.isSelected(), slot);
+        crew.setHasNaturalAptitudeGunnery(chkNaturalAptitudeGunnery.isSelected(), slot);
+        crew.setHasNaturalAptitudeArtillery(showsArtilleryAptitude ?
+                                                  chkNaturalAptitudeArtillery.isSelected() :
+                                                  chkNaturalAptitudeGunnery.isSelected(), slot);
+        // A hidden checkbox never writes back, like the Small Arms skill field itself
+        if (showsPersonalEquipment) {
+            crew.setHasNaturalAptitudeSmallArms(chkNaturalAptitudeSmallArms.isSelected(), slot);
+        }
+
+        if (crew instanceof LAMPilot lamPilot) {
+            lamPilot.setHasNaturalAptitudePilotingAero(chkNaturalAptitudePilotingAero.isSelected());
+            lamPilot.setHasNaturalAptitudeGunneryAero(chkNaturalAptitudeGunneryAero.isSelected());
+        }
     }
 
     /**
@@ -571,6 +875,44 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         return chkClanPilot.isSelected();
     }
 
+    /**
+     * Whether the kit, sidearm and Small Arms controls are shown for this crew member: the crew personal equipment
+     * rule is on and this unit's crew can leave it on foot. When they are not shown, nothing the player could not
+     * see should be written back onto the crew.
+     *
+     * @return {@code true} if the personal equipment controls are on this panel
+     */
+    public boolean showsPersonalEquipment() {
+        return showsPersonalEquipment;
+    }
+
+    /**
+     * @return the internal name of the armor kit chosen for this crew member, or {@code null} for none
+     */
+    public @Nullable String getArmorKitName() {
+        EquipmentChoice chosen = choArmorKit.getSelectedItem();
+        return (chosen == null) ? null : chosen.internalName();
+    }
+
+    /**
+     * @return the internal name of the sidearm chosen for this crew member, or {@code null} for none
+     */
+    public @Nullable String getSidearmName() {
+        EquipmentChoice chosen = choSidearm.getSelectedItem();
+        return (chosen == null) ? null : chosen.internalName();
+    }
+
+    /**
+     * @return the Small Arms skill entered for this crew member, or {@link Crew#SMALL_ARMS_UNSET} when the field
+     *       was left blank
+     *
+     * @throws NumberFormatException if the field holds something that is not a number, like the other skill fields
+     */
+    public int getSmallArms() {
+        String entered = fldSmallArms.getText().trim();
+        return entered.isEmpty() ? Crew.SMALL_ARMS_UNSET : Integer.parseInt(entered);
+    }
+
     public int getGunnery() {
         return Integer.parseInt(fldGunnery.getText());
     }
@@ -635,7 +977,7 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     }
 
     public int getBackup() {
-        if (null != cbBackup.getSelectedItem()) {
+        if (cbBackup.getSelectedItem() != null){
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
                 if (cbBackup.getSelectedItem().equals(entity.getCrew().getCrewType().getRoleName(i))) {
                     return i;

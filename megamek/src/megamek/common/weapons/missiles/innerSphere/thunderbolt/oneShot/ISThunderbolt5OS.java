@@ -33,6 +33,7 @@
 
 package megamek.common.weapons.missiles.innerSphere.thunderbolt.oneShot;
 
+import megamek.common.SourceBookCode;
 import megamek.common.weapons.missiles.thunderbolt.Thunderbolt5Weapon;
 
 /**
@@ -46,6 +47,11 @@ public class ISThunderbolt5OS extends Thunderbolt5Weapon {
         super();
         name = "Thunderbolt 5 (OS)";
         setInternalName(name);
+        rulesRefs = rulesRefs(
+              rulesRefs,
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
         addLookupName("IS OS Thunderbolt-5");
         addLookupName("ISThunderbolt5 (OS)");
         addLookupName("IS Thunderbolt 5 (OS)");

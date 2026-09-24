@@ -35,7 +35,7 @@
 
 package megamek.common;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
@@ -522,7 +522,7 @@ public class SpecialHexDisplay implements Serializable {
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final SpecialHexDisplay other = (SpecialHexDisplay) obj;

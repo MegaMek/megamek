@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.List;
 
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.EquipmentType;
@@ -540,8 +541,8 @@ public class DamageInterruptCircuitTest {
             EquipmentType dicType = EquipmentType.get("DamageInterruptCircuit");
             assertNotNull(dicType, "DIC equipment should exist");
 
-            assertTrue(dicType.getRulesRefs().contains("39, IO"),
-                  "DIC should reference IO p.39");
+            assertEquals(List.of(new RulesRef(SourceBookCode.IO_AE, 62)), dicType.getRulesRefs(),
+                  "DIC should reference IO:AE p.62");
         }
     }
 }

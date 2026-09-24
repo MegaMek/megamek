@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons.naval;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,10 +70,8 @@ public class NAC10Weapon extends NavalACWeapon {
         this.medAV = 10;
         this.longAV = 10;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "143, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 143);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2195, DATE_NONE, 2950, 3051)

@@ -36,7 +36,6 @@ package megamek.client.bot.princess;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
@@ -55,6 +54,7 @@ public class EntityState {
     private int secondaryFacing; // to account for torso twists
     private int heat;
     private final int elevation;
+    private final int altitude;
     private final int hexesMoved;
     private final boolean prone;
     private final boolean immobile;
@@ -63,7 +63,6 @@ public class EntityState {
     private boolean building;
     private boolean aero;
     private boolean airborne;
-    private final boolean naturalAptGun;
     private final boolean naturalAptPilot;
 
     /**
@@ -73,6 +72,7 @@ public class EntityState {
         position = target.getPosition();
         facing = 0;
         elevation = target.getElevation();
+        altitude = target.getAltitude();
         hexesMoved = 0;
         heat = 0;
         prone = false;
@@ -82,7 +82,6 @@ public class EntityState {
         setSecondaryFacing(0);
         building = (target instanceof BuildingTarget);
         aero = false;
-        naturalAptGun = false;
         naturalAptPilot = false;
     }
 
@@ -90,6 +89,7 @@ public class EntityState {
         position = entity.getPosition();
         facing = entity.getFacing();
         elevation = entity.getElevation();
+        altitude = entity.getAltitude();
         hexesMoved = entity.delta_distance;
         heat = entity.heat;
         prone = entity.isProne() || entity.isHullDown();
@@ -100,8 +100,7 @@ public class EntityState {
         building = false;
         aero = entity.isAero();
         airborne = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
-        naturalAptGun = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptPilot = entity.isUseNaturalAptitudePiloting();
     }
 
     /**
@@ -111,6 +110,7 @@ public class EntityState {
         position = path.getFinalCoords();
         facing = path.getFinalFacing();
         elevation = path.getFinalElevation();
+        altitude = path.getFinalAltitude();
         hexesMoved = path.getHexesMoved();
         heat = path.getEntity().heat;
 
@@ -128,8 +128,7 @@ public class EntityState {
         immobile = path.getEntity().isImmobile();
         jumping = path.isJumping();
         movementType = path.getLastStepMovementType();
-        naturalAptGun = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        naturalAptPilot = path.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        naturalAptPilot = path.getEntity().isUseNaturalAptitudePiloting();
         setSecondaryFacing(getFacing());
     }
 
@@ -156,6 +155,20 @@ public class EntityState {
      */
     public int getElevation() {
         return elevation;
+    }
+
+    /**
+     * Returns the altitude this state describes: the unit's current altitude, or the final altitude of the
+     * move path this state was built from.
+     *
+     * <p>Distinct from {@link #getElevation()}, and the one that matters for aerospace. Aerospace units
+     * <i>"never use elevations"</i> even when flying directly over a ground mapsheet (TW p.91), so any
+     * air-to-air geometry - range, and the dead zone above all - is measured with this.</p>
+     *
+     * @return the altitude
+     */
+    public int getAltitude() {
+        return altitude;
     }
 
     public int getFacing() {
@@ -210,10 +223,6 @@ public class EntityState {
         return aero && airborne;
     }
 
-    public boolean hasNaturalAptGun() {
-        return naturalAptGun;
-    }
-
     public boolean hasNaturalAptPiloting() {
         return naturalAptPilot;
     }
@@ -221,8 +230,8 @@ public class EntityState {
     @Override
     public String toString() {
         return new ParameterizedMessage("EntityState{ position = {}, movementType = {}, facing = {}, secondaryFacing" +
-              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, building" +
-              " = {}, aero = {}, airborne = {}, naturalAptGun = {}, naturalAptPilot = {}, }",
+              " = {}, heat = {}, hexesMoved = {}, prone = {}, immobile = {}, jumping = {}, building" +
+              " = {}, aero = {}, airborne = {}, naturalAptPilot = {}, }",
               position,
               movementType,
               facing,
@@ -235,7 +244,6 @@ public class EntityState {
               building,
               aero,
               airborne,
-              naturalAptGun,
               naturalAptPilot).getFormattedMessage();
     }
 }

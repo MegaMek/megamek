@@ -38,6 +38,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.game.Game;
 
 /**
@@ -45,6 +46,9 @@ import megamek.common.game.Game;
  * not exclude gun emplacements or spawns (MekWarriors, Missiles) from the test.
  */
 public class BattlefieldControlVictory implements VictoryCondition, Serializable {
+
+    /** "All opposing forces have been destroyed or have left the field." */
+    private static final int REPORT_LAST_SIDE_STANDING = 7148;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> ctx) {
@@ -82,16 +86,32 @@ public class BattlefieldControlVictory implements VictoryCondition, Serializable
         } else if (playersAlive == 1) {
             if (lastPlayer.getTeam() == Player.TEAM_NONE) {
                 // individual victory
-                return new VictoryResult(true, lastPlayer.getId(), Player.TEAM_NONE);
+                return lastSideStandingResult(lastPlayer.getId(), Player.TEAM_NONE);
             }
         }
 
         // did we only find one live team?
         if (oneTeamAlive && !unteamedAlive) {
             // team victory
-            return new VictoryResult(true, Player.PLAYER_NONE, lastTeam);
+            return lastSideStandingResult(Player.PLAYER_NONE, lastTeam);
         }
 
         return VictoryResult.noResult();
+    }
+
+    /**
+     * Builds the win by last side standing, carrying a line that says so. Without it the only thing a
+     * player sees is the generic winner report, which cannot explain a victory nobody opted into: this
+     * condition has no game option behind it and is always active.
+     *
+     * @param playerId The winning player, or {@link Player#PLAYER_NONE} for a team win
+     * @param teamId   The winning team, or {@link Player#TEAM_NONE} for an individual win
+     *
+     * @return The victory result, with the explanatory report attached
+     */
+    private VictoryResult lastSideStandingResult(int playerId, int teamId) {
+        VictoryResult result = new VictoryResult(true, playerId, teamId);
+        result.addReport(new Report(REPORT_LAST_SIDE_STANDING, Report.PUBLIC));
+        return result;
     }
 }

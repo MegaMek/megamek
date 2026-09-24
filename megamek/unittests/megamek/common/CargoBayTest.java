@@ -48,6 +48,7 @@ import megamek.common.bays.CargoBay;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -101,6 +102,9 @@ public class CargoBayTest {
         when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
+        IOption mockRulesSystemOption = mock (IOption.class);
+        when(mockRulesSystemOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockRulesSystemOption);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
 
         team1.addPlayer(player1);

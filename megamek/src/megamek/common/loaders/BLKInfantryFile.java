@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -160,7 +160,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         loadDisposableWeapon(infantry);
 
         // TAG infantry have separate attacks for primary and secondary weapons.
-        if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
+        if (secondaryWeaponType != null && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | ConvInfantry.TAG_TROOPS);
             try {
                 infantry.addEquipment(primaryWeaponType, ConvInfantry.LOC_INFANTRY);
@@ -175,14 +175,22 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName,
                 infantry.isClan() ? TechBase.CLAN : TechBase.IS);
-            if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
+            if ((kit == null) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
                 throw new EntityLoadingException(kitName + " is not an infantry armor kit");
             }
             infantry.setArmorKit(kit);
         }
 
-        if (dataFile.exists("dest")) {
-            infantry.setDEST(true);
+        if (dataFile.exists("armor_name")) {
+            infantry.setCustomArmorName(dataFile.getDataAsString("armor_name")[0]);
+        }
+
+        if (dataFile.exists("armordivisor")) {
+            try {
+                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read armor divisor");
+            }
         }
 
         if (dataFile.exists("encumberingarmor")) {
@@ -191,6 +199,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("spacesuit")) {
             infantry.setSpaceSuit(true);
+        }
+
+        if (dataFile.exists("dest")) {
+            infantry.setDEST(true);
         }
 
         if (dataFile.exists("sneakcamo")) {
@@ -203,14 +215,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("sneakecm")) {
             infantry.setSneakECM(true);
-        }
-
-        if (dataFile.exists("armordivisor")) {
-            try {
-                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
-            } catch (NumberFormatException ex) {
-                throw new EntityLoadingException("Could not read armor divisor");
-            }
         }
 
         loadEquipment(infantry, "Field Guns", ConvInfantry.LOC_FIELD_GUNS);

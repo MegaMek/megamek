@@ -33,7 +33,9 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -115,6 +117,28 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                       gameManager.getGame().getRoundCount(),
                       MegaMek.getMemoryUsed());
                 break;
+            case VICTORY_SETUP:
+                gameManager.checkForObservers();
+                gameManager.transmitAllPlayerUpdates();
+                gameManager.resetActivePlayersDone();
+                gameManager.setIneligible(phase);
+
+                if (gameManager.getGame().getBoard().isGround()) {
+                    List<GameTurn> victorySetupTurns = new ArrayList<>();
+                    for (Player player : gameManager.getGame().getPlayersList()) {
+                        // a game master with no units of their own is an observer, but still authors the mission
+                        boolean canPlaceObjectives = (!player.isObserver() || player.isGameMaster())
+                              && !player.isGhost();
+                        if (canPlaceObjectives) {
+                            victorySetupTurns.add(new GameTurn(player.getId()));
+                        }
+                    }
+                    gameManager.getGame().setTurnVector(victorySetupTurns);
+                }
+
+                gameManager.getGame().resetTurnIndex();
+                gameManager.sendCurrentTurns();
+                break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -188,6 +212,20 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                     collapsePreEndPlayerWideTurns();
                 }
                 gameManager.determineTurnOrder(phase);
+                if (phase.isPreEndDeclarations()) {
+                    // The book asks the attacker first and the defender answers; initiative alone may not. The
+                    // clients already hold the initiative order from determineTurnOrder, so a change is sent again
+                    // or they would wait on the wrong player.
+                    boolean reordered = InfantryActionTurnOrder.putAttackersFirst(gameManager.getGame());
+                    if (reordered) {
+                        gameManager.sendTurnList();
+                    }
+                }
+                if (phase.isDeployment()) {
+                    // "my units never got a deployment turn" has several causes that look identical on the map, and
+                    // none of them say anything; this is what tells them apart
+                    DeploymentDiagnostics.logWhoCanDeploy(gameManager.getGame());
+                }
                 // Guard the eligibility scan behind the level check so it only runs when [PreEnd] tracing is enabled.
                 if (phase.isPreEndDeclarations() && LOGGER.isDebugEnabled()) {
                     LOGGER.debug("[PreEnd] turn order built: {} turn(s); eligible units: [{}]",
@@ -220,11 +258,13 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.checkLayExplosives();
                 gameManager.checkBuildBridges();
                 gameManager.checkClearRubble();
+                gameManager.checkCraneOperations();
                 gameManager.checkDeployBridges();
                 gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();
                 gameManager.resolveEmergencyCoolantSystem();
                 gameManager.checkForSuffocation();
+                gameManager.checkTaintedAtmosphereEffects();
                 gameManager.getGame().getPlanetaryConditions().determineWind();
                 gameManager.send(gameManager.getPacketHelper().createPlanetaryConditionsPacket());
 

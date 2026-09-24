@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,12 +36,11 @@ package megamek.common.weapons.handlers.srm;
 
 import java.io.Serial;
 
-import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.DamageType;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -55,14 +54,10 @@ public class SRMAXHandler extends SRMHandler {
     public SRMAXHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " acid-head missile(s) ";
-        // PLAYTEST3, -1 not -2
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            nSalvoBonus = -1;
-        } else {
-            nSalvoBonus = -2;
-        }
+
+        nSalvoBonus = Game.rulesManager.getRulesAmmo().getAXMissileModifier();
         damageType = DamageType.ACID;
-        generalDamageType = HitData.DAMAGE_AX;
+        generalDamageType = HitDamageType.DAMAGE_AX;
     }
 }
 //Rules for AX Warheads are found in Tactical Operations: Advanced Units and Equipment (6th Printing), pg. 179

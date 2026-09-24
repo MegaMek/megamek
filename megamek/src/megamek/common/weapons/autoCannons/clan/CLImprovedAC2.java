@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -78,7 +79,7 @@ public class CLImprovedAC2 extends ACWeapon {
         maxRange = RANGE_LONG;
         explosionDamage = damage;
         ammoType = AmmoType.AmmoTypeEnum.AC_IMP;
-        rulesRefs = "90, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.X, AvailabilityValue.X)
               .setClanAdvancement(DATE_NONE, 2815, 2818, 2833, 3080)

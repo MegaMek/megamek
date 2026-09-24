@@ -53,8 +53,11 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CrossBoardAttackHelper;
+import megamek.common.compute.ArtilleryRange;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.compute.VirtualRealityPilotingPod;
+import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
@@ -71,8 +74,10 @@ import megamek.common.weapons.bayWeapons.PulseLaserBayWeapon;
 import megamek.common.weapons.bayWeapons.ScreenLauncherBayWeapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
+import megamek.logging.MMLogger;
 
 class ComputeToHitIsImpossible {
+    private static final MMLogger LOGGER = MMLogger.create(ComputeToHitIsImpossible.class);
 
     /**
      * Method that tests each attack to see if it's impossible. If so, a reason string will be returned. A null return
@@ -91,7 +96,7 @@ class ComputeToHitIsImpossible {
      * @param distance              The distance in hexes from attacker to target
      * @param spotter               The spotting entity for indirect fire, if present
      * @param weaponType            The WeaponType of the weapon being used
-     * @param weapon                The Mounted weapon being used
+     * @param weapon                The Mounted weapon being used, or {@code null} when the attack names no mount
      * @param ammoType              The AmmoType being used for this attack
      * @param ammo                  The Mounted ammo being used
      * @param munition              Long indicating the munition type flag being used, if applicable
@@ -114,7 +119,8 @@ class ComputeToHitIsImpossible {
      */
     static String toHitIsImpossible(Game game, Entity weaponEntity, int attackerId, Targetable target, int targetType,
           LosEffects los, ToHitData losMods, ToHitData toHit, int distance, Entity spotter, WeaponType weaponType,
-          WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo, EnumSet<AmmoType.Munitions> munition,
+          @Nullable WeaponMounted weapon, int weaponId, AmmoType ammoType, AmmoMounted ammo,
+          EnumSet<AmmoType.Munitions> munition,
           boolean isFlakAttack, boolean isArtilleryDirect, boolean isArtilleryFLAK, boolean isArtilleryIndirect,
           boolean isAttackerInfantry, boolean isBearingsOnlyMissile, boolean isCruiseMissile,
           boolean exchangeSwarmTarget, boolean isHoming, boolean isInferno, boolean isIndirect, boolean isStrafing,
@@ -144,10 +150,26 @@ class ComputeToHitIsImpossible {
 
         Entity entityTarget = target instanceof Entity ? (Entity) target : null;
 
+        // An Advanced Building cannot fire on a unit inside one of its own hexes (TO:AR p. 132: its turreted weapons
+        // are rooftop equipment). This comes before the same-building exemption below, which would otherwise treat
+        // the building as a unit standing inside itself.
+        boolean buildingFiringInsideItself = (attacker instanceof AbstractBuildingEntity buildingAttacker)
+              && (entityTarget != null)
+              && buildingAttacker.isInsideThisBuilding(entityTarget);
+        if (buildingFiringInsideItself) {
+            LOGGER.debug("[BuildingFire] {} cannot fire on {}: target is inside the building at {}",
+                  attacker.getShortName(), entityTarget.getShortName(), entityTarget.getPosition());
+            return Messages.getString("WeaponAttackAction.TargetInsideOwnBuilding");
+        }
+
         // If the attacker and target are in the same building & hex, they can
         // always attack each other, TW pg 175.
         if ((los.getThruBldg() != null) && los.getTargetPosition().equals(attacker.getPosition())) {
             return null;
+        }
+
+        if (los.isShotBlockedByWater()) {
+            return Messages.getString("WeaponAttackAction.WaterBlocksShot");
         }
 
         // got ammo?
@@ -212,9 +234,16 @@ class ComputeToHitIsImpossible {
                   && !AmmoType.canDeliverMinefield(ammoType)) {
                 return Messages.getString("WeaponAttackAction.NoMinefields");
             }
+            if ((target.getTargetType() == Targetable.TYPE_SATURATION)
+                  && !((weapon != null)
+                  && (weaponType != null)
+                  && weaponType.hasFlag(WeaponType.F_MRM)
+                  && EquipmentActivation.isGuidanceActive(weapon.getLinkedBy(), MiscType.F_APOLLO))) {
+                return Messages.getString("WeaponAttackAction.NoSaturation");
+            }
 
             // These ammo types can only target hexes for minefield delivery
-            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR) &&
+            if (ammoType.getAmmoType().isAnyOf(LRM, LRM_IMP, MML, MEK_MORTAR, TBOLT_10, TBOLT_15, TBOLT_20) &&
                   ((ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE)) ||
                         (ammoType.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO)) ||
@@ -230,7 +259,7 @@ class ComputeToHitIsImpossible {
         // If the attacker is actively using a shield, weapons in the same location are blocked
         if (weapon != null
               && attacker.hasShield()
-              && attacker.hasActiveShield(weapon.getLocation(), weapon.isRearMounted())) {
+              && attacker.hasRaisedShield(weapon.getLocation(), weapon.isRearMounted())) {
             return Messages.getString("WeaponAttackAction.ActiveShieldBlocking");
         }
 
@@ -326,6 +355,16 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.CrewStunned");
         }
 
+        // Advanced building gunners stunned or killed by a critical hit cannot fire (TO:AR p. 118)
+        if (attacker instanceof AbstractBuildingEntity buildingAttacker) {
+            if (buildingAttacker.isStunned()) {
+                return Messages.getString("WeaponAttackAction.CrewStunned");
+            }
+            if ((weapon != null) && buildingAttacker.hasDeadGunners(weapon.getLocation())) {
+                return Messages.getString("WeaponAttackAction.BuildingGunnersKilled");
+            }
+        }
+
         // Vehicles with a single crewman can't shoot and unjam a RAC in the same turn (like meks...)
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_TANK_CREWS)
               && (attacker instanceof Tank)
@@ -347,6 +386,12 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.CICDestroyed");
                 }
             }
+        }
+        // A Virtual Reality Piloting Pod under hostile interference is blind, as if its sensors were destroyed
+        // (IO:AE p.63)
+        String vrppBlindedReason = VirtualRealityPilotingPod.getBlindedReason(attacker);
+        if (vrppBlindedReason != null) {
+            return vrppBlindedReason;
         }
         // Are the sensors operational?
         // BattleMek sensors are destroyed after 2 hits, unless they have a
@@ -473,7 +518,7 @@ class ComputeToHitIsImpossible {
         }
 
         // Must target infantry in buildings from the inside.
-        if (targetInBuilding && (entityTarget instanceof Infantry) && (null == los.getThruBldg())) {
+        if (targetInBuilding && (entityTarget instanceof Infantry) && (los.getThruBldg() == null)) {
             return Messages.getString("WeaponAttackAction.CantShootThruBuilding");
         }
 
@@ -604,6 +649,11 @@ class ComputeToHitIsImpossible {
                     }
                 }
             }
+        }
+
+        // Bombast lasers while charging cannot fire
+        if ((weapon != null) && (weaponType.hasFlag(WeaponType.F_BOMBAST_LASER) && weapon.getChargeState().equals(ChargeLevel.CHARGING))) {
+            return Messages.getString("WeaponAttackAction.BombastImpossible");
         }
 
         // Phase Reasons
@@ -1130,7 +1180,7 @@ class ComputeToHitIsImpossible {
                 }
                 // ADA is _fired_ by artillery but is just a Flak attack, and so bypasses these
                 // restrictions
-                if (null != ammoType && !ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
+                if (ammoType != null && !ammoType.getMunitionType().contains(AmmoType.Munitions.M_ADA)) {
                     // Direct fire artillery cannot be fired at less than 6 hexes,
                     // except at ASFs in the air (TO:AR 6th print, p153.)
                     if (!(target.isAirborne()) && (Compute.effectiveDistance(game, attacker, target) <= 6)) {
@@ -1155,31 +1205,9 @@ class ComputeToHitIsImpossible {
                     return Messages.getString("WeaponAttackAction.FlakIndirect");
                 }
 
-                int boardRange = (int) Math.ceil(distance / 17f);
-                int maxRange = weaponType.getLongRange();
-                // Capital/subcapital missiles have a board range equal to their max space hex
-                // range
-                if (weaponType instanceof CapitalMissileWeapon) {
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_EXT) {
-                        maxRange = 50;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_LONG) {
-                        maxRange = 40;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_MED) {
-                        maxRange = 24;
-                    }
-                    if (weaponType.getMaxRange(weapon) == WeaponType.RANGE_SHORT) {
-                        maxRange = 12;
-                    }
-                }
-
-                // Apply gravity mod here, per TO: AR pg 155
-                maxRange = (int) (Math.floor((double) (maxRange * Board.DEFAULT_BOARD_HEIGHT) /
-                      game.getPlanetaryConditions().getGravity()) / 17f);
-
-                // Maximum range is measured in map sheets
-                if (boardRange > maxRange) {
+                // Measured in hexes rather than map sheets, since Oblique Artilleryman extends the weapon's rated
+                // range by a fraction of a map sheet
+                if (distance > ArtilleryRange.maximumIndirectRangeInHexes(game, attacker, weaponType, weapon)) {
                     return Messages.getString("WeaponAttackAction.OutOfRange");
                 }
                 // Indirect (=targeting phase) shots cannot be made at less than 17 hexes range unless
@@ -1657,7 +1685,7 @@ class ComputeToHitIsImpossible {
                         // Or split ground-to-air fire across multiple targets
                         if (prevAttack.isGroundToAir(game) &&
                               Compute.isGroundToAir(attacker, target) &&
-                              (null != entityTarget) &&
+                            (entityTarget != null) &&
                               (prevAttack.getTargetId() != entityTarget.getId())) {
                             return Messages.getString("WeaponAttackAction.OneTargetForGta");
                         }
@@ -1939,6 +1967,11 @@ class ComputeToHitIsImpossible {
                   !attacker.isMakingVTOLGroundAttack() &&
                   !attacker.isOffBoard()) {
                 return Messages.getString("WeaponAttackAction.OutOfArc");
+            }
+
+            // A jammed weapon gets its own reason so the player can tell a jam from the other not-ready states
+            if ((!evenIfAlreadyFired) && weapon.isJammed()) {
+                return Messages.getString("WeaponAttackAction.WeaponJammed");
             }
 
             // Weapon operational?

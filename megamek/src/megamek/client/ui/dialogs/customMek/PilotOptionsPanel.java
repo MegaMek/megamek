@@ -72,6 +72,7 @@ import megamek.client.ui.panels.OptionRowLayout;
 import megamek.client.ui.panels.OptionSearchFilter;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
@@ -275,7 +276,7 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
 
     /**
      * @return {@code true} if the whole option group is switched off by the game options (RPG pilot advantages, edge,
-     *       Manei Domini, neural interfaces)
+     *       pilot implants)
      */
     private boolean isGroupHidden(IOptionGroup group) {
         if (group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES)) {
@@ -284,15 +285,11 @@ public class PilotOptionsPanel extends JPanel implements DialogOptionListener {
         if (group.getKey().equalsIgnoreCase(PilotOptions.EDGE_ADVANTAGES)) {
             return !gameOptions.booleanOption(OptionsConstants.EDGE);
         }
-        if (group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES)) {
-            return !gameOptions.booleanOption(OptionsConstants.RPG_MANEI_DOMINI);
-        }
-        if (group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES)) {
-            IOption neuralInterfaceOption = gameOptions.getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE);
-            String neuralInterfaceMode = (neuralInterfaceOption == null)
-                  ? OptionsConstants.NEURAL_INTERFACE_MODE_OFF
-                  : neuralInterfaceOption.stringValue();
-            return OptionsConstants.NEURAL_INTERFACE_MODE_OFF.equals(neuralInterfaceMode);
+        boolean isImplantGroup = group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES)
+              || group.getKey().equalsIgnoreCase(PilotOptions.EI_ADVANTAGES);
+        if (isImplantGroup) {
+            // One game option governs every implant group: with it Off, neither is shown
+            return !NeuralInterfaceMode.from(gameOptions).allowsImplants();
         }
         return false;
     }

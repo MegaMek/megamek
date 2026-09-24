@@ -374,4 +374,20 @@ class TestSupportVehicleTest {
         assertEquals(1.5, RoundWeight.NEXT_HALF_TON.round(expectedRawWeight, wige), 0.0001,
               "NEXT_HALF_TON (ceiling) would incorrectly give 1.5 tons");
     }
+
+      @Test
+      @DisplayName("Support engine ratings are derived from unit mass and movement")
+      void testSupportVehicleEngineRatingIsDerivedFromUnit() {
+            SupportTank supportTank = new SupportTank();
+            supportTank.setWeight(20.0);
+            supportTank.setOriginalWalkMP(5);
+            Engine engine = new Engine(0, Engine.COMBUSTION_ENGINE, Engine.SUPPORT_VEE_ENGINE);
+            supportTank.setEngine(engine);
+
+            assertEquals(0, engine.getRating());
+            assertEquals(100.0, engine.getRating(supportTank));
+
+            MiscType masc = MiscType.createISMASC();
+            assertEquals(100_000.0, masc.getCost(supportTank, false, SupportTank.LOC_BODY, 0), 0.0001);
+      }
 }

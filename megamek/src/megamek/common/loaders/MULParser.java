@@ -51,6 +51,8 @@ import java.util.Vector;
 import java.util.zip.GZIPInputStream;
 import javax.xml.parsers.DocumentBuilder;
 
+import megamek.SuiteConstants;
+import megamek.Version;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
@@ -65,6 +67,7 @@ import megamek.common.bays.Bay;
 import megamek.common.board.Board;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
@@ -172,6 +175,9 @@ public class MULParser {
     public static final String ATTR_EXT_ID = "externalId";
     public static final String ATTR_PICKUP_ID = "pickUpId";
     public static final String ATTR_CLAN_PILOT = "clanperson";
+    public static final String ATTR_ARMOR_KIT = "armorkit";
+    public static final String ATTR_SIDEARM = "sidearm";
+    public static final String ATTR_SMALL_ARMS = "smallarms";
     public static final String ATTR_NICK = "nick";
     public static final String ATTR_GENDER = "gender";
     public static final String ATTR_CAT_PORTRAIT = "portraitCat";
@@ -182,6 +188,13 @@ public class MULParser {
     public static final String ATTR_GUNNERY_B = "gunneryB";
     public static final String ATTR_PILOTING = "piloting";
     public static final String ATTR_ARTILLERY = "artillery";
+    public static final String ATTR_NATURAL_APTITUDE_GUNNERY = "naturalAptitudeGunnery";
+    public static final String ATTR_NATURAL_APTITUDE_ARTILLERY = "naturalAptitudeArtillery";
+    public static final String ATTR_NATURAL_APTITUDE_PILOTING = "naturalAptitudePiloting";
+    public static final String ATTR_NATURAL_APTITUDE_SMALL_ARMS = "naturalAptitudeSmallArms";
+    // The retired Natural Aptitude SPAs, still found in the advantages of older unit lists
+    private static final String LEGACY_NATURAL_APTITUDE_GUNNERY = "aptitude_gunnery";
+    private static final String LEGACY_NATURAL_APTITUDE_PILOTING = "aptitude_piloting";
     public static final String ATTR_TOUGH = "toughness";
     public static final String ATTR_FATIGUE = "fatigue";
     public static final String ATTR_INIT_B = "initB";
@@ -213,9 +226,11 @@ public class MULParser {
     public static final String ATTR_DEPLOYMENT_ZONE_ANY_SEX = "deploymentZoneAnySEx";
     public static final String ATTR_DEPLOYMENT_ZONE_ANY_SEY = "deploymentZoneAnySEy";
     public static final String ATTR_NEVER_DEPLOYED = "neverDeployed";
-    /** The unit-file UUID. Written for every unit that has one and used as the primary lookup on load (the chassis and
+    /**
+     * The unit-file UUID. Written for every unit that has one and used as the primary lookup on load (the chassis and
      * model remain for backwards-compatibility and readability). It is essential for Battlefield Support Assets, which
-     * share a name with their base unit. */
+     * share a name with their base unit.
+     */
     public static final String ATTR_UNIT_FILE_UUID = "unitFileUUID";
     /** Distinguishes alternate entity forms that can share the same chassis/model name. */
     public static final String ATTR_ENTITY_FORM = "entityForm";
@@ -263,6 +278,8 @@ public class MULParser {
     public static final String ATTR_PENALTY = "penalty";
     public static final String ATTR_C3_MASTER_IS = "c3MasterIs";
     public static final String ATTR_C3UUID = "c3UUID";
+    public static final String ATTR_C3EM_ACTIVE = "c3emActive";
+    public static final String ATTR_C3EM_TURNS = "c3emTurns";
     public static final String ATTR_LOAD = "load";
     public static final String ATTR_INTERNAL = "Internal";
     public static final String ATTR_BA_APM_MOUNT_NUM = "baAPMMountNum";
@@ -273,6 +290,7 @@ public class MULParser {
     public static final String ATTR_KILLER = "killer";
     public static final String ATTR_DAMAGE_TAKEN = "damageTaken";
     private static final String EXTRA_DATA = "extraData";
+    public static final String ATTR_ARMOR_NAME = "armorName";
     public static final String ATTR_ARMOR_DIVISOR = "armorDivisor";
     public static final String ATTR_ARMOR_ENC = "armorEncumbering";
     public static final String ATTR_DEST_ARMOR = "destArmor";
@@ -285,6 +303,8 @@ public class MULParser {
     public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
     public static final String ATTR_INF_SQUAD_NUM = "squadNum";
     public static final String ATTR_RFMG = "rfmg";
+    public static final String ATTR_AUTOCANNON_HIT = "autocannonHit";
+    public static final String ATTR_DIRECTIONAL_MOUNT_LOCKED = "directionalMountLocked";
     public static final String ATTR_LINK = "link";
     public static final String ATTR_ID = "id";
     public static final String ATTR_NUMBER = "number";
@@ -298,6 +318,8 @@ public class MULParser {
     public static final String ATTR_GUNNERY_AERO_M = "gunneryAeroM";
     public static final String ATTR_GUNNERY_AERO_B = "gunneryAeroB";
     public static final String ATTR_PILOTING_AERO = "pilotingAero";
+    public static final String ATTR_NATURAL_APTITUDE_GUNNERY_AERO = "naturalAptitudeGunneryAero";
+    public static final String ATTR_NATURAL_APTITUDE_PILOTING_AERO = "naturalAptitudePilotingAero";
     public static final String ATTR_CREW_TYPE = "crewType";
     public static final String ATTR_FILENAME = "filename";
 
@@ -359,6 +381,24 @@ public class MULParser {
     private final Hashtable<String, String> kills;
 
     StringBuffer warning;
+
+    /**
+     * The MegaMek version this MUL was saved in, as read from the root element's {@link #VERSION} attribute. This is
+     * {@code null} when the file did not specify a (parseable) version.
+     */
+    private Version fileVersion;
+
+    /**
+     * True when the MUL was saved in a MegaMek version newer (by major.minor.patch) than the one currently running. A
+     * newer MUL can never be loaded in an older version, so no entities are parsed in this case.
+     */
+    private boolean newerVersion;
+
+    /**
+     * True when the MUL was saved in an older MegaMek version than the one currently running, or when it does not carry
+     * a parseable version at all. Loading is still possible, but correct behavior is not guaranteed.
+     */
+    private boolean olderVersion;
 
     // region Constructors
 
@@ -442,11 +482,78 @@ public class MULParser {
         element.normalize();
 
         final String version = element.getAttribute(VERSION);
+        determineVersionCompatibility(version);
+
+        if (newerVersion) {
+            // A MUL saved in a newer version can never be loaded in an older one. Refuse to parse any entities.
+            warning.append("This MUL was created in a newer version of MegaMek (")
+                  .append(version)
+                  .append(") than the one currently running (")
+                  .append(SuiteConstants.VERSION)
+                  .append("). It cannot be loaded.\n");
+            if (hasWarningMessage()) {
+                LOGGER.warn(getWarningMessage());
+            }
+            return;
+        }
+
         if (version.isBlank()) {
             warning.append("Warning: No version specified, correct parsing ")
                   .append("not guaranteed!\n");
         }
         parse(element, options);
+    }
+
+    /**
+     * Reads the MUL's saved version (as taken from the root element's {@link #VERSION} attribute) and records how it
+     * relates to the currently running version. A missing or unparseable version is treated as older, since it cannot
+     * be confirmed to match the current format. Only the major.minor.patch components are compared; the
+     * snapshot/nightly suffix is ignored.
+     *
+     * @param versionText the raw version attribute value, which may be blank
+     */
+    private void determineVersionCompatibility(final String versionText) {
+        fileVersion = parseVersionSafely(versionText);
+
+        if (fileVersion == null) {
+            // Missing or unparseable version: assume it predates the current format.
+            olderVersion = true;
+            return;
+        }
+
+        final Version runningVersion = SuiteConstants.VERSION;
+        if (fileVersion.isHigherThan(runningVersion)) {
+            newerVersion = true;
+        } else if (fileVersion.isLowerThan(runningVersion)) {
+            olderVersion = true;
+        }
+        // Equal major.minor.patch: load silently.
+    }
+
+    /**
+     * Parses a version string into a {@link Version} without triggering the fatal error dialog that
+     * {@link Version#Version(String)} raises on malformed input. Returns {@code null} for blank or malformed values.
+     *
+     * @param versionText the raw version attribute value
+     *
+     * @return the parsed {@link Version}, or {@code null} if it is blank or cannot be parsed
+     */
+    private static @Nullable Version parseVersionSafely(final @Nullable String versionText) {
+        if ((versionText == null) || versionText.isBlank()) {
+            return null;
+        }
+
+        final String[] extraSplit = versionText.split("-", 2);
+        final String[] versionSplit = extraSplit[0].split("\\.");
+        if ((extraSplit.length > 2) || (versionSplit.length < 3)) {
+            return null;
+        }
+        for (int i = 0; i < 3; i++) {
+            if (!versionSplit[i].matches("\\d+")) {
+                return null;
+            }
+        }
+        return new Version(versionText);
     }
 
     private void parse(final Element element, final @Nullable GameOptions options) {
@@ -711,18 +818,18 @@ public class MULParser {
 
     /**
      * Loads a unit from the cache. When a unit-file UUID is given it is the primary lookup - it pins the exact saved
-    * unit file - and the chassis/model name is the fallback. A MUL entity-form discriminator makes that fallback use
-    * the separate Battlefield Support Asset name index, preventing a same-name base unit from being substituted.
+     * unit file - and the chassis/model name is the fallback. A MUL entity-form discriminator makes that fallback use
+     * the separate Battlefield Support Asset name index, preventing a same-name base unit from being substituted.
      *
      * @param chassis      the unit chassis
      * @param model        the unit model, or {@code null}
-        * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
-        * @param assetForm    whether the MUL explicitly identifies the entity as its Battlefield Support Asset form
+     * @param unitFileUUID the unit-file UUID to resolve first, or {@code null}/blank to look up by name only
+     * @param assetForm    whether the MUL explicitly identifies the entity as its Battlefield Support Asset form
      *
      * @return the loaded entity, or {@code null} if it could not be found or loaded
      */
-        private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID,
-                    boolean assetForm) {
+    private Entity getEntity(String chassis, @Nullable String model, @Nullable String unitFileUUID,
+          boolean assetForm) {
         // The unit-file UUID is the primary lookup: it pins the exact saved unit file (and is the only way to resolve a
         // Battlefield Support Asset, which shares its name with its base unit). Old UUID-less MULs, and any UUID not in
         // this cache, fall through to the chassis/model name lookup below.
@@ -1050,9 +1157,18 @@ public class MULParser {
         if (!c3uuid.isBlank()) {
             entity.setC3UUIDAsString(c3uuid);
         }
+        // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+        entity.setC3EmergencyMasterActive(Boolean.parseBoolean(entityTag.getAttribute(ATTR_C3EM_ACTIVE)));
+        String c3emTurns = entityTag.getAttribute(ATTR_C3EM_TURNS);
+        if (!c3emTurns.isBlank()) {
+            entity.setC3EmergencyMasterOperatingTurns(MathUtility.parseInt(c3emTurns, 0));
+        }
 
         // Load some values for conventional infantry
         if (entity instanceof ConvInfantry inf) {
+            String armorName = entityTag.getAttribute(ATTR_ARMOR_NAME);
+            inf.setCustomArmorName(armorName);
+
             String armorDiv = entityTag.getAttribute(ATTR_ARMOR_DIVISOR);
             if (!armorDiv.isBlank()) {
                 inf.setCustomArmorDamageDivisor(Double.parseDouble(armorDiv));
@@ -1139,7 +1255,7 @@ public class MULParser {
         }
 
         Crew crew;
-        if (null != entity) {
+        if (entity != null) {
             crew = new Crew(entity.getCrew().getCrewType());
         } else {
             crew = new Crew(CrewType.SINGLE);
@@ -1166,6 +1282,16 @@ public class MULParser {
             ((LAMPilot) crew).setGunneryAeroB(aeroCrew.getGunneryB());
             ((LAMPilot) crew).setGunneryAeroL(aeroCrew.getGunneryL());
             ((LAMPilot) crew).setPilotingAero(aeroCrew.getPiloting());
+            // convertToLAMPilot copies the Mek aptitudes to Aero, which is what we want for files written before the
+            // Aero aptitudes were saved separately
+            if (attributes.containsKey(ATTR_NATURAL_APTITUDE_GUNNERY_AERO)) {
+                ((LAMPilot) crew).setHasNaturalAptitudeGunneryAero(
+                      parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_GUNNERY_AERO));
+            }
+            if (attributes.containsKey(ATTR_NATURAL_APTITUDE_PILOTING_AERO)) {
+                ((LAMPilot) crew).setHasNaturalAptitudePilotingAero(
+                      parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING_AERO));
+            }
             entity.setCrew(crew);
         }
         pilots.add(crew);
@@ -1248,6 +1374,84 @@ public class MULParser {
     }
 
     /**
+     * @return {@code true} if the attribute is present and set to {@code true}
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static boolean parseBooleanAttribute(final Map<String, String> attributes, final String key) {
+        return attributes.containsKey(key) && Boolean.parseBoolean(attributes.get(key));
+    }
+
+    /**
+     * Reads a crew member's Natural Aptitudes. Absent attributes are left alone rather than cleared, so a legacy SPA
+     * converted by {@link #convertLegacyNaturalAptitudes(Crew, Map)} isn't undone regardless of which runs first.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void setNaturalAptitudeAttributes(final Crew crew, final int slot,
+          final Map<String, String> attributes) {
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_GUNNERY)) {
+            crew.setHasNaturalAptitudeGunnery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_GUNNERY), slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_ARTILLERY)) {
+            crew.setHasNaturalAptitudeArtillery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_ARTILLERY),
+                  slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_PILOTING)) {
+            crew.setHasNaturalAptitudePiloting(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING),
+                  slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_SMALL_ARMS)) {
+            crew.setHasNaturalAptitudeSmallArms(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_SMALL_ARMS),
+                  slot);
+        }
+    }
+
+    /**
+     * @return {@code true} if the advantage name is one of the retired Natural Aptitude SPAs
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static boolean isLegacyNaturalAptitude(final String advantageName) {
+        return LEGACY_NATURAL_APTITUDE_GUNNERY.equals(advantageName)
+              || LEGACY_NATURAL_APTITUDE_PILOTING.equals(advantageName);
+    }
+
+    /**
+     * Natural Aptitude used to be a pair of SPAs. Files written before it became a property of the crew's skills
+     * store it in the advantages list instead; convert those into the new crew flags. The old Gunnery SPA applied to
+     * every gunnery roll, including artillery, so it grants both the Gunnery and Artillery aptitudes. SPAs were held
+     * by the crew as a whole, so every crew member receives the aptitude.
+     *
+     * <p>This is done regardless of whether pilot advantages are enabled, as Natural Aptitude is no longer an
+     * SPA.</p>
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void convertLegacyNaturalAptitudes(final Crew crew, final Map<String, String> attributes) {
+        if (!attributes.containsKey(ATTR_ADVANTAGES) || attributes.get(ATTR_ADVANTAGES).isBlank()) {
+            return;
+        }
+
+        StringTokenizer st = new StringTokenizer(attributes.get(ATTR_ADVANTAGES), "::");
+        while (st.hasMoreTokens()) {
+            String advantageName = Crew.parseAdvantageName(st.nextToken());
+            for (int slot = 0; slot < crew.getSlotCount(); slot++) {
+                if (LEGACY_NATURAL_APTITUDE_GUNNERY.equals(advantageName)) {
+                    crew.setHasNaturalAptitudeGunnery(true, slot);
+                    crew.setHasNaturalAptitudeArtillery(true, slot);
+                } else if (LEGACY_NATURAL_APTITUDE_PILOTING.equals(advantageName)) {
+                    crew.setHasNaturalAptitudePiloting(true, slot);
+                }
+            }
+        }
+    }
+
+    /**
      * Helper method that sets field values for the crew as a whole, either from a
      * <pilot> element
      * (single/collective crews) or a <crew> element (multi-crew cockpits). If an
@@ -1290,7 +1494,7 @@ public class MULParser {
 
                 }
                 crew.setSize(crewSize);
-            } else if (null != entity) {
+            } else if (entity != null) {
                 crew.setSize(Compute.getFullCrewSize(entity));
                 // Reset the currentSize equal to the max size
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
@@ -1306,7 +1510,7 @@ public class MULParser {
 
                 }
                 crew.setCurrentSize(crewCurrentSize);
-            } else if (null != entity) {
+            } else if (entity != null) {
                 // Reset the currentSize equal to the max size
                 crew.setCurrentSize(Compute.getFullCrewSize(entity));
             }
@@ -1315,6 +1519,8 @@ public class MULParser {
         crew.setInitBonus(initBVal);
         crew.setCommandBonus(commandBVal);
 
+        convertLegacyNaturalAptitudes(crew, attributes);
+
         if ((options != null) && options.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)
               && attributes.containsKey(ATTR_ADVANTAGES) && !attributes.get(ATTR_ADVANTAGES).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ATTR_ADVANTAGES), "::");
@@ -1322,6 +1528,11 @@ public class MULParser {
                 String adv = st.nextToken();
                 String advName = Crew.parseAdvantageName(adv);
                 Object value = Crew.parseAdvantageValue(adv);
+
+                if (isLegacyNaturalAptitude(advName)) {
+                    // Handled by convertLegacyNaturalAptitudes
+                    continue;
+                }
 
                 try {
                     crew.getOptions().getOption(advName).setValue(value);
@@ -1348,8 +1559,8 @@ public class MULParser {
             }
         }
 
-        if ((options != null) && options.booleanOption(OptionsConstants.RPG_MANEI_DOMINI)
-              && attributes.containsKey(ATTR_IMPLANTS) && !attributes.get(ATTR_IMPLANTS).isBlank()) {
+        boolean implantsAllowed = NeuralInterfaceMode.from(options).allowsImplants();
+        if (implantsAllowed && attributes.containsKey(ATTR_IMPLANTS) && !attributes.get(ATTR_IMPLANTS).isBlank()) {
             StringTokenizer st = new StringTokenizer(attributes.get(ATTR_IMPLANTS), "::");
             while (st.hasMoreTokens()) {
                 String implant = st.nextToken();
@@ -1385,7 +1596,7 @@ public class MULParser {
             crew.setEjected(Boolean.parseBoolean(attributes.get(ATTR_EJECTED)));
         }
 
-        if (null != entity) {
+        if (entity != null) {
             // Set the crew for this entity.
             entity.setCrew(crew);
 
@@ -1484,6 +1695,33 @@ public class MULParser {
                 }
             }
         }
+    }
+
+    /**
+     * Reads a crew member's Small Arms skill, if the file carries one. A missing or blank attribute leaves the
+     * skill unset, so the crew member fires on foot with their gunnery; a value outside the skill range is reported
+     * and ignored rather than trusted.
+     *
+     * @param crew       the crew being filled in
+     * @param slot       the crew slot these attributes belong to
+     * @param attributes the attributes read for that slot
+     */
+    private void setSmallArmsAttribute(final Crew crew, final int slot, final Map<String, String> attributes) {
+        if (!attributes.containsKey(ATTR_SMALL_ARMS) || attributes.get(ATTR_SMALL_ARMS).isBlank()) {
+            return;
+        }
+        int smallArmsValue;
+        try {
+            smallArmsValue = Integer.parseInt(attributes.get(ATTR_SMALL_ARMS));
+        } catch (NumberFormatException ignored) {
+            warning.append("Found invalid small arms value: ").append(attributes.get(ATTR_SMALL_ARMS)).append(".\n");
+            return;
+        }
+        if ((smallArmsValue < 0) || (smallArmsValue > Crew.MAX_SKILL)) {
+            warning.append("Found invalid small arms value: ").append(attributes.get(ATTR_SMALL_ARMS)).append(".\n");
+            return;
+        }
+        crew.setSmallArms(smallArmsValue, slot);
     }
 
     /**
@@ -1638,6 +1876,7 @@ public class MULParser {
             crew.setPiloting(pilotVal, slot);
             crew.setToughness(toughVal, slot);
             crew.setCrewFatigue(fatigueVal, slot);
+            setNaturalAptitudeAttributes(crew, slot, attributes);
 
             if ((attributes.containsKey(ATTR_NAME)) && !attributes.get(ATTR_NAME).isBlank()) {
                 crew.setName(attributes.get(ATTR_NAME), slot);
@@ -1656,6 +1895,20 @@ public class MULParser {
             if ((attributes.containsKey(ATTR_CLAN_PILOT)) && !attributes.get(ATTR_CLAN_PILOT).isBlank()) {
                 crew.setClanPilot(Boolean.parseBoolean(attributes.get(ATTR_CLAN_PILOT)), slot);
             }
+
+            // This is the seam MekHQ hands personal equipment across on: a campaign issues a kit to a person,
+            // writes its name here, and MegaMek reads it back when the battle starts. An older file simply has no
+            // attribute and the crew member goes without.
+            if ((attributes.containsKey(ATTR_ARMOR_KIT)) && !attributes.get(ATTR_ARMOR_KIT).isBlank()) {
+                crew.setArmorKitName(attributes.get(ATTR_ARMOR_KIT), slot);
+            }
+
+            // The sidearm and the Small Arms skill cross on the same seam. A blank or absent attribute leaves the
+            // crew member unarmed and firing with their gunnery on foot, which is what every older file means.
+            if ((attributes.containsKey(ATTR_SIDEARM)) && !attributes.get(ATTR_SIDEARM).isBlank()) {
+                crew.setSidearmName(attributes.get(ATTR_SIDEARM), slot);
+            }
+            setSmallArmsAttribute(crew, slot, attributes);
 
             if ((attributes.containsKey(ATTR_CAT_PORTRAIT)) && !attributes.get(ATTR_CAT_PORTRAIT).isBlank()) {
                 crew.getPortrait(slot).setCategory(attributes.get(ATTR_CAT_PORTRAIT));
@@ -1890,6 +2143,8 @@ public class MULParser {
         String quirks = slotTag.getAttribute(ATTR_QUIRKS);
         String trooperMiss = slotTag.getAttribute(ATTR_TROOPER_MISS);
         String rfmg = slotTag.getAttribute(ATTR_RFMG);
+        String autocannonHit = slotTag.getAttribute(ATTR_AUTOCANNON_HIT);
+        String directionalMountLocked = slotTag.getAttribute(ATTR_DIRECTIONAL_MOUNT_LOCKED);
         String bayIndex = slotTag.getAttribute(ATTR_WEAPONS_BAY_INDEX);
 
         // Did we find required attributes?
@@ -2095,6 +2350,16 @@ public class MULParser {
                 mounted.setRepairable(repairFlag);
 
                 mounted.setRapidFire(Boolean.parseBoolean(rfmg));
+
+                // Non-crit-slot combat damage flags (CORE first autocannon crit, locked Directional Torso Mount) that
+                // the writer stored on the slot; blank when the attribute was absent, leaving the default false.
+                if (!autocannonHit.isBlank()) {
+                    mounted.setAutocannonHit(Boolean.parseBoolean(autocannonHit));
+                }
+
+                if (!directionalMountLocked.isBlank()) {
+                    mounted.setDirectionalMountLocked(Boolean.parseBoolean(directionalMountLocked));
+                }
 
                 // Is the mounted a type of ammo?
                 if (mounted instanceof AmmoMounted) {
@@ -2738,9 +3003,9 @@ public class MULParser {
     /**
      * Parses the trailers a tractor tows, in order from front to back.
      * <p>
-     * The ids read here are the ones the saving game used. They are stored as-is, exactly like the conveyance id
-     * above, and translated to real ids once the units have been added to a game and their server-side ids are known.
-     * Only the tractor records the train; each trailer's own tractor and hitch are rebuilt from this list.
+     * The ids read here are the ones the saving game used. They are stored as-is, exactly like the conveyance id above,
+     * and translated to real ids once the units have been added to a game and their server-side ids are known. Only the
+     * tractor records the train; each trailer's own tractor and hitch are rebuilt from this list.
      * </p>
      */
     private void parseTowedUnits(Element towedUnitsTag, Entity entity) {
@@ -2977,6 +3242,29 @@ public class MULParser {
             return warning.toString();
         }
         return null;
+    }
+
+    /**
+     * @return the MegaMek version this MUL was saved in, or {@code null} if the file did not carry a parseable version
+     */
+    public @Nullable Version getFileVersion() {
+        return fileVersion;
+    }
+
+    /**
+     * @return true if the MUL was saved in a MegaMek version newer than the one currently running. Such a file is never
+     *       loaded, so {@link #getEntities()} and the other result accessors will be empty.
+     */
+    public boolean isNewerVersion() {
+        return newerVersion;
+    }
+
+    /**
+     * @return true if the MUL was saved in an older MegaMek version than the one currently running, or does not carry a
+     *       parseable version. The file is still parsed, but correct behavior is not guaranteed.
+     */
+    public boolean isOlderVersion() {
+        return olderVersion;
     }
 
     /**

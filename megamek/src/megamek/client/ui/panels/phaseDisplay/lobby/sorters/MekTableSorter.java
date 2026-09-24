@@ -35,15 +35,19 @@ package megamek.client.ui.panels.phaseDisplay.lobby.sorters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.Set;
 
 import megamek.client.Client;
-import megamek.common.units.Entity;
 import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.options.IGameOptions;
+import megamek.common.units.Entity;
 
 /**
  * Abstract Class for Mek Table Sorters.
@@ -69,6 +73,145 @@ public abstract class MekTableSorter implements Comparator<Entity> {
 
     /** Guards against a malformed load looping forever when walking up to a unit's outermost carrier. */
     private static final int MAX_CARRIER_DEPTH = 16;
+
+    /**
+     * Wraps a sorter so C3 network members stay together as one hierarchy-ordered block, whatever the sorter is
+     * ordering by - the same guarantee {@link #keepingCarriedUnitsTogether(Comparator)} gives carrier stacks, and
+     * for the same reason: the lobby draws branch glyphs in front of network members, which only tell the truth
+     * while a member sits directly under its master. Works on carrier-stack roots so both wrappers compose: a
+     * towed unit follows its tractor first, and the whole stack follows the tractor's network.
+     *
+     * @param entities   the list about to be sorted, used to precompute one representative per network
+     * @param baseSorter the (already stack-aware) sorter the player chose
+     *
+     * @return a sorter that applies the player's choice to whole networks
+     */
+    public static Comparator<Entity> keepingC3NetworksTogether(List<Entity> entities,
+          Comparator<Entity> baseSorter) {
+        C3NetworkIndex index = new C3NetworkIndex(entities);
+        return (a, b) -> {
+            String netA = index.networkKey(a);
+            String netB = index.networkKey(b);
+            if ((netA == null) && (netB == null)) {
+                return baseSorter.compare(a, b);
+            }
+            if (!Objects.equals(netA, netB)) {
+                return compareAcrossNetworks(a, netA, b, netB, index, baseSorter);
+            }
+            return compareWithinNetwork(a, b, baseSorter);
+        };
+    }
+
+    /**
+     * What one pass over the list being sorted says about its C3 networks: each unit's net id, how many
+     * carrier-stack roots share each net id, and the lowest-id member of each. A net id shared by 2+ roots marks
+     * a network; a unit whose net id is its own is solo and sorts as an ordinary unit.
+     */
+    private static final class C3NetworkIndex {
+        private final Map<Integer, String> netIdByEntityId = new HashMap<>();
+        private final Map<String, Integer> memberCounts = new HashMap<>();
+        private final Map<String, Entity> representatives = new HashMap<>();
+
+        C3NetworkIndex(List<Entity> entities) {
+            for (Entity entity : entities) {
+                String netId = rootNetId(entity);
+                if (netId == null) {
+                    continue;
+                }
+                netIdByEntityId.put(entity.getId(), netId);
+                memberCounts.merge(netId, 1, Integer::sum);
+                Entity current = representatives.get(netId);
+                if ((current == null) || (entity.getId() < current.getId())) {
+                    representatives.put(netId, entity);
+                }
+            }
+        }
+
+        /** The unit's network key, or {@code null} when it is not part of a 2+ member network in this list. */
+        @Nullable
+        String networkKey(Entity entity) {
+            String netId = netIdByEntityId.get(entity.getId());
+            if ((netId == null) || (memberCounts.get(netId) < 2)) {
+                return null;
+            }
+            return netId;
+        }
+
+        /** The lowest-id member of the network; the base sorter judges this unit for the whole block. */
+        Entity representative(String netId) {
+            return representatives.get(netId);
+        }
+
+        /** The C3 net id of the unit's carrier-stack root, {@code null} when the root carries no C3 system. */
+        @Nullable
+        private static String rootNetId(Entity entity) {
+            Entity root = carrierPath(entity).get(0);
+            if (!root.hasAnyC3System()) {
+                return null;
+            }
+            return root.getC3NetId();
+        }
+    }
+
+    /**
+     * Orders two units in different networks (or one networked, one not): the base sorter judges the
+     * representatives, so a whole network sorts where its representative would. The tie-break on net id keeps
+     * two blocks the sorter considers equal from interleaving.
+     */
+    private static int compareAcrossNetworks(Entity a, @Nullable String netA, Entity b, @Nullable String netB,
+          C3NetworkIndex index, Comparator<Entity> baseSorter) {
+        Entity representativeA = (netA == null) ? a : index.representative(netA);
+        Entity representativeB = (netB == null) ? b : index.representative(netB);
+        int representativeComparison = baseSorter.compare(representativeA, representativeB);
+        if (representativeComparison != 0) {
+            return representativeComparison;
+        }
+        return String.valueOf(netA).compareTo(String.valueOf(netB));
+    }
+
+    /**
+     * Orders two units in the same network by walking their master chains from the top: a master comes before
+     * its dependents, sibling branches go by unit id, and peers with identical chains fall back to the base sorter.
+     */
+    private static int compareWithinNetwork(Entity a, Entity b, Comparator<Entity> baseSorter) {
+        List<Entity> pathA = c3Path(a);
+        List<Entity> pathB = c3Path(b);
+        int depth = 0;
+        while ((depth < pathA.size()) && (depth < pathB.size())
+              && (pathA.get(depth).getId() == pathB.get(depth).getId())) {
+            depth++;
+        }
+        if ((depth >= pathA.size()) && (depth >= pathB.size())) {
+            return baseSorter.compare(a, b);
+        }
+        if (depth >= pathA.size()) {
+            return -1;
+        }
+        if (depth >= pathB.size()) {
+            return 1;
+        }
+        return Integer.compare(pathA.get(depth).getId(), pathB.get(depth).getId());
+    }
+
+    /** Guards against a malformed master chain looping while walking up to the network top. */
+    private static final int MAX_C3_CHAIN_DEPTH = 4;
+
+    /** The chain from the network top down to the unit's carrier-stack root: [top, ..., root]. */
+    private static List<Entity> c3Path(Entity entity) {
+        List<Entity> path = new ArrayList<>();
+        Entity current = carrierPath(entity).get(0);
+        int guard = 0;
+        while ((current != null) && (guard++ < MAX_C3_CHAIN_DEPTH)) {
+            path.add(current);
+            Entity master = current.getC3Master();
+            if ((master == null) || (master.getId() == current.getId())) {
+                break;
+            }
+            current = master;
+        }
+        Collections.reverse(path);
+        return path;
+    }
 
     /**
      * Wraps a sorter so anything riding on another unit stays with it, whatever the sorter is ordering by.

@@ -36,6 +36,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.Serial;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.Map;
 import javax.swing.JButton;
@@ -44,13 +45,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
+import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.common.Player;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
@@ -70,6 +71,16 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     MMLogger LOGGER = MMLogger.create(MegaMekUnitSelectorDialog.class);
     //region Variable Declarations
     private final ClientGUI clientGUI;
+    /**
+     * The player a caller asked this dialog to open on, or {@code null} when it was opened by itself.
+     *
+     * <p>{@link UnitRecipients} decides what being asked for is worth: a gamemaster tool naming a player who is on
+     * no team yet gets them offered anyway, while an ordinary player whose lobby happened to have the host
+     * highlighted does not get the host. The decision is made there, once, so that this dialog and the random army
+     * dialog can never answer it differently.</p>
+     */
+    private Player explicitlyRequestedPlayer;
+
     private final JComboBox<String> comboPlayer = new JComboBox<>();
     private JButton buttonSelectAsset;
     //endregion Variable Declarations
@@ -157,27 +168,58 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         if (entities.isEmpty()) {
             return;
         }
-        Client client = null;
-        String name = (String) comboPlayer.getSelectedItem();
+        Player owner = chosenOwner();
 
-        if (comboPlayer.getSelectedIndex() > 0) {
-            client = (Client) clientGUI.getLocalBots().get(name);
+        for (Entity entity : entities) {
+            autoSetSkillsAndName(entity, owner);
+            entity.setOwner(owner);
         }
+        // sent over this machine's own connection whoever the units are for, the way reinforcements during a game
+        // have always been sent: a remote player has no client here to send through
+        clientGUI.getClient().sendAddEntity(entities);
 
-        if (client == null) {
-            client = clientGUI.getClient();
+        // named from the owner the units were actually given, not from the chooser: those were two different
+        // things to read, and the chat line could name a player who received nothing
+        String message = clientGUI.getClient().getLocalPlayer() + " selected "
+              + ((entities.size() == 1) ? "a unit" : entities.size() + " units")
+              + " for player: " + owner.getName();
+        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, message);
+    }
+
+    /**
+     * The player the chosen units should belong to.
+     *
+     * <p>That is whoever the chooser names, when they are still in the game and the local player may add units to
+     * them. Otherwise it is the local player: the chooser only offers permitted players, so anything else here
+     * means the game changed under the open dialog, and units must not go to somebody else on the strength of a
+     * stale entry.</p>
+     *
+     * @return the player who will own the units
+     */
+    private Player chosenOwner() {
+        Player localPlayer = clientGUI.getClient().getLocalPlayer();
+        String chosenName = (String) comboPlayer.getSelectedItem();
+        Player chosen = clientGUI.getClient()
+              .getGame()
+              .getPlayersList()
+              .stream()
+              .filter(player -> player.getName().equals(chosenName))
+              .findFirst()
+              .orElse(null);
+        if (chosen == null) {
+            LOGGER.warn("[GMAddUnit] the chooser names {}, who is no longer in the game; the units go to {} instead",
+                  chosenName, localPlayer.getName());
+            return localPlayer;
         }
-
-        for (var e : entities) {
-            autoSetSkillsAndName(e, client.getLocalPlayer());
-            e.setOwner(client.getLocalPlayer());
+        boolean isPermitted = UnitRecipients.mayAddUnitsTo(localPlayer, chosen, clientGUI.getLocalBots().keySet());
+        if (!isPermitted) {
+            LOGGER.warn("[GMAddUnit] the chooser names {}, whom {} may not add units to; the units go to {} instead",
+                  chosen.getName(), localPlayer.getName(), localPlayer.getName());
+            return localPlayer;
         }
-        client.sendAddEntity(entities);
-
-        String msg = clientGUI.getClient().getLocalPlayer() + " selected " + (entities.size() == 1 ?
-              "a unit" :
-              entities.size() + " units") + " for player: " + name;
-        clientGUI.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+        LOGGER.info("[GMAddUnit] {} is adding units owned by {}, sent over their own connection",
+              localPlayer.getName(), chosen.getName());
+        return chosen;
     }
 
     private void autoSetSkillsAndName(Entity e, Player player) {
@@ -206,16 +248,28 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
     }
 
     private void updatePlayerChoice(String selectionName) {
-        String clientName = clientGUI.getClient().getName();
         comboPlayer.setEnabled(false);
         comboPlayer.removeAllItems();
-        comboPlayer.addItem(clientName);
-
-        for (AbstractClient client : clientGUI.getLocalBots().values()) {
-            comboPlayer.addItem(client.getName());
+        List<Player> offered = UnitRecipients.availableTo(clientGUI.getClient().getLocalPlayer(),
+              clientGUI.getClient().getGame().getPlayersList(),
+              clientGUI.getLocalBots().keySet(),
+              !clientGUI.getClient().getGame().getPhase().isLounge(),
+              explicitlyRequestedPlayer);
+        for (Player player : offered) {
+            comboPlayer.addItem(player.getName());
         }
-        comboPlayer.setSelectedItem(selectionName);
+        if (selectionName == null) {
+            // the first opening has no previous choice to keep, and the local player is always first
+            comboPlayer.setSelectedIndex(0);
+            LOGGER.debug("[GMAddUnit] no previous choice, so the chooser starts on {}", comboPlayer.getItemAt(0));
+        } else {
+            comboPlayer.setSelectedItem(selectionName);
+        }
         if (comboPlayer.getSelectedIndex() < 0) {
+            // never fall back in silence: units quietly going to the wrong player looks exactly like them going to
+            // the right one, and is only noticed a turn later
+            LOGGER.warn("[GMAddUnit] {} is not in the player list, so the chooser fell back to {}",
+                  selectionName, comboPlayer.getItemAt(0));
             comboPlayer.setSelectedIndex(0);
         }
         if (comboPlayer.getItemCount() > 1) {
@@ -228,12 +282,35 @@ public class MegaMekUnitSelectorDialog extends AbstractUnitSelectorDialog {
         updatePlayerChoice(lastChoice);
     }
 
-    public void setPlayerFromClient(Client c) {
-        if (c != null) {
-            updatePlayerChoice(c.getName());
-        } else {
+    /**
+     * Points the player chooser at the given player, so a dialog opened from a chosen player opens on them.
+     *
+     * <p>Asking is not the same as getting: if the local player may not add units to that player, the chooser is
+     * left on the person using it, and the log says why.</p>
+     *
+     * @param player The player to select, or {@code null} to leave the chooser where it was
+     */
+    public void setPlayerFrom(@Nullable Player player) {
+        explicitlyRequestedPlayer = player;
+        if (player == null) {
+            LOGGER.debug("[GMAddUnit] unit selector opened with no player asked for; the chooser stays where it was");
             updatePlayerChoice();
+        } else {
+            LOGGER.debug("[GMAddUnit] unit selector opened asking for {}", player.getName());
+            updatePlayerChoice(player.getName());
         }
+    }
+
+    /**
+     * @param client The client whose player to select, or {@code null} to leave the chooser where it was
+     *
+     * @deprecated since 0.51.01 - use {@link #setPlayerFrom(Player)}. A client cannot name a remote player,
+     *       because there is none on this machine, so anything asking for one silently fell back to the local
+     *       player.
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public void setPlayerFromClient(@Nullable Client client) {
+        setPlayerFrom((client == null) ? null : client.getLocalPlayer());
     }
     //endregion Button Methods
 

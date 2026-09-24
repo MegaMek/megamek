@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,22 +33,18 @@
 
 package megamek.client;
 
-import static megamek.client.ui.clientGUI.ClientGUI.CG_FILENAME_SALVAGE;
 import static megamek.client.ui.clientGUI.ClientGUI.CG_FILE_EXTENSION_MUL;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
 
 import megamek.common.Player;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityListFile;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameVictoryEvent;
 import megamek.common.preference.ClientPreferences;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityListFile;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -62,6 +58,16 @@ public class HeadlessClient extends Client {
     protected static final ClientPreferences PREFERENCES = PreferenceManager.getClientPreferences();
 
     private boolean sendDoneOnVictoryAutomatically = true;
+
+    /**
+     * The game result captured the instant the VICTORY phase begins, before any server-side reset can wipe the board.
+     * This is how the result reaches MekHQ even when the VICTORY phase never formally ends (e.g. a bot disconnect
+     * stalls the readiness check). See issue #8889.
+     *
+     * <p>Written on the game/receive thread in {@link #changePhase(GamePhase)} and read from the Swing EDT in the
+     * Commander window's hand-off, so it is {@code volatile} to publish the snapshot across those threads.</p>
+     */
+    private volatile GameVictoryEvent victorySnapshot;
 
     /**
      * A client with no GUI has nothing to show an entity's picture in, so it does not cache one.
@@ -80,64 +86,9 @@ public class HeadlessClient extends Client {
 
     public HeadlessClient(String name, String host, int port) {
         super(name, host, port);
-
-        // Make a list of the player's living units.
-        // Be sure to include all units that have retreated.
-        // save all destroyed units in a separate "salvage MUL"
-        // Save the destroyed entities to the file.
-        var gameListener = new GameListenerAdapter() {
-            @Override
-            public void gameEnd(GameEndEvent e) {
-                // Make a list of the player's living units.
-                ArrayList<Entity> living = getGame().getPlayerEntities(getLocalPlayer(), false);
-
-                // Be sure to include all units that have retreated.
-                for (Enumeration<Entity> iter = getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
-                    Entity ent = iter.nextElement();
-                    if (ent.getOwnerId() == getLocalPlayer().getId()) {
-                        living.add(ent);
-                    }
-                }
-
-                // save all destroyed units in a separate "salvage MUL"
-                ArrayList<Entity> destroyed = new ArrayList<>();
-                Enumeration<Entity> graveyard = getGame().getGraveyardEntities();
-                while (graveyard.hasMoreElements()) {
-                    Entity entity = graveyard.nextElement();
-                    if (entity.isSalvage()) {
-                        destroyed.add(entity);
-                    }
-                }
-
-                if (!destroyed.isEmpty()) {
-                    String sLogDir = PREFERENCES.getLogDirectory();
-                    File logDir = new File(sLogDir);
-                    if (!logDir.exists()) {
-                        try {
-                            // noinspection ResultOfMethodCallIgnored
-                            logDir.mkdir();
-                        } catch (SecurityException ex) {
-                            LOGGER.error(ex, "Failed to create log directory");
-                            return;
-                        }
-                    }
-                    String fileName = CG_FILENAME_SALVAGE + CG_FILE_EXTENSION_MUL;
-                    if (PREFERENCES.stampFilenames()) {
-                        fileName = StringUtil.addDateTimeStamp(fileName);
-                    }
-                    File unitFile = new File(sLogDir + File.separator + fileName);
-                    try {
-                        // Save the destroyed entities to the file.
-                        EntityListFile.saveTo(unitFile, destroyed);
-                    } catch (IOException ex) {
-                        LOGGER.error(ex, "Failed to save entity list file");
-                    }
-                }
-                saveVictoryList();
-            }
-        };
-
-        getGame().addGameListener(gameListener);
+        // Note: the end-of-game MUL is written from changePhase(VICTORY) via saveVictoryList(), not from a gameEnd
+        // listener. GameEndEvent is only fired when the client receives an END_OF_GAME packet, which the server no
+        // longer sends, so a gameEnd listener here would never run. See issue #8890.
     }
 
     public void setSendDoneOnVictoryAutomatically(boolean value) {
@@ -147,6 +98,13 @@ public class HeadlessClient extends Client {
     @Override
     public void changePhase(GamePhase phase) {
         if (phase == GamePhase.VICTORY) {
+            // Capture the final game state now, while the board is still populated, so a consumer (e.g. MekHQ via the
+            // Commander interface) can be handed the result on demand without depending on the VICTORY phase ending
+            // or on the GAME_VICTORY_EVENT packet arriving. See issue #8889.
+            victorySnapshot = new GameVictoryEvent(this, getGame());
+            // Write the player's end-of-game MUL now, while the board is still populated. Waiting for gameEnd never
+            // worked (its END_OF_GAME packet is no longer sent) and the game is reset right after VICTORY. See #8890.
+            saveVictoryList();
             if (sendDoneOnVictoryAutomatically) {
                 sendDone(true);
             }
@@ -154,34 +112,46 @@ public class HeadlessClient extends Client {
         super.changePhase(phase);
     }
 
+    /**
+     * @return the game result captured when the VICTORY phase began, or {@code null} if the game has not reached
+     *       victory yet
+     */
+    public @Nullable GameVictoryEvent getVictorySnapshot() {
+        return victorySnapshot;
+    }
 
+    /**
+     * Writes a MUL of the player's surviving force to the log directory, named after the player. PACAR hands the
+     * player's units to an "@AI" bot on the player's own team, so the force is gathered by team rather than by the old
+     * (and now removed) lookup of a bot named "{@literal <player>@AI}", which {@code resetGame()} deleted before the
+     * write could ever run. The file is a fallback the player can use to resolve the scenario manually if the
+     * post-scenario dialogs are lost. See issue #8890.
+     */
     private void saveVictoryList() {
-        String filename = getLocalPlayer().getName();
-
-        // Did we select a file?
-        File unitFile = new File(filename + CG_FILE_EXTENSION_MUL);
-        if (!(unitFile.getName().toLowerCase().endsWith(CG_FILE_EXTENSION_MUL))) {
-            try {
-                unitFile = new File(unitFile.getCanonicalPath() + CG_FILE_EXTENSION_MUL);
-            } catch (Exception ignored) {
-                LOGGER.error("Could not set proper extension for file path.");
-                return;
-            }
+        Player localPlayer = getLocalPlayer();
+        if (localPlayer == null) {
+            return;
         }
 
-
-            // What bot was this player? We need it to get the propper salvage MUL, just in case
-            Player botPlayer =
-                  getGame().getPlayersList().stream().filter(p -> p.isBot() && p.getName().equals(getLocalPlayer().getName() +
-                        "@AI")).findFirst().orElse(null);
-
-            if (botPlayer != null) {
-                try {
-                    // Save the player's entities to the file.
-                    EntityListFile.saveTo(unitFile, this, botPlayer);
-                } catch (Exception ex) {
-                    LOGGER.error(ex, "saveVictoryList");
-                }
-            }
+        String logDirectoryPath = PREFERENCES.getLogDirectory();
+        File logDir = new File(logDirectoryPath);
+        if (!logDir.exists() && !logDir.mkdirs()) {
+            LOGGER.error("Failed to create log directory {}", logDirectoryPath);
+            return;
         }
+
+        String fileName = localPlayer.getName() + CG_FILE_EXTENSION_MUL;
+        if (PREFERENCES.stampFilenames()) {
+            fileName = StringUtil.addDateTimeStamp(fileName);
+        }
+        File unitFile = new File(logDir, fileName);
+
+        try {
+            // teamAsLiving = true: gather the whole player team (the player plus the "@AI" bot the units were handed
+            // to) into the survivors/retreated sections; the enemy team goes to salvage. See issue #8890.
+            EntityListFile.saveTo(unitFile, this, localPlayer, true);
+        } catch (Exception ex) {
+            LOGGER.error(ex, "saveVictoryList");
+        }
+    }
 }

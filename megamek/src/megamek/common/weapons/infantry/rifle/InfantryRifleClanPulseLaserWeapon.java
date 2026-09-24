@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,7 @@ public class InfantryRifleClanPulseLaserWeapon extends InfantryWeapon {
         shots = 8;
         bursts = 1;
         infantryRange = 2;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(2833, 2835, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CGS)
               .setProductionFactions(Faction.CGS).setTechRating(TechRating.F)

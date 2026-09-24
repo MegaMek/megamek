@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.sniperRifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -76,7 +77,7 @@ public class InfantrySniperRifleMinolta9000Weapon extends InfantryWeapon {
         ammoWeight = 0.00012;
         ammoCost = 5;
         shots = 10;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3052, 3055, 3100, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.CC)

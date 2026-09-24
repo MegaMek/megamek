@@ -64,6 +64,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -114,6 +115,9 @@ class ComputeTest {
         when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
+        IOption mockRulesSystemOption = mock (IOption.class);
+        when(mockRulesSystemOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockRulesSystemOption);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
 
         team1.addPlayer(player1);
@@ -971,6 +975,30 @@ class ComputeTest {
     }
 
     @Test
+    void testDirectBlowInfantryMOSCannotShiftPastEndOfTable() {
+        // A heavy flamer is already 6D6, the second-to-last row of the Non-Conventional Damage against Infantry
+        // table. A direct blow that shifts it two rows would run off the end of the table; the shift must stop at
+        // 7D6 rather than falling through to the weapon's base damage.
+        double originalDamage = 4.0;
+        int weaponType = WeaponType.WEAPON_BURST_6D6;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              3,
+              weaponType,
+              false,
+              false,
+              1,
+              reports,
+              1
+        );
+        assertTrue((newDamage >= 7) && (newDamage <= 42),
+              "A 6D6 burst shifted past the end of the table must roll 7D6 (7-42), not fall back to the weapon's "
+                    + "base damage of 4; got " + newDamage);
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
     void testDirectBlowInfantryMOS3BurstInBuilding() {
         // Burst Weapon in the building attacking infantry also in the building.
         // 1D6 -> 4D6 -> 4D6 / 2
@@ -989,7 +1017,7 @@ class ComputeTest {
         );
         assertTrue(newDamage >= 2.0 && newDamage <= 12.0, "10 -> 4D6 / 2.0, rounded up: " + newDamage);
         assertEquals(1, reports.size(), "Report size");
-        assertTrue(reports.getFirst().text().contains("in building"));
+        assertTrue(reports.getFirst().text().contains("inside the building"), "the report says why the damage halved");
     }
 
     /**
@@ -1062,5 +1090,43 @@ class ComputeTest {
 
             assertFalse(Compute.isInBuilding(getGame(), mek));
         }
+    }
+
+    @Test
+    void groundMoverRevealsAHiddenUnitAsItPasses() {
+        // TW p.260: the shot follows from being revealed by enemy movement, and the target may continue its move
+        // afterwards, which is only possible part way through a move. Walking past used to reveal nothing.
+        Entity groundMover = mock(Entity.class);
+        when(groundMover.isAirborne()).thenReturn(false);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 0),
+              "moving into the hidden unit's own hex reveals it");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 1),
+              "moving adjacent reveals it, whether or not the mover stops there");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(groundMover, 2),
+              "two hexes away is out of reach");
+    }
+
+    @Test
+    void airborneMoverRevealsOnlyWhatItFliesOverWithoutAProbe() {
+        Entity flyer = mock(Entity.class);
+        when(flyer.isAirborne()).thenReturn(true);
+        when(flyer.getBAPRange()).thenReturn(0);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0), "it reveals what it overflies");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 1),
+              "without an Active Probe an adjacent hex is not revealed");
+    }
+
+    @Test
+    void airborneMoverWithAProbeRevealsAnAdjacentHex() {
+        Entity flyerWithProbe = mock(Entity.class);
+        when(flyerWithProbe.isAirborne()).thenReturn(true);
+        when(flyerWithProbe.getBAPRange()).thenReturn(4);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 1),
+              "an Active Probe extends the reveal to an adjacent hex");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 0),
+              "with a probe the reveal is the adjacent hex, not the overflown one");
     }
 }

@@ -26,6 +26,16 @@
             <pctClan>0,0</pctClan>
             <pctSL>0,0</pctSL>
         </faction>
+        <!-- Both the surviving and the retired code in one file, which is the shape of the shipped 3078 and 3131
+             files. The retired block sets only techMargin, so it must replace that one value and leave the rest of
+             the surviving block alone. See RATGeneratorAliasedEraParametersTest. -->
+        <faction key='SUC'>
+            <pctOmni>60,61,62,63,64</pctOmni>
+            <techMargin>4</techMargin>
+        </faction>
+        <faction key='RET'>
+            <techMargin>9</techMargin>
+        </faction>
     </factions>
     <units>
         <chassis name='Archer' unitType='Mek'>

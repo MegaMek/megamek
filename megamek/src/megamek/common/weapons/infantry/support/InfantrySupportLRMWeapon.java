@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -78,7 +79,7 @@ public class InfantrySupportLRMWeapon extends InfantryWeapon {
         ammoWeight = 0.0083;
         ammoCost = 1500;
         shots = 1;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3057, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW, Faction.CC)
               .setProductionFactions(Faction.FW).setTechRating(TechRating.D)

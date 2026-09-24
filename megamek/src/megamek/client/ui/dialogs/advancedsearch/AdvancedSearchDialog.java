@@ -41,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.*;
@@ -60,6 +61,9 @@ import megamek.client.ui.buttons.ButtonEsc;
 import megamek.client.ui.buttons.DialogButton;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
+import megamek.common.SourceBookCode;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 
 /**
  * This is the dialog for advanced unit filtering, mostly for the unit selector. It contains the TW advanced search in
@@ -96,9 +100,21 @@ public class AdvancedSearchDialog extends AbstractButtonDialog {
         alphaStrikeTab.saveValues();
         battlefieldSupportTab.saveValues();
         if (b) {
+            totalWarTab.setRulesRefChoices(collectRulesRefChoices(MekSummaryCache.getInstance().getAllMeks()));
             setLocationRelativeTo(getOwner());
         }
         super.setVisible(b);
+    }
+
+    static List<SourceBookCode> collectRulesRefChoices(MekSummary[] summaries) {
+        if (summaries == null) {
+            return List.of();
+        }
+        return Arrays.stream(summaries)
+              .flatMap(summary -> summary.getRulesRefs().stream())
+              .flatMap(List::stream)
+              .distinct()
+              .toList();
     }
 
     @Override

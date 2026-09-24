@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.smg;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -76,7 +77,7 @@ public class InfantrySMGGuntherMP20Weapon extends InfantryWeapon {
         ammoCost = 5;
         shots = 30;
         bursts = 6;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3005, 3007, 3025, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.LC)

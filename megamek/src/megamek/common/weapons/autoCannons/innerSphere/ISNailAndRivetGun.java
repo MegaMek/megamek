@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -64,10 +65,11 @@ public class ISNailAndRivetGun extends NailRivetGunWeapon {
         addLookupName("CLRivet Gun");
         addLookupName("CLNailRivetGun");
         addLookupName("Nail Gun");
-        rulesRefs = "246, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 246),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setISAdvancement(2309, 2310, 2312, DATE_NONE, DATE_NONE)

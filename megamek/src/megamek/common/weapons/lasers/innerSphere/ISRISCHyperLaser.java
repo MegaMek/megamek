@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -88,7 +89,7 @@ public class ISRISCHyperLaser extends LaserWeapon {
         maxRange = RANGE_EXT;
         explosionDamage = 10;
         explosive = true;
-        rulesRefs = "87, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 87);
         this.flags = flags.or(F_LASER).or(F_DIRECT_FIRE).or(F_HYPER);
         //Oct 2024 - CGL request RISC equipment shouldn't go extinct but be unique
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)

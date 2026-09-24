@@ -36,6 +36,7 @@ package megamek.common.weapons.gaussRifles.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -74,11 +75,9 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         bv = 15;
         cost = 8500;
         explosionDamage = 3;
-        rulesRefs = "126, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 126);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C)
               .setISAdvancement(3059, 3072, 3078, DATE_NONE, DATE_NONE)

@@ -33,6 +33,7 @@
 
 package megamek.common.equipment;
 
+import megamek.common.SourceBookCode;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.enums.StructureEngine;
 import megamek.common.units.Entity;
@@ -68,7 +69,7 @@ public class PowerGeneratorType extends MiscType {
         powerGeneratorType.bv = 0;
         powerGeneratorType.spreadable = true;
         powerGeneratorType.flags = powerGeneratorType.flags.or(F_POWER_GENERATOR).or(F_VARIABLE_SIZE);
-        powerGeneratorType.rulesRefs = "131-133, TO:AR";
+        powerGeneratorType.rulesRefs = rulesRefs(SourceBookCode.TO_AR, 131, 132, 133);
 
         // Let's create a dummy engine to get the tech advancement
         Engine engine = new Engine(0, engineType.getEngineType(), 0);

@@ -36,6 +36,7 @@ package megamek.common.weapons.artillery;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -69,7 +70,7 @@ public class ISCruiseMissile90 extends ArtilleryWeapon {
         flags = flags.or(F_CRUISE_MISSILE);
         bv = 1530;
         cost = 1250000;
-        rulesRefs = "97, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 97);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2007 - Jay Lawson
- * Copyright (C) 2008-2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -282,10 +282,11 @@ public class FighterSquadron extends AeroSpaceFighter {
     }
 
     @Override
-    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, CalculationReport calculationReport) {
+    public int doBattleValueCalculation(boolean ignoreC3, boolean ignoreSkill, boolean ignoreTAG,
+          CalculationReport calculationReport) {
         int bv = 0;
         for (Entity fighter : getActiveSubEntities()) {
-            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill);
+            bv += fighter.calculateBattleValue(ignoreC3, ignoreSkill, ignoreTAG);
         }
         return bv;
     }
@@ -399,7 +400,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                     loc = LandAirMek.getAeroLocation(loc);
                 }
                 String key = mounted.getType().getInternalName() + ":" + loc;
-                if (null == groups.get(key)) {
+                if (groups.get(key) == null) {
                     groups.put(key, mounted.getNWeapons());
                 } else if (!mounted.getType().hasFlag(WeaponType.F_SPACE_BOMB)) {
                     groups.put(key, groups.get(key) + mounted.getNWeapons());
@@ -410,7 +411,7 @@ public class FighterSquadron extends AeroSpaceFighter {
         // equipment or add new ones if there is none
         Set<String> newSet = groups.keySet();
         for (String key : newSet) {
-            if (null != weaponGroups.get(key) && null != getEquipment(weaponGroups.get(key))) {
+            if (weaponGroups.get(key) != null && getEquipment(weaponGroups.get(key)) != null) {
                 // then this equipment is already loaded, so we just need to
                 // correctly update the number of weapons
                 getEquipment(weaponGroups.get(key)).setNWeapons(groups.get(key));
@@ -914,4 +915,8 @@ public class FighterSquadron extends AeroSpaceFighter {
         }
     }
 
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return false;
+    }
 }

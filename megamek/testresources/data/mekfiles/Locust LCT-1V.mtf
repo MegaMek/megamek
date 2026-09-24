@@ -1,0 +1,202 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+uuid:019f583e-c25b-7e1d-a2f6-f2b3763ac718
+generator:MegaMek Suite 0.51.01 on 2026-07-12
+chassis:Locust
+model:LCT-1V
+mul id:1901
+
+Config:Biped
+techbase:Inner Sphere
+era:2499
+source:TR:3039,TR:SW
+published:RSFP:Wave 1,RS:GoAC
+rules level:1
+role:Scout
+
+quirk:cramped_cockpit
+quirk:compact_mech
+quirk:no_arms
+quirk:low_profile
+quirk:weak_legs
+quirk:ubiquitous_clan
+quirk:ubiquitous_is
+
+mass:20
+engine:160 Fusion Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 Single
+walk mp:8
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:4
+RA armor:4
+LT armor:8
+RT armor:8
+CT armor:10
+HD armor:8
+LL armor:8
+RL armor:8
+RTL armor:2
+RTR armor:2
+RTC armor:2
+
+Weapons:3
+Machine Gun, Left Arm
+Machine Gun, Right Arm
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Machine Gun
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser
+IS Ammo MG - Full
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+overview:<p>The Locust stands as one of the most enduring and ubiquitous BattleMech designs in history, with continuous production spanning over five centuries since Bergan Industries first introduced the chassis in 2499. Designed exclusively for reconnaissance and quick strike missions, this twenty-ton light 'Mech relies on exceptional speed to outpace threats rather than armor to absorb them. The Locust's compact frame and narrow profile make it a difficult target, though these same characteristics leave little room for heavy weaponry or substantial protection. Within its weight class, the design excels as a scout, overshadowed only by 'Mechs equipped with jump jets. The sheer number of manufacturers producing the Locust across the Inner Sphere and Periphery has kept production costs low and replacement parts readily available, ensuring the design's continued relevance on battlefields from the Age of War through the ilClan era.</p>
+
+capabilities:<p>The Locust's primary asset has always been speed. Powered by a 160-rated fusion engine in its base configuration, the chassis achieves a cruising speed of 86.4 km/h and a maximum velocity of 129.6 km/h, with later variants pushing these figures even higher through extralight engines and myomer accelerator signal circuitry. This mobility proves essential to the 'Mech's survival, as four tons of standard armor provides minimal protection against direct hits from battlefield weapons. The original LCT-1V mounted a chin-turret medium laser supported by two arm-mounted machine guns, a loadout adequate for deterring infantry and engaging targets of opportunity but wholly insufficient for sustained combat against heavier opponents. The design's lack of hand actuators and jump jets limits its effectiveness in close-quarters engagements and restrictive terrain. When forced into combat, Locust pilots typically fight holding actions until reinforcements arrive or operate in groups of three to encircle isolated enemy 'Mechs. Few MechWarriors relish extended assignments in a Locust, though those who master its capabilities often develop exceptional piloting skills born of necessity.</p>
+
+deployment:<p>The original production model and still the most common variant, this variant mounts a chin-turret Martell medium laser supported by two Sperry Browning machine guns fed from a shared 200-round magazine. This configuration provides adequate firepower for reconnaissance duties and anti-infantry work while maintaining the design's exceptional speed. The LCT-1V accounts for over seventy-five percent of operational Locusts and remains in production at facilities across the Inner Sphere and Periphery, from Bergan Industries on Ares to Taurus Territorial Industries in the Concordat.</p>
+
+history:<p>Bergan Industries operated eight factories producing Locusts during the Star League era, supplying member states through the Amaris Civil War. The Succession Wars saw manufacturing expand to nearly a dozen facilities, including several in the Periphery, as the design's simplicity and low cost made it attractive to powers lacking sophisticated industrial bases. Everyone from pirates to corporate security forces purchased Locusts in substantial numbers, leading to an explosion of variants as different manufacturers and field technicians modified the chassis to meet local needs.</p><p>During the Second Hidden War, also called the War of Davion Succession, General Kessem of House Davion demonstrated the Locust's strategic potential on Ludwig, organizing five lances of fast-moving units to penetrate Kurita lines and draw crack units away from the front. Though losses proved staggering, the gambit slowed Ludwig's fall by months. House Marik's 10th Militia Regiment showed the design's urban combat potential during city-fighting on Callison in 3020, where Locust recon lances navigated narrow streets to devastating effect against defending infantry. The battle for Royal in 3020 illustrated both the Locust's strengths and weaknesses when detachments from the 8th Deneb Light Cavalry successfully flanked Kurita positions while three companies of the 10th Deneb blundered into an ambush of heavy and assault 'Mechs and were nearly annihilated. That same engagement saw House Davion introduce a new Locust variant mounting a heavy Magna PPC, but difficulties with the O/P 911 targeting system and massive overheating made it an utter failure, the recoil from firing the PPC actually knocked down these small 'Mechs in combat.</p><p>As the Succession Wars wound down, manufacturers within the Successor States began experimenting with rediscovered technology. The Capellan Confederation modified the Ares facility to produce the LCT-1L with improved Triple Strength Myomer, while Achernar, Corean, and Defiance introduced upgraded variants incorporating endo steel, ferro-fibrous armor, and advanced weapons systems. The Clan Invasion prompted further development, with the LCT-3D, 3M, and 3S entering service just in time to face the invaders. The Word of Blake later commissioned Corean Enterprises to develop the LCT-5M for their militia, purchasing the entire first production run. Even into the thirty-second century, the Locust continues rolling off production lines across the Periphery, with Bergan and Defiance introducing the LCT-7V and 7S variants during the ilClan era. The Marian Hegemony's assault on Marantha in 3150 demonstrated the design's continued vulnerability when a century of Locusts charging an entrenched militia position was cut down by field guns and portable missiles, the survivors posted to the Cohors Morituri for their failure.</p>
+
+manufacturer:Achernar Battlemechs|Alliance Defenders Limited|Amalgamated Sword and Steel|Bergan Industries|Bergan Industries|Bergan Industries - Alshain Weapons(formerly GK&T owned)|Bordello Military Goods, Inc.|Corean Enterprises - MacAdams-Suharno|Defiance Industries|Diplass BattleMechs|Diplass BattleMechs|Gibson Federated BattleMechs (A Division of Free Worlds Defense Industries)|Interstellar Arms (a division of Interstellar Agricultural Concerns)|Lyran 'Mech Corporation|Majesty Metals and Manufacturing|Majesty Metals and Manufacturing|Pinard Protectorates Limited|Protectorate Military Industries|Rim Motors|Taurus Territorial Industries
+
+primaryfactory:New Avalon|Alpheratz|Oldsmith|Ares|New Earth|Alshain|Antwerp|Stewart|Furillo|Apollo|Timbuktu|Gibson|Rockwellawan|Nichol's Rest|Canopus IV|Dunianshire|Macleod's Land|Erod's Escape|Otisberg|Taurus
+
+fluffdate:2026-02-28 17:47:08
+
+systemmanufacturer:CHASSIS:Bergan
+systemmode:CHASSIS:VII
+systemmanufacturer:ENGINE:LTV
+systemmode:ENGINE:160
+systemmanufacturer:ARMOR:StarSlab
+systemmode:ARMOR:/1
+systemmanufacturer:COMMUNICATIONS:Garrett
+systemmode:COMMUNICATIONS:T10-B
+systemmanufacturer:TARGETING:O/P
+systemmode:TARGETING:911

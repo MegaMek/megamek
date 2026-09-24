@@ -46,8 +46,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import megamek.MMConstants;
@@ -174,6 +176,14 @@ public class EntityListFile {
                 output.append("\" " + MULParser.ATTR_RFMG + "=\"true");
             }
 
+            if (mount.isAutocannonHit()) {
+                output.append("\" " + MULParser.ATTR_AUTOCANNON_HIT + "=\"true");
+            }
+
+            if (mount.isDirectionalMountLocked()) {
+                output.append("\" " + MULParser.ATTR_DIRECTIONAL_MOUNT_LOCKED + "=\"true");
+            }
+
             if (mount.countQuirks() > 0) {
                 output.append("\" " + MULParser.ATTR_QUIRKS + "=\"").append(mount.getQuirkList("::"));
             }
@@ -241,6 +251,8 @@ public class EntityListFile {
         StringBuilder output = new StringBuilder();
         StringBuilder thisLoc = new StringBuilder();
         boolean isDestroyed = false;
+
+        Set<Mounted<?>> flaggedMountsWritten = new HashSet<>();
 
         // Walk through the locations for the entity,
         // and only record damage and ammo.
@@ -335,7 +347,7 @@ public class EntityListFile {
                 CriticalSlot slot = entity.getCritical(loc, loop);
 
                 // Did we get a slot?
-                if (null == slot) {
+                if (slot == null) {
 
                     // Nope. Record missing actuators on Biped Meks.
                     if (isMek &&
@@ -402,7 +414,7 @@ public class EntityListFile {
                     }
 
                     // record any quirks
-                    else if ((null != mount) && (mount.countQuirks() > 0)) {
+                    else if ((mount != null) && (mount.countQuirks() > 0)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,
                               slot.isHit(),
@@ -510,7 +522,7 @@ public class EntityListFile {
                     }
 
                     // Record trooper missing equipment on BattleArmor
-                    else if (null != mount && mount.isAnyMissingTroopers()) {
+                    else if (mount != null && mount.isAnyMissingTroopers()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,
                               slot.isHit(),
@@ -519,6 +531,21 @@ public class EntityListFile {
                               slot.isMissing(),
                               slotHasDepletedArmor(slot),
                               indentLvl + 1));
+                        haveSlot = true;
+                    } else if ((mount != null) &&
+                          !mount.isHit() &&
+                          !mount.isDestroyed() &&
+                          (mount.isAutocannonHit() || mount.isDirectionalMountLocked()) &&
+                          !flaggedMountsWritten.contains(mount)) {
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
+                              mount,
+                              slot.isHit(),
+                              slot.isDestroyed(),
+                              slot.isRepairable(),
+                              slot.isMissing(),
+                              slotHasDepletedArmor(slot),
+                              indentLvl + 1));
+                        flaggedMountsWritten.add(mount);
                         haveSlot = true;
                     }
 
@@ -776,7 +803,28 @@ public class EntityListFile {
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, Client client, Player localPlayer) throws IOException {
-        if (null == client.getGame() || !client.playerExists(localPlayer.getId())) {
+        saveTo(file, client, localPlayer, false);
+    }
+
+    /**
+     * Save the entities from the game of client to the given file, as {@link #saveTo(File, Client, Player)} does, but
+     * optionally treating the local player's whole team as "the player".
+     *
+     * <p>When {@code teamAsLiving} is {@code true}, every unit belonging to a player on the local player's team - not
+     * only the units the local player owns directly - is written to the survivors and retreated sections instead of the
+     * allies section. PACAR hands the player's units off to an "@AI" bot on the player's own team, so after the game
+     * the human player owns nothing and the force can only be recovered by team. See issue #8890.</p>
+     *
+     * @param file         - The current contents of the file will be discarded and all
+     *                     <code>Entity</code>s in the list will be written to the file.
+     * @param client       - a <code>Client</code> containing the <code>Game</code>s to be used
+     * @param localPlayer  - What player should we treat as "the" player?
+     * @param teamAsLiving - when {@code true}, the local player's whole team counts as the player's own units
+     *
+     * @throws IOException is thrown on any error.
+     */
+    public static void saveTo(File file, Client client, Player localPlayer, boolean teamAsLiving) throws IOException {
+        if (client.getGame() == null || !client.playerExists(localPlayer.getId())) {
             return;
         }
 
@@ -797,7 +845,7 @@ public class EntityListFile {
         // Sort entities into player's, enemies, and allies and add to survivors,
         // salvage, and allies.
         for (Entity entity : client.getGame().inGameTWEntities()) {
-            if (entity.getOwner().getId() == localPlayer.getId()) {
+            if (countsAsPlayerOwn(entity.getOwner(), localPlayer, teamAsLiving)) {
                 living.add(entity);
             } else if (entity.getOwner().isEnemyOf(localPlayer)) {
                 if (!entity.canEscape()) {
@@ -813,7 +861,7 @@ public class EntityListFile {
         // sections
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
-            if (ent.getOwner().getId() == localPlayer.getId()) {
+            if (countsAsPlayerOwn(ent.getOwner(), localPlayer, teamAsLiving)) {
                 living.add(ent);
             } else if (!ent.getOwner().isEnemyOf(localPlayer)) {
                 allied.add(ent);
@@ -828,7 +876,7 @@ public class EntityListFile {
             Entity entity = graveyard.nextElement();
             if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
+                if (killer != null && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), MULParser.VALUE_NONE);
@@ -843,7 +891,7 @@ public class EntityListFile {
             Entity entity = devastation.nextElement();
             if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
+                if (killer != null && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), MULParser.VALUE_NONE);
@@ -898,6 +946,20 @@ public class EntityListFile {
         output.write("</" + MULParser.ELE_RECORD + ">\n");
         output.flush();
         output.close();
+    }
+
+    /**
+     * @param owner        the owner of a unit being classified
+     * @param localPlayer  the player treated as "the" player
+     * @param teamAsLiving when {@code true}, any owner on the local player's team counts, not only the local player
+     *
+     * @return {@code true} if the unit should be written as one of the player's own (survivors/retreated)
+     */
+    static boolean countsAsPlayerOwn(Player owner, Player localPlayer, boolean teamAsLiving) {
+        if (owner.getId() == localPlayer.getId()) {
+            return true;
+        }
+        return teamAsLiving && (owner.getTeam() == localPlayer.getTeam());
     }
 
     private static void writeKills(Writer output, Hashtable<String, String> kills) throws IOException {
@@ -990,6 +1052,15 @@ public class EntityListFile {
                     output.write(entity.getC3UUIDAsString());
                 }
             }
+            // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+            if (entity.isC3EmergencyMasterActive()) {
+                output.write("\" " + MULParser.ATTR_C3EM_ACTIVE + "=\"");
+                output.write("true");
+            }
+            if (entity.getC3EmergencyMasterOperatingTurns() > 0) {
+                output.write("\" " + MULParser.ATTR_C3EM_TURNS + "=\"");
+                output.write(String.valueOf(entity.getC3EmergencyMasterOperatingTurns()));
+            }
             if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" " + MULParser.ATTR_CAMO_CATEGORY + "=\"");
                 output.write(entity.getCamouflage().getCategory());
@@ -1021,6 +1092,10 @@ public class EntityListFile {
 
             // Save some values for conventional infantry
             if (entity instanceof ConvInfantry infantry) {
+                if (infantry.getCustomArmorName() != null) {
+                    output.write("\" " + MULParser.ATTR_ARMOR_NAME + "=\"");
+                    output.write(MMXMLUtility.escape(infantry.getCustomArmorName()));
+                }
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
                     output.write(infantry.getCustomArmorDamageDivisor() + "");
@@ -1332,7 +1407,7 @@ public class EntityListFile {
 
             // Add the locations of this entity (if any are needed).
             String loc = EntityListFile.getLocString(entity, indentLvl + 1);
-            if (null != loc) {
+            if (loc != null) {
                 output.write(loc);
             }
 
@@ -1616,8 +1691,15 @@ public class EntityListFile {
         output.write(crew.getNickname(pos).replace("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
+        String armorKitName = crew.getArmorKitName(pos);
+        output.write("\" " + MULParser.ATTR_ARMOR_KIT + "=\"" + ((armorKitName == null) ? "" : armorKitName));
+        String sidearmName = crew.getSidearmName(pos);
+        output.write("\" " + MULParser.ATTR_SIDEARM + "=\"" + ((sidearmName == null) ? "" : sidearmName));
+        if (crew.hasSmallArms(pos)) {
+            output.write("\" " + MULParser.ATTR_SMALL_ARMS + "=\"" + crew.getSmallArms(pos));
+        }
 
-        if ((null != entity.getGame()) &&
+        if ((entity.getGame() != null) &&
               entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             output.write("\" " + MULParser.ATTR_GUNNERY_L + "=\"");
             output.write(String.valueOf(crew.getGunneryL(pos)));
@@ -1634,14 +1716,22 @@ public class EntityListFile {
         if (crew instanceof LAMPilot) {
             writeLAMAeroAttributes(output,
                   (LAMPilot) crew,
-                  (null != entity.getGame()) &&
+                                   (entity.getGame() != null) &&
                         entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
         }
-        if ((null != entity.getGame()) &&
+        if ((entity.getGame() != null) &&
               entity.gameOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_GUNNERY,
+              crew.isHasNaturalAptitudeGunnery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_ARTILLERY,
+              crew.isHasNaturalAptitudeArtillery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_PILOTING,
+              crew.isHasNaturalAptitudePiloting(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_SMALL_ARMS,
+              crew.isHasNaturalAptitudeSmallArms(pos));
 
         if (crew.getToughness(0) != 0) {
             output.write("\" " + MULParser.ATTR_TOUGH + "=\"");
@@ -1695,6 +1785,24 @@ public class EntityListFile {
         }
         output.write("\" " + MULParser.ATTR_PILOTING_AERO + "=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
+        // Always written for LAMs, so the parser can tell 'no Aero aptitude' apart from an older file
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_GUNNERY_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudeGunneryAero()));
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_PILOTING_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudePilotingAero()));
+    }
+
+    /**
+     * Writes a Natural Aptitude flag, but only if it's set, to keep files free of noise for the vast majority of crews.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void writeNaturalAptitudeAttribute(Writer output, String attribute, boolean hasNaturalAptitude)
+          throws IOException {
+        if (hasNaturalAptitude) {
+            output.write("\" " + attribute + "=\"true");
+        }
     }
 
     /**
@@ -1757,7 +1865,7 @@ public class EntityListFile {
             } else {
                 output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"false");
             }
-            if ((null != entity.getGame()) &&
+            if ((entity.getGame() != null) &&
                   (entity.gameOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mek) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_COND_EJECT_AMMO + "=\"true");

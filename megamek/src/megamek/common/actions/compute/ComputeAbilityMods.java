@@ -73,7 +73,7 @@ class ComputeAbilityMods {
             toHit.addModifier(+1, Messages.getString("WeaponAttackAction.SensorGhosts"));
         }
 
-        if (null != weapon) {
+        if (weapon != null) {
 
             // Flat -1 for Accurate Weapon
             if (weapon.hasQuirk(OptionsConstants.QUIRK_WEAPON_POS_ACCURATE)) {
@@ -242,7 +242,7 @@ class ComputeAbilityMods {
 
     static void processDefenderSPAs(ToHitData toHit, Entity attacker, Entity target, Game game) {
 
-        if (null == target) {
+        if (target == null) {
             return;
         }
 

@@ -112,6 +112,9 @@ public final class Factions2 {
     /** Maps a retired/aliased faction code to the surviving canonical faction key. See {@link Faction2#getAliases()}. */
     private final Map<String, String> aliasToCanonical = new HashMap<>();
 
+    /** Flattens subunits declared inside a faction file into {@link #factions}. */
+    private final SubunitRegistrar subunitRegistrar = new SubunitRegistrar(factions);
+
     private Factions2() {
         loadFactionsFromFile();
     }
@@ -244,9 +247,21 @@ public final class Factions2 {
         }
     }
 
+    /**
+     * Reads one faction from the given source and registers it, together with any subunits it declares.
+     *
+     * <p>A command may declare its subordinate formations inline rather than in separate files; those are flattened
+     * into this same map by {@link SubunitRegistrar} so that every consumer sees one flat faction list.</p>
+     *
+     * @param source The stream to read the faction YAML from
+     * @param mapper The Jackson ObjectMapper to parse with
+     *
+     * @throws IOException When the source cannot be read or parsed
+     */
     private void loadFaction(InputStream source, ObjectMapper mapper) throws IOException {
         Faction2 faction = mapper.readValue(source, Faction2.class);
         factions.put(faction.getKey(), faction);
+        subunitRegistrar.registerSubunits(faction);
     }
 
     /**

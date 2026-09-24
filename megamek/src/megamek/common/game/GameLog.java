@@ -113,9 +113,17 @@ public class GameLog {
         }
     }
 
+    /**
+     * Closes the log file. The field is cleared before the writer is closed, so that the {@code null} guards in
+     * {@link #append(String)} and {@link #appendRaw(String)} hold afterwards even if the close itself throws.
+     * Shutdown writes the closing HTML tag through {@code appendRaw} and can run more than once, and without this
+     * every game ended by logging an {@code IOException: Stream closed}.
+     */
     public void close() throws Exception {
         if (writer != null) {
-            writer.close();
+            BufferedWriter openWriter = writer;
+            writer = null;
+            openWriter.close();
         }
     }
 }

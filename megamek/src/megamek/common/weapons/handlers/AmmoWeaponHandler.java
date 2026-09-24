@@ -38,11 +38,11 @@ import java.io.Serial;
 import java.util.Vector;
 
 import megamek.common.CriticalSlot;
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -67,7 +67,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
 
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        generalDamageType = HitData.DAMAGE_BALLISTIC;
+        generalDamageType = HitDamageType.DAMAGE_BALLISTIC;
     }
 
     @Override

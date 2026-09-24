@@ -38,12 +38,12 @@ import static java.lang.Math.floor;
 
 import java.io.Serial;
 
-import megamek.common.HitData;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
@@ -60,7 +60,7 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
     public ChemicalLaserHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_ENERGY;
     }
 
     /*
@@ -99,8 +99,8 @@ public class ChemicalLaserHandler extends AmmoWeaponHandler {
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
-                  toReturn, bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  toReturn, getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {

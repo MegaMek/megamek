@@ -1,0 +1,200 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.server.totalWarfare;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doReturn;
+
+import java.util.Vector;
+
+import megamek.common.GameBoardTestCase;
+import megamek.common.HitData;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.board.CubeCoords;
+import megamek.common.enums.BasementType;
+import megamek.common.enums.BuildingType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.game.Game;
+import megamek.common.net.packets.Packet;
+import megamek.common.units.BipedMek;
+import megamek.common.units.BuildingEntity;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
+import megamek.common.units.LargeSupportTank;
+import megamek.common.units.Tank;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+/**
+ * Issue #8904: a Large Support Vehicle entering a building hex inflicts double the standard one point per ten tons
+ * of damage on the building (TW p. 168, Large Support Vehicles).
+ */
+class LargeSupportVehicleBuildingDamageTest extends GameBoardTestCase {
+
+    private static final Coords OUTSIDE_HEX = new Coords(5, 4);
+    private static final Coords BUILDING_HEX = new Coords(5, 5);
+    private static final Coords FORTRESS_HEX = new Coords(8, 8);
+    private static final int STARTING_CF = 90;
+    private static final double UNIT_WEIGHT = 150;
+    private static final int STANDARD_DAMAGE = 15;
+    private static final int REPORT_BUILDING_DAMAGED = 6441;
+
+    static {
+        initializeBoard("LARGE_SUPPORT_BUILDING_BOARD", """
+              size 16 17
+              hex 0504 0 "" ""
+              hex 0505 0 "" ""
+              end"""
+        );
+    }
+
+    private TWGameManager gameManager;
+    private Game game;
+    private BuildingEntity building;
+
+    @BeforeAll
+    static void beforeAll() {
+        EquipmentType.initializeTypes();
+    }
+
+    @BeforeEach
+    void beforeEach() {
+        Player player = new Player(0, "Test");
+        gameManager = Mockito.spy(new TWGameManager());
+        Mockito.doNothing().when(gameManager).send(any(Packet.class));
+        Mockito.doNothing().when(gameManager).sendChangedHex(any(Coords.class), any(int.class));
+        Mockito.doNothing().when(gameManager).entityUpdate(any(int.class));
+        Mockito.doNothing().when(gameManager).sendChangedBuildings(any());
+        game = gameManager.getGame();
+        game.addPlayer(0, player);
+
+        Board board = getBoard("LARGE_SUPPORT_BUILDING_BOARD");
+        game.setBoard(board);
+
+        // A standard-class medium building applies no damage scaling, so the CF drop is the raw damage.
+        building = placeBuilding(IBuilding.STANDARD, BUILDING_HEX);
+
+        // The Driving Skill Roll and the damage to the moving unit are not under test.
+        doReturn(0).when(gameManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(), any(Coords.class),
+              any(Coords.class), any(), anyBoolean(), any());
+        doReturn(new Vector<Report>()).when(gameManager)
+              .damageEntity(any(Entity.class), any(HitData.class), anyInt());
+    }
+
+    private BuildingEntity placeBuilding(int buildingClass, Coords position) {
+        BuildingEntity placed = new BuildingEntity(BuildingType.MEDIUM, buildingClass);
+        placed.getInternalBuilding().setBuildingHeight(1);
+        placed.getInternalBuilding().addHex(CubeCoords.ZERO, STARTING_CF, 0, BasementType.UNKNOWN, false);
+        placed.setOwner(game.getPlayer(0));
+        placed.refreshLocations();
+        placed.refreshAdditionalLocations();
+        placed.setId(game.getNextEntityId());
+        game.addEntity(placed);
+        placed.setPosition(position);
+        placed.updateBuildingEntityHexes(game.getBoard().getBoardId(), gameManager);
+        return placed;
+    }
+
+    private <T extends Entity> T addUnit(T unit) {
+        unit.setOwner(game.getPlayer(0));
+        unit.setWeight(UNIT_WEIGHT);
+        unit.setId(game.getNextEntityId());
+        game.addEntity(unit);
+        unit.setPosition(OUTSIDE_HEX);
+        return unit;
+    }
+
+    private Vector<Report> enterBuilding(Entity unit) {
+        return enterBuilding(unit, building, BUILDING_HEX);
+    }
+
+    private Vector<Report> enterBuilding(Entity unit, BuildingEntity entered, Coords enteredHex) {
+        Vector<Report> reports = new Vector<>();
+        gameManager.passBuildingWall(unit, entered, OUTSIDE_HEX, enteredHex, 1, "", false,
+              EntityMovementType.MOVE_WALK, true, reports);
+        return reports;
+    }
+
+    private static boolean reportsBuildingDamage(Vector<Report> reports) {
+        return reports.stream().anyMatch(report -> report.messageId == REPORT_BUILDING_DAMAGED);
+    }
+
+    @Test
+    void largeSupportVehicleInflictsDoubleDamageOnTheBuilding() {
+        LargeSupportTank largeSupportVehicle = addUnit(new LargeSupportTank());
+
+        Vector<Report> reports = enterBuilding(largeSupportVehicle);
+
+        assertEquals(STARTING_CF - (2 * STANDARD_DAMAGE), building.getCurrentCF(BUILDING_HEX));
+        assertTrue(reportsBuildingDamage(reports), "the round report must state the building damage");
+    }
+
+    /** A fortress halves damage taken; the doubling happens before that scaling, so 150 tons still does 15. */
+    @Test
+    void doublingHappensBeforeTheBuildingClassScaling() {
+        BuildingEntity fortress = placeBuilding(IBuilding.FORTRESS, FORTRESS_HEX);
+        LargeSupportTank largeSupportVehicle = addUnit(new LargeSupportTank());
+
+        enterBuilding(largeSupportVehicle, fortress, FORTRESS_HEX);
+
+        assertEquals(STARTING_CF - STANDARD_DAMAGE, fortress.getCurrentCF(FORTRESS_HEX));
+    }
+
+    @Test
+    void ordinaryVehicleInflictsStandardDamageOnTheBuilding() {
+        Tank tank = addUnit(new Tank());
+
+        enterBuilding(tank);
+
+        assertEquals(STARTING_CF - STANDARD_DAMAGE, building.getCurrentCF(BUILDING_HEX));
+    }
+
+    @Test
+    void mekInflictsStandardDamageOnTheBuilding() {
+        BipedMek mek = addUnit(new BipedMek());
+
+        enterBuilding(mek);
+
+        assertEquals(STARTING_CF - STANDARD_DAMAGE, building.getCurrentCF(BUILDING_HEX));
+    }
+}

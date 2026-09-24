@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.gauss;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -79,7 +80,7 @@ public class InfantrySupportKingDavidLightGaussRifleWeapon extends InfantryWeapo
         ammoCost = 200;
         shots = 80;
         bursts = 16;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3063, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FW)

@@ -36,6 +36,7 @@ package megamek.common.weapons.ppc.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -79,7 +80,7 @@ public class CLEnhancedPPC extends PPCWeapon {
         this.medAV = 12;
         this.longAV = 12;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "89, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 89);
         flags = flags.or(F_PPC_CAPACITOR_COMPATIBLE);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E)

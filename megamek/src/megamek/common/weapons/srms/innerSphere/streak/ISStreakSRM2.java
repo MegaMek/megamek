@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.innerSphere.streak;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,11 +70,14 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         cost = 15000;
         shortAV = 4;
         maxRange = RANGE_SHORT;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2645, 2647, 2650, 2845, 3035)

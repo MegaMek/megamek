@@ -116,9 +116,15 @@ public class SettingsSpinner extends JSpinner implements SettingsHelpProvider {
     private void configureSpinner(String keyBase) {
         setName("spn" + keyBase);
         setFontScaling(this, false, 1);
-        DefaultEditor editor = (DefaultEditor) getEditor();
-        editor.getTextField().setHorizontalAlignment(JTextField.LEFT);
-        installSelectAllOnFocus(this);
+        configureEditor(this);
+    }
+
+    /** Applies the standard settings alignment and focus behavior to any numeric spinner. */
+    public static void configureEditor(JSpinner spinner) {
+        if (spinner.getEditor() instanceof DefaultEditor editor) {
+            editor.getTextField().setHorizontalAlignment(JTextField.LEFT);
+        }
+        installSelectAllOnFocus(spinner);
     }
 
     /** Selects the complete spinner value whenever its editor gains focus. */

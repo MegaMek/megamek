@@ -453,7 +453,14 @@ public class FormationType {
      */
     private void applyFormationWeightClasses(Parameters parameters, List<Integer> groundRange,
           List<Integer> airRange) {
-        parameters.addRoles(missionRoles);
+        // Deliberately does NOT add this formation's own missionRoles to the caller's parameters. A mission role
+        // is a hard filter on the unit table, and forcing one in behind the caller's back made the two consumers
+        // of this class fight each other: the Formation Builder passes the formation's roles itself and means to,
+        // while the Force Generator passes the roles of the node being filled and means those. Anti-Air and
+        // Artillery Fire both declare MIXED_ARTILLERY, a role carried by 128 of 11,016 models and by none a 3067
+        // mercenary command can draw, so the injection cut their table to nothing and neither formation could ever
+        // be built by the generator - a Draconis Combine regiment offered Anti-Air sixty times and built it none.
+        // Each caller now gets the filter it asked for and no other.
         List<Integer> formationRange = (parameters.getUnitType() < UnitType.CONV_FIGHTER) ? groundRange : airRange;
         Collection<Integer> requested = parameters.getWeightClasses();
         if (requested.isEmpty()) {
@@ -515,7 +522,7 @@ public class FormationType {
         }
 
         final GroupingConstraint useGrouping;
-        if (null == groupingCriteria) {
+        if (groupingCriteria == null) {
             useGrouping = null;
         } else {
             useGrouping = groupingCriteria.copy();
@@ -2512,7 +2519,7 @@ public class FormationType {
      */
     private static boolean checkUnitMatch(final MekSummary ms0, final MekSummary ms1) {
         final ModelRecord mRec = RATGenerator.getInstance().getModelRecord(ms0.getName());
-        if (null != mRec && mRec.isOmni()) {
+        if (mRec != null && mRec.isOmni()) {
             return ms0.getChassis().equals(ms1.getChassis());
         } else {
             return ms0.getName().equals(ms1.getName());

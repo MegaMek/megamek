@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -61,8 +62,11 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
     public InfantryRifleClanMauserIICIASInfernoWeapon() {
         super();
 
-        name = "Laser Rifle (Mauser IIC IAS) (Inferno Grenades)";
-        setInternalName(name);
+        name = "Laser Rifle (Mauser IIC IAS) (Incendiary Grenades)";
+        // The internal name stays on the pre-errata spelling because unit files store it. setInternalName()
+        // registers it as a lookup too, so existing files keep loading.
+        setInternalName("Laser Rifle (Mauser IIC IAS) (Inferno Grenades)");
+        addLookupName(name);
         addLookupName("InfantryClanMauserIICIASInferno");
         addLookupName("Infantry Clan Mauser IIC Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
@@ -75,7 +79,7 @@ public class InfantryRifleClanMauserIICIASInfernoWeapon extends InfantryWeapon {
         infantryRange = 3;
         ammoWeight = 0.0003;
         shots = 6;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.CLAN).setClanAdvancement(3013, 3015, DATE_NONE, DATE_NONE, DATE_NONE)
               .setClanApproximate(true, false, false, false, false).setPrototypeFactions(Faction.CHH)
               .setProductionFactions(Faction.CHH).setTechRating(TechRating.F)

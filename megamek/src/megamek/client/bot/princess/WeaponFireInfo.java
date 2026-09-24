@@ -308,6 +308,17 @@ public class WeaponFireInfo {
         this.probabilityToHit = probabilityToHit;
     }
 
+    /**
+     * Whether the shooter's Natural Aptitude applies to this weapon. Asked per weapon, rather than from the shooter's
+     * {@link EntityState}, as artillery weapons may use a different aptitude from direct fire weapons.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private boolean isUseNaturalAptitudeGunnery() {
+        return getShooter().isUseNaturalAptitudeGunnery(getGame(), getWeapon());
+    }
+
     Entity getShooter() {
         return shooter;
     }
@@ -325,7 +336,7 @@ public class WeaponFireInfo {
     }
 
     public ToHitData getToHit() {
-        if (null == toHit) {
+        if (toHit == null) {
             setToHit(calcToHit());
         }
         return toHit;
@@ -365,7 +376,7 @@ public class WeaponFireInfo {
     }
 
     private EntityState getShooterState() {
-        if (null == shooterState) {
+        if (shooterState == null) {
             shooterState = new EntityState(getShooter());
         }
         return shooterState;
@@ -376,7 +387,7 @@ public class WeaponFireInfo {
     }
 
     private EntityState getTargetState() {
-        if (null == targetState) {
+        if (targetState == null) {
             targetState = new EntityState(target);
         }
         return targetState;
@@ -412,6 +423,33 @@ public class WeaponFireInfo {
 
     public double getExpectedDamage() {
         return getProbabilityToHit() * getDamageOnHit();
+    }
+
+    /**
+     * Re-prices this shot as one leg of a strafing run: flags the action so the server resolves it
+     * as a strafe, recomputes the real to-hit with the strafing modifiers (+4, energy-only
+     * legality, TW p.243), and charges heat only on the first shot of each weapon's run - the
+     * rules bill a strafing weapon's heat once however many targets its run crosses.
+     *
+     * <p>Inert unless called; the only caller is the CASPAR aerospace fire control, so stock
+     * Princess behavior is untouched.</p>
+     *
+     * @param firstShot {@code true} for the first shot of this weapon's run (carries the heat)
+     */
+    void convertToStrafe(final boolean firstShot) {
+        WeaponAttackAction strafeAction = getWeaponAttackAction();
+        if (strafeAction == null) {
+            return;
+        }
+        strafeAction.setStrafing(true);
+        strafeAction.setStrafingFirstShot(firstShot);
+        ToHitData strafeToHit = strafeAction.toHit(getGame());
+        setToHit(strafeToHit);
+        setProbabilityToHit(Compute.oddsAbove(strafeToHit.getValue(),
+              isUseNaturalAptitudeGunnery()) / 100.0);
+        if (!firstShot) {
+            setHeat(0);
+        }
     }
 
     WeaponAttackAction buildWeaponAttackAction() {
@@ -664,7 +702,7 @@ public class WeaponFireInfo {
                     // Chance of getting a TAG spot is, at base, the spotter's gunnery skill
                     thd = new ToHitData(spotter.getCrew().getGunnery(), msg);
                     // Likelihood of hitting goes up as speed goes down...
-                    if (null != te) {
+                    if (te != null) {
                         thd.append(
                               Compute.getTargetMovementModifier(
                                     te.getRunMP(),
@@ -873,7 +911,7 @@ public class WeaponFireInfo {
               : null;
 
         // Set up the attack action and calculate the chance to hit.
-        if ((null == bombPayloads) || (0 == bombPayloads.get("external").getTotalBombs())) {
+        if ((bombPayloads == null) || (0 == bombPayloads.get("external").getTotalBombs())) {
             setAction(buildWeaponAttackAction());
         } else {
             setAction(buildBombAttackAction(bombPayloads));
@@ -887,7 +925,7 @@ public class WeaponFireInfo {
         // bot-related postprocessing on its results rather than inside of the WAA code.
         if (!guess) {
             setToHit(postProcessToHit(calcRealToHit(getWeaponAttackAction())));
-        } else if (null != shooterPath) {
+        } else if (shooterPath != null) {
             setToHit(calcToHit(shooterPath, assumeUnderFlightPath));
         } else {
             setToHit(calcToHit());
@@ -909,11 +947,11 @@ public class WeaponFireInfo {
             return;
         }
 
-        if (debugEnabled && getShooterState().hasNaturalAptGun()) {
+        if (debugEnabled && isUseNaturalAptitudeGunnery()) {
             msg.append("\n\tAttacker has Natural Aptitude Gunnery");
         }
 
-        setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), getShooterState().hasNaturalAptGun()) / 100);
+        setProbabilityToHit(Compute.oddsAbove(getToHit().getValue(), isUseNaturalAptitudeGunnery()) / 100);
 
         if (debugEnabled) {
             msg.append("\n\tHit Chance: ").append(LOG_PER.format(getProbabilityToHit()));
@@ -983,7 +1021,7 @@ public class WeaponFireInfo {
             }
         }
         // No target Mek found; nothing to do
-        if (null == targetMek) {
+        if (targetMek == null) {
             if (debugEnabled) {
                 logger.debug(msg.toString());
             }
@@ -1025,8 +1063,7 @@ public class WeaponFireInfo {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                 if (Mek.LOC_CENTER_TORSO == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
-                } else if ((Mek.LOC_HEAD == hitLocation) &&
-                      (Mek.COCKPIT_TORSO_MOUNTED != targetMek.getCockpitType())) {
+                } else if ((Mek.LOC_HEAD == hitLocation) && !targetMek.hasTorsoMountedCockpit()) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
                 }
 
@@ -1044,7 +1081,7 @@ public class WeaponFireInfo {
     }
 
     WeaponAttackAction getWeaponAttackAction() {
-        if (null != getAction()) {
+        if (getAction() != null){
             return getAction();
         }
         if (!(getWeapon().getType().hasFlag(WeaponType.F_ARTILLERY)
@@ -1064,7 +1101,7 @@ public class WeaponFireInfo {
         // Set the ammoId for calcs.
         getAction().setAmmoId(shooter.getEquipmentNum(this.getAmmo()));
         setProbabilityToHit(Compute.oddsAbove(getAction().toHit(getGame()).getValue(),
-              getShooterState().hasNaturalAptGun()) / 100.0);
+              isUseNaturalAptitudeGunnery()) / 100.0);
         return getAction();
     }
 

@@ -44,21 +44,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import megamek.common.DamageInfo;
 import megamek.common.HitData;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.IArmorState;
 import megamek.common.equipment.LiftHoist;
 import megamek.common.equipment.MekArms;
 import megamek.common.equipment.Transporter;
+import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;
@@ -309,7 +313,7 @@ class TWDamageManagerTest {
         // Deal "20" points of damage (should fill 10 circles)
         HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
         // All AmmoWeaponHandlers (including artillery) use Ballistic damage type
-        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         // Set areaSatArty so all suits take damage
         DamageInfo damageInfo = new DamageInfo(baEntity, hit, 20, false, DamageType.NONE,
               false, true);
@@ -359,7 +363,7 @@ class TWDamageManagerTest {
 
         // Deal "20" points of AP damage (should fill 20 circles against Hardened)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO, false, 0, false,
-              -1, true, true, HitData.DAMAGE_ARMOR_PIERCING, 0);
+                                  -1, true, true, HitDamageType.DAMAGE_ARMOR_PIERCING, 0);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
         manager.damageEntity(damageInfo);
 
@@ -374,7 +378,7 @@ class TWDamageManagerTest {
 
         // Deal "20" points of AP damage (should fill 20 circles against Standard)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO, false, 0, false,
-              -1, true, true, HitData.DAMAGE_ARMOR_PIERCING, 0);
+                                  -1, true, true, HitDamageType.DAMAGE_ARMOR_PIERCING, 0);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
         manager.damageEntity(damageInfo);
 
@@ -434,6 +438,77 @@ class TWDamageManagerTest {
         assertEquals(7, mek.getInternal(Mek.LOC_LEFT_TORSO));
     }
 
+    /**
+     * Report id of the Enhanced Imaging feedback roll, and of the superseded duplicate that used to roll a second time
+     * for the same hit (issue #8718).
+     */
+    private static final int REPORT_EI_FEEDBACK = 3593;
+    private static final int REPORT_LEGACY_EI_FEEDBACK = 5075;
+
+    /**
+     * Installs a running EI Interface and gives the pilot the EI implant, then enables the Pilot Abilities Only neural
+     * interface mode - the mode the issue was reported under.
+     */
+    private void equipWithRunningEnhancedImaging(Entity entity) {
+        game.getOptions()
+              .getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)
+              .setValue(OptionsConstants.NEURAL_INTERFACE_MODE_PILOT_ONLY);
+        entity.getCrew().getOptions().getOption(OptionsConstants.MD_EI_IMPLANT).setValue(true);
+        try {
+            entity.addEquipment(EquipmentType.get("EIInterface"), Entity.LOC_NONE);
+        } catch (LocationFullException exception) {
+            throw new IllegalStateException("EI Interface takes no slots and must always mount", exception);
+        }
+    }
+
+    private long countReports(List<Report> reports, int messageId) {
+        return reports.stream().filter(report -> report.messageId == messageId).count();
+    }
+
+    @Test
+    void testEnhancedImagingRollsOnceForOneInternalHit() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        equipWithRunningEnhancedImaging(mek);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+
+        Vector<Report> reports = manager.damageEntity(new DamageInfo(mek, hit, 3, false, DamageType.NONE, true));
+
+        assertEquals(1, countReports(reports, REPORT_EI_FEEDBACK),
+              "One hit that reaches internal structure must produce exactly one EI feedback roll");
+        assertEquals(0, countReports(reports, REPORT_LEGACY_EI_FEEDBACK),
+              "The superseded duplicate EI feedback roll must no longer fire");
+    }
+
+    @Test
+    void testEnhancedImagingDoesNotRollWhenShutDown() {
+        BipedMek mek = createFrankenMekForInternalDamage();
+        equipWithRunningEnhancedImaging(mek);
+        mek.setEiShutdown(true);
+        mek.newRound(1);
+        HitData hit = new HitData(Mek.LOC_LEFT_ARM, false, HitData.EFFECT_NO_CRITICAL_SLOTS);
+
+        Vector<Report> reports = manager.damageEntity(new DamageInfo(mek, hit, 3, false, DamageType.NONE, true));
+
+        assertEquals(0, countReports(reports, REPORT_EI_FEEDBACK),
+              "A pilot who shut EI down must take no feedback roll (IO p.69)");
+    }
+
+    @Test
+    void testEnhancedImagingDoesNotApplyToBattleArmor() throws EntityLoadingException {
+        BattleArmor battleArmor = loadBA("Elemental BA [Laser] (Sqd5).blk");
+        equipWithRunningEnhancedImaging(battleArmor);
+        assertTrue(battleArmor.hasActiveEiCockpit(), "Test setup: the squad must have EI running");
+        HitData hit = new HitData(BattleArmor.LOC_TROOPER_1);
+
+        // damageIS drives the internal-damage flag the feedback roll keys off, so this is the battle armor case
+        // that would have rolled before the Mek restriction was restored
+        Vector<Report> reports = manager.damageEntity(
+              new DamageInfo(battleArmor, hit, 5, false, DamageType.NONE, true));
+
+        assertEquals(0, countReports(reports, REPORT_EI_FEEDBACK),
+              "EI feedback damage is limited to Mek units, so battle armor must not roll for it");
+    }
+
     @Test
     void testDamageMekBallisticReinforcedArmorNoPSR() throws EntityLoadingException {
         String unit = "Dervish DV-11DK.mtf";
@@ -444,7 +519,7 @@ class TWDamageManagerTest {
 
         // Deal "39" points of damage (should fill 19 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
         manager.damageEntity(damageInfo);
 
@@ -462,7 +537,7 @@ class TWDamageManagerTest {
 
         // Deal "40" points of damage (should fill 20 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
         manager.damageEntity(damageInfo);
 
@@ -481,7 +556,7 @@ class TWDamageManagerTest {
 
         // Deal "24" points of damage (should fill 16 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 24);
         manager.damageEntity(damageInfo);
 
@@ -500,7 +575,7 @@ class TWDamageManagerTest {
 
         // Deal "30" points of damage (should fill 20 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 30);
         manager.damageEntity(damageInfo);
 
@@ -519,7 +594,7 @@ class TWDamageManagerTest {
 
         // Deal 20 points of damage (should fill 20 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 20);
         manager.damageEntity(damageInfo);
 
@@ -537,7 +612,7 @@ class TWDamageManagerTest {
 
         // Deal "24" points of damage (should fill 19? circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 24);
         manager.damageEntity(damageInfo);
 
@@ -555,7 +630,7 @@ class TWDamageManagerTest {
 
         // Deal "25" points of damage (should fill 20 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 25);
         manager.damageEntity(damageInfo);
 
@@ -574,7 +649,7 @@ class TWDamageManagerTest {
         // Deal 9 points of ballistic damage against Ferro-Lamellor (reduces ~20%)
         // 9 * 0.8 = ~7 actual damage, below threshold of 8
         HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
-        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(asf, hit, 9);
         manager.damageEntity(damageInfo);
 
@@ -585,7 +660,7 @@ class TWDamageManagerTest {
         // Threshold is 8, need > 8 actual damage. 12 * 0.8 = ~9.6 actual > 8
         AeroSpaceFighter asf2 = loadASF(unit);
         HitData hit2 = new HitData(AeroSpaceFighter.LOC_NOSE);
-        hit2.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit2.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 12);  // ~9-10 actual, exceeds threshold
         manager.damageEntity(damageInfo2);
         assertTrue(asf2.wasCritThresh());
@@ -605,7 +680,7 @@ class TWDamageManagerTest {
 
         // Deal 3 points of damage (should fill 3 circles but leave 9 still)
         HitData hit = new HitData(BipedMek.LOC_HEAD);
-        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 3);
         manager.damageEntity(damageInfo);
 
@@ -631,7 +706,7 @@ class TWDamageManagerTest {
 
         // Deal 12 points of damage (should fill 12 total (3 + 9) leaving armor at 0 but no crits)
         HitData hit = new HitData(BipedMek.LOC_HEAD);
-        hit.setGeneralDamageType(HitData.DAMAGE_BALLISTIC);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_BALLISTIC);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 12);
         manager.damageEntity(damageInfo);
 
@@ -651,7 +726,7 @@ class TWDamageManagerTest {
 
         // Deal "39" points of damage (should fill 19 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
         manager.damageEntity(damageInfo);
 
@@ -669,7 +744,7 @@ class TWDamageManagerTest {
 
         // Deal "40" points of damage (should fill 20 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
         manager.damageEntity(damageInfo);
 
@@ -687,7 +762,7 @@ class TWDamageManagerTest {
 
         // Deal "39" points of damage (should fill 19 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 39);
         manager.damageEntity(damageInfo);
 
@@ -705,7 +780,7 @@ class TWDamageManagerTest {
 
         // Deal "40" points of damage (should fill 20 circles)
         HitData hit = new HitData(BipedMek.LOC_CENTER_TORSO);
-        hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(mek, hit, 40);
         manager.damageEntity(damageInfo);
 
@@ -724,7 +799,7 @@ class TWDamageManagerTest {
         // Deal 2 points of energy damage against Reflective (halves energy damage)
         // 2 / 2 = 1 actual damage, below threshold of 2
         HitData hit = new HitData(AeroSpaceFighter.LOC_NOSE);
-        hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
         DamageInfo damageInfo = new DamageInfo(asf, hit, 2);
         manager.damageEntity(damageInfo);
 
@@ -735,7 +810,7 @@ class TWDamageManagerTest {
         // Threshold is 2, need > 2 actual damage. 6 / 2 = 3 actual > 2
         AeroSpaceFighter asf2 = loadASF(unit);
         HitData hit2 = new HitData(AeroSpaceFighter.LOC_NOSE);
-        hit2.setGeneralDamageType(HitData.DAMAGE_ENERGY);
+        hit2.setGeneralDamageType(HitDamageType.DAMAGE_ENERGY);
         DamageInfo damageInfo2 = new DamageInfo(asf2, hit2, 6);  // 3 actual, exceeds threshold
         manager.damageEntity(damageInfo2);
         assertTrue(asf2.wasCritThresh());
@@ -753,7 +828,7 @@ class TWDamageManagerTest {
         // Deal 13 points of damage (should fill 11 circles and deal 1 SI damage without overflowing and
         // destroying the unit)
         HitData hit = new HitData(AeroSpaceFighter.LOC_LEFT_WING);
-        hit.setGeneralDamageType(HitData.DAMAGE_MISSILE);
+        hit.setGeneralDamageType(HitDamageType.DAMAGE_MISSILE);
         DamageInfo damageInfo = new DamageInfo(asf, hit, 13);
         manager.damageEntity(damageInfo);
 

@@ -36,6 +36,8 @@ package megamek.common.weapons.lasers.innerSphere.small;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -78,10 +80,14 @@ public class ISLaserSmall extends LaserWeapon {
         shortAV = 3;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "227, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 227),
+              rulesRef(SourceBookCode.BMM, 100),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(true)
-              .setUnofficial(false)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(2290, 2300, 2310, DATE_NONE, DATE_NONE)

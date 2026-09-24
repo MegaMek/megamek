@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -75,7 +76,7 @@ public class ISHVAC10 extends HVACWeapon {
         longAV = 10;
         maxRange = RANGE_LONG;
         explosionDamage = 10;
-        rulesRefs = "97, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 97);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)

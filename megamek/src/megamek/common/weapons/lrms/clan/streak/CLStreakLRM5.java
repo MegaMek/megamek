@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.streak;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.weapons.lrms.StreakLRMWeapon;
 
 /**
@@ -65,7 +66,11 @@ public class CLStreakLRM5 extends StreakLRMWeapon {
         medAV = 5;
         longAV = 5;
         maxRange = RANGE_LONG;
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 139),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187)
+        );
         // Tech Advancement moved to StreakLRMWeapon.java
     }
 }

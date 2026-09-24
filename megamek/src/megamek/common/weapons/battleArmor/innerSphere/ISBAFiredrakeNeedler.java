@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -71,10 +72,8 @@ public class ISBAFiredrakeNeedler extends Weapon {
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INCENDIARY_NEEDLES).or(F_BURST_FIRE)
               .or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
-        rulesRefs = "266, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 266);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(3058, 3060, 3068, DATE_NONE, DATE_NONE)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,8 +33,6 @@
 
 package megamek.common.event;
 
-import megamek.logging.MMLogger;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,6 +40,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import megamek.logging.MMLogger;
 
 public final class EventBus {
     private static final MMLogger LOGGER = MMLogger.create(EventBus.class);
@@ -59,7 +59,7 @@ public final class EventBus {
 
     public static EventBus getInstance() {
         synchronized (INSTANCE_LOCK) {
-            if (null == instance) {
+            if (instance == null) {
                 instance = new EventBus();
             }
         }
@@ -82,7 +82,7 @@ public final class EventBus {
 
     private List<Class<?>> getClasses(Class<?> leaf) {
         List<Class<?>> result = new ArrayList<>();
-        while (null != leaf) {
+        while (leaf != null) {
             result.add(leaf);
             leaf = leaf.getSuperclass();
         }
@@ -91,6 +91,13 @@ public final class EventBus {
 
     @SuppressWarnings("unchecked")
     public void register(Object handler) {
+        synchronized (REGISTER_LOCK) {
+            // Cancel any pending unregister for this handler. Unregisters are deferred onto unregisterQueue and only
+            // applied at the start of the next trigger(), so a detach/reattach cycle that unregisters then
+            // re-registers with no intervening trigger() would otherwise leave the queued removal in place. The next
+            // trigger() would then drop a handler supposed to be live. Reconciling here keeps it registered.
+            unregisterQueue.remove(handler);
+        }
         if (handlerMap.containsKey(handler)) {
             return;
         }
@@ -150,10 +157,10 @@ public final class EventBus {
         synchronized (REGISTER_LOCK) {
             for (Object handler : unregisterQueue.keySet()) {
                 List<EventListener> listenerList = handlerMap.remove(handler);
-                if (null != listenerList) {
+                if (listenerList != null) {
                     for (EventListener listener : listenerList) {
                         List<EventListener> eventListeners = eventMap.get(listener.getEventType());
-                        if (null != eventListeners) {
+                        if (eventListeners != null) {
                             eventListeners.remove(listener);
                         }
                     }
@@ -178,7 +185,7 @@ public final class EventBus {
 
     private void internalTrigger(Class<? extends MMEvent> eventClass, MMEvent event) {
         List<EventListener> eventListeners = eventMap.get(eventClass);
-        if (null != eventListeners) {
+        if (eventListeners != null) {
             eventListeners.sort(EVENT_SORTER);
             for (EventListener listener : eventListeners) {
                 listener.trigger(event);

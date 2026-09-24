@@ -263,10 +263,8 @@ public class LRMSwarmHandler extends LRMHandler {
             }
             // Targeting a building.
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
-                // The building takes the full brunt of the attack.
-                nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage,
-                      target.getPosition());
+                // The building takes the full brunt of the attack, one damage grouping at a time.
+                handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
                 hits = 0;
             }
             if (entityTarget != null) {
@@ -349,8 +347,8 @@ public class LRMSwarmHandler extends LRMHandler {
             int missiles = weaponAttackAction.isSwarmingMissiles() ? weaponAttackAction.getSwarmMissiles()
                   : weaponType.getRackSize();
             double toReturn = Compute.directBlowInfantryDamage(
-                  missiles, bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  missiles, getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 
@@ -418,6 +416,12 @@ public class LRMSwarmHandler extends LRMHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target.isConventionalInfantry()) {
+            // A conventional platoon absorbs every remaining missile and the flight is over: cluster weapons do
+            // not roll on the cluster table against infantry (TW p.215), so there is nothing left to carry on
+            // with. Asked and answered officially - "That's a strange side-effect of the infantry rules, but yes":
+            // https://www.battletech.com/forums/index.php/topic,46840.msg1080115.html#msg1080115
+            // Without this the remainder is never updated here and the missiles chain on to a further target.
+            swarmMissilesNowLeft = 0;
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 return ((BattleArmor) attackingEntity).getShootingStrength();

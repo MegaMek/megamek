@@ -251,7 +251,7 @@ public class ServerHelper {
      */
     public static boolean detectMinefields(Game game, Entity entity, Coords coords,
           Vector<Report> vPhaseReport, TWGameManager gameManager) {
-        if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) {
+        if (!Game.rulesManager.getRulesGame().allowMinefields(game.getOptions().booleanOption(OptionsConstants.ADVANCED_MINEFIELDS))) {
             return false;
         }
 
@@ -478,6 +478,36 @@ public class ServerHelper {
     }
 
     /**
+     * Checks whether a requested equipment mode change must be rejected because it would put a second ECM suite into
+     * use. A unit may use only one ECM suite at a time, of any type (TM p.213, CO p.200), and every mode other than
+     * {@code "Off"} counts as using the suite - ECCM and Ghost Targets included. Switching a suite off, or between two
+     * active modes while it is the only suite in use, is always allowed.
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would leave the unit using more than one ECM suite next round
+     */
+    public static boolean isSecondEcmSuiteActivation(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        if (miscType.getMode(newMode).getName().equals(Mounted.MODE_OFF)) {
+            return false;
+        }
+        for (MiscMounted otherSuite : EquipmentActivation.ecmSuitesInUseNextRound(entity)) {
+            if (!otherSuite.equals(mounted)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Loop through the game and clear 'blood stalker' flag for any entities that have the given unit as the blood
      * stalker target.
      */
@@ -488,25 +518,5 @@ public class ServerHelper {
                 gameManager.entityUpdate(entity.getId());
             }
         }
-    }
-
-    /**
-     * Returns the target number to avoid Radical Heat Sink Failure for the given number of rounds of consecutive use,
-     * IO p.89. The first round of use means consecutiveRounds = 1; this is the minimum as 0 rounds of use would not
-     * trigger a roll.
-     *
-     * @param consecutiveRounds The rounds the RHS has been used
-     *
-     * @return The roll target number to avoid failure
-     */
-    public static int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
-        return switch (consecutiveRounds) {
-            case 1 -> 3;
-            case 2 -> 5;
-            case 3 -> 7;
-            case 4 -> 10;
-            case 5 -> 11;
-            default -> TargetRoll.AUTOMATIC_FAIL;
-        };
     }
 }

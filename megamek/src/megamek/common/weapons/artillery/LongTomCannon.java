@@ -36,6 +36,7 @@ package megamek.common.weapons.artillery;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -80,7 +81,7 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "97, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 97);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)

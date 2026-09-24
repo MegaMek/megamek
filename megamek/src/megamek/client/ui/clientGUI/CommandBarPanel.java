@@ -37,28 +37,43 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import megamek.client.Client;
+import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
 import megamek.client.ui.util.UIUtil;
+import megamek.client.ui.widget.HazardButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
+import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
  * The command strip that sits directly under the menu bar, above the board. It always ends in the Commands button,
- * which opens the game commands menu ({@link GameCommandsMenu}), and it is the strip the bot commands panel docks into
- * when the player has it set to Dock.
+ * which opens the game commands menu ({@link GameCommandsMenu}), followed by the Report a Bug button, and it is the
+ * strip the bot commands panel docks into when the player has it set to Dock.
  *
  * <p>Keeping the Commands button on a strip of its own, rather than on the bot commands panel, means it stays where
  * the player left it no matter how the bot commands panel is set: a player who commands no bots at all, and has the bot
  * panel switched off, still has the game commands one click away.</p>
+ *
+ * <p>The Report a Bug button is styled as a hazard-striped stop button so that a player who has just watched
+ * something go wrong can find it without reading the strip. It lives here rather than in the phase display's Done
+ * column because that column is already two buttons deep during the action phases, and a third row there cost board
+ * space in every phase.</p>
  */
 public class CommandBarPanel extends JPanel {
     private static final MMLogger LOGGER = MMLogger.create(CommandBarPanel.class);
 
+    private static final BugReportMessages BUG_REPORT_I18N = new BugReportMessages();
+
     /** The height of the strip, matching the docked layout of the bot commands panel it sits beside. */
     private static final int BAR_HEIGHT = 40;
-    private static final int COMMANDS_BUTTON_WIDTH = 160;
+    /** Narrower than it was before the Report a Bug button joined it, which is what pays for that button's width. */
+    private static final int COMMANDS_BUTTON_WIDTH = 110;
+    private static final int REPORT_BUG_BUTTON_WIDTH = 130;
+    /** The gap between the two buttons at the end of the strip. */
+    private static final int BUTTON_GAP = 2;
 
     private final ClientGUI clientGUI;
     private final MegaMekButton commandsButton;
@@ -80,7 +95,27 @@ public class CommandBarPanel extends JPanel {
         commandsButton.setToolTipText(Messages.getString("GameCommands.tooltip"));
         commandsButton.setPreferredSize(UIUtil.scaleForGUI(COMMANDS_BUTTON_WIDTH, BAR_HEIGHT));
         commandsButton.addActionListener(event -> showCommandsPopup());
-        add(commandsButton, BorderLayout.EAST);
+
+        HazardButton reportBugButton = new HazardButton(BUG_REPORT_I18N.get("package.reportBug"));
+        reportBugButton.setToolTipText(BUG_REPORT_I18N.get("package.reportBug.tooltip"));
+        reportBugButton.setPreferredSize(UIUtil.scaleForGUI(REPORT_BUG_BUTTON_WIDTH, BAR_HEIGHT));
+        reportBugButton.addActionListener(event -> BugReportDialog.showWithGameTools(clientGUI.getFrame(),
+              this::totalWarfareClient));
+
+        // Commands first, so it keeps the spot it had when it was alone, then Report a Bug on the far right.
+        JPanel endOfStrip = new JPanel(new BorderLayout(UIUtil.scaleForGUI(BUTTON_GAP), 0));
+        endOfStrip.setOpaque(false);
+        endOfStrip.add(commandsButton, BorderLayout.CENTER);
+        endOfStrip.add(reportBugButton, BorderLayout.EAST);
+        add(endOfStrip, BorderLayout.EAST);
+    }
+
+    /**
+     * @return the client of the running game when it is one whose save the bug report packager understands, otherwise
+     *       {@code null}; a Strategic BattleForce game, for instance, packages its logs alone
+     */
+    private @Nullable Client totalWarfareClient() {
+        return (clientGUI.getClient() instanceof Client totalWarfareClient) ? totalWarfareClient : null;
     }
 
     /**

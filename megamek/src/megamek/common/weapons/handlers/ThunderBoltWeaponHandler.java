@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -85,14 +85,13 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         } else {
             minRange = weaponType.getMinimumRange();
         }
-        if ((nRange <= minRange) && !weapon.isHotLoaded()) {
-            toReturn /= 2;
-            toReturn = Math.floor(toReturn);
-        }
+        toReturn = Game.rulesManager.getRulesWeapons()
+                                    .thunderboltMinimum(toReturn, nRange, minRange, weapon.isHotLoaded());
+
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {
@@ -198,7 +197,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             vPhaseReport.add(r);
             Roll diceRoll = Compute.rollD6(1);
 
-            if (diceRoll.getIntValue() <= 3) {
+            if (Game.rulesManager.getRulesEquipment().checkAMSSingleMissile(diceRoll.getIntValue())) {
                 r = new Report(3240);
                 r.subject = subjectId;
                 r.add("missile");
@@ -241,5 +240,4 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             return 0;
         }
     }
-
 }

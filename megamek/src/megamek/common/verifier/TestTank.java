@@ -407,11 +407,14 @@ public class TestTank extends TestEntity {
             }
         }
 
-        if (tank.getMovementMode() == EntityMovementMode.WIGE) {
-            if (tank.getWalkMP() < 5) {
-                buff.append("WiGE must have at least 5 Cruise MP.\n");
-                correct = false;
-            }
+        if (tank.getMovementMode() == EntityMovementMode.WIGE && tank.getWalkMP() < 5) {
+            buff.append("WiGE must have at least 5 Cruise MP.\n");
+            correct = false;
+        }
+
+        if (!tank.isTrailer() && tank.hasNoControlSystems()) {
+            buff.append("Non-trailer must have control systems.\n");
+            correct = false;
         }
 
         if (showFailedEquip() && hasFailedEquipment(buff)) {
@@ -997,7 +1000,7 @@ public class TestTank extends TestEntity {
                 buffer.append(eq.getName()).append(" cannot be mounted in the rotor.\n");
                 return false;
             }
-            if ((eq.hasFlag(MiscTypeFlag.F_HARJEL) || eq.hasFlag(MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM)
+            if ((eq.hasFlag(MiscTypeFlag.F_MODULAR_ARMOR) || eq.hasFlag(MiscTypeFlag.F_HARJEL) || eq.hasFlag(MiscTypeFlag.F_LIGHT_FLUID_SUCTION_SYSTEM)
                   || eq.hasFlag(MiscTypeFlag.F_SPRAYER)
                   || (eq.hasFlag(MiscTypeFlag.F_LIFT_HOIST) && !(tank instanceof VTOL)))
                   && (location == Tank.LOC_BODY)) {

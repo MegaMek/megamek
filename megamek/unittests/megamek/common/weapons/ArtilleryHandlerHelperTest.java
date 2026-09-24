@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,7 @@
  */
 package megamek.common.weapons;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -42,6 +43,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
+import megamek.common.Messages;
+import megamek.common.Player;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -182,5 +186,33 @@ class ArtilleryHandlerHelperTest {
         boolean getsBonus = !(spotter instanceof Infantry)
               && spotter.hasAbility(OptionsConstants.MD_COMM_IMPLANT);
         assertFalse(getsBonus, "Entity without comm implant should not get bonus");
+    }
+
+    /**
+     * A round already in the air outlives its firer, so the player who fired it may have been dropped from the game by
+     * the time it lands (issue #8685). Naming that firer must fall back to a label rather than throwing.
+     */
+    @Test
+    void firingPlayerName_whenPlayerHasLeftTheGame_returnsALabel() {
+        Game game = mock(Game.class);
+        ArtilleryAttackAction attack = mock(ArtilleryAttackAction.class);
+        when(attack.getPlayerId()).thenReturn(2);
+        when(game.getPlayer(2)).thenReturn(null);
+
+        assertEquals(Messages.getString("ArtilleryMessage.unknownFiringPlayer"),
+              ArtilleryHandlerHelper.firingPlayerName(game, attack));
+    }
+
+    /**
+     * Test that a firer still in the game is named normally.
+     */
+    @Test
+    void firingPlayerName_whenPlayerIsStillInTheGame_returnsTheirName() {
+        Game game = mock(Game.class);
+        ArtilleryAttackAction attack = mock(ArtilleryAttackAction.class);
+        when(attack.getPlayerId()).thenReturn(2);
+        when(game.getPlayer(2)).thenReturn(new Player(2, "Independent Base Defenses"));
+
+        assertEquals("Independent Base Defenses", ArtilleryHandlerHelper.firingPlayerName(game, attack));
     }
 }

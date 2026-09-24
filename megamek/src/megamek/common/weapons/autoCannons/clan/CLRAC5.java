@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -73,7 +74,11 @@ public class CLRAC5 extends RACWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = "98, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 98),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 183)
+        );
         flags = flags.andNot(F_PROTO_WEAPON);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)

@@ -33,11 +33,13 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -46,20 +48,30 @@ import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
+import megamek.client.ui.dialogs.phaseDisplay.InfantryActionDeclarationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.MinesweeperActivationDialog;
 import megamek.client.ui.dialogs.phaseDisplay.NovaNetworkDialog;
 import megamek.client.ui.dialogs.phaseDisplay.TargetChoiceDialog;
 import megamek.client.ui.dialogs.phaseDisplay.VariableRangeTargetingDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.widget.MegaMekButton;
+import megamek.common.HexTarget;
+import megamek.common.LosEffects;
 import megamek.common.Player;
-import megamek.common.actions.InitiateInfantryCombatAction;
+import megamek.common.actions.ScanAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;
 import megamek.common.equipment.BridgeLayerState;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.ScanMission;
+import megamek.common.event.entity.GameEntityChangeEvent;
+import megamek.common.game.GameTurn;
+import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesScanning;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
-import megamek.common.units.Infantry;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
@@ -72,13 +84,14 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     private static final MMLogger AVLB_LOGGER = MMLogger.create(BridgeLayerState.DIAGNOSTIC_LOGGER_NAME);
 
     public enum PreEndCommand implements PhaseCommand {
-        PREEND_INITIATE_INFANTRY_COMBAT("initiateInfantryCombat"),
+        PREEND_INFANTRY_ACTION("infantryAction"),
         PREEND_NOVA_NETWORK("novaNetwork"),
         PREEND_VAR_RANGE_TARGETING("varRangeTargeting"),
         PREEND_ABANDON("abandon"),
         PREEND_DETONATE_CHARGES("detonateCharges"),
         PREEND_MINESWEEPER("minesweeper"),
         PREEND_DEPLOY_BRIDGE("deployBridge"),
+        PREEND_SCAN("scan"),
         PREEND_NEXT("next");
 
         private final String cmd;
@@ -128,6 +141,12 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * end-turn button to read "Done" instead of "Skip Turn" - otherwise the player gets no sign the declaration took.
      */
     private boolean declarationMade;
+    /** The player answered a prompt about an infantry action this turn, so ending the turn needs no warning. */
+    private boolean promptAnswered;
+    /** True while waiting for the player to click the hex or unit the selected unit should scan. */
+    private boolean selectingScanTarget = false;
+    /** The last state the Infantry Action button was set to, so the log records changes and not every refresh. */
+    private boolean infantryActionOffered;
 
     /**
      * Sets the current target and updates button states
@@ -151,7 +170,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setupButtonPanel();
 
         // Initialize buttons to disabled state
-        setInitiateInfantryCombatEnabled(false);
+        setInfantryActionEnabled(false);
         updateDonePanel();
     }
 
@@ -176,6 +195,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         setTooltip(PreEndCommand.PREEND_ABANDON);
         setTooltip(PreEndCommand.PREEND_DETONATE_CHARGES);
         setTooltip(PreEndCommand.PREEND_MINESWEEPER);
+        setTooltip(PreEndCommand.PREEND_SCAN);
     }
 
     private void setTooltip(PreEndCommand command) {
@@ -186,21 +206,22 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     @Override
     protected List<MegaMekButton> getButtonList() {
         ArrayList<MegaMekButton> buttonList = new ArrayList<>();
-        buttonList.add(buttons.get(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_INFANTRY_ACTION));
         buttonList.add(buttons.get(PreEndCommand.PREEND_NOVA_NETWORK));
         buttonList.add(buttons.get(PreEndCommand.PREEND_VAR_RANGE_TARGETING));
         buttonList.add(buttons.get(PreEndCommand.PREEND_ABANDON));
         buttonList.add(buttons.get(PreEndCommand.PREEND_DETONATE_CHARGES));
         buttonList.add(buttons.get(PreEndCommand.PREEND_MINESWEEPER));
         buttonList.add(buttons.get(PreEndCommand.PREEND_DEPLOY_BRIDGE));
+        buttonList.add(buttons.get(PreEndCommand.PREEND_SCAN));
         buttonList.add(buttons.get(PreEndCommand.PREEND_NEXT));
         return buttonList;
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        if (ev.getActionCommand().equals(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd())) {
-            initiateInfantryCombat();
+        if (ev.getActionCommand().equals(PreEndCommand.PREEND_INFANTRY_ACTION.getCmd())) {
+            showInfantryActionDialogs();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_NOVA_NETWORK.getCmd())) {
             showNovaNetworkDialog();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_VAR_RANGE_TARGETING.getCmd())) {
@@ -213,8 +234,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             showMinesweeperDialog();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_DEPLOY_BRIDGE.getCmd())) {
             deployBridge();
+        } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_SCAN.getCmd())) {
+            doScan();
         } else if (ev.getActionCommand().equals(PreEndCommand.PREEND_NEXT.getCmd())) {
-            selectEntity(clientgui.getClient().getNextEntityNum(currentEntity));
+            selectEntity(nextEligibleUnit());
         }
     }
 
@@ -319,60 +342,112 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
     // TODO: Add propertyChange handler for keyboard shortcuts once parent class infrastructure exists
 
-    private void initiateInfantryCombat() {
-        if (target == null) {
-            return;
+    /**
+     * One declaration per building the local player has a stake in: the attacker commits units or withdraws, the
+     * defender commits units and crew (TO:AR pp. 169 to 172). Each confirmed dialog goes to the server at once.
+     */
+    private void showInfantryActionDialogs() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        List<AbstractBuildingEntity> stakes = InfantryActionStrengths.stakes(game, localPlayer);
+        LOGGER.debug("[InfantryAction] {} declares for {} building(s)", localPlayer.getName(), stakes.size());
+        boolean declared = false;
+        for (AbstractBuildingEntity building : stakes) {
+            declared |= declareFor(localPlayer, building);
         }
-
-        Entity ce = game.getEntity(currentEntity);
-        if (!(ce instanceof Infantry inf)) {
-            return;
+        if (declared) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
+        buttons.get(PreEndCommand.PREEND_INFANTRY_ACTION).transferFocus();
+    }
 
-        // Check if already in combat
-        if (inf.getInfantryCombatTargetId() != Entity.NONE) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.alreadyEngaged"));
-            return;
+    /**
+     * Opens the declaration dialog for one building and sends what the player confirmed.
+     *
+     * @return {@code true} when a declaration went to the server
+     */
+    private boolean declareFor(Player localPlayer, AbstractBuildingEntity building) {
+        clientgui.centerOnUnit(building);
+        var dialog = new InfantryActionDeclarationDialog(clientgui.getFrame(), game, localPlayer, building);
+        boolean confirmed = dialog.showDialog() == DialogResult.CONFIRMED;
+        LOGGER.info("[PreEnd] dialog for {}: {}", building.getShortName(),
+              confirmed ? dialog.getDeclaration() : "cancelled");
+        if (confirmed && dialog.declaresAnything()) {
+            clientgui.getClient().sendInfantryActionDeclaration(dialog.getDeclaration());
+            return true;
         }
+        return false;
+    }
 
-        // Check if target is a building
-        Entity targetEntity = game.getEntity(target.getId());
-        if (!(targetEntity instanceof AbstractBuildingEntity)) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.targetMustBeBuilding"));
-            return;
+    /**
+     * When the turn begins with an infantry action to decide on, asks the player about it and opens the dialog if
+     * they say yes: an attacker whose infantry stand inside an enemy building is asked whether to start the action,
+     * or to reinforce one already under way; a defender whose building is under attack is asked whether to respond,
+     * and told that a building nothing is committed to falls (TO:AR p. 172). Declining leaves the button and the
+     * skip-turn check as they were.
+     */
+    private void offerDeclarations() {
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        boolean declared = false;
+        for (AbstractBuildingEntity building : InfantryActionStrengths.stakes(game, localPlayer)) {
+            String promptKey = promptFor(localPlayer, building);
+            if (promptKey == null) {
+                continue;
+            }
+            LOGGER.info("[PreEnd] {}: asking {} ({})", building.getShortName(), localPlayer.getName(), promptKey);
+            clientgui.centerOnUnit(building);
+            String title = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".title");
+            String body = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".message",
+                  building.getDisplayName());
+            boolean yes = clientgui.doYesNoDialog(title, body);
+            promptAnswered = true;
+            if ("continueAttack".equals(promptKey) || "continueDefence".equals(promptKey)) {
+                // Yes keeps fighting, which needs no declaration; No opens the dialog, where the force can withdraw
+                if (!yes) {
+                    declared |= declareFor(localPlayer, building);
+                }
+            } else if (yes) {
+                declared |= declareFor(localPlayer, building);
+            } else {
+                LOGGER.info("[PreEnd] {} declined the {} prompt for {}", localPlayer.getName(), promptKey,
+                      building.getShortName());
+            }
         }
-
-        // Check if same hex
-        if (!ce.getPosition().equals(targetEntity.getPosition())) {
-            clientgui.addToast(ToastLevel.ERROR,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.mustBeSameHex"));
-            return;
+        if (declared) {
+            registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
+    }
 
-        // Check if combat already exists in this building
-        boolean combatExists = game.getEntitiesVector().stream()
-              .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
-              .map(e -> (Infantry) e)
-              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
-
-        if (combatExists) {
-            clientgui.addToast(ToastLevel.WARNING,
-                  Messages.getString("InfantryVsInfantryCombatDisplay.combatAlreadyExists"));
-            return;
+    /**
+     * Which question, if any, the player is asked about a building at the start of their turn.
+     *
+     * @return the message key stem, or {@code null} when there is nothing to ask
+     */
+    private @Nullable String promptFor(Player localPlayer, AbstractBuildingEntity building) {
+        boolean running = InfantryActionStrengths.hasActionRunning(game, building);
+        if (InfantryActionStrengths.defends(localPlayer, building)) {
+            if (!running) {
+                return null;
+            }
+            boolean somethingToCommit = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
+                  building).isEmpty() || (InfantryActionStrengths.crewAvailableToCommit(building) > 0);
+            if (somethingToCommit) {
+                return "underAttack";
+            }
+            // Nothing left to commit: the only question is whether to hold, under the house rule that lets them go
+            return InfantryActionStrengths.canWithdrawDefence(game, localPlayer, building) ? "continueDefence" : null;
         }
-
-        String title = Messages.getString("PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.title");
-        String message = Messages.getString("PreEndDeclarationsDisplay.InitiateInfantryCombatDialog.message",
-              ce.getDisplayName(),
-              target.getDisplayName());
-
-        if (clientgui.doYesNoDialog(title, message)) {
-            addAttack(new InitiateInfantryCombatAction(currentEntity, target.getId()));
-            ready();
+        boolean unengagedInside = !InfantryActionStrengths.unengagedFriendlyInfantryInside(game, localPlayer,
+              building).isEmpty();
+        if (!unengagedInside) {
+            // Only engaged units: the fight goes on unless the player withdraws the force
+            return running ? "continueAttack" : null;
         }
+        return running ? "reinforce" : "startAttack";
+    }
+
+    /** Whether the local player has an infantry action to declare for anywhere on the board. */
+    private boolean hasInfantryActionStake() {
+        return !InfantryActionStrengths.stakes(game, clientgui.getClient().getLocalPlayer()).isEmpty();
     }
 
     @Override
@@ -397,8 +472,10 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         }
         // Only nag about un-declared infantry combat for a unit that could actually initiate it. Other units in this
         // phase (a unit making an end-phase declaration, or a bridgelayer that chose not to deploy) end silently.
-        if (attacks.isEmpty() && entity.canInitiateInfantryVsInfantryCombat()) {
-            LOGGER.debug("[PreEnd] {}: nag - infantry-combat-capable but none declared; confirming skip",
+        boolean undeclaredAction = attacks.isEmpty() && !declarationMade && !promptAnswered
+              && hasInfantryActionStake();
+        if (undeclaredAction) {
+            LOGGER.debug("[PreEnd] {}: nag - an infantry action awaits a declaration; confirming skip",
                   entity.getShortName());
             String title = Messages.getString("PreEndDeclarationsDisplay.skipTurn.title");
             String body = Messages.getString("PreEndDeclarationsDisplay.skipTurn.message");
@@ -413,10 +490,15 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             return;
         }
 
-        LOGGER.debug("[PreEnd] entity {} ready; {} queued action(s), advancing turn", currentEntity, attacks.size());
+        // A player gets one declarations turn, held by one of their units, but Next lets them select any unit of
+        // theirs to give it a scan order. Ending the turn has to name the unit that actually holds it. Naming any
+        // other one left the turn open, so the selection bounced back to the turn holder and Done had to be
+        // pressed a second time.
+        int turnHolder = entityHoldingTheTurn();
+        LOGGER.debug("[PreEnd] ready: selected entity {} advancing turn as holder {} with {} action(s)",
+              currentEntity, turnHolder, attacks.size());
         // Always send attack data to advance turn, even if empty
-        LOGGER.debug("[PreEnd] ready: entity {} advancing turn with {} action(s)", currentEntity, attacks.size());
-        clientgui.getClient().sendAttackData(currentEntity, attacks.toVector());
+        clientgui.getClient().sendAttackData(turnHolder, attacks.toVector());
         removeAllAttacks();
 
         endMyTurn();
@@ -444,9 +526,11 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                 completeDeployBridge(coords);
                 return;
             }
-
-            Targetable chosenTarget = chooseTarget(coords);
-
+            if (selectingScanTarget) {
+                completeScan(coords, event.getBoardId());
+                return;
+            }
+            Targetable chosenTarget = chooseTarget(coords, event.getBoardId());
             if (chosenTarget != null) {
                 target(chosenTarget);
             }
@@ -463,17 +547,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         //if (event.getCoords() != null) {
         //    clientgui.getBoardView().cursor(event.getCoords());
         //}
-        if (clientgui.getClient().isMyTurn()
-              && (event.getButton() == MouseEvent.BUTTON1)) {
-            if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-                if (!event.getCoords().equals(
-                      event.getBoardView().getLastCursor())) {
-                    event.getBoardView().cursor(event.getCoords());
-                }
-            } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
-                event.getBoardView().select(event.getCoords());
-            }
-        }
+        // This display has no torso twist, so the shift key never suppresses the selection.
+        applyHexMouseAction(event, false);
     }
 
     @Override
@@ -484,7 +559,12 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
 
         Entity clickedEntity = game.getEntity(event.getEntityId());
         if (clickedEntity != null && isMyTurn()) {
-            if (clientgui.getClient().getMyTurn().isValidEntity(clickedEntity, game)) {
+            // the player's pre-End turn is one turn for all their units, so any unit that could scan may be picked
+            // to give its order, not only the unit the turn was collapsed onto
+            boolean isOwnScanner = (clickedEntity.getOwner() != null)
+                  && clickedEntity.getOwner().equals(clientgui.getClient().getLocalPlayer())
+                  && ScanMission.canOrderScan(clickedEntity);
+            if (isOwnScanner || clientgui.getClient().getMyTurn().isValidEntity(clickedEntity, game)) {
                 selectEntity(clickedEntity.getId());
             }
         }
@@ -502,13 +582,16 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Chooses a target from the given hex coordinates. If multiple entities exist at the hex, shows a dialog for
      * selection.
      */
-    private Targetable chooseTarget(Coords coords) {
+    private Targetable chooseTarget(Coords coords, int boardId) {
+        // The engine's own hex lookup, which every other display uses. The hand-written filter this replaces
+        // asked isBoardable(), which means "can be boarded" and is false for everything but a building, so no unit
+        // was ever offered and every click fell back to the hex.
         List<Targetable> targets = new ArrayList<>();
-
-        // Gather all entities at hex
-        for (Entity e : game.getEntitiesVector()) {
-            if (e.getPosition() != null && e.getPosition().equals(coords) && e.isBoardable()) {
-                targets.add(e);
+        for (Entity candidate : game.getEntitiesVector(coords, boardId, true)) {
+            // Not the scanner itself: clicking your own hex means the hex, which is how infantry read the ground
+            // they stand on.
+            if (candidate.getId() != currentEntity) {
+                targets.add(candidate);
             }
         }
 
@@ -527,6 +610,71 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
                   game.getEntity(currentEntity)
             );
         }
+    }
+
+    /**
+     * Picks what a click on this hex means for a scan. Ordinary targeting offers the units in the hex and falls back
+     * to the ground, but a hex holding an objective marker is itself worth scanning, so both are offered and the
+     * player chooses. Without this, a marker sharing a hex with a unit could never be scanned: the unit always won,
+     * and no choice was offered because there was only one candidate.
+     *
+     * @param coords  the hex that was clicked
+     * @param boardId the board it is on
+     *
+     * @return what to scan, or {@code null} when the player closed the choice dialog without picking
+     */
+    private @Nullable Targetable chooseScanTarget(Coords coords, int boardId) {
+        List<Targetable> candidates = new ArrayList<>();
+        for (Entity candidate : game.getEntitiesVector(coords, boardId, true)) {
+            // Not the scanner itself: clicking your own hex means the hex, which is how infantry read the ground
+            // they stand on.
+            if (candidate.getId() != currentEntity) {
+                candidates.add(candidate);
+            }
+        }
+        // The ground itself is always one of the answers. A player clicking a hex with a unit standing in it
+        // may well mean the hex, which is the only way to read a building or a control point under someone's
+        // feet, so the choice is theirs to make rather than one this code guesses at.
+        candidates.add(new HexTarget(coords, boardId, Targetable.TYPE_HEX_CLEAR));
+        if (candidates.size() == 1) {
+            return candidates.getFirst();
+        }
+        return TargetChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(),
+              "PreEndDeclarationsDisplay.ChooseTargetDialog.title",
+              Messages.getString("PreEndDeclarationsDisplay.ChooseTargetDialog.message"),
+              candidates,
+              clientgui,
+              game.getEntity(currentEntity));
+    }
+
+    /**
+     * Puts a scan order on this client's own copy of the unit and tells the board, so the sweep and the labels
+     * follow the click instead of the packet. The server confirms or refuses a moment later and its answer
+     * replaces this one, so nothing here decides the rules - it only stops the board lagging the player.
+     *
+     * @param scanner the unit whose order changed
+     * @param order   the order it now carries, or {@code null} when it was withdrawn
+     */
+    private void showTheOrderImmediately(Entity scanner, @Nullable ScanAction order) {
+        scanner.setPendingScan(order);
+        game.processGameEvent(new GameEntityChangeEvent(this, scanner));
+    }
+
+    /**
+     * Works out which of the player's units the declarations turn belongs to. The selected unit is usually the
+     * right answer, but the player may have used Next to step onto a unit that has no turn of its own, and ending
+     * the turn in that unit's name does nothing.
+     *
+     * @return the unit id to end the turn with
+     */
+    private int entityHoldingTheTurn() {
+        GameTurn myTurn = clientgui.getClient().getMyTurn();
+        Entity selected = game.getEntity(currentEntity);
+        if ((myTurn != null) && (selected != null) && myTurn.isValidEntity(selected, game)) {
+            return currentEntity;
+        }
+        int turnHolder = clientgui.getClient().getFirstEntityNum();
+        return (turnHolder == Entity.NONE) ? currentEntity : turnHolder;
     }
 
     /**
@@ -551,18 +699,32 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Bridge-Layer (AVLB) deployment is entity-scoped: it depends on the selected unit (vehicle or quad Mek).
         boolean canDeployBridge = (entity != null) && BridgeLayerLogic.canDeclareBridgeDeploy(entity, game);
         setDeployBridgeEnabled(canDeployBridge);
+        // lit whenever the selected unit could scan at all; where it scans is asked for after the press
+        setScanEnabled(isMyTurn() && (entity != null) && ScanMission.canOrderScan(entity));
+        // Without this the button is never switched on, so a player cannot move off whichever unit came first
+        List<Entity> eligible = eligibleUnits();
+        boolean canChangeUnit = isMyTurn() && (eligible.size() > 1);
+        setNextUnitEnabled(canChangeUnit);
+        if (!canChangeUnit) {
+            LOGGER.debug("[PreEnd] Next Unit disabled: myTurn={}, {} of the player's unit(s) can act this phase [{}]",
+                  isMyTurn(), eligible.size(),
+                  eligible.stream().map(Entity::getShortName).collect(Collectors.joining(", ")));
+        }
+        updateScanButtonLabel();
         if (entity != null) {
             // Show the button on its first selectable bridge from the start (e.g. "Deploy Right Bridge" on a unit
             // with two bridges) rather than a generic label.
             updateDeployBridgeButtonLabel(entity, BridgeLayerLogic.getDeployableBridgeLayers(entity));
         }
 
-        // Initiate Infantry Combat is entity-scoped: it depends on the selected unit and target building.
-        boolean canInitiate = (entity instanceof Infantry infantry)
-              && infantry.canInitiateInfantryVsInfantryCombat()
-              && target != null
-              && isValidBuildingTargetNoCombat(entity, target);
-        setInitiateInfantryCombatEnabled(canInitiate);
+        // Infantry actions are player-wide: one declaration per building the player has a stake in
+        boolean canInitiate = isMyTurn() && hasInfantryActionStake() && !declarationMade;
+        if (canInitiate != infantryActionOffered) {
+            infantryActionOffered = canInitiate;
+            LOGGER.info("[PreEnd] Infantry Action button {}: myTurn={}, stake={}, declarationMade={}",
+                  canInitiate ? "enabled" : "disabled", isMyTurn(), hasInfantryActionStake(), declarationMade);
+        }
+        setInfantryActionEnabled(canInitiate);
         updateDonePanel();
 
         LOGGER.debug("[PreEnd] updateButtons: currentEntity={}, infantryCombat={}, deployBridge={}, nova={}, vrt={}, "
@@ -601,35 +763,201 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         updateButtons();
     }
 
+
     /**
-     * Checks if the target is a valid building with no existing combat
+     * The local player's units that can do something in this phase, in display order. The pre-End declarations are
+     * player-wide rather than one turn per unit, so the player must be free to move between their own units.
+     *
+     * @return those units, which may be empty
      */
-    private boolean isValidBuildingTargetNoCombat(Entity entity, Targetable target) {
-        Entity targetEntity = game.getEntity(target.getId());
-        if (!(targetEntity instanceof AbstractBuildingEntity)) {
-            return false;
+    private List<Entity> eligibleUnits() {
+        List<Entity> eligible = new ArrayList<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            boolean isMine = (entity.getOwner() != null)
+                  && (entity.getOwnerId() == clientgui.getClient().getLocalPlayer().getId());
+            if (isMine && entity.isEligibleForPreEndDeclarations()) {
+                eligible.add(entity);
+            }
         }
+        eligible.sort(Comparator.comparingInt(Entity::getId));
+        return eligible;
+    }
 
-        if (!entity.getPosition().equals(targetEntity.getPosition())) {
-            return false;
+    /**
+     * @return the id of the next of the player's own units that can act this phase, wrapping around, or the current
+     *       one when there is nothing else to move to
+     */
+    private int nextEligibleUnit() {
+        List<Entity> eligible = eligibleUnits();
+        if (eligible.isEmpty()) {
+            return currentEntity;
         }
+        int position = -1;
+        for (int index = 0; index < eligible.size(); index++) {
+            if (eligible.get(index).getId() == currentEntity) {
+                position = index;
+                break;
+            }
+        }
+        Entity next = eligible.get((position + 1) % eligible.size());
+        LOGGER.debug("[PreEnd] Next Unit: {} of {} eligible, moving to {}", position + 1, eligible.size(),
+              next.getShortName());
+        return next.getId();
+    }
 
-        // Check if combat already exists in this building
-        boolean combatExists = game.getEntitiesVector().stream()
-              .filter(e -> e instanceof Infantry)
-              .filter(e -> e.getPosition() != null && e.getPosition().equals(targetEntity.getPosition()))
-              .map(e -> (Infantry) e)
-              .anyMatch(e -> e.getInfantryCombatTargetId() != Entity.NONE);
+    /** Lights the Next Unit button when the player has more than one unit worth moving between. */
+    protected void setNextUnitEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_NEXT).setEnabled(enabled);
+    }
 
-        return !combatExists;
+    /**
+     * The Scan button is its own cancel: pressing it a second time backs out. Players went looking for a separate
+     * Cancel button, so while a target is being picked the button says Cancel Scan instead.
+     */
+    private void updateScanButtonLabel() {
+        Entity scanner = game.getEntity(currentEntity);
+        boolean orderQueued = (scanner != null) && (scanner.getPendingScan() != null);
+        boolean cancels = selectingScanTarget || orderQueued;
+        MegaMekButton scanButton = buttons.get(PreEndCommand.PREEND_SCAN);
+        scanButton.setText(Messages.getString(cancels
+              ? "PreEndDeclarationsDisplay.scanCancel"
+              : "PreEndDeclarationsDisplay.scan"));
+        // Lit for as long as scanning is armed, so the player can see the mode is on and that pressing it undoes it
+        scanButton.setActive(cancels);
+        LOGGER.debug("[Scan] button label -> {} (unit={}, picking={}, orderQueued={}, enabled={})",
+              cancels ? "Cancel Scan" : "Scan",
+              (scanner == null) ? "none selected" : scanner.getShortName(),
+              selectingScanTarget, orderQueued, scanButton.isEnabled());
+    }
+
+    protected void setScanEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_SCAN).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PreEndCommand.PREEND_SCAN.getCmd(), enabled);
+    }
+
+    /**
+     * @return why the selected unit cannot scan that hex or unit, or {@code null} when it can. The same three questions
+     *       the server asks when it resolves the order - the ruleset, range, line of sight - so no order is sent that
+     *       the server would refuse.
+     */
+    private @Nullable String scanRefusal(Entity scanner, Targetable scanTarget) {
+        if ((scanTarget.getPosition() == null) || !ScanMission.canOrderScan(scanner)) {
+            return Messages.getString("PreEndDeclarationsDisplay.scanRefused",
+                  Messages.getString("ObjectiveScan.cannotScanNow"));
+        }
+        RulesScanning rules = ScanMission.scanningRules(game);
+        TargetRoll targetRoll = rules.scanTargetRoll(scanner, scanTarget);
+        if (targetRoll.getValue() == TargetRoll.IMPOSSIBLE) {
+            return Messages.getString("PreEndDeclarationsDisplay.scanRefused", targetRoll.getDesc());
+        }
+        int distance = scanner.getPosition().distance(scanTarget.getPosition());
+        int range = rules.scanningRange(scanner, scanTarget);
+        if (distance > range) {
+            return Messages.getString("PreEndDeclarationsDisplay.scanOutOfRange", distance, range);
+        }
+        if (!LosEffects.calculateLOS(game, scanner, scanTarget).canSee()) {
+            return Messages.getString("PreEndDeclarationsDisplay.scanNoLineOfSight");
+        }
+        return null;
+    }
+
+    /**
+     * The Scan button: asks the player for the hex or unit to scan, and pressing it again withdraws the question.
+     * The order itself is sent from {@link #completeScan(Coords, int)} when the hex is clicked.
+     */
+    private void doScan() {
+        Entity scanner = game.getEntity(currentEntity);
+        if (scanner == null) {
+            return;
+        }
+        if (selectingScanTarget) {
+            selectingScanTarget = false;
+            setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
+            LOGGER.debug("[Scan] {} scan order withdrawn before a target was chosen", scanner.getShortName());
+            updateScanButtonLabel();
+            return;
+        }
+        if (scanner.getPendingScan() != null) {
+            // The order is already with the server, so take it back rather than making the player pick another hex
+            clientgui.getClient().sendScanWithdraw(scanner.getId());
+            scanner.setPendingScan(null);
+            showTheOrderImmediately(scanner, null);
+            setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
+            clientgui.addToast(ToastLevel.INFO,
+                  Messages.getString("PreEndDeclarationsDisplay.scanWithdrawn", scanner.getShortName()));
+            LOGGER.info("[Scan] {} withdrew its scan order", scanner.getShortName());
+            updateScanButtonLabel();
+            return;
+        }
+        selectingScanTarget = true;
+        setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.SelectScanTarget",
+              scanner.getShortName(),
+              scanningRangeText(ScanMission.scanningRules(game).scanningRange(scanner, null))));
+        LOGGER.debug("[Scan] {} waiting for a hex or unit to scan", scanner.getShortName());
+        updateScanButtonLabel();
+    }
+
+    /**
+     * @param scanningRange the unit's scanning range
+     *
+     * @return the range as the player should read it: the number of hexes, or a word for a ruleset that sets no
+     *       distance limit, so the status bar never shows a meaningless very large number
+     */
+    private static String scanningRangeText(int scanningRange) {
+        return RulesScanning.isUnlimitedRange(scanningRange)
+              ? Messages.getString("PreEndDeclarationsDisplay.scanRangeSensors")
+              : String.valueOf(scanningRange);
+    }
+
+    /**
+     * Sends the selected unit's order to scan the clicked hex, or the unit standing in it, in the End Phase. The
+     * order goes to the server at once, like the other declarations of this phase, so the player can go on to give
+     * other units theirs before pressing Done. One scan per unit per turn: a later order replaces an earlier one.
+     *
+     * @param coords  the clicked hex
+     * @param boardId the board it is on
+     */
+    private void completeScan(Coords coords, int boardId) {
+        selectingScanTarget = false;
+        setStatusBarText(Messages.getString("PreEndDeclarationsDisplay.its_your_turn"));
+        Entity scanner = game.getEntity(currentEntity);
+        if (scanner == null) {
+            return;
+        }
+        Targetable scanTarget = chooseScanTarget(coords, boardId);
+        if (scanTarget == null) {
+            return;
+        }
+        String refusal = scanRefusal(scanner, scanTarget);
+        if (refusal != null) {
+            clientgui.addToast(ToastLevel.WARNING, refusal, scanner);
+            LOGGER.debug("[Scan] {} cannot scan {}: {}", scanner.getShortName(), coords.getBoardNum(), refusal);
+            return;
+        }
+        ScanAction order = (scanTarget instanceof Entity targetUnit)
+              ? new ScanAction(currentEntity, targetUnit.getId())
+              : new ScanAction(currentEntity, coords, boardId);
+        clientgui.getClient().sendScanOrder(order);
+        // Show the order at once rather than after the round trip. A scan order lives for part of one turn and a
+        // player often re-points it two or three times before ending the turn, so waiting for the server to
+        // confirm left the sweep lagging a click behind the choice. The server's own update follows and wins.
+        showTheOrderImmediately(scanner, order);
+        String targetName = (scanTarget instanceof Entity targetUnit)
+              ? targetUnit.getShortName()
+              : scanTarget.getPosition().getBoardNum();
+        LOGGER.info("[Scan] {} ordered to scan {} in the End Phase", scanner.getShortName(), targetName);
+        clientgui.addToast(ToastLevel.SUCCESS,
+              Messages.getString("PreEndDeclarationsDisplay.scanQueued", scanner.getShortName(), targetName));
+        updateScanButtonLabel();
+        registerDeclaration();
     }
 
     /**
      * Enables or disables the initiate infantry combat button
      */
-    protected void setInitiateInfantryCombatEnabled(boolean enabled) {
-        buttons.get(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT).setEnabled(enabled);
-        clientgui.getMenuBar().setEnabled(PreEndCommand.PREEND_INITIATE_INFANTRY_COMBAT.getCmd(), enabled);
+    protected void setInfantryActionEnabled(boolean enabled) {
+        buttons.get(PreEndCommand.PREEND_INFANTRY_ACTION).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(PreEndCommand.PREEND_INFANTRY_ACTION.getCmd(), enabled);
     }
 
     /**
@@ -798,9 +1126,12 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     }
 
     /**
-     * Selects an entity for this turn
+     * Selects one of the local player's units for this turn. Public because the map menu's right-click Select
+     * offers it, the same way it does in the Movement, Firing and Physical phases.
+     *
+     * @param entityId the unit to select
      */
-    private void selectEntity(int entityId) {
+    public void selectEntity(int entityId) {
         Entity selected = game.getEntity(entityId);
         if (selected == null) {
             return;
@@ -813,6 +1144,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         // Reset the multi-mode Deploy Bridge selection for the newly selected unit; updateButtons() sets the label.
         selectingDeployBridgeHex = false;
         selectedDeployBridgeIndex = 0;
+        selectingScanTarget = false;
         clientgui.setSelectedEntityNum(entityId);
         clientgui.getUnitDisplay().displayEntity(selected);
         clientgui.getBoardView().highlight(selected.getPosition());
@@ -826,7 +1158,13 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      */
     private void beginMyTurn() {
         declarationMade = false;
-        LOGGER.debug("[PreEnd] pre-end declarations turn begins for the local player");
+        promptAnswered = false;
+        Player localPlayer = clientgui.getClient().getLocalPlayer();
+        LOGGER.info("[PreEnd] {}'s declaration turn begins; infantry action stakes: {}", localPlayer.getName(),
+              InfantryActionStrengths.stakes(game, localPlayer).stream()
+                    .map(building -> (InfantryActionStrengths.defends(localPlayer, building) ? "defends "
+                          : "attacks ") + building.getShortName())
+                    .toList());
         clientgui.maybeShowUnitDisplay();
         setTarget(null);
         selectingDeployBridgeHex = false;
@@ -843,6 +1181,8 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         startTimer();
         LOGGER.debug("[PreEnd] beginMyTurn complete: currentEntity={}, butDoneEnabled={}, butSkipEnabled={}",
               currentEntity, butDone.isEnabled(), butSkipTurn.isEnabled());
+        // After the turn's buttons are settled, so the player can still act from the button if they say no
+        SwingUtilities.invokeLater(this::offerDeclarations);
     }
 
     /**
@@ -861,7 +1201,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
      * Disables all action buttons
      */
     private void disableButtons() {
-        setInitiateInfantryCombatEnabled(false);
+        setInfantryActionEnabled(false);
         setNovaNetworkEnabled(false);
         setVariableRangeTargetingEnabled(false);
         setAbandonEnabled(false);
@@ -876,6 +1216,20 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
     //
     // GameListener
     //
+    /**
+     * The server owns whether a scan order stands, and it tells us by sending the unit back. Refreshing the buttons
+     * here is what moves the Scan button to Cancel Scan once the order is accepted, and back again once it is
+     * withdrawn, without the client guessing ahead of the server.
+     */
+    @Override
+    public void gameEntityChange(GameEntityChangeEvent event) {
+        super.gameEntityChange(event);
+        boolean isTheSelectedUnit = (event.getEntity() != null) && (event.getEntity().getId() == currentEntity);
+        if (isTheSelectedUnit && isMyTurn()) {
+            updateButtons();
+        }
+    }
+
     @Override
     public void gameTurnChange(megamek.common.event.GameTurnChangeEvent e) {
         if (isIgnoringEvents()) {

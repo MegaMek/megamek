@@ -88,6 +88,16 @@ class SettingsControlsTest {
     }
 
     @Test
+    void buttonResolvesTextAndExplicitHelp() {
+        SettingsButton button = new SettingsButton("normalButton", TEXT, "normal");
+
+        assertEquals("Normal", button.getText());
+        assertEquals("Normal tooltip", button.getSettingsHelpText());
+        assertTrue(button.getToolTipText().contains("Normal tooltip"));
+        assertEquals("normalButton", button.getName());
+    }
+
+    @Test
     void missingTooltipIsNotInstalled() {
         SettingsTextField textField = new SettingsTextField(TEXT, "placeholder");
 

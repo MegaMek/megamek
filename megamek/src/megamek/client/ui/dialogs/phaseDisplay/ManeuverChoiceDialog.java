@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2004-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2004-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -320,7 +320,7 @@ public class ManeuverChoiceDialog extends JDialog implements ActionListener {
             checkboxes[type].setEnabled(canPerform);
             // Update tooltip to show current state using ManeuverType
             checkboxes[type].setToolTipText(
-                ManeuverType.getManeuverTooltip(type, canPerform, velocity, altitude, isVSTOL_CF));
+                ManeuverType.getManeuverTooltip(type, canPerform, velocity, altitude, ceiling, isVSTOL_CF));
         }
     }
 }

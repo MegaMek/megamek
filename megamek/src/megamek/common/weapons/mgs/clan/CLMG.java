@@ -36,6 +36,7 @@ package megamek.common.weapons.mgs.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -72,10 +73,13 @@ public class CLMG extends MGWeapon {
         shortAV = 2;
         maxRange = RANGE_SHORT;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "228, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 228),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.A)
               .setClanAdvancement(2821, 2825, 2830, DATE_NONE, DATE_NONE)

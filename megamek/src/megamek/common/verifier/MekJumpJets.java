@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,12 +41,13 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.units.Mek;
 
+@Deprecated(since = "0.51.0", forRemoval = true)
 public enum MekJumpJets {
     JJ_STANDARD(EquipmentTypeLookup.JUMP_JET, true, Mek.JUMP_STANDARD),
     JJ_IMPROVED(EquipmentTypeLookup.IMPROVED_JUMP_JET, false, Mek.JUMP_IMPROVED),
     JJ_PROTOTYPE(EquipmentTypeLookup.PROTOTYPE_JUMP_JET, true, Mek.JUMP_PROTOTYPE),
     JJ_PROTOTYPE_IMPROVED(EquipmentTypeLookup.PROTOTYPE_IMPROVED_JJ, false, Mek.JUMP_PROTOTYPE_IMPROVED),
-    JJ_UMU(EquipmentTypeLookup.MEK_UMU, false, Mek.JUMP_NONE);
+    JJ_UMU(EquipmentTypeLookup.MEK_UMU, true, Mek.JUMP_NONE);
 
     private final String internalName;
     private final boolean industrial;
@@ -71,6 +72,7 @@ public enum MekJumpJets {
         return jumpType;
     }
 
+    @Deprecated(since = "0.51.0", forRemoval = true)
     public static List<EquipmentType> allJJs(boolean industrialOnly) {
         List<EquipmentType> retVal = new ArrayList<>();
         for (MekJumpJets jj : values()) {

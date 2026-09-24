@@ -39,13 +39,13 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.common.HexTarget;
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -69,7 +69,7 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
 
     public VGLWeaponHandler(ToHitData t, WeaponAttackAction w, Game g, TWGameManager m) throws EntityLoadingException {
         super(t, w, g, m);
-        generalDamageType = HitData.DAMAGE_NONE;
+        generalDamageType = HitDamageType.DAMAGE_NONE;
     }
 
     /**
@@ -208,4 +208,3 @@ public class VGLWeaponHandler extends AmmoWeaponHandler {
     }
 
 }
-

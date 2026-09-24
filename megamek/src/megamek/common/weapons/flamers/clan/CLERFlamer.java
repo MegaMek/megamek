@@ -36,6 +36,7 @@ package megamek.common.weapons.flamers.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -73,11 +74,13 @@ public class CLERFlamer extends FlamerWeapon {
         cost = 15000;
         shortAV = 2;
         maxRange = RANGE_SHORT;
-        rulesRefs = "124, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 124),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 184)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(DATE_NONE, 3067, 3081, DATE_NONE, DATE_NONE)

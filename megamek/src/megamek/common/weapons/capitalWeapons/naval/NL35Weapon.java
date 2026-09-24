@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons.naval;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,10 +70,8 @@ public class NL35Weapon extends NLWeapon {
         this.medAV = 3.5;
         this.longAV = 3.5;
         this.maxRange = RANGE_LONG;
-        rulesRefs = "145, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 145);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(DATE_ES, 2305, DATE_NONE, 2950, 3051)

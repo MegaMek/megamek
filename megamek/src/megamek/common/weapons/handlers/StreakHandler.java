@@ -80,8 +80,8 @@ public class StreakHandler extends MissileWeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             return Compute.directBlowInfantryDamage(
-                  weaponType.getRackSize() * 2, bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getRackSize() * 2, getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         }

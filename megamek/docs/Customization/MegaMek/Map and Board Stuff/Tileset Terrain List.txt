@@ -1,0 +1,90 @@
+MEGAMEK TILESET - TERRAIN LIST
+==============================================================================
+Source: megamek/common/units/Terrains.java (names[] array).
+The keyword is what the tileset uses to match a hex to an image.
+"Level" = the number after the keyword (e.g. woods:2 = heavy woods).
+
+Grouped by what it means for the artist. Everything under "NEEDS NO ART" is
+bookkeeping - numbers the engine reads or edges it draws itself.
+
+
+==============================================================================
+GROUND / AREA TERRAIN  (opaque full-hex tiles)
+==============================================================================
+  woods              1 light, 2 heavy, 3 ultra
+  jungle             1 light, 2 heavy, 3 ultra
+  water              level = depth (also edge-connected, see below)
+  rough              1 normal, 2 ultra
+  rubble             1 light .. 4 hardened, 5 wall, 6 ultra
+  sand               -
+  tundra             -
+  snow               1 thin, 2 deep
+  swamp              1 normal, 2/3 quicksand
+  mud                normal / deep
+  ice                -
+  black_ice          -
+  magma              1 crust, 2 liquid
+  geyser             1 dormant, 2 active, 3 magma vent
+  planted_fields     crops
+  heavy_industrial   level = height
+  hazardous_liquid   level = pool type
+  ultra_sublevel     deep pit
+  space              starfield backdrop
+  sky                low-atmosphere backdrop
+
+
+==============================================================================
+EFFECTS OVERLAYS  (transparent, often animated GIF)
+==============================================================================
+  fire               1 fire, 2 inferno, 3 inferno bomb, 4 inferno IV
+  smoke              1 light, 2 heavy, 3/4 laser-inhibiting, chaff
+  rapids             1 rapids, 2 torrent
+  screen             space chaff cloud
+
+
+==============================================================================
+EDGE-CONNECTED TERRAIN  (directional sets - must line up hex-to-hex)
+==============================================================================
+  road               1 paved, 2 alley, 3 dirt, 4 gravel
+  pavement           -
+  bridge             -
+  water              shoreline edges
+  cliff_top          per-edge cliff face
+  incline_top        per-edge slope shading
+  incline_high_top   per-edge slope shading, big (3+ level) drop
+
+
+==============================================================================
+STRUCTURES  (theme-neutral, one style used everywhere)
+==============================================================================
+  building           1 light, 2 medium, 3 heavy, 4 hardened
+  bldg_class         1 hangar, 2 fortress, 3 gun emplacement
+  fuel_tank          -
+  fortified          dug-in position
+
+
+==============================================================================
+FLUFF OVERLAYS  (optional cosmetic; lets us stack special images)
+==============================================================================
+  fluff
+  bldg_fluff
+  road_fluff
+  ground_fluff
+  water_fluff
+  arms               blown-off arms used as clubs
+  legs               blown-off legs used as clubs
+
+
+==============================================================================
+NEEDS NO ART
+==============================================================================
+Pure data (numbers the engine reads, never drawn):
+  bldg_cf, bldg_elev, bldg_basement_type, bldg_armor,
+  bridge_cf, bridge_elev,
+  fuel_tank_cf, fuel_tank_elev, fuel_tank_magn,
+  metal_deposit, bldg_base_collapsed, deployment_zone, impassable,
+  foliage_elev (height helper for woods/jungle),
+  solaris_elevator, industrial_elevator
+
+Engine-generated (auto-added, hidden from the map editor):
+  incline_bottom, incline_high_bottom, cliff_bottom, sky, bridge_repaired

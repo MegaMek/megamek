@@ -32,7 +32,34 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.Hex;
 import megamek.common.rules.RulesTerrain;
+import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 
 public class CoreRulesTerrain extends RulesTerrain {
+    
+    /**
+     * {@inheritDoc}
+     * Road to road elevation change is -1 MP
+     */
+    @Override
+    public int getRoadElevationCostDifference(Hex srcHex, Hex destHex, int deltaElevation) {
+        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD) && deltaElevation > 0) {
+            return -1;
+        }        
+        return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * Using roads can increase the max elevation change by 1. Core p.53
+     */
+    @Override
+    public int getMaxElevationChangeAllowed(Hex srcHex, Hex destHex, int maxElevationChange) {
+        if (srcHex.containsTerrain(Terrains.ROAD) && destHex.containsTerrain(Terrains.ROAD)) {
+            return (maxElevationChange != Entity.UNLIMITED_JUMP_DOWN) ? maxElevationChange + 1 : maxElevationChange;
+        }
+        return maxElevationChange;
+    }
 }

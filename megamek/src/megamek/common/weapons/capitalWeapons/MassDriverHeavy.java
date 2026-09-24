@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -71,7 +72,7 @@ public class MassDriverHeavy extends MassDriverWeapon {
         this.shortAV = 140;
         this.medAV = 140;
         this.longAV = 140;
-        rulesRefs = "135, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 135);
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.F)
               .setISAdvancement(2715, DATE_NONE, DATE_NONE, 2855, 3066)

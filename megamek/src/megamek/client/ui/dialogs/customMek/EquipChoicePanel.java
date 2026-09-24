@@ -33,10 +33,7 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,15 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import com.formdev.flatlaf.FlatClientProperties;
@@ -63,10 +52,12 @@ import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.phaseDisplay.EcmSuiteChoiceDialog;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.AmmoTypeFlag;
@@ -129,8 +120,21 @@ public class EquipChoicePanel extends JPanel {
     private final JCheckBox chEICockpit = new JCheckBox(Messages.getString("CustomMekDialog.labEICockpit"));
     private final JCheckBox chDamageInterruptCircuit
           = new JCheckBox(Messages.getString("CustomMekDialog.labDamageInterruptCircuit"));
-    /** Ghost target equipment mode selectors, keyed by equipment number on the entity. */
+    /**
+     * Mode selectors for the equipment shown in the ECM section - ECM suites, active probes, C3 gear, comms gear and
+     * the command console - keyed by equipment number on the entity. The ECM suites among them also drive the
+     * single-suite conflict check.
+     */
     private final Map<Integer, JComboBox<String>> ecmModeSelectors = new LinkedHashMap<>();
+    /** Set while the ECM dropdowns are being changed in code, so those changes do not re-trigger the conflict check. */
+    private boolean adjustingEcmModes;
+    /**
+     * Picks which sensor the unit starts the game with. Null when the unit has fewer than two sensors, which leaves
+     * it nothing to choose.
+     */
+    private JComboBox<String> chSensors;
+    /** Ticked to remember the chosen sensor for every unit of this chassis and model, not just this one. */
+    private JCheckBox chRememberSensor;
     private final JComboBox<String> choC3 = new JComboBox<>();
     ClientGUI clientgui;
     Client client;
@@ -279,6 +283,9 @@ public class EquipChoicePanel extends JPanel {
 
         // Set up mines
         setupMines(gbc);
+
+        // Set up the starting sensor choice
+        setupSensorChoice(gbc);
 
         // Set up ECM equipment mode selectors (ECM/ECCM, and Ghost Targets per TO:AR p.100)
         setupEcmModes(game, gbc);
@@ -506,7 +513,9 @@ public class EquipChoicePanel extends JPanel {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
-            if (e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e)) {
+            if (entity.hasC3M() && e.C3MasterIs(e)) {
+                // A master joining a company commander occupies a company-level master link - also for
+                // single-computer company masters (CR p.198, Configuration 1)
                 nodes = e.calculateFreeC3MNodes();
             }
             if (entity.C3MasterIs(e) && !entity.equals(e)) {
@@ -653,8 +662,41 @@ public class EquipChoicePanel extends JPanel {
                     bTechMatch = atCheck.getStaticTechLevel().ordinal() <= legalLevel.ordinal() && canUseThisAmmo;
                 }
 
-                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 EnumSet<AmmoType.Munitions> munitionsTypes = atCheck.getMunitionType();
+
+                boolean bTWRules = false;
+                IOption rules_system = gameOpts.getOption(OptionsConstants.RULES_SYSTEM);
+                String rules_selected = (rules_system == null) ? OptionsConstants.RULES_CORE :
+                      rules_system.stringValue();
+                if (OptionsConstants.RULES_TW.equals(rules_selected)) {
+                    bTWRules = true;
+                }
+                if (bTWRules) {
+                    // Check if the ammo type is caseless, and do not include it if it is.
+                    if (atCheck.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY
+                          && munitionsTypes.contains(AmmoType.Munitions.M_CASELESS)) {
+                        continue;
+                    }
+
+                    // Check for advanced Thunderbolt ammos and skip them if Core is not enabled
+                    switch (atCheck.getAmmoType()) {
+                        case AmmoType.AmmoTypeEnum.TBOLT_5:
+                        case AmmoType.AmmoTypeEnum.TBOLT_10:
+                        case AmmoType.AmmoTypeEnum.TBOLT_15:
+                        case AmmoType.AmmoTypeEnum.TBOLT_20:
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_SEMIGUIDED)) {
+                                continue;
+                            }
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_NARC_CAPABLE)) {
+                                continue;
+                            }
+                            if (munitionsTypes.contains(AmmoType.Munitions.M_THUNDER)) {
+                                continue;
+                            }
+                    }
+                }
+
+                // If clan_ignore_eq_limits is unchecked, do NOT allow Clans to use IS-only ammo.
                 if (!gameOpts.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH) &&
                       entity.isClan() &&
                       atCheck.notAllowedByClanRules()) {
@@ -672,7 +714,8 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
-                if (!gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS) &&
+                if (!Game.rulesManager.getRulesGame()
+                      .allowMinefields(gameOpts.booleanOption(OptionsConstants.ADVANCED_MINEFIELDS)) &&
                       AmmoType.canDeliverMinefield(atCheck)) {
                     continue;
                 }
@@ -932,7 +975,7 @@ public class EquipChoicePanel extends JPanel {
             mineChoice.applyChoice();
         }
         // update bomb setting
-        if (null != m_bombs) {
+        if (m_bombs != null) {
             m_bombs.applyChoice();
         }
         if (entity.isConventionalInfantry()) {
@@ -1048,8 +1091,16 @@ public class EquipChoicePanel extends JPanel {
             }
         }
 
+        // Both ECM dropdowns can still be showing a suite in use at this point, because every suite starts in its
+        // ECM mode and the player never had to touch either one. Ask before the modes are applied.
+        askWhichEcmSuiteToKeep(null);
+
         // Apply ghost target equipment mode selections
         applyEcmModes();
+
+        // Apply the starting sensor choice
+        applySensorChoice();
+        applyRememberedSensorChoice();
 
         if (entity.hasC3() && (choC3.getSelectedIndex() > -1)) {
             Entity chosen = client.getEntity(entityCorrespondence[choC3.getSelectedIndex()]);
@@ -1140,6 +1191,96 @@ public class EquipChoicePanel extends JPanel {
      * activation/deactivation ("Off") modes, Communications Equipment (7+ tons) and Cockpit Command Console when they
      * can be set to Ghost Targets mode.
      */
+    /**
+     * Sets up the dropdown that picks which sensor the unit starts the game with.
+     *
+     * <p>Without this the player can only change a unit's sensor once the game has started, during round zero. The
+     * choice made here is the same one that dropdown makes, so a unit set up in the lobby deploys on the sensor the
+     * player wanted rather than on whichever sensor it happened to load with.</p>
+     *
+     * <p>Nothing is shown for a unit with fewer than two sensors, since it has no choice to make. A ProtoMek, for
+     * one, carries no sensors at all.</p>
+     */
+    private void setupSensorChoice(GBC2 constraints) {
+        Vector<Sensor> sensors = entity.getSensors();
+        if (sensors.size() < 2) {
+            return;
+        }
+
+        add(new SectionTitleLabel(Messages.getString("CustomMekDialog.sensorSection")), constraints.fullLine());
+
+        chSensors = new JComboBox<>();
+        chSensors.setToolTipText(Messages.getString("CustomMekDialog.labSensors.tooltip"));
+        for (int sensorIndex = 0; sensorIndex < sensors.size(); sensorIndex++) {
+            Sensor sensor = sensors.elementAt(sensorIndex);
+            // An installed probe the unit cannot currently use is still listed, marked, so the player can see why
+            // the unit is not using it. This matches the round zero dropdown.
+            String condition = (sensor.isBAP() && !entity.hasBAP(false))
+                  ? Messages.getString("CustomMekDialog.sensorDisabled")
+                  : "";
+            chSensors.addItem(sensor.getDisplayName() + condition);
+            if ((entity.getNextSensor() != null) && (sensor.type() == entity.getNextSensor().type())) {
+                chSensors.setSelectedIndex(sensorIndex);
+            }
+        }
+
+        JLabel labSensors = new JLabel(Messages.getString("CustomMekDialog.labSensors"), SwingConstants.RIGHT);
+        labSensors.setToolTipText(Messages.getString("CustomMekDialog.labSensors.tooltip"));
+        add(labSensors, constraints.forLabel());
+        add(chSensors, constraints.eol());
+
+        // Saving is keyed on chassis and model, so a unit with neither has nothing to save against
+        if (!entity.getChassis().isBlank() && !entity.getModel().isBlank()) {
+            chRememberSensor = new JCheckBox(Messages.getString("CustomMekDialog.labRememberSensor"));
+            chRememberSensor.setToolTipText(Messages.getString("CustomMekDialog.labRememberSensor.tooltip"));
+            chRememberSensor.setSelected(
+                  SensorChoiceHandler.getSensorChoice(entity.getChassis(), entity.getModel()) != null);
+            add(new JLabel(), constraints.forLabel());
+            add(chRememberSensor, constraints.eol());
+        }
+    }
+
+    /**
+     * Applies the sensor picked in the dropdown, and marks the unit so the player's sensor preference leaves it
+     * alone from here on.
+     */
+    private void applySensorChoice() {
+        if (chSensors == null) {
+            return;
+        }
+        int sensorIndex = chSensors.getSelectedIndex();
+        if ((sensorIndex < 0) || (sensorIndex >= entity.getSensors().size())) {
+            return;
+        }
+        Sensor chosenSensor = entity.getSensors().elementAt(sensorIndex);
+        Sensor currentSensor = entity.getNextSensor();
+        if ((currentSensor != null) && (currentSensor.type() == chosenSensor.type())) {
+            return;
+        }
+        entity.setNextSensor(chosenSensor);
+        entity.setCustomSensorChoice(true);
+    }
+
+    /**
+     * Saves or forgets the chosen sensor for this chassis and model, so every unit of the design starts on it.
+     *
+     * <p>The file this writes is read by the unit file parser, which MekHQ and MegaMekLab share, so a choice saved
+     * here also applies in a campaign.</p>
+     */
+    private void applyRememberedSensorChoice() {
+        if ((chRememberSensor == null) || (chSensors == null)) {
+            return;
+        }
+        int sensorIndex = chSensors.getSelectedIndex();
+        if ((sensorIndex < 0) || (sensorIndex >= entity.getSensors().size())) {
+            return;
+        }
+        SensorFamily chosenFamily = chRememberSensor.isSelected()
+              ? SensorFamily.familyOf(entity.getSensors().elementAt(sensorIndex))
+              : null;
+        SensorChoiceHandler.setSensorChoice(entity.getChassis(), entity.getModel(), chosenFamily);
+    }
+
     private void setupEcmModes(Game game, GBC2 gbc) {
         boolean hasEccmOption = game.getOptions().booleanOption(OptionsConstants.ADVANCED_TAC_OPS_ECCM);
         boolean hasGhostTargetOption = game.getOptions()
@@ -1192,7 +1333,12 @@ public class EquipChoicePanel extends JPanel {
             } else if (hasGhostTargetOption && type.hasFlag(MiscType.F_COMMAND_CONSOLE)) {
                 modes.add("Default");
                 modes.add("Ghost Targets");
-            } else if ((type.hasFlag(MiscType.F_BAP) || type.hasFlag(MiscTypeFlag.ANY_C3))
+            } else if ((type.hasFlag(MiscType.F_BAP)
+                  || type.hasFlag(MiscTypeFlag.ANY_C3)
+                  || type.hasFlag(MiscType.F_ARTEMIS)
+                  || type.hasFlag(MiscType.F_ARTEMIS_V)
+                  || type.hasFlag(MiscType.F_ARTEMIS_PROTO)
+                  || type.hasFlag(MiscType.F_APOLLO))
                   && (type.getModesCount() > 1)) {
                 // Active probes, Nova CEWS (which carries F_BAP but is excluded from the ECM branch above) and C3
                 // computers can be activated/deactivated at game start; offer the modes defined on the equipment
@@ -1206,6 +1352,9 @@ public class EquipChoicePanel extends JPanel {
                 int equipmentNumber = entity.getEquipmentNum(equipment);
                 JComboBox<String> combo = new JComboBox<>(modes.toArray(new String[0]));
                 combo.setSelectedItem(equipment.curMode().getName());
+                if (type.hasFlag(MiscType.F_ECM)) {
+                    combo.addActionListener(event -> resolveEcmSuiteConflict(equipmentNumber));
+                }
 
                 JLabel label = new JLabel(equipment.getName() + ":", SwingConstants.RIGHT);
                 add(label, gbc.forLabel());
@@ -1216,7 +1365,112 @@ public class EquipChoicePanel extends JPanel {
 
         if (ecmModeSelectors.isEmpty()) {
             remove(title);
+        } else if (selectedEcmSuitesInUse().size() > 1) {
+            // The panel can open with two suites already in use, since every ECM suite starts in its ECM mode.
+            // Say so here rather than leaving the player to find out when the game starts.
+            add(new JLabel(Messages.getString("CustomMekDialog.ecmOneAtATime")), gbc.fullLine());
         }
+    }
+
+    /**
+     * Asks the player which ECM suite to leave on when the dropdown they just changed would put a second one into
+     * use, and sets every other ECM dropdown to {@code "Off"}. A unit may use only one ECM suite at a time, of any
+     * type (TM p.213, CO p.200), and every mode other than {@code "Off"} counts as using the suite.
+     *
+     * <p>Cancelling sets the dropdown the player just changed to {@code "Off"}, which is the one choice that is
+     * always legal. While the stealth armor system is engaged no ECM suite may be switched off at all, so the
+     * dropdowns offer no {@code "Off"} entry and there is nothing to resolve here; the server sorts that unit out
+     * when the game starts.</p>
+     *
+     * @param changedEquipmentNumber the equipment number of the ECM suite whose dropdown the player just changed
+     */
+    private void resolveEcmSuiteConflict(int changedEquipmentNumber) {
+        if (adjustingEcmModes) {
+            return;
+        }
+        JComboBox<String> changedCombo = ecmModeSelectors.get(changedEquipmentNumber);
+        if ((changedCombo != null) && !Mounted.MODE_OFF.equals(changedCombo.getSelectedItem())) {
+            askWhichEcmSuiteToKeep(changedCombo);
+        }
+    }
+
+    /**
+     * Opens the choice dialog when the ECM dropdowns have more than one suite in use, and sets every dropdown but the
+     * one the player keeps to {@code "Off"}.
+     *
+     * <p>This runs both when the player changes a dropdown and when they confirm the customization. The second case
+     * is needed because every ECM suite starts in its {@code "ECM"} mode, so a unit carrying two of them opens this
+     * panel already showing both in use - the player can confirm without touching either dropdown, and nothing would
+     * have fired the change check.</p>
+     *
+     * <p>While the stealth armor system is engaged no ECM suite may be switched off at all, so the dropdowns offer no
+     * {@code "Off"} entry and there is nothing to resolve here; the server sorts that unit out when the game
+     * starts.</p>
+     *
+     * @param changedCombo the dropdown the player just changed, or {@code null} when the check runs because the
+     *                     customization is being confirmed. Cancelling switches off the changed dropdown, or, with
+     *                     nothing to revert, keeps the suite the game itself would have kept
+     */
+    private void askWhichEcmSuiteToKeep(@Nullable JComboBox<String> changedCombo) {
+        if (EquipmentActivation.isStealthOnOrActivating(entity)) {
+            return;
+        }
+        Map<MiscMounted, String> suitesInUse = selectedEcmSuitesInUse();
+        if (suitesInUse.size() < 2) {
+            return;
+        }
+
+        MiscMounted keptSuite = EcmSuiteChoiceDialog.showSingleChoiceDialog(clientgui.getFrame(), entity,
+              suitesInUse);
+        adjustingEcmModes = true;
+        try {
+            if (keptSuite == null) {
+                if (changedCombo != null) {
+                    changedCombo.setSelectedItem(Mounted.MODE_OFF);
+                    return;
+                }
+                keptSuite = EquipmentActivation.preferredEcmSuite(new ArrayList<>(suitesInUse.keySet()));
+                if (keptSuite == null) {
+                    return;
+                }
+            }
+            for (MiscMounted suite : suitesInUse.keySet()) {
+                if (suite.equals(keptSuite)) {
+                    continue;
+                }
+                JComboBox<String> combo = ecmModeSelectors.get(entity.getEquipmentNum(suite));
+                if (combo != null) {
+                    combo.setSelectedItem(Mounted.MODE_OFF);
+                }
+            }
+        } finally {
+            adjustingEcmModes = false;
+        }
+    }
+
+    /**
+     * Returns the ECM suites the dropdowns currently have in use, each mapped to the mode selected for it. The modes
+     * are read from the dropdowns rather than the equipment because the customization has not been applied yet.
+     *
+     * @return the suites in use, in mount order
+     */
+    private Map<MiscMounted, String> selectedEcmSuitesInUse() {
+        Map<MiscMounted, String> suitesInUse = new LinkedHashMap<>();
+        for (MiscMounted suite : entity.getMisc()) {
+            MiscType suiteType = suite.getType();
+            if ((suiteType == null) || !suiteType.hasFlag(MiscType.F_ECM)) {
+                continue;
+            }
+            JComboBox<String> combo = ecmModeSelectors.get(entity.getEquipmentNum(suite));
+            if (combo == null) {
+                continue;
+            }
+            String selectedMode = (String) combo.getSelectedItem();
+            if ((selectedMode != null) && !Mounted.MODE_OFF.equals(selectedMode)) {
+                suitesInUse.put(suite, selectedMode);
+            }
+        }
+        return suitesInUse;
     }
 
     /**

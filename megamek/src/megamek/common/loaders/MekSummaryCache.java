@@ -427,7 +427,7 @@ public class MekSummaryCache {
                         File fSource = ms.getSourceFile();
                         if (fSource.exists()) {
                             vMeks.addElement(ms);
-                            if (null == ms.getEntryName()) {
+                            if (ms.getEntryName() == null) {
                                 sKnownFiles.add(fSource.toString());
                             } else {
                                 sKnownFiles.add(ms.getEntryName());
@@ -439,6 +439,12 @@ public class MekSummaryCache {
                     inputStream.close();
                 }
             } catch (Exception ex) {
+                // A cache-format change can fail after some entries were read. Rescan every unit instead of retaining
+                // partial data or treating the old cache timestamp as authoritative.
+                vMeks.clear();
+                sKnownFiles.clear();
+                lLastCheck = 0;
+                cacheCount = 0;
                 loadReport.append("  Unable to load unit cache: ").append(ex.getMessage()).append("\n");
                 logger.error(loadReport.toString(), ex);
             }
@@ -708,7 +714,7 @@ public class MekSummaryCache {
             File source = mekSummary.getSourceFile();
             if (source.exists()) {
                 units.add(mekSummary);
-                if (null == mekSummary.getEntryName()) {
+                if (mekSummary.getEntryName() == null) {
                     knownFiles.add(source.toString());
                 } else {
                     knownFiles.add(mekSummary.getEntryName());
@@ -772,8 +778,8 @@ public class MekSummaryCache {
     }
 
     /**
-     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit
-     * cache to be loaded. The unit does not need to be part of the official cache.
+     * Builds a fully populated {@link MekSummary} from a standalone unit file, without requiring the entire unit cache
+     * to be loaded. The unit does not need to be part of the official cache.
      *
      * <p>This is intended for tooling (such as the SVG mass printer) that needs to process arbitrary or custom
      * {@code .blk}/{@code .mtf} files.</p>
@@ -872,6 +878,11 @@ public class MekSummaryCache {
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
         ms.setAdvancedYear(e.getProductionDate(e.isClan()));
         ms.setStandardYear(e.getCommonDate(e.isClan()));
+        ms.setPrototypeDate(e.getPrototypeDate());
+        ms.setProductionDate(e.getProductionDate());
+        ms.setCommonDate(e.getCommonDate());
+        ms.setExtinctionDate(e.getExtinctionDate());
+        ms.setReintroductionDate(e.getReintroductionDate());
         ms.setExtinctRange(e.getExtinctionRange());
         ms.setForceGeneratorAvailability(e.getForceGeneratorAvailability());
         ms.setMissionRoles(e.getMissionRoles());
@@ -884,6 +895,7 @@ public class MekSummaryCache {
         ms.setJumpMp(e.getAnyTypeMaxJumpMP());
         ms.setMoveMode(e.getMovementMode());
         ms.setClan(e.isClan());
+        ms.setMixedTech(e.isMixedTech());
         if (e.isSupportVehicle()) {
             ms.setSupport(true);
         }
@@ -901,11 +913,12 @@ public class MekSummaryCache {
         if (ms.isSupport()) {
             ms.setWeightClass(EntityWeightClass.getSupportWeightClass(ms.getTons(), ms.getUnitSubType()));
         } else {
-            double weightClassWeight = ms.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
+            double weightClassWeight = e.isBattleArmor() ? ms.getSuitWeight() : ms.getTons();
             ms.setWeightClass(EntityWeightClass.getWeightClass(weightClassWeight, ms.getUnitType()));
         }
 
         ms.setEquipment(e.getEquipment());
+        ms.setRulesRefs(e);
         ms.setQuirkNames(e.getQuirks());
         ms.setWeaponQuirkNames(e);
         ms.setTotalArmor(e.getTotalArmor());
@@ -1356,7 +1369,7 @@ public class MekSummaryCache {
                 String line;
                 String lookupName;
                 String entryName;
-                while (null != (line = br.readLine())) {
+                while ((line = br.readLine()) != null) {
                     if (line.startsWith("#")) {
                         continue;
                     }
@@ -1366,7 +1379,7 @@ public class MekSummaryCache {
                         entryName = line.substring(index + 1);
                         if (!nameMap.containsKey(lookupName)) {
                             MekSummary ms = nameMap.get(entryName);
-                            if (null != ms) {
+                            if (ms != null) {
                                 nameMap.put(lookupName, ms);
                             }
                         }

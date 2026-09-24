@@ -153,7 +153,6 @@ public class RapidFireACWeaponHandler extends UltraWeaponHandler {
             return false;
         }
         return ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING)
-              || ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARMOR_PIERCING_PLAYTEST)
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLAK)
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLECHETTE)
               || ammoType.getMunitionType().contains(AmmoType.Munitions.M_TRACER)

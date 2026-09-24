@@ -36,6 +36,8 @@ package megamek.common.weapons.unofficial.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -87,9 +89,9 @@ public class ISLaserAMSTHB extends LaserWeapon {
         setInstantModeSwitch(false);
         cost = 300000;
         // Since this are the Tactical Handbook Weapons I'm using the TM Stats.
-        rulesRefs = "156, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 156);
         techAdvancement.setTechBase(TechBase.IS)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3059, 3079, 3145, DATE_NONE, DATE_NONE)

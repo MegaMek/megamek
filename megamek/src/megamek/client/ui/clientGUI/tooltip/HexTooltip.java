@@ -37,6 +37,7 @@ import static megamek.client.ui.util.UIUtil.uiWhite;
 
 import java.awt.Point;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
@@ -59,6 +60,9 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
+import megamek.common.equipment.ObjectiveMarker;
+import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
@@ -230,7 +234,9 @@ public final class HexTooltip {
         if ((game != null) && !game.getGroundObjects(mcoords).isEmpty()) {
             for (ICarryable groundObject : game.getGroundObjects(mcoords)) {
                 result.append("&nbsp");
-                String groundObj = groundObject.specificName();
+                String groundObj = (groundObject instanceof ObjectiveMarker marker)
+                      ? describeControlPoint(marker, game)
+                      : groundObject.specificName();
                 String attr = String.format("FACE=Dialog COLOR=%s",
                       UIUtil.toColorHexString(GUIP.getUnitToolTipFGColor()));
                 groundObj = UIUtil.tag("FONT", attr, groundObj);
@@ -558,4 +564,62 @@ public final class HexTooltip {
     }
 
     private HexTooltip() {}
+
+    /**
+     * Describes a control point for the hex tooltip: who placed it, who holds it now, what it is worth, how
+     * far along it is, and what its scheme asks of the players - the same wording the setup pane shows, so
+     * a point explains itself the same way wherever it is read. Both sides matter and are different things:
+     * who placed a Defend or Capture point decides who can score from it, while who holds it is the live
+     * state that changes hands. Without this a marker rendered only as its own name.
+     *
+     * @param marker The control point under the cursor
+     * @param game   The game, for resolving the owning player
+     *
+     * @return The description, as tooltip HTML
+     */
+    /**
+     * @param marker The control point
+     * @param game   The game, for resolving names
+     *
+     * @return who holds the point right now, in words a player reads: the team's members, a player's name,
+     *       or "no one"
+     */
+    private static String currentHolder(ObjectiveMarker marker, Game game) {
+        if (marker.getControllingPlayerId() != ObjectiveMarker.NO_CONTROLLER) {
+            Player holder = game.getPlayer(marker.getControllingPlayerId());
+            return (holder == null) ? Messages.getString("VictoryHex.tooltip.nobody") : holder.getName();
+        }
+        if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
+            List<String> members = new ArrayList<>();
+            for (Player player : game.getPlayersList()) {
+                if ((player.getTeam() == marker.getControllingTeam()) && !player.isObserver()) {
+                    members.add(player.getName());
+                }
+            }
+            return members.isEmpty() ? "Team " + marker.getControllingTeam() : String.join(", ", members);
+        }
+        return Messages.getString("VictoryHex.tooltip.nobody");
+    }
+
+    private static String describeControlPoint(ObjectiveMarker marker, Game game) {
+        ObjectiveScoringScheme scheme = marker.getScoringScheme();
+        Player owner = game.getPlayer(marker.getOwnerId());
+        StringBuilder description = new StringBuilder("<B>");
+        description.append(marker.generalName()).append("</B>");
+        if (owner != null) {
+            description.append(" &mdash; ").append(Messages.getString("VictoryHex.tooltip.placedBy",
+                  owner.getName()));
+        }
+        description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.heldBy",
+              currentHolder(marker, game)));
+        description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.worth",
+              marker.getVictoryPointValue(), marker.getControlRadius()));
+        String progress = scheme.progressLabel();
+        if (progress != null) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.progress",
+                  progress));
+        }
+        description.append("<BR>&nbsp;").append(VictoryHexPropertiesPane.describeScheme(scheme));
+        return description.toString();
+    }
 }

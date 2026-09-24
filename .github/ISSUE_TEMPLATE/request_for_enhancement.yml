@@ -1,74 +1,71 @@
-name: "Request for Enhancement"
+name: "Request an Enhancement"
 description: >
-  Request an enhancement for MegaMek. Be sure you've confirmed it's not a duplicate 
-  and that you've checked on the Discord if your request is already known.
-title: "[RFE]"
+  Suggest a new feature, an improvement to an existing one, or a rule we have not implemented yet.
+  Please check that you are on the right repository and that nobody has asked for this already.
+type: "Feature"
 labels:
   - (RFE) Enhancement
-  
+
 body:
   - type: dropdown
     id: enhancement-type
     attributes:
-      label: "Enhancement Type *"
-      description: "Select the category of enhancement you are requesting."
+      label: "What kind of request is this?"
       options:
-        - "New Feature"
-        - "Improvement to Existing Feature"
-        - "Implementation of Missing Official Rule"
-        - "Implementation of Errata"
+        - "New feature"
+        - "Improvement to an existing feature"
+        - "Implementation of a missing official rule"
+        - "Implementation of errata"
     validations:
       required: true
 
   - type: textarea
     id: brief-description
     attributes:
-      label: "Brief Description of Enhancement *"
-      description: |
-        Please describe the feature or improvement you’d like to see. 
-        If it's based on any official rules or errata, mention that here.
-      placeholder: "Describe your enhancement here..."
+      label: "What would you like to see?"
+      description: >
+        If it comes from official rules or errata, name the book, its edition and the page, and quote
+        the relevant text.
+      placeholder: "Describe the enhancement here..."
     validations:
       required: true
 
   - type: textarea
     id: proposed-use-cases
     attributes:
-      label: "Use Cases or Rationale"
-      description: |
-        Elaborate on why this enhancement is needed or valuable:
-        - What problem does it solve?
-        - How does it improve gameplay or user experience?
-        - Are there any related rulebook references or official errata?
-      placeholder: "1. ...\n2. ...\n3. ..."
+      label: "Why is it worth doing?"
+      description: >
+        What problem does it solve, and who does it help? A rules citation counts as an answer on its
+        own.
+      placeholder: "1. ...\n2. ..."
 
-  - type: textarea
-    id: attached-files
+  - type: upload
+    id: reference-files
     attributes:
-      label: "Attach Files"
-      description: |
-        Provide any relevant files, images, or logs that illustrate your idea or 
-        help explain how it should work.
-      placeholder: "Drag and drop or click to upload relevant files."
+      label: "Reference material"
+      description: "Sketches, tables, screenshots, or a page from a rulebook."
+    validations:
+      required: false
+      accept: ".png,.jpg,.jpeg,.gif,.pdf,.txt,.csv,.zip"
 
   - type: input
     id: custom-megamek-version
     attributes:
-      label: "MegaMek Suite Version *"
-      description: "Which version of MegaMek (or related tool) are you currently using?"
-      placeholder: "Example 0.50.02"
+      label: "MegaMek Suite Version"
+      description: "Which version you are using now."
+      placeholder: "Example: 0.51.0"
     validations:
       required: true
 
   - type: checkboxes
     id: final-checks
     attributes:
-      label: "Final Verification"
-      description: "Before submitting, please confirm the following:"
+      label: "Before you submit"
       options:
-        - label: "I confirm this request hasn't already been submitted (checked the tracker)"
+        - label: "This report only contains one issue or request, and I haven't already reported it"
           required: true
-        - label: "I've discussed or asked about this enhancement on MegaMek Discord"
+        - label: >
+            I am on the right repository - MegaMek for battles, MegaMekLab for unit design, MekHQ for
+            campaigns, mm-data for unit and planet data
           required: true
-        - label: "I’m opening this on the correct repo (MegaMek, MegaMekLab, or MekHQ)"
-          required: true
+        - label: "I have discussed this on the MegaMek Discord (optional)"

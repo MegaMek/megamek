@@ -88,6 +88,19 @@ class SettingsRouteTest {
     }
 
     @Test
+    void dynamicSearchTextRefreshDoesNotReplaceStableSectionText() {
+        SettingsRoute route = new SettingsRoute("rules", List.of("Rules"));
+        route.setSectionSearchText("Battlefield Engineering");
+        route.setDynamicSearchText("bridge_repair");
+
+        route.setDynamicSearchText("minefields");
+
+        assertTrue(route.matches(SettingsRoute.normalizeSearchText("Battlefield Engineering")));
+        assertTrue(route.matches(SettingsRoute.normalizeSearchText("minefields")));
+        assertFalse(route.matches(SettingsRoute.normalizeSearchText("bridge_repair")));
+    }
+
+    @Test
     void searchNormalizationPreservesUnicodeAndIgnoresAccents() {
         assertEquals("uber настройки 設定", SettingsRoute.normalizeSearchText("Über — Настройки / 設定"));
     }

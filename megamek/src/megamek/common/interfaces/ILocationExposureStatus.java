@@ -42,4 +42,9 @@ public interface ILocationExposureStatus {
     int NORMAL = 0;
     int VACUUM = 1;
     int WET = 2;
+    /**
+     * The location is open to a tainted or toxic atmosphere (TO:AR p.54). Breach checks are made the same way as in a
+     * vacuum, but what a breach then does to the crew depends on how the air is fouled.
+     */
+    int TAINTED = 3;
 }

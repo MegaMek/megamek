@@ -103,11 +103,8 @@ public class BLKLargeSupportTankFile extends BLKFile implements IMekLoader {
         if (!dataFile.exists("cruiseMP")) {
             throw new EntityLoadingException("Could not find cruiseMP block.");
         }
-        int engineRating = (dataFile.getDataAsInt("cruiseMP")[0] * (int) t.getWeight()) - t.getSuspensionFactor();
-        if ((engineRating % 5) > 0) {
-            engineRating += (5 - (engineRating % 5));
-        }
-        t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
+        // Support ratings are derived from the owning unit by Engine.getRating(Entity).
+        t.setEngine(new Engine(0, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
         loadSVArmor(t);

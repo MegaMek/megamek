@@ -48,7 +48,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.System;
 import java.util.*;
 import java.util.List;
 import java.util.Queue;
@@ -1063,7 +1062,25 @@ public final class BoardView extends AbstractBoardView
         }
     }
 
+    /**
+     * Returns whether a unit that finished a move can have that move animated. A unit that mounted a DropShip, was
+     * recovered by a carrier or left the board during its move has no position left, so there is no hex to draw its
+     * ghost sprite in.
+     *
+     * @param entity the unit that finished a move
+     *
+     * @return {@code true} when the unit still has a position to animate from
+     */
+    static boolean canAnimateMove(@Nullable Entity entity) {
+        return (entity != null) && (entity.getPosition() != null);
+    }
+
     void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
+        if (!canAnimateMove(entity)) {
+            LOGGER.debug("Move animation skipped: {} has no position (loaded or off board)",
+                  (entity == null) ? "null entity" : entity.getShortName());
+            return;
+        }
         if (!movePath.isEmpty() && isOnThisBord(entity)) {
             MovingUnit m = new MovingUnit(entity, movePath);
             movingUnits.add(m);
@@ -1086,7 +1103,7 @@ public final class BoardView extends AbstractBoardView
             return;
         }
         if (GUIP.getShowFPS()) {
-            paintCompsStartTime = System.nanoTime();
+            paintCompsStartTime = java.lang.System.nanoTime();
         }
 
         UIUtil.setHighQualityRendering(graphics2D);
@@ -1293,7 +1310,7 @@ public final class BoardView extends AbstractBoardView
                 totalTime = 0;
                 frameCount = 0;
             } else {
-                totalTime += System.nanoTime() - paintCompsStartTime;
+                totalTime += java.lang.System.nanoTime() - paintCompsStartTime;
                 frameCount++;
             }
 
@@ -1365,23 +1382,23 @@ public final class BoardView extends AbstractBoardView
             }
         }
     }
-    
-    /** 
+
+    /**
      * Debugging method used to render minefield effectiveness ratings
      */
     @SuppressWarnings("unused")
     private void renderMinefieldScores(Graphics2D graphics2D) {
     	/*Map<Coords, Integer> minefieldScores = mdp.getMinefieldScores(Minefield.TYPE_CONVENTIONAL, UnitType.TANK,
     			EntityMovementMode.WHEELED, getBoard());*/
-    	
+
     	MinefieldDeploymentPlanner mdp = new MinefieldDeploymentPlanner(getLocalPlayer(), game);
     	Map<Coords, Double> minefieldScores = mdp.buildCoalescedMinefieldScores(Minefield.TYPE_CONVENTIONAL, getBoard());
-    	
+
     	for (Coords coords : minefieldScores.keySet()) {
     		Point centreHexLocation = getCentreHexLocation(coords.getX(), coords.getY(), true);
             centreHexLocation.translate(HEX_W / 2, HEX_H);
             graphics2D.setColor(Color.pink);
-            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)), 
+            drawCenteredString(String.format("%3.1f", minefieldScores.get(coords)),
             		centreHexLocation.x, centreHexLocation.y, FONT_14, graphics2D);
     	}
     }
@@ -2726,7 +2743,7 @@ public final class BoardView extends AbstractBoardView
         if (!supersUnderShadow) {
             if (supers != null) {
                 for (Image image : supers) {
-                    if (null != image) {
+                    if (image != null) {
                         if (animatedImages.contains(image.hashCode())) {
                             dontCache = true;
                         }
@@ -3797,6 +3814,19 @@ public final class BoardView extends AbstractBoardView
             addC3Link(entity);
         }
 
+        // The removal above also dropped the lines that this entity's hierarchic subordinates draw TO it (each
+        // slave owns its own line to its master), and addC3Link(entity) only redraws the entity's own line to its
+        // master. Re-add the subordinates' lines, otherwise selecting a master in the firing phase erases its
+        // network on the board until the next full redraw.
+        for (Entity subordinate : game.getEntitiesVector()) {
+            if ((subordinate.getC3MasterId() == entity.getId())
+                  && !subordinate.equals(entity)
+                  && subordinate.hasC3()
+                  && isOnThisBord(subordinate)) {
+                addC3Link(subordinate);
+            }
+        }
+
         vtolAttackSprites.removeIf(s -> s.getEntity().getId() == entity.getId());
 
         // Remove Flyover Sprites
@@ -4151,7 +4181,7 @@ public final class BoardView extends AbstractBoardView
         for (ListIterator<MoveStep> i = movePath.getSteps();
               i.hasNext(); ) {
             final MoveStep step = i.next();
-            if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
+            if ((previousStep != null) && ((step.getType() == MoveStepType.UP)
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
                   || (step.getType() == MoveStepType.DEC)
@@ -4507,8 +4537,8 @@ public final class BoardView extends AbstractBoardView
             }
         }
 
-        for (Enumeration<AttackAction> i = game.getCharges();
-              i.hasMoreElements(); ) {
+        for (Enumeration<AttackAction> i = game.getDisplacementAttacks();
+             i.hasMoreElements(); ) {
             AttackAction attackAction = i.nextElement();
             if (attackAction instanceof PhysicalAttackAction physicalAttackAction) {
                 addAttack(physicalAttackAction);
@@ -5148,11 +5178,11 @@ public final class BoardView extends AbstractBoardView
      */
     private class RedrawWorker implements Runnable {
 
-        private long lastTime = System.currentTimeMillis();
+        private long lastTime = java.lang.System.currentTimeMillis();
 
         @Override
         public void run() {
-            long currentTime = System.currentTimeMillis();
+            long currentTime = java.lang.System.currentTimeMillis();
 
             if (boardPanel.isShowing()) {
                 boolean redraw = false;
@@ -5575,6 +5605,15 @@ public final class BoardView extends AbstractBoardView
         }
 
         zoomIndex--;
+        zoom();
+    }
+
+    /**
+     * Reset the zoom level to the BASE_ZOOM_INDEX
+     */
+    @Override
+    public void zoomReset() {
+        zoomIndex = BASE_ZOOM_INDEX;
         zoom();
     }
 

@@ -149,14 +149,29 @@ public class InfantryCombatResult {
         return defenderCasualtiesPercent;
     }
 
+    /**
+     * The result the way the Infantry vs. Infantry Action Table prints it: the attacker's percentage, the
+     * defender's, and the R or P flag, with E for a side that is eliminated. An eliminated attacker cannot be
+     * repulsed as well, so the R flag is left off such a cell.
+     *
+     * @return the cell, for example {@code 70%/30% (R)} or {@code 25%/E (P)}
+     */
+    public String printedCell() {
+        boolean attackerEliminated = attackerCasualtiesPercent >= 100;
+        String attacker = attackerEliminated ? "E" : attackerCasualtiesPercent + "%";
+        String defender = isDefenderEliminated() ? "E" : defenderCasualtiesPercent + "%";
+        String flag = "";
+        if (isPartialControl()) {
+            flag = " (P)";
+        } else if (isAttackerRepulsed() && !attackerEliminated) {
+            flag = " (R)";
+        }
+        return attacker + "/" + defender + flag;
+    }
+
+    /** The table cell, which is locale-neutral, so the same text serves logs and reports. */
     @Override
     public String toString() {
-        return switch (type) {
-            case ELIMINATED -> "E (Defender Eliminated)";
-            case REPULSED -> "R (Attacker Repulsed, " + attackerCasualtiesPercent + "% casualties)";
-            case PARTIAL -> "P (Partial, A:" + attackerCasualtiesPercent + "% D:" +
-                  (defenderCasualtiesPercent >= 100 ? "Eliminated" : defenderCasualtiesPercent + "%") + ")";
-            case CASUALTIES -> attackerCasualtiesPercent + "%/" + defenderCasualtiesPercent + "%";
-        };
+        return printedCell();
     }
 }

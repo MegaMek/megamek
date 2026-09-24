@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
@@ -71,6 +72,7 @@ public class NovaCEWSBVTest {
     @BeforeEach
     void setUp() {
         game = new Game();
+        game.initializeRulesManager(OptionsConstants.RULES_CORE);
         game.addPlayer(0, new Player(0, "Test Player"));
         nextEntityId = 1;
     }

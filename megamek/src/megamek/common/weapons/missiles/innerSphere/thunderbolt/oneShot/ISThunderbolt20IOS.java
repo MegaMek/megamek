@@ -33,6 +33,7 @@
 
 package megamek.common.weapons.missiles.innerSphere.thunderbolt.oneShot;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechRating;
 import megamek.common.weapons.missiles.thunderbolt.Thunderbolt20Weapon;
@@ -48,6 +49,11 @@ public class ISThunderbolt20IOS extends Thunderbolt20Weapon {
         super();
         name = "Thunderbolt 20 (I-OS)";
         setInternalName(name);
+        rulesRefs = rulesRefs(
+              rulesRefs,
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
         addLookupName("IS IOS Thunderbolt-20");
         addLookupName("ISThunderbolt20 (IOS)");
         addLookupName("ISTBolt20IOS");

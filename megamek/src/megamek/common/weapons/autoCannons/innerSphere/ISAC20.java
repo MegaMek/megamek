@@ -36,6 +36,8 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,13 +75,21 @@ public class ISAC20 extends ACWeapon {
         shortAV = 20;
         maxRange = RANGE_SHORT;
         explosionDamage = damage;
-        rulesRefs = "208, TM";
-        techAdvancement.setTechBase(TechBase.ALL).setIntroLevel(true).setTechRating(TechRating.C)
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 208),
+              rulesRef(SourceBookCode.BMM, 98),
+              rulesRef(SourceBookCode.CORE, 182),
+              rulesRef(SourceBookCode.TW, 303)
+        );
+        techAdvancement.setTechBase(TechBase.ALL)
+              .setStaticTechLevel(SimpleTechLevel.INTRO)
+              .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(2488, 2500, 2502, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2488, 2500, 2502, 2850, DATE_NONE)
-              .setClanApproximate(false, false, false, true, false).setPrototypeFactions(Faction.LC)
+              .setClanApproximate(false, false, false, true, false)
+              .setPrototypeFactions(Faction.LC)
               .setProductionFactions(Faction.LC);
     }
 }

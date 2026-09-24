@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.innerSphere.enhancedLRM;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
@@ -70,7 +71,11 @@ public class ISExtendedLRM15 extends ExtendedLRMWeapon {
         medAV = 9;
         longAV = 9;
         extAV = 9;
-        rulesRefs = "139, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 139),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement
               .setTechBase(TechBase.IS)

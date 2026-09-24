@@ -96,4 +96,9 @@ public enum FactionTag {
      * (pirates) is used to abstractly represent all pirates, not individual pirate groups.
      */
     AGGREGATE,
+    /**
+     * Faction is a planetary defense militia. Used to recognize the commands whose forces are generated as planetary
+     * garrisons (see the Random Garrisons Table) rather than as standard line formations.
+     */
+    MILITIA,
 }

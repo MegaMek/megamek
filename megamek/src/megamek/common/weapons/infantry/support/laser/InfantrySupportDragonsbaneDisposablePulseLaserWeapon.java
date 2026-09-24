@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.laser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class InfantrySupportDragonsbaneDisposablePulseLaserWeapon extends Infant
         infantryDamage = 0.16;
         infantryRange = 3;
         crew = 1;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         tonnage = .007;
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3058, 3068, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)

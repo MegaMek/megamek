@@ -36,6 +36,7 @@ package megamek.common.weapons.artillery;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -72,7 +73,7 @@ public class LongTom extends ArtilleryWeapon {
         svSlots = 15;
         bv = 368;
         cost = 450000;
-        rulesRefs = "96, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 96);
         techAdvancement.setTechBase(TechBase.ALL).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)
               .setAdvancement(2445, 2500, DATE_NONE, DATE_NONE, DATE_NONE)

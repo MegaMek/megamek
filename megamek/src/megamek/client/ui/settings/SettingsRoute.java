@@ -51,6 +51,7 @@ public final class SettingsRoute {
     private final boolean showDetailsPanel;
     private final String searchableText;
     private String sectionSearchText = "";
+    private String dynamicSearchText = "";
 
     /**
      * Creates a top-level or nested route with no additional search aliases and a visible details panel.
@@ -142,6 +143,15 @@ public final class SettingsRoute {
     }
 
     /**
+     * Replaces searchable text derived from content whose visibility can change after page construction.
+     *
+     * @param text the currently searchable dynamic content, or {@code null} to clear it
+     */
+    public void setDynamicSearchText(String text) {
+        dynamicSearchText = text == null ? "" : normalizeSearchText(SettingsSearchText.renderedText(text));
+    }
+
+    /**
      * @param normalizedFilter a filter already normalized by {@link #normalizeSearchText(String)}
      *
      * @return {@code true} when every non-blank token occurs in the route or section search text
@@ -152,7 +162,8 @@ public final class SettingsRoute {
         }
 
         for (String token : normalizedFilter.split("\\s+")) {
-            if (!token.isBlank() && !searchableText.contains(token) && !sectionSearchText.contains(token)) {
+            if (!token.isBlank() && !searchableText.contains(token) && !sectionSearchText.contains(token)
+                  && !dynamicSearchText.contains(token)) {
                 return false;
             }
         }

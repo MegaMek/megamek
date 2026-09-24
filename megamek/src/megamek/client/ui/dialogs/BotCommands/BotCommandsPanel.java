@@ -81,6 +81,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
@@ -100,6 +101,7 @@ public class BotCommandsPanel extends JPanel {
     private final AudioService audioService;
     private final MegaMekController controller;
     private final ClientGUI clientGUI;
+    private String serverPassword = "";
     private final MegaMekButton miscButton =
           new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
     // This latch is used only to change the state of the button from pause to continue and back
@@ -286,7 +288,35 @@ public class BotCommandsPanel extends JPanel {
         setMiscButton(
               Messages.getString("BotCommandPanel.Victory.title"),
               Messages.getString("BotCommandPanel.Victory.tooltip"),
-              evt -> client.sendChat("/victory"));
+              evt -> client.sendChat(victoryCommand()));
+    }
+
+    /**
+     * @return the {@code /victory} chat command, including the server password when one is set. {@code VictoryCommand}
+     *       rejects a passwordless request on a passworded server, and MekHQ's Host dialog pre-fills the last password.
+     *       See issue #8891.
+     */
+    private String victoryCommand() {
+        return buildVictoryCommand(serverPassword);
+    }
+
+    /**
+     * @param serverPassword the server password, possibly empty/{@code null}
+     *
+     * @return the {@code /victory} chat command, with the password appended when one is present
+     */
+    static String buildVictoryCommand(String serverPassword) {
+        return ((serverPassword == null) || serverPassword.isBlank()) ? "/victory" : ("/victory " + serverPassword);
+    }
+
+    /**
+     * Sets the server password used to authenticate the "Request Victory" command. Pass empty or {@code null} when the
+     * server has no password.
+     *
+     * @param serverPassword the server password
+     */
+    public void setServerPassword(String serverPassword) {
+        this.serverPassword = (serverPassword == null) ? "" : serverPassword;
     }
 
     /**
@@ -1478,7 +1508,22 @@ public class BotCommandsPanel extends JPanel {
     }
 
     private boolean canBePaused() {
-        var game = client.getGame();
+        return isGamePausable(client.getGame());
+    }
+
+    /**
+     * Pausing is only meaningful while a bot-only game is still being watched. It is refused once the game has been
+     * decided - at victory, pausing would only freeze the server waiting to be unpaused and block the hand-off back to
+     * MekHQ (issue #8888) - and whenever a human player still owns units.
+     *
+     * @param game the game to test
+     *
+     * @return {@code true} if the game may be paused right now
+     */
+    static boolean isGamePausable(IGame game) {
+        if (game.getPhase().isVictory()) {
+            return false;
+        }
         List<Player> nonBots = game.getPlayersList().stream().filter(p -> !p.isBot()).toList();
         boolean liveUnitsRemaining = nonBots.stream().anyMatch(p -> game.getEntitiesOwnedBy(p) > 0);
         return !liveUnitsRemaining;

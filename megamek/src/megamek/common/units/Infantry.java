@@ -43,6 +43,7 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
@@ -360,7 +361,7 @@ public abstract class Infantry extends Entity {
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         // EI bonus for anti-Mek attacks per IO p.69
-        // "All Piloting Skill rolls required for the EI-equipped unit receives a -1 target number modifier.
+        // "All Physical attack rolls required for the EI-equipped unit receives a -1 target number modifier.
         // This includes checks made for physical attacks, as well as anti-Mek attacks by EI-equipped battle armor."
         if (hasActiveEiCockpit()) {
             prd.addModifier(-1, "Enhanced Imaging");
@@ -841,6 +842,14 @@ public abstract class Infantry extends Entity {
     }
 
     @Override
+    public boolean canDeclareInfantryAction() {
+        if ((game == null) || !game.hasBoardLocationOf(this)) {
+            return false;
+        }
+        return InfantryActionStrengths.hasStake(game, this);
+    }
+
+    @Override
     public boolean canReinforceInfantryVsInfantry() {
         if (!game.hasBoardLocationOf(this)) {
             return false; // not on board?
@@ -883,5 +892,10 @@ public abstract class Infantry extends Entity {
      */
     public boolean canExitVTOLWithGliderWings() {
         return false;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

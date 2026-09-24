@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.gauss;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,7 @@ public class InfantrySupportGrandMaulerGaussCannonWeapon extends InfantryWeapon 
         ammoWeight = 0.0045;
         ammoCost = 5;
         shots = 5;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3055, 3059, 3065, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FS)

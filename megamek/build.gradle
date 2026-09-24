@@ -8,6 +8,7 @@ plugins {
     id 'jacoco'
     id 'java'
     id 'checkstyle'
+    id 'com.diffplug.spotless' version '8.10.1'
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
@@ -61,8 +62,8 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.20.0'
     implementation 'org.apache.commons:commons-text:1.15.0'
 
-    implementation 'org.apache.logging.log4j:log4j-api:2.25.4'
-    implementation 'org.apache.logging.log4j:log4j-core:2.25.4'
+    implementation 'org.apache.logging.log4j:log4j-api:2.25.5'
+    implementation 'org.apache.logging.log4j:log4j-core:2.25.5'
 
     implementation 'org.apache.pdfbox:pdfbox:3.0.7'
 
@@ -75,7 +76,7 @@ dependencies {
         exclude group: 'xml-apis', module: 'xml-apis'
     }
 
-    implementation 'org.freemarker:freemarker:2.3.34'
+    implementation 'org.freemarker:freemarker:2.3.35'
 
     implementation 'org.commonmark:commonmark:0.28.0'
 
@@ -146,6 +147,38 @@ checkstyle {
 tasks.withType(Checkstyle).configureEach {
     minHeapSize = "1g"
     maxHeapSize = "4g"
+}
+
+// Source hygiene checks that do not depend on which editor wrote the code: import order, unused imports, trailing
+// whitespace, final newline. `./gradlew spotlessCheck` reports every violation in one run; `./gradlew spotlessApply`
+// fixes them all. The Checkstyle workflow runs the check as its first step on every PR.
+//
+// Deliberately no full formatter engine yet. The Java style in .editorconfig uses a 6-space continuation indent and
+// IntelliJ's wrapping rules, which the Eclipse engine Spotless bundles cannot reproduce; enabling it would reformat
+// most of the tree and then fight IntelliJ on every wrapped line. Choosing an engine is a separate decision.
+spotless {
+    // Checked explicitly by CI rather than as part of `build`, so a plain build stays fast and works in a shallow
+    // checkout that has no origin/main to ratchet against.
+    enforceCheck = false
+
+    // Until the whole tree has been formatted once, only look at files that differ from origin/main. Pass
+    // -PspotlessFullTree to format everything (used for the one-time reformat and to measure it).
+    if (!project.hasProperty('spotlessFullTree')) {
+        ratchetFrom 'origin/main'
+    }
+
+    java {
+        target 'src/**/*.java', 'unittests/**/*.java'
+
+        // Matches ij_java_imports_layout in .editorconfig: static imports, then java/javax, then everything else.
+        importOrder('\\#', 'java|javax', '')
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+
+        // Same fence the code already uses (see MDAugmentationType) and that .editorconfig configures for IntelliJ.
+        toggleOffOn('@formatter:off', '@formatter:on')
+    }
 }
 
 // Data is staged directly out of mm-data/data (no intermediate staging copy) and split
@@ -471,11 +504,65 @@ assembleDist {
     dependsOn distTar
 }
 
+// The ordinary release is cut with MekHQ's buildAllPackages, which pulls MegaMek and MegaMekLab in as
+// included builds and ships all three together. A MegaMek-only release has no such task, so the steps
+// below - clean slate, package, then check nothing local rode along - are the same procedure reduced to
+// this one repository.
+tasks.register('buildMegaMekPackage') {
+    description = 'Builds the MegaMek-only release package. Use this in place of MekHQ buildAllPackages when ' +
+            'MegaMek ships on its own.'
+    group = 'distribution'
+
+    dependsOn clean
+    dependsOn assembleDist
+
+    doLast {
+        File releasePackage = layout.buildDirectory
+                .file("distributions/MegaMek-${project.version}.tar.gz")
+                .get()
+                .asFile
+
+        if (!releasePackage.exists()) {
+            throw new GradleException("Expected release package ${releasePackage} was not produced.")
+        }
+
+        // Step 6 of the release procedure: a developer's own settings must never ship inside the archive.
+        List<String> forbiddenFileNames = ['clientsettings.xml', 'gameoptions.xml', 'mm.preferences',
+                                           'mml.preferences', 'mhq.preferences', 'megameklab.properties',
+                                           'megameklab.properties.bak']
+        List<String> foundFileNames = []
+        tarTree(resources.gzip(releasePackage))
+                .matching { forbiddenFileNames.each { forbiddenFileName -> include "**/${forbiddenFileName}" } }
+                .visit { fileVisitDetails ->
+                    if (!fileVisitDetails.directory) {
+                        foundFileNames.add(fileVisitDetails.path)
+                    }
+                }
+
+        if (!foundFileNames.isEmpty()) {
+            throw new GradleException('Release package contains files that must not ship: '
+                    + foundFileNames.join(', '))
+        }
+
+        logger.lifecycle("[Release] MegaMek ${project.version} packaged at ${releasePackage}")
+        logger.lifecycle("[Release] Size: ${(releasePackage.length() / (1024 * 1024)).round(1)} MB")
+    }
+}
+
+// Without this, a clean slate is not guaranteed: dependsOn does not order its own dependencies, so clean
+// could run after the package was built and delete it.
+assembleDist.mustRunAfter clean
+
 test {
     useJUnitPlatform {
         excludeTags 'on-demand'
     }
     dependsOn(checkstyleMain)
+    // Some tests read the shipped data set - faction rules, formation naming conventions - which
+    // lives in mm-data and is copied into place by stageDataFiles. Without this the data is present
+    // locally only if someone happened to stage it, and absent on CI, so such a test passes on a
+    // developer machine and fails in the pipeline.
+    dependsOn(stageDataFiles)
 
     minHeapSize = "1024m"
     maxHeapSize = "8192m"

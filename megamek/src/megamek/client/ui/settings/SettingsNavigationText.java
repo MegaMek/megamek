@@ -41,7 +41,14 @@ public record SettingsNavigationText(
       String noMatches,
       String matchesFormat,
       String expandAllTooltip,
-      String collapseAllTooltip) {
+    String collapseAllTooltip,
+    String searching) {
+
+    public SettingsNavigationText(String filterPlaceholder, String filterTooltip, String noMatches,
+        String matchesFormat, String expandAllTooltip, String collapseAllTooltip) {
+      this(filterPlaceholder, filterTooltip, noMatches, matchesFormat, expandAllTooltip, collapseAllTooltip,
+          "Searching...");
+    }
 
     public SettingsNavigationText {
         Objects.requireNonNull(filterPlaceholder);
@@ -50,5 +57,6 @@ public record SettingsNavigationText(
         Objects.requireNonNull(matchesFormat);
         Objects.requireNonNull(expandAllTooltip);
         Objects.requireNonNull(collapseAllTooltip);
+        Objects.requireNonNull(searching);
     }
 }

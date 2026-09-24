@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -52,21 +53,22 @@ public class InfantryLaserPistolAWAWilibyMk4LaserPistol extends InfantryWeapon {
     public InfantryLaserPistolAWAWilibyMk4LaserPistol() {
         super();
 
-        name = "Laser Pistol (AWA Wiliby MK4 LASER PISTOL)";
-        setInternalName(name);
+        name = "Laser Pistol (AWA Wiliby Mk4 Laser Pistol)";
+        setInternalName("Laser Pistol (AWA Wiliby MK4 LASER PISTOL)");
+        addLookupName(name);
         addLookupName("WILIBYMK4");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 0.028;
         tonnage = 0.0018;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        infantryDamage = 0.09;
+        infantryDamage = 0.028;
         infantryRange = 1;
         // ammoWeight is not applicable (NA)
         shots = 1;
         // ammoCost is not applicable (NA)
         bursts = 1;
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
         techAdvancement.setTechBase(TechBase.IS);
         techAdvancement.setISAdvancement(DATE_NONE, DATE_NONE, DATE_ES, DATE_NONE, DATE_NONE);
         techAdvancement.setTechRating(TechRating.D);

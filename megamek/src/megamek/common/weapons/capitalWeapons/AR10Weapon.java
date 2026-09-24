@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,10 +78,8 @@ public class AR10Weapon extends CapitalMissileWeapon {
         this.extAV = 2;
         this.maxRange = RANGE_EXT;
         this.atClass = CLASS_AR10;
-        rulesRefs = "210, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 210);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(2540, 2550, 3055, 2950, 3051)

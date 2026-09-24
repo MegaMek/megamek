@@ -145,6 +145,23 @@
           </Logger>
         -->
         <!--
+          Advanced Building (gun emplacement) weapon damage diagnostics. Critical rolls are logged at info by
+          default as [BuildingCrit] lines. Uncomment to also trace every hit's hex, level and damage
+          (TWDamageManager, [BuildingDamage]), each critical result's effect (BuildingEntityCriticalHandler), and
+          shots refused because the target is inside the firing building (ComputeToHitIsImpossible,
+          [BuildingFire]). Then grep logs/megamek.log for "[Building".
+
+          <Logger name="megamek.server.totalWarfare.TWDamageManager" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.server.totalWarfare.BuildingEntityCriticalHandler" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+          <Logger name="megamek.common.actions.compute.ComputeToHitIsImpossible" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Bulldozer (rubble clearing / movement override / destruction roll) diagnostics, silent by default
           (parent "megamek" logger at info). All emit [Bulldozer]-tagged lines. Uncomment to trace: the Clear
           Rubble button enablement and rubble-hex target selection (MovementDisplay); the clear-rubble move-step
@@ -203,6 +220,20 @@
             <AppenderRef ref="MegaMekLog" />
         </Logger>
         <Logger name="megamek.common.moves.MoveStep" level="debug" additivity="false">
+            <AppenderRef ref="MegaMekLog" />
+        </Logger>
+        -->
+        <!--
+          Tainted and Toxic Atmospheres diagnostics (TO:AR p.54). All messages are tagged [TaintedAtmosphere]; grep
+          logs/megamek.log for that tag to follow the whole feature flow. The events that change the game - a hex set
+          alight, a crew killed by the air, a platoon poisoned past its exposure limit - are logged at INFO and appear
+          via the parent "megamek" logger with this block commented out. What the block below adds at debug is the
+          reasons nothing happened: whether the End Phase pass ran at all, how many heat-tracking units were hot
+          enough to roll for igniting their own hex, why a breach or an ignition was skipped. Uncomment it when a
+          playtest reports that an atmosphere effect did not fire.
+        -->
+        <!--
+        <Logger name="megamek.server.totalWarfare.TaintedAtmosphereHandler" level="debug" additivity="false">
             <AppenderRef ref="MegaMekLog" />
         </Logger>
         -->
@@ -282,6 +313,20 @@
           </Logger>
         -->
         <!--
+          Objectives and control point diagnostics, silent by default (parent "megamek" logger at info). Messages
+          are tagged [VictoryHex] on the client (the Victory Setup phase: why a click on a hex did nothing, a Done
+          with no points placed) and [Objective] on the server (marker placement at game start, control points
+          present while Use Objectives is off, the route taken out of the starting phase). Grep logs/megamek.log
+          for either tag. Uncomment to diagnose "why can't I place a control point" or "why did my objectives
+          never score"; leave commented for normal play.
+
+          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
           Equipment activation/deactivation diagnostics, silent by default (parent "megamek" logger at info).
           All messages are tagged [EquipOff]; grep logs/megamek.log for that tag. Logs every equipment mode
           change the server receives (with the resulting current and pending mode) and rejected deactivations
@@ -289,6 +334,21 @@
           mode switch take effect"; leave commented for normal play.
 
           <Logger name="megamek.feature.EquipOff" level="debug" additivity="false">
+              <AppenderRef ref="${env:mm.profile:-null}" />
+              <AppenderRef ref="UnifiedLog" />
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
+        <!--
+          Objective / control point diagnostics, silent by default (parent "megamek" logger at info).
+          Client lines are tagged [VictoryHex] (control points placed or removed in the Victory Setup
+          phase), server lines [Objective] (markers placed at game start, off-board or stacked markers
+          left unplaced, markers returned to the lobby on a game reset, and the End Phase control
+          resolution). Uncomment to diagnose "why is this objective uncontrolled" - the control
+          resolution logs every in-range unit's exclusion reason and the per-side unit counts; leave
+          commented for normal play.
+
+          <Logger name="megamek.feature.VictoryHex" level="debug" additivity="false">
               <AppenderRef ref="${env:mm.profile:-null}" />
               <AppenderRef ref="UnifiedLog" />
               <AppenderRef ref="MegaMekLog" />

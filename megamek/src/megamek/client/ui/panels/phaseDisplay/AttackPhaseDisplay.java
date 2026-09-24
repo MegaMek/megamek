@@ -32,9 +32,12 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
@@ -328,7 +331,7 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             } else if (!tank.hasNoTurret()) {
                 // The main turret follows the unit's secondary facing, so rotating it is a turret twist: the dialog
                 // only picks the facing and the twist is declared through the same path as the Twist button.
-                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+                new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::rotateMainTurretTo)
                       .setVisible(true);
             }
             return;
@@ -348,12 +351,50 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     }
 
     /**
+     * Declares the main turret's new facing and redraws the unit. Called back by the facing dialog when the player
+     * accepts it.
+     *
+     * <p>The dialog is not modal, so {@code setVisible} returns as soon as it is on screen. Refreshing there ran
+     * before the player had chosen anything, which is why the board kept the old facing.</p>
+     *
+     * @param facing the absolute facing (0-5) the player picked
+     */
+    private void rotateMainTurretTo(int facing) {
+        declareSecondaryFacing(facing);
+        refreshAfterRotation();
+    }
+
+    /**
+     * Redraws the unit and its firing arc after a turret or mount rotation.
+     *
+     * <p>Only one of the rotation paths refreshed the board on its own. A vehicle main turret is declared as a twist,
+     * which refreshes; a Mek turret and a Directional Torso Mount only send the new facing to the server, which
+     * applies it and echoes nothing, so the unit kept its old facing on screen until something else redrew it.</p>
+     */
+    private void refreshAfterRotation() {
+        Entity entity = currentEntity();
+        if (entity == null) {
+            return;
+        }
+        clientgui.onAllBoardViews(boardView -> boardView.redrawEntity(entity));
+        // The arc is drawn for whatever weapon the unit display currently shows, so it only picks up the new
+        // facing when the weapon panel is rebuilt. Reselecting the same weapon keeps the player's choice, which a
+        // full refresh would drop back to the first weapon. Same sequence the flip-mount button uses.
+        WeaponMounted selectedWeapon = clientgui.getUnitDisplay().wPan.getSelectedWeapon();
+        clientgui.getUnitDisplay().wPan.displayMek(entity);
+        if (selectedWeapon != null) {
+            clientgui.getUnitDisplay().wPan.selectWeapon(selectedWeapon);
+        }
+        clientgui.updateFiringArc(entity);
+    }
+
+    /**
      * Opens the facing dialog for a dual-turret vehicle's rear (main) turret - the "Rotate Rr. Turret" button. The rear
      * turret follows the unit's secondary facing, so the rotation is declared as a turret twist.
      */
     public void rotateRearTurret() {
         if ((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret()) {
-            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::declareSecondaryFacing)
+            new TurretFacingDialog(clientgui.getFrame(), tank, clientgui, this::rotateMainTurretTo)
                   .setVisible(true);
         }
     }
@@ -441,5 +482,46 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
             setRotateTurretEnabled(!tank.hasNoTurret() && canTwistTurret);
             setRotateRearTurretEnabled(false);
         }
+    }
+
+    /**
+     * Applies the one board action a hex mouse event calls for: move the cursor while the player drags, select the
+     * hex on a plain left click.
+     * <p>
+     * Every attack phase display routes its mouse handling through this method so that a single click can select a
+     * hex only once. {@link megamek.client.ui.clientGUI.boardview.BoardView#select(megamek.common.board.Coords)}
+     * fires a hex-selected event every time it is called, even when the hex has not changed, and the displays
+     * answer that event by asking the player which unit in the hex to attack. A second selection for the same
+     * click therefore opens that target window twice (issue #8781).
+     * </p>
+     *
+     * @param event             the hex mouse event being handled
+     * @param twistModifierHeld {@code true} when the shift key is held and this display uses shift for torso twist,
+     *                          in which case the click twists and must not pick a target. Displays without torso
+     *                          twist pass {@code false}.
+     */
+    protected static void applyHexMouseAction(BoardViewEvent event, boolean twistModifierHeld) {
+        switch (event.getType()) {
+            case BoardViewEvent.BOARD_HEX_DRAGGED -> event.getBoardView().cursor(event.getCoords());
+            case BoardViewEvent.BOARD_HEX_CLICKED -> {
+                if (!twistModifierHeld && isPlainLeftClick(event)) {
+                    event.getBoardView().select(event.getCoords());
+                }
+            }
+            default -> {
+                // Every other board event is the display's own business.
+            }
+        }
+    }
+
+    /**
+     * @param event the hex mouse event being handled
+     *
+     * @return {@code true} if this is a left click with no ALT key. ALT belongs to the ruler
+     *       (RulerDialog.hexMoused) and the other mouse buttons have no targeting meaning on the board.
+     */
+    private static boolean isPlainLeftClick(BoardViewEvent event) {
+        return (event.getButton() == MouseEvent.BUTTON1)
+              && ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) == 0);
     }
 }

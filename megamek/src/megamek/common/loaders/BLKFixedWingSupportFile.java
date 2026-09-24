@@ -102,8 +102,8 @@ public class BLKFixedWingSupportFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         a.setOriginalWalkMP(dataFile.getDataAsInt("SafeThrust")[0]);
-        // support vees don't use engine ratings, so just use a value of 1
-        a.setEngine(new Engine(1, BLKFile.translateEngineCode(engineCode), engineFlags));
+        // Support ratings are derived from the owning unit by Engine.getRating(Entity).
+        a.setEngine(new Engine(0, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         loadSVArmor(a);
 

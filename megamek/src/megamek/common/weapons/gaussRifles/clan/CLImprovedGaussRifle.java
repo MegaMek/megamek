@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -85,7 +86,7 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         longAV = 15;
         maxRange = RANGE_LONG;
         explosionDamage = 20;
-        rulesRefs = "90, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.X, AvailabilityValue.E)
               .setClanAdvancement(2818, 2821, 2822, 2837, 3080)

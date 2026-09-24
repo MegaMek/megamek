@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.grenade;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,7 +74,7 @@ public class InfantryGrenadeRAGWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_INF_DISPOSABLE);
         infantryDamage = 0.30;
         infantryRange = 1;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3062, 3065, 3085, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FS)

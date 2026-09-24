@@ -36,6 +36,7 @@ package megamek.common.weapons.srms.clan.improvedSRM;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -71,7 +72,7 @@ public class CLImprovedSRM2 extends SRMWeapon {
         this.shortAV = 3;
         this.medAV = 3;
         this.maxRange = RANGE_MED;
-        rulesRefs = "90, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 90);
         flags = flags.andNot(F_PROTO_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.X)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -128,9 +128,7 @@ public class MunitionTree {
           "Caseless",
           "Flak",
           "Tracer",
-          "Flechette",
-          "Armor-Piercing Playtest",
-          "Precision Playtest"));
+          "Flechette"));
 
     public static final List<String> ATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard"));
     public static final List<String> iATM_MUNITION_NAMES = new ArrayList<>(List.of("HE", "ER", "Standard", "IIW",
@@ -357,7 +355,7 @@ public class MunitionTree {
     @Deprecated(since = "0.51.0", forRemoval = true)
     public String getEffectiveImperative(String chassis, String variant, String pilot, String binType) {
         LoadNode node = root.retrieve(chassis, variant, pilot);
-        if (null != node) {
+        if (node != null) {
             return node.getImperative(binType).get(1);
         }
         return "";
@@ -372,4 +370,3 @@ public class MunitionTree {
         return root.retrieveAmmoCount(chassis, variant, pilot, binType, ammoType);
     }
 }
-

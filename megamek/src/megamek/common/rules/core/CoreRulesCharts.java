@@ -33,8 +33,49 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import megamek.common.ToHitData;
+import megamek.common.compute.Compute;
 import megamek.common.rules.RulesCharts;
+import megamek.common.units.Mek;
 
 public class CoreRulesCharts extends RulesCharts {
 
+    /**
+     * {@inheritDoc}
+     * Falls are always forwards unless you land on your back. Core p.115
+     */
+    @Override
+    public int getFacingForFall() {
+        if (Compute.d6(1) == 1) {
+            return 3;
+        }
+        return 0;
+    }
+
+     /**
+     * {@inheritDoc}
+     * Core p.81
+     */
+     @Override
+     public int getPunchHitLocation(int roll, int side, boolean quad) {
+        // front punch hits
+        boolean rear = (side == ToHitData.SIDE_REAR);
+        if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
+            switch (roll) {
+                case 1:
+                    return (quad && rear) ? Mek.LOC_RIGHT_LEG : Mek.LOC_RIGHT_ARM;
+                case 2:
+                    return Mek.LOC_RIGHT_TORSO;
+                case 3:
+                    return Mek.LOC_CENTER_TORSO;
+                case 4:
+                    return Mek.LOC_LEFT_TORSO;
+                case 5:
+                    return (quad && rear) ? Mek.LOC_LEFT_LEG : Mek.LOC_LEFT_ARM;
+                case 6:
+                    return Mek.LOC_HEAD;
+            }
+        }
+        return getPunchHitLocationSide(roll, side, quad);
+    }
 }

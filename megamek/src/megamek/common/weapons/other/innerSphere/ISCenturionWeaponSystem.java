@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -84,7 +85,7 @@ public class ISCenturionWeaponSystem extends EnergyWeapon {
         waterExtremeRange = 14;
         maxRange = RANGE_MED;
         flags = flags.or(F_MEK_WEAPON).or(F_TANK_WEAPON).or(F_AERO_WEAPON).or(F_CWS);
-        rulesRefs = "79, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 79);
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.X)
               .setISAdvancement(2762, DATE_NONE, DATE_NONE, 2770, DATE_NONE)

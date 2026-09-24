@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -82,7 +83,7 @@ public class InfantrySupportMk2PortableAAWeapon extends InfantryWeapon {
         mediumRange = 4;
         longRange = 6;
         extremeRange = 8;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2498, 2510, 2590, 2790, 3056)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2498, 2510, 2590, DATE_NONE, 3056)

@@ -66,8 +66,8 @@ public class SRMDeadFireHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                  weaponType.getRackSize() * 3, bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getRackSize() * 3, getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 

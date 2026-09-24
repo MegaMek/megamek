@@ -65,6 +65,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.FuelType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -91,6 +92,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
               && getGame().getOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
+
     protected boolean m_bHasNoTurret = false;
     protected boolean m_bTurretLocked = false;
     protected boolean m_bTurretJammed = false;
@@ -156,8 +158,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private transient FortifyState fortifyState = new FortifyState();
 
     /**
-     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing (TacOps). The
-     * vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
+     * The rubble hex this vehicle is currently clearing with its bulldozer, or {@code null} if it is not clearing
+     * (TacOps). The vehicle must remain in this hex for the duration; if displaced or destroyed the work is abandoned.
      */
     private Coords rubbleClearTarget = null;
     /** Turns of bulldozer clearing banked so far against {@link #rubbleClearTurnsRequired}. */
@@ -397,7 +399,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
             mp = Math.max(0, mp - getCargoMpReduction(this));
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -436,7 +438,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         }
 
         // If the unit is towing trailers, the load slows it down (TM, Tractors).
-        if (!mpCalculationSetting.ignoreCargo() && (null != game) && !getAllTowedUnits().isEmpty()) {
+        if (!mpCalculationSetting.ignoreCargo() && (game != null) && !getAllTowedUnits().isEmpty()) {
             double trailerWeight = 0;
             for (int id : getAllTowedUnits()) {
                 Entity towedUnit = game.getEntity(id);
@@ -1287,9 +1289,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
@@ -1418,7 +1418,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
         // are we wheeled and in light snow?
         Hex hex = game.getHex(getPosition(), getBoardId());
-        if ((null != hex) &&
+        if ((hex != null) &&
               (getMovementMode() == EntityMovementMode.WHEELED) &&
               (hex.terrainLevel(Terrains.SNOW) == 1)) {
             prd.addModifier(1, "thin snow");
@@ -1778,15 +1778,24 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         return Math.max(0, caseLocations.size() - explicit);
     }
 
+    /**
+     * A vehicle survives vacuum only if it can hold itself up without air to push against, and is sealed, and its
+     * engine runs with no outside air to breathe. The rules name fission, fusion and fuel cell engines for Combat
+     * Vehicles (TO:AUE p.115) and fission, fusion and electric engines for Support Vehicles (TM p.122); MegaMek's
+     * Support Vehicle "Electric" engine is the battery.
+     *
+     * @return {@code true} when this vehicle will not survive vacuum conditions
+     */
     @Override
     public boolean doomedInVacuum() {
-        if (hasEngine() &&
-              (getEngine().isFusion() ||
-                    getEngine().getEngineType() == Engine.FISSION ||
-                    getEngine().getEngineType() == Engine.FUEL_CELL)) {
-            return !hasEnvironmentalSealing();
+        // Hovercraft, WiGEs and VTOLs all fly by pushing against air, so there is nothing for them to work with in a
+        // vacuum or a trace atmosphere however well sealed they are (TO:AR p.35, Expanded Movement Costs and
+        // Planetary Conditions Table, footnote 31; the ruling that hovercraft belong in that footnote alongside WiGEs
+        // and VTOLs is at battletech.com/forums topic 55634).
+        if (getMovementMode().isHoverVTOLOrWiGE()) {
+            return true;
         }
-        return true;
+        return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 
     @Override
@@ -1805,9 +1814,9 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     /**
-     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use
-     * the cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since
-     * hull-down requires a fortified land hex (TO:AR p.19).
+     * Whether this vehicle type can use hull-down at all, independent of its current hex. Large Vehicles cannot use the
+     * cover, and naval, hydrofoil, and submarine (water-based) vehicles cannot dig in / hull down since hull-down
+     * requires a fortified land hex (TO:AR p.19).
      *
      * @return true if this vehicle may ever go hull-down
      */
@@ -2638,7 +2647,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
                 this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
-                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_BODY);
+                      EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_BODY);
             } catch (LocationFullException e) {
                 // this should never happen
             }
@@ -2679,7 +2688,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
                       (mpBoosters.hasSupercharger() ?
                             " Supercharger:" +
                                   getSuperchargerTurns() +
-                            (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
+                                  (armed.hasSupercharger() ? "(" + getSuperchargerTarget() + "+)" : "(NA)") :
                             "");
             }
             return str;
@@ -3298,5 +3307,10 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
 
         // Vehicle must not already be destroyed
         return !isDestroyed() && !isDoomed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

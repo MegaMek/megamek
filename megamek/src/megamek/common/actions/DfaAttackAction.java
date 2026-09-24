@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -356,7 +356,8 @@ public class DfaAttackAction extends DisplacementAttackAction {
 
         // piloting skill differential
         if ((ae.getCrew().getPiloting() != te.getCrew().getPiloting())) {
-            toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
+            toHit.addModifier(Game.rulesManager.getRulesPhysical().getPilotDiffModifier(ae.getCrew().getPiloting(),
+                  te.getCrew().getPiloting(), te.isImmobile()), "piloting skill differential");
         }
 
         // attacker is spotting (no penalty with second pilot in command console)
@@ -424,26 +425,9 @@ public class DfaAttackAction extends DisplacementAttackAction {
     }
 
     public static boolean hasTalons(Entity entity) {
-
         if (entity instanceof Mek) {
-
-            if (entity instanceof BipedMek) {
-
-                return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
-                      entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
-                      (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
-                            entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG));
-            }
-            return (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_LEG) &&
-                  entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_LEG)) ||
-                  (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_LEG) &&
-                        entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_LEG)) ||
-                  ((entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_RIGHT_ARM)) &&
-                        (entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_RIGHT_ARM) ||
-                              (entity.hasWorkingMisc(MiscType.F_TALON, null, Mek.LOC_LEFT_ARM) &&
-                                    entity.hasWorkingSystem(Mek.ACTUATOR_FOOT, Mek.LOC_LEFT_ARM))));
+            return Game.rulesManager.getRulesPhysical().hasTalons(entity);
         }
-
         return false;
     }
 

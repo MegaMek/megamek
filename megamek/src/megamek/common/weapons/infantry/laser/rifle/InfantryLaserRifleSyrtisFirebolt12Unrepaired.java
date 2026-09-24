@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -60,12 +61,12 @@ public class InfantryLaserRifleSyrtisFirebolt12Unrepaired extends InfantryWeapon
         cost = 2200;
         bv = 0.525;
         tonnage = 0.0065;
-        infantryDamage = 0.53;
+        infantryDamage = 0.2625;
         infantryRange = 5;
         shots = 5;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
 
         techAdvancement
               .setTechBase(TechBase.IS)

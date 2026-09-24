@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -56,13 +57,32 @@ public class OptionGroupNode extends RulesetNode {
         return selectOption(fd, false);
     }
 
-    public @Nullable ValueNode selectOption(ForceDescriptor fd, boolean apply) {
-        ArrayList<ValueNode> matching = new ArrayList<>();
+    /**
+     * The options whose predicates pass for the given descriptor, in declaration order.
+     *
+     * <p>This is the choice the weighted pick in {@link #selectOption(ForceDescriptor, boolean)} is about to be made
+     * from. Callers that need to know what was on offer - rather than only what was drawn - read it from here, which
+     * keeps one definition of "eligible" rather than a second that could drift from the one that decides.</p>
+     *
+     * <p>Must be consulted <em>before</em> {@code selectOption} applies its result: applying an option can change the
+     * descriptor's properties, and the predicates are evaluated against those properties.</p>
+     *
+     * @param fd the descriptor to test the options against
+     *
+     * @return the matching options, empty when none apply
+     */
+    public List<ValueNode> matchingOptions(ForceDescriptor fd) {
+        List<ValueNode> matching = new ArrayList<>();
         for (ValueNode option : options) {
             if (option.matches(fd)) {
                 matching.add(option);
             }
         }
+        return matching;
+    }
+
+    public @Nullable ValueNode selectOption(ForceDescriptor fd, boolean apply) {
+        List<ValueNode> matching = matchingOptions(fd);
         if (matching.isEmpty()) {
             return null;
         }

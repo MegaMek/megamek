@@ -35,6 +35,7 @@ package megamek.common.weapons.other.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -57,7 +58,7 @@ public class ISTSEMPRepeatingCannon extends TSEMPWeapon {
         tonnage = 8;
         criticalSlots = 7;
         tankSlots = 1;
-        rulesRefs = "88, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 88);
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F)
               .setISAdvancement(3133, DATE_NONE, DATE_NONE, 3138, DATE_NONE)

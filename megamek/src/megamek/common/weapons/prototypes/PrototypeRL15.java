@@ -36,6 +36,7 @@ package megamek.common.weapons.prototypes;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
@@ -69,10 +70,8 @@ public class PrototypeRL15 extends PrototypeRLWeapon {
         medAV = 9;
         maxRange = RANGE_MED;
         flags = flags.or(F_PROTOTYPE);
-        rulesRefs = "67, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 67);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.X)
               .setISAdvancement(DATE_ES, DATE_NONE, DATE_NONE, DATE_NONE, DATE_NONE)

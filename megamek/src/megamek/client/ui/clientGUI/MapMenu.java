@@ -33,7 +33,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.Component;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
@@ -44,13 +44,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
-import javax.swing.JComponent;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JSeparator;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
@@ -60,6 +54,8 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.BuildingEditDialog;
+import megamek.client.ui.dialogs.HexEditDialog;
 import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
@@ -67,7 +63,9 @@ import megamek.client.ui.entityreadout.LiveReadoutDialog;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
+import megamek.client.ui.panels.phaseDisplay.PreEndDeclarationsDisplay;
 import megamek.client.ui.panels.phaseDisplay.TargetingPhaseDisplay;
+import megamek.client.ui.panels.phaseDisplay.VictoryHexPropertiesPane;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
@@ -84,15 +82,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.comparators.WeaponComparatorDamage;
 import megamek.common.compute.TurretFacing;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentFlag;
-import megamek.common.equipment.EquipmentMode;
-import megamek.common.equipment.MinefieldTarget;
-import megamek.common.equipment.MiscMounted;
-import megamek.common.equipment.MiscType;
-import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponMounted;
-import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.*;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
@@ -164,7 +154,11 @@ public class MapMenu extends JPopupMenu {
                     if (getComponentCount() > 0) {
                         addSeparator();
                     }
-                    addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    if (myEntity.getPosition() != null) {
+                        addIfNotEmpty(createMovementMenu(myEntity.getPosition().equals(coords)));
+                    } else {
+                        addIfNotEmpty(createMovementMenu(false));
+                    }
                     addIfNotEmpty(createTurnMenu());
                     addIfNotEmpty(createStandMenu());
                     addIfNotEmpty(createConvertMenu());
@@ -296,6 +290,8 @@ public class MapMenu extends JPopupMenu {
                         ((FiringDisplay) currentPanel).selectEntity(selectedEntity.getId());
                     } else if (currentPanel instanceof PhysicalDisplay) {
                         ((PhysicalDisplay) currentPanel).selectEntity(selectedEntity.getId());
+                    } else if (currentPanel instanceof PreEndDeclarationsDisplay preEndDisplay) {
+                        preEndDisplay.selectEntity(selectedEntity.getId());
                     }
                 }
             } catch (Exception ex) {
@@ -731,7 +727,10 @@ public class MapMenu extends JPopupMenu {
             JMenu dmgMenu = new JMenu(Messages.getString("Gamemaster.EditDamage"));
             JMenu specialCommandsMenu = GameMasterCommandMenu.createSpecialCommandsMenu(gui, coords);
 
-            var entities = client.getGame().getEntitiesVector(coords);
+            // Ignoring targetability is deliberate: a gamemaster edits units rather than shooting at them, and an
+            // Advanced Building reports itself untargetable because it is shot at as a hex rather than as a unit.
+            // Filtering on it left buildings out of this list entirely, which dropped the whole submenu.
+            var entities = client.getGame().getEntitiesVector(boardLocation, true);
 
             for (Entity entity : entities) {
                 dmgMenu.add(createUnitEditorMenuItem(entity));
@@ -740,9 +739,88 @@ public class MapMenu extends JPopupMenu {
                 menu.add(dmgMenu);
                 menu.addSeparator();
             }
+            // Change Terrain has a dialog of its own rather than a generated form, because what a gamemaster may
+            // legally set depends on what the hex already holds, and the generated form cannot know that.
+            menu.add(createChangeTerrainMenuItem());
+            menu.add(createBuildingMenuItem());
+            if (client.getGame().getOptions().booleanOption(OptionsConstants.VICTORY_USE_OBJECTIVES)) {
+                menu.add(createObjectiveMenuItem());
+                if (!entities.isEmpty()) {
+                    menu.add(createScanTargetMenu(entities));
+                }
+            }
             menu.add(specialCommandsMenu);
         }
         return menu;
+    }
+
+    /**
+     * Opens the control point pane on the hex that was right-clicked, to change the objective there, remove it, or
+     * put a new one there, at any time in the game. The edit goes to the server, which replaces the marker and
+     * tells every client (Objectives series, game master tools).
+     */
+    private JMenuItem createObjectiveMenuItem() {
+        ObjectiveMarker existing = objectiveAt(coords);
+        JMenuItem item = new JMenuItem(Messages.getString(
+              (existing != null) ? "Gamemaster.cmd.objective.edit" : "Gamemaster.cmd.objective.add"));
+        item.addActionListener(event -> editObjectiveAsGameMaster(existing));
+        return item;
+    }
+
+    /**
+     * Marks the units standing in the right-clicked hex as ones the mission wants scanned, or unmarks them. Ticking
+     * every vehicle of a convoy makes the convoy the scanning objective: once any unit is marked, only marked units
+     * are worth reading (Objectives series, game master tools).
+     */
+    private JMenu createScanTargetMenu(List<Entity> entities) {
+        JMenu menu = new JMenu(Messages.getString("Gamemaster.cmd.scanTarget"));
+        for (Entity entity : entities) {
+            JCheckBoxMenuItem item = new JCheckBoxMenuItem(entity.getShortName(), entity.isDesignatedScanTarget());
+            item.addActionListener(event -> client.sendScanDesignation(entity.getId(), item.isSelected()));
+            menu.add(item);
+        }
+        return menu;
+    }
+
+    private @Nullable ObjectiveMarker objectiveAt(Coords hex) {
+        for (ICarryable groundObject : client.getGame().getGroundObjects(hex)) {
+            if (groundObject instanceof ObjectiveMarker marker) {
+                return marker;
+            }
+        }
+        return null;
+    }
+
+    private void editObjectiveAsGameMaster(@Nullable ObjectiveMarker existing) {
+        ObjectiveMarker marker = existing;
+        if (marker == null) {
+            marker = new ObjectiveMarker();
+            marker.setName(Messages.getString("VictoryHex.name", coords.getBoardNum()));
+            marker.setOwnerId(client.getLocalPlayer().getId());
+        }
+        VictoryHexPropertiesPane.Result result = VictoryHexPropertiesPane.edit(gui.getFrame(), marker,
+              client.getGame().getPlayersList(), true);
+        switch (result) {
+            case SAVED -> client.sendObjectiveEdit(coords, marker);
+            case REMOVED -> client.sendObjectiveEdit(coords, null);
+            case CANCELLED -> { /* nothing sent; the server's copy stands */ }
+        }
+    }
+
+    /** Opens the Building dialog on the hex that was right-clicked, to put one up, change it or remove it. */
+    private JMenuItem createBuildingMenuItem() {
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.cmd.building.longName"));
+        item.addActionListener(event -> new BuildingEditDialog(gui.getFrame(), gui, coords).setVisible(true));
+        return item;
+    }
+
+    /** Opens the Change Terrain dialog on the hex that was right-clicked. */
+    private JMenuItem createChangeTerrainMenuItem() {
+        // named from the command rather than from the dialog's title, so this entry reads the same as the one on the
+        // Commands button and carries the same mark
+        JMenuItem item = new JMenuItem(Messages.getString("Gamemaster.cmd.changeTerrain.longName"));
+        item.addActionListener(event -> new HexEditDialog(gui.getFrame(), gui, coords).setVisible(true));
+        return item;
     }
 
     JMenuItem createUnitEditorMenuItem(Entity entity) {
@@ -1462,7 +1540,10 @@ public class MapMenu extends JPopupMenu {
             } else {
                 if ((hasAmmoType(AmmoType.AmmoTypeEnum.LRM)
                       || hasAmmoType(AmmoType.AmmoTypeEnum.LRM_IMP)
-                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML))
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.MML)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_10)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_15)
+                      || hasAmmoType(AmmoType.AmmoTypeEnum.TBOLT_20))
                       && (hasMunitionType(AmmoType.Munitions.M_FASCAM)
                       || hasMunitionType(AmmoType.Munitions.M_THUNDER)
                       || hasMunitionType(AmmoType.Munitions.M_THUNDER_ACTIVE)
@@ -1478,6 +1559,12 @@ public class MapMenu extends JPopupMenu {
 
                 if (hasAmmoType(AmmoType.AmmoTypeEnum.BA_MICRO_BOMB)) {
                     menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_BOMB)));
+                }
+
+                if (hasWeaponFlag(WeaponType.F_MRM)
+                      && EquipmentActivation.hasActiveGuidance(myEntity, MiscType.F_APOLLO)
+                      && Game.rulesManager.getRulesWeapons().getApolloSaturationMode()) {
+                    menu.add(targetMenuItem(new HexTarget(coords, board, Targetable.TYPE_SATURATION)));
                 }
 
                 if (hasWeaponFlag(WeaponType.F_DIVE_BOMB)
@@ -1787,12 +1874,17 @@ public class MapMenu extends JPopupMenu {
     private JMenuItem createModeJMenuItem(Mounted<?> mounted, int position) {
         JMenuItem item = new JMenuItem();
 
-        EquipmentMode mode = mounted.getType().getMode(position);
+        // Read from the mount, not its type. An infantry platoon's mount combines the modes of its primary and
+        // secondary weapons, so a mount can offer modes its own type does not have: reading from the type after
+        // counting with getModesCount() walks off the end of the type's list.
+        EquipmentMode mode = mounted.getMode(position);
 
+        // The starred entry is the mode the equipment is already in, so it is described as a state; the rest
+        // are changes the player can pick, and read as instructions.
         if (mode.equals(mounted.curMode())) {
-            item.setText("* " + mode.getDisplayableName());
+            item.setText("* " + mode.getStateName(mounted.getType()));
         } else {
-            item.setText(mode.getDisplayableName());
+            item.setText(mode.getActionName(mounted.getType()));
         }
         item.setActionCommand(Integer.toString(position));
         item.addActionListener(evt -> {

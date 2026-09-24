@@ -93,6 +93,96 @@ public class DamageEditSpec implements Serializable {
     /** Hot-loading on each ammo bin, by its equipment number; only carried by a gamemaster's in-game edit. */
     public final Map<Integer, Boolean> hotLoadedAmmo = new HashMap<>();
 
+    /**
+     * The chosen mode of each piece of equipment with modes, by its equipment number as the internal (non-localized)
+     * mode name; only carried by a gamemaster's in-game edit. The gamemaster's mode change takes effect at once,
+     * without the End Phase wait of a player's declared switch, and a mode matching the equipment's current mode is
+     * left alone so that a player's pending switch on untouched equipment survives the edit.
+     */
+    public final Map<Integer, String> equipmentMode = new HashMap<>();
+
+    /**
+     * Whether each chargeable weapon (a bombast laser or a PPC capacitor) holds a full charge, by its equipment
+     * number; only carried by a gamemaster's in-game edit.
+     */
+    public final Map<Integer, Boolean> equipmentCharged = new HashMap<>();
+
+    /*
+     * The weapon and location states a gamemaster can set or clear outright, as opposed to the damage that
+     * produces them in play. Only a gamemaster's editor carries these; everything else leaves them empty or
+     * {@code null}.
+     *
+     * Deliberately not carried: the turn bookkeeping on a mount. "Used this round" is what stops a weapon firing
+     * twice in one turn and is reset by the phase machinery; "AMS used" marks an anti-missile system that has
+     * already fired this round; the TSEMP downtime turn is the every-other-round rest a standard TSEMP takes. A
+     * gamemaster editing those mid-turn would fight the phase machinery for the same flag, and the next round reset
+     * wipes the edit anyway, so the editor shows none of them.
+     */
+
+    /**
+     * Whether each weapon is jammed, by its equipment number. Applies to every unit type, an Advanced Building's
+     * weapons included (TO:AR p. 119), but only to weapons some rule can jam ({@code WeaponMounted#canJam()});
+     * a jam named for any other weapon is refused. A jam set here bites at once, without the phase turnover a
+     * jam in play waits for; a jam cleared here is cleared entirely.
+     */
+    public final Map<Integer, Boolean> weaponJammed = new HashMap<>();
+
+    /**
+     * Whether each one-shot weapon has been fired, by its equipment number. Clearing it reloads the launcher.
+     * Only one-shot weapons carry a lasting fired state; a TSEMP's fired flag is round bookkeeping and is refused.
+     */
+    public final Map<Integer, Boolean> weaponFired = new HashMap<>();
+
+    /**
+     * Whether each weapon's Directional Torso Mount is locked in its current arc, by its equipment number (BMM
+     * p.83). Refused for a weapon that is not in such a mount.
+     */
+    public final Map<Integer, Boolean> directionalMountLocked = new HashMap<>();
+
+    /**
+     * Whether each of a Mek's locations is hull-breached (TW p.122); a {@code null} element means that location
+     * was not edited, and the whole array is {@code null} for any unit that is not a Mek. Breaching a location
+     * marks every piece of equipment and every critical slot in it breached, and clearing the breach restores
+     * them; the editor only marks the state, so a breached center torso or head does not destroy the unit here
+     * the way it does in play.
+     */
+    public Boolean[] locationBreached;
+
+    /**
+     * Whether each of a Mek's limbs (arms and legs) is blown off; a {@code null} element means that limb was not
+     * edited, and the whole array is {@code null} for any unit that is not a Mek. Blowing a limb off runs the same
+     * destruction a "limb blown off" critical does, missing marks and the leg-loss piloting roll included.
+     * Clearing it brings the limb back with its structure and armor: at the values the edit carries, or in full
+     * when the edit still shows the zero a gone limb reads as.
+     */
+    public Boolean[] locationBlownOff;
+
+    /*
+     * The Advanced Building critical results a gamemaster can set or take back (TO:AR p. 119). These are only
+     * carried for a building; every other unit type leaves them empty or {@code null}.
+     */
+
+    /**
+     * Turns the building's gunners remain stunned, or {@code null} when the unit has no such state. Zero means the
+     * gunners can act.
+     */
+    public Integer buildingStunnedTurns;
+
+    /**
+     * Whether the gunners of each of the building's hexes are dead, keyed by one entity location in that hex.
+     * Gunners are killed a hex at a time, so any location of the hex stands for the whole hex.
+     */
+    public final Map<Integer, Boolean> buildingGunnersKilled = new HashMap<>();
+
+    /** Whether each of the building's turreted weapons is locked to the forward arc, by its equipment number. */
+    public final Map<Integer, Boolean> buildingTurretLocked = new HashMap<>();
+
+    /**
+     * Whether the building's power is switched off at the mains, or {@code null} when the unit has no such switch.
+     * A structure switched off shuts down however healthy its generators are.
+     */
+    public Boolean buildingPowerSwitchedOff;
+
     /*
      * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
      * permanent flag is on). Gunnery and piloting travel together; the initiative trio is present only where the
@@ -107,6 +197,25 @@ public class DamageEditSpec implements Serializable {
     public Integer initiativeModifier;
     public Integer initiativeRounds;
     public boolean initiativePermanent;
+    /**
+     * The gamemaster's change to the unit's target movement modifier for the rest of the round, or {@code null}
+     * where the editor offered no such control. Zero clears it. See {@code Entity#setGamemasterTargetModifier}.
+     */
+    public Integer targetModifier;
+
+    /*
+     * The unit's ejection settings, the same ones the lobby's Configure dialog sets, so a gamemaster can override
+     * them in play. Each is {@code null} where the editor offered no box: a unit without an ejection system has
+     * none, and the conditional triggers only exist under the conditional ejection option. Only a gamemaster's
+     * in-game edit carries them. The first is the master switch as the unit stores it: {@code true} ejects.
+     */
+    public Boolean autoEject;
+    public Boolean conditionalEjectOnAmmoExplosion;
+    public Boolean conditionalEjectOnEngineExplosion;
+    public Boolean conditionalEjectOnCenterTorsoDestroyed;
+    public Boolean conditionalEjectOnHeadshot;
+    public Boolean conditionalEjectOnFuelExplosion;
+    public Boolean conditionalEjectOnStructuralIntegrityDestroyed;
 
     /* Mek system crit hits */
     public Integer centerEngineHits;

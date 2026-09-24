@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.sniperRifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -65,7 +66,7 @@ public class InfantrySniperRifleSairentosutomu extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = .224;
         tonnage = 0.007;
-        infantryDamage = 0.28;
+        infantryDamage = 0.224;
         infantryRange = 5;
         ammoWeight = 0.007;
         cost = 900;
@@ -73,7 +74,7 @@ public class InfantrySniperRifleSairentosutomu extends InfantryWeapon {
         shots = 8;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #1";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_1);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)

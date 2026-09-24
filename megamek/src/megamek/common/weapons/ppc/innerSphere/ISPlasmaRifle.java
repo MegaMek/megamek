@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -84,10 +85,13 @@ public class ISPlasmaRifle extends AmmoWeapon {
         medAV = 10;
         maxRange = RANGE_MED;
         atClass = CLASS_PLASMA;
-        rulesRefs = "234, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 234),
+              rulesRef(SourceBookCode.BMM, 106),
+              rulesRef(SourceBookCode.CORE, 189),
+              rulesRef(SourceBookCode.TW, 140)
+        );
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3061, 3068, 3072, DATE_NONE, DATE_NONE)

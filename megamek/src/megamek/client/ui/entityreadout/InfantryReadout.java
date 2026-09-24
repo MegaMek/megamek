@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -249,7 +249,8 @@ class InfantryReadout extends GeneralEntityReadout {
     protected List<ViewElement> getWeapons(boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
         result.add(new LabeledLine(Messages.getString("MekView.PrimaryWeapon"),
-              (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : MESSAGE_NONE));
+                                   (infantry.getPrimaryWeapon() != null) ? infantry.getPrimaryWeapon()
+                                                                                   .getDesc() : MESSAGE_NONE));
         result.add(new LabeledLine(Messages.getString("MekView.SecondWeapon"),
               secondaryCIWeaponDescriptor()));
         if (infantry.hasDisposableWeapon()) {
@@ -349,30 +350,25 @@ class InfantryReadout extends GeneralEntityReadout {
     }
 
     private String getInfantryArmor() {
-        String armorDescription = "None";
-        EquipmentType armorKit = infantry.getArmorKit();
-        if (armorKit != null) {
-            armorDescription = armorKit.getName();
-            StringJoiner abilities = new StringJoiner(", ", " (", ")");
-            abilities.setEmptyValue("");
-
-            if (infantry.hasSpaceSuit()) {
-                abilities.add("Spacesuit");
+        String armorName;
+        if (infantry.hasArmor()) {
+            EquipmentType armor = infantry.getArmorKit();
+            if (armor != null) {
+                armorName = armor.getName();
+            } else {
+                armorName = infantry.getCustomArmorName() != null ? infantry.getCustomArmorName()
+                      : Messages.getString("MekView.Custom");
+                if (!infantry.getArmorSpecials().isBlank()) {
+                    armorName += " " + infantry.getArmorSpecials();
+                }
             }
-
-            if (infantry.hasDEST()) {
-                abilities.add("DEST");
+        } else {
+            armorName = Messages.getString("MekView.None");
+            if (!infantry.getArmorSpecials().isBlank()) {
+                armorName += " " + infantry.getArmorSpecials();
             }
-
-            // Sneak Suit abilities are part of the armor name and don't need to be listed
-            if (!infantry.hasSneakCamo()
-                  && (infantry.getCrew() != null && infantry.hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
-                abilities.add("Camo");
-            }
-
-            armorDescription += abilities.toString();
         }
-        return armorDescription;
+        return armorName;
     }
 
     @Override

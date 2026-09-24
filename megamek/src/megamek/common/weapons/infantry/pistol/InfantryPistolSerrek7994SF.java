@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -63,9 +64,9 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
         setInternalName(name);
         addLookupName("Serrek 7994 SF");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .202;
+        bv = 0.2025;
         tonnage = 0.0011;
-        infantryDamage = 0.2;
+        infantryDamage = 0.2025;
         infantryRange = 1;
         ammoWeight = 0.000004;
         cost = 400;
@@ -73,7 +74,7 @@ public class InfantryPistolSerrek7994SF extends InfantryWeapon {
         shots = 20;
         bursts = 3;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #3";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_3);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)

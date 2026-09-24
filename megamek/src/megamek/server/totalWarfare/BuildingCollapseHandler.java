@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,6 +49,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.MiscType;
 import megamek.common.net.enums.PacketCommand;
@@ -97,8 +98,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
     boolean checkForCollapse(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
           boolean checkBecauseOfDamage, Vector<Report> vPhaseReport) {
 
-        // If the input is meaningless, do nothing and throw no exception.
-        if ((bldg == null) || (positionMap == null) || positionMap.isEmpty() || (coords == null)
+        // If the input is meaningless, do nothing and throw no exception. An empty position map is legal: nothing
+        // is standing on the board, but the building can still come down (a building burning down on an empty map).
+        if ((bldg == null) || (positionMap == null) || (coords == null)
               || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
             LOGGER.error("Illegal/null arguments");
             return false;
@@ -511,7 +513,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                         table = ToHitData.HIT_PUNCH;
                     }
                     HitData hit = entity.rollHitLocation(table, ToHitData.SIDE_FRONT);
-                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
                     vPhaseReport.addAll(gameManager.damageEntity(entity, hit, next));
                     remaining -= next;
                 }

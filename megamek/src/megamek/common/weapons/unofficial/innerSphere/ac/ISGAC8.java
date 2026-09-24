@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,18 +36,20 @@ package megamek.common.weapons.unofficial.innerSphere.ac;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
-import megamek.common.weapons.autoCannons.ACWeapon;
+import megamek.common.weapons.unofficial.GACWeapon;
 
 /**
  * @author BATTLEMASTER
  * @since Sep 25, 2004
  */
-public class ISGAC8 extends ACWeapon {
+public class ISGAC8 extends GACWeapon {
     @Serial
     private static final long serialVersionUID = 49211848611799265L;
 
@@ -82,13 +84,12 @@ public class ISGAC8 extends ACWeapon {
         toHitModifier = -1;
         flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_MEK_WEAPON)
               .or(F_AERO_WEAPON).or(F_TANK_WEAPON).or(F_PULSE);
-        ammoType = AmmoType.AmmoTypeEnum.AC;
+        ammoType = AmmoType.AmmoTypeEnum.GAC;
         atClass = CLASS_AC;
         // Going to Assume these are like IS RACs
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3060, 3062, 3071, DATE_NONE, DATE_NONE)

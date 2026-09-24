@@ -77,8 +77,8 @@ public class MGAWeaponHandler extends MGHandler {
         if (target.isConventionalInfantry()) {
             calcDmgPerHitReport.add(new Report(950));
             int damage = Compute.directBlowInfantryDamage(
-                  weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getDamage(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport, howManyShots);
             damage = applyGlancingBlowModifier(damage, true);
@@ -135,7 +135,8 @@ public class MGAWeaponHandler extends MGHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         int shotsHit;
         int nMod = getClusterModifiers(true);
-
+        nMod += Game.rulesManager.getRulesWeapons().getMGABonus();
+        
         if ((howManyShots == 1) || target.isConventionalInfantry()) {
             shotsHit = 1;
         } else {

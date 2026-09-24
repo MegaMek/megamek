@@ -33,6 +33,7 @@
 package megamek.common.universe;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 import megamek.common.annotations.Nullable;
 
@@ -52,6 +53,11 @@ public record RankSystem(String code, String name, List<String[]> ranks) {
 
     private static final int DEFAULT_PROFESSION_COLUMN = 0;
     private static final String INHERIT_PLACEHOLDER = "-";
+    /**
+     * A trailing {@code :<count>} on a rank name, recording how many levels the rank spans rather than
+     * forming part of its name.
+     */
+    private static final Pattern RANK_LEVEL_COUNT_SUFFIX = Pattern.compile(":\\d+\\s*$");
 
     /**
      * Resolves the rank int to its short display name, e.g. rank 34 in DCMS → "Tai-i". Returns {@code null} when the
@@ -92,6 +98,21 @@ public record RankSystem(String code, String name, List<String[]> ranks) {
         if (value.isEmpty() || INHERIT_PLACEHOLDER.equals(value)) {
             return null;
         }
-        return value;
+        return stripRankLevelCount(value);
+    }
+
+    /**
+     * Removes the rank-level count a name may carry.
+     *
+     * <p>A rank that spans several levels records how many after a colon - "Precentor:25" is the
+     * Precentor rank with twenty-five levels, not a rank called "Precentor:25". Only that exact shape
+     * is stripped, so a rank whose name genuinely contains a colon survives intact.</p>
+     *
+     * @param rankName the name as the file records it
+     *
+     * @return the name without its level count
+     */
+    private static String stripRankLevelCount(String rankName) {
+        return RANK_LEVEL_COUNT_SUFFIX.matcher(rankName).replaceAll("");
     }
 }

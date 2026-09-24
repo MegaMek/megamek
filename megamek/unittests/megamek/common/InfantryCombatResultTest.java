@@ -128,7 +128,9 @@ public class InfantryCombatResultTest {
         InfantryCombatResult result = InfantryCombatResult.repulsed(30);
         String str = result.toString();
 
-        assertTrue(str.contains("Repulsed") || str.contains("R"));
+        // An eliminated attacker cannot also be repulsed, so the cell prints without the R flag
+        assertEquals("E/30%", str);
+        assertEquals("70%/30% (R)", InfantryCombatResult.repulsed(70, 30).toString());
     }
 
     @Test

@@ -163,7 +163,9 @@ public enum KeyCommandBind {
     FORCE_DISPLAY(true, "toggleForceDisplay", VK_F, CTRL_DOWN_MASK),
     EXTEND_TURN_TIMER("extendTurnTimer", VK_F4, CTRL_DOWN_MASK),
     BOT_COMMANDS(true, "toggleBotCommandsDisplay", VK_G, CTRL_DOWN_MASK | SHIFT_DOWN_MASK),
-    FOV_SPOTTING(true, "toggleFovSpotting", VK_O);
+    FOV_SPOTTING(true, "toggleFovSpotting", VK_O, CTRL_DOWN_MASK),
+    /** Toggles the objective overlays: control zone outlines and the scheme word on each flag. */
+    SHOW_OBJECTS(true, "toggleShowObjects", VK_O);
 
     /** The command associated with this binding. */
     public String cmd;

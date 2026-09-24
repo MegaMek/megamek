@@ -123,6 +123,9 @@ public final class Player extends TurnOrdered {
     // initiative collectively
     // if they are then we pick the best non-zero bonuses
     private int constantInitBonus = 0;
+
+    // victory points this player's side starts the game with, from a scenario's faction definition
+    private int startingVictoryPoints = 0;
     private int streakCompensationBonus = 0;
 
     private Camouflage camouflage = new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, PlayerColour.BLUE.name());
@@ -144,7 +147,8 @@ public final class Player extends TurnOrdered {
     //endregion Variable Declarations
 
     //region Constructors
-    public Player(int id, String name) {
+    public Player(int id,
+                  String name) {
         this.name = name;
         this.id = id;
     }
@@ -181,26 +185,27 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean hasMinefields() {
-    	boolean hasMinefields = false;
-    	
-    	for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
-    		if (minefieldCounts[minefieldIndex] > 0) {
-    			hasMinefields = true;
-    			break;
-    		}
-    	}
-    	
+        boolean hasMinefields = false;
+
+        for (int minefieldIndex = 0; minefieldIndex < Minefield.TYPE_SIZE; minefieldIndex++) {
+            if (minefieldCounts[minefieldIndex] > 0) {
+                hasMinefields = true;
+                break;
+            }
+        }
+
         return hasMinefields ||
-              (numFortifiedHexes > 0) ||
-              !getGroundObjectsToPlace().isEmpty();
+               (numFortifiedHexes > 0) ||
+               !getGroundObjectsToPlace().isEmpty();
     }
-    
+
     /**
-     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
-     * and a count (preferably more than 0), set the count of that type of mine for this player.
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java and a count (preferably
+     * more than 0), set the count of that type of mine for this player.
      */
-    public void setMinefieldCount(int minefieldType, int count) {
-    	minefieldCounts[minefieldType] = count;
+    public void setMinefieldCount(int minefieldType,
+                                  int count) {
+        minefieldCounts[minefieldType] = count;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -208,31 +213,31 @@ public final class Player extends TurnOrdered {
     }
 
     public void setNbrMFCommand(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
+        minefieldCounts[Minefield.TYPE_COMMAND_DETONATED] = nbrMF;
     }
 
     public void setNbrMFVibra(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
+        minefieldCounts[Minefield.TYPE_VIBRABOMB] = nbrMF;
     }
 
     public void setNbrMFActive(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
+        minefieldCounts[Minefield.TYPE_ACTIVE] = nbrMF;
     }
 
     public void setNbrMFInferno(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
+        minefieldCounts[Minefield.TYPE_INFERNO] = nbrMF;
     }
-    
+
     public void setNbrMFEMP(int nbrMF) {
-    	minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
+        minefieldCounts[Minefield.TYPE_EMP] = nbrMF;
     }
-    
+
     /**
-     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java
-     * returns how many mines of that type this player has
+     * Given a minefield type from one of the TYPE_[MINEFIELDTYPE] constants in Minefield.java returns how many mines of
+     * that type this player has
      */
     public int getMinefieldCount(int minefieldType) {
-    	return minefieldCounts[minefieldType];
+        return minefieldCounts[minefieldType];
     }
 
     public int getNbrMFConventional() {
@@ -261,7 +266,7 @@ public final class Player extends TurnOrdered {
 
     /**
      * @return the number of fortified hexes this player may place during the minefield deployment phase
-     *       (Trench/Fieldworks Engineers, TO:AUE p.153)
+     * (Trench/Fieldworks Engineers, TO:AUE p.153)
      */
     public int getNbrFortifiedHexes() {
         return numFortifiedHexes;
@@ -310,12 +315,12 @@ public final class Player extends TurnOrdered {
     public void setTeam(int team) {
         this.team = team;
     }
-    
+
     public String getTeamName() {
         if (getTeam() <= TEAM_NONE) {
             return "No Team";
         }
-        
+
         return "Team " + getTeam();
     }
 
@@ -349,12 +354,16 @@ public final class Player extends TurnOrdered {
         this.bot = bot;
     }
 
-    /** @return true if this player may become a Game Master. Any human may be a GM */
+    /**
+     * @return true if this player may become a Game Master. Any human may be a GM
+     */
     public boolean isGameMasterPermitted() {
         return !bot;
     }
 
-    /** @return true if {@link #gameMaster} flag is true and {@link #isGameMasterPermitted()} */
+    /**
+     * @return true if {@link #gameMaster} flag is true and {@link #isGameMasterPermitted()}
+     */
     public boolean isGameMaster() {
         return (isGameMasterPermitted() && gameMaster);
     }
@@ -376,7 +385,9 @@ public final class Player extends TurnOrdered {
         this.gameMaster = gameMaster;
     }
 
-    /** @return true if {@link #observer} flag is true and not in VICTORY phase */
+    /**
+     * @return true if {@link #observer} flag is true and not in VICTORY phase
+     */
     public boolean isObserver() {
         if ((game != null) && game.getPhase().isVictory()) {
             return false;
@@ -386,7 +397,6 @@ public final class Player extends TurnOrdered {
 
     /**
      * @return true if this Player is not considered an observer.
-     *
      * @see #isObserver()
      */
     public boolean isNotObserver() {
@@ -420,7 +430,7 @@ public final class Player extends TurnOrdered {
 
     /**
      * @return {@code true} if the server should include enemy artillery attacks in this player's artillery packet (the
-     *       Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
+     * Rounds in the Air testing reveal); {@code false} for normal team-only (double-blind) behavior
      */
     public boolean isArtilleryRevealAll() {
         return artilleryRevealAll;
@@ -444,7 +454,9 @@ public final class Player extends TurnOrdered {
         return gameMaster || observer;
     }
 
-    /** set the {@link #observer} flag. Observers have no units add no team */
+    /**
+     * set the {@link #observer} flag. Observers have no units add no team
+     */
     public void setObserver(boolean observer) {
         this.observer = observer;
     }
@@ -493,6 +505,22 @@ public final class Player extends TurnOrdered {
     }
 
     public PlayerColour getColour() {
+        return colour;
+    }
+
+    /**
+     * The colour this player is actually shown in. A player picks a colour in the lobby by choosing a
+     * colour camouflage, and that choice lives on the camouflage - {@link #getColour()} is a separate
+     * field that the lobby never sets, so it stays at its default for most players and cannot be trusted
+     * to say what the player looks like. Anything drawing something in a player's colour wants this.
+     *
+     * @return The colour of this player's colour camouflage, or the plain colour field when the camouflage
+     * is an image rather than a colour
+     */
+    public PlayerColour getDisplayColour() {
+        if ((camouflage != null) && camouflage.isColourCamouflage()) {
+            return PlayerColour.parseFromString(camouflage.getFilename());
+        }
         return colour;
     }
 
@@ -570,7 +598,7 @@ public final class Player extends TurnOrdered {
     }
 
     public boolean isEnemyOf(Player other) {
-        if (null == other) {
+        if (other == null) {
             return true;
         }
         return (id != other.getId()) && ((team == TEAM_NONE) || (team == TEAM_UNASSIGNED) || (team != other.getTeam()));
@@ -649,18 +677,17 @@ public final class Player extends TurnOrdered {
      */
     public int getBV() {
         return List.copyOf(game.getInGameObjects())
-              .stream()
-              .filter(this::isMyUnit)
-              .filter(InGameObject::countForStrengthSum)
-              .mapToInt(InGameObject::getStrength)
-              .sum();
+                   .stream()
+                   .filter(this::isMyUnit)
+                   .filter(InGameObject::countForStrengthSum)
+                   .mapToInt(InGameObject::getStrength)
+                   .sum();
     }
 
     /**
      * Returns true when the given unit belongs to this Player.
      *
      * @param unit The unit
-     *
      * @return True when the unit belongs to "me", this Player
      */
     public boolean isMyUnit(InGameObject unit) {
@@ -698,6 +725,18 @@ public final class Player extends TurnOrdered {
     }
 
     /**
+     * @return The victory points this player's side starts the game with, as set by a scenario's faction
+     * definition; 0 unless a scenario set it
+     */
+    public int getStartingVictoryPoints() {
+        return startingVictoryPoints;
+    }
+
+    public void setStartingVictoryPoints(int startingVictoryPoints) {
+        this.startingVictoryPoints = startingVictoryPoints;
+    }
+
+    /**
      * @return the bonus to this player's initiative rolls granted by his units
      */
     public int getTurnInitBonus() {
@@ -732,7 +771,7 @@ public final class Player extends TurnOrdered {
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
             if (object instanceof Entity entity && entity.getOwner().equals(this)
-                  && isActiveForCommandBonus(entity)) {
+                && isActiveForCommandBonus(entity)) {
                 bonus = Math.max(entity.getHQIniBonus(), bonus);
             }
         }
@@ -750,7 +789,7 @@ public final class Player extends TurnOrdered {
         int bonus = 0;
         for (InGameObject object : game.getInGameObjects()) {
             if (object instanceof Entity entity && entity.getOwner().equals(this)
-                  && isActiveForCommandBonus(entity)) {
+                && isActiveForCommandBonus(entity)) {
                 bonus = Math.max(bonus, entity.getQuirkIniBonus());
             }
         }
@@ -769,7 +808,7 @@ public final class Player extends TurnOrdered {
         String bestQuirkName = null;
         for (InGameObject object : game.getInGameObjects()) {
             if (object instanceof Entity entity && entity.getOwner().equals(this)
-                  && isActiveForCommandBonus(entity)) {
+                && isActiveForCommandBonus(entity)) {
                 int entityBonus = entity.getQuirkIniBonus();
                 if (entityBonus > bestBonus) {
                     bestBonus = entityBonus;
@@ -797,7 +836,7 @@ public final class Player extends TurnOrdered {
             if (object instanceof Entity entity && entity.getOwner().equals(this)) {
                 if (isActiveForCommandBonus(entity)) {
                     if (entity.hasCommandConsoleBonus() || entity.getCrew().hasActiveTechOfficer()) {
-                        return 2;
+                        return Game.rulesManager.getRulesEquipment().getCommandConsoleBonus();
                     }
                 }
             }
@@ -837,12 +876,12 @@ public final class Player extends TurnOrdered {
         boolean useCommandInit = game.getOptions().booleanOption(OptionsConstants.RPG_COMMAND_INIT);
         // entities are owned by this player, active, and not individual pilots
         ArrayList<Entity> entities = game.getInGameObjects()
-              .stream()
-              .filter(Entity.class::isInstance)
-              .map(Entity.class::cast)
-              .filter(entity -> (null != entity.getOwner()) &&
-                    entity.getOwner().equals(this))
-              .collect(Collectors.toCollection(ArrayList::new));
+                                         .stream()
+                                         .filter(Entity.class::isInstance)
+                                         .map(Entity.class::cast)
+                                         .filter(entity -> (entity.getOwner() != null) &&
+                                                           entity.getOwner().equals(this))
+                                         .collect(Collectors.toCollection(ArrayList::new));
         int commandBonus = 0;
         for (Entity entity : entities) {
             int bonus = getIndividualCommandBonus(entity, useCommandInit);
@@ -861,7 +900,8 @@ public final class Player extends TurnOrdered {
      * @param useCommandInit boolean based on game options
      *
      */
-    public int getIndividualCommandBonus(Entity entity, boolean useCommandInit) {
+    public int getIndividualCommandBonus(Entity entity,
+                                         boolean useCommandInit) {
         int bonus = 0;
         // Only consider this during normal rounds when unit is deployed on board, or about to deploy this round.
         if (isActiveForCommandBonus(entity)) {
@@ -908,7 +948,7 @@ public final class Player extends TurnOrdered {
                 continue;
             }
             boolean eligibleForBonus = (entity.isDeployed() && !entity.isOffBoard()) ||
-                  (entity.getDeployRound() == (game.getCurrentRound() + 1));
+                                       (entity.getDeployRound() == (game.getCurrentRound() + 1));
             if (!eligibleForBonus) {
                 LOGGER.debug("TCP: {} skipped - not deployed or deploying next round", entity.getDisplayName());
                 continue;
@@ -919,7 +959,7 @@ public final class Player extends TurnOrdered {
                 continue;
             }
             if (!entity.hasAbility(OptionsConstants.MD_VDNI)
-                  && !entity.hasAbility(OptionsConstants.MD_BVDNI)) {
+                && !entity.hasAbility(OptionsConstants.MD_BVDNI)) {
                 LOGGER.debug("TCP: {} skipped - no VDNI/BVDNI", entity.getDisplayName());
                 continue;
             }
@@ -952,7 +992,7 @@ public final class Player extends TurnOrdered {
             }
 
             LOGGER.debug("TCP: {} qualifies with bonus {} (deployed={}, deployRound={})",
-                  entity.getDisplayName(), bonus, entity.isDeployed(), entity.getDeployRound());
+                         entity.getDisplayName(), bonus, entity.isDeployed(), entity.getDeployRound());
             bestBonus = Math.max(bestBonus, bonus);
         }
         LOGGER.debug("TCP: Final TCP bonus for player {}: {}", name, bestBonus);
@@ -999,7 +1039,6 @@ public final class Player extends TurnOrdered {
      * crew, not captured, not an ejected pilot, and either deployed on-board or deploying next round.
      *
      * @param entity the entity to check
-     *
      * @return true if the entity can provide command bonuses
      */
     private boolean isActiveForCommandBonus(Entity entity) {
@@ -1017,12 +1056,12 @@ public final class Player extends TurnOrdered {
 
     public String getColoredPlayerNameWithTeam() {
         return "<B><font color='" +
-              getColour().getHexString(0x00F0F0F0) +
-              "'>" +
-              getName() +
-              " (" +
-              getTeamName() +
-              ")</font></B>";
+               getColour().getHexString(0x00F0F0F0) +
+               "'>" +
+               getName() +
+               " (" +
+               getTeamName() +
+               ")</font></B>";
     }
 
     /**
@@ -1046,7 +1085,7 @@ public final class Player extends TurnOrdered {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if ((null == object) || (getClass() != object.getClass())) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         } else {
             final Player other = (Player) object;
@@ -1089,10 +1128,15 @@ public final class Player extends TurnOrdered {
 
         copy.artyAutoHitHexes = new ArrayList<>(artyAutoHitHexes);
 
+        // without this, player updates sent to OTHER clients (which are sent as redacted copies) lose the
+        // ground objects, so designated victory hexes would never show up for anyone but their owner
+        copy.groundObjectsToPlace = new ArrayList<>(groundObjectsToPlace);
+
         copy.initialEntityCount = initialEntityCount;
         copy.initialBV = initialBV;
 
         copy.constantInitBonus = constantInitBonus;
+        copy.startingVictoryPoints = startingVictoryPoints;
         copy.streakCompensationBonus = streakCompensationBonus;
 
         copy.camouflage = camouflage;
@@ -1109,7 +1153,7 @@ public final class Player extends TurnOrdered {
 
     /**
      * @return The area of the board this player's units are allowed to flee from; An empty area as return value means
-     *       they may not flee at all.
+     * they may not flee at all.
      */
     public HexArea getFleeZone() {
         return fleeArea;
@@ -1120,7 +1164,6 @@ public final class Player extends TurnOrdered {
      * flee.
      *
      * @param fleeArea The new flee area.
-     *
      * @see megamek.common.hexArea.BorderHexArea
      */
     public void setFleeZone(HexArea fleeArea) {

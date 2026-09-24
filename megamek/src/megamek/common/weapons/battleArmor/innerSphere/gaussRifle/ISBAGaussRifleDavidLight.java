@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere.gaussRifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,10 +69,8 @@ public class ISBAGaussRifleDavidLight extends Weapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC)
               .or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 22500;
-        rulesRefs = "255, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 255);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3058, 3063, 3065, DATE_NONE, DATE_NONE)

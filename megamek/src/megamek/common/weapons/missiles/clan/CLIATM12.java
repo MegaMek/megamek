@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -70,10 +71,8 @@ public class CLIATM12 extends CLIATMWeapon {
         this.shortAV = this.getBaseAeroDamage(); // This is a streak weapon so we use the rack size for the AV
         this.medAV = this.shortAV;
         this.maxRange = RANGE_MED;
-        rulesRefs = "59, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 59);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setClanAdvancement(3054, 3070, DATE_NONE, DATE_NONE, DATE_NONE)

@@ -60,6 +60,7 @@ class GameDataTest {
         Mockito.when(mockGame.getTurnIndex()).thenReturn(2);
         Mockito.when(mockGame.getTurn()).thenReturn(null); // Null turn player
         Mockito.when(mockGame.getInGameObjects()).thenReturn(new java.util.ArrayList<>());
+        Mockito.when(mockGame.getOutOfGameEntitiesVector()).thenReturn(new java.util.Vector<>());
         Mockito.when(mockGame.getMinedCoords())
               .thenReturn(new java.util.Vector<megamek.common.board.Coords>().elements());
 

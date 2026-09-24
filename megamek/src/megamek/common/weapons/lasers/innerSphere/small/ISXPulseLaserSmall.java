@@ -36,6 +36,7 @@ package megamek.common.weapons.lasers.innerSphere.small;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -78,7 +79,11 @@ public class ISXPulseLaserSmall extends PulseLaserWeapon {
         shortAV = 3;
         cost = 31000;
         flags = flags.or(F_BURST_FIRE).andNot(F_PROTO_WEAPON);
-        rulesRefs = "133, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 133),
+              rulesRef(SourceBookCode.BMM, 101),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

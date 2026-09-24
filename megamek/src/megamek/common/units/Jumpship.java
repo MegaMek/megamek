@@ -1275,4 +1275,9 @@ public class Jumpship extends Aero {
     public int getRecoveryTime() {
         return 360;
     }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
+    }
 }

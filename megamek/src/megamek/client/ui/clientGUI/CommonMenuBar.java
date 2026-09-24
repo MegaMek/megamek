@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
@@ -57,8 +58,10 @@ import javax.swing.KeyStroke;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
+import megamek.client.Client;
 import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.Messages;
+import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.ShowBugReportDialogAction;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.common.KeyBindParser;
@@ -84,6 +87,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     /** True when this menu is attached to a client (lobby or in game). */
     private final boolean isGame;
 
+    /**
+     * Supplies the client whose game the bug report packager should save. The menu bar is built before any client
+     * exists - and for the main menu, none ever does - so this is resolved lazily and defaults to no client.
+     */
+    private Supplier<Client> clientSupplier = () -> null;
+
     /** The current phase of the game, if any. */
     private GamePhase phase = GamePhase.UNKNOWN;
 
@@ -101,6 +110,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private final JMenuItem gameRequestGameMaster = new JMenuItem(getString("CommonMenuBar.gameRequestGameMaster"));
     /** Gives up the Game Master role; only shown while the local player holds it. */
     private final JMenuItem gameGiveUpGameMaster = new JMenuItem(getString("CommonMenuBar.gameGiveUpGameMaster"));
+
+    /**
+     * Whether the player at this screen holds the Game Master role, which decides whether the reinforcement entries
+     * are theirs to use during a game. Kept because the menu is rebuilt on events that do not carry the role.
+     */
+    private boolean localPlayerHoldsGameMasterRole;
     /*
      * Lobby-only shortcuts that set MG burst fire and LRM hot-loading on every unit the player may configure at
      * once, sharing the labels of the same actions in the unit right-click menu. Shown only in the lobby and only
@@ -168,6 +183,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
+    private final JMenuItem viewZoomReset = new JMenuItem(getString("CommonMenuBar.viewZoomReset"));
     private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
     // Bot Commands is a submenu offering three mutually exclusive display modes (Off / Float / Dock).
@@ -193,6 +209,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewToggleFovDarken"));
     private final JCheckBoxMenuItem toggleFovSpotting = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFovSpotting"));
+    private final JCheckBoxMenuItem toggleShowObjects = new JCheckBoxMenuItem(getString(
+          "CommonMenuBar.viewToggleShowObjects"));
     private final JCheckBoxMenuItem toggleFiringSolutions = new JCheckBoxMenuItem(getString(
           "CommonMenuBar.viewToggleFiringSolutions"));
     private final JCheckBoxMenuItem toggleCFWarning = new JCheckBoxMenuItem(getString(
@@ -218,6 +236,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
     /** Maps the Action Command to the respective MenuItem. */
     private final Map<String, JMenuItem> itemMap = new HashMap<>();
+
+    /**
+     * Tells this menu bar how to find the client whose game should be saved for a bug report.
+     *
+     * <p>Set this once the client exists. Without it, the bug report packager still works but produces an archive of
+     * logs and system information only, which is the correct behaviour for the main menu and the board editor.</p>
+     *
+     * @param clientSupplier supplies the current client; may return {@code null} when no game is running
+     */
+    public void setClientSupplier(Supplier<Client> clientSupplier) {
+        this.clientSupplier = clientSupplier;
+    }
 
     public static CommonMenuBar getMenuBarForGame() {
         var menuBar = new CommonMenuBar(false, true, false);
@@ -380,6 +410,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
+        initMenuItem(viewZoomReset, menu, VIEW_ZOOM_RESET);
         initMenuItem(viewZoomOverviewToggle, menu, VIEW_ZOOM_OVERVIEW_TOGGLE);
         initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T, GUIP.getIsometricEnabled());
         initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEX_COORDS, VK_G, GUIP.getCoordsEnabled());
@@ -392,6 +423,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         initMenuItem(toggleFovHighlight, menu, VIEW_TOGGLE_FOV_HIGHLIGHT, GUIP.getFovHighlight());
         initMenuItem(toggleFovSpotting, menu, VIEW_TOGGLE_FOV_SPOTTING, GUIP.getFovSpottingMode());
         toggleFovSpotting.setToolTipText(Messages.getString("CommonMenuBar.viewToggleFovSpottingTooltip"));
+        initMenuItem(toggleShowObjects, menu, VIEW_TOGGLE_SHOW_OBJECTS, GUIP.getShowObjectiveOverlays());
+        toggleShowObjects.setToolTipText(Messages.getString("CommonMenuBar.viewToggleShowObjectsTooltip"));
         initMenuItem(viewMovementEnvelope, menu, VIEW_MOVE_ENV, GUIP.getMoveEnvelope());
         initMenuItem(viewMovModEnvelope, menu, VIEW_MOVE_MOD_ENV);
         menu.addSeparator();
@@ -422,7 +455,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         menu.addSeparator();
 
-        menu.add(new ShowBugReportDialogAction(this, new CopySystemDataAction()));
+        // The client is resolved when the button is pressed, not now: this menu bar is also built for the main menu,
+        // where no game exists yet. A null client is a supported state and yields a logs-only archive.
+        // This must stay a lambda rather than the method reference clientSupplier::get, which would capture the
+        // placeholder supplier installed above and ignore whatever setClientSupplier later provides.
+        menu.add(new ShowBugReportDialogAction(this, new CopySystemDataAction(),
+              new PackageBugReportAction(this, () -> clientSupplier.get())));
         menu.add(new CopySystemDataAction());
 
         menu.addSeparator();
@@ -440,6 +478,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
     private void setKeyBinds() {
         toggleSensorRange.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SENSOR_RANGE));
         toggleFovSpotting.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FOV_SPOTTING));
+        toggleShowObjects.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.SHOW_OBJECTS));
         toggleFieldOfFire.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.FIELD_FIRE));
         toggleIsometric.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.TOGGLE_ISO));
         viewMovementEnvelope.setAccelerator(KeyCommandBind.keyStroke(KeyCommandBind.MOVE_ENVELOPE));
@@ -589,8 +628,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         boardTraceOverlay.setEnabled(isBoardEditor);
         fileUnitsPaste.setEnabled(isLobby);
         fileUnitsCopy.setEnabled(isLobby);
-        fileUnitsReinforce.setEnabled((isInGame) && isNotVictory);
-        fileUnitsReinforceRAT.setEnabled((isMainMenu || isLobby || isInGame) && isNotVictory);
+        // reinforcing a player during a game is a gamemaster's job and lives on the Game Master menu; the same
+        // dialog outside a game is how anybody builds an army, so the main menu and the lobby keep it
+        fileUnitsReinforce.setEnabled(isInGame && isNotVictory && localPlayerHoldsGameMasterRole);
+        fileUnitsReinforceRAT.setEnabled(isNotVictory
+              && (isMainMenu || isLobby || (isInGame && localPlayerHoldsGameMasterRole)));
         fileUnitsSave.setEnabled(isLobby || (isInGame && canSave));
         fileUnitsBrowse.setEnabled(isMainMenu);
         boardSaveAsImageUnits.setEnabled(isInGame);
@@ -605,6 +647,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMinimap.setEnabled(isBoardView);
         viewZoomIn.setEnabled(isBoardView);
         viewZoomOut.setEnabled(isBoardView);
+        viewZoomReset.setEnabled(isBoardView);
         viewZoomOverviewToggle.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
         viewKeybindsOverlay.setEnabled(isBoardView);
@@ -654,8 +697,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
      * the role is free and the game allows one, and neither while another player holds it.
      */
     public synchronized void setGameMasterState(boolean localPlayerHoldsRole, boolean roleFreeToRequest) {
+        localPlayerHoldsGameMasterRole = localPlayerHoldsRole;
         gameGiveUpGameMaster.setVisible(localPlayerHoldsRole);
         gameRequestGameMaster.setVisible(roleFreeToRequest);
+        updateEnabledStates();
     }
 
     /**
@@ -679,6 +724,10 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
                 // Use invokeLater to avoid interfering with accelerator processing
                 final boolean newState = (Boolean) e.getNewValue();
                 javax.swing.SwingUtilities.invokeLater(() -> toggleFovSpotting.setSelected(newState));
+            }
+            case GUIPreferences.SHOW_OBJECTIVE_OVERLAYS -> {
+                final boolean newState = (Boolean) e.getNewValue();
+                javax.swing.SwingUtilities.invokeLater(() -> toggleShowObjects.setSelected(newState));
             }
             case GUIPreferences.SHOW_KEYBINDS_OVERLAY -> viewKeybindsOverlay.setSelected((Boolean) e.getNewValue());
             case GUIPreferences.SHOW_PLANETARY_CONDITIONS_OVERLAY ->

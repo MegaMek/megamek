@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.grenade;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -53,11 +54,13 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
     public InfantryGrenadeInfernoWeapon() {
         super();
 
-        name = "Grenade (Inferno)";
+        name = "Grenade (Incendiary)";
         // I can find no reference to a Thrown Inferno Grenade. Moving these to Unofficial.
         // Hammer Feb 2017
 
         setInternalName("InfantryGrenadeInferno");
+
+        addLookupName("Grenade (Inferno)");
         addLookupName(name);
         addLookupName("InfantryInfernoGrenade");
         addLookupName("Inferno Grenades");
@@ -71,7 +74,7 @@ public class InfantryGrenadeInfernoWeapon extends InfantryWeapon {
         infantryDamage = 0.19;
         infantryRange = 0;
         // very hackish - using some data from Inferno Fuel.
-        rulesRefs = "272, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 272);
         techAdvancement.setTechBase(TechBase.ALL)
               .setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)

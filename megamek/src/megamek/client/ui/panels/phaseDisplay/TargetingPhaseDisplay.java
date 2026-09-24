@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -397,13 +397,13 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
-            if (null == currentEntity().getPosition()) {
+            if (currentEntity().getPosition() == null) {
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
                     Entity nextEntity = game.getEntity(nextId);
 
-                    if (nextEntity != null && null != nextEntity.getPosition()) {
+                    if (nextEntity != null && nextEntity.getPosition() != null) {
                         currentEntity = nextId;
                         break;
                     }
@@ -411,7 +411,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 } // Check the player's next entity.
 
                 // We were *supposed* to have found an on-board entity.
-                if (null == currentEntity().getPosition()) {
+                if (currentEntity().getPosition() == null) {
                     logger.error("Could not find an on-board entity: {}", en);
                     return;
                 }
@@ -472,7 +472,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         GameTurn turn = clientgui.getClient().getMyTurn();
         // There's special processing for triggering AP Pods.
-        if ((turn instanceof TriggerAPPodTurn) && (null != currentEntity())) {
+        if ((turn instanceof TriggerAPPodTurn) && (currentEntity() != null)) {
             selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui.getFrame(), currentEntity());
@@ -483,7 +483,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 addAttack(actions.nextElement());
             }
             ready();
-        } else if ((turn instanceof TriggerBPodTurn) && (null != currentEntity())) {
+        } else if ((turn instanceof TriggerBPodTurn) && (currentEntity() != null)) {
             selectEntity(clientgui.getClient().getFirstEntityNum());
             disableButtons();
             TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, currentEntity(),
@@ -514,7 +514,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         // end my turn, then.
         Entity next = game.getNextEntity(game.getTurnIndex());
         if ((phase == game.getPhase())
-              && (null != next) && (null != currentEntity())
+            && (next != null) && (currentEntity() != null)
               && (next.getOwnerId() != currentEntity().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
@@ -700,7 +700,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     public void updateDisplayForPendingAttack(Mounted<?> mounted, WeaponAttackAction waa) {
         // put this and the rest of the method into a separate function for access
         // externally.
-        if ((null != mounted.getLinked())
+        if ((mounted.getLinked() != null)
               && (((WeaponType) mounted.getType()).getAmmoType() != AmmoType.AmmoTypeEnum.NA)) {
             Mounted<?> ammoMount = mounted.getLinked();
             waa.setAmmoId(ammoMount.getEntity().getEquipmentNum(ammoMount));
@@ -915,7 +915,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     setFireEnabled(true);
                 } else {
                     clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                          attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                          attacker.isUseNaturalAptitudeGunnery(attacker.getGame(), weapon));
                     setFireEnabled(true);
                 }
             }
@@ -985,7 +985,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      * Get the next target. Return null if we don't have any targets.
      */
     private Entity getNextTarget() {
-        if (null == visibleTargets || visibleTargets.length == 0) {
+        if (visibleTargets == null || visibleTargets.length == 0) {
             return null;
         }
 
@@ -1004,7 +1004,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     private void jumpToNextTarget() {
         Entity targ = getNextTarget();
 
-        if (null == targ) {
+        if (targ == null) {
             return;
         }
 
@@ -1105,7 +1105,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
     // BoardListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -1113,34 +1113,31 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         // ignore buttons other than 1
         if (!clientgui.getClient().isMyTurn()
-              || ((b.getButton() != MouseEvent.BUTTON1))) {
+              || ((event.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-              || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+        if (((event.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+              || ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
         // check for shifty goodness
-        if (shiftHeld == ((b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) == 0)) {
-            shiftHeld = (b.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
+        if (shiftHeld == ((event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) == 0)) {
+            shiftHeld = (event.getModifiers() & InputEvent.SHIFT_DOWN_MASK) != 0;
         }
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (shiftHeld || twisting) {
                 if ((currentEntity() != null) && !currentEntity().getAlreadyTwisted()) {
                     updateFlipArms(false);
-                    torsoTwist(b.getCoords());
+                    torsoTwist(event.getCoords());
                 }
             }
-            b.getBoardView().cursor(b.getCoords());
-        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+        } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!shiftHeld) {
-                b.getBoardView().select(b.getCoords());
-            }
         }
+        applyHexMouseAction(event, shiftHeld);
     }
 
     @Override
@@ -1254,7 +1251,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
 
         if (game.getPhase() == phase) {
             if (clientgui.getClient().isMyTurn()) {
-                if (currentEntity == Entity.NONE) {
+                if (needsUnitSelectedForTurn()) {
                     beginMyTurn();
                 }
                 String t = (phase.isTargeting()) ? Messages.getString("TargetingPhaseDisplay.its_your_turn")

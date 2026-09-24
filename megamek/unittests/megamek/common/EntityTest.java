@@ -486,9 +486,8 @@ class EntityTest {
             Player player2 = new Player(2, "ECM side");
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -496,9 +495,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Master());
             assertEquals(mek, tank.getC3Top());
 
-            // Actual test: if AECM affects Boosted connection, slave entity returns self as "top" of network.
+            // Actual test: if AECM affects Boosted connection, still returns the mek
             setUpECMEntity(game, player2, vtol, new Coords(2, 2), true);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         @Test
@@ -516,8 +515,6 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 
@@ -525,9 +522,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Master());
             assertEquals(mek, tank.getC3Top());
 
-            // Actual test: if ECM affects C3 connection, slave entity returns self as "top" of network.
+            // Actual test: if ECM affects C3 connection, slave entity returns master still
             setUpECMEntity(game, player2, vtol, new Coords(2, 2), false);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         @Test
@@ -545,8 +542,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -574,8 +570,6 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 
@@ -583,9 +577,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Master());
             assertEquals(mek, tank.getC3Top());
 
-            // Actual test: if AECM affects C3 connection, slave entity returns self as "top" of network.
+            // Actual test: if AECM affects C3 connection, slave entity still returns the master.
             setUpECMEntity(game, player2, vtol, new Coords(2, 2), true);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         @Test
@@ -603,8 +597,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -613,9 +606,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Top());
 
             // Actual test: if AECM affects Boosted connection, even only at one end,
-            // slave entity returns self as "top" of network.
+            // slave entity returns mek still, as it still works under ecm
             setUpECMEntity(game, player2, vtol, new Coords(3, 9), true);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         /**
@@ -639,9 +632,8 @@ class EntityTest {
             Game game = setUpGame();
             Player player = new Player(1, "C3 side");
             game.addPlayer(player.getId(), player);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Standard (non-boosted) C3 link, master at (1,1), slave at (3,3).
             setUpC3Link(game, player, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 
@@ -659,9 +651,9 @@ class EntityTest {
                 ecm.when(() -> ComputeECM.isAffectedByECM(eq(mek), eq(mek.getPosition()), eq(mek.getPosition())))
                       .thenReturn(true);
 
-                // Pre-fix this threw IllegalStateException; post-fix the master is treated as unreachable and the
-                // slave returns itself as the effective top of network (same handling as a slave-side jammed line).
-                assertEquals(tank, tank.getC3Top());
+                // Pre-fix this threw IllegalStateException; post-fix the master is treated as under ECM, but still 
+                // reachable
+                assertEquals(mek, tank.getC3Top());
             }
         }
 

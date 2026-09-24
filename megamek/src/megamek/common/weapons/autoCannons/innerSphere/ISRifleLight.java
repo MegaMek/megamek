@@ -36,6 +36,7 @@ package megamek.common.weapons.autoCannons.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,11 @@ public class ISRifleLight extends RifleWeapon {
         extAV = 3;
         maxRange = RANGE_MED;
         explosionDamage = 0;
-        rulesRefs = "150, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 150),
+              rulesRef(SourceBookCode.BMM, 106),
+              rulesRef(SourceBookCode.CORE, 190)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.X, AvailabilityValue.D)

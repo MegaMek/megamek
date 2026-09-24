@@ -75,8 +75,8 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                  weaponType.getDamage(), bDirect ? toHit.getMoS() / 3 : 0,
-                  WeaponType.WEAPON_CLUSTER_BALLISTIC,
+                  weaponType.getDamage(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(WeaponType.WEAPON_CLUSTER_BALLISTIC),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);

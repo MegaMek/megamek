@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.archaic;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -72,7 +73,7 @@ public class InfantryArchaicVibroAxeWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.42;
         infantryRange = 0;
-        rulesRefs = "272, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 272);
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(2435, 2445, 2600, DATE_NONE, DATE_NONE)
               .setApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
               .setProductionFactions(Faction.LC).setTechRating(TechRating.E)

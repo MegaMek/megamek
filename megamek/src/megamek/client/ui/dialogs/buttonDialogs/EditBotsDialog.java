@@ -32,9 +32,7 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,14 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import megamek.client.AbstractClient;
@@ -62,9 +53,9 @@ import megamek.client.bot.princess.PrincessException;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.enums.DialogResult;
+import megamek.common.Player;
 import megamek.common.game.Game;
 import megamek.common.preference.PreferenceManager;
-import megamek.common.Player;
 import megamek.logging.MMLogger;
 
 public class EditBotsDialog extends AbstractButtonDialog {
@@ -191,7 +182,7 @@ public class EditBotsDialog extends AbstractButtonDialog {
                     // Princess otherwise. A remembered CASPAR with the option switched off falls back to
                     // Princess, since the choice is not in the box.
                     AIType savedType = game.getBotTypes().get(player.getName());
-                    boolean casparLeads = (null == savedType)
+                    boolean casparLeads = (savedType == null)
                           ? casparAvailable
                           : (casparAvailable && (AIType.CASPAR == savedType));
                     ghostChooser.setSelectedIndex(casparLeads

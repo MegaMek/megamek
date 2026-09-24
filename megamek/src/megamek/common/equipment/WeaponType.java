@@ -44,6 +44,7 @@ import megamek.common.RangeType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType.AmmoTypeEnum;
+import megamek.common.game.Game;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.weapons.AlamoMissileWeapon;
@@ -152,6 +153,7 @@ import megamek.common.weapons.infantry.archaic.*;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeInfernoWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMicroWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniInfernoWeapon;
+import megamek.common.weapons.infantry.grenade.InfantryGrenadeMiniWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeRAGWeapon;
 import megamek.common.weapons.infantry.grenade.InfantryGrenadeStandardWeapon;
 import megamek.common.weapons.infantry.laser.InfantryLaserCarbineBrightStarL15;
@@ -209,6 +211,21 @@ import megamek.common.weapons.infantry.support.laser.InfantrySupportLaserUltraHe
 import megamek.common.weapons.infantry.support.laser.InfantrySupportLaserWeapon;
 import megamek.common.weapons.infantry.support.laser.InfantrySupportPulseLaserWeapon;
 import megamek.common.weapons.infantry.support.laser.InfantrySupportSemiPortableLaserWeapon;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunAkaiRyu;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunBooneMGL14A;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunBooneMGL14D;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunFogueDefender;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunHCKM2MG;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunHuoDushe;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunNambuM12;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperLB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperLLB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperLSB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunPeacekeeperSB;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunSarcotMG19;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunTIE124;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunTharwepNachtgewitter;
+import megamek.common.weapons.infantry.support.mg.InfantryMachineGunType17;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGLightWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGPortableWeapon;
 import megamek.common.weapons.infantry.support.mg.InfantrySupportMGSemiPortableWeapon;
@@ -224,9 +241,7 @@ import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRe
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleLightWeapon;
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleMediumInfernoWeapon;
 import megamek.common.weapons.infantry.support.recoillessRifle.InfantrySupportRecoillessRifleMediumWeapon;
-import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyWeapon;
-import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardInfernoWeapon;
 import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardWeapon;
@@ -401,8 +416,10 @@ import megamek.common.weapons.ppc.clan.CLImprovedPPC;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
 import megamek.common.weapons.ppc.innerSphere.ISERPPC;
 import megamek.common.weapons.ppc.innerSphere.ISHeavyPPC;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISKinsSlaughterPPC;
 import megamek.common.weapons.ppc.innerSphere.ISLightPPC;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPPC;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISSnubNosePPC;
@@ -567,7 +584,9 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_ENERGY = WeaponTypeFlag.F_ENERGY;
     // for Gunnery/Missile
     public static final WeaponTypeFlag F_MISSILE = WeaponTypeFlag.F_MISSILE;
-
+    // for Arrow IV
+    public static final WeaponTypeFlag F_ARROW_IV = WeaponTypeFlag.F_ARROW_IV;
+    
     // fires
     public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
@@ -589,6 +608,8 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;
     // Variable heat, heat is listed in dice, not points
     public static final WeaponTypeFlag F_HEAT_AS_DICE = WeaponTypeFlag.F_HEAT_AS_DICE;
+    // Variable heat, weapon mode determines heat
+    public static final WeaponTypeFlag F_HEAT_VARIABLE = WeaponTypeFlag.F_HEAT_VARIABLE;
     // AMS
     public static final WeaponTypeFlag F_AMS = WeaponTypeFlag.F_AMS;
 
@@ -728,6 +749,20 @@ public class WeaponType extends EquipmentType {
     public static final int CLASS_THUNDERBOLT = 27;
     public static final int CLASS_MORTAR = 28;
 
+    /**
+     * Not a row on the Non-Infantry Weapon Damage Against Infantry Table (TW p.217) but the instruction to skip that
+     * table entirely and apply the attack's damage point for point, the way damage from another infantry unit is
+     * applied (TW p.216). A flammable toxic atmosphere does this to every non-area-effect attack on conventional
+     * infantry (TO:AR p.54).
+     */
+    public static final int WEAPON_INFANTRY_ORIGIN = -1;
+    /**
+     * The Area-Effect row of the Non-Infantry Weapon Damage Against Infantry Table (TW p.217), which kills
+     * {@code Damage Value / .5} troopers. MegaMek resolves area-effect attacks on infantry by doubling the damage
+     * rather than by a row of this ladder, so the row has no ordinary constant; this one exists for the flammable
+     * tainted atmosphere, which shifts an attack two rows down the table and caps it here (TO:AR p.54).
+     */
+    public static final int WEAPON_AREA_EFFECT_INFANTRY = -2;
     public static final int WEAPON_DIRECT_FIRE = 0;
     public static final int WEAPON_CLUSTER_BALLISTIC = 1;
     public static final int WEAPON_PULSE = 2;
@@ -1037,10 +1072,10 @@ public class WeaponType extends EquipmentType {
     public int[] getWRanges() {
         return new int[] {
               minimumRange,
-              waterShortRange,
-              waterMediumRange,
-              waterLongRange,
-              waterExtremeRange
+              Game.rulesManager.getRulesUnderwater().getShortRange(this),
+              Game.rulesManager.getRulesUnderwater().getMediumRange(this),
+              Game.rulesManager.getRulesUnderwater().getLongRange(this),
+              Game.rulesManager.getRulesUnderwater().getExtremeRange(this),
         };
     }
 
@@ -1843,7 +1878,11 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryRifleLaserWeapon());
         EquipmentType.addType(new InfantrySupportLRMWeapon());
         EquipmentType.addType(new InfantrySupportLRMInfernoWeapon());
-        EquipmentType.addType(new InfantrySupportSRMLightInfernoWeapon());
+        // Retired by the TechManual pp. 350-352 errata, which deletes the SRM Launcher (Inferno Ammo) rows
+        // outright. No unit file mounts this one, so it is withdrawn rather than left to confuse players. The
+        // class is kept so the decision stays reversible; see InfantrySupportSRMStandardInfernoWeapon for why
+        // the two-shot version is still registered.
+        // EquipmentType.addType(new InfantrySupportSRMLightInfernoWeapon());
         EquipmentType.addType(new InfantrySupportPortableFlamerWeapon());
         EquipmentType.addType(new InfantryTWFlamerWeapon());
 
@@ -2142,6 +2181,22 @@ public class WeaponType extends EquipmentType {
 
         // Infantry Support Weapons
         EquipmentType.addType(new InfantrySupportMGPortableWeapon());
+        // Light machine guns from Shrapnel #22.
+        EquipmentType.addType(new InfantryMachineGunType17());
+        EquipmentType.addType(new InfantryMachineGunHuoDushe());
+        EquipmentType.addType(new InfantryMachineGunNambuM12());
+        EquipmentType.addType(new InfantryMachineGunAkaiRyu());
+        EquipmentType.addType(new InfantryMachineGunSarcotMG19());
+        EquipmentType.addType(new InfantryMachineGunFogueDefender());
+        EquipmentType.addType(new InfantryMachineGunHCKM2MG());
+        EquipmentType.addType(new InfantryMachineGunTharwepNachtgewitter());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperLSB());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperSB());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperLLB());
+        EquipmentType.addType(new InfantryMachineGunPeacekeeperLB());
+        EquipmentType.addType(new InfantryMachineGunBooneMGL14A());
+        EquipmentType.addType(new InfantryMachineGunBooneMGL14D());
+        EquipmentType.addType(new InfantryMachineGunTIE124());
         EquipmentType.addType(new InfantrySupportMGSemiPortableWeapon());
         EquipmentType.addType(new InfantrySupportMk1LightAAWeapon());
         EquipmentType.addType(new InfantrySupportMk2PortableAAWeapon());
@@ -2187,7 +2242,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantrySupportSRMStandardWeapon());
         EquipmentType.addType(new InfantrySupportSRMStandardInfernoWeapon());
         EquipmentType.addType(new InfantrySupportSRMHeavyWeapon());
-        EquipmentType.addType(new InfantrySupportSRMHeavyInfernoWeapon());
+        // Retired by the TechManual pp. 350-352 errata, as with the light version above. No unit file mounts it.
+        // EquipmentType.addType(new InfantrySupportSRMHeavyInfernoWeapon());
         EquipmentType.addType(new InfantrySupportSRMLightWeapon());
         EquipmentType.addType(new InfantrySupportLaserWeapon());
         EquipmentType.addType(new InfantrySupportERLaserWeapon());
@@ -2214,13 +2270,14 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryGrenadeInfernoWeapon());
         EquipmentType.addType(new InfantryGrenadeMicroWeapon());
         EquipmentType.addType(new InfantryGrenadeMiniInfernoWeapon());
+        EquipmentType.addType(new InfantryGrenadeMiniWeapon());
         EquipmentType.addType(new InfantryGrenadeRAGWeapon());
         EquipmentType.addType(new InfantryGrenadeStandardWeapon());
 
         // Infantry TAG
         EquipmentType.addType(new InfantrySupportTAGWeapon());
 
-        // Prosthetic Weapon from ATOW Companion
+        // Prosthetic Weapon from AToW Companion
         EquipmentType.addType(new InfantryProstheticLaserWeapon());
         EquipmentType.addType(new InfantryProstheticBallisticWeapon());
         EquipmentType.addType(new InfantryProstheticDartGunWeapon());
@@ -2230,6 +2287,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(new InfantryProstheticSMGWeapon());
         EquipmentType.addType(new InfantryProstheticBladeWeapon());
         EquipmentType.addType(new InfantryProstheticNeedleWeapon());
+        EquipmentType.addType(new InfantryProstheticRumalGarroteWeapon());
         EquipmentType.addType(new InfantryProstheticShockerWeapon());
         EquipmentType.addType(new InfantryProstheticVibroBladeWeapon());
         EquipmentType.addType(new InfantryProstheticClimbingClawsWeapon());
@@ -2239,6 +2297,8 @@ public class WeaponType extends EquipmentType {
 
         // Plasma Weapons
         EquipmentType.addType(new ISPlasmaRifle());
+        EquipmentType.addType(new ISLightPlasmaRifle());
+        EquipmentType.addType(new ISHeavyPlasmaRifle());
         EquipmentType.addType(new CLPlasmaCannon());
 
         // MekMortarWeapons

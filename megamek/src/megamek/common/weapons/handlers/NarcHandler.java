@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -114,7 +114,7 @@ public class NarcHandler extends MissileWeaponHandler {
             vPhaseReport.add(report);
             Roll diceRoll = Compute.rollD6(1);
 
-            if (diceRoll.getIntValue() <= 3) {
+            if (Game.rulesManager.getRulesEquipment().checkAMSSingleMissile(diceRoll.getIntValue())) {
                 report = new Report(3240);
                 report.subject = subjectId;
                 report.add("pod");

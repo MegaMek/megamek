@@ -253,14 +253,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
             // If the selected entity is not on the board, use the next one.
             // ASSUMPTION: there will always be *at least one* entity on map.
-            if (null == currentEntity().getPosition()) {
+            if (currentEntity().getPosition() == null) {
 
                 // Walk through the list of entities for this player.
                 for (int nextId = client.getNextEntityNum(en); nextId != en; nextId = client.getNextEntityNum(nextId)) {
 
                     Entity nextEntity = client.getEntity(nextId);
 
-                    if (nextEntity != null && null != nextEntity.getPosition()) {
+                    if (nextEntity != null && nextEntity.getPosition() != null) {
                         cen = nextId;
                         break;
                     }
@@ -268,7 +268,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
                 } // Check the player's next entity.
 
                 // We were *supposed* to have found an on-board entity.
-                if (null == currentEntity().getPosition()) {
+                if (currentEntity().getPosition() == null) {
                     logger.error("Could not find an on-board entity: {}", en);
                     return;
                 }
@@ -369,12 +369,14 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
 
         setupButtonPanel();
         refreshButtons();
+        startTimer();
     }
 
     /**
      * Does end turn stuff.
      */
     private void endMyTurn() {
+        stopTimer();
         cen = Entity.NONE;
         ghostTargetMode = false;
         ghostTargetConfirmation = null;
@@ -486,6 +488,7 @@ public class PrephaseDisplay extends StatusBarPhaseDisplay implements ListSelect
         if (game().getPhase().isSimultaneous(game())
               && (e.getPreviousPlayerId() != clientgui.getClient().getLocalPlayerNumber())
               && (game().getTurnIndex() != 0)) {
+            setStatusBarText(getRemainingPlayerWithTurns());
             return;
         }
 

@@ -57,6 +57,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.planetaryConditions.TaintedAtmosphereRules;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.logging.MMLogger;
@@ -275,7 +276,7 @@ public interface IAero {
             // equipment or add new ones if there is none
             Set<String> newSet = groups.keySet();
             for (String key : newSet) {
-                if (null != getWeaponGroups().get(key)) {
+                if (getWeaponGroups().get(key) != null) {
                     // then this equipment is already loaded, so we just need to
                     // correctly update the number of weapons
                     ((Entity) this).getEquipment(getWeaponGroups().get(key)).setNWeapons(groups.get(key));
@@ -452,7 +453,7 @@ public interface IAero {
         // We will just treat this as having paved terrain
         Coords pos = ((Entity) this).getPosition();
         Hex hex = ((Entity) this).getGame().getHexOf((Entity) this);
-        if ((null != hex) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
+        if ((hex != null) && hex.containsTerrain(Terrains.PAVEMENT) && !hex.containsTerrain(Terrains.RUBBLE)) {
             roll.addModifier(-1, "on landing pad");
         }
 
@@ -731,7 +732,27 @@ public interface IAero {
     }
 
     default boolean canTakeOffHorizontally() {
-        return !isSpheroid() && (getCurrentThrust() > 0);
+        return !isSpheroid() && (getCurrentThrust() > 0) && !isLaunchProhibitedByAtmosphere();
+    }
+
+    /**
+     * Whether the air outside forbids this unit from launching at all. A flammable toxic atmosphere would be set
+     * alight by the exhaust, so jet-propelled units may not launch in the lower atmosphere (TO:AR p.54).
+     * <p>
+     * This sits on {@link IAero} rather than on the server so that the movement display greys the takeoff button out
+     * for exactly the cases the server would refuse.
+     *
+     * @return {@code true} if the atmosphere prohibits launching
+     */
+    default boolean isLaunchProhibitedByAtmosphere() {
+        Entity self = (Entity) this;
+        Game game = self.getGame();
+        if (game == null) {
+            return false;
+        }
+        boolean atmosphereBarsLaunching = TaintedAtmosphereRules.prohibitsLaunching(
+              game.getPlanetaryConditions().getAtmosphericTaint());
+        return atmosphereBarsLaunching && TaintedAtmosphereRules.isJetPropelled(self);
     }
 
     default boolean canLandHorizontally() {
@@ -739,7 +760,28 @@ public interface IAero {
     }
 
     default boolean canTakeOffVertically() {
-        return (isVSTOL() || isSpheroid()) && (getCurrentThrust() > 2);
+        // SO: "Aerospace fighters, aerodyne small craft, and VSTOL-equipped conventional fighters
+        // may lift off or land vertically... all spheroid DropShips and spheroid small craft lift
+        // off vertically. A unit must spend 2 Thrust Points to lift off." The old test allowed
+        // only VSTOL and spheroids, which contradicted the vertical-liftoff roll's own "+2,
+        // Fighter making vertical liftoff" modifier a few lines above. Aerodyne DropShips
+        // (vacuum-only rule) have their own override.
+        if (isLaunchProhibitedByAtmosphere()) {
+            return false;
+        }
+        if (getCurrentThrust() < 2) {
+            return false;
+        }
+        if (isVSTOL() || isSpheroid()) {
+            return true;
+        }
+        Entity self = (Entity) this;
+        // Conventional fighters need VSTOL gear (handled above); aerospace fighters and aerodyne
+        // small craft may always lift vertically. Spheroid small craft never reach this line (the
+        // isSpheroid() branch above catches them), and Dropship extends SmallCraft, so excluding it
+        // here keeps aerodyne DropShips on the vacuum-only rule in their own override.
+        return (self instanceof AeroSpaceFighter && !(self instanceof ConvFighter))
+              || (self instanceof SmallCraft && !(self instanceof Dropship));
     }
 
     default boolean canLandVertically() {
@@ -784,7 +826,7 @@ public interface IAero {
                 hex = board.getHex(pos);
                 // if the hex is null, then we are offboard. Don't let units
                 // take off offboard.
-                if (null == hex) {
+                if (hex == null) {
                     return "Not enough room on map" + lenString;
                 }
                 if (!hex.isClearForTakeoff()) {
@@ -847,7 +889,7 @@ public interface IAero {
                 }
                 hex = board.getHex(position);
                 // if the hex is null, then we are offboard. Don't let units land offboard.
-                if (null == hex) {
+                if (hex == null) {
                     return "Not enough room on map" + lenString;
                 }
                 // landing must contain only acceptable terrain
@@ -880,7 +922,7 @@ public interface IAero {
         }
         // if the hex is null, then we are offboard. Don't let units
         // land offboard.
-        if (null == hex) {
+        if (hex == null) {
             return "landing area not on the map";
         }
         // landing must contain only acceptable terrain

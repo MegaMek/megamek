@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,12 +37,12 @@ package megamek.common.weapons.handlers.plasma;
 import java.io.Serial;
 import java.util.Vector;
 
-import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.WeaponMounted;
@@ -56,6 +56,8 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AmmoBayWeaponHandler;
 import megamek.common.weapons.ppc.clan.CLPlasmaCannon;
+import megamek.common.weapons.ppc.innerSphere.ISHeavyPlasmaRifle;
+import megamek.common.weapons.ppc.innerSphere.ISLightPlasmaRifle;
 import megamek.common.weapons.ppc.innerSphere.ISPlasmaRifle;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -70,7 +72,7 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
     public PlasmaBayWeaponHandler(ToHitData toHit, WeaponAttackAction waa, Game g, TWGameManager m)
           throws EntityLoadingException {
         super(toHit, waa, g, m);
-        generalDamageType = HitData.DAMAGE_ENERGY;
+        generalDamageType = HitDamageType.DAMAGE_HEAT;
     }
 
     /*
@@ -95,6 +97,10 @@ public class PlasmaBayWeaponHandler extends AmmoBayWeaponHandler {
                     if (bayWType instanceof ISPlasmaRifle) {
                         extraHeat += Compute.d6();
                     } else if (bayWType instanceof CLPlasmaCannon) {
+                        extraHeat += Compute.d6(2);
+                    } else if (bayWType instanceof ISLightPlasmaRifle) {
+                        extraHeat += (int) Math.ceil(Compute.d6(1) / 2.0);
+                    } else if (bayWType instanceof ISHeavyPlasmaRifle) {
                         extraHeat += Compute.d6(2);
                     }
                 }

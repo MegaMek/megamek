@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -85,6 +85,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.common.weapons.missiles.ATMWeapon;
@@ -2898,9 +2899,13 @@ class FireControlTest {
         when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_ARMOR_PIERCING));
 
         // Armor-piercing autocannon ammo adds +1 to-hit.
+        // In core there is no penalty.
         ToHitData expected = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expected.addModifier(FireControl.TH_MEDIUM_RANGE);
-        expected.addModifier(FireControl.TH_AP_AMMO);
+        if (Game.rulesManager instanceof TWRulesManager) {
+            TargetRollModifier thAPAmmo = new TargetRollModifier(1,"armor-piercing ammo");
+            expected.addModifier(thAPAmmo);
+        }
         assertToHitDataEquals(expected,
               testFireControl.guessToHitModifierForWeapon(mockShooter,
                     mockShooterState,
@@ -2910,8 +2915,6 @@ class FireControlTest {
                     mockAmmo,
                     mockGame));
 
-        // Under PLAYTEST 3 rules the AP penalty is removed.
-        when(mockGameOptions.booleanOption(OptionsConstants.PLAYTEST_3)).thenReturn(true);
         ToHitData expectedNoPenalty = new ToHitData(mockShooter.getCrew().getGunnery(), FireControl.TH_GUNNERY);
         expectedNoPenalty.addModifier(FireControl.TH_MEDIUM_RANGE);
         assertToHitDataEquals(expectedNoPenalty,
@@ -2979,10 +2982,10 @@ class FireControlTest {
         when(mockAmmoType.getMunitionType()).thenReturn(EnumSet.of(AmmoType.Munitions.M_STANDARD));
 
         // An operational Apollo FCS linked to the MRM launcher gives -1 to-hit.
-        final MiscType mockApolloType = mock(MiscType.class);
+        Mounted<?> mockApollo = mock(Mounted.class);
+        MiscType mockApolloType = mock(MiscType.class);
         when(mockApolloType.hasFlag(MiscType.F_APOLLO)).thenReturn(true);
-        final Mounted<?> mockApollo = mock(Mounted.class);
-        when(mockApollo.getType()).thenReturn(mockApolloType);
+        doReturn(mockApolloType).when(mockApollo).getType();
         when(mockApollo.isDestroyed()).thenReturn(false);
         when(mockApollo.isMissing()).thenReturn(false);
         when(mockApollo.isBreached()).thenReturn(false);

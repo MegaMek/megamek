@@ -88,7 +88,7 @@ public final class PhysicalCalculator {
         double r_dmg;
         double final_dmg;
         int best_brush = PhysicalOption.NONE;
-        boolean aptPiloting = entity.getCrew().isHasNaturalAptitudePiloting();
+        boolean aptPiloting = entity.getCrew().isUseNaturalAptitudePiloting(entity);
 
         // If the attacker is a Mek
 
@@ -329,8 +329,8 @@ public final class PhysicalCalculator {
         int bestType = PhysicalOption.NONE;
         MiscMounted bestClub = null;
         boolean targetConvInfantry = false;
-        boolean fromAptPiloting = from.getCrew().isHasNaturalAptitudePiloting();
-        boolean toAptPiloting = to.getCrew().isHasNaturalAptitudePiloting();
+        boolean fromAptPiloting = from.getCrew().isUseNaturalAptitudePiloting(from);
+        boolean toAptPiloting = to.getCrew().isUseNaturalAptitudePiloting(to);
 
         // Infantry and tanks can't conduct any of these attacks
         if ((from instanceof Infantry) || (from instanceof Tank)) {
@@ -558,7 +558,7 @@ public final class PhysicalCalculator {
         double dmg = odds;
         dmg *= 1.0 -
               (Compute.oddsAbove(ent.getBasePilotingRoll().getValue(),
-                    ent.getCrew().isHasNaturalAptitudePiloting()) / 100.0);
+                    ent.getCrew().isUseNaturalAptitudePiloting(ent)) / 100.0);
         dmg *= ent.getWeight() * 0.1;
         return dmg;
     }
@@ -588,11 +588,11 @@ public final class PhysicalCalculator {
 
         // Calculate collateral damage, due to possible target fall
         if (to instanceof Mek) {
-            boolean toAptPiloting = to.getCrew().isHasNaturalAptitudePiloting();
+            boolean toAptPiloting = to.getCrew().isUseNaturalAptitudePiloting(to);
             coll_damage = calculateFallingDamage(Compute.oddsAbove(odds.getValue(), toAptPiloting) / 100.0, to);
         }
 
-        boolean fromAptPiloting = from.getCrew().isHasNaturalAptitudePiloting();
+        boolean fromAptPiloting = from.getCrew().isUseNaturalAptitudePiloting(from);
         damage = KickAttackAction.getDamageFor(from, action, targetConvInfantry);
         dmg = (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0) * damage;
         // Adjust damage for targets armor

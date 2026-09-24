@@ -45,11 +45,13 @@ import java.util.Vector;
 
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.common.Report;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.SkillLevel;
+import megamek.common.equipment.Mounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.icons.Portrait;
 import megamek.common.options.IOption;
@@ -213,6 +215,9 @@ public class Crew implements Serializable {
     public static final int MAX_SKILL = 8;
     /** The Small Arms value meaning no skill was recorded, so the crew fires on foot with their gunnery. */
     public static final int SMALL_ARMS_UNSET = -1;
+
+    /** The base 1-in-N chance of a generated crew having a Natural Aptitude; reduced by experience level. */
+    public static final int NATURAL_APTITUDE_CHANCE = 1000;
     // endregion Variable Declarations
 
     // region Constructors
@@ -227,6 +232,8 @@ public class Crew implements Serializable {
     }
 
     /**
+     * Creates a crew with no Natural Aptitudes.
+     *
      * @param crewType  the type of crew
      * @param name      the name of the crew or commander.
      * @param size      the crew size.
@@ -236,21 +243,42 @@ public class Crew implements Serializable {
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
      */
-    public Crew(CrewType crewType, String name, int size, int gunnery, boolean hasNaturalAptitudeGunnery, boolean hasNaturalAptitudeArtillery,
-          int piloting, boolean hasNaturalAptitudePiloting, Gender gender,
-          boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
-        this(crewType, name, size, gunnery, gunnery, gunnery, hasNaturalAptitudeGunnery, hasNaturalAptitudePiloting, piloting,
-              hasNaturalAptitudeArtillery, gender, clanPilot, extraData);
+    public Crew(CrewType crewType, String name, int size, int gunnery, int piloting, Gender gender, boolean clanPilot,
+          Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, false, false, piloting, false, gender, clanPilot, extraData);
     }
 
     /**
-     * @param crewType  the type of crew.
-     * @param name      the name of the crew or commander.
-     * @param size      the crew size.
-     * @param gunneryL  the crew's "laser" Gunnery skill.
-     * @param gunneryM  the crew's "missile" Gunnery skill.
-     * @param gunneryB  the crew's "ballistic" Gunnery skill.
-     * @param piloting  the crew's Piloting or Driving skill.
+     * @param crewType                    the type of crew
+     * @param name                        the name of the crew or commander.
+     * @param size                        the crew size.
+     * @param gunnery                     the crew's Gunnery skill.
+     * @param hasNaturalAptitudeGunnery   whether the crew has a Natural Aptitude in Gunnery
+     * @param hasNaturalAptitudeArtillery whether the crew has a Natural Aptitude in Artillery
+     * @param piloting                    the crew's Piloting or Driving skill.
+     * @param hasNaturalAptitudePiloting  whether the crew has a Natural Aptitude in Piloting or Driving
+     * @param gender                      the gender of the crew or commander
+     * @param clanPilot                   if the crew or commander is a clanPilot
+     * @param extraData                   any extra data passed to be stored with this Crew.
+     */
+    public Crew(CrewType crewType, String name, int size, int gunnery, boolean hasNaturalAptitudeGunnery,
+          boolean hasNaturalAptitudeArtillery, int piloting, boolean hasNaturalAptitudePiloting, Gender gender,
+          boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+        this(crewType, name, size, gunnery, gunnery, gunnery, hasNaturalAptitudeGunnery, hasNaturalAptitudeArtillery,
+              piloting, hasNaturalAptitudePiloting, gender, clanPilot, extraData);
+    }
+
+    /**
+     * @param crewType                    the type of crew.
+     * @param name                        the name of the crew or commander.
+     * @param size                        the crew size.
+     * @param gunneryL                    the crew's "laser" Gunnery skill.
+     * @param gunneryM                    the crew's "missile" Gunnery skill.
+     * @param gunneryB                    the crew's "ballistic" Gunnery skill.
+     * @param hasNaturalAptitudeGunnery   whether the crew has a Natural Aptitude in Gunnery
+     * @param hasNaturalAptitudeArtillery whether the crew has a Natural Aptitude in Artillery
+     * @param piloting                    the crew's Piloting or Driving skill.
+     * @param hasNaturalAptitudePiloting  whether the crew has a Natural Aptitude in Piloting or Driving
      * @param gender    the gender of the crew or commander
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
@@ -746,6 +774,9 @@ public class Crew implements Serializable {
 
     /**
      * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     *
+     * @author Illiani
+     * @since 0.51.01
      */
     public boolean isHasNaturalAptitudeGunnery() {
         return hasNaturalAptitudeGunnery;
@@ -764,7 +795,10 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)}  instead.
+     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)} instead.
+     *
+     * @author Illiani
+     * @since 0.51.01
      */
     public boolean isHasNaturalAptitudePiloting() {
         return hasNaturalAptitudePiloting;
@@ -808,6 +842,9 @@ public class Crew implements Serializable {
 
     /**
      * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     *
+     * @author Illiani
+     * @since 0.51.01
      */
     public boolean isHasNaturalAptitudeArtillery() {
         return hasNaturalAptitudeArtillery;
@@ -975,6 +1012,10 @@ public class Crew implements Serializable {
         gunneryB[pos] = gunnery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery) {
         this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
     }
@@ -983,6 +1024,10 @@ public class Crew implements Serializable {
         this.artillery[pos] = artillery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery) {
         this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
     }
@@ -991,6 +1036,10 @@ public class Crew implements Serializable {
         this.piloting[pos] = piloting;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting) {
         this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
     }
@@ -1814,18 +1863,102 @@ public class Crew implements Serializable {
         return getCrewType() != null && getCrewType().equals(CrewType.NONE);
     }
 
-    public boolean isUseNaturalAptitudeGunnery(Game game, WeaponAttackAction weaponAttackAction) {
-        boolean useArtillerySkill = game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
-        boolean useArtilleryNaturalAptitude = useArtillerySkill && weaponAttackAction instanceof ArtilleryAttackAction;
+    /**
+     * Randomly determines whether a generated (non-campaign) crew member has a Natural Aptitude in a skill. The base
+     * chance of 1 in {@link #NATURAL_APTITUDE_CHANCE} is improved by the crew's experience level, so better crews are
+     * more likely to be naturally talented.
+     *
+     * @param skillLevel the crew's experience level
+     *
+     * @return {@code true} if the crew member should have a Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public static boolean rollNaturalAptitude(SkillLevel skillLevel) {
+        int experienceLevel = skillLevel.getExperienceLevel();
+        if (experienceLevel <= 0) {
+            return false;
+        }
 
-        if (useArtilleryNaturalAptitude) {
+        return Compute.randomInt(NATURAL_APTITUDE_CHANCE / experienceLevel) == 0;
+    }
+
+    /**
+     * Determines whether the Natural Aptitude for general (non-artillery) weapon fire applies, taking into account
+     * which gunnery skill the crew is currently using. Use this when no specific weapon is known.
+     *
+     * @return {@code true} if a general weapon attack should be rolled with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery() {
+        return isUseNaturalAptitudeGunnery(null, (Mounted<?>) null);
+    }
+
+    /**
+     * Determines whether the Natural Aptitude matching the skill used for this weapon attack applies.
+     *
+     * @param game               the current game
+     * @param weaponAttackAction the attack being rolled
+     *
+     * @return {@code true} if the attack should be rolled with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery(Game game, WeaponAttackAction weaponAttackAction) {
+        Entity attackingEntity = weaponAttackAction.getEntity(game);
+        Mounted<?> weapon = (attackingEntity == null) ? null :
+              attackingEntity.getEquipment(weaponAttackAction.getWeaponId());
+        return isUseNaturalAptitudeGunnery(game, weapon);
+    }
+
+    /**
+     * Determines whether the Natural Aptitude matching the skill used for this weapon applies. Artillery weapons use
+     * the Artillery aptitude when the Artillery skill game option is enabled, mirroring the skill selection in
+     * {@link megamek.common.actions.compute.ComputeToHit}.
+     *
+     * @param game   the current game; may only be {@code null} when {@code weapon} is also {@code null}
+     * @param weapon the weapon being fired, or {@code null} if unknown (in which case Gunnery is assumed)
+     *
+     * @return {@code true} if the attack should be rolled with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        if (isUsingArtillerySkill(game, weapon)) {
             return isHasNaturalAptitudeArtillery();
         }
 
         return isHasNaturalAptitudeGunnery();
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    protected static boolean isUsingArtillerySkill(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        return (weapon != null)
+              && (weapon.getType() instanceof WeaponType weaponType)
+              && weaponType.hasFlag(WeaponType.F_ARTILLERY)
+              && (game != null)
+              && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
+    }
+
+    /**
+     * Determines whether the Natural Aptitude matching the piloting skill currently in use applies.
+     *
+     * @param pilotedEntity the unit being piloted
+     *
+     * @return {@code true} if the roll should be made with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
     public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity) {
-        return this.isHasNaturalAptitudePiloting();
+        return isHasNaturalAptitudePiloting();
     }
 }

@@ -37,6 +37,7 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
+import megamek.common.enums.SkillLevel;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.UnitType;
@@ -153,6 +154,15 @@ public class CrewDescriptor {
         int[] escalated = escalateExceptionalCrew(experience, gunnery, piloting, hasPilotingSkill);
         gunnery = escalated[0];
         piloting = escalated[1];
+
+        // Experience rows start at Green; the separate Artillery skill defaults to Gunnery, so its aptitude does too
+        SkillLevel skillLevel = SkillLevel.parseFromInteger(Math.clamp(
+              SkillLevel.GREEN.getExperienceLevel() + experience,
+              SkillLevel.GREEN.getExperienceLevel(),
+              SkillLevel.LEGENDARY.getExperienceLevel()));
+        hasNaturalAptitudeGunnery = Crew.rollNaturalAptitude(skillLevel);
+        hasNaturalAptitudeArtillery = hasNaturalAptitudeGunnery;
+        hasNaturalAptitudePiloting = hasPilotingSkill && Crew.rollNaturalAptitude(skillLevel);
     }
 
     /**
@@ -385,18 +395,34 @@ public class CrewDescriptor {
         this.gunnery = gunnery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public boolean isHasNaturalAptitudeGunnery() {
         return hasNaturalAptitudeGunnery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery) {
         this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public boolean isHasNaturalAptitudeArtillery() {
         return hasNaturalAptitudeArtillery;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery) {
         this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
     }
@@ -409,10 +435,18 @@ public class CrewDescriptor {
         this.piloting = piloting;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public boolean isHasNaturalAptitudePiloting() {
         return hasNaturalAptitudePiloting;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting) {
         this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
     }

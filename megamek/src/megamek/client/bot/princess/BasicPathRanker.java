@@ -3036,7 +3036,7 @@ public class BasicPathRanker extends PathRanker {
         if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
             return 0.0;
         }
-        boolean naturalAptPilot = movingUnit.getCrew().isHasNaturalAptitudePiloting();
+        boolean naturalAptPilot = movingUnit.getCrew().isUseNaturalAptitudePiloting(movingUnit);
         return 1.0 - (Compute.oddsAbove(waterRoll.getValue(), naturalAptPilot) / 100.0);
     }
 

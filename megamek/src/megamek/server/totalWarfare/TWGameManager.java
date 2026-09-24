@@ -29754,7 +29754,7 @@ public class TWGameManager extends AbstractGameManager {
         PhysicalResult physicalResult = new PhysicalResult();
         ToHitData toHit = new ToHitData();
         if (aaa instanceof PhysicalAttackAction && attackingEntity.getCrew() != null) {
-            physicalResult.roll = attackingEntity.getCrew().rollPilotingSkill(ae);
+            physicalResult.roll = attackingEntity.getCrew().rollPilotingSkill(attackingEntity);
         } else {
             physicalResult.roll = Compute.rollD6(2);
         }
@@ -29776,7 +29776,7 @@ public class TWGameManager extends AbstractGameManager {
                 physicalResult.damageRight = BrushOffAttackAction.getDamageFor(attackingEntity, BrushOffAttackAction.RIGHT);
                 baa.setArm(arm);
                 if (attackingEntity.getCrew() != null) {
-                    physicalResult.rollRight = attackingEntity.getCrew().rollPilotingSkill(ae);
+                    physicalResult.rollRight = attackingEntity.getCrew().rollPilotingSkill(attackingEntity);
                 } else {
                     physicalResult.rollRight = Compute.rollD6(2);
                 }
@@ -29865,8 +29865,8 @@ public class TWGameManager extends AbstractGameManager {
                 punchAttackAction.setArm(arm);
                 // If we're punching while prone (at a Tank,
                 // duh), then we can only use one arm.
-                if (ae.isProne()) {
-                    boolean hasNaturalAptitudePiloting = attackingEntity.getCrew().isHasNaturalAptitudePiloting();
+                if (attackingEntity.isProne()) {
+                    boolean hasNaturalAptitudePiloting = attackingEntity.getCrew().isUseNaturalAptitudePiloting(attackingEntity);
                     double oddsLeft = Compute.oddsAbove(toHit.getValue(), hasNaturalAptitudePiloting);
                     double oddsRight = Compute.oddsAbove(toHitRight.getValue(), hasNaturalAptitudePiloting);
                     // Use the best attack.
@@ -29879,7 +29879,7 @@ public class TWGameManager extends AbstractGameManager {
                 physicalResult.damageRight = damageRight;
                 physicalResult.toHitRight = toHitRight;
                 if (attackingEntity.getCrew() != null) {
-                    physicalResult.rollRight = attackingEntity.getCrew().rollPilotingSkill(ae);
+                    physicalResult.rollRight = attackingEntity.getCrew().rollPilotingSkill(attackingEntity);
                 } else {
                     physicalResult.rollRight = Compute.rollD6(2);
                 }

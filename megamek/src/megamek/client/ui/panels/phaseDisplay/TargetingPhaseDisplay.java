@@ -38,7 +38,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -915,7 +915,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     setFireEnabled(true);
                 } else {
                     clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                          attacker.getCrew().isHasNaturalAptitudeGunnery());
+                          attacker.getCrew().isUseNaturalAptitudeGunnery(attacker.getGame(), weapon));
                     setFireEnabled(true);
                 }
             }

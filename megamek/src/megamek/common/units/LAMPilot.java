@@ -40,11 +40,11 @@ import java.util.Vector;
 
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Report;
-import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 import megamek.common.util.CrewSkillSummaryUtil;
 
 /**
@@ -71,7 +71,10 @@ public class LAMPilot extends Crew {
               Gender.RANDOMIZE, false, null);
     }
 
-    public LAMPilot(LandAirMek lam, String name, int gunneryMek, boolean hasNaturalAptitudeGunneryMek, boolean hasNaturalAptitudeArtillery, int pilotingMek, boolean hasNaturalAptitudePilotingMek, int gunneryAero, boolean hasNaturalAptitudeGunneryAero, int pilotingAero, boolean hasNaturalAptitudePilotingAero, Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
+    public LAMPilot(LandAirMek lam, String name, int gunneryMek, boolean hasNaturalAptitudeGunneryMek,
+          boolean hasNaturalAptitudeArtillery, int pilotingMek, boolean hasNaturalAptitudePilotingMek, int gunneryAero,
+          boolean hasNaturalAptitudeGunneryAero, int pilotingAero, boolean hasNaturalAptitudePilotingAero,
+          Gender gender, boolean clanPilot, Map<Integer, Map<String, String>> extraData) {
         super(CrewType.SINGLE, name, 1, gunneryMek, hasNaturalAptitudeGunneryMek, hasNaturalAptitudeArtillery,
               pilotingMek, hasNaturalAptitudePilotingMek, gender, clanPilot, extraData);
         this.lam = lam;
@@ -95,7 +98,20 @@ public class LAMPilot extends Crew {
     public static LAMPilot convertToLAMPilot(LandAirMek lam, Crew crew) {
         Map<Integer, Map<String, String>> extraData = new HashMap<>();
         extraData.put(0, crew.getExtraDataForCrewMember(0));
-        LAMPilot pilot = new LAMPilot(lam, crew.getName(), crew.getGunnery(), crew.isHasNaturalAptitudeGunnery(), crew.isHasNaturalAptitudeArtillery(), crew.getPiloting(), crew.isHasNaturalAptitudePiloting(), crew.getGunnery(), crew.isHasNaturalAptitudeGunnery(), crew.getPiloting(), crew.isHasNaturalAptitudePiloting(), crew.getGender(), crew.isClanPilot(), extraData);
+        LAMPilot pilot = new LAMPilot(lam,
+              crew.getName(),
+              crew.getGunnery(),
+              crew.isHasNaturalAptitudeGunnery(),
+              crew.isHasNaturalAptitudeArtillery(),
+              crew.getPiloting(),
+              crew.isHasNaturalAptitudePiloting(),
+              crew.getGunnery(),
+              crew.isHasNaturalAptitudeGunnery(),
+              crew.getPiloting(),
+              crew.isHasNaturalAptitudePiloting(),
+              crew.getGender(),
+              crew.isClanPilot(),
+              extraData);
         pilot.setNickname(crew.getNickname(), 0);
         pilot.setPortrait(crew.getPortrait(0).clone(), 0);
         pilot.setGunneryL(crew.getGunneryL(), 0);
@@ -176,13 +192,17 @@ public class LAMPilot extends Crew {
 
     /**
      * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
+     *
+     * @author Illiani
+     * @since 0.51.01
      */
     public boolean isHasNaturalAptitudeGunneryAero() {
         return hasNaturalAptitudeGunneryAero;
     }
 
     /**
-     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)} instead.
+     * @author Illiani
+     * @since 0.51.01
      */
     public void setHasNaturalAptitudeGunneryAero(boolean hasNaturalAptitudeGunneryAero) {
         this.hasNaturalAptitudeGunneryAero = hasNaturalAptitudeGunneryAero;
@@ -220,10 +240,20 @@ public class LAMPilot extends Crew {
         pilotingAero = piloting;
     }
 
+    /**
+     * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)} instead.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
     public boolean isHasNaturalAptitudePilotingAero() {
         return hasNaturalAptitudePilotingAero;
     }
 
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
     public void setHasNaturalAptitudePilotingAero(boolean hasNaturalAptitudePilotingAero) {
         this.hasNaturalAptitudePilotingAero = hasNaturalAptitudePilotingAero;
     }
@@ -234,6 +264,17 @@ public class LAMPilot extends Crew {
         } else {
             return lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER;
         }
+    }
+
+    /**
+     * @return {@code true} if the pilot is currently using their Aero piloting skill
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private boolean useAeroPiloting() {
+        return lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
+              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE());
     }
 
     // The mode-switching getters below pick the raw Mek or Aero skill and then apply any temporary gamemaster
@@ -300,8 +341,7 @@ public class LAMPilot extends Crew {
 
     @Override
     protected int rawPiloting() {
-        if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
-              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {
+        if (useAeroPiloting()) {
             return pilotingAero;
         }
         return getPilotingMek();
@@ -319,8 +359,7 @@ public class LAMPilot extends Crew {
 
     @Override
     public int getPiloting() {
-        if (lam.getConversionMode() == LandAirMek.CONV_MODE_FIGHTER
-              || (lam.getConversionMode() == LandAirMek.CONV_MODE_AIR_MEK && lam.isAirborneVTOLorWIGE())) {
+        if (useAeroPiloting()) {
             return getSkillModifiers().adjustPiloting(pilotingAero);
         } else {
             return getSkillModifiers().adjustPiloting(getPilotingMek());
@@ -433,25 +472,29 @@ public class LAMPilot extends Crew {
         return getGunneryMek() != 4 || getGunneryAero() != 4 || getPilotingMek() != 5 || getPilotingAero() != 5;
     }
 
+    /**
+     * Picks the Mek or Aero Gunnery aptitude to match the skill {@link #getGunnery()} uses in the LAM's current mode.
+     */
     @Override
-    public boolean isUseNaturalAptitudeGunnery(Game game, WeaponAttackAction weaponAttackAction) {
-        Entity attackingEntity = weaponAttackAction.getEntity(game);
-
-        boolean useArtillerySkill = game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
-        boolean useArtilleryNaturalAptitude = useArtillerySkill && weaponAttackAction instanceof ArtilleryAttackAction;
-
-        if (useArtilleryNaturalAptitude) {
+    public boolean isUseNaturalAptitudeGunnery(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        if (isUsingArtillerySkill(game, weapon)) {
             return isHasNaturalAptitudeArtillery();
-        } else if (attackingEntity.isAero()) {
+        }
+
+        if (!usesSmallArms() && useAeroGunnery()) {
             return isHasNaturalAptitudeGunneryAero();
         }
 
         return isHasNaturalAptitudeGunnery();
     }
 
+    /**
+     * Picks the Mek or Aero Piloting aptitude to match the skill {@link #getPiloting()} uses in the LAM's current
+     * mode.
+     */
     @Override
     public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity) {
-        if (pilotedEntity.isAero()) {
+        if (useAeroPiloting()) {
             return isHasNaturalAptitudePilotingAero();
         }
 

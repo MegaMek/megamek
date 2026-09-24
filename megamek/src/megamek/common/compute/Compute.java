@@ -3560,7 +3560,7 @@ public class Compute {
                 fChance = 1.0f;
             } else {
                 fChance = (float) Compute.oddsAbove(hitData.getValue(),
-                      attacker.getCrew().isHasNaturalAptitudeGunnery())
+                      attacker.getCrew().isUseNaturalAptitudeGunnery(game, weapon))
                       / 100.0f;
             }
         }

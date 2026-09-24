@@ -47,7 +47,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -1320,7 +1324,7 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean hasNaturalAptitudePiloting = entity.getCrew().isHasNaturalAptitudePiloting();
+        boolean hasNaturalAptitudePiloting = entity.getCrew().isUseNaturalAptitudePiloting(entity);
         double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), hasNaturalAptitudePiloting) / 100);
         return potentialDmg * oddsTakeDmg;
     }

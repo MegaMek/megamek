@@ -39,15 +39,15 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -3035,7 +3035,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                 Messages.getString("MovementDisplay.RamDialog.message",
                                                                    toHit.getValueAsString(),
                                                                    Compute.oddsAbove(toHit.getValue(),
-                                                                                     currentlySelectedEntity.getCrew().isHasNaturalAptitudePiloting()),
+                                                                                     currentlySelectedEntity.getCrew().isUseNaturalAptitudePiloting(currentlySelectedEntity)),
                                                                    toHit.getDesc(),
                                                                    toDefender,
                                                                    toHit.getTableDesc(),

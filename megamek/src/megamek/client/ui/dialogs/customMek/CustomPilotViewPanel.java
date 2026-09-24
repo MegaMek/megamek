@@ -167,13 +167,13 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             inputField.setMinimumSize(inputField.getPreferredSize());
         }
 
-        // Sections sit side by side at their natural width in fixed grid columns; the trailing glue absorbs the
-        // leftover row width and packs them to the left. The Advanced section goes below the identity section in
-        // the same grid column, stretched to its width, so the two panels' edges line up.
-        // Needed by the skills section, for the Small Arms aptitude
+        // Worked out before the sections are built, as the skills section needs it for the Small Arms aptitude
         showsPersonalEquipment = CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
               && CrewArmorKitRules.canWearArmorKit(entity);
 
+        // Sections sit side by side at their natural width in fixed grid columns; the trailing glue absorbs the
+        // leftover row width and packs them to the left. The Advanced section goes below the identity section in
+        // the same grid column, stretched to its width, so the two panels' edges line up.
         sectionsRow.add(buildIdentitySection(parent, slot), sectionConstraints(0));
         sectionsRow.add(buildSkillsSection(parent, slot), sectionConstraints(1));
 

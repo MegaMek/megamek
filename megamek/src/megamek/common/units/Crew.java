@@ -889,32 +889,33 @@ public class Crew implements Serializable {
 
     /**
      * Crews deserialized from before Natural Aptitudes were tracked restore these arrays as null. Nobody had an
-     * aptitude back then, so an empty array is correct.
+     * aptitude back then, so an empty array is correct. Sized like the constructor's arrays, which always have at least
+     * one slot even for {@link CrewType#NONE}.
      */
     private boolean[] getNaturalAptitudesGunnery() {
         if (naturalAptitudesGunnery == null) {
-            naturalAptitudesGunnery = new boolean[getSlotCount()];
+            naturalAptitudesGunnery = new boolean[Math.max(1, getSlotCount())];
         }
         return naturalAptitudesGunnery;
     }
 
     private boolean[] getNaturalAptitudesArtillery() {
         if (naturalAptitudesArtillery == null) {
-            naturalAptitudesArtillery = new boolean[getSlotCount()];
+            naturalAptitudesArtillery = new boolean[Math.max(1, getSlotCount())];
         }
         return naturalAptitudesArtillery;
     }
 
     private boolean[] getNaturalAptitudesPiloting() {
         if (naturalAptitudesPiloting == null) {
-            naturalAptitudesPiloting = new boolean[getSlotCount()];
+            naturalAptitudesPiloting = new boolean[Math.max(1, getSlotCount())];
         }
         return naturalAptitudesPiloting;
     }
 
     private boolean[] getNaturalAptitudesSmallArms() {
         if (naturalAptitudesSmallArms == null) {
-            naturalAptitudesSmallArms = new boolean[getSlotCount()];
+            naturalAptitudesSmallArms = new boolean[Math.max(1, getSlotCount())];
         }
         return naturalAptitudesSmallArms;
     }

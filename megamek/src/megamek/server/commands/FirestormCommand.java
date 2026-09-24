@@ -117,7 +117,7 @@ public class FirestormCommand extends GamemasterServerCommand {
 
     private void igniteHex(Coords coords, int fireType) {
         Hex hex = gameManager.getGame().getBoard().getHex(coords);
-        if (null == hex) {
+        if (hex == null) {
             // Just ignore null hexes...
             // they should not happen, but I don't want to crash the command
             return;

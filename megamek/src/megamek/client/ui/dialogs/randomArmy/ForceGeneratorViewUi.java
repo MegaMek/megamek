@@ -32,12 +32,7 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -70,17 +65,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import megamek.client.Client;
-import megamek.client.ratgenerator.C3NetworkConfigurator;
-import megamek.client.ratgenerator.CarrierLoadingConfigurator;
-import megamek.client.ratgenerator.CrewDescriptor;
-import megamek.client.ratgenerator.ExistingLift;
-import megamek.client.ratgenerator.ForceDescriptor;
-import megamek.client.ratgenerator.FormationType;
-import megamek.client.ratgenerator.GenerationContext;
-import megamek.client.ratgenerator.RATGenerator;
-import megamek.client.ratgenerator.Ruleset;
-import megamek.client.ratgenerator.ShipReroller;
-import megamek.client.ratgenerator.TransportBranchMerger;
+import megamek.client.ratgenerator.*;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
@@ -244,6 +229,10 @@ public class ForceGeneratorViewUi implements ActionListener {
         // Selecting a lance points the formation mix at it, so the palette offers that lance's formations rather
         // than whatever the settings above it are left on. Deselecting hands it back to the settings.
         forceTree.addTreeSelectionListener(event -> panControls.setFormationMixContext(selectedForceNode()));
+        // The Add to Game button acts on the selection, so it is only live while there is one.
+        forceTree.addTreeSelectionListener(
+              event -> panControls.setAddToGameEnabled(forceTree.getSelectionCount() > 0));
+        panControls.setOnAddToGame(this::addSelectionToChosenUnits);
 
         rightPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -418,6 +407,29 @@ public class ForceGeneratorViewUi implements ActionListener {
      */
     public void setToeExclusionMode(boolean enabled) {
         this.toeExclusionMode = enabled;
+        // the Add to Game button goes the same way as the menu item of that name
+        panControls.setOnAddToGame(enabled ? null : this::addSelectionToChosenUnits);
+    }
+
+    /**
+     * Puts whatever is selected in the force tree on the chosen units list, as the right-click "Add to Game" does for
+     * the node under the pointer. A formation brings everything inside it; excluded nodes are skipped, and a unit
+     * already on the list is not added twice.
+     */
+    private void addSelectionToChosenUnits() {
+        TreePath[] selectedPaths = forceTree.getSelectionPaths();
+        if ((selectedPaths == null) || (selectedPaths.length == 0)) {
+            logger.debug("[ForceGen] Add to Game pressed with nothing selected in the force tree; nothing added");
+            return;
+        }
+        int chosenBefore = modelChosen.getRowCount();
+        for (TreePath selectedPath : selectedPaths) {
+            if (selectedPath.getLastPathComponent() instanceof ForceDescriptor selectedNode) {
+                modelChosen.addEntities(selectedNode);
+            }
+        }
+        logger.debug("[ForceGen] Add to Game button: {} tree node(s) selected, {} unit(s) added to the chosen list",
+              selectedPaths.length, modelChosen.getRowCount() - chosenBefore);
     }
 
     /**
@@ -642,11 +654,22 @@ public class ForceGeneratorViewUi implements ActionListener {
         CarrierLoadingConfigurator.configure(generatedForce, modelChosen::hasEntity);
         localClient.sendAddEntity(entities);
 
-        String msg = clientGui.getClient().getLocalPlayer() + " loaded Units from Random Army for player: "
-              + owner.getName()
-              + " [" + entities.size() + " units]";
-        clientGui.getClient().sendServerChat(Player.PLAYER_NONE, msg);
+        String chatMessage = Messages.getString("RandomArmyDialog.loadedUnitsChat",
+              localClient.getLocalPlayer(), owner.getName(), entities.size());
+        localClient.sendServerChat(Player.PLAYER_NONE, chatMessage);
 
+        modelChosen.clearData();
+    }
+
+    /**
+     * Discards the generated force and the accumulated Command Model, as the Clear Force button does, and empties
+     * the chosen units along with them. A command is sent to the game as one player's force, so a host calls this
+     * once a command has gone to its owner and the next roll is for somebody else - otherwise that roll would be
+     * folded into the command the first player already received.
+     */
+    public void clearForce() {
+        logger.debug("[ForceGen] host asked for the generated force to be cleared");
+        panControls.clearGeneratedForce();
         modelChosen.clearData();
     }
 
@@ -710,7 +733,7 @@ public class ForceGeneratorViewUi implements ActionListener {
             txtSearch.setText("");
         }
 
-        if (null != fd) {
+        if (fd != null) {
             lblOrganization.setText(Ruleset.findRuleset(fd).getEschelonNames(fd.getUnitType() == null
                   ? ""
                   : UnitType.getTypeName(fd.getUnitType())).get(fd.getEchelonCode()));
@@ -1039,7 +1062,7 @@ public class ForceGeneratorViewUi implements ActionListener {
                     }
 
                     if (!toeExclusionMode) {
-                        JMenuItem addItem = new JMenuItem("Add to game");
+                        JMenuItem addItem = new JMenuItem(Messages.getString("ForceGeneratorDialog.addToGame"));
                         addItem.addActionListener(actionEvent -> modelChosen.addEntities(fd));
                         menu.add(addItem);
                     }
@@ -1467,7 +1490,7 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public void addTreeModelListener(TreeModelListener listener) {
-            if (null != listener && !listeners.contains(listener)) {
+            if (listener != null && !listeners.contains(listener)) {
                 listeners.add(listener);
             }
         }
@@ -1511,7 +1534,7 @@ public class ForceGeneratorViewUi implements ActionListener {
 
         @Override
         public void removeTreeModelListener(TreeModelListener listener) {
-            if (null != listener) {
+            if (listener != null) {
                 listeners.remove(listener);
             }
         }

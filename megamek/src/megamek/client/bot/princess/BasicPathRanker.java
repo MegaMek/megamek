@@ -493,7 +493,7 @@ public class BasicPathRanker extends PathRanker {
         List<Coords> positions = new ArrayList<>(units.size());
         for (Entity unit : units) {
             Coords position = unit.getPosition();
-            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
+            if ((position != null) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
                 positions.add(position);
             }
         }
@@ -2647,10 +2647,10 @@ public class BasicPathRanker extends PathRanker {
         // unit's ledger said stay, turn after turn. Price the water for the hex the unit stays in. The
         // elevation check keeps this to units actually in the water - a stationary path reports MOVE_NONE,
         // so a hovering VTOL would otherwise read as drowning.
-        if (null == previousCoords) {
+        if (previousCoords == null) {
             Coords finalCoords = path.getFinalCoords();
-            Hex finalHex = (null == finalCoords) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
-            if ((null != finalHex) && finalHex.containsTerrain(Terrains.WATER)
+            Hex finalHex = (finalCoords == null) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
+            if ((finalHex != null) && finalHex.containsTerrain(Terrains.WATER)
                   && !finalHex.containsTerrain(Terrains.ICE) && (movingUnit.getElevation() < 0)) {
                 totalHazard += waterHazard(movingUnit, finalHex, movingUnit.getElevation(),
                       movingUnit.isProne(), true, null);
@@ -2942,7 +2942,7 @@ public class BasicPathRanker extends PathRanker {
         // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
         // the fall probability lazily so a fully-armored unit never triggers it. A unit standing still makes
         // no water-entry roll, so there is nothing to fall from.
-        if (null != movePath) {
+        if (movePath != null) {
             double fallProbability = -1;
             for (int location : submergedWhileProne) {
                 if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {

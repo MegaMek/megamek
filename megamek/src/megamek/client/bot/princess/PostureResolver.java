@@ -161,7 +161,7 @@ public class PostureResolver {
         }
 
         Double meanDistance = meanEnemyDistance(ownPositions, enemyPositions);
-        if (null == meanDistance) {
+        if (meanDistance == null) {
             // No enemy in sight: go find them.
             return resolved(round, CombatPosture.ATTACK, "no enemy in sight");
         }
@@ -217,7 +217,7 @@ public class PostureResolver {
      */
     private static Double meanEnemyDistance(List<Coords> ownPositions, List<Coords> enemyPositions) {
         Coords ownCentre = FormationGeometry.centroid(ownPositions);
-        if ((null == ownCentre) || enemyPositions.isEmpty()) {
+        if ((ownCentre == null) || enemyPositions.isEmpty()) {
             return null;
         }
         double total = 0;

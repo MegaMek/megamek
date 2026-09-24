@@ -33,18 +33,25 @@
 package megamek.client.ui.dialogs.unitEditor;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -60,6 +67,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
+import megamek.common.compute.Compute;
 import megamek.common.enums.ChargeLevel;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
@@ -70,10 +78,12 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.InfantryAttack;
+import megamek.logging.MMLogger;
 
 /**
  * Builds the controls of the unit damage editor: a panel per unit location holding that location's armor and
@@ -84,6 +94,8 @@ import megamek.common.weapons.attacks.InfantryAttack;
  * </p>
  */
 public class UnitDamagePanelBuilder {
+
+    private static final MMLogger LOGGER = MMLogger.create(UnitDamagePanelBuilder.class);
 
     /** The most heat that can be set, matching the range the lobby's heat menu offers. */
     public static final int MAX_HEAT = 40;
@@ -138,6 +150,7 @@ public class UnitDamagePanelBuilder {
         initLocationPanels();
         initSystemCrits();
         initEquipCrits();
+        initDamageSummary();
     }
 
     private void initLocationPanels() {
@@ -185,6 +198,12 @@ public class UnitDamagePanelBuilder {
                     addLabeledRow(controls.locationPanels[location],
                           Messages.getString("UnitEditorDialog.armorRear"),
                           controls.spnRear[location]);
+                }
+            }
+            if (offersStateSwitches() && (entity instanceof Mek mek)) {
+                addBreachedRow(location);
+                if (mek.isArm(location) || mek.locationIsLeg(location)) {
+                    addBlownOffRow(location);
                 }
             }
         }
@@ -237,6 +256,72 @@ public class UnitDamagePanelBuilder {
         initSkillModifiers(generalPanel());
     }
 
+    /**
+     * Adds the unit's ejection settings as a second column of the panel the crew sits in - a Mek's head, or the
+     * general panel for a unit whose crew has no location of its own: the same boxes the lobby's Configure
+     * dialog offers, so a gamemaster can override in play what was set in the lobby. Offered in the gamemaster's
+     * in-game editor only, for units with an ejection system, with the conditional triggers only under the
+     * conditional ejection option, exactly as the lobby offers them.
+     */
+    public void addEjectionColumn() {
+        if (!offersEquipmentSettings() || !AutomaticEjectionRules.hasEjectionSystem(entity)) {
+            return;
+        }
+        JPanel panel = targetPanel(crewLocation());
+        startNewColumn(panel);
+        JLabel header = new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.ejection") + "</b></html>");
+        header.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.ejection.tooltip")));
+        addRow(panel, header, new JLabel());
+
+        boolean isConditionalEjectionInPlay = entity.getGame().getOptions()
+              .booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION);
+        String disabledTooltip = "UnitEditorDialog.ejection.autoDisabled.tooltip";
+        String conditionalTooltip = "UnitEditorDialog.ejection.conditional.tooltip";
+        if (entity instanceof Mek mek) {
+            // which unit the column was read from, and what it held, so a playtest log can show whether a
+            // setting was already wrong before the gamemaster touched it
+            LOGGER.info("[EquipState] ejection column for {} (id {}): auto {}, ammo {}, engine {}, center torso {},"
+                        + " headshot {}", mek.getDisplayName(), mek.getId(), mek.isAutoEject(),
+                  mek.isCondEjectAmmo(), mek.isCondEjectEngine(), mek.isCondEjectCTDest(),
+                  mek.isCondEjectHeadshot());
+            controls.chkAutoEjectDisabled = ejectionRow(panel, "CustomMekDialog.labAutoEject", !mek.isAutoEject(),
+                  disabledTooltip);
+            if (isConditionalEjectionInPlay && mek.hasEjectSeat()) {
+                controls.chkConditionalEjectAmmo = ejectionRow(panel, "CustomMekDialog.labConditional_Ejection_Ammo",
+                      mek.isCondEjectAmmo(), conditionalTooltip);
+                controls.chkConditionalEjectEngine = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_Engine", mek.isCondEjectEngine(), conditionalTooltip);
+                controls.chkConditionalEjectCenterTorso = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_CT_Destroyed", mek.isCondEjectCTDest(),
+                      conditionalTooltip);
+                controls.chkConditionalEjectHeadshot = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_Headshot", mek.isCondEjectHeadshot(),
+                      conditionalTooltip);
+            }
+        } else if (entity instanceof Aero aero) {
+            controls.chkAutoEjectDisabled = ejectionRow(panel, "CustomMekDialog.labAutoEject", !aero.isAutoEject(),
+                  disabledTooltip);
+            if (isConditionalEjectionInPlay && aero.hasEjectSeat()) {
+                controls.chkConditionalEjectAmmo = ejectionRow(panel, "CustomMekDialog.labConditional_Ejection_Ammo",
+                      aero.isCondEjectAmmo(), conditionalTooltip);
+                controls.chkConditionalEjectFuel = ejectionRow(panel, "CustomMekDialog.labConditional_Ejection_Fuel",
+                      aero.isCondEjectFuel(), conditionalTooltip);
+                controls.chkConditionalEjectStructuralIntegrity = ejectionRow(panel,
+                      "CustomMekDialog.labConditional_Ejection_SI_Destroyed", aero.isCondEjectSIDest(),
+                      conditionalTooltip);
+            }
+        }
+    }
+
+    /** One ejection setting row: the lobby's own label for it, and a checkbox with the given tooltip. */
+    private JCheckBox ejectionRow(JPanel panel, String labelKey, boolean selected, String tooltipKey) {
+        JCheckBox checkBox = new JCheckBox();
+        checkBox.setSelected(selected);
+        checkBox.setToolTipText(UIUtil.formatSideTooltip(Messages.getString(tooltipKey)));
+        addLabeledRow(panel, Messages.getString(labelKey), checkBox);
+        return checkBox;
+    }
+
     /** Pads the given panel's row count so the next row added to it starts at the top of a fresh column. */
     private void startNewColumn(JPanel panel) {
         int itemCount = controls.panelRows.getOrDefault(panel, 1) - 1;
@@ -285,6 +370,40 @@ public class UnitDamagePanelBuilder {
                   modifierRow(controls.spnInitiativeModifier, controls.spnInitiativeRounds,
                         controls.chkInitiativePermanent));
         }
+
+        // the gamemaster's target movement modifier change lasts this round only, so it has no duration controls;
+        // the modifier the unit earned by moving is shown beside it and is as far down as the control goes, since
+        // a reduction cannot go below zero and a unit that stood still has nothing to reduce
+        controls.spnTargetModifier = targetModifierSpinner(entity.getGamemasterTargetModifier(),
+              Compute.minGamemasterTargetModifier(entity.getGame(), entity.getId()));
+        int earnedModifier = Compute.getEarnedTargetMovementModifier(entity.getGame(), entity.getId()).getValue();
+        JPanel targetRow = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(5), 0));
+        targetRow.add(controls.spnTargetModifier);
+        targetRow.add(new JLabel(Messages.getString("UnitEditorDialog.skillModifier.target.earned",
+              signedModifier(earnedModifier))));
+        addLabeledRow(panel, Messages.getString("UnitEditorDialog.skillModifier.target"), targetRow);
+    }
+
+    /** A modifier with its sign, {@code +2} or {@code -1}, as the to-hit breakdown shows them. */
+    private static String signedModifier(int modifier) {
+        return (modifier > 0) ? "+" + modifier : String.valueOf(modifier);
+    }
+
+    /**
+     * A spinner for the gamemaster's target movement modifier change. It goes down only as far as the modifier the
+     * unit earned by moving, so every reduction it offers applies in full; upward it runs over the whole range a
+     * change could ever matter in, since the total is held to the movement table's ceiling when it is read.
+     *
+     * @param delta        the change the unit already carries this round, which the spinner starts on
+     * @param lowestUseful the largest reduction that still does something, zero or negative
+     */
+    private JSpinner targetModifierSpinner(int delta, int lowestUseful) {
+        int startingDelta = Math.clamp(delta, lowestUseful, Compute.MAX_GAMEMASTER_TARGET_MODIFIER);
+        JSpinner spinner = new JSpinner(new SpinnerNumberModel(startingDelta,
+              lowestUseful, Compute.MAX_GAMEMASTER_TARGET_MODIFIER, 1));
+        spinner.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.skillModifier.target.tooltip")));
+        return spinner;
     }
 
     /**
@@ -391,6 +510,11 @@ public class UnitDamagePanelBuilder {
     }
 
     private JCheckBox addStatusRow(String labelKey, boolean selected) {
+        return addStatusRow(generalPanel(), labelKey, selected);
+    }
+
+    /** Adds a status checkbox to the given panel; see {@link #addStatusRow(String, boolean)}. */
+    private JCheckBox addStatusRow(JPanel panel, String labelKey, boolean selected) {
         JCheckBox checkBox = new JCheckBox();
         checkBox.setSelected(selected);
         // A status checkbox only shows the current state, so its tooltip names the state and the action the next
@@ -399,8 +523,52 @@ public class UnitDamagePanelBuilder {
         String offTooltip = Messages.getString(labelKey + ".tooltip.off");
         checkBox.setToolTipText(selected ? onTooltip : offTooltip);
         checkBox.addItemListener(event -> checkBox.setToolTipText(checkBox.isSelected() ? onTooltip : offTooltip));
-        addLabeledRow(generalPanel(), Messages.getString(labelKey), checkBox);
+        addLabeledRow(panel, Messages.getString(labelKey), checkBox);
         return checkBox;
+    }
+
+    /**
+     * Adds a Breached checkbox to a Mek location's panel, prefilled with whether the location is hull-breached (TW
+     * p.122). Ticking it marks the location and everything in it breached, and clearing it puts them back; the
+     * editor only marks the state, so a breached center torso or head does not destroy the unit here the way it
+     * does in play - Destroy Unit is there for that.
+     */
+    private void addBreachedRow(int location) {
+        if (controls.chkLocationBreached == null) {
+            controls.chkLocationBreached = new JCheckBox[entity.locations()];
+        }
+        boolean breached = entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED;
+        controls.chkLocationBreached[location] = addStatusRow(controls.locationPanels[location],
+              "UnitEditorDialog.location.breached", breached);
+    }
+
+    /**
+     * Adds a Blown Off checkbox to a Mek limb's panel, prefilled with whether the limb is gone. Ticking it blows
+     * the limb off the way a "limb blown off" critical does; unticking it brings the limb back, and puts the
+     * limb's structure and armor spinners to full so the returned limb is whole rather than at the zero a gone
+     * limb shows.
+     */
+    private void addBlownOffRow(int location) {
+        if (controls.chkLocationBlownOff == null) {
+            controls.chkLocationBlownOff = new JCheckBox[entity.locations()];
+        }
+        JCheckBox checkBox = addStatusRow(controls.locationPanels[location],
+              "UnitEditorDialog.location.blownOff", entity.isLocationBlownOff(location));
+        checkBox.addItemListener(event -> {
+            if (!checkBox.isSelected()) {
+                restoreSpinnerToMaximum(controls.spnInternal[location]);
+                restoreSpinnerToMaximum(controls.spnArmor[location]);
+                restoreSpinnerToMaximum(controls.spnRear[location]);
+            }
+        });
+        controls.chkLocationBlownOff[location] = checkBox;
+    }
+
+    /** Sets a spinner to its model's maximum; a missing spinner is left alone. */
+    private static void restoreSpinnerToMaximum(@Nullable JSpinner spinner) {
+        if ((spinner != null) && (spinner.getModel() instanceof SpinnerNumberModel model)) {
+            spinner.setValue(model.getMaximum());
+        }
     }
 
     /** Whether the unit's stealth armor is switched on, which it is when any of its stealth equipment is. */
@@ -621,6 +789,7 @@ public class UnitDamagePanelBuilder {
                 label += " (" + entity.getLocationAbbr(mounted.getLocation()) + "/"
                       + entity.getLocationAbbr(mounted.getSecondLocation()) + ")";
             }
+            label += stateTag(flaggedStates(mounted));
 
             JComponent control = crit;
             if (offerGameMasterTools && (mounted instanceof AmmoMounted ammoBin)) {
@@ -640,12 +809,195 @@ public class UnitDamagePanelBuilder {
                     control = withModeChooser(equipmentNumber, mounted, control);
                 }
             }
+            if (offersStateSwitches() && (mounted instanceof WeaponMounted weapon)) {
+                control = withWeaponStateSwitches(equipmentNumber, weapon, control);
+            }
             if ((entity instanceof AbstractBuildingEntity building) && (mounted instanceof WeaponMounted weapon)) {
                 control = withBuildingWeaponSwitches(building, equipmentNumber, weapon, control);
+            }
+            if (offersExplodeButton(mounted)) {
+                control = appendedToRow(control, explodeButton(equipmentNumber));
             }
             controls.addCritOfLocation(mounted.getLocation(), crit);
             addLabeledRow(equipmentPanel(mounted.getLocation()), label, control);
         }
+    }
+
+    /**
+     * Whether the equipment's row gets an Explode button: in the gamemaster's in-game editor, where there is a
+     * server to resolve the damage, and only for equipment a critical hit would set off right now. Buildings are
+     * left out until their damage path has been tried with it.
+     */
+    private boolean offersExplodeButton(Mounted<?> mounted) {
+        return offersEquipmentSettings() && !(entity instanceof AbstractBuildingEntity)
+              && mounted.wouldExplodeWhenHit();
+    }
+
+    /** The Explode button of a row, registered for the dialog to wire to the server's explode command. */
+    private JButton explodeButton(int equipmentNumber) {
+        JButton button = new JButton(Messages.getString("UnitEditorDialog.explode"));
+        button.setToolTipText(UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.explode.tooltip")));
+        controls.explodeButtons.put(equipmentNumber, button);
+        return button;
+    }
+
+    /**
+     * Whether the state switches - Jammed, Fired, Mount Locked, a location's Breached - are offered: in the
+     * gamemaster's editor only. Unlike the equipment settings, nothing else owns these states in the lobby, so
+     * they are offered there as well as in play; MekHQ's editor, which has no game to hold such states, gets none.
+     */
+    private boolean offersStateSwitches() {
+        return offerGameMasterTools;
+    }
+
+    /**
+     * The states a piece of equipment is in that keep it from working as built, in the order they are worth
+     * seeing: destroyed, missing, breached, jammed, fired (one-shot weapons only), and a locked Directional Torso
+     * Mount. Empty for equipment in working order.
+     */
+    private List<String> flaggedStates(Mounted<?> mounted) {
+        List<String> states = new ArrayList<>();
+        if (mounted.isDestroyed()) {
+            states.add(Messages.getString("UnitEditorDialog.state.destroyed"));
+        }
+        if (mounted.isMissing()) {
+            states.add(Messages.getString("UnitEditorDialog.state.missing"));
+        }
+        if (mounted.isBreached()) {
+            states.add(Messages.getString("UnitEditorDialog.state.breached"));
+        }
+        if (mounted.isJammed()) {
+            states.add(Messages.getString("UnitEditorDialog.state.jammed"));
+        }
+        if (mounted.isOneShot() && mounted.isFired()) {
+            states.add(Messages.getString("UnitEditorDialog.state.fired"));
+        }
+        if (mounted.hasDirectionalTorsoMount() && mounted.isDirectionalMountLocked()) {
+            states.add(Messages.getString("UnitEditorDialog.state.mountLocked"));
+        }
+        return states;
+    }
+
+    /** The given states as a red tag for a row label, such as {@code [Jammed, Fired]}; empty for no states. */
+    private String stateTag(List<String> states) {
+        if (states.isEmpty()) {
+            return "";
+        }
+        return " <font color=\"" + UIUtil.hexColor(UIUtil.uiLightRed()) + "\">[" + String.join(", ", states)
+              + "]</font>";
+    }
+
+    /**
+     * Appends the gamemaster's state switches to a weapon's row: Jammed for any weapon, Fired for a one-shot
+     * launcher, and Mount Locked for a weapon in a Directional Torso Mount (BMM p.83). Each is prefilled with the
+     * weapon's current state and applied outright, so a gamemaster can jam a gun or clear a jam, spend or reload a
+     * one-shot launcher, and lock or free a mount without waiting for the rules to roll it.
+     *
+     * <p>Not offered on purpose: "used this round", "AMS used" and the TSEMP downtime turn. Those are the phase
+     * machinery's own bookkeeping, reset by it every round, so a gamemaster's edit would be fighting the same flag
+     * mid-turn and be wiped at the next round anyway. A TSEMP's fired flag is the same kind of bookkeeping, which
+     * is why Fired is offered on one-shot weapons alone.</p>
+     */
+    private JComponent withWeaponStateSwitches(int equipmentNumber, WeaponMounted weapon, JComponent control) {
+        JComponent row = control;
+        // only where some rule can jam the weapon: an LRM rack or a laser has no jam to set or clear
+        if (weapon.canJam()) {
+            row = appendedToRow(row,
+                  stateSwitch("UnitEditorDialog.weaponJammed", weapon.isJammed(), controls.weaponJammed,
+                        equipmentNumber));
+        }
+        if (weapon.isOneShot()) {
+            row = appendedToRow(row,
+                  stateSwitch("UnitEditorDialog.weaponFired", weapon.isFired(), controls.weaponFired,
+                        equipmentNumber));
+        }
+        if (weapon.hasDirectionalTorsoMount()) {
+            row = appendedToRow(row,
+                  stateSwitch("UnitEditorDialog.mountLocked", weapon.isDirectionalMountLocked(),
+                        controls.directionalMountLocked, equipmentNumber));
+        }
+        return row;
+    }
+
+    /**
+     * A state switch for an equipment row: a bare checkbox with its name as a separate label, registered under
+     * the equipment number in the given map. The checkbox is bare on purpose - it is then the same component as
+     * the crit boxes beside it and sits on their line at every GUI scale, where a checkbox carrying its own text
+     * is taller and its box drifts below them. Clicking the label toggles the box, so nothing is lost.
+     */
+    private JComponent stateSwitch(String labelKey, boolean selected, Map<Integer, JCheckBox> register,
+          int equipmentNumber) {
+        JCheckBox checkBox = new JCheckBox("", selected);
+        JLabel text = new JLabel(Messages.getString(labelKey));
+        String tooltip = UIUtil.formatSideTooltip(Messages.getString(labelKey + ".tooltip"));
+        checkBox.setToolTipText(tooltip);
+        text.setToolTipText(tooltip);
+        text.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                checkBox.doClick();
+            }
+        });
+        register.put(equipmentNumber, checkBox);
+        JPanel switchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, UIUtil.scaleForGUI(2), 0));
+        switchPanel.add(checkBox);
+        switchPanel.add(text);
+        return switchPanel;
+    }
+
+    /**
+     * Lists every flagged item on the general panel - a breached location, then each piece of equipment that is
+     * destroyed, missing, breached, jammed, fired or mount-locked - as a link that opens the panel of the location
+     * it sits in. The location panels show one location at a time, so without this list a gamemaster looking for
+     * the jammed gun would have to page through every location to find it.
+     */
+    private void initDamageSummary() {
+        if (!offersStateSwitches()) {
+            return;
+        }
+        JPanel summary = new JPanel();
+        summary.setLayout(new BoxLayout(summary, BoxLayout.PAGE_AXIS));
+        if (entity instanceof Mek) {
+            for (int location = 0; location < entity.locations(); location++) {
+                if (entity.isLocationBlownOff(location)) {
+                    summary.add(stateLink(entity.getLocationName(location),
+                          Messages.getString("UnitEditorDialog.state.blownOff"), location));
+                } else if (entity.getLocationStatus(location) == ILocationExposureStatus.BREACHED) {
+                    summary.add(stateLink(entity.getLocationName(location),
+                          Messages.getString("UnitEditorDialog.state.breached"), location));
+                }
+            }
+        }
+        for (Mounted<?> mounted : entity.getEquipment()) {
+            int equipmentNumber = entity.getEquipmentNum(mounted);
+            // only the equipment the editor lists, so that every link has a row to open
+            if (!controls.equipCrits.containsKey(equipmentNumber)) {
+                continue;
+            }
+            List<String> states = flaggedStates(mounted);
+            if (!states.isEmpty()) {
+                String itemName = mounted.getName() + " (" + entity.getLocationAbbr(mounted.getLocation()) + ")";
+                summary.add(stateLink(itemName, String.join(", ", states), mounted.getLocation()));
+            }
+        }
+        if (summary.getComponentCount() == 0) {
+            summary.add(new JLabel(Messages.getString("UnitEditorDialog.damageSummary.none")));
+        }
+        JLabel title = new JLabel("<html><b>" + Messages.getString("UnitEditorDialog.damageSummary")
+              + "</b></html>");
+        title.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.damageSummary.tooltip")));
+        addRow(generalPanel(), title, summary);
+    }
+
+    /** One summary line, {@code item: states}, underlined as a link and registered to open the given location. */
+    private JLabel stateLink(String itemName, String states, int location) {
+        JLabel link = new JLabel("<html><u>" + itemName + "</u>: " + states + "</html>");
+        link.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        link.setToolTipText(UIUtil.formatSideTooltip(
+              Messages.getString("UnitEditorDialog.damageSummary.link.tooltip")));
+        controls.equipmentStateLinks.add(new UnitDamageControls.EquipmentStateLink(link, location));
+        return link;
     }
 
     /**
@@ -656,17 +1008,10 @@ public class UnitDamagePanelBuilder {
         return offerGameMasterTools && (entity.getGame() != null) && !entity.getGame().getPhase().isLounge();
     }
 
-    /** Appends a burst fire checkbox to a machine gun's row, prefilled with the gun's current setting. */
+    /** Appends a burst fire switch to a machine gun's row, prefilled with the gun's current setting. */
     private JComponent withMgBurstCheckbox(int equipmentNumber, Mounted<?> machineGun, JComponent control) {
-        JCheckBox burstCheckbox = new JCheckBox(Messages.getString("UnitEditorDialog.mgBurst"),
-              machineGun.isRapidFire());
-        burstCheckbox.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.mgBurst.tooltip")));
-        controls.mgBurst.put(equipmentNumber, burstCheckbox);
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 0));
-        row.add(control);
-        row.add(burstCheckbox);
-        return row;
+        return appendedToRow(control, stateSwitch("UnitEditorDialog.mgBurst", machineGun.isRapidFire(),
+              controls.mgBurst, equipmentNumber));
     }
 
     /**
@@ -816,35 +1161,24 @@ public class UnitDamagePanelBuilder {
     }
 
     /**
-     * Appends an Advanced Building's per-weapon critical switches to a weapon's row: Jammed for any weapon, and
-     * Turret Locked as well for a turreted one (TO:AR p. 119). A jammed weapon does not fire; a locked turret
-     * still fires but only into the building's forward arc.
+     * Appends an Advanced Building's Turret Locked switch to a turreted weapon's row (TO:AR p. 119). A locked
+     * turret still fires but only into the building's forward arc. The building's Jammed switch is the same one
+     * every weapon gets, from {@link #withWeaponStateSwitches}.
      *
      * @param building        the building the weapon belongs to
      * @param equipmentNumber the weapon's equipment number
-     * @param weapon          the weapon being given switches
+     * @param weapon          the weapon being given the switch
      * @param control         the row built so far
      *
-     * @return the row with the switches appended
+     * @return the row with the switch appended, or unchanged for a weapon that is not turreted
      */
     private JComponent withBuildingWeaponSwitches(AbstractBuildingEntity building, int equipmentNumber,
           WeaponMounted weapon, JComponent control) {
-        JCheckBox jammed = new JCheckBox(Messages.getString("UnitEditorDialog.building.weaponJammed"),
-              weapon.isJammed());
-        jammed.setToolTipText(UIUtil.formatSideTooltip(
-              Messages.getString("UnitEditorDialog.building.weaponJammed.tooltip")));
-        controls.buildingWeaponJammed.put(equipmentNumber, jammed);
-        JComponent row = appendedToRow(control, jammed);
-
-        if (building.isTurretMounted(weapon)) {
-            JCheckBox turretLocked = new JCheckBox(Messages.getString("UnitEditorDialog.building.turretLocked"),
-                  building.isTurretLocked(weapon));
-            turretLocked.setToolTipText(UIUtil.formatSideTooltip(
-                  Messages.getString("UnitEditorDialog.building.turretLocked.tooltip")));
-            controls.buildingTurretLocked.put(equipmentNumber, turretLocked);
-            row = appendedToRow(row, turretLocked);
+        if (!building.isTurretMounted(weapon)) {
+            return control;
         }
-        return row;
+        return appendedToRow(control, stateSwitch("UnitEditorDialog.building.turretLocked",
+              building.isTurretLocked(weapon), controls.buildingTurretLocked, equipmentNumber));
     }
 
     /** Wraps the control and the switch into one row, the switch at its right end. */
@@ -933,12 +1267,8 @@ public class UnitDamagePanelBuilder {
         control.add(new JLabel(Messages.getString("UnitEditorDialog.shots")));
         if (offersEquipmentSettings() && ammoBin.getType().hasFlag(AmmoType.F_HOTLOAD)
               && entity.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
-            JCheckBox hotLoadCheckbox = new JCheckBox(Messages.getString("UnitEditorDialog.hotLoad"),
-                  ammoBin.isHotLoaded());
-            hotLoadCheckbox.setToolTipText(UIUtil.formatSideTooltip(
-                  Messages.getString("UnitEditorDialog.hotLoad.tooltip")));
-            controls.hotLoadedAmmo.put(equipmentNumber, hotLoadCheckbox);
-            control.add(hotLoadCheckbox);
+            control.add(stateSwitch("UnitEditorDialog.hotLoad", ammoBin.isHotLoaded(), controls.hotLoadedAmmo,
+                  equipmentNumber));
         }
         return control;
     }

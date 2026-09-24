@@ -34,14 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -56,6 +49,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -256,6 +250,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_ZOOM_RESET = "viewZoomReset";
     public static final String VIEW_ZOOM_OVERVIEW_TOGGLE = "viewZoomOverviewToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
     public static final String VIEW_TOGGLE_HEX_COORDS = "viewToggleHexCoords";
@@ -963,6 +958,7 @@ public class ClientGUI extends AbstractClientGUI
               client.getGame());
         BridgeDeploySpriteHandler bridgeDeploySpriteHandler = new BridgeDeploySpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
+        ScanSpriteHandler scanSpriteHandler = new ScanSpriteHandler(this, client);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
@@ -982,6 +978,7 @@ public class ClientGUI extends AbstractClientGUI
               bridgeRepairedSpriteHandler,
               bridgeDeploySpriteHandler,
               groundObjectSpriteHandler,
+              scanSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
               fleeZoneSpriteHandler,
@@ -1530,6 +1527,9 @@ public class ClientGUI extends AbstractClientGUI
                 break;
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
+                break;
+            case VIEW_ZOOM_RESET:
+                boardViews.get(0).zoomReset();
                 break;
             case VIEW_ZOOM_OVERVIEW_TOGGLE:
                 boardViews.get(0).zoomOverviewToggle();
@@ -3021,7 +3021,7 @@ public class ClientGUI extends AbstractClientGUI
         // from the same directory that MM is in
         var mmlPath = CP.getMmlPath();
         var autodetect = false;
-        if (null == mmlPath || mmlPath.isBlank()) {
+        if (mmlPath == null || mmlPath.isBlank()) {
             autodetect = true;
             mmlPath = "MegaMekLab.jar";
         }
@@ -4086,7 +4086,7 @@ public class ClientGUI extends AbstractClientGUI
             // An experimental bot that fails to stand up must not leave the seat empty: the player asked
             // for a bot in that slot, so Princess takes it instead. Guarded like the first attempt, so a
             // failure here degrades to an empty seat and a log line rather than a crash.
-            if ((null == botClient) && (AIType.PRINCESS != aiType)) {
+            if ((botClient == null) && (AIType.PRINCESS != aiType)) {
                 message.append(" Falling back to Princess. ");
                 try {
                     botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName),

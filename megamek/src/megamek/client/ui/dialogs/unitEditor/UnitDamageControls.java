@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -129,6 +130,21 @@ public class UnitDamageControls {
     public JSpinner spnInitiativeModifier;
     public JSpinner spnInitiativeRounds;
     public JCheckBox chkInitiativePermanent;
+    /** The gamemaster's target movement modifier delta for this round; {@code null} outside a running game. */
+    public JSpinner spnTargetModifier;
+
+    /*
+     * The unit's ejection settings, mirroring the lobby's Configure dialog; only a gamemaster's in-game editor
+     * builds these, and only the boxes the unit and the game options call for. The first box is "Disable
+     * Automatic ejection", ticked when the unit will NOT eject, as the lobby shows it.
+     */
+    public JCheckBox chkAutoEjectDisabled;
+    public JCheckBox chkConditionalEjectAmmo;
+    public JCheckBox chkConditionalEjectEngine;
+    public JCheckBox chkConditionalEjectCenterTorso;
+    public JCheckBox chkConditionalEjectHeadshot;
+    public JCheckBox chkConditionalEjectFuel;
+    public JCheckBox chkConditionalEjectStructuralIntegrity;
 
     /** The crits of each piece of equipment, by its equipment number. */
     public Map<Integer, CheckCritPanel> equipCrits = new HashMap<>();
@@ -148,8 +164,40 @@ public class UnitDamageControls {
     public final Map<Integer, JCheckBox> buildingGunnersKilled = new HashMap<>();
     /** Whether each of the building's turreted weapons is locked forward, by equipment number. */
     public final Map<Integer, JCheckBox> buildingTurretLocked = new HashMap<>();
-    /** Whether each of the building's weapons is jammed, by equipment number. */
-    public final Map<Integer, JCheckBox> buildingWeaponJammed = new HashMap<>();
+
+    /*
+     * The weapon and location states a gamemaster sets or clears outright; only a gamemaster's editor builds these.
+     */
+
+    /** Whether each weapon is jammed, by equipment number. */
+    public final Map<Integer, JCheckBox> weaponJammed = new HashMap<>();
+    /** Whether each one-shot weapon has been fired, by equipment number. */
+    public final Map<Integer, JCheckBox> weaponFired = new HashMap<>();
+    /** Whether each Directional Torso Mount weapon is locked in its arc, by equipment number. */
+    public final Map<Integer, JCheckBox> directionalMountLocked = new HashMap<>();
+    /** Whether each of a Mek's locations is hull-breached; {@code null} for other units, null elements unedited. */
+    public JCheckBox[] chkLocationBreached;
+    /** Whether each of a Mek's limbs is blown off; {@code null} for other units, null elements for non-limbs. */
+    public JCheckBox[] chkLocationBlownOff;
+
+    /**
+     * One line of the damage summary on the general panel: the clickable label and the location whose
+     * panel it opens, so that a gamemaster can find a jammed or breached item without paging through every
+     * location.
+     *
+     * @param label    the clickable label naming the item and its state
+     * @param location the location the item sits in
+     */
+    public record EquipmentStateLink(JLabel label, int location) {}
+
+    /** The damage summary lines, wired by the dialog to open their location on click. */
+    public final List<EquipmentStateLink> equipmentStateLinks = new ArrayList<>();
+
+    /**
+     * The Explode button of each piece of equipment a critical hit would set off, by equipment number. Only a
+     * gamemaster's in-game editor builds these; the dialog wires them to the server's explode command.
+     */
+    public final Map<Integer, JButton> explodeButtons = new HashMap<>();
 
     /* system crits */
     public CheckCritPanel engineCrit;

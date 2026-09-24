@@ -161,7 +161,7 @@ public class NavalRepairFacility extends UnitBay {
             Entity troop = unit.getGame().getEntity(troops.getFirst());
 
             return ((troops.size() == 1)
-                  && (null != troop) && (troop.hasETypeFlag(Entity.ETYPE_DROPSHIP)));
+                    && (troop != null) && (troop.hasETypeFlag(Entity.ETYPE_DROPSHIP)));
         } else if (unit.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
             return troops.isEmpty();
         } else {

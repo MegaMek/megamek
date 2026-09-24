@@ -89,7 +89,7 @@ public class NoFiresCommand extends GamemasterServerCommand {
 
     private void firefight(Coords coords) {
         Hex hex = gameManager.getGame().getBoard().getHex(coords);
-        if (null == hex) {
+        if (hex == null) {
             // Just ignore null hexes...
             // they should not happen, but I don't want to crash the command
             return;

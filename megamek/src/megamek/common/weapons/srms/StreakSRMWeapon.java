@@ -65,7 +65,7 @@ public abstract class StreakSRMWeapon extends SRMWeapon {
 
     @Override
     public double getTonnage(Entity entity, int location, double size) {
-        if ((null != entity) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
+        if ((entity != null) && entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             return getRackSize() * 0.5;
         } else {
             return super.getTonnage(entity, location, size);

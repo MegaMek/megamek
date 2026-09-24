@@ -356,6 +356,28 @@ class ObjectiveMarkerTest {
     }
 
     @Test
+    void testTheSideAPointBelongsToIsNotWhoPlacedIt() {
+        // The placer keeps the point: ownership drives visibility, who may remove it and the return to the
+        // lobby, and a scan point commonly belongs to nobody or to an opponent of whoever put it down.
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setOwnerId(3);
+
+        marker.setBelongsToPlayerId(Player.PLAYER_NONE);
+
+        assertEquals(3, marker.getOwnerId(), "the placer still owns it, so Done does not claim it was never placed");
+        assertEquals(Player.PLAYER_NONE, marker.getBelongsToPlayerId(), "and it belongs to nobody");
+    }
+
+    @Test
+    void testAPointWithNoChosenSideBelongsToWhoeverPlacedIt() {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setOwnerId(2);
+
+        assertEquals(2, marker.getBelongsToPlayerId(),
+              "a point from a save written before the choice existed keeps behaving as it always did");
+    }
+
+    @Test
     void testADecidedPointIsFullyDecided() {
         ObjectiveScoringScheme scheme = ObjectiveScoringScheme.hold(3,
               ObjectiveScoringScheme.HoldCounting.CONSECUTIVE);

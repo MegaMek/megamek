@@ -42,8 +42,8 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
-import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.equipment.WeaponType;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Aero;
 import megamek.common.units.EntityMovementMode;
@@ -521,7 +521,7 @@ public class ModelRecord extends AbstractUnitRecord {
 
             // EquipmentType.get is throwing an NPE intermittently, and the only possibility
             // I can see is that there is a null equipment name.
-            if (null == unitData.getEquipmentNames().get(i)) {
+            if (unitData.getEquipmentNames().get(i) == null) {
                 logger.error("RATGenerator ModelRecord encountered null equipment name" +
                       " in MekSummary for {}, index {}", unitData.getName(), i);
                 continue;

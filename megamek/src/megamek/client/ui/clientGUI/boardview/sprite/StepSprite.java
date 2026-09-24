@@ -242,6 +242,10 @@ public class StepSprite extends Sprite {
                 String load = Messages.getString("BoardView1.Load");
                 drawAnnouncement(g2D, load, step, col);
                 break;
+            case DEPLOY:
+                String deploy = Messages.getString("MovementDisplay.moveDeploy");
+                drawAnnouncement(g2D, deploy, step, col);
+                break;
             case PICKUP_CARGO:
                 String pickup = Messages.getString("MovementDisplay.movePickupCargo");
                 drawAnnouncement(g2D, pickup, step, col);

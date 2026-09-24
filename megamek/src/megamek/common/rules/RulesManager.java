@@ -154,6 +154,7 @@ public interface RulesManager {
      * @return the RulesPSR implementation in use
      */
     public RulesPSR getRulesPSR();
+    public RulesScanning getRulesScanning();
 
     /**
      * Provides access to terrain rules, including terrain types,

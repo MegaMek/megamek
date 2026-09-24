@@ -33,10 +33,7 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.Graphics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -46,15 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import com.formdev.flatlaf.FlatClientProperties;
@@ -986,7 +975,7 @@ public class EquipChoicePanel extends JPanel {
             mineChoice.applyChoice();
         }
         // update bomb setting
-        if (null != m_bombs) {
+        if (m_bombs != null) {
             m_bombs.applyChoice();
         }
         if (entity.isConventionalInfantry()) {

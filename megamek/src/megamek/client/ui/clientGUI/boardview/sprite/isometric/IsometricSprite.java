@@ -118,6 +118,10 @@ public class IsometricSprite extends HexSprite {
         } else {
             p = bv.getHexLocation(entity.getSecondaryPositions().get(secondaryPos));
         }
+        if (p == null) {
+            // The entity has no position, there is nothing to draw
+            return;
+        }
         Graphics2D g2 = (Graphics2D) g;
 
         if (onlyDetectedBySensors()) {
@@ -182,7 +186,7 @@ public class IsometricSprite extends HexSprite {
 
         if (drawFuelLeak) {
             Image fuelLeak = bv.getScaledImage(bv.getTileManager().bottomLayerFuelLeakMarkerFor(entity), true);
-            if (null != fuelLeak) {
+            if (fuelLeak != null) {
                 graph.drawImage(fuelLeak, x, y, observer);
             }
         }
@@ -192,7 +196,7 @@ public class IsometricSprite extends HexSprite {
 
         if (drawMotiveWreckage) {
             Image motiveWreckage = bv.getScaledImage(bv.getTilesetManager().bottomLayerMotiveMarkerFor(entity), true);
-            if (null != motiveWreckage) {
+            if (motiveWreckage != null) {
                 graph.drawImage(motiveWreckage, x, y, observer);
             }
         }

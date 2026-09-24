@@ -879,7 +879,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat effects: mekwarrior damage
             // N.B. The pilot may already be dead.
             int lifeSupportCritCount;
-            boolean torsoMountedCockpit = mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
+            boolean torsoMountedCockpit = mek.hasTorsoMountedCockpit();
             if (torsoMountedCockpit) {
                 lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
@@ -887,6 +887,12 @@ class HeatResolver extends AbstractTWRuleHandler {
                 lifeSupportCritCount += entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
                       Mek.LOC_LEFT_TORSO);
+                if (mek.hasVirtualRealityPilotingPod()) {
+                    // IO:AE p.63: the pod's third life support slot sits in the center torso
+                    lifeSupportCritCount += entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                          Mek.SYSTEM_LIFE_SUPPORT,
+                          Mek.LOC_CENTER_TORSO);
+                }
             } else {
                 lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
@@ -905,8 +911,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                   !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
-                
-                RulesHeat.LifeSupportHeat lifeSupportHeat = 
+
+                RulesHeat.LifeSupportHeat lifeSupportHeat =
                       Game.rulesManager.getRulesHeat().checkLifeSupportHeat(damageHeat,
                       torsoMountedCockpit, mtHeat, entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT));
                 if (lifeSupportHeat != null) {

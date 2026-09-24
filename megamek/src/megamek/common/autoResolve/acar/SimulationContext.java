@@ -194,7 +194,7 @@ public class SimulationContext implements IGame, PlanetaryConditionsUsing {
         int retVal = 0;
 
         // If no selector was supplied, return the count of all game entities.
-        if (null == selector) {
+        if (selector == null) {
             retVal = getNoOfEntities();
         }
 

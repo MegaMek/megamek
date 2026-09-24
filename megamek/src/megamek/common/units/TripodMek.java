@@ -232,7 +232,7 @@ public class TripodMek extends MekWithArms {
             mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);

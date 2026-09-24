@@ -50,11 +50,11 @@ public class InfantryCostCalculator {
 
         // Weapon Cost Calculation
         double primaryWeaponCost = 0; // Primary Weapon Cost
-        if (null != infantry.getPrimaryWeapon()) {
+        if (infantry.getPrimaryWeapon() != null){
             primaryWeaponCost = Math.sqrt(infantry.getPrimaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
         double secondaryWeaponCost = 0; // Secondary Weapon Cost
-        if (null != infantry.getSecondaryWeapon()) {
+        if (infantry.getSecondaryWeapon() != null){
             secondaryWeaponCost = Math.sqrt(infantry.getSecondaryWeapon().getCost(infantry, false, -1)) * 2000;
         }
 

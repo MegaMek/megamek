@@ -32,26 +32,12 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.Border;
 
 import megamek.client.generator.RandomCallsignGenerator;
@@ -879,7 +865,7 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     }
 
     public int getBackup() {
-        if (null != cbBackup.getSelectedItem()) {
+        if (cbBackup.getSelectedItem() != null){
             for (int i = 0; i < entity.getCrew().getSlotCount(); i++) {
                 if (cbBackup.getSelectedItem().equals(entity.getCrew().getCrewType().getRoleName(i))) {
                     return i;

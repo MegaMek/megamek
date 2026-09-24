@@ -35,16 +35,21 @@ package megamek.server.victory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.List;
 
 import megamek.common.Player;
-import megamek.common.game.Game;
+import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.BipedMek;
+import megamek.common.units.Crew;
+import megamek.common.units.CrewType;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
 import megamek.server.trigger.SpecificRoundEndTrigger;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +66,7 @@ class VictoryPointVictoryTest {
 
     private Game game;
     private VictoryPointVictory victoryPointVictory;
+    private int nextEntityId = 1;
 
     @BeforeEach
     void setUp() {
@@ -220,6 +226,89 @@ class VictoryPointVictoryTest {
 
         assertTrue(result.isVictory());
         assertTrue(result.isDraw());
+    }
+
+    @Test
+    void testTheScoringSideWinsEvenThoughItsScoutLeftTheBattlefield() {
+        enableObjectiveScoring();
+        game.getOptions().getOption(OptionsConstants.VICTORY_CHECK_VICTORY).setValue(true);
+        Player scoutingSide = playerOn(1);
+        Player sideThatStayedPut = playerOn(2);
+        // The scout has carried its readings off the battlefield, so its owner has nothing left deployed
+        deployAMek(sideThatStayedPut);
+        VictoryPointTracker.getTracker(game).awardToTeam(1, 2, 3, "two scans carried home");
+        game.setCurrentRound(2);
+        VictoryHelper victoryHelper = new VictoryHelper(game);
+
+        VictoryResult result = victoryHelper.checkForVictory(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
+        assertFalse(result.isDraw());
+        assertEquals(scoutingSide.getTeam(), result.getWinningTeam(),
+              "doing what the mission asked must not lose the game to the side that merely stayed put");
+        assertNotEquals(sideThatStayedPut.getTeam(), result.getWinningTeam());
+    }
+
+    @Test
+    void testTheLastSideStandingStillWinsWhenNobodyScored() {
+        enableObjectiveScoring();
+        game.getOptions().getOption(OptionsConstants.VICTORY_CHECK_VICTORY).setValue(true);
+        playerOn(1);
+        Player sideThatStayedPut = playerOn(2);
+        deployAMek(sideThatStayedPut);
+        game.setCurrentRound(2);
+        VictoryHelper victoryHelper = new VictoryHelper(game);
+
+        VictoryResult result = victoryHelper.checkForVictory(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
+        assertEquals(sideThatStayedPut.getTeam(), result.getWinningTeam());
+    }
+
+    @Test
+    void testTheLastSideStandingBreaksATieOnVictoryPoints() {
+        enableObjectiveScoring();
+        game.getOptions().getOption(OptionsConstants.VICTORY_CHECK_VICTORY).setValue(true);
+        playerOn(1);
+        Player sideThatStayedPut = playerOn(2);
+        deployAMek(sideThatStayedPut);
+        VictoryPointTracker tracker = VictoryPointTracker.getTracker(game);
+        tracker.awardToTeam(1, 2, 3, "two scans carried home");
+        tracker.awardToTeam(2, 2, 3, "holds two control points");
+        game.setCurrentRound(2);
+        VictoryHelper victoryHelper = new VictoryHelper(game);
+
+        VictoryResult result = victoryHelper.checkForVictory(game, game.getVictoryContext());
+
+        assertTrue(result.isVictory());
+        assertFalse(result.isDraw(), "a level score is broken by who is still on the board");
+        assertEquals(sideThatStayedPut.getTeam(), result.getWinningTeam());
+    }
+
+    /**
+     * @param team the team to put the new player on, which is also used as the player id
+     *
+     * @return the player, already added to the game
+     */
+    private Player playerOn(int team) {
+        Player player = new Player(team, "Player " + team);
+        player.setTeam(team);
+        game.addPlayer(team, player);
+        return player;
+    }
+
+    /** Gives the player one living, deployed unit, which is what makes their side count as still in the game. */
+    private void deployAMek(Player owner) {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setId(nextEntityId++);
+        mek.setChassis("Holder");
+        mek.setModel("H-" + mek.getId());
+        mek.setCrew(new Crew(CrewType.SINGLE));
+        mek.setOwner(owner);
+        mek.setPosition(new Coords(1, 1));
+        mek.setDeployed(true);
+        game.addEntity(mek);
     }
 
     @Test

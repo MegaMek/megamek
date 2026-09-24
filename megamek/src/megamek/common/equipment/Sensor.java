@@ -480,7 +480,7 @@ public record Sensor(int type) implements Serializable {
 
             range += target.heat / 5;
 
-            if ((null != game.getBoard().getHex(target.getPosition()))
+            if ((game.getBoard().getHex(target.getPosition()) != null)
                   && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE)) {
                 range += 1;
             }
@@ -497,7 +497,7 @@ public record Sensor(int type) implements Serializable {
                 range = 0;
             }
 
-            if ((null != game.getBoard().getHex(target.getPosition()))
+            if ((game.getBoard().getHex(target.getPosition()) != null)
                   && game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.INDUSTRIAL)) {
                 return 0;
             }

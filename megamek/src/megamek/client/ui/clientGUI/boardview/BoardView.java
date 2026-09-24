@@ -2743,7 +2743,7 @@ public final class BoardView extends AbstractBoardView
         if (!supersUnderShadow) {
             if (supers != null) {
                 for (Image image : supers) {
-                    if (null != image) {
+                    if (image != null) {
                         if (animatedImages.contains(image.hashCode())) {
                             dontCache = true;
                         }
@@ -4181,7 +4181,7 @@ public final class BoardView extends AbstractBoardView
         for (ListIterator<MoveStep> i = movePath.getSteps();
               i.hasNext(); ) {
             final MoveStep step = i.next();
-            if ((null != previousStep) && ((step.getType() == MoveStepType.UP)
+            if ((previousStep != null) && ((step.getType() == MoveStepType.UP)
                   || (step.getType() == MoveStepType.DOWN)
                   || (step.getType() == MoveStepType.ACC)
                   || (step.getType() == MoveStepType.DEC)
@@ -5605,6 +5605,15 @@ public final class BoardView extends AbstractBoardView
         }
 
         zoomIndex--;
+        zoom();
+    }
+
+    /**
+     * Reset the zoom level to the BASE_ZOOM_INDEX
+     */
+    @Override
+    public void zoomReset() {
+        zoomIndex = BASE_ZOOM_INDEX;
         zoom();
     }
 

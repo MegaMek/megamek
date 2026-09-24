@@ -215,7 +215,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
         send(connId, packetHelper.createGameSettingsPacket());
 
         Player player = getGame().getPlayer(connId);
-        if (null != player) {
+        if (player != null) {
             send(connId, new Packet(PacketCommand.SENDING_MINEFIELDS, player.getMinefields()));
 
             if (getGame().getPhase().isLounge()) {
@@ -402,7 +402,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
 
             if (player.isPresent() && player.get().isGhost()) {
                 sendGhostSkipMessage(player.get());
-                // } else if ((null == game.getFirstEntity()) && (null != player) &&
+                // } else if ((game.getFirstEntity() == null) && (player != null) &&
                 // !minefieldPhase && !artyPhase) {
                 // sendTurnErrorSkipMessage(player);
             }
@@ -452,7 +452,7 @@ public final class SBFGameManager extends AbstractGameManager implements SBFRule
      * Called when the current player has done his current turn and the turn counter needs to be advanced.
      */
     void endCurrentTurn(SBFFormation entityUsed) {
-        final int playerId = (null == entityUsed) ? Player.PLAYER_NONE : entityUsed.getOwnerId();
+        final int playerId = (entityUsed == null) ? Player.PLAYER_NONE : entityUsed.getOwnerId();
         changeToNextTurn(playerId);
     }
 

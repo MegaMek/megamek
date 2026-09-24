@@ -275,7 +275,7 @@ public class ComputeTargetToHitMods {
         }
 
         // Ground-to-air attacks against a target flying at NOE
-        if (Compute.isGroundToAir(attacker, target) && (null != entityTarget) && entityTarget.isNOE()) {
+        if (Compute.isGroundToAir(attacker, target) && (entityTarget != null) && entityTarget.isNOE()) {
             if (entityTarget.passedWithin(attacker.getPosition(), 1)) {
                 toHit.addModifier(+1, Messages.getString("WeaponAttackAction.TeNoe"));
             } else {
@@ -287,7 +287,7 @@ public class ComputeTargetToHitMods {
         // StratOps Velocity mods are on)
         if (Compute.isGroundToAir(attacker, target)
               && game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_STRATOPS_AA_FIRE)
-              && (null != entityTarget)
+            && (entityTarget != null)
               && entityTarget.isAero()) {
             int vMod = ((IAero) entityTarget).getCurrentVelocity();
             if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AA_MOVE_MOD)) {

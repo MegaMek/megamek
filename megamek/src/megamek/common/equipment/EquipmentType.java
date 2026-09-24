@@ -45,7 +45,6 @@ import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -354,7 +353,7 @@ public class EquipmentType implements ITechnology {
 
     @Override
     public SimpleTechLevel getStaticTechLevel() {
-        if (null != techAdvancement.getStaticTechLevel()) {
+        if (techAdvancement.getStaticTechLevel() != null){
             return techAdvancement.getStaticTechLevel();
         } else {
             return techAdvancement.guessStaticTechLevel(rulesRefs);
@@ -447,7 +446,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
-        if (null == mounted) {
+        if (mounted == null) {
             return explosive;
         }
 
@@ -532,7 +531,7 @@ public class EquipmentType implements ITechnology {
               !mounted.curMode().equals("Charge")) {
             return false;
         }
-        
+
         if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
             return false;
         }
@@ -875,7 +874,7 @@ public class EquipmentType implements ITechnology {
         if (key == null) {
             return null;
         }
-        if (null == EquipmentType.lookupHash) {
+        if (EquipmentType.lookupHash == null) {
             EquipmentType.initializeTypes();
         }
         String normalizedKey = key.toLowerCase(Locale.ROOT);
@@ -1000,7 +999,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static synchronized void initializeTypes() {
-        if (null == EquipmentType.allTypes) {
+        if (EquipmentType.allTypes == null) {
             EquipmentType.allTypes = new Vector<>();
             EquipmentType.lookupHash = new Hashtable<>();
             EquipmentType.lookupCollisions = new TreeMap<>();
@@ -1044,7 +1043,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static Enumeration<EquipmentType> getAllTypes() {
-        if (null == EquipmentType.allTypes) {
+        if (EquipmentType.allTypes == null) {
             EquipmentType.initializeTypes();
         }
         return EquipmentType.allTypes.elements();
@@ -1061,7 +1060,7 @@ public class EquipmentType implements ITechnology {
     }
 
     protected static void addType(EquipmentType type) {
-        if (null == EquipmentType.allTypes) {
+        if (EquipmentType.allTypes == null) {
             EquipmentType.initializeTypes();
         }
         if (EquipmentType.allTypes.contains(type)) {
@@ -1335,7 +1334,7 @@ public class EquipmentType implements ITechnology {
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final EquipmentType other = (EquipmentType) obj;

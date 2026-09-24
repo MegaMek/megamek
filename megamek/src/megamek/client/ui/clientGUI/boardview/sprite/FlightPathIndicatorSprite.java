@@ -32,9 +32,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 
@@ -195,7 +193,7 @@ public class FlightPathIndicatorSprite extends HexSprite {
         int turnCost = Integer.MIN_VALUE;
 
 
-        if (null != entity) {
+        if (entity != null) {
             maxMP = entity.getRunMP();
             turnCost = step.asfTurnCost(step.getGame(), MoveStepType.TURN_LEFT, entity);
         }

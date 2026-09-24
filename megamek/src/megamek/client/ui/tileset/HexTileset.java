@@ -34,7 +34,7 @@
  */
 package megamek.client.ui.tileset;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -600,7 +600,7 @@ public class HexTileset implements BoardListener {
         }
 
         public Image getImage(int seed) {
-            if ((null == images) || images.isEmpty()) {
+            if ((images == null) || images.isEmpty()) {
                 loadImage();
             }
             if (images.isEmpty()) {
@@ -618,7 +618,7 @@ public class HexTileset implements BoardListener {
             for (String filename : filenames) {
                 File imgFile = new MegaMekFile(Configuration.hexesDir(), filename).getFile();
                 Image image = ImageUtil.loadImageFromFile(imgFile.toString());
-                if (null != image) {
+                if (image != null) {
                     images.add(image);
                 } else {
                     logger.error("Received null image from ImageUtil.loadImageFromFile! File: {}", imgFile);

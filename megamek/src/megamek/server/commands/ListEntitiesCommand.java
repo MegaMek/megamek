@@ -59,7 +59,7 @@ public class ListEntitiesCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         Player p = server.getGame().getPlayer(connId);
-        if (null == p) {
+        if (p == null) {
             return;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,7 +40,6 @@ import static megamek.codeUtilities.MathUtility.clampUlp1;
 import java.util.List;
 import java.util.TreeSet;
 
-import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -277,7 +276,7 @@ public class UtilityPathRanker extends BasicPathRanker {
               pathCopy.isJumping(),
               pathCopy.isAirborne(),
               game);
-        var tmmValue = MathUtility.clamp(tmm.getValue() / 8.0, 0.0, 1.0);
+        var tmmValue = Math.clamp(tmm.getValue() / 8.0, 0.0, 1.0);
         return clampUlp1(tmmValue * tmmFactor);
     }
 

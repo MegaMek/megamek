@@ -263,7 +263,7 @@ public class LosEffects {
         shotBlockedByWater |= other.shotBlockedByWater;
         targetCover |= other.targetCover;
         attackerCover |= other.attackerCover;
-        if ((null != thruBldg) && !thruBldg.equals(other.thruBldg)) {
+        if ((thruBldg != null) && !thruBldg.equals(other.thruBldg)) {
             thruBldg = null;
         }
     }
@@ -301,7 +301,7 @@ public class LosEffects {
     public int getHeavySmoke() {
         return heavySmoke;
     }
-    
+
     public int getBAPReduceSmoke() { return bapReduceSmoke; }
 
     public int getScreen() {
@@ -1135,7 +1135,7 @@ public class LosEffects {
 
         // Infantry inside a building can only be
         // targeted by units in the same building.
-        if (ai.targetInfantry && targetInBuilding && (null == los.getThruBldg())) {
+        if (ai.targetInfantry && targetInBuilding && (los.getThruBldg() == null)){
             los.infProtected = true;
         }
 
@@ -1212,9 +1212,9 @@ public class LosEffects {
             // Infantry inside a building can only be
             // targeted by units in the same building.
             if (ai.targetInfantry && targetInBuilding) {
-                if (null == leftLos.getThruBldg()) {
+                if (leftLos.getThruBldg() == null){
                     leftLos.infProtected = true;
-                } else if (null == rightLos.getThruBldg()) {
+                } else if (rightLos.getThruBldg() == null){
                     rightLos.infProtected = true;
                 }
             }
@@ -1439,11 +1439,11 @@ public class LosEffects {
         boolean coveredByDropship = false;
         Entity coveringDropship = null;
 
-        if ((null == los.getThruBldg()) && hex.containsTerrain(Terrains.BLDG_ELEV)) {
+        if ((los.getThruBldg() == null) &&hex.containsTerrain(Terrains.BLDG_ELEV)){
             bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
         }
 
-        if ((null == los.getThruBldg()) &&
+        if ((los.getThruBldg() == null) &&
               hex.containsTerrain(Terrains.FUEL_TANK_ELEV) &&
               hex.terrainLevel(Terrains.FUEL_TANK_ELEV) > bldgEl) {
             bldgEl = hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
@@ -1609,7 +1609,7 @@ public class LosEffects {
                           ((terrainEl > ai.attackAbsHeight) && attackerAdjacent) ||
                           ((terrainEl > ai.targetAbsHeight) && targetAdjacent);
                 }
-                
+
                 int smokeModifier = 0;
                 if (affectsLos) {
                     // smoke and woods stack for LOS so check them both
@@ -1631,7 +1631,7 @@ public class LosEffects {
                     }
                     Entity attacker = game.getEntity(ai.attackerId);
                     if (attacker != null && attacker.hasBAP(true) && ai.attackPos.distance(coords) <= attacker.getBAPRange()) {
-                        los.bapReduceSmoke += smokeModifier; 
+                        los.bapReduceSmoke += smokeModifier;
                     }
                     // Check woods/jungle
                     if ((woodsLevel == 1) || (jungleLevel == 1)) {
@@ -1904,9 +1904,9 @@ public class LosEffects {
             // Infantry inside a building can only be
             // targeted by units in the same building.
             if (ai.targetInfantry && targetInBuilding) {
-                if (null == left.getThruBldg()) {
+                if (left.getThruBldg() == null){
                     left.infProtected = true;
-                } else if (null == right.getThruBldg()) {
+                } else if (right.getThruBldg() == null){
                     right.infProtected = true;
                 }
             }

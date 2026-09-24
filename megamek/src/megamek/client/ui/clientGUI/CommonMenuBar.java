@@ -183,6 +183,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
           "CommonMenuBar.viewPlanetaryConditions"));
     private final JMenuItem viewZoomIn = new JMenuItem(getString("CommonMenuBar.viewZoomIn"));
     private final JMenuItem viewZoomOut = new JMenuItem(getString("CommonMenuBar.viewZoomOut"));
+    private final JMenuItem viewZoomReset = new JMenuItem(getString("CommonMenuBar.viewZoomReset"));
     private final JMenuItem viewZoomOverviewToggle = new JMenuItem(getString("CommonMenuBar.viewZoomOverviewToggle"));
     private final JMenuItem viewLabels = new JMenuItem(getString("CommonMenuBar.viewLabels"));
     // Bot Commands is a submenu offering three mutually exclusive display modes (Off / Float / Dock).
@@ -409,6 +410,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
 
         initMenuItem(viewZoomIn, menu, VIEW_ZOOM_IN);
         initMenuItem(viewZoomOut, menu, VIEW_ZOOM_OUT);
+        initMenuItem(viewZoomReset, menu, VIEW_ZOOM_RESET);
         initMenuItem(viewZoomOverviewToggle, menu, VIEW_ZOOM_OVERVIEW_TOGGLE);
         initMenuItem(toggleIsometric, menu, VIEW_TOGGLE_ISOMETRIC, VK_T, GUIP.getIsometricEnabled());
         initMenuItem(toggleHexCoords, menu, VIEW_TOGGLE_HEX_COORDS, VK_G, GUIP.getCoordsEnabled());
@@ -645,6 +647,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener, IPreferen
         viewMinimap.setEnabled(isBoardView);
         viewZoomIn.setEnabled(isBoardView);
         viewZoomOut.setEnabled(isBoardView);
+        viewZoomReset.setEnabled(isBoardView);
         viewZoomOverviewToggle.setEnabled(isBoardView);
         toggleIsometric.setEnabled(isBoardView);
         viewKeybindsOverlay.setEnabled(isBoardView);

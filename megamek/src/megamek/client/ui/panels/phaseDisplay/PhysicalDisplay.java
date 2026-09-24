@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -78,6 +78,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
@@ -607,8 +608,8 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         // end my turn, then.
         Entity next = game.getNextEntity(game.getTurnIndex());
         if (game.getPhase().isPhysical() &&
-              (null != next) &&
-              (null != currentEntity()) &&
+            (next != null) &&
+            (currentEntity() != null) &&
               (next.getOwnerId() != currentEntity().getOwnerId())) {
             clientgui.maybeShowUnitDisplay();
         }
@@ -1371,7 +1372,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
      * Club that target!
      */
     public void club(MiscMounted club) {
-        if (null == club) {
+        if (club == null) {
             return;
         }
         if (currentEntity() == null) {
@@ -2160,6 +2161,24 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
     //
     // GameListener
     //
+    /**
+     * Keeps the shown to-hit in step with the units it is between: a gamemaster edit in the physical phase changes
+     * the number without any action of this player's, and the display would otherwise keep showing the one it
+     * computed when the target was picked.
+     */
+    @Override
+    public void gameEntityChange(GameEntityChangeEvent event) {
+        if (isIgnoringEvents() || (target == null) || (event.getEntity() == null)) {
+            return;
+        }
+        int changedId = event.getEntity().getId();
+        boolean isTarget = target.getId() == changedId;
+        boolean isAttacker = currentEntity == changedId;
+        if (isTarget || isAttacker) {
+            updateTarget();
+        }
+    }
+
     @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
@@ -2203,7 +2222,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         if (clientgui.getClient().isMyTurn()) {
-            if (currentEntity == Entity.NONE) {
+            if (needsUnitSelectedForTurn()) {
                 beginMyTurn();
                 clientgui.bingMyTurn();
             }

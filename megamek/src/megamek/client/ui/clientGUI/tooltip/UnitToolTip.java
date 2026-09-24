@@ -1852,6 +1852,16 @@ public final class UnitToolTip {
             result += sSpotting;
         }
 
+        // Scan readings the unit is carrying home (Objectives series): worth points only once it leaves
+        if (!entity.getBankedScans().isEmpty()) {
+            result += addToTT("ScanReadings", NOBR, entity.getBankedScans().size()) + " ";
+        }
+
+        // A unit the mission wants scanned (Objectives series), so a scout can see what it was sent for
+        if (entity.isDesignatedScanTarget()) {
+            result += addToTT("ScanTarget", NOBR) + " ";
+        }
+
         if (entity.hasAnyTypeNarcPodsAttached()) {
             String sNarced = addToTT(entity.hasNarcPodsAttached() ? "Narced" : "INarced", NOBR) + " ";
             attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getPrecautionColor())));

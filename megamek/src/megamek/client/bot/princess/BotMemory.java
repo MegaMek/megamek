@@ -32,7 +32,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -72,7 +71,7 @@ public class BotMemory {
     private UnitBehavior unitBehaviorTracker = new UnitBehavior();
     private EnemyTracker enemyTracker;
     private SwarmContext swarmContext;
-    private List<HeatMap> enemyHeatMaps = new ArrayList<>();
+    private List<HeatMap> enemyHeatMaps = List.of();
     private HeatMap friendlyHeatMap;
 
     private final Set<Integer> crippledUnitIds = new HashSet<>();
@@ -121,15 +120,15 @@ public class BotMemory {
     }
 
     /**
-     * @return one heat map per opposing team, tracking where that team's units have been; empty until the bot has
-     *       initialized
+     * @return one heat map per opposing team, tracking where that team's units have been, as a list that cannot be
+     *       changed; empty until the bot has initialized
      */
     public List<HeatMap> getEnemyHeatMaps() {
         return enemyHeatMaps;
     }
 
     void setEnemyHeatMaps(List<HeatMap> enemyHeatMaps) {
-        this.enemyHeatMaps = enemyHeatMaps;
+        this.enemyHeatMaps = List.copyOf(enemyHeatMaps);
     }
 
     /**

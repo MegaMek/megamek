@@ -2807,7 +2807,6 @@ public class Princess extends BotClient {
             if (path != null && path.getEntity().isGround()) {
                 getMemory().getFriendlyHeatMap().updateTrackers(path);
             }
-            rememberChosenMove(path);
             return path;
         } catch (Exception ignored) {
             LOGGER.error("Error while calculating movement");
@@ -2820,7 +2819,8 @@ public class Princess extends BotClient {
      *
      * @param path the chosen path, or {@code null} if no move was found
      */
-    private void rememberChosenMove(@Nullable MovePath path) {
+    @Override
+    protected void onMovePathChosen(@Nullable MovePath path) {
         if (path == null) {
             return;
         }

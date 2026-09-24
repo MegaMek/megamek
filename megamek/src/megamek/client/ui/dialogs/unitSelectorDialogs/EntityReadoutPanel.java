@@ -47,7 +47,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -77,6 +79,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.units.Entity;
+import megamek.common.util.ImageUtil;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
@@ -95,11 +98,22 @@ public class EntityReadoutPanel extends JPanel {
     private final JLabel fluffImageLabel = new JLabel();
     private final List<FluffImageHelper.FluffImageRecord> fluffImageList = new ArrayList<>();
     private int fluffImageIndex = 0;
+
+    /** Recently shown fluff images of the current unit by list index, least recently shown first. */
+    private final Map<Integer, ShownFluffImage> recentFluffImages = new LinkedHashMap<>(16, 0.75f, true) {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Integer, ShownFluffImage> eldest) {
+            return size() > RECENT_FLUFF_IMAGE_COUNT;
+        }
+    };
     private final JButton nextImageButton = new JButton(">");
-    private final JButton prevImageButton = new JButton("<");
+    private final JButton previousImageButton = new JButton("<");
     private final JLabel imageInfoLabel = new JLabel("", JLabel.CENTER);
 
     public static final int DEFAULT_WIDTH = 360;
+
+    /** How many recently shown fluff images of the current unit are kept, so that browsing back is instant. */
+    private static final int RECENT_FLUFF_IMAGE_COUNT = 8;
 
     /** The vertical gap between the fluff image and the info line below it, before GUI scaling. */
     private static final int IMAGE_INFO_GAP = 10;
@@ -172,11 +186,11 @@ public class EntityReadoutPanel extends JPanel {
         }
         textPanel.add(scrollPane);
 
-        prevImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.previousImage.toolTipText"));
+        previousImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.previousImage.toolTipText"));
         nextImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.nextImage.toolTipText"));
 
         var imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
-        imageControlsPanel.add(prevImageButton);
+        imageControlsPanel.add(previousImageButton);
         imageControlsPanel.add(nextImageButton);
 
         imageControlsPanel.setAlignmentX(CENTER_ALIGNMENT);
@@ -199,7 +213,7 @@ public class EntityReadoutPanel extends JPanel {
         addMouseWheelListener(wheelForwarder);
 
         nextImageButton.addActionListener(event -> showNextFluffImage());
-        prevImageButton.addActionListener(event -> showPrevFluffImage());
+        previousImageButton.addActionListener(event -> showPreviousFluffImage());
     }
 
     public void showEntity(Entity entity, EntityReadout mekView) {
@@ -264,21 +278,36 @@ public class EntityReadoutPanel extends JPanel {
             fluffImageLabel.setToolTipText(null);
             return;
         }
-        Image displayedImage = image;
-        if (displayedImage.getWidth(this) > DEFAULT_WIDTH) {
-            displayedImage = displayedImage.getScaledInstance(DEFAULT_WIDTH, -1, Image.SCALE_SMOOTH);
+        fluffImageLabel.setIcon(new ImageIcon(scaleToPanelWidth(image)));
+    }
+
+    /**
+     * Scales the image down to {@link #DEFAULT_WIDTH}, keeping its aspect ratio. Images that are narrower, or whose
+     * size is not known yet, are returned unchanged. This draws the image once at the new size, which is several times
+     * faster than {@link Image#getScaledInstance} with {@link Image#SCALE_SMOOTH} on large fluff images.
+     *
+     * @param image The image to scale
+     *
+     * @return The scaled image, or the given image if it needs no scaling
+     */
+    private static Image scaleToPanelWidth(Image image) {
+        int width = image.getWidth(null);
+        int height = image.getHeight(null);
+        if ((width <= DEFAULT_WIDTH) || (height <= 0)) {
+            return image;
         }
-        fluffImageLabel.setIcon(new ImageIcon(displayedImage));
+        return ImageUtil.getScaledImage(image, DEFAULT_WIDTH, height * DEFAULT_WIDTH / width);
     }
 
     private void setFluffImage(@Nullable Entity entity) {
         fluffImageList.clear();
+        recentFluffImages.clear();
         fluffImageIndex = 0;
 
         boolean isSpritesOnly = PreferenceManager.getClientPreferences().getSpritesOnly();
         if (isSpritesOnly || (entity == null)) {
             nextImageButton.setEnabled(false);
-            prevImageButton.setEnabled(false);
+            previousImageButton.setEnabled(false);
             imageInfoLabel.setText("");
             displayFluffImage(null);
             return;
@@ -287,7 +316,7 @@ public class EntityReadoutPanel extends JPanel {
         fluffImageList.addAll(FluffImageHelper.getFluffRecords(entity));
         boolean hasMultipleImages = fluffImageList.size() > 1;
         nextImageButton.setEnabled(hasMultipleImages);
-        prevImageButton.setEnabled(hasMultipleImages);
+        previousImageButton.setEnabled(hasMultipleImages);
         // Show the first image, not the next one - stepping by 1 here would open on the second image
         changeFluffImageIndex(0);
     }
@@ -295,9 +324,10 @@ public class EntityReadoutPanel extends JPanel {
     public void reset() {
         readoutTextComponent.setText("");
         fluffImageList.clear();
+        recentFluffImages.clear();
         fluffImageIndex = 0;
         nextImageButton.setEnabled(false);
-        prevImageButton.setEnabled(false);
+        previousImageButton.setEnabled(false);
         imageInfoLabel.setText("");
         displayFluffImage(null);
     }
@@ -315,7 +345,7 @@ public class EntityReadoutPanel extends JPanel {
         changeFluffImageIndex(1);
     }
 
-    private void showPrevFluffImage() {
+    private void showPreviousFluffImage() {
         changeFluffImageIndex(-1);
     }
 
@@ -335,19 +365,33 @@ public class EntityReadoutPanel extends JPanel {
             return;
         }
 
-        FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
-        try {
-            displayFluffImage(record.getImage());
-        } catch (IOException exception) {
-            LOGGER.warn("[FluffImages] Could not load fluff image {}", record.file(), exception);
-            displayFluffImage(null);
-            imageInfoLabel.setText(Messages.getString("EntityReadoutPanel.imageLoadError"));
-            return;
+        ShownFluffImage shownImage = recentFluffImages.get(fluffImageIndex);
+        if (shownImage == null) {
+            FluffImageHelper.FluffImageRecord record = fluffImageList.get(fluffImageIndex);
+            try {
+                Image image = record.getImage();
+                shownImage = new ShownFluffImage((image != null) ? scaleToPanelWidth(image) : null,
+                      FluffImageTooltip.getTooltip(record));
+            } catch (IOException exception) {
+                LOGGER.warn("[FluffImages] Could not load fluff image {}", record.file(), exception);
+                displayFluffImage(null);
+                imageInfoLabel.setText(Messages.getString("EntityReadoutPanel.imageLoadError"));
+                return;
+            }
+            recentFluffImages.put(fluffImageIndex, shownImage);
         }
-        String imageInfo = FluffImageTooltip.getTooltip(record);
-        fluffImageLabel.setToolTipText(imageInfo);
-        imageInfoLabel.setText((imageInfo != null) ? imageInfo : "");
+        displayFluffImage(shownImage.image());
+        fluffImageLabel.setToolTipText(shownImage.info());
+        imageInfoLabel.setText((shownImage.info() != null) ? shownImage.info() : "");
     }
+
+    /**
+     * A fluff image as shown in this panel, kept so that browsing back to it needs no second read from disk.
+     *
+     * @param image The image, already scaled to the panel width, or {@code null} if there is none
+     * @param info  The image information shown below the image and as its tooltip, or {@code null} if there is none
+     */
+    private record ShownFluffImage(@Nullable Image image, @Nullable String info) {}
 
     private static @Nullable Image readPlaceHolderImage() {
         File placeholderFile = new File(PLACEHOLDER_IMAGE_NAME);

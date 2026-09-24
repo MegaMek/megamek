@@ -45,8 +45,8 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.SequencedSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -96,16 +96,14 @@ public final class FluffImageHelper {
      *
      * <p>
      * If a fluff image is stored in the unit/object itself, e.g. if it was part of the unit's file or is created by the
-     * unit itself, this
-     * is returned. Note that this is not used for canon units, but may be used in custom ones by
+     * unit itself, this is returned. Note that this is not used for canon units, but may be used in custom ones by
      * adding a fluff image to the unit in MML.
      *
      * <p>
      * Otherwise, the fluff images directories are searched. First searches the user dir, then the internal dir. Tries
-     * to match the image by
-     * chassis + model or chassis alone. Chassis and model names are cleaned from " and /
-     * characters before matching. For Meks with clan
-     * names, both names and the combinations are searched. The model alone is not used to search.
+     * to match the image by chassis + model or chassis alone. Chassis and model names are cleaned from " and /
+     * characters before matching. For Meks with clan names, both names and the combinations are searched. The model
+     * alone is not used to search.
      * <p>
      * Returns null if no fluff image can be found.
      *
@@ -121,31 +119,12 @@ public final class FluffImageHelper {
         if (unit == null) {
             return null;
         }
-        File fluffImageFile = findFluffFiles(unit, true).stream().findFirst().orElse(null);
+        File fluffImageFile = firstFluffFile(unit, true);
         if (fluffImageFile != null) {
             return fluffImageFile.toString();
         } else {
             return null;
         }
-    }
-
-    /**
-     * Returns a list of all fluff images for the given unit/object to be shown e.g. in the unit summary.
-     *
-     * <p>If a fluff image is stored in the unit/object itself, e.g. if it was part of the
-     * unit's file or is created by the unit itself, only this is returned. Note that this is not used for canon units, but may be used in
-     * custom ones by adding a fluff image to the unit in MML.</p>
-     *
-     * <p>Otherwise, the fluff image directories are searched. First searches the user dir,
-     * then the internal dir. Tries to match the image by chassis + model or chassis alone. Chassis and model names are cleaned from " and /
-     * characters before matching. For Meks with clan names, both names and the combinations are searched. The model alone is not used to
-     * search.</p>
-     *
-     * @param unit The unit
-     * @return a list of fluff images, or an empty list if none are found
-     */
-    public static List<Image> getFluffImages(@Nullable BTObject unit) {
-        return getFluffImageList(unit, false);
     }
 
     /**
@@ -169,10 +148,8 @@ public final class FluffImageHelper {
 
     /**
      * Returns a fluff image for the given unit for the record sheet, with a fallback file named "hud.png" if that is
-     * present in the right
-     * fluff directory, or {@code null} if nothing can be found. See {@link #getFluffImage(BTObject)} for
-     * further comments on how the fluff image is
-     * searched.
+     * present in the right fluff directory, or null if nothing can be found. See {@link #getFluffImage(BTObject)} for
+     * further comments on how the fluff image is searched.
      *
      * @param unit The unit
      *
@@ -183,9 +160,17 @@ public final class FluffImageHelper {
     }
 
     private static @Nullable Image getFluffImage(@Nullable BTObject unit, boolean recordSheet) {
-        List<Image> fluffImages = getFluffImageList(unit, recordSheet);
-        if (!fluffImages.isEmpty()) {
-            return fluffImages.get(0);
+        if (unit == null) {
+            return null;
+        }
+        Image embeddedFluffImage = unit.getFluffImage();
+        if (embeddedFluffImage != null) {
+            return embeddedFluffImage;
+        }
+        // Only the first (most specific) match is shown, so only that one is read from disk; a unit can have dozens
+        File fluffImageFile = firstFluffFile(unit, recordSheet);
+        if (fluffImageFile != null) {
+            return new ImageIcon(fluffImageFile.toString()).getImage();
         } else {
             return null;
         }
@@ -208,40 +193,27 @@ public final class FluffImageHelper {
         if (embeddedFluffImage != null) {
             return List.of(new FluffImageRecord(embeddedFluffImage, null));
         } else {
-            return findFluffFiles(unit, recordSheet).stream().map(FluffImageRecord::toRecord).toList();
+            List<FluffImageRecord> records = new ArrayList<>();
+            for (File fluffImageFile : findFluffFiles(unit, recordSheet)) {
+                records.add(FluffImageRecord.toRecord(fluffImageFile));
+            }
+            return records;
         }
     }
 
     /**
-     * Returns a list of available fluff images. If a fluff image is embedded in the unit file,
-     * only that image is returned, even if others are available from the fluff directories. The returned
-     * list may be empty, but not {@code null}.
-     *
-     * @param unit The unit
-     * @param recordSheet True if this image search is meant for a record sheet
-     * @return Available fluff images or the embedded fluff image
+     * @return The first, most specific fluff image file for the unit, or {@code null} if there is none
      */
-    private static List<Image> getFluffImageList(@Nullable BTObject unit, boolean recordSheet) {
-        if (unit == null) {
-            return new ArrayList<>();
-        }
-        Image embeddedFluffImage = unit.getFluffImage();
-        if (embeddedFluffImage != null) {
-            return List.of(embeddedFluffImage);
-        } else {
-            return findFluffFiles(unit, recordSheet).stream()
-                    .map(File::toString)
-                    .map(ImageIcon::new)
-                    .map(ImageIcon::getImage)
-                    .collect(Collectors.toList());
-        }
+    private static @Nullable File firstFluffFile(BTObject unit, boolean recordSheet) {
+        SequencedSet<File> fluffFiles = findFluffFiles(unit, recordSheet);
+        return fluffFiles.isEmpty() ? null : fluffFiles.getFirst();
     }
 
-    private static Set<File> findFluffFiles(BTObject unit, boolean recordSheet) {
+    private static SequencedSet<File> findFluffFiles(BTObject unit, boolean recordSheet) {
         // A LinkedHashSet keeps the search order while removing duplicates. The order is significant:
         // getFluffImage(BTObject) shows the first entry, and the directories below are searched from
         // most to least specific so that the most specific art wins.
-        Set<File> fileCandidates = new LinkedHashSet<>();
+        SequencedSet<File> fileCandidates = new LinkedHashSet<>();
 
         List<String> nameCandidates = nameCandidates(unit);
 

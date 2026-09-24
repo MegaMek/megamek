@@ -472,8 +472,9 @@ public abstract class Infantry extends Entity {
      * Whether an infantry vs. infantry action (TO:AR p. 169) keeps this unit from taking a turn in the given phase.
      * The book gives a committed unit one way out of the fight, a withdrawal with a last roll at half damage, and
      * the End Phase roll never asks where the combatants stand; a unit free to walk out in the Movement Phase would
-     * skip that roll and go on fighting from across the map. So a committed unit takes no movement, weapon attack
-     * or physical attack turn. It still declares in the Pre-End Declarations phase, which is how it withdraws.
+     * skip that roll and go on fighting from across the map. So a committed unit takes no movement, targeting,
+     * off-board, weapon attack or physical attack turn. It still declares in the Pre-End Declarations phase, which is
+     * how it withdraws.
      *
      * <p>An interpretation, so it sits behind a game option, on by default.</p>
      *

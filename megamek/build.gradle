@@ -76,7 +76,7 @@ dependencies {
         exclude group: 'xml-apis', module: 'xml-apis'
     }
 
-    implementation 'org.freemarker:freemarker:2.3.34'
+    implementation 'org.freemarker:freemarker:2.3.35'
 
     implementation 'org.commonmark:commonmark:0.28.0'
 

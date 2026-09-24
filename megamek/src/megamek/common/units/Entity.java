@@ -1454,6 +1454,10 @@ public abstract class Entity extends TurnOrdered
     /** Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf". */
     public void setClanChassisName(String name) {
         clanChassisName = Objects.requireNonNullElse(name, "");
+        // shortName and displayName include the clan chassis name; invalidate the cached copies so they are
+        // regenerated on next access (see setChassis).
+        shortName = null;
+        displayName = null;
     }
 
     /**

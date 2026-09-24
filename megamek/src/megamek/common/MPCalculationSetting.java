@@ -124,7 +124,6 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
           .noWeather()
           .noHeat()
           .noCargo()
-          .noShield()
           .noDWP()
           .noGrounded()
           .noOptionalRules()

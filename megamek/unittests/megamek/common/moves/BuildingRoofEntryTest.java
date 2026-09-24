@@ -43,6 +43,7 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.ProtoMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -130,5 +131,13 @@ class BuildingRoofEntryTest extends GameBoardTestCase {
         ConvInfantry platoon = place(new ConvInfantry(), EntityMovementMode.INF_JUMP, OPEN_HEX, 0);
 
         assertFalse(isEnteringFromRoof(platoon));
+    }
+
+    @Test
+    @DisplayName("A ProtoMek on the roof enters the building by going down (TW p. 169)")
+    void protoMekOnTheRoof() {
+        ProtoMek protoMek = place(new ProtoMek(), EntityMovementMode.BIPED, BUILDING_HEX, ROOF);
+
+        assertTrue(isEnteringFromRoof(protoMek));
     }
 }

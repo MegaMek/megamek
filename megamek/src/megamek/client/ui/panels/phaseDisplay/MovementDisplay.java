@@ -3461,6 +3461,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private synchronized void updateElevationButtons() {
         final Entity currentEntity = currentEntity();
         if (currentEntity == null) {
+            updateLowerButtonLabel(false);
             return;
         }
 

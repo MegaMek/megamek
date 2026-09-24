@@ -164,8 +164,6 @@ public class OptionsConstants {
     public static final String QUIRK_WEAPON_NEG_MIS_REPLACED = "misreplaced_weapon";
 
     // PILOTING SKILLS
-    public static final String PILOT_APTITUDE_GUNNERY = "aptitude_gunnery";
-    public static final String PILOT_APTITUDE_PILOTING = "aptitude_piloting";
     public static final String PILOT_ANIMAL_MIMIC = "animal_mimic";
     public static final String PILOT_CROSS_COUNTRY = "cross_country";
     public static final String PILOT_DODGE_MANEUVER = "dodge_maneuver";

@@ -25398,7 +25398,7 @@ public class TWGameManager extends AbstractGameManager {
             reports.add(r);
             reports.addAll(damageCrew(entity, 1, crewPos));
         } else {
-            Roll diceRoll = entity.getCrew().rollPilotingSkill();
+            Roll diceRoll = entity.getCrew().rollPilotingSkill(crewPos);
             r = new Report(2325);
             r.subject = entity.getId();
             r.add(entity.getCrew().getCrewType().getRoleName(crewPos));
@@ -29866,10 +29866,9 @@ public class TWGameManager extends AbstractGameManager {
                 // If we're punching while prone (at a Tank,
                 // duh), then we can only use one arm.
                 if (attackingEntity.isProne()) {
-                    double oddsLeft = Compute.oddsAbove(toHit.getValue(),
-                          attackingEntity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING));
-                    double oddsRight = Compute.oddsAbove(toHitRight.getValue(),
-                          attackingEntity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING));
+                    boolean hasNaturalAptitudePiloting = attackingEntity.isUseNaturalAptitudePiloting();
+                    double oddsLeft = Compute.oddsAbove(toHit.getValue(), hasNaturalAptitudePiloting);
+                    double oddsRight = Compute.oddsAbove(toHitRight.getValue(), hasNaturalAptitudePiloting);
                     // Use the best attack.
                     if ((oddsLeft * damage) > (oddsRight * damageRight)) {
                         punchAttackAction.setArm(PunchAttackAction.LEFT);
@@ -30174,9 +30173,11 @@ public class TWGameManager extends AbstractGameManager {
 
     /**
      * Applies Edge to an ejection roll: if the roll failed and the crew has the failed-ejection Edge trigger enabled
-     * with Edge remaining, spends one Edge point and rerolls once.
+     * with Edge remaining, spends one Edge point and rerolls once. The reroll is made by the same crew member, so
+     * their own Natural Aptitude applies.
      *
      * @param entity     the ejecting unit
+     * @param crewPos    the crew slot making the ejection roll
      * @param rollTarget the ejection roll target number
      * @param diceRoll   the ejection roll that was made
      * @param vDesc      the report vector to append the Edge-use report to
@@ -30184,7 +30185,8 @@ public class TWGameManager extends AbstractGameManager {
      * @return the roll to use — the reroll if Edge was spent, otherwise the original roll
      */
     // package-private for testing
-    Roll applyEjectionEdge(Entity entity, PilotingRollData rollTarget, Roll diceRoll, Vector<Report> vDesc) {
+    Roll applyEjectionEdge(Entity entity, int crewPos, PilotingRollData rollTarget, Roll diceRoll,
+          Vector<Report> vDesc) {
         boolean isCheckFailed = diceRoll.getIntValue() < rollTarget.getValue();
         boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_EJECT_FAILS);
         if (isCheckFailed && shouldUseEdge) {
@@ -30195,7 +30197,7 @@ public class TWGameManager extends AbstractGameManager {
             edgeReport.add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE));
             vDesc.addElement(edgeReport);
 
-            return entity.getCrew().rollPilotingSkill();
+            return entity.getCrew().rollPilotingSkill(crewPos);
         }
 
         return diceRoll;
@@ -30261,9 +30263,9 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 rollTarget = getEjectModifiers(game, entity, crewPos, autoEject);
                 // roll
-                Roll diceRoll = entity.getCrew().rollPilotingSkill();
+                Roll diceRoll = entity.getCrew().rollPilotingSkill(crewPos);
                 // Edge may reroll a failed ejection roll once.
-                diceRoll = applyEjectionEdge(entity, rollTarget, diceRoll, vDesc);
+                diceRoll = applyEjectionEdge(entity, crewPos, rollTarget, diceRoll, vDesc);
 
                 if (entity.getCrew().getSlotCount() > 1) {
                     r = new Report(2193);

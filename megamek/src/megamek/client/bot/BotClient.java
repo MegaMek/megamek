@@ -47,7 +47,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -91,7 +95,6 @@ import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
-import megamek.common.options.OptionsConstants;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
@@ -1321,8 +1324,8 @@ public abstract class BotClient extends Client {
             return 0;
         }
         int potentialDmg = (int) Math.ceil((double) building.getCurrentCF(coords) / 10);
-        boolean aptGunnery = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
-        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), aptGunnery) / 100);
+        boolean hasNaturalAptitudePiloting = entity.isUseNaturalAptitudePiloting();
+        double oddsTakeDmg = 1 - (Compute.oddsAbove(entity.getCrew().getPiloting(), hasNaturalAptitudePiloting) / 100);
         return potentialDmg * oddsTakeDmg;
     }
 
@@ -1351,7 +1354,6 @@ public abstract class BotClient extends Client {
             return 0.0f;
         }
 
-        boolean naturalAptGunnery = attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
         Mounted<?> weapon = attacker.getEquipment(weaponAttackAction.getWeaponId());
         ToHitData hitData = weaponAttackAction.toHit(game, allECMInfo);
         if (hitData.getValue() > 12) {
@@ -1362,7 +1364,8 @@ public abstract class BotClient extends Client {
         if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             fChance = 1.0f;
         } else {
-            fChance = (float) Compute.oddsAbove(hitData.getValue(), naturalAptGunnery) / 100.0f;
+            boolean isUseNaturalAptitude = attacker.isUseNaturalAptitudeGunnery(game, weaponAttackAction);
+            fChance = (float) Compute.oddsAbove(hitData.getValue(), isUseNaturalAptitude) / 100.0f;
         }
 
         // TODO : update for BattleArmor.

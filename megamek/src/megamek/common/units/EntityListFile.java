@@ -1724,6 +1724,14 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_GUNNERY,
+              crew.isHasNaturalAptitudeGunnery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_ARTILLERY,
+              crew.isHasNaturalAptitudeArtillery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_PILOTING,
+              crew.isHasNaturalAptitudePiloting(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_SMALL_ARMS,
+              crew.isHasNaturalAptitudeSmallArms(pos));
 
         if (crew.getToughness(0) != 0) {
             output.write("\" " + MULParser.ATTR_TOUGH + "=\"");
@@ -1777,6 +1785,24 @@ public class EntityListFile {
         }
         output.write("\" " + MULParser.ATTR_PILOTING_AERO + "=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
+        // Always written for LAMs, so the parser can tell 'no Aero aptitude' apart from an older file
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_GUNNERY_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudeGunneryAero()));
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_PILOTING_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudePilotingAero()));
+    }
+
+    /**
+     * Writes a Natural Aptitude flag, but only if it's set, to keep files free of noise for the vast majority of crews.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void writeNaturalAptitudeAttribute(Writer output, String attribute, boolean hasNaturalAptitude)
+          throws IOException {
+        if (hasNaturalAptitude) {
+            output.write("\" " + attribute + "=\"true");
+        }
     }
 
     /**

@@ -36,10 +36,9 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -75,8 +74,6 @@ import megamek.common.compute.ComputeArc;
 import megamek.common.compute.ComputeECM;
 import megamek.common.enums.*;
 import megamek.common.equipment.*;
-import megamek.common.equipment.BankedScan;
-import megamek.common.equipment.ScanMission;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
@@ -18225,6 +18222,51 @@ public abstract class Entity extends TurnOrdered
             }
         }
         return false;
+    }
+
+    /**
+     * Null-safe wrapper for {@link Crew#isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)}.
+     *
+     * @param game               the current game
+     * @param weaponAttackAction the attack being rolled
+     *
+     * @return {@code true} if the attack should be rolled with Natural Aptitude; {@code false} if there is no crew
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery(Game game, WeaponAttackAction weaponAttackAction) {
+        Crew crew = getCrew();
+        return (crew != null) && crew.isUseNaturalAptitudeGunnery(game, weaponAttackAction);
+    }
+
+    /**
+     * Null-safe wrapper for {@link Crew#isUseNaturalAptitudeGunnery(Game, Mounted)}.
+     *
+     * @param game   the current game; may only be {@code null} when {@code weapon} is also {@code null}
+     * @param weapon the weapon being fired, or {@code null} if unknown (in which case Gunnery is assumed)
+     *
+     * @return {@code true} if the attack should be rolled with Natural Aptitude; {@code false} if there is no crew
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudeGunnery(@Nullable Game game, @Nullable Mounted<?> weapon) {
+        Crew crew = getCrew();
+        return (crew != null) && crew.isUseNaturalAptitudeGunnery(game, weapon);
+    }
+
+    /**
+     * Null-safe wrapper for {@link Crew#isUseNaturalAptitudePiloting()}.
+     *
+     * @return {@code true} if the roll should be made with Natural Aptitude; {@code false} if there is no crew
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudePiloting() {
+        Crew crew = getCrew();
+        return (crew != null) && crew.isUseNaturalAptitudePiloting();
     }
 
     /**

@@ -64,7 +64,6 @@ import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
@@ -527,7 +526,7 @@ public abstract class PathRanker implements IPathRanker {
             } else if (rollDescription.contains("careful stand")) {
                 continue;
             }
-            boolean naturalAptPilot = movePath.getEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+            boolean naturalAptPilot = movePath.getEntity().isUseNaturalAptitudePiloting();
             if (naturalAptPilot) {
                 logger.trace("Pilot has Natural Aptitude Piloting");
             }

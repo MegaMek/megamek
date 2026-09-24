@@ -192,6 +192,14 @@ public final class PilotToolTip {
                 sCrew += UIUtil.tag("FONT", attr, crew.getStatusDesc(i));
             }
             result.append(sCrew).append("<BR>");
+
+            // Multi-crew cockpits list each crew member's aptitudes under their name
+            if (crew.getSlotCount() > 1) {
+                String naturalAptitudes = naturalAptitudesDescription(entity, i);
+                if (!naturalAptitudes.isEmpty()) {
+                    result.append(naturalAptitudes).append("<BR>");
+                }
+            }
         }
 
         // Effective entity skill for the whole crew
@@ -203,9 +211,11 @@ public final class PilotToolTip {
         if (!implantAdjustments.isEmpty()) {
             result.append("<BR>").append(implantAdjustments);
         }
-        String naturalAptitudes = naturalAptitudesDescription(entity);
-        if (!naturalAptitudes.isEmpty()) {
-            result.append("<BR>").append(naturalAptitudes);
+        if (crew.getSlotCount() == 1) {
+            String naturalAptitudes = naturalAptitudesDescription(entity, 0);
+            if (!naturalAptitudes.isEmpty()) {
+                result.append("<BR>").append(naturalAptitudes);
+            }
         }
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = new StringBuilder(UIUtil.tag("span", fontSizeAttr, result.toString()));
@@ -215,22 +225,25 @@ public final class PilotToolTip {
     }
 
     /**
-     * Lists the crew's Natural Aptitudes, e.g. "Natural Aptitude: Piloting, Gunnery". The Artillery aptitude is only
-     * listed when the separate Artillery skill is in use, as otherwise artillery is fired with Gunnery.
+     * Lists a crew member's Natural Aptitudes, e.g. "Natural Aptitude: Piloting, Gunnery". The Artillery aptitude is
+     * only listed when the separate Artillery skill is in use, as otherwise artillery is fired with Gunnery.
      *
-     * @return the description, or an empty String if the crew has no Natural Aptitudes
+     * @param entity the unit
+     * @param pos    the crew slot
+     *
+     * @return the description, or an empty String if the crew member has no Natural Aptitudes
      *
      * @author Illiani
      * @since 0.51.01
      */
-    private static String naturalAptitudesDescription(final Entity entity) {
+    private static String naturalAptitudesDescription(final Entity entity, final int pos) {
         Crew crew = entity.getCrew();
         Game game = entity.getGame();
         boolean isUseArtillerySkill = (game != null)
               && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
 
         List<String> naturalAptitudes = new ArrayList<>();
-        if (crew.isHasNaturalAptitudePiloting()) {
+        if (crew.isHasNaturalAptitudePiloting(pos)) {
             String pilotingKey = "BoardView1.Tooltip.NaturalAptitude.Piloting";
             if (entity instanceof Tank) {
                 pilotingKey = "BoardView1.Tooltip.NaturalAptitude.Driving";
@@ -242,13 +255,13 @@ public final class PilotToolTip {
         if ((crew instanceof LAMPilot lamPilot) && lamPilot.isHasNaturalAptitudePilotingAero()) {
             naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.PilotingAero"));
         }
-        if (crew.isHasNaturalAptitudeGunnery()) {
+        if (crew.isHasNaturalAptitudeGunnery(pos)) {
             naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Gunnery"));
         }
         if ((crew instanceof LAMPilot lamPilot) && lamPilot.isHasNaturalAptitudeGunneryAero()) {
             naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.GunneryAero"));
         }
-        if (isUseArtillerySkill && crew.isHasNaturalAptitudeArtillery()) {
+        if (isUseArtillerySkill && crew.isHasNaturalAptitudeArtillery(pos)) {
             naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Artillery"));
         }
 

@@ -1790,7 +1790,7 @@ public class CustomMekDialog extends AbstractButtonDialog
                 } else {
                     entity.getCrew().setArtillery(entity.getCrew().getGunnery(i), i);
                 }
-                panCrewMember[i].applyNaturalAptitudes(entity.getCrew());
+                panCrewMember[i].applyNaturalAptitudes(entity.getCrew(), i);
                 entity.getCrew().setMissing(missing, i);
                 entity.getCrew().setToughness(tough, i);
                 entity.getCrew().setCrewFatigue(fatigue, i);

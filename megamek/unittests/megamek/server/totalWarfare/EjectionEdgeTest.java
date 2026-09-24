@@ -61,6 +61,7 @@ import org.junit.jupiter.api.Test;
 class EjectionEdgeTest {
 
     private static final int TARGET = 8;
+    private static final int CREW_POS = 0;
 
     private final TWGameManager gameManager = new TWGameManager();
 
@@ -80,7 +81,7 @@ class EjectionEdgeTest {
         PilotOptions crewOptions = mock(PilotOptions.class);
         lenient().when(crewOptions.intOption(OptionsConstants.EDGE)).thenReturn(1);
         lenient().when(crew.getOptions()).thenReturn(crewOptions);
-        lenient().when(crew.rollPilotingSkill()).thenReturn(rerollResult);
+        lenient().when(crew.rollPilotingSkill(entity, CREW_POS)).thenReturn(rerollResult);
         lenient().when(entity.getCrew()).thenReturn(crew);
         lenient().when(entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_EJECT_FAILS)).thenReturn(ejectTrigger);
         return entity;
@@ -99,7 +100,7 @@ class EjectionEdgeTest {
         Entity entity = ejectingUnit(true, reroll);
         Vector<Report> reports = new Vector<>();
 
-        Roll result = gameManager.applyEjectionEdge(entity, target(), rollOf(4), reports);
+        Roll result = gameManager.applyEjectionEdge(entity, CREW_POS, target(), rollOf(4), reports);
 
         assertSame(reroll, result, "The rerolled result should replace the failed roll");
         verify(entity.getCrew(), times(1)).decreaseEdge();
@@ -113,7 +114,7 @@ class EjectionEdgeTest {
         Entity entity = ejectingUnit(true, rollOf(2));
         Vector<Report> reports = new Vector<>();
 
-        Roll result = gameManager.applyEjectionEdge(entity, target(), passed, reports);
+        Roll result = gameManager.applyEjectionEdge(entity, CREW_POS, target(), passed, reports);
 
         assertSame(passed, result, "A successful roll should be returned unchanged");
         verify(entity.getCrew(), never()).decreaseEdge();
@@ -127,7 +128,7 @@ class EjectionEdgeTest {
         Entity entity = ejectingUnit(false, rollOf(10));
         Vector<Report> reports = new Vector<>();
 
-        Roll result = gameManager.applyEjectionEdge(entity, target(), failed, reports);
+        Roll result = gameManager.applyEjectionEdge(entity, CREW_POS, target(), failed, reports);
 
         assertSame(failed, result, "Without the trigger the failed roll should stand");
         verify(entity.getCrew(), never()).decreaseEdge();

@@ -451,6 +451,20 @@ public class CrewDescriptor {
         this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
     }
 
+    /**
+     * Copies the most recently generated skills and Natural Aptitudes into one crew slot.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void setCrewMemberSkills(Crew crew, int slot) {
+        crew.setPiloting(piloting, slot);
+        crew.setHasNaturalAptitudePiloting(hasNaturalAptitudePiloting, slot);
+        crew.setGunnery(gunnery, slot);
+        crew.setHasNaturalAptitudeGunnery(hasNaturalAptitudeGunnery, slot);
+        crew.setHasNaturalAptitudeArtillery(hasNaturalAptitudeArtillery, slot);
+    }
+
     public Crew createCrew(CrewType crewType) {
         Crew crew = new Crew(crewType, name, crewType.getCrewSlots(), gunnery, hasNaturalAptitudeGunnery,
               hasNaturalAptitudeArtillery, piloting,
@@ -460,19 +474,26 @@ public class CrewDescriptor {
         if (crewType.getCrewSlots() > 1) {
             int oldPiloting = crew.getPiloting();
             int oldGunnery = crew.getGunnery();
+            boolean oldHasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
+            boolean oldHasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+            boolean oldHasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
             setSkills();
-            crew.setPiloting(piloting, 0);
-            crew.setGunnery(gunnery, 0);
+            setCrewMemberSkills(crew, 0);
             for (int i = 1; i < crew.getSlotCount(); i++) {
                 crew.setName(generateName(Gender.RANDOMIZE), i);
                 setSkills();
-                crew.setPiloting(piloting, i);
-                crew.setGunnery(gunnery, i);
+                setCrewMemberSkills(crew, i);
             }
             crew.setPiloting(oldPiloting, crew.getCurrentPilotIndex());
+            crew.setHasNaturalAptitudePiloting(oldHasNaturalAptitudePiloting, crew.getCurrentPilotIndex());
             crew.setGunnery(oldGunnery, crew.getCurrentGunnerIndex());
+            crew.setHasNaturalAptitudeGunnery(oldHasNaturalAptitudeGunnery, crew.getCurrentGunnerIndex());
+            crew.setHasNaturalAptitudeArtillery(oldHasNaturalAptitudeArtillery, crew.getCurrentGunnerIndex());
             setPiloting(oldPiloting);
+            setHasNaturalAptitudePiloting(oldHasNaturalAptitudePiloting);
             setGunnery(oldGunnery);
+            setHasNaturalAptitudeGunnery(oldHasNaturalAptitudeGunnery);
+            setHasNaturalAptitudeArtillery(oldHasNaturalAptitudeArtillery);
         }
         return crew;
     }

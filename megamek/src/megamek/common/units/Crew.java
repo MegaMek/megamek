@@ -99,9 +99,12 @@ public class Crew implements Serializable {
     private final Portrait[] portraits;
 
     private final int[] gunnery;
-    private boolean hasNaturalAptitudeGunnery;
     private final int[] piloting;
-    private boolean hasNaturalAptitudePiloting;
+    // Natural Aptitudes are tracked per slot, like the skills they modify. Deliberately not final, for the same
+    // reason as armorKitNames above; the accessors fill them in on first use.
+    private boolean[] naturalAptitudesGunnery;
+    private boolean[] naturalAptitudesArtillery;
+    private boolean[] naturalAptitudesPiloting;
     private final int[] hits; // hits taken
 
     private final String[] externalId;
@@ -134,7 +137,6 @@ public class Crew implements Serializable {
 
     // Separate artillery skill
     private final int[] artillery;
-    private boolean hasNaturalAptitudeArtillery;
 
     // init bonuses
     // bonus for individual initiative
@@ -253,10 +255,10 @@ public class Crew implements Serializable {
      * @param name                        the name of the crew or commander.
      * @param size                        the crew size.
      * @param gunnery                     the crew's Gunnery skill.
-     * @param hasNaturalAptitudeGunnery   whether the crew has a Natural Aptitude in Gunnery
-     * @param hasNaturalAptitudeArtillery whether the crew has a Natural Aptitude in Artillery
+     * @param hasNaturalAptitudeGunnery   whether each crew member has a Natural Aptitude in Gunnery
+     * @param hasNaturalAptitudeArtillery whether each crew member has a Natural Aptitude in Artillery
      * @param piloting                    the crew's Piloting or Driving skill.
-     * @param hasNaturalAptitudePiloting  whether the crew has a Natural Aptitude in Piloting or Driving
+     * @param hasNaturalAptitudePiloting  whether each crew member has a Natural Aptitude in Piloting or Driving
      * @param gender                      the gender of the crew or commander
      * @param clanPilot                   if the crew or commander is a clanPilot
      * @param extraData                   any extra data passed to be stored with this Crew.
@@ -275,10 +277,10 @@ public class Crew implements Serializable {
      * @param gunneryL                    the crew's "laser" Gunnery skill.
      * @param gunneryM                    the crew's "missile" Gunnery skill.
      * @param gunneryB                    the crew's "ballistic" Gunnery skill.
-     * @param hasNaturalAptitudeGunnery   whether the crew has a Natural Aptitude in Gunnery
-     * @param hasNaturalAptitudeArtillery whether the crew has a Natural Aptitude in Artillery
+     * @param hasNaturalAptitudeGunnery   whether each crew member has a Natural Aptitude in Gunnery
+     * @param hasNaturalAptitudeArtillery whether each crew member has a Natural Aptitude in Artillery
      * @param piloting                    the crew's Piloting or Driving skill.
-     * @param hasNaturalAptitudePiloting  whether the crew has a Natural Aptitude in Piloting or Driving
+     * @param hasNaturalAptitudePiloting  whether each crew member has a Natural Aptitude in Piloting or Driving
      * @param gender    the gender of the crew or commander
      * @param clanPilot if the crew or commander is a clanPilot
      * @param extraData any extra data passed to be stored with this Crew.
@@ -322,11 +324,14 @@ public class Crew implements Serializable {
         Arrays.fill(this.gunneryM, gunneryM);
         this.artillery = new int[slots];
         Arrays.fill(this.artillery, avGunnery);
-        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
-        this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
         this.piloting = new int[slots];
         Arrays.fill(this.piloting, piloting);
-        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
+        naturalAptitudesGunnery = new boolean[slots];
+        Arrays.fill(naturalAptitudesGunnery, hasNaturalAptitudeGunnery);
+        naturalAptitudesArtillery = new boolean[slots];
+        Arrays.fill(naturalAptitudesArtillery, hasNaturalAptitudeArtillery);
+        naturalAptitudesPiloting = new boolean[slots];
+        Arrays.fill(naturalAptitudesPiloting, hasNaturalAptitudePiloting);
 
         initBonus = 0;
         commandBonus = 0;
@@ -775,11 +780,21 @@ public class Crew implements Serializable {
     /**
      * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
      *
+     * @return whether the current gunner has a Natural Aptitude in Gunnery
+     *
      * @author Illiani
      * @since 0.51.01
      */
     public boolean isHasNaturalAptitudeGunnery() {
-        return hasNaturalAptitudeGunnery;
+        return isHasNaturalAptitudeGunnery(gunnerPos);
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeGunnery(int pos) {
+        return getNaturalAptitudesGunnery()[pos];
     }
 
     protected int rawArtillery() {
@@ -797,11 +812,21 @@ public class Crew implements Serializable {
     /**
      * Generally you want to use {@link #isUseNaturalAptitudePiloting(Entity)} instead.
      *
+     * @return whether the current pilot has a Natural Aptitude in Piloting or Driving
+     *
      * @author Illiani
      * @since 0.51.01
      */
     public boolean isHasNaturalAptitudePiloting() {
-        return hasNaturalAptitudePiloting;
+        return isHasNaturalAptitudePiloting(pilotPos);
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudePiloting(int pos) {
+        return getNaturalAptitudesPiloting()[pos];
     }
 
     public int getGunnery(int pos) {
@@ -843,11 +868,46 @@ public class Crew implements Serializable {
     /**
      * Generally you want to use {@link #isUseNaturalAptitudeGunnery(Game, WeaponAttackAction)} instead.
      *
+     * @return whether the current gunner has a Natural Aptitude in Artillery
+     *
      * @author Illiani
      * @since 0.51.01
      */
     public boolean isHasNaturalAptitudeArtillery() {
-        return hasNaturalAptitudeArtillery;
+        return isHasNaturalAptitudeArtillery(gunnerPos);
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isHasNaturalAptitudeArtillery(int pos) {
+        return getNaturalAptitudesArtillery()[pos];
+    }
+
+    /**
+     * Crews deserialized from before Natural Aptitudes were tracked restore these arrays as null. Nobody had an
+     * aptitude back then, so an empty array is correct.
+     */
+    private boolean[] getNaturalAptitudesGunnery() {
+        if (naturalAptitudesGunnery == null) {
+            naturalAptitudesGunnery = new boolean[getSlotCount()];
+        }
+        return naturalAptitudesGunnery;
+    }
+
+    private boolean[] getNaturalAptitudesArtillery() {
+        if (naturalAptitudesArtillery == null) {
+            naturalAptitudesArtillery = new boolean[getSlotCount()];
+        }
+        return naturalAptitudesArtillery;
+    }
+
+    private boolean[] getNaturalAptitudesPiloting() {
+        if (naturalAptitudesPiloting == null) {
+            naturalAptitudesPiloting = new boolean[getSlotCount()];
+        }
+        return naturalAptitudesPiloting;
     }
 
     public int getPiloting() {
@@ -1016,8 +1076,8 @@ public class Crew implements Serializable {
      * @author Illiani
      * @since 0.51.01
      */
-    public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery) {
-        this.hasNaturalAptitudeGunnery = hasNaturalAptitudeGunnery;
+    public void setHasNaturalAptitudeGunnery(boolean hasNaturalAptitudeGunnery, int pos) {
+        getNaturalAptitudesGunnery()[pos] = hasNaturalAptitudeGunnery;
     }
 
     public void setArtillery(int artillery, int pos) {
@@ -1028,8 +1088,8 @@ public class Crew implements Serializable {
      * @author Illiani
      * @since 0.51.01
      */
-    public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery) {
-        this.hasNaturalAptitudeArtillery = hasNaturalAptitudeArtillery;
+    public void setHasNaturalAptitudeArtillery(boolean hasNaturalAptitudeArtillery, int pos) {
+        getNaturalAptitudesArtillery()[pos] = hasNaturalAptitudeArtillery;
     }
 
     public void setPiloting(int piloting, int pos) {
@@ -1040,8 +1100,8 @@ public class Crew implements Serializable {
      * @author Illiani
      * @since 0.51.01
      */
-    public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting) {
-        this.hasNaturalAptitudePiloting = hasNaturalAptitudePiloting;
+    public void setHasNaturalAptitudePiloting(boolean hasNaturalAptitudePiloting, int pos) {
+        getNaturalAptitudesPiloting()[pos] = hasNaturalAptitudePiloting;
     }
 
     public void setHits(int hits, int pos) {
@@ -1589,7 +1649,21 @@ public class Crew implements Serializable {
     }
 
     public Roll rollPilotingSkill(Entity pilotedEntity) {
-        if (isUseNaturalAptitudePiloting(pilotedEntity)) {
+        return rollPilotingSkill(pilotedEntity, pilotPos);
+    }
+
+    /**
+     * Rolls a piloting skill check for a specific crew member, such as when each crew member rolls for themselves
+     * during ejection or a fall. Use {@link #rollPilotingSkill(Entity)} for rolls made by whoever is piloting.
+     *
+     * @param pilotedEntity the unit being piloted
+     * @param pos           the crew slot making the roll
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public Roll rollPilotingSkill(Entity pilotedEntity, int pos) {
+        if (isUseNaturalAptitudePiloting(pilotedEntity, pos)) {
             return Compute.rollD6(3, 2);
         }
 
@@ -1949,7 +2023,7 @@ public class Crew implements Serializable {
     }
 
     /**
-     * Determines whether the Natural Aptitude matching the piloting skill currently in use applies.
+     * Determines whether the current pilot's Natural Aptitude for the piloting skill currently in use applies.
      *
      * @param pilotedEntity the unit being piloted
      *
@@ -1959,6 +2033,21 @@ public class Crew implements Serializable {
      * @since 0.51.01
      */
     public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity) {
-        return isHasNaturalAptitudePiloting();
+        return isUseNaturalAptitudePiloting(pilotedEntity, pilotPos);
+    }
+
+    /**
+     * Determines whether a specific crew member's Natural Aptitude for the piloting skill currently in use applies.
+     *
+     * @param pilotedEntity the unit being piloted
+     * @param pos           the crew slot making the roll
+     *
+     * @return {@code true} if the roll should be made with Natural Aptitude
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity, int pos) {
+        return isHasNaturalAptitudePiloting(pos);
     }
 }

@@ -1724,6 +1724,12 @@ public class EntityListFile {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_GUNNERY,
+              crew.isHasNaturalAptitudeGunnery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_ARTILLERY,
+              crew.isHasNaturalAptitudeArtillery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_PILOTING,
+              crew.isHasNaturalAptitudePiloting(pos));
 
         if (crew.getToughness(0) != 0) {
             output.write("\" " + MULParser.ATTR_TOUGH + "=\"");
@@ -1777,6 +1783,11 @@ public class EntityListFile {
         }
         output.write("\" " + MULParser.ATTR_PILOTING_AERO + "=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
+        // Always written for LAMs, so the parser can tell 'no Aero aptitude' apart from an older file
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_GUNNERY_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudeGunneryAero()));
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_PILOTING_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudePilotingAero()));
     }
 
     /**
@@ -1807,19 +1818,6 @@ public class EntityListFile {
         }
         output.write("\" " + MULParser.ATTR_EJECTED + "=\"");
         output.write(String.valueOf(crew.isEjected()));
-        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_GUNNERY,
-              crew.isHasNaturalAptitudeGunnery());
-        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_ARTILLERY,
-              crew.isHasNaturalAptitudeArtillery());
-        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_PILOTING,
-              crew.isHasNaturalAptitudePiloting());
-        if (crew instanceof LAMPilot lamPilot) {
-            // Always written for LAMs, so the parser can tell 'no Aero aptitude' apart from an older file
-            output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_GUNNERY_AERO + "=\"");
-            output.write(String.valueOf(lamPilot.isHasNaturalAptitudeGunneryAero()));
-            output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_PILOTING_AERO + "=\"");
-            output.write(String.valueOf(lamPilot.isHasNaturalAptitudePilotingAero()));
-        }
         if (crew.countOptions(PilotOptions.LVL3_ADVANTAGES) > 0) {
             output.write("\" " + MULParser.ATTR_ADVANTAGES + "=\"");
             output.write(String.valueOf(crew.getOptionList("::", PilotOptions.LVL3_ADVANTAGES)));

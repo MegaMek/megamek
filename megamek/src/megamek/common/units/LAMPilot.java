@@ -493,7 +493,7 @@ public class LAMPilot extends Crew {
      * mode.
      */
     @Override
-    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity) {
+    public boolean isUseNaturalAptitudePiloting(Entity pilotedEntity, int pos) {
         if (useAeroPiloting()) {
             return isHasNaturalAptitudePilotingAero();
         }

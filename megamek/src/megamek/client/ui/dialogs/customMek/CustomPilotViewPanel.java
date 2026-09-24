@@ -117,15 +117,11 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldTough = new JTextField(4);
     private final JTextField fldFatigue = new JTextField(4);
 
-    // Natural Aptitudes belong to the crew as a whole, not a slot: piloting shows on the pilot's panel, gunnery and
-    // artillery on the gunner's. For single-pilot units both are the same panel.
     private final JCheckBox chkNaturalAptitudePiloting = new JCheckBox();
     private final JCheckBox chkNaturalAptitudePilotingAero = new JCheckBox();
     private final JCheckBox chkNaturalAptitudeGunnery = new JCheckBox();
     private final JCheckBox chkNaturalAptitudeGunneryAero = new JCheckBox();
     private final JCheckBox chkNaturalAptitudeArtillery = new JCheckBox();
-    private boolean showsPilotingAptitudes;
-    private boolean showsGunneryAptitudes;
     private boolean showsArtilleryAptitude;
 
     private final JComboBox<String> cbBackup = new JComboBox<>();
@@ -657,9 +653,7 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Adds the Natural Aptitude checkboxes to the skills section. As aptitudes are tracked for the crew as a whole,
-     * piloting aptitudes are only shown on the pilot's panel and gunnery aptitudes on the gunner's, so multi-crew
-     * cockpits don't present the same setting on several tabs.
+     * Adds this crew member's Natural Aptitude checkboxes to the skills section.
      *
      * @param skillsSection       the section to add the rows to
      * @param slot                the crew slot this panel edits
@@ -670,38 +664,31 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
      */
     private void addNaturalAptitudeRows(JPanel skillsSection, int slot, boolean isUseArtillerySkill) {
         Crew crew = entity.getCrew();
-        showsPilotingAptitudes = slot == crew.getCrewType().getPilotPos();
-        showsGunneryAptitudes = slot == crew.getCrewType().getGunnerPos();
-        showsArtilleryAptitude = showsGunneryAptitudes && isUseArtillerySkill;
-        LAMPilot lamPilot = (crew instanceof LAMPilot pilot) ? pilot : null;
+        showsArtilleryAptitude = isUseArtillerySkill;
 
-        if (showsPilotingAptitudes) {
-            String pilotingKey = "CustomMekDialog.labNaturalAptitudePiloting";
-            if (entity instanceof Tank) {
-                pilotingKey = "CustomMekDialog.labNaturalAptitudeDriving";
-            } else if (entity instanceof Infantry) {
-                pilotingKey = "CustomMekDialog.labNaturalAptitudeAntiMek";
-            }
-            addNaturalAptitudeRow(skillsSection, pilotingKey, chkNaturalAptitudePiloting,
-                  crew.isHasNaturalAptitudePiloting());
-            if (lamPilot != null) {
-                addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudePilotingAero",
-                      chkNaturalAptitudePilotingAero, lamPilot.isHasNaturalAptitudePilotingAero());
-            }
+        String pilotingKey = "CustomMekDialog.labNaturalAptitudePiloting";
+        if (entity instanceof Tank) {
+            pilotingKey = "CustomMekDialog.labNaturalAptitudeDriving";
+        } else if (entity instanceof Infantry) {
+            pilotingKey = "CustomMekDialog.labNaturalAptitudeAntiMek";
+        }
+        addNaturalAptitudeRow(skillsSection, pilotingKey, chkNaturalAptitudePiloting,
+              crew.isHasNaturalAptitudePiloting(slot));
+        if (crew instanceof LAMPilot lamPilot) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudePilotingAero",
+                  chkNaturalAptitudePilotingAero, lamPilot.isHasNaturalAptitudePilotingAero());
         }
 
-        if (showsGunneryAptitudes) {
-            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunnery",
-                  chkNaturalAptitudeGunnery, crew.isHasNaturalAptitudeGunnery());
-            if (lamPilot != null) {
-                addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunneryAero",
-                      chkNaturalAptitudeGunneryAero, lamPilot.isHasNaturalAptitudeGunneryAero());
-            }
+        addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunnery",
+              chkNaturalAptitudeGunnery, crew.isHasNaturalAptitudeGunnery(slot));
+        if (crew instanceof LAMPilot lamPilot) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunneryAero",
+                  chkNaturalAptitudeGunneryAero, lamPilot.isHasNaturalAptitudeGunneryAero());
         }
 
         if (showsArtilleryAptitude) {
             addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeArtillery",
-                  chkNaturalAptitudeArtillery, crew.isHasNaturalAptitudeArtillery());
+                  chkNaturalAptitudeArtillery, crew.isHasNaturalAptitudeArtillery(slot));
         }
     }
 
@@ -721,31 +708,25 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     }
 
     /**
-     * Writes the Natural Aptitudes shown on this panel back onto the crew. Aptitudes shown on another crew member's
-     * panel are left alone. When the separate Artillery skill isn't in use, artillery is fired with Gunnery, so the
-     * Artillery aptitude follows the Gunnery aptitude.
+     * Writes this crew member's Natural Aptitudes back onto the crew. When the separate Artillery skill isn't in use,
+     * artillery is fired with Gunnery, so the Artillery aptitude follows the Gunnery aptitude.
      *
      * @param crew the crew to update
+     * @param slot the crew slot this panel edits
      *
      * @author Illiani
      * @since 0.51.01
      */
-    public void applyNaturalAptitudes(Crew crew) {
-        if (showsPilotingAptitudes) {
-            crew.setHasNaturalAptitudePiloting(chkNaturalAptitudePiloting.isSelected());
-            if (crew instanceof LAMPilot lamPilot) {
-                lamPilot.setHasNaturalAptitudePilotingAero(chkNaturalAptitudePilotingAero.isSelected());
-            }
-        }
+    public void applyNaturalAptitudes(Crew crew, int slot) {
+        crew.setHasNaturalAptitudePiloting(chkNaturalAptitudePiloting.isSelected(), slot);
+        crew.setHasNaturalAptitudeGunnery(chkNaturalAptitudeGunnery.isSelected(), slot);
+        crew.setHasNaturalAptitudeArtillery(showsArtilleryAptitude ?
+                                                  chkNaturalAptitudeArtillery.isSelected() :
+                                                  chkNaturalAptitudeGunnery.isSelected(), slot);
 
-        if (showsGunneryAptitudes) {
-            crew.setHasNaturalAptitudeGunnery(chkNaturalAptitudeGunnery.isSelected());
-            if (crew instanceof LAMPilot lamPilot) {
-                lamPilot.setHasNaturalAptitudeGunneryAero(chkNaturalAptitudeGunneryAero.isSelected());
-            }
-            crew.setHasNaturalAptitudeArtillery(showsArtilleryAptitude ?
-                                                      chkNaturalAptitudeArtillery.isSelected() :
-                                                      chkNaturalAptitudeGunnery.isSelected());
+        if (crew instanceof LAMPilot lamPilot) {
+            lamPilot.setHasNaturalAptitudePilotingAero(chkNaturalAptitudePilotingAero.isSelected());
+            lamPilot.setHasNaturalAptitudeGunneryAero(chkNaturalAptitudeGunneryAero.isSelected());
         }
     }
 

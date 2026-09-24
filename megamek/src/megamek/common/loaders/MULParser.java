@@ -1380,6 +1380,28 @@ public class MULParser {
     }
 
     /**
+     * Reads a crew member's Natural Aptitudes. Absent attributes are left alone rather than cleared, so a legacy SPA
+     * converted by {@link #convertLegacyNaturalAptitudes(Crew, Map)} isn't undone regardless of which runs first.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void setNaturalAptitudeAttributes(final Crew crew, final int slot,
+          final Map<String, String> attributes) {
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_GUNNERY)) {
+            crew.setHasNaturalAptitudeGunnery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_GUNNERY), slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_ARTILLERY)) {
+            crew.setHasNaturalAptitudeArtillery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_ARTILLERY),
+                  slot);
+        }
+        if (attributes.containsKey(ATTR_NATURAL_APTITUDE_PILOTING)) {
+            crew.setHasNaturalAptitudePiloting(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING),
+                  slot);
+        }
+    }
+
+    /**
      * @return {@code true} if the advantage name is one of the retired Natural Aptitude SPAs
      *
      * @author Illiani
@@ -1393,7 +1415,8 @@ public class MULParser {
     /**
      * Natural Aptitude used to be a pair of SPAs. Files written before it became a property of the crew's skills
      * store it in the advantages list instead; convert those into the new crew flags. The old Gunnery SPA applied to
-     * every gunnery roll, including artillery, so it grants both the Gunnery and Artillery aptitudes.
+     * every gunnery roll, including artillery, so it grants both the Gunnery and Artillery aptitudes. SPAs were held
+     * by the crew as a whole, so every crew member receives the aptitude.
      *
      * <p>This is done regardless of whether pilot advantages are enabled, as Natural Aptitude is no longer an
      * SPA.</p>
@@ -1409,11 +1432,13 @@ public class MULParser {
         StringTokenizer st = new StringTokenizer(attributes.get(ATTR_ADVANTAGES), "::");
         while (st.hasMoreTokens()) {
             String advantageName = Crew.parseAdvantageName(st.nextToken());
-            if (OptionsConstants.PILOT_APTITUDE_GUNNERY.equals(advantageName)) {
-                crew.setHasNaturalAptitudeGunnery(true);
-                crew.setHasNaturalAptitudeArtillery(true);
-            } else if (OptionsConstants.PILOT_APTITUDE_PILOTING.equals(advantageName)) {
-                crew.setHasNaturalAptitudePiloting(true);
+            for (int slot = 0; slot < crew.getSlotCount(); slot++) {
+                if (OptionsConstants.PILOT_APTITUDE_GUNNERY.equals(advantageName)) {
+                    crew.setHasNaturalAptitudeGunnery(true, slot);
+                    crew.setHasNaturalAptitudeArtillery(true, slot);
+                } else if (OptionsConstants.PILOT_APTITUDE_PILOTING.equals(advantageName)) {
+                    crew.setHasNaturalAptitudePiloting(true, slot);
+                }
             }
         }
     }
@@ -1486,9 +1511,6 @@ public class MULParser {
         crew.setInitBonus(initBVal);
         crew.setCommandBonus(commandBVal);
 
-        crew.setHasNaturalAptitudeGunnery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_GUNNERY));
-        crew.setHasNaturalAptitudeArtillery(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_ARTILLERY));
-        crew.setHasNaturalAptitudePiloting(parseBooleanAttribute(attributes, ATTR_NATURAL_APTITUDE_PILOTING));
         convertLegacyNaturalAptitudes(crew, attributes);
 
         if ((options != null) && options.booleanOption(OptionsConstants.RPG_PILOT_ADVANTAGES)
@@ -1846,6 +1868,7 @@ public class MULParser {
             crew.setPiloting(pilotVal, slot);
             crew.setToughness(toughVal, slot);
             crew.setCrewFatigue(fatigueVal, slot);
+            setNaturalAptitudeAttributes(crew, slot, attributes);
 
             if ((attributes.containsKey(ATTR_NAME)) && !attributes.get(ATTR_NAME).isBlank()) {
                 crew.setName(attributes.get(ATTR_NAME), slot);

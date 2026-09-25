@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import megamek.client.bot.princess.FightMemory.OddsRecord;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.UnitMemory.MoveRecord;
 import megamek.common.annotations.Nullable;
@@ -81,6 +82,7 @@ public class BotMemory {
     private final Set<Integer> scootingUnitIds = new HashSet<>();
 
     private final Map<Integer, UnitMemory> unitMemories = new HashMap<>();
+    private final Map<Integer, FightMemory> fightMemories = new HashMap<>();
 
     // region What each of my units is doing this round, and the waypoints it is following
 
@@ -245,6 +247,57 @@ public class BotMemory {
         if (pagesDropped > 0) {
             LOGGER.debug("[BotMemory] forgot {} unit(s) no longer in the game; {} remembered", pagesDropped,
                   unitMemories.size());
+        }
+    }
+
+    // endregion
+
+    // region Infantry vs. infantry actions in progress
+
+    /**
+     * @param buildingId the building being fought over
+     *
+     * @return what is remembered of the action in that building, or {@code null} if the bot has noted none
+     */
+    public @Nullable FightMemory fight(int buildingId) {
+        return fightMemories.get(buildingId);
+    }
+
+    /**
+     * Notes this round's strengths in a running action, starting the page for it if this is the first look.
+     *
+     * @param buildingId   the building being fought over
+     * @param buildingName the name of the building, for the log
+     * @param record       the strengths as the bot sees them this round
+     */
+    void rememberFightOdds(int buildingId, String buildingName, OddsRecord record) {
+        // In the round an action starts the bot looks before the defender has declared, so the defence reads as
+        // nothing and the odds as limitless. Noting that would make the first real figure count as a fall.
+        boolean isBothSidesCommitted = (record.attackerPoints() > 0) && (record.defenderPoints() > 0);
+        if (!isBothSidesCommitted) {
+            LOGGER.debug("[BotMemory] round {}: action in {} not noted yet: {} against {}, one side has not "
+                  + "committed", record.round(), buildingName, record.attackerPoints(), record.defenderPoints());
+            return;
+        }
+        FightMemory fight = fightMemories.computeIfAbsent(buildingId, FightMemory::new);
+        fight.rememberOdds(record);
+        LOGGER.debug("[BotMemory] round {}: action in {} stands at {} against {}; {} round(s) noted",
+              record.round(), buildingName, record.attackerPoints(), record.defenderPoints(), fight.roundsNoted());
+    }
+
+    /**
+     * Drops the pages of actions that have ended, so a second assault on the same building starts a fresh page
+     * instead of inheriting the trend of the first.
+     *
+     * @param runningBuildingIds the buildings that still have an action the bot has a stake in
+     */
+    void forgetFightsExcept(Collection<Integer> runningBuildingIds) {
+        int pagesBefore = fightMemories.size();
+        fightMemories.keySet().retainAll(runningBuildingIds);
+        int pagesDropped = pagesBefore - fightMemories.size();
+        if (pagesDropped > 0) {
+            LOGGER.debug("[BotMemory] forgot {} finished action(s); {} still running", pagesDropped,
+                  fightMemories.size());
         }
     }
 

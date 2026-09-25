@@ -43,6 +43,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Set;
 
+import megamek.client.bot.princess.FightMemory.OddsRecord;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.UnitMemory.MoveRecord;
 import megamek.common.board.Coords;
@@ -175,5 +176,53 @@ class BotMemoryTest {
 
         memory.forgetAllScooting();
         assertFalse(memory.isScooting(UNIT_ID + 1));
+    }
+
+    @Test
+    @DisplayName("A slide is so many falls in a row, counted back from the newest round")
+    void fightTrendCountsConsecutiveFalls() {
+        int buildingId = 40;
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(1, 80, 40));
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(2, 70, 40));
+        FightMemory fight = memory.fight(buildingId);
+        assertNotNull(fight);
+        assertTrue(fight.oddsHaveFallenFor(1));
+        assertFalse(fight.oddsHaveFallenFor(2), "two falls need three rounds on the page");
+
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(3, 60, 40));
+        assertTrue(fight.oddsHaveFallenFor(2));
+
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(4, 60, 30));
+        assertFalse(fight.oddsHaveFallenFor(1), "the defenders lost more, so the odds rose");
+        assertEquals(2.0, fight.firstRecord().odds(), 0.001);
+        assertEquals(4, fight.roundsNoted());
+    }
+
+    @Test
+    @DisplayName("A look taken before the defender declared is not a record, so it cannot start a slide")
+    void oddsBeforeTheDefenceDeclaresAreNotNoted() {
+        int buildingId = 40;
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(1, 60, 0));
+        assertNull(memory.fight(buildingId), "nothing is noted while the defence reads as nothing");
+
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(2, 60, 40));
+        memory.rememberFightOdds(buildingId, "Tower", new OddsRecord(3, 50, 40));
+        FightMemory fight = memory.fight(buildingId);
+        assertNotNull(fight);
+        assertEquals(2, fight.roundsNoted());
+        assertEquals(1.5, fight.firstRecord().odds(), 0.001, "the first record is the first real figure");
+        assertFalse(fight.oddsHaveFallenFor(2), "one real fall is not a slide");
+    }
+
+    @Test
+    @DisplayName("A finished action is forgotten, so a second assault starts a fresh page")
+    void finishedFightsAreForgotten() {
+        memory.rememberFightOdds(40, "Tower", new OddsRecord(1, 80, 40));
+        memory.rememberFightOdds(41, "Bunker", new OddsRecord(1, 50, 40));
+
+        memory.forgetFightsExcept(List.of(41));
+
+        assertNull(memory.fight(40));
+        assertNotNull(memory.fight(41));
     }
 }

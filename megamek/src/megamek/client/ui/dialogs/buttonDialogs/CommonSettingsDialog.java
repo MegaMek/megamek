@@ -622,7 +622,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
                                 String routeId) {
         this(owner);
         clientgui = cg;
-        settingsPane.selectRoute("audio");
+        settingsPane.selectRoute(routeId);
+    }
+
+    public void selectRoute(String routeId) {
+        settingsPane.selectRoute(routeId);
     }
 
     /**
@@ -644,80 +648,155 @@ public class CommonSettingsDialog extends AbstractButtonDialog
 
         List<CommonSettingsPane.OptionPage> pages = new ArrayList<>();
 
-        CommonSettingsPane.SectionedContent main = sectionedContent(getSettingsPanel(), "main");
-        addMappedPages(pages, "main", main,
-              optionPage("main.application", path("main", "main.application"), main,
-                    section("main.locale", 0), section("main.scale", 1), section("main.userFiles", 2),
-                    section("main.mml", 3), section("main.theme", 4)),
-              optionPage("main.colours", path("main", "main.colours"), main,
-                    section("main.statusColours", 5), section("main.unitColours", 6),
-                section("main.playerColours", 7)),
-              optionPage("main.behavior", path("main", "main.behavior"), main,
-                    section("main.interface", 8), section("main.units", 9), section("main.logging", 10),
-                section("main.privacy", 11)));
+        CommonSettingsPane.SectionedContent main = sectionedContent(getSettingsPanel(),
+                                                                    CommonSettingsPane.SETTINGS_MAIN);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_MAIN, main,
+                       optionPage(CommonSettingsPane.SETTINGS_MAIN + ".application",
+                                  path("main", CommonSettingsPane.SETTINGS_MAIN + ".application"),
+                                  main,
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".locale", 0),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".scale", 1),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".userFiles", 2),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".mml", 3),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".theme", 4)),
+                       optionPage(CommonSettingsPane.SETTINGS_MAIN + ".colours",
+                                  path(CommonSettingsPane.SETTINGS_MAIN, CommonSettingsPane.SETTINGS_MAIN + ".colours"),
+                                  main,
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".statusColours", 5),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".unitColours", 6),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".playerColours", 7)),
+                       optionPage(CommonSettingsPane.SETTINGS_MAIN + ".behavior",
+                                  path("main", CommonSettingsPane.SETTINGS_MAIN + ".behavior"),
+                                  main,
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".interface", 8),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".units", 9),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".logging", 10),
+                                  section(CommonSettingsPane.SETTINGS_MAIN + ".privacy", 11)));
 
-        CommonSettingsPane.SectionedContent audio = sectionedContent(getAudioPanel(), "audio");
-        addMappedPages(pages, "audio", audio,
-              optionPage("audio", path("audio"), audio,
-                    section("audio.volume", 0), section("audio.notifications", 1)));
-        pages.add(optionPage("keyBinds", path("keyBinds"), getKeyBindSections()));
+        CommonSettingsPane.SectionedContent audio = sectionedContent(getAudioPanel(),
+                                                                     CommonSettingsPane.SETTINGS_AUDIO);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_AUDIO, audio,
+                       optionPage(CommonSettingsPane.SETTINGS_AUDIO,
+                                  path(CommonSettingsPane.SETTINGS_AUDIO),
+                                  audio,
+                                  section(CommonSettingsPane.SETTINGS_AUDIO + ".volume", 0),
+                                  section(CommonSettingsPane.SETTINGS_AUDIO + ".notifications", 1)));
+        pages.add(optionPage(CommonSettingsPane.SETTINGS_KEYBINDS,
+                             path(CommonSettingsPane.SETTINGS_KEYBINDS),
+                             getKeyBindSections()));
 
-        CommonSettingsPane.SectionedContent gameBoard = sectionedContent(getGameBoardPanel(), "gameBoard");
-        addMappedPages(pages, "gameBoard", gameBoard,
-              optionPage("gameBoard.general", path("gameBoard", "gameBoard.general"), gameBoard,
-                    section("gameBoard.tileset", 0), section("gameBoard.nags", 1), section("gameBoard.actions", 2),
-                    section("gameBoard.controls", 3), section("gameBoard.pathfinder", 4),
-                section("gameBoard.units", 5)),
-              optionPage("gameBoard.appearance", path("gameBoard", "gameBoard.appearance"), gameBoard,
-                    section("gameBoard.rendering", 6), section("gameBoard.indicators", 7),
-                    section("gameBoard.movement", 8), section("gameBoard.fire", 9)),
-              optionPage("gameBoard.fov", path("gameBoard", "gameBoard.fov"), gameBoard,
-                    section("gameBoard.fovInside", 10), section("gameBoard.fovOutside", 11)));
+        CommonSettingsPane.SectionedContent gameBoard = sectionedContent(getGameBoardPanel(),
+                                                                         CommonSettingsPane.SETTINGS_GAMEBOARD);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_GAMEBOARD, gameBoard,
+                       optionPage(CommonSettingsPane.SETTINGS_GAMEBOARD + ".general",
+                                  path(CommonSettingsPane.SETTINGS_GAMEBOARD,
+                                       CommonSettingsPane.SETTINGS_GAMEBOARD + ".general"),
+                                  gameBoard,
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".tileset", 0),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".nags", 1),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".actions", 2),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".controls", 3),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".pathfinder", 4),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".units", 5)),
+                       optionPage(CommonSettingsPane.SETTINGS_GAMEBOARD + ".appearance",
+                                  path("gameBoard", CommonSettingsPane.SETTINGS_GAMEBOARD + ".appearance"),
+                                  gameBoard,
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".rendering", 6),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".indicators", 7),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".movement", 8),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".fire", 9)),
+                       optionPage(CommonSettingsPane.SETTINGS_GAMEBOARD + ".fov",
+                                  path("gameBoard", CommonSettingsPane.SETTINGS_GAMEBOARD + ".fov"),
+                                  gameBoard,
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".fovInside", 10),
+                                  section(CommonSettingsPane.SETTINGS_GAMEBOARD + ".fovOutside", 11)));
 
-        CommonSettingsPane.SectionedContent unitDisplay = sectionedContent(getUnitDisplayPanel(), "unitDisplay");
-        addMappedPages(pages, "unitDisplay", unitDisplay,
-              optionPage("unitDisplay.tooltips", path("unitDisplay", "unitDisplay.tooltips"), unitDisplay,
-                    section("unitDisplay.tooltip", 0), section("unitDisplay.armor", 1)),
-              optionPage("unitDisplay.interface", path("unitDisplay", "unitDisplay.interface"), unitDisplay,
-                    section("unitDisplay.heat", 2), section("unitDisplay.order", 3),
-                    section("unitDisplay.weapons", 4), section("unitDisplay.sensors", 5),
-                    section("unitDisplay.fonts", 6)));
+        CommonSettingsPane.SectionedContent unitDisplay = sectionedContent(getUnitDisplayPanel(),
+                                                                           CommonSettingsPane.SETTINGS_UNITDISPLAY);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_UNITDISPLAY, unitDisplay,
+                       optionPage(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".tooltips",
+                                  path(CommonSettingsPane.SETTINGS_UNITDISPLAY,
+                                       CommonSettingsPane.SETTINGS_UNITDISPLAY + ".tooltips"),
+                                  unitDisplay,
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".tooltip", 0),
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".armor", 1)),
+                       optionPage(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".interface",
+                                  path(CommonSettingsPane.SETTINGS_UNITDISPLAY,
+                                       CommonSettingsPane.SETTINGS_UNITDISPLAY + ".interface"),
+                                  unitDisplay,
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".heat", 2),
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".order", 3),
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".weapons", 4),
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".sensors", 5),
+                                  section(CommonSettingsPane.SETTINGS_UNITDISPLAY + ".fonts", 6)));
 
-        CommonSettingsPane.SectionedContent miniMap = sectionedContent(getMiniMapPanel(), "miniMap");
-        addMappedPages(pages, "miniMap", miniMap,
-              optionPage("miniMap", path("miniMap"), miniMap,
-                    section("miniMap.theme", 0), section("miniMap.display", 1)));
+        CommonSettingsPane.SectionedContent miniMap = sectionedContent(getMiniMapPanel(),
+                                                                       CommonSettingsPane.SETTINGS_MINIMAP);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_MINIMAP, miniMap,
+                       optionPage(CommonSettingsPane.SETTINGS_MINIMAP,
+                                  path(CommonSettingsPane.SETTINGS_MINIMAP),
+                                  miniMap,
+                                  section(CommonSettingsPane.SETTINGS_MINIMAP + ".theme", 0),
+                                  section(CommonSettingsPane.SETTINGS_MINIMAP + ".display", 1)));
 
-        CommonSettingsPane.SectionedContent report = sectionedContent(getReportPanel(), "report");
-        addMappedPages(pages, "report", report,
-              optionPage("report", path("report"), report,
-                    section("report.appearance", 0), section("report.content", 1), section("report.filter", 2)));
+        CommonSettingsPane.SectionedContent report = sectionedContent(getReportPanel(),
+                                                                      CommonSettingsPane.SETTINGS_REPORT);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_REPORT, report,
+                       optionPage(CommonSettingsPane.SETTINGS_REPORT,
+                                  path(CommonSettingsPane.SETTINGS_REPORT),
+                                  report,
+                                  section(CommonSettingsPane.SETTINGS_REPORT + ".appearance", 0),
+                                  section(CommonSettingsPane.SETTINGS_REPORT + ".content", 1),
+                                  section(CommonSettingsPane.SETTINGS_REPORT + ".filter", 2)));
 
-        CommonSettingsPane.SectionedContent overlays = sectionedContent(getOverlaysPanel(), "overlays");
-        addMappedPages(pages, "overlays", overlays,
-              optionPage("overlays", path("overlays"), overlays,
-                    section("overlays.overview", 0), section("overlays.planetary", 1),
-                    section("overlays.toasts", 2), section("overlays.trace", 3)));
+        CommonSettingsPane.SectionedContent overlays = sectionedContent(getOverlaysPanel(),
+                                                                        CommonSettingsPane.SETTINGS_OVERLAYS);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_OVERLAYS, overlays,
+                       optionPage(CommonSettingsPane.SETTINGS_OVERLAYS,
+                                  path(CommonSettingsPane.SETTINGS_OVERLAYS),
+                                  overlays,
+                                  section(CommonSettingsPane.SETTINGS_OVERLAYS + ".overview", 0),
+                                  section(CommonSettingsPane.SETTINGS_OVERLAYS + ".planetary", 1),
+                                  section(CommonSettingsPane.SETTINGS_OVERLAYS + ".toasts", 2),
+                                  section(CommonSettingsPane.SETTINGS_OVERLAYS + ".trace", 3)));
         pages.add(optionPage("buttonOrder", path("buttonOrder"), getButtonOrderSections()));
 
-        CommonSettingsPane.SectionedContent autoDisplay = sectionedContent(getPhasePanel(), "autoDisplay");
-        addMappedPages(pages, "autoDisplay", autoDisplay,
-              optionPage("autoDisplay", path("autoDisplay"), autoDisplay,
-                    section("autoDisplay.unit", 0), section("autoDisplay.minimap", 1),
-                    section("autoDisplay.report", 2), section("autoDisplay.players", 3),
-                    section("autoDisplay.force", 4), section("autoDisplay.bots", 5),
-                section("autoDisplay.tabs", 6)));
+        CommonSettingsPane.SectionedContent autoDisplay = sectionedContent(getPhasePanel(),
+                                                                           CommonSettingsPane.SETTINGS_AUTODISPLAY);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_AUTODISPLAY, autoDisplay,
+                       optionPage(CommonSettingsPane.SETTINGS_AUTODISPLAY,
+                                  path(CommonSettingsPane.SETTINGS_AUTODISPLAY),
+                                  autoDisplay,
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".unit", 0),
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".minimap", 1),
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".report", 2),
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".players", 3),
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".force", 4),
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".bots", 5),
+                                  section(CommonSettingsPane.SETTINGS_AUTODISPLAY + ".tabs", 6)));
 
-        CommonSettingsPane.SectionedContent aiDisplay = sectionedContent(aiDisplayPanel(), "aiDisplay");
-        addMappedPages(pages, "aiDisplay", aiDisplay,
-              optionPage("aiDisplay", path("aiDisplay"), aiDisplay,
-                section("aiDisplay.settings", 0)));
-        CommonSettingsPane.SectionedContent advanced = sectionedContent(getAdvancedSettingsPanel(), "advanced");
-          addMappedPages(pages, "advanced", advanced,
-              optionPage("advanced", path("advanced"), List.of(
-                    optionSection("advanced.chat", advanced.groups().get(0), true),
-                    optionSection("advanced.timing", advanced.groups().get(1), true),
-                    optionSection("advanced.safety", advanced.groups().get(2), true))));
+        CommonSettingsPane.SectionedContent aiDisplay = sectionedContent(aiDisplayPanel(),
+                                                                         CommonSettingsPane.SETTINGS_AIDISPLAY);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_AIDISPLAY, aiDisplay,
+                       optionPage(CommonSettingsPane.SETTINGS_AIDISPLAY,
+                                  path(CommonSettingsPane.SETTINGS_AIDISPLAY),
+                                  aiDisplay,
+                                  section(CommonSettingsPane.SETTINGS_AIDISPLAY + ".settings", 0)));
+        CommonSettingsPane.SectionedContent advanced = sectionedContent(getAdvancedSettingsPanel(),
+                                                                        CommonSettingsPane.SETTINGS_ADVANCED);
+        addMappedPages(pages, CommonSettingsPane.SETTINGS_ADVANCED, advanced,
+                       optionPage(CommonSettingsPane.SETTINGS_ADVANCED,
+                                  path(CommonSettingsPane.SETTINGS_ADVANCED),
+                                  List.of(
+                                          optionSection(CommonSettingsPane.SETTINGS_ADVANCED + ".chat",
+                                                        advanced.groups().get(0),
+                                                        true),
+                                          optionSection(CommonSettingsPane.SETTINGS_ADVANCED + ".timing",
+                                                        advanced.groups().get(1),
+                                                        true),
+                                          optionSection(CommonSettingsPane.SETTINGS_ADVANCED + ".safety",
+                                                        advanced.groups().get(2),
+                                                        true))));
         settingsPane = new CommonSettingsPane(pages);
         return settingsPane;
     }

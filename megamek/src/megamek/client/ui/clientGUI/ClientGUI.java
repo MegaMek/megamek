@@ -112,6 +112,7 @@ import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.panels.CommonSettingsPane;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
@@ -1226,6 +1227,8 @@ public class ClientGUI extends AbstractClientGUI
         // Do we need to create the "settings" dialog?
         if (commonSettingsDialog == null) {
             commonSettingsDialog = new CommonSettingsDialog(frame, this, subpage);
+        } else {
+            commonSettingsDialog.selectRoute(subpage);
         }
 
         // Show the settings dialog.
@@ -3176,7 +3179,7 @@ public class ClientGUI extends AbstractClientGUI
         JLabel clientSettingsLabel = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
 
         // Action listeners
-        launchSettings.addActionListener(e -> showSettingsSubPage("audio"));
+        launchSettings.addActionListener(e -> showSettingsSubPage(CommonSettingsPane.SETTINGS_AUDIO));
         playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
 
         // Set alignments

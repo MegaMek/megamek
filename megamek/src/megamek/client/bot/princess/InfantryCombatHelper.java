@@ -66,6 +66,7 @@ public class InfantryCombatHelper {
      *
      * @return MPS value for the attacker
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static int calculateAttackerMPS(Entity entity, Entity building) {
         if (!(entity instanceof Infantry) || !(building instanceof AbstractBuildingEntity)) {
             return 0;
@@ -82,6 +83,7 @@ public class InfantryCombatHelper {
      *
      * @return Total estimated defender MPS
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static int calculateEnemyMPS(Game game, Entity target, Entity attacker) {
         int totalDefenderMPS = 0;
 
@@ -109,6 +111,7 @@ public class InfantryCombatHelper {
      *
      * @return Ratio, or 0 if defender MPS is 0
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static double calculateMPSRatio(int attackerMPS, int defenderMPS) {
         if (defenderMPS <= 0) {
             return attackerMPS > 0 ? Double.MAX_VALUE : 0;
@@ -169,6 +172,7 @@ public class InfantryCombatHelper {
      *
      * @return true if should initiate combat
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static boolean shouldInitiateCombat(Entity attacker, Entity target,
           Game game, BehaviorSettings behavior) {
         // Validate inputs
@@ -211,6 +215,7 @@ public class InfantryCombatHelper {
      *
      * @return true if should send reinforcement
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static boolean shouldReinforce(Entity reinforcement, int targetId,
           Game game, BehaviorSettings behavior) {
         // Validate inputs
@@ -286,6 +291,7 @@ public class InfantryCombatHelper {
      *
      * @return true if should withdraw
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static boolean shouldWithdraw(Entity entity, int targetId,
           Game game, BehaviorSettings behavior) {
         // Only attackers can withdraw
@@ -348,6 +354,7 @@ public class InfantryCombatHelper {
      *
      * @return List of enemy infantry entities
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static List<Entity> getEnemyInfantryInHex(Game game, Coords coords, int ownerId) {
         List<Entity> enemyInfantry = new ArrayList<>();
 
@@ -370,6 +377,7 @@ public class InfantryCombatHelper {
      *
      * @return Estimated number of crew defenders
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public static int estimateCrewDefenders(Entity target) {
         if (target.getCrew() != null) {
             return (int) Math.ceil(target.getCrew().getSize() * CREW_DEFENDER_PERCENTAGE);

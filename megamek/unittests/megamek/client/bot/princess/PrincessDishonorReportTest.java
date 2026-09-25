@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -40,9 +41,11 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import megamek.common.Player;
+import megamek.common.game.BotHonorReport;
 import megamek.common.game.Game;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,5 +100,46 @@ class PrincessDishonorReportTest {
         // A pirate has no honor to give, so HonorUtil.isEnemyDishonored is true for everyone.
         ((HonorUtil) princess.getHonorUtil()).setIAmAPirate(true);
         assertEquals(List.of(1, 2, 3), princess.resolveDishonoredPlayerIds());
+    }
+
+    @Test
+    void reportsItsWithdrawingUnitsWhenFollowingForcedWithdrawal() {
+        // The crippled list is the one the bot judges attacks against, so it is exactly what clients should tag.
+        princess.getMemory().setCrippledUnits(Set.of(20, 21));
+
+        BotHonorReport report = princess.buildHonorReport();
+
+        assertTrue(report.followsForcedWithdrawal());
+        assertEquals(Set.of(20, 21), report.withdrawingUnitIds());
+    }
+
+    @Test
+    void reportsNoWithdrawingUnitsWhenIgnoringForcedWithdrawal() {
+        // A Berserk bot fights to the death; a list left over from before the setting changed must not leak out.
+        doReturn(false).when(princess).getForcedWithdrawal();
+        princess.getMemory().setCrippledUnits(Set.of(20));
+
+        BotHonorReport report = princess.buildHonorReport();
+
+        assertFalse(report.followsForcedWithdrawal());
+        assertTrue(report.withdrawingUnitIds().isEmpty());
+    }
+
+    @Test
+    void theReportCarriesTheDishonoredPlayers() {
+        princess.getHonorUtil().setEnemyDishonored(2);
+
+        assertEquals(List.of(2), princess.buildHonorReport().dishonoredPlayerIds());
+    }
+
+    @Test
+    void returningToTheLobbyForgetsWithdrawingUnits() {
+        // Otherwise the next game's unit that reuses a withdrawing unit's ID counts as fleeing for the first round.
+        princess.getMemory().setCrippledUnits(Set.of(3));
+
+        princess.forgetWithdrawingUnits();
+
+        assertTrue(princess.buildHonorReport().withdrawingUnitIds().isEmpty());
+        assertFalse(princess.getMemory().isCrippled(3));
     }
 }

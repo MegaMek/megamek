@@ -281,6 +281,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
     protected int phaseInternalBombs = 0;
 
     /**
+     * Targets the player has already agreed to attack despite the honor warning, this turn, for the current unit. The
+     * warning is asked at the first shot at a target; later weapons fired at it, and the final check on Done, do not ask
+     * again.
+     */
+    private final Set<Integer> honorAcceptedTargetIds = new HashSet<>();
+
+    /**
      * Keeps track of the Coords that are in a strafing run.
      */
     private final List<Coords> strafingCoords = new ArrayList<>(5);
@@ -990,19 +997,78 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
         }
 
-        String dishonorWarning = needNagForDishonor() ? HonorNagHelper.warningFor(game, attacks) : null;
-        if (dishonorWarning != null) {
-            // confirm this action
-            String title = Messages.getString("HonorNag.title");
-            String body = dishonorWarning;
-            if (checkNagForDishonor(title, body)) {
+        if (needNagForDishonor()) {
+            // Targets already accepted at the first shot are not asked about again.
+            String dishonorWarning = HonorNagHelper.warningFor(game, attacksAgainstUnacceptedTargets());
+            if ((dishonorWarning != null) && checkNagForDishonor(Messages.getString("HonorNag.title"), dishonorWarning)) {
+                // No means these attacks are not made, so take them all back instead of leaving them queued.
+                logger.debug("[HonorNag] Player declined the honor warning on Done; clearing the declared attacks");
+                clear();
                 return true;
             }
-            // Player accepted; remember it so the rest of this turn isn't re-warned before the bot's report arrives.
+            // Remember it so the rest of this turn isn't re-warned before the bot's report arrives.
             HonorNagHelper.recordDishonor(game, attacks);
         }
 
         return currentEntity() == null;
+    }
+
+    /**
+     * @return the declared attacks, leaving out those at targets the player already accepted at the first shot
+     */
+    private List<EntityAction> attacksAgainstUnacceptedTargets() {
+        List<EntityAction> unacceptedAttacks = new ArrayList<>();
+        for (EntityAction action : attacks) {
+            if ((action instanceof AbstractAttackAction attackAction) && isAtAcceptedTarget(attackAction)) {
+                continue;
+            }
+            unacceptedAttacks.add(action);
+        }
+        return unacceptedAttacks;
+    }
+
+    /**
+     * @return {@code true} if the attack is aimed at a unit the player already accepted at the first shot
+     */
+    private boolean isAtAcceptedTarget(AbstractAttackAction attackAction) {
+        boolean isAtUnit = attackAction.getTargetType() == Targetable.TYPE_ENTITY;
+        return isAtUnit && honorAcceptedTargetIds.contains(attackAction.getTargetId());
+    }
+
+    /**
+     * Shows the honor warning at the first shot at a target, when that shot would make a bot following Forced
+     * Withdrawal consider the player dishonored. Asking here, rather than only on Done, means a No leaves nothing
+     * queued, and the player learns about a withdrawing target before committing a whole volley to it.
+     *
+     * <p>Strafing is left to the check on Done, since a strafing run picks up every unit in its hexes.</p>
+     *
+     * @param attacker the unit carrying the weapon being fired
+     *
+     * @return {@code true} to go ahead with the shot, {@code false} if the player declined
+     */
+    private boolean confirmHonorBeforeFiring(Entity attacker) {
+        if (isStrafing || !needNagForDishonor()) {
+            return true;
+        }
+        if (!(target instanceof Entity targetEntity)) {
+            return true;
+        }
+        if (honorAcceptedTargetIds.contains(targetEntity.getId())) {
+            return true;
+        }
+        String dishonorWarning = HonorNagHelper.warningFor(game, attacker, targetEntity);
+        if (dishonorWarning == null) {
+            return true;
+        }
+        if (checkNagForDishonor(Messages.getString("HonorNag.title"), dishonorWarning)) {
+            logger.debug("[HonorNag] Player declined to fire {} at {}", attacker.getShortName(),
+                  targetEntity.getShortName());
+            return false;
+        }
+        logger.debug("[HonorNag] Player accepted firing {} at {}", attacker.getShortName(),
+              targetEntity.getShortName());
+        honorAcceptedTargetIds.add(targetEntity.getId());
+        return true;
     }
 
     @Override
@@ -1102,6 +1168,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
 
         // clear queue
         removeAllAttacks();
+        honorAcceptedTargetIds.clear();
 
         // close aimed shot display, if any
         ash.closeDialog();
@@ -1406,6 +1473,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
             }
         }
 
+        if (!confirmHonorBeforeFiring(mounted.getEntity())) {
+            return;
+        }
+
         // declare searchlight, if possible
         if (GUIP.getAutoDeclareSearchlight() && currentEntity().isUsingSearchlight()) {
             doSearchlight();
@@ -1624,6 +1695,7 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     @Override
     protected void clearAttacks() {
+        honorAcceptedTargetIds.clear();
         isStrafing = false;
         strafingCoords.clear();
         clientgui.onAllBoardViews(BoardView::clearStrafingCoords);

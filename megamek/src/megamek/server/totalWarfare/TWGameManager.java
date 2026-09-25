@@ -87,6 +87,7 @@ import megamek.common.event.GameToastEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.BotHonorReport;
 import megamek.common.game.Game;
 import megamek.common.game.GameDatasetLogger;
 import megamek.common.game.GameTurn;
@@ -1112,11 +1113,11 @@ public class TWGameManager extends AbstractGameManager {
                     }
                     break;
                 case PRINCESS_DISHONORED:
-                    // Only bots report dishonor, and only a list of player IDs is worth relaying; anything else is a
+                    // Only bots report dishonor, and only an honor report is worth relaying; anything else is a
                     // client sending a packet it has no business sending, so drop it rather than pass it on.
-                    if ((player != null) && player.isBot() && (packet.getObject(0) instanceof List<?>)) {
-                        // Relay this bot's dishonored-players list to all clients, tagged with the bot's player ID, so
-                        // clients can warn a human before an action that would newly dishonor them.
+                    if ((player != null) && player.isBot() && (packet.getObject(0) instanceof BotHonorReport)) {
+                        // Relay this bot's honor report to all clients, tagged with the bot's player ID, so clients
+                        // can tag its withdrawing units and warn a human before an action that would dishonor them.
                         send(new Packet(PacketCommand.PRINCESS_DISHONORED, player.getId(), packet.getObject(0)));
                     }
                     break;

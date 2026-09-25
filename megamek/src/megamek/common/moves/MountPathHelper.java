@@ -40,9 +40,11 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.units.BuildingFlightDeckRules;
 import megamek.common.units.CraneRules;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.Targetable;
 
 /**
  * Lets a player board a transport by clicking on it. A unit boards a transport with a MOUNT step taken from a hex
@@ -55,7 +57,7 @@ public final class MountPathHelper {
     private MountPathHelper() {}
 
     /**
-     * Why a unit may not mount a grounded Small Craft or DropShip under its own power at this point in its move.
+     * Why a unit may not mount a carrier under its own power at this point in its move.
      */
     public enum MountRestriction {
         /** The unit may mount. */
@@ -71,21 +73,26 @@ public final class MountPathHelper {
     }
 
     /**
-     * Checks whether a unit may mount a grounded Small Craft or DropShip after the movement it has already made this
-     * turn. Non-infantry pay half their Walking/Cruising MP (round cost up) on top of what they have spent, and may not
+     * Checks whether a unit may mount a carrier after the movement it has already made this turn.
+     * Non-infantry pay half their standard Walking/Cruising MP (round cost up) on top of what they have spent, and may not
      * run; a unit that has not spent any MP may still mount through the Minimum Movement rule (TW p.90 and p.49).
      * Infantry mount as though the carrier were a Large Support Vehicle and must spend all their MP doing so (TW p.89 and
-     * p.223, errata v11.01).
+     * p.223, errata v11.01). Mobile Structures follow these same rules (TO:AUE p.38). A ready aircraft on its carrier's
+     * flight deck instead uses the deck elevators (TO:AUE p.125).
      *
      * @param mountingUnit         the unit that wants to mount
+     * @param carrier              the transport it wants to enter
      * @param walkingMp            the unit's current Walking/Cruising MP
      * @param mpUsedBeforeMounting the MP the unit has spent this turn before mounting
      * @param isJumping            {@code true} if the unit jumped this turn
      *
      * @return {@link MountRestriction#NONE} if the unit may mount, otherwise the reason it may not
      */
-    public static MountRestriction mountRestriction(Entity mountingUnit, int walkingMp, int mpUsedBeforeMounting,
-          boolean isJumping) {
+    public static MountRestriction mountRestriction(Entity mountingUnit, Targetable carrier, int walkingMp,
+          int mpUsedBeforeMounting, boolean isJumping) {
+        if (isDeckTransfer(mountingUnit, carrier)) {
+            return MountRestriction.NONE;
+        }
         if (CraneRules.isCraneOnlyUnit(mountingUnit)) {
             return MountRestriction.CRANE_ONLY;
         }
@@ -99,15 +106,32 @@ public final class MountPathHelper {
             // Minimum Movement: a unit that has not moved may always enter the adjacent transport
             return MountRestriction.NONE;
         }
-        int mpNeeded = mpUsedBeforeMounting + mountOrDismountMpCost(walkingMp);
+        int mpNeeded = mpUsedBeforeMounting + mountMpCost(mountingUnit, carrier);
         return (mpNeeded > walkingMp) ? MountRestriction.NOT_ENOUGH_WALKING_MP : MountRestriction.NONE;
     }
 
     /**
+     * Boarding costs half standard Walking/Cruising MP for non-infantry, or all current Walking MP for infantry.
+     * A ready aircraft already on the carrier's flight deck is transferred by its elevators without spending MP.
+     */
+    public static int mountMpCost(Entity mountingUnit, Targetable carrier) {
+        if (isDeckTransfer(mountingUnit, carrier)) {
+            return 0;
+        }
+        return mountingUnit.isInfantry() ? mountingUnit.getWalkMP()
+              : mountOrDismountMpCost(mountingUnit.getOriginalWalkMP());
+    }
+
+    private static boolean isDeckTransfer(Entity mountingUnit, Targetable carrier) {
+        var deck = BuildingFlightDeckRules.onDeck(mountingUnit);
+        return deck != null && deck.carrier() == carrier && BuildingFlightDeckRules.canEnterBay(mountingUnit);
+    }
+
+    /**
      * Returns the MP a unit spends to mount or dismount a grounded Small Craft or DropShip under its own power: half
-     * its Walking MP, with the cost rounded up (TW p.90 for mounting, TW p.91 for dismounting, errata v11.01).
+     * its standard Walking MP, with the cost rounded up (TW p.90 for mounting, TW p.91 for dismounting, errata v11.01).
      *
-     * @param walkingMp the unit's Walking MP
+     * @param walkingMp the unit's standard Walking MP before heat and damage reductions
      *
      * @return the MP cost to mount or dismount
      */

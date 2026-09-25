@@ -123,7 +123,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
             }
         }
 
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
                   getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -143,7 +143,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_RANGE)
               && (nRange > nRanges[RangeType.RANGE_LONG])) {
             // Against conventional infantry, treat as direct fire energy
-            if (target.isConventionalInfantry()) {
+            if (usesConventionalInfantryDamage()) {
                 toReturn -= 1;
             } else { // Else, treat as pulse weapon
                 toReturn = (int) Math.floor(toReturn / 2.0);
@@ -152,7 +152,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_LOS_RANGE)
               && (nRange > nRanges[RangeType.RANGE_EXTREME])) {
             // Against conventional infantry, treat as direct fire energy
-            if (target.isConventionalInfantry()) {
+            if (usesConventionalInfantryDamage()) {
                 toReturn = (int) Math.floor(toReturn / 2.0);
             } else { // Else, treat as pulse weapon
                 toReturn = (int) Math.floor(toReturn / 3.0);
@@ -160,7 +160,7 @@ public class HyperLaserHandler extends EnergyWeaponHandler {
 
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
         return (int) toReturn;
     }
 

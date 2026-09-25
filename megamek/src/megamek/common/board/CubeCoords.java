@@ -61,6 +61,10 @@ public record CubeCoords(double q, double r, double s) implements Serializable {
      * @param s the s coordinate
      */
     public CubeCoords {
+        // Rotations negate components. Signed zero is the same hex coordinate, including in map keys.
+        q = q == 0 ? 0 : q;
+        r = r == 0 ? 0 : r;
+        s = s == 0 ? 0 : s;
     }
 
     /**

@@ -68,6 +68,10 @@ public class NextStepsAdjacencyMap implements AdjacencyMap<MovePath> {
      */
     @Override
     public Collection<MovePath> getAdjacent(MovePath mp) {
+        if (mp.getEntity() instanceof megamek.common.units.MobileStructure) {
+            // Use mobile footprint costs, including air clearance, rather than generic VTOL roof decoration.
+            return mp.getNextMoves(true, true);
+        }
         final MoveStep last = mp.getLastStep();
         final MoveStepType lType = (last == null) ? null : last.getType();
         final Entity entity = mp.getEntity();

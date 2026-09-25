@@ -53,6 +53,7 @@ import megamek.common.board.Coords;
 import megamek.common.board.DeploymentElevationType;
 import megamek.common.board.ElevationOption;
 import megamek.common.board.FacingOption;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Tank;
@@ -63,7 +64,6 @@ import megamek.logging.MMLogger;
 public class DeploymentHelper {
 
     private final ClientGUI clientgui;
-    private Entity currentEntity;
 
     private static final MMLogger logger = MMLogger.create(DeploymentHelper.class);
 
@@ -221,7 +221,6 @@ public class DeploymentHelper {
                                                                     Board board,
                                                                     Set<ElevationOption> lastHexDeploymentOptions,
                                                                     ElevationOption lastDeploymentOption) {
-        currentEntity = entity;
         if (board.isSpace()) {
             return spaceDeploymentPosition(entity, coords, lastDeploymentOption);
         }
@@ -235,7 +234,7 @@ public class DeploymentHelper {
         boolean validFacings = facingOptions != null && facingOptions.hasValidFacings();
 
         if (elevationOptions.isEmpty() && !validFacings) {
-            showCannotDeployHereMessage(coords);
+            showCannotDeployHereMessage(entity, coords);
             return null;
         } else if (elevationOptions.size() == 1) {
             finalElevation = elevationOptions.getFirst().elevation();
@@ -264,6 +263,14 @@ public class DeploymentHelper {
             }
         }
 
+        if (finalFacing == -1) {
+            return null;
+        }
+        if (entity instanceof AbstractBuildingEntity building
+              && !building.isDeploymentPositionAndFacingValid(coords, finalFacing, finalElevation, board.getBoardId())) {
+            showCannotDeployHereMessage(entity, coords);
+            return null;
+        }
         return new DeploymentPosition(finalElevation, finalFacing, lastDeploymentOption);
     }
 
@@ -384,11 +391,11 @@ public class DeploymentHelper {
                              .anyMatch(o -> o.elevation() <= elevation);
     }
 
-    private void showCannotDeployHereMessage(Coords coords) {
+    void showCannotDeployHereMessage(Entity entity, Coords coords) {
         String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
-                                        currentEntity.getShortName(),
+                                        entity.getShortName(),
                                         coords.getBoardNum());
-        clientgui.addToast(ToastLevel.ERROR, msg, currentEntity);
+        clientgui.addToast(ToastLevel.ERROR, msg, entity);
     }
 
     /**
@@ -398,7 +405,7 @@ public class DeploymentHelper {
      *
      * @param facingOption  The FacingOption containing valid facings, or null if not applicable
      * @param currentFacing The entity's current facing
-     * @return The chosen facing (0-5), or currentFacing if no selection was made
+     * @return The chosen facing (0-5), or -1 if the choice dialog was cancelled
      */
     private int promptForFacingIfNeeded(FacingOption facingOption,
                                         int currentFacing) {
@@ -417,8 +424,7 @@ public class DeploymentHelper {
         }
 
         // Show facing choice dialog
-        int chosenFacing = showFacingChoiceDialog(facingOption);
-        return (chosenFacing != -1) ? chosenFacing : currentFacing;
+        return showFacingChoiceDialog(facingOption);
     }
 
     public void setStartingFacing(Entity entity,

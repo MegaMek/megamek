@@ -631,6 +631,11 @@ public class Compute {
             // Walk through the entities in the given hex.
             for (Entity inHex : game.getEntitiesVector(coords, destBoardId)) {
 
+                // A building is the surrounding terrain volume, not one of the units using its stacking allowance.
+                if (inHex instanceof IBuilding) {
+                    continue;
+                }
+
                 if (inHex.isAirborne()) {
                     continue;
                 }
@@ -981,13 +986,17 @@ public class Compute {
         // entity
         // into a grounded droppers hex, because of the stacking violation check
         // below
-        if (entity instanceof Dropship) {
+        if (entity instanceof Dropship || entity instanceof MobileStructure) {
             return false;
         }
 
         // an easy check
         if (!game.getBoard().contains(dest)) {
             return game.getOptions().booleanOption(OptionsConstants.BASE_PUSH_OFF_BOARD);
+        }
+
+        if (megamek.common.moves.MobileStructureMovement.displacementObstacle(entity, src, dest) != null) {
+            return false;
         }
 
         // can't be displaced into prohibited terrain
@@ -1945,8 +1954,10 @@ public class Compute {
         attackPos.add(attacker.getPosition());
         Vector<Coords> targetPos = new Vector<>();
 
-        if (target instanceof BuildingEntity) {
+        if (target instanceof BuildingEntity || target instanceof megamek.common.units.WallTarget) {
             targetPos.addAll(target.getSecondaryPositions().values());
+        } else if (target instanceof Entity entity && entity.getOccupiedWall() != null) {
+            targetPos.addAll(entity.getOccupiedWall().getSecondaryPositions().values());
         } else {
             targetPos.add(target.getPosition());
         }
@@ -3373,7 +3384,7 @@ public class Compute {
         Coords position = target.getPosition();
 
         // First, handle buildings versus entities, since they are handled differently.
-        if (targetType == Targetable.TYPE_BUILDING) {
+        if (Targetable.isBuildingType(targetType)) {
             // Buildings are a simple sum of their current CF and armor values.
             // the building the targeted hex belongs to. We have to get this and then get
             // values for the specific hex internally to it.
@@ -5044,7 +5055,7 @@ public class Compute {
      * @return visual range in hexes along a specific line of sight
      */
     public static int getVisualRange(Game game, Entity ae, LosEffects los, boolean targetIlluminated) {
-        int visualRange = game.getPlanetaryConditions().getVisualRange(ae, targetIlluminated);
+        int visualRange = game.getPlanetaryConditions().forEntity(ae).getVisualRange(ae, targetIlluminated);
         visualRange -= los.getLightSmoke();
         visualRange -= 2 * los.getHeavySmoke();
         visualRange = max(1, visualRange);
@@ -5078,7 +5089,7 @@ public class Compute {
                 }
             }
         } else {
-            visualRange = game.getPlanetaryConditions().getVisualRange(entity, targetIlluminated);
+            visualRange = game.getPlanetaryConditions().forEntity(entity).getVisualRange(entity, targetIlluminated);
         }
         return visualRange;
     }
@@ -5319,7 +5330,7 @@ public class Compute {
         int range = sensor.getRangeByBracket();
 
         // adjust the range based on LOS and planetary conditions
-        range = sensor.adjustRange(range, game, los);
+        range = sensor.adjustRange(range, game, los, ae.isAffectedByEMI(target.getPosition()));
 
         // If we're an airborne aero, sensor range is limited to within a few hexes of
         // the flight line against ground targets
@@ -6371,9 +6382,9 @@ public class Compute {
             return false;
         }
 
-        IBuilding attackingBuilding = game.getBoard().getBuildingAt(attacker.getPosition());
-        IBuilding targetBuilding = game.getBoard().getBuildingAt(target.getPosition());
-        return attackingBuilding.equals(targetBuilding);
+        return attacker.getBoardId() == targetEntity.getBoardId()
+              && megamek.common.units.BuildingInteriorRules.shared(game, attacker.getPosition(), attacker.getElevation(),
+                    target.getPosition(), targetEntity.getElevation(), attacker.getBoardId()) != null;
     }
 
     /**
@@ -6431,8 +6442,15 @@ public class Compute {
             return false;
         }
         final Hex hex = game.getBoard(boardId).getHex(coords);
+        if (game.getBoard(boardId).getBuildingAt(coords, elevation) != null) {
+            return true;
+        }
+        if (hex == null || !hex.containsTerrain(Terrains.BLDG_ELEV)) {
+            return false;
+        }
 
-        if (!hex.containsTerrain(Terrains.BLDG_ELEV) || hex == null) {
+        // Authored buildings have their own physical base, which may be underground or above empty space.
+        if (game.getBoard(boardId).getBuildingAt(coords) instanceof AbstractBuildingEntity) {
             return false;
         }
 
@@ -7261,6 +7279,19 @@ public class Compute {
         }
 
         List<Entity> mountable = new ArrayList<>();
+        for (Entity candidate : game.getEntitiesVector()) {
+            if (candidate instanceof MobileStructure mobile && candidate.getBoardId() == boardId
+                  && MobileStructureCargoRules.canMount(mobile, entity, pos, elev)) {
+                mountable.add(mobile);
+            }
+        }
+        for (Entity candidate : game.getEntitiesVector()) {
+            if (candidate instanceof megamek.common.units.AbstractBuildingEntity building
+                  && !(candidate instanceof MobileStructure) && candidate.getBoardId() == boardId
+                  && megamek.common.units.BuildingFlightDeckRules.canStow(building, entity, pos, elev)) {
+                mountable.add(candidate);
+            }
+        }
         // Non-infantry mount from within two levels of the transport (TW p.90). Infantry mount as though the carrier
         // were a Large Support Vehicle, which needs the same level (TW p.89 and p.224).
         int maximumLevelDifference = entity.isInfantry() ? 0 : 2;
@@ -7471,6 +7502,9 @@ public class Compute {
      * @return The number of required gunners
      */
     public static int getTotalGunnerNeeds(Entity entity) {
+        if (entity instanceof BuildingEntity building) {
+            return building.calculateMinimumCrewRequirements().gunners();
+        }
         if (entity.hasDroneOs()) {
             return 0;
         }
@@ -7602,6 +7636,10 @@ public class Compute {
      * @return The number of additional non-gunner crew required for the given unit
      */
     public static int getAdditionalNonGunner(Entity entity) {
+        if (entity instanceof BuildingEntity building) {
+            var crew = building.calculateMinimumCrewRequirements();
+            return crew.crew() + crew.officers();
+        }
         if (entity.hasDroneOs()) {
             return 0;
         }

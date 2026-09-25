@@ -151,7 +151,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Can't target woods or a building with a thrash attack.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING
+        if (Targetable.isBuildingType(target.getTargetType())
               || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
               || target.getTargetType() == Targetable.TYPE_FUEL_TANK
               || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE

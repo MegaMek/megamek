@@ -58,7 +58,19 @@ import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.*;
+import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.BuildingConstruction;
+import megamek.common.units.BuildingTarget;
+import megamek.common.units.ConvInfantry;
+import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
+import megamek.common.units.Infantry;
+import megamek.common.units.Mek;
+import megamek.common.units.MobileStructure;
+import megamek.common.units.Tank;
+import megamek.common.units.Targetable;
+import megamek.common.units.Terrains;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.InfantryAttack;
 import megamek.common.weapons.battleArmor.clan.CLBALBX;
@@ -88,6 +100,10 @@ public class ComputeToHit {
             logger.error("Attempted toHit calculation with a null weapon!");
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No weapon");
         }
+        if (weaponEntity instanceof MobileStructure mobile
+              && !game.getBoard(mobile).contains(mobile.getLocationCoords(weapon.getLocation()))) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "An off-map Mobile Structure hex cannot attack");
+        }
         final AmmoMounted linkedAmmo;
         if (ammoId == WeaponAttackAction.UNASSIGNED) {
             linkedAmmo = weapon.getLinkedAmmo();
@@ -103,6 +119,24 @@ public class ComputeToHit {
         if (target == null) {
             logger.error("{} Attempting to attack null target", attackerId);
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
+        if (target instanceof megamek.common.units.WallTarget wall) {
+            target = wall.viewFrom(ae.getPosition());
+        }
+        if (target instanceof AbstractBuildingEntity building && BuildingConstruction.usesHexsides(building)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Select the wall or fence hexside to attack");
+        }
+
+        if (target instanceof AbstractBuildingEntity building && aimingAt != Entity.LOC_NONE && !aimingMode.isNone()) {
+            if (aimingAt < 0 || aimingAt >= building.locations() || building.getInternal(aimingAt) <= 0
+                  || (ae.getBoardId() == building.getBoardId() && building.isIn(ae.getPosition()) && ae.isInBuilding())) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Aimed building shots require a standing location and an outside attacker");
+            }
+            target = new BuildingTarget(building, aimingAt);
+        }
+        if (target instanceof BuildingTarget buildingTarget
+              && !game.getBoard(target.getBoardId()).contains(buildingTarget.getPosition())) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "An off-map Mobile Structure hex cannot be attacked");
         }
 
         Targetable swarmSecondaryTarget = target;
@@ -600,6 +634,15 @@ public class ComputeToHit {
         if (gamemasterModifier != 0) {
             toHit.addModifier(gamemasterModifier, Messages.getString("WeaponAttackAction.GamemasterModifier"));
         }
+        if (ae instanceof AbstractBuildingEntity building && building.getDesign().getAutomatedWeapons().contains(weapon)) {
+            toHit = new ToHitData(5, "Automated building weapon");
+            if (ComputeECM.isAffectedByECM(ae, building.getWeaponFiringPosition(weapon), target.getPosition(), allECMInfo)) {
+                toHit.addModifier(1, "Hostile ECM affects automated targeting");
+            }
+        }
+        if (ae instanceof MobileStructure mobile && mobile.getMobileCrewHits() > 0) {
+            toHit.addModifier(mobile.getMobileCrewHits(), "Mobile Structure crew hits");
+        }
 
         // Is this an Artillery attack?
         if (isArtilleryDirect || isArtilleryIndirect) {
@@ -1070,7 +1113,7 @@ public class ComputeToHit {
         // Buildings
 
         // Attacks against adjacent buildings automatically hit.
-        boolean isBuilding = (targetType == Targetable.TYPE_BUILDING) ||
+        boolean isBuilding = (Targetable.isBuildingType(targetType)) ||
               (targetType == Targetable.TYPE_BLDG_IGNITE) ||
               (targetType == Targetable.TYPE_FUEL_TANK) ||
               (targetType == Targetable.TYPE_FUEL_TANK_IGNITE) ||

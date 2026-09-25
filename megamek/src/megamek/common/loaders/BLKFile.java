@@ -358,11 +358,17 @@ public class BLKFile {
                         } else if (t instanceof AbstractBuildingEntity) {
                             mount.setFacing(facing);
                         }
-                        if (shots > 0) {
+                        if (shots > 0 || (shots == 0 && t instanceof AbstractBuildingEntity)) {
                             mount.setOriginalShots(shots);
                             mount.setShotsLeft(shots);
-                            mount.setSize(shots);
+                            if (!(t instanceof AbstractBuildingEntity)) {
+                                mount.setSize(shots);
+                            }
+                        } else if (shots == -1 && t instanceof AbstractBuildingEntity && etype instanceof AmmoType) {
+                            // Building clean sheets use the authored starting load, including default full bins.
+                            mount.setOriginalShots(mount.getBaseShotsLeft());
                         }
+
                         if (etype instanceof MiscType && mount.getType().hasFlag(MiscType.F_LIFT_HOIST)) { //
                             // Cargo
                             // Container too?
@@ -790,7 +796,7 @@ public class BLKFile {
         } else if (t instanceof HandheldWeapon) {
             blk.writeBlockData("UnitType", "HandheldWeapon");
         } else if (t instanceof AbstractBuildingEntity) {
-            blk.writeBlockData("UnitType", "BuildingEntity");
+            blk.writeBlockData("UnitType", t instanceof MobileStructure ? "MobileStructure" : "BuildingEntity");
         }
 
         blk.writeBlockData("Name", t.getChassis());
@@ -838,7 +844,9 @@ public class BLKFile {
             for (IOption weaponQuirk : equipment.getQuirks().activeQuirks()) {
                 weaponQuirkList.add(weaponQuirk.getName() +
                       ":" +
-                      t.getLocationAbbr(equipment.getLocation()) +
+                      (t instanceof AbstractBuildingEntity building
+                            ? building.getConstructionLocationAbbr(equipment.getLocation())
+                            : t.getLocationAbbr(equipment.getLocation())) +
                       ":" +
                       t.slotNumber(equipment) +
                       ":" +
@@ -877,7 +885,7 @@ public class BLKFile {
             }
         }
 
-        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement)) {
+        if (!(t.isConventionalInfantry() || t.isHandheldWeapon() || t instanceof GunEmplacement || t instanceof AbstractBuildingEntity)) {
             if (t instanceof Aero) {
                 blk.writeBlockData("SafeThrust", t.getOriginalWalkMP());
             } else {
@@ -925,13 +933,14 @@ public class BLKFile {
                 blk.writeBlockData("armor_type", EquipmentType.T_ARMOR_PATCHWORK);
                 for (int i = 0; i < t.locations(); i++) {
                     ArmorType armor = ArmorType.forEntity(t, i);
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_type", armor.getArmorType());
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech",
+                    String locationName = getDesignLocationName(t, i);
+                    blk.writeBlockData(locationName + "_armor_type", armor.getArmorType());
+                    blk.writeBlockData(locationName + "_armor_tech",
                           TechConstants.getTechName(t.getArmorTechLevel(i)));
-                    blk.writeBlockData(t.getLocationName(i) + "_armor_tech_rating",
+                    blk.writeBlockData(locationName + "_armor_tech_rating",
                           armor.getTechRating().getIndex());
                     if (armor.hasFlag(MiscType.F_SUPPORT_VEE_BAR_ARMOR)) {
-                        blk.writeBlockData(t.getLocationName(i) + "_barrating", armor.getBAR());
+                        blk.writeBlockData(locationName + "_barrating", armor.getBAR());
                     }
                 }
             } else {
@@ -964,7 +973,7 @@ public class BLKFile {
             }
             blk.writeBlockData("armor", armor_array);
         } else if (t instanceof AbstractBuildingEntity abstractBuildingEntity) {
-            blk.writeBlockData("armor", abstractBuildingEntity.getInternalBuilding().getArmor(CubeCoords.ZERO));
+            blk.writeBlockData("armor", abstractBuildingEntity.getOArmor(0));
         }
 
         // Write out armor_type and armor_tech entries for BA
@@ -981,17 +990,12 @@ public class BLKFile {
         for (Mounted<?> m : t.getEquipment()) {
             // Ignore Mounted's that represent a WeaponGroup
             // BA anti-personnel weapon are written just after the mount
-            if (m.isWeaponGroup() || m.isAPMMounted() || (m.getType() instanceof InfantryAttack)) {
+            if (isImplicitEquipment(m)) {
                 continue;
             }
 
             // Infantry primary and secondary are written separately
             if (t.isConventionalInfantry() && m.getType() instanceof InfantryWeapon) {
-                continue;
-            }
-
-            // Ignore ammo for one-shot launchers
-            if ((m.getLinkedBy() != null) && (m.getLinkedBy().isOneShot())) {
                 continue;
             }
 
@@ -1037,7 +1041,7 @@ public class BLKFile {
             }
         }
         for (int i = 0; i < numLocs; i++) {
-            blk.writeBlockData(t.getLocationName(i) + " Equipment", eq.get(i));
+            blk.writeBlockData(getDesignLocationName(t, i) + " Equipment", eq.get(i));
         }
 
         // Write slotless equipment (LOC_NONE) - e.g., cockpit modifications like DNI.
@@ -1250,13 +1254,26 @@ public class BLKFile {
                 blk.writeBlockData("building_class", abstractBuildingEntity.getBldgClass());
                 blk.writeBlockData("building_type", abstractBuildingEntity.getBuildingType().getTypeValue());
                 blk.writeBlockData("height", abstractBuildingEntity.getInternalBuilding().getBuildingHeight());
-                blk.writeBlockData("cf", abstractBuildingEntity.getInternalBuilding().getCurrentCF(CubeCoords.ZERO));
+                blk.writeBlockData("cf", abstractBuildingEntity.getOInternal(0));
                 if (abstractBuildingEntity.hasExplicitCrewCount()) {
                     blk.writeBlockData("crew", abstractBuildingEntity.getNCrew());
                 }
 
                 blk.writeBlockData("coords",
                       abstractBuildingEntity.getInternalBuilding().getCoordsList().toArray(new CubeCoords[0]));
+                BuildingDesignCodec.write(blk, abstractBuildingEntity);
+                if (abstractBuildingEntity instanceof MobileStructure mobile) {
+                    blk.writeBlockData("cruiseMP", mobile.getMaximumMP());
+                    blk.writeBlockData("power_system", mobile.getPowerSystem().name());
+                    blk.writeBlockData("operating_range", mobile.getOperatingRange());
+                    if (!mobile.getFuelLocations().isEmpty()) {
+                        blk.writeBlockData("fuel_locations", mobile.getFuelLocations().entrySet().stream()
+                              .map(entry -> (int) entry.getKey().q() + "," + (int) entry.getKey().r() + ","
+                                    + (int) entry.getKey().s() + ";" + entry.getValue()).toArray(String[]::new));
+                    }
+                    blk.writeBlockData("hex_heights", mobile.getInternalBuilding().getOriginalCoordsList().stream()
+                          .mapToInt(mobile.getInternalBuilding()::getHeight).toArray());
+                }
             }
             default -> blk.writeBlockData("tonnage", t.getWeight());
         }
@@ -1370,6 +1387,11 @@ public class BLKFile {
         return blk;
     }
 
+    private static String getDesignLocationName(Entity entity, int location) {
+        return entity instanceof AbstractBuildingEntity building
+              ? building.getConstructionLocationName(location) : entity.getLocationName(location);
+    }
+
     private static String getType(Entity t) {
         String type;
         if (t.isMixedTech()) {
@@ -1466,6 +1488,12 @@ public class BLKFile {
         return quirk.getName();
     }
 
+    /** Entries recreated by their parent mount or written outside the ordinary location equipment list. */
+    static boolean isImplicitEquipment(Mounted<?> mount) {
+        return mount.isWeaponGroup() || mount.isAPMMounted() || mount.getType() instanceof InfantryAttack
+              || (mount.getLinkedBy() != null && mount.getLinkedBy().isOneShot());
+    }
+
     private static String encodeEquipmentLine(Mounted<?> m) {
         String name = m.getType().getInternalName();
         if (m.getEntity() instanceof AbstractBuildingEntity) {
@@ -1518,7 +1546,8 @@ public class BLKFile {
         }
         // For BattleArmor and ProtoMeks, we need to save how many shots are in this
         // location, but they have different formats, yay!
-        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon) &&
+        if ((m.getEntity() instanceof BattleArmor || m.getEntity() instanceof HandheldWeapon
+              || m.getEntity() instanceof AbstractBuildingEntity) &&
               (m.getType() instanceof AmmoType)) {
             name += ":Shots" + m.getBaseShotsLeft() + "#";
         } else if (m.getEntity() instanceof ProtoMek && (m.getType() instanceof AmmoType)) {

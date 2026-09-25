@@ -99,7 +99,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);
@@ -306,7 +306,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getRackSize(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
@@ -1012,7 +1012,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     return false;
                 }
                 // Targeting a building.
-                if (target.getTargetType() == Targetable.TYPE_BUILDING) {
+                if (Targetable.isBuildingType(target.getTargetType())) {
                     // The building takes the full brunt of the attack, all its hits as one attack (TW p. 171)
                     nDamage = nDamPerHit * hits;
                     handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());

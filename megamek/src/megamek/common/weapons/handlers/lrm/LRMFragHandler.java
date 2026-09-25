@@ -81,14 +81,14 @@ public class LRMFragHandler extends LRMHandler {
             toReturn *= ((BattleArmor) attackingEntity).getShootingStrength();
         }
         // against infantry, we have 1 hit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn = weaponType.getRackSize();
             if (bDirect) {
                 toReturn += (int) floor(toHit.getMoS() / 3.0);
             }
         }
 
-        if ((target instanceof Entity) && !target.isConventionalInfantry()) {
+        if ((target instanceof Entity) && !usesConventionalInfantryDamage()) {
             toReturn = 0;
         }
 

@@ -74,7 +74,7 @@ public class MGAWeaponHandler extends MGHandler {
 
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             calcDmgPerHitReport.add(new Report(950));
             int damage = Compute.directBlowInfantryDamage(
                   weaponType.getDamage(), getInfantryDamageClassShift(),
@@ -136,8 +136,8 @@ public class MGAWeaponHandler extends MGHandler {
         int shotsHit;
         int nMod = getClusterModifiers(true);
         nMod += Game.rulesManager.getRulesWeapons().getMGABonus();
-        
-        if ((howManyShots == 1) || target.isConventionalInfantry()) {
+
+        if ((howManyShots == 1) || usesConventionalInfantryDamage()) {
             shotsHit = 1;
         } else {
             shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(

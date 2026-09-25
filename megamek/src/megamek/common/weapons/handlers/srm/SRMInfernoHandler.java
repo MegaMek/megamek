@@ -87,7 +87,7 @@ public class SRMInfernoHandler extends SRMHandler {
               && attackingEntity.getPosition().distance(target.getPosition()) <= 1;
 
         // Which building takes the damage?
-        IBuilding bldg = game.getBoard().getBuildingAt(target.getPosition());
+        IBuilding bldg = megamek.common.units.WallRules.getBuilding(game, target);
 
         // Report weapon attack and its to-hit value.
         Report r = new Report(3115);
@@ -195,7 +195,7 @@ public class SRMInfernoHandler extends SRMHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit with all missiles
         // BAs do one lump of damage per BA suit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             if (attackingEntity instanceof BattleArmor) {
                 bSalvo = true;
                 Report r = new Report(3325);

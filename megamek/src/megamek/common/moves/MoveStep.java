@@ -103,6 +103,8 @@ public class MoveStep implements Serializable {
     public static final int BRIDGE_TARGET_Y_KEY = 1;
     public static final int BRIDGE_EXITS_KEY = 2;
     public static final int BRIDGE_TYPE_KEY = 3;
+    public static final int MOBILE_PIVOT_Q_KEY = 0;
+    public static final int MOBILE_PIVOT_R_KEY = 1;
 
     /** Additional int data key for an UNLOAD_BY_CRANE step: the facing the unloaded unit is placed with. */
     public static final int CRANE_UNLOAD_FACING_KEY = 0;
@@ -155,6 +157,10 @@ public class MoveStep implements Serializable {
     private boolean isFlying;
     private boolean isHullDown;
     private boolean climbMode;
+    private megamek.common.units.WallTarget occupiedWall;
+
+    public megamek.common.units.WallTarget getOccupiedWall() { return occupiedWall; }
+    public void setOccupiedWall(megamek.common.units.WallTarget wall) { occupiedWall = wall; }
 
     private boolean danger; // keep psr
     private boolean pastDanger;
@@ -557,12 +563,28 @@ public class MoveStep implements Serializable {
      * @param prev              {@link MoveStep} Previous step.
      * @param cachedEntityState {@link CachedEntityState} the Cached Entity State
      */
-    void compileMove(final Game game,
-                     final Entity entity,
-                     MoveStep prev,
-                     CachedEntityState cachedEntityState) {
+    void compileMove(final Game game, final Entity entity, MoveStep prev, CachedEntityState cachedEntityState) {
+        if (entity instanceof MobileStructure mobile) {
+            setElevation(MobileStructureAirMovement.isAir(mobile)
+                  ? MobileStructureAirMovement.translatedElevation(mobile, prev.getPosition(), getPosition(), prev.getElevation())
+                  : prev.getElevation());
+            addDistance(1);
+            setMp(MobileStructureMovement.plannedCost(game, mobile, prev.getPosition(), prev.getFacing(), prev.getElevation(),
+                  getPosition(), getFacing(), getElevation(), prev.getMpUsed()));
+            return;
+        }
 
         Hex destHex = game.getBoard(boardId).getHex(getPosition());
+        if (megamek.common.units.LargeNavalVesselRules.collisionAttempt(entity, prev.getPosition(), prev.getFacing(),
+              prev.getElevation(), getPosition(), getFacing(), prev.getElevation())) {
+            setElevation(prev.getElevation());
+            addDistance(1);
+            setMp(1);
+            return;
+        }
+        if (!getPosition().equals(prev.getPosition()) && occupiedWall != null) {
+            occupiedWall = null;
+        }
 
         // Check for pavement movement.
         if (!entity.isAirborne() && Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), this)) {
@@ -697,7 +719,13 @@ public class MoveStep implements Serializable {
         } else {
             IBuilding bld = game.getBoard(boardId).getBuildingAt(getPosition());
 
-            if (bld != null) {
+            if (bld instanceof MobileStructure mobile && mobile.getMovementMode() == EntityMovementMode.TRACKED
+                  && !climbMode() && prev.getElevation() < mobile.getBaseElevation(getPosition())) {
+                Hex hex = game.getBoard(boardId).getHex(getPosition());
+                boolean floats = entity.getMovementMode().isHover() || entity.getMovementMode().isWiGE()
+                      || entity.getMovementMode().isNaval();
+                setElevation(floats ? 0 : -hex.depth());
+            } else if (bld != null) {
                 Hex hex = game.getBoard(boardId).getHex(getPosition());
                 int maxElevation = (entity.getElevation() + game.getBoard(boardId)
                                                                 .getHex(entity.getPosition())
@@ -870,6 +898,16 @@ public class MoveStep implements Serializable {
         PhasePass phasePass = PhasePassSelector.getPhasePass(getType());
         phasePass.execute(this, game, entity, prev, cachedEntityState);
 
+        if (entity instanceof MobileStructure mobile && MobileStructureAirMovement.isAir(mobile)) {
+            if (MobileStructureAirMovement.isAction(type)) {
+                setElevation(MobileStructureAirMovement.actionElevation(mobile, type));
+                setMp(MobileStructureAirMovement.plannedActionCost(mobile, type));
+            } else if (MobileStructureMovement.isMovementStep(type) && type != MoveStepType.UP && type != MoveStepType.DOWN) {
+                setElevation(MobileStructureAirMovement.translatedElevation(mobile, prev.getPosition(), getPosition(),
+                      prev.getElevation()));
+            }
+        }
+
         if (noCost) {
             setMp(0);
         }
@@ -891,8 +929,20 @@ public class MoveStep implements Serializable {
             setHullDown(false);
         }
 
+        if (entity instanceof MobileStructure && (type == MoveStepType.UNLOAD || type == MoveStepType.LOAD)) {
+            setMp(0);
+        }
         // Update the entity's total MP used.
-        addMpUsed(getMp());
+        if (entity instanceof MobileStructure mobile && MobileStructureMovement.isMovementStep(type)) {
+            setMp(MobileStructureMovement.plannedCost(game, mobile, prev.getPosition(), prev.getFacing(), prev.getElevation(),
+                  getPosition(), getFacing(), getElevation(), prev.getMpUsed()));
+        }
+        if (entity instanceof MobileStructure && (getMp() == MobileStructureMovement.PROHIBITED
+              || (long) getMpUsed() + getMp() > Integer.MAX_VALUE)) {
+            mpUsed = Integer.MAX_VALUE;
+        } else {
+            addMpUsed(getMp());
+        }
 
         // Check for a stacking violation.
         final Entity violation = Compute.stackingViolation(game,
@@ -902,12 +952,12 @@ public class MoveStep implements Serializable {
               null,
               climbMode,
               true);
-        // A MOUNT step boards the adjacent transport, so the unit does not end its move in this hex. A Mek may move
-        // through a friendly Mek's hex but may not end its move there (TW, Occupied Hexes and Stacking)
-        if ((violation != null)
-              && (getType() != MoveStepType.CHARGE)
-              && (getType() != MoveStepType.DFA)
-              && (getType() != MoveStepType.MOUNT)) {
+        var vtolDeck = entity instanceof VTOL && violation instanceof VTOL
+              ? megamek.common.units.BuildingFlightDeckRules.landingDeck(entity, boardId, getPosition(), getFacing(), true) : null;
+        boolean deckStacking = vtolDeck != null && getElevation() == vtolDeck.elevation(getPosition());
+        // Mounting leaves this hex; a unit may board after passing through a friendly unit's hex.
+        if ((violation != null) && !deckStacking && (getType() != MoveStepType.CHARGE)
+              && (getType() != MoveStepType.DFA) && (getType() != MoveStepType.MOUNT)) {
             setStackingViolation(true);
         }
 
@@ -1011,6 +1061,7 @@ public class MoveStep implements Serializable {
         isFlying = prev.isFlying;
         isHullDown = prev.isHullDown;
         climbMode = prev.climbMode;
+        occupiedWall = prev.occupiedWall;
         isRunProhibited = prev.isRunProhibited;
         isClimbing = prev.isClimbing;
         hasEverUnloaded = prev.hasEverUnloaded;
@@ -1052,6 +1103,7 @@ public class MoveStep implements Serializable {
         isFlying = entity.isAirborne() || entity.isAirborneVTOLorWIGE();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
+        occupiedWall = entity.getOccupiedWall();
         isClimbing = entity.isClimbing();
         thisStepBackwards = entity.inReverse;
 
@@ -1082,7 +1134,6 @@ public class MoveStep implements Serializable {
         // TODO: figure this out
         int[] tempMv = entity.getVectors();
 
-        mv = new int[] { 0, 0, 0, 0, 0, 0 };
         mv = Arrays.copyOf(tempMv, 6);
 
         // if ASF get velocity
@@ -1116,7 +1167,7 @@ public class MoveStep implements Serializable {
         }
 
         // check pavement & water
-        if (position != null) {
+        if (position != null && !(entity instanceof MobileStructure)) {
             Hex curHex = game.getBoard(boardId).getHex(position);
             if (curHex.hasPavementOrRoad()) {
                 if (curHex.hasPavement()) {
@@ -1372,16 +1423,16 @@ public class MoveStep implements Serializable {
         } else if (isJumping() && (distance == 0)) {
             // Can't jump zero hexes.
             legal = false;
-        } else if (hasEverUnloaded &&
-                   (type != MoveStepType.UNLOAD) &&
-                   (type != MoveStepType.LAUNCH) &&
-                   (type != MoveStepType.DROP) &&
-                   (type != MoveStepType.UNDOCK) &&
-                   (type != MoveStepType.DISCONNECT) &&
-                   (type != MoveStepType.CHAFF) &&
-                   (type != MoveStepType.DROP_CARGO) &&
-                   (getAltitude() == 0)) {
-            // Can't be after unloading BA/inf
+        } else if (hasEverUnloaded && !(getEntity() instanceof MobileStructure) &&
+              (type != MoveStepType.UNLOAD) &&
+              (type != MoveStepType.LAUNCH) &&
+              (type != MoveStepType.DROP) &&
+              (type != MoveStepType.UNDOCK) &&
+              (type != MoveStepType.DISCONNECT) &&
+              (type != MoveStepType.CHAFF) &&
+              (type != MoveStepType.DROP_CARGO) &&
+              (getAltitude() == 0)) {
+            // Ordinary carriers stop after unloading BA/inf; mobile structures may move (TO:AUE p.38).
             legal = false;
         }
 
@@ -1751,10 +1802,95 @@ public class MoveStep implements Serializable {
      * @param entity The {@link Entity} taking this step.
      * @param prev   The {@link MoveStep} previous step in the path.
      */
-    private void compileIllegal(final Game game,
-                                final Entity entity,
-                                final MoveStep prev,
-                                CachedEntityState cachedEntityState) {
+    private void compileIllegal(final Game game, final Entity entity, final MoveStep prev,
+          CachedEntityState cachedEntityState) {
+        if (type == MoveStepType.WALL_LAND) {
+            var wall = getTarget(game) instanceof megamek.common.units.WallTarget target ? target : null;
+            boolean legal = isJumping() && !entity.isImmobile() && !isProne
+                  && megamek.common.units.WallRules.canStandOn(entity, wall, position, elevation)
+                  && prev.movementType != EntityMovementType.MOVE_ILLEGAL
+                  && mpUsed <= getAvailableJumpMP(entity) && distance > 0
+                  && elevation + game.getBoard(boardId).getHex(position).getLevel()
+                        <= entity.getElevation() + game.getBoard(boardId).getHex(entity.getPosition()).getLevel()
+                              + getAvailableJumpMP(entity);
+            movementType = legal ? EntityMovementType.MOVE_JUMP : EntityMovementType.MOVE_ILLEGAL;
+            isClimbing = false;
+            return;
+        }
+        if (type == MoveStepType.WALL_ASCEND || type == MoveStepType.WALL_DESCEND) {
+            var wall = getTarget(game) instanceof megamek.common.units.WallTarget target ? target : null;
+            boolean sameWall = prev.occupiedWall == null || wall != null
+                  && prev.occupiedWall.getId() == wall.getId()
+                  && prev.occupiedWall.getTargetType() == wall.getTargetType();
+            boolean legal = !isJumping() && !entity.isImmobile() && !isProne && sameWall
+                  && megamek.common.units.WallRules.canClimbStep(entity, wall, position, elevation)
+                  && prev.movementType != EntityMovementType.MOVE_ILLEGAL && mpUsed <= cachedEntityState.getWalkMP();
+            movementType = legal ? EntityMovementType.MOVE_WALK : EntityMovementType.MOVE_ILLEGAL;
+            isRunProhibited = true;
+            isClimbing = occupiedWall != null && wall != null && wall.segment(game) != null
+                  && (wall.segment(game).fence()
+                        || elevation + game.getBoard(boardId).getHex(position).getLevel() < wall.segment(game).topAltitude());
+            return;
+        }
+        if (entity instanceof MobileStructure mobile) {
+            if (type == MoveStepType.DEPLOY) {
+                movementType = mobile.isDeploymentPositionAndFacingValid(position, facing, elevation, boardId)
+                      ? EntityMovementType.MOVE_NONE : EntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
+            if (MobileStructureAirMovement.isAction(type)) {
+                boolean legal = isFirstStep() && prev.getMpUsed() == 0
+                      && MobileStructureAirMovement.canAttempt(mobile, type);
+                movementType = legal ? EntityMovementType.MOVE_RUN : EntityMovementType.MOVE_ILLEGAL;
+                setStackingViolation(false);
+                return;
+            }
+            if (type == MoveStepType.LOAD) {
+                boolean legal = getTarget(game) instanceof Entity passenger
+                      && prev.movementType != EntityMovementType.MOVE_ILLEGAL
+                      && MobileStructureCargoRules.loadableUnits(mobile,
+                            new MobileStructureLinkage.Pose(position, facing, elevation)).contains(passenger);
+                movementType = legal ? EntityMovementType.MOVE_WALK : EntityMovementType.MOVE_ILLEGAL;
+                setStackingViolation(false);
+                return;
+            }
+            if (type == MoveStepType.UNLOAD) {
+                boolean legal = getTarget(game) instanceof Entity passenger
+                      && MobileStructureCargoRules.exits(mobile, passenger,
+                            new MobileStructureLinkage.Pose(position, facing, elevation)).stream()
+                            .anyMatch(exit -> exit.position().equals(getTargetPosition()));
+                movementType = legal ? EntityMovementType.MOVE_WALK : EntityMovementType.MOVE_ILLEGAL;
+                setStackingViolation(false);
+                return;
+            }
+            if (type == MoveStepType.LAUNCH) {
+                boolean legal = megamek.common.units.MobileStructureBayLaunch.valid(mobile, position, facing, elevation,
+                      getLaunched()) && prev.movementType != EntityMovementType.MOVE_ILLEGAL;
+                movementType = legal ? EntityMovementType.MOVE_WALK : EntityMovementType.MOVE_ILLEGAL;
+                setStackingViolation(false);
+                return;
+            }
+            if (type == MoveStepType.MODULE_LINK || type == MoveStepType.MODULE_UNLINK) {
+                boolean legal = isFirstStep() && prev.getMpUsed() == 0
+                      && getTarget(game) instanceof MobileStructure other
+                      && (type == MoveStepType.MODULE_LINK ? MobileStructureLinkage.canLink(mobile, other)
+                            : MobileStructureLinkage.directlyLinked(mobile, other));
+                movementType = legal ? EntityMovementType.MOVE_WALK : EntityMovementType.MOVE_ILLEGAL;
+                setStackingViolation(false);
+                return;
+            }
+            // A slow structure can commit its movement to a single hex over several turns.
+            boolean legal = MobileStructureMovement.isMovementStep(type) && !mobile.isImmobile()
+                  && (type != MoveStepType.HOVER || MobileStructureAirMovement.isAirborne(mobile))
+                  && prev.getType() != MoveStepType.MODULE_LINK && prev.getType() != MoveStepType.MODULE_UNLINK
+                  && !MobileStructureAirMovement.isAction(prev.getType())
+                  && mp != MobileStructureMovement.PROHIBITED
+                  && prev.movementType != EntityMovementType.MOVE_ILLEGAL
+                  && prev.getMpUsed() < mobile.getWalkMP();
+            movementType = legal ? EntityMovementType.MOVE_RUN : EntityMovementType.MOVE_ILLEGAL;
+            setStackingViolation(false); // Mobile collisions are resolved by their dedicated movement handler.
+            return;
+        }
         final MoveStepType stepType = getType();
         final boolean isInfantry = entity instanceof Infantry;
         final boolean isTank = entity instanceof Tank;
@@ -1946,6 +2082,13 @@ public class MoveStep implements Serializable {
 
             // no moves after being recovered
             if (!isFirstStep() && (prev.getType() == MoveStepType.RECOVER)) {
+                return;
+            }
+
+            if (type == MoveStepType.RECOVER
+                  && game.getEntity(getRecoveryUnit()) instanceof MobileStructure mobile
+                  && MobileStructureBayRecovery.entry(mobile, entity, getPosition(), boardId, getFacing(),
+                        getVelocity(), getAltitude()) == null) {
                 return;
             }
 
@@ -2420,7 +2563,9 @@ public class MoveStep implements Serializable {
 
         // check for valid walk/run mp; BRACE is a special case for ProtoMeks
         // 0 MP infantry with fast movement have runMPMax > 0 even when tmpWalkMP is 0
-        if (!isJumping() &&
+        // MOUNT uses its own walking/minimum-movement check below; its cost must not activate MP boosters.
+        if (stepType != MoveStepType.MOUNT &&
+            !isJumping() &&
             !entity.isStuck() &&
             ((tmpWalkMP > 0) || (runMPMax > 0)) &&
             ((getMp() > 0) || (stepType == MoveStepType.BRACE))) {
@@ -3020,7 +3165,7 @@ public class MoveStep implements Serializable {
         }
 
         if (stepType == MoveStepType.MOUNT) {
-            MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(entity,
+            MountPathHelper.MountRestriction restriction = MountPathHelper.mountRestriction(entity, getTarget(game),
                   cachedEntityState.getWalkMP(), prev.getMpUsed(), isJumping());
             if (restriction != MountPathHelper.MountRestriction.NONE) {
                 LOGGER.debug("[Mount] {} may not mount after spending {} MP (Walking MP {}, jumping {}): {}",
@@ -3573,23 +3718,39 @@ public class MoveStep implements Serializable {
             mp += 1;
         }
 
+        if (!isJumping()) {
+            mp += megamek.common.units.WallRules.movementCost(entity, prevStep.getPosition(), getPosition(),
+                  prevStep.getElevation(), elevation, climbMode);
+        }
+        if (MobileStructureMovement.undercarriage(game, boardId, getPosition(), elevation, entity.height()) != null
+              && !destHex.containsTerrain(Terrains.WOODS, Terrains.JUNGLE)) {
+            mp += new Terrain(Terrains.WOODS, 1).movementCost(entity);
+            if (isInfantry && !isMechanizedInfantry) {
+                mp--;
+            }
+        }
+
         // If we're entering a building, all non-infantry pay additional MP.
-        if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
-            IBuilding bldg = game.getBoard(boardId).getBuildingAt(getPosition());
+        IBuilding interiorBuilding = game.getBoard(boardId).getBuildingAt(getPosition(), elevation);
+        if (interiorBuilding != null) {
+            IBuilding bldg = interiorBuilding;
             // check for inside hangar movement
             if (!isInfantry && !isSuperHeavyMek) {
-                if (!isProto) {
-                    // non-ProtoMeks pay extra according to the building type
-                    mp += bldg.getBuildingType().getTypeValue();
-                    if (bldg.getBldgClass() == IBuilding.HANGAR) {
-                        mp--;
-                    }
-                    if (bldg.getBldgClass() == IBuilding.FORTRESS) {
-                        mp++;
+                if (bldg instanceof AbstractBuildingEntity buildingEntity) {
+                    if (megamek.common.units.BuildingInteriorRules.paved(buildingEntity, entity, prev, getPosition(), elevation)) {
+                        isPavementStep = true;
+                    } else {
+                        boolean withinHall = megamek.common.units.BuildingInteriorRules.hallFits(buildingEntity, entity, getPosition())
+                              && !megamek.common.units.BuildingInteriorRules.exteriorWall(bldg, prev, getPosition(), elevation);
+                        if (!withinHall) {
+                            mp += megamek.common.units.BuildingInteriorRules.baseMovement(bldg, entity);
+                        }
+                        mp += megamek.common.units.BuildingInteriorRules.movementModifier(buildingEntity, entity, prev,
+                              getPosition(), elevation);
+                        mp = Math.max(1, mp);
                     }
                 } else {
-                    // ProtoMeks pay one extra
-                    mp += 1;
+                    mp += megamek.common.units.BuildingInteriorRules.baseMovement(bldg, entity);
                 }
             } else if (isMechanizedInfantry) {
                 // mechanized infantry pays 1 extra
@@ -3627,7 +3788,36 @@ public class MoveStep implements Serializable {
         if (destHex == null) {
             return false;
         }
-        if (dest == null) {
+        if (entity instanceof VTOL) {
+            var sourceDeck = megamek.common.units.BuildingFlightDeckRules.onDeck(entity);
+            if (sourceDeck != null && (elevation != srcEl || !src.equals(dest)) && !sourceDeck.available()) {
+                return false;
+            }
+            boolean descendingOntoDeck = type == MoveStepType.DOWN
+                  && megamek.common.units.BuildingFlightDeckRules.decksAt(game, boardId, dest).stream()
+                        .anyMatch(deck -> deck.elevation(dest) == elevation);
+            if (descendingOntoDeck && megamek.common.units.BuildingFlightDeckRules.landingDeck(entity, boardId, dest,
+                  facing, true) == null) {
+                return false;
+            }
+        }
+        if (!megamek.common.units.MobileStructureNavalRules.canDepart(entity, src, srcEl,
+              dest, elevation, isJumping())) {
+            return false;
+        }
+        if (!isJumping() && !megamek.common.units.WallRules.canCross(entity, src, dest, srcEl, elevation, climbMode)) {
+            return false;
+        }
+        if (src != null && !src.equals(dest) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE()
+              && !(entity instanceof IBuilding) && !isJumping()) {
+            IndustrialElevator sourceLift = game.getIndustrialElevator(BoardLocation.of(src, boardId), srcEl);
+            IndustrialElevator destinationLift = game.getIndustrialElevator(BoardLocation.of(dest, boardId), elevation);
+            if ((sourceLift != null && !sourceLift.canAccess(srcEl, src.direction(dest)))
+                  || (destinationLift != null && !destinationLift.canAccess(elevation, dest.direction(src)))) {
+                return false;
+            }
+        }
+        if (null == dest) {
             var ex = new IllegalStateException("Step has no position");
             LOGGER.error("", ex);
             throw ex;
@@ -3706,7 +3896,38 @@ public class MoveStep implements Serializable {
 
         final int srcAlt = srcEl + srcHex.getLevel();
 
-        IBuilding bld = game.getBoard(boardId).getBuildingAt(dest);
+        int navalSourceFacing = type == MoveStepType.TURN_LEFT ? Math.floorMod(facing + 1, 6)
+              : type == MoveStepType.TURN_RIGHT ? Math.floorMod(facing - 1, 6) : facing;
+        if (megamek.common.units.LargeNavalVesselRules.collisionAttempt(entity, src, navalSourceFacing, srcEl,
+              dest, facing, elevation)) {
+            return true;
+        }
+
+        if (src.equals(dest) && MobileStructureMovement.surfacingObstacle(entity, dest, srcEl, elevation) != null) {
+            return true;
+        }
+
+        IBuilding bld = game.getBoard(boardId).getBuildingAt(dest, elevation);
+        if (bld == null) {
+            bld = game.getBoard(boardId).getBuildingAt(dest);
+        }
+        if (MobileStructureMovement.undercarriage(game, boardId, dest, elevation, entity.height()) != null) {
+            if (!MobileStructureMovement.canPassUnder(entity)) {
+                return false;
+            }
+            if (bld instanceof MobileStructure) {
+                bld = null;
+            }
+        }
+        IBuilding sourceInterior = game.getBoard(boardId).getBuildingAt(src, srcEl);
+        IBuilding destinationInterior = game.getBoard(boardId).getBuildingAt(dest, elevation);
+        // Underground walls border solid earth unless there is a connected built volume at the same altitude.
+        if ((megamek.common.units.BuildingElevation.undergroundAt(sourceInterior, src, srcEl)
+                    && destinationInterior == null && elevation < -destHex.depth())
+              || (megamek.common.units.BuildingElevation.undergroundAt(destinationInterior, dest, elevation)
+                    && sourceInterior == null && srcEl < -srcHex.depth())) {
+            return false;
+        }
 
         final int destAlt;
         // For buildings (but NOT bridges), when entering from ground level in climbMode,
@@ -3746,8 +3967,9 @@ public class MoveStep implements Serializable {
 
             // only infantry can enter an armored building
             if ((elevation < hex.terrainLevel(Terrains.BLDG_ELEV)) &&
-                (bld.getArmor(dest) > 0) &&
-                !(entity instanceof Infantry)) {
+                  (bld.getArmor(dest) > 0) &&
+                  !(entity instanceof Infantry) && !bld.isIn(src) && !(bld instanceof AbstractBuildingEntity buildingEntity
+                        && buildingEntity.getBuildingRuntimeState().openPassage(buildingEntity, entity, src, dest, elevation))) {
                 return false;
             }
 
@@ -4087,24 +4309,27 @@ public class MoveStep implements Serializable {
         // approach roads, such as those raised by Bridge-Building Engineers (TO:AUE p.152), where the step onto the
         // bridge does not qualify as a pavement step.
         if (entity.isLocationProhibited(dest, boardId, getElevation())
-            && !isOnBridgeDeck(game.getBoard(boardId).getHex(dest), getElevation())
-            // Units in prohibited terran should still be able to unload/disconnect
-            &&
-            (type != MoveStepType.UNLOAD) &&
-            (type != MoveStepType.DISCONNECT)
-            // Should allow vertical takeoffs
-            &&
-            (type != MoveStepType.VERTICAL_TAKE_OFF)
-            // QuadVees can convert to vehicle mode even if they cannot enter the terrain
-            &&
-            (type != MoveStepType.CONVERT_MODE) &&
-            (!isPavementStep() ||
-             (nMove == EntityMovementMode.NAVAL) ||
-             (nMove == EntityMovementMode.HYDROFOIL) ||
-             (nMove == EntityMovementMode.SUBMARINE)) &&
-            (movementType != EntityMovementType.MOVE_VTOL_WALK) &&
-            (movementType != EntityMovementType.MOVE_VTOL_RUN) &&
-            (movementType != EntityMovementType.MOVE_VTOL_SPRINT)) {
+              && !(destinationInterior instanceof AbstractBuildingEntity authoredInterior
+                    && !authoredInterior.getBuildingRuntimeState().isFlooded(authoredInterior.boardToRelative(dest),
+                          megamek.common.units.BuildingElevation.floor(authoredInterior, dest, elevation)))
+              && !isOnBridgeDeck(game.getBoard(boardId).getHex(dest), getElevation())
+              // Units in prohibited terran should still be able to unload/disconnect
+              &&
+              (type != MoveStepType.UNLOAD) &&
+              (type != MoveStepType.DISCONNECT)
+              // Should allow vertical takeoffs
+              &&
+              (type != MoveStepType.VERTICAL_TAKE_OFF)
+              // QuadVees can convert to vehicle mode even if they cannot enter the terrain
+              &&
+              (type != MoveStepType.CONVERT_MODE) &&
+              (!isPavementStep() ||
+                    (nMove == EntityMovementMode.NAVAL) ||
+                    (nMove == EntityMovementMode.HYDROFOIL) ||
+                    (nMove == EntityMovementMode.SUBMARINE)) &&
+              (movementType != EntityMovementType.MOVE_VTOL_WALK) &&
+              (movementType != EntityMovementType.MOVE_VTOL_RUN) &&
+              (movementType != EntityMovementType.MOVE_VTOL_SPRINT)) {
 
             // We're allowed to pass *over* invalid
             // terrain, but we can't end there.
@@ -4260,7 +4485,10 @@ public class MoveStep implements Serializable {
         }
 
         // check the elevation is valid for the type of entity and hex
-        if ((type != MoveStepType.DFA) && !entity.isElevationValid(elevation, destHex)) {
+        boolean wallSupports = occupiedWall != null && megamek.common.units.WallRules.canClimbStep(entity,
+              occupiedWall, position, elevation) || occupiedWall != null
+                    && megamek.common.units.WallRules.canStandOn(entity, occupiedWall, position, elevation);
+        if ((type != MoveStepType.DFA) && !wallSupports && !entity.isElevationValid(elevation, destHex)) {
             LOGGER.debug("[CLIMB-TRACE] isMovementPossible: elevation NOT valid! elevation={}, " +
                          "destHex={}, destHex.level={}, destHex.ceiling={}, destHex.floor={}, " +
                          "isClimbing={}, entity={}",
@@ -4296,7 +4524,7 @@ public class MoveStep implements Serializable {
             LOGGER.debug("[IndustrialElevator] Step impossible at {}: no elevator terrain in hex", src);
             return false;
         }
-        IndustrialElevator elevator = game.getIndustrialElevator(BoardLocation.of(src, boardId));
+        IndustrialElevator elevator = game.getIndustrialElevator(BoardLocation.of(src, boardId), srcEl);
         if (elevator == null) {
             LOGGER.debug("[IndustrialElevator] Step impossible at {}: elevator terrain present but no elevator "
                          + "registered with the game", src);

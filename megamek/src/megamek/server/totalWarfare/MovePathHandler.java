@@ -140,6 +140,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
     private int thrustUsed = 0;
     private int j = 0;
     private boolean recovered = false;
+    private boolean mobileRecovered = false;
     private Entity loader = null;
     private boolean continueTurnFromPBS = false;
     private boolean continueTurnFromFishtail = false;
@@ -197,7 +198,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
         if ((step.getType() != MoveStepType.ELEVATOR_ASCEND) && (step.getType() != MoveStepType.ELEVATOR_DESCEND)) {
             return;
         }
-        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId));
+        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId), curElevation);
         if (elevator != null) {
             elevator.setPlatformLevel(curElevation);
             // Update the hex so the tileset shows the platform at its new level
@@ -234,7 +235,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             || isElevatorStep) {
             return false;
         }
-        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId));
+        IndustrialElevator elevator = getGame().getIndustrialElevator(BoardLocation.of(curPos, curBoardId), curElevation);
         if ((elevator == null) || !elevator.isFunctional() || elevator.isPlatformAt(curElevation)) {
             return false;
         }
@@ -338,7 +339,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 entityElevation = entity.getElevation();
             }
 
-            boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing);
+            boolean isLegalLocation = deploymentProcess.isLegalDeployment(position, boardId, entity, facing, entityElevation);
             if (!isLegalLocation) {
                 String msg = "server got invalid deployment packet from connection " + entity.getOwnerId();
                 msg += ", Entity: " + entity.getShortName();
@@ -370,6 +371,14 @@ class MovePathHandler extends AbstractTWRuleHandler {
             TWGameManager.datasetLogger.append(getGame(), true);
         }
 
+        var initialFlightDeck = megamek.common.units.BuildingFlightDeckRules.onDeck(entity);
+        if (entity instanceof megamek.common.units.MobileStructure mobile) {
+            new MobileStructureMovementHandler(gameManager).process(mobile, md);
+            return;
+        }
+        if (!new MobileStructureNavalHandler(gameManager).departDeck(entity, md)) {
+            return;
+        }
         // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
         // due to actuator damage since last turn (TO:AR p.20)
         // Climbing requires 1+ arms; dangling requires 2 arms
@@ -952,6 +961,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
         }
 
+        if (new BuildingFlightDeckHandler(gameManager).handleAircraft(entity, md,
+              usingAeroOnGroundMovement() || MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity),
+              () -> { if (!usingAeroOnGroundMovement()) { positionOnAtmosphericMap(); } })) {
+            return;
+        }
         if (md.contains(MoveStepType.TAKEOFF) && entity.isAero()) {
             if (!usingAeroOnGroundMovement() && !MovementDisplay.hasAtmosphericMapForLiftOff(getGame(), entity)) {
                 logger.warn("Received lift off without aero-on-ground movement and without atmospheric map.");
@@ -1254,6 +1268,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             entity.setElevation(curVTOLElevation);
         }
         entity.setAltitude(curAltitude);
+        new BuildingFlightDeckHandler(gameManager).completedVtolMovement(entity, initialFlightDeck, crashedDuringMovement);
         entity.setClimbMode(curClimbMode);
 
         // add a list of places passed through
@@ -1376,8 +1391,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                               "Thrust spent during turn exceeds SI"));
             }
 
-            if (!getGame().getBoard(entity.getBoardId()).isSpace()) {
-                rollTarget = a.checkVelocityDouble(md.getFinalVelocity(), overallMoveType);
+            // A successful recovery has already reached its bay; failed attempts still stall or lose altitude.
+            if (!recovered && !getGame().getBoard(entity.getBoardId()).isSpace()) {
+                rollTarget = a.checkVelocityDouble(md.getFinalVelocity(),
+                      overallMoveType);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     getGame().addControlRoll(new PilotingRollData(entity.getId(),
                                                                   0,
@@ -2110,7 +2127,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
                 loader.load(entity);
             } else {
-                loader.recover(entity);
+                if (!mobileRecovered) {
+                    loader.recover(entity);
+                }
                 entity.setRecoveryTurn(5);
             }
 
@@ -3473,6 +3492,20 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
+            if (!new MobileStructureCollisionHandler(gameManager).allowSurfacing(entity, lastPos, lastElevation, step)) {
+                curPos = entity.getPosition();
+                curFacing = entity.getFacing();
+                curVTOLElevation = entity.getElevation();
+                mpUsed = step.getMpUsed();
+                turnOver = true;
+                break;
+            }
+            if (!step.isJumping() && !new BuildingEnvironmentHandler(gameManager).canCross(entity, lastPos,
+                  lastElevation, step.getPosition(), step.getElevation(), gameManager.getMainPhaseReport())) {
+                mpUsed = step.getMpUsed();
+                turnOver = true;
+                break;
+            }
             // set last step parameters
             curPos = step.getPosition();
             if (!(step.isUsingMekJumpBooster() && step.isJumping())) {
@@ -3487,6 +3520,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
             curClimbMode = step.climbMode();
             // set elevation in case of collapses
             entity.setElevation(step.getElevation());
+            var previousWall = entity.getOccupiedWall();
+            entity.setOccupiedWall(step.getOccupiedWall());
+            if (step.getType() == MoveStepType.WALL_ASCEND || step.getType() == MoveStepType.WALL_DESCEND
+                  || step.getType() == MoveStepType.WALL_LAND) {
+                boolean completed = gameManager.climbWallSegment(entity, step, previousWall);
+                curElevation = entity.getElevation();
+                if (!completed) {
+                    curVTOLElevation = curElevation;
+                    break;
+                }
+            }
             // set climb mode in case of skid
             entity.setClimbMode(curClimbMode);
 
@@ -4309,23 +4353,49 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.MOUNT) {
                 Targetable targetToMountInto = step.getTarget(getGame());
                 if (targetToMountInto instanceof Entity entityToMountInto) {
-                    if (!entityToMountInto.canLoad(entity)) {
+                    if (entityToMountInto instanceof MobileStructure mobile
+                          ? !MobileStructureCargoRules.canMount(mobile, entity, curPos,
+                                getGame().getBoard(entity).getHex(curPos).getLevel() + curElevation)
+                          : entityToMountInto instanceof megamek.common.units.AbstractBuildingEntity building
+                                ? !megamek.common.units.BuildingFlightDeckRules.canStow(building, entity, curPos,
+                                      getGame().getBoard(entity).getHex(curPos).getLevel() + curElevation)
+                                : !entityToMountInto.canLoad(entity)) {
                         // Something is fishy in Denmark.
                         logger.error("(Mounted) {} can not load {}",
                                      entityToMountInto.getShortName(),
                                      entity.getShortName());
                     } else {
                         // Have the indicated unit load this unit.
+                        int bayNumber = entity.getTargetBay();
+                        if (entityToMountInto instanceof MobileStructure mobile) {
+                            entity.setPosition(curPos);
+                            entity.setElevation(curElevation);
+                            int selectedBay = bayNumber;
+                            var reachableBay = MobileStructureCargoRules.mountingBays(mobile, entity, curPos,
+                                  getGame().getBoard(entity).getHex(curPos).getLevel() + curElevation,
+                                  new megamek.common.moves.MobileStructureLinkage.Pose(mobile.getPosition(),
+                                        mobile.getFacing(), mobile.getElevation())).stream()
+                                  .filter(bay -> selectedBay < 0 || bay.getBayNumber() == selectedBay).findFirst().orElse(null);
+                            if (reachableBay == null) { return; }
+                            bayNumber = reachableBay.getBayNumber();
+                        }
                         entity.setDone(true);
-                        gameManager.loadUnit(entityToMountInto, entity, entity.getTargetBay());
+                        gameManager.loadUnit(entityToMountInto, entity, bayNumber);
                         Bay currentBay = entityToMountInto.getBay(entity);
-                        if ((currentBay != null) && (Compute.d6(2) == 2)) {
+                        if (currentBay != null && !(entityToMountInto instanceof MobileStructure && entity instanceof Infantry)
+                              && Compute.d6(2) == 2) {
                             report = new Report(9390);
                             report.subject = entity.getId();
                             report.indent(1);
                             report.add(currentBay.getTransporterType());
                             addReport(report);
-                            currentBay.destroyDoorNext();
+                            if (entityToMountInto instanceof MobileStructure mobile) {
+                                BuildingBayDoors.damage(mobile, currentBay, MobileStructureCargoRules.mountingDoor(mobile,
+                                      currentBay, entity, curPos, getGame().getBoard(entity).getHex(curPos).getLevel()
+                                            + curElevation));
+                            } else {
+                                currentBay.destroyDoorNext();
+                            }
                         }
                         // Stop looking.
                         curPos = entity.getPosition();
@@ -4448,6 +4518,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
             if (step.getType() == MoveStepType.RECOVER) {
 
                 loader = getGame().getEntity(step.getRecoveryUnit());
+                var mobileEntry = loader instanceof megamek.common.units.MobileStructure mobile
+                      ? megamek.common.moves.MobileStructureBayRecovery.entry(mobile, entity, curPos,
+                            step.getBoardId(), curFacing, step.getVelocity(), step.getAltitude()) : null;
+                if (loader == null || loader instanceof megamek.common.units.MobileStructure && mobileEntry == null) {
+                    loader = null;
+                    break;
+                }
                 boolean isDS = (entity instanceof Dropship);
 
                 rollTarget = entity.getBasePilotingRoll(overallMoveType);
@@ -4487,11 +4564,19 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 } else {
                     report.choose(true);
                     addReport(report);
+                    if (mobileEntry != null) {
+                        mobileEntry.bay().recover(entity, mobileEntry.doorIndex());
+                        mobileRecovered = true;
+                    }
                     recovered = true;
                 }
                 // check for door damage
                 if (diceRoll.getIntValue() == 2) {
-                    loader.damageDoorRecovery(entity);
+                    if (mobileEntry == null) {
+                        loader.damageDoorRecovery(entity);
+                    } else {
+                        mobileEntry.bay().damageRecoveryDoor(mobileEntry.doorIndex());
+                    }
                     report = new Report(9384);
                     report.subject = entity.getId();
                     report.indent(0);
@@ -4654,30 +4739,40 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 }
             }
 
+            if (stepMoveType != EntityMovementType.MOVE_JUMP && !entity.isAirborne()) {
+                gameManager.passWallSegments(entity, lastPos, curPos, lastElevation, curElevation,
+                      distance, step.isThisStepBackwards(), lastStepMoveType);
+            }
+
             // Handle non-infantry moving into a building.
             if (buildingMove > 0) {
                 // Get the building being exited.
                 IBuilding bldgExited = null;
                 if ((buildingMove & 1) == 1) {
-                    bldgExited = getGame().getBoard(curBoardId).getBuildingAt(lastPos);
+                    bldgExited = getGame().getBoard(curBoardId).getBuildingAt(lastPos, lastElevation);
                 }
 
                 // Get the building being entered.
                 IBuilding bldgEntered = null;
                 if ((buildingMove & 2) == 2) {
-                    bldgEntered = getGame().getBoard(curBoardId).getBuildingAt(curPos);
+                    bldgEntered = getGame().getBoard(curBoardId).getBuildingAt(curPos, entity.getElevation());
                 }
 
                 // ProtoMeks changing levels within a building cause damage
                 if (((buildingMove & 8) == 8) && (entity instanceof ProtoMek)) {
-                    IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
-                    Vector<Report> vBuildingReport = gameManager.damageBuilding(bldg, 1, curPos);
+                    IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos, entity.getElevation());
+                    Vector<Report> vBuildingReport = gameManager.damageBuilding(bldg, 1, curPos, megamek.common.units.BuildingElevation.floor(bldg, curPos, entity.getElevation()));
                     for (Report report : vBuildingReport) {
                         report.subject = entity.getId();
                     }
                     addReport(vBuildingReport);
                 }
 
+                if (bldgExited != null && bldgExited != bldgEntered) {
+                    gameManager.passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "leaving",
+                          step.isThisStepBackwards(), lastStepMoveType, false);
+                    gameManager.addAffectedBldg(bldgExited, false);
+                }
                 boolean collapsed = false;
                 if ((bldgEntered != null)) {
                     String reason = getReason(bldgExited, bldgEntered);
@@ -4707,11 +4802,18 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 // TODO : what if a building collapses into rubble?
             }
 
-            if (stepMoveType != EntityMovementType.MOVE_JUMP && (step.getClearance() == 0 || (entity.getMovementMode()
-                                                                                                    .isWiGE() && (step.getClearance() == 1)) || curElevation == curHex.terrainLevel(
-                    Terrains.BLDG_ELEV) || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV))) {
+            if (stepMoveType != EntityMovementType.MOVE_JUMP
+                  && (step.getClearance() == 0
+                  || (entity.getMovementMode().isWiGE() && (step.getClearance() == 1))
+                  || curElevation == curHex.terrainLevel(Terrains.BLDG_ELEV)
+                  || curElevation == curHex.terrainLevel(Terrains.BRIDGE_ELEV)
+                  || megamek.common.units.BuildingElevation.at(getGame(), curPos, curBoardId, curElevation) != null)) {
                 IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(curPos);
-                if ((bldg != null) && (entity.getElevation() >= 0)) {
+                IBuilding interior = megamek.common.units.BuildingElevation.at(getGame(), curPos, curBoardId, curElevation);
+                if (interior != null) {
+                    bldg = interior;
+                }
+                if ((bldg != null) && (entity.getElevation() >= megamek.common.units.BuildingElevation.base(bldg, curPos))) {
                     boolean wigeFlyingOver = entity.getMovementMode() == EntityMovementMode.WIGE
                                              && ((curHex.containsTerrain(
                             Terrains.BLDG_ELEV) && curElevation > curHex.terrainLevel(Terrains.BLDG_ELEV))
@@ -4812,7 +4914,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // On failure, the Mek falls from the last level successfully reached.
             // Multi-turn: if the climb costs more MP than available, only climb
             // affordable levels this turn and persist climbing state for next turn.
-            if (step.isClimbing() && (entity instanceof Mek climbingMek) && (stepHeight > 0)) {
+            if (step.isClimbing() && (entity instanceof Mek climbingMek)
+                  && step.getOccupiedWall() == null
+                  && (stepHeight > 0)) {
                 // Only process climbing PSRs for upward movement (stepHeight > 0)
                 // Downward movement is handled by leaping rules
                 int totalLevelsToClimb = Math.abs(stepHeight);
@@ -4865,8 +4969,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     int overallLevel = levelsAlreadyClimbed + levelClimbed;
                     rollTarget = entity.getBasePilotingRoll(moveType);
                     rollTarget.append(new PilotingRollData(entity.getId(),
-                                                           ClimbingHelper.CLIMBING_PSR_MODIFIER,
-                                                           "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
+                          0, // TO:AR p.20: the +1 applies to other PSRs while climbing, not the climbing roll.
+                          "climbing (level " + overallLevel + " of " + overallClimbHeight + ")"));
                     if (climbableArms == 1) {
                         rollTarget.append(new PilotingRollData(entity.getId(),
                                                                ClimbingHelper.ONE_ARM_PSR_MODIFIER,

@@ -33,23 +33,35 @@
 package megamek.common.moves;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.GameBoardTestCase;
 import megamek.common.Player;
 import megamek.common.bays.MekBay;
 import megamek.common.board.Coords;
+import megamek.common.enums.BuildingType;
 import megamek.common.enums.MoveStepType;
+import megamek.common.equipment.Engine;
+import megamek.common.equipment.MiscType;
+import megamek.common.game.Game;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
+import megamek.common.units.MobileStructure;
 import megamek.common.units.SmallCraft;
 import megamek.common.units.VTOL;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Clicking a friendly DropShip should plot a path that stops beside it, so the unit can mount. The Mek starts at
@@ -88,6 +100,8 @@ class MountPathHelperTest extends GameBoardTestCase {
         assertEquals(HEX_BESIDE_DROPSHIP, movePath.getFinalCoords(), "The path should stop beside the DropShip");
 
         movePath.addStep(MoveStepType.MOUNT, transport);
+        assertEquals(4, movePath.getLastStep().getMp(), "Boarding costs half the Mek's standard eight Walking MP");
+        assertEquals(7, movePath.getMpUsed(), "The path includes both the three-hex approach and boarding");
         movePath.clipToPossible();
         assertEquals(4, movePath.length(), "The walk and the mount step should all survive clipping");
     }
@@ -146,15 +160,18 @@ class MountPathHelperTest extends GameBoardTestCase {
     @DisplayName("A Mek may mount while its spent MP plus the mounting cost fits in its Walking MP (TW p.90)")
     void mekMountsWithinWalkingMp() {
         BipedMek mek = new BipedMek();
+        Dropship carrier = new Dropship();
+        mek.setOriginalWalkMP(4);
 
-        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, 4, 2, false),
+        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 4, 2, false),
               "Walk 4: 2 MP spent + 2 to mount = 4, which fits");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
-              MountPathHelper.mountRestriction(mek, 4, 3, false), "Walk 4: 3 MP spent + 2 to mount = 5, too many");
-        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, 5, 2, false),
+              MountPathHelper.mountRestriction(mek, carrier, 4, 3, false), "Walk 4: 3 MP spent + 2 to mount = 5, too many");
+        mek.setOriginalWalkMP(5);
+        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 5, 2, false),
               "Walk 5: 2 MP spent + 3 to mount = 5, which fits");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
-              MountPathHelper.mountRestriction(mek, 5, 3, false),
+              MountPathHelper.mountRestriction(mek, carrier, 5, 3, false),
               "Walk 5: 3 MP spent + 3 to mount = 6; rounding the cost down would wrongly allow this");
     }
 
@@ -162,47 +179,106 @@ class MountPathHelperTest extends GameBoardTestCase {
     @DisplayName("A unit that has not moved may always mount, through the Minimum Movement rule (TW p.90, p.49)")
     void unmovedUnitMountsThroughMinimumMovement() {
         BipedMek mek = new BipedMek();
+        Dropship carrier = new Dropship();
+        mek.setOriginalWalkMP(5);
 
-        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, 1, 0, false),
-              "Walk 1 costs 1 to mount, which a unit that has not moved may always spend");
-        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, 0, 0, false),
+        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 1, 0, false),
+              "A unit starting beside the carrier can pay three standard MP even with only one current MP");
+        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(mek, carrier, 0, 0, false),
               "A unit with no Walking MP left may still mount from where it started");
         assertEquals(MountPathHelper.MountRestriction.NOT_ENOUGH_WALKING_MP,
-              MountPathHelper.mountRestriction(mek, 1, 1, false), "Walk 1 that already moved has nothing left");
+              MountPathHelper.mountRestriction(mek, carrier, 1, 1, false), "Walk 1 that already moved has nothing left");
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {false, true})
+    void minimumBoardingDoesNotActivateArmedMpBoosters(boolean supercharger) throws Exception {
+        var originalRules = Game.rulesManager;
+        Game.rulesManager = new TWRulesManager();
+        try {
+            Dropship carrier = placeDropShip(true);
+            BipedMek mek = new BipedMek();
+            mek.setId(5);
+            mek.setOwner(getGame().getPlayer(0));
+            mek.setWeight(50);
+            mek.setEngine(new Engine(350, Engine.NORMAL_ENGINE, 0));
+            mek.setOriginalWalkMP(7);
+            mek.heat = 25;
+            mek.setDeployed(true);
+            getGame().addEntity(mek);
+            mek.setPosition(HEX_BESIDE_DROPSHIP);
+            mek.addEquipment(supercharger ? MiscType.createISSuperCharger() : MiscType.createISMASC(), BipedMek.LOC_RIGHT_TORSO);
+            assertEquals(2, mek.getWalkMP());
+            assertEquals(3, mek.getRunMPWithoutMASC());
+            assertEquals(4, mek.getRunMP());
+
+            MovePath path = new MovePath(getGame(), mek).addStep(MoveStepType.MOUNT, carrier);
+            assertTrue(path.isMoveLegal(), "Minimum movement permits boarding from beside the carrier");
+            assertEquals(4, path.getMpUsed(), "Boarding still pays half the standard seven Walking MP");
+            assertEquals(EntityMovementType.MOVE_WALK, path.getLastStepMovementType());
+            assertFalse(path.hasActiveMASC(), "Boarding must not cause a MASC failure roll");
+            assertFalse(path.hasActiveSupercharger(), "Boarding must not cause a supercharger failure roll");
+        } finally {
+            Game.rulesManager = originalRules;
+        }
     }
 
     @Test
     @DisplayName("VTOLs, fighters and small craft cannot mount under their own power (TW p.90)")
     void craneOnlyUnitsCannotMountUnderOwnPower() {
+        Dropship carrier = new Dropship();
         assertEquals(MountPathHelper.MountRestriction.CRANE_ONLY,
-              MountPathHelper.mountRestriction(new VTOL(), 6, 0, false), "A VTOL must be loaded by crane");
+              MountPathHelper.mountRestriction(new VTOL(), carrier, 6, 0, false), "A VTOL must be loaded by crane");
         assertEquals(MountPathHelper.MountRestriction.CRANE_ONLY,
-              MountPathHelper.mountRestriction(new AeroSpaceFighter(), 5, 0, false),
+              MountPathHelper.mountRestriction(new AeroSpaceFighter(), carrier, 5, 0, false),
               "A grounded fighter must be loaded by crane");
         assertEquals(MountPathHelper.MountRestriction.CRANE_ONLY,
-              MountPathHelper.mountRestriction(new SmallCraft(), 3, 0, false),
+              MountPathHelper.mountRestriction(new SmallCraft(), carrier, 3, 0, false),
               "A grounded small craft must be loaded by crane");
+        MobileStructure mobile = new MobileStructure(BuildingType.HEAVY, IBuilding.FORTRESS);
+        assertEquals(MountPathHelper.MountRestriction.CRANE_ONLY,
+              MountPathHelper.mountRestriction(new VTOL(), mobile, 6, 0, false),
+              "A building target alone does not replace the required flight deck transfer");
     }
 
     @Test
     @DisplayName("No unit may jump and then mount (TW p.90)")
     void jumpingUnitCannotMount() {
+        Dropship carrier = new Dropship();
         assertEquals(MountPathHelper.MountRestriction.JUMPED,
-              MountPathHelper.mountRestriction(new BipedMek(), 5, 1, true), "A Mek that jumped cannot mount");
+              MountPathHelper.mountRestriction(new BipedMek(), carrier, 5, 1, true), "A Mek that jumped cannot mount");
         assertEquals(MountPathHelper.MountRestriction.JUMPED,
-              MountPathHelper.mountRestriction(new ConvInfantry(), 1, 0, true), "Jump infantry that jumped cannot mount");
+              MountPathHelper.mountRestriction(new ConvInfantry(), carrier, 1, 0, true),
+              "Jump infantry that jumped cannot mount");
     }
 
     @Test
     @DisplayName("Infantry must spend all their MP to mount, so they may not move first (TW p.223)")
     void infantryMountOnlyWithoutMoving() {
         ConvInfantry infantry = new ConvInfantry();
+        Dropship carrier = new Dropship();
 
-        assertEquals(MountPathHelper.MountRestriction.NONE, MountPathHelper.mountRestriction(infantry, 1, 0, false),
+        assertEquals(MountPathHelper.MountRestriction.NONE,
+              MountPathHelper.mountRestriction(infantry, carrier, 1, 0, false),
               "Infantry that has not moved may mount");
         assertEquals(MountPathHelper.MountRestriction.INFANTRY_ALREADY_MOVED,
-              MountPathHelper.mountRestriction(infantry, 3, 1, false),
+              MountPathHelper.mountRestriction(infantry, carrier, 3, 1, false),
               "Infantry that moved even one MP may not mount, however much MP it has left");
+    }
+
+    @Test
+    void buildingBaysUseTheSameInfantryBoardingRulesAsGroundedDropships() {
+        MobileStructure carrier = new MobileStructure(BuildingType.HEAVY, IBuilding.FORTRESS);
+        ConvInfantry infantry = new ConvInfantry();
+        infantry.setOriginalWalkMP(3);
+
+        assertEquals(MountPathHelper.MountRestriction.NONE,
+              MountPathHelper.mountRestriction(infantry, carrier, 3, 0, false));
+        assertEquals(3, MountPathHelper.mountMpCost(infantry, carrier), "Infantry spends all its movement boarding");
+        assertEquals(MountPathHelper.MountRestriction.INFANTRY_ALREADY_MOVED,
+              MountPathHelper.mountRestriction(infantry, carrier, 3, 1, false));
+        assertEquals(MountPathHelper.MountRestriction.JUMPED,
+              MountPathHelper.mountRestriction(infantry, carrier, 3, 1, true));
     }
 
     private Dropship placeDropShip(boolean hasMekBay) {

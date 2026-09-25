@@ -50,10 +50,6 @@ import megamek.common.compute.Compute;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.rules.RulesTarget;
-import megamek.common.rules.RulesUnits;
-import megamek.common.rules.RulesManager;
-
 import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.*;
 
@@ -99,6 +95,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             return "Attacker and target are not on the same board.";
         }
 
+        IBuilding targetStructure = target instanceof IBuilding || target instanceof BuildingTarget
+              ? WallRules.getBuilding(game, target) : null;
+        int structureElevation = target instanceof AbstractBuildingEntity && targetStructure != null
+              ? BuildingElevation.base(targetStructure, target.getPosition()) : target.getElevation();
+        if (!BuildingElevation.canAttack(game, targetStructure, ae, target.getPosition(), structureElevation)) {
+            return "Underground structures are protected by the surrounding ground";
+        }
         // check range
         if (Compute.effectiveDistance(game, ae, target) > 1) {
             return "Target not in range";
@@ -181,7 +184,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         boolean inSameBuilding = Compute.isInSameBuilding(game, ae, target);
         int attackerId = ae.getId();
         int targetId = target.getId();
- 
+
         // Battle Armor targets are hard for Meks and Tanks to hit.
         if (target instanceof BattleArmor) {
             toHit.addModifier(1, "battle armor target");

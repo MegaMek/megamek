@@ -125,7 +125,7 @@ public class BAMGHandler extends WeaponHandler {
         Report r = new Report(3220);
         r.subject = subjectId;
         vPhaseReport.add(r);
-        if (weapon.isRapidFire() && !target.isConventionalInfantry()) {
+        if (weapon.isRapidFire() && !usesConventionalInfantryDamage()) {
             r.newlines = 0;
             r = new Report(3225);
             r.subject = subjectId;

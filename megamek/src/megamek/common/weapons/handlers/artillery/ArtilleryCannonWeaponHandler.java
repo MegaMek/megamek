@@ -331,11 +331,11 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         double toReturn = weaponType.getDamage();
         // area effect damage is double
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn /= 0.5;
         }
 
-        toReturn = applyGlancingBlowModifier(toReturn, target.isConventionalInfantry());
+        toReturn = applyGlancingBlowModifier(toReturn, usesConventionalInfantryDamage());
 
         return (int) Math.ceil(toReturn);
     }

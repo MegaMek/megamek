@@ -32,8 +32,8 @@
  */
 package megamek.client.ui.panels;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -70,8 +70,8 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
-import javax.swing.JTree;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -97,6 +97,23 @@ class GameOptionsPaneTest {
     private static final String ADVANCED_SYMBOL = Character.toString(0xE8B8);
     private static final String UNOFFICIAL_SYMBOL = Character.toString(0xEA4B);
     private static final String LEGACY_SYMBOL = Character.toString(0xE889);
+
+    @Test
+    void optionalBuildingDamageTrackingIsAnUncheckedCombatCheckbox() throws Exception {
+        runOnEdt(() -> {
+            GameOptions options = new GameOptions();
+            DialogOptionComponentYPanel expandedCF = component(
+                  options.getOption(OptionsConstants.ADVANCED_BUILDING_EXPANDED_CF));
+            GameOptionsPane pane = pane("advancedRules", List.of(expandedCF), option -> true);
+
+            assertTreePathExists(findComponent(pane, JTree.class), "Combat", "Damage, Heat, and Criticals");
+            assertFalse(expandedCF.settingsCheckBox().isSelected());
+            expandedCF.settingsCheckBox().doClick();
+            assertEquals(Boolean.TRUE, expandedCF.getValue());
+            expandedCF.settingsCheckBox().doClick();
+            assertEquals(Boolean.FALSE, expandedCF.getValue());
+        });
+    }
 
     @Test
     void searchFiltersRowsByOptionName() throws Exception {

@@ -41,9 +41,12 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.MiscMounted;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.AbstractBuildingEntity;
+import megamek.common.units.Entity;
+import megamek.common.units.MobileStructure;
 import megamek.logging.MMLogger;
 
 /**
@@ -52,14 +55,15 @@ import megamek.logging.MMLogger;
  * {@link TWGameManager#damageBuilding}; this handler only rolls and applies the effect to the equipment in the hex
  * that was hit.
  *
- * <p>Effects are applied per hex, as the table describes. A Gunners Stunned result stuns the whole building, because
- * stun state is tracked per entity; for the single-hex gun emplacements this is the same thing.</p>
+ * <p>Effects are applied per hex, as the table describes.</p>
  */
 class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     private static final MMLogger LOGGER = MMLogger.create(BuildingEntityCriticalHandler.class);
 
     /** On the Turret Jammed/Turret Locked result a 1D6 of this value or less jams; higher locks (TO:AR p. 119). */
     private static final int TURRET_JAM_MAX_ROLL = 3;
+    private int targetLevel = -1;
+    private int criticalModifier;
 
     BuildingEntityCriticalHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -73,8 +77,20 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
      *
      * @return the reports describing the roll and its effect
      */
-    Vector<Report> resolveCriticalHit(AbstractBuildingEntity building, Coords coords) {
-        return applyCriticalResult(building, coords, Compute.d6(2), Compute.d6());
+    Vector<Report> resolveCriticalHit(AbstractBuildingEntity building, Coords coords, int level, Entity attacker, int modifier) {
+        targetLevel = building.usesExpandedCF() ? level : -1;
+        criticalModifier = modifier;
+        try {
+            return applyCriticalResult(building, coords, Math.min(12, Compute.d6(2) + modifier), Compute.d6(), attacker);
+        } finally {
+            targetLevel = -1;
+            criticalModifier = 0;
+        }
+    }
+
+    private <T extends Mounted<?>> List<T> atTargetLevel(AbstractBuildingEntity building, List<T> equipment) {
+        return equipment.stream().filter(item -> targetLevel < 0 || building.getLocationLevel(item.getLocation()) == targetLevel)
+              .toList();
     }
 
     /**
@@ -89,15 +105,40 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
      */
     Vector<Report> applyCriticalResult(AbstractBuildingEntity building, Coords coords, int criticalRoll,
           int turretRoll) {
+        return applyCriticalResult(building, coords, criticalRoll, turretRoll, null);
+    }
+
+    Vector<Report> applyCriticalResult(AbstractBuildingEntity building, Coords coords, int criticalRoll,
+          int turretRoll, Entity attacker) {
         Vector<Report> reports = new Vector<>();
         reports.add(publicReport(3800, 0));
+        if (building instanceof MobileStructure) {
+            // TO:AUE p.40 rerolls an absent/destroyed category, rather than wasting the critical.
+            boolean hasItem = atTargetLevel(building, building.getWeaponsAt(coords)).stream().anyMatch(this::isWorking)
+                  || atTargetLevel(building, building.getAmmoAt(coords)).stream().anyMatch(this::isWorking)
+                  || atTargetLevel(building, building.getMiscAt(coords)).stream().anyMatch(this::isWorking);
+            if (!hasItem) {
+                criticalRoll = 2;
+            }
+            while (criticalRoll >= 6 && !hasMobileCriticalTarget(building, coords, criticalRoll, turretRoll)) {
+                criticalRoll = Math.min(12, Compute.d6(2) + criticalModifier);
+                turretRoll = Compute.d6();
+            }
+            if (criticalRoll == 6 && turretRoll > TURRET_JAM_MAX_ROLL) {
+                criticalRoll = 10;
+                turretRoll = 1;
+            } else if (criticalRoll == 8 && turretRoll > TURRET_JAM_MAX_ROLL) {
+                criticalRoll = 10;
+                turretRoll = 6;
+            }
+        }
         // A critical roll only happens when a single hit beat the hex's damage threshold, so this stays low-volume
         LOGGER.info("[BuildingCrit] {} hex {}: critical roll {} (turret roll {})",
               building.getShortName(), coords, criticalRoll, turretRoll);
         switch (criticalRoll) {
-            case 6 -> weaponMalfunction(building, coords, reports);
+            case 6 -> weaponMalfunction(building, coords, reports, attacker);
             case 7 -> gunnersStunned(building, coords, reports);
-            case 8 -> weaponDestroyed(building, coords, reports);
+            case 8 -> weaponDestroyed(building, coords, reports, attacker);
             case 9 -> gunnersKilled(building, coords, reports);
             case 10 -> turretHit(building, coords, turretRoll, reports);
             case 11 -> ammunitionExplosion(building, coords, reports);
@@ -107,16 +148,32 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
         return reports;
     }
 
+    private boolean hasMobileCriticalTarget(AbstractBuildingEntity building, Coords coords, int roll, int subroll) {
+        List<WeaponMounted> weapons = atTargetLevel(building, building.getWeaponsAt(coords)).stream()
+              .filter(this::isWorking).toList();
+        if (roll == 10 || ((roll == 6 || roll == 8) && subroll > TURRET_JAM_MAX_ROLL)) {
+            return weapons.stream().anyMatch(building::isTurretMounted);
+        }
+        return switch (roll) {
+            case 6, 8 -> !weapons.isEmpty();
+            case 7, 9 -> weapons.stream().anyMatch(weapon -> building.requiresGunner(weapon)
+                  && !building.hasDeadGunners(weapon.getLocation()));
+            case 11 -> atTargetLevel(building, building.getAmmoAt(coords)).stream().anyMatch(this::isWorking);
+            case 12 -> atTargetLevel(building, building.getMiscAt(coords)).stream().anyMatch(this::isWorking);
+            default -> true;
+        };
+    }
+
     /** Result 6: one working weapon in the hex jams until the gunners clear it. */
-    private void weaponMalfunction(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
-        List<WeaponMounted> candidates = building.getWeaponsAt(coords).stream()
+    private void weaponMalfunction(AbstractBuildingEntity building, Coords coords, Vector<Report> reports, Entity attacker) {
+        List<WeaponMounted> candidates = atTargetLevel(building, building.getWeaponsAt(coords)).stream()
               .filter(weapon -> isWorking(weapon) && !weapon.isJammed() && !weapon.jammedThisPhase())
               .toList();
         if (candidates.isEmpty()) {
             reports.add(publicReport(3846, 1));
             return;
         }
-        WeaponMounted weapon = candidates.get(Compute.randomInt(candidates.size()));
+        WeaponMounted weapon = chooseWeapon(building, candidates, attacker);
         weapon.setJammed(true);
         Report report = publicReport(3845, 1);
         report.add(weapon.getDesc());
@@ -125,43 +182,69 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Result 7: the gunners are disoriented and the building takes no actions next turn. A hex whose gunners are
+     * Result 7: the gunners are disoriented and the hex takes no actions next turn. A hex whose gunners are
      * already dead has nobody to stun, so the result has no effect (TO:AR p. 118, Critical Hit Effects).
      */
     private void gunnersStunned(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
-        boolean gunnersDead = building.getLocationsAt(coords).stream().allMatch(building::hasDeadGunners);
+        boolean gunnersDead = atTargetLevel(building, building.getWeaponsAt(coords)).stream()
+              .noneMatch(weapon -> building.requiresGunner(weapon) && !building.hasDeadGunners(weapon.getLocation()));
         if (gunnersDead) {
             reports.add(publicReport(3811, 1));
             LOGGER.debug("[BuildingCrit] {}: gunners stunned in hex {} has no effect, gunners already dead",
                   building.getShortName(), coords);
             return;
         }
-        building.stunGunners();
+        building.stunGunnersAt(coords, targetLevel);
         reports.add(publicReport(3810, 1));
         LOGGER.debug("[BuildingCrit] {}: gunners stunned for {} turns", building.getShortName(),
               building.getStunnedTurns());
     }
 
     /** Result 8: one working weapon in the hex stops working for the rest of the scenario. */
-    private void weaponDestroyed(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
-        List<WeaponMounted> candidates = building.getWeaponsAt(coords).stream()
+    private void weaponDestroyed(AbstractBuildingEntity building, Coords coords, Vector<Report> reports, Entity attacker) {
+        List<WeaponMounted> candidates = atTargetLevel(building, building.getWeaponsAt(coords)).stream()
               .filter(this::isWorking)
               .toList();
         if (candidates.isEmpty()) {
             reports.add(publicReport(3841, 1));
             return;
         }
-        WeaponMounted weapon = candidates.get(Compute.randomInt(candidates.size()));
+        WeaponMounted weapon = chooseWeapon(building, candidates, attacker);
+        int explosionDamage = weapon.getType().isExplosive(weapon) ? weapon.getExplosionDamage() : 0;
         weapon.setHit(true);
         Report report = publicReport(3840, 1);
         report.add(weapon.getDesc());
         reports.add(report);
         LOGGER.debug("[BuildingCrit] {}: weapon destroyed, {}", building.getShortName(), weapon.getName());
+        if (explosionDamage > 0) {
+            applyExplosion(building, coords, reports, explosionDamage);
+        }
+    }
+
+    private WeaponMounted chooseWeapon(AbstractBuildingEntity building, List<WeaponMounted> candidates, Entity attacker) {
+        boolean hasTurret = candidates.stream().anyMatch(building::isTurretMounted);
+        boolean hasFixed = candidates.stream().anyMatch(weapon -> !building.isTurretMounted(weapon));
+        if (hasTurret && hasFixed) {
+            boolean turret = Compute.d6() <= 3;
+            candidates = candidates.stream().filter(weapon -> building.isTurretMounted(weapon) == turret).toList();
+        }
+        int playerId = Compute.d6() <= 3 || attacker == null ? building.getOwnerId() : attacker.getOwnerId();
+        return gameManager.chooseBuildingCriticalWeapon(building, playerId, candidates);
     }
 
     /** Result 9: nothing in the hex fires again this scenario. */
     private void gunnersKilled(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
-        building.killGunnersAt(coords);
+        List<WeaponMounted> weapons = atTargetLevel(building, building.getWeaponsAt(coords));
+        if (weapons.stream().noneMatch(weapon -> building.requiresGunner(weapon)
+              && !building.hasDeadGunners(weapon.getLocation()))) {
+            reports.add(publicReport(3811, 1));
+            return;
+        }
+        if (targetLevel < 0) {
+            building.killGunnersAt(coords);
+        } else {
+            weapons.forEach(weapon -> building.setGunnersKilledAtLocation(weapon.getLocation(), true));
+        }
         reports.add(publicReport(3815, 1));
         LOGGER.debug("[BuildingCrit] {}: gunners killed in hex {}; all gunners dead = {}", building.getShortName(),
               coords, building.allGunnersDead());
@@ -169,16 +252,16 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
 
     /** Result 10: turreted weapons in the hex jam (1D6 of 1 to 3) or lock in their current facing (4 to 6). */
     private void turretHit(AbstractBuildingEntity building, Coords coords, int turretRoll, Vector<Report> reports) {
-        List<WeaponMounted> turretWeapons = building.getWeaponsAt(coords).stream()
-              .filter(weapon -> building.isTurretMounted(weapon) && isWorking(weapon))
+        List<WeaponMounted> turretWeapons = atTargetLevel(building, building.getWeaponsAt(coords)).stream()
+              .filter(weapon -> building.isTurretMounted(weapon) && isWorking(weapon) && !building.isTurretLocked(weapon))
               .toList();
         if (turretWeapons.isEmpty()) {
             reports.add(publicReport(3826, 1));
             return;
         }
         if (turretRoll <= TURRET_JAM_MAX_ROLL) {
-            turretWeapons.forEach(weapon -> weapon.setJammed(true));
-            reports.add(publicReport(3825, 1));
+            turretWeapons.forEach(building::jamTurretWeapon);
+            reports.add(publicReport(turretWeapons.stream().anyMatch(building::isTurretLocked) ? 3820 : 3825, 1));
         } else {
             turretWeapons.forEach(building::lockTurretWeapon);
             reports.add(publicReport(3820, 1));
@@ -190,21 +273,34 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
     /** Result 11: every ammunition bin in the hex explodes and the total is applied to the hex's CF. */
     private void ammunitionExplosion(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
         int explosionDamage = 0;
-        for (AmmoMounted ammo : building.getAmmoAt(coords)) {
+        for (AmmoMounted ammo : atTargetLevel(building, building.getAmmoAt(coords))) {
+            if (!isWorking(ammo)) {
+                continue;
+            }
             ammo.setHit(true);
             if (ammo.getType().isExplosive(ammo)) {
                 AmmoType ammoType = ammo.getType();
                 explosionDamage += ammo.getHittableShotsLeft() * ammoType.getDamagePerShot() * ammoType.getRackSize();
             }
         }
-        explosionDamage = (int) Math.floor(building.getDamageToScale() * explosionDamage);
+        applyExplosion(building, coords, reports, explosionDamage);
+    }
+
+    private void applyExplosion(AbstractBuildingEntity building, Coords coords, Vector<Report> reports, int explosionDamage) {
+        boolean hasCase = atTargetLevel(building, building.getMiscAt(coords)).stream()
+              .anyMatch(misc -> isWorking(misc) && misc.getType().hasFlag(MiscType.F_CASE));
+        if (hasCase) {
+            explosionDamage /= 10;
+        }
+        explosionDamage = building.scaleDamageToCF(explosionDamage);
         if (explosionDamage == 0) {
             reports.add(publicReport(3831, 1));
             return;
         }
-        int currentCF = building.getCurrentCF(coords);
+        int level = Math.max(0, targetLevel);
+        int currentCF = building.getCurrentCF(coords, level);
         currentCF -= Math.min(currentCF, explosionDamage);
-        building.setCurrentCF(currentCF, coords);
+        building.setCurrentCF(currentCF, coords, level);
         Report report = publicReport(3830, 1);
         report.add(building.getShortName());
         report.add(explosionDamage);
@@ -216,7 +312,7 @@ class BuildingEntityCriticalHandler extends AbstractTWRuleHandler {
 
     /** Result 12: one other piece of equipment in the hex is rendered inoperative. */
     private void otherEquipmentHit(AbstractBuildingEntity building, Coords coords, Vector<Report> reports) {
-        List<MiscMounted> candidates = building.getMiscAt(coords).stream()
+        List<MiscMounted> candidates = atTargetLevel(building, building.getMiscAt(coords)).stream()
               .filter(this::isWorking)
               .toList();
         if (candidates.isEmpty()) {

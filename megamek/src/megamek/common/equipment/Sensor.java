@@ -146,6 +146,13 @@ public record Sensor(int type) implements Serializable {
     }
 
     public int adjustRange(int range, Game game, LosEffects los) {
+        return adjustRange(range, game, los, false);
+    }
+
+    public int adjustRange(int range, Game game, LosEffects los, boolean localEMI) {
+        if (localEMI && isBAP()) {
+            return 0;
+        }
 
         if (((type == TYPE_MEK_RADAR) || (type == TYPE_VEE_RADAR)
               || (type == TYPE_VEE_MAG_SCAN) || (type == TYPE_MEK_MAG_SCAN))
@@ -166,7 +173,7 @@ public record Sensor(int type) implements Serializable {
         //TO:AR 6th ed. p 190
         if ((type != TYPE_MEK_SEISMIC) && (type != TYPE_VEE_SEISMIC)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.isEMI()) {
+            if (conditions.isEMI() || localEMI) {
                 range -= 4;
             }
             if (conditions.getWeather().isLightningStorm()) {

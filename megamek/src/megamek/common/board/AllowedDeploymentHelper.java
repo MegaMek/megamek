@@ -117,13 +117,11 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
     public FacingOption findAllowedFacings(int elevation) {
         FacingOption facingOption = new FacingOption(coords, elevation);
 
-        if (isFacingDependentDeployment()) {
-            // Use the new non-mutating method for buildings - no setFacing() calls!
-            AbstractBuildingEntity buildingEntity = (AbstractBuildingEntity) entity;
-            List<Integer> validFacings = buildingEntity.getValidFacingsAt(coords, elevation, board.getBoardId());
-
-            for (int facing : validFacings) {
-                facingOption.addValidFacing(facing);
+        if (entity instanceof AbstractBuildingEntity buildingEntity) {
+            for (int facing = 0; facing < 6; facing++) {
+                if (buildingEntity.isDeploymentPositionAndFacingValid(coords, facing, elevation, board.getBoardId())) {
+                    facingOption.addValidFacing(facing);
+                }
             }
         } else {
             // For facing-independent entities, all facings are valid if the position is valid

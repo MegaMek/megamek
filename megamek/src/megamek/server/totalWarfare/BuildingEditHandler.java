@@ -41,10 +41,10 @@ import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.annotations.Nullable;
-import megamek.common.enums.BasementType;
 import megamek.common.board.Board;
 import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
+import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.IBuilding;
@@ -590,6 +590,9 @@ public class BuildingEditHandler extends AbstractTWRuleHandler {
      */
     private static int damageNeededToFlatten(IBuilding building, Coords coords) {
         int armor = Math.max(0, building.getArmor(coords));
+        if (building.usesCapitalScale()) {
+            armor *= 10;
+        }
         int constructionFactor = Math.max(0, building.getCurrentCF(coords));
         double scale = building.getDamageToScale();
         int damageThroughScaling = (scale <= 0)

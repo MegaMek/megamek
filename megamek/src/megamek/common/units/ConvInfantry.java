@@ -153,6 +153,16 @@ public class ConvInfantry extends Infantry {
     private double customArmorDamageDivisor = 1.0;
     private boolean encumbering = false;
     private boolean spaceSuit = false;
+    /** Scenario state: carried survival gear has not yet been donned (TO:AR p.137). */
+    private boolean survivalGearStored;
+
+    public boolean isSurvivalGearStored() {
+        return survivalGearStored;
+    }
+
+    public void setSurvivalGearStored(boolean stored) {
+        survivalGearStored = stored;
+    }
     private boolean dest = false;
     private boolean sneak_camo = false;
     private boolean sneak_ir = false;

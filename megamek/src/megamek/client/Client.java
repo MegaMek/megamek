@@ -556,6 +556,10 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.BUILDING_EDIT, spec));
     }
 
+    public void sendBuildingDoor(int buildingId, int doorIndex, boolean open) {
+        send(new Packet(PacketCommand.BUILDING_DOOR, buildingId, doorIndex, open));
+    }
+
     /**
      * Sends a packet containing multiple entity updates. Should only be used in the lobby phase.
      */
@@ -865,7 +869,13 @@ public class Client extends AbstractClient {
 
     protected void receiveBuildingCollapse(Packet packet) throws InvalidPacketDataException {
         int boardId = packet.getIntValue(1);
-        game.getBoard(boardId).collapseBuilding(packet.getCoordsVector(0));
+        if (packet.getObject(2) instanceof Integer entityId && game.getEntity(entityId) instanceof IBuilding building) {
+            for (Coords coords : packet.getCoordsVector(0)) {
+                game.getBoard(boardId).collapseBuilding(building, coords);
+            }
+        } else {
+            game.getBoard(boardId).collapseBuilding(packet.getCoordsVector(0));
+        }
     }
 
     /**
@@ -1438,6 +1448,9 @@ public class Client extends AbstractClient {
                     if (cfrType != null) {
                         GameCFREvent cfrEvt = new GameCFREvent(this, cfrType);
                         switch (cfrType) {
+                            case CFR_MOBILE_AVOIDANCE:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                break;
                             case CFR_DOMINO_EFFECT:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
                                 cfrEvt.setDirection(packet.getIntValue(2));
@@ -1463,6 +1476,10 @@ public class Client extends AbstractClient {
                             case CFR_TAG_TARGET:
                                 cfrEvt.setTAGTargets(packet.getIntList(1));
                                 cfrEvt.setTAGTargetTypes(packet.getIntList(2));
+                                break;
+                            case CFR_BUILDING_WEAPON:
+                                cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setBuildingWeaponIds(packet.getIntList(2));
                                 break;
                             default:
                                 break;
@@ -1559,6 +1576,15 @@ public class Client extends AbstractClient {
 
     public void sendTAGTargetCFRResponse(int index) {
         send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_TAG_TARGET, index));
+    }
+
+    public void sendMobileAvoidanceCFRResponse(int entityId, MovePath path) {
+        send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_MOBILE_AVOIDANCE, entityId, path));
+    }
+
+    public void sendBuildingWeaponCFRResponse(int buildingId, int equipmentId) {
+        send(new Packet(PacketCommand.CLIENT_FEEDBACK_REQUEST, PacketCommand.CFR_BUILDING_WEAPON,
+              buildingId, equipmentId));
     }
 
     public Set<BoardDimensions> getAvailableMapSizes() {
@@ -1669,6 +1695,10 @@ public class Client extends AbstractClient {
      */
     public void sendUnloadStranded(int... entityIds) {
         send(new Packet(PacketCommand.UNLOAD_STRANDED, entityIds));
+    }
+
+    public void sendUnloadStranded(int[] entityIds, Map<Integer, Coords> exits) {
+        send(new Packet(PacketCommand.UNLOAD_STRANDED, entityIds, exits));
     }
 
     /**

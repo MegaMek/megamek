@@ -101,7 +101,7 @@ class ComputeAbilityMods {
 
     static void processAttackerSPAs(ToHitData toHit, Entity attacker, @Nullable Targetable target, WeaponMounted weapon,
           Game game) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        PlanetaryConditions conditions = game.getPlanetaryConditions().forEntity(attacker);
 
         // blood stalker SPA
         if (attacker.getBloodStalkerTarget() > Entity.NONE) {

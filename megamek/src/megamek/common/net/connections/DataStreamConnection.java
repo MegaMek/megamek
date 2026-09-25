@@ -129,7 +129,7 @@ public class DataStreamConnection extends AbstractConnection {
      * override flush to flush the data stream after flushing packet queue
      */
     @Override
-    public synchronized void flush() {
+    public void flush() {
         // Sends all queued packets
         super.flush();
         try {

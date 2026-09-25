@@ -68,8 +68,12 @@ public interface IBuilding extends Serializable {
     int HANGAR = 1;
     int FORTRESS = 2;
     int GUN_EMPLACEMENT = 3;
-    // TODO: leaving out Castles Brian until issues with damage scaling are resolved
-    // public static final int CASTLE_BRIAN = 3;
+    // Append new classes: these values are also stored in existing BLK files.
+    int CASTLE_BRIAN = 4;
+    int TENT = 5;
+    int WALL = 6;
+    int FENCE = 7;
+    int BRIDGE = 8;
 
     static int currentId(Board board, Coords coords) {
         if (board != null && coords != null) {
@@ -167,6 +171,51 @@ public interface IBuilding extends Serializable {
      */
     int getCurrentCF(Coords coords);
 
+    default boolean usesExpandedCF() {
+        return getInternalBuilding().usesExpandedCF();
+    }
+
+    /** Open-space buildings cannot contain damage and breaches to individual levels (TO:AR p.137). */
+    default void enableExpandedCF() {
+        if (getBldgClass() != BRIDGE && !(this instanceof AbstractBuildingEntity entity && (entity.getDesign().isOpenSpace()
+              || BuildingConstruction.usesHexsides(entity)))) {
+            getInternalBuilding().enableExpandedCF();
+        }
+    }
+
+    default BuildingFloorState getFloorState(Coords coords) {
+        return getInternalBuilding().getFloorState(boardToRelative(coords));
+    }
+
+    /** Levels are relative to the base of the building in this hex. */
+    default int getCurrentCF(Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        return floors == null ? getCurrentCF(coords) : floors.getCF(floors.floorAtLevel(level));
+    }
+
+    default int getArmor(Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        return floors == null ? getArmor(coords) : floors.getArmor(floors.floorAtLevel(level));
+    }
+
+    default void setCurrentCF(int cf, Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors == null) {
+            setCurrentCF(cf, coords);
+        } else {
+            floors.setCF(floors.floorAtLevel(level), cf);
+        }
+    }
+
+    default void setArmor(int armor, Coords coords, int level) {
+        BuildingFloorState floors = getFloorState(coords);
+        if (floors == null) {
+            setArmor(armor, coords);
+        } else {
+            floors.setArmor(floors.floorAtLevel(level), armor);
+        }
+    }
+
     /**
      * Get the construction factor of the building hex at the passed coords at the start of the current phase. Damage
      * that is received during the phase is applied at the end of the phase.
@@ -261,6 +310,11 @@ public interface IBuilding extends Serializable {
             case IBuilding.HANGAR -> "Hangar";
             case IBuilding.FORTRESS -> "Fortress";
             case IBuilding.GUN_EMPLACEMENT -> "Gun Emplacement";
+            case IBuilding.CASTLE_BRIAN -> "Castles Brian";
+            case IBuilding.TENT -> "Tent";
+            case IBuilding.WALL -> "Wall";
+            case IBuilding.FENCE -> "Fence";
+            case IBuilding.BRIDGE -> "Bridge";
             default -> "Building";
         };
     }
@@ -305,18 +359,42 @@ public interface IBuilding extends Serializable {
         return switch (getBldgClass()) {
             case IBuilding.HANGAR -> 0.5;
             case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> 2.0;
+            case IBuilding.CASTLE_BRIAN -> 10.0;
             default -> 1.0;
         };
     }
 
     /**
-     * @return the damage scale multiplier for damage applied to this building (and occupants)
+     * @return the multiplier from standard damage to this building's CF. Castles Brian require per-attacker
+     *       accumulation before rounding, and resolve occupant damage separately (TO:AR p. 124, errata).
      */
     default double getDamageToScale() {
         return switch (getBldgClass()) {
             case IBuilding.FORTRESS, IBuilding.GUN_EMPLACEMENT -> 0.5;
+            case IBuilding.CASTLE_BRIAN -> 0.05;
             default -> 1.0;
         };
+    }
+
+    /** Whether CF and armor are stored in capital points (TO:AR pp. 124, 127-128). */
+    default boolean usesCapitalScale() {
+        return getBldgClass() == CASTLE_BRIAN;
+    }
+
+    /** Standard-scale tons supported by this hex, before applying any load-specific modifiers. */
+    default int getLoadCapacity(Coords coords) {
+        return getCurrentCF(coords) * (usesCapitalScale() ? 10 : 1);
+    }
+
+    /** Scale a single non-weapon event. Weapon attacks must use the per-attacker damage tracker instead. */
+    default int scaleDamageToCF(int standardDamage) {
+        return usesCapitalScale() ? (int) Math.round(standardDamage / 20.0)
+              : (int) Math.floor(standardDamage * getDamageToScale());
+    }
+
+    /** Standard-scale threshold that an individual hit must exceed to injure Castles Brian occupants. */
+    default int getCapitalDamageThreshold(Coords coords) {
+        return (int) Math.ceil(getCurrentCF(coords) / 10.0) * 10;
     }
 
     /**

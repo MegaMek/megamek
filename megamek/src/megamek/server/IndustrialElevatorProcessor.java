@@ -103,19 +103,10 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
      * This method should be called during game initialization (after board is set) to ensure elevators are available
      * before movement phase.
      * <p>
-     * Skips initialization if elevators already exist to preserve runtime state (platform positions from player
-     * movement).
+     * Retains existing shafts to preserve runtime state while adding any remaining terrain-authored elevators.
      */
     public void initializeElevators() {
         Game game = gameManager.getGame();
-
-        // Skip if elevators already exist to preserve platform positions
-        if (!game.getIndustrialElevators().isEmpty()) {
-            initialized = true;
-            return;
-        }
-
-        game.clearIndustrialElevators();
 
         for (Board board : game.getBoards().values()) {
             if (board.isLowAltitude() || board.isSpace()) {
@@ -131,6 +122,9 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                     if (hex.containsTerrain(Terrains.INDUSTRIAL_ELEVATOR)) {
                         Terrain terrain = hex.getTerrain(Terrains.INDUSTRIAL_ELEVATOR);
                         BoardLocation location = BoardLocation.of(new Coords(x, y), board.getBoardId());
+                        if (game.hasIndustrialElevator(location)) {
+                            continue;
+                        }
                         IndustrialElevator elevator = IndustrialElevator.fromTerrain(
                               location, terrain.getLevel(), terrain.getExits());
                         game.addIndustrialElevator(elevator);
@@ -160,7 +154,7 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
      * Processes a single CallElevatorAction by adding it to the elevator's queue.
      */
     private void processCallAction(Game game, CallElevatorAction callAction, Vector<Report> vPhaseReport) {
-        IndustrialElevator elevator = game.getIndustrialElevator(callAction.getElevatorLocation());
+        IndustrialElevator elevator = game.getIndustrialElevator(callAction.getElevatorLocation(), callAction.getTargetLevel());
         if (elevator == null) {
             LOGGER.warn("[IndustrialElevator] Ignoring call action for entity {}: no elevator at {}",
                   callAction.getEntityId(), callAction.getElevatorLocation());
@@ -175,7 +169,8 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
         }
 
         // Validate caller is adjacent to elevator
-        if (!isAdjacentToElevator(caller, elevator)) {
+        if (!isAdjacentToElevator(caller, elevator) || caller.getElevation() != callAction.getTargetLevel()
+              || !elevator.canAccess(callAction.getTargetLevel(), elevator.getCoords().direction(caller.getPosition()))) {
             LOGGER.debug("[IndustrialElevator] Ignoring call by {}: not adjacent to elevator at {}",
                   caller.getShortName(), elevator.getLocation());
             return;
@@ -242,7 +237,7 @@ public class IndustrialElevatorProcessor extends DynamicTerrainProcessor {
                 Report report = new Report(5296, Report.PUBLIC);
                 report.add(elevator.getLocation().toFriendlyString());
                 report.add((int) elevator.getCurrentLoad(game));
-                report.add(elevator.getCapacityTons());
+                report.add(Double.toString(elevator.getCapacityTons()));
                 vPhaseReport.add(report);
                 continue;
             }

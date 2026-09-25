@@ -72,6 +72,19 @@ class TestSupportVehicleTest {
     }
 
     @Test
+    void supportArmorConversionPreservesWholePointsAtFloatingPointBoundary() {
+        SupportTank tank = new SupportTank();
+        tank.setWeight(1.5);
+        tank.setArmorType(EquipmentType.T_ARMOR_SV_BAR_2);
+        tank.setBARRating(2);
+        tank.setArmorTechRating(TechRating.B);
+        assertEquals(0.025, TestSupportVehicle.armorWeightPerPoint(tank));
+        assertEquals(6, TestEntity.getRawArmorPoints(tank, 0.15));
+        assertEquals(5, TestEntity.getRawArmorPoints(tank, 0.149));
+        assertEquals(0, TestEntity.getRawArmorPoints(tank, 0));
+    }
+
+    @Test
     void testChassisModLookup() {
         for (ChassisModification mod : ChassisModification.values()) {
             assertNotNull(mod.equipment);

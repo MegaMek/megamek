@@ -227,9 +227,11 @@ public abstract class AbstractConnection {
     }
 
     /** Adds a packet to the send queue to be sent on a separate thread. */
-    public synchronized void send(Packet packet) {
+    public void send(Packet packet) {
         try {
-            sendQueue.addPacket(new SendPacket(packet, this));
+            synchronized (this) {
+                sendQueue.addPacket(new SendPacket(packet, this));
+            }
             // Send right now
             flush();
         } catch (Exception e) {
@@ -329,13 +331,15 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Send all queued packets. This method is synchronized since it deals with the non-thread-safe send queue.
+     * Send all queued packets under the connection lock, releasing it before notifying disconnect listeners.
      */
-    public synchronized void flush() {
+    public void flush() {
         SendPacket packet = null;
         try {
-            while ((packet = sendQueue.getPacket()) != null) {
-                processPacket(packet);
+            synchronized (this) {
+                while ((packet = sendQueue.getPacket()) != null) {
+                    processPacket(packet);
+                }
             }
         } catch (Exception ex) {
             if (packet == null) {

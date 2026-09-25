@@ -81,7 +81,7 @@ public class SRMFragHandler extends SRMHandler {
             toReturn *= ((BattleArmor) attackingEntity).getShootingStrength();
         }
         // against infantry, we have 1 hit
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             toReturn *= weaponType.getRackSize();
             if (bDirect) {
                 toReturn += (int) floor(toHit.getMoS() / 3.0);
@@ -90,7 +90,7 @@ public class SRMFragHandler extends SRMHandler {
             toReturn = applyGlancingBlowModifier(toReturn, true);
         }
 
-        if ((target instanceof Entity) && !target.isConventionalInfantry()) {
+        if ((target instanceof Entity) && !usesConventionalInfantryDamage()) {
             toReturn = 0;
         }
         return (int) Math.ceil(toReturn);

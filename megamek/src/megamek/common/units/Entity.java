@@ -242,6 +242,7 @@ public abstract class Entity extends TurnOrdered
     public static final long ETYPE_HANDHELD_WEAPON = 1L << 29;
 
     public static final long ETYPE_BUILDING_ENTITY = 1L << 30;
+    public static final long ETYPE_MOBILE_STRUCTURE = 1L << 33;
 
     public static final long ETYPE_COMBAT_VEHICLE_ESCAPE_POD = 1L << 31;
 
@@ -2711,6 +2712,15 @@ public abstract class Entity extends TurnOrdered
             return retVal;
         }
 
+        if (!climb && game != null && current != null && current.getCoords() != null && next.getCoords() != null) {
+            IBuilding currentInterior = BuildingElevation.at(game, current.getCoords(), boardId, assumedElevation);
+            int nextElevation = current.getLevel() + assumedElevation - next.getLevel();
+            if (currentInterior instanceof AbstractBuildingEntity
+                  && BuildingElevation.at(game, next.getCoords(), boardId, nextElevation) != null) {
+                return nextElevation;
+            }
+        }
+
         // Special case for DFA attacks into water - we want to land on the bottom of the hex
         if (isMakingDfa() &&
             (assumedElevation == 0) &&
@@ -2890,6 +2900,13 @@ public abstract class Entity extends TurnOrdered
         return isOffBoard() ? 0 : elevation;
     }
 
+    /** A wall top is a named hexside, not a roof covering the whole hex. Null means standing beside the wall. */
+    private WallTarget occupiedWall;
+
+    public WallTarget getOccupiedWall() { return occupiedWall; }
+
+    public void setOccupiedWall(WallTarget wall) { occupiedWall = wall; }
+
     public boolean canGoDown() {
         return canGoDown(elevation, position, boardId);
     }
@@ -2923,6 +2940,10 @@ public abstract class Entity extends TurnOrdered
         Hex hex = game.getBoard(boardId).getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.getLevel();
         int minAlt = hex.getLevel();
+        IBuilding interior = BuildingElevation.at(game, assumedPos, boardId, assumedElevation);
+        if (interior instanceof AbstractBuildingEntity && (this instanceof Infantry || this instanceof ProtoMek)) {
+            return assumedElevation > BuildingElevation.base(interior, assumedPos);
+        }
         switch (getMovementMode()) {
             case INF_JUMP:
             case INF_LEG:
@@ -3015,6 +3036,14 @@ public abstract class Entity extends TurnOrdered
         Hex hex = game.getBoard(boardId).getHex(assumedPos);
         int assumedAlt = assumedElevation + hex.getLevel();
         int maxAlt = hex.getLevel();
+        IBuilding interior = BuildingElevation.at(game, assumedPos, boardId, assumedElevation);
+        if (interior instanceof AbstractBuildingEntity authored && (this instanceof Infantry || this instanceof ProtoMek)) {
+            int maximum = BuildingElevation.roof(interior, assumedPos);
+            if (authored.getDesign().getSite() == BuildingDesign.Site.UNDERGROUND) {
+                maximum--;
+            }
+            return assumedElevation < maximum;
+        }
         switch (getMovementMode()) {
             case INF_JUMP:
             case INF_LEG:
@@ -3078,6 +3107,14 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isElevationValid(int assumedElevation,
                                     Hex hex) {
+        if (occupiedWall != null && (WallRules.canClimbStep(this, occupiedWall, hex.getCoords(), assumedElevation)
+              || WallRules.canStandOn(this, occupiedWall, hex.getCoords(), assumedElevation))) {
+            return true;
+        }
+        if (game != null && hex != null && hex.getCoords() != null
+              && BuildingElevation.at(game, hex.getCoords(), boardId, assumedElevation) instanceof AbstractBuildingEntity) {
+            return true;
+        }
         int assumedAlt = assumedElevation + hex.getLevel();
         if (getMovementMode() == EntityMovementMode.VTOL) {
             if ((this instanceof Infantry) &&
@@ -6695,7 +6732,7 @@ public abstract class Entity extends TurnOrdered
                         toReturn = 3;
                     }
                     PlanetaryConditions conditions = game.getPlanetaryConditions();
-                    if (conditions.getEMI().isEMI()) {
+                    if (isAffectedByEMI(getPosition())) {
                         return toReturn * 2;
                     }
                     return toReturn;
@@ -6716,7 +6753,7 @@ public abstract class Entity extends TurnOrdered
     public boolean hasBAP(boolean checkECM) {
         if (game != null) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
-            if (conditions.getEMI().isEMI()) {
+            if (isAffectedByEMI(getPosition())) {
                 return false;
             }
         }
@@ -6775,7 +6812,7 @@ public abstract class Entity extends TurnOrdered
      */
     public int getBAPRange() {
         PlanetaryConditions conditions = game.getPlanetaryConditions();
-        if (conditions.getEMI().isEMI() || isShutDown()) {
+        if (isAffectedByEMI(getPosition()) || isShutDown()) {
             return Entity.NONE;
         }
         // Sensory implants provide active probe capability:
@@ -8839,7 +8876,7 @@ public abstract class Entity extends TurnOrdered
      */
     public PilotingRollData addConditionBonuses(PilotingRollData roll,
                                                 EntityMovementType moveType) {
-        PlanetaryConditions conditions = game.getPlanetaryConditions();
+        PlanetaryConditions conditions = game.getPlanetaryConditions().forEntity(this);
 
         if (moveType == EntityMovementType.MOVE_SPRINT || moveType == EntityMovementType.MOVE_VTOL_SPRINT) {
             roll.addModifier(2, "Sprinting");
@@ -9587,12 +9624,28 @@ public abstract class Entity extends TurnOrdered
         }
 
         // check for movement inside a hangar
-        IBuilding curBldg = board.getBuildingAt(curPos);
+        IBuilding curBldg = board.getBuildingAt(curPos, step.getElevation());
+        if (curBldg instanceof AbstractBuildingEntity authored) {
+            int previousElevation = prevStep == null ? getElevation() : prevStep.getElevation();
+            if (curPos.equals(prevPos) && previousElevation != step.getElevation() && !step.isJumping()
+                  && (step.getType() == MoveStepType.UP || step.getType() == MoveStepType.DOWN)) {
+                return this instanceof ProtoMek ? 8 : 0;
+            }
+            if (BuildingInteriorRules.paved(authored, this, prevPos, curPos, step.getElevation())) {
+                return 0;
+            }
+            int result = 2;
+            if (board.getBuildingAt(prevPos, previousElevation) != null
+                  && !curBldg.isIn(prevPos)) {
+                result++;
+            }
+            return result;
+        }
         if ((curBldg != null) &&
-            curBldg.isIn(prevPos) &&
-            (curBldg.getBldgClass() == IBuilding.HANGAR) &&
-            (curHex.terrainLevel(Terrains.BLDG_ELEV) > height()) &&
-            (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
+              curBldg.isIn(prevPos) &&
+              (curBldg.getBldgClass() == IBuilding.HANGAR) &&
+              (curHex.terrainLevel(Terrains.BLDG_ELEV) > height()) &&
+              (step.getElevation() < curHex.terrainLevel(Terrains.BLDG_ELEV))) {
             return 0;
         }
 
@@ -9649,10 +9702,13 @@ public abstract class Entity extends TurnOrdered
     /**
      * Calculates and returns the roll for an entity moving in buildings.
      */
-    public PilotingRollData rollMovementInBuilding(IBuilding bldg,
-                                                   int distance,
-                                                   String why,
-                                                   EntityMovementType overallMoveType) {
+    public PilotingRollData rollMovementInBuilding(IBuilding bldg, int distance, String why,
+          EntityMovementType overallMoveType) {
+        return rollMovementInBuilding(bldg, distance, why, overallMoveType, getPosition(), getPosition(), getElevation());
+    }
+
+    public PilotingRollData rollMovementInBuilding(IBuilding bldg, int distance, String why,
+          EntityMovementType overallMoveType, Coords from, Coords to, int elevation) {
         PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if ((this instanceof Mek) && isSuperHeavy()) {
@@ -9718,8 +9774,24 @@ public abstract class Entity extends TurnOrdered
                 break;
         }
 
+        if (bldg.getBldgClass() == IBuilding.CASTLE_BRIAN) {
+            mod = bldg.getBuildingType() == BuildingType.HARDENED ? 5 : 4;
+        }
+        if (bldg instanceof AbstractBuildingEntity buildingEntity
+              && BuildingInteriorRules.hallFits(buildingEntity, this, to)
+              && !BuildingInteriorRules.exteriorWall(bldg, from, to, elevation)) {
+            mod = 0;
+        }
         // append the reason modifier
         roll.append(new PilotingRollData(getId(), mod, "moving through " + desc + " " + bldg.getName()));
+        if (!(this instanceof Infantry) && bldg instanceof AbstractBuildingEntity buildingEntity) {
+            int features = to != null && bldg.isIn(to)
+                  ? BuildingInteriorRules.pilotingModifier(buildingEntity, this, to, elevation)
+                  : buildingEntity.getDesign().movementPilotingModifier();
+            if (features != 0) {
+                roll.addModifier(features, "building contents, ceilings and superstructure");
+            }
+        }
         adjustDifficultTerrainPSRModifier(roll);
 
         // Modify the roll by the distance moved so far.
@@ -10157,7 +10229,7 @@ public abstract class Entity extends TurnOrdered
         while (iter.hasMoreElements()) {
             Transporter next = iter.nextElement();
             if (next instanceof Bay nextBay) {
-                if (nextBay.getCurrentDoors() > 0) {
+                if (nextBay.getUsableDoors() > 0) {
                     potential.add(nextBay);
                 }
             }
@@ -10336,7 +10408,7 @@ public abstract class Entity extends TurnOrdered
 
         // I should only add entities in bays that are functional
         for (Transporter next : transports) {
-            if ((next instanceof ASFBay nextBay) && (nextBay.getCurrentDoors() > 0)) {
+            if ((next instanceof ASFBay nextBay) && (nextBay.getUsableDoors() > 0)) {
                 for (Entity e : nextBay.getLaunchableUnits()) {
                     result.addElement(e);
                 }
@@ -10361,7 +10433,7 @@ public abstract class Entity extends TurnOrdered
                 result.addAll(nextCompartment.getDroppableUnits());
             } else if (next instanceof Bay nextBay) {
                 // Infantry (Conventional and BA) do not need doors to deploy (TM 209)
-                if (nextBay instanceof InfantryTransporter || nextBay.getCurrentDoors() > 0) {
+                if (nextBay instanceof InfantryTransporter || nextBay.getUsableDoors() > 0) {
                     result.addAll(nextBay.getDroppableUnits());
                 }
             }
@@ -10425,7 +10497,7 @@ public abstract class Entity extends TurnOrdered
         Vector<Bay> result = new Vector<>();
 
         for (Transporter next : transports) {
-            if (((next instanceof ASFBay) || (next instanceof SmallCraftBay)) && (((Bay) next).getCurrentDoors() > 0)) {
+            if (((next instanceof ASFBay) || (next instanceof SmallCraftBay)) && (((Bay) next).getUsableDoors() > 0)) {
                 result.addElement((Bay) next);
             }
         }
@@ -10494,7 +10566,7 @@ public abstract class Entity extends TurnOrdered
 
         // Walk through this entity's transport components; add all of their lists to ours.
         for (Transporter next : transports) {
-            if ((next instanceof SmallCraftBay nextBay) && (nextBay.getCurrentDoors() > 0)) {
+            if ((next instanceof SmallCraftBay nextBay) && (nextBay.getUsableDoors() > 0)) {
                 for (Entity e : nextBay.getLaunchableUnits()) {
                     result.addElement(e);
                 }
@@ -13551,6 +13623,12 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isSufferingEMI() {
         return _isEMId;
+    }
+
+    /** Planetary EMI or interference along this unit's line to a target, including heavy-metal structures. */
+    public boolean isAffectedByEMI(Coords target) {
+        return game != null && (game.getPlanetaryConditions().getEMI().isEMI()
+              || BuildingConstruction.hasHeavyMetalInterference(this, getPosition(), target));
     }
 
     public void setEMI(boolean inVal) {

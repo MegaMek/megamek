@@ -150,6 +150,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.doAllAssaultDrops();
                 gameManager.addMovementHeat();
                 gameManager.applyBuildingDamage();
+                new MobileStructureNavalHandler(gameManager).endMovement();
                 gameManager.checkForPSRFromDamage();
                 gameManager.addReport(gameManager.resolvePilotingRolls()); // Skids cause damage in
                 // movement phase
@@ -325,6 +326,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.changePhase(GamePhase.PREMOVEMENT);
                 break;
             case END:
+                new MobileStructureNavalHandler(gameManager).endTurn();
                 gameManager.addReport(gameManager.resolveCrewConsciousness());
                 gameManager.addReport(C3EmergencyMasterProcessor.processEndPhase(gameManager.getGame()));
                 // remove any entities that died in the heat/end phase before

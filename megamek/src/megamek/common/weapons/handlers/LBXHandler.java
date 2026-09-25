@@ -47,7 +47,6 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.OptionsConstants;
-import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.Infantry;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -73,7 +72,7 @@ public class LBXHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double toReturn = Compute.directBlowInfantryDamage(
                   weaponType.getDamage(), getInfantryDamageClassShift(),
                   resolveInfantryDamageClass(WeaponType.WEAPON_CLUSTER_BALLISTIC),
@@ -95,7 +94,7 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             return 1;
         }
 
@@ -113,8 +112,8 @@ public class LBXHandler extends AmmoWeaponHandler {
                 shotsHit = (int) Math.ceil(shotsHit * .5);
             }
         } else {
-            PlanetaryConditions conditions = game.getPlanetaryConditions();
-            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier, conditions.getEMI().isEMI());
+            shotsHit = Compute.missilesHit(weaponType.getRackSize(), nHitsModifier,
+                  attackingEntity.isAffectedByEMI(target.getPosition()));
         }
 
         Report report = new Report(3325);

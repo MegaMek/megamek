@@ -377,13 +377,16 @@ public class DeploymentServerHelper {
     public boolean isLegalDeployment(Coords coords,
                                      int boardId,
                                      Entity entity,
-                                     int nFacing) {
+                                     int nFacing,
+                                     int elevation) {
         Game game = gameManager.getGame();
         if (game == null) {
             return false;
         }
         return game.hasBoardLocation(coords, boardId)
                && game.getBoard(boardId).isLegalDeployment(coords, entity)
+               && (!(entity instanceof AbstractBuildingEntity building)
+               || building.isDeploymentPositionAndFacingValid(coords, nFacing, elevation, boardId))
                && isLegalTrainFootprint(entity, coords, boardId, nFacing);
     }
 }

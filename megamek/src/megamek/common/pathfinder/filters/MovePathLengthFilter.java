@@ -46,7 +46,12 @@ public class MovePathLengthFilter extends Filter<MovePath> {
 
     @Override
     public boolean shouldStay(MovePath mp) {
-        return (mp.getMpUsed() <= maxMP);
-
+        if (mp.getMpUsed() <= maxMP) {
+            return true;
+        }
+        // Slow mobile structures can commit the remaining movement to one unfinished maneuver.
+        return mp.getEntity() instanceof megamek.common.units.MobileStructure
+              && mp.getLastStep() != null && mp.isMoveLegal()
+              && mp.getMpUsed() - mp.getLastStep().getMp() < maxMP;
     }
 }

@@ -90,7 +90,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(missilesHit);
             r.add(sSalvoType);
-            if (target.isConventionalInfantry()) {
+            if (usesConventionalInfantryDamage()) {
                 r.add("");
             } else {
                 r.add(toHit.getTableDesc());
@@ -123,7 +123,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
      */
     @Override
     protected int calcDamagePerHit() {
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             double damage;
             int numDice = 1;
             if (bDirect) {
@@ -144,7 +144,7 @@ public class MekMortarAntiPersonnelHandler extends AmmoWeaponHandler {
               nCluster, bldgAbsorbs);
 
         // We need to roll damage for each hit against infantry
-        if (target.isConventionalInfantry()) {
+        if (usesConventionalInfantryDamage()) {
             nDamPerHit = calcDamagePerHit();
         }
     }

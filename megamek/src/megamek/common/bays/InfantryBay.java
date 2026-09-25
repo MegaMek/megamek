@@ -108,7 +108,7 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
      *       otherwise.
      */
     @Override
-    public boolean canLoad(Entity unit) {
+    public boolean canLoad(Entity unit, int usableDoors) {
         // Only infantry
         boolean result = unit.hasETypeFlag(Entity.ETYPE_INFANTRY);
 
@@ -147,8 +147,9 @@ public final class InfantryBay extends Bay implements InfantryTransporter {
 
     @Override
     public int getPersonnel(boolean clan) {
+        // TM p. 239 (errata v8 p. 24): bay personnel capacity is independent of platoon composition.
         return (int) (totalSpace / platoonType.getWeight())
-              * (clan ? platoonType.getClanPersonnel() : platoonType.getISPersonnel());
+              * (platoonType == PlatoonType.MECHANIZED ? 7 : 30);
     }
 
     @Override

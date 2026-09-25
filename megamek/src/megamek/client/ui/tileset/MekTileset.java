@@ -349,7 +349,7 @@ public class MekTileset {
         } else if (entity instanceof HandheldWeapon) {
             return default_handheld_weapon;
         } else if (entity instanceof AbstractBuildingEntity) {
-            return default_handheld_weapon;
+            return default_gun_emplacement;
         }
 
         return default_unknown;

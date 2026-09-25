@@ -67,7 +67,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.moves.Key;
@@ -1774,6 +1773,7 @@ class BasicPathRankerTest {
         final Board mockBoard = mock(Board.class);
         final Hex mockHex = new Hex();
         when(mockBoard.getHex(any(Coords.class))).thenReturn(mockHex);
+        when(mockBoard.getBuildingsVector()).thenReturn(new Vector<>());
         when(mockBoard.contains(any(Coords.class))).thenReturn(true);
         when(mockBoard.isSpace()).thenReturn(false);
         when(mockBoard.isGround()).thenReturn(true);

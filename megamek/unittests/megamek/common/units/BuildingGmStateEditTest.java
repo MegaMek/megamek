@@ -169,7 +169,7 @@ class BuildingGmStateEditTest {
         }
 
         @Test
-        @DisplayName("killed gunners can be restored, which also lifts the doomed flag")
+        @DisplayName("killed gunners can be restored without changing the remaining crew")
         void killedGunnersCanBeRestored() throws Exception {
             AbstractBuildingEntity building = load(GUN_EMPLACEMENT_FILE);
             building.setPosition(new Coords(5, 5));
@@ -178,7 +178,7 @@ class BuildingGmStateEditTest {
             killSpec.buildingGunnersKilled.put(FIRST_HEX_GROUND_FLOOR, true);
             apply(building, killSpec);
             assertTrue(building.allGunnersDead(), "a single hex building loses all its gunners at once");
-            assertTrue(building.getCrew().isDoomed());
+            assertFalse(building.getCrew().isDoomed(), "operators and officers survive a gunner critical");
 
             DamageEditSpec reviveSpec = new DamageEditSpec();
             reviveSpec.buildingGunnersKilled.put(FIRST_HEX_GROUND_FLOOR, false);

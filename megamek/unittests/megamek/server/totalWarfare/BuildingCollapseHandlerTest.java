@@ -111,6 +111,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
     void beforeEach() {
         Player player = new Player(0, "Test");
         gameManager = Mockito.spy(new TWGameManager());
+        gameManager.getGame().getOptions().initialize();
 
         // Mock methods that require Server to avoid NullPointerException
         Mockito.doNothing().when(gameManager).send(any(Packet.class));

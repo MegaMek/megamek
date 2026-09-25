@@ -72,6 +72,9 @@ public class ConstructionUtil {
     public static void removeMounted(Entity unit, Mounted<?> mount) {
         Objects.requireNonNull(unit);
         Objects.requireNonNull(mount);
+        if (unit instanceof BuildingEntity building) {
+            building.getDesign().removeEquipment(mount);
+        }
 
         removeCriticalSlots(unit, mount);
 

@@ -98,6 +98,19 @@ class TurnStep implements PhasePass {
             moveStep.setMp(0);
         }
         moveStep.adjustFacing(moveStep.getType());
+        if (entity instanceof megamek.common.units.MobileStructure mobile) {
+            var pivots = MobileStructureGeometry.pivots(mobile);
+            Integer q = moveStep.getAdditionalData(MoveStep.MOBILE_PIVOT_Q_KEY);
+            Integer r = moveStep.getAdditionalData(MoveStep.MOBILE_PIVOT_R_KEY);
+            var pivot = q == null || r == null ? pivots.getFirst()
+                  : new megamek.common.board.CubeCoords(q, r, -q - r);
+            if (!pivots.contains(pivot)) {
+                moveStep.setMp(MobileStructureMovement.PROHIBITED);
+            } else {
+                moveStep.setPosition(MobileStructureGeometry.pivotOrigin(mobile, prev.getPosition(), prev.getFacing(),
+                      moveStep.getFacing(), pivot));
+            }
+        }
         return PhasePassResult.BREAK;
     }
 }

@@ -3379,18 +3379,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public void addClanCase() {
-        if (!isClan() && !hasClanCaseEquipped()) {
-            return;
-        }
         boolean explosiveFound;
         EquipmentType clCase = EquipmentType.get(EquipmentTypeLookup.CLAN_CASE);
         for (int i = 0; i < locations(); i++) {
-            // Skip location if it already contains CASE
-            if (locationHasCase(i) || hasCASEII(i)) {
-                continue;
-            }
-            // Skip location if user has opted out of auto Clan CASE
-            if (isClanCaseOptedOut(i)) {
+            if (!canAddAutomaticClanCase(i)) {
                 continue;
             }
 
@@ -3409,6 +3401,15 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 }
             }
         }
+    }
+
+    /** TM p. 210 / errata v8 p. 18: automatic CASE follows Clan internal structure. */
+    private boolean canAddAutomaticClanCase(int location) {
+        return location >= 0
+              && TechConstants.isClan(isFrankenMek()
+                    ? getFrankenMekStructureTechLevel(location) : getStructureTechLevel())
+              && !locationHasCase(location) && !hasCASEII(location)
+              && !isClanCaseOptedOut(location);
     }
 
     /**
@@ -4032,26 +4033,20 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int implicitClanCASE() {
-        if (!isClan() && !hasClanCaseEquipped()) {
-            return 0;
-        }
-        int explicit = 0;
         Set<Integer> caseLocations = new HashSet<>();
         for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && (m.getType().hasFlag(MiscType.F_CASE))) {
-                explicit++;
-            } else if (m.getType().isExplosive(m)) {
+            if (m.getType().isExplosive(m)) {
                 int loc = m.getLocation();
-                if (loc >= 0 && !isClanCaseOptedOut(loc)) {
+                if (canAddAutomaticClanCase(loc)) {
                     caseLocations.add(loc);
                 }
                 int secLoc = m.getSecondLocation();
-                if (secLoc >= 0 && !isClanCaseOptedOut(secLoc)) {
+                if (canAddAutomaticClanCase(secLoc)) {
                     caseLocations.add(secLoc);
                 }
             }
         }
-        return Math.max(0, caseLocations.size() - explicit);
+        return caseLocations.size();
     }
 
     public double getActuatorCost() {

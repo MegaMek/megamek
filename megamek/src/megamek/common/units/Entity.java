@@ -1430,6 +1430,10 @@ public abstract class Entity extends TurnOrdered
      */
     public void setModel(String model) {
         this.model = model;
+        // shortName and displayName are derived from the model; invalidate the cached copies so they are
+        // regenerated on next access (see setChassis).
+        shortName = null;
+        displayName = null;
     }
 
     /**
@@ -1453,11 +1457,20 @@ public abstract class Entity extends TurnOrdered
      */
     public void setChassis(String chassis) {
         this.chassis = chassis;
+        // shortName and displayName are derived from the chassis; invalidate the cached copies so they are
+        // regenerated on next access. Otherwise a name generated before the chassis was set (e.g. during
+        // construction) sticks around, which is how AbstractBuildingEntity units ended up displaying "null".
+        shortName = null;
+        displayName = null;
     }
 
     /** Sets the {@link #clanChassisName} for this unit, e.g. "Timber Wolf". */
     public void setClanChassisName(String name) {
         clanChassisName = Objects.requireNonNullElse(name, "");
+        // shortName and displayName include the clan chassis name; invalidate the cached copies so they are
+        // regenerated on next access (see setChassis).
+        shortName = null;
+        displayName = null;
     }
 
     /**

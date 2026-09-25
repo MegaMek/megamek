@@ -36,11 +36,7 @@ import static megamek.client.ui.Messages.getString;
 import static megamek.utilities.ImageUtilities.addTintToImageIcon;
 import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -50,15 +46,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
-import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListModel;
+import javax.swing.*;
 
 import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsHeaderPanel;
@@ -73,6 +61,19 @@ import megamek.common.Configuration;
 
 /** Settings-tree presentation for the shared MegaMek client preferences. */
 public class CommonSettingsPane extends JPanel {
+
+    public static final String SETTINGS_MAIN = "main";
+    public static final String SETTINGS_AUDIO = "audio";
+    public static final String SETTINGS_KEYBINDS = "keyBinds";
+    public static final String SETTINGS_GAMEBOARD = "gameBoard";
+    public static final String SETTINGS_UNITDISPLAY = "unitDisplay";
+    public static final String SETTINGS_MINIMAP = "miniMap";
+    public static final String SETTINGS_REPORT = "report";
+    public static final String SETTINGS_OVERLAYS = "overlays";
+    public static final String SETTINGS_BUTTONORDER = "buttonOrder";
+    public static final String SETTINGS_AUTODISPLAY = "autoDisplay";
+    public static final String SETTINGS_AIDISPLAY = "aiDisplay";
+    public static final String SETTINGS_ADVANCED = "advanced";
     private static final int START_HEIGHT = 800;
     private static final int HEADER_IMAGE_SIZE = 80;
     private static final int IMPORTANT_ICON = 0xE002;
@@ -83,18 +84,18 @@ public class CommonSettingsPane extends JPanel {
     private static final SettingsBadge ADVANCED_BADGE = new SettingsBadge(ADVANCED_ICON, null,
         getString("CommonSettingsDialog.legend.advanced"));
     private static final Map<String, String> PAGE_FACTION_LOGOS = Map.ofEntries(
-        Map.entry("main", "logo_federated_suns.png"),
-        Map.entry("audio", "logo_comstar.png"),
-        Map.entry("keyBinds", "logo_clan_coyote.png"),
-        Map.entry("gameBoard", "logo_clan_wolf.png"),
-        Map.entry("unitDisplay", "logo_draconis_combine.png"),
-        Map.entry("miniMap", "logo_rim_worlds_republic.png"),
-        Map.entry("report", "logo_clan_ghost_bear.png"),
-        Map.entry("overlays", "logo_clan_smoke_jaguar.png"),
-        Map.entry("buttonOrder", "logo_free_worlds_league.png"),
-        Map.entry("autoDisplay", "logo_outworld_alliance.png"),
-        Map.entry("aiDisplay", "logo_clan_nova_cat.png"),
-        Map.entry("advanced", "logo_republic_of_the_sphere.png"));
+            Map.entry(SETTINGS_MAIN, "logo_federated_suns.png"),
+            Map.entry(SETTINGS_AUDIO, "logo_comstar.png"),
+            Map.entry(SETTINGS_KEYBINDS, "logo_clan_coyote.png"),
+            Map.entry(SETTINGS_GAMEBOARD, "logo_clan_wolf.png"),
+            Map.entry(SETTINGS_UNITDISPLAY, "logo_draconis_combine.png"),
+            Map.entry(SETTINGS_MINIMAP, "logo_rim_worlds_republic.png"),
+            Map.entry(SETTINGS_REPORT, "logo_clan_ghost_bear.png"),
+            Map.entry(SETTINGS_OVERLAYS, "logo_clan_smoke_jaguar.png"),
+            Map.entry(SETTINGS_BUTTONORDER, "logo_free_worlds_league.png"),
+            Map.entry(SETTINGS_AUTODISPLAY, "logo_outworld_alliance.png"),
+            Map.entry(SETTINGS_AIDISPLAY, "logo_clan_nova_cat.png"),
+            Map.entry(SETTINGS_ADVANCED, "logo_republic_of_the_sphere.png"));
     private static final Map<String, Icon> PAGE_HEADER_ICONS = new LinkedHashMap<>();
 
     private final SettingsPane settingsPane;
@@ -163,6 +164,16 @@ public class CommonSettingsPane extends JPanel {
               + UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH);
         int floorHeight = UIUtil.scaleForGUI(START_HEIGHT);
         return new Dimension(Math.max(preferred.width, floorWidth), Math.max(preferred.height, floorHeight));
+    }
+
+    /**
+     * This expands the pane to the selected option
+     *
+     * @param routeId the name of the section
+     * @return did it work?
+     */
+    public boolean selectRoute(String routeId) {
+        return settingsPane.selectRouteAndExpand(routeId);
     }
 
     private static List<String> collectSearchAliases(Component root) {

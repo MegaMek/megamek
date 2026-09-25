@@ -112,6 +112,7 @@ import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.panels.CommonSettingsPane;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
@@ -410,6 +411,11 @@ public class ClientGUI extends AbstractClientGUI
 
     private File curFileBoardImage;
     private File curFileBoard;
+
+    /**
+     * Have we prompted about bing?
+     */
+    private boolean firstBing = true;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -1211,6 +1217,18 @@ public class ClientGUI extends AbstractClientGUI
         // Do we need to create the "settings" dialog?
         if (commonSettingsDialog == null) {
             commonSettingsDialog = new CommonSettingsDialog(frame, this);
+        }
+
+        // Show the settings dialog.
+        commonSettingsDialog.setVisible(true);
+    }
+
+    private void showSettingsSubPage(String subpage) {
+        // Do we need to create the "settings" dialog?
+        if (commonSettingsDialog == null) {
+            commonSettingsDialog = new CommonSettingsDialog(frame, this, subpage);
+        } else {
+            commonSettingsDialog.selectRoute(subpage);
         }
 
         // Show the settings dialog.
@@ -3149,7 +3167,103 @@ public class ClientGUI extends AbstractClientGUI
         audioService.playSound(SoundType.BING_CHAT);
     }
 
+    /**
+     * This prompts the user if they want to have the My Turn notifications enabled or not
+     */
+    private void promptForSound() {
+        JCheckBox chkSoundNagSuppress = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
+        JButton launchSettings = new JButton(Messages.getString("ClientGUI.bingLaunchSettings"));
+        JButton playMyTurnSound = new JButton(Messages.getString("ClientGUI.bingPlay"));
+        JLabel lblPlay = new JLabel(Messages.getString("ClientGUI.bingPlaySound"));
+        JLabel lblMessage = new JLabel(Messages.getString("ClientGUI.bingMessage"));
+        JLabel lblClientSettings = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
+
+        int padding;
+        // Action listeners
+        launchSettings.addActionListener(e -> showSettingsSubPage(CommonSettingsPane.SETTINGS_AUDIO));
+        playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
+
+        // Set alignments
+        lblPlay.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
+        launchSettings.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        lblMessage.setAlignmentX(Component.LEFT_ALIGNMENT);
+        chkSoundNagSuppress.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Audio button panel
+        padding = UIUtil.scaleForGUI(5);
+        JPanel playSoundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, padding, 0));
+        playSoundPanel.add(lblPlay);
+        playSoundPanel.add(playMyTurnSound);
+
+        // Client settings label panel
+        JPanel clientSettingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        clientSettingsPanel.add(lblClientSettings);
+
+        // Client Settings button panel
+        JPanel settingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        settingsButtonPanel.add(launchSettings);
+
+        // Panel alignment
+        playSoundPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        settingsButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        playSoundPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        settingsButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        clientSettingsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Audio sub-panel
+        JPanel audioPanel = new JPanel();
+        audioPanel.setLayout(new BoxLayout(audioPanel, BoxLayout.Y_AXIS));
+
+        padding = UIUtil.scaleForGUI(10);
+        audioPanel.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createEtchedBorder(),
+                        BorderFactory.createEmptyBorder(padding, padding, padding, padding)
+                )
+        );
+
+        audioPanel.add(playSoundPanel);
+        padding = UIUtil.scaleForGUI(20);
+        audioPanel.add(Box.createVerticalStrut(padding));
+        audioPanel.add(clientSettingsPanel);
+        padding = UIUtil.scaleForGUI(5);
+        audioPanel.add(Box.createVerticalStrut(padding));
+        audioPanel.add(settingsButtonPanel);
+
+        // Main content panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        panel.add(lblMessage);
+        padding = UIUtil.scaleForGUI(10);
+        panel.add(Box.createVerticalStrut(padding));
+        panel.add(audioPanel);
+        panel.add(Box.createVerticalStrut(padding));
+        panel.add(chkSoundNagSuppress);
+
+        int response = JOptionPane.showConfirmDialog(null,
+                                                     panel,
+              Messages.getString("ClientGUI.bingTitle"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        boolean soundPrompt = (response == JOptionPane.YES_OPTION);
+        boolean currentSetting = GUIPreferences.getInstance().getSoundMuteMyTurn();
+        if (soundPrompt != currentSetting) {
+            GUIPreferences.getInstance().setSoundMuteMyTurn(soundPrompt);
+        }
+        if (chkSoundNagSuppress.isSelected()) {
+            GUIPreferences.getInstance()
+                          .setSoundPromptSuppress(soundPrompt);
+        }
+    }
+
     public void bingMyTurn() {
+        if (!GUIP.getSoundPromptSuppress() && firstBing) {
+            promptForSound();
+            firstBing = false;
+        }
         audioService.playSound(SoundType.BING_MY_TURN);
     }
 

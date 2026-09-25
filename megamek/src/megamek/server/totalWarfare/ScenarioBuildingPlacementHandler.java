@@ -64,15 +64,19 @@ class ScenarioBuildingPlacementHandler extends AbstractTWRuleHandler {
                 continue;
             }
             boolean isPlaced = building.isDeployed() && (building.getPosition() != null);
-            boolean isOnTheMap = !building.isOffBoard();
-            if (!isPlaced || !isOnTheMap) {
+            if (!isPlaced) {
                 LOGGER.debug("[ScenarioBuilding] {} is not placed on the board yet; it will be written in when it"
                       + " deploys", building.getShortName());
                 continue;
             }
+            if (building.isOffBoard()) {
+                LOGGER.debug("[ScenarioBuilding] {} is off the board; it has no hexes to write into the map",
+                      building.getShortName());
+                continue;
+            }
             building.updateBuildingEntityHexes(building.getBoardId(), gameManager);
             placedCount++;
-            LOGGER.info("[ScenarioBuilding] {} written into the map at {} on board {}", building.getShortName(),
+            LOGGER.debug("[ScenarioBuilding] {} written into the map at {} on board {}", building.getShortName(),
                   building.getCoordsList(), building.getBoardId());
         }
         if (placedCount > 0) {

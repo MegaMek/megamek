@@ -11170,18 +11170,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveUnJams() {
         // loop through actions and handle everything we expect except attacks
-        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
-            EntityAction ea = i.nextElement();
+        for (Enumeration<EntityAction> gameActions = game.getActions(); gameActions.hasMoreElements(); ) {
+            EntityAction ea = gameActions.nextElement();
             Entity entity = game.getEntity(ea.getEntityId());
-
             if (entity == null) {
                 continue;
             }
-
-            switch (ea) {
-                case UnjamAction ignored -> resolveUnjam(entity);
-                default -> {
-                }
+            if (ea instanceof UnjamAction) {
+                resolveUnjam(entity);
             }
         }
     }

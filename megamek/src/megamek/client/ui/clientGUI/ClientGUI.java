@@ -34,30 +34,6 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-import java.util.jar.JarFile;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -176,6 +152,30 @@ import megamek.common.voting.Poll;
 import megamek.common.voting.PollStatus;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
+import java.util.jar.JarFile;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -3178,6 +3178,7 @@ public class ClientGUI extends AbstractClientGUI
         JLabel lblMessage = new JLabel(Messages.getString("ClientGUI.bingMessage"));
         JLabel lblClientSettings = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
 
+        int padding;
         // Action listeners
         launchSettings.addActionListener(e -> showSettingsSubPage(CommonSettingsPane.SETTINGS_AUDIO));
         playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
@@ -3191,7 +3192,8 @@ public class ClientGUI extends AbstractClientGUI
         lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Audio button panel
-        JPanel playSoundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        padding = UIUtil.scaleForGUI(5);
+        JPanel playSoundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, padding, 0));
         playSoundPanel.add(lblPlay);
         playSoundPanel.add(playMyTurnSound);
 
@@ -3214,7 +3216,7 @@ public class ClientGUI extends AbstractClientGUI
         JPanel audioPanel = new JPanel();
         audioPanel.setLayout(new BoxLayout(audioPanel, BoxLayout.Y_AXIS));
 
-        int padding = UIUtil.scaleForGUI(10);
+        padding = UIUtil.scaleForGUI(10);
         audioPanel.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createEtchedBorder(),
@@ -3223,9 +3225,11 @@ public class ClientGUI extends AbstractClientGUI
         );
 
         audioPanel.add(playSoundPanel);
-        audioPanel.add(Box.createVerticalStrut(20));
+        padding = UIUtil.scaleForGUI(20);
+        audioPanel.add(Box.createVerticalStrut(padding));
         audioPanel.add(clientSettingsPanel);
-        audioPanel.add(Box.createVerticalStrut(5));
+        padding = UIUtil.scaleForGUI(5);
+        audioPanel.add(Box.createVerticalStrut(padding));
         audioPanel.add(settingsButtonPanel);
 
         // Main content panel
@@ -3233,9 +3237,10 @@ public class ClientGUI extends AbstractClientGUI
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         panel.add(lblMessage);
-        panel.add(Box.createVerticalStrut(10));
+        padding = UIUtil.scaleForGUI(10);
+        panel.add(Box.createVerticalStrut(padding));
         panel.add(audioPanel);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(padding));
         panel.add(chkSoundNagSuppress);
 
         int response = JOptionPane.showConfirmDialog(null,

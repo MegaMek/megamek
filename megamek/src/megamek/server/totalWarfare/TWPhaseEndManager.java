@@ -76,6 +76,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // code for the one path that needs it. The phase END does run; it is what moves the
                 // game on. Markers themselves arrive with the scenario file; what this pass adds is the
                 // scenario's starting victory points and the warning that nothing can end the game.
+                // scenario units placed with at: skip deployment, which is where a building is written into
+                // its hexes; without this the building fights as a unit on what the map shows as open ground
+                new ScenarioBuildingPlacementHandler(gameManager).placePreDeployedBuildings();
                 gameManager.placeLobbyObjectives();
                 // deliberately not cleared afterwards: nothing reports again until the first initiative
                 // report, so these lines have to survive in the phase report until then. Clearing here

@@ -2049,25 +2049,48 @@ public class Compute {
             distance += (2 * attacker.getAltitude());
         }
 
-        if (game.isOnSpaceMap(attacker) && !attacker.getPosition().equals(targetPos.getFirst())) {
-            // Atmospheric hexes count as extra range
-            Board attackerBoard = game.getBoard(attacker);
-            Coords currentCoords = attacker.getPosition();
-            currentCoords = Coords.nextHex(currentCoords, targetPos.getFirst());
-            int safetyCounter = 0;
-            while (!currentCoords.equals(targetPos.getFirst()) && (safetyCounter < 1000)) {
-                safetyCounter++; // prevent infinite loops
-                currentCoords = Coords.nextHex(currentCoords, targetPos.getFirst());
-                if (BoardHelper.isAtmosphericRow(game, attackerBoard, currentCoords)
-                      || BoardHelper.isGroundRowHex(attackerBoard, currentCoords)) {
-                    distance += BoardHelper.highAltAtmosphereRowRangeIncrease(game);
-                } else if (BoardHelper.isSpaceAtmosphereInterface(game, attackerBoard, currentCoords)) {
-                    distance += BoardHelper.highAltSpaceAtmosphereRangeIncrease(game);
-                }
-            }
+        if (game.isOnSpaceMap(attacker)) {
+            Coords targetPosition = targetPos.isEmpty() ? null : targetPos.getFirst();
+            distance += spaceMapAtmosphereRangeIncrease(game, attacker, targetPosition);
         }
 
         return distance;
+    }
+
+    /**
+     * Returns the extra range a space-map attack pays for crossing atmospheric hexes between the attacker and the
+     * target.
+     *
+     * <p>A unit that is in the game but has no hex of its own - an ejected pilot who has been picked up, for
+     * example - has nothing to walk towards, so it adds no extra range. The plain distance to such a unit is already
+     * out of reach (see {@link #smallestDistance(Collection, Collection)}).</p>
+     *
+     * @param game           The current {@link Game}
+     * @param attacker       the attacking unit, which is on a space map
+     * @param targetPosition the target's hex, or {@code null} if the target has none
+     *
+     * @return the extra range from atmospheric hexes along the way, or {@code 0} if either side has no hex
+     */
+    private static int spaceMapAtmosphereRangeIncrease(Game game, Entity attacker, @Nullable Coords targetPosition) {
+        Coords attackerPosition = attacker.getPosition();
+        if ((attackerPosition == null) || (targetPosition == null) || attackerPosition.equals(targetPosition)) {
+            return 0;
+        }
+        int rangeIncrease = 0;
+        Board attackerBoard = game.getBoard(attacker);
+        Coords currentCoords = Coords.nextHex(attackerPosition, targetPosition);
+        int safetyCounter = 0;
+        while (!currentCoords.equals(targetPosition) && (safetyCounter < 1000)) {
+            safetyCounter++; // prevent infinite loops
+            currentCoords = Coords.nextHex(currentCoords, targetPosition);
+            if (BoardHelper.isAtmosphericRow(game, attackerBoard, currentCoords)
+                  || BoardHelper.isGroundRowHex(attackerBoard, currentCoords)) {
+                rangeIncrease += BoardHelper.highAltAtmosphereRowRangeIncrease(game);
+            } else if (BoardHelper.isSpaceAtmosphereInterface(game, attackerBoard, currentCoords)) {
+                rangeIncrease += BoardHelper.highAltSpaceAtmosphereRangeIncrease(game);
+            }
+        }
+        return rangeIncrease;
     }
 
     static int smallestDistance(Collection<Coords> firstList, Collection<Coords> secondList) {

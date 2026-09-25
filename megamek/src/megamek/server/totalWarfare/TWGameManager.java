@@ -29208,91 +29208,41 @@ public class TWGameManager extends AbstractGameManager {
         return rv;
     }
 
+    /**
+     * Damages the infantry inside a building hex from an attack on the building that is not a weapon attack, such as a
+     * physical attack or a unit forcing its way in. The damage counts as direct fire (TW p. 216).
+     *
+     * @param bldg      the building attacked
+     * @param damage    the damage of the attack on the building
+     * @param hexCoords the building hex attacked
+     *
+     * @return the reports of the damage
+     */
     public Vector<Report> damageInfantryIn(IBuilding bldg, int damage, Coords hexCoords) {
-        return damageInfantryIn(bldg, damage, hexCoords, WeaponType.WEAPON_NA);
+        return damageInfantryIn(bldg, damage, hexCoords, WeaponType.WEAPON_DIRECT_FIRE);
     }
 
     /**
-     * Apply the correct amount of damage that passes on to any infantry unit in the given building, based upon the
-     * amount of damage the building just sustained. This amount is a percentage dictated by pg. 172 of TW.
+     * Damages the infantry inside a building hex from an attack on the building from outside (TW p. 172). See
+     * {@link BuildingOccupantDamageHandler}.
      *
-     * @param building   - the <code>Building</code> that sustained the damage.
-     * @param damage - the <code>int</code> amount of damage.
+     * @param building       the building attacked, or {@code null} for none
+     * @param damage         the damage of the attack on the building
+     * @param hexCoords      the building hex attacked
+     * @param infDamageClass the attacking weapon's infantry damage class, or
+     *                       {@link WeaponType#WEAPON_INFANTRY_ORIGIN} for an attack by conventional infantry
+     *
+     * @return the reports of the damage
      */
-    public Vector<Report> damageInfantryIn(IBuilding building, int damage, Coords hexCoords, int infDamageClass) {
-        Vector<Report> vDesc = new Vector<>();
-
+    public Vector<Report> damageInfantryIn(@Nullable IBuilding building, int damage, Coords hexCoords,
+          int infDamageClass) {
         if (building == null || building.usesCapitalScale()
               || building instanceof AbstractBuildingEntity authored && BuildingConstruction.usesHexsides(authored)) {
             // Capital building threshold hits already affected every occupant in damageBuilding().
-            return vDesc;
+            return new Vector<>();
         }
-        // Calculate the amount of damage the infantry will sustain.
-        float percent = building.getDamageReductionFromOutside();
-        Report r;
-
-        // Round up at .5 points of damage.
-        int toInf = Math.round(damage * percent);
-
-        // some buildings scale remaining damage
-        toInf = (int) Math.floor(building.getDamageToScale() * toInf);
-
-        // Walk through the entities in the game.
-        for (Entity entity : game.getEntitiesVector()) {
-            final Coords coords = entity.getPosition();
-
-            // If the entity is infantry in the affected hex?
-            if (coords != null && (entity instanceof Infantry) && coords.equals(hexCoords)) {
-                // Is the entity is inside the building
-                // (instead of just on top of it)?
-                if (Compute.isInBuilding(game, entity, coords)) {
-
-                    // Report if the infantry receive no points of damage.
-                    if (toInf == 0) {
-                        r = new Report(6445);
-                        r.indent(3);
-                        r.subject = entity.getId();
-                        r.add(entity.getDisplayName());
-                        vDesc.addElement(r);
-                    } else {
-                        // Yup. Damage the entity.
-                        r = new Report(6450);
-                        r.indent(3);
-                        r.subject = entity.getId();
-                        r.add(toInf);
-                        r.add(entity.getDisplayName());
-                        vDesc.addElement(r);
-                        // need to adjust damage to conventional infantry
-                        // TW page 217 says left over damage gets treated as
-                        // direct fire ballistic damage
-                        if (!(entity instanceof BattleArmor)) {
-                            toInf = Compute.directBlowInfantryDamage(toInf,
-                                  0,
-                                  WeaponType.WEAPON_DIRECT_FIRE,
-                                  false,
-                                  false);
-                        }
-                        int remaining = toInf;
-                        int cluster = toInf;
-                        // Battle Armor units use 5 point clusters.
-                        if (entity instanceof BattleArmor) {
-                            cluster = 5;
-                        }
-                        while (remaining > 0) {
-                            int next = Math.min(cluster, remaining);
-                            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                            vDesc.addAll((damageEntity(entity, hit, next)));
-                            remaining -= next;
-                        }
-                    }
-
-                    Report.addNewline(vDesc);
-                } // End infantry-inside-building
-            } // End entity-is-infantry-in-building-hex
-        } // Handle the next entity
-
-        return vDesc;
-    } // End private void damageInfantryIn( Building, int )
+        return new BuildingOccupantDamageHandler(this).damageInfantryIn(building, damage, hexCoords, infDamageClass);
+    }
 
     /**
      * Determine if the given building should collapse. If so, inflict the appropriate amount of damage on each entity

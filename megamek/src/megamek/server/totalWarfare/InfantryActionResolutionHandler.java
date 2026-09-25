@@ -366,6 +366,7 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
      */
     private void applySideLosses(InfantryAction combat, boolean isAttacker, InfantryActionSideLosses losses) {
         List<Integer> sideIds = isAttacker ? combat.attackerIds : combat.defenderIds;
+        List<Integer> opposingIds = isAttacker ? combat.defenderIds : combat.attackerIds;
         for (InfantryActionSideLosses.UnitLoss loss : losses.units()) {
             Entity entity = loss.entity();
             boolean eliminated;
@@ -376,6 +377,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                         addReport(report);
                     }
                     eliminated = battleArmor.isDestroyed() || (battleArmor.getNumberActiveTroopers() <= 0);
+                    if (eliminated) {
+                        creditKill(battleArmor, opposingIds);
+                    }
                 }
                 case ConvInfantry platoon -> {
                     // The casualties are already people, so they come straight off the live trooper count. Going
@@ -385,6 +389,9 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                         platoon.setInternal(Math.max(0, loss.remaining()), ConvInfantry.LOC_INFANTRY);
                     }
                     eliminated = platoon.getInternal(ConvInfantry.LOC_INFANTRY) <= 0;
+                    if (eliminated) {
+                        creditKill(platoon, opposingIds);
+                    }
                     if (eliminated && !platoon.isDestroyed()) {
                         addReport(gameManager.destroyEntity(platoon, "infantry action casualties"));
                     }
@@ -402,6 +409,31 @@ class InfantryActionResolutionHandler extends AbstractTWRuleHandler {
                 sideIds.remove(Integer.valueOf(entity.getId()));
             }
         }
+    }
+
+    /**
+     * Gives the kill to a unit of the other side, so the end-of-game summary names who took the unit out instead
+     * of calling it pilot error, which is what it says for a destroyed unit with no killer recorded. The action is
+     * fought by the whole side at once, so the credit goes to the first of the other side's units still in it.
+     *
+     * @param eliminated  the unit wiped out by the action's casualties
+     * @param opposingIds the units fighting on the other side
+     */
+    private void creditKill(Entity eliminated, List<Integer> opposingIds) {
+        if (eliminated.getGaveKillCredit()) {
+            return;
+        }
+        for (int opposingId : opposingIds) {
+            Entity opponent = getGame().getEntity(opposingId);
+            if (opponent != null) {
+                opponent.addKill(eliminated);
+                LOGGER.debug("[InfantryAction] {} credited with {}", opponent.getShortName(),
+                      eliminated.getShortName());
+                return;
+            }
+        }
+        LOGGER.debug("[InfantryAction] {} eliminated with nobody left on the other side to credit",
+              eliminated.getShortName());
     }
 
     /**

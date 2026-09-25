@@ -1013,8 +1013,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 }
                 // Targeting a building.
                 if (Targetable.isBuildingType(target.getTargetType())) {
-                    // The building takes the full brunt of the attack, one damage grouping at a time.
-                    handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
+                    // The building takes the full brunt of the attack, all its hits as one attack (TW p. 171)
+                    nDamage = nDamPerHit * hits;
+                    handleBuildingDamage(vPhaseReport, bldg, nDamage, target.getPosition());
                     // And we're done!
                     return false;
                 }
@@ -1036,11 +1037,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = attackingEntity.getId();
                 r.newlines--;
                 vPhaseReport.add(r);
-                // The missed volley hits the building one damage grouping at a time; bSalvo is forced on so the
-                // building damage does not report a hit
+                int nDamage = nDamPerHit * hits;
+                // We want to set bSalvo to true to prevent
+                // handleBuildingDamage from reporting a hit
                 boolean savedSalvo = bSalvo;
                 bSalvo = true;
-                handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
+                handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                      target.getPosition());
                 bSalvo = savedSalvo;
             }
         }

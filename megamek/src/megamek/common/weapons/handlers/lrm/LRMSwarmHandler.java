@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -263,8 +263,10 @@ public class LRMSwarmHandler extends LRMHandler {
             }
             // Targeting a building.
             if (Targetable.isBuildingType(target.getTargetType())) {
-                // The building takes the full brunt of the attack, one damage grouping at a time.
-                handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
+                // The building takes the full brunt of the attack, all its hits as one attack (TW p. 171)
+                nDamage = nDamPerHit * hits;
+                handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                      target.getPosition());
                 hits = 0;
             }
             if (entityTarget != null) {

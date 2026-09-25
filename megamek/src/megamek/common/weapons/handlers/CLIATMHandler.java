@@ -910,8 +910,10 @@ public class CLIATMHandler extends ATMHandler {
                 }
                 // Targeting a building.
                 if (Targetable.isBuildingType(target.getTargetType())) {
-                    // The building takes the full brunt of the attack, one damage grouping at a time.
-                    handleBuildingDamageByGrouping(vPhaseReport, bldg, hits, nCluster, target.getPosition());
+                    // The building takes the full brunt of the attack, all its hits as one attack (TW p. 171)
+                    nDamage = nDamPerHit * hits;
+                    handleBuildingDamage(vPhaseReport, bldg, nDamage,
+                          target.getPosition());
                     // And we're done!
                     return false;
                 }

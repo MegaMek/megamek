@@ -76,6 +76,13 @@ import megamek.common.units.Infantry;
  */
 public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
 
+    /** How much larger than its content the dialog opens, so wrapped text is never cut off. */
+    private static final double CONTENT_MARGIN = 1.15;
+    /** The largest share of its screen the dialog grows to, as the base dialog allows. */
+    private static final double MOST_OF_THE_SCREEN = 0.8;
+    private static final int MINIMUM_WIDTH = 414;
+    private static final int MINIMUM_HEIGHT = 276;
+
     private final Game game;
     private final Player player;
     private final AbstractBuildingEntity building;
@@ -102,7 +109,38 @@ public class InfantryActionDeclarationDialog extends AbstractButtonDialog {
         this.defends = InfantryActionStrengths.defends(player, building);
         initialize();
         setTitle(Messages.getString(titleKey(), building.getDisplayName()));
-        setMinimumSize(new Dimension(UIUtil.scaleForGUI(360), UIUtil.scaleForGUI(240)));
+        setMinimumSize(new Dimension(UIUtil.scaleForGUI(MINIMUM_WIDTH), UIUtil.scaleForGUI(MINIMUM_HEIGHT)));
+        growToFitContent();
+    }
+
+    /**
+     * Opens the dialog with room to spare around its text. The packed size is exactly what the content asks for,
+     * and wrapped text asks for too little height, so the last lines were cut off; a size the player saved earlier
+     * can be smaller still. Either is grown to the content's size plus a margin, and a larger saved size is kept.
+     */
+    private void growToFitContent() {
+        Dimension contentSize = getPreferredSize();
+        int roomyWidth = (int) Math.ceil(contentSize.width * CONTENT_MARGIN);
+        int roomyHeight = (int) Math.ceil(contentSize.height * CONTENT_MARGIN);
+        Dimension currentSize = getSize();
+        setSize(Math.max(currentSize.width, roomyWidth), Math.max(currentSize.height, roomyHeight));
+        keepOnScreen();
+    }
+
+    /**
+     * Leaves the dialog where it was placed, centred the first time and where the player saved it after that, and
+     * only moves it back onto its screen if growing it pushed an edge off. Re-centring every time would throw away a
+     * position the player chose. The screen is the one the dialog is on, so a saved spot on a second monitor stays
+     * there.
+     */
+    private void keepOnScreen() {
+        Rectangle screen = getGraphicsConfiguration().getBounds();
+        int width = Math.min(getWidth(), (int) (screen.width * MOST_OF_THE_SCREEN));
+        int height = Math.min(getHeight(), (int) (screen.height * MOST_OF_THE_SCREEN));
+        setSize(width, height);
+        int x = Math.clamp(getX(), screen.x, (screen.x + screen.width) - width);
+        int y = Math.clamp(getY(), screen.y, (screen.y + screen.height) - height);
+        setLocation(x, y);
     }
 
     /** Defend, attack, reinforce a running attack, or, with nothing left to add, continue or withdraw from it. */

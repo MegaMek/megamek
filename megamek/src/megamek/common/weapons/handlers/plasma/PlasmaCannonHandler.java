@@ -196,14 +196,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 report.subject = subjectId;
                 report.indent();
             }
+            // The infantry inside are not hurt: only an intentional attack on a building reaches them (TW p. 172)
             vPhaseReport.addAll(buildingReport);
-            // Damage any infantry in the building.
-            Vector<Report> infantryReport = gameManager.damageInfantryIn(coverBuilding, nDamage,
-                  coverLoc, weaponType.getInfantryDamageClass());
-            for (Report report : infantryReport) {
-                report.indent(2);
-            }
-            vPhaseReport.addAll(infantryReport);
         }
         missed = true;
     }

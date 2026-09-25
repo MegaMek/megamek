@@ -433,6 +433,21 @@ public interface IBuilding extends Serializable {
         };
     }
 
+    /**
+     * The damage that reaches the infantry inside this building from one attack on it from outside. A building that
+     * scales damage, such as a gun emplacement or fortress, scales the attack first, rounding down (TO:AR p. 124: the
+     * multiplier applies to the damage delivered to the building and its occupants). The infantry then take the
+     * building type's share of what is left, rounding .5 up (TW p. 172).
+     *
+     * @param damage the damage of the attack on the building
+     *
+     * @return the damage that reaches each infantry unit inside
+     */
+    default int damageReachingInfantryInside(int damage) {
+        int scaledDamage = (int) Math.floor(getDamageToScale() * damage);
+        return Math.round(scaledDamage * getDamageReductionFromOutside());
+    }
+
     BasementType getBasement(Coords coords);
 
     void setBasement(Coords coords, BasementType basement);

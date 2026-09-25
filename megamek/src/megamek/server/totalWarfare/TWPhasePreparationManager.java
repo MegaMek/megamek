@@ -212,6 +212,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                     collapsePreEndPlayerWideTurns();
                 }
                 gameManager.determineTurnOrder(phase);
+                InfantryActionTurnOrder.logUnitsHeldInPlace(gameManager.getGame(), phase);
                 if (phase.isPreEndDeclarations()) {
                     // The book asks the attacker first and the defender answers; initiative alone may not. The
                     // clients already hold the initiative order from determineTurnOrder, so a change is sent again

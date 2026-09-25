@@ -39,15 +39,15 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -116,6 +116,7 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
+import megamek.common.moves.BuildingRoofEntry;
 import megamek.common.moves.ClimbingHelper;
 import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
@@ -3035,8 +3036,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                 Messages.getString("MovementDisplay.RamDialog.message",
                                                                    toHit.getValueAsString(),
                                                                    Compute.oddsAbove(toHit.getValue(),
-                                                                                     currentlySelectedEntity.hasAbility(
-                                                                                             OptionsConstants.PILOT_APTITUDE_PILOTING)),
+                                                                                     currentlySelectedEntity.isUseNaturalAptitudePiloting()),
                                                                    toHit.getDesc(),
                                                                    toDefender,
                                                                    toHit.getTableDesc(),
@@ -3461,6 +3461,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
     private synchronized void updateElevationButtons() {
         final Entity currentEntity = currentEntity();
         if (currentEntity == null) {
+            updateLowerButtonLabel(false);
             return;
         }
 
@@ -3470,6 +3471,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             setLowerEnabled(currentEntity.canGoDown(cmd.getFinalAltitude(),
                                                     cmd.getFinalCoords(),
                                                     cmd.getFinalBoardId()));
+            updateLowerButtonLabel(false);
             return;
         }
         // WiGEs (and LAMs and glider ProtoMeks) cannot go up if they've used ground movement.
@@ -3484,6 +3486,26 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                   cmd.getFinalBoardId()));
         }
         setLowerEnabled(currentEntity.canGoDown(cmd.getFinalElevation(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
+        updateLowerButtonLabel(BuildingRoofEntry.isEnteringFromRoof(currentEntity, cmd.getFinalElevation(),
+              cmd.getFinalCoords(), cmd.getFinalBoardId()));
+    }
+
+    /** Whether the Go Down button currently reads "Enter Building", so the change is logged once, not every refresh. */
+    private boolean isLowerLabelledEnterBuilding;
+
+    /**
+     * Names the Go Down button "Enter Building" while going down takes the unit from a building's roof into the
+     * building (TW p. 169), and "Go Down" otherwise.
+     *
+     * @param isEnteringFromRoof whether going down enters the building from its roof
+     */
+    private void updateLowerButtonLabel(boolean isEnteringFromRoof) {
+        if (isEnteringFromRoof != isLowerLabelledEnterBuilding) {
+            LOGGER.debug("[RoofEntry] Go Down button now reads {}", isEnteringFromRoof ? "Enter Building" : "Go Down");
+            isLowerLabelledEnterBuilding = isEnteringFromRoof;
+        }
+        String key = isEnteringFromRoof ? "MovementDisplay.moveEnterBuilding" : "MovementDisplay.moveLowerElevation";
+        getBtn(MoveCommand.MOVE_LOWER_ELEVATION).setText(Messages.getString(key));
     }
 
     /**

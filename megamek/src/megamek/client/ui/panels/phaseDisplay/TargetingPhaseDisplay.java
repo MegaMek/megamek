@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,7 +38,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import javax.swing.*;
+import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -915,7 +915,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                     setFireEnabled(true);
                 } else {
                     clientgui.getUnitDisplay().wPan.setToHit(toHit,
-                          attacker.hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY));
+                          attacker.isUseNaturalAptitudeGunnery(attacker.getGame(), weapon));
                     setFireEnabled(true);
                 }
             }

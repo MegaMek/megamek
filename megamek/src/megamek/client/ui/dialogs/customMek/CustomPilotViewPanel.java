@@ -32,7 +32,12 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Rectangle;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -112,6 +117,14 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
     private final JTextField fldTough = new JTextField(4);
     private final JTextField fldFatigue = new JTextField(4);
 
+    private final JCheckBox chkNaturalAptitudePiloting = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudePilotingAero = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeGunnery = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeGunneryAero = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeArtillery = new JCheckBox();
+    private final JCheckBox chkNaturalAptitudeSmallArms = new JCheckBox();
+    private boolean showsArtilleryAptitude;
+
     private final JComboBox<String> cbBackup = new JComboBox<>();
 
     private final List<Entity> entityUnitNum = new ArrayList<>();
@@ -154,6 +167,10 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             inputField.setMinimumSize(inputField.getPreferredSize());
         }
 
+        // Worked out before the sections are built, as the skills section needs it for the Small Arms aptitude
+        showsPersonalEquipment = CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
+              && CrewArmorKitRules.canWearArmorKit(entity);
+
         // Sections sit side by side at their natural width in fixed grid columns; the trailing glue absorbs the
         // leftover row width and packs them to the left. The Advanced section goes below the identity section in
         // the same grid column, stretched to its width, so the two panels' edges line up.
@@ -165,8 +182,6 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         // command controls beside Small Arms, then toughness and fatigue. The first row is added here; for a
         // single pilot the dialog adds its command controls next and then calls addCrewMemberRows(), for a
         // multi-crew member tab there are no command controls and the rest follows at once.
-        showsPersonalEquipment = CrewArmorKitRules.isRuleInPlay(parent.getClient().getGame())
-              && CrewArmorKitRules.canWearArmorKit(entity);
         if (showsPersonalEquipment) {
             choArmorKit = buildArmorKitChooser(parent.getClient().getGame(), entity, slot);
             refreshArmorKitTooltip();
@@ -219,6 +234,12 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
             fldArtillery.setEnabled(false);
             fldTough.setEnabled(false);
             fldFatigue.setEnabled(false);
+            chkNaturalAptitudePiloting.setEnabled(false);
+            chkNaturalAptitudePilotingAero.setEnabled(false);
+            chkNaturalAptitudeGunnery.setEnabled(false);
+            chkNaturalAptitudeGunneryAero.setEnabled(false);
+            chkNaturalAptitudeArtillery.setEnabled(false);
+            chkNaturalAptitudeSmallArms.setEnabled(false);
         }
 
         missingToggled();
@@ -629,7 +650,98 @@ public class CustomPilotViewPanel extends JPanel implements Scrollable {
         }
         fldArtillery.setText(Integer.toString(entity.getCrew().getArtillery(slot)));
 
+        addNaturalAptitudeRows(skillsSection, slot,
+              parent.getClient().getGame().getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL));
+
         return skillsSection;
+    }
+
+    /**
+     * Adds this crew member's Natural Aptitude checkboxes to the skills section.
+     *
+     * @param skillsSection       the section to add the rows to
+     * @param slot                the crew slot this panel edits
+     * @param isUseArtillerySkill whether the separate Artillery skill game option is on
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void addNaturalAptitudeRows(JPanel skillsSection, int slot, boolean isUseArtillerySkill) {
+        Crew crew = entity.getCrew();
+        showsArtilleryAptitude = isUseArtillerySkill;
+
+        String pilotingKey = "CustomMekDialog.labNaturalAptitudePiloting";
+        if (entity instanceof Tank) {
+            pilotingKey = "CustomMekDialog.labNaturalAptitudeDriving";
+        } else if (entity instanceof Infantry) {
+            pilotingKey = "CustomMekDialog.labNaturalAptitudeAntiMek";
+        }
+        addNaturalAptitudeRow(skillsSection, pilotingKey, chkNaturalAptitudePiloting,
+              crew.isHasNaturalAptitudePiloting(slot));
+        if (crew instanceof LAMPilot lamPilot) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudePilotingAero",
+                  chkNaturalAptitudePilotingAero, lamPilot.isHasNaturalAptitudePilotingAero());
+        }
+
+        addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunnery",
+              chkNaturalAptitudeGunnery, crew.isHasNaturalAptitudeGunnery(slot));
+        if (crew instanceof LAMPilot lamPilot) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeGunneryAero",
+                  chkNaturalAptitudeGunneryAero, lamPilot.isHasNaturalAptitudeGunneryAero());
+        }
+
+        if (showsArtilleryAptitude) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeArtillery",
+                  chkNaturalAptitudeArtillery, crew.isHasNaturalAptitudeArtillery(slot));
+        }
+
+        // Small Arms is only used once the crew is on foot, which only matters with the personal equipment rule
+        if (showsPersonalEquipment) {
+            addNaturalAptitudeRow(skillsSection, "CustomMekDialog.labNaturalAptitudeSmallArms",
+                  chkNaturalAptitudeSmallArms, crew.isHasNaturalAptitudeSmallArms(slot));
+        }
+    }
+
+    /**
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private void addNaturalAptitudeRow(JPanel skillsSection, String labelKey, JCheckBox checkBox,
+          boolean hasNaturalAptitude) {
+        String tooltip = UIUtil.formatSideTooltip(Messages.getString("CustomMekDialog.naturalAptitude.tooltip"));
+        JLabel label = new JLabel(Messages.getString(labelKey), SwingConstants.RIGHT);
+        label.setToolTipText(tooltip);
+        checkBox.setToolTipText(tooltip);
+        checkBox.setSelected(hasNaturalAptitude);
+        skillsSection.add(label, GBC.std());
+        skillsSection.add(checkBox, GBC.eol());
+    }
+
+    /**
+     * Writes this crew member's Natural Aptitudes back onto the crew. When the separate Artillery skill isn't in use,
+     * artillery is fired with Gunnery, so the Artillery aptitude follows the Gunnery aptitude.
+     *
+     * @param crew the crew to update
+     * @param slot the crew slot this panel edits
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void applyNaturalAptitudes(Crew crew, int slot) {
+        crew.setHasNaturalAptitudePiloting(chkNaturalAptitudePiloting.isSelected(), slot);
+        crew.setHasNaturalAptitudeGunnery(chkNaturalAptitudeGunnery.isSelected(), slot);
+        crew.setHasNaturalAptitudeArtillery(showsArtilleryAptitude ?
+                                                  chkNaturalAptitudeArtillery.isSelected() :
+                                                  chkNaturalAptitudeGunnery.isSelected(), slot);
+        // A hidden checkbox never writes back, like the Small Arms skill field itself
+        if (showsPersonalEquipment) {
+            crew.setHasNaturalAptitudeSmallArms(chkNaturalAptitudeSmallArms.isSelected(), slot);
+        }
+
+        if (crew instanceof LAMPilot lamPilot) {
+            lamPilot.setHasNaturalAptitudePilotingAero(chkNaturalAptitudePilotingAero.isSelected());
+            lamPilot.setHasNaturalAptitudeGunneryAero(chkNaturalAptitudeGunneryAero.isSelected());
+        }
     }
 
     /**

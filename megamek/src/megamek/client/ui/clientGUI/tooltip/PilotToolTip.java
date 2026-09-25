@@ -42,6 +42,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import javax.imageio.ImageIO;
@@ -56,8 +58,12 @@ import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.units.Crew;
+import megamek.common.units.CrewArmorKitRules;
 import megamek.common.units.Entity;
+import megamek.common.units.Infantry;
+import megamek.common.units.LAMPilot;
 import megamek.common.units.MekWarrior;
+import megamek.common.units.Tank;
 import megamek.common.util.CrewSkillSummaryUtil;
 import megamek.logging.MMLogger;
 
@@ -187,6 +193,14 @@ public final class PilotToolTip {
                 sCrew += UIUtil.tag("FONT", attr, crew.getStatusDesc(i));
             }
             result.append(sCrew).append("<BR>");
+
+            // Multi-crew cockpits list each crew member's aptitudes under their name
+            if (crew.getSlotCount() > 1) {
+                String naturalAptitudes = naturalAptitudesDescription(entity, i);
+                if (!naturalAptitudes.isEmpty()) {
+                    result.append(naturalAptitudes).append("<BR>");
+                }
+            }
         }
 
         // Effective entity skill for the whole crew
@@ -198,11 +212,71 @@ public final class PilotToolTip {
         if (!implantAdjustments.isEmpty()) {
             result.append("<BR>").append(implantAdjustments);
         }
+        if (crew.getSlotCount() == 1) {
+            String naturalAptitudes = naturalAptitudesDescription(entity, 0);
+            if (!naturalAptitudes.isEmpty()) {
+                result.append("<BR>").append(naturalAptitudes);
+            }
+        }
         String fontSizeAttr = String.format("class=%s", GUIP.getUnitToolTipFontSizeMod());
         result = new StringBuilder(UIUtil.tag("span", fontSizeAttr, result.toString()));
         String col = UIUtil.tag("TD", "align=\"left\"", result.toString());
 
         return new StringBuilder().append(col);
+    }
+
+    /**
+     * Lists a crew member's Natural Aptitudes, e.g. "Natural Aptitude: Piloting, Gunnery". The Artillery aptitude is
+     * only listed when the separate Artillery skill is in use, as otherwise artillery is fired with Gunnery, and the
+     * Small Arms aptitude only when the crew could end up fighting on foot.
+     *
+     * @param entity the unit
+     * @param pos    the crew slot
+     *
+     * @return the description, or an empty String if the crew member has no Natural Aptitudes
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static String naturalAptitudesDescription(final Entity entity, final int pos) {
+        Crew crew = entity.getCrew();
+        Game game = entity.getGame();
+        boolean isUseArtillerySkill = (game != null)
+              && game.getOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL);
+
+        List<String> naturalAptitudes = new ArrayList<>();
+        if (crew.isHasNaturalAptitudePiloting(pos)) {
+            String pilotingKey = "BoardView1.Tooltip.NaturalAptitude.Piloting";
+            if (entity instanceof Tank) {
+                pilotingKey = "BoardView1.Tooltip.NaturalAptitude.Driving";
+            } else if (entity instanceof Infantry) {
+                pilotingKey = "BoardView1.Tooltip.NaturalAptitude.AntiMek";
+            }
+            naturalAptitudes.add(Messages.getString(pilotingKey));
+        }
+        if ((crew instanceof LAMPilot lamPilot) && lamPilot.isHasNaturalAptitudePilotingAero()) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.PilotingAero"));
+        }
+        if (crew.isHasNaturalAptitudeGunnery(pos)) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Gunnery"));
+        }
+        if ((crew instanceof LAMPilot lamPilot) && lamPilot.isHasNaturalAptitudeGunneryAero()) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.GunneryAero"));
+        }
+        if (isUseArtillerySkill && crew.isHasNaturalAptitudeArtillery(pos)) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.Artillery"));
+        }
+        // Small Arms is only used once the crew is on foot, which only happens with the personal equipment rule
+        boolean isSmallArmsInPlay = CrewArmorKitRules.isRuleInPlay(game) && CrewArmorKitRules.canWearArmorKit(entity);
+        if (isSmallArmsInPlay && crew.isHasNaturalAptitudeSmallArms(pos)) {
+            naturalAptitudes.add(Messages.getString("BoardView1.Tooltip.NaturalAptitude.SmallArms"));
+        }
+
+        if (naturalAptitudes.isEmpty()) {
+            return "";
+        }
+
+        return Messages.getString("BoardView1.Tooltip.NaturalAptitudes") + ' ' + String.join(", ", naturalAptitudes);
     }
 
     /** Returns a tooltip part with any pilots picked up by this unit. */

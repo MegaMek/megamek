@@ -355,8 +355,13 @@ public class BombAttackHandler extends WeaponHandler {
                     }
                 }
 
-                // Finally, we need a new attack roll for the next bomb, if any.
-                roll = Compute.rollD6(2);
+                // Finally, we need a new attack roll for the next bomb, if any. Made the same way as the first
+                // bomb's roll in WeaponHandler, so the crew's Natural Aptitude applies to every bomb in the run.
+                if (attackingEntity.getCrew() != null) {
+                    roll = attackingEntity.getCrew().rollGunnerySkill(game, weaponAttackAction);
+                } else {
+                    roll = Compute.rollD6(2);
+                }
             }
         }
 

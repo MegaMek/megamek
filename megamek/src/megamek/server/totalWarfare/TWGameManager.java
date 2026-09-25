@@ -11099,7 +11099,6 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
                 case FindClubAction ignored -> resolveFindClub(entity);
-                case UnjamAction ignored -> resolveUnjam(entity);
                 case ClearMinefieldAction clearMinefieldAction ->
                       resolveClearMinefield(entity, clearMinefieldAction.getMinefield());
                 case TriggerAPPodAction tapa -> {
@@ -11160,6 +11159,27 @@ public class TWGameManager extends AbstractGameManager {
                         addReport(r);
                     }
                 }
+                default -> {
+                }
+            }
+        }
+    }
+
+    /**
+     * Called to complete weapon unjams
+     */
+    void resolveUnJams() {
+        // loop through actions and handle everything we expect except attacks
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
+            EntityAction ea = i.nextElement();
+            Entity entity = game.getEntity(ea.getEntityId());
+
+            if (entity == null) {
+                continue;
+            }
+
+            switch (ea) {
+                case UnjamAction ignored -> resolveUnjam(entity);
                 default -> {
                 }
             }

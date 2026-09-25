@@ -32,18 +32,10 @@
  */
 package megamek.client.ui.panels;
 
-import megamek.client.ui.settings.SettingsBadge;
-import megamek.client.ui.settings.SettingsHeaderPanel;
-import megamek.client.ui.settings.SettingsNavigationPanel;
-import megamek.client.ui.settings.SettingsNavigationText;
-import megamek.client.ui.settings.SettingsPagePanel;
-import megamek.client.ui.settings.SettingsPane;
-import megamek.client.ui.settings.SettingsRoute;
-import megamek.client.ui.settings.SettingsTextProvider;
-import megamek.client.ui.util.UIUtil;
-import megamek.common.Configuration;
+import static megamek.client.ui.Messages.getString;
+import static megamek.utilities.ImageUtilities.addTintToImageIcon;
+import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -54,10 +46,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import javax.swing.*;
 
-import static megamek.client.ui.Messages.getString;
-import static megamek.utilities.ImageUtilities.addTintToImageIcon;
-import static megamek.utilities.ImageUtilities.scaleImageIcon;
+import megamek.client.ui.settings.SettingsBadge;
+import megamek.client.ui.settings.SettingsHeaderPanel;
+import megamek.client.ui.settings.SettingsNavigationPanel;
+import megamek.client.ui.settings.SettingsNavigationText;
+import megamek.client.ui.settings.SettingsPagePanel;
+import megamek.client.ui.settings.SettingsPane;
+import megamek.client.ui.settings.SettingsRoute;
+import megamek.client.ui.settings.SettingsTextProvider;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.Configuration;
 
 /** Settings-tree presentation for the shared MegaMek client preferences. */
 public class CommonSettingsPane extends JPanel {

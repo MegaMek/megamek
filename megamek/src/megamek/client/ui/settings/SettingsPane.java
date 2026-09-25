@@ -32,11 +32,6 @@
  */
 package megamek.client.ui.settings;
 
-import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
-import megamek.logging.MMLogger;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -45,6 +40,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import javax.swing.*;
+
+import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 
 /**
  * Generic settings coordinator that combines navigation and content hosting, creates pages lazily, caches them,

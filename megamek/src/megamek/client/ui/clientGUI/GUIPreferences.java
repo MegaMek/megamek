@@ -424,6 +424,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
     public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
     public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
+    public static final String SOUND_PROMPT = "SoundPrompt";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
     public static final String TOOLTIP_DIST_SUPPRESSION = "TooltipDistSuppression";
@@ -960,6 +961,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SOUND_MUTE_CHAT, true);
         store.setDefault(SOUND_MUTE_MY_TURN, false);
         store.setDefault(SOUND_MUTE_OTHERS_TURN, true);
+        store.setDefault(SOUND_PROMPT, true);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
@@ -2810,6 +2812,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setSoundMuteMyTurn(boolean state) {
         store.setValue(SOUND_MUTE_MY_TURN, state);
+    }
+
+    /**
+     * Should we prompt for turn sounds?
+     *
+     * @param state enable or disable prompting
+     */
+    public void setSoundPrompt(boolean state) {
+        store.setValue(SOUND_PROMPT, state);
+    }
+
+    /**
+     * Are we prompting?
+     *
+     * @return the value of SOUND_PROMPT
+     */
+    public boolean getSoundPrompt() {
+        return store.getBoolean(SOUND_PROMPT);
     }
 
     public void setSoundMuteOthersTurn(boolean state) {

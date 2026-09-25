@@ -41,7 +41,13 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -235,6 +241,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JTextField tfSoundMuteChatFileName;
     private final JCheckBox soundMuteMyTurn = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMuteMyTurn"));
     private JTextField tfSoundMuteMyTurnFileName;
+    private final JCheckBox soundPrompt = new JCheckBox(Messages.getString("CommonSettingsDialog.soundPrompt"));
     private final JCheckBox soundMuteOthersTurn = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.soundMuteOthersTurn"));
     private JTextField tfSoundMuteOthersFileName;
@@ -828,13 +835,13 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         return createAudioSettingsPanel(masterVolumeLabel, masterVolumeSlider,
               soundMuteChat, tfSoundMuteChatFileName,
               soundMuteMyTurn, tfSoundMuteMyTurnFileName,
-              soundMuteOthersTurn, tfSoundMuteOthersFileName);
+              soundMuteOthersTurn, tfSoundMuteOthersFileName, soundPrompt);
     }
 
     static CommonSettingsPane.SectionedContent createAudioSettingsPanel(JLabel volumeLabel, JSlider volumeSlider,
         JCheckBox chatMute, JTextField chatSoundFile,
         JCheckBox myTurnMute, JTextField myTurnSoundFile,
-        JCheckBox otherTurnsMute, JTextField otherTurnsSoundFile) {
+          JCheckBox otherTurnsMute, JTextField otherTurnsSoundFile, JCheckBox soundPrompt) {
         volumeLabel.setLabelFor(volumeSlider);
         JPanel volumeControl = createMasterVolumeControl(volumeSlider);
         SettingsFormPanel volumeGrid = createAudioControlGrid(
@@ -849,7 +856,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             "CommonSettingsAudioNotificationGrid",
               chatMute, chatSoundControl,
               myTurnMute, myTurnSoundControl,
-              otherTurnsMute, otherTurnsSoundControl);
+              otherTurnsMute, otherTurnsSoundControl, soundPrompt);
         return new CommonSettingsPane.SectionedContent(List.of(volumeGrid, notificationGrid));
     }
 
@@ -2718,6 +2725,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             masterVolumeSlider.setValue(GUIP.getMasterVolume());
             soundMuteChat.setSelected(GUIP.getSoundMuteChat());
             soundMuteMyTurn.setSelected(GUIP.getSoundMuteMyTurn());
+            soundPrompt.setSelected(GUIP.getSoundPrompt());
             soundMuteOthersTurn.setSelected(GUIP.getSoundMuteOthersTurn());
             tfSoundMuteChatFileName.setText(GUIP.getSoundBingFilenameChat());
             tfSoundMuteMyTurnFileName.setText(GUIP.getSoundBingFilenameMyTurn());
@@ -3218,6 +3226,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setMasterVolume(masterVolumeSlider.getValue());
         GUIP.setSoundMuteChat(soundMuteChat.isSelected());
         GUIP.setSoundMuteMyTurn(soundMuteMyTurn.isSelected());
+        GUIP.setSoundPrompt(soundPrompt.isSelected());
         GUIP.setSoundMuteOthersTurn(soundMuteOthersTurn.isSelected());
 
         GUIP.setSoundBingFilenameChat(tfSoundMuteChatFileName.getText());

@@ -34,7 +34,14 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -49,7 +56,6 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -410,6 +416,11 @@ public class ClientGUI extends AbstractClientGUI
 
     private File curFileBoardImage;
     private File curFileBoard;
+
+    /**
+     * Have we prompted about bing?
+     */
+    private boolean firstBing = true;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -3149,7 +3160,34 @@ public class ClientGUI extends AbstractClientGUI
         audioService.playSound(SoundType.BING_CHAT);
     }
 
+    private void promptForSound() {
+        JCheckBox rememberChoice = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
+        JButton launchSettings = new JButton(Messages.getString("ClientGUI.bingLaunchSettings"));
+        launchSettings.addActionListener(e -> showSettings());
+        Object[] dialogContent = { Messages.getString("ClientGUI.bingMessage"),
+                                   rememberChoice,
+                                   launchSettings };
+        int response = JOptionPane.showConfirmDialog(null,
+              dialogContent,
+              Messages.getString("ClientGUI.bingTitle"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        boolean soundPrompt = (response == JOptionPane.YES_OPTION);
+        boolean currentSetting = GUIPreferences.getInstance().getSoundMuteMyTurn();
+        if (soundPrompt != currentSetting) {
+            GUIPreferences.getInstance().setSoundMuteMyTurn(soundPrompt);
+        }
+        if (rememberChoice.isSelected()) {
+            GUIPreferences.getInstance()
+                  .setSoundPrompt(soundPrompt);
+        }
+    }
+
     public void bingMyTurn() {
+        if (GUIP.getSoundPrompt() && firstBing) {
+            promptForSound();
+            firstBing = false;
+        }
         audioService.playSound(SoundType.BING_MY_TURN);
     }
 

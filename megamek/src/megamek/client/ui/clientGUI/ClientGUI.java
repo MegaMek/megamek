@@ -3171,33 +3171,33 @@ public class ClientGUI extends AbstractClientGUI
      * This prompts the user if they want to have the My Turn notifications enabled or not
      */
     private void promptForSound() {
-        JCheckBox rememberChoice = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
+        JCheckBox chkSoundNagSuppress = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
         JButton launchSettings = new JButton(Messages.getString("ClientGUI.bingLaunchSettings"));
         JButton playMyTurnSound = new JButton(Messages.getString("ClientGUI.bingPlay"));
-        JLabel playLabel = new JLabel(Messages.getString("ClientGUI.bingPlaySound"));
-        JLabel messageLabel = new JLabel(Messages.getString("ClientGUI.bingMessage"));
-        JLabel clientSettingsLabel = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
+        JLabel lblPlay = new JLabel(Messages.getString("ClientGUI.bingPlaySound"));
+        JLabel lblMessage = new JLabel(Messages.getString("ClientGUI.bingMessage"));
+        JLabel lblClientSettings = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
 
         // Action listeners
         launchSettings.addActionListener(e -> showSettingsSubPage(CommonSettingsPane.SETTINGS_AUDIO));
         playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
 
         // Set alignments
-        playLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        clientSettingsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblPlay.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
         launchSettings.setAlignmentX(Component.RIGHT_ALIGNMENT);
-        messageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        rememberChoice.setAlignmentX(Component.LEFT_ALIGNMENT);
-        clientSettingsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblMessage.setAlignmentX(Component.LEFT_ALIGNMENT);
+        chkSoundNagSuppress.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // Audio button panel
         JPanel playSoundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
-        playSoundPanel.add(playLabel);
+        playSoundPanel.add(lblPlay);
         playSoundPanel.add(playMyTurnSound);
 
         // Client settings label panel
         JPanel clientSettingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        clientSettingsPanel.add(clientSettingsLabel);
+        clientSettingsPanel.add(lblClientSettings);
 
         // Client Settings button panel
         JPanel settingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
@@ -3214,10 +3214,11 @@ public class ClientGUI extends AbstractClientGUI
         JPanel audioPanel = new JPanel();
         audioPanel.setLayout(new BoxLayout(audioPanel, BoxLayout.Y_AXIS));
 
+        int padding = UIUtil.scaleForGUI(10);
         audioPanel.setBorder(
                 BorderFactory.createCompoundBorder(
                         BorderFactory.createEtchedBorder(),
-                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                        BorderFactory.createEmptyBorder(padding, padding, padding, padding)
                 )
         );
 
@@ -3231,11 +3232,11 @@ public class ClientGUI extends AbstractClientGUI
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        panel.add(messageLabel);
+        panel.add(lblMessage);
         panel.add(Box.createVerticalStrut(10));
         panel.add(audioPanel);
         panel.add(Box.createVerticalStrut(10));
-        panel.add(rememberChoice);
+        panel.add(chkSoundNagSuppress);
 
         int response = JOptionPane.showConfirmDialog(null,
                                                      panel,
@@ -3247,7 +3248,7 @@ public class ClientGUI extends AbstractClientGUI
         if (soundPrompt != currentSetting) {
             GUIPreferences.getInstance().setSoundMuteMyTurn(soundPrompt);
         }
-        if (rememberChoice.isSelected()) {
+        if (chkSoundNagSuppress.isSelected()) {
             GUIPreferences.getInstance()
                           .setSoundPromptSuppress(soundPrompt);
         }

@@ -34,30 +34,6 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.function.Consumer;
-import java.util.jar.JarFile;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.filechooser.FileFilter;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
 import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -175,6 +151,30 @@ import megamek.common.voting.Poll;
 import megamek.common.voting.PollStatus;
 import megamek.common.weapons.handlers.WeaponOrderHandler;
 import megamek.logging.MMLogger;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
+import java.util.jar.JarFile;
 
 public class ClientGUI extends AbstractClientGUI
       implements BoardViewListener, ActionListener, IPreferenceChangeListener, MekDisplayListener, ILocalBots,
@@ -1216,6 +1216,16 @@ public class ClientGUI extends AbstractClientGUI
         // Do we need to create the "settings" dialog?
         if (commonSettingsDialog == null) {
             commonSettingsDialog = new CommonSettingsDialog(frame, this);
+        }
+
+        // Show the settings dialog.
+        commonSettingsDialog.setVisible(true);
+    }
+
+    private void showSettingsSubPage(String subpage) {
+        // Do we need to create the "settings" dialog?
+        if (commonSettingsDialog == null) {
+            commonSettingsDialog = new CommonSettingsDialog(frame, this, subpage);
         }
 
         // Show the settings dialog.
@@ -3166,7 +3176,7 @@ public class ClientGUI extends AbstractClientGUI
         JLabel clientSettingsLabel = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
 
         // Action listeners
-        launchSettings.addActionListener(e -> showSettings());
+        launchSettings.addActionListener(e -> showSettingsSubPage("audio"));
         playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
 
         // Set alignments

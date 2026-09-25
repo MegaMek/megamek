@@ -32,34 +32,6 @@
  */
 package megamek.client.ui.panels;
 
-import static megamek.client.ui.Messages.getString;
-import static megamek.utilities.ImageUtilities.addTintToImageIcon;
-import static megamek.utilities.ImageUtilities.scaleImageIcon;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Supplier;
-import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.ListModel;
-
 import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsHeaderPanel;
 import megamek.client.ui.settings.SettingsNavigationPanel;
@@ -70,6 +42,22 @@ import megamek.client.ui.settings.SettingsRoute;
 import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Supplier;
+
+import static megamek.client.ui.Messages.getString;
+import static megamek.utilities.ImageUtilities.addTintToImageIcon;
+import static megamek.utilities.ImageUtilities.scaleImageIcon;
 
 /** Settings-tree presentation for the shared MegaMek client preferences. */
 public class CommonSettingsPane extends JPanel {
@@ -163,6 +151,16 @@ public class CommonSettingsPane extends JPanel {
               + UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH);
         int floorHeight = UIUtil.scaleForGUI(START_HEIGHT);
         return new Dimension(Math.max(preferred.width, floorWidth), Math.max(preferred.height, floorHeight));
+    }
+
+    /**
+     * This expands the pane to the selected option
+     *
+     * @param routeId the name of the section
+     * @return did it work?
+     */
+    public boolean selectRoute(String routeId) {
+        return settingsPane.selectRouteAndExpand(routeId);
     }
 
     private static List<String> collectSearchAliases(Component root) {

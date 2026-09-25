@@ -32,9 +32,12 @@
  */
 package megamek.client.ui.settings;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
+import megamek.client.ui.util.UIUtil;
+import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,14 +45,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
-import javax.swing.BorderFactory;
-import javax.swing.JPanel;
-import javax.swing.JSplitPane;
-import javax.swing.SwingUtilities;
-
-import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
-import megamek.logging.MMLogger;
 
 /**
  * Generic settings coordinator that combines navigation and content hosting, creates pages lazily, caches them,
@@ -107,6 +102,37 @@ public class SettingsPane extends JPanel {
     public boolean selectRoute(SettingsRoute route) {
         navigationPanel.selectRoute(route);
         return showRoute(route);
+    }
+
+    public boolean selectRouteAndExpand(String routeId) {
+        SettingsRoute route = routes.stream()
+                                    .filter(r -> r.getId().equals(routeId))
+                                    .findFirst()
+                                    .orElse(null);
+        if (route == null) {
+            return false;
+        }
+
+        if (!selectRoute(route)) {
+            return false;
+        }
+
+        Component page = pageCache.get(route.getId());
+        SettingsPagePanel pagePanel =
+                SettingsContentHost.findPagePanel(page);
+        if (pagePanel != null) {
+            pagePanel.expandAllSections();
+        }
+
+        return true;
+    }
+
+    public boolean selectRoute(String routeId) {
+        return routes.stream()
+                     .filter(route -> route.getId().equals(routeId))
+                     .findFirst()
+                     .map(this::selectRoute)
+                     .orElse(false);
     }
 
     public void focusSearchField() {

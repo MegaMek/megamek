@@ -792,9 +792,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         }
 
         // remove attacks, set weapons available again
-        for (EntityAction o : attacks) {
-            if (o instanceof WeaponAttackAction waa) {
-                currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+        for (EntityAction action : attacks) {
+            if (action instanceof WeaponAttackAction weaponAttackAction) {
+                markWeaponUnfired(weaponAttackAction);
+                removeCarriedWeaponAttack(weaponAttackAction);
             }
         }
         removeAllAttacks();
@@ -822,14 +823,14 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void removeLastFiring() {
         if (!attacks.isEmpty()) {
-            EntityAction o = attacks.lastElement();
-            if (o instanceof WeaponAttackAction waa) {
-                currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-                removeAttack(o);
+            EntityAction lastAction = attacks.lastElement();
+            if (lastAction instanceof WeaponAttackAction weaponAttackAction) {
+                markWeaponUnfired(weaponAttackAction);
+                removeAttack(lastAction);
                 setDisengageEnabled(attacks.isEmpty() && currentEntity().isOffBoard() && currentEntity().canFlee(
                       currentEntity().getPosition()));
                 clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-                game.removeAction(o);
+                game.removeAction(lastAction);
                 clientgui.boardViews().forEach(bv -> ((BoardView) bv).refreshAttacks());
             }
         }

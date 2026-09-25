@@ -1634,9 +1634,10 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
         }
 
         // remove attacks, set weapons available again
-        for (EntityAction o : attacks) {
-            if (o instanceof WeaponAttackAction waa) {
-                currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+        for (EntityAction action : attacks) {
+            if (action instanceof WeaponAttackAction weaponAttackAction) {
+                markWeaponUnfired(weaponAttackAction);
+                removeCarriedWeaponAttack(weaponAttackAction);
             }
         }
         removeAllAttacks();
@@ -1670,13 +1671,13 @@ public class FiringDisplay extends AttackPhaseDisplay implements ListSelectionLi
      */
     protected void removeLastFiring() {
         if (!attacks.isEmpty()) {
-            EntityAction o = attacks.lastElement();
-            if (o instanceof WeaponAttackAction waa) {
-                currentEntity().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
-                decrementInternalBombs(waa);
-                removeAttack(o);
+            EntityAction lastAction = attacks.lastElement();
+            if (lastAction instanceof WeaponAttackAction weaponAttackAction) {
+                markWeaponUnfired(weaponAttackAction);
+                decrementInternalBombs(weaponAttackAction);
+                removeAttack(lastAction);
                 clientgui.getUnitDisplay().wPan.displayMek(currentEntity());
-                game.removeAction(o);
+                game.removeAction(lastAction);
                 clientgui.onAllBoardViews(BoardView::refreshAttacks);
             }
         }

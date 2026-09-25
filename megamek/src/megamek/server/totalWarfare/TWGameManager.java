@@ -4153,10 +4153,7 @@ public class TWGameManager extends AbstractGameManager {
     boolean launchUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int velocity, int altitude,
           int[] moveVec, int bonus) {
 
-        Entity unit;
-        if (unloaded instanceof Entity && unloader instanceof Aero) {
-            unit = (Entity) unloaded;
-        } else {
+        if (!(unloaded instanceof Entity unit) || !(unloader instanceof IAero aeroUnloader)) {
             return false;
         }
 
@@ -4253,8 +4250,8 @@ public class TWGameManager extends AbstractGameManager {
 
         // launching from an OOC vessel causes damage
         // same thing if faster than 2 velocity in atmosphere
-        if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed()) ||
-              ((((Aero) unloader).getCurrentVelocity() > 2) && !game.getBoard().isSpace())) {
+        if ((aeroUnloader.isOutControlTotal() && !unit.isDoomed()) ||
+              ((aeroUnloader.getCurrentVelocity() > 2) && !game.getBoard().isSpace())) {
             Roll diceRoll = Compute.rollD6(2);
             int damage = diceRoll.getIntValue() * 10;
             String rollCalc = damage + "[" + diceRoll.getIntValue() + " * 10]";
@@ -6905,13 +6902,19 @@ public class TWGameManager extends AbstractGameManager {
 
         if (unsecured) {
             // roll hit location to get a new critical
-            HitData hit = ((Entity) a).rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
-            addReport(applyCriticalHit((Entity) a,
-                  hit.getLocation(),
-                  new CriticalSlot(0, ((Aero) a).getPotCrit()),
-                  true,
-                  1,
-                  false));
+            Entity takingOff = (Entity) a;
+            HitData hit = takingOff.rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
+            if (a instanceof Aero aero) {
+                addReport(applyCriticalHit(takingOff,
+                      hit.getLocation(),
+                      new CriticalSlot(0, aero.getPotCrit()),
+                      true,
+                      1,
+                      false));
+            } else {
+                // A LAM takes criticals by slot, like a Mek, so it has no aerospace critical to apply (issue #8027)
+                addReport(oneCriticalEntity(takingOff, hit.getLocation(), hit.isRear(), 0));
+            }
         }
 
     }

@@ -382,6 +382,21 @@ public class AreaEffectHelper {
     }
 
     /**
+     * Returns whether artillery flak can damage this unit. Flak hits "airborne ground units (VTOL Vehicles, WiGEs and
+     * units expending VTOL MPs such as infantry) as well as airborne aerospace units" (TO:AR p.153). A LAM in AirMek
+     * mode flies as a WiGE, so it counts. Whether the unit is at the elevation the flak burst at is checked separately.
+     *
+     * @param entity the unit caught in the flak burst
+     *
+     * @return {@code true} if flak can damage the unit
+     */
+    static boolean isFlakTarget(Entity entity) {
+        boolean isVtol = (entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.VTOL);
+        boolean isAirborneGroundUnit = entity.isAirborneVTOLorWIGE();
+        return isVtol || isAirborneGroundUnit || entity.isAero();
+    }
+
+    /**
      * Worker function that does artillery damage to an entity. Extracted from Server.artilleryDamageHex()
      *
      * @param entity         The entity to damage
@@ -453,10 +468,9 @@ public class AreaEffectHelper {
         // Flak should only hit VTOLs or similar craft.
         // Correct elevation/altitude checks should happen elsewhere
         if (flak) {
-            // Check: is entity not a VTOL in flight or an ASF
-            if (!((entity instanceof VTOL)
-                  || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                  || entity.isAero())) {
+            if (!isFlakTarget(entity)) {
+                logger.debug("[Flak] {}: not an airborne ground or aerospace unit, flak does no damage",
+                      entity.getShortName());
                 return;
             }
             // "Altitude" here is either true Altitude (Aerospace) or objective levels from 0;
@@ -512,7 +526,7 @@ public class AreaEffectHelper {
                     if (!ServerHelper.infantryInOpen(entity, hex, gameManager.getGame(), true, false, false)
                           && !hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.FUEL_TANK)) {
                         hits *= 2;
-                        
+
                         // Report that we doubled the damage when not in the open
                         report = new Report(6046);
                         report.subject = entity.getId();

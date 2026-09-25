@@ -106,7 +106,7 @@ public class FluffImageTooltip {
         try {
             JsonNode node = YAML_MAPPER.readTree(yamlFile);
 
-            StringBuilder result = new StringBuilder("<HTML><HEAD><STYLE>" + styles() + "</STYLE></HEAD><BODY>");
+            StringBuilder result = new StringBuilder("<html><head><style>" + styles() + "</style></head><body>");
             int width = UIUtil.scaleForGUI(TOOLTIP_WIDTH);
             result.append("<div width=").append(width).append(">");
 
@@ -119,7 +119,7 @@ public class FluffImageTooltip {
                     appendLabelledValue(result, Messages.getString("FluffImageTooltip.insignia"), description, true);
                 }
             }
-            result.append("</div></BODY></HTML>");
+            result.append("</div></body></html>");
             return result.toString();
         } catch (IOException exception) {
             LOGGER.warn("Could not read fluff image info from {}", yamlFile, exception);
@@ -159,7 +159,7 @@ public class FluffImageTooltip {
      */
     private static void appendLabelledValue(StringBuilder result, String label, String value,
           boolean precedeWithLineBreak) {
-        String lineBreak = precedeWithLineBreak ? "<BR>" : "";
+        String lineBreak = precedeWithLineBreak ? "<br>" : "";
         result.append(UIUtil.spanCSS("label", lineBreak + label + " "))
                 .append(UIUtil.spanCSS("value", value));
     }

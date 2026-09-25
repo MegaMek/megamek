@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BFSAssetType;
@@ -223,14 +224,14 @@ public final class FluffImageHelper {
         // Assets search their own folder first, then the folder of the corresponding TW unit type; all other units
         // search a single folder. The folders are searched in order so that the most specific art wins.
         for (String fluffPath : getFluffPaths(unit)) {
-            var fluffDir = new File(Configuration.fluffImagesDir(), fluffPath);
+            File fluffDir = new File(Configuration.fluffImagesDir(), fluffPath);
 
             // UserDir matches
             // For internal use: in [user dir]/data/images/rs/<type> images for record sheets can be placed; these
             // will be preferentially loaded when the recordSheet parameter is true (i.e. when called from RS printing)
             if (hasUserDir) {
-                var fluffUserDir = userFluffDir(userDir, false, fluffPath);
-                var rsFluffUserDir = userFluffDir(userDir, true, fluffPath);
+                File fluffUserDir = userFluffDir(userDir, false, fluffPath);
+                File rsFluffUserDir = userFluffDir(userDir, true, fluffPath);
 
                 if (recordSheet) {
                     fileCandidates.addAll(findMatchingFiles(rsFluffUserDir, nameCandidates));
@@ -259,21 +260,21 @@ public final class FluffImageHelper {
 
     /**
      * With the addition of multiple fluff images, file matching depends on the directory a file is in.
-     * <BR>- In the main fluff/[unittype]/ directory the old rules apply, i.e. a file is valid if it
+     * <br>- In the main fluff/[unittype]/ directory the old rules apply, i.e. a file is valid if it
      * matches the model exactly or if the filename is only the chassis and matches the unit's chassis.
      * The filename may now contain additional information after an underscore (atlas_xyz.jpg matches for
      * any Atlas mek).
-     * <BR>- In a chassis subdirectory fluff/[unittype]/[chassis], all files match if [chassis]
+     * <br>- In a chassis subdirectory fluff/[unittype]/[chassis], all files match if [chassis]
      * matches the unit's chassis (even if the filename has the wrong model) AND if there is no
      * [model] subdirectory matching the unit's model. Empty models match the directory "---empty---".
      * The filename doesn't matter for matching.
-     * <BR>- In a model subdirectory fluff/[unittype]/[chassis]/[model], all files match if the
+     * <br>- In a model subdirectory fluff/[unittype]/[chassis]/[model], all files match if the
      * unit's chassis and model match [chassis] and [model]. The filename doesn't matter for matching.
      */
     static List<File> getFluffInChassisDirs(BTObject unit, File unitTypeFluffDir) {
         List<File> result = new ArrayList<>();
         for (String nameCandidate : chassisNameCandidates(unit)) {
-            var chassisDir = new File(unitTypeFluffDir, nameCandidate);
+            File chassisDir = new File(unitTypeFluffDir, nameCandidate);
             if (chassisDir.isDirectory()) {
                 result.addAll(getFluffInChassisDir(unit, chassisDir));
             }
@@ -308,7 +309,7 @@ public final class FluffImageHelper {
         }
         List<File> result = new ArrayList<>();
         for (String chassisNameCandidate : chassisNameCandidates(unit)) {
-            var modelDir = new File(chassisDir, chassisNameCandidate + " " + sanitizedModel);
+            File modelDir = new File(chassisDir, chassisNameCandidate + " " + sanitizedModel);
             if (modelDir.isDirectory()) {
                 result.addAll(getFluffInDir(modelDir));
             }
@@ -510,7 +511,7 @@ public final class FluffImageHelper {
          *
          * @return A record for a fluff image that has not been loaded yet
          */
-        public static FluffImageRecord toRecord(File file) {
+        public static FluffImageRecord toRecord(@Nonnull File file) {
             return new FluffImageRecord(null, file);
         }
 

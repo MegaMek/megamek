@@ -179,7 +179,7 @@ public class EntityReadoutPanel extends JPanel {
         scrollPane.setBorder(null);
         scrollPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
-        var textPanel = new JPanel(new GridLayout(1, 1));
+        JPanel textPanel = new JPanel(new GridLayout(1, 1));
         if (width != -1) {
             textPanel.setMinimumSize(new Dimension(width, height));
             textPanel.setPreferredSize(new Dimension(width, height));
@@ -189,7 +189,7 @@ public class EntityReadoutPanel extends JPanel {
         previousImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.previousImage.toolTipText"));
         nextImageButton.setToolTipText(Messages.getString("EntityReadoutPanel.nextImage.toolTipText"));
 
-        var imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
+        UIUtil.FixedYPanel imageControlsPanel = new UIUtil.FixedYPanel(new FlowLayout());
         imageControlsPanel.add(previousImageButton);
         imageControlsPanel.add(nextImageButton);
 

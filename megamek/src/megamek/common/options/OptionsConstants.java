@@ -435,6 +435,8 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_AMS = "tacops_ams";
     /** House rule: the infantry defending a building in an infantry action may withdraw on the attacker's terms. */
     public static final String ADVANCED_COMBAT_INFANTRY_ACTION_DEFENDER_WITHDRAWAL = "infantry_action_defender_withdrawal";
+    /** Interpretation: committed infantry take no movement, targeting, off-board, firing or physical turn. */
+    public static final String ADVANCED_COMBAT_INFANTRY_ACTION_COMMITTED_UNITS_HOLD = "infantry_action_committed_units_hold";
     public static final String ADVANCED_COMBAT_TAC_OPS_MANUAL_AMS = "tacops_manual_ams";
     public static final String ADVANCED_COMBAT_FLOATING_CRITS = "floating_crits";
     public static final String ADVANCED_COMBAT_TAC_OPS_CRIT_ROLL = "tacops_crit_roll";

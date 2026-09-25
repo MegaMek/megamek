@@ -32,6 +32,9 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.awt.Dialog;
+import java.awt.KeyboardFocusManager;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,12 +43,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.phaseDisplay.AbandonUnitDialog;
 import megamek.client.ui.dialogs.phaseDisplay.DetonateChargesDialog;
 import megamek.client.ui.dialogs.phaseDisplay.InfantryActionDeclarationDialog;
@@ -76,6 +81,9 @@ import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
+    /** How long after the under-attack prompt opens it is raised again, once it is surely on screen. */
+    private static final int PROMPT_RAISE_DELAY_MILLISECONDS = 500;
+
 
     /** General pre-end declarations phase diagnostics; tagged [PreEnd]. */
     private static final MMLogger LOGGER = MMLogger.create(PreEndDeclarationsDisplay.class);
@@ -398,7 +406,7 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
             String title = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".title");
             String body = Messages.getString("PreEndDeclarationsDisplay." + promptKey + ".message",
                   building.getDisplayName());
-            boolean yes = clientgui.doYesNoDialog(title, body);
+            boolean yes = askInFront(title, body);
             promptAnswered = true;
             if ("continueAttack".equals(promptKey) || "continueDefence".equals(promptKey)) {
                 // Yes keeps fighting, which needs no declaration; No opens the dialog, where the force can withdraw
@@ -415,6 +423,39 @@ public class PreEndDeclarationsDisplay extends AttackPhaseDisplay {
         if (declared) {
             registerDeclaration("PreEndDeclarationsDisplay.declared.infantryAction");
         }
+    }
+
+    /**
+     * Asks a yes or no question in a window that comes to the front. The question opens at the start of the
+     * player's turn, which can be while another of the game's windows has the focus - after a bot has declared, for
+     * instance - and a playtest found it hidden behind until the player clicked the main window. The game window is
+     * raised first, the dialog is raised again once it is showing, and both states are logged so a hidden prompt
+     * can be told from one that never opened.
+     */
+    private boolean askInFront(String title, String body) {
+        Window activeWindow = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
+        LOGGER.info("[PreEnd] prompt opening; game window active={}, active window={}",
+              clientgui.getFrame().isActive(), describe(activeWindow));
+        clientgui.getFrame().toFront();
+        ConfirmDialog prompt = new ConfirmDialog(clientgui.getFrame(), title, body);
+        Timer raiseOnceShowing = new Timer(PROMPT_RAISE_DELAY_MILLISECONDS, event -> {
+            LOGGER.info("[PreEnd] prompt showing={}, active={}; raising it", prompt.isShowing(), prompt.isActive());
+            prompt.toFront();
+            prompt.requestFocus();
+        });
+        raiseOnceShowing.setRepeats(false);
+        raiseOnceShowing.start();
+        prompt.setVisible(true);
+        raiseOnceShowing.stop();
+        return prompt.getAnswer();
+    }
+
+    private static String describe(@Nullable Window window) {
+        if (window == null) {
+            return "none";
+        }
+        String kind = window.getClass().getSimpleName();
+        return (window instanceof Dialog dialog) ? kind + " '" + dialog.getTitle() + "'" : kind;
     }
 
     /**

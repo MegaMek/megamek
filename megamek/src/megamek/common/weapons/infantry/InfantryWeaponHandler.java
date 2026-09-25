@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -122,6 +122,9 @@ public class InfantryWeaponHandler extends WeaponHandler {
             troopersHit = ((Infantry) attackingEntity).getShootingStrength();
         } else if (!(attackingEntity instanceof Infantry)) {
             troopersHit = 1;
+        } else if (allShotsHit()) {
+            // Every shot hits a building at point-blank range or adjacent (TW p. 171), so every trooper hits
+            troopersHit = ((Infantry) attackingEntity).getShootingStrength();
         } else {
             troopersHit = Compute.missilesHit(((Infantry) attackingEntity)
                   .getShootingStrength(), nHitMod);

@@ -32,9 +32,12 @@
  */
 package megamek.client.bot;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.client.bot.princess.BehaviorSettings;
@@ -42,6 +45,7 @@ import megamek.common.board.BoardLocation;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.moves.MovePath;
+import megamek.common.turns.SpecificEntityTurn;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
 
@@ -51,6 +55,8 @@ class BotClientTest {
     private static final class RecordingBotClient extends BotClient {
 
         private boolean dismissedItself = false;
+        private int unitMovesAsked = 0;
+        private int movesReported = 0;
 
         RecordingBotClient() {
             super("tester", "localhost", 0);
@@ -109,7 +115,13 @@ class BotClientTest {
 
         @Override
         protected MovePath continueMovementFor(Entity entity) {
+            unitMovesAsked++;
             return null;
+        }
+
+        @Override
+        protected void onMovePathChosen(MovePath path) {
+            movesReported++;
         }
 
         @Override
@@ -160,5 +172,24 @@ class BotClientTest {
 
         assertFalse(bot.dismissedItself,
               "a bot that owns everything visible must keep playing - the victory check ends games");
+    }
+
+    /**
+     * A turn that names the unit to move skips the bot's own choice of unit and asks for that unit's move directly.
+     * The chosen move must still be reported, or a bot that remembers its moves loses every such turn.
+     */
+    @Test
+    void aTurnThatNamesTheUnitStillReportsTheChosenMove() throws Exception {
+        RecordingBotClient bot = new RecordingBotClient();
+        bot.getGame().setPhase(GamePhase.MOVEMENT);
+        bot.getGame().setTurnVector(List.of(new SpecificEntityTurn(0, 7)));
+        bot.getGame().setTurnIndex(0, 0);
+        Method worker = BotClient.class.getDeclaredMethod("calculateMyTurnWorker", boolean.class);
+        worker.setAccessible(true);
+
+        worker.invoke(bot, false);
+
+        assertEquals(1, bot.unitMovesAsked, "the named unit's move is asked for directly");
+        assertEquals(1, bot.movesReported, "and the move chosen for it is reported");
     }
 }

@@ -83,6 +83,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.game.BotHonorReport;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeRoll;
@@ -202,6 +203,9 @@ public class Princess extends BotClient {
 
     // What the bot has learned or decided and needs on a later turn. Reach it through getMemory().
     private BotMemory memory;
+
+    // Which of the bot's units withdraw under forced withdrawal. Reach it through getForcedWithdrawalTracker().
+    private ForcedWithdrawalTracker forcedWithdrawalTracker;
 
     private Integer spinUpThreshold = null;
 
@@ -1078,11 +1082,9 @@ public class Princess extends BotClient {
         final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
         sendChat("deploying unit " + getEntity(entityNum).getChassis(), Level.INFO);
 
-        // if we are using forced withdrawal, and the entity being considered is crippled
-        // we will opt to not re-deploy the entity
-        // isCrippled(true) to match the other withdrawal predicates: crew-crippled Meks withdraw too
-        if (getForcedWithdrawal() && getEntity(entityNum).isCrippled(true)) {
-            LOGGER.info("Declining to deploy crippled unit: {}. Removing unit.", getEntity(entityNum).getChassis());
+        // a unit that is withdrawing under forced withdrawal is not deployed
+        if (getForcedWithdrawalTracker().isWithdrawing(getEntity(entityNum))) {
+            LOGGER.info("Declining to deploy withdrawing unit: {}. Removing unit.", getEntity(entityNum).getChassis());
             sendDeleteEntity(entityNum);
             return;
         }
@@ -1530,9 +1532,9 @@ public class Princess extends BotClient {
 
             // If my unit is forced to withdraw, don't fire unless I've been fired on
             // or I have no retreat path anyway.
-            if (getForcedWithdrawal() && shooter.isCrippled(true)) {
+            if (getForcedWithdrawalTracker().isWithdrawing(shooter)) {
                 final StringBuilder msg = new StringBuilder(shooter.getDisplayName()).append(
-                      " is crippled and withdrawing.");
+                      " is withdrawing.");
                 try {
                     if (shooter.getSwarmTargetId() != Entity.NONE) {
                         msg.append("\n\tBut will need to stop swarming before fleeing.");
@@ -1805,10 +1807,12 @@ public class Princess extends BotClient {
             return;
         }
 
-        // if we're crippled, off-board and can do so, disengage
-        if (entityToFire.isOffBoard() &&
-              entityToFire.canFlee(entityToFire.getPosition()) &&
-              entityToFire.isCrippled(true)) {
+        // if we're crippled, off-board and can do so, disengage. An off-board unit disengages once crippled whatever
+        // the bot's forced withdrawal setting, unless a gamemaster ordered otherwise.
+        boolean canDisengage = entityToFire.isOffBoard() && entityToFire.canFlee(entityToFire.getPosition());
+        boolean wantsToDisengage = entityToFire.getForcedWithdrawalOrder()
+              .isWithdrawing(true, entityToFire.isCrippled(true));
+        if (canDisengage && wantsToDisengage) {
             Vector<EntityAction> disengageVector = new Vector<>();
             disengageVector.add(new DisengageAction(entityToFire.getId()));
             sendAttackData(entityToFire.getId(), disengageVector);
@@ -2847,9 +2851,9 @@ public class Princess extends BotClient {
 
             // If my unit is forced to withdraw, don't attack unless I've been
             // attacked or I have no retreat path anyway.
-            if (getForcedWithdrawal() && attacker.isCrippled(true)) {
+            if (getForcedWithdrawalTracker().isWithdrawing(attacker)) {
                 final StringBuilder msg = new StringBuilder(attacker.getDisplayName()).append(
-                      " is crippled and withdrawing.");
+                      " is withdrawing.");
                 if (getMemory().wasAttackedWhileFleeing(attacker.getId())) {
                     msg.append("\n\tBut I was fired on, so I will hit back.");
                 } else if (hasNoRetreatPath(attacker)) {
@@ -2895,7 +2899,7 @@ public class Princess extends BotClient {
     }
 
     boolean wantsToFallBack(final Entity entity) {
-        return (entity.isCrippled(true) && getForcedWithdrawal()) || getFallBack();
+        return getForcedWithdrawalTracker().isWithdrawing(entity) || getFallBack();
     }
 
     /**
@@ -2922,8 +2926,7 @@ public class Princess extends BotClient {
      * @return Whether or not the entity is falling back.
      */
     boolean isFallingBack(final Entity entity) {
-        return (getBehaviorSettings().shouldAutoFlee() ||
-              (getBehaviorSettings().isForcedWithdrawal() && entity.isCrippled(true)));
+        return getBehaviorSettings().shouldAutoFlee() || getForcedWithdrawalTracker().isWithdrawing(entity);
     }
 
     /**
@@ -2946,7 +2949,7 @@ public class Princess extends BotClient {
               getHomeEdge(entity), getGame())) {
             return false;
         } else {
-            return getFleeBoard() || (entity.isCrippled(true) && getForcedWithdrawal());
+            return getFleeBoard() || getForcedWithdrawalTracker().isWithdrawing(entity);
         }
     }
 
@@ -3170,10 +3173,9 @@ public class Princess extends BotClient {
             if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
-                    msg += " is falling back.";
-                } else if (entity.isCrippled(true)) {
-                    // isCrippled(true) matches isFallingBack above, so a crew-crippled Mek gets a message too
-                    msg += " is crippled and withdrawing.";
+                    msg = Messages.getString("Princess.fallingBack", entity.getDisplayName());
+                } else if (getForcedWithdrawalTracker().isWithdrawing(entity)) {
+                    msg = Messages.getString("Princess.withdrawing", entity.getDisplayName());
                 }
                 LOGGER.debug(msg);
                 sendChat(msg, Level.ERROR);
@@ -3468,11 +3470,11 @@ public class Princess extends BotClient {
         final StringBuilder msg = new StringBuilder("Checking for dishonored enemies.");
 
         try {
-            // If the Forced Withdrawal rule is not turned on, then it's a
-            // fight to the death anyway.
-            if (!getForcedWithdrawal()) {
-                msg.append("\n\tForced withdrawal turned off.");
-                return;
+            // With the Forced Withdrawal rule off it is a fight to the death, so fighting on while crippled or as a
+            // civilian is no dishonor. A unit a gamemaster ordered to withdraw is still protected, though.
+            final boolean judgesAttackers = getForcedWithdrawal();
+            if (!judgesAttackers) {
+                msg.append("\n\tForced withdrawal turned off; only ordered withdrawals are protected.");
             }
 
             for (final Entity mine : getEntitiesOwned()) {
@@ -3482,8 +3484,7 @@ public class Princess extends BotClient {
                     continue;
                 }
 
-                // Is my unit trying to withdraw as per forced withdrawal rules?
-                // shortcut: we already check for forced withdrawal above, so need to do that here
+                // Was my unit withdrawing under forced withdrawal when this turn began?
                 final boolean fleeing = getMemory().isCrippled(mine.getId());
 
                 for (final int id : attackedBy) {
@@ -3492,8 +3493,11 @@ public class Princess extends BotClient {
                         continue;
                     }
 
-                    if (getHonorUtil().isEnemyBroken(entity.getId(), entity.getOwnerId(), getForcedWithdrawal()) ||
-                          !entity.isMilitary()) {
+                    boolean isAttackerBroken = getHonorUtil().isEnemyBroken(entity.getId(), entity.getOwnerId(),
+                          getForcedWithdrawal());
+                    boolean isAttackerCivilian = !entity.isMilitary();
+                    boolean hasAttackerFault = isAttackerBroken || isAttackerCivilian;
+                    if (judgesAttackers && hasAttackerFault) {
                         // If he'd just continued running, I would have let him
                         // go, but the bastard shot at me!
                         msg.append("\n\t")
@@ -3522,8 +3526,6 @@ public class Princess extends BotClient {
             }
         } finally {
             LOGGER.info(msg.toString());
-            // Keep clients informed of this bot's honor state (covers pirates and the forced-withdrawal-off case too).
-            sendDishonoredData();
         }
     }
 
@@ -3632,6 +3634,9 @@ public class Princess extends BotClient {
             checkForDishonoredEnemies();
             checkForBrokenEnemies();
             refreshCrippledUnits();
+            // Report after the withdrawing list is fresh, so clients tag and warn about the units this bot will treat
+            // as fleeing this turn. Covers pirates and the forced-withdrawal-off case too.
+            sendDishonoredData();
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
@@ -3867,25 +3872,30 @@ public class Princess extends BotClient {
         return friendlyGuidedWeapons;
     }
 
+    @Override
+    public void changePhase(GamePhase phase) {
+        super.changePhase(phase);
+        if (phase.isLounge()) {
+            getForcedWithdrawalTracker().forgetWithdrawingUnits();
+        }
+    }
+
     /**
-     * Load the list of units considered crippled at the time the bot was loaded or the beginning of the turn, whichever
-     * is the more recent.
+     * @return the tracker that decides which of this bot's units withdraw under Forced Withdrawal
+     */
+    public ForcedWithdrawalTracker getForcedWithdrawalTracker() {
+        if (forcedWithdrawalTracker == null) {
+            forcedWithdrawalTracker = new ForcedWithdrawalTracker(this);
+        }
+        return forcedWithdrawalTracker;
+    }
+
+    /**
+     * Load the list of units withdrawing under forced withdrawal at the time the bot was loaded or the beginning of the
+     * turn, whichever is the more recent. See {@link ForcedWithdrawalTracker#refreshWithdrawingUnits()}.
      */
     public void refreshCrippledUnits() {
-        // if we're not following 'forced withdrawal' rules, there's no need for this
-        if (!getForcedWithdrawal()) {
-            return;
-        }
-
-        // this approach is a little bit inefficient, but the running time is only O(n) where n is the number
-        // of princess owned units, so it shouldn't be a big deal.
-        Set<Integer> crippledUnitIds = new HashSet<>();
-        for (Entity entity : getEntitiesOwned()) {
-            if (entity.isCrippled(true)) {
-                crippledUnitIds.add(entity.getId());
-            }
-        }
-        getMemory().setCrippledUnits(crippledUnitIds);
+        getForcedWithdrawalTracker().refreshWithdrawingUnits();
     }
 
     private boolean isEnemyGunEmplacement(final Entity entity, final Coords coords) {
@@ -3932,8 +3942,8 @@ public class Princess extends BotClient {
      * retreat Guaranteed to return a cardinal edge or NONE.
      */
     CardinalEdge getHomeEdge(Entity entity) {
-        // if I am crippled and using forced withdrawal rules, my home edge is the "retreat" edge
-        if (entity.isCrippled(true) && getBehaviorSettings().isForcedWithdrawal()) {
+        // if I am withdrawing under forced withdrawal, my home edge is the "retreat" edge
+        if (getForcedWithdrawalTracker().isWithdrawing(entity)) {
             if (getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
                 return BoardUtilities.getClosestEdge(entity);
             } else {
@@ -4012,6 +4022,9 @@ public class Princess extends BotClient {
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
+        // Report after the withdrawing list is fresh, so clients tag and warn about the units this bot will treat as
+        // fleeing next turn. Covers pirates and the forced-withdrawal-off case too.
+        sendDishonoredData();
         updateReturnFirePermission(unitsWithdrawingAtStartOfTurn);
         setAMSModes();
         updateEnemyHeatMaps();
@@ -4101,12 +4114,27 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Reports to the server which players this bot currently considers dishonored, so that clients can warn a human
-     * player before committing an action that would newly dishonor them. The reported set is fully resolved - it
+     * Reports to the server which players this bot currently considers dishonored, whether it follows Forced
+     * Withdrawal, and which of its units are withdrawing. Clients use it to tag withdrawing units and to warn a human
+     * player before committing an action that would newly dishonor them. The dishonored set is fully resolved - it
      * already accounts for pirates having no honor to give - so a receiving client only needs a membership test.
      */
     public void sendDishonoredData() {
-        send(new Packet(PacketCommand.PRINCESS_DISHONORED, resolveDishonoredPlayerIds()));
+        BotHonorReport report = buildHonorReport();
+        LOGGER.debug("[HonorNag] {} reports: forced withdrawal {}, withdrawing units {}, dishonored players {}",
+              getName(), report.followsForcedWithdrawal(), report.withdrawingUnitIds(),
+              report.dishonoredPlayerIds());
+        send(new Packet(PacketCommand.PRINCESS_DISHONORED, report));
+    }
+
+    /**
+     * @return this bot's honor report. The withdrawing units are the ones it will treat as fleeing when it judges the
+     *       coming turn's attacks, including units a gamemaster ordered to withdraw even when the bot itself ignores
+     *       Forced Withdrawal. Package-visible for testing.
+     */
+    BotHonorReport buildHonorReport() {
+        return new BotHonorReport(resolveDishonoredPlayerIds(), getForcedWithdrawal(),
+              getForcedWithdrawalTracker().withdrawingUnitIds());
     }
 
     /**

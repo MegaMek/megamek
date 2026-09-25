@@ -63,6 +63,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoType;
@@ -110,6 +111,8 @@ class PrincessTest {
         MoraleUtil mockMoralUtil = mock(MoraleUtil.class);
 
         mockPrincess = mock(Princess.class);
+        // the withdrawal decisions under test ask the real tracker, which reads the stubbed forced withdrawal setting
+        when(mockPrincess.getForcedWithdrawalTracker()).thenReturn(new ForcedWithdrawalTracker(mockPrincess));
         when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockPathRanker);
         when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);
@@ -407,6 +410,7 @@ class PrincessTest {
         Entity mockMek = mock(BipedMek.class);
         // wantsToFallBack checks isCrippled(true), so crew-crippled Meks withdraw too
         when(mockMek.isCrippled(true)).thenReturn(false);
+        when(mockMek.getForcedWithdrawalOrder()).thenReturn(ForcedWithdrawalOrder.BOT_RULES);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenCallRealMethod();
         when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
@@ -508,9 +512,11 @@ class PrincessTest {
         when(mockMek.isImmobile()).thenReturn(false);
         when(mockMek.isCrippled(anyBoolean())).thenReturn(false);
         when(mockMek.getId()).thenReturn(1);
+        when(mockMek.getForcedWithdrawalOrder()).thenReturn(ForcedWithdrawalOrder.BOT_RULES);
 
         when(mockPrincess.wantsToFallBack(any(Entity.class))).thenReturn(false);
         when(mockPrincess.isFallingBack(any(Entity.class))).thenCallRealMethod();
+        when(mockPrincess.getForcedWithdrawal()).thenReturn(true);
 
         BehaviorSettings mockBehavior = mock(BehaviorSettings.class);
         when(mockBehavior.getDestinationEdge()).thenReturn(CardinalEdge.NONE);
@@ -538,6 +544,7 @@ class PrincessTest {
 
         // Unit is capable of fleeing.
         Entity mockMek = mock(BipedMek.class);
+        when(mockMek.getForcedWithdrawalOrder()).thenReturn(ForcedWithdrawalOrder.BOT_RULES);
 
         // Unit is on home edge.
         BasicPathRanker mockRanker = mock(BasicPathRanker.class);

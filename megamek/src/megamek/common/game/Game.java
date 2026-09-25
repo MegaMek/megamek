@@ -270,6 +270,12 @@ public final class Game extends AbstractGame implements Serializable,
     private transient Map<Integer, Set<Integer>> dishonoredPlayersByBot = new ConcurrentHashMap<>();
 
     /**
+     * Each bot's last reported Forced Withdrawal state, relayed with its dishonored list. Transient like that list:
+     * ephemeral battle state, not part of savegames.
+     */
+    private transient ForcedWithdrawalReports forcedWithdrawalReports = new ForcedWithdrawalReports();
+
+    /**
      * Constructor
      */
     public Game() {
@@ -3998,6 +4004,18 @@ public final class Game extends AbstractGame implements Serializable,
             dishonoredPlayersByBot = new ConcurrentHashMap<>();
         }
         return dishonoredPlayersByBot;
+    }
+
+    /**
+     * @return each bot's last reported Forced Withdrawal state, which says which units are withdrawing; never
+     *       {@code null}
+     */
+    public ForcedWithdrawalReports getForcedWithdrawalReports() {
+        if (forcedWithdrawalReports == null) {
+            // Transient field is null after deserialization.
+            forcedWithdrawalReports = new ForcedWithdrawalReports();
+        }
+        return forcedWithdrawalReports;
     }
 
     /**

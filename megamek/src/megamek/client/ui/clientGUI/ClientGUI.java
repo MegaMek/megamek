@@ -34,14 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -56,6 +49,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -3164,9 +3158,13 @@ public class ClientGUI extends AbstractClientGUI
         JCheckBox rememberChoice = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
         JButton launchSettings = new JButton(Messages.getString("ClientGUI.bingLaunchSettings"));
         launchSettings.addActionListener(e -> showSettings());
+        launchSettings.setMaximumSize(launchSettings.getPreferredSize());
         Object[] dialogContent = { Messages.getString("ClientGUI.bingMessage"),
-                                   rememberChoice,
-                                   launchSettings };
+                                   Box.createVerticalStrut(10),
+                                   launchSettings,
+                                   Box.createVerticalStrut(10),
+                                   rememberChoice
+        };
         int response = JOptionPane.showConfirmDialog(null,
               dialogContent,
               Messages.getString("ClientGUI.bingTitle"),

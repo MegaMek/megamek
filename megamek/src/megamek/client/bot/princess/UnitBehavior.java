@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.logging.MMLogger;
@@ -75,9 +75,8 @@ public class UnitBehavior {
     private BehaviorType calculateUnitBehavior(Entity entity, Princess owner) {
         BehaviorSettings botSettings = owner.getBehaviorSettings();
 
-        // isCrippled(true) so crew-crippled Meks withdraw too, matching Princess.refreshCrippledUnits and the
-        // firing-suppression checks (isCrippled() skips crew damage for Meks)
-        if (botSettings.isForcedWithdrawal() && entity.isCrippled(true)) {
+        // the same test as every other withdrawal decision, so crew-crippled Meks and gamemaster orders count too
+        if (owner.getForcedWithdrawalTracker().isWithdrawing(entity)) {
             if (owner.getClusterTracker().getDestinationCoords(entity, owner.getHomeEdge(entity), true).isEmpty()) {
                 return BehaviorType.NoPathToDestination;
             }

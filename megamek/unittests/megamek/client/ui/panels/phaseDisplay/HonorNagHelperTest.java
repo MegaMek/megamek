@@ -162,13 +162,29 @@ class HonorNagHelperTest {
     }
 
     @Test
-    void botIgnoringForcedWithdrawalNeverWarns() {
-        // A Berserk bot fights to the death and never judges honor, so nothing the player does dishonors them.
+    void botIgnoringForcedWithdrawalDoesNotJudgeTheAttacker() {
+        // A Berserk bot fights to the death, so fighting on while crippled or as a civilian is no dishonor to it.
         when(attacker.isCrippled()).thenReturn(true);
         when(attacker.isMilitary()).thenReturn(false);
         withdrawalReports.record(BOT_OWNER_ID, new BotHonorReport(List.of(), false, Set.of()));
         assertFalse(HonorNagHelper.wouldBeDishonored(game, attacker, target));
         assertNull(HonorNagHelper.warningFor(game, attacker, target));
+    }
+
+    @Test
+    void botIgnoringForcedWithdrawalStillProtectsAUnitOrderedToWithdraw() {
+        // A gamemaster's order to withdraw overrides the bot's setting, so attacking that unit is still dishonorable,
+        // and the warning names only the target, not the attacker's own condition.
+        when(attacker.isCrippled()).thenReturn(true);
+        when(attacker.getShortName()).thenReturn("Hunchback HBK-4G");
+        when(target.getShortName()).thenReturn("Atlas AS7-D");
+        withdrawalReports.record(BOT_OWNER_ID, new BotHonorReport(List.of(), false, Set.of(TARGET_ID)));
+
+        String warning = HonorNagHelper.warningFor(game, attacker, target);
+
+        assertNotNull(warning);
+        assertTrue(warning.contains("Atlas AS7-D you are targeting"), warning);
+        assertFalse(warning.contains("Hunchback HBK-4G"), warning);
     }
 
     @Test

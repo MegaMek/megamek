@@ -71,23 +71,24 @@ public class ForcedWithdrawalReports {
     }
 
     /**
-     * Returns {@code true} when the unit's owner is a bot that follows Forced Withdrawal and has reported this unit as
-     * withdrawing. Crippled units of human players and of bots that ignore Forced Withdrawal are never withdrawing.
+     * Returns {@code true} when the unit's owner is a bot that has reported this unit as withdrawing. The bot decides:
+     * it lists a unit when it is crippled under the bot's Forced Withdrawal rules, or when a gamemaster ordered it to
+     * withdraw, which holds even for a bot that ignores Forced Withdrawal. Human players' units are never listed.
      *
      * @param entity the unit to check
      *
-     * @return {@code true} if the unit is withdrawing under the Forced Withdrawal rules
+     * @return {@code true} if the unit is withdrawing under Forced Withdrawal
      */
     public boolean isWithdrawing(Entity entity) {
         BotHonorReport report = reportsByBot.get(entity.getOwnerId());
-        boolean isOwnerFollowingForcedWithdrawal = (report != null) && report.followsForcedWithdrawal();
-        return isOwnerFollowingForcedWithdrawal && report.withdrawingUnitIds().contains(entity.getId());
+        return (report != null) && report.withdrawingUnitIds().contains(entity.getId());
     }
 
     /**
      * Returns {@code true} only when the bot has reported that it does not follow Forced Withdrawal. Such a bot fights
-     * to the death and never judges anyone's honor. A bot that has not reported yet is assumed to follow the rules,
-     * which is the Princess default.
+     * to the death, so fighting on while crippled or as a civilian is no dishonor to it; it still protects any unit a
+     * gamemaster ordered to withdraw. A bot that has not reported yet is assumed to follow the rules, which is the
+     * Princess default.
      *
      * @param botPlayerId the bot's player ID
      *

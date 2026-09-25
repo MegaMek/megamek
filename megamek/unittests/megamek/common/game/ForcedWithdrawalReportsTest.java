@@ -91,11 +91,11 @@ class ForcedWithdrawalReportsTest {
     }
 
     @Test
-    void aBotIgnoringForcedWithdrawalHasNoWithdrawingUnits() {
-        // Even if a stale list came along with it, a bot that ignores the rules has nobody withdrawing.
+    void aBotIgnoringForcedWithdrawalStillHasItsOrderedUnitsWithdrawing() {
+        // A Berserk bot lists only units a gamemaster ordered off the field; they withdraw all the same.
         reports.record(BOT_ID, new BotHonorReport(List.of(), false, Set.of(UNIT_ID)));
 
-        assertFalse(reports.isWithdrawing(unit(UNIT_ID, BOT_ID)));
+        assertTrue(reports.isWithdrawing(unit(UNIT_ID, BOT_ID)));
         assertTrue(reports.ignoresForcedWithdrawal(BOT_ID));
     }
 

@@ -49,6 +49,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -127,6 +128,8 @@ public class UnitDamagePanelBuilder {
     private final UnitDamageControls controls;
     /** Whether the gamemaster-only controls are offered: refilling ammo bins and temporary skill modifiers. */
     private final boolean offerGameMasterTools;
+    /** The general panel's gamemaster column, holding the owner and the skill modifiers; created on first use. */
+    private JPanel gamemasterColumn;
 
     public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls) {
         this(entity, controls, false);
@@ -243,17 +246,62 @@ public class UnitDamagePanelBuilder {
     }
 
     /**
-     * Adds the gamemaster's skill modifier controls to the general panel, as a column of their own so they stand
-     * apart from the unit's systems and are always in view, unlike a location panel that only shows when its
-     * location is chosen. Called by the dialog after every other general row is in place, so the column is the
-     * panel's last.
+     * Adds the gamemaster's skill modifier controls to the general panel's gamemaster column, so they stand apart
+     * from the unit's systems and are always in view, unlike a location panel that only shows when its location is
+     * chosen. Called by the dialog after every other general row is in place.
      */
     public void addSkillModifiersColumn() {
         if (!offersSkillModifiers()) {
             return;
         }
-        startNewColumn(generalPanel());
-        initSkillModifiers(generalPanel());
+        initSkillModifiers(gamemasterColumn());
+    }
+
+    /**
+     * Returns the general panel's last column, which holds the gamemaster's controls: the owner and the temporary
+     * skill modifiers. It is a panel of its own set beside the general rows, rather than more rows of the general
+     * panel's grid. Rows of one grid share their height across columns, so the taller spinner rows used to stretch
+     * the checkbox rows beside them into uneven gaps.
+     *
+     * <p>Created on first use, which must come after every other general row is in place: rows added to the general
+     * panel afterwards would land under this column.</p>
+     *
+     * @return the gamemaster column
+     */
+    public JPanel gamemasterColumn() {
+        if (gamemasterColumn == null) {
+            gamemasterColumn = new JPanel(new GridBagLayout());
+            controls.panelRows.put(gamemasterColumn, 1);
+            attachBesideGeneralRows(gamemasterColumn);
+        }
+        return gamemasterColumn;
+    }
+
+    /**
+     * Places a column panel to the right of the general panel's rows, spanning their height and pinned to the top.
+     * A glue row under the rows takes up any height the column needs beyond theirs, so the last general row is never
+     * stretched to make room.
+     */
+    private void attachBesideGeneralRows(JPanel column) {
+        JPanel general = generalPanel();
+        int itemCount = controls.panelRows.getOrDefault(general, 1) - 1;
+        int columnsUsed = Math.max(1, Math.ceilDiv(itemCount, MAX_ROWS_PER_COLUMN));
+        int glueRow = MAX_ROWS_PER_COLUMN + 1;
+
+        GridBagConstraints columnConstraints = new GridBagConstraints();
+        columnConstraints.gridx = columnsUsed * 2;
+        columnConstraints.gridy = 1;
+        columnConstraints.gridwidth = 2;
+        columnConstraints.gridheight = glueRow;
+        columnConstraints.anchor = GridBagConstraints.NORTHWEST;
+        columnConstraints.insets = new Insets(0, UIUtil.scaleForGUI(10), 0, 0);
+        general.add(column, columnConstraints);
+
+        GridBagConstraints glueConstraints = new GridBagConstraints();
+        glueConstraints.gridx = 0;
+        glueConstraints.gridy = glueRow;
+        glueConstraints.weighty = 1.0;
+        general.add(Box.createGlue(), glueConstraints);
     }
 
     /**

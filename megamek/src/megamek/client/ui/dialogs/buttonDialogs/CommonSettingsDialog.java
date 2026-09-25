@@ -33,14 +33,7 @@
  */
 package megamek.client.ui.dialogs.buttonDialogs;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -59,6 +52,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.List;
 import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.UIManager.LookAndFeelInfo;
@@ -2725,7 +2719,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             masterVolumeSlider.setValue(GUIP.getMasterVolume());
             soundMuteChat.setSelected(GUIP.getSoundMuteChat());
             soundMuteMyTurn.setSelected(GUIP.getSoundMuteMyTurn());
-            soundPrompt.setSelected(GUIP.getSoundPrompt());
+            soundPrompt.setSelected(GUIP.getSoundPromptSuppress());
             soundMuteOthersTurn.setSelected(GUIP.getSoundMuteOthersTurn());
             tfSoundMuteChatFileName.setText(GUIP.getSoundBingFilenameChat());
             tfSoundMuteMyTurnFileName.setText(GUIP.getSoundBingFilenameMyTurn());
@@ -3226,7 +3220,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setMasterVolume(masterVolumeSlider.getValue());
         GUIP.setSoundMuteChat(soundMuteChat.isSelected());
         GUIP.setSoundMuteMyTurn(soundMuteMyTurn.isSelected());
-        GUIP.setSoundPrompt(soundPrompt.isSelected());
+        GUIP.setSoundPromptSuppress(soundPrompt.isSelected());
         GUIP.setSoundMuteOthersTurn(soundMuteOthersTurn.isSelected());
 
         GUIP.setSoundBingFilenameChat(tfSoundMuteChatFileName.getText());

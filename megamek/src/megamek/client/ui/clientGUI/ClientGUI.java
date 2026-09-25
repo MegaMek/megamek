@@ -3154,19 +3154,78 @@ public class ClientGUI extends AbstractClientGUI
         audioService.playSound(SoundType.BING_CHAT);
     }
 
+    /**
+     * This prompts the user if they want to have the My Turn notifications enabled or not
+     */
     private void promptForSound() {
         JCheckBox rememberChoice = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
         JButton launchSettings = new JButton(Messages.getString("ClientGUI.bingLaunchSettings"));
+        JButton playMyTurnSound = new JButton(Messages.getString("ClientGUI.bingPlay"));
+        JLabel playLabel = new JLabel(Messages.getString("ClientGUI.bingPlaySound"));
+        JLabel messageLabel = new JLabel(Messages.getString("ClientGUI.bingMessage"));
+        JLabel clientSettingsLabel = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
+
+        // Action listeners
         launchSettings.addActionListener(e -> showSettings());
-        launchSettings.setMaximumSize(launchSettings.getPreferredSize());
-        Object[] dialogContent = { Messages.getString("ClientGUI.bingMessage"),
-                                   Box.createVerticalStrut(10),
-                                   launchSettings,
-                                   Box.createVerticalStrut(10),
-                                   rememberChoice
-        };
+        playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
+
+        // Set alignments
+        playLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        clientSettingsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        launchSettings.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        messageLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        rememberChoice.setAlignmentX(Component.LEFT_ALIGNMENT);
+        clientSettingsLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Audio button panel
+        JPanel playSoundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        playSoundPanel.add(playLabel);
+        playSoundPanel.add(playMyTurnSound);
+
+        // Client settings label panel
+        JPanel clientSettingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        clientSettingsPanel.add(clientSettingsLabel);
+
+        // Client Settings button panel
+        JPanel settingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        settingsButtonPanel.add(launchSettings);
+
+        // Panel alignment
+        playSoundPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        settingsButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        playSoundPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        settingsButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        clientSettingsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Audio sub-panel
+        JPanel audioPanel = new JPanel();
+        audioPanel.setLayout(new BoxLayout(audioPanel, BoxLayout.Y_AXIS));
+
+        audioPanel.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createEtchedBorder(),
+                        BorderFactory.createEmptyBorder(10, 10, 10, 10)
+                )
+        );
+
+        audioPanel.add(playSoundPanel);
+        audioPanel.add(Box.createVerticalStrut(20));
+        audioPanel.add(clientSettingsPanel);
+        audioPanel.add(Box.createVerticalStrut(5));
+        audioPanel.add(settingsButtonPanel);
+
+        // Main content panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        panel.add(messageLabel);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(audioPanel);
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(rememberChoice);
+
         int response = JOptionPane.showConfirmDialog(null,
-              dialogContent,
+                                                     panel,
               Messages.getString("ClientGUI.bingTitle"),
               JOptionPane.YES_NO_OPTION,
               JOptionPane.QUESTION_MESSAGE);
@@ -3177,12 +3236,12 @@ public class ClientGUI extends AbstractClientGUI
         }
         if (rememberChoice.isSelected()) {
             GUIPreferences.getInstance()
-                  .setSoundPrompt(soundPrompt);
+                          .setSoundPromptSuppress(soundPrompt);
         }
     }
 
     public void bingMyTurn() {
-        if (GUIP.getSoundPrompt() && firstBing) {
+        if (!GUIP.getSoundPromptSuppress() && firstBing) {
             promptForSound();
             firstBing = false;
         }

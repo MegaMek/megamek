@@ -36,10 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.intThat;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -59,10 +56,10 @@ import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
-import megamek.common.loaders.EntityLoadingException;
 import megamek.common.net.packets.Packet;
 import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
@@ -79,19 +76,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 /**
- * Issue #8906: a cluster weapon fired at a building hex damages the building, and the infantry inside it, one Damage
- * Value grouping at a time (TW p. 171 and p. 172), so an LRM-20 that lands every missile is four separate 5-point
- * attacks rather than one 20-point attack. A single-hit weapon is still one attack.
+ * An attack on a building hex is one attack, however many hits it lands: the building takes its total damage, and the
+ * share that reaches the infantry inside (TW p. 172) is worked out on that total and converted by the attacking
+ * weapon's row of the damage table for infantry (TW p. 216). Each grouping of a cluster weapon counts separately only
+ * for the building's absorption of damage aimed at a non-infantry unit inside (TW p. 171).
  */
-class BuildingDamageGroupingTest extends GameBoardTestCase {
+class BuildingAttackResolutionTest extends GameBoardTestCase {
 
     private static final Coords ATTACKER_HEX = new Coords(5, 1);
     private static final Coords BUILDING_HEX = new Coords(5, 5);
-    private static final int LRM_CLUSTER = 5;
-    private static final int SINGLE_HIT = 1;
 
     static {
-        initializeBoard("BUILDING_GROUPING_BOARD", """
+        initializeBoard("BUILDING_ATTACK_BOARD", """
               size 16 17
               hex 0501 0 "" ""
               hex 0505 0 "" ""
@@ -105,7 +101,6 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
     private BuildingEntity building;
     private BipedMek attacker;
     private Mounted<?> lrm;
-    private Mounted<?> autocannon;
 
     @BeforeAll
     static void beforeAll() {
@@ -123,7 +118,7 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
         game = gameManager.getGame();
         game.addPlayer(0, player);
 
-        board = getBoard("BUILDING_GROUPING_BOARD");
+        board = getBoard("BUILDING_ATTACK_BOARD");
         game.setBoard(board);
 
         building = new BuildingEntity(BuildingType.MEDIUM, IBuilding.STANDARD);
@@ -146,68 +141,23 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
         attacker.setOwner(game.getPlayer(0));
         attacker.setWeight(50.0);
         lrm = attacker.addEquipment(EquipmentType.get("ISLRM20"), Mek.LOC_RIGHT_TORSO);
-        autocannon = attacker.addEquipment(EquipmentType.get("ISAC20"), Mek.LOC_LEFT_TORSO);
         game.addEntity(attacker);
         attacker.setDeployed(true);
         attacker.setPosition(ATTACKER_HEX);
 
-        // The damage itself is not under test; only how the attack is split up.
+        // The damage itself is not under test; only what attack reaches the building and the infantry inside
         doReturn(new Vector<Report>()).when(gameManager)
               .damageBuilding(any(IBuilding.class), anyInt(), any(Coords.class));
         doReturn(new Vector<Report>()).when(gameManager)
               .damageInfantryIn(any(IBuilding.class), anyInt(), any(Coords.class), anyInt());
     }
 
-    private WeaponHandler handlerFor(Mounted<?> weapon, boolean salvo) throws EntityLoadingException {
-        int targetId = HexTarget.locationToId(BoardLocation.of(BUILDING_HEX, board.getBoardId()));
-        WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), Targetable.TYPE_BUILDING, targetId,
-              attacker.getEquipmentNum(weapon));
-        WeaponHandler handler = new WeaponHandler(new ToHitData(), attack, game, gameManager);
-        handler.bSalvo = salvo;
-        handler.nDamPerHit = salvo ? 1 : ((WeaponType) weapon.getType()).getDamage();
-        return handler;
-    }
-
-    @Test
-    void fullLrmVolleyIsFourSeparateFivePointAttacksOnTheBuilding() throws EntityLoadingException {
-        WeaponHandler handler = handlerFor(lrm, true);
-
-        int hitsLeft = handler.handleBuildingDamageByGrouping(new Vector<>(), building, 20, LRM_CLUSTER,
-              BUILDING_HEX);
-
-        assertEquals(0, hitsLeft);
-        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
-        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
-    }
-
-    @Test
-    void infantryInsideTakesEachGroupingSeparately() throws EntityLoadingException {
-        WeaponHandler handler = handlerFor(lrm, true);
-        int infantryDamageClass = ((WeaponType) lrm.getType()).getInfantryDamageClass();
-
-        handler.handleBuildingDamageByGrouping(new Vector<>(), building, 20, LRM_CLUSTER, BUILDING_HEX);
-
-        verify(gameManager, times(4)).damageInfantryIn(eq(building), eq(5), eq(BUILDING_HEX),
-              eq(infantryDamageClass));
-    }
-
-    @Test
-    void partialVolleyEndsWithASmallerGrouping() throws EntityLoadingException {
-        WeaponHandler handler = handlerFor(lrm, true);
-
-        handler.handleBuildingDamageByGrouping(new Vector<>(), building, 12, LRM_CLUSTER, BUILDING_HEX);
-
-        verify(gameManager, times(2)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
-        verify(gameManager, times(1)).damageBuilding(eq(building), eq(2), eq(BUILDING_HEX));
-    }
-
     /**
-     * The missile handlers resolve building hits in their own loop, which is where the first playtest found the
-     * volley still landing as one lump. Adjacent to the building every missile hits, so a full LRM-20 run through
-     * the real handler must reach the building as four groupings of five.
+     * Adjacent to a building every missile hits (TW p. 171), so a full LRM-20 run through the real handler lands 20
+     * damage on the building as one attack, and the infantry inside are dealt their share of all 20 at once.
      */
     @Test
-    void lrmHandlerRunEndToEndDamagesTheBuildingPerGrouping() throws Exception {
+    void fullLrmVolleyIsOneAttack() throws Exception {
         attacker.setPosition(BUILDING_HEX.translated(0));
         attacker.setFacing(3);
         Mounted<?> ammo = attacker.addEquipment(EquipmentType.get("IS Ammo LRM-20"), Mek.LOC_LEFT_TORSO);
@@ -219,13 +169,14 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        verify(gameManager, times(4)).damageBuilding(eq(building), eq(5), eq(BUILDING_HEX));
-        verify(gameManager, never()).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        verify(gameManager, times(1)).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        verify(gameManager, times(1)).damageInfantryIn(eq(building), eq(20), eq(BUILDING_HEX),
+              eq(WeaponType.WEAPON_CLUSTER_MISSILE));
     }
 
-    /** A missed volley at a unit inside a building damages the building instead (TW p. 171), also per grouping. */
+    /** A missed volley at a unit inside a building damages the building instead (TW p. 171), as one attack. */
     @Test
-    void missedVolleyAtAUnitInsideDamagesTheBuildingPerGrouping() throws Exception {
+    void missedVolleyAtAUnitInsideIsOneAttackOnTheBuilding() throws Exception {
         BipedMek inside = new BipedMek();
         inside.setGame(game);
         inside.setId(game.getNextEntityId());
@@ -248,17 +199,20 @@ class BuildingDamageGroupingTest extends GameBoardTestCase {
 
         handler.handle(GamePhase.FIRING, new Vector<>());
 
-        verify(gameManager, atLeastOnce()).damageBuilding(eq(building), intThat(damage -> damage <= 5),
-              eq(BUILDING_HEX));
-        verify(gameManager, never()).damageBuilding(eq(building), intThat(damage -> damage > 5), eq(BUILDING_HEX));
+        verify(gameManager, times(1)).damageBuilding(eq(building), anyInt(), eq(BUILDING_HEX));
     }
 
+    /** Damage from conventional infantry weapons reaches infantry inside unreduced (TW p. 216). */
     @Test
-    void singleHitWeaponIsOneAttack() throws EntityLoadingException {
-        WeaponHandler handler = handlerFor(autocannon, false);
+    void infantryWeaponDamageIsInfantryOrigin() throws Exception {
+        int targetId = HexTarget.locationToId(BoardLocation.of(BUILDING_HEX, board.getBoardId()));
+        WeaponAttackAction attack = new WeaponAttackAction(attacker.getId(), Targetable.TYPE_BUILDING, targetId,
+              attacker.getEquipmentNum(lrm));
+        WeaponHandler handler = new WeaponHandler(new ToHitData(), attack, game, gameManager);
 
-        handler.handleBuildingDamageByGrouping(new Vector<>(), building, SINGLE_HIT, 1, BUILDING_HEX);
+        assertEquals(WeaponType.WEAPON_CLUSTER_MISSILE, handler.infantryDamageClass());
 
-        verify(gameManager, times(1)).damageBuilding(eq(building), eq(20), eq(BUILDING_HEX));
+        handler.weaponType = (WeaponType) EquipmentType.get(EquipmentTypeLookup.INFANTRY_ASSAULT_RIFLE);
+        assertEquals(WeaponType.WEAPON_INFANTRY_ORIGIN, handler.infantryDamageClass());
     }
 }

@@ -370,4 +370,16 @@ class InfantryActionPlannerTest {
 
         assertNull(memory.fight(building.getId()), "the action is over, so its page is dropped");
     }
+
+    @Test
+    @DisplayName("A declaration lists its units lowest id first, whatever order they were found in")
+    void declaredIdsAreInAscendingOrder() {
+        ConvInfantry later = new ConvInfantry();
+        later.setId(20);
+        ConvInfantry earlier = new ConvInfantry();
+        earlier.setId(10);
+
+        assertEquals(List.of(10, 20), InfantryActionPlanner.ids(List.of(later, earlier)),
+              "the server takes the first unit as the lead attacker, so the order must not depend on the entity map");
+    }
 }

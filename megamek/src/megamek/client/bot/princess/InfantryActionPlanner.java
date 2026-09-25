@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import megamek.client.bot.princess.FightMemory.OddsRecord;
@@ -304,11 +305,21 @@ public final class InfantryActionPlanner {
         return attackers / defenders;
     }
 
-    private static List<Integer> ids(List<? extends Entity> units) {
+    /**
+     * The units' ids, lowest first. The units come from the game's entity map, whose order is not guaranteed, and the
+     * server makes the first unit of a declaration the action's lead attacker, so an unsorted list would let the same
+     * position start the same fight with a different lead.
+     *
+     * @param units the units to declare
+     *
+     * @return their ids in ascending order
+     */
+    static List<Integer> ids(List<? extends Entity> units) {
         List<Integer> ids = new ArrayList<>();
         for (Entity unit : units) {
             ids.add(unit.getId());
         }
+        Collections.sort(ids);
         return ids;
     }
 

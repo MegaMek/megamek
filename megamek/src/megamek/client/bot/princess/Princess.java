@@ -83,6 +83,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
+import megamek.common.game.BotHonorReport;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeRoll;
@@ -3522,8 +3523,6 @@ public class Princess extends BotClient {
             }
         } finally {
             LOGGER.info(msg.toString());
-            // Keep clients informed of this bot's honor state (covers pirates and the forced-withdrawal-off case too).
-            sendDishonoredData();
         }
     }
 
@@ -3632,6 +3631,9 @@ public class Princess extends BotClient {
             checkForDishonoredEnemies();
             checkForBrokenEnemies();
             refreshCrippledUnits();
+            // Report after the withdrawing list is fresh, so clients tag and warn about the units this bot will treat
+            // as fleeing this turn. Covers pirates and the forced-withdrawal-off case too.
+            sendDishonoredData();
             initializePathRankers();
             fireControlState = new FireControlState();
             pathRankerState = new PathRankerState();
@@ -3867,6 +3869,27 @@ public class Princess extends BotClient {
         return friendlyGuidedWeapons;
     }
 
+    @Override
+    public void changePhase(GamePhase phase) {
+        super.changePhase(phase);
+        if (phase.isLounge()) {
+            forgetWithdrawingUnits();
+        }
+    }
+
+    /**
+     * Forgets which of this bot's units were withdrawing, when a game ends and the players return to the lobby.
+     *
+     * <p>The list is otherwise only refreshed at the end of each turn, and unit IDs start again in the next game. Kept
+     * over, it would make the bot treat whichever new unit reuses a withdrawing unit's ID as fleeing for the whole
+     * first round, calling an attack on it dishonorable when that unit is unhurt. Package-visible for testing.</p>
+     */
+    void forgetWithdrawingUnits() {
+        LOGGER.debug("[HonorNag] {} back in the lobby; forgetting withdrawing units {}", getName(),
+              getMemory().crippledUnitIds());
+        getMemory().setCrippledUnits(Set.of());
+    }
+
     /**
      * Load the list of units considered crippled at the time the bot was loaded or the beginning of the turn, whichever
      * is the more recent.
@@ -4012,6 +4035,9 @@ public class Princess extends BotClient {
         // refreshCrippledUnits should happen after checkForDishonoredEnemies, since checkForDishonoredEnemies
         // wants to examine the units that were considered crippled at the *beginning* of the turn and were attacked.
         refreshCrippledUnits();
+        // Report after the withdrawing list is fresh, so clients tag and warn about the units this bot will treat as
+        // fleeing next turn. Covers pirates and the forced-withdrawal-off case too.
+        sendDishonoredData();
         updateReturnFirePermission(unitsWithdrawingAtStartOfTurn);
         setAMSModes();
         updateEnemyHeatMaps();
@@ -4101,12 +4127,27 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Reports to the server which players this bot currently considers dishonored, so that clients can warn a human
-     * player before committing an action that would newly dishonor them. The reported set is fully resolved - it
+     * Reports to the server which players this bot currently considers dishonored, whether it follows Forced
+     * Withdrawal, and which of its units are withdrawing. Clients use it to tag withdrawing units and to warn a human
+     * player before committing an action that would newly dishonor them. The dishonored set is fully resolved - it
      * already accounts for pirates having no honor to give - so a receiving client only needs a membership test.
      */
     public void sendDishonoredData() {
-        send(new Packet(PacketCommand.PRINCESS_DISHONORED, resolveDishonoredPlayerIds()));
+        BotHonorReport report = buildHonorReport();
+        LOGGER.debug("[HonorNag] {} reports: forced withdrawal {}, withdrawing units {}, dishonored players {}",
+              getName(), report.followsForcedWithdrawal(), report.withdrawingUnitIds(),
+              report.dishonoredPlayerIds());
+        send(new Packet(PacketCommand.PRINCESS_DISHONORED, report));
+    }
+
+    /**
+     * @return this bot's honor report. The withdrawing units are the ones it will treat as fleeing when it judges the
+     *       coming turn's attacks; a bot that ignores Forced Withdrawal reports none. Package-visible for testing.
+     */
+    BotHonorReport buildHonorReport() {
+        boolean followsForcedWithdrawal = getForcedWithdrawal();
+        Set<Integer> withdrawingUnitIds = followsForcedWithdrawal ? getMemory().crippledUnitIds() : Set.of();
+        return new BotHonorReport(resolveDishonoredPlayerIds(), followsForcedWithdrawal, withdrawingUnitIds);
     }
 
     /**

@@ -44,6 +44,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
+import megamek.logging.MMLogger;
 
 /**
  * Helper that mirrors, from the human player's point of view, the honor rules that a Princess bot applies in
@@ -55,7 +56,7 @@ import megamek.common.units.Targetable;
  * happens against one of the bot's units:</p>
  * <ul>
  *     <li>a crippled ("broken") unit keeps fighting instead of withdrawing, or a civilian unit attacks; or</li>
- *     <li>the target is one of the bot's crippled ("broken") units that would otherwise be allowed to withdraw.</li>
+ *     <li>the target is one of the bot's units withdrawing under Forced Withdrawal.</li>
  * </ul>
  *
  * <p>Once a bot already considers the player dishonored, further attacks against that bot change nothing, so no warning
@@ -64,10 +65,14 @@ import megamek.common.units.Targetable;
  * stores it on its {@link Game}. This works the same for locally and remotely hosted bots.</p>
  *
  * <p>Honor is only tracked by Princess opponents, so warnings are limited to attacks against enemy bot-owned units.
- * The bot's per-Princess Forced Withdrawal setting is not visible to this client; it is assumed to be on (the Princess
- * default), so this is a best-effort warning that the player can disable.</p>
+ * Forced Withdrawal is a per-bot setting, so each bot reports whether it follows it and which of its units are
+ * withdrawing (see {@link megamek.common.game.ForcedWithdrawalReports}). A target counts as protected only if its bot
+ * reported it withdrawing, and a bot that reported ignoring Forced Withdrawal produces no warning at all. Until a bot
+ * first reports, it is assumed to follow the rules (the Princess default).</p>
  */
 final class HonorNagHelper {
+
+    private static final MMLogger LOGGER = MMLogger.create(HonorNagHelper.class);
 
     private HonorNagHelper() {}
 
@@ -141,8 +146,8 @@ final class HonorNagHelper {
         if (attacker.isCrippled()) {
             addReason(reasons, Messages.getString("HonorNag.reason.attackerCrippled", attacker.getShortName()));
         }
-        if (targetEntity.isCrippled()) {
-            addReason(reasons, Messages.getString("HonorNag.reason.targetCrippled", targetEntity.getShortName()));
+        if (game.getForcedWithdrawalReports().isWithdrawing(targetEntity)) {
+            addReason(reasons, Messages.getString("HonorNag.reason.targetWithdrawing", targetEntity.getShortName()));
         }
     }
 
@@ -252,12 +257,18 @@ final class HonorNagHelper {
             return false;
         }
 
+        // A bot that ignores Forced Withdrawal fights to the death and never judges honor.
+        if (game.getForcedWithdrawalReports().ignoresForcedWithdrawal(targetOwner.getId())) {
+            LOGGER.debug("[HonorNag] No warning: {} does not follow Forced Withdrawal", targetOwner.getName());
+            return false;
+        }
+
         // Dishonored by fighting on while broken (crippled) or by attacking as a civilian, or by attacking an enemy
-        // that is itself broken (crippled) and would otherwise be allowed to withdraw.
-        boolean matchesDishonorConditions = attacker.isCrippled()
-              || !attacker.isMilitary()
-              || targetEntity.isCrippled();
-        if (!matchesDishonorConditions) {
+        // unit its bot has reported as withdrawing.
+        boolean isAttackerCrippled = attacker.isCrippled();
+        boolean isAttackerCivilian = !attacker.isMilitary();
+        boolean isTargetWithdrawing = game.getForcedWithdrawalReports().isWithdrawing(targetEntity);
+        if (!isAttackerCrippled && !isAttackerCivilian && !isTargetWithdrawing) {
             return false;
         }
 

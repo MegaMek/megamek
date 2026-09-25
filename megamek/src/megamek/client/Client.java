@@ -93,6 +93,8 @@ import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.BotHonorReport;
+import megamek.common.game.ForcedWithdrawalReports;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
@@ -271,6 +273,8 @@ public class Client extends AbstractClient {
                 if (tilesetManager != null) {
                     tilesetManager.reset();
                 }
+                // Unit IDs restart in the next game, so last game's withdrawing units would tag the wrong units
+                game.getForcedWithdrawalReports().clear();
             case DEPLOYMENT:
             case TARGETING:
             case MOVEMENT:
@@ -1486,8 +1490,9 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Receives a bot's dishonored-players report, records it, and - the first time an enemy bot marks the local player
-     * dishonored - shows the player a toast so they know the bot's units will no longer show theirs mercy.
+     * Receives a bot's honor report and records it: which players it considers dishonored, and which of its units are
+     * withdrawing under Forced Withdrawal. The first time an enemy bot marks the local player dishonored, shows the
+     * player a toast so they know the bot's units will no longer show theirs mercy.
      *
      * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
      * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
@@ -1497,7 +1502,11 @@ public class Client extends AbstractClient {
      */
     protected void receivePrincessDishonored(Packet packet) throws InvalidPacketDataException {
         int botPlayerId = packet.getIntValue(0);
-        List<Integer> dishonoredPlayerIds = packet.getIntList(1);
+        if (!(packet.getObject(1) instanceof BotHonorReport report)) {
+            throw new InvalidPacketDataException("BotHonorReport", packet.getObject(1), 1);
+        }
+        recordForcedWithdrawal(botPlayerId, report);
+        List<Integer> dishonoredPlayerIds = report.dishonoredPlayerIds();
         Player localPlayer = getLocalPlayer();
 
         if (localPlayer == null) {
@@ -1516,6 +1525,37 @@ public class Client extends AbstractClient {
             String botName = (bot != null) ? bot.getName() : Messages.getString("HonorNag.unknownBot");
             game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.GAMEMASTER,
                   Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
+        }
+    }
+
+    /**
+     * Stores a bot's Forced Withdrawal state and redraws every unit of that bot whose WITHDRAWING tag appeared or went
+     * away, so the board shows the change without waiting for the unit's next update.
+     *
+     * @param botPlayerId the reporting bot's player ID
+     * @param report      what the bot reported
+     */
+    private void recordForcedWithdrawal(int botPlayerId, BotHonorReport report) {
+        ForcedWithdrawalReports withdrawalReports = game.getForcedWithdrawalReports();
+        List<Entity> botUnits = new ArrayList<>();
+        Set<Integer> withdrawingBefore = new HashSet<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwnerId() == botPlayerId) {
+                botUnits.add(entity);
+                if (withdrawalReports.isWithdrawing(entity)) {
+                    withdrawingBefore.add(entity.getId());
+                }
+            }
+        }
+
+        withdrawalReports.record(botPlayerId, report);
+        LOGGER.debug("[HonorNag] Bot player {} reports forced withdrawal {}, withdrawing units {}", botPlayerId,
+              report.followsForcedWithdrawal(), report.withdrawingUnitIds());
+
+        for (Entity entity : botUnits) {
+            if (withdrawalReports.isWithdrawing(entity) != withdrawingBefore.contains(entity.getId())) {
+                game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            }
         }
     }
 

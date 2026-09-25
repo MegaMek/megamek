@@ -660,6 +660,11 @@ public class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getCautionColor(), "Jammed"));
             }
 
+            // A bot unit leaving the field under Forced Withdrawal; attacking it dishonors the attacker
+            if (bv.game.getForcedWithdrawalReports().isWithdrawing(entity)) {
+                stStr.add(new Status(GUIP.getCautionColor(), "Withdrawing"));
+            }
+
             // Virtual Reality Piloting Pod under hostile interference (IO:AE p.63)
             if (entity instanceof Mek mek && mek.hasVirtualRealityPilotingPod()) {
                 Interference podInterference = VirtualRealityPilotingPod.getInterference(mek);

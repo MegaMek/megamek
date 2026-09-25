@@ -140,10 +140,11 @@ final class HonorNagHelper {
         }
         // wouldBeDishonored guarantees a non-null attacker and an Entity target.
         Entity targetEntity = (Entity) target;
-        if (!attacker.isMilitary()) {
+        boolean botJudgesAttackers = botJudgesAttackers(game, targetEntity.getOwner());
+        if (botJudgesAttackers && !attacker.isMilitary()) {
             addReason(reasons, Messages.getString("HonorNag.reason.attackerCivilian", attacker.getShortName()));
         }
-        if (attacker.isCrippled()) {
+        if (botJudgesAttackers && attacker.isCrippled()) {
             addReason(reasons, Messages.getString("HonorNag.reason.attackerCrippled", attacker.getShortName()));
         }
         if (game.getForcedWithdrawalReports().isWithdrawing(targetEntity)) {
@@ -257,23 +258,42 @@ final class HonorNagHelper {
             return false;
         }
 
-        // A bot that ignores Forced Withdrawal fights to the death and never judges honor.
-        if (game.getForcedWithdrawalReports().ignoresForcedWithdrawal(targetOwner.getId())) {
-            LOGGER.debug("[HonorNag] No warning: {} does not follow Forced Withdrawal", targetOwner.getName());
-            return false;
-        }
-
         // Dishonored by fighting on while broken (crippled) or by attacking as a civilian, or by attacking an enemy
         // unit its bot has reported as withdrawing.
-        boolean isAttackerCrippled = attacker.isCrippled();
-        boolean isAttackerCivilian = !attacker.isMilitary();
+        boolean breaksAttackerRule = botJudgesAttackers(game, targetOwner) && hasAttackerFault(attacker);
         boolean isTargetWithdrawing = game.getForcedWithdrawalReports().isWithdrawing(targetEntity);
-        if (!isAttackerCrippled && !isAttackerCivilian && !isTargetWithdrawing) {
+        if (!breaksAttackerRule && !isTargetWithdrawing) {
             return false;
         }
 
         // If that bot already considers the player dishonored (as it last reported to us), nothing is left to warn
         // about. This covers pirate bots too, which have no honor to give and so consider everyone dishonored.
         return !game.isPlayerDishonoredBy(targetOwner.getId(), attackerOwner.getId());
+    }
+
+    /**
+     * Returns whether the bot judges the attacker at all. A bot that ignores Forced Withdrawal fights to the death, so
+     * fighting on while crippled or as a civilian is no dishonor to it; only attacking a unit it reported withdrawing
+     * is, which happens when a gamemaster ordered that unit off the field.
+     *
+     * @param game     the game being played
+     * @param botOwner the bot that owns the target
+     *
+     * @return {@code true} unless the bot has reported that it ignores Forced Withdrawal
+     */
+    private static boolean botJudgesAttackers(Game game, Player botOwner) {
+        if (game.getForcedWithdrawalReports().ignoresForcedWithdrawal(botOwner.getId())) {
+            LOGGER.debug("[HonorNag] {} does not follow Forced Withdrawal; only withdrawing targets count",
+                  botOwner.getName());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return {@code true} if the attacker is crippled and should be withdrawing, or counts as a civilian unit
+     */
+    private static boolean hasAttackerFault(Entity attacker) {
+        return attacker.isCrippled() || !attacker.isMilitary();
     }
 }

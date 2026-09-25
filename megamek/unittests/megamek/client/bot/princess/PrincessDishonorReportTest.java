@@ -114,15 +114,15 @@ class PrincessDishonorReportTest {
     }
 
     @Test
-    void reportsNoWithdrawingUnitsWhenIgnoringForcedWithdrawal() {
-        // A Berserk bot fights to the death; a list left over from before the setting changed must not leak out.
+    void aBotIgnoringForcedWithdrawalStillReportsItsWithdrawingUnits() {
+        // A Berserk bot's list only ever holds units a gamemaster ordered off the field, and those are protected.
         doReturn(false).when(princess).getForcedWithdrawal();
         princess.getMemory().setCrippledUnits(Set.of(20));
 
         BotHonorReport report = princess.buildHonorReport();
 
         assertFalse(report.followsForcedWithdrawal());
-        assertTrue(report.withdrawingUnitIds().isEmpty());
+        assertEquals(Set.of(20), report.withdrawingUnitIds());
     }
 
     @Test
@@ -137,7 +137,7 @@ class PrincessDishonorReportTest {
         // Otherwise the next game's unit that reuses a withdrawing unit's ID counts as fleeing for the first round.
         princess.getMemory().setCrippledUnits(Set.of(3));
 
-        princess.forgetWithdrawingUnits();
+        princess.getForcedWithdrawalTracker().forgetWithdrawingUnits();
 
         assertTrue(princess.buildHonorReport().withdrawingUnitIds().isEmpty());
         assertFalse(princess.getMemory().isCrippled(3));

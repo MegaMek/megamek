@@ -497,6 +497,12 @@ public abstract class Entity extends TurnOrdered
      * reads it, and cleared at the next round.
      */
     private int gamemasterTargetModifier = 0;
+
+    /**
+     * The gamemaster's standing Forced Withdrawal order for this unit, set from the Edit Damage dialog. Read it
+     * through {@link #getForcedWithdrawalOrder()}, which reads a unit from an older savegame as having no order.
+     */
+    private ForcedWithdrawalOrder forcedWithdrawalOrder = ForcedWithdrawalOrder.BOT_RULES;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
@@ -2260,6 +2266,23 @@ public abstract class Entity extends TurnOrdered
      */
     public void setGamemasterTargetModifier(int delta) {
         gamemasterTargetModifier = delta;
+    }
+
+    /**
+     * @return the gamemaster's standing Forced Withdrawal order for this unit; {@link ForcedWithdrawalOrder#BOT_RULES}
+     *       when none was given, including for a unit loaded from a savegame made before orders existed
+     */
+    public ForcedWithdrawalOrder getForcedWithdrawalOrder() {
+        return (forcedWithdrawalOrder == null) ? ForcedWithdrawalOrder.BOT_RULES : forcedWithdrawalOrder;
+    }
+
+    /**
+     * Sets the gamemaster's standing Forced Withdrawal order for this unit. It lasts until the gamemaster changes it.
+     *
+     * @param order the order
+     */
+    public void setForcedWithdrawalOrder(ForcedWithdrawalOrder order) {
+        forcedWithdrawalOrder = order;
     }
 
     /**

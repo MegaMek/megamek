@@ -574,6 +574,9 @@ code { font-size: 12px; }
 
 THEME_SCRIPT = """
 <script>
+if (location.hash === '#light' || location.hash === '#dark') {
+  document.documentElement.setAttribute('data-theme', location.hash.substring(1));
+}
 function toggleTheme() {
   var root = document.documentElement;
   var current = root.getAttribute('data-theme');

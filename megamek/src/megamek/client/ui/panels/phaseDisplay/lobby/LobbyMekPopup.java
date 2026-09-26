@@ -57,6 +57,7 @@ import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.dialogs.BotCommands.BotFormationsMenuBuilder;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
@@ -323,6 +324,9 @@ class LobbyMekPopup {
 
         popup.add(c3Menu(hasJoinedEntities, joinedEntities, clientGui, listener));
         popup.add(forceMenu(lobby, entities, forces, listener));
+        if (lobby.isForceView() && (forces.size() == 1)) {
+            addBotFormationMenu(popup, lobby, forces.getFirst());
+        }
 
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHA_STRIKE + NO_INFO + seIds, true, listener));
@@ -346,6 +350,18 @@ class LobbyMekPopup {
     /**
      * Returns the "Force" submenu, allowing assignment to forces
      */
+    /**
+     * Adds the Formation menu for a lance owned by a bot, so it starts the game in formation.
+     */
+    private static void addBotFormationMenu(ScalingPopup popup, ChatLounge lobby, Force force) {
+        Player owner = lobby.game().getForces().getOwner(force);
+        if ((owner == null) || !owner.isBot()) {
+            return;
+        }
+        List<Integer> unitIds = new ArrayList<>(force.getEntities());
+        popup.add(BotFormationsMenuBuilder.lobbyFormationMenu(lobby.getClientGUI().getClient(), force, unitIds));
+    }
+
     private static JMenu forceMenu(ChatLounge lobby, List<Entity> entities, List<Force> forces,
           ActionListener listener) {
         JMenu menu = new JMenu("Force");

@@ -91,8 +91,8 @@ public class UnitOrdersFollower {
     /** How far off its slot a formation unit may stand when the slot itself is blocked. */
     static final int FORMATION_SLACK = 1;
 
-    /** An enemy this close to a formation's leader counts as contact. */
-    static final int CONTACT_RANGE = 12;
+    /** Contact range for a formation none of whose units has a weapon: an enemy this close still breaks it. */
+    static final int FALLBACK_CONTACT_RANGE = 12;
 
     private final Princess owner;
     private final Set<Integer> arrivedUnitIds = new HashSet<>();
@@ -452,9 +452,10 @@ public class UnitOrdersFollower {
         if ((leader.getId() == entity.getId()) || (leader.getPosition() == null)) {
             return Optional.empty();
         }
-        if ((formation.get().getContactRule() == ContactRule.BREAK) && isEnemyNear(leader)) {
+        int contactRange = contactRange(members);
+        if ((formation.get().getContactRule() == ContactRule.BREAK) && isEnemyNear(leader, contactRange)) {
             LOGGER.debug("[BotOrders] {} (ID {}): formation broken - enemy within {} of {}", entity.getDisplayName(),
-                  entity.getId(), CONTACT_RANGE, leader.getDisplayName());
+                  entity.getId(), contactRange, leader.getDisplayName());
             return Optional.empty();
         }
         SlotChoice cached = slotChoices.get(entity.getId());
@@ -546,10 +547,22 @@ public class UnitOrdersFollower {
         return members;
     }
 
-    private boolean isEnemyNear(Entity leader) {
+    /**
+     * How close an enemy must come to break a formation: the longest effective range among its units, so a lance of
+     * missile boats breaks to fight at long range while a lance of brawlers keeps its shape until the enemy is close.
+     */
+    private static int contactRange(List<Entity> members) {
+        int longestRange = 0;
+        for (Entity member : members) {
+            longestRange = Math.max(longestRange, SupportEnvelope.of(member).effectiveRange());
+        }
+        return (longestRange > 0) ? longestRange : FALLBACK_CONTACT_RANGE;
+    }
+
+    private boolean isEnemyNear(Entity leader, int contactRange) {
         for (Entity enemy : owner.getEnemyEntities()) {
             if ((enemy.getPosition() != null) && (enemy.getBoardId() == leader.getBoardId())
-                  && (enemy.getPosition().distance(leader.getPosition()) <= CONTACT_RANGE)) {
+                  && (enemy.getPosition().distance(leader.getPosition()) <= contactRange)) {
                 return true;
             }
         }
@@ -582,7 +595,11 @@ public class UnitOrdersFollower {
         }
         int expectedAdvance = Math.min(paceLimit, leaderPosition.distance(leaderWaypoint.get()));
         Coords projected = leaderPosition.translated(heading, expectedAdvance);
-        return board.contains(projected) ? projected : leaderPosition;
+        // a projection across deep water would put every slot on the far bank and fold the formation for nothing
+        if (!board.contains(projected) || !FormationSide.sameSide(board, leaderPosition, projected)) {
+            return leaderPosition;
+        }
+        return projected;
     }
 
     /**

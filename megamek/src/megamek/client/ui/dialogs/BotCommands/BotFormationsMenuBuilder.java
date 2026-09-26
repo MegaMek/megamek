@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -41,6 +42,7 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.util.MenuScroller;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
@@ -215,6 +217,46 @@ public class BotFormationsMenuBuilder {
         }
         acknowledge(botPlayer, group, Messages.getString("BotCommandPanel.Formations.toast",
               Messages.getString("BotCommandPanel.Formations.shape." + shape), spacing));
+    }
+
+    /**
+     * The lobby's Formation menu for one bot lance, so a lance can start the game already in formation: one item per
+     * shape, spacing {@link FormationOrder#DEFAULT_SPACING}, the lance's first unit leading, Walk pace and Break on
+     * contact, plus Formation off. The rest can be changed in game from the Formations button.
+     *
+     * @param client  the client that sends the orders
+     * @param lance   the lance
+     * @param unitIds the lance's units, in lance order
+     *
+     * @return the menu
+     */
+    public static JMenu lobbyFormationMenu(AbstractClient client, Force lance, List<Integer> unitIds) {
+        JMenu menu = new JMenu(Messages.getString("BotCommandPanel.Formations.lobby"));
+        menu.setEnabled(unitIds.size() >= 2);
+        for (FormationShape shape : FormationShape.values()) {
+            JMenuItem item = new JMenuItem(Messages.getString("BotCommandPanel.Formations.shape." + shape));
+            item.addActionListener(event -> {
+                for (int slot = 0; slot < unitIds.size(); slot++) {
+                    client.sendChat(UnitOrderCommand.commandText(unitIds.get(slot), UnitOrderAction.FORMATION,
+                          UnitOrderCommand.SHAPE + '=' + shape.name(),
+                          UnitOrderCommand.LEADER + '=' + unitIds.get(0),
+                          UnitOrderCommand.SPACING + '=' + FormationOrder.DEFAULT_SPACING,
+                          UnitOrderCommand.SLOT + '=' + slot));
+                }
+                LOGGER.info("[BotOrders] lobby formation {} for {} ({} units)", shape, lance.getName(),
+                      unitIds.size());
+            });
+            menu.add(item);
+        }
+        menu.addSeparator();
+        JMenuItem offItem = new JMenuItem(Messages.getString("BotCommandPanel.Formations.off"));
+        offItem.addActionListener(event -> {
+            for (int unitId : unitIds) {
+                client.sendChat(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION_OFF));
+            }
+        });
+        menu.add(offItem);
+        return menu;
     }
 
     private void acknowledge(Player botPlayer, BotOrdersMenuBuilder.OrderGroup group, String description) {

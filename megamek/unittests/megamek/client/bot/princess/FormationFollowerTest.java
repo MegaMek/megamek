@@ -147,6 +147,20 @@ class FormationFollowerTest {
     }
 
     @Test
+    void theProjectionDoesNotCrossDeepWater() {
+        // A projected leader hex across a river put every slot on the far bank and folded the formation (test games).
+        game.setPhase(GamePhase.MOVEMENT);
+        for (int x = 0; x < WIDTH; x++) {
+            board.getHex(x, LEADER_HEX.getY() - 2).addTerrain(new Terrain(Terrains.WATER, 3));
+        }
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
     void theLeaderHasNoSlotAndFollowsItsRoute() {
         BipedMek leader = member(20, LEADER_HEX, 0, 3);
         member(21, new Coords(16, 25), 1, 4);

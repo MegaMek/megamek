@@ -44,6 +44,7 @@ import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
@@ -343,6 +344,38 @@ public class UnitOrdersFollower {
      */
     static boolean endsAt(Coords position, MovePath path) {
         return path.getFinalCoords().distance(position) <= Princess.DISTANCE_TO_WAYPOINT;
+    }
+
+    /**
+     * Counts the steps of a move that take the unit further from its target than the step before. A unit with
+     * movement to spare near a waypoint otherwise runs a loop past it and back, to bank the defence bonus for hexes
+     * moved; each step away is scored like a hex further from the destination.
+     *
+     * @param path   a candidate move
+     * @param target the waypoint or slot the unit is heading for
+     *
+     * @return the number of steps that moved away from the target
+     */
+    static int backtrackSteps(MovePath path, Coords target) {
+        Coords previous = path.getStartCoords();
+        if (previous == null) {
+            return 0;
+        }
+        int previousDistance = previous.distance(target);
+        int stepsAway = 0;
+        for (MoveStep step : path.getStepVector()) {
+            Coords position = step.getPosition();
+            if ((position == null) || position.equals(previous)) {
+                continue;
+            }
+            int distance = position.distance(target);
+            if (distance > previousDistance) {
+                stepsAway++;
+            }
+            previous = position;
+            previousDistance = distance;
+        }
+        return stepsAway;
     }
 
     /**

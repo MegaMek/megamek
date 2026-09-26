@@ -1695,9 +1695,15 @@ public class BasicPathRanker extends PathRanker {
             double routeWeight = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner())
                   .isPresent() ? getOwner().getUnitOrdersFollower().routeWeight(movingUnit) : 1.0;
 
+            // a unit on a route gets its movement bonus going forward, not in a loop that doubles back past it
+            Optional<Coords> routeTarget = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit,
+                  getOwner());
+            int backtrackSteps = routeTarget.map(target -> UnitOrdersFollower.backtrackSteps(path, target))
+                  .orElse(0);
+
             // normally, we favor being closer to the edge we're trying to get to
             if (newDistanceToHome > 0) {
-                selfPreservationMod = newDistanceToHome * selfPreservation * routeWeight;
+                selfPreservationMod = (newDistanceToHome + backtrackSteps) * selfPreservation * routeWeight;
                 // if this path gets us to the edge, we value it considerably more than we do
                 // paths that don't get us there
             } else {

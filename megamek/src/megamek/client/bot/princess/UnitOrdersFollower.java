@@ -694,7 +694,7 @@ public class UnitOrdersFollower {
      * The hex a formation member should deploy in: its slot beside the formation's leader, once the leader is on the
      * board. The slot comes from the member's place in the formation as set in the lobby, since an undeployed unit
      * has no position yet. The shape faces the leader's first waypoint if it has a route, else the middle of the
-     * board. Where the formation's own shape does not fit the deployment zone around the leader, the member takes
+     * enemy's deployment zone. Where the formation's own shape does not fit the deployment zone around the leader, the member takes
      * its place in a Line abreast instead, and the formation forms its shape on the move.
      *
      * @param entity     a unit about to deploy
@@ -718,7 +718,7 @@ public class UnitOrdersFollower {
             return Optional.empty();
         }
         Coords leaderPosition = leader.getPosition();
-        int heading = deploymentHeading(leader, leaderPosition, board);
+        int heading = deploymentHeading(leader, leaderPosition, deploymentFacingTarget(board));
         FormationShape shape = fittingDeploymentShape(formation.get(), leaderPosition, heading,
               new HashSet<>(legalHexes), memberSlots(leader.getId())).orElse(formation.get().getShape());
         return Optional.of(FormationPlanner.idealSlot(leaderPosition, heading, shape, formation.get().getSpacing(),
@@ -771,11 +771,12 @@ public class UnitOrdersFollower {
             return possibleDeployCoords;
         }
         Set<Coords> legalHexes = new HashSet<>(possibleDeployCoords);
+        Coords facingTarget = deploymentFacingTarget(board);
         for (FormationShape shape : List.of(formation.get().getShape(), FormationShape.LINE)) {
             List<Coords> fitting = new ArrayList<>();
             for (Coords candidate : possibleDeployCoords) {
-                if (fits(shape, formation.get(), candidate, deploymentHeading(entity, candidate, board), legalHexes,
-                      slots)) {
+                if (fits(shape, formation.get(), candidate, deploymentHeading(entity, candidate, facingTarget),
+                      legalHexes, slots)) {
                     fitting.add(candidate);
                 }
             }
@@ -794,16 +795,23 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * The way a formation faces while it deploys: toward its leader's first waypoint, else toward the middle of the
-     * board, the way the bot faces a unit it deploys with no enemy in sight.
+     * The way a formation faces while it deploys: toward its leader's first waypoint, else toward the facing target -
+     * the middle of the enemy's deployment zone, the way the bot faces the units it deploys.
      */
-    private static int deploymentHeading(Entity leader, Coords leaderPosition, Board board) {
+    private static int deploymentHeading(Entity leader, Coords leaderPosition, Coords facingTarget) {
         Optional<Coords> waypoint = leader.getUnitOrders().getNextWaypoint();
         if (waypoint.isPresent() && !waypoint.get().equals(leaderPosition)) {
             return leaderPosition.direction(waypoint.get());
         }
-        Coords middle = new Coords(board.getWidth() / 2, board.getHeight() / 2);
-        return middle.equals(leaderPosition) ? leader.getFacing() : leaderPosition.direction(middle);
+        return facingTarget.equals(leaderPosition) ? leader.getFacing() : leaderPosition.direction(facingTarget);
+    }
+
+    /**
+     * @return the middle of the enemy's deployment zone, or the middle of the board when no enemy zone is known
+     */
+    private Coords deploymentFacingTarget(Board board) {
+        return owner.getEnemyDeploymentCenter(board)
+              .orElse(new Coords(board.getWidth() / 2, board.getHeight() / 2));
     }
 
     /**

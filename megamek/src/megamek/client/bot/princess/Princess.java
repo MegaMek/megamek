@@ -1129,14 +1129,23 @@ public class Princess extends BotClient {
         Board board = game.getBoard(deployEntity);
 
         // first coordinate that it is legal to put this unit on now find some sort of reasonable
-        // facing. If there are deployed enemies, face them
-
-        // specifically, face the last deployed enemy.
+        // facing: toward the enemy's deployment zone, where the enemy will come from
         int decentFacing = -1;
-        for (final Entity enemy : getEnemyEntities()) {
-            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(deployEntity, enemy)) {
-                decentFacing = deployCoords.direction(enemy.getPosition());
-                break;
+        Optional<Coords> enemyZoneCenter = getEnemyDeploymentCenter(board);
+        if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(deployCoords)) {
+            decentFacing = deployCoords.direction(enemyZoneCenter.get());
+            LOGGER.info("[Deployment] {} deploys at {} facing {}, toward the enemy deployment zone around {}",
+                  deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
+                  enemyZoneCenter.get().getBoardNum());
+        }
+
+        // with no enemy zone to face, face the last deployed enemy
+        if (decentFacing == -1) {
+            for (final Entity enemy : getEnemyEntities()) {
+                if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(deployEntity, enemy)) {
+                    decentFacing = deployCoords.direction(enemy.getPosition());
+                    break;
+                }
             }
         }
 
@@ -1352,6 +1361,53 @@ public class Princess extends BotClient {
      *     </li>
      * </ol>
      */
+    /**
+     * The middle of the enemy's deployment zones on a board: the average of every hex an enemy player may deploy in.
+     * The bot faces the units it deploys this way, toward where the enemy will come from, and lays its formations out
+     * facing it.
+     *
+     * @param board the board the bot is deploying on
+     *
+     * @return the hex, or empty when no enemy player with units is known
+     */
+    public Optional<Coords> getEnemyDeploymentCenter(@Nullable Board board) {
+        Player localPlayer = getLocalPlayer();
+        if ((board == null) || (localPlayer == null)) {
+            return Optional.empty();
+        }
+        Game currentGame = getGame();
+        List<Player> enemies = new ArrayList<>();
+        for (Player player : currentGame.getPlayersList()) {
+            if (player.isEnemyOf(localPlayer) && !player.isObserver()
+                  && !currentGame.getPlayerEntities(player, false).isEmpty()) {
+                enemies.add(player);
+            }
+        }
+        if (enemies.isEmpty()) {
+            return Optional.empty();
+        }
+        long totalX = 0;
+        long totalY = 0;
+        int zoneHexes = 0;
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords hex = new Coords(x, y);
+                for (Player enemy : enemies) {
+                    if (board.isLegalDeployment(hex, enemy)) {
+                        totalX += x;
+                        totalY += y;
+                        zoneHexes++;
+                        break;
+                    }
+                }
+            }
+        }
+        if (zoneHexes == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(new Coords((int) (totalX / zoneHexes), (int) (totalY / zoneHexes)));
+    }
+
     /**
      * Orders the candidate deployment hexes that {@link #rankDeploymentCoords(Entity, List)} will scan.
      *

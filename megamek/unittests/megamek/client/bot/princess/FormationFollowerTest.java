@@ -544,6 +544,23 @@ class FormationFollowerTest {
         assertEquals(UnitOrders.FACING_AUTO, princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX));
     }
 
+    @Test
+    void aMekTwistsToAnOrderedFacingWithinReachRatherThanTurning() {
+        // HammerGS: turning in place spends movement and counts as moving; a torso twist is free
+        BipedMek warhammer = loneUnit(31, NORTH_WAYPOINT, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT))
+              .withFacings(UnitOrders.FACING_AUTO, NORTH_EAST));
+        warhammer.setFacing(NORTH);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertEquals(1, UnitOrdersFollower.twistReach(warhammer));
+        assertEquals(NORTH_EAST, follower.orderedTwist(warhammer));
+
+        // two hexsides off is beyond a torso twist: the legs have to turn
+        warhammer.setUnitOrders(warhammer.getUnitOrders().withFacings(UnitOrders.FACING_AUTO, SOUTH_EAST));
+        assertEquals(UnitOrders.FACING_AUTO, follower.orderedTwist(warhammer));
+        assertEquals(2, UnitOrdersFollower.sidesApart(NORTH, SOUTH_EAST));
+    }
+
     private BipedMek loneUnit(int unitId, Coords position, UnitOrders orders) {
         BipedMek mek = new BipedMek();
         mek.setId(unitId);

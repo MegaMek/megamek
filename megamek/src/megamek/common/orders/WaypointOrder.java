@@ -41,11 +41,16 @@ import java.util.Objects;
 import megamek.common.annotations.Nullable;
 
 /**
- * What a unit does at one waypoint of its route: the way it faces on arrival and how many turns it holds there before
- * moving on. A waypoint with no hold is passed through; its facing applies only if the unit ends a turn on it.
+ * What a unit does at one waypoint of its route: the way it faces on arrival, whether and how long it holds there
+ * before moving on, the formation for the leg ending there and, at the end of the route, whether it then leaves the
+ * board. A waypoint with no hold is passed through; its facing applies only if the unit ends a turn on it.
  *
- * <p>Example: {@code 1706/NE/2} in a route order - arrive at 1706, face northeast, hold two full turns after the
- * arrival turn, then move on to the next waypoint.</p>
+ * <p>A hold is either a fixed delay - hold two turns, whatever happens - or a wait for the formation to assemble,
+ * moving on as soon as every unit is in its slot, after at most so many turns.</p>
+ *
+ * <p>Examples in a route order: {@code 1706/NE/2} - arrive at 1706, face northeast, hold two full turns after the
+ * arrival turn, then move on; {@code 1623/U3} - wait at 1623 until the formation has assembled, three turns at most;
+ * {@code 1802/EXIT} - the end of the route, then leave the board by the edge nearest 1802.</p>
  *
  * <p>This is a plain class and not a record on purpose: the save format uses XStream, which cannot read records
  * without a custom converter.</p>
@@ -64,8 +69,30 @@ public final class WaypointOrder implements Serializable {
     /** The code for a facing left to the bot. */
     private static final String AUTO_CODE = "A";
 
+    /** The code before the most turns of a wait for the formation to assemble, e.g. {@code U3}. */
+    private static final String ASSEMBLE_CODE = "U";
+
+    /** The code for leaving the board at the end of the route. */
+    private static final String EXIT_CODE = "EXIT";
+
+    /**
+     * How a unit leaves a waypoint.
+     */
+    public enum HoldMode {
+        /** Straight on, without stopping. */
+        PASS,
+        /** After holding the set number of turns, whatever happens. */
+        HOLD,
+        /** As soon as its formation has assembled, or after the set number of turns at most. */
+        ASSEMBLE
+    }
+
     private final int facing;
     private final int holdTurns;
+    // PASS, HOLD or ASSEMBLE; null in a save made before holds had modes, read from the hold turns
+    private final HoldMode holdMode;
+    // true for a last waypoint the unit leaves the board from; false in a save made before exits
+    private final boolean exitBoard;
     // the formation for the leg ending here, or null to keep the units' own; null in a save made before legs had one
     private final WaypointFormation formation;
 
@@ -83,6 +110,19 @@ public final class WaypointOrder implements Serializable {
      * @param formation the formation for the leg ending at this waypoint, or {@code null} to keep the units' own
      */
     public WaypointOrder(int facing, int holdTurns, @Nullable WaypointFormation formation) {
+        this(facing, (holdTurns > 0) ? HoldMode.HOLD : HoldMode.PASS, holdTurns, formation, false);
+    }
+
+    /**
+     * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
+     * @param holdMode  how the unit leaves the waypoint
+     * @param holdTurns the full turns to hold after arriving: the delay for a hold, the most for a wait to assemble
+     * @param formation the formation for the leg ending at this waypoint, or {@code null} to keep the units' own
+     * @param exitBoard {@code true} to leave the board, by the edge nearest this waypoint, once it is reached at the
+     *                  end of the route
+     */
+    public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
+          boolean exitBoard) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -90,8 +130,35 @@ public final class WaypointOrder implements Serializable {
             throw new IllegalArgumentException("Hold turns may not be negative, was " + holdTurns);
         }
         this.facing = facing;
-        this.holdTurns = holdTurns;
+        this.holdMode = Objects.requireNonNull(holdMode);
+        this.holdTurns = (holdMode == HoldMode.PASS) ? 0 : holdTurns;
         this.formation = formation;
+        this.exitBoard = exitBoard;
+    }
+
+    /**
+     * @return how the unit leaves this waypoint
+     */
+    public HoldMode getHoldMode() {
+        if (holdMode != null) {
+            return holdMode;
+        }
+        return (holdTurns > 0) ? HoldMode.HOLD : HoldMode.PASS;
+    }
+
+    /**
+     * @return {@code true} if the unit waits here for its formation to assemble, rather than for a fixed delay
+     */
+    public boolean isAssemble() {
+        return (getHoldMode() == HoldMode.ASSEMBLE) && (holdTurns > 0);
+    }
+
+    /**
+     * @return {@code true} if the unit leaves the board, by the edge nearest this waypoint, once it reaches it at the
+     *       end of its route
+     */
+    public boolean isExitBoard() {
+        return exitBoard;
     }
 
     /**
@@ -119,7 +186,7 @@ public final class WaypointOrder implements Serializable {
      * @return {@code true} if the unit stops and holds at this waypoint
      */
     public boolean isHold() {
-        return holdTurns > 0;
+        return (getHoldMode() != HoldMode.PASS) && (holdTurns > 0);
     }
 
     /**
@@ -131,19 +198,25 @@ public final class WaypointOrder implements Serializable {
         if (facing != UnitOrders.FACING_AUTO) {
             suffix.append('/').append(FACING_CODES.get(facing));
         }
-        if (holdTurns > 0) {
+        if (isAssemble()) {
+            suffix.append('/').append(ASSEMBLE_CODE).append(holdTurns);
+        } else if (isHold()) {
             suffix.append('/').append(holdTurns);
         }
         if (formation != null) {
             suffix.append('/').append(formation.toCommandText());
+        }
+        if (exitBoard) {
+            suffix.append('/').append(EXIT_CODE);
         }
         return suffix.toString();
     }
 
     /**
      * Reads the settings a route order writes after a hex: letters are a facing (N, NE, SE, S, SW, NW, or A for the
-     * bot's choice), digits are the turns to hold, and a part starting {@code F:} is the formation for the leg ending
-     * here, in any order.
+     * bot's choice), digits are the turns to hold, {@code U} and digits a wait for the formation to assemble with the
+     * most turns to wait, {@code EXIT} leaves the board at the end of the route, and a part starting {@code F:} is the
+     * formation for the leg ending here, in any order.
      *
      * @param segments the parts after the hex, e.g. {@code ["NE", "2"]}; none for a plain waypoint
      *
@@ -154,6 +227,8 @@ public final class WaypointOrder implements Serializable {
     public static WaypointOrder parse(List<String> segments) {
         int parsedFacing = UnitOrders.FACING_AUTO;
         int parsedHold = 0;
+        HoldMode parsedMode = HoldMode.PASS;
+        boolean parsedExit = false;
         WaypointFormation parsedFormation = null;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
@@ -162,8 +237,15 @@ public final class WaypointOrder implements Serializable {
             }
             if (WaypointFormation.isCommandText(code)) {
                 parsedFormation = WaypointFormation.parse(code);
+            } else if (code.equals(EXIT_CODE)) {
+                parsedExit = true;
+            } else if (code.startsWith(ASSEMBLE_CODE) && (code.length() > 1)
+                  && Character.isDigit(code.charAt(1))) {
+                parsedHold = Integer.parseInt(code.substring(1));
+                parsedMode = HoldMode.ASSEMBLE;
             } else if (Character.isDigit(code.charAt(0))) {
                 parsedHold = Integer.parseInt(code);
+                parsedMode = HoldMode.HOLD;
             } else if (code.equals(AUTO_CODE)) {
                 parsedFacing = UnitOrders.FACING_AUTO;
             } else if (FACING_CODES.contains(code)) {
@@ -172,7 +254,10 @@ public final class WaypointOrder implements Serializable {
                 throw new IllegalArgumentException("Not a facing or a number of turns: " + segment);
             }
         }
-        return new WaypointOrder(parsedFacing, parsedHold, parsedFormation);
+        if (parsedHold == 0) {
+            parsedMode = HoldMode.PASS;
+        }
+        return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit);
     }
 
     @Override
@@ -181,12 +266,13 @@ public final class WaypointOrder implements Serializable {
             return true;
         }
         return (other instanceof WaypointOrder otherOrder) && (facing == otherOrder.facing)
-              && (holdTurns == otherOrder.holdTurns) && Objects.equals(formation, otherOrder.formation);
+              && (holdTurns == otherOrder.holdTurns) && (getHoldMode() == otherOrder.getHoldMode())
+              && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(facing, holdTurns, formation);
+        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation);
     }
 
     @Override

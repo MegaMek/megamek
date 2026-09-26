@@ -84,12 +84,30 @@ class MoveOrderEditorTest {
         waypoints.setFacing(1, NORTH);
         waypoints.setHoldTurns(1, 3);
 
-        assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_HOLD));
+        assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_TURNS));
         assertEquals(List.of(new WaypointOrder(NORTH_EAST, 2, WaypointFormation.NONE),
               new WaypointOrder(NORTH, 0, WaypointFormation.NONE)), waypoints.getWaypointOrders());
         // a hold beyond the editor's range is kept to it
         waypoints.setHoldTurns(0, 99);
         assertEquals(WaypointTableModel.MAXIMUM_HOLD_TURNS, waypoints.getHoldTurns(0));
+    }
+
+    @Test
+    void theLastWaypointCanLeaveTheBoardAndOthersWaitUntilInPosition() {
+        // HammerGS: the route ends by leaving the board; a stop can wait for the lance rather than a fixed delay
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointFormation.NONE);
+
+        assertEquals(List.of(WaypointTableModel.Then.STAY, WaypointTableModel.Then.EXIT), waypoints.thenOptions(1));
+        waypoints.setThen(1, WaypointTableModel.Then.EXIT);
+        waypoints.setThen(0, WaypointTableModel.Then.ASSEMBLE);
+
+        List<WaypointOrder> orders = waypoints.getWaypointOrders();
+        assertTrue(orders.get(0).isAssemble());
+        assertTrue(orders.get(1).isExitBoard());
+        // an exit on a waypoint that is no longer last is dropped
+        waypoints.addWaypoint(FIRST_HEX);
+        assertFalse(waypoints.getWaypointOrders().get(1).isExitBoard());
     }
 
     @Test

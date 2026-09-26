@@ -129,7 +129,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private static final int CONTACT_COLUMN_WIDTH = 190;
     private static final int TOGETHER_COLUMN_WIDTH = 100;
     private static final int FACING_COLUMN_WIDTH = 150;
-    private static final int HOLD_COLUMN_WIDTH = 100;
+    private static final int THEN_COLUMN_WIDTH = 130;
+    private static final int TURNS_COLUMN_WIDTH = 70;
     private static final int NOTE_WIDTH = 260;
 
     private final ClientGUI clientGUI;
@@ -292,8 +293,12 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         waypointTable.setRowHeight(UIUtil.scaleForGUI(ROW_HEIGHT));
         waypointTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         setUpColumns();
-        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_HOLD).setCellEditor(new HoldCellEditor());
-        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_HOLD).setCellRenderer(new HoldCellRenderer());
+        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_THEN).setCellEditor(new ThenCellEditor());
+        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_THEN)
+              .setCellRenderer(new ComboCellRenderer(String::valueOf));
+        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_TURNS).setCellEditor(new TurnsCellEditor());
+        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_TURNS)
+              .setCellRenderer(new TurnsCellRenderer());
         waypointTable.getSelectionModel().addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting()) {
                 loadDetail();
@@ -381,7 +386,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private void setUpColumns() {
         TableColumnModel columns = waypointTable.getColumnModel();
         int[] widths = {NUMBER_COLUMN_WIDTH, HEX_COLUMN_WIDTH, SHAPE_COLUMN_WIDTH, SPACING_COLUMN_WIDTH,
-              PACE_COLUMN_WIDTH, CONTACT_COLUMN_WIDTH, TOGETHER_COLUMN_WIDTH, FACING_COLUMN_WIDTH, HOLD_COLUMN_WIDTH};
+              PACE_COLUMN_WIDTH, CONTACT_COLUMN_WIDTH, TOGETHER_COLUMN_WIDTH, FACING_COLUMN_WIDTH, THEN_COLUMN_WIDTH,
+              TURNS_COLUMN_WIDTH};
         for (int column = 0; column < widths.length; column++) {
             columns.getColumn(column).setPreferredWidth(UIUtil.scaleForGUI(widths[column]));
         }
@@ -437,27 +443,23 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     }
 
     /**
-     * Draws the hold as a spinner on every row, so the player can set each waypoint's hold in the table; the end of
-     * the route, which has no hold, reads as such.
+     * Draws the turns as a spinner on every row, greyed out where the waypoint neither holds nor waits to assemble.
      */
-    private final class HoldCellRenderer implements TableCellRenderer {
+    private final class TurnsCellRenderer implements TableCellRenderer {
         private final JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0,
               WaypointTableModel.MAXIMUM_HOLD_TURNS, 1));
-        private final JLabel endLabel = new JLabel(Messages.getString("BotCommandPanel.MoveOrder.endOfRoute"));
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
               boolean hasFocus, int row, int column) {
-            if (waypoints.isEndOfRoute(row)) {
-                return endLabel;
-            }
             spinner.setValue(waypoints.getHoldTurns(row));
+            spinner.setEnabled(waypoints.isCellEditable(row, WaypointTableModel.COLUMN_TURNS));
             return spinner;
         }
     }
 
-    /** Edits a hold with a spinner, 0 to {@link WaypointTableModel#MAXIMUM_HOLD_TURNS} turns. */
-    private final class HoldCellEditor extends AbstractCellEditor implements TableCellEditor {
+    /** Edits the turns with a spinner, 0 to {@link WaypointTableModel#MAXIMUM_HOLD_TURNS}. */
+    private final class TurnsCellEditor extends AbstractCellEditor implements TableCellEditor {
         private final JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0,
               WaypointTableModel.MAXIMUM_HOLD_TURNS, 1));
 
@@ -471,6 +473,34 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         @Override
         public Object getCellEditorValue() {
             return spinner.getValue();
+        }
+    }
+
+    /**
+     * Edits what the units do on reaching a waypoint, offering pass, hold or assemble part-way along the route and
+     * stay or exit at its end.
+     */
+    private final class ThenCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JComboBox<WaypointTableModel.Then> combo = new JComboBox<>();
+
+        private ThenCellEditor() {
+            combo.addActionListener(event -> stopCellEditing());
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+              int column) {
+            combo.removeAllItems();
+            for (WaypointTableModel.Then then : waypoints.thenOptions(row)) {
+                combo.addItem(then);
+            }
+            combo.setSelectedItem(waypoints.getThen(row));
+            return combo;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return combo.getSelectedItem();
         }
     }
 

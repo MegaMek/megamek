@@ -130,13 +130,19 @@ public class UnitOrdersApplier implements OrderApplier {
 
     @Override
     public void orderFlee(Princess bot, CardinalEdge edge) {
-        // the same settings FleeCommand changes
+        // the same changes FleeCommand makes
         boolean fleeing = edge != CardinalEdge.NONE;
         String reason = fleeing ? "Scripted flee order - " + edge.name() : "Scripted cancel flee order";
         bot.getBehaviorSettings().setDestinationEdge(edge);
         bot.getBehaviorSettings().setAutoFlee(fleeing);
         bot.setFallBack(fleeing, reason);
         bot.setFleeBoard(fleeing, reason);
+        // since the review, the flee order is also carried by each unit as Exit by edge, replacing its route
+        if (fleeing) {
+            bot.getUnitOrdersFollower().orderAllToExit(edge);
+        } else {
+            bot.getUnitOrdersFollower().cancelExitOrders();
+        }
     }
 
     @Override

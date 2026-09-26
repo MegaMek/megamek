@@ -95,7 +95,7 @@ public class BotOrderRecorder implements AutoCloseable {
     private static final List<String> COLUMNS = List.of("game", "stage", "round", "unitId", "name", "owner", "col",
           "row", "facing", "crippled", "withdrawing", "behaviour", "rule", "detail", "headWaypoint", "fleeEdge",
           "retreatEdge", "homeEdge", "route", "priority", "paused", "stopped", "edgeOrder", "edge", "facingMoving",
-          "facingStopped", "formation", "orderAction", "orderArgs", "note");
+          "facingStopped", "formation", "armorInternal", "orderAction", "orderArgs", "note");
 
     /** Matches a decision line: "[BotOrders] name (ID 12) round 3: RULE - detail". */
     private static final Pattern DECISION_PATTERN =
@@ -208,6 +208,8 @@ public class BotOrderRecorder implements AutoCloseable {
         row.put("owner", bot.getName());
         putPosition(row, serverUnit);
         row.put("crippled", Boolean.toString(serverUnit.isCrippled(true)));
+        // armor plus internal structure left, so the trace shows the damage taken each round
+        row.put("armorInternal", Integer.toString(serverUnit.getTotalArmor() + serverUnit.getTotalInternal()));
         row.put("withdrawing", Boolean.toString(bot.getForcedWithdrawalTracker().isWithdrawing(botUnit)));
         BehaviorType behaviour = bot.getUnitBehaviorTracker().getCachedBehaviorType(botUnit);
         row.put("behaviour", (behaviour == null) ? "" : behaviour.name());

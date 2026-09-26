@@ -48,6 +48,11 @@ public enum UnitOrderAction {
     ROUTE,
     /** Add the given hexes to the end of the route. */
     ADD,
+    /**
+     * Replace the route with an edited copy of it, such as a waypoint's facing changed from the map: a pause and a
+     * hold under way at the next waypoint carry on.
+     */
+    EDIT_ROUTE,
     /** Take the last hex off the route. */
     REMOVE_LAST,
     /**
@@ -154,6 +159,7 @@ public enum UnitOrderAction {
                 requireHexes(hexes);
                 yield current.withWaypointsAdded(hexes, waypointOrders);
             }
+            case EDIT_ROUTE -> current.withRouteEdited(hexes, waypointOrders);
             case REMOVE_LAST -> current.withLastWaypointRemoved();
             case SKIP -> current.withNextWaypointReached();
             case HOLD_STARTED -> current.hasRoute() ? current.withHoldStarted(currentRound) : current;

@@ -76,6 +76,12 @@ class UnitOrdersTest {
               null, ROUND);
     }
 
+    private static UnitOrders apply(UnitOrderAction action, UnitOrders current, List<Coords> hexes,
+          List<WaypointOrder> waypointOrders) {
+        return action.apply(current, hexes, waypointOrders, OffBoardDirection.NONE, UnitOrders.FACING_AUTO,
+              UnitOrders.FACING_AUTO, null, ROUND, null);
+    }
+
     @Test
     void aNewUnitHasNoOrders() {
         assertTrue(new BipedMek().getUnitOrders().isEmpty());
@@ -304,6 +310,23 @@ class UnitOrdersTest {
         assertEquals(List.of(FIRST_HEX, SECOND_HEX), restored.getRoute());
         assertEquals(List.of(WaypointOrder.PASS_THROUGH, WaypointOrder.PASS_THROUGH), restored.getWaypointOrders());
         assertFalse(restored.isHoldDone(10));
+    }
+
+    @Test
+    void editingARouteInPlaceKeepsAPauseAndAHoldUnderWay() {
+        UnitOrders holding = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+              List.of(new WaypointOrder(FACING_NORTHEAST, 2))).withHoldStarted(3).withPaused(true);
+
+        // a later waypoint's facing changed from the map: the hold at the first carries on
+        UnitOrders edited = apply(UnitOrderAction.EDIT_ROUTE, holding, List.of(FIRST_HEX, SECOND_HEX),
+              List.of(new WaypointOrder(FACING_NORTHEAST, 2), new WaypointOrder(FACING_NORTH, 0)));
+        assertEquals(3, edited.getHoldSinceRound());
+        assertTrue(edited.isPaused());
+        assertEquals(new WaypointOrder(FACING_NORTH, 0), edited.getWaypointOrder(1));
+
+        // the waypoint it holds at taken off: the hold ends
+        UnitOrders removed = apply(UnitOrderAction.EDIT_ROUTE, holding, List.of(SECOND_HEX), List.of());
+        assertEquals(UnitOrders.NO_ROUND, removed.getHoldSinceRound());
     }
 
     @Test

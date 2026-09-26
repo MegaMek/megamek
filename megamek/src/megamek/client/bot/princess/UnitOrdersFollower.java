@@ -462,7 +462,6 @@ public class UnitOrdersFollower {
         syncFollowerRoutes();
     }
 
-
     /**
      * The hex a formation unit heads for: its slot around the hex its leader is heading for, laid out along the
      * leader's heading. It stays the same while the leader moves, so each unit has one fixed hex to make for.
@@ -679,23 +678,11 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * @return the movement points the slowest member walks, or runs at a Run pace
-     */
-    private static int paceLimit(List<Entity> members, FormationPace pace) {
-        boolean isRunning = pace == FormationPace.RUN;
-        int paceLimit = Integer.MAX_VALUE;
-        for (Entity member : members) {
-            paceLimit = Math.min(paceLimit, isRunning ? member.getRunMP() : member.getWalkMP());
-        }
-        return paceLimit;
-    }
-
-    /**
      * The hex a formation member should deploy in: its slot beside the formation's leader, once the leader is on the
      * board. The slot comes from the member's place in the formation as set in the lobby, since an undeployed unit
      * has no position yet. The shape faces the leader's first waypoint if it has a route, else the middle of the
-     * enemy's deployment zone. Where the formation's own shape does not fit the deployment zone around the leader, the member takes
-     * its place in a Line abreast instead, and the formation forms its shape on the move.
+     * enemy's deployment zone. Where the formation's own shape does not fit the deployment zone around the leader,
+     * the member takes its place in a Line abreast instead, and the formation forms its shape on the move.
      *
      * @param entity     a unit about to deploy
      * @param legalHexes the hexes the unit may deploy in
@@ -884,14 +871,20 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * Keeps a formation's leader to the pace of its slowest unit, so the formation stays together: its moves may not
-     * use more movement points than that unit walks, or runs at a Run pace. A leader with no move within the pace
-     * keeps every move.
+     * Keeps each unit in a formation to the formation's pace, which sets how its units move, not how fast: at a Walk
+     * pace every unit, the leader included, may use up to its own walking movement points, and at a Run pace up to
+     * its own running movement points. A fast unit is not held back to the slowest one's speed: each unit heads for
+     * its own slot around the leader's waypoint, so it only reaches it sooner and holds there. A jump within those
+     * movement points is allowed. A formation that has broken on contact is not paced, and a unit with no move within
+     * the pace keeps every move.
+     *
+     * <p>The leader used to be held to the slowest unit's walk: a Grasshopper leading a Longbow jumped three hexes a
+     * turn instead of five while the rest waited in their slots for it (HammerGS's playtest, 2026-09-26).</p>
      *
      * @param entity the unit about to move
      * @param paths  its candidate moves
      *
-     * @return the moves within the formation's pace, or all of them when the unit leads no formation
+     * @return the moves within the formation's pace, or all of them when the unit is in no formation
      */
     List<MovePath> limitToFormationPace(Entity entity, List<MovePath> paths) {
         Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
@@ -899,17 +892,22 @@ public class UnitOrdersFollower {
             return paths;
         }
         List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
-        if ((members.size() < 2) || (members.get(0).getId() != entity.getId())) {
+        if (members.size() < 2) {
             return paths;
         }
-        int paceLimit = paceLimit(members, formation.get().getPace());
+        Entity leader = members.get(0);
+        if ((formation.get().getContactRule() == ContactRule.BREAK) && (leader.getPosition() != null)
+              && isEnemyNear(leader, contactRange(members))) {
+            return paths;
+        }
+        int paceLimit = (formation.get().getPace() == FormationPace.RUN) ? entity.getRunMP() : entity.getWalkMP();
         List<MovePath> pacedPaths = new ArrayList<>();
         for (MovePath path : paths) {
             if (path.getMpUsed() <= paceLimit) {
                 pacedPaths.add(path);
             }
         }
-        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} {} MP, {} of {} moves kept",
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} up to its own {} MP, {} of {} moves kept",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.get().getPace(), paceLimit,
               pacedPaths.size(), paths.size());
         return pacedPaths.isEmpty() ? paths : pacedPaths;

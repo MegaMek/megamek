@@ -33,11 +33,12 @@
 package megamek.common.orders;
 
 /**
- * How fast a formation travels: at the walking or running speed of its slowest unit, so no unit runs ahead.
+ * How a formation's units move: each walks, or may run, up to its own movement points. A fast unit is not held to
+ * the slowest one's speed; it reaches its slot sooner and holds there.
  */
 public enum FormationPace {
-    /** The slowest unit's walking movement points. */
+    /** Each unit walks, up to its own walking movement points. */
     WALK,
-    /** The slowest unit's running movement points. */
+    /** Each unit may run, up to its own running movement points. */
     RUN
 }

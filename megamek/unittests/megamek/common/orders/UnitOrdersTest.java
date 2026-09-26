@@ -349,6 +349,19 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aWaypointCanWaitUntilInPositionOrEndTheRouteByLeavingTheBoard() {
+        WaypointOrder waitForTheLance = WaypointOrder.parse(List.of("U8"));
+        WaypointOrder leave = WaypointOrder.parse(List.of("N", "EXIT"));
+
+        assertTrue(waitForTheLance.isAssemble());
+        assertEquals(8, waitForTheLance.getHoldTurns());
+        assertEquals("/U8", waitForTheLance.toCommandSuffix());
+        assertTrue(leave.isExitBoard());
+        assertEquals("/N/EXIT", leave.toCommandSuffix());
+        assertEquals(WaypointOrder.HoldMode.HOLD, WaypointOrder.parse(List.of("2")).getHoldMode());
+    }
+
+    @Test
     void aWaypointReadsItsFacingAndHoldInEitherOrder() {
         assertEquals(new WaypointOrder(FACING_NORTHEAST, 2), WaypointOrder.parse(List.of("NE", "2")));
         assertEquals(new WaypointOrder(4, 3), WaypointOrder.parse(List.of("3", "sw")));

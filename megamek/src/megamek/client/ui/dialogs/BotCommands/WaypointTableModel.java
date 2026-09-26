@@ -49,8 +49,9 @@ import megamek.common.orders.WaypointOrder;
 
 /**
  * The waypoints of a move order being set up in the Move Order editor, one row each. A row reads as one instruction:
- * travel to this hex in this formation, face this way on arrival and hold this many turns. The last row is the end of
- * the route, which the unit holds until given new orders, so it has no hold count.
+ * travel to this hex in this formation, face this way on arrival, then pass on, hold a number of turns, or wait until
+ * the formation has assembled. The last row is the end of the route: the units hold it until given new orders, or
+ * leave the board by the edge nearest it.
  */
 class WaypointTableModel extends AbstractTableModel {
 
@@ -62,7 +63,8 @@ class WaypointTableModel extends AbstractTableModel {
     static final int COLUMN_CONTACT = 5;
     static final int COLUMN_TOGETHER = 6;
     static final int COLUMN_FACING = 7;
-    static final int COLUMN_HOLD = 8;
+    static final int COLUMN_THEN = 8;
+    static final int COLUMN_TURNS = 9;
 
     /** The longest hold the editor offers; a player wanting longer holds with Pause. */
     static final int MAXIMUM_HOLD_TURNS = 20;
@@ -73,7 +75,31 @@ class WaypointTableModel extends AbstractTableModel {
 
     private static final int FACING_COUNT = 6;
     private static final String[] COLUMN_KEYS = {"number", "hex", "shape", "spacing", "pace", "contact", "together",
-          "facing", "hold"};
+          "facing", "then", "turns"};
+
+    /**
+     * The turns a new hold waits: a two-turn delay; or, waiting until in position, at most eight turns - the leader's
+     * own estimate of when the last unit arrives normally ends the wait long before.
+     */
+    private static final int DEFAULT_HOLD_TURNS = 2;
+    private static final int DEFAULT_ASSEMBLE_TURNS = 8;
+
+    /**
+     * What the units do on reaching a waypoint: part-way along the route pass on, hold or wait to assemble; at the end
+     * of the route stay or leave the board.
+     */
+    enum Then {
+        PASS,
+        HOLD,
+        ASSEMBLE,
+        STAY,
+        EXIT;
+
+        @Override
+        public String toString() {
+            return Messages.getString("BotCommandPanel.MoveOrder.then." + name());
+        }
+    }
 
     /**
      * A facing as the facing column shows it: 0-5, or {@link UnitOrders#FACING_AUTO} for the bot's choice.
@@ -128,13 +154,18 @@ class WaypointTableModel extends AbstractTableModel {
     private static final class Row {
         private final Coords hex;
         private int facing;
+        private WaypointOrder.HoldMode holdMode;
         private int holdTurns;
+        private boolean exitBoard;
         private WaypointFormation formation;
 
-        private Row(Coords hex, int facing, int holdTurns, WaypointFormation formation) {
+        private Row(Coords hex, int facing, WaypointOrder.HoldMode holdMode, int holdTurns, boolean exitBoard,
+              WaypointFormation formation) {
             this.hex = hex;
             this.facing = facing;
+            this.holdMode = holdMode;
             this.holdTurns = holdTurns;
+            this.exitBoard = exitBoard;
             this.formation = formation;
         }
     }
@@ -168,8 +199,8 @@ class WaypointTableModel extends AbstractTableModel {
             WaypointOrder order = (index < waypointOrders.size()) ? waypointOrders.get(index)
                   : WaypointOrder.PASS_THROUGH;
             WaypointFormation formation = (order.getFormation() == null) ? unitsFormation : order.getFormation();
-            rows.add(new Row(hexes.get(index), order.getFacing(), order.getHoldTurns(),
-                  canForm ? formation : WaypointFormation.NONE));
+            rows.add(new Row(hexes.get(index), order.getFacing(), order.getHoldMode(), order.getHoldTurns(),
+                  order.isExitBoard(), canForm ? formation : WaypointFormation.NONE));
         }
         fireTableDataChanged();
     }
@@ -189,7 +220,7 @@ class WaypointTableModel extends AbstractTableModel {
         } else {
             formation = rows.get(rows.size() - 1).formation;
         }
-        rows.add(new Row(hex, UnitOrders.FACING_AUTO, 0, formation));
+        rows.add(new Row(hex, UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, false, formation));
         fireTableDataChanged();
     }
 
@@ -255,7 +286,52 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     int getHoldTurns(int index) {
-        return isEndOfRoute(index) ? 0 : rows.get(index).holdTurns;
+        return (isEndOfRoute(index) || (rows.get(index).holdMode == WaypointOrder.HoldMode.PASS)) ? 0
+              : rows.get(index).holdTurns;
+    }
+
+    /**
+     * @param index a row
+     *
+     * @return what the units do on reaching that waypoint
+     */
+    Then getThen(int index) {
+        Row row = rows.get(index);
+        if (isEndOfRoute(index)) {
+            return row.exitBoard ? Then.EXIT : Then.STAY;
+        }
+        return switch (row.holdMode) {
+            case HOLD -> Then.HOLD;
+            case ASSEMBLE -> Then.ASSEMBLE;
+            default -> Then.PASS;
+        };
+    }
+
+    /**
+     * @param index a row
+     *
+     * @return the choices for that waypoint: stay or exit at the end of the route, pass, hold or assemble before it
+     */
+    List<Then> thenOptions(int index) {
+        return isEndOfRoute(index) ? List.of(Then.STAY, Then.EXIT) : List.of(Then.PASS, Then.HOLD, Then.ASSEMBLE);
+    }
+
+    void setThen(int index, Then then) {
+        Row row = rows.get(index);
+        switch (then) {
+            case STAY -> row.exitBoard = false;
+            case EXIT -> row.exitBoard = true;
+            case PASS -> row.holdMode = WaypointOrder.HoldMode.PASS;
+            case HOLD -> {
+                row.holdMode = WaypointOrder.HoldMode.HOLD;
+                row.holdTurns = (row.holdTurns > 0) ? row.holdTurns : DEFAULT_HOLD_TURNS;
+            }
+            case ASSEMBLE -> {
+                row.holdMode = WaypointOrder.HoldMode.ASSEMBLE;
+                row.holdTurns = (row.holdTurns > 0) ? row.holdTurns : DEFAULT_ASSEMBLE_TURNS;
+            }
+        }
+        fireTableRowsUpdated(index, index);
     }
 
     WaypointFormation getFormation(int index) {
@@ -268,7 +344,13 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     void setHoldTurns(int index, int holdTurns) {
-        rows.get(index).holdTurns = Math.max(0, Math.min(MAXIMUM_HOLD_TURNS, holdTurns));
+        Row row = rows.get(index);
+        row.holdTurns = Math.max(0, Math.min(MAXIMUM_HOLD_TURNS, holdTurns));
+        if (row.holdTurns == 0) {
+            row.holdMode = WaypointOrder.HoldMode.PASS;
+        } else if (row.holdMode == WaypointOrder.HoldMode.PASS) {
+            row.holdMode = WaypointOrder.HoldMode.HOLD;
+        }
         fireTableRowsUpdated(index, index);
     }
 
@@ -290,12 +372,16 @@ class WaypointTableModel extends AbstractTableModel {
 
     /**
      * @return what to do at each waypoint, in route order, each with the formation for the leg ending there; the end
-     *       of the route has no hold
+     *       of the route has no hold, and leaves the board if set to
      */
     List<WaypointOrder> getWaypointOrders() {
         List<WaypointOrder> orders = new ArrayList<>();
         for (int index = 0; index < rows.size(); index++) {
-            orders.add(new WaypointOrder(rows.get(index).facing, getHoldTurns(index), rows.get(index).formation));
+            Row row = rows.get(index);
+            int holdTurns = getHoldTurns(index);
+            WaypointOrder.HoldMode holdMode = (holdTurns == 0) ? WaypointOrder.HoldMode.PASS : row.holdMode;
+            orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, row.formation,
+                  isEndOfRoute(index) && row.exitBoard));
         }
         return orders;
     }
@@ -333,14 +419,9 @@ class WaypointTableModel extends AbstractTableModel {
             case COLUMN_CONTACT -> formation.getContactRule();
             case COLUMN_TOGETHER -> formation.isKeepTogether();
             case COLUMN_FACING -> new FacingOption(row.facing);
-            default -> isEndOfRoute(rowIndex) ? Messages.getString("BotCommandPanel.MoveOrder.endOfRoute")
-                  : holdText(row.holdTurns);
+            case COLUMN_THEN -> getThen(rowIndex);
+            default -> getHoldTurns(rowIndex);
         };
-    }
-
-    private static String holdText(int holdTurns) {
-        return (holdTurns == 0) ? Messages.getString("BotCommandPanel.MoveOrder.passThrough")
-              : Messages.getString("BotCommandPanel.MoveOrder.holdTurns", holdTurns);
     }
 
     @Override
@@ -349,8 +430,8 @@ class WaypointTableModel extends AbstractTableModel {
         return switch (columnIndex) {
             case COLUMN_SHAPE -> canForm;
             case COLUMN_SPACING, COLUMN_PACE, COLUMN_CONTACT, COLUMN_TOGETHER -> hasShape;
-            case COLUMN_FACING -> true;
-            case COLUMN_HOLD -> !isEndOfRoute(rowIndex);
+            case COLUMN_FACING, COLUMN_THEN -> true;
+            case COLUMN_TURNS -> !isEndOfRoute(rowIndex) && (rows.get(rowIndex).holdMode != WaypointOrder.HoldMode.PASS);
             default -> false;
         };
     }
@@ -395,7 +476,12 @@ class WaypointTableModel extends AbstractTableModel {
                     setFacing(rowIndex, option.facing());
                 }
             }
-            case COLUMN_HOLD -> {
+            case COLUMN_THEN -> {
+                if (value instanceof Then then) {
+                    setThen(rowIndex, then);
+                }
+            }
+            case COLUMN_TURNS -> {
                 if (value instanceof Integer turns) {
                     setHoldTurns(rowIndex, turns);
                 }

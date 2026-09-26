@@ -201,6 +201,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
+                gameManager.resolveUnJams();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
                 gameManager.addReport(gameManager.resolveCrewConsciousness());

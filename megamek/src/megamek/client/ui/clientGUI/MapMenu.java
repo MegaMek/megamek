@@ -44,6 +44,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.function.BiConsumer;
 import javax.swing.*;
 
 import megamek.client.Client;
@@ -53,6 +54,7 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.BotCommands.BotOrderFacingDialog;
 import megamek.client.ui.dialogs.BotCommands.BotOrdersMenuBuilder;
 import megamek.client.ui.dialogs.BuildingEditDialog;
 import megamek.client.ui.dialogs.HexEditDialog;
@@ -60,6 +62,7 @@ import megamek.client.ui.dialogs.NoteDialog;
 import megamek.client.ui.dialogs.TurretFacingDialog;
 import megamek.client.ui.dialogs.UnitEditorDialog;
 import megamek.client.ui.entityreadout.LiveReadoutDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.phaseDisplay.FiringDisplay;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.PhysicalDisplay;
@@ -428,6 +431,7 @@ public class MapMenu extends JPopupMenu {
         new BotOrdersMenuBuilder(client, (orderDescription, singleHex, onPicked) -> onPicked.accept(
               coords.getBoardNum()), (botPlayer, orderText) -> gui.addToast(ToastLevel.SUCCESS,
               Messages.getString("BotCommandPanel.toast.orderSent", botPlayer.getName(), orderText)))
+              .withFacingChooser(this::chooseBotOrderFacings)
               .populate(ordersMenu, bot, coords);
         if (ordersMenu.getItemCount() > 0) {
             menu.add(ordersMenu);
@@ -507,6 +511,22 @@ public class MapMenu extends JPopupMenu {
 
     JMenu createCautionMenu(Player bot) {
         return createBehaviorAdjustmentMenu(bot, "Bot.commands.caution", ChatCommands.CAUTION);
+    }
+
+    /**
+     * Opens the facing dialog for a bot order, showing the first unit of the group.
+     */
+    private void chooseBotOrderFacings(BotOrdersMenuBuilder.OrderGroup group, int facingWhileMoving,
+          int facingWhenStopped, BiConsumer<Integer, Integer> onChosen) {
+        Entity previewUnit = client.getGame().getEntity(group.unitIds().get(0));
+        if (previewUnit == null) {
+            return;
+        }
+        BotOrderFacingDialog dialog = new BotOrderFacingDialog(gui.getFrame(), gui, previewUnit, facingWhileMoving,
+              facingWhenStopped);
+        if (dialog.showDialog() == DialogResult.CONFIRMED) {
+            onChosen.accept(dialog.getFacingWhileMoving(), dialog.getFacingWhenStopped());
+        }
     }
 
     JMenuItem createIgnoreTargetUnitMenu(Player bot, Entity entity) {

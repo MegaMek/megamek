@@ -41,6 +41,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -64,6 +65,7 @@ import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
@@ -195,6 +197,10 @@ public class BotCommandsPanel extends JPanel {
               this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
         var orders = createButton("Orders");
+        if (clientGUI != null) {
+            ordersMenuBuilder.withUnitChooser((botPlayer, unitsByLance) -> chooseUnits(orders, botPlayer, unitsByLance))
+                  .withFacingChooser(this::chooseFacings);
+        }
         var targets = createButton("Targets");
         var maneuver = createButton("Maneuver");
         var setBehavior = createButton("SetBehavior");
@@ -400,6 +406,38 @@ public class BotCommandsPanel extends JPanel {
     private void requestStatus(Player botPlayer) {
         sendChatCommand(botPlayer, ChatCommands.SHOW_BEHAVIOR);
         sendChatCommand(botPlayer, ChatCommands.SHOW_DISHONORED);
+    }
+
+    /**
+     * Opens the unit checklist; once the player ticks some units, shows every order for them under the Orders button.
+     */
+    private void chooseUnits(MegaMekButton ordersButton, Player botPlayer,
+          Map<String, List<BotOrdersMenuBuilder.OrderGroup>> unitsByLance) {
+        BotUnitChooserDialog dialog = new BotUnitChooserDialog(clientGUI.getFrame(), unitsByLance);
+        if (dialog.showDialog() != DialogResult.CONFIRMED) {
+            return;
+        }
+        BotOrdersMenuBuilder.OrderGroup chosen = dialog.getChosenGroup();
+        if (chosen != null) {
+            showButtonPopup(ordersButton, () -> ordersMenuBuilder.ordersPopup(botPlayer, chosen));
+        }
+    }
+
+    /**
+     * Opens the facing dialog, showing the first unit of the group.
+     */
+    private void chooseFacings(BotOrdersMenuBuilder.OrderGroup group, int facingWhileMoving, int facingWhenStopped,
+          BiConsumer<Integer, Integer> onChosen) {
+        Entity previewUnit = client.getGame().getInGameObject(group.unitIds().get(0))
+              .filter(Entity.class::isInstance).map(Entity.class::cast).orElse(null);
+        if (previewUnit == null) {
+            return;
+        }
+        BotOrderFacingDialog dialog = new BotOrderFacingDialog(clientGUI.getFrame(), clientGUI, previewUnit,
+              facingWhileMoving, facingWhenStopped);
+        if (dialog.showDialog() == DialogResult.CONFIRMED) {
+            onChosen.accept(dialog.getFacingWhileMoving(), dialog.getFacingWhenStopped());
+        }
     }
 
     /**

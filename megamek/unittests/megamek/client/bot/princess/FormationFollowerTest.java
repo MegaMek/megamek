@@ -48,6 +48,7 @@ import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -73,6 +74,7 @@ class FormationFollowerTest {
     private static final int WIDTH = 30;
     private static final int HEIGHT = 30;
     private static final int CLIFF_LEVEL = 5;
+    private static final int NORTH = 0;
     private static final int SOUTH_EAST = 2;
     private static final int SOUTH = 3;
     private static final Coords LEADER_HEX = new Coords(14, 20);
@@ -124,6 +126,22 @@ class FormationFollowerTest {
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
 
         // heading north toward the waypoint, the Echelon Right steps back south-east
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
+    void aFollowerMovingBeforeItsLeaderLinesUpOnWhereTheLeaderIsGoing() {
+        // Units move one at a time; lining up on the leader's current hex leaves a follower a move behind.
+        game.setPhase(GamePhase.MOVEMENT);
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        Coords projectedLeader = LEADER_HEX.translated(NORTH, 3);
+
+        assertEquals(Optional.of(projectedLeader.translated(SOUTH_EAST, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+
+        leader.setDone(true);
         assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
     }

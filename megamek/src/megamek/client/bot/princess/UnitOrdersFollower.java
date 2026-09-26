@@ -103,7 +103,7 @@ public class UnitOrdersFollower {
     /**
      * A formation unit's worked-out slot, kept until the round or its leader's position changes.
      */
-    private record SlotChoice(int round, Coords leaderPosition, @Nullable Coords slot) {}
+    private record SlotChoice(int round, Coords leaderPosition, boolean hasLeaderMoved, @Nullable Coords slot) {}
 
     /**
      * @param owner the bot whose units follow orders
@@ -459,24 +459,25 @@ public class UnitOrdersFollower {
         }
         SlotChoice cached = slotChoices.get(entity.getId());
         if ((cached != null) && (cached.round() == currentRound())
-              && cached.leaderPosition().equals(leader.getPosition())) {
+              && cached.leaderPosition().equals(leader.getPosition()) && (cached.hasLeaderMoved() == leader.isDone())) {
             return Optional.ofNullable(cached.slot());
         }
-        Coords slot = chooseSlot(entity, leader, formation.get(), members.indexOf(entity));
-        slotChoices.put(entity.getId(), new SlotChoice(currentRound(), leader.getPosition(), slot));
+        Coords slot = chooseSlot(entity, leader, members, formation.get(), members.indexOf(entity));
+        slotChoices.put(entity.getId(), new SlotChoice(currentRound(), leader.getPosition(), leader.isDone(), slot));
         return Optional.ofNullable(slot);
     }
 
-    private @Nullable Coords chooseSlot(Entity entity, Entity leader, FormationOrder formation, int slotIndex) {
+    private @Nullable Coords chooseSlot(Entity entity, Entity leader, List<Entity> members, FormationOrder formation,
+          int slotIndex) {
         Board board = owner.getGame().getBoard(entity);
         if (board == null) {
             return null;
         }
-        Coords leaderPosition = leader.getPosition();
-        int heading = leader.getUnitOrders().getNextWaypoint()
-              .filter(waypoint -> !waypoint.equals(leaderPosition))
-              .map(leaderPosition::direction)
-              .orElse(leader.getFacing());
+        Optional<Coords> leaderWaypoint = leader.getUnitOrders().getNextWaypoint()
+              .filter(waypoint -> !waypoint.equals(leader.getPosition()));
+        int heading = leaderWaypoint.map(leader.getPosition()::direction).orElse(leader.getFacing());
+        Coords leaderPosition = projectedLeaderPosition(leader, leaderWaypoint, heading, board,
+              paceLimit(members, formation.getPace()));
         Coords ideal = FormationPlanner.idealSlot(leaderPosition, heading, formation.getShape(),
               formation.getSpacing(), slotIndex);
         Coords settled = settle(entity, board, leaderPosition, ideal);
@@ -566,6 +567,37 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * Where the leader will stand at the end of this movement phase. Units move one at a time, so a follower may move
+     * before its leader; lining up on the leader's current hex would leave it a full move behind once the leader goes.
+     * Until the leader has moved, it is expected to advance toward its next waypoint by the formation's pace; after
+     * that, its actual hex is used.
+     *
+     * @return the hex the formation lines up on
+     */
+    private Coords projectedLeaderPosition(Entity leader, Optional<Coords> leaderWaypoint, int heading, Board board,
+          int paceLimit) {
+        Coords leaderPosition = leader.getPosition();
+        if (leader.isDone() || leaderWaypoint.isEmpty() || !owner.getGame().getPhase().isMovement()) {
+            return leaderPosition;
+        }
+        int expectedAdvance = Math.min(paceLimit, leaderPosition.distance(leaderWaypoint.get()));
+        Coords projected = leaderPosition.translated(heading, expectedAdvance);
+        return board.contains(projected) ? projected : leaderPosition;
+    }
+
+    /**
+     * @return the movement points the slowest member walks, or runs at a Run pace
+     */
+    private static int paceLimit(List<Entity> members, FormationPace pace) {
+        boolean isRunning = pace == FormationPace.RUN;
+        int paceLimit = Integer.MAX_VALUE;
+        for (Entity member : members) {
+            paceLimit = Math.min(paceLimit, isRunning ? member.getRunMP() : member.getWalkMP());
+        }
+        return paceLimit;
+    }
+
+    /**
      * Keeps a formation's leader to the pace of its slowest unit, so the formation stays together: its moves may not
      * use more movement points than that unit walks, or runs at a Run pace. A leader with no move within the pace
      * keeps every move.
@@ -584,11 +616,7 @@ public class UnitOrdersFollower {
         if ((members.size() < 2) || (members.get(0).getId() != entity.getId())) {
             return paths;
         }
-        boolean isRunning = formation.get().getPace() == FormationPace.RUN;
-        int paceLimit = Integer.MAX_VALUE;
-        for (Entity member : members) {
-            paceLimit = Math.min(paceLimit, isRunning ? member.getRunMP() : member.getWalkMP());
-        }
+        int paceLimit = paceLimit(members, formation.get().getPace());
         List<MovePath> pacedPaths = new ArrayList<>();
         for (MovePath path : paths) {
             if (path.getMpUsed() <= paceLimit) {

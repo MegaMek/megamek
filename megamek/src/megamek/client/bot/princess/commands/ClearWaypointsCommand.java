@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -76,7 +76,7 @@ public class ClearWaypointsCommand implements ChatCommand {
             return;
         }
 
-        princess.getUnitBehaviorTracker().clearWaypoints(unitOpt.get());
+        princess.getUnitBehaviorTracker().clearWaypoints(unitOpt.get(), princess);
         if (!quietArgument.getValue()) {
             princess.sendChat(Messages.getString("Princess.command.clearWaypoints.success",
                   unitOpt.get().getDisplayName()));

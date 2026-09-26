@@ -70,6 +70,7 @@ import megamek.common.board.ElevationOption;
 import megamek.common.compute.Compute;
 import megamek.common.containers.PlayerIDAndList;
 import megamek.common.enums.AimingMode;
+import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoMounted;
@@ -93,6 +94,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.PathDecorator;
@@ -206,6 +208,9 @@ public class Princess extends BotClient {
 
     // Which of the bot's units withdraw under forced withdrawal. Reach it through getForcedWithdrawalTracker().
     private ForcedWithdrawalTracker forcedWithdrawalTracker;
+
+    // Carries out the orders players give the bot's units. Reach it through getUnitOrdersFollower().
+    private UnitOrdersFollower unitOrdersFollower;
 
     private Integer spinUpThreshold = null;
 
@@ -864,10 +869,17 @@ public class Princess extends BotClient {
             return movePath;
         }
         Coords closestEnemyPosition = findClosestEnemyPosition(entity);
-        if ((closestEnemyPosition == null) || closestEnemyPosition.equals(entity.getPosition())) {
+        // a player's "when stopped" facing stands while the closest enemy is in that facing's front arc
+        int orderedFacing = UnitOrdersFollower.facingThatStands(entity.getUnitOrders().getFacingWhenStopped(),
+              entity.getPosition(), closestEnemyPosition);
+        int desiredFacing;
+        if (orderedFacing != UnitOrders.FACING_AUTO) {
+            desiredFacing = orderedFacing;
+        } else if ((closestEnemyPosition == null) || closestEnemyPosition.equals(entity.getPosition())) {
             return movePath;
+        } else {
+            desiredFacing = entity.getPosition().direction(closestEnemyPosition);
         }
-        int desiredFacing = entity.getPosition().direction(closestEnemyPosition);
         int rightTurns = ((desiredFacing - entity.getFacing()) + 6) % 6;
         if (rightTurns == 0) {
             return movePath;
@@ -2941,6 +2953,14 @@ public class Princess extends BotClient {
     }
 
     boolean mustFleeBoard(final Entity entity) {
+        // a player's edge order decides: exit by the edge once on it, or hold at the edge and never leave
+        if (getUnitOrdersFollower().isOrderedToHoldAtEdge(entity)) {
+            return false;
+        } else if (getUnitOrdersFollower().isOrderedToExit(entity)) {
+            return entity.canFlee(entity.getPosition())
+                  && (0 >= getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
+                  getHomeEdge(entity), getGame()));
+        }
         if (!isFallingBack(entity)) {
             return false;
         } else if (!entity.canFlee(entity.getPosition())) {
@@ -3164,19 +3184,32 @@ public class Princess extends BotClient {
                 return getHoldPositionPath(entity);
             }
 
+            if (getUnitOrdersFollower().isHolding(entity) && !entity.isAirborne()
+                  && !entity.isAirborneVTOLorWIGE()) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: HOLD - {}", entity.getDisplayName(), entity.getId(),
+                      game.getCurrentRound(), entity.getUnitOrders().isPaused() ? "paused" : "stopped this round");
+                return getHoldPositionPath(entity);
+            }
+
+            if (getUnitOrdersFollower().isOrderedToExit(entity) && mustFleeBoard(entity)) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: EXIT_BY_EDGE - leaving by the {} edge",
+                      entity.getDisplayName(), entity.getId(), game.getCurrentRound(), getHomeEdge(entity));
+                final MovePath exitPath = new MovePath(game, entity);
+                exitPath.addStep(MoveStepType.FLEE);
+                return exitPath;
+            }
+
             // figure out who moved last, and whose move lists need to be updated
 
             // moves this entity during movement phase
             LOGGER.debug("Moving {} (ID {})", entity.getDisplayName(), entity.getId());
             getPrecognition().ensureUpToDate();
 
-            Optional<Coords> overridingWaypoint = getUnitBehaviorTracker().isFollowingWaypointOverWithdrawal(entity,
-                  this) ? getUnitBehaviorTracker().getActiveWaypoint(entity, this) : Optional.empty();
-            if (overridingWaypoint.isPresent()) {
+            if (getUnitBehaviorTracker().isFollowingOrdersOverWithdrawal(entity, this)) {
                 // A crippled unit the player has sent somewhere goes there instead of withdrawing (issue #9038). It
                 // stays a withdrawing unit for firing and honor, but does not run for, or leave by, its retreat edge.
                 String msg = Messages.getString("Princess.followingOrders", entity.getDisplayName(),
-                      overridingWaypoint.get().toFriendlyString());
+                      describeOrderedDestination(entity));
                 LOGGER.info("[BotOrders] {}", msg);
                 sendChat(msg, Level.ERROR);
             } else if (isFallingBack(entity)) {
@@ -3900,6 +3933,27 @@ public class Princess extends BotClient {
     }
 
     /**
+     * @return where the player has ordered the unit: "the NORTH edge" for an edge order, else its next waypoint
+     */
+    private String describeOrderedDestination(Entity entity) {
+        Optional<CardinalEdge> orderedEdge = getUnitOrdersFollower().getOrderedEdge(entity);
+        if (orderedEdge.isPresent()) {
+            return Messages.getString("Princess.orders.edge", orderedEdge.get().name());
+        }
+        return getUnitBehaviorTracker().getWaypointForEntity(entity).map(Coords::getBoardNum).orElse("?");
+    }
+
+    /**
+     * @return the helper that carries out the orders players give this bot's units
+     */
+    public UnitOrdersFollower getUnitOrdersFollower() {
+        if (unitOrdersFollower == null) {
+            unitOrdersFollower = new UnitOrdersFollower(this);
+        }
+        return unitOrdersFollower;
+    }
+
+    /**
      * Load the list of units withdrawing under forced withdrawal at the time the bot was loaded or the beginning of the
      * turn, whichever is the more recent. See {@link ForcedWithdrawalTracker#refreshWithdrawingUnits()}.
      */
@@ -3951,6 +4005,12 @@ public class Princess extends BotClient {
      * retreat Guaranteed to return a cardinal edge or NONE.
      */
     CardinalEdge getHomeEdge(Entity entity) {
+        // a player's edge order for this unit comes first, unless a gamemaster has ordered it to withdraw
+        Optional<CardinalEdge> orderedEdge = getUnitOrdersFollower().getOrderedEdge(entity);
+        if (orderedEdge.isPresent() && (entity.getForcedWithdrawalOrder() != ForcedWithdrawalOrder.WITHDRAW)) {
+            return orderedEdge.get();
+        }
+
         // if I am withdrawing under forced withdrawal, my home edge is the "retreat" edge - unless the player has
         // ordered the bot to flee toward an edge, which every unit follows, crippled or not (issue #9038)
         if (getForcedWithdrawalTracker().isWithdrawing(entity) && !UnitBehavior.isFleeOrdered(this)) {
@@ -4952,19 +5012,7 @@ public class Princess extends BotClient {
 
     @Override
     protected void postMovementProcessing() {
-        for (var entity : getEntitiesOwned()) {
-            if (entity.getPosition() == null) {
-                continue;
-            }
-            var waypoint = getUnitBehaviorTracker().getWaypointForEntity(entity);
-            if (waypoint.isPresent()) {
-                var wp = waypoint.get();
-                if (wp.distance(entity.getPosition()) <= DISTANCE_TO_WAYPOINT) {
-                    LOGGER.debug("{} arrived at waypoint {}", entity.getDisplayName(), wp);
-                    getUnitBehaviorTracker().removeHeadWaypoint(entity);
-                }
-            }
-        }
+        getUnitOrdersFollower().advanceRoutes();
     }
 
     public ArtilleryCommandAndControl getArtilleryCommandAndControl() {

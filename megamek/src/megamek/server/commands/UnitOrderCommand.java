@@ -152,6 +152,42 @@ public class UnitOrderCommand extends ClientServerCommand {
         return null;
     }
 
+    /**
+     * Builds the chat text that gives a unit an order, for the Bot Commands panel, the map menu and the bots
+     * themselves.
+     *
+     * @param unitId         the unit
+     * @param action         the order
+     * @param namedArguments any of {@code hexes=...}, {@code edge=...}, {@code moving=...}, {@code stopped=...},
+     *                       {@code priority=...}
+     *
+     * @return the command, e.g. {@code /unitOrder 12 ROUTE hexes=1508-1504}
+     */
+    public static String commandText(int unitId, UnitOrderAction action, String... namedArguments) {
+        StringBuilder text = new StringBuilder("/").append(COMMAND_NAME).append(' ').append(unitId).append(' ')
+              .append(action.name());
+        for (String namedArgument : namedArguments) {
+            text.append(' ').append(namedArgument);
+        }
+        return text.toString();
+    }
+
+    /**
+     * @param hexes the route's hexes, in order
+     *
+     * @return the named argument for them, e.g. {@code hexes=1508-1504}
+     */
+    public static String hexesArgument(List<Coords> hexes) {
+        StringBuilder text = new StringBuilder(HEXES).append('=');
+        for (int index = 0; index < hexes.size(); index++) {
+            if (index > 0) {
+                text.append('-');
+            }
+            text.append(hexes.get(index).getBoardNum());
+        }
+        return text.toString();
+    }
+
     private static int facingArgument(Arguments args, String name) {
         return args.get(name, OptionalIntegerArgument.class).getValue().orElse(UnitOrders.FACING_AUTO);
     }

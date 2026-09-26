@@ -41,8 +41,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
@@ -150,5 +152,47 @@ class BotOrdersMenuBuilderTest {
         findItem(unitMenu, Messages.getString("BotCommandPanel.Orders.moveHere")).doClick();
 
         verify(client).sendChat("/unitOrder 22 ROUTE hexes=1508");
+    }
+
+    @Test
+    void theChecklistGroupsUnitsByLance() {
+        Map<String, List<BotOrdersMenuBuilder.OrderGroup>> unitsByLance = builder.unitsByLance(bot);
+
+        assertEquals(List.of("Command Lance", Messages.getString("BotCommandPanel.Orders.noLance")),
+              List.copyOf(unitsByLance.keySet()));
+        assertEquals(2, unitsByLance.get("Command Lance").size());
+    }
+
+    @Test
+    void chosenUnitsGetEveryOrder() {
+        BotOrdersMenuBuilder.OrderGroup chosen = new BotOrdersMenuBuilder.OrderGroup("Chosen units (2)",
+              List.of(20, 22));
+
+        JPopupMenu popup = builder.ordersPopup(bot, chosen);
+        JMenuItem pause = null;
+        for (int index = 0; index < popup.getComponentCount(); index++) {
+            if ((popup.getComponent(index) instanceof JMenuItem item)
+                  && Messages.getString("BotCommandPanel.Orders.pause").equals(item.getText())) {
+                pause = item;
+            }
+        }
+        assertNotNull(pause);
+        pause.doClick();
+
+        verify(client).sendChat("/unitOrder 20 PAUSE");
+        verify(client).sendChat("/unitOrder 22 PAUSE");
+    }
+
+    @Test
+    void aNewRouteAsksForTheFacings() {
+        builder.withFacingChooser((group, moving, stopped, onChosen) -> onChosen.accept(0, 1));
+        JMenu botMenu = new JMenu();
+        builder.populate(botMenu, bot, null);
+        JMenu lanceMenu = (JMenu) findItem(botMenu, "Command Lance (2)");
+
+        findItem(lanceMenu, Messages.getString("BotCommandPanel.Orders.moveTo")).doClick();
+
+        verify(client).sendChat("/unitOrder 20 FACING moving=0 stopped=1");
+        verify(client).sendChat("/unitOrder 21 FACING moving=0 stopped=1");
     }
 }

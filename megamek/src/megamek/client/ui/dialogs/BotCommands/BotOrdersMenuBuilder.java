@@ -32,12 +32,16 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
+import java.awt.Component;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
@@ -94,11 +98,42 @@ public class BotOrdersMenuBuilder {
      * @param label   the menu label, e.g. "Command Lance (3)"
      * @param unitIds the units
      */
-    record OrderGroup(String label, List<Integer> unitIds) {}
+    public record OrderGroup(String label, List<Integer> unitIds) {}
+
+    /**
+     * Lets the player tick any mix of one bot's units, then give them an order.
+     */
+    @FunctionalInterface
+    public interface UnitChooser {
+        /**
+         * @param botPlayer    the bot
+         * @param unitsByLance the bot's units, each a one-unit group, keyed by lance name
+         */
+        void chooseUnits(Player botPlayer, Map<String, List<OrderGroup>> unitsByLance);
+    }
+
+    /**
+     * Lets the player set the facing while moving and the facing when stopped in one go.
+     */
+    @FunctionalInterface
+    public interface FacingChooser {
+        /**
+         * @param group             the units being ordered
+         * @param facingWhileMoving the facing while moving now, 0-5 or {@link UnitOrders#FACING_AUTO}
+         * @param facingWhenStopped the facing when stopped now, 0-5 or {@link UnitOrders#FACING_AUTO}
+         * @param onChosen          receives the facing while moving and the facing when stopped
+         */
+        void chooseFacings(OrderGroup group, int facingWhileMoving, int facingWhenStopped,
+              BiConsumer<Integer, Integer> onChosen);
+    }
 
     private final AbstractClient client;
     private final HexPicker hexPicker;
     private final BiConsumer<Player, String> acknowledger;
+    // null when the host has no dialog for picking units, e.g. the Commander GUI
+    private UnitChooser unitChooser;
+    // null when the host has no facing dialog; facings are then set from submenus
+    private FacingChooser facingChooser;
 
     /**
      * @param client       the client that sends the orders
@@ -112,6 +147,26 @@ public class BotOrdersMenuBuilder {
     }
 
     /**
+     * @param chooser lets the player tick any mix of units; without one the menu offers lances and single units only
+     *
+     * @return this builder
+     */
+    public BotOrdersMenuBuilder withUnitChooser(UnitChooser chooser) {
+        unitChooser = chooser;
+        return this;
+    }
+
+    /**
+     * @param chooser the facing dialog; without one, facings are set from submenus
+     *
+     * @return this builder
+     */
+    public BotOrdersMenuBuilder withFacingChooser(FacingChooser chooser) {
+        facingChooser = chooser;
+        return this;
+    }
+
+    /**
      * Adds one submenu per group of the bot's units to the given menu, each holding every order.
      *
      * @param botMenu    the menu to fill
@@ -120,6 +175,12 @@ public class BotOrdersMenuBuilder {
      *                   Commands panel, where the player picks hexes instead
      */
     public void populate(JMenu botMenu, Player botPlayer, @Nullable Coords clickedHex) {
+        if ((clickedHex == null) && (unitChooser != null) && !groupsFor(botPlayer).isEmpty()) {
+            JMenuItem chooseItem = new JMenuItem(Messages.getString("BotCommandPanel.Orders.chooseUnits"));
+            chooseItem.addActionListener(event -> unitChooser.chooseUnits(botPlayer, unitsByLance(botPlayer)));
+            botMenu.add(chooseItem);
+            botMenu.addSeparator();
+        }
         for (OrderGroup group : groupsFor(botPlayer)) {
             JMenu groupMenu = new JMenu(group.label());
             addOrders(groupMenu, botPlayer, group, clickedHex);
@@ -176,6 +237,55 @@ public class BotOrdersMenuBuilder {
     }
 
     /**
+     * @param botPlayer the bot
+     *
+     * @return each of the bot's units as a one-unit group, keyed by the name of its lance in the force tree; units in
+     *       no lance come last
+     */
+    Map<String, List<OrderGroup>> unitsByLance(Player botPlayer) {
+        Map<String, List<OrderGroup>> unitsByLance = new LinkedHashMap<>();
+        if (!(client.getGame() instanceof Game game)) {
+            return unitsByLance;
+        }
+        List<OrderGroup> withoutLance = new ArrayList<>();
+        for (Entity unit : game.getPlayerEntities(botPlayer, false)) {
+            if (!canTakeOrders(unit)) {
+                continue;
+            }
+            OrderGroup unitGroup = new OrderGroup(Messages.getString("BotCommandPanel.Orders.unit", unit.getId(),
+                  unit.getDisplayName()), List.of(unit.getId()));
+            Force lance = game.getForces().getForce(unit);
+            if (lance == null) {
+                withoutLance.add(unitGroup);
+            } else {
+                unitsByLance.computeIfAbsent(lance.getName(), name -> new ArrayList<>()).add(unitGroup);
+            }
+        }
+        if (!withoutLance.isEmpty()) {
+            unitsByLance.put(Messages.getString("BotCommandPanel.Orders.noLance"), withoutLance);
+        }
+        return unitsByLance;
+    }
+
+    /**
+     * Builds the orders for one group as a popup, for a group the player ticked together.
+     *
+     * @param botPlayer the bot
+     * @param group     the units
+     *
+     * @return the popup holding every order for the group
+     */
+    public JPopupMenu ordersPopup(Player botPlayer, OrderGroup group) {
+        JMenu groupMenu = new JMenu(group.label());
+        addOrders(groupMenu, botPlayer, group, null);
+        JPopupMenu popup = new JPopupMenu(group.label());
+        for (Component item : groupMenu.getMenuComponents()) {
+            popup.add(item);
+        }
+        return popup;
+    }
+
+    /**
      * @return {@code true} for a unit the orders apply to: on the board and not airborne, since airborne units get
      *       orders in a later version
      */
@@ -224,8 +334,13 @@ public class BotOrdersMenuBuilder {
           UnitOrderAction action) {
         String title = Messages.getString("BotCommandPanel.Orders." + key);
         JMenuItem item = new JMenuItem(title);
-        item.addActionListener(event -> hexPicker.pickHexes(title + " - " + group.label(), false,
-              hexes -> sendToGroup(botPlayer, group, title + " " + hexes, action, "hexes=" + hexes)));
+        item.addActionListener(event -> hexPicker.pickHexes(title + " - " + group.label(), false, hexes -> {
+            sendToGroup(botPlayer, group, title + " " + hexes, action, "hexes=" + hexes);
+            if ((action == UnitOrderAction.ROUTE) && (facingChooser != null)) {
+                // a new route is the moment to say which way to face; cancelling keeps the facings as they were
+                chooseFacings(botPlayer, group);
+            }
+        }));
         menu.add(item);
     }
 
@@ -242,7 +357,12 @@ public class BotOrdersMenuBuilder {
         return menu;
     }
 
-    private JMenu createFacingMenu(Player botPlayer, OrderGroup group) {
+    private JMenuItem createFacingMenu(Player botPlayer, OrderGroup group) {
+        if (facingChooser != null) {
+            JMenuItem item = new JMenuItem(Messages.getString("BotCommandPanel.Orders.facing.dialog"));
+            item.addActionListener(event -> chooseFacings(botPlayer, group));
+            return item;
+        }
         JMenu menu = new JMenu(Messages.getString("BotCommandPanel.Orders.facing"));
         menu.add(createFacingChoiceMenu(botPlayer, group, true));
         menu.add(createFacingChoiceMenu(botPlayer, group, false));
@@ -281,6 +401,23 @@ public class BotOrdersMenuBuilder {
                   UnitOrderCommand.FACING_WHEN_STOPPED + '=' + stopped));
         }
         acknowledge(botPlayer, group, description);
+    }
+
+    /**
+     * Opens the facing dialog for the group, starting from its first unit's facings, and sends both facings.
+     */
+    private void chooseFacings(Player botPlayer, OrderGroup group) {
+        Entity firstUnit = (client.getGame() instanceof Game game) ? game.getEntity(group.unitIds().get(0)) : null;
+        UnitOrders current = (firstUnit == null) ? UnitOrders.NONE : firstUnit.getUnitOrders();
+        facingChooser.chooseFacings(group, current.getFacingWhileMoving(), current.getFacingWhenStopped(),
+              (moving, stopped) -> {
+                  for (int unitId : group.unitIds()) {
+                      client.sendChat(UnitOrderCommand.commandText(unitId, UnitOrderAction.FACING,
+                            UnitOrderCommand.FACING_WHILE_MOVING + '=' + moving,
+                            UnitOrderCommand.FACING_WHEN_STOPPED + '=' + stopped));
+                  }
+                  acknowledge(botPlayer, group, Messages.getString("BotCommandPanel.Orders.facing"));
+              });
     }
 
     private JMenu createEdgeMenu(Player botPlayer, OrderGroup group) {

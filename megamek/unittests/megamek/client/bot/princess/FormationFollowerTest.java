@@ -162,6 +162,22 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aFollowerPassingNearAWaypointDoesNotRunAheadOfItsLeader() {
+        // HammerGS's playtest: a Firestarter starting near the first waypoint ticked it off its own route, then
+        // headed for the second waypoint while the rest of the Wedge formed on the first.
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        Coords secondWaypoint = NORTH_WAYPOINT.translated(SOUTH_WEST, 6);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, secondWaypoint)));
+        BipedMek second = member(21, NORTH_WAYPOINT.translated(SOUTH, 1), 1, 4);
+        second.setUnitOrders(second.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, secondWaypoint)));
+        doReturn(List.of(leader, second)).when(princess).getEntitiesOwned();
+
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertEquals(List.of(NORTH_WAYPOINT, secondWaypoint), second.getUnitOrders().getRoute());
+    }
+
+    @Test
     void theLeaderHasNoSlotAndFollowsItsRoute() {
         BipedMek leader = member(20, LEADER_HEX, 0, 3);
         member(21, new Coords(16, 25), 1, 4);

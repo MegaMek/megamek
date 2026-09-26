@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import megamek.client.bot.Messages;
 import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -62,7 +61,6 @@ import megamek.common.units.Entity;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 import megamek.server.commands.UnitOrderCommand;
-import org.apache.logging.log4j.Level;
 
 /**
  * Carries out the standing orders players give a bot's units ({@link Entity#getUnitOrders()}): holds paused and
@@ -456,8 +454,7 @@ public class UnitOrdersFollower {
                 // the last hex stays in the route: the unit holds it and comes back to it after a fight
                 LOGGER.info("[BotOrders] {} (ID {}) reached the end of its route at {}", entity.getDisplayName(),
                       entity.getId(), waypoint.get().getBoardNum());
-                owner.sendChat(Messages.getString("Princess.orders.arrived", entity.getDisplayName(),
-                      waypoint.get().getBoardNum()), Level.INFO);
+                owner.getOrdersRadio().report(entity, "arrived", waypoint.get().getBoardNum());
             }
         }
         syncFollowerRoutes();
@@ -557,6 +554,7 @@ public class UnitOrdersFollower {
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
               (columnSlot == null) ? anchor.getBoardNum() : columnSlot.getBoardNum());
+        owner.getOrdersRadio().report(entity, "fold", anchor.getBoardNum());
         return (columnSlot == null) ? anchor : columnSlot;
     }
 
@@ -828,8 +826,7 @@ public class UnitOrdersFollower {
         }
         LOGGER.info("[BotOrders] {} (ID {}): waypoint {} cannot be reached; dropping it", entity.getDisplayName(),
               entity.getId(), waypoint.get().getBoardNum());
-        owner.sendChat(Messages.getString("Princess.orders.unreachable", entity.getDisplayName(),
-              waypoint.get().getBoardNum()), Level.INFO);
+        owner.getOrdersRadio().report(entity, "unreachable", waypoint.get().getBoardNum());
         change(entity, UnitOrderAction.SKIP);
     }
 

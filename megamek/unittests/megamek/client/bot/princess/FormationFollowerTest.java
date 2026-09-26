@@ -394,6 +394,20 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aLanceGivenAFacingInTheLobbyDeploysItsShapeAlongThatFacing() {
+        // HammerGS: set a facing in the lobby. A lance ordered to face south-east when stopped lays its Echelon Right
+        // out along south-east, although its route heads north.
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        leader.setUnitOrders(leader.getUnitOrders().withFacings(UnitOrders.FACING_AUTO, SOUTH_EAST));
+        leader.setDeployed(true);
+        BipedMek second = member(21, null, 1, 4);
+        second.setDeployed(false);
+        Coords slot = LEADER_HEX.translated(SOUTH_WEST, 2);
+
+        assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getDeploymentSlot(second, List.of(slot)));
+    }
+
+    @Test
     void theBotFacesTheEnemyDeploymentZone() {
         // HammerGS: deploy facing the enemy's deployment zone. An enemy deploying along the north edge, three rows
         // deep, puts the zone's middle at the top of the board, halfway across.

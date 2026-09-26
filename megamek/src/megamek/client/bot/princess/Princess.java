@@ -1128,19 +1128,24 @@ public class Princess extends BotClient {
         // For now, just use whatever board the unit is set to be on, usually board 0 by default
         Board board = game.getBoard(deployEntity);
 
-        // first coordinate that it is legal to put this unit on now find some sort of reasonable
-        // facing: toward the enemy's deployment zone, where the enemy will come from
-        int decentFacing = -1;
-        Optional<Coords> enemyZoneCenter = getEnemyDeploymentCenter(board);
-        if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(deployCoords)) {
-            decentFacing = deployCoords.direction(enemyZoneCenter.get());
-            LOGGER.info("[Deployment] {} deploys at {} facing {}, toward the enemy deployment zone around {}",
-                  deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
-                  enemyZoneCenter.get().getBoardNum());
+        // first coordinate that it is legal to put this unit on now find some sort of reasonable facing: the one a
+        // player ordered for when it is stopped, else toward the enemy's deployment zone, where the enemy will come from
+        int decentFacing = deployEntity.getUnitOrders().getFacingWhenStopped();
+        if (decentFacing != UnitOrders.FACING_AUTO) {
+            LOGGER.info("[Deployment] {} deploys at {} facing {}, as ordered", deployEntity.getDisplayName(),
+                  deployCoords.getBoardNum(), decentFacing);
+        } else {
+            Optional<Coords> enemyZoneCenter = getEnemyDeploymentCenter(board);
+            if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(deployCoords)) {
+                decentFacing = deployCoords.direction(enemyZoneCenter.get());
+                LOGGER.info("[Deployment] {} deploys at {} facing {}, toward the enemy deployment zone around {}",
+                      deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
+                      enemyZoneCenter.get().getBoardNum());
+            }
         }
 
         // with no enemy zone to face, face the last deployed enemy
-        if (decentFacing == -1) {
+        if (decentFacing == UnitOrders.FACING_AUTO) {
             for (final Entity enemy : getEnemyEntities()) {
                 if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(deployEntity, enemy)) {
                     decentFacing = deployCoords.direction(enemy.getPosition());

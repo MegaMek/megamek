@@ -145,8 +145,35 @@ public class UnitOrdersFollower {
      */
     public boolean isAtRouteEnd(Entity entity) {
         List<Coords> route = entity.getUnitOrders().getRoute();
-        return (route.size() == 1) && (entity.getPosition() != null)
-              && (entity.getPosition().distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT);
+        if ((route.size() != 1) || (entity.getPosition() == null)) {
+            return false;
+        }
+        Optional<Entity> leader = formationLeaderOf(entity);
+        if (leader.isPresent()) {
+            // a formation unit's route ends in its slot beside the leader, once the leader has arrived; checking the
+            // waypoint itself stopped the whole formation wherever it stood when the waypoint came within reach
+            Optional<Coords> slot = getFormationSlot(entity);
+            return isAtRouteEnd(leader.get()) && slot.isPresent()
+                  && (entity.getPosition().distance(slot.get()) <= FORMATION_SLACK);
+        }
+        return entity.getPosition().distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT;
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return the unit leading the unit's formation, if the unit is in one and is not leading it
+     */
+    private Optional<Entity> formationLeaderOf(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty()) {
+            return Optional.empty();
+        }
+        List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+        if ((members.size() < 2) || (members.get(0).getId() == entity.getId())) {
+            return Optional.empty();
+        }
+        return Optional.of(members.get(0));
     }
 
     /**
@@ -477,6 +504,13 @@ public class UnitOrdersFollower {
         Optional<Coords> leaderWaypoint = leader.getUnitOrders().getNextWaypoint()
               .filter(waypoint -> !waypoint.equals(leader.getPosition()));
         int heading = leaderWaypoint.map(leader.getPosition()::direction).orElse(leader.getFacing());
+        if (isAtRouteEnd(leader)) {
+            // once the leader has arrived, lay the shape out along its ordered stopped facing, or the way it faces,
+            // not toward a waypoint it is already standing next to
+            int stoppedFacing = leader.getUnitOrders().getFacingWhenStopped();
+            heading = (stoppedFacing != UnitOrders.FACING_AUTO) ? stoppedFacing : leader.getFacing();
+            leaderWaypoint = Optional.empty();
+        }
         Coords leaderPosition = projectedLeaderPosition(leader, leaderWaypoint, heading, board,
               paceLimit(members, formation.getPace()));
         Coords ideal = FormationPlanner.idealSlot(leaderPosition, heading, formation.getShape(),

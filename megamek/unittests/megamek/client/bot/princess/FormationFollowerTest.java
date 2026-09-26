@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -77,6 +78,7 @@ class FormationFollowerTest {
     private static final int NORTH = 0;
     private static final int SOUTH_EAST = 2;
     private static final int SOUTH = 3;
+    private static final int SOUTH_WEST = 4;
     private static final Coords LEADER_HEX = new Coords(14, 20);
     private static final Coords NORTH_WAYPOINT = new Coords(14, 2);
 
@@ -237,5 +239,30 @@ class FormationFollowerTest {
               List.of(walkThree, runFive));
 
         assertEquals(List.of(walkThree), paced);
+    }
+
+    @Test
+    void aFormationFormsAtTheEndOfItsRouteInsteadOfStoppingWhereItStands() {
+        // HammerGS's playtest: an Echelon Left whose one waypoint was already within 3 hexes of every unit stopped
+        // where it stood, roughly abreast, because every unit counted the waypoint itself as "arrived".
+        Coords waypoint = Coords.parseHexNumber("0906");
+        FormationOrder echelonLeft = new FormationOrder(FormationShape.ECHELON_LEFT, 20, 2, 0, FormationPace.WALK,
+              ContactRule.HOLD);
+        BipedMek wolverine = member(20, Coords.parseHexNumber("1206"), 0, 5);
+        wolverine.setUnitOrders(UnitOrders.NONE.withRoute(List.of(waypoint)).withFacings(0, 0)
+              .withFormation(echelonLeft));
+        BipedMek firestarter = member(21, Coords.parseHexNumber("1203"), 1, 6);
+        firestarter.setUnitOrders(UnitOrders.NONE.withRoute(List.of(waypoint)).withFacings(0, 0)
+              .withFormation(new FormationOrder(FormationShape.ECHELON_LEFT, 20, 2, 1, FormationPace.WALK,
+                    ContactRule.HOLD)));
+
+        assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(wolverine));
+        assertFalse(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
+        // the leader faces north when stopped, so Echelon Left steps back to the south-west
+        Coords slot = Coords.parseHexNumber("1206").translated(SOUTH_WEST, 2);
+        assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getFormationSlot(firestarter));
+
+        firestarter.setPosition(slot);
+        assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
     }
 }

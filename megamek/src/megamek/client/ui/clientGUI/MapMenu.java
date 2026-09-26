@@ -49,11 +49,11 @@ import javax.swing.*;
 import megamek.client.Client;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
-import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.BotCommands.BotOrdersMenuBuilder;
 import megamek.client.ui.dialogs.BuildingEditDialog;
 import megamek.client.ui.dialogs.HexEditDialog;
 import megamek.client.ui.dialogs.NoteDialog;
@@ -421,12 +421,20 @@ public class MapMenu extends JPopupMenu {
 
         JMenu prioritizeTargetUnitMenu = new JMenu(Messages.getString("Bot.commands.priority"));
         JMenu ignoreTargetMenu = new JMenu(Messages.getString("Bot.commands.ignore"));
-        JMenu fleeMenu = createFleeMenu(bot);
         JMenu behaviorMenu = createBehaviorMenu(bot);
+
+        // the same orders as the Bot Commands panel's Orders button, with this hex as the route
+        JMenu ordersMenu = new JMenu(Messages.getString("BotCommandPanel.Orders.title"));
+        new BotOrdersMenuBuilder(client, (orderDescription, singleHex, onPicked) -> onPicked.accept(
+              coords.getBoardNum()), (botPlayer, orderText) -> gui.addToast(ToastLevel.SUCCESS,
+              Messages.getString("BotCommandPanel.toast.orderSent", botPlayer.getName(), orderText)))
+              .populate(ordersMenu, bot, coords);
+        if (ordersMenu.getItemCount() > 0) {
+            menu.add(ordersMenu);
+        }
 
         JMenu targetHexMenu = createTargetHexMenuItem(bot);
         menu.add(targetHexMenu);
-        menu.add(createWaypointMenu(bot));
         if (botHasArtillery(bot)) {
             menu.add(createArtilleryMenu(bot));
         }
@@ -445,30 +453,7 @@ public class MapMenu extends JPopupMenu {
 
         menu.addSeparator();
         menu.add(behaviorMenu);
-        menu.add(fleeMenu);
-        menu.add(createHoldPositionMenuItem(bot, true));
-        menu.add(createHoldPositionMenuItem(bot, false));
         return menu;
-    }
-
-    /**
-     * Creates a menu item ordering the given bot to hold position or to resume movement.
-     *
-     * @param bot  The bot player to send the order to
-     * @param hold {@code true} for a hold position order, {@code false} to resume movement
-     *
-     * @return The created menu item
-     */
-    private JMenuItem createHoldPositionMenuItem(Player bot, boolean hold) {
-        String messageKey = hold ? "Bot.commands.holdPosition" : "Bot.commands.resumeMovement";
-        JMenuItem item = new JMenuItem(Messages.getString(messageKey));
-        item.addActionListener(evt -> {
-            client.sendChat(String.format("%s: %s : %s",
-                  bot.getName(), ChatCommands.HOLD_POSITION.getCommand(), hold));
-            gui.addToast(ToastLevel.SUCCESS, Messages.getString("BotCommandPanel.toast.orderSent",
-                  bot.getName(), Messages.getString(messageKey)));
-        });
-        return item;
     }
 
     JMenu createBehaviorMenu(Player bot) {
@@ -524,37 +509,6 @@ public class MapMenu extends JPopupMenu {
         return createBehaviorAdjustmentMenu(bot, "Bot.commands.caution", ChatCommands.CAUTION);
     }
 
-    JMenu createFleeMenu(Player bot) {
-        JMenu menu = new JMenu(Messages.getString("Bot.commands.flee"));
-        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.northEdge")),
-              bot,
-              CardinalEdge.NORTH));
-        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.southEdge")),
-              bot,
-              CardinalEdge.SOUTH));
-        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.westEdge")), bot, CardinalEdge.WEST));
-        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.eastEdge")), bot, CardinalEdge.EAST));
-        menu.add(setFleeAction(new JMenuItem(Messages.getString("BotConfigDialog.nearestEdge")),
-              bot,
-              CardinalEdge.NEAREST));
-        return menu;
-    }
-
-    private JMenuItem setFleeAction(JMenuItem fleeMenuItem, Player bot, CardinalEdge cardinalEdge) {
-        fleeMenuItem.addActionListener(evt -> {
-            int confirm = JOptionPane.showConfirmDialog(gui.getFrame(),
-                  Messages.getString("Bot.commands.flee.confirmation", bot.getName()),
-                  Messages.getString("Bot.commands.flee.confirm"),
-                  JOptionPane.YES_NO_OPTION);
-
-            if (confirm == JOptionPane.YES_OPTION) {
-                client.sendChat(String.format("%s: fl : %d", bot.getName(), cardinalEdge.getIndex()));
-            }
-        });
-
-        return fleeMenuItem;
-    }
-
     JMenuItem createIgnoreTargetUnitMenu(Player bot, Entity entity) {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> client.sendChat(String.format("%s: ig : %d", bot.getName(), entity.getId())));
@@ -565,52 +519,6 @@ public class MapMenu extends JPopupMenu {
         JMenuItem item = new JMenuItem(entity.getDisplayName());
         item.addActionListener(evt -> client.sendChat(String.format("%s: pr : %d", bot.getName(), entity.getId())));
         return item;
-    }
-
-    JMenu createWaypointMenu(Player bot) {
-        JMenu targetHexMenu = new JMenu(Messages.getString("Bot.commands.waypoint"));
-        // "Set hex" replaces the unit's waypoint list with this hex, "Add hex" appends this hex to it
-        JMenu setWaypointMenu = createWaypointCommandMenu(bot,
-              "Bot.commands.setWaypoint", ChatCommands.SET_WAYPOINT);
-        JMenu addWaypointMenu = createWaypointCommandMenu(bot,
-              "Bot.commands.addWaypoint", ChatCommands.ADD_WAYPOINT);
-
-        JMenuItem clearWaypoints = new JMenuItem(Messages.getString("Bot.commands.clearAllWaypoints"));
-        clearWaypoints.addActionListener(evt -> client.sendChat(String.format("%s: %s",
-              bot.getName(), ChatCommands.CLEAR_ALL_WAYPOINTS.getCommand())));
-
-        targetHexMenu.add(setWaypointMenu);
-        targetHexMenu.add(addWaypointMenu);
-        targetHexMenu.add(clearWaypoints);
-
-        return targetHexMenu;
-    }
-
-    /**
-     * Creates a menu listing the bot's units; selecting a unit sends the given waypoint chat command for the currently
-     * selected hex.
-     *
-     * @param bot             The bot player to send the command to
-     * @param messageKey      The resource key for the menu title
-     * @param waypointCommand The waypoint chat command to send (e.g. add-waypoint or set-waypoints)
-     *
-     * @return The created menu
-     */
-    private JMenu createWaypointCommandMenu(Player bot, String messageKey, ChatCommands waypointCommand) {
-        JMenu menu = new JMenu(Messages.getString(messageKey));
-        for (Entity entity : client.getGame().getPlayerEntities(bot, false)) {
-            JMenuItem waypoint = new JMenuItem(entity.getDisplayName());
-            waypoint.addActionListener(evt ->
-                  client.sendChat(String.format("%s: %s : %s %s",
-                        bot.getName(),
-                        waypointCommand.getCommand(),
-                        entity.getId(),
-                        coords.hexCode(board)
-                  ))
-            );
-            menu.add(waypoint);
-        }
-        return menu;
     }
 
     JMenu createTargetHexMenuItem(Player bot) {

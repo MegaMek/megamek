@@ -337,14 +337,48 @@ class FormationFollowerTest {
 
         // the game would deploy the member first; the leader goes first so the member can form on it
         assertEquals(20, princess.getUnitOrdersFollower().chooseUnitToDeploy(21, turn));
-        assertTrue(princess.getUnitOrdersFollower().getDeploymentSlot(second).isEmpty());
+        Coords slot = LEADER_HEX.translated(SOUTH_EAST, 2);
+        assertTrue(princess.getUnitOrdersFollower().getDeploymentSlot(second, List.of(slot)).isEmpty());
 
         leader.setDeployed(true);
-        Coords slot = LEADER_HEX.translated(SOUTH_EAST, 2);
-        assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getDeploymentSlot(second));
+        assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getDeploymentSlot(second, List.of(slot)));
 
         List<Coords> legalHexes = List.of(new Coords(2, 2), slot.translated(SOUTH, 1), new Coords(28, 28));
         assertEquals(slot.translated(SOUTH, 1),
               princess.getUnitOrdersFollower().preferDeploymentSlot(second, legalHexes).get(0));
+    }
+
+    @Test
+    void aZoneTooShallowForAVeeDeploysTheLanceInALineWithEveryUnitInTheZone() {
+        // HammerGS's playtest: a Vee lance deploying in a two-row zone at the board's edge scattered, because the
+        // Vee's arms reach four rows ahead of the leader and every slot fell outside the zone.
+        List<Coords> zone = new ArrayList<>();
+        for (int x = 0; x < WIDTH; x++) {
+            zone.add(new Coords(x, HEIGHT - 2));
+            zone.add(new Coords(x, HEIGHT - 1));
+        }
+        List<BipedMek> lance = new ArrayList<>();
+        for (int slot = 0; slot < 4; slot++) {
+            BipedMek mek = member(20 + slot, null, slot, 4);
+            mek.setDeployed(false);
+            mek.setUnitOrders(UnitOrders.NONE.withFormation(
+                  new FormationOrder(FormationShape.VEE, 20, 2, slot, FormationPace.WALK, ContactRule.BREAK)));
+            lance.add(mek);
+        }
+
+        List<Coords> leaderHexes = princess.getUnitOrdersFollower().preferFormationFit(lance.get(0), zone);
+
+        assertFalse(leaderHexes.isEmpty());
+        assertTrue(leaderHexes.size() < zone.size());
+        BipedMek leader = lance.get(0);
+        leader.setPosition(leaderHexes.get(0));
+        leader.setDeployed(true);
+        List<Coords> slots = new ArrayList<>();
+        for (BipedMek mek : lance.subList(1, lance.size())) {
+            Coords slot = princess.getUnitOrdersFollower().getDeploymentSlot(mek, zone).orElseThrow();
+            assertTrue(zone.contains(slot), "slot " + slot.getBoardNum() + " is outside the zone");
+            assertFalse(slots.contains(slot));
+            slots.add(slot);
+        }
     }
 }

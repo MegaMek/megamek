@@ -35,65 +35,58 @@ package megamek.client.ui.dialogs.BotCommands;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
-import megamek.common.orders.ContactRule;
-import megamek.common.orders.FormationPace;
-import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.server.commands.UnitOrderCommand;
 
 /**
  * Turns a move order set up in the Move Order editor into the {@code /unitOrder} commands that carry it to each unit:
- * its place in the formation, then its route with a facing and hold at each waypoint, and the route's priority.
+ * its leader and slot in the formation, then its route with each waypoint's formation, facing and hold, and the
+ * route's priority.
  */
 final class MoveOrderCommands {
-
-    /**
-     * The formation a move order puts its units in.
-     *
-     * @param shape       the shape
-     * @param leaderId    the unit the others form on
-     * @param spacing     hexes between neighbouring slots
-     * @param pace        how the units move
-     * @param contactRule what the formation does on contact
-     * @param keepTogether {@code true} to move as a block, at the slowest unit's speed, re-forming at each waypoint
-     */
-    record FormationChoice(FormationShape shape, int leaderId, int spacing, FormationPace pace,
-          ContactRule contactRule, boolean keepTogether) {}
 
     private MoveOrderCommands() {
     }
 
     /**
-     * @param unitIds         the units ordered, in the order they take formation slots after the leader
-     * @param formation       the formation to put them in, or {@code null} for none
-     * @param leaveFormation  {@code true} to take units out of a formation they are in, when no formation is chosen
-     * @param hexes           the route, or empty to keep each unit's route and only set the priority
-     * @param waypointOrders  what to do at each hex of the route, in the same order
-     * @param priority        how hard to push for the route
+     * @param unitIds        the units ordered, in the order they take formation slots after the leader
+     * @param leaderId       the unit the others form on
+     * @param wasInFormation {@code true} if any of the units is in a formation now, so leaving formation is sent
+     * @param hexes          the route, or empty to keep each unit's route and only set the priority
+     * @param waypointOrders what to do at each hex of the route, each with the formation for the leg ending there
+     * @param priority       how hard to push for the route
      *
      * @return the commands to send, in order
      */
-    static List<String> commands(List<Integer> unitIds, @Nullable FormationChoice formation, boolean leaveFormation,
-          List<Coords> hexes, List<WaypointOrder> waypointOrders, OrderPriority priority) {
+    static List<String> commands(List<Integer> unitIds, int leaderId, boolean wasInFormation, List<Coords> hexes,
+          List<WaypointOrder> waypointOrders, OrderPriority priority) {
+        // the formation order carries the leader and slots; the first leg in formation sets its starting shape
+        WaypointFormation firstFormation = null;
+        for (WaypointOrder order : waypointOrders) {
+            if ((order.getFormation() != null) && !order.getFormation().isNone()) {
+                firstFormation = order.getFormation();
+                break;
+            }
+        }
+        boolean isInFormation = (firstFormation != null) && (unitIds.size() >= 2);
         List<String> commands = new ArrayList<>();
-        boolean isInFormation = (formation != null) && (unitIds.size() >= 2);
         int nextSlot = 1;
         for (int unitId : unitIds) {
             if (isInFormation) {
-                int slot = (unitId == formation.leaderId()) ? 0 : nextSlot++;
+                int slot = (unitId == leaderId) ? 0 : nextSlot++;
                 commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION,
-                      UnitOrderCommand.SHAPE + '=' + formation.shape().name(),
-                      UnitOrderCommand.LEADER + '=' + formation.leaderId(),
-                      UnitOrderCommand.SPACING + '=' + formation.spacing(),
+                      UnitOrderCommand.SHAPE + '=' + firstFormation.getShape().name(),
+                      UnitOrderCommand.LEADER + '=' + leaderId,
+                      UnitOrderCommand.SPACING + '=' + firstFormation.getSpacing(),
                       UnitOrderCommand.SLOT + '=' + slot,
-                      UnitOrderCommand.PACE + '=' + formation.pace().name(),
-                      UnitOrderCommand.CONTACT + '=' + formation.contactRule().name(),
-                      UnitOrderCommand.TOGETHER + '=' + formation.keepTogether()));
-            } else if (leaveFormation) {
+                      UnitOrderCommand.PACE + '=' + firstFormation.getPace().name(),
+                      UnitOrderCommand.CONTACT + '=' + firstFormation.getContactRule().name(),
+                      UnitOrderCommand.TOGETHER + '=' + firstFormation.isKeepTogether()));
+            } else if (wasInFormation) {
                 commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION_OFF));
             }
             if (hexes.isEmpty()) {
@@ -101,10 +94,22 @@ final class MoveOrderCommands {
                       UnitOrderCommand.PRIORITY + '=' + priority.name()));
             } else {
                 commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.ROUTE,
-                      UnitOrderCommand.hexesArgument(hexes, waypointOrders),
+                      UnitOrderCommand.hexesArgument(hexes, isInFormation ? waypointOrders
+                            : withoutFormations(waypointOrders)),
                       UnitOrderCommand.PRIORITY + '=' + priority.name()));
             }
         }
         return commands;
+    }
+
+    /**
+     * @return the orders with no formation on any leg, for units that travel out of formation throughout
+     */
+    private static List<WaypointOrder> withoutFormations(List<WaypointOrder> waypointOrders) {
+        List<WaypointOrder> plain = new ArrayList<>();
+        for (WaypointOrder order : waypointOrders) {
+            plain.add(new WaypointOrder(order.getFacing(), order.getHoldTurns()));
+        }
+        return plain;
     }
 }

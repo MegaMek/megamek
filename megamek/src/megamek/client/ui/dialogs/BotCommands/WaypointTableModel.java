@@ -37,27 +37,43 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import megamek.client.ui.Messages;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 
 /**
- * The waypoints of a move order being set up in the Move Order editor, one row each: its number, its hex, the facing
- * on arrival and the turns to hold there. The last row is the end of the route, which the unit holds until given new
- * orders, so it has no hold count.
+ * The waypoints of a move order being set up in the Move Order editor, one row each. A row reads as one instruction:
+ * travel to this hex in this formation, face this way on arrival and hold this many turns. The last row is the end of
+ * the route, which the unit holds until given new orders, so it has no hold count.
  */
 class WaypointTableModel extends AbstractTableModel {
 
     static final int COLUMN_NUMBER = 0;
     static final int COLUMN_HEX = 1;
-    static final int COLUMN_FACING = 2;
-    static final int COLUMN_HOLD = 3;
+    static final int COLUMN_SHAPE = 2;
+    static final int COLUMN_SPACING = 3;
+    static final int COLUMN_PACE = 4;
+    static final int COLUMN_CONTACT = 5;
+    static final int COLUMN_TOGETHER = 6;
+    static final int COLUMN_FACING = 7;
+    static final int COLUMN_HOLD = 8;
 
     /** The longest hold the editor offers; a player wanting longer holds with Pause. */
     static final int MAXIMUM_HOLD_TURNS = 20;
 
+    /** The formation a first waypoint gets for a group of two or more units: a Wedge moving as a block. */
+    static final WaypointFormation DEFAULT_FORMATION = new WaypointFormation(FormationShape.WEDGE,
+          FormationOrder.DEFAULT_SPACING, FormationPace.WALK, ContactRule.BREAK, true);
+
     private static final int FACING_COUNT = 6;
-    private static final String[] COLUMN_KEYS = {"number", "hex", "facing", "hold"};
+    private static final String[] COLUMN_KEYS = {"number", "hex", "shape", "spacing", "pace", "contact", "together",
+          "facing", "hold"};
 
     /**
      * A facing as the facing column shows it: 0-5, or {@link UnitOrders#FACING_AUTO} for the bot's choice.
@@ -73,6 +89,19 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     /**
+     * A shape as the shape column shows it, or no formation at all.
+     *
+     * @param shape the shape, or {@code null} to travel out of formation
+     */
+    record ShapeOption(@Nullable FormationShape shape) {
+        @Override
+        public String toString() {
+            return (shape == null) ? Messages.getString("BotCommandPanel.MoveOrder.noFormation")
+                  : Messages.getString("BotCommandPanel.Formations.shape." + shape);
+        }
+    }
+
+    /**
      * @return every facing the column offers, Auto first
      */
     static List<FacingOption> facingOptions() {
@@ -83,42 +112,84 @@ class WaypointTableModel extends AbstractTableModel {
         return options;
     }
 
+    /**
+     * @return every shape the column offers, no formation first
+     */
+    static List<ShapeOption> shapeOptions() {
+        List<ShapeOption> options = new ArrayList<>();
+        options.add(new ShapeOption(null));
+        for (FormationShape shape : FormationShape.values()) {
+            options.add(new ShapeOption(shape));
+        }
+        return options;
+    }
+
     /** One waypoint being edited. */
     private static final class Row {
         private final Coords hex;
         private int facing;
         private int holdTurns;
+        private WaypointFormation formation;
 
-        private Row(Coords hex, int facing, int holdTurns) {
+        private Row(Coords hex, int facing, int holdTurns, WaypointFormation formation) {
             this.hex = hex;
             this.facing = facing;
             this.holdTurns = holdTurns;
+            this.formation = formation;
         }
     }
 
     private final List<Row> rows = new ArrayList<>();
+    private boolean canForm = true;
+
+    /**
+     * @param canFormNow {@code false} for a group of one unit, which travels out of formation on every leg
+     */
+    void setCanForm(boolean canFormNow) {
+        canForm = canFormNow;
+        if (!canForm) {
+            for (Row row : rows) {
+                row.formation = WaypointFormation.NONE;
+            }
+        }
+        fireTableDataChanged();
+    }
 
     /**
      * Replaces every row with a route and what to do at each of its waypoints.
      *
      * @param hexes          the route
      * @param waypointOrders what to do at each hex, in the same order
+     * @param unitsFormation the formation of a leg that sets none of its own: the units' own formation
      */
-    void setRoute(List<Coords> hexes, List<WaypointOrder> waypointOrders) {
+    void setRoute(List<Coords> hexes, List<WaypointOrder> waypointOrders, WaypointFormation unitsFormation) {
         rows.clear();
         for (int index = 0; index < hexes.size(); index++) {
             WaypointOrder order = (index < waypointOrders.size()) ? waypointOrders.get(index)
                   : WaypointOrder.PASS_THROUGH;
-            rows.add(new Row(hexes.get(index), order.getFacing(), order.getHoldTurns()));
+            WaypointFormation formation = (order.getFormation() == null) ? unitsFormation : order.getFormation();
+            rows.add(new Row(hexes.get(index), order.getFacing(), order.getHoldTurns(),
+                  canForm ? formation : WaypointFormation.NONE));
         }
         fireTableDataChanged();
     }
 
     /**
-     * @param hex a hex to add at the end of the route, passed through with the bot choosing the facing
+     * Adds a hex at the end of the route, passed through with the bot choosing the facing, in the formation of the
+     * waypoint before it - so a formation set on the first waypoint carries on until changed.
+     *
+     * @param hex the hex
      */
     void addWaypoint(Coords hex) {
-        rows.add(new Row(hex, UnitOrders.FACING_AUTO, 0));
+        WaypointFormation formation;
+        if (!canForm) {
+            formation = WaypointFormation.NONE;
+        } else if (rows.isEmpty()) {
+            formation = DEFAULT_FORMATION;
+        } else {
+            formation = rows.get(rows.size() - 1).formation;
+        }
+        rows.add(new Row(hex, UnitOrders.FACING_AUTO, 0, formation));
         fireTableDataChanged();
     }
 
@@ -187,6 +258,10 @@ class WaypointTableModel extends AbstractTableModel {
         return isEndOfRoute(index) ? 0 : rows.get(index).holdTurns;
     }
 
+    WaypointFormation getFormation(int index) {
+        return rows.get(index).formation;
+    }
+
     void setFacing(int index, int facing) {
         rows.get(index).facing = facing;
         fireTableRowsUpdated(index, index);
@@ -194,6 +269,11 @@ class WaypointTableModel extends AbstractTableModel {
 
     void setHoldTurns(int index, int holdTurns) {
         rows.get(index).holdTurns = Math.max(0, Math.min(MAXIMUM_HOLD_TURNS, holdTurns));
+        fireTableRowsUpdated(index, index);
+    }
+
+    void setFormation(int index, WaypointFormation formation) {
+        rows.get(index).formation = canForm ? formation : WaypointFormation.NONE;
         fireTableRowsUpdated(index, index);
     }
 
@@ -209,12 +289,13 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     /**
-     * @return what to do at each waypoint, in route order; the end of the route has no hold
+     * @return what to do at each waypoint, in route order, each with the formation for the leg ending there; the end
+     *       of the route has no hold
      */
     List<WaypointOrder> getWaypointOrders() {
         List<WaypointOrder> orders = new ArrayList<>();
         for (int index = 0; index < rows.size(); index++) {
-            orders.add(new WaypointOrder(rows.get(index).facing, getHoldTurns(index)));
+            orders.add(new WaypointOrder(rows.get(index).facing, getHoldTurns(index), rows.get(index).formation));
         }
         return orders;
     }
@@ -235,11 +316,22 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        return (columnIndex == COLUMN_TOGETHER) ? Boolean.class : Object.class;
+    }
+
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Row row = rows.get(rowIndex);
+        WaypointFormation formation = row.formation;
         return switch (columnIndex) {
             case COLUMN_NUMBER -> rowIndex + 1;
             case COLUMN_HEX -> row.hex.getBoardNum();
+            case COLUMN_SHAPE -> new ShapeOption(formation.getShape());
+            case COLUMN_SPACING -> formation.getSpacing();
+            case COLUMN_PACE -> formation.getPace();
+            case COLUMN_CONTACT -> formation.getContactRule();
+            case COLUMN_TOGETHER -> formation.isKeepTogether();
             case COLUMN_FACING -> new FacingOption(row.facing);
             default -> isEndOfRoute(rowIndex) ? Messages.getString("BotCommandPanel.MoveOrder.endOfRoute")
                   : holdText(row.holdTurns);
@@ -253,15 +345,63 @@ class WaypointTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return (columnIndex == COLUMN_FACING) || ((columnIndex == COLUMN_HOLD) && !isEndOfRoute(rowIndex));
+        boolean hasShape = !rows.get(rowIndex).formation.isNone();
+        return switch (columnIndex) {
+            case COLUMN_SHAPE -> canForm;
+            case COLUMN_SPACING, COLUMN_PACE, COLUMN_CONTACT, COLUMN_TOGETHER -> hasShape;
+            case COLUMN_FACING -> true;
+            case COLUMN_HOLD -> !isEndOfRoute(rowIndex);
+            default -> false;
+        };
     }
 
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        if ((columnIndex == COLUMN_FACING) && (value instanceof FacingOption option)) {
-            setFacing(rowIndex, option.facing());
-        } else if ((columnIndex == COLUMN_HOLD) && (value instanceof Integer turns)) {
-            setHoldTurns(rowIndex, turns);
+        WaypointFormation formation = rows.get(rowIndex).formation;
+        switch (columnIndex) {
+            case COLUMN_SHAPE -> {
+                if (value instanceof ShapeOption option) {
+                    setFormation(rowIndex, (option.shape() == null) ? WaypointFormation.NONE
+                          : new WaypointFormation(option.shape(), formation.getSpacing(), formation.getPace(),
+                          formation.getContactRule(), formation.isNone() || formation.isKeepTogether()));
+                }
+            }
+            case COLUMN_SPACING -> {
+                if (value instanceof Integer spacing) {
+                    setFormation(rowIndex, new WaypointFormation(formation.getShape(), spacing, formation.getPace(),
+                          formation.getContactRule(), formation.isKeepTogether()));
+                }
+            }
+            case COLUMN_PACE -> {
+                if (value instanceof FormationPace pace) {
+                    setFormation(rowIndex, new WaypointFormation(formation.getShape(), formation.getSpacing(), pace,
+                          formation.getContactRule(), formation.isKeepTogether()));
+                }
+            }
+            case COLUMN_CONTACT -> {
+                if (value instanceof ContactRule contactRule) {
+                    setFormation(rowIndex, new WaypointFormation(formation.getShape(), formation.getSpacing(),
+                          formation.getPace(), contactRule, formation.isKeepTogether()));
+                }
+            }
+            case COLUMN_TOGETHER -> {
+                if (value instanceof Boolean keepTogether) {
+                    setFormation(rowIndex, new WaypointFormation(formation.getShape(), formation.getSpacing(),
+                          formation.getPace(), formation.getContactRule(), keepTogether));
+                }
+            }
+            case COLUMN_FACING -> {
+                if (value instanceof FacingOption option) {
+                    setFacing(rowIndex, option.facing());
+                }
+            }
+            case COLUMN_HOLD -> {
+                if (value instanceof Integer turns) {
+                    setHoldTurns(rowIndex, turns);
+                }
+            }
+            default -> {
+            }
         }
     }
 }

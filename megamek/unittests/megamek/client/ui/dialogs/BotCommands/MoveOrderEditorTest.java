@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.BotCommands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -43,6 +44,7 @@ import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import org.junit.jupiter.api.Test;
 
@@ -76,40 +78,69 @@ class MoveOrderEditorTest {
     @Test
     void theLastWaypointIsTheEndOfTheRouteAndHasNoHold() {
         WaypointTableModel waypoints = new WaypointTableModel();
-        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of());
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointFormation.NONE);
         waypoints.setFacing(0, NORTH_EAST);
         waypoints.setHoldTurns(0, 2);
         waypoints.setFacing(1, NORTH);
         waypoints.setHoldTurns(1, 3);
 
         assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_HOLD));
-        assertEquals(List.of(new WaypointOrder(NORTH_EAST, 2), new WaypointOrder(NORTH, 0)),
-              waypoints.getWaypointOrders());
+        assertEquals(List.of(new WaypointOrder(NORTH_EAST, 2, WaypointFormation.NONE),
+              new WaypointOrder(NORTH, 0, WaypointFormation.NONE)), waypoints.getWaypointOrders());
         // a hold beyond the editor's range is kept to it
         waypoints.setHoldTurns(0, 99);
         assertEquals(WaypointTableModel.MAXIMUM_HOLD_TURNS, waypoints.getHoldTurns(0));
     }
 
     @Test
-    void aMoveOrderInFormationSendsEachUnitItsSlotThenTheRoute() {
-        MoveOrderCommands.FormationChoice wedge = new MoveOrderCommands.FormationChoice(FormationShape.WEDGE, 21, 2,
-              FormationPace.WALK, ContactRule.BREAK, true);
+    void aNewWaypointTravelsInTheFormationOfTheOneBefore() {
+        // HammerGS: set the formation per waypoint; row 1 sets it and it carries on until a row changes it
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        assertEquals(WaypointTableModel.DEFAULT_FORMATION, waypoints.getFormation(0));
 
-        List<String> commands = MoveOrderCommands.commands(List.of(20, 21), wedge, false,
-              List.of(FIRST_HEX, SECOND_HEX, LAST_HEX),
-              List.of(WaypointOrder.PASS_THROUGH, new WaypointOrder(NORTH_EAST, 2), new WaypointOrder(NORTH, 0)),
-              OrderPriority.NORMAL);
+        waypoints.setValueAt(new WaypointTableModel.ShapeOption(FormationShape.COLUMN), 0,
+              WaypointTableModel.COLUMN_SHAPE);
+        waypoints.addWaypoint(SECOND_HEX);
+        assertEquals(FormationShape.COLUMN, waypoints.getFormation(1).getShape());
 
-        assertEquals(List.of(
-              "/unitOrder 20 FORMATION shape=WEDGE leader=21 spacing=2 slot=1 pace=WALK contact=BREAK together=true",
-              "/unitOrder 20 ROUTE hexes=1709-1706/NE/2-2204/N priority=NORMAL",
-              "/unitOrder 21 FORMATION shape=WEDGE leader=21 spacing=2 slot=0 pace=WALK contact=BREAK together=true",
-              "/unitOrder 21 ROUTE hexes=1709-1706/NE/2-2204/N priority=NORMAL"), commands);
+        waypoints.setValueAt(new WaypointTableModel.ShapeOption(null), 1, WaypointTableModel.COLUMN_SHAPE);
+        assertTrue(waypoints.getFormation(1).isNone());
+        assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_SPACING));
     }
 
     @Test
-    void leavingAFormationWithNoRouteOnlySetsThePriority() {
-        List<String> commands = MoveOrderCommands.commands(List.of(20), null, true, List.of(), List.of(),
+    void aSingleUnitTravelsOutOfFormation() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setCanForm(false);
+        waypoints.addWaypoint(FIRST_HEX);
+
+        assertTrue(waypoints.getFormation(0).isNone());
+        assertFalse(waypoints.isCellEditable(0, WaypointTableModel.COLUMN_SHAPE));
+    }
+
+    @Test
+    void aMoveOrderSendsEachUnitItsSlotThenTheRouteWithEachLegsFormation() {
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.RUN,
+              ContactRule.BREAK, true);
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 3, FormationPace.WALK,
+              ContactRule.HOLD, true);
+
+        List<String> commands = MoveOrderCommands.commands(List.of(20, 21), 21, false, List.of(FIRST_HEX, SECOND_HEX),
+              List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0, column), new WaypointOrder(NORTH_EAST, 2, wedge)),
+              OrderPriority.NORMAL);
+
+        String route = " ROUTE hexes=1709/F:COLUMN:2:RUN:BREAK:T-1706/NE/2/F:WEDGE:3:WALK:HOLD:T priority=NORMAL";
+        assertEquals(List.of(
+              "/unitOrder 20 FORMATION shape=COLUMN leader=21 spacing=2 slot=1 pace=RUN contact=BREAK together=true",
+              "/unitOrder 20" + route,
+              "/unitOrder 21 FORMATION shape=COLUMN leader=21 spacing=2 slot=0 pace=RUN contact=BREAK together=true",
+              "/unitOrder 21" + route), commands);
+    }
+
+    @Test
+    void aRouteWithNoFormationLeavesTheFormationAndOnlySetsThePriorityWhenEmpty() {
+        List<String> commands = MoveOrderCommands.commands(List.of(20), 20, true, List.of(), List.of(),
               OrderPriority.IMPERATIVE);
 
         assertEquals(List.of("/unitOrder 20 FORMATION_OFF", "/unitOrder 20 PRIORITY priority=IMPERATIVE"), commands);

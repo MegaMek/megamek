@@ -56,6 +56,7 @@ import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
 import megamek.common.util.BoardUtilities;
@@ -231,13 +232,38 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * The formation a unit travels in on its current leg: the one set on its formation leader's next waypoint, else
+     * its own formation order. A leg set to travel out of formation has none.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the formation for this leg, with the unit's own leader and slot; empty out of formation
+     */
+    Optional<FormationOrder> activeFormation(Entity entity) {
+        Optional<FormationOrder> base = entity.getUnitOrders().getFormation();
+        if (base.isEmpty()) {
+            return base;
+        }
+        // the leader's route sets the leg; the unit's own route stands in step for it once the leader is gone
+        Entity leader = owner.getGame().getEntity(base.get().getLeaderId());
+        boolean isLeaderRouted = (leader != null) && !leader.isDestroyed() && leader.getUnitOrders().hasRoute();
+        UnitOrders legOrders = isLeaderRouted ? leader.getUnitOrders() : entity.getUnitOrders();
+        WaypointFormation leg = legOrders.hasRoute() ? legOrders.getWaypointOrder(0).getFormation() : null;
+        if (leg == null) {
+            return base;
+        }
+        return leg.isNone() ? Optional.empty() : Optional.of(leg.applyTo(base.get()));
+    }
+
+    /**
      * @param entity a unit of the bot
      *
      * @return the unit leading the unit's formation, if the unit is in one and is not leading it
      */
     private Optional<Entity> formationLeaderOf(Entity entity) {
         Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
-        if (formation.isEmpty()) {
+        if (formation.isEmpty() || activeFormation(entity).isEmpty()) {
+            // out of formation on this leg: the unit follows its own route like a unit on its own
             return Optional.empty();
         }
         List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
@@ -652,7 +678,7 @@ public class UnitOrdersFollower {
      * @return {@code true} to wait another round
      */
     private boolean shouldWaitForFormation(Entity leader, Coords waypoint) {
-        Optional<FormationOrder> formation = leader.getUnitOrders().getFormation();
+        Optional<FormationOrder> formation = activeFormation(leader);
         if (formation.isEmpty() || !formation.get().isKeepTogether()) {
             return false;
         }
@@ -736,7 +762,7 @@ public class UnitOrdersFollower {
      * @return the hex to head for, or empty when the unit is not following a formation leader
      */
     public Optional<Coords> getFormationSlot(Entity entity) {
-        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        Optional<FormationOrder> formation = activeFormation(entity);
         if (formation.isEmpty() || (entity.getPosition() == null)) {
             return Optional.empty();
         }
@@ -968,7 +994,7 @@ public class UnitOrdersFollower {
      * @return the slot hex, or empty for a unit not in a formation, the leader itself, or a leader not yet deployed
      */
     public Optional<Coords> getDeploymentSlot(Entity entity, List<Coords> legalHexes) {
-        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        Optional<FormationOrder> formation = activeFormation(entity);
         if (formation.isEmpty() || (formation.get().getSlot() == 0)
               || (formation.get().getLeaderId() == entity.getId())) {
             return Optional.empty();
@@ -1026,7 +1052,7 @@ public class UnitOrdersFollower {
      *       or when the formation fits nowhere
      */
     public List<Coords> preferFormationFit(Entity entity, List<Coords> possibleDeployCoords) {
-        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        Optional<FormationOrder> formation = activeFormation(entity);
         if (formation.isEmpty() || (formation.get().getLeaderId() != entity.getId())) {
             return possibleDeployCoords;
         }
@@ -1170,7 +1196,7 @@ public class UnitOrdersFollower {
      * @return the moves within the formation's pace, or all of them when the unit is in no formation
      */
     List<MovePath> limitToFormationPace(Entity entity, List<MovePath> paths) {
-        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        Optional<FormationOrder> formation = activeFormation(entity);
         if (formation.isEmpty()) {
             return paths;
         }

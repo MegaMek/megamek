@@ -62,6 +62,7 @@ import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -542,6 +543,34 @@ class FormationFollowerTest {
         when(enemy.getPosition()).thenReturn(new Coords(2, 2));
         enemies.add(enemy);
         assertEquals(UnitOrders.FACING_AUTO, princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX));
+    }
+
+    @Test
+    void aWaypointsFormationSetsTheShapeForTheLegEndingThere() {
+        // HammerGS: change the formation at each waypoint; a row reads "travel to this hex in this formation"
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 3, FormationPace.WALK,
+              ContactRule.HOLD, false);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT),
+              List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0, column))));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+
+        // the units' own Echelon Right gives way to the leg's Column, three hexes apart behind the waypoint
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 3)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
+    void aLegSetToNoFormationIsTravelledByEachUnitOnItsOwn() {
+        BipedMek leader = member(20, LEADER_HEX, 0, 6);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT),
+              List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0, WaypointFormation.NONE))));
+        BipedMek second = member(21, new Coords(16, 25), 1, 3);
+        MovePath runNine = moveUsing(9);
+
+        assertTrue(princess.getUnitOrdersFollower().getFormationSlot(second).isEmpty());
+        assertEquals(List.of(runNine), princess.getUnitOrdersFollower().limitToFormationPace(leader,
+              List.of(runNine)));
     }
 
     @Test

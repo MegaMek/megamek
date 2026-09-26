@@ -54,6 +54,7 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.HeatShutdownTargets;
 import megamek.common.rules.RulesHeat;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
@@ -641,23 +642,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                             report.addDesc(entity);
                         } else {
                             // roll for startup
-                            int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                            if (mtHeat) {
-                                startup -= 5;
-                                switch (entity.getCrew().getPiloting()) {
-                                    case 0:
-                                    case 1:
-                                        startup -= 2;
-                                        break;
-                                    case 2:
-                                    case 3:
-                                        startup -= 1;
-                                        break;
-                                    case 6:
-                                    case 7:
-                                        startup += 1;
-                                }
-                            }
+                            // always the plain Avoid number; the Avoiding Shutdown rule covers only avoiding one
+                            int startup = HeatShutdownTargets.restart(entity.heat, hotDogMod).getValue();
                             Roll diceRoll = Compute.rollD6(2);
                             report = new Report(5050);
                             report.subject = entity.getId();
@@ -728,27 +714,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                         addReport(report);
                         // No shutdown - TCP automatically avoids
                     } else {
-                        int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                        TargetRoll target;
-                        if (mtHeat) {
-                            shutdown -= 5;
-                            target = new TargetRoll(shutdown, "Base TacOps shutdown TN");
-                            switch (entity.getCrew().getPiloting()) {
-                                case 0:
-                                case 1:
-                                    target.addModifier(-2, "Piloting skill");
-                                    break;
-                                case 2:
-                                case 3:
-                                    target.addModifier(-1, "Piloting skill");
-                                    break;
-                                case 6:
-                                case 7:
-                                    target.addModifier(+1, "Piloting skill");
-                            }
-                        } else {
-                            target = new TargetRoll(shutdown, "Base shutdown TN");
-                        }
+                        TargetRoll target = shutdownAvoidanceTarget(entity, hotDogMod);
                         if (mek.hasRiscHeatSinkOverrideKit()) {
                             target.addModifier(-2, "RISC Heat Sink Override Kit");
                         }
@@ -1226,24 +1192,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                     } else {
                         // roll for startup
-                        int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                        if (mtHeat) {
-                            startup -= 5;
-                            switch (entity.getCrew().getPiloting()) {
-                                case 0:
-                                case 1:
-                                    startup -= 2;
-                                    break;
-                                case 2:
-                                case 3:
-                                    startup -= 1;
-                                    break;
-                                case 6:
-                                case 7:
-                                    startup += 1;
-                                    break;
-                            }
-                        }
+                        // always the plain Avoid number; the Avoiding Shutdown rule covers only avoiding one
+                        int startup = HeatShutdownTargets.restart(entity.heat, hotDogMod).getValue();
                         Roll diceRoll = entity.getCrew().rollPilotingSkill();
                         report = new Report(5050);
                         report.subject = entity.getId();
@@ -1315,24 +1265,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                     vPhaseReport.add(report);
                     // No shutdown - TCP automatically avoids
                 } else {
-                    int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                    if (mtHeat) {
-                        shutdown -= 5;
-                        switch (entity.getCrew().getPiloting()) {
-                            case 0:
-                            case 1:
-                                shutdown -= 2;
-                                break;
-                            case 2:
-                            case 3:
-                                shutdown -= 1;
-                                break;
-                            case 6:
-                            case 7:
-                                shutdown += 1;
-                                break;
-                        }
-                    }
+                    int shutdown = shutdownAvoidanceTarget(entity, hotDogMod).getValue();
                     Roll diceRoll = Compute.rollD6(2);
                     report = new Report(5060);
                     report.subject = entity.getId();
@@ -1462,6 +1395,27 @@ class HeatResolver extends AbstractTWRuleHandler {
                 vPhaseReport.add(report);
             }
         }
+    }
+
+    /**
+     * Returns the target number for a unit to avoid a heat shutdown under the rules in play. The ruleset in play
+     * decides whether the Avoiding Shutdown rule (TO:AR p.102) applies; both play it when its game option is on.
+     *
+     * @param entity         the unit rolling to avoid shutdown, at 14 heat or more
+     * @param hotDogModifier how much the Hot Dog ability lowers the roll, or 0 without it
+     *
+     * @return the target number, with each modifier named. Package-visible for testing.
+     */
+    TargetRoll shutdownAvoidanceTarget(Entity entity, int hotDogModifier) {
+        boolean isAvoidingShutdownOptionOn = getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN);
+        boolean usesAvoidingShutdown = Game.rulesManager.getRulesHeat().usesAvoidingShutdown(isAvoidingShutdownOptionOn);
+        TargetRoll target = HeatShutdownTargets.shutdownAvoidance(entity.heat, entity.getCrew().getPiloting(),
+              hotDogModifier, usesAvoidingShutdown);
+        LOGGER.debug("[HeatShutdown] {} at heat {}: avoid on {} ({}); Avoiding Shutdown option {}, in play {}",
+              entity.getDisplayName(), entity.heat, target.getValue(), target.getDesc(), isAvoidingShutdownOptionOn,
+              usesAvoidingShutdown);
+        return target;
     }
 
     /**

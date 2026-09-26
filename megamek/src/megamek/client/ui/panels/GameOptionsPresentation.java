@@ -372,6 +372,7 @@ final class GameOptionsPresentation {
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE,
               OptionsConstants.ADVANCED_COMBAT_FOREST_FIRES_NO_SMOKE,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT,
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN,
               OptionsConstants.ADVANCED_COMBAT_TAC_OPS_COOLANT_FAILURE,
               OptionsConstants.ADVANCED_COMBAT_MAX_EXTERNAL_HEAT);
 

@@ -33,13 +33,13 @@ package megamek.common.rules.core;
  */
 
 
+import java.util.ArrayList;
+
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.rules.RulesHeat;
-
-import java.util.ArrayList;
 
 public class CoreRulesHeat extends RulesHeat {
 
@@ -50,6 +50,16 @@ public class CoreRulesHeat extends RulesHeat {
     @Override
     public int standingHeat() {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * The Core Rules roll 2D6 against the Shutdown Avoid Target Number, Core p.104, and have no Avoiding Shutdown rule
+     * of their own. The Tactical Operations rule, TO:AR p.102, is still played on top of them when its option is on.
+     */
+    @Override
+    public boolean usesAvoidingShutdown(boolean avoidingShutdownOption) {
+        return avoidingShutdownOption;
     }
 
     /**

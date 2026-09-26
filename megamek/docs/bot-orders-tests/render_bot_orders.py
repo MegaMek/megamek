@@ -589,6 +589,12 @@ function toggleEnemies() {
     nodes[i].style.display = nodes[i].style.display === 'none' ? '' : 'none';
   }
 }
+function toggleFormations() {
+  var nodes = document.querySelectorAll('.formation-layer');
+  for (var i = 0; i < nodes.length; i++) {
+    nodes[i].style.display = nodes[i].style.display === 'none' ? '' : 'none';
+  }
+}
 function toggleHexNumbers() {
   var map = document.getElementById('board');
   map.classList.toggle('numbers');
@@ -837,6 +843,9 @@ def legend_html():
          'fill="#4363d8" stroke="var(--fg)" stroke-width="0.8"/></svg>', "Ordered facing (big: when stopped)"),
         ('<svg width="16" height="16"><circle cx="8" cy="8" r="6" class="facingmiss"/></svg>',
          "Ended the round not facing as ordered"),
+        ('<svg width="30" height="16"><line x1="2" y1="8" x2="20" y2="8" stroke="#4363d8" stroke-width="0.9"/>'
+         '<polygon points="25,3 30,8 25,13 20,8" fill="none" stroke="#4363d8" stroke-width="1.4"/></svg>',
+         "Formation: link to leader, and ideal slot (diamond)"),
         ('<svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="var(--enemy)" '
          'stroke-width="1.6"/></svg>', "Units without orders (grey)"),
         ('<span class="swatch" style="background:var(--t-woods)"></span>', "Light woods"),
@@ -849,6 +858,129 @@ def legend_html():
         ('<span class="elev" style="font-size:11px">2</span>', "Number in hex = elevation"),
     ]
     return '<div class="legend">' + "".join("<div>%s%s</div>" % (icon, escape(text)) for icon, text in items) + "</div>"
+
+
+
+# ----------------------------------------------------------------------------------------------------------------
+# Formations: the ideal slot of each follower, rebuilt the way FormationPlanner lays it out
+# ----------------------------------------------------------------------------------------------------------------
+
+CUBE_DIRECTIONS = [(0, 1, -1), (1, 0, -1), (1, -1, 0), (0, -1, 1), (-1, 0, 1), (-1, 1, 0)]
+
+
+def parse_formation(text):
+    """'WEDGE leader=101 spacing=2 slot=1 WALK HOLD' -> dict, or None."""
+    if not text:
+        return None
+    words = text.split()
+    result = {"shape": words[0], "leader": None, "spacing": 2, "slot": 0, "pace": "", "contact": ""}
+    extras = []
+    for word in words[1:]:
+        if "=" in word:
+            key, _, value = word.partition("=")
+            if key in ("leader", "spacing", "slot"):
+                result[key] = int(value)
+        else:
+            extras.append(word)
+    if extras:
+        result["pace"] = extras[0]
+    if len(extras) > 1:
+        result["contact"] = extras[1]
+    return result
+
+
+def cube_to_offset(cube_x, cube_z):
+    column = cube_x
+    row = cube_z + (column - (column & 1)) // 2
+    return column, row
+
+
+def translated(position, direction, distance):
+    cube_x, cube_y, cube_z = to_cube(*position)
+    delta_x, delta_y, delta_z = CUBE_DIRECTIONS[direction % 6]
+    return cube_to_offset(cube_x + delta_x * distance, cube_z + delta_z * distance)
+
+
+def direction_between(start, end):
+    """Nearest hex facing from one hex toward another, by the angle between their centres."""
+    start_x, start_y = centre(start[0], start[1], 1.0)
+    end_x, end_y = centre(end[0], end[1], 1.0)
+    angle = math.degrees(math.atan2(end_x - start_x, -(end_y - start_y))) % 360.0
+    return int(round(angle / 60.0)) % 6
+
+
+def ideal_slot(leader_position, heading, shape, spacing, slot_index):
+    arm_step = (slot_index + 1) // 2
+    is_left_arm = (slot_index % 2) == 1
+    if shape == "COLUMN":
+        return translated(leader_position, heading + 3, spacing * slot_index)
+    if shape == "ECHELON_RIGHT":
+        return translated(leader_position, heading + 2, spacing * slot_index)
+    if shape == "ECHELON_LEFT":
+        return translated(leader_position, heading + 4, spacing * slot_index)
+    if shape == "WEDGE":
+        return translated(leader_position, heading + (4 if is_left_arm else 2), spacing * arm_step)
+    if shape == "VEE":
+        return translated(leader_position, heading + (5 if is_left_arm else 1), spacing * arm_step)
+    if shape == "LINE":
+        position = leader_position
+        first = heading + (5 if is_left_arm else 1)
+        second = heading + (4 if is_left_arm else 2)
+        for step in range(spacing * arm_step):
+            position = translated(position, first if step % 2 == 0 else second, 1)
+        return position
+    return None
+
+
+def formation_slots(trace):
+    """For every follower end-of-round row: (round, unit id) -> (ideal slot, leader position, formation)."""
+    slots = {}
+    for track in trace.units.values():
+        for round_number, end_row in track.ends.items():
+            formation = parse_formation(end_row.get("formation", ""))
+            if not formation or formation["leader"] is None or formation["slot"] == 0:
+                continue
+            leader = trace.units.get(str(formation["leader"]))
+            leader_row = leader.ends.get(round_number) if leader else None
+            leader_position = position_of(leader_row)
+            if not leader_position:
+                continue
+            waypoint = parse_hex_number(leader_row.get("headWaypoint", "")) if leader_row.get("headWaypoint") else None
+            if waypoint and waypoint != leader_position:
+                heading = direction_between(leader_position, waypoint)
+            else:
+                heading = int(leader_row["facing"]) if leader_row.get("facing") else 0
+            slot = ideal_slot(leader_position, heading, formation["shape"], formation["spacing"], formation["slot"])
+            slots[(round_number, track.unit_id)] = (slot, leader_position, formation)
+    return slots
+
+
+def svg_formations(trace, slots, size):
+    parts = []
+    for (round_number, unit_id), (slot, leader_position, formation) in slots.items():
+        track = trace.units[unit_id]
+        position = position_of(track.ends.get(round_number))
+        if not position:
+            continue
+        colour = track.colour or "var(--enemy)"
+        follower_x, follower_y = centre(position[0], position[1], size)
+        leader_x, leader_y = centre(leader_position[0], leader_position[1], size)
+        parts.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="%s" stroke-width="0.9" opacity="0.55">'
+                     '<title>%s round %d: follows leader %s (%s slot %d)</title></line>'
+                     % (follower_x, follower_y, leader_x, leader_y, colour, escape(track.name), round_number,
+                        formation["leader"], formation["shape"], formation["slot"]))
+        if slot:
+            slot_x, slot_y = centre(slot[0], slot[1], size)
+            half = size * 0.32
+            parts.append('<polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f %.1f,%.1f" fill="none" stroke="%s" '
+                         'stroke-width="1.4"><title>%s round %d: ideal %s slot %d at %s, ended %d hexes away'
+                         '</title></polygon>'
+                         % (slot_x, slot_y - half, slot_x + half, slot_y, slot_x, slot_y + half, slot_x - half,
+                            slot_y, colour, escape(track.name), round_number, formation["shape"], formation["slot"],
+                            hex_number(*slot), hex_distance(position, slot)))
+            parts.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="%s" stroke-width="0.9" '
+                         'stroke-dasharray="1 2"/>' % (follower_x, follower_y, slot_x, slot_y, colour))
+    return '<g class="formation-layer">%s</g>' % "\n".join(parts)
 
 
 def render_game(trace, board, output_path, label):
@@ -869,6 +1001,8 @@ def render_game(trace, board, output_path, label):
         verdicts, summary = analyses[track.unit_id]
         layer = svg_unit(track, verdicts, summary, size, board.width, board.height, not track.ordered)
         (unit_layers if track.ordered else enemy_layers).append(layer)
+    slots = formation_slots(trace)
+    unit_layers.append(svg_formations(trace, slots, size))
     show_numbers = True
     svg = ('<svg id="board" xmlns="http://www.w3.org/2000/svg" width="%d" height="%d" viewBox="0 0 %.1f %.1f" '
            'role="img" aria-label="Board with ordered and actual unit paths">'
@@ -881,6 +1015,7 @@ def render_game(trace, board, output_path, label):
     # tables
     unit_rows = []
     decision_rows = []
+    formation_errors = {}
     total_overridden = 0
     ordered_units = 0
     for track in trace.units.values():
@@ -907,6 +1042,21 @@ def render_game(trace, board, output_path, label):
             distance_parts.append("facing off in %d round(s)" % summary["facing_misses"])
         if summary["moved_away_rounds"]:
             distance_parts.append("ended farther from its waypoint in %d round(s)" % summary["moved_away_rounds"])
+        slot_offsets = []
+        for (slot_round, slot_unit), (slot, leader_position, formation) in slots.items():
+            slot_position = position_of(track.ends.get(slot_round)) if slot_unit == track.unit_id else None
+            if slot and slot_position:
+                slot_offsets.append(hex_distance(slot_position, slot))
+        if slot_offsets:
+            distance_parts.append("formation slot off by %.1f hexes on average (max %d)"
+                                  % (sum(slot_offsets) / len(slot_offsets), max(slot_offsets)))
+        fold_count = 0
+        for round_events in track.events.values():
+            for event_text in round_events:
+                if event_text.startswith("FORMATION_FOLD"):
+                    fold_count += 1
+        if fold_count:
+            distance_parts.append("folded to column %d time(s)" % fold_count)
         distance_text = "; ".join(distance_parts) if distance_parts else "-"
         rules = ", ".join("%s x%d" % (rule, count) for rule, count in sorted(summary["rule_counts"].items()))
         verdict_class = "bad" if summary["overridden_rounds"] else "good"
@@ -934,15 +1084,28 @@ def render_game(trace, board, output_path, label):
                 if verdict["distance_after"] > verdict["distance_before"]:
                     distance_class = "warn"
             facing_class = "warn" if "ended" in verdict["facing_note"] else ""
+            formation_text = "-"
+            slot_entry = slots.get((round_number, track.unit_id))
+            end_formation = parse_formation(track.ends[round_number].get("formation", "")) \
+                if round_number in track.ends else None
+            if slot_entry and slot_entry[0] and verdict["position"]:
+                slot_off = hex_distance(verdict["position"], slot_entry[0])
+                formation_text = "%s slot %d: %d hex%s from ideal %s" % (
+                    slot_entry[2]["shape"], slot_entry[2]["slot"], slot_off, "" if slot_off == 1 else "es",
+                    hex_number(*slot_entry[0]))
+                formation_errors.setdefault(track.unit_id, []).append(slot_off)
+            elif end_formation:
+                formation_text = "%s leader" % end_formation["shape"] if end_formation["slot"] == 0 \
+                    else "%s slot %d" % (end_formation["shape"], end_formation["slot"])
             decision_rows.append(
                 "<tr><td><span class='swatch' style='background:%s'></span>%s</td><td>%d</td><td>%s</td><td>%s</td>"
                 "<td>%s</td><td>%s</td><td class='%s'>%s</td><td class='%s'>%s</td><td class='%s'>%s</td>"
-                "<td>%s</td></tr>"
+                "<td>%s</td><td>%s</td></tr>"
                 % (track.colour, escape(track.name), round_number,
                    hex_number(*verdict["position"]) if verdict["position"] else "-",
                    escape(", ".join(flags)), escape(verdict["expected"] or "-"),
                    escape(verdict["rule"]), status_class, status, distance_class, distance_text, facing_class,
-                   escape(verdict["facing_note"] or "-"),
+                   escape(verdict["facing_note"] or "-"), escape(formation_text),
                    escape("; ".join([verdict["detail"] or (verdict["reason"] if verdict["followed"] is False
                                                            else "")] + verdict["events"]).strip("; "))))
 
@@ -962,6 +1125,7 @@ Orders: <code>%(orders)s</code>. Trace: <code>%(trace)s</code>.</div>
 <div class="toolbar"><button onclick="toggleTheme()">Light / dark</button>
 <button onclick="toggleEnemies()">Show / hide units without orders</button>
 <button onclick="toggleHexNumbers()">Show / hide hex numbers</button>
+<button onclick="toggleFormations()">Show / hide formation slots</button>
 <a href="index.html">All games</a></div>
 %(derived)s
 <div class="layout"><div class="mapbox">%(svg)s</div>
@@ -973,7 +1137,8 @@ Orders: <code>%(orders)s</code>. Trace: <code>%(trace)s</code>.</div>
 <p class="small">Rule comes from the bot's [BotOrders] log line; a * means it was derived from the bot's cached behaviour
 because the build does not log one. "Expected" is the order in force that round.</p>
 <table><tr><th>Unit</th><th>Round</th><th>End hex</th><th>State</th><th>Expected</th><th>Rule</th><th>Result</th>
-<th>Hexes to next waypoint (start -> end)</th><th>Facing</th><th>Logged reason and events</th></tr>%(decisions)s
+<th>Hexes to next waypoint (start -> end)</th><th>Facing</th><th>Formation (ideal slot rebuilt from the
+leader's end hex)</th><th>Logged reason and events</th></tr>%(decisions)s
 </table>
 </body></html>
 """ % {

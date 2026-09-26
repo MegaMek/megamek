@@ -93,14 +93,15 @@ public interface OrderApplier {
      * @param edge          the edge of the edge order, or an empty string
      * @param facingMoving  the ordered facing while moving, 0-5, or -1 for automatic
      * @param facingStopped the ordered facing when stopped, 0-5, or -1 for automatic
+     * @param formation     the unit's formation as {@code SHAPE leader=N spacing=N slot=N PACE CONTACT}, or empty
      */
     record OrderSnapshot(@Nullable Coords headWaypoint, List<Coords> route, String priority, boolean paused,
-          boolean stopped, String edgeOrder, String edge, int facingMoving, int facingStopped) {
+          boolean stopped, String edgeOrder, String edge, int facingMoving, int facingStopped, String formation) {
 
         /** A snapshot with only a waypoint list, for a model without the other orders. */
         public static OrderSnapshot ofRoute(List<Coords> route) {
             return new OrderSnapshot(route.isEmpty() ? null : route.getFirst(), route, "", false, false, "", "", -1,
-                  -1);
+                  -1, "");
         }
     }
 }

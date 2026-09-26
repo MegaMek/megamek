@@ -1,0 +1,10 @@
+# Bot orders script for formations-32x34.mms. Needs the formations branch.
+# 'units a b c d' lists a lance; the first unit leads and the others take slots 1, 2, 3 in that order.
+# Round 0 is the first round of these scenario games. Hexes are column then row.
+
+# Command lance: Wedge, spacing 2, holds formation even in contact; route north through the deep water.
+round 0 | units 101 102 103 104 | route 1022 1012 1004
+round 0 | units 101 102 103 104 | formation WEDGE spacing 2 pace WALK contact HOLD
+# Battle lance: Echelon Right, spacing 2, breaks formation on contact.
+round 0 | units 105 106 107 108 | route 2322 2512 2404
+round 0 | units 105 106 107 108 | formation ECHELON_RIGHT spacing 2 pace WALK contact BREAK

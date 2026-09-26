@@ -40,6 +40,10 @@ import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Coords;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -74,6 +78,7 @@ public class UnitOrdersApplier implements OrderApplier {
         int facingMoving = UnitOrders.FACING_AUTO;
         int facingStopped = UnitOrders.FACING_AUTO;
         OrderPriority priority = null;
+        FormationOrder formation = null;
         switch (order.action()) {
             case WAYPOINTS -> {
                 action = UnitOrderAction.ROUTE;
@@ -106,12 +111,17 @@ public class UnitOrdersApplier implements OrderApplier {
                 action = UnitOrderAction.PRIORITY;
                 priority = OrderPriority.valueOf(ScenarioOrderScript.priorityKeyword(arguments.getFirst()));
             }
+            case FORMATION -> {
+                action = UnitOrderAction.FORMATION;
+                formation = formationFor(order, serverUnit);
+            }
+            case FORMATION_OFF -> action = UnitOrderAction.FORMATION_OFF;
             default -> {
                 return "not a unit order: " + order.action();
             }
         }
         UnitOrders newOrders = action.apply(serverUnit.getUnitOrders(), hexes, edge, facingMoving, facingStopped,
-              priority, round);
+              priority, round, formation);
         serverUnit.setUnitOrders(newOrders);
         botUnit.setUnitOrders(newOrders);
         gameManager.entityUpdate(serverUnit.getId());
@@ -136,7 +146,36 @@ public class UnitOrdersApplier implements OrderApplier {
         return new OrderSnapshot(route.isEmpty() ? null : route.getFirst(), route, orders.getPriority().name(),
               orders.isPaused(), orders.isStoppedInRound(bot.getGame().getCurrentRound()),
               orders.getEdgeOrder().name(), orders.getEdge().name(), orders.getFacingWhileMoving(),
-              orders.getFacingWhenStopped());
+              orders.getFacingWhenStopped(), orders.getFormation().map(FormationOrder::toString).orElse(""));
+    }
+
+    /**
+     * Builds a unit's place in a formation. With a {@code units a b c} selector the first unit leads and the others
+     * take slots 1, 2, ... in the order listed; otherwise the unit leads itself.
+     */
+    private static FormationOrder formationFor(ScriptedOrder order, Entity unit) {
+        List<String> arguments = order.arguments();
+        FormationShape shape = FormationShape.valueOf(arguments.getFirst().toUpperCase(Locale.ROOT));
+        int spacing = FormationOrder.DEFAULT_SPACING;
+        FormationPace pace = FormationPace.WALK;
+        ContactRule contactRule = ContactRule.BREAK;
+        for (int index = 1; index + 1 < arguments.size(); index += 2) {
+            String value = arguments.get(index + 1).toUpperCase(Locale.ROOT);
+            switch (arguments.get(index).toLowerCase(Locale.ROOT)) {
+                case "spacing" -> spacing = Integer.parseInt(value);
+                case "pace" -> pace = FormationPace.valueOf(value);
+                case "contact" -> contactRule = ContactRule.valueOf(value);
+                default -> throw new IllegalArgumentException("Unknown formation setting " + arguments.get(index));
+            }
+        }
+        int leaderId = unit.getId();
+        int slot = 0;
+        if (order.targetKind() == ScriptedOrder.TargetKind.UNIT_IDS) {
+            List<Integer> unitIds = ScriptedOrderDirector.listedUnitIds(order);
+            leaderId = unitIds.getFirst();
+            slot = Math.max(0, unitIds.indexOf(unit.getId()));
+        }
+        return new FormationOrder(shape, leaderId, spacing, slot, pace, contactRule);
     }
 
     private static List<Coords> hexes(List<String> arguments) {

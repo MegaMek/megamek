@@ -332,6 +332,7 @@ public class ScriptedOrderDirector {
                 case UNIT_ID -> Integer.toString(serverUnit.getId()).equals(order.targetValue());
                 case UNIT_NAME -> matchesName(serverUnit, order.targetValue());
                 case BOT -> bot.getName().equalsIgnoreCase(order.targetValue());
+                case UNIT_IDS -> listedUnitIds(order).contains(serverUnit.getId());
                 case ALL -> true;
             };
             if (selected) {
@@ -339,6 +340,19 @@ public class ScriptedOrderDirector {
             }
         }
         return targets;
+    }
+
+    /**
+     * @return the unit ids of a {@code units a b c} selector, in the order given
+     */
+    static List<Integer> listedUnitIds(ScriptedOrder order) {
+        List<Integer> unitIds = new ArrayList<>();
+        for (String unitId : order.targetValue().split(" ")) {
+            if (!unitId.isBlank()) {
+                unitIds.add(Integer.parseInt(unitId));
+            }
+        }
+        return unitIds;
     }
 
     private static boolean matchesName(Entity unit, String name) {

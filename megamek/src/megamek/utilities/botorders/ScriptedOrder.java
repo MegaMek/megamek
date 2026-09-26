@@ -59,6 +59,8 @@ public record ScriptedOrder(int round, TargetKind targetKind, String targetValue
         UNIT_ID,
         /** Every unit owned by the named bot player. */
         BOT,
+        /** The listed units, by id, in the given order ({@code units 101 102 103}); the first leads a formation. */
+        UNIT_IDS,
         /** Every unit owned by any bot. */
         ALL
     }
@@ -90,6 +92,13 @@ public record ScriptedOrder(int round, TargetKind targetKind, String targetValue
         /** Set the facing while moving and when stopped (N, NE, SE, S, SW, NW, 0-5 or AUTO). Unit orders only. */
         FACING,
         /** Set the route priority, NORMAL or IMPERATIVE. Unit orders model only. */
-        PRIORITY
+        PRIORITY,
+        /**
+         * Put the selected units in a formation: shape, then optional {@code spacing N}, {@code pace WALK|RUN} and
+         * {@code contact BREAK|HOLD}. With {@code units a b c} the first unit leads and the rest take slots in order.
+         */
+        FORMATION,
+        /** Take the selected units out of their formation. */
+        FORMATION_OFF
     }
 }

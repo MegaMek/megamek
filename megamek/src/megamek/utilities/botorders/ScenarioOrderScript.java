@@ -84,6 +84,7 @@ public final class ScenarioOrderScript {
     private static final Pattern UNIT_ID_PATTERN = Pattern.compile("(?i)unit\\s+id\\s+(\\d+)");
     private static final Pattern UNIT_NAME_PATTERN = Pattern.compile("(?i)unit\\s+\"([^\"]+)\"");
     private static final Pattern BOT_PATTERN = Pattern.compile("(?i)bot\\s+\"([^\"]+)\"");
+    private static final Pattern UNIT_IDS_PATTERN = Pattern.compile("(?i)units\\s+((?:\\d+\\s*)+)");
     private static final Pattern PERCENT_PATTERN = Pattern.compile("(\\d+)%?");
 
     private final List<ScriptedOrder> orders;
@@ -161,7 +162,11 @@ public final class ScenarioOrderScript {
         Matcher unitIdMatcher = UNIT_ID_PATTERN.matcher(selector);
         Matcher unitNameMatcher = UNIT_NAME_PATTERN.matcher(selector);
         Matcher botMatcher = BOT_PATTERN.matcher(selector);
-        if (unitIdMatcher.matches()) {
+        Matcher unitIdsMatcher = UNIT_IDS_PATTERN.matcher(selector);
+        if (unitIdsMatcher.matches()) {
+            targetKind = TargetKind.UNIT_IDS;
+            targetValue = unitIdsMatcher.group(1).trim().replaceAll("\\s+", " ");
+        } else if (unitIdMatcher.matches()) {
             targetKind = TargetKind.UNIT_ID;
             targetValue = unitIdMatcher.group(1);
         } else if (unitNameMatcher.matches()) {
@@ -210,6 +215,11 @@ public final class ScenarioOrderScript {
             }
             case "facing" -> action = OrderAction.FACING;
             case "priority" -> action = OrderAction.PRIORITY;
+            case "formation" -> {
+                boolean isOff = (words.length > 1) && words[1].equalsIgnoreCase("off");
+                action = isOff ? OrderAction.FORMATION_OFF : OrderAction.FORMATION;
+                firstArgument = isOff ? 2 : 1;
+            }
             default -> throw new IllegalArgumentException(problem(lineNumber, line, "unknown action " + verb
                   + " (waypoints, add waypoints, clear, flee, cripple, damage internal N%, pause, resume, stop,"
                   + " move to edge E, exit by edge E, facing moving F stopped F, priority P)"));
@@ -256,7 +266,12 @@ public final class ScenarioOrderScript {
                     throw new IllegalArgumentException(problem(lineNumber, line, "priority needs NORMAL or IMPERATIVE"));
                 }
             }
-            case FACING, CLEAR, CRIPPLE, PAUSE, RESUME, STOP -> {
+            case FORMATION -> {
+                if (arguments.isEmpty()) {
+                    throw new IllegalArgumentException(problem(lineNumber, line, "formation needs a shape"));
+                }
+            }
+            case FACING, CLEAR, CRIPPLE, PAUSE, RESUME, STOP, FORMATION_OFF -> {
                 // no further arguments to check
             }
         }

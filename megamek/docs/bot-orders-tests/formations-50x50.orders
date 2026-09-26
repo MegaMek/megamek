@@ -1,0 +1,18 @@
+# Bot orders script for formations-50x50.mms. Needs the formations branch.
+# Four Lyran lances, each in a different shape, routed north. Round 0 is the first round.
+
+# A1 Command: LINE
+round 0 | units 101 102 103 104 | route 1238 1829 2322 2412 2406
+round 0 | units 101 102 103 104 | formation LINE spacing 2 pace WALK contact HOLD
+
+# A2 Battle: VEE
+round 0 | units 105 106 107 108 | route 2240 3027 3010 2904
+round 0 | units 105 106 107 108 | formation VEE spacing 2 pace WALK contact BREAK
+
+# A3 Recon: COLUMN
+round 0 | units 109 110 111 112 | route 3242 3632 3822 3812 3604
+round 0 | units 109 110 111 112 | formation COLUMN spacing 2 pace WALK contact HOLD
+
+# A4 Fire: ECHELON_LEFT
+round 0 | units 113 114 115 116 | route 4038 4328 4218 3908
+round 0 | units 113 114 115 116 | formation ECHELON_LEFT spacing 2 pace WALK contact BREAK

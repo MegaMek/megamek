@@ -95,7 +95,7 @@ public class BotOrderRecorder implements AutoCloseable {
     private static final List<String> COLUMNS = List.of("game", "stage", "round", "unitId", "name", "owner", "col",
           "row", "facing", "crippled", "withdrawing", "behaviour", "rule", "detail", "headWaypoint", "fleeEdge",
           "retreatEdge", "homeEdge", "route", "priority", "paused", "stopped", "edgeOrder", "edge", "facingMoving",
-          "facingStopped", "orderAction", "orderArgs", "note");
+          "facingStopped", "formation", "orderAction", "orderArgs", "note");
 
     /** Matches a decision line: "[BotOrders] name (ID 12) round 3: RULE - detail". */
     private static final Pattern DECISION_PATTERN =
@@ -238,6 +238,7 @@ public class BotOrderRecorder implements AutoCloseable {
         row.put("edge", orders.edge());
         row.put("facingMoving", Integer.toString(orders.facingMoving()));
         row.put("facingStopped", Integer.toString(orders.facingStopped()));
+        row.put("formation", orders.formation());
         writeRow(row);
     }
 
@@ -329,6 +330,17 @@ public class BotOrderRecorder implements AutoCloseable {
             return;
         }
         Matcher decisionMatcher = DECISION_PATTERN.matcher(message);
+        if (decisionMatcher.matches() && decisionMatcher.group(3).startsWith("FORMATION_")) {
+            // formation lines come on top of the movement decision; keep them as events, not as the rule
+            synchronized (this) {
+                Map<String, String> row = newRow(STAGE_EVENT, Integer.parseInt(decisionMatcher.group(2)));
+                row.put("unitId", decisionMatcher.group(1));
+                row.put("rule", decisionMatcher.group(3));
+                row.put("detail", decisionMatcher.group(3) + " - " + decisionMatcher.group(4));
+                writeRow(row);
+            }
+            return;
+        }
         if (decisionMatcher.matches()) {
             synchronized (this) {
                 decisionsByUnitAndRound.put(decisionMatcher.group(1) + ":" + decisionMatcher.group(2),

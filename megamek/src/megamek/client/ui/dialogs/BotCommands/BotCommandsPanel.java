@@ -56,7 +56,6 @@ import megamek.client.AbstractClient;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
-import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.CombatPosture;
 import megamek.client.ui.Messages;
@@ -108,6 +107,7 @@ public class BotCommandsPanel extends JPanel {
     private boolean pauseLatch = false;
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
+    private BotOrdersMenuBuilder ordersMenuBuilder;
 
     /**
      * Bot Commands Panel constructor.
@@ -189,35 +189,32 @@ public class BotCommandsPanel extends JPanel {
     private void initialize() {
         applyLayout(false);
         UIUtil.applyTopBarBackground(this);
-        var retreat = createButton("Retreat");
+        ordersMenuBuilder = new BotOrdersMenuBuilder(client,
+              (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
+                    "BotCommandPanel.WaypointPrompt.message", onPicked),
+              this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
+        var orders = createButton("Orders");
+        var targets = createButton("Targets");
         var maneuver = createButton("Maneuver");
-        var priorityTarget = createButton("PriorityTarget");
-        var ignoreTarget = createButton("IgnoreTarget");
         var setBehavior = createButton("SetBehavior");
         var artillery = createButton("Artillery");
-        var waypoints = createButton("Waypoints");
-        commandButtons = List.of(retreat, maneuver, priorityTarget, ignoreTarget, setBehavior, artillery,
-              waypoints);
+        commandButtons = List.of(orders, targets, maneuver, setBehavior, artillery);
 
+        orders.addActionListener(evt -> showButtonPopup(orders, this::createOrdersPopup));
+        targets.addActionListener(evt -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
-        priorityTarget.addActionListener(evt -> showButtonPopup(priorityTarget, this::createPriorityTargetPopup));
-        ignoreTarget.addActionListener(evt -> showButtonPopup(ignoreTarget, this::createIgnoreTargetPopup));
-        retreat.addActionListener(evt -> showButtonPopup(retreat, this::createRetreatPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
         artillery.addActionListener(evt -> showButtonPopup(artillery, this::createArtilleryPopup));
-        waypoints.addActionListener(evt -> showButtonPopup(waypoints, this::createWaypointsPopup));
         pauseContinue.addActionListener(evt -> pauseUnpause());
 
         // Add them to the buttonPanel. With 2 rows set, the grid grows columns as needed.
         this.add(pauseContinue);
+        this.add(orders);
+        this.add(targets);
         this.add(maneuver);
         this.add(setBehavior);
-        this.add(retreat);
         this.add(artillery);
-        this.add(priorityTarget);
-        this.add(ignoreTarget);
-        this.add(waypoints);
         // The misc button is only added to the panel once a caller configures it (e.g. as Request Victory). It is left
         // out until then because GridLayout reserves a cell for a child even while that child is invisible, which would
         // leave an empty gap at the end of the strip in the GUIs that never configure it.
@@ -405,36 +402,36 @@ public class BotCommandsPanel extends JPanel {
         sendChatCommand(botPlayer, ChatCommands.SHOW_DISHONORED);
     }
 
-    private JPopupMenu createRetreatPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> {
-            addRetreatAction(botMenu, botPlayer, CardinalEdge.NORTH, this::retreatNorth);
-            addRetreatAction(botMenu, botPlayer, CardinalEdge.EAST, this::retreatEast);
-            addRetreatAction(botMenu, botPlayer, CardinalEdge.SOUTH, this::retreatSouth);
-            addRetreatAction(botMenu, botPlayer, CardinalEdge.WEST, this::retreatWest);
-            addRetreatAction(botMenu, botPlayer, CardinalEdge.NEAREST, this::retreatNearestEdge);
-            addRetreatAction(botMenu, botPlayer, CardinalEdge.NONE, this::noRetreat);
-            botMenu.addSeparator();
-            addBotAction(botMenu, botPlayer, "HoldPosition", this::holdPosition);
-            addBotAction(botMenu, botPlayer, "ResumeMovement", this::resumeMovement);
-            // Shoot-and-scoot only moves on-board artillery; gray it out for a bot whose artillery is all off-board
-            // (off-board units cannot move). Evaluated per bot, since a player may command a mix of on- and off-board
-            // artillery bots.
-            boolean canScoot = hasMovableArtillery(botPlayer);
-            JMenuItem shootAndScootItem = addBotAction(botMenu, botPlayer, "ShootAndScoot", this::enableShootAndScoot);
-            JMenuItem stopShootAndScootItem = addBotAction(botMenu, botPlayer, "StopShootAndScoot",
-                  this::disableShootAndScoot);
-            JMenuItem scootToHexItem = new JMenuItem(Messages.getString("BotCommandPanel.ScootToHex.title"));
-            scootToHexItem.setToolTipText(Messages.getString("BotCommandPanel.ScootToHex.tooltip"));
-            scootToHexItem.addActionListener(evt -> scootToHex(botPlayer));
-            botMenu.add(scootToHexItem);
-            if (!canScoot) {
-                String reason = Messages.getString("BotCommandPanel.ShootAndScoot.noOnBoardArtillery");
-                for (JMenuItem item : List.of(shootAndScootItem, stopShootAndScootItem, scootToHexItem)) {
-                    item.setEnabled(false);
-                    item.setToolTipText(reason);
-                }
+    /**
+     * The per-unit orders for each bot: routes, edges, facing, priority, pause, resume, stop and clear, for all units,
+     * one lance or one unit.
+     */
+    private JPopupMenu createOrdersPopup() {
+        return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populate(botMenu, botPlayer, null),
+              this::hasOnBoardUnits);
+    }
+
+    /**
+     * Adds the shoot-and-scoot orders to a bot's artillery menu. Shoot-and-scoot only moves on-board artillery, so the
+     * items are grayed out for a bot whose artillery is all off-board (off-board units cannot move). Evaluated per
+     * bot, since a player may command a mix of on- and off-board artillery bots.
+     */
+    private void addShootAndScootActions(JMenu botMenu, Player botPlayer) {
+        boolean canScoot = hasMovableArtillery(botPlayer);
+        JMenuItem shootAndScootItem = addBotAction(botMenu, botPlayer, "ShootAndScoot", this::enableShootAndScoot);
+        JMenuItem stopShootAndScootItem = addBotAction(botMenu, botPlayer, "StopShootAndScoot",
+              this::disableShootAndScoot);
+        JMenuItem scootToHexItem = new JMenuItem(Messages.getString("BotCommandPanel.ScootToHex.title"));
+        scootToHexItem.setToolTipText(Messages.getString("BotCommandPanel.ScootToHex.tooltip"));
+        scootToHexItem.addActionListener(evt -> scootToHex(botPlayer));
+        botMenu.add(scootToHexItem);
+        if (!canScoot) {
+            String reason = Messages.getString("BotCommandPanel.ShootAndScoot.noOnBoardArtillery");
+            for (JMenuItem item : List.of(shootAndScootItem, stopShootAndScootItem, scootToHexItem)) {
+                item.setEnabled(false);
+                item.setToolTipText(reason);
             }
-        }, this::hasOnBoardUnits);
+        }
     }
 
     /**
@@ -479,14 +476,6 @@ public class BotCommandsPanel extends JPanel {
             }
         }
         return false;
-    }
-
-    private void holdPosition(Player botPlayer) {
-        sendChatCommand(botPlayer, ChatCommands.HOLD_POSITION);
-    }
-
-    private void resumeMovement(Player botPlayer) {
-        sendChatCommand(botPlayer, ChatCommands.HOLD_POSITION, "false");
     }
 
     private void enableShootAndScoot(Player botPlayer) {
@@ -693,24 +682,6 @@ public class BotCommandsPanel extends JPanel {
         return menuItem;
     }
 
-    /**
-     * Adds a retreat-edge action item to a bot's submenu.
-     *
-     * @param botMenu      The bot submenu to add the item to
-     * @param botPlayer    The bot the retreat order will be issued to
-     * @param cardinalEdge The edge to retreat toward
-     * @param action       The action to run against the bot
-     */
-    private void addRetreatAction(JMenu botMenu, Player botPlayer, CardinalEdge cardinalEdge,
-          Consumer<Player> action) {
-        JMenuItem menuItem = new JMenuItem(cardinalEdge.toString());
-        menuItem.addActionListener(evt -> {
-            action.accept(botPlayer);
-            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.retreat", cardinalEdge));
-        });
-        botMenu.add(menuItem);
-    }
-
     private void carefulAimManeuver(Player botPlayer) {
         setAvoid(botPlayer, 6);
         setBravery(botPlayer, 8);
@@ -822,13 +793,23 @@ public class BotCommandsPanel extends JPanel {
         sendChatCommand(botPlayer, ChatCommands.CLEAR_IGNORED_TARGETS);
     }
 
-    private JPopupMenu createPriorityTargetPopup() {
+    /**
+     * What each bot shoots at first and what it leaves alone: priority, TAG and strategic targets and blood feuds,
+     * then ignored units and players. Priority and ignore orders share one menu to leave room on the panel.
+     */
+    private JPopupMenu createTargetsPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
             addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
             addEnemyUnitMenu(botMenu, botPlayer, "TagTargetMenu", this::setTagTarget);
             addStrategicTargetItem(botMenu, botPlayer);
             addEnemyPlayerMenu(botMenu, botPlayer, "BloodFeud", ChatCommands.BLOOD_FEUD,
                   "BotCommandPanel.toast.bloodFeud");
+            botMenu.addSeparator();
+            addEnemyUnitMenu(botMenu, botPlayer, "IgnoreTargetMenu", this::setIgnoreTarget);
+            addEnemyPlayerMenu(botMenu, botPlayer, "IgnorePlayer", ChatCommands.IGNORE_PLAYER,
+                  "BotCommandPanel.toast.ignorePlayer");
+            addBotAction(botMenu, botPlayer, "IgnoreTurrets", this::ignoreTurrets);
+            addBotAction(botMenu, botPlayer, "ClearIgnoredTargets", this::clearIgnoredTargetsOrder);
         });
     }
 
@@ -872,16 +853,6 @@ public class BotCommandsPanel extends JPanel {
                   acknowledgeOrder(botPlayer,
                         Messages.getString("BotCommandPanel.toast.strategicTarget", targets));
               });
-    }
-
-    private JPopupMenu createIgnoreTargetPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> {
-            addEnemyUnitMenu(botMenu, botPlayer, "IgnoreTargetMenu", this::setIgnoreTarget);
-            addEnemyPlayerMenu(botMenu, botPlayer, "IgnorePlayer", ChatCommands.IGNORE_PLAYER,
-                  "BotCommandPanel.toast.ignorePlayer");
-            addBotAction(botMenu, botPlayer, "IgnoreTurrets", this::ignoreTurrets);
-            addBotAction(botMenu, botPlayer, "ClearIgnoredTargets", this::clearIgnoredTargetsOrder);
-        });
     }
 
     /**
@@ -934,6 +905,8 @@ public class BotCommandsPanel extends JPanel {
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryVolley", ArtilleryOrder.VOLLEY));
             botMenu.add(createArtilleryFireMissionMenu(botPlayer, "ArtilleryBarrage", ArtilleryOrder.BARRAGE));
             botMenu.add(createCounterBatteryMenu(botPlayer));
+            botMenu.addSeparator();
+            addShootAndScootActions(botMenu, botPlayer);
         }, this::botHasArtillery);
     }
 
@@ -1308,23 +1281,6 @@ public class BotCommandsPanel extends JPanel {
         return targets.replace("-", ", ");
     }
 
-    private JPopupMenu createWaypointsPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> {
-            if (!getUnitsOwnedBy(botPlayer).isEmpty()) {
-                botMenu.add(createWaypointHexOrderMenu(botPlayer, "SetWaypoints", ChatCommands.SET_WAYPOINT));
-                botMenu.add(createWaypointHexOrderMenu(botPlayer, "AddWaypoint", ChatCommands.ADD_WAYPOINT));
-                botMenu.addSeparator();
-                botMenu.add(createWaypointUnitOrderMenu(botPlayer, "RemoveWaypoint", ChatCommands.REMOVE_WAYPOINT));
-                botMenu.add(createWaypointUnitOrderMenu(botPlayer, "ClearWaypoints", ChatCommands.CLEAR_WAYPOINT));
-            }
-            addBotAction(botMenu, botPlayer, "ClearAllWaypoints", this::clearAllWaypoints);
-        }, this::hasOnBoardUnits);
-    }
-
-    private void clearAllWaypoints(Player botPlayer) {
-        sendChatCommand(botPlayer, ChatCommands.CLEAR_ALL_WAYPOINTS);
-    }
-
     /**
      * Lists all units owned by the given bot player.
      *
@@ -1336,78 +1292,6 @@ public class BotCommandsPanel extends JPanel {
         return client.getInGameObjects().stream()
               .filter(unit -> unit.getOwnerId() == botPlayer.getId())
               .toList();
-    }
-
-    /**
-     * Creates a waypoint menu for one bot that needs target hexes: pick one of the bot's units, then enter the hexes.
-     *
-     * @param botPlayer       The bot the waypoint order will be issued to
-     * @param messageKey      The resource key for the menu title and tooltip
-     * @param waypointCommand The waypoint chat command to send (set-waypoints or add-waypoint)
-     *
-     * @return The created menu
-     */
-    private JMenu createWaypointHexOrderMenu(Player botPlayer, String messageKey, ChatCommands waypointCommand) {
-        return createWaypointMenu(botPlayer, messageKey, (bot, unit) ->
-              promptAndSendWaypoints(bot, unit, waypointCommand,
-                    Messages.getString("BotCommandPanel." + messageKey + ".title")));
-    }
-
-    /**
-     * Creates a waypoint menu for one bot that acts on a unit without needing hexes (remove last / clear waypoints).
-     *
-     * @param botPlayer       The bot the waypoint order will be issued to
-     * @param messageKey      The resource key for the menu title and tooltip
-     * @param waypointCommand The waypoint chat command to send (remove-waypoint or clear-waypoints)
-     *
-     * @return The created menu
-     */
-    private JMenu createWaypointUnitOrderMenu(Player botPlayer, String messageKey, ChatCommands waypointCommand) {
-        return createWaypointMenu(botPlayer, messageKey, (bot, unit) -> {
-            sendChatCommand(bot, waypointCommand, String.valueOf(unit.getId()));
-            acknowledgeOrder(bot, Messages.getString("BotCommandPanel.toast.unitOrder",
-                  Messages.getString("BotCommandPanel." + messageKey + ".title"),
-                  unit.getId(), unit.generalName()));
-        });
-    }
-
-    /**
-     * Creates a menu listing one bot's units; selecting a unit runs the given action.
-     *
-     * @param botPlayer  The bot whose units are listed
-     * @param messageKey The resource key for the menu title and tooltip
-     * @param unitAction The action to run with the bot and the chosen unit
-     *
-     * @return The created menu
-     */
-    private JMenu createWaypointMenu(Player botPlayer, String messageKey, BiConsumer<Player, InGameObject> unitAction) {
-        JMenu menu = new JMenu(Messages.getString("BotCommandPanel." + messageKey + ".title"));
-        menu.setToolTipText(Messages.getString("BotCommandPanel." + messageKey + ".tooltip"));
-        for (InGameObject unit : getUnitsOwnedBy(botPlayer)) {
-            JMenuItem unitItem = new JMenuItem("ID:" + unit.getId() + " " + unit.generalName());
-            unitItem.addActionListener(evt -> unitAction.accept(botPlayer, unit));
-            menu.add(unitItem);
-        }
-        return menu;
-    }
-
-    /**
-     * Prompts the player for waypoint hexes and sends the given waypoint command for the chosen unit.
-     *
-     * @param botPlayer       The bot to receive the order
-     * @param unit            The unit to set waypoints for
-     * @param waypointCommand The waypoint chat command to send
-     * @param orderTitle      The human-readable order name for the confirmation toast
-     */
-    private void promptAndSendWaypoints(Player botPlayer, InGameObject unit, ChatCommands waypointCommand,
-          String orderTitle) {
-        pickTargetHexes(orderTitle + " - " + unit.generalName(), false, 0,
-              "BotCommandPanel.WaypointPrompt.message",
-              targets -> {
-                  sendChatCommand(botPlayer, waypointCommand, unit.getId() + " " + targets);
-                  acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.unitOrder",
-                        orderTitle, unit.getId(), unit.generalName()));
-              });
     }
 
     private record PlayerInGameObject(Player player, InGameObject inGameObject) {}
@@ -1460,34 +1344,6 @@ public class BotCommandsPanel extends JPanel {
                     Messages.getString("BotCommandPanel.PriorityTarget.title"),
                     playerInGameObject.inGameObject().getId(),
                     playerInGameObject.inGameObject().generalName()));
-    }
-
-    private void retreatNorth(Player botPlayer) {
-        retreatTowards(botPlayer, CardinalEdge.NORTH);
-    }
-
-    private void retreatEast(Player botPlayer) {
-        retreatTowards(botPlayer, CardinalEdge.EAST);
-    }
-
-    private void retreatWest(Player botPlayer) {
-        retreatTowards(botPlayer, CardinalEdge.WEST);
-    }
-
-    private void retreatSouth(Player botPlayer) {
-        retreatTowards(botPlayer, CardinalEdge.SOUTH);
-    }
-
-    private void retreatNearestEdge(Player botPlayer) {
-        retreatTowards(botPlayer, CardinalEdge.NEAREST);
-    }
-
-    private void noRetreat(Player botPlayer) {
-        retreatTowards(botPlayer, CardinalEdge.NONE);
-    }
-
-    private void retreatTowards(Player botPlayer, CardinalEdge cardinalEdge) {
-        sendChatCommand(botPlayer, ChatCommands.FLEE, cardinalEdge.getIndex());
     }
 
     private void pauseUnpause() {

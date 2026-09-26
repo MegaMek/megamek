@@ -1091,7 +1091,10 @@ public class Princess extends BotClient {
     @Override
     protected void calculateDeployment() {
         // get the first unit
-        final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
+        // a formation's leader deploys before its members, so they can deploy in their slots around it
+        final int entityNum = getUnitOrdersFollower().chooseUnitToDeploy(
+              game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber)),
+              game.getTurnForPlayer(localPlayerNumber));
         sendChat("deploying unit " + getEntity(entityNum).getChassis(), Level.INFO);
 
         // a unit that is withdrawing under forced withdrawal is not deployed
@@ -1410,6 +1413,9 @@ public class Princess extends BotClient {
         // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
         // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
         possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
+        // A formation member deploys in its slot beside its leader. Done here rather than in
+        // prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
+        possibleDeployCoords = getUnitOrdersFollower().preferDeploymentSlot(deployedUnit, possibleDeployCoords);
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;

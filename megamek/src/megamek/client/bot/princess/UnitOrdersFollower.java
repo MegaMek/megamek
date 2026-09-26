@@ -46,6 +46,7 @@ import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.orders.ContactRule;
@@ -646,6 +647,88 @@ public class UnitOrdersFollower {
             paceLimit = Math.min(paceLimit, isRunning ? member.getRunMP() : member.getWalkMP());
         }
         return paceLimit;
+    }
+
+    /**
+     * The hex a formation member should deploy in: its slot beside the formation's leader, once the leader is on the
+     * board. The slot comes from the member's place in the formation as set in the lobby, since an undeployed unit
+     * has no position yet. The shape faces the leader's first waypoint if it has a route, else the way the leader
+     * faces.
+     *
+     * @param entity a unit about to deploy
+     *
+     * @return the slot hex, or empty for a unit not in a formation, the leader itself, or a leader not yet deployed
+     */
+    public Optional<Coords> getDeploymentSlot(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (formation.get().getSlot() == 0)
+              || (formation.get().getLeaderId() == entity.getId())) {
+            return Optional.empty();
+        }
+        Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
+        if ((leader == null) || !leader.isDeployed() || (leader.getPosition() == null)
+              || (leader.getBoardId() != entity.getBoardId())) {
+            return Optional.empty();
+        }
+        Coords leaderPosition = leader.getPosition();
+        int heading = leader.getUnitOrders().getNextWaypoint()
+              .filter(waypoint -> !waypoint.equals(leaderPosition))
+              .map(leaderPosition::direction)
+              .orElse(leader.getFacing());
+        return Optional.of(FormationPlanner.idealSlot(leaderPosition, heading, formation.get().getShape(),
+              formation.get().getSpacing(), formation.get().getSlot()));
+    }
+
+    /**
+     * Puts the legal deployment hexes nearest a formation member's slot first, so the bot deploys the lance in its
+     * shape. Hexes outside the deployment zone are never added; a slot outside it just draws the member as close as
+     * the zone allows.
+     *
+     * @param entity               the unit about to deploy
+     * @param possibleDeployCoords the legal deployment hexes, in the bot's own order
+     *
+     * @return the same hexes, nearest the slot first, or unchanged for a unit with no deployment slot
+     */
+    public List<Coords> preferDeploymentSlot(Entity entity, List<Coords> possibleDeployCoords) {
+        Optional<Coords> slot = getDeploymentSlot(entity);
+        if (slot.isEmpty()) {
+            return possibleDeployCoords;
+        }
+        List<Coords> ordered = new ArrayList<>(possibleDeployCoords);
+        ordered.sort(Comparator.comparingInt(coords -> coords.distance(slot.get())));
+        LOGGER.info("[BotOrders] {} (ID {}): deploying in formation, slot {}, nearest legal hex {}",
+              entity.getDisplayName(), entity.getId(), slot.get().getBoardNum(),
+              ordered.isEmpty() ? "none" : ordered.get(0).getBoardNum());
+        return ordered;
+    }
+
+    /**
+     * Picks which unit to deploy this turn so a formation's leader goes down before its members, which then deploy
+     * in their slots around it. A member due to deploy is swapped for its leader when the leader may deploy this
+     * turn too.
+     *
+     * @param firstDeployable the unit the game would deploy next
+     * @param turn            the bot's deployment turn
+     *
+     * @return the unit to deploy
+     */
+    public int chooseUnitToDeploy(int firstDeployable, GameTurn turn) {
+        Entity unit = owner.getGame().getEntity(firstDeployable);
+        if ((unit == null) || (turn == null)) {
+            return firstDeployable;
+        }
+        Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (formation.get().getLeaderId() == unit.getId())) {
+            return firstDeployable;
+        }
+        Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
+        if ((leader != null) && !leader.isDeployed() && turn.isValidEntity(leader, owner.getGame())
+              && leader.shouldDeploy(owner.getGame().getRoundCount())) {
+            LOGGER.info("[BotOrders] deploying formation leader {} (ID {}) before {} (ID {})",
+                  leader.getDisplayName(), leader.getId(), unit.getDisplayName(), unit.getId());
+            return leader.getId();
+        }
+        return firstDeployable;
     }
 
     /**

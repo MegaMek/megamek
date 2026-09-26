@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -52,6 +53,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
@@ -264,5 +266,29 @@ class FormationFollowerTest {
 
         firestarter.setPosition(slot);
         assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
+    }
+
+    @Test
+    void theLeaderDeploysFirstAndMembersDeployInTheirSlots() {
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        leader.setDeployed(false);
+        second.setDeployed(false);
+        second.setPosition(null);
+        game.setCurrentRound(1);
+        GameTurn turn = mock(GameTurn.class);
+        when(turn.isValidEntity(any(Entity.class), any(Game.class))).thenReturn(true);
+
+        // the game would deploy the member first; the leader goes first so the member can form on it
+        assertEquals(20, princess.getUnitOrdersFollower().chooseUnitToDeploy(21, turn));
+        assertTrue(princess.getUnitOrdersFollower().getDeploymentSlot(second).isEmpty());
+
+        leader.setDeployed(true);
+        Coords slot = LEADER_HEX.translated(SOUTH_EAST, 2);
+        assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getDeploymentSlot(second));
+
+        List<Coords> legalHexes = List.of(new Coords(2, 2), slot.translated(SOUTH, 1), new Coords(28, 28));
+        assertEquals(slot.translated(SOUTH, 1),
+              princess.getUnitOrdersFollower().preferDeploymentSlot(second, legalHexes).get(0));
     }
 }

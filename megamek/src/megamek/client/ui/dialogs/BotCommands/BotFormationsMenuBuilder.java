@@ -102,6 +102,12 @@ public class BotFormationsMenuBuilder {
             addFormationItems(groupMenu, botPlayer, group, current);
             botMenu.add(groupMenu);
         }
+        if (botMenu.getItemCount() == 0) {
+            // say why rather than showing nothing, which looks like the button is broken
+            JMenuItem noFormation = new JMenuItem(Messages.getString("BotCommandPanel.Formations.needsTwoUnits"));
+            noFormation.setEnabled(false);
+            botMenu.add(noFormation);
+        }
         if (botMenu.getItemCount() > GROUP_SCROLL_THRESHOLD) {
             MenuScroller.setScrollerFor(botMenu, GROUP_SCROLL_THRESHOLD);
         }

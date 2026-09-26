@@ -123,6 +123,23 @@ class WaypointDistanceFieldTest {
     }
 
     @Test
+    void theWayRoundAWallToAnEdgeBeatsStepsTowardIt() {
+        // HammerGS's playtest: a Longbow behind a lake, ordered off the north edge, stood still because every first
+        // step of the way round scored as further from the edge than the shore it was on
+        WaypointDistanceField field = WaypointDistanceField.buildToEdge(mek, CardinalEdge.NORTH);
+        Coords towardTheWall = new Coords(2, WALL_ROW + 1);
+        Coords towardTheGap = new Coords(5, WALL_ROW + 2);
+
+        // one row nearer the edge in a straight line...
+        assertTrue(towardTheWall.getY() < towardTheGap.getY());
+        // ...but further by the way the unit can go
+        assertTrue(field.costFrom(towardTheWall) > field.costFrom(towardTheGap),
+              "toward the wall " + field.costFrom(towardTheWall) + " vs toward the gap "
+                    + field.costFrom(towardTheGap));
+        assertEquals(0, field.costFrom(new Coords(3, 0)));
+    }
+
+    @Test
     void theClifftopCannotBeReached() {
         WaypointDistanceField field = WaypointDistanceField.build(mek, WAYPOINT);
 

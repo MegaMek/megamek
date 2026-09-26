@@ -241,19 +241,64 @@ class FormationFollowerTest {
         assertTrue(princess.getUnitOrdersFollower().getFormationSlot(second).isPresent());
     }
 
+    private static MovePath moveUsing(int movementPoints) {
+        MovePath path = mock(MovePath.class);
+        when(path.getMpUsed()).thenReturn(movementPoints);
+        return path;
+    }
+
+    private static FormationOrder paced(int slot, FormationPace pace, ContactRule contactRule) {
+        return new FormationOrder(FormationShape.WEDGE, 20, 2, slot, pace, contactRule);
+    }
+
     @Test
-    void theLeaderKeepsToTheSlowestUnitsWalk() {
+    void atAWalkPaceEachUnitWalksUpToItsOwnWalkNotTheSlowestUnits() {
+        // HammerGS's playtest: a Grasshopper walking 5 leading a Longbow walking 3 was held to three hexes a turn
+        // while the rest of the Wedge waited in their slots for it. Each unit now walks at its own speed.
+        BipedMek grasshopper = member(20, LEADER_HEX, 0, 5);
+        BipedMek longbow = member(21, new Coords(16, 25), 1, 3);
+        MovePath walkThree = moveUsing(3);
+        MovePath jumpFive = moveUsing(5);
+        MovePath runSeven = moveUsing(7);
+
+        assertEquals(List.of(walkThree, jumpFive), princess.getUnitOrdersFollower().limitToFormationPace(grasshopper,
+              List.of(walkThree, jumpFive, runSeven)));
+        assertEquals(List.of(walkThree), princess.getUnitOrdersFollower().limitToFormationPace(longbow,
+              List.of(walkThree, jumpFive, runSeven)));
+    }
+
+    @Test
+    void atARunPaceEachUnitMayRunUpToItsOwnRun() {
+        BipedMek grasshopper = member(20, LEADER_HEX, 0, 5);
+        grasshopper.setUnitOrders(grasshopper.getUnitOrders().withFormation(paced(0, FormationPace.RUN,
+              ContactRule.BREAK)));
+        BipedMek longbow = member(21, new Coords(16, 25), 1, 3);
+        longbow.setUnitOrders(longbow.getUnitOrders().withFormation(paced(1, FormationPace.RUN, ContactRule.BREAK)));
+        doReturn(8).when(grasshopper).getRunMP();
+        doReturn(5).when(longbow).getRunMP();
+        MovePath runFive = moveUsing(5);
+        MovePath runEight = moveUsing(8);
+        MovePath sprintTen = moveUsing(10);
+
+        assertEquals(List.of(runFive, runEight), princess.getUnitOrdersFollower().limitToFormationPace(grasshopper,
+              List.of(runFive, runEight, sprintTen)));
+        assertEquals(List.of(runFive), princess.getUnitOrdersFollower().limitToFormationPace(longbow,
+              List.of(runFive, runEight, sprintTen)));
+    }
+
+    @Test
+    void aFormationBrokenOnContactIsNotPaced() {
         BipedMek leader = member(20, LEADER_HEX, 0, 6);
         member(21, new Coords(16, 25), 1, 3);
-        MovePath walkThree = mock(MovePath.class);
-        when(walkThree.getMpUsed()).thenReturn(3);
-        MovePath runFive = mock(MovePath.class);
-        when(runFive.getMpUsed()).thenReturn(5);
+        Entity enemy = mock(Entity.class);
+        when(enemy.getPosition()).thenReturn(LEADER_HEX.translated(0, 5));
+        when(enemy.getBoardId()).thenReturn(0);
+        enemies.add(enemy);
+        MovePath walkThree = moveUsing(3);
+        MovePath runNine = moveUsing(9);
 
-        List<MovePath> paced = princess.getUnitOrdersFollower().limitToFormationPace(leader,
-              List.of(walkThree, runFive));
-
-        assertEquals(List.of(walkThree), paced);
+        assertEquals(List.of(walkThree, runNine), princess.getUnitOrdersFollower().limitToFormationPace(leader,
+              List.of(walkThree, runNine)));
     }
 
     @Test

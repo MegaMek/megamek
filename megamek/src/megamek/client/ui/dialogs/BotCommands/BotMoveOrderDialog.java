@@ -71,6 +71,7 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
@@ -135,6 +136,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private JTable waypointTable;
     private JLabel unitsLabel;
     private JCheckBox formationBox;
+    private JCheckBox keepTogetherBox;
     private JComboBox<FormationShape> shapeCombo;
     private JComboBox<UnitOption> leaderCombo;
     private JComboBox<Integer> spacingCombo;
@@ -143,7 +145,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private JToggleButton pickButton;
     private JLabel selectedLabel;
     private JCheckBox autoFacingBox;
-    private JSpinner holdSpinner;
     private JComboBox<OrderPriority> priorityCombo;
     private BoardViewListenerAdapter hexClickListener;
     private Distractable suppressedDisplay;
@@ -252,7 +253,12 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         JPanel panel = section("BotCommandPanel.MoveOrder.formation");
         formationBox = new JCheckBox(Messages.getString("BotCommandPanel.MoveOrder.inFormation"));
         formationBox.addActionListener(event -> updateFormationEnabled());
-        panel.add(formationBox, BorderLayout.PAGE_START);
+        keepTogetherBox = new JCheckBox(Messages.getString("BotCommandPanel.MoveOrder.keepTogether"));
+        keepTogetherBox.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.keepTogether.tooltip"));
+        JPanel switches = new JPanel(new FlowLayout(FlowLayout.LEADING, UIUtil.scaleForGUI(GAP * 2), 0));
+        switches.add(formationBox);
+        switches.add(keepTogetherBox);
+        panel.add(switches, BorderLayout.PAGE_START);
 
         shapeCombo = new JComboBox<>(FormationShape.values());
         shapeCombo.setRenderer(labelRenderer("BotCommandPanel.Formations.shape."));
@@ -333,7 +339,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_FACING)
               .setCellEditor(new DefaultCellEditor(new JComboBox<>(WaypointTableModel.facingOptions()
                     .toArray(new WaypointTableModel.FacingOption[0]))));
+        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_FACING)
+              .setCellRenderer(new FacingCellRenderer());
         waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_HOLD).setCellEditor(new HoldCellEditor());
+        waypointTable.getColumnModel().getColumn(WaypointTableModel.COLUMN_HOLD).setCellRenderer(new HoldCellRenderer());
         waypointTable.getSelectionModel().addListSelectionListener(event -> {
             if (!event.getValueIsAdjusting()) {
                 loadDetail();
@@ -394,20 +403,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         selectedLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         text.add(selectedLabel);
         text.add(Box.createVerticalStrut(UIUtil.scaleForGUI(GAP)));
-        JPanel holdRow = new JPanel(new FlowLayout(FlowLayout.LEADING, UIUtil.scaleForGUI(4), 0));
-        holdRow.setAlignmentX(Component.LEFT_ALIGNMENT);
-        holdSpinner = new JSpinner(new SpinnerNumberModel(0, 0, WaypointTableModel.MAXIMUM_HOLD_TURNS, 1));
-        holdSpinner.addChangeListener(event -> {
-            int row = waypointTable.getSelectedRow();
-            if (!isLoadingDetail && (row >= 0)) {
-                waypoints.setHoldTurns(row, (Integer) holdSpinner.getValue());
-            }
-        });
-        holdRow.add(new JLabel(Messages.getString("BotCommandPanel.MoveOrder.holdFor")));
-        holdRow.add(holdSpinner);
-        holdRow.add(new JLabel(Messages.getString("BotCommandPanel.MoveOrder.holdAfter")));
-        text.add(holdRow);
-        text.add(Box.createVerticalStrut(UIUtil.scaleForGUI(GAP)));
         JLabel note = new JLabel("<html><div style='width:" + UIUtil.scaleForGUI(NOTE_WIDTH) + "px'>"
               + Messages.getString("BotCommandPanel.MoveOrder.holdNote") + "</div></html>");
         note.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -426,6 +421,41 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         row.add(new JLabel(Messages.getString("BotCommandPanel.MoveOrder.lastWaypointNote")));
         panel.add(row, BorderLayout.CENTER);
         return panel;
+    }
+
+    /** Draws the facing as a dropdown on every row, so the player can see it can be changed. */
+    private static final class FacingCellRenderer implements TableCellRenderer {
+        private final JComboBox<WaypointTableModel.FacingOption> combo = new JComboBox<>();
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+              boolean hasFocus, int row, int column) {
+            combo.removeAllItems();
+            if (value instanceof WaypointTableModel.FacingOption option) {
+                combo.addItem(option);
+            }
+            return combo;
+        }
+    }
+
+    /**
+     * Draws the hold as a spinner on every row, so the player can set each waypoint's hold in the table; the end of
+     * the route, which has no hold, reads as such.
+     */
+    private final class HoldCellRenderer implements TableCellRenderer {
+        private final JSpinner spinner = new JSpinner(new SpinnerNumberModel(0, 0,
+              WaypointTableModel.MAXIMUM_HOLD_TURNS, 1));
+        private final JLabel endLabel = new JLabel(Messages.getString("BotCommandPanel.MoveOrder.endOfRoute"));
+
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+              boolean hasFocus, int row, int column) {
+            if (waypoints.isEndOfRoute(row)) {
+                return endLabel;
+            }
+            spinner.setValue(waypoints.getHoldTurns(row));
+            return spinner;
+        }
     }
 
     /** Edits a hold with a spinner, 0 to {@link WaypointTableModel#MAXIMUM_HOLD_TURNS} turns. */
@@ -473,6 +503,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         spacingCombo.setSelectedItem(formation.map(FormationOrder::getSpacing).orElse(FormationOrder.DEFAULT_SPACING));
         paceCombo.setSelectedItem(formation.map(FormationOrder::getPace).orElse(FormationPace.WALK));
         contactCombo.setSelectedItem(formation.map(FormationOrder::getContactRule).orElse(ContactRule.BREAK));
+        // a new formation keeps together: moving as a block is the point of one
+        keepTogetherBox.setSelected(formation.map(FormationOrder::isKeepTogether).orElse(true));
         int leaderId = formation.map(FormationOrder::getLeaderId).orElse(group.unitIds().get(0));
         for (int index = 0; index < leaderCombo.getItemCount(); index++) {
             if (leaderCombo.getItemAt(index).unitId() == leaderId) {
@@ -513,6 +545,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         for (JComboBox<?> combo : List.of(shapeCombo, leaderCombo, spacingCombo, paceCombo, contactCombo)) {
             combo.setEnabled(isInFormation);
         }
+        keepTogetherBox.setEnabled(isInFormation);
     }
 
     private void chooseUnits() {
@@ -543,7 +576,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
                 button.setEnabled(hasRow);
             }
             autoFacingBox.setEnabled(hasRow);
-            holdSpinner.setEnabled(hasRow && !waypoints.isEndOfRoute(row));
             if (!hasRow) {
                 selectedLabel.setText(Messages.getString("BotCommandPanel.MoveOrder.noneSelected"));
                 facingButtonGroup.clearSelection();
@@ -558,7 +590,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             } else {
                 facingButtons.get(facing).setSelected(true);
             }
-            holdSpinner.setValue(waypoints.getHoldTurns(row));
         } finally {
             isLoadingDetail = false;
         }
@@ -637,7 +668,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             UnitOption leader = (UnitOption) leaderCombo.getSelectedItem();
             formation = new MoveOrderCommands.FormationChoice((FormationShape) shapeCombo.getSelectedItem(),
                   (leader == null) ? group.unitIds().get(0) : leader.unitId(), (Integer) spacingCombo.getSelectedItem(),
-                  (FormationPace) paceCombo.getSelectedItem(), (ContactRule) contactCombo.getSelectedItem());
+                  (FormationPace) paceCombo.getSelectedItem(), (ContactRule) contactCombo.getSelectedItem(),
+                  keepTogetherBox.isSelected());
         }
         List<String> commands = MoveOrderCommands.commands(group.unitIds(), formation, wasInFormation,
               waypoints.getHexes(), waypoints.getWaypointOrders(), (OrderPriority) priorityCombo.getSelectedItem());

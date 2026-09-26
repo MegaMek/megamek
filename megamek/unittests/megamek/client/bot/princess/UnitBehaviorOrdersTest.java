@@ -317,4 +317,51 @@ class UnitBehaviorOrdersTest {
         assertEquals(0, princess.getUnitOrdersFollower().orderedFacing(healthy, new Coords(14, 20)));
         assertEquals(1, princess.getUnitOrdersFollower().orderedFacing(healthy, new Coords(14, 2)));
     }
+
+    @Test
+    void aUnitAtTheEndOfItsRouteHoldsUntilAnEnemyComesInRange() {
+        Entity healthy = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        healthy.setUnitOrders(UnitOrders.NONE.withRoute(List.of(new Coords(10, 21))));
+        doReturn(15).when(princess).getMaxWeaponRange(healthy);
+        doReturn(List.of()).when(princess).getEnemyEntities();
+
+        assertTrue(princess.getUnitOrdersFollower().isHolding(healthy));
+
+        Entity jenner = mock(Entity.class);
+        when(jenner.getPosition()).thenReturn(new Coords(10, 26));
+        when(jenner.getBoardId()).thenReturn(0);
+        doReturn(List.of(jenner)).when(princess).getEnemyEntities();
+
+        assertFalse(princess.getUnitOrdersFollower().isHolding(healthy));
+        assertEquals(BehaviorType.Engaged, princess.getUnitBehaviorTracker().getBehaviorType(healthy, princess));
+    }
+
+    @Test
+    void aRoutesPriorityDecidesHowMuchDamageCounts() {
+        Entity normal = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        normal.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        Entity imperative = unit(148, false, ForcedWithdrawalOrder.BOT_RULES);
+        imperative.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT))
+              .withPriority(OrderPriority.IMPERATIVE));
+        Entity noOrders = unit(149, false, ForcedWithdrawalOrder.BOT_RULES);
+
+        assertEquals(UnitOrdersFollower.NORMAL_ROUTE_DAMAGE_WEIGHT,
+              princess.getUnitOrdersFollower().damageWeight(normal));
+        assertEquals(UnitOrdersFollower.IMPERATIVE_DAMAGE_WEIGHT,
+              princess.getUnitOrdersFollower().damageWeight(imperative));
+        assertEquals(1.0, princess.getUnitOrdersFollower().damageWeight(noOrders));
+    }
+
+    @Test
+    void aFleeOrderGivesEveryUnitAnExitOrderInPlaceOfItsRoute() {
+        Entity routed = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        routed.setUnitOrders(UnitOrders.NONE.withRoute(List.of(new Coords(5, 30))));
+        doReturn(List.of(routed)).when(princess).getEntitiesOwned();
+
+        princess.getUnitOrdersFollower().orderAllToExit(CardinalEdge.NORTH);
+
+        assertFalse(routed.getUnitOrders().hasRoute());
+        assertEquals(CardinalEdge.NORTH, princess.getHomeEdge(routed));
+        assertTrue(princess.getUnitOrdersFollower().isOrderedToExit(routed));
+    }
 }

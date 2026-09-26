@@ -51,8 +51,8 @@ public enum UnitOrderAction {
     /** Take the last hex off the route. */
     REMOVE_LAST,
     /**
-     * The unit reached the first hex of its route: take it off the front. Reaching the last hex leaves the unit
-     * paused there, holding the ground it was sent to until given new orders.
+     * The unit reached the first hex of its route: take it off the front. The last hex stays: the unit holds the ground
+     * it was sent to, fights anything that comes in range, and returns to it, until given new orders.
      */
     REACHED,
     /** The unit cannot reach the first hex of its route: take it off the front and carry on with the rest. */
@@ -103,10 +103,7 @@ public enum UnitOrderAction {
             }
             case REMOVE_LAST -> current.withLastWaypointRemoved();
             case SKIP -> current.withNextWaypointReached();
-            case REACHED -> {
-                UnitOrders advanced = current.withNextWaypointReached();
-                yield (current.hasRoute() && !advanced.hasRoute()) ? advanced.withPaused(true) : advanced;
-            }
+            case REACHED -> (current.getRoute().size() > 1) ? current.withNextWaypointReached() : current;
             case CLEAR -> UnitOrders.NONE;
             case PAUSE -> current.withPaused(true);
             case RESUME -> current.withPaused(false);

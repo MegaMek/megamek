@@ -104,16 +104,15 @@ class UnitOrdersTest {
     }
 
     @Test
-    void reachingTheLastWaypointHoldsTheUnitThere() {
+    void theLastWaypointStaysSoTheUnitHoldsAndReturnsToIt() {
         UnitOrders orders = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX, SECOND_HEX));
 
         UnitOrders afterFirst = apply(UnitOrderAction.REACHED, orders, List.of());
         UnitOrders afterLast = apply(UnitOrderAction.REACHED, afterFirst, List.of());
 
-        assertFalse(afterFirst.isPaused());
-        assertFalse(afterLast.hasRoute());
-        assertTrue(afterLast.isPaused());
-        assertEquals(afterLast, apply(UnitOrderAction.REACHED, afterLast, List.of()));
+        assertEquals(List.of(SECOND_HEX), afterFirst.getRoute());
+        assertEquals(List.of(SECOND_HEX), afterLast.getRoute());
+        assertFalse(afterLast.isPaused());
     }
 
     @Test

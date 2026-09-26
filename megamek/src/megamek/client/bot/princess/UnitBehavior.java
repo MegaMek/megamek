@@ -97,6 +97,13 @@ public class UnitBehavior {
                   && !owner.getUnitOrdersFollower().canReach(entity, getWaypointForEntity(entity).get())) {
                 owner.getUnitOrdersFollower().dropUnreachableWaypoint(entity);
             }
+            if (owner.getUnitOrdersFollower().isAtRouteEnd(entity)
+                  && owner.getUnitOrdersFollower().isEnemyInRange(entity)) {
+                // holding the end of its route, with an enemy in range: fight, then the route end pulls it back
+                logDecision(entity, "ROUTE_END", "engaging, will return to "
+                      + getWaypointForEntity(entity).get().getBoardNum());
+                return BehaviorType.Engaged;
+            }
             if (getWaypointForEntity(entity).isPresent()) {
                 String waypoint = getWaypointForEntity(entity).get().getBoardNum();
                 String priority = entity.getUnitOrders().getPriority().name();

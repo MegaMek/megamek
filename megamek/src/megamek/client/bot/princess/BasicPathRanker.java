@@ -1922,6 +1922,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         scores.put("ignoreDamageOutput", getOwner().getBehaviorSettings().isIgnoreDamageOutput() ? 1.0 : 0.0);
+        // a unit on a player's route weighs the damage by the route's priority: Normal takes cover, Imperative pushes on
+        expectedDamageTaken *= getOwner().getUnitOrdersFollower().damageWeight(movingUnit);
         scores.put("damageExpectedTotal", expectedDamageTaken);
         scores.put("myAttackFiring", damageEstimate.firingDamage);
         scores.put("myAttackPhysical", damageEstimate.physicalDamage);

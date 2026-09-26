@@ -1416,9 +1416,18 @@ public class Princess extends BotClient {
         // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
         // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
         possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
-        // A formation member deploys in its slot beside its leader. Done here rather than in
-        // prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
-        possibleDeployCoords = getUnitOrdersFollower().preferDeploymentSlot(deployedUnit, possibleDeployCoords);
+        // A formation leader deploys where its formation fits, and a member in its slot beside it. Done here rather
+        // than in prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
+        possibleDeployCoords = getUnitOrdersFollower().preferFormationFit(deployedUnit, possibleDeployCoords);
+        if (getUnitOrdersFollower().getDeploymentSlot(deployedUnit, possibleDeployCoords).isPresent()) {
+            // the free hex nearest the slot: ranking the hexes by terrain moved members out of the shape
+            // (HammerGS's playtest, 2026-09-26)
+            Coords slotHex = super.getFirstValidCoords(deployedUnit,
+                  getUnitOrdersFollower().preferDeploymentSlot(deployedUnit, possibleDeployCoords));
+            if (slotHex != null) {
+                return slotHex;
+            }
+        }
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;

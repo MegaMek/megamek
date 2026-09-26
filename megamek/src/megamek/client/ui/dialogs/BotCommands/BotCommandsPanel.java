@@ -41,7 +41,6 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -107,10 +106,12 @@ public class BotCommandsPanel extends JPanel {
           new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
     // This latch is used only to change the state of the button from pause to continue and back
     private boolean pauseLatch = false;
+    /** How many groups the Move Order menu shows before it scrolls, so a bot with thirty lances still fits. */
+    private static final int MOVE_ORDER_SCROLL_THRESHOLD = 20;
+
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
     private BotOrdersMenuBuilder ordersMenuBuilder;
-    private BotFormationsMenuBuilder formationsMenuBuilder;
 
     /**
      * Bot Commands Panel constructor.
@@ -196,22 +197,17 @@ public class BotCommandsPanel extends JPanel {
               (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
                     "BotCommandPanel.WaypointPrompt.message", onPicked),
               this::acknowledgeOrder);
-        formationsMenuBuilder = new BotFormationsMenuBuilder(client, ordersMenuBuilder, this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
-        var orders = createButton("Orders");
-        if (clientGUI != null) {
-            ordersMenuBuilder.withUnitChooser((botPlayer, unitsByLance) -> chooseUnits(orders, botPlayer, unitsByLance))
-                  .withFacingChooser(this::chooseFacings);
-        }
-        var formations = createButton("Formations");
+        var moveOrder = createButton("MoveOrder");
+        var quickOrders = createButton("QuickOrders");
         var targets = createButton("Targets");
         var maneuver = createButton("Maneuver");
         var setBehavior = createButton("SetBehavior");
         var artillery = createButton("Artillery");
-        commandButtons = List.of(orders, formations, targets, maneuver, setBehavior, artillery);
+        commandButtons = List.of(moveOrder, quickOrders, targets, maneuver, setBehavior, artillery);
 
-        orders.addActionListener(evt -> showButtonPopup(orders, this::createOrdersPopup));
-        formations.addActionListener(evt -> showButtonPopup(formations, this::createFormationsPopup));
+        moveOrder.addActionListener(evt -> showButtonPopup(moveOrder, this::createMoveOrderPopup));
+        quickOrders.addActionListener(evt -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
         targets.addActionListener(evt -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
@@ -220,8 +216,8 @@ public class BotCommandsPanel extends JPanel {
 
         // Add them to the buttonPanel. With 2 rows set, the grid grows columns as needed.
         this.add(pauseContinue);
-        this.add(orders);
-        this.add(formations);
+        this.add(moveOrder);
+        this.add(quickOrders);
         this.add(targets);
         this.add(maneuver);
         this.add(setBehavior);
@@ -414,52 +410,67 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * Opens the unit checklist; once the player ticks some units, shows every order for them under the Orders button.
+     * The Move Order editor for each bot: pick all its units, a lance, one unit, or any mix, then set their route,
+     * each waypoint's facing and hold, and their formation in one window.
      */
-    private void chooseUnits(MegaMekButton ordersButton, Player botPlayer,
-          Map<String, List<BotOrdersMenuBuilder.OrderGroup>> unitsByLance) {
-        BotUnitChooserDialog dialog = new BotUnitChooserDialog(clientGUI.getFrame(), unitsByLance);
-        if (dialog.showDialog() != DialogResult.CONFIRMED) {
+    private JPopupMenu createMoveOrderPopup() {
+        return createBotFirstPopup((botMenu, botPlayer) -> {
+            if (clientGUI == null) {
+                // no board to click in this GUI: the orders menu, where routes are typed as hex numbers
+                ordersMenuBuilder.populate(botMenu, botPlayer, null);
+                return;
+            }
+            JMenuItem chooseItem = new JMenuItem(Messages.getString("BotCommandPanel.Orders.chooseUnits"));
+            chooseItem.addActionListener(event -> chooseUnitsForMoveOrder(botPlayer));
+            botMenu.add(chooseItem);
+            botMenu.addSeparator();
+            for (BotOrdersMenuBuilder.OrderGroup group : ordersMenuBuilder.groupsFor(botPlayer)) {
+                JMenuItem groupItem = new JMenuItem(group.label());
+                groupItem.addActionListener(event -> openMoveOrder(botPlayer, group));
+                botMenu.add(groupItem);
+            }
+        }, MOVE_ORDER_SCROLL_THRESHOLD, this::hasOnBoardUnits);
+    }
+
+    /**
+     * The one-click orders for each bot's units: pause, resume, stop, clear, edges, priority and formation off.
+     */
+    private JPopupMenu createQuickOrdersPopup() {
+        return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),
+              this::hasOnBoardUnits);
+    }
+
+    /**
+     * Opens the unit checklist, then the Move Order editor for the units the player ticks.
+     */
+    private void chooseUnitsForMoveOrder(Player botPlayer) {
+        if (clientGUI == null) {
             return;
         }
-        BotOrdersMenuBuilder.OrderGroup chosen = dialog.getChosenGroup();
-        if (chosen != null) {
-            showButtonPopup(ordersButton, () -> ordersMenuBuilder.ordersPopup(botPlayer, chosen));
+        BotUnitChooserDialog dialog = new BotUnitChooserDialog(clientGUI.getFrame(),
+              ordersMenuBuilder.unitsByLance(botPlayer));
+        if ((dialog.showDialog() == DialogResult.CONFIRMED) && (dialog.getChosenGroup() != null)) {
+            openMoveOrder(botPlayer, dialog.getChosenGroup());
         }
     }
 
     /**
-     * Opens the facing dialog, showing the first unit of the group.
+     * Opens the Move Order editor for a group, on the board its first unit is on.
      */
-    private void chooseFacings(BotOrdersMenuBuilder.OrderGroup group, int facingWhileMoving, int facingWhenStopped,
-          BiConsumer<Integer, Integer> onChosen) {
-        Entity previewUnit = client.getGame().getInGameObject(group.unitIds().get(0))
+    private void openMoveOrder(Player botPlayer, BotOrdersMenuBuilder.OrderGroup group) {
+        if ((clientGUI == null) || group.unitIds().isEmpty()) {
+            return;
+        }
+        Entity firstUnit = client.getGame().getInGameObject(group.unitIds().get(0))
               .filter(Entity.class::isInstance).map(Entity.class::cast).orElse(null);
-        if (previewUnit == null) {
+        BoardView boardView = (firstUnit != null) && (clientGUI.getBoardView(firstUnit.getBoardId())
+              instanceof BoardView unitBoardView) ? unitBoardView : null;
+        if (boardView == null) {
+            clientGUI.addToast(ToastLevel.WARNING, Messages.getString("BotCommandPanel.MoveOrder.noBoard"));
             return;
         }
-        BotOrderFacingDialog dialog = new BotOrderFacingDialog(clientGUI.getFrame(), clientGUI, previewUnit,
-              facingWhileMoving, facingWhenStopped);
-        if (dialog.showDialog() == DialogResult.CONFIRMED) {
-            onChosen.accept(dialog.getFacingWhileMoving(), dialog.getFacingWhenStopped());
-        }
-    }
-
-    /**
-     * The per-unit orders for each bot: routes, edges, facing, priority, pause, resume, stop and clear, for all units,
-     * one lance or one unit.
-     */
-    private JPopupMenu createOrdersPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populate(botMenu, botPlayer, null),
-              this::hasOnBoardUnits);
-    }
-
-    /**
-     * The formation of each lance, or of all units: shape, spacing, leader, pace and what to do on contact.
-     */
-    private JPopupMenu createFormationsPopup() {
-        return createBotFirstPopup((botMenu, botPlayer) -> formationsMenuBuilder.populate(botMenu, botPlayer),
-              this::hasOnBoardUnits);
+        new BotMoveOrderDialog(clientGUI, boardView, botPlayer, group,
+              () -> ordersMenuBuilder.unitsByLance(botPlayer), this::acknowledgeOrder).setVisible(true);
     }
 
     /**

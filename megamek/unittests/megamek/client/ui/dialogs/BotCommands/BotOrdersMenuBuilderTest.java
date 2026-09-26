@@ -34,6 +34,7 @@ package megamek.client.ui.dialogs.BotCommands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -44,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
@@ -164,23 +164,17 @@ class BotOrdersMenuBuilderTest {
     }
 
     @Test
-    void chosenUnitsGetEveryOrder() {
-        BotOrdersMenuBuilder.OrderGroup chosen = new BotOrdersMenuBuilder.OrderGroup("Chosen units (2)",
-              List.of(20, 22));
+    void quickOrdersGoToEveryUnitOfTheGroupAndLeaveRoutesToTheEditor() {
+        JMenu botMenu = new JMenu();
+        builder.populateQuick(botMenu, bot);
+        JMenu lanceMenu = (JMenu) findItem(botMenu, "Command Lance (2)");
+        assertNotNull(lanceMenu);
 
-        JPopupMenu popup = builder.ordersPopup(bot, chosen);
-        JMenuItem pause = null;
-        for (int index = 0; index < popup.getComponentCount(); index++) {
-            if ((popup.getComponent(index) instanceof JMenuItem item)
-                  && Messages.getString("BotCommandPanel.Orders.pause").equals(item.getText())) {
-                pause = item;
-            }
-        }
-        assertNotNull(pause);
-        pause.doClick();
+        findItem(lanceMenu, Messages.getString("BotCommandPanel.Orders.formationOff")).doClick();
 
-        verify(client).sendChat("/unitOrder 20 PAUSE");
-        verify(client).sendChat("/unitOrder 22 PAUSE");
+        verify(client).sendChat("/unitOrder 20 FORMATION_OFF");
+        verify(client).sendChat("/unitOrder 21 FORMATION_OFF");
+        assertNull(findItem(lanceMenu, Messages.getString("BotCommandPanel.Orders.moveTo")));
     }
 
     @Test

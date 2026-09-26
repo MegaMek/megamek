@@ -33,10 +33,12 @@
 package megamek.utilities.botorders;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
@@ -57,10 +59,14 @@ import megamek.utilities.botorders.ScriptedOrder.OrderAction;
 /**
  * Plays a {@link ScenarioOrderScript} into a headless game and drives the {@link BotOrderRecorder}.
  *
- * <p>Listens to the server's game. Each round's orders are applied once, at the Initiative Report phase (or, if
- * that phase is skipped, at the start of the Movement phase), so the bots hold them before they plan their moves.
- * Test-only damage ({@code cripple}, {@code damage internal N%}) is applied to the server's copy of the unit and sent
- * to every client, as real damage would be.</p>
+ * <p>Orders reach each bot on the bot's own thread: a listener on the bot's copy of the game applies that round's
+ * orders for the bot's units when its Movement phase starts, before the bot is given its turn. The bot is initialized
+ * first ({@code Princess#initialize} is idempotent), because a bot that has not moved yet resets its waypoint tracker
+ * on its first turn and would silently drop anything set earlier.</p>
+ *
+ * <p>Test-only damage ({@code cripple}, {@code damage internal N%}) goes through the server's game instead: it is
+ * applied to the server's copy of the unit at the Initiative Report phase (or at the start of the Movement phase if
+ * that is skipped) and sent to every client, as real damage would be.</p>
  *
  * <p>Every order and its result is logged at INFO with the prefix {@code [BotOrdersHarness]}.</p>
  */
@@ -91,6 +97,12 @@ public class ScriptedOrderDirector {
 
     private Game watcherGame;
 
+    /** One listener per bot, on the bot's own copy of the game, so orders are applied on the bot's thread. */
+    private final Map<Princess, GameListenerAdapter> botListeners = new HashMap<>();
+
+    /** The last round each bot had its orders applied, keyed by the bot's player id. */
+    private final Map<Integer, Integer> lastBotRound = new ConcurrentHashMap<>();
+
     /**
      * @param script       the orders to apply
      * @param orderApplier how to give the bot its orders
@@ -116,6 +128,20 @@ public class ScriptedOrderDirector {
      */
     public void attach(@Nullable Game watcherClientGame) {
         serverGame.addGameListener(serverListener);
+        for (Map.Entry<Integer, Princess> botEntry : botsByPlayer.entrySet()) {
+            Princess bot = botEntry.getValue();
+            int playerId = botEntry.getKey();
+            GameListenerAdapter botListener = new GameListenerAdapter() {
+                @Override
+                public void gamePhaseChange(GamePhaseChangeEvent event) {
+                    if (event.getNewPhase() == GamePhase.MOVEMENT) {
+                        onBotMovementPhase(bot, playerId);
+                    }
+                }
+            };
+            botListeners.put(bot, botListener);
+            bot.getGame().addGameListener(botListener);
+        }
         watcherGame = watcherClientGame;
         if (watcherGame != null) {
             watcherGame.addGameListener(watcherListener);
@@ -129,6 +155,10 @@ public class ScriptedOrderDirector {
      */
     public void detach() {
         serverGame.removeGameListener(serverListener);
+        for (Map.Entry<Princess, GameListenerAdapter> botListener : botListeners.entrySet()) {
+            botListener.getKey().getGame().removeGameListener(botListener.getValue());
+        }
+        botListeners.clear();
         if (watcherGame != null) {
             watcherGame.removeGameListener(watcherListener);
         }
@@ -141,7 +171,7 @@ public class ScriptedOrderDirector {
                   || ((newPhase == GamePhase.MOVEMENT) && (lastAppliedRound != round))) {
                 if (lastAppliedRound != round) {
                     lastAppliedRound = round;
-                    applyOrdersForRound(round);
+                    applyDamageForRound(round);
                 }
             }
             if ((recorder != null) && (newPhase == GamePhase.MOVEMENT)) {
@@ -170,16 +200,20 @@ public class ScriptedOrderDirector {
         }
     }
 
-    private void applyOrdersForRound(int round) {
+    private static boolean isDamage(ScriptedOrder order) {
+        return (order.action() == OrderAction.CRIPPLE) || (order.action() == OrderAction.DAMAGE_INTERNAL);
+    }
+
+    /** Server thread: the round's test damage, before the bots plan their moves. */
+    private void applyDamageForRound(int round) {
         for (ScriptedOrder order : script.getOrdersForRound(round)) {
+            if (!isDamage(order)) {
+                continue;
+            }
             List<Entity> targets = selectTargets(order);
             if (targets.isEmpty()) {
                 logger.warn("[BotOrdersHarness] round {}: no unit matches line {}: {}", round, order.lineNumber(),
                       order.sourceText());
-                continue;
-            }
-            if (order.action() == OrderAction.FLEE) {
-                applyFlee(round, order, targets);
                 continue;
             }
             for (Entity serverUnit : targets) {
@@ -188,19 +222,52 @@ public class ScriptedOrderDirector {
         }
     }
 
-    private void applyFlee(int round, ScriptedOrder order, List<Entity> targets) {
-        CardinalEdge edge = CardinalEdge.valueOf(order.arguments().getFirst().toUpperCase(Locale.ROOT));
-        List<Princess> ordered = new ArrayList<>();
-        for (Entity serverUnit : targets) {
-            Princess bot = botsByPlayer.get(serverUnit.getOwnerId());
-            if ((bot != null) && !ordered.contains(bot)) {
-                ordered.add(bot);
-                orderApplier.orderFlee(bot, edge);
-                logger.info("[BotOrdersHarness] round {}: bot {} ordered to flee {}", round, bot.getName(), edge);
-                if (recorder != null) {
-                    recorder.recordOrder(round, null, bot.getName(), order, "flee " + edge);
+    /** Bot thread: the round's orders for this bot's units, as its Movement phase starts. */
+    private void onBotMovementPhase(Princess bot, int playerId) {
+        try {
+            int round = bot.getGame().getCurrentRound();
+            Integer lastRound = lastBotRound.put(playerId, round);
+            if ((lastRound != null) && (lastRound == round)) {
+                return;
+            }
+            List<ScriptedOrder> roundOrders = script.getOrdersForRound(round);
+            if (roundOrders.isEmpty()) {
+                return;
+            }
+            // a bot that has not moved yet resets its waypoint tracker on its first turn; do that now, not after
+            bot.initialize();
+            for (ScriptedOrder order : roundOrders) {
+                if (isDamage(order)) {
+                    continue;
+                }
+                List<Entity> targets = new ArrayList<>();
+                for (Entity serverUnit : selectTargets(order)) {
+                    if (serverUnit.getOwnerId() == playerId) {
+                        targets.add(serverUnit);
+                    }
+                }
+                if (targets.isEmpty()) {
+                    continue;
+                }
+                if (order.action() == OrderAction.FLEE) {
+                    applyFlee(round, order, bot);
+                    continue;
+                }
+                for (Entity serverUnit : targets) {
+                    applyToUnit(round, order, serverUnit);
                 }
             }
+        } catch (RuntimeException failure) {
+            logger.error(failure, "[BotOrdersHarness] failed applying orders for bot " + bot.getName());
+        }
+    }
+
+    private void applyFlee(int round, ScriptedOrder order, Princess bot) {
+        CardinalEdge edge = CardinalEdge.valueOf(order.arguments().getFirst().toUpperCase(Locale.ROOT));
+        orderApplier.orderFlee(bot, edge);
+        logger.info("[BotOrdersHarness] round {}: bot {} ordered to flee {}", round, bot.getName(), edge);
+        if (recorder != null) {
+            recorder.recordOrder(round, null, bot.getName(), order, "flee " + edge);
         }
     }
 

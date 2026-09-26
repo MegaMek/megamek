@@ -35,6 +35,7 @@ package megamek.utilities.botorders;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -77,8 +78,10 @@ import org.apache.logging.log4j.core.config.Property;
  * <p>Columns (hexes are 1-based board columns and rows, as MegaMek shows them):</p>
  * <pre>
  * game stage round unitId name owner col row facing crippled withdrawing behaviour rule detail headWaypoint
- * fleeEdge retreatEdge orderAction orderArgs note
+ * fleeEdge retreatEdge homeEdge orderAction orderArgs note
  * </pre>
+ * <p>{@code homeEdge} is the edge the bot resolves for the unit right now ({@code Princess#getHomeEdge}, read by
+ * reflection because it is package-private): the edge a withdrawing or fleeing unit is heading for.</p>
  * <p>{@code stage} is {@code order}, {@code start}, {@code end}, {@code path} or {@code gone}. A {@code path} row
  * lists the hexes of one move in {@code detail} as {@code col,row,facing;...}.</p>
  */
@@ -93,13 +96,16 @@ public class BotOrderRecorder implements AutoCloseable {
 
     private static final String HEADER = String.join("\t", "game", "stage", "round", "unitId", "name", "owner",
           "col", "row", "facing", "crippled", "withdrawing", "behaviour", "rule", "detail", "headWaypoint",
-          "fleeEdge", "retreatEdge", "orderAction", "orderArgs", "note");
+          "fleeEdge", "retreatEdge", "homeEdge", "orderAction", "orderArgs", "note");
 
     /** Matches the #9038 decision line: "[BotOrders] name (ID 12) round 3: RULE - detail". */
     private static final Pattern DECISION_PATTERN =
           Pattern.compile("^\\[BotOrders] .*\\(ID (\\d+)\\) round (\\d+): (\\S+) - (.*)$");
 
     private static final String CAPTURED_LOGGER = UnitBehavior.class.getName();
+
+    /** {@code Princess#getHomeEdge(Entity)}, or {@code null} when it cannot be reached. */
+    private static final Method HOME_EDGE_METHOD = findHomeEdgeMethod();
 
     private final PrintWriter writer;
     private final int gameNumber;
@@ -154,7 +160,7 @@ public class BotOrderRecorder implements AutoCloseable {
             facing = Integer.toString(unit.getFacing());
         }
         writeRow(STAGE_ORDER, round, unitId, unitName, ownerName, col, row, facing, "", "", "", "", "", "", "", "",
-              order.action().name(), arguments.toString(), note + " [line " + order.lineNumber() + "]");
+              "", order.action().name(), arguments.toString(), note + " [line " + order.lineNumber() + "]");
     }
 
     /**
@@ -177,7 +183,7 @@ public class BotOrderRecorder implements AutoCloseable {
             for (Entity removedUnit : serverGame.getOutOfGameEntitiesVector()) {
                 if ((removedUnit.getOwnerId() == botEntry.getKey()) && goneUnitIds.add(removedUnit.getId())) {
                     writeRow(STAGE_GONE, round, Integer.toString(removedUnit.getId()), removedUnit.getDisplayName(),
-                          bot.getName(), "", "", "", "", "", "", "", "", "", "", "", "", "",
+                          bot.getName(), "", "", "", "", "", "", "", "", "", "", "", "", "", "",
                           removalName(removedUnit.getRemovalCondition()));
                 }
             }
@@ -212,7 +218,7 @@ public class BotOrderRecorder implements AutoCloseable {
               col, row, Integer.toString(serverUnit.getFacing()), Boolean.toString(serverUnit.isCrippled(true)),
               Boolean.toString(withdrawing), (behaviour == null) ? "" : behaviour.name(), rule, detail,
               ScenarioOrderScript.toHexNumber(orderApplier.headWaypoint(bot, botUnit)), fleeEdge,
-              settings.getRetreatEdge().name(), "", "", "");
+              settings.getRetreatEdge().name(), homeEdge(bot, botUnit), "", "", "");
     }
 
     /**
@@ -226,17 +232,40 @@ public class BotOrderRecorder implements AutoCloseable {
             }
         }
         writeRow(STAGE_PATH, round, Integer.toString(unit.getId()), unit.getDisplayName(), "", "", "", "", "", "",
-              "", "", steps.toString(), "", "", "", "", "", "");
+              "", "", steps.toString(), "", "", "", "", "", "", "");
     }
 
     private void writeRow(String stage, int round, String unitId, String name, String owner, String col, String row,
           String facing, String crippled, String withdrawing, String behaviour, String rule, String detail,
-          String headWaypoint, String fleeEdge, String retreatEdge, String orderAction, String orderArgs,
-          String note) {
+          String headWaypoint, String fleeEdge, String retreatEdge, String homeEdge, String orderAction,
+          String orderArgs, String note) {
         writer.println(String.join("\t", Integer.toString(gameNumber), stage, Integer.toString(round), unitId,
               clean(name), clean(owner), col, row, facing, crippled, withdrawing, behaviour, rule, clean(detail),
-              headWaypoint, fleeEdge, retreatEdge, orderAction, clean(orderArgs), clean(note)));
+              headWaypoint, fleeEdge, retreatEdge, homeEdge, orderAction, clean(orderArgs), clean(note)));
         writer.flush();
+    }
+
+    private static Method findHomeEdgeMethod() {
+        try {
+            Method method = Princess.class.getDeclaredMethod("getHomeEdge", Entity.class);
+            method.setAccessible(true);
+            return method;
+        } catch (ReflectiveOperationException | RuntimeException notAvailable) {
+            logger.warn("[BotOrdersHarness] Princess#getHomeEdge is not reachable; homeEdge column left empty");
+            return null;
+        }
+    }
+
+    private static String homeEdge(Princess bot, Entity unit) {
+        if ((HOME_EDGE_METHOD == null) || (unit.getPosition() == null)) {
+            return "";
+        }
+        try {
+            Object edge = HOME_EDGE_METHOD.invoke(bot, unit);
+            return (edge instanceof CardinalEdge cardinalEdge) ? cardinalEdge.name() : "";
+        } catch (ReflectiveOperationException | RuntimeException failure) {
+            return "";
+        }
     }
 
     private static String clean(String text) {

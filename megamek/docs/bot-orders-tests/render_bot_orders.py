@@ -312,7 +312,7 @@ def position_of(row):
 # Order analysis: did the unit follow what it was told this round?
 # ----------------------------------------------------------------------------------------------------------------
 
-def analyse_unit(track, width, height):
+def analyse_unit(track, width, height, threat_lookup=None):
     """Walk the unit's rounds, tracking its standing orders, and judge each end-of-movement row.
 
     Traces from the unit orders model carry the unit's orders on every row (route, paused, stopped, edgeOrder,
@@ -439,12 +439,16 @@ def analyse_unit(track, width, height):
                 if end_facing != facing_moving:
                     facing_note = "moving: ordered %s, ended %s" % (FACING_NAMES[facing_moving],
                                                                    FACING_NAMES[end_facing])
+                    facing_note += threat_override_note(threat_lookup, round_number, end_position, track.owner,
+                                                        facing_moving)
                 else:
                     facing_note = "moving: %s as ordered" % FACING_NAMES[facing_moving]
             elif facing_stopped >= 0 and (not moved or paused or stopped):
                 if end_facing != facing_stopped:
                     facing_note = "stopped: ordered %s, ended %s" % (FACING_NAMES[facing_stopped],
                                                                     FACING_NAMES[end_facing])
+                    facing_note += threat_override_note(threat_lookup, round_number, end_position, track.owner,
+                                                        facing_stopped)
                 else:
                     facing_note = "stopped: %s as ordered" % FACING_NAMES[facing_stopped]
 
@@ -476,7 +480,10 @@ def analyse_unit(track, width, height):
         "followed_rounds": sum(1 for verdict in verdicts.values() if verdict["followed"] is True),
         "overridden_rounds": sum(1 for verdict in verdicts.values() if verdict["followed"] is False),
         "ordered_rounds": sum(1 for verdict in verdicts.values() if verdict["expected"]),
-        "facing_misses": sum(1 for verdict in verdicts.values() if "ended" in verdict["facing_note"]),
+        "facing_misses": sum(1 for verdict in verdicts.values()
+                             if "ended" in verdict["facing_note"] and "threat" not in verdict["facing_note"]),
+        "facing_threat_overrides": sum(1 for verdict in verdicts.values() if "threat" in verdict["facing_note"]),
+        "facing_kept": sum(1 for verdict in verdicts.values() if "as ordered" in verdict["facing_note"]),
         "moved_away_rounds": sum(1 for verdict in verdicts.values()
                                  if verdict["followed"] and verdict["distance_before"] is not None
                                  and verdict["distance_after"] > verdict["distance_before"]),
@@ -486,6 +493,44 @@ def analyse_unit(track, width, height):
                               and not verdict["moved"]),
     }
     return verdicts, summary
+
+
+def threat_override_note(threat_lookup, round_number, position, owner, ordered_facing):
+    """Approximates Princess's threat check: the nearest enemy at the end of the round stands for the expected fire.
+    Outside the ordered facing's front arc (the ordered side and one either way), the bot may turn to the threat on
+    purpose."""
+    if threat_lookup is None or position is None:
+        return ""
+    threat = threat_lookup(round_number, position, owner)
+    if threat is None or threat == position:
+        return ""
+    threat_direction = direction_between(position, threat)
+    sides_apart = abs(threat_direction - ordered_facing) % 6
+    sides_apart = min(sides_apart, 6 - sides_apart)
+    if sides_apart <= 1:
+        return ""
+    return " (threat from %s, outside the ordered arc: override allowed)" % FACING_NAMES[threat_direction]
+
+
+def make_threat_lookup(trace):
+    ends_by_round = defaultdict(list)
+    for track in trace.units.values():
+        for round_number, end_row in track.ends.items():
+            position = position_of(end_row)
+            if position:
+                ends_by_round[round_number].append((track.owner, position))
+
+    def lookup(round_number, position, owner):
+        nearest = None
+        nearest_distance = None
+        for other_owner, other_position in ends_by_round.get(round_number, []):
+            if other_owner == owner:
+                continue
+            distance = hex_distance(position, other_position)
+            if nearest_distance is None or distance < nearest_distance:
+                nearest, nearest_distance = other_position, distance
+        return nearest
+    return lookup
 
 
 def derived_rule(behaviour, flee_edge, head, withdrawing):
@@ -779,7 +824,7 @@ def svg_unit(track, verdicts, summary, size, width, height, is_enemy):
             parts.append(ordered_arrow(position[0], position[1], verdict["facing_moving"], size, colour, 0.9,
                                        "%s ordered facing while moving: %s" % (track.name,
                                                                               FACING_NAMES[verdict["facing_moving"]])))
-        if not is_enemy and "ended" in verdict.get("facing_note", ""):
+        if not is_enemy and "ended" in verdict.get("facing_note", "") and "threat" not in verdict["facing_note"]:
             parts.append('<circle class="facingmiss" cx="%.1f" cy="%.1f" r="%.1f"><title>Round %d facing %s'
                          '</title></circle>' % (centre_x, centre_y, size * 0.62, round_number,
                                                 escape(verdict["facing_note"])))
@@ -1008,8 +1053,9 @@ def render_game(trace, board, output_path, label):
     svg_height = SQRT3 * size * (board.height + 0.5) + 2
     palette_index = 0
     analyses = OrderedDict()
+    threat_lookup = make_threat_lookup(trace)
     for track in trace.units.values():
-        verdicts, summary = analyse_unit(track, board.width, board.height)
+        verdicts, summary = analyse_unit(track, board.width, board.height, threat_lookup)
         analyses[track.unit_id] = (verdicts, summary)
         if track.ordered:
             track.colour = UNIT_COLOURS[palette_index % len(UNIT_COLOURS)]
@@ -1113,7 +1159,8 @@ def render_game(trace, board, output_path, label):
                 distance_text = "%d -> %d" % (verdict["distance_before"], verdict["distance_after"])
                 if verdict["distance_after"] >= verdict["distance_before"]:
                     distance_class = "warn"
-            facing_class = "warn" if "ended" in verdict["facing_note"] else ""
+            facing_class = "warn" if ("ended" in verdict["facing_note"]
+                                      and "threat" not in verdict["facing_note"]) else ""
             formation_text = "-"
             slot_entry = slots.get((round_number, track.unit_id))
             end_formation = parse_formation(track.ends[round_number].get("formation", "")) \
@@ -1196,6 +1243,7 @@ leader's end hex)</th><th>Logged reason and events</th></tr>%(decisions)s
             "final_distance": summary["final_distance"], "flee_edge": summary["flee_edge"],
             "flee_distance": summary["flee_distance"], "gone": track.gone.get("note", "") if track.gone else "",
             "edge_distance": summary["edge_distance"], "facing_misses": summary["facing_misses"],
+            "facing_threat_overrides": summary["facing_threat_overrides"], "facing_kept": summary["facing_kept"],
             "moved_away_rounds": summary["moved_away_rounds"], "stalled_rounds": summary["stalled_rounds"],
             "dropped_waypoints": summary.get("dropped_waypoints", []), "folds": summary.get("folds", 0),
             "overrides": [{"round": round_number, "expected": verdict["expected"], "reason": verdict["reason"]}

@@ -1,0 +1,126 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.common.orders;
+
+import java.util.List;
+
+import megamek.common.OffBoardDirection;
+import megamek.common.annotations.Nullable;
+import megamek.common.board.Coords;
+
+/**
+ * The changes a player can make to a bot unit's {@link UnitOrders}, and how each one changes them. The server command
+ * that carries orders from a client and any test that sets orders both go through {@link #apply}, so there is one
+ * definition of what, for example, Stop does.
+ */
+public enum UnitOrderAction {
+    /** Replace the route with the given hexes. */
+    ROUTE,
+    /** Add the given hexes to the end of the route. */
+    ADD,
+    /** Take the last hex off the route. */
+    REMOVE_LAST,
+    /** Clear every order. */
+    CLEAR,
+    /** Hold in place, keeping the route. */
+    PAUSE,
+    /** Carry on with the route after a pause. */
+    RESUME,
+    /** Clear every order and hold in place for the rest of the round. */
+    STOP,
+    /** Move to an edge and hold there. */
+    MOVE_TO_EDGE,
+    /** Move to an edge and leave the board by it. */
+    EXIT_BY_EDGE,
+    /** Set the facing while moving and when stopped. */
+    FACING,
+    /** Set how hard the unit pushes for its route. */
+    PRIORITY;
+
+    /**
+     * Returns the orders after this action.
+     *
+     * @param current          the unit's orders now
+     * @param hexes            the hexes for {@link #ROUTE} and {@link #ADD}
+     * @param edge             the edge for {@link #MOVE_TO_EDGE} and {@link #EXIT_BY_EDGE}
+     * @param facingWhileMoving the facing while moving for {@link #FACING}, or {@link UnitOrders#FACING_AUTO}
+     * @param facingWhenStopped the facing when stopped for {@link #FACING}, or {@link UnitOrders#FACING_AUTO}
+     * @param priority         the priority for {@link #PRIORITY}; a {@link #ROUTE} with a priority also sets it
+     * @param currentRound     the current round, for {@link #STOP}
+     *
+     * @return the new orders
+     *
+     * @throws IllegalArgumentException when the action is missing what it needs, such as a route with no hexes
+     */
+    public UnitOrders apply(UnitOrders current, List<Coords> hexes, OffBoardDirection edge, int facingWhileMoving,
+          int facingWhenStopped, @Nullable OrderPriority priority, int currentRound) {
+        return switch (this) {
+            case ROUTE -> {
+                requireHexes(hexes);
+                UnitOrders routed = current.withRoute(hexes);
+                yield (priority == null) ? routed : routed.withPriority(priority);
+            }
+            case ADD -> {
+                requireHexes(hexes);
+                yield current.withWaypointsAdded(hexes);
+            }
+            case REMOVE_LAST -> current.withLastWaypointRemoved();
+            case CLEAR -> UnitOrders.NONE;
+            case PAUSE -> current.withPaused(true);
+            case RESUME -> current.withPaused(false);
+            case STOP -> UnitOrders.stoppedInRound(currentRound);
+            case MOVE_TO_EDGE -> current.withEdgeOrder(EdgeOrder.MOVE_TO, requireEdge(edge));
+            case EXIT_BY_EDGE -> current.withEdgeOrder(EdgeOrder.EXIT_BY, requireEdge(edge));
+            case FACING -> current.withFacings(facingWhileMoving, facingWhenStopped);
+            case PRIORITY -> {
+                if (priority == null) {
+                    throw new IllegalArgumentException("A priority order needs a priority");
+                }
+                yield current.withPriority(priority);
+            }
+        };
+    }
+
+    private static void requireHexes(List<Coords> hexes) {
+        if (hexes.isEmpty()) {
+            throw new IllegalArgumentException("A route order needs at least one hex");
+        }
+    }
+
+    private static OffBoardDirection requireEdge(OffBoardDirection edge) {
+        if (edge == OffBoardDirection.NONE) {
+            throw new IllegalArgumentException("An edge order needs an edge");
+        }
+        return edge;
+    }
+}

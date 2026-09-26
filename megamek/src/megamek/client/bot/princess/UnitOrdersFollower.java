@@ -680,9 +680,10 @@ public class UnitOrdersFollower {
     /**
      * The hex a formation member should deploy in: its slot beside the formation's leader, once the leader is on the
      * board. The slot comes from the member's place in the formation as set in the lobby, since an undeployed unit
-     * has no position yet. The shape faces the leader's first waypoint if it has a route, else the middle of the
-     * enemy's deployment zone. Where the formation's own shape does not fit the deployment zone around the leader,
-     * the member takes its place in a Line abreast instead, and the formation forms its shape on the move.
+     * has no position yet. The shape faces the leader's ordered facing when stopped, else its first waypoint, else
+     * the middle of the enemy's deployment zone. Where the formation's own shape does not fit the deployment zone
+     * around the leader, the member takes its place in a Line abreast instead, and the formation forms its shape on
+     * the move.
      *
      * @param entity     a unit about to deploy
      * @param legalHexes the hexes the unit may deploy in
@@ -782,10 +783,15 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * The way a formation faces while it deploys: toward its leader's first waypoint, else toward the facing target -
-     * the middle of the enemy's deployment zone, the way the bot faces the units it deploys.
+     * The way a formation faces while it deploys: the leader's ordered facing when stopped, as set in the lobby; else
+     * toward its first waypoint; else toward the facing target - the middle of the enemy's deployment zone, the way
+     * the bot faces the units it deploys.
      */
     private static int deploymentHeading(Entity leader, Coords leaderPosition, Coords facingTarget) {
+        int orderedFacing = leader.getUnitOrders().getFacingWhenStopped();
+        if (orderedFacing != UnitOrders.FACING_AUTO) {
+            return orderedFacing;
+        }
         Optional<Coords> waypoint = leader.getUnitOrders().getNextWaypoint();
         if (waypoint.isPresent() && !waypoint.get().equals(leaderPosition)) {
             return leaderPosition.direction(waypoint.get());

@@ -44,6 +44,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +59,9 @@ import javax.swing.KeyStroke;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.BotCommands.BotFormationsMenuBuilder;
+import megamek.client.ui.dialogs.BotCommands.BotOrderFacingDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.MenuScroller;
@@ -79,6 +82,8 @@ import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.UnitOrderAction;
+import megamek.common.orders.UnitOrders;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -88,6 +93,7 @@ import megamek.common.units.Jumpship;
 import megamek.common.units.ProtoMek;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
+import megamek.server.commands.UnitOrderCommand;
 
 /**
  * Creates the Lobby Mek right-click pop-up menu for both the sortable table and the force tree.
@@ -327,6 +333,7 @@ class LobbyMekPopup {
         if (lobby.isForceView() && (forces.size() == 1)) {
             addBotFormationMenu(popup, lobby, forces.getFirst());
         }
+        addBotFacingItem(popup, clientGui, joinedEntities);
 
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHA_STRIKE + NO_INFO + seIds, true, listener));
@@ -360,6 +367,41 @@ class LobbyMekPopup {
         }
         List<Integer> unitIds = new ArrayList<>(force.getEntities());
         popup.add(BotFormationsMenuBuilder.lobbyFormationMenu(lobby.getClientGUI().getClient(), force, unitIds));
+    }
+
+    /**
+     * Adds a Bot facing item for units owned by a bot. It opens the turret-style facing dialog: the "when stopped"
+     * facing is the one each unit deploys in and holds whenever it stops, the "while moving" one it keeps on the move.
+     * Auto leaves the choice to the bot, which deploys facing the enemy's deployment zone.
+     */
+    private static void addBotFacingItem(ScalingPopup popup, ClientGUI clientGui, Collection<Entity> selectedUnits) {
+        if (selectedUnits.isEmpty()) {
+            return;
+        }
+        List<Entity> units = new ArrayList<>(selectedUnits);
+        units.sort(Comparator.comparingInt(Entity::getId));
+        for (Entity unit : units) {
+            if ((unit.getOwner() == null) || !unit.getOwner().isBot()) {
+                return;
+            }
+        }
+        JMenuItem item = new JMenuItem(Messages.getString("BotCommandPanel.Orders.lobbyFacing"));
+        item.addActionListener(event -> {
+            UnitOrders firstOrders = units.getFirst().getUnitOrders();
+            BotOrderFacingDialog dialog = new BotOrderFacingDialog(clientGui.getFrame(), clientGui, units.getFirst(),
+                  firstOrders.getFacingWhileMoving(), firstOrders.getFacingWhenStopped());
+            if (dialog.showDialog() != DialogResult.CONFIRMED) {
+                return;
+            }
+            for (Entity unit : units) {
+                clientGui.getClient().sendChat(UnitOrderCommand.commandText(unit.getId(), UnitOrderAction.FACING,
+                      UnitOrderCommand.FACING_WHILE_MOVING + '=' + dialog.getFacingWhileMoving(),
+                      UnitOrderCommand.FACING_WHEN_STOPPED + '=' + dialog.getFacingWhenStopped()));
+            }
+            logger.info("[BotOrders] lobby facing: moving {}, stopped {} for {} unit(s)",
+                  dialog.getFacingWhileMoving(), dialog.getFacingWhenStopped(), units.size());
+        });
+        popup.add(item);
     }
 
     private static JMenu forceMenu(ChatLounge lobby, List<Entity> entities, List<Force> forces,

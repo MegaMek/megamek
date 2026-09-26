@@ -121,8 +121,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H +2", 1, AUTO, 0),
-              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H +2", 2, AUTO, 0)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H +2", 1, AUTO, 0, false, false),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H +2", 2, AUTO, 0, false, false)), flags);
     }
 
     @Test
@@ -132,8 +132,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1, AUTO, 0),
-              new RouteFlag(SECOND_WAYPOINT, 0, 1, "CN9-A", 1, AUTO, 0)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1, AUTO, 0, false, false),
+              new RouteFlag(SECOND_WAYPOINT, 0, 1, "CN9-A", 1, AUTO, 0, false, false)), flags);
     }
 
     @Test
@@ -151,8 +151,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1, NORTH_EAST, 2),
-              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H", 2, NORTH, 0)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1, NORTH_EAST, 2, false, false),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H", 2, NORTH, 0, false, false)), flags);
         assertEquals("1 hold 2", flags.get(0).progressText());
         assertEquals("2", flags.get(1).progressText());
     }

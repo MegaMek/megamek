@@ -49,6 +49,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import megamek.common.Hex;
+import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -58,6 +59,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.orders.ContactRule;
+import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
@@ -571,6 +573,61 @@ class FormationFollowerTest {
         assertTrue(princess.getUnitOrdersFollower().getFormationSlot(second).isEmpty());
         assertEquals(List.of(runNine), princess.getUnitOrdersFollower().limitToFormationPace(leader,
               List.of(runNine)));
+    }
+
+    @Test
+    void theLeaderWorksOutFromPathsAndSpeedHowLongTheLastUnitNeeds() {
+        // HammerGS: the leader can see how far each unit is from its slot, over what ground, and at what speed
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
+        BipedMek second = member(21, LEADER_HEX, 1, 3);
+        Coords slot = princess.getUnitOrdersFollower().getFormationSlot(second).orElseThrow();
+        second.setPosition(slot.translated(SOUTH, 6));
+
+        // six hexes of open ground at a walk of three
+        assertEquals(2, princess.getUnitOrdersFollower().estimatedAssemblyTurns(leader));
+    }
+
+    @Test
+    void aLeaderWaitingUntilInPositionMovesOnWhenTheLastUnitArrives() {
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        WaypointOrder untilInPosition = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.ASSEMBLE, 8,
+              null, false);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint),
+              List.of(untilInPosition)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 3);
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        game.setCurrentRound(3);
+        follower.advanceRoutes();
+        game.setCurrentRound(4);
+        follower.advanceRoutes();
+        assertTrue(follower.isHolding(leader));
+        assertEquals(2, leader.getUnitOrders().getRoute().size());
+
+        second.setPosition(follower.getFormationSlot(second).orElseThrow());
+        game.setCurrentRound(5);
+        follower.advanceRoutes();
+        assertEquals(List.of(eastWaypoint), leader.getUnitOrders().getRoute());
+    }
+
+    @Test
+    void aRouteEndingInAnExitLeavesTheBoardByTheNearestEdge() {
+        // HammerGS: exit as the end of the route, instead of a separate order
+        WaypointOrder exit = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, null, true);
+        BipedMek scout = loneUnit(32, NORTH_WAYPOINT, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT),
+              List.of(exit)));
+        doReturn(List.<Entity>of(scout)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertEquals(EdgeOrder.EXIT_BY, scout.getUnitOrders().getEdgeOrder());
+        assertEquals(OffBoardDirection.NORTH, scout.getUnitOrders().getEdge());
     }
 
     @Test

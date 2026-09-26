@@ -94,8 +94,11 @@ public class UnitOrdersFollower {
     /** A formation that keeps together counts as formed when every unit is this close to its slot. */
     static final int REFORM_SLACK = 2;
 
-    /** The most rounds a leader waits at a waypoint for its formation, so one stuck unit cannot hold the rest. */
-    static final int MAXIMUM_REFORM_WAIT_ROUNDS = 3;
+    /**
+     * The most rounds a leader waits at a waypoint for its formation, however far the last unit has to come, so one
+     * stuck unit cannot hold the rest.
+     */
+    static final int MAXIMUM_REFORM_WAIT_ROUNDS = 6;
 
     /** Contact range for a formation none of whose units has a weapon: an enemy this close still breaks it. */
     static final int FALLBACK_CONTACT_RANGE = 12;
@@ -119,11 +122,15 @@ public class UnitOrdersFollower {
      *
      * @param waypoint   the waypoint it waits at
      * @param sinceRound the round it first waited there
+     * @param maxRounds  the rounds to wait at most: until the last unit should have arrived, by its path and speed
      */
-    private record ReformWait(Coords waypoint, int sinceRound) {}
+    private record ReformWait(Coords waypoint, int sinceRound, int maxRounds) {}
 
     /** The leaders waiting at a waypoint for their formation, by unit id; the bot's own bookkeeping, not saved. */
     private final Map<Integer, ReformWait> reformWaits = new HashMap<>();
+
+    /** The leaders holding at a waypoint until their formation assembles, by unit id; not saved. */
+    private final Map<Integer, ReformWait> assemblyWaits = new HashMap<>();
 
     /**
      * @param owner the bot whose units follow orders
@@ -321,12 +328,19 @@ public class UnitOrdersFollower {
             if (direction == OffBoardDirection.NONE) {
                 continue;
             }
-            entity.setUnitOrders(UnitOrderAction.EXIT_BY_EDGE.apply(entity.getUnitOrders(), List.of(), direction,
-                  UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound()));
-            owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.EXIT_BY_EDGE,
-                  UnitOrderCommand.EDGE + '=' + direction.name()));
+            orderExit(entity, direction);
         }
         LOGGER.info("[BotOrders] {}: flee order - every unit exits by the {} edge", owner.getName(), edge);
+    }
+
+    /**
+     * Orders one unit off the board by an edge, on this client and to every other.
+     */
+    private void orderExit(Entity entity, OffBoardDirection direction) {
+        entity.setUnitOrders(UnitOrderAction.EXIT_BY_EDGE.apply(entity.getUnitOrders(), List.of(), direction,
+              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound()));
+        owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.EXIT_BY_EDGE,
+              UnitOrderCommand.EDGE + '=' + direction.name()));
     }
 
     /**
@@ -673,6 +687,12 @@ public class UnitOrdersFollower {
                 LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
                       waypoint.get().getBoardNum());
                 change(entity, UnitOrderAction.REACHED);
+            } else if (isAtRouteEnd(entity) && entity.getUnitOrders().getWaypointOrder(0).isExitBoard()
+                  && !isFormationFollower(entity)) {
+                // the route ends by leaving the board: a formation keeping together first assembles, then leaves as one
+                if (!shouldWaitForFormation(entity, waypoint.get())) {
+                    exitWithFormation(entity, waypoint.get());
+                }
             } else if (isAtRouteEnd(entity) && arrivedUnitIds.add(entity.getId())) {
                 // the last hex stays in the route: the unit holds it and comes back to it after a fight
                 String arrivalHex = entity.getPosition().getBoardNum();
@@ -716,16 +736,11 @@ public class UnitOrdersFollower {
             reformWaits.remove(leader.getId());
             return false;
         }
-        int outOfPlace = 0;
-        for (Entity member : members.subList(1, members.size())) {
-            Optional<Coords> slot = getFormationSlot(member);
-            if (slot.isPresent() && (member.getPosition().distance(slot.get()) > REFORM_SLACK)) {
-                outOfPlace++;
-            }
-        }
+        int outOfPlace = countOutOfPlace(members);
         ReformWait wait = reformWaits.get(leader.getId());
         if ((wait == null) || !wait.waypoint().equals(waypoint)) {
-            wait = new ReformWait(waypoint, currentRound());
+            wait = new ReformWait(waypoint, currentRound(), assemblyWaitRounds(leader, waypoint,
+                  MAXIMUM_REFORM_WAIT_ROUNDS));
         }
         int roundsWaited = currentRound() - wait.sinceRound();
         if (outOfPlace == 0) {
@@ -734,7 +749,7 @@ public class UnitOrdersFollower {
             reformWaits.remove(leader.getId());
             return false;
         }
-        if (roundsWaited >= MAXIMUM_REFORM_WAIT_ROUNDS) {
+        if (roundsWaited >= wait.maxRounds()) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT_OVER at {} - {} unit(s) still out of place "
                         + "after {} round(s); moving on", leader.getDisplayName(), leader.getId(), currentRound(),
                   waypoint.getBoardNum(), outOfPlace, roundsWaited);
@@ -749,14 +764,163 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * How many turns until the last of a formation's other units reaches its slot: the movement points of the way it
+     * can really go there, over the movement points it spends a turn at the formation's pace. A unit that cannot reach
+     * its slot at all is not waited for.
+     *
+     * @param leader the formation's leader
+     *
+     * @return the turns until the last one arrives; 0 when all are in place
+     */
+    int estimatedAssemblyTurns(Entity leader) {
+        Optional<FormationOrder> formation = activeFormation(leader);
+        if (formation.isEmpty()) {
+            return 0;
+        }
+        List<Entity> members = formationMembers(leader, formation.get().getLeaderId());
+        int longest = 0;
+        for (Entity member : members.subList(Math.min(1, members.size()), members.size())) {
+            Optional<Coords> slot = getFormationSlot(member);
+            if (slot.isEmpty() || member.getPosition().equals(slot.get())) {
+                continue;
+            }
+            int cost = routeCostFrom(member, slot.get(), member.getPosition());
+            if (cost == WaypointDistanceField.UNREACHABLE) {
+                continue;
+            }
+            int perTurn = Math.max(1, paceMovementPoints(member, formation.get().getPace()));
+            int turns = (cost + perTurn - 1) / perTurn;
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: ASSEMBLY_ESTIMATE - {} is {} MP from its slot at {}, {} MP a "
+                        + "turn: {} turn(s)", leader.getDisplayName(), leader.getId(), currentRound(),
+                  member.getDisplayName(), cost, slot.get().getBoardNum(), perTurn, turns);
+            longest = Math.max(longest, turns);
+        }
+        return longest;
+    }
+
+    /**
+     * @return the rounds to wait at a waypoint for the formation: until the last unit should have arrived, plus one
+     *       for luck, at least one and at most the cap
+     */
+    private int assemblyWaitRounds(Entity leader, Coords waypoint, int cap) {
+        int rounds = Math.max(1, Math.min(cap, estimatedAssemblyTurns(leader) + 1));
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: waits at {} up to {} round(s) for the formation (at most {})",
+              leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), rounds, cap);
+        return rounds;
+    }
+
+    /**
+     * @return {@code true} if a unit waiting at a waypoint for its formation has waited as long as the last unit should
+     *       have needed to arrive
+     */
+    private boolean isAssemblyWaitOver(Entity entity, Coords waypoint) {
+        ReformWait wait = assemblyWaits.get(entity.getId());
+        return (wait != null) && wait.waypoint().equals(waypoint)
+              && (currentRound() - wait.sinceRound() >= wait.maxRounds());
+    }
+
+    /**
+     * @param members a formation's units, its leader first
+     *
+     * @return how many of the others are more than {@link #REFORM_SLACK} hexes from their slots
+     */
+    private int countOutOfPlace(List<Entity> members) {
+        int outOfPlace = 0;
+        for (Entity member : members.subList(1, members.size())) {
+            Optional<Coords> slot = getFormationSlot(member);
+            if (slot.isPresent() && (member.getPosition().distance(slot.get()) > REFORM_SLACK)) {
+                outOfPlace++;
+            }
+        }
+        return outOfPlace;
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit's formation has assembled: every other unit within {@link #REFORM_SLACK} of
+     *       its slot; a unit out of formation, or leading no one, counts as assembled
+     */
+    boolean isFormationAssembled(Entity entity) {
+        Optional<FormationOrder> formation = activeFormation(entity);
+        if (formation.isEmpty()) {
+            return true;
+        }
+        List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+        return (members.size() < 2) || (countOutOfPlace(members) == 0);
+    }
+
+    /**
+     * @return {@code true} if the unit follows a formation leader on this leg, so the leader decides for it
+     */
+    private boolean isFormationFollower(Entity entity) {
+        return formationLeaderOf(entity).isPresent();
+    }
+
+    /**
+     * Orders a unit off the board by the edge nearest the last waypoint of its route, and with it every unit of the
+     * formation it leads.
+     */
+    private void exitWithFormation(Entity entity, Coords lastWaypoint) {
+        OffBoardDirection edge = nearestEdge(entity, lastWaypoint);
+        List<Entity> leaving = new ArrayList<>(List.of(entity));
+        Optional<FormationOrder> formation = activeFormation(entity);
+        if (formation.isPresent()) {
+            List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+            if (!members.isEmpty() && (members.get(0).getId() == entity.getId())) {
+                leaving = members;
+            }
+        }
+        for (Entity unit : leaving) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: end of route at {} - leaving by the {} edge",
+                  unit.getDisplayName(), unit.getId(), currentRound(), lastWaypoint.getBoardNum(), edge);
+            orderExit(unit, edge);
+        }
+        owner.getOrdersRadio().report(entity, "exiting", edge.toString());
+    }
+
+    /**
+     * @return the board edge nearest the hex; ties go north, south, west, then east
+     */
+    private OffBoardDirection nearestEdge(Entity entity, Coords hex) {
+        Board board = owner.getGame().getBoard(entity);
+        if (board == null) {
+            return OffBoardDirection.NORTH;
+        }
+        int toNorth = hex.getY();
+        int toSouth = board.getHeight() - 1 - hex.getY();
+        int toWest = hex.getX();
+        int toEast = board.getWidth() - 1 - hex.getX();
+        int nearest = Math.min(Math.min(toNorth, toSouth), Math.min(toWest, toEast));
+        if (toNorth == nearest) {
+            return OffBoardDirection.NORTH;
+        } else if (toSouth == nearest) {
+            return OffBoardDirection.SOUTH;
+        } else if (toWest == nearest) {
+            return OffBoardDirection.WEST;
+        }
+        return OffBoardDirection.EAST;
+    }
+
+    /**
      * Starts a unit's hold when it stands on a waypoint set to hold, and moves it on once it has held for the turns
      * set: reaching a two-turn hold in round 3, it holds in rounds 4 and 5 and moves on in round 6.
      */
     private void advanceHold(Entity entity, Coords waypoint) {
         UnitOrders orders = entity.getUnitOrders();
         int holdTurns = orders.getWaypointOrder(0).getHoldTurns();
+        boolean isAssemble = orders.getWaypointOrder(0).isAssemble();
         if (orders.getHoldSinceRound() == UnitOrders.NO_ROUND) {
-            if (entity.getPosition().equals(waypoint)) {
+            if (entity.getPosition().equals(waypoint) && isAssemble && isFormationAssembled(entity)) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: reached {} with the formation assembled; moving on",
+                      entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum());
+                change(entity, UnitOrderAction.REACHED);
+            } else if (entity.getPosition().equals(waypoint)) {
+                if (isAssemble) {
+                    // wait until the last unit should have arrived, by its path and speed, never past the turns set
+                    assemblyWaits.put(entity.getId(), new ReformWait(waypoint, currentRound(),
+                          assemblyWaitRounds(entity, waypoint, holdTurns)));
+                }
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: reached {} and holds {} turn(s), through round {}",
                       entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(), holdTurns,
                       currentRound() + holdTurns);
@@ -768,6 +932,17 @@ public class UnitOrdersFollower {
         if (orders.isHoldDone(currentRound())) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: held {} turn(s) at {}; moving on", entity.getDisplayName(),
                   entity.getId(), currentRound(), holdTurns, waypoint.getBoardNum());
+            change(entity, UnitOrderAction.REACHED);
+        } else if (isAssemble && isAssemblyWaitOver(entity, waypoint)) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: the formation should have assembled at {} by now; moving on",
+                  entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum());
+            assemblyWaits.remove(entity.getId());
+            change(entity, UnitOrderAction.REACHED);
+        } else if (isAssemble && isFormationAssembled(entity)) {
+            assemblyWaits.remove(entity.getId());
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: formation assembled at {}; moving on before the {} turn(s) "
+                  + "were up", entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(),
+                  holdTurns);
             change(entity, UnitOrderAction.REACHED);
         }
     }

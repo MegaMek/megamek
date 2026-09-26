@@ -157,8 +157,8 @@ public class OrdersRadio {
      * Reports an event about one unit's orders, once per lance and kind of event per round.
      *
      * @param entity the unit
-     * @param event  the kind of event: {@code arrived}, {@code holding}, {@code unreachable}, {@code followingOrders} or
-     *               {@code fold}
+     * @param event  the kind of event: {@code arrived}, {@code holding}, {@code exiting}, {@code unreachable},
+     *               {@code followingOrders} or {@code fold}
      * @param detail the hex or edge the event is about
      */
     void report(Entity entity, String event, String detail) {

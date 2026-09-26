@@ -94,15 +94,23 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
      * @param stepNumber the waypoint's place in the route, from 1
      * @param facing     the facing set on the waypoint, 0-5, or {@link UnitOrders#FACING_AUTO}
      * @param holdTurns  the turns set to hold there; 0 passes through
+     * @param isAssemble {@code true} if the units wait there until in position rather than for a fixed delay
+     * @param isExit     {@code true} if the units leave the board from there, at the end of the route
      */
     record RouteFlag(Coords hex, int boardId, int colorIndex, String label, int stepNumber, int facing,
-          int holdTurns) {
+          int holdTurns, boolean isAssemble, boolean isExit) {
 
         /**
-         * @return the line under the unit's name: the waypoint's number, and its hold if it has one, e.g.
-         *       {@code 2 hold 2}
+         * @return the line under the unit's name: the waypoint's number, and what the units do there if they stop or
+         *       leave, e.g. {@code 2 hold 2}, {@code 2 form up} or {@code 4 exit}
          */
         String progressText() {
+            if (isExit) {
+                return Messages.getString("BotCommandPanel.MoveOrder.flagExit", stepNumber);
+            }
+            if (isAssemble) {
+                return Messages.getString("BotCommandPanel.MoveOrder.flagAssemble", stepNumber);
+            }
             return (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", stepNumber, holdTurns)
                   : String.valueOf(stepNumber);
         }
@@ -161,10 +169,12 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
             List<Coords> route = guide.getUnitOrders().getRoute();
             for (int step = 0; step < route.size(); step++) {
                 WaypointOrder waypointOrder = guide.getUnitOrders().getWaypointOrder(step);
-                // the last waypoint is held until new orders: it has no hold count to show
-                int holdTurns = (step == route.size() - 1) ? 0 : waypointOrder.getHoldTurns();
+                // the last waypoint is held until new orders or left by the board edge: it has no hold count to show
+                boolean isLast = step == route.size() - 1;
+                int holdTurns = isLast ? 0 : waypointOrder.getHoldTurns();
                 flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), step + 1,
-                      waypointOrder.getFacing(), holdTurns));
+                      waypointOrder.getFacing(), holdTurns, !isLast && waypointOrder.isAssemble(),
+                      isLast && waypointOrder.isExitBoard()));
             }
             colorIndex++;
         }

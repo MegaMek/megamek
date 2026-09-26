@@ -428,6 +428,32 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * How far a position is from a board edge by the cheapest route the unit can take, in movement points, for a unit
+     * leaving by or withdrawing to that edge. Units moving the same way share one field a round.
+     *
+     * @param mover    the unit
+     * @param edge     the edge
+     * @param position the position to measure from
+     *
+     * @return the movement points to the nearest hex of the edge the unit can stand on, or
+     *       {@link WaypointDistanceField#UNREACHABLE}
+     */
+    int edgeCostFrom(Entity mover, CardinalEdge edge, Coords position) {
+        if (distanceFieldsRound != currentRound()) {
+            distanceFields.clear();
+            distanceFieldsRound = currentRound();
+        }
+        String key = "edge " + edge + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId() + '|'
+              + mover.getMaxElevationChange();
+        WaypointDistanceField field = distanceFields.get(key);
+        if (field == null) {
+            field = WaypointDistanceField.buildToEdge(mover, edge);
+            distanceFields.put(key, field);
+        }
+        return field.costFrom(position);
+    }
+
+    /**
      * @param entity a unit of the bot
      *
      * @return how strongly the unit's route pulls in its path score: {@link #IMPERATIVE_ROUTE_WEIGHT} for an

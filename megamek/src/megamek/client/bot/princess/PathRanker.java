@@ -732,7 +732,8 @@ public abstract class PathRanker implements IPathRanker {
      * <p>Anywhere within {@link Princess#DISTANCE_TO_WAYPOINT} of the waypoint counts as arrived, matching the point at
      * which the bot moves on to the next waypoint. Further out, the distance is the movement points to the waypoint by
      * the cheapest route the unit can take ({@link WaypointDistanceField}), so a unit behind a lake or in a dead-end
-     * street prefers the way round over the shore facing the waypoint (issue #7615). Where no route is known, the
+     * street prefers the way round over the shore facing the waypoint (issue #7615). A unit on the ground heading for
+     * its home edge is measured the same way, to the nearest hex of the edge. Where no route is known, the
      * straight-line distance stands in.</p>
      *
      * @param movingUnit the unit on the mission
@@ -768,7 +769,18 @@ public abstract class PathRanker implements IPathRanker {
             }
             return hasArrived ? 0 : costToward(movingUnit, target, position, arrivalRadius);
         }
-        return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
+        CardinalEdge homeEdge = getOwner().getHomeEdge(movingUnit);
+        // A unit on the ground heading for an edge is scored by the way it can really go. By rows to the edge alone,
+        // every first step round a lake scores worse than standing still, and the unit freezes on the shore
+        // (HammerGS's playtest, 2026-09-26). Airborne units keep the straight line.
+        boolean isOnGround = !movingUnit.isAirborne() && !movingUnit.isAirborneVTOLorWIGE();
+        if (isOnGround && (boardId == movingUnit.getBoardId())) {
+            int edgeCost = getOwner().getUnitOrdersFollower().edgeCostFrom(movingUnit, homeEdge, position);
+            if (edgeCost != WaypointDistanceField.UNREACHABLE) {
+                return edgeCost;
+            }
+        }
+        return distanceToHomeEdge(position, boardId, homeEdge, game);
     }
 
     /**

@@ -422,6 +422,24 @@ public class UnitOrdersFollower {
      * @return the ordered facing 0-5, or {@link UnitOrders#FACING_AUTO}
      */
     int orderedFacing(Entity entity, Coords finalHex) {
+        int facing = playerOrderedFacing(entity, finalHex);
+        if ((facing == UnitOrders.FACING_AUTO) && owner.getEnemyEntities().isEmpty()) {
+            // with no enemy to face, Auto faces along the route rather than wherever the move happens to end
+            return facingAlongRoute(entity, finalHex);
+        }
+        return facing;
+    }
+
+    /**
+     * The facing a player set for the end of this move - on the waypoint it ends on, for the end of the route, or
+     * while moving - without the bot's own choices.
+     *
+     * @param entity   the unit
+     * @param finalHex where the move ends
+     *
+     * @return the facing 0-5, or {@link UnitOrders#FACING_AUTO} when the player left it to the bot
+     */
+    int playerOrderedFacing(Entity entity, Coords finalHex) {
         UnitOrders orders = entity.getUnitOrders();
         List<Coords> route = orders.getRoute();
         // a move that ends on the next waypoint takes the facing set on it
@@ -431,12 +449,61 @@ public class UnitOrdersFollower {
         }
         boolean endsStopped = route.isEmpty()
               || ((route.size() == 1) && (finalHex.distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT));
-        int facing = endsStopped ? stoppedFacing(entity) : orders.getFacingWhileMoving();
-        if ((facing == UnitOrders.FACING_AUTO) && owner.getEnemyEntities().isEmpty()) {
-            // with no enemy to face, Auto faces along the route rather than wherever the move happens to end
-            return facingAlongRoute(entity, finalHex);
+        return endsStopped ? stoppedFacing(entity) : orders.getFacingWhileMoving();
+    }
+
+    /**
+     * How many hexsides a unit can turn its weapons without turning its legs: one for a torso twist, more for an
+     * extended twist, three - any way at all - for a turret; none for a unit that cannot. Turning its weapons is free,
+     * where turning in place spends movement and counts as having moved.
+     *
+     * @param entity the unit
+     *
+     * @return the hexsides either side of its facing that its torso or turret can reach, 0-3
+     */
+    static int twistReach(Entity entity) {
+        if (!entity.canChangeSecondaryFacing()) {
+            return 0;
         }
-        return facing;
+        int reach = 0;
+        for (int sides = 1; sides <= 3; sides++) {
+            boolean canReach = entity.isValidSecondaryFacing((entity.getFacing() + sides) % 6)
+                  && entity.isValidSecondaryFacing((entity.getFacing() + 6 - sides) % 6);
+            if (!canReach) {
+                break;
+            }
+            reach = sides;
+        }
+        return reach;
+    }
+
+    /**
+     * @param fromFacing the facing turned from, 0-5
+     * @param toFacing   the facing turned to, 0-5
+     *
+     * @return how many hexsides apart the two are, 0-3
+     */
+    static int sidesApart(int fromFacing, int toFacing) {
+        int sides = Math.abs(fromFacing - toFacing) % 6;
+        return Math.min(sides, 6 - sides);
+    }
+
+    /**
+     * The way a unit should twist its torso or turret this fire phase to face the way a player ordered, when it has
+     * nothing better to aim at.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the facing to twist to, 0-5, or {@link UnitOrders#FACING_AUTO} when there is no order it can reach
+     */
+    public int orderedTwist(Entity entity) {
+        if (entity.getPosition() == null) {
+            return UnitOrders.FACING_AUTO;
+        }
+        int ordered = isHolding(entity) ? stoppedFacing(entity) : playerOrderedFacing(entity, entity.getPosition());
+        boolean canReach = (ordered != UnitOrders.FACING_AUTO) && (ordered != entity.getSecondaryFacing())
+              && entity.canChangeSecondaryFacing() && entity.isValidSecondaryFacing(ordered);
+        return canReach ? ordered : UnitOrders.FACING_AUTO;
     }
 
     /**

@@ -876,7 +876,15 @@ public class Princess extends BotClient {
         int orderedFacing = UnitOrdersFollower.facingThatStands(getUnitOrdersFollower().stoppedFacing(entity),
               entity.getPosition(), closestEnemyPosition);
         int desiredFacing;
-        if (orderedFacing != UnitOrders.FACING_AUTO) {
+        if ((orderedFacing != UnitOrders.FACING_AUTO)
+              && (UnitOrdersFollower.sidesApart(entity.getFacing(), orderedFacing)
+              <= UnitOrdersFollower.twistReach(entity))) {
+            // its torso or turret reaches the ordered facing: it twists that way in the fire phase rather than
+            // spending movement to turn, which would count as having moved
+            LOGGER.info("[BotOrders] {} (ID {}): holds facing {} and twists to the ordered facing {}",
+                  entity.getDisplayName(), entity.getId(), entity.getFacing(), orderedFacing);
+            return movePath;
+        } else if (orderedFacing != UnitOrders.FACING_AUTO) {
             desiredFacing = orderedFacing;
         } else if ((closestEnemyPosition == null) || closestEnemyPosition.equals(entity.getPosition())) {
             return movePath;
@@ -1846,6 +1854,14 @@ public class Princess extends BotClient {
                 if (findClubAction != null) {
                     miscPlan.add(findClubAction);
                 }
+            }
+
+            // with nothing to aim at, turn the torso or turret the way the player ordered, which costs nothing
+            int orderedTwist = getUnitOrdersFollower().orderedTwist(shooter);
+            if (orderedTwist != UnitOrders.FACING_AUTO) {
+                LOGGER.info("[BotOrders] {} (ID {}): twists to the ordered facing {}", shooter.getDisplayName(),
+                      shooter.getId(), orderedTwist);
+                miscPlan.add(new TorsoTwistAction(shooter.getId(), orderedTwist));
             }
 
             sendAttackData(shooter.getId(), miscPlan);

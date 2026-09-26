@@ -745,17 +745,36 @@ public abstract class PathRanker implements IPathRanker {
     protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game) {
         Optional<Coords> waypoint = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner());
         if (waypoint.isPresent() && (boardId == movingUnit.getBoardId())) {
-            int straightDistance = position.distance(waypoint.get());
-            if (straightDistance <= Princess.DISTANCE_TO_WAYPOINT) {
-                return 0;
+            // Score the way still to go along the whole route, not just to the next waypoint. Otherwise every hex
+            // near a waypoint scores as "arrived", and a unit with movement to spare runs a loop past it to bank
+            // defence rather than heading on to the next one (HammerGS's playtest, 2026-09-26).
+            List<Coords> route = movingUnit.getUnitOrders().getRoute();
+            Coords target = waypoint.get();
+            boolean isRouteHead = !route.isEmpty() && route.get(0).equals(target);
+            Coords nextWaypoint = (isRouteHead && (route.size() > 1)) ? route.get(1) : null;
+            boolean hasArrived = position.distance(target) <= Princess.DISTANCE_TO_WAYPOINT;
+            if (nextWaypoint != null) {
+                if (hasArrived) {
+                    return costToward(movingUnit, nextWaypoint, position, 0);
+                }
+                return costToward(movingUnit, target, position, Princess.DISTANCE_TO_WAYPOINT)
+                      + costToward(movingUnit, nextWaypoint, target, 0);
             }
-            int routeCost = getOwner().getUnitOrdersFollower().routeCostFrom(movingUnit, waypoint.get(), position);
-            if (routeCost == WaypointDistanceField.UNREACHABLE) {
-                return straightDistance - Princess.DISTANCE_TO_WAYPOINT;
-            }
-            return routeCost;
+            return hasArrived ? 0 : costToward(movingUnit, target, position, Princess.DISTANCE_TO_WAYPOINT);
         }
         return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
+    }
+
+    /**
+     * @return the movement points from the position to the target by the cheapest route, or the straight-line
+     *       distance less the arrival radius where no route is known
+     */
+    private int costToward(Entity movingUnit, Coords target, Coords position, int arrivalRadius) {
+        int routeCost = getOwner().getUnitOrdersFollower().routeCostFrom(movingUnit, target, position);
+        if (routeCost == WaypointDistanceField.UNREACHABLE) {
+            return Math.max(0, position.distance(target) - arrivalRadius);
+        }
+        return routeCost;
     }
 
     private boolean validRange(Coords finalCoords, Targetable target, int startingTargetDistance,

@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Vector;
 import java.util.concurrent.atomic.AtomicReference;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
@@ -59,6 +60,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -363,5 +365,53 @@ class UnitBehaviorOrdersTest {
         assertFalse(routed.getUnitOrders().hasRoute());
         assertEquals(CardinalEdge.NORTH, princess.getHomeEdge(routed));
         assertTrue(princess.getUnitOrdersFollower().isOrderedToExit(routed));
+    }
+
+    private PathRanker plainRanker() {
+        return new PathRanker(princess) {
+            @Override
+            protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
+                  List<Entity> enemies, Coords friendsCoords) {
+                return null;
+            }
+
+            @Override
+            public double distanceToClosestEnemy(Entity entity, Coords position, Game game) {
+                return 0;
+            }
+        };
+    }
+
+    @Test
+    void reachingAWaypointWithMoreToComeIsScoredByTheWayStillToGo() {
+        // HammerGS's playtest: every hex near waypoint 1 scored as "arrived", so the Wraith looped past it to burn MP.
+        Entity wraith = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        wraith.setUnitOrders(UnitOrders.NONE.withRoute(List.of(new Coords(10, 10), new Coords(10, 2))));
+        PathRanker ranker = plainRanker();
+        Game game = mock(Game.class);
+
+        int atFirstWaypoint = ranker.distanceToDestination(wraith, new Coords(10, 11), 0, game);
+        int onTowardTheSecond = ranker.distanceToDestination(wraith, new Coords(10, 8), 0, game);
+        int shortOfTheFirst = ranker.distanceToDestination(wraith, new Coords(10, 20), 0, game);
+
+        assertEquals(9, atFirstWaypoint);
+        assertTrue(onTowardTheSecond < atFirstWaypoint);
+        assertTrue(atFirstWaypoint < shortOfTheFirst);
+    }
+
+    @Test
+    void aLoopThatDoublesBackIsCounted() {
+        MovePath loop = mock(MovePath.class);
+        when(loop.getStartCoords()).thenReturn(new Coords(10, 10));
+        Vector<MoveStep> steps = new Vector<>();
+        for (Coords position : List.of(new Coords(10, 9), new Coords(10, 8), new Coords(10, 9),
+              new Coords(10, 10))) {
+            MoveStep step = mock(MoveStep.class);
+            when(step.getPosition()).thenReturn(position);
+            steps.add(step);
+        }
+        when(loop.getStepVector()).thenReturn(steps);
+
+        assertEquals(2, UnitOrdersFollower.backtrackSteps(loop, new Coords(10, 2)));
     }
 }

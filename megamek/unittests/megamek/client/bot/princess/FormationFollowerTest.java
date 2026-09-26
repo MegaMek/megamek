@@ -287,6 +287,44 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aFollowerOneHexOffItsSlotHasNotArrived() {
+        // HammerGS's playtest: a Column's Centurion stopped one hex beside its slot and held there, because anywhere
+        // within a hex counted as arrived.
+        Coords waypoint = Coords.parseHexNumber("1622");
+        BipedMek grasshopper = member(20, waypoint, 0, 3);
+        grasshopper.setUnitOrders(UnitOrders.NONE.withRoute(List.of(waypoint)).withFacings(0, 0).withFormation(
+              new FormationOrder(FormationShape.COLUMN, 20, 2, 0, FormationPace.WALK, ContactRule.HOLD)));
+        BipedMek centurion = member(21, Coords.parseHexNumber("1524"), 1, 4);
+        centurion.setUnitOrders(UnitOrders.NONE.withRoute(List.of(waypoint)).withFacings(0, 0).withFormation(
+              new FormationOrder(FormationShape.COLUMN, 20, 2, 1, FormationPace.WALK, ContactRule.HOLD)));
+        Coords slot = Coords.parseHexNumber("1624");
+        assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getFormationSlot(centurion));
+
+        assertFalse(princess.getUnitOrdersFollower().isAtRouteEnd(centurion));
+        assertEquals(0, princess.getUnitOrdersFollower().arrivalRadius(centurion));
+
+        centurion.setPosition(slot);
+        assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(centurion));
+    }
+
+    @Test
+    void aSlotHeldByAUnitOutsideTheFormationMovesBesideIt() {
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        Coords ideal = NORTH_WAYPOINT.translated(SOUTH_EAST, 2);
+        BipedMek bystander = new BipedMek();
+        bystander.setId(30);
+        bystander.setOwner(bot);
+        game.addEntity(bystander);
+        bystander.setDeployed(true);
+        bystander.setPosition(ideal);
+
+        Coords slot = princess.getUnitOrdersFollower().getFormationSlot(second).orElseThrow();
+
+        assertEquals(1, slot.distance(ideal));
+    }
+
+    @Test
     void theLeaderDeploysFirstAndMembersDeployInTheirSlots() {
         BipedMek leader = member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);

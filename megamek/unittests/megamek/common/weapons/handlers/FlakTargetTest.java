@@ -53,7 +53,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Regression tests for issue #9047: artillery flak did no damage to a LAM in AirMek mode.
+ * Regression tests for issue #9047: artillery flak did no damage to a LAM in AirMek mode, and issue #8898: artillery
+ * flak did no damage to a Mek making an atmospheric drop.
  *
  * <p>Flak hits "airborne ground units (VTOL Vehicles, WiGEs and units expending VTOL MPs such as infantry) as well as
  * airborne aerospace units" (TO:AR p.153). An AirMek flies as a WiGE, but the damage step only let VTOLs and aerospace
@@ -119,6 +120,15 @@ class FlakTargetTest {
     @Test
     void groundMekDoesNotTakeFlak() {
         assertFalse(AreaEffectHelper.isFlakTarget(place(new BipedMek(), 0)));
+    }
+
+    @Test
+    void droppingMekTakesFlak() {
+        BipedMek mek = place(new BipedMek(), 0);
+        mek.setAltitude(5);
+
+        assertTrue(mek.isDropping(), "a Mek at altitude should be dropping");
+        assertTrue(AreaEffectHelper.isFlakTarget(mek));
     }
 
     /** The positive control: VTOLs always could be hit by flak. */

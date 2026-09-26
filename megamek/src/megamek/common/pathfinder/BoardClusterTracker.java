@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -365,7 +365,8 @@ public class BoardClusterTracker {
     /**
      * Whether we are required to plow through a building if we enter this hex.
      */
-    private boolean buildingPlowThroughRequired(Entity entity, MovementType relevantMovementType, Coords coords) {
+    public static boolean buildingPlowThroughRequired(Entity entity, MovementType relevantMovementType,
+          Coords coords) {
         // basic premise:
         // ground tanks cannot climb over buildings and must plow through
         // meks can climb over buildings that won't collapse under them

@@ -730,19 +730,30 @@ public abstract class PathRanker implements IPathRanker {
      * the home edge, which is NORTH when no edge is set, so a waypoint anywhere else was pulled toward the north edge.
      *
      * <p>Anywhere within {@link Princess#DISTANCE_TO_WAYPOINT} of the waypoint counts as arrived, matching the point at
-     * which the bot moves on to the next waypoint.</p>
+     * which the bot moves on to the next waypoint. Further out, the distance is the movement points to the waypoint by
+     * the cheapest route the unit can take ({@link WaypointDistanceField}), so a unit behind a lake or in a dead-end
+     * street prefers the way round over the shore facing the waypoint (issue #7615). Where no route is known, the
+     * straight-line distance stands in.</p>
      *
      * @param movingUnit the unit on the mission
      * @param position   the position to measure from
      * @param boardId    the board of that position
      * @param game       the game
      *
-     * @return the distance in hexes; {@code 0} means the unit has arrived
+     * @return the distance; {@code 0} means the unit has arrived
      */
     protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game) {
         Optional<Coords> waypoint = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner());
         if (waypoint.isPresent() && (boardId == movingUnit.getBoardId())) {
-            return Math.max(0, position.distance(waypoint.get()) - Princess.DISTANCE_TO_WAYPOINT);
+            int straightDistance = position.distance(waypoint.get());
+            if (straightDistance <= Princess.DISTANCE_TO_WAYPOINT) {
+                return 0;
+            }
+            int routeCost = getOwner().getUnitOrdersFollower().routeCostFrom(movingUnit, waypoint.get(), position);
+            if (routeCost == WaypointDistanceField.UNREACHABLE) {
+                return straightDistance - Princess.DISTANCE_TO_WAYPOINT;
+            }
+            return routeCost;
         }
         return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
     }

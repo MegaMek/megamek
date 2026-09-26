@@ -93,6 +93,19 @@ class UnitOrdersTest {
     }
 
     @Test
+    void reachingTheLastWaypointHoldsTheUnitThere() {
+        UnitOrders orders = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX, SECOND_HEX));
+
+        UnitOrders afterFirst = apply(UnitOrderAction.REACHED, orders, List.of());
+        UnitOrders afterLast = apply(UnitOrderAction.REACHED, afterFirst, List.of());
+
+        assertFalse(afterFirst.isPaused());
+        assertFalse(afterLast.hasRoute());
+        assertTrue(afterLast.isPaused());
+        assertEquals(afterLast, apply(UnitOrderAction.REACHED, afterLast, List.of()));
+    }
+
+    @Test
     void ordersAreNeverChangedInPlace() {
         UnitOrders original = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX));
 

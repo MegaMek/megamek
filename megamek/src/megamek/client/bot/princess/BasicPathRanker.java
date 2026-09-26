@@ -61,6 +61,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.UnitOrders;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -1634,6 +1635,19 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition,
           boolean squareUpOnClosestEnemy) {
+        // A player's ordered facing replaces the bot's own point to face while the fire it expects - the closest
+        // enemy when squaring up, else the enemy median - still falls in the ordered facing's front arc.
+        Coords expectedThreat = (squareUpOnClosestEnemy || (enemyMedianPosition == null))
+              ? closestEnemyPosition : enemyMedianPosition;
+        int orderedFacing = UnitOrdersFollower.facingThatStands(
+              getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
+              path.getFinalCoords(), expectedThreat);
+        if (orderedFacing != UnitOrders.FACING_AUTO) {
+            int sidesApart = Math.abs(path.getFinalFacing() - orderedFacing) % 6;
+            int orderedFacingDiff = Math.min(sidesApart, 6 - sidesApart);
+            logger.trace("facing mod [ordered facing {}, {} sides off]", orderedFacing, orderedFacingDiff);
+            return FACING_MOD_MULTIPLIER * orderedFacingDiff;
+        }
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,
               game.getBoard(movingUnit).getCenter(),
@@ -1675,9 +1689,13 @@ public class BasicPathRanker extends PathRanker {
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
 
+            // an Imperative route pulls harder than anything else the unit weighs (issue #7615)
+            double routeWeight = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner())
+                  .isPresent() ? getOwner().getUnitOrdersFollower().routeWeight(movingUnit) : 1.0;
+
             // normally, we favor being closer to the edge we're trying to get to
             if (newDistanceToHome > 0) {
-                selfPreservationMod = newDistanceToHome * selfPreservation;
+                selfPreservationMod = newDistanceToHome * selfPreservation * routeWeight;
                 // if this path gets us to the edge, we value it considerably more than we do
                 // paths that don't get us there
             } else {

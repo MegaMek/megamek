@@ -42,6 +42,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
+import megamek.server.commands.RadioCommand;
 import org.apache.logging.log4j.Level;
 
 /**
@@ -173,12 +174,11 @@ public class OrdersRadio {
             return;
         }
         RadioVoice voice = voice();
-        if (voice == RadioVoice.PLAIN) {
-            owner.sendChat(plain, Level.INFO);
-            return;
-        }
-        owner.sendChat(callsign(entity, lance, voice) + ": "
-              + Messages.getString("Princess.radio." + voice.name() + '.' + event, detail), Level.INFO);
+        String call = (voice == RadioVoice.PLAIN) ? plain : callsign(entity, lance, voice) + ": "
+              + Messages.getString("Princess.radio." + voice.name() + '.' + event, detail);
+        // the server relays the call to the unit's own side only, as a toast with the unit's icon and a chat line;
+        // it names the hex the unit is heading for, so the other side must not hear it
+        owner.sendChat(RadioCommand.commandText(entity.getId(), call), Level.INFO);
     }
 
     /**

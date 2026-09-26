@@ -50,9 +50,14 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -134,6 +139,21 @@ class BotWaypointMenuBuilderTest {
         findItem(menu, Messages.getString("BotCommandPanel.Waypoint.remove")).doClick();
 
         verify(client).sendChat("/unitOrder 20 EDIT_ROUTE hexes=1709/NE/2");
+    }
+
+    @Test
+    void changingAFlagsFacingKeepsTheFormationOfItsLeg() {
+        Entity mek = ((Game) client.getGame()).getEntity(20);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        mek.setUnitOrders(UnitOrders.NONE.withRoute(List.of(FIRST_HEX, HOLD_HEX),
+              List.of(new WaypointOrder(NORTH_EAST, 2, column))));
+        JMenu facingMenu = (JMenu) findItem(waypointMenuOn(FIRST_HEX),
+              Messages.getString("BotCommandPanel.MoveOrder.column.facing"));
+
+        findItem(facingMenu, Messages.getString("BotCommandPanel.Orders.facing.0")).doClick();
+
+        verify(client).sendChat("/unitOrder 20 EDIT_ROUTE hexes=1709/N/2/F:COLUMN:2:WALK:BREAK:T-1706");
     }
 
     @Test

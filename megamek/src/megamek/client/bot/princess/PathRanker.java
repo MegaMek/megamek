@@ -751,8 +751,12 @@ public abstract class PathRanker implements IPathRanker {
             List<Coords> route = movingUnit.getUnitOrders().getRoute();
             Coords target = waypoint.get();
             boolean isRouteHead = !route.isEmpty() && route.get(0).equals(target);
-            Coords nextWaypoint = (isRouteHead && (route.size() > 1)) ? route.get(1) : null;
-            // a formation slot counts as reached within its slack, a waypoint within DISTANCE_TO_WAYPOINT
+            // a waypoint set to hold is the whole goal until the unit stands on it: scoring the leg beyond it would
+            // pull the unit past the hex it has to stop on
+            boolean isHeadingForHold = getOwner().getUnitOrdersFollower().isHeadingForHold(movingUnit);
+            Coords nextWaypoint = (isRouteHead && (route.size() > 1) && !isHeadingForHold) ? route.get(1) : null;
+            // a formation slot, a waypoint set to hold and a formation leader's last waypoint count as reached only on
+            // the hex; any other waypoint within DISTANCE_TO_WAYPOINT
             int arrivalRadius = getOwner().getUnitOrdersFollower().arrivalRadius(movingUnit);
             boolean hasArrived = position.distance(target) <= arrivalRadius;
             if (nextWaypoint != null) {

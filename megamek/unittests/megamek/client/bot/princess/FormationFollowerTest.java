@@ -36,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -60,10 +62,12 @@ import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,6 +82,7 @@ class FormationFollowerTest {
     private static final int HEIGHT = 30;
     private static final int CLIFF_LEVEL = 5;
     private static final int NORTH = 0;
+    private static final int NORTH_EAST = 1;
     private static final int SOUTH_EAST = 2;
     private static final int SOUTH = 3;
     private static final int SOUTH_WEST = 4;
@@ -460,5 +465,79 @@ class FormationFollowerTest {
             assertFalse(slots.contains(slot));
             slots.add(slot);
         }
+    }
+
+    private BipedMek loneUnit(int unitId, Coords position, UnitOrders orders) {
+        BipedMek mek = new BipedMek();
+        mek.setId(unitId);
+        mek.setOwner(bot);
+        game.addEntity(mek);
+        mek.setPosition(position);
+        mek.setUnitOrders(orders);
+        return mek;
+    }
+
+    @Test
+    void aUnitHoldsAtAWaypointForTheTurnsSetThenMovesOn() {
+        // HammerGS: a waypoint can hold the unit a number of turns, facing a set way, before it moves on
+        Coords holdHex = Coords.parseHexNumber("1706");
+        Coords lastHex = Coords.parseHexNumber("2204");
+        BipedMek wolverine = loneUnit(30, holdHex.translated(SOUTH, 1), UnitOrders.NONE.withRoute(
+              List.of(holdHex, lastHex), List.of(new WaypointOrder(NORTH_EAST, 2))));
+        doReturn(List.<Entity>of(wolverine)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setCurrentRound(3);
+
+        // one hex short does not start the hold: a waypoint set to hold must be reached exactly
+        assertEquals(0, follower.arrivalRadius(wolverine));
+        follower.advanceRoutes();
+        assertEquals(UnitOrders.NO_ROUND, wolverine.getUnitOrders().getHoldSinceRound());
+
+        wolverine.setPosition(holdHex);
+        follower.advanceRoutes();
+        assertEquals(3, wolverine.getUnitOrders().getHoldSinceRound());
+
+        game.setCurrentRound(4);
+        assertTrue(follower.isHolding(wolverine));
+        assertEquals(NORTH_EAST, follower.stoppedFacing(wolverine));
+        follower.advanceRoutes();
+        assertEquals(List.of(holdHex, lastHex), wolverine.getUnitOrders().getRoute());
+
+        game.setCurrentRound(5);
+        follower.advanceRoutes();
+        assertEquals(List.of(lastHex), wolverine.getUnitOrders().getRoute());
+    }
+
+    @Test
+    void aFormationLaysItsShapeOutAlongTheFacingSetOnAWaypoint() {
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint),
+              List.of(new WaypointOrder(SOUTH_WEST, 1))));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+
+        // facing southwest, an Echelon Right steps back two facings round, to the north
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(NORTH, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
+    void aFormationUnitOnItsSlotHoldsWhileItsLeaderHolds() {
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 3);
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint),
+              List.of(new WaypointOrder(SOUTH_WEST, 2))).withHoldStarted(3));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        game.setCurrentRound(4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        Coords slot = follower.getFormationSlot(second).orElseThrow();
+
+        assertFalse(follower.isHolding(second));
+
+        second.setPosition(slot);
+        assertTrue(follower.isHolding(second));
+        assertEquals(SOUTH_WEST, follower.stoppedFacing(second));
     }
 }

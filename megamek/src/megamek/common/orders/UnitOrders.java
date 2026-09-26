@@ -45,8 +45,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 
 /**
- * The standing orders a player has given one bot-controlled unit: a route of waypoints, how hard to push for it, which
- * way to face, whether to pause, and whether to head for a board edge.
+ * The standing orders a player has given one bot-controlled unit: a route of waypoints, each with its own facing and
+ * hold, how hard to push for it, which way to face, whether to pause, and whether to head for a board edge.
  *
  * <p>The orders live on the unit ({@link megamek.common.units.Entity#getUnitOrders()}), not inside the bot, so they
  * are saved with the game, reach every client, and outlast a bot reconnecting or a unit changing hands. Each instance
@@ -68,12 +68,16 @@ public final class UnitOrders implements Serializable {
     public static final int NO_ROUND = -1;
 
     /** A unit with no orders. */
-    public static final UnitOrders NONE = new UnitOrders(new ArrayList<>(), OrderPriority.NORMAL, FACING_AUTO,
-          FACING_AUTO, false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, null);
+    public static final UnitOrders NONE = new UnitOrders(new ArrayList<>(), List.of(), NO_ROUND,
+          OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO, false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, null);
 
     private static final int FACING_COUNT = 6;
 
     private final ArrayList<Coords> route;
+    // what the unit does at each waypoint, in step with route; null in a save made before waypoints had settings
+    private final ArrayList<WaypointOrder> waypointOrders;
+    // the round the unit reached the waypoint it now holds at, or NO_ROUND
+    private final int holdSinceRound;
     private final OrderPriority priority;
     private final int facingWhileMoving;
     private final int facingWhenStopped;
@@ -83,10 +87,16 @@ public final class UnitOrders implements Serializable {
     private final int stopRound;
     private final FormationOrder formation;
 
-    private UnitOrders(List<Coords> route, OrderPriority priority, int facingWhileMoving, int facingWhenStopped,
-          boolean paused, EdgeOrder edgeOrder, OffBoardDirection edge, int stopRound,
-          @Nullable FormationOrder formation) {
+    private UnitOrders(List<Coords> route, List<WaypointOrder> waypointOrders, int holdSinceRound,
+          OrderPriority priority, int facingWhileMoving, int facingWhenStopped, boolean paused, EdgeOrder edgeOrder,
+          OffBoardDirection edge, int stopRound, @Nullable FormationOrder formation) {
         this.route = new ArrayList<>(route);
+        this.waypointOrders = new ArrayList<>();
+        for (int index = 0; index < route.size(); index++) {
+            this.waypointOrders.add((index < waypointOrders.size()) ? waypointOrders.get(index)
+                  : WaypointOrder.PASS_THROUGH);
+        }
+        this.holdSinceRound = holdSinceRound;
         this.priority = Objects.requireNonNull(priority);
         this.facingWhileMoving = validFacing(facingWhileMoving);
         this.facingWhenStopped = validFacing(facingWhenStopped);
@@ -123,6 +133,63 @@ public final class UnitOrders implements Serializable {
      */
     public boolean hasRoute() {
         return !route.isEmpty();
+    }
+
+    /**
+     * @return what the unit does at each waypoint, in route order: its facing on arrival and turns to hold
+     */
+    public List<WaypointOrder> getWaypointOrders() {
+        List<WaypointOrder> orders = new ArrayList<>();
+        for (int index = 0; index < route.size(); index++) {
+            orders.add(getWaypointOrder(index));
+        }
+        return orders;
+    }
+
+    /**
+     * @param index the waypoint's place in the route, from 0
+     *
+     * @return what the unit does at that waypoint; pass through for a waypoint with no settings
+     */
+    public WaypointOrder getWaypointOrder(int index) {
+        if ((waypointOrders == null) || (index < 0) || (index >= waypointOrders.size())) {
+            return WaypointOrder.PASS_THROUGH;
+        }
+        return waypointOrders.get(index);
+    }
+
+    /**
+     * @return the round the unit reached the waypoint it now holds at, or {@link #NO_ROUND}
+     */
+    public int getHoldSinceRound() {
+        return holdSinceRound;
+    }
+
+    /**
+     * A unit holds at a waypoint part-way along its route for the turns set on it, counted after the turn it arrived
+     * in: reaching a two-turn hold in round 3, it holds in rounds 4 and 5 and moves on in round 6. The last waypoint
+     * has no hold count: the unit holds it until given new orders.
+     *
+     * @param round the current round
+     *
+     * @return {@code true} if the unit is holding at its next waypoint this round
+     */
+    public boolean isHoldingAtWaypoint(int round) {
+        WaypointOrder nextWaypointOrder = getWaypointOrder(0);
+        return nextWaypointOrder.isHold() && (holdSinceRound != NO_ROUND) && (route.size() > 1)
+              && (round > holdSinceRound) && (round <= holdSinceRound + nextWaypointOrder.getHoldTurns());
+    }
+
+    /**
+     * @param round the current round
+     *
+     * @return {@code true} if the unit has held at its next waypoint for every turn set on it, by the end of this
+     *       round
+     */
+    public boolean isHoldDone(int round) {
+        WaypointOrder nextWaypointOrder = getWaypointOrder(0);
+        return nextWaypointOrder.isHold() && (holdSinceRound != NO_ROUND)
+              && (round >= holdSinceRound + nextWaypointOrder.getHoldTurns());
     }
 
     /**
@@ -196,8 +263,18 @@ public final class UnitOrders implements Serializable {
      * @return these orders with the route replaced; a new route also ends a pause, a Stop and any edge order
      */
     public UnitOrders withRoute(List<Coords> newRoute) {
-        return new UnitOrders(newRoute, priority, facingWhileMoving, facingWhenStopped, false, EdgeOrder.NONE,
-              OffBoardDirection.NONE, NO_ROUND, formation);
+        return withRoute(newRoute, List.of());
+    }
+
+    /**
+     * @param newRoute          the waypoints to follow, in order
+     * @param newWaypointOrders what to do at each of them, in the same order; missing ones pass through
+     *
+     * @return these orders with the route replaced; a new route also ends a pause, a Stop, a hold and any edge order
+     */
+    public UnitOrders withRoute(List<Coords> newRoute, List<WaypointOrder> newWaypointOrders) {
+        return new UnitOrders(newRoute, newWaypointOrders, NO_ROUND, priority, facingWhileMoving, facingWhenStopped,
+              false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, formation);
     }
 
     /**
@@ -206,10 +283,25 @@ public final class UnitOrders implements Serializable {
      * @return these orders with the waypoints added to the end of the route
      */
     public UnitOrders withWaypointsAdded(List<Coords> waypoints) {
+        return withWaypointsAdded(waypoints, List.of());
+    }
+
+    /**
+     * @param waypoints          the waypoints to add after the existing ones
+     * @param addedWaypointOrders what to do at each of them, in the same order; missing ones pass through
+     *
+     * @return these orders with the waypoints added to the end of the route
+     */
+    public UnitOrders withWaypointsAdded(List<Coords> waypoints, List<WaypointOrder> addedWaypointOrders) {
         List<Coords> newRoute = new ArrayList<>(route);
         newRoute.addAll(waypoints);
-        return new UnitOrders(newRoute, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound, formation);
+        List<WaypointOrder> newWaypointOrders = getWaypointOrders();
+        for (int index = 0; index < waypoints.size(); index++) {
+            newWaypointOrders.add((index < addedWaypointOrders.size()) ? addedWaypointOrders.get(index)
+                  : WaypointOrder.PASS_THROUGH);
+        }
+        return new UnitOrders(newRoute, newWaypointOrders, holdSinceRound, priority, facingWhileMoving,
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -221,8 +313,11 @@ public final class UnitOrders implements Serializable {
         }
         List<Coords> newRoute = new ArrayList<>(route);
         newRoute.remove(newRoute.size() - 1);
-        return new UnitOrders(newRoute, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound, formation);
+        List<WaypointOrder> newWaypointOrders = getWaypointOrders();
+        newWaypointOrders.remove(newWaypointOrders.size() - 1);
+        int newHoldSinceRound = newRoute.isEmpty() ? NO_ROUND : holdSinceRound;
+        return new UnitOrders(newRoute, newWaypointOrders, newHoldSinceRound, priority, facingWhileMoving,
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -232,8 +327,19 @@ public final class UnitOrders implements Serializable {
         if (route.isEmpty()) {
             return this;
         }
-        return new UnitOrders(route.subList(1, route.size()), priority, facingWhileMoving, facingWhenStopped, paused,
-              edgeOrder, edge, stopRound, formation);
+        List<WaypointOrder> newWaypointOrders = getWaypointOrders();
+        return new UnitOrders(route.subList(1, route.size()), newWaypointOrders.subList(1, newWaypointOrders.size()),
+              NO_ROUND, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+    }
+
+    /**
+     * @param round the round the unit reached its next waypoint in
+     *
+     * @return these orders with the unit holding at its next waypoint from that round, for the turns set on it
+     */
+    public UnitOrders withHoldStarted(int round) {
+        return new UnitOrders(route, getWaypointOrders(), round, priority, facingWhileMoving, facingWhenStopped,
+              paused, edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -242,8 +348,8 @@ public final class UnitOrders implements Serializable {
      * @return these orders with the priority replaced
      */
     public UnitOrders withPriority(OrderPriority newPriority) {
-        return new UnitOrders(route, newPriority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound, formation);
+        return new UnitOrders(route, getWaypointOrders(), holdSinceRound, newPriority, facingWhileMoving,
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -253,8 +359,8 @@ public final class UnitOrders implements Serializable {
      * @return these orders with both facings replaced
      */
     public UnitOrders withFacings(int newFacingWhileMoving, int newFacingWhenStopped) {
-        return new UnitOrders(route, priority, newFacingWhileMoving, newFacingWhenStopped, paused, edgeOrder, edge,
-              stopRound, formation);
+        return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, newFacingWhileMoving,
+              newFacingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -263,8 +369,8 @@ public final class UnitOrders implements Serializable {
      * @return these orders paused or resumed; the route is kept either way
      */
     public UnitOrders withPaused(boolean isPaused) {
-        return new UnitOrders(route, priority, facingWhileMoving, facingWhenStopped, isPaused, edgeOrder, edge,
-              stopRound, formation);
+        return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
+              facingWhenStopped, isPaused, edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -277,9 +383,9 @@ public final class UnitOrders implements Serializable {
         if ((newEdgeOrder != EdgeOrder.NONE) && (newEdge == OffBoardDirection.NONE)) {
             throw new IllegalArgumentException("An edge order needs an edge");
         }
-        return new UnitOrders(new ArrayList<>(), priority, facingWhileMoving, facingWhenStopped, false,
-              newEdgeOrder, (newEdgeOrder == EdgeOrder.NONE) ? OffBoardDirection.NONE : newEdge, NO_ROUND,
-              formation);
+        return new UnitOrders(new ArrayList<>(), List.of(), NO_ROUND, priority, facingWhileMoving,
+              facingWhenStopped, false, newEdgeOrder, (newEdgeOrder == EdgeOrder.NONE) ? OffBoardDirection.NONE
+              : newEdge, NO_ROUND, formation);
     }
 
     /**
@@ -289,8 +395,8 @@ public final class UnitOrders implements Serializable {
      *       the bot handles the unit normally
      */
     public static UnitOrders stoppedInRound(int round) {
-        return new UnitOrders(new ArrayList<>(), OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO, false,
-              EdgeOrder.NONE, OffBoardDirection.NONE, round, null);
+        return new UnitOrders(new ArrayList<>(), List.of(), NO_ROUND, OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO,
+              false, EdgeOrder.NONE, OffBoardDirection.NONE, round, null);
     }
 
     /**
@@ -306,8 +412,8 @@ public final class UnitOrders implements Serializable {
      * @return these orders with the formation replaced; the route and every other order are kept
      */
     public UnitOrders withFormation(@Nullable FormationOrder newFormation) {
-        return new UnitOrders(route, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound, newFormation);
+        return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, newFormation);
     }
 
     @Override
@@ -322,7 +428,9 @@ public final class UnitOrders implements Serializable {
               && (facingWhenStopped == otherOrders.facingWhenStopped)
               && (paused == otherOrders.paused)
               && (stopRound == otherOrders.stopRound)
+              && (holdSinceRound == otherOrders.holdSinceRound)
               && route.equals(otherOrders.route)
+              && getWaypointOrders().equals(otherOrders.getWaypointOrders())
               && (priority == otherOrders.priority)
               && (edgeOrder == otherOrders.edgeOrder)
               && (edge == otherOrders.edge)
@@ -331,14 +439,16 @@ public final class UnitOrders implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(route, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound,
-              formation);
+        return Objects.hash(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
     }
 
     @Override
     public String toString() {
         StringBuilder text = new StringBuilder("UnitOrders[");
         text.append("route=").append(route);
+        text.append(", waypoints=").append(getWaypointOrders());
+        text.append(", holdSinceRound=").append(holdSinceRound);
         text.append(", priority=").append(priority);
         text.append(", facingWhileMoving=").append(facingWhileMoving);
         text.append(", facingWhenStopped=").append(facingWhenStopped);

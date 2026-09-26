@@ -243,4 +243,76 @@ class UnitOrdersTest {
 
         assertEquals(orders, restored);
     }
+
+    @Test
+    void eachWaypointKeepsItsFacingAndHoldAsTheRouteChanges() {
+        WaypointOrder holdNortheast = new WaypointOrder(FACING_NORTHEAST, 2);
+        UnitOrders orders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+              List.of(WaypointOrder.PASS_THROUGH, holdNortheast));
+
+        assertEquals(List.of(WaypointOrder.PASS_THROUGH, holdNortheast), orders.getWaypointOrders());
+        assertEquals(holdNortheast, orders.withNextWaypointReached().getWaypointOrder(0));
+        assertEquals(List.of(WaypointOrder.PASS_THROUGH), orders.withLastWaypointRemoved().getWaypointOrders());
+        // a plain route order, and waypoints added without settings, pass through
+        assertEquals(WaypointOrder.PASS_THROUGH, orders.withWaypointsAdded(List.of(FIRST_HEX)).getWaypointOrder(2));
+        assertEquals(List.of(WaypointOrder.PASS_THROUGH), UnitOrders.NONE.withRoute(List.of(FIRST_HEX))
+              .getWaypointOrders());
+    }
+
+    @Test
+    void aTwoTurnHoldReachedInRoundThreeHoldsRoundsFourAndFive() {
+        // HammerGS: "hold 2 turns" means two full turns after the turn the unit arrives in.
+        UnitOrders orders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+              List.of(new WaypointOrder(FACING_NORTHEAST, 2))).withHoldStarted(3);
+
+        assertFalse(orders.isHoldingAtWaypoint(3));
+        assertTrue(orders.isHoldingAtWaypoint(4));
+        assertTrue(orders.isHoldingAtWaypoint(5));
+        assertFalse(orders.isHoldingAtWaypoint(6));
+        assertFalse(orders.isHoldDone(4));
+        assertTrue(orders.isHoldDone(5));
+        // moving on clears the hold
+        assertEquals(UnitOrders.NO_ROUND, orders.withNextWaypointReached().getHoldSinceRound());
+    }
+
+    @Test
+    void waypointFacingsAndHoldsSurviveASaveAndLoad() {
+        BipedMek mek = new BipedMek();
+        UnitOrders orders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+              List.of(new WaypointOrder(FACING_NORTHEAST, 2), new WaypointOrder(FACING_NORTH, 0))).withHoldStarted(4);
+        mek.setUnitOrders(orders);
+
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(savedXml);
+
+        assertEquals(orders, restored.getUnitOrders());
+    }
+
+    @Test
+    void aRouteFromASaveMadeBeforeWaypointSettingsPassesThroughEveryWaypoint() {
+        BipedMek mek = new BipedMek();
+        mek.setUnitOrders(UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX)));
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        assertTrue(savedXml.contains("<waypointOrders"), "the save should hold the settings before we strip them");
+        String legacyXml = savedXml
+              .replaceAll("(?s)<waypointOrders[^>]*/>|<waypointOrders[^>]*>.*?</waypointOrders>", "")
+              .replaceAll("(?s)<holdSinceRound>.*?</holdSinceRound>", "");
+
+        UnitOrders restored = ((BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(legacyXml))
+              .getUnitOrders();
+
+        assertEquals(List.of(FIRST_HEX, SECOND_HEX), restored.getRoute());
+        assertEquals(List.of(WaypointOrder.PASS_THROUGH, WaypointOrder.PASS_THROUGH), restored.getWaypointOrders());
+        assertFalse(restored.isHoldDone(10));
+    }
+
+    @Test
+    void aWaypointReadsItsFacingAndHoldInEitherOrder() {
+        assertEquals(new WaypointOrder(FACING_NORTHEAST, 2), WaypointOrder.parse(List.of("NE", "2")));
+        assertEquals(new WaypointOrder(4, 3), WaypointOrder.parse(List.of("3", "sw")));
+        assertEquals(WaypointOrder.PASS_THROUGH, WaypointOrder.parse(List.of("A")));
+        assertEquals("/NE/2", new WaypointOrder(FACING_NORTHEAST, 2).toCommandSuffix());
+        assertEquals("", WaypointOrder.PASS_THROUGH.toCommandSuffix());
+        assertThrows(IllegalArgumentException.class, () -> WaypointOrder.parse(List.of("NNE")));
+    }
 }

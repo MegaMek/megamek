@@ -57,6 +57,8 @@ public enum UnitOrderAction {
     REACHED,
     /** The unit cannot reach the first hex of its route: take it off the front and carry on with the rest. */
     SKIP,
+    /** The unit reached a waypoint it holds at: count its hold from this round. */
+    HOLD_STARTED,
     /** Clear every order. */
     CLEAR,
     /** Hold in place, keeping the route. */
@@ -117,18 +119,44 @@ public enum UnitOrderAction {
     public UnitOrders apply(UnitOrders current, List<Coords> hexes, OffBoardDirection edge, int facingWhileMoving,
           int facingWhenStopped, @Nullable OrderPriority priority, int currentRound,
           @Nullable FormationOrder formation) {
+        return apply(current, hexes, List.of(), edge, facingWhileMoving, facingWhenStopped, priority, currentRound,
+              formation);
+    }
+
+    /**
+     * Returns the orders after this action, with what the unit does at each waypoint of a {@link #ROUTE} or
+     * {@link #ADD}.
+     *
+     * @param current           the unit's orders now
+     * @param hexes             the hexes for {@link #ROUTE} and {@link #ADD}
+     * @param waypointOrders    what to do at each of those hexes, in the same order; missing ones pass through
+     * @param edge              the edge for {@link #MOVE_TO_EDGE} and {@link #EXIT_BY_EDGE}
+     * @param facingWhileMoving the facing while moving for {@link #FACING}, or {@link UnitOrders#FACING_AUTO}
+     * @param facingWhenStopped the facing when stopped for {@link #FACING}, or {@link UnitOrders#FACING_AUTO}
+     * @param priority          the priority for {@link #PRIORITY}; a {@link #ROUTE} with a priority also sets it
+     * @param currentRound      the current round, for {@link #STOP} and {@link #HOLD_STARTED}
+     * @param formation         the unit's place in a formation, for {@link #FORMATION}
+     *
+     * @return the new orders
+     *
+     * @throws IllegalArgumentException when the action is missing what it needs
+     */
+    public UnitOrders apply(UnitOrders current, List<Coords> hexes, List<WaypointOrder> waypointOrders,
+          OffBoardDirection edge, int facingWhileMoving, int facingWhenStopped, @Nullable OrderPriority priority,
+          int currentRound, @Nullable FormationOrder formation) {
         return switch (this) {
             case ROUTE -> {
                 requireHexes(hexes);
-                UnitOrders routed = current.withRoute(hexes);
+                UnitOrders routed = current.withRoute(hexes, waypointOrders);
                 yield (priority == null) ? routed : routed.withPriority(priority);
             }
             case ADD -> {
                 requireHexes(hexes);
-                yield current.withWaypointsAdded(hexes);
+                yield current.withWaypointsAdded(hexes, waypointOrders);
             }
             case REMOVE_LAST -> current.withLastWaypointRemoved();
             case SKIP -> current.withNextWaypointReached();
+            case HOLD_STARTED -> current.hasRoute() ? current.withHoldStarted(currentRound) : current;
             case REACHED -> (current.getRoute().size() > 1) ? current.withNextWaypointReached() : current;
             case CLEAR -> UnitOrders.NONE;
             case PAUSE -> current.withPaused(true);

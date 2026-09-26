@@ -873,7 +873,7 @@ public class Princess extends BotClient {
         }
         Coords closestEnemyPosition = findClosestEnemyPosition(entity);
         // a player's "when stopped" facing stands while the closest enemy is in that facing's front arc
-        int orderedFacing = UnitOrdersFollower.facingThatStands(entity.getUnitOrders().getFacingWhenStopped(),
+        int orderedFacing = UnitOrdersFollower.facingThatStands(getUnitOrdersFollower().stoppedFacing(entity),
               entity.getPosition(), closestEnemyPosition);
         int desiredFacing;
         if (orderedFacing != UnitOrders.FACING_AUTO) {
@@ -3270,6 +3270,8 @@ public class Princess extends BotClient {
                     holdReason = "paused";
                 } else if (entity.getUnitOrders().isStoppedInRound(game.getCurrentRound())) {
                     holdReason = "stopped this round";
+                } else if (getUnitOrdersFollower().isHoldingAtWaypoint(entity)) {
+                    holdReason = "holding at waypoint " + entity.getPosition().getBoardNum();
                 } else {
                     holdReason = "holding the end of its route at " + entity.getPosition().getBoardNum();
                 }

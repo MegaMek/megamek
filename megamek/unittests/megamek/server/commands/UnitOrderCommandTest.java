@@ -44,6 +44,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.OrderPriority;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.BipedMek;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -128,6 +129,19 @@ class UnitOrderCommandTest {
         assertEquals(List.of(Coords.parseHexNumber("1508"), Coords.parseHexNumber("1504")),
               botUnit.getUnitOrders().getRoute());
         assertEquals(OrderPriority.IMPERATIVE, botUnit.getUnitOrders().getPriority());
+    }
+
+    @Test
+    void aRouteCarriesAFacingAndHoldForEachWaypoint() {
+        // pass 1709, hold two turns at 1706 facing northeast, pass 2005, end at 2204 facing north
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "ROUTE", "hexes=1709-1706/NE/2-2005-2204/N");
+
+        assertEquals(List.of(Coords.parseHexNumber("1709"), Coords.parseHexNumber("1706"),
+              Coords.parseHexNumber("2005"), Coords.parseHexNumber("2204")), botUnit.getUnitOrders().getRoute());
+        assertEquals(List.of(WaypointOrder.PASS_THROUGH, new WaypointOrder(1, 2), WaypointOrder.PASS_THROUGH,
+              new WaypointOrder(0, 0)), botUnit.getUnitOrders().getWaypointOrders());
+        assertEquals("hexes=1709-1706/NE/2-2005-2204/N", UnitOrderCommand.hexesArgument(
+              botUnit.getUnitOrders().getRoute(), botUnit.getUnitOrders().getWaypointOrders()));
     }
 
     @Test

@@ -330,6 +330,25 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aWaypointCarriesTheFormationForTheLegEndingThereThroughCommandAndSave() {
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 3, FormationPace.WALK,
+              ContactRule.HOLD, true);
+        WaypointOrder order = new WaypointOrder(FACING_NORTHEAST, 2, wedge);
+
+        assertEquals("/NE/2/F:WEDGE:3:WALK:HOLD:T", order.toCommandSuffix());
+        assertEquals(order, WaypointOrder.parse(List.of("NE", "2", "F:WEDGE:3:WALK:HOLD:T")));
+        assertEquals(WaypointFormation.NONE, WaypointOrder.parse(List.of("F:NONE")).getFormation());
+
+        BipedMek mek = new BipedMek();
+        UnitOrders orders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+              List.of(order, new WaypointOrder(FACING_NORTH, 0, WaypointFormation.NONE)));
+        mek.setUnitOrders(orders);
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(savedXml);
+        assertEquals(orders, restored.getUnitOrders());
+    }
+
+    @Test
     void aWaypointReadsItsFacingAndHoldInEitherOrder() {
         assertEquals(new WaypointOrder(FACING_NORTHEAST, 2), WaypointOrder.parse(List.of("NE", "2")));
         assertEquals(new WaypointOrder(4, 3), WaypointOrder.parse(List.of("3", "sw")));

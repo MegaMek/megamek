@@ -36,6 +36,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
+
+import megamek.common.annotations.Nullable;
 
 /**
  * What a unit does at one waypoint of its route: the way it faces on arrival and how many turns it holds there before
@@ -63,12 +66,23 @@ public final class WaypointOrder implements Serializable {
 
     private final int facing;
     private final int holdTurns;
+    // the formation for the leg ending here, or null to keep the units' own; null in a save made before legs had one
+    private final WaypointFormation formation;
 
     /**
      * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
      * @param holdTurns the full turns to hold after arriving; 0 passes through
      */
     public WaypointOrder(int facing, int holdTurns) {
+        this(facing, holdTurns, null);
+    }
+
+    /**
+     * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
+     * @param holdTurns the full turns to hold after arriving; 0 passes through
+     * @param formation the formation for the leg ending at this waypoint, or {@code null} to keep the units' own
+     */
+    public WaypointOrder(int facing, int holdTurns, @Nullable WaypointFormation formation) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -77,6 +91,14 @@ public final class WaypointOrder implements Serializable {
         }
         this.facing = facing;
         this.holdTurns = holdTurns;
+        this.formation = formation;
+    }
+
+    /**
+     * @return the formation for the leg ending at this waypoint, or {@code null} to keep the units' own formation
+     */
+    public @Nullable WaypointFormation getFormation() {
+        return formation;
     }
 
     /**
@@ -112,12 +134,16 @@ public final class WaypointOrder implements Serializable {
         if (holdTurns > 0) {
             suffix.append('/').append(holdTurns);
         }
+        if (formation != null) {
+            suffix.append('/').append(formation.toCommandText());
+        }
         return suffix.toString();
     }
 
     /**
      * Reads the settings a route order writes after a hex: letters are a facing (N, NE, SE, S, SW, NW, or A for the
-     * bot's choice), digits are the turns to hold, in either order.
+     * bot's choice), digits are the turns to hold, and a part starting {@code F:} is the formation for the leg ending
+     * here, in any order.
      *
      * @param segments the parts after the hex, e.g. {@code ["NE", "2"]}; none for a plain waypoint
      *
@@ -128,12 +154,15 @@ public final class WaypointOrder implements Serializable {
     public static WaypointOrder parse(List<String> segments) {
         int parsedFacing = UnitOrders.FACING_AUTO;
         int parsedHold = 0;
+        WaypointFormation parsedFormation = null;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
             if (code.isEmpty()) {
                 continue;
             }
-            if (Character.isDigit(code.charAt(0))) {
+            if (WaypointFormation.isCommandText(code)) {
+                parsedFormation = WaypointFormation.parse(code);
+            } else if (Character.isDigit(code.charAt(0))) {
                 parsedHold = Integer.parseInt(code);
             } else if (code.equals(AUTO_CODE)) {
                 parsedFacing = UnitOrders.FACING_AUTO;
@@ -143,7 +172,7 @@ public final class WaypointOrder implements Serializable {
                 throw new IllegalArgumentException("Not a facing or a number of turns: " + segment);
             }
         }
-        return new WaypointOrder(parsedFacing, parsedHold);
+        return new WaypointOrder(parsedFacing, parsedHold, parsedFormation);
     }
 
     @Override
@@ -152,12 +181,12 @@ public final class WaypointOrder implements Serializable {
             return true;
         }
         return (other instanceof WaypointOrder otherOrder) && (facing == otherOrder.facing)
-              && (holdTurns == otherOrder.holdTurns);
+              && (holdTurns == otherOrder.holdTurns) && Objects.equals(formation, otherOrder.formation);
     }
 
     @Override
     public int hashCode() {
-        return (31 * facing) + holdTurns;
+        return Objects.hash(facing, holdTurns, formation);
     }
 
     @Override

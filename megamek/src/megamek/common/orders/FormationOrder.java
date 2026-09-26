@@ -61,6 +61,8 @@ public final class FormationOrder implements Serializable {
     private final int slot;
     private final FormationPace pace;
     private final ContactRule contactRule;
+    // false in a save made before formations could keep together, which is the old behaviour
+    private final boolean keepTogether;
 
     /**
      * @param shape       the formation's shape
@@ -72,6 +74,21 @@ public final class FormationOrder implements Serializable {
      */
     public FormationOrder(FormationShape shape, int leaderId, int spacing, int slot, FormationPace pace,
           ContactRule contactRule) {
+        this(shape, leaderId, spacing, slot, pace, contactRule, false);
+    }
+
+    /**
+     * @param shape        the formation's shape
+     * @param leaderId     the unit the others form on
+     * @param spacing      hexes between neighbouring slots
+     * @param slot         this unit's place: 0 for the leader, then 1, 2, ...
+     * @param pace         how the units move
+     * @param contactRule  what the formation does on contact
+     * @param keepTogether {@code true} to move as a block: the leader moves no faster than the slowest unit and
+     *                     waits at each waypoint for the others to form up
+     */
+    public FormationOrder(FormationShape shape, int leaderId, int spacing, int slot, FormationPace pace,
+          ContactRule contactRule, boolean keepTogether) {
         if ((spacing < MINIMUM_SPACING) || (spacing > MAXIMUM_SPACING)) {
             throw new IllegalArgumentException("Spacing must be " + MINIMUM_SPACING + "-" + MAXIMUM_SPACING
                   + ", was " + spacing);
@@ -85,6 +102,7 @@ public final class FormationOrder implements Serializable {
         this.slot = slot;
         this.pace = Objects.requireNonNull(pace);
         this.contactRule = Objects.requireNonNull(contactRule);
+        this.keepTogether = keepTogether;
     }
 
     /**
@@ -134,6 +152,14 @@ public final class FormationOrder implements Serializable {
      *
      * @return {@code true} if a unit with that leader is in the same formation as this one
      */
+    /**
+     * @return {@code true} if the formation moves as a block: its leader moves no faster than its slowest unit and
+     *       waits at each waypoint until the others have formed up
+     */
+    public boolean isKeepTogether() {
+        return keepTogether;
+    }
+
     public boolean sharesLeader(int otherLeaderId) {
         return leaderId == otherLeaderId;
     }
@@ -147,17 +173,18 @@ public final class FormationOrder implements Serializable {
             return false;
         }
         return (leaderId == otherOrder.leaderId) && (spacing == otherOrder.spacing) && (slot == otherOrder.slot)
-              && (shape == otherOrder.shape) && (pace == otherOrder.pace) && (contactRule == otherOrder.contactRule);
+              && (shape == otherOrder.shape) && (pace == otherOrder.pace) && (contactRule == otherOrder.contactRule)
+              && (keepTogether == otherOrder.keepTogether);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shape, leaderId, spacing, slot, pace, contactRule);
+        return Objects.hash(shape, leaderId, spacing, slot, pace, contactRule, keepTogether);
     }
 
     @Override
     public String toString() {
         return shape + " leader=" + leaderId + " spacing=" + spacing + " slot=" + slot + " " + pace + " "
-              + contactRule;
+              + contactRule + (keepTogether ? " together" : "");
     }
 }

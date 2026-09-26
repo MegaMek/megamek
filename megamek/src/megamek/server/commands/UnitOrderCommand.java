@@ -54,6 +54,7 @@ import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
+import megamek.server.commands.arguments.BooleanArgument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.OptionalEnumArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
@@ -89,6 +90,7 @@ public class UnitOrderCommand extends ClientServerCommand {
     public static final String SLOT = "slot";
     public static final String PACE = "pace";
     public static final String CONTACT = "contact";
+    public static final String TOGETHER = "together";
 
     private static final int HIGHEST_FACING = 5;
 
@@ -115,7 +117,8 @@ public class UnitOrderCommand extends ClientServerCommand {
                     FormationOrder.MINIMUM_SPACING, FormationOrder.MAXIMUM_SPACING),
               new OptionalIntegerArgument(SLOT, Messages.getString("UnitOrder.cmd.slot"), 0, Integer.MAX_VALUE),
               new OptionalEnumArgument<>(PACE, Messages.getString("UnitOrder.cmd.pace"), FormationPace.class),
-              new OptionalEnumArgument<>(CONTACT, Messages.getString("UnitOrder.cmd.contact"), ContactRule.class));
+              new OptionalEnumArgument<>(CONTACT, Messages.getString("UnitOrder.cmd.contact"), ContactRule.class),
+              new BooleanArgument(TOGETHER, Messages.getString("UnitOrder.cmd.together"), false));
     }
 
     @Override
@@ -237,8 +240,9 @@ public class UnitOrderCommand extends ClientServerCommand {
         int slot = args.get(SLOT, OptionalIntegerArgument.class).getValue().orElse(0);
         FormationPace pace = (FormationPace) args.get(PACE).getValue();
         ContactRule contactRule = (ContactRule) args.get(CONTACT).getValue();
+        boolean keepTogether = args.get(TOGETHER, BooleanArgument.class).getValue();
         return new FormationOrder(shape, leaderId, spacing, slot, (pace == null) ? FormationPace.WALK : pace,
-              (contactRule == null) ? ContactRule.BREAK : contactRule);
+              (contactRule == null) ? ContactRule.BREAK : contactRule, keepTogether);
     }
 
     private static int facingArgument(Arguments args, String name) {

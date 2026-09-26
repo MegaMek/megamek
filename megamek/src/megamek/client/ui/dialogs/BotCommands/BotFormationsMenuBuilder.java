@@ -61,8 +61,8 @@ public final class BotFormationsMenuBuilder {
 
     /**
      * The lobby's Formation menu for one bot lance, so a lance can start the game already in formation: one item per
-     * shape, spacing {@link FormationOrder#DEFAULT_SPACING}, the lance's first unit leading, Walk pace and Break on
-     * contact, plus Formation off. The rest can be changed in game from the Move Order editor.
+     * shape, spacing {@link FormationOrder#DEFAULT_SPACING}, the lance's first unit leading, Walk pace, Break on
+     * contact and keeping together, plus Formation off. The rest can be changed in game from the Move Order editor.
      *
      * @param client  the client that sends the orders
      * @param lance   the lance
@@ -81,7 +81,8 @@ public final class BotFormationsMenuBuilder {
                           UnitOrderCommand.SHAPE + '=' + shape.name(),
                           UnitOrderCommand.LEADER + '=' + unitIds.get(0),
                           UnitOrderCommand.SPACING + '=' + FormationOrder.DEFAULT_SPACING,
-                          UnitOrderCommand.SLOT + '=' + slot));
+                          UnitOrderCommand.SLOT + '=' + slot,
+                          UnitOrderCommand.TOGETHER + "=true"));
                 }
                 LOGGER.info("[BotOrders] lobby formation {} for {} ({} units)", shape, lance.getName(),
                       unitIds.size());

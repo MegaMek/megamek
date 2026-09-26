@@ -59,9 +59,10 @@ final class MoveOrderCommands {
      * @param spacing     hexes between neighbouring slots
      * @param pace        how the units move
      * @param contactRule what the formation does on contact
+     * @param keepTogether {@code true} to move as a block, at the slowest unit's speed, re-forming at each waypoint
      */
     record FormationChoice(FormationShape shape, int leaderId, int spacing, FormationPace pace,
-          ContactRule contactRule) {}
+          ContactRule contactRule, boolean keepTogether) {}
 
     private MoveOrderCommands() {
     }
@@ -90,7 +91,8 @@ final class MoveOrderCommands {
                       UnitOrderCommand.SPACING + '=' + formation.spacing(),
                       UnitOrderCommand.SLOT + '=' + slot,
                       UnitOrderCommand.PACE + '=' + formation.pace().name(),
-                      UnitOrderCommand.CONTACT + '=' + formation.contactRule().name()));
+                      UnitOrderCommand.CONTACT + '=' + formation.contactRule().name(),
+                      UnitOrderCommand.TOGETHER + '=' + formation.keepTogether()));
             } else if (leaveFormation) {
                 commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION_OFF));
             }

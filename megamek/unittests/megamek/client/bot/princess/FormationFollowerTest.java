@@ -467,6 +467,83 @@ class FormationFollowerTest {
         }
     }
 
+    private static FormationOrder keptTogether(int slot) {
+        return new FormationOrder(FormationShape.WEDGE, 20, 2, slot, FormationPace.WALK, ContactRule.BREAK, true);
+    }
+
+    /** A leader on the first of two waypoints and one other unit far from its slot, both keeping together. */
+    private List<BipedMek> lanceKeepingTogether() {
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 3);
+        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(1)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        return List.of(leader, second);
+    }
+
+    @Test
+    void aFormationKeptTogetherAdvancesAtItsSlowestUnitsSpeed() {
+        // HammerGS's playtest: without it a Grasshopper outran a Longbow walking 3 and the lance spread across the map
+        List<BipedMek> lance = lanceKeepingTogether();
+        MovePath walkThree = moveUsing(3);
+        MovePath walkFive = moveUsing(5);
+
+        assertEquals(List.of(walkThree), princess.getUnitOrdersFollower().limitToFormationPace(lance.get(0),
+              List.of(walkThree, walkFive)));
+    }
+
+    @Test
+    void aLeaderKeepingTogetherWaitsAtAWaypointUntilItsFormationFormsUp() {
+        List<BipedMek> lance = lanceKeepingTogether();
+        BipedMek leader = lance.get(0);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setCurrentRound(3);
+
+        follower.advanceRoutes();
+        assertEquals(NORTH_WAYPOINT, leader.getUnitOrders().getNextWaypoint().orElseThrow());
+        assertTrue(follower.isHolding(leader));
+
+        lance.get(1).setPosition(follower.getFormationSlot(lance.get(1)).orElseThrow());
+        game.setCurrentRound(4);
+        follower.advanceRoutes();
+        assertEquals(1, leader.getUnitOrders().getRoute().size());
+        assertFalse(follower.isWaitingForFormation(leader));
+    }
+
+    @Test
+    void aLeaderStopsWaitingForAUnitThatCannotFormUpAfterThreeRounds() {
+        List<BipedMek> lance = lanceKeepingTogether();
+        BipedMek leader = lance.get(0);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        for (int round = 3; round < 3 + UnitOrdersFollower.MAXIMUM_REFORM_WAIT_ROUNDS; round++) {
+            game.setCurrentRound(round);
+            follower.advanceRoutes();
+            assertEquals(2, leader.getUnitOrders().getRoute().size(), "moved on early in round " + round);
+        }
+
+        game.setCurrentRound(3 + UnitOrdersFollower.MAXIMUM_REFORM_WAIT_ROUNDS);
+        follower.advanceRoutes();
+        assertEquals(1, leader.getUnitOrders().getRoute().size());
+    }
+
+    @Test
+    void withNoEnemyInSightAutoFacingPointsAlongTheRoute() {
+        // HammerGS's playtest: with no opponent on the board, units on Auto facing ended their moves facing anywhere
+        BipedMek scout = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+
+        assertEquals(NORTH, princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX));
+
+        Entity enemy = mock(Entity.class);
+        when(enemy.getPosition()).thenReturn(new Coords(2, 2));
+        enemies.add(enemy);
+        assertEquals(UnitOrders.FACING_AUTO, princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX));
+    }
+
     private BipedMek loneUnit(int unitId, Coords position, UnitOrders orders) {
         BipedMek mek = new BipedMek();
         mek.setId(unitId);

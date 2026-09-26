@@ -90,6 +90,12 @@ public class UnitOrdersFollower {
     /** How far off its slot a formation unit may stand when the slot itself is blocked. */
     static final int FORMATION_SLACK = 1;
 
+    /** A formation that keeps together counts as formed when every unit is this close to its slot. */
+    static final int REFORM_SLACK = 2;
+
+    /** The most rounds a leader waits at a waypoint for its formation, so one stuck unit cannot hold the rest. */
+    static final int MAXIMUM_REFORM_WAIT_ROUNDS = 3;
+
     /** Contact range for a formation none of whose units has a weapon: an enemy this close still breaks it. */
     static final int FALLBACK_CONTACT_RANGE = 12;
 
@@ -106,6 +112,17 @@ public class UnitOrdersFollower {
 
     /** The heading a formation takes at its final waypoint when no stopped facing is ordered, fixed once seen. */
     private final Map<String, Integer> finalHeadings = new HashMap<>();
+
+    /**
+     * A formation leader waiting at a waypoint for its formation to form up.
+     *
+     * @param waypoint   the waypoint it waits at
+     * @param sinceRound the round it first waited there
+     */
+    private record ReformWait(Coords waypoint, int sinceRound) {}
+
+    /** The leaders waiting at a waypoint for their formation, by unit id; the bot's own bookkeeping, not saved. */
+    private final Map<Integer, ReformWait> reformWaits = new HashMap<>();
 
     /**
      * @param owner the bot whose units follow orders
@@ -127,6 +144,7 @@ public class UnitOrdersFollower {
     public boolean isHolding(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
         return orders.isPaused() || orders.isStoppedInRound(currentRound()) || isHoldingAtWaypoint(entity)
+              || isWaitingForFormation(entity)
               || isHoldingRouteEnd(entity);
     }
 
@@ -413,7 +431,28 @@ public class UnitOrdersFollower {
         }
         boolean endsStopped = route.isEmpty()
               || ((route.size() == 1) && (finalHex.distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT));
-        return endsStopped ? stoppedFacing(entity) : orders.getFacingWhileMoving();
+        int facing = endsStopped ? stoppedFacing(entity) : orders.getFacingWhileMoving();
+        if ((facing == UnitOrders.FACING_AUTO) && owner.getEnemyEntities().isEmpty()) {
+            // with no enemy to face, Auto faces along the route rather than wherever the move happens to end
+            return facingAlongRoute(entity, finalHex);
+        }
+        return facing;
+    }
+
+    /**
+     * @return the direction from the hex toward the unit's next target - its slot or waypoint, or the waypoint after
+     *       it when the move ends on it - or {@link UnitOrders#FACING_AUTO} when there is none
+     */
+    private int facingAlongRoute(Entity entity, Coords finalHex) {
+        Optional<Coords> target = owner.getUnitBehaviorTracker().getActiveWaypoint(entity, owner);
+        if (target.isEmpty()) {
+            return UnitOrders.FACING_AUTO;
+        }
+        if (!target.get().equals(finalHex)) {
+            return finalHex.direction(target.get());
+        }
+        List<Coords> route = entity.getUnitOrders().getRoute();
+        return (route.size() > 1) ? finalHex.direction(route.get(1)) : UnitOrders.FACING_AUTO;
     }
 
     /**
@@ -508,6 +547,9 @@ public class UnitOrdersFollower {
             if (waypoint.get().distance(entity.getPosition()) > Princess.DISTANCE_TO_WAYPOINT) {
                 continue;
             }
+            if (isPartWay && shouldWaitForFormation(entity, waypoint.get())) {
+                continue;
+            }
             if (isPartWay) {
                 LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
                       waypoint.get().getBoardNum());
@@ -521,6 +563,70 @@ public class UnitOrdersFollower {
             }
         }
         syncFollowerRoutes();
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit leads a formation that keeps together and is waiting at a waypoint for the
+     *       others to form up
+     */
+    public boolean isWaitingForFormation(Entity entity) {
+        ReformWait wait = reformWaits.get(entity.getId());
+        Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
+        return (wait != null) && waypoint.isPresent() && wait.waypoint().equals(waypoint.get());
+    }
+
+    /**
+     * Decides, once a formation leader that keeps together has reached a waypoint part-way along its route, whether it
+     * waits there for its formation: until every other unit is within {@link #REFORM_SLACK} of its slot, for at most
+     * {@link #MAXIMUM_REFORM_WAIT_ROUNDS} rounds. Then the formation moves on to the next waypoint together.
+     *
+     * @return {@code true} to wait another round
+     */
+    private boolean shouldWaitForFormation(Entity leader, Coords waypoint) {
+        Optional<FormationOrder> formation = leader.getUnitOrders().getFormation();
+        if (formation.isEmpty() || !formation.get().isKeepTogether()) {
+            return false;
+        }
+        List<Entity> members = formationMembers(leader, formation.get().getLeaderId());
+        boolean isLeading = (members.size() >= 2) && (members.get(0).getId() == leader.getId());
+        boolean isBroken = (formation.get().getContactRule() == ContactRule.BREAK)
+              && isEnemyNear(leader, contactRange(members));
+        if (!isLeading || isBroken) {
+            reformWaits.remove(leader.getId());
+            return false;
+        }
+        int outOfPlace = 0;
+        for (Entity member : members.subList(1, members.size())) {
+            Optional<Coords> slot = getFormationSlot(member);
+            if (slot.isPresent() && (member.getPosition().distance(slot.get()) > REFORM_SLACK)) {
+                outOfPlace++;
+            }
+        }
+        ReformWait wait = reformWaits.get(leader.getId());
+        if ((wait == null) || !wait.waypoint().equals(waypoint)) {
+            wait = new ReformWait(waypoint, currentRound());
+        }
+        int roundsWaited = currentRound() - wait.sinceRound();
+        if (outOfPlace == 0) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FORMED at {} - moving on together",
+                  leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum());
+            reformWaits.remove(leader.getId());
+            return false;
+        }
+        if (roundsWaited >= MAXIMUM_REFORM_WAIT_ROUNDS) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT_OVER at {} - {} unit(s) still out of place "
+                        + "after {} round(s); moving on", leader.getDisplayName(), leader.getId(), currentRound(),
+                  waypoint.getBoardNum(), outOfPlace, roundsWaited);
+            reformWaits.remove(leader.getId());
+            return false;
+        }
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT at {} - {} of {} unit(s) still forming up",
+              leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), outOfPlace,
+              members.size() - 1);
+        reformWaits.put(leader.getId(), wait);
+        return true;
     }
 
     /**
@@ -983,13 +1089,13 @@ public class UnitOrdersFollower {
     /**
      * Keeps each unit in a formation to the formation's pace, which sets how its units move, not how fast: at a Walk
      * pace every unit, the leader included, may use up to its own walking movement points, and at a Run pace up to
-     * its own running movement points. A fast unit is not held back to the slowest one's speed: each unit heads for
-     * its own slot around the leader's waypoint, so it only reaches it sooner and holds there. A jump within those
-     * movement points is allowed. A formation that has broken on contact is not paced, and a unit with no move within
-     * the pace keeps every move.
+     * its own running movement points. A jump within those movement points is allowed. A formation that has broken on
+     * contact is not paced, and a unit with no move within the pace keeps every move.
      *
-     * <p>The leader used to be held to the slowest unit's walk: a Grasshopper leading a Longbow jumped three hexes a
-     * turn instead of five while the rest waited in their slots for it (HammerGS's playtest, 2026-09-26).</p>
+     * <p>A formation that keeps together also holds its leader to the slowest unit's speed, so the others can keep
+     * their slots; without it, a Grasshopper leading a Longbow reached each waypoint in a turn or two and the Longbow,
+     * chasing slots around ever-further waypoints, fell hopelessly behind (HammerGS's playtest, 2026-09-26). A
+     * formation that does not keep together lets each unit move at its own speed, so units form up sooner.</p>
      *
      * @param entity the unit about to move
      * @param paths  its candidate moves
@@ -1010,17 +1116,28 @@ public class UnitOrdersFollower {
               && isEnemyNear(leader, contactRange(members))) {
             return paths;
         }
-        int paceLimit = (formation.get().getPace() == FormationPace.RUN) ? entity.getRunMP() : entity.getWalkMP();
+        int paceLimit = paceMovementPoints(entity, formation.get().getPace());
+        boolean isHeldToSlowest = formation.get().isKeepTogether() && (leader.getId() == entity.getId());
+        if (isHeldToSlowest) {
+            // a formation keeping together advances no faster than its slowest unit can follow
+            for (Entity member : members) {
+                paceLimit = Math.min(paceLimit, paceMovementPoints(member, formation.get().getPace()));
+            }
+        }
         List<MovePath> pacedPaths = new ArrayList<>();
         for (MovePath path : paths) {
             if (path.getMpUsed() <= paceLimit) {
                 pacedPaths.add(path);
             }
         }
-        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} up to its own {} MP, {} of {} moves kept",
-              entity.getDisplayName(), entity.getId(), currentRound(), formation.get().getPace(), paceLimit,
-              pacedPaths.size(), paths.size());
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} up to {} {} MP, {} of {} moves kept",
+              entity.getDisplayName(), entity.getId(), currentRound(), formation.get().getPace(),
+              isHeldToSlowest ? "the slowest unit's" : "its own", paceLimit, pacedPaths.size(), paths.size());
         return pacedPaths.isEmpty() ? paths : pacedPaths;
+    }
+
+    private static int paceMovementPoints(Entity unit, FormationPace pace) {
+        return (pace == FormationPace.RUN) ? unit.getRunMP() : unit.getWalkMP();
     }
 
     /**

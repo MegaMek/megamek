@@ -93,7 +93,7 @@ class MoveOrderEditorTest {
     @Test
     void aMoveOrderInFormationSendsEachUnitItsSlotThenTheRoute() {
         MoveOrderCommands.FormationChoice wedge = new MoveOrderCommands.FormationChoice(FormationShape.WEDGE, 21, 2,
-              FormationPace.WALK, ContactRule.BREAK);
+              FormationPace.WALK, ContactRule.BREAK, true);
 
         List<String> commands = MoveOrderCommands.commands(List.of(20, 21), wedge, false,
               List.of(FIRST_HEX, SECOND_HEX, LAST_HEX),
@@ -101,9 +101,9 @@ class MoveOrderEditorTest {
               OrderPriority.NORMAL);
 
         assertEquals(List.of(
-              "/unitOrder 20 FORMATION shape=WEDGE leader=21 spacing=2 slot=1 pace=WALK contact=BREAK",
+              "/unitOrder 20 FORMATION shape=WEDGE leader=21 spacing=2 slot=1 pace=WALK contact=BREAK together=true",
               "/unitOrder 20 ROUTE hexes=1709-1706/NE/2-2204/N priority=NORMAL",
-              "/unitOrder 21 FORMATION shape=WEDGE leader=21 spacing=2 slot=0 pace=WALK contact=BREAK",
+              "/unitOrder 21 FORMATION shape=WEDGE leader=21 spacing=2 slot=0 pace=WALK contact=BREAK together=true",
               "/unitOrder 21 ROUTE hexes=1709-1706/NE/2-2204/N priority=NORMAL"), commands);
     }
 

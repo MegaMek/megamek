@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -41,7 +40,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
@@ -101,18 +99,6 @@ public class BotOrdersMenuBuilder {
     public record OrderGroup(String label, List<Integer> unitIds) {}
 
     /**
-     * Lets the player tick any mix of one bot's units, then give them an order.
-     */
-    @FunctionalInterface
-    public interface UnitChooser {
-        /**
-         * @param botPlayer    the bot
-         * @param unitsByLance the bot's units, each a one-unit group, keyed by lance name
-         */
-        void chooseUnits(Player botPlayer, Map<String, List<OrderGroup>> unitsByLance);
-    }
-
-    /**
      * Lets the player set the facing while moving and the facing when stopped in one go.
      */
     @FunctionalInterface
@@ -130,8 +116,6 @@ public class BotOrdersMenuBuilder {
     private final AbstractClient client;
     private final HexPicker hexPicker;
     private final BiConsumer<Player, String> acknowledger;
-    // null when the host has no dialog for picking units, e.g. the Commander GUI
-    private UnitChooser unitChooser;
     // null when the host has no facing dialog; facings are then set from submenus
     private FacingChooser facingChooser;
 
@@ -144,16 +128,6 @@ public class BotOrdersMenuBuilder {
         this.client = client;
         this.hexPicker = hexPicker;
         this.acknowledger = acknowledger;
-    }
-
-    /**
-     * @param chooser lets the player tick any mix of units; without one the menu offers lances and single units only
-     *
-     * @return this builder
-     */
-    public BotOrdersMenuBuilder withUnitChooser(UnitChooser chooser) {
-        unitChooser = chooser;
-        return this;
     }
 
     /**
@@ -175,15 +149,36 @@ public class BotOrdersMenuBuilder {
      *                   Commands panel, where the player picks hexes instead
      */
     public void populate(JMenu botMenu, Player botPlayer, @Nullable Coords clickedHex) {
-        if ((clickedHex == null) && (unitChooser != null) && !groupsFor(botPlayer).isEmpty()) {
-            JMenuItem chooseItem = new JMenuItem(Messages.getString("BotCommandPanel.Orders.chooseUnits"));
-            chooseItem.addActionListener(event -> unitChooser.chooseUnits(botPlayer, unitsByLance(botPlayer)));
-            botMenu.add(chooseItem);
-            botMenu.addSeparator();
-        }
         for (OrderGroup group : groupsFor(botPlayer)) {
             JMenu groupMenu = new JMenu(group.label());
             addOrders(groupMenu, botPlayer, group, clickedHex);
+            botMenu.add(groupMenu);
+        }
+        if (botMenu.getItemCount() > GROUP_SCROLL_THRESHOLD) {
+            MenuScroller.setScrollerFor(botMenu, GROUP_SCROLL_THRESHOLD);
+        }
+    }
+
+    /**
+     * Adds one submenu per group of the bot's units holding the one-click orders: pause, resume, stop, clear, an edge
+     * to move to or exit by, the route's priority and leaving a formation. Routes, facings and formations are set up
+     * in the Move Order editor.
+     *
+     * @param botMenu   the menu to fill
+     * @param botPlayer the bot
+     */
+    public void populateQuick(JMenu botMenu, Player botPlayer) {
+        for (OrderGroup group : groupsFor(botPlayer)) {
+            JMenu groupMenu = new JMenu(group.label());
+            addOrder(groupMenu, botPlayer, group, "pause", UnitOrderAction.PAUSE);
+            addOrder(groupMenu, botPlayer, group, "resume", UnitOrderAction.RESUME);
+            addOrder(groupMenu, botPlayer, group, "stop", UnitOrderAction.STOP);
+            addOrder(groupMenu, botPlayer, group, "clear", UnitOrderAction.CLEAR);
+            groupMenu.addSeparator();
+            groupMenu.add(createEdgeMenu(botPlayer, group));
+            groupMenu.add(createPriorityMenu(botPlayer, group));
+            groupMenu.addSeparator();
+            addOrder(groupMenu, botPlayer, group, "formationOff", UnitOrderAction.FORMATION_OFF);
             botMenu.add(groupMenu);
         }
         if (botMenu.getItemCount() > GROUP_SCROLL_THRESHOLD) {
@@ -265,24 +260,6 @@ public class BotOrdersMenuBuilder {
             unitsByLance.put(Messages.getString("BotCommandPanel.Orders.noLance"), withoutLance);
         }
         return unitsByLance;
-    }
-
-    /**
-     * Builds the orders for one group as a popup, for a group the player ticked together.
-     *
-     * @param botPlayer the bot
-     * @param group     the units
-     *
-     * @return the popup holding every order for the group
-     */
-    public JPopupMenu ordersPopup(Player botPlayer, OrderGroup group) {
-        JMenu groupMenu = new JMenu(group.label());
-        addOrders(groupMenu, botPlayer, group, null);
-        JPopupMenu popup = new JPopupMenu(group.label());
-        for (Component item : groupMenu.getMenuComponents()) {
-            popup.add(item);
-        }
-        return popup;
     }
 
     /**

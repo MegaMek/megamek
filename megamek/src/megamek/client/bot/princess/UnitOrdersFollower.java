@@ -121,11 +121,59 @@ public class UnitOrdersFollower {
     /**
      * @param entity a unit of the bot
      *
-     * @return {@code true} if a Pause order, or a Stop order given this round, holds the unit where it is
+     * @return {@code true} if a Pause order, a Stop order given this round, a hold at a waypoint or the end of the
+     *       route holds the unit where it is
      */
     public boolean isHolding(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
-        return orders.isPaused() || orders.isStoppedInRound(currentRound()) || isHoldingRouteEnd(entity);
+        return orders.isPaused() || orders.isStoppedInRound(currentRound()) || isHoldingAtWaypoint(entity)
+              || isHoldingRouteEnd(entity);
+    }
+
+    /**
+     * A unit holds at a waypoint part-way along its route for the turns set on it. It stays in the hex and fires at
+     * anything in range, but does not chase. A formation unit on its slot holds while its leader does, so the shape
+     * waits together.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is holding at a waypoint this round
+     */
+    public boolean isHoldingAtWaypoint(Entity entity) {
+        int round = currentRound();
+        if (entity.getUnitOrders().isHoldingAtWaypoint(round)) {
+            return true;
+        }
+        Optional<Entity> leader = formationLeaderOf(entity);
+        if (leader.isEmpty() || !leader.get().getUnitOrders().isHoldingAtWaypoint(round)
+              || (entity.getPosition() == null)) {
+            return false;
+        }
+        Optional<Coords> slot = getFormationSlot(entity);
+        return slot.isPresent() && entity.getPosition().equals(slot.get());
+    }
+
+    /**
+     * The facing a unit takes when it stops: the one set on the waypoint it holds at or ends its route on, else its
+     * "when stopped" facing.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the facing 0-5, or {@link UnitOrders#FACING_AUTO}
+     */
+    public int stoppedFacing(Entity entity) {
+        UnitOrders orders = entity.getUnitOrders();
+        boolean isStoppedAtWaypoint = orders.hasRoute()
+              && ((orders.getRoute().size() == 1) || isHoldingAtWaypoint(entity));
+        if (isStoppedAtWaypoint) {
+            // a formation unit holding with its leader faces the way set on the leader's waypoint
+            Entity waypointOwner = formationLeaderOf(entity).orElse(entity);
+            int waypointFacing = waypointOwner.getUnitOrders().getWaypointOrder(0).getFacing();
+            if (waypointFacing != UnitOrders.FACING_AUTO) {
+                return waypointFacing;
+            }
+        }
+        return orders.getFacingWhenStopped();
     }
 
     /**
@@ -358,9 +406,14 @@ public class UnitOrdersFollower {
     int orderedFacing(Entity entity, Coords finalHex) {
         UnitOrders orders = entity.getUnitOrders();
         List<Coords> route = orders.getRoute();
+        // a move that ends on the next waypoint takes the facing set on it
+        if (!route.isEmpty() && finalHex.equals(route.get(0))
+              && (orders.getWaypointOrder(0).getFacing() != UnitOrders.FACING_AUTO)) {
+            return orders.getWaypointOrder(0).getFacing();
+        }
         boolean endsStopped = route.isEmpty()
               || ((route.size() == 1) && (finalHex.distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT));
-        return endsStopped ? orders.getFacingWhenStopped() : orders.getFacingWhileMoving();
+        return endsStopped ? stoppedFacing(entity) : orders.getFacingWhileMoving();
     }
 
     /**
@@ -439,15 +492,23 @@ public class UnitOrdersFollower {
                 continue;
             }
             Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
-            if (waypoint.isEmpty() || (waypoint.get().distance(entity.getPosition()) > Princess.DISTANCE_TO_WAYPOINT)) {
+            if (waypoint.isEmpty()) {
                 continue;
             }
-            if (entity.getUnitOrders().getRoute().size() > 1) {
-                if (getFormationSlot(entity).isPresent()) {
-                    // a unit in formation takes its route from its leader's; ticking off a waypoint it merely passed
-                    // near sent it on toward the next one, ahead of the formation (HammerGS's playtest, 2026-09-26)
-                    continue;
-                }
+            boolean isPartWay = entity.getUnitOrders().getRoute().size() > 1;
+            if (isPartWay && getFormationSlot(entity).isPresent()) {
+                // a unit in formation takes its route from its leader's; ticking off a waypoint it merely passed
+                // near sent it on toward the next one, ahead of the formation (HammerGS's playtest, 2026-09-26)
+                continue;
+            }
+            if (isPartWay && entity.getUnitOrders().getWaypointOrder(0).isHold()) {
+                advanceHold(entity, waypoint.get());
+                continue;
+            }
+            if (waypoint.get().distance(entity.getPosition()) > Princess.DISTANCE_TO_WAYPOINT) {
+                continue;
+            }
+            if (isPartWay) {
                 LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
                       waypoint.get().getBoardNum());
                 change(entity, UnitOrderAction.REACHED);
@@ -460,6 +521,30 @@ public class UnitOrdersFollower {
             }
         }
         syncFollowerRoutes();
+    }
+
+    /**
+     * Starts a unit's hold when it stands on a waypoint set to hold, and moves it on once it has held for the turns
+     * set: reaching a two-turn hold in round 3, it holds in rounds 4 and 5 and moves on in round 6.
+     */
+    private void advanceHold(Entity entity, Coords waypoint) {
+        UnitOrders orders = entity.getUnitOrders();
+        int holdTurns = orders.getWaypointOrder(0).getHoldTurns();
+        if (orders.getHoldSinceRound() == UnitOrders.NO_ROUND) {
+            if (entity.getPosition().equals(waypoint)) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: reached {} and holds {} turn(s), through round {}",
+                      entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(), holdTurns,
+                      currentRound() + holdTurns);
+                change(entity, UnitOrderAction.HOLD_STARTED);
+                owner.getOrdersRadio().report(entity, "holding", waypoint.getBoardNum());
+            }
+            return;
+        }
+        if (orders.isHoldDone(currentRound())) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: held {} turn(s) at {}; moving on", entity.getDisplayName(),
+                  entity.getId(), currentRound(), holdTurns, waypoint.getBoardNum());
+            change(entity, UnitOrderAction.REACHED);
+        }
     }
 
     /**
@@ -509,12 +594,18 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * The way the formation faces around its leader's waypoint: toward the next waypoint while more follow; at the
-     * last one, the leader's ordered stopped facing, or else the direction of the last leg, fixed the first time it is
+     * The way the formation faces around its leader's waypoint: the facing set on that waypoint; else toward the next
+     * waypoint while more follow; at the last one, the leader's ordered stopped facing, or else the direction of the last leg, fixed the first time it is
      * worked out so the shape does not swing as the leader closes in.
      */
     private int formationHeading(Entity leader, Coords anchor) {
         List<Coords> leaderRoute = leader.getUnitOrders().getRoute();
+        // a facing set on the waypoint lays the shape out that way
+        int waypointFacing = leader.getUnitOrders().getWaypointOrder(0).getFacing();
+        if (!leaderRoute.isEmpty() && anchor.equals(leaderRoute.get(0))
+              && (waypointFacing != UnitOrders.FACING_AUTO)) {
+            return waypointFacing;
+        }
         if (leaderRoute.size() > 1) {
             return anchor.direction(leaderRoute.get(1));
         }
@@ -657,8 +748,21 @@ public class UnitOrdersFollower {
      *       waypoint, which must be reached exactly, else {@link Princess#DISTANCE_TO_WAYPOINT}
      */
     int arrivalRadius(Entity entity) {
-        boolean holdsExactHex = getFormationSlot(entity).isPresent() || isLeadingFormationToLastWaypoint(entity);
+        boolean holdsExactHex = getFormationSlot(entity).isPresent() || isLeadingFormationToLastWaypoint(entity)
+              || isHeadingForHold(entity);
         return holdsExactHex ? 0 : Princess.DISTANCE_TO_WAYPOINT;
+    }
+
+    /**
+     * A waypoint set to hold must be reached exactly: the hold starts only once the unit stands on it.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit's next waypoint, part-way along its route, is set to hold
+     */
+    boolean isHeadingForHold(Entity entity) {
+        UnitOrders orders = entity.getUnitOrders();
+        return (orders.getRoute().size() > 1) && orders.getWaypointOrder(0).isHold();
     }
 
     /**

@@ -48,15 +48,16 @@ import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.EnumArgument;
-import megamek.server.commands.arguments.NotRequiredMultiHexNumberArgument;
 import megamek.server.commands.arguments.OptionalEnumArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
+import megamek.server.commands.arguments.RouteArgument;
 import megamek.server.commands.arguments.UnitArgument;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -100,7 +101,7 @@ public class UnitOrderCommand extends ClientServerCommand {
     public List<Argument<?>> defineArguments() {
         return List.of(new UnitArgument(UNIT_ID, Messages.getString("UnitOrder.cmd.unitID")),
               new EnumArgument<>(ACTION, Messages.getString("UnitOrder.cmd.action"), UnitOrderAction.class),
-              new NotRequiredMultiHexNumberArgument(HEXES, Messages.getString("UnitOrder.cmd.hexes")),
+              new RouteArgument(HEXES, Messages.getString("UnitOrder.cmd.hexes")),
               new OptionalEnumArgument<>(EDGE, Messages.getString("UnitOrder.cmd.edge"), OffBoardDirection.class),
               new OptionalIntegerArgument(FACING_WHILE_MOVING, Messages.getString("UnitOrder.cmd.moving"),
                     UnitOrders.FACING_AUTO, HIGHEST_FACING),
@@ -134,13 +135,15 @@ public class UnitOrderCommand extends ClientServerCommand {
             return;
         }
 
-        List<Coords> hexes = args.get(HEXES, NotRequiredMultiHexNumberArgument.class).getValue();
+        RouteArgument route = args.get(HEXES, RouteArgument.class);
+        List<Coords> hexes = route.getHexes();
+        List<WaypointOrder> waypointOrders = route.getWaypointOrders();
         OffBoardDirection edge = (OffBoardDirection) args.get(EDGE).getValue();
         int facingWhileMoving = facingArgument(args, FACING_WHILE_MOVING);
         int facingWhenStopped = facingArgument(args, FACING_WHEN_STOPPED);
         OrderPriority priority = (OrderPriority) args.get(PRIORITY).getValue();
 
-        UnitOrders newOrders = action.apply(entity.getUnitOrders(), hexes,
+        UnitOrders newOrders = action.apply(entity.getUnitOrders(), hexes, waypointOrders,
               (edge == null) ? OffBoardDirection.NONE : edge,
               facingWhileMoving, facingWhenStopped, priority, gameManager.getGame().getCurrentRound(),
               formationArgument(args, entity));
@@ -196,12 +199,25 @@ public class UnitOrderCommand extends ClientServerCommand {
      * @return the named argument for them, e.g. {@code hexes=1508-1504}
      */
     public static String hexesArgument(List<Coords> hexes) {
+        return hexesArgument(hexes, List.of());
+    }
+
+    /**
+     * @param hexes          the route's hexes, in order
+     * @param waypointOrders what the unit does at each hex, in the same order; missing ones pass through
+     *
+     * @return the named argument for them, e.g. {@code hexes=1709-1706/NE/2-2005-2204/N}
+     */
+    public static String hexesArgument(List<Coords> hexes, List<WaypointOrder> waypointOrders) {
         StringBuilder text = new StringBuilder(HEXES).append('=');
         for (int index = 0; index < hexes.size(); index++) {
             if (index > 0) {
                 text.append('-');
             }
             text.append(hexes.get(index).getBoardNum());
+            if (index < waypointOrders.size()) {
+                text.append(waypointOrders.get(index).toCommandSuffix());
+            }
         }
         return text.toString();
     }

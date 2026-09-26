@@ -3195,8 +3195,16 @@ public class Princess extends BotClient {
 
             if (getUnitOrdersFollower().isHolding(entity) && !entity.isAirborne()
                   && !entity.isAirborneVTOLorWIGE()) {
+                String holdReason;
+                if (entity.getUnitOrders().isPaused()) {
+                    holdReason = "paused";
+                } else if (entity.getUnitOrders().isStoppedInRound(game.getCurrentRound())) {
+                    holdReason = "stopped this round";
+                } else {
+                    holdReason = "holding the end of its route at " + entity.getPosition().getBoardNum();
+                }
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: HOLD - {}", entity.getDisplayName(), entity.getId(),
-                      game.getCurrentRound(), entity.getUnitOrders().isPaused() ? "paused" : "stopped this round");
+                      game.getCurrentRound(), holdReason);
                 return getHoldPositionPath(entity);
             }
 

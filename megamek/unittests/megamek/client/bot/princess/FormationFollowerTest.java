@@ -349,6 +349,27 @@ class FormationFollowerTest {
     }
 
     @Test
+    void theBotFacesTheEnemyDeploymentZone() {
+        // HammerGS: deploy facing the enemy's deployment zone. An enemy deploying along the north edge, three rows
+        // deep, puts the zone's middle at the top of the board, halfway across.
+        doReturn(bot).when(princess).getLocalPlayer();
+        bot.setTeam(1);
+        Player enemy = new Player(2, "Clan Wolf");
+        enemy.setTeam(2);
+        enemy.setStartingPos(Board.START_N);
+        game.addPlayer(2, enemy);
+        BipedMek enemyMek = new BipedMek();
+        enemyMek.setId(40);
+        enemyMek.setOwner(enemy);
+        game.addEntity(enemyMek);
+
+        Coords center = princess.getEnemyDeploymentCenter(board).orElseThrow();
+
+        assertTrue(center.getY() <= 2, "zone middle " + center.getBoardNum() + " is not along the north edge");
+        assertEquals(WIDTH / 2, center.getX(), 1);
+    }
+
+    @Test
     void aZoneTooShallowForAVeeDeploysTheLanceInALineWithEveryUnitInTheZone() {
         // HammerGS's playtest: a Vee lance deploying in a two-row zone at the board's edge scattered, because the
         // Vee's arms reach four rows ahead of the leader and every slot fell outside the zone.

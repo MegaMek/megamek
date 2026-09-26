@@ -35,11 +35,9 @@ package megamek.client.ui.clientGUI.boardview.spriteHandler;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
@@ -51,14 +49,17 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.game.Game;
-import megamek.common.orders.FormationOrder;
+import megamek.common.orders.RouteGroups;
+import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.Entity;
 
 /**
  * Marks the waypoints players have ordered for the bot units on this player's side with flags. Each group of units
  * following the same route - a formation, or units sent along identical hexes - gets its own banner color, with the
- * unit's model under the flag and the waypoint's number below that, so a player can tell at a glance whose route a
- * flag belongs to and in what order it will be visited.
+ * unit's model under the flag and the waypoint's number below that, with its hold if it has one. An arrow on the hex
+ * edge shows the facing set on the waypoint. A player can tell at a glance whose route a flag belongs to, in what
+ * order it will be visited and what the units do there.
  *
  * <p>Routes are read from the units' own orders, which every client receives with the units, so the flags follow the
  * bots as they work through their routes. Enemy bots' routes are never drawn.</p>
@@ -91,8 +92,21 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
      * @param colorIndex the group's place in unit order, which picks its banner color
      * @param label      who follows the route, e.g. {@code GHR-5H +3}
      * @param stepNumber the waypoint's place in the route, from 1
+     * @param facing     the facing set on the waypoint, 0-5, or {@link UnitOrders#FACING_AUTO}
+     * @param holdTurns  the turns set to hold there; 0 passes through
      */
-    record RouteFlag(Coords hex, int boardId, int colorIndex, String label, int stepNumber) {}
+    record RouteFlag(Coords hex, int boardId, int colorIndex, String label, int stepNumber, int facing,
+          int holdTurns) {
+
+        /**
+         * @return the line under the unit's name: the waypoint's number, and its hold if it has one, e.g.
+         *       {@code 2 hold 2}
+         */
+        String progressText() {
+            return (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", stepNumber, holdTurns)
+                  : String.valueOf(stepNumber);
+        }
+    }
 
     /**
      * Redraws the flags. Kept for the unit selection hooks; the flags no longer depend on which unit is selected.
@@ -110,9 +124,11 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
         for (RouteFlag flag : routeFlags(units, localPlayer())) {
             IBoardView boardView = clientGUI.getBoardView(flag.boardId());
             if (boardView instanceof BoardView tacticalBoardView) {
+                int arrowFacing = (flag.facing() == UnitOrders.FACING_AUTO) ? HexFlagSprite.NO_FACING
+                      : flag.facing();
                 HexFlagSprite sprite = new HexFlagSprite(tacticalBoardView, flag.hex(),
-                      ROUTE_COLORS.get(flag.colorIndex() % ROUTE_COLORS.size()), flag.label(),
-                      String.valueOf(flag.stepNumber()));
+                      ROUTE_COLORS.get(flag.colorIndex() % ROUTE_COLORS.size()), flag.label(), flag.progressText(),
+                      arrowFacing);
                 currentSprites.add(sprite);
                 tacticalBoardView.addSprites(List.of(sprite));
             }
@@ -138,58 +154,21 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
      * @return the flags, grouped by route in unit order
      */
     static List<RouteFlag> routeFlags(List<Entity> units, @Nullable Player viewer) {
-        Map<String, List<Entity>> groups = new LinkedHashMap<>();
-        for (Entity unit : units) {
-            if (isRouteShownTo(unit, viewer)) {
-                groups.computeIfAbsent(groupKey(unit), key -> new ArrayList<>()).add(unit);
-            }
-        }
         List<RouteFlag> flags = new ArrayList<>();
         int colorIndex = 0;
-        for (List<Entity> group : groups.values()) {
-            Entity guide = routeGuide(group);
-            String label = modelOf(guide) + ((group.size() > 1) ? (" +" + (group.size() - 1)) : "");
+        for (RouteGroups.RouteGroup group : RouteGroups.visibleTo(units, viewer)) {
+            Entity guide = group.guide();
             List<Coords> route = guide.getUnitOrders().getRoute();
             for (int step = 0; step < route.size(); step++) {
-                flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, label, step + 1));
+                WaypointOrder waypointOrder = guide.getUnitOrders().getWaypointOrder(step);
+                // the last waypoint is held until new orders: it has no hold count to show
+                int holdTurns = (step == route.size() - 1) ? 0 : waypointOrder.getHoldTurns();
+                flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), step + 1,
+                      waypointOrder.getFacing(), holdTurns));
             }
             colorIndex++;
         }
         return flags;
-    }
-
-    private static boolean isRouteShownTo(Entity unit, @Nullable Player viewer) {
-        Player owner = unit.getOwner();
-        return (viewer != null) && (owner != null) && owner.isBot() && !viewer.isEnemyOf(owner)
-              && (unit.getPosition() != null) && unit.getUnitOrders().hasRoute();
-    }
-
-    private static String groupKey(Entity unit) {
-        Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
-        if (formation.isPresent()) {
-            return "formation " + formation.get().getLeaderId();
-        }
-        return "route " + unit.getBoardId() + ' ' + unit.getUnitOrders().getRoute();
-    }
-
-    /**
-     * @return the formation's leader if it is in the group, else the first unit, whose route the others share
-     */
-    private static Entity routeGuide(List<Entity> group) {
-        Optional<FormationOrder> formation = group.get(0).getUnitOrders().getFormation();
-        if (formation.isPresent()) {
-            for (Entity member : group) {
-                if (member.getId() == formation.get().getLeaderId()) {
-                    return member;
-                }
-            }
-        }
-        return group.get(0);
-    }
-
-    private static String modelOf(Entity unit) {
-        String model = unit.getModel();
-        return ((model == null) || model.isBlank()) ? unit.getChassis() : model;
     }
 
     @Override

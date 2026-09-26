@@ -77,11 +77,23 @@ public class HexFlagSprite extends HexSprite {
     private static final int PROGRESS_Y = 66;
     private static final Color LABEL_COLOR = new Color(255, 255, 255, 230);
 
+    /** No facing arrow on the hex edge. */
+    public static final int NO_FACING = -1;
+
+    // facing arrow geometry: how far inside the hex edge its tip and base sit, and its half width
+    private static final double ARROW_TIP_INSET = 2;
+    private static final double ARROW_BASE_INSET = 13;
+    private static final double ARROW_HALF_WIDTH = 7;
+    private static final int FACING_COUNT = 6;
+    private static final double DEGREES_PER_FACING = 60;
+
     private final Color flagColor;
     // the one-word scheme label under the flag; null for no label (MM @Nullable is not applicable to fields)
     private final String label;
     // the counter under the label, e.g. "2/3"; null for a scheme with nothing to count
     private final String progress;
+    // the hex edge an arrow points out of, 0-5, or NO_FACING
+    private final int facing;
 
     /**
      * @param boardView the board view this sprite is displayed on
@@ -102,10 +114,25 @@ public class HexFlagSprite extends HexSprite {
      */
     public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label,
           @Nullable String progress) {
+        this(boardView, location, flagColor, label, progress, NO_FACING);
+    }
+
+    /**
+     * @param boardView The board view to draw on
+     * @param location  The hex the flag stands in
+     * @param flagColor The banner colour
+     * @param label     A short word drawn under the flag, or {@code null} for none
+     * @param progress  A counter drawn under the label, or {@code null} for none
+     * @param facing    The hex edge (0-5) an arrow in the banner colour points out of, e.g. the way a unit will face
+     *                  on this hex; {@link #NO_FACING} for none
+     */
+    public HexFlagSprite(BoardView boardView, Coords location, Color flagColor, @Nullable String label,
+          @Nullable String progress, int facing) {
         super(boardView, location);
         this.flagColor = flagColor;
         this.label = label;
         this.progress = progress;
+        this.facing = facing;
     }
 
     @Override
@@ -128,6 +155,10 @@ public class HexFlagSprite extends HexSprite {
         graph.setColor(OUTLINE_COLOR);
         graph.setStroke(OUTLINE_STROKE);
         graph.draw(banner);
+
+        if ((facing >= 0) && (facing < FACING_COUNT)) {
+            drawFacingArrow(graph);
+        }
 
         // pole: a thick dark line the banner hangs from
         graph.setColor(POLE_COLOR);
@@ -156,6 +187,33 @@ public class HexFlagSprite extends HexSprite {
         }
 
         graph.dispose();
+    }
+
+    /**
+     * Draws an arrow just inside the hex edge the facing points through, in the banner colour.
+     */
+    private void drawFacingArrow(Graphics2D graph) {
+        double radians = Math.toRadians(facing * DEGREES_PER_FACING);
+        double outwardX = Math.sin(radians);
+        double outwardY = -Math.cos(radians);
+        double centreX = HexTileset.HEX_W / 2.0;
+        double centreY = HexTileset.HEX_H / 2.0;
+        // a hex edge's midpoint lies the inner radius from the centre, measured toward that edge
+        double innerRadius = HexTileset.HEX_H / 2.0;
+        double edgeX = centreX + (outwardX * innerRadius);
+        double edgeY = centreY + (outwardY * innerRadius);
+        Path2D.Double arrow = new Path2D.Double();
+        arrow.moveTo(edgeX - (outwardX * ARROW_TIP_INSET), edgeY - (outwardY * ARROW_TIP_INSET));
+        double baseX = edgeX - (outwardX * ARROW_BASE_INSET);
+        double baseY = edgeY - (outwardY * ARROW_BASE_INSET);
+        arrow.lineTo(baseX - (outwardY * ARROW_HALF_WIDTH), baseY + (outwardX * ARROW_HALF_WIDTH));
+        arrow.lineTo(baseX + (outwardY * ARROW_HALF_WIDTH), baseY - (outwardX * ARROW_HALF_WIDTH));
+        arrow.closePath();
+        graph.setColor(flagColor);
+        graph.fill(arrow);
+        graph.setColor(OUTLINE_COLOR);
+        graph.setStroke(OUTLINE_STROKE);
+        graph.draw(arrow);
     }
 
     /** The flag should be displayed on top of buildings and bridges in isometric view. */

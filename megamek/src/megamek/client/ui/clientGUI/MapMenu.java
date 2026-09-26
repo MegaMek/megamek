@@ -53,9 +53,12 @@ import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.BotCommands.BotMoveOrderDialog;
 import megamek.client.ui.dialogs.BotCommands.BotOrderFacingDialog;
 import megamek.client.ui.dialogs.BotCommands.BotOrdersMenuBuilder;
+import megamek.client.ui.dialogs.BotCommands.BotWaypointMenuBuilder;
 import megamek.client.ui.dialogs.BuildingEditDialog;
 import megamek.client.ui.dialogs.HexEditDialog;
 import megamek.client.ui.dialogs.NoteDialog;
@@ -195,6 +198,7 @@ public class MapMenu extends JPopupMenu {
 
         addIfNotEmpty(touchOffExplosivesMenu());
         addIfNotEmptyWithSeparator(createSpecialHexDisplayMenu());
+        addWaypointMenus();
         addIfNotEmptyWithSeparator(createPleaToRoyaltyMenu());
         addIfNotEmptyWithSeparator(createGameMasterMenu());
         return getComponentCount() > 0;
@@ -399,6 +403,38 @@ public class MapMenu extends JPopupMenu {
         menu.add(item);
 
         return menu;
+    }
+
+    /**
+     * Adds a menu for each bot route on the player's side with a waypoint on this hex, to change the waypoint's facing
+     * and hold, remove it, or open the route in the Move Order editor.
+     */
+    private void addWaypointMenus() {
+        boolean isFirst = true;
+        for (JMenu waypointMenu : BotWaypointMenuBuilder.menusFor(client, coords, boardLocation.boardId(),
+              this::openBotRouteEditor, (botPlayer, orderText) -> gui.addToast(ToastLevel.SUCCESS,
+                    Messages.getString("BotCommandPanel.toast.orderSent", botPlayer.getName(), orderText)))) {
+            if (isFirst && (getComponentCount() > 0)) {
+                addSeparator();
+            }
+            add(waypointMenu);
+            isFirst = false;
+        }
+    }
+
+    /**
+     * Opens the Move Order editor for the units following a route, on this board.
+     */
+    private void openBotRouteEditor(Player botPlayer, BotOrdersMenuBuilder.OrderGroup group) {
+        if (!(gui.getBoardView(boardLocation.boardId()) instanceof BoardView boardView)) {
+            return;
+        }
+        BotOrdersMenuBuilder unitsSource = new BotOrdersMenuBuilder(client, (orderDescription, singleHex,
+              onPicked) -> {}, (orderedBot, orderText) -> {});
+        new BotMoveOrderDialog(gui, boardView, botPlayer, group, () -> unitsSource.unitsByLance(botPlayer),
+              (orderedBot, orderText) -> gui.addToast(ToastLevel.SUCCESS,
+                    Messages.getString("BotCommandPanel.toast.orderSent", orderedBot.getName(), orderText)))
+              .setVisible(true);
     }
 
     /**

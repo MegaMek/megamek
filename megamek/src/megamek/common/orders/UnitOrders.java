@@ -278,6 +278,19 @@ public final class UnitOrders implements Serializable {
     }
 
     /**
+     * @param newRoute          the edited route
+     * @param newWaypointOrders what to do at each of its waypoints, in the same order; missing ones pass through
+     *
+     * @return these orders with the route edited in place: a pause, a Stop and the priority stand, and a hold under
+     *       way at the next waypoint carries on while that waypoint stays first
+     */
+    public UnitOrders withRouteEdited(List<Coords> newRoute, List<WaypointOrder> newWaypointOrders) {
+        boolean isSameNextWaypoint = !route.isEmpty() && !newRoute.isEmpty() && route.get(0).equals(newRoute.get(0));
+        return new UnitOrders(newRoute, newWaypointOrders, isSameNextWaypoint ? holdSinceRound : NO_ROUND, priority,
+              facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+    }
+
+    /**
      * @param waypoints the waypoints to add after the existing ones
      *
      * @return these orders with the waypoints added to the end of the route

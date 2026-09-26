@@ -237,7 +237,7 @@ public class BotOrdersMenuBuilder {
      * @return each of the bot's units as a one-unit group, keyed by the name of its lance in the force tree; units in
      *       no lance come last
      */
-    Map<String, List<OrderGroup>> unitsByLance(Player botPlayer) {
+    public Map<String, List<OrderGroup>> unitsByLance(Player botPlayer) {
         Map<String, List<OrderGroup>> unitsByLance = new LinkedHashMap<>();
         if (!(client.getGame() instanceof Game game)) {
             return unitsByLance;

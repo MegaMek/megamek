@@ -212,6 +212,9 @@ public class Princess extends BotClient {
     // Carries out the orders players give the bot's units. Reach it through getUnitOrdersFollower().
     private UnitOrdersFollower unitOrdersFollower;
 
+    // Reports on the units' orders, by radio or plainly. Reach it through getOrdersRadio().
+    private OrdersRadio ordersRadio;
+
     private Integer spinUpThreshold = null;
 
     private double moveEvaluationTimeEstimate = 0;
@@ -3214,10 +3217,7 @@ public class Princess extends BotClient {
             if (getUnitBehaviorTracker().isFollowingOrdersOverWithdrawal(entity, this)) {
                 // A crippled unit the player has sent somewhere goes there instead of withdrawing (issue #9038). It
                 // stays a withdrawing unit for firing and honor, but does not run for, or leave by, its retreat edge.
-                String msg = Messages.getString("Princess.followingOrders", entity.getDisplayName(),
-                      describeOrderedDestination(entity));
-                LOGGER.info("[BotOrders] {}", msg);
-                sendChat(msg, Level.ERROR);
+                getOrdersRadio().report(entity, "followingOrders", describeOrderedDestination(entity));
             } else if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
@@ -3957,6 +3957,16 @@ public class Princess extends BotClient {
             return Messages.getString("Princess.orders.edge", orderedEdge.get().name());
         }
         return getUnitBehaviorTracker().getWaypointForEntity(entity).map(Coords::getBoardNum).orElse("?");
+    }
+
+    /**
+     * @return how this bot reports on its units' orders
+     */
+    public OrdersRadio getOrdersRadio() {
+        if (ordersRadio == null) {
+            ordersRadio = new OrdersRadio(this);
+        }
+        return ordersRadio;
     }
 
     /**

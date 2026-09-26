@@ -404,8 +404,11 @@ def analyse_unit(track, width, height, threat_lookup=None):
                 reason = describe(rule_label, detail, behaviour, home_edge) + "; moved while ordered to hold"
         elif has_model and edge_order not in ("", "NONE"):
             expected = edge_order + " " + edge
-            followed = (rule.startswith(edge_order + "_EDGE") and not detail.startswith("no path")
-                        and behaviour != "NoPathToDestination")
+            # since the review a bot-wide flee is carried as Exit by edge too, and withdrawal may lead it
+            heading_edge = edge_in_detail(detail)
+            followed = ((rule.startswith(edge_order + "_EDGE")
+                         or (rule in ("FLEE_ORDER", "FORCED_WITHDRAWAL") and heading_edge == edge))
+                        and not detail.startswith("no path") and behaviour != "NoPathToDestination")
             if not followed:
                 reason = describe(rule_label, detail, behaviour, home_edge)
         elif effective_flee:
@@ -420,8 +423,9 @@ def analyse_unit(track, width, height, threat_lookup=None):
                 if has_model else (start_head or head)
             expected = "ROUTE " + (hex_number(*target) if target else "?") + ((" " + priority) if priority else "")
             if rule:
-                followed = (rule in ("PLAYER_WAYPOINT", "PLAYER_ROUTE") and "no reachable" not in detail
-                            and behaviour != "NoPathToDestination")
+                # at the last hex a unit holds it, or fights and then returns (ROUTE_END), as designed
+                followed = (rule in ("PLAYER_WAYPOINT", "PLAYER_ROUTE", "ROUTE_END", "HOLD")
+                            and "no reachable" not in detail and behaviour != "NoPathToDestination")
             else:
                 followed = behaviour == "MoveToDestination" and not withdrawing
             if not followed:

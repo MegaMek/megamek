@@ -384,7 +384,8 @@ public class AreaEffectHelper {
     /**
      * Returns whether artillery flak can damage this unit. Flak hits "airborne ground units (VTOL Vehicles, WiGEs and
      * units expending VTOL MPs such as infantry) as well as airborne aerospace units" (TO:AR p.153). A LAM in AirMek
-     * mode flies as a WiGE, so it counts. Whether the unit is at the elevation the flak burst at is checked separately.
+     * mode flies as a WiGE, so it counts. A ground unit making an atmospheric drop is at altitude and is attacked like an
+     * airborne unit, so it counts too. Whether the unit is at the elevation the flak burst at is checked separately.
      *
      * @param entity the unit caught in the flak burst
      *
@@ -393,7 +394,7 @@ public class AreaEffectHelper {
     static boolean isFlakTarget(Entity entity) {
         boolean isVtol = (entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.VTOL);
         boolean isAirborneGroundUnit = entity.isAirborneVTOLorWIGE();
-        return isVtol || isAirborneGroundUnit || entity.isAero();
+        return isVtol || isAirborneGroundUnit || entity.isAero() || entity.isDropping();
     }
 
     /**

@@ -148,6 +148,7 @@ class BasicPathRankerTest {
         UnitOrdersFollower noOrdersFollower = mock(UnitOrdersFollower.class);
         when(noOrdersFollower.orderedFacing(any(Entity.class), any(Coords.class))).thenReturn(UnitOrders.FACING_AUTO);
         when(noOrdersFollower.routeWeight(any(Entity.class))).thenReturn(1.0);
+        when(noOrdersFollower.damageWeight(any(Entity.class))).thenReturn(1.0);
         when(mockPrincess.getUnitOrdersFollower()).thenReturn(noOrdersFollower);
         when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);

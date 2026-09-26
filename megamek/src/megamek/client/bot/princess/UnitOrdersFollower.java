@@ -33,9 +33,11 @@
 package megamek.client.bot.princess;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import megamek.client.bot.Messages;
 import megamek.common.OffBoardDirection;
@@ -48,6 +50,7 @@ import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
+import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 import megamek.server.commands.UnitOrderCommand;
 import org.apache.logging.log4j.Level;
@@ -68,10 +71,17 @@ public class UnitOrdersFollower {
     /** How much more an Imperative route's pull counts than a Normal one in the path score. */
     static final double IMPERATIVE_ROUTE_WEIGHT = 3.0;
 
+    /** How much a unit on an Imperative route weighs the damage it expects: half, so it walks past enemies. */
+    static final double IMPERATIVE_DAMAGE_WEIGHT = 0.5;
+
+    /** How much a unit on a Normal route weighs the damage it expects: a little more, so it takes cover on the way. */
+    static final double NORMAL_ROUTE_DAMAGE_WEIGHT = 1.25;
+
     /** Hex facings on each side of the ordered one that still count as its front arc. */
     private static final int FRONT_ARC_HALF_WIDTH = 1;
 
     private final Princess owner;
+    private final Set<Integer> arrivedUnitIds = new HashSet<>();
     private final Map<String, WaypointDistanceField> distanceFields = new HashMap<>();
     private int distanceFieldsRound = -1;
 
@@ -93,7 +103,113 @@ public class UnitOrdersFollower {
      */
     public boolean isHolding(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
-        return orders.isPaused() || orders.isStoppedInRound(currentRound());
+        return orders.isPaused() || orders.isStoppedInRound(currentRound()) || isHoldingRouteEnd(entity);
+    }
+
+    /**
+     * A unit that has reached the last hex of its route holds it while no enemy is within reach of its weapons. When
+     * one is, the unit is free to fight; once the enemy is gone, the last hex pulls it back.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is at the end of its route with no enemy in range
+     */
+    public boolean isHoldingRouteEnd(Entity entity) {
+        return isAtRouteEnd(entity) && !isEnemyInRange(entity);
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is within {@link Princess#DISTANCE_TO_WAYPOINT} of the last hex of its route
+     */
+    public boolean isAtRouteEnd(Entity entity) {
+        List<Coords> route = entity.getUnitOrders().getRoute();
+        return (route.size() == 1) && (entity.getPosition() != null)
+              && (entity.getPosition().distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT);
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if a known enemy is within the unit's longest weapon range
+     */
+    public boolean isEnemyInRange(Entity entity) {
+        int weaponRange = owner.getMaxWeaponRange(entity);
+        for (Entity enemy : owner.getEnemyEntities()) {
+            if ((enemy.getPosition() != null) && (enemy.getBoardId() == entity.getBoardId())
+                  && (enemy.getPosition().distance(entity.getPosition()) <= weaponRange)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * How much a unit weighs the damage it expects on the way along a player's route: a Normal route a little more
+     * than usual, so the unit takes cover, an Imperative one half as much, so it pushes past the enemy (issue #7615).
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the factor for the damage the unit expects to take, 1 for a unit not following a route
+     */
+    double damageWeight(Entity entity) {
+        if (owner.getUnitBehaviorTracker().getActiveWaypoint(entity, owner).isEmpty() || isAtRouteEnd(entity)) {
+            return 1.0;
+        }
+        return (entity.getUnitOrders().getPriority() == OrderPriority.IMPERATIVE) ? IMPERATIVE_DAMAGE_WEIGHT
+              : NORMAL_ROUTE_DAMAGE_WEIGHT;
+    }
+
+    /**
+     * Gives every one of the bot's units on the board an order to exit by an edge, replacing their routes: what the
+     * bot-wide flee order now means. {@link CardinalEdge#NEAREST} sends each unit to its own nearest edge.
+     *
+     * @param edge the edge to flee toward
+     */
+    public void orderAllToExit(CardinalEdge edge) {
+        for (Entity entity : owner.getEntitiesOwned()) {
+            if ((entity.getPosition() == null) || entity.isAirborne()) {
+                continue;
+            }
+            CardinalEdge unitEdge = (edge == CardinalEdge.NEAREST) ? BoardUtilities.getClosestEdge(entity) : edge;
+            OffBoardDirection direction = toOffBoardDirection(unitEdge);
+            if (direction == OffBoardDirection.NONE) {
+                continue;
+            }
+            entity.setUnitOrders(UnitOrderAction.EXIT_BY_EDGE.apply(entity.getUnitOrders(), List.of(), direction,
+                  UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound()));
+            owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.EXIT_BY_EDGE,
+                  UnitOrderCommand.EDGE + '=' + direction.name()));
+        }
+        LOGGER.info("[BotOrders] {}: flee order - every unit exits by the {} edge", owner.getName(), edge);
+    }
+
+    /**
+     * Clears the edge orders a flee order gave, when the flee order is cancelled.
+     */
+    public void cancelExitOrders() {
+        for (Entity entity : owner.getEntitiesOwned()) {
+            if (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.EXIT_BY) {
+                change(entity, UnitOrderAction.CLEAR);
+            }
+        }
+        LOGGER.info("[BotOrders] {}: flee order cancelled - exit orders cleared", owner.getName());
+    }
+
+    /**
+     * @param edge an edge as the bot's movement code names it
+     *
+     * @return the same edge as orders store it; {@link OffBoardDirection#NONE} for none or nearest
+     */
+    static OffBoardDirection toOffBoardDirection(CardinalEdge edge) {
+        return switch (edge) {
+            case NORTH -> OffBoardDirection.NORTH;
+            case SOUTH -> OffBoardDirection.SOUTH;
+            case EAST -> OffBoardDirection.EAST;
+            case WEST -> OffBoardDirection.WEST;
+            default -> OffBoardDirection.NONE;
+        };
     }
 
     /**
@@ -242,10 +358,14 @@ public class UnitOrdersFollower {
             if (waypoint.isEmpty() || (waypoint.get().distance(entity.getPosition()) > Princess.DISTANCE_TO_WAYPOINT)) {
                 continue;
             }
-            LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
-                  waypoint.get().getBoardNum());
-            change(entity, UnitOrderAction.REACHED);
-            if (!entity.getUnitOrders().hasRoute()) {
+            if (entity.getUnitOrders().getRoute().size() > 1) {
+                LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
+                      waypoint.get().getBoardNum());
+                change(entity, UnitOrderAction.REACHED);
+            } else if (arrivedUnitIds.add(entity.getId())) {
+                // the last hex stays in the route: the unit holds it and comes back to it after a fight
+                LOGGER.info("[BotOrders] {} (ID {}) reached the end of its route at {}", entity.getDisplayName(),
+                      entity.getId(), waypoint.get().getBoardNum());
                 owner.sendChat(Messages.getString("Princess.orders.arrived", entity.getDisplayName(),
                       waypoint.get().getBoardNum()), Level.INFO);
             }

@@ -39,6 +39,7 @@ import java.io.ObjectInputFilter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -57,6 +58,7 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.BotFactory;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
+import megamek.client.bot.princess.Princess;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -76,6 +78,11 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
+import megamek.utilities.botorders.BotOrderRecorder;
+import megamek.utilities.botorders.OrderApplier;
+import megamek.utilities.botorders.ScenarioOrderScript;
+import megamek.utilities.botorders.ScriptedOrderDirector;
+import megamek.utilities.botorders.UnitBehaviorOrderApplier;
 
 /**
  * Runs a Scenario file headless as a fully automated bot-vs-bot game, without any GUI or human interaction.
@@ -104,8 +111,16 @@ public class ScenarioGameRunner {
     }
 
     private final Server server;
+    private final TWGameManager gameManager;
     private final Scenario scenario;
+    private final File scenarioFile;
     private final Game game;
+
+    /** Scripted bot orders to play into the game, or {@code null}; see {@link #enableBotOrders}. */
+    private ScenarioOrderScript orderScript;
+    /** Where to record the orders trace TSV, or {@code null} to apply orders without recording. */
+    private File orderTraceFile;
+    private int orderTraceGameNumber = 1;
 
     /**
      * Every client this runner has connected, so they can be disconnected when the game ends.
@@ -130,7 +145,8 @@ public class ScenarioGameRunner {
     private final List<Player> playersAtGameStart;
 
     public ScenarioGameRunner(File scenarioFile) throws Exception {
-        TWGameManager gameManager = new TWGameManager();
+        gameManager = new TWGameManager();
+        this.scenarioFile = scenarioFile;
         Random random = new Random();
         server = new Server(null,
               random.nextInt(MMConstants.MIN_PORT_FOR_QUICK_GAME, MMConstants.MAX_PORT),
@@ -261,9 +277,32 @@ public class ScenarioGameRunner {
             logger.info("Connected bot for {}", botSlot.getName());
         }
 
+        ScriptedOrderDirector orderDirector = null;
+        BotOrderRecorder orderRecorder = null;
+        if (orderScript != null) {
+            OrderApplier orderApplier = new UnitBehaviorOrderApplier();
+            if (orderTraceFile != null) {
+                orderRecorder = new BotOrderRecorder(orderTraceFile, orderTraceGameNumber, orderApplier,
+                      traceHeader(roundsLimit));
+            }
+            orderDirector = new ScriptedOrderDirector(orderScript, orderApplier, game, gameManager,
+                  botsByPlayerId(), orderRecorder);
+            orderDirector.attach(watcher.getGame() instanceof Game watcherGame ? watcherGame : null);
+        }
+
         logger.info("Running scenario '{}' for up to {} rounds ({} minute timeout)",
               scenario.getName(), roundsLimit, timeoutMinutes);
-        boolean finished = roundCounter.await(timeoutMinutes, TimeUnit.MINUTES);
+        boolean finished;
+        try {
+            finished = roundCounter.await(timeoutMinutes, TimeUnit.MINUTES);
+        } finally {
+            if (orderDirector != null) {
+                orderDirector.detach();
+            }
+            if (orderRecorder != null) {
+                orderRecorder.close();
+            }
+        }
         if (finished) {
             logger.info("Scenario game completed");
         } else {
@@ -273,6 +312,52 @@ public class ScenarioGameRunner {
               determineWinningTeam(game, playersAtGameStart, watcherSlot.getTeam()),
               game.getCurrentRound(),
               collectTeamStandings(game, playersAtGameStart, watcherSlot.getTeam()));
+    }
+
+    /**
+     * Plays a bot orders script into the next {@link #runGame} and records what the bots did with it.
+     *
+     * @param script     the orders to apply
+     * @param traceFile  the TSV to record orders, positions and decisions to, or {@code null} for none
+     * @param gameNumber the game's number in its batch, written to every TSV row
+     */
+    public void enableBotOrders(ScenarioOrderScript script, @Nullable File traceFile, int gameNumber) {
+        this.orderScript = script;
+        this.orderTraceFile = traceFile;
+        this.orderTraceGameNumber = gameNumber;
+    }
+
+    /**
+     * Returns every connected Princess (or CASPAR) bot keyed by its player id.
+     */
+    private Map<Integer, Princess> botsByPlayerId() {
+        Map<Integer, Princess> bots = new TreeMap<>();
+        for (AbstractClient client : connectedClients) {
+            if ((client instanceof Princess princess) && (princess.getLocalPlayer() != null)) {
+                bots.put(princess.getLocalPlayer().getId(), princess);
+            }
+        }
+        return bots;
+    }
+
+    /**
+     * The comment lines at the top of an orders trace, which the renderer reads to find the scenario and board.
+     */
+    private Map<String, String> traceHeader(int roundsLimit) {
+        Map<String, String> header = new LinkedHashMap<>();
+        header.put("scenario", scenarioFile.getAbsolutePath());
+        header.put("scenarioName", scenario.getName());
+        header.put("orders", (orderScript == null) ? "" : orderScript.getSourceFile().getAbsolutePath());
+        header.put("boardWidth", Integer.toString(game.getBoard().getWidth()));
+        header.put("boardHeight", Integer.toString(game.getBoard().getHeight()));
+        header.put("roundsLimit", Integer.toString(roundsLimit));
+        StringBuilder players = new StringBuilder();
+        for (Player player : playersAtGameStart) {
+            players.append(player.getId()).append('=').append(player.getName()).append(" (team ")
+                  .append(player.getTeam()).append("); ");
+        }
+        header.put("players", players.toString());
+        return header;
     }
 
     /**
@@ -509,6 +594,12 @@ public class ScenarioGameRunner {
         ScenarioGameRunner runner = null;
         try {
             runner = new ScenarioGameRunner(scenarioFile);
+            File ordersFile = ScenarioOrderScript.findFor(scenarioFile);
+            if (ordersFile != null) {
+                File traceFile = new File(PreferenceManager.getClientPreferences().getLogDirectory(),
+                      "bot_orders_single_game.tsv");
+                runner.enableBotOrders(ScenarioOrderScript.load(ordersFile), traceFile, 1);
+            }
             if (!runner.runGame(roundsLimit, timeoutMinutes).finished()) {
                 exitCode = 2;
             }

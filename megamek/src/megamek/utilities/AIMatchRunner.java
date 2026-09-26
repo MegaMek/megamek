@@ -47,6 +47,7 @@ import megamek.client.bot.AIType;
 import megamek.common.Player;
 import megamek.common.preference.PreferenceManager;
 import megamek.logging.MMLogger;
+import megamek.utilities.botorders.ScenarioOrderScript;
 
 /**
  * Runs a scenario headlessly many times and reports the win rate per team (and the {@link AIType}s on each team),
@@ -90,6 +91,7 @@ public final class AIMatchRunner {
         int unfinished = 0;
 
         File resultsFile = resultsFile();
+        ScenarioOrderScript orderScript = loadOrderScript(scenarioFile);
         try (PrintWriter resultsWriter = new PrintWriter(resultsFile, StandardCharsets.UTF_8)) {
             resultsWriter.println(RESULTS_CSV_HEADER);
 
@@ -97,6 +99,9 @@ public final class AIMatchRunner {
                 ScenarioGameRunner runner = null;
                 try {
                     runner = new ScenarioGameRunner(scenarioFile);
+                    if (orderScript != null) {
+                        runner.enableBotOrders(orderScript, orderTraceFile(resultsFile, gameNumber), gameNumber);
+                    }
                     if (teamAITypes.isEmpty()) {
                         teamAITypes = runner.getBotTeamAITypes();
                     }
@@ -152,6 +157,37 @@ public final class AIMatchRunner {
         long maxMegabytes = runtime.maxMemory() / (1024 * 1024);
         logger.info("Game {}/{} finished; heap retained {} MB of {} MB", gameNumber, repetitions, retainedMegabytes,
               maxMegabytes);
+    }
+
+    /**
+     * Loads the bot orders script next to the scenario ({@code name.orders} beside {@code name.mms}), if there is one.
+     * A script that fails to parse stops the batch: running the games without their orders would look like the bot
+     * ignoring them.
+     */
+    private static ScenarioOrderScript loadOrderScript(File scenarioFile) {
+        File ordersFile = ScenarioOrderScript.findFor(scenarioFile);
+        if (ordersFile == null) {
+            return null;
+        }
+        try {
+            ScenarioOrderScript script = ScenarioOrderScript.load(ordersFile);
+            logger.info("[BotOrdersHarness] using orders script {} ({} orders)", ordersFile.getAbsolutePath(),
+                  script.getOrders().size());
+            return script;
+        } catch (IOException | IllegalArgumentException loadFailure) {
+            logger.fatal(loadFailure, "Could not load the orders script " + ordersFile.getAbsolutePath());
+            System.exit(1);
+            return null; // unreachable: System.exit does not return
+        }
+    }
+
+    /**
+     * Returns the orders trace TSV for one game, next to the results CSV: {@code ai_match_results_<stamp>_game3.tsv}.
+     */
+    private static File orderTraceFile(File resultsFile, int gameNumber) {
+        String resultsName = resultsFile.getName();
+        String baseName = resultsName.substring(0, resultsName.length() - ".csv".length());
+        return new File(resultsFile.getParentFile(), baseName + "_game" + gameNumber + "_orders.tsv");
     }
 
     /**

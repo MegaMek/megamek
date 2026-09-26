@@ -111,6 +111,7 @@ class UnitBehaviorOrdersTest {
         when(unit.getForcedWithdrawalOrder()).thenReturn(order);
         when(unit.getGame()).thenReturn(game);
         when(unit.getBoardId()).thenReturn(0);
+        when(unit.getPosition()).thenReturn(new Coords(10, 20));
         when(unit.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
         // orders live on the unit, so the mock keeps them the way a real unit would
         AtomicReference<UnitOrders> orders = new AtomicReference<>(UnitOrders.NONE);

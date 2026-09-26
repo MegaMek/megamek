@@ -3443,7 +3443,15 @@ public class Princess extends BotClient {
                 // so just have it mill around in place as usual. Also set the behavior to "no path to destination"
                 // so it doesn't hump the walls due to "self preservation mods"
                 if ((bulldozerPaths == null) || bulldozerPaths.isEmpty()) {
-                    if (!mover.isAirborne()) {
+                    // A unit with a player's route or edge order keeps heading there: its moves are still scored by
+                    // the distance to the waypoint by the real route, which does not need a long-range path.
+                    // Labelling it "no path" would take away that pull and leave it standing still.
+                    boolean hasOrderedDestination = getUnitBehaviorTracker().getActiveWaypoint(mover, this).isPresent()
+                          || getUnitOrdersFollower().getOrderedEdge(mover).isPresent();
+                    if (hasOrderedDestination) {
+                        LOGGER.info("[BotOrders] {} (ID {}): no long-range path; steering by the route distance",
+                              mover.getDisplayName(), mover.getId());
+                    } else if (!mover.isAirborne()) {
                         getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
                     }
                     return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());

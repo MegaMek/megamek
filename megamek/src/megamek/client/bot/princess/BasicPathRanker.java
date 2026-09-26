@@ -95,6 +95,8 @@ import megamek.logging.MMLogger;
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
     public static final int FACING_MOD_MULTIPLIER = 50;
+    /** A player's ordered facing counts double the bot's own facing preference, so it wins most close calls. */
+    public static final int ORDERED_FACING_MOD_MULTIPLIER = 2 * FACING_MOD_MULTIPLIER;
 
     // this is a value used to indicate how much we value the unit being at its destination
     private final int ARRIVED_AT_DESTINATION_FACTOR = 250;
@@ -1646,7 +1648,7 @@ public class BasicPathRanker extends PathRanker {
             int sidesApart = Math.abs(path.getFinalFacing() - orderedFacing) % 6;
             int orderedFacingDiff = Math.min(sidesApart, 6 - sidesApart);
             logger.trace("facing mod [ordered facing {}, {} sides off]", orderedFacing, orderedFacingDiff);
-            return FACING_MOD_MULTIPLIER * orderedFacingDiff;
+            return ORDERED_FACING_MOD_MULTIPLIER * orderedFacingDiff;
         }
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,

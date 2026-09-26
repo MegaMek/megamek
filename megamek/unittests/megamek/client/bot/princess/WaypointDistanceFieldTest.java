@@ -33,14 +33,26 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.UUID;
 
 import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.units.BipedMek;
+import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
@@ -115,6 +127,21 @@ class WaypointDistanceFieldTest {
         WaypointDistanceField field = WaypointDistanceField.build(mek, WAYPOINT);
 
         assertEquals(WaypointDistanceField.UNREACHABLE, field.costFrom(new Coords(4, WALL_ROW)));
+    }
+
+    @Test
+    void aWaypointTheQuickCheckRefusesIsKeptWhenARouteExists() {
+        // In test games the cluster check refused waypoints the unit could walk to, and the unit parked.
+        Princess princess = spy(new Princess("TestPrincess", UUID.randomUUID().toString(), 1));
+        BoardClusterTracker refusingTracker = mock(BoardClusterTracker.class);
+        when(refusingTracker.getDestinationCoords(any(Entity.class), any(Coords.class), anyBoolean()))
+              .thenReturn(Collections.emptySet());
+        doReturn(refusingTracker).when(princess).getClusterTracker();
+        doReturn(mek.getGame()).when(princess).getGame();
+        mek.setPosition(new Coords(2, 7));
+
+        assertTrue(princess.getUnitOrdersFollower().canReach(mek, WAYPOINT));
+        assertFalse(princess.getUnitOrdersFollower().canReach(mek, new Coords(4, WALL_ROW)));
     }
 
     @Test

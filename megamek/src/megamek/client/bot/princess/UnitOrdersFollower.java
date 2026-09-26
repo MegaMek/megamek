@@ -266,7 +266,33 @@ public class UnitOrdersFollower {
               entity.getId(), waypoint.get().getBoardNum());
         owner.sendChat(Messages.getString("Princess.orders.unreachable", entity.getDisplayName(),
               waypoint.get().getBoardNum()), Level.INFO);
-        change(entity, UnitOrderAction.REACHED);
+        change(entity, UnitOrderAction.SKIP);
+    }
+
+    /**
+     * Whether the unit can get to a hex at all. The bot's quick reachability check, {@link
+     * megamek.common.pathfinder.BoardClusterTracker}, can say no for a hex the unit can in fact walk to - for example
+     * from a hex its cluster does not join well - so a hex only counts as unreachable when the route distance map
+     * agrees that no way there exists.
+     *
+     * @param entity   the unit
+     * @param waypoint the hex
+     *
+     * @return {@code true} if the unit can reach the hex, or its position is unknown so it cannot be judged
+     */
+    boolean canReach(Entity entity, Coords waypoint) {
+        if (entity.getPosition() == null) {
+            return true;
+        }
+        if (!owner.getClusterTracker().getDestinationCoords(entity, waypoint, true).isEmpty()) {
+            return true;
+        }
+        boolean hasRoute = routeCostFrom(entity, waypoint, entity.getPosition()) != WaypointDistanceField.UNREACHABLE;
+        if (hasRoute) {
+            LOGGER.info("[BotOrders] {} (ID {}): reachability check refused {} but a route exists; keeping it",
+                  entity.getDisplayName(), entity.getId(), waypoint.getBoardNum());
+        }
+        return hasRoute;
     }
 
     /**

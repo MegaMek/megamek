@@ -52,6 +52,15 @@ public final class HeatShutdownTargets {
     /** The lowest heat at which a unit has to roll to avoid shutdown; below it a shut down unit restarts on its own. */
     public static final int FIRST_SHUTDOWN_HEAT = 14;
 
+    /** The Avoid number at {@link #FIRST_SHUTDOWN_HEAT}, the lowest on the heat scale. */
+    public static final int BASE_SHUTDOWN_TARGET_NUMBER = 4;
+
+    /** How much heat each step up the heat scale's shutdown rows covers: 14, 18, 22 and so on. */
+    static final int HEAT_PER_SHUTDOWN_STEP = 4;
+
+    /** How much the Avoid number rises with each step up the heat scale. */
+    static final int TARGET_NUMBER_PER_SHUTDOWN_STEP = 2;
+
     /** The Avoiding Shutdown rule's standard modifier to the Avoid number (TO:AR p.102). */
     static final int AVOIDING_SHUTDOWN_MODIFIER = -5;
 
@@ -66,7 +75,8 @@ public final class HeatShutdownTargets {
      * @return the Avoid number
      */
     public static int avoidNumber(int heat) {
-        return 4 + (((heat - FIRST_SHUTDOWN_HEAT) / 4) * 2);
+        int stepsAboveFirst = (heat - FIRST_SHUTDOWN_HEAT) / HEAT_PER_SHUTDOWN_STEP;
+        return BASE_SHUTDOWN_TARGET_NUMBER + (stepsAboveFirst * TARGET_NUMBER_PER_SHUTDOWN_STEP);
     }
 
     /**

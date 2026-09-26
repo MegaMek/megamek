@@ -72,7 +72,11 @@ public enum UnitOrderAction {
     /** Set the facing while moving and when stopped. */
     FACING,
     /** Set how hard the unit pushes for its route. */
-    PRIORITY;
+    PRIORITY,
+    /** Put the unit in a formation, or change its place in one. */
+    FORMATION,
+    /** Take the unit out of its formation. */
+    FORMATION_OFF;
 
     /**
      * Returns the orders after this action.
@@ -91,6 +95,28 @@ public enum UnitOrderAction {
      */
     public UnitOrders apply(UnitOrders current, List<Coords> hexes, OffBoardDirection edge, int facingWhileMoving,
           int facingWhenStopped, @Nullable OrderPriority priority, int currentRound) {
+        return apply(current, hexes, edge, facingWhileMoving, facingWhenStopped, priority, currentRound, null);
+    }
+
+    /**
+     * Returns the orders after this action, for any action including {@link #FORMATION}.
+     *
+     * @param current           the unit's orders now
+     * @param hexes             the hexes for {@link #ROUTE} and {@link #ADD}
+     * @param edge              the edge for {@link #MOVE_TO_EDGE} and {@link #EXIT_BY_EDGE}
+     * @param facingWhileMoving the facing while moving for {@link #FACING}, or {@link UnitOrders#FACING_AUTO}
+     * @param facingWhenStopped the facing when stopped for {@link #FACING}, or {@link UnitOrders#FACING_AUTO}
+     * @param priority          the priority for {@link #PRIORITY}; a {@link #ROUTE} with a priority also sets it
+     * @param currentRound      the current round, for {@link #STOP}
+     * @param formation         the unit's place in a formation, for {@link #FORMATION}
+     *
+     * @return the new orders
+     *
+     * @throws IllegalArgumentException when the action is missing what it needs
+     */
+    public UnitOrders apply(UnitOrders current, List<Coords> hexes, OffBoardDirection edge, int facingWhileMoving,
+          int facingWhenStopped, @Nullable OrderPriority priority, int currentRound,
+          @Nullable FormationOrder formation) {
         return switch (this) {
             case ROUTE -> {
                 requireHexes(hexes);
@@ -117,6 +143,13 @@ public enum UnitOrderAction {
                 }
                 yield current.withPriority(priority);
             }
+            case FORMATION -> {
+                if (formation == null) {
+                    throw new IllegalArgumentException("A formation order needs a shape and a leader");
+                }
+                yield current.withFormation(formation);
+            }
+            case FORMATION_OFF -> current.withFormation(null);
         };
     }
 

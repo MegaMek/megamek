@@ -32,6 +32,8 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,10 +44,15 @@ import java.util.Set;
 import megamek.client.bot.Messages;
 import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.orders.ContactRule;
 import megamek.common.orders.EdgeOrder;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -81,10 +88,22 @@ public class UnitOrdersFollower {
     /** Hex facings on each side of the ordered one that still count as its front arc. */
     private static final int FRONT_ARC_HALF_WIDTH = 1;
 
+    /** How far off its slot a formation unit may stand when the slot itself is blocked. */
+    static final int FORMATION_SLACK = 1;
+
+    /** An enemy this close to a formation's leader counts as contact. */
+    static final int CONTACT_RANGE = 12;
+
     private final Princess owner;
     private final Set<Integer> arrivedUnitIds = new HashSet<>();
     private final Map<String, WaypointDistanceField> distanceFields = new HashMap<>();
     private int distanceFieldsRound = -1;
+    private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
+
+    /**
+     * A formation unit's worked-out slot, kept until the round or its leader's position changes.
+     */
+    private record SlotChoice(int round, Coords leaderPosition, @Nullable Coords slot) {}
 
     /**
      * @param owner the bot whose units follow orders
@@ -401,6 +420,210 @@ public class UnitOrdersFollower {
                       entity.getId(), waypoint.get().getBoardNum());
                 owner.sendChat(Messages.getString("Princess.orders.arrived", entity.getDisplayName(),
                       waypoint.get().getBoardNum()), Level.INFO);
+            }
+        }
+        syncFollowerRoutes();
+    }
+
+
+    /**
+     * The hex a formation unit should head for this move: its slot beside the formation's leader. Empty for a unit
+     * not in a formation, for the unit leading it, and while a formation that breaks on contact has an enemy near.
+     *
+     * <p>If the slot hex is blocked - off the board, somewhere the unit cannot go, or across deep water from the
+     * leader - the unit takes the best hex within {@link #FORMATION_SLACK}. If none will do, the formation folds into
+     * a Column behind the leader, which is how it gets through a pass or down a street; it opens out again as soon
+     * as the slots are clear.</p>
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the hex to head for, or empty when the unit is not following a formation leader
+     */
+    public Optional<Coords> getFormationSlot(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (entity.getPosition() == null)) {
+            return Optional.empty();
+        }
+        List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+        if (members.size() < 2) {
+            return Optional.empty();
+        }
+        Entity leader = members.get(0);
+        if ((leader.getId() == entity.getId()) || (leader.getPosition() == null)) {
+            return Optional.empty();
+        }
+        if ((formation.get().getContactRule() == ContactRule.BREAK) && isEnemyNear(leader)) {
+            LOGGER.debug("[BotOrders] {} (ID {}): formation broken - enemy within {} of {}", entity.getDisplayName(),
+                  entity.getId(), CONTACT_RANGE, leader.getDisplayName());
+            return Optional.empty();
+        }
+        SlotChoice cached = slotChoices.get(entity.getId());
+        if ((cached != null) && (cached.round() == currentRound())
+              && cached.leaderPosition().equals(leader.getPosition())) {
+            return Optional.ofNullable(cached.slot());
+        }
+        Coords slot = chooseSlot(entity, leader, formation.get(), members.indexOf(entity));
+        slotChoices.put(entity.getId(), new SlotChoice(currentRound(), leader.getPosition(), slot));
+        return Optional.ofNullable(slot);
+    }
+
+    private @Nullable Coords chooseSlot(Entity entity, Entity leader, FormationOrder formation, int slotIndex) {
+        Board board = owner.getGame().getBoard(entity);
+        if (board == null) {
+            return null;
+        }
+        Coords leaderPosition = leader.getPosition();
+        int heading = leader.getUnitOrders().getNextWaypoint()
+              .filter(waypoint -> !waypoint.equals(leaderPosition))
+              .map(leaderPosition::direction)
+              .orElse(leader.getFacing());
+        Coords ideal = FormationPlanner.idealSlot(leaderPosition, heading, formation.getShape(),
+              formation.getSpacing(), slotIndex);
+        Coords settled = settle(entity, board, leaderPosition, ideal);
+        if (settled != null) {
+            LOGGER.debug("[BotOrders] {} (ID {}): {} slot {} at {}", entity.getDisplayName(), entity.getId(),
+                  formation.getShape(), slotIndex, settled.getBoardNum());
+            return settled;
+        }
+        Coords columnSlot = settle(entity, board, leaderPosition, FormationPlanner.idealSlot(leaderPosition, heading,
+              FormationShape.COLUMN, formation.getSpacing(), slotIndex));
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
+              entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
+              (columnSlot == null) ? "the leader" : columnSlot.getBoardNum());
+        return (columnSlot == null) ? leaderPosition : columnSlot;
+    }
+
+    /**
+     * @return the ideal hex if the unit can stand there, else the best hex within {@link #FORMATION_SLACK} of it,
+     *       else {@code null}
+     */
+    private static @Nullable Coords settle(Entity entity, Board board, Coords leaderPosition, Coords ideal) {
+        if (isUsableSlot(entity, board, leaderPosition, ideal)) {
+            return ideal;
+        }
+        int wantedDistance = ideal.distance(leaderPosition);
+        Coords best = null;
+        int bestScore = Integer.MAX_VALUE;
+        for (int direction = 0; direction < 6; direction++) {
+            Coords candidate = ideal.translated(direction, FORMATION_SLACK);
+            if (!isUsableSlot(entity, board, leaderPosition, candidate)) {
+                continue;
+            }
+            int score = Math.abs(candidate.distance(leaderPosition) - wantedDistance);
+            if (score < bestScore) {
+                bestScore = score;
+                best = candidate;
+            }
+        }
+        return best;
+    }
+
+    private static boolean isUsableSlot(Entity entity, Board board, Coords leaderPosition, Coords slot) {
+        return board.contains(slot) && !slot.equals(leaderPosition) && !entity.isLocationProhibited(slot)
+              && FormationSide.sameSide(board, leaderPosition, slot);
+    }
+
+    /**
+     * @return the formation's units still on the board, any owner on the same side, in slot order; the first is the
+     *       acting leader, which is the original leader while it lives and the next unit after that
+     */
+    private List<Entity> formationMembers(Entity entity, int leaderId) {
+        List<Entity> members = new ArrayList<>();
+        for (Entity candidate : owner.getGame().getEntitiesVector()) {
+            Optional<FormationOrder> candidateFormation = candidate.getUnitOrders().getFormation();
+            if (candidateFormation.isEmpty() || !candidateFormation.get().sharesLeader(leaderId)) {
+                continue;
+            }
+            if ((candidate.getPosition() == null) || candidate.isDestroyed() || candidate.isDoomed()
+                  || candidate.getOwner().isEnemyOf(entity.getOwner())) {
+                continue;
+            }
+            members.add(candidate);
+        }
+        members.sort(Comparator.comparingInt(member -> member.getUnitOrders().getFormation()
+              .map(FormationOrder::getSlot).orElse(Integer.MAX_VALUE)));
+        return members;
+    }
+
+    private boolean isEnemyNear(Entity leader) {
+        for (Entity enemy : owner.getEnemyEntities()) {
+            if ((enemy.getPosition() != null) && (enemy.getBoardId() == leader.getBoardId())
+                  && (enemy.getPosition().distance(leader.getPosition()) <= CONTACT_RANGE)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return how close counts as arrived: {@link #FORMATION_SLACK} for a formation slot, else
+     *       {@link Princess#DISTANCE_TO_WAYPOINT}
+     */
+    int arrivalRadius(Entity entity) {
+        return getFormationSlot(entity).isPresent() ? FORMATION_SLACK : Princess.DISTANCE_TO_WAYPOINT;
+    }
+
+    /**
+     * Keeps a formation's leader to the pace of its slowest unit, so the formation stays together: its moves may not
+     * use more movement points than that unit walks, or runs at a Run pace. A leader with no move within the pace
+     * keeps every move.
+     *
+     * @param entity the unit about to move
+     * @param paths  its candidate moves
+     *
+     * @return the moves within the formation's pace, or all of them when the unit leads no formation
+     */
+    List<MovePath> limitToFormationPace(Entity entity, List<MovePath> paths) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty()) {
+            return paths;
+        }
+        List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+        if ((members.size() < 2) || (members.get(0).getId() != entity.getId())) {
+            return paths;
+        }
+        boolean isRunning = formation.get().getPace() == FormationPace.RUN;
+        int paceLimit = Integer.MAX_VALUE;
+        for (Entity member : members) {
+            paceLimit = Math.min(paceLimit, isRunning ? member.getRunMP() : member.getWalkMP());
+        }
+        List<MovePath> pacedPaths = new ArrayList<>();
+        for (MovePath path : paths) {
+            if (path.getMpUsed() <= paceLimit) {
+                pacedPaths.add(path);
+            }
+        }
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} {} MP, {} of {} moves kept",
+              entity.getDisplayName(), entity.getId(), currentRound(), formation.get().getPace(), paceLimit,
+              pacedPaths.size(), paths.size());
+        return pacedPaths.isEmpty() ? paths : pacedPaths;
+    }
+
+    /**
+     * Keeps followers' routes in step with their leader's: when the leader moves on to its next waypoint, so do they,
+     * since they reach the waypoints beside the leader rather than on them.
+     */
+    private void syncFollowerRoutes() {
+        for (Entity entity : owner.getEntitiesOwned()) {
+            Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+            if (formation.isEmpty() || (formation.get().getLeaderId() == entity.getId())) {
+                continue;
+            }
+            List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+            if (members.isEmpty() || (members.get(0).getId() == entity.getId())) {
+                continue;
+            }
+            List<Coords> leaderRoute = members.get(0).getUnitOrders().getRoute();
+            List<Coords> ownRoute = entity.getUnitOrders().getRoute();
+            int stepsBehind = ownRoute.size() - leaderRoute.size();
+            if ((stepsBehind > 0) && ownRoute.subList(stepsBehind, ownRoute.size()).equals(leaderRoute)) {
+                for (int step = 0; step < stepsBehind; step++) {
+                    change(entity, UnitOrderAction.REACHED);
+                }
+                LOGGER.info("[BotOrders] {} (ID {}) keeps pace with its leader's route", entity.getDisplayName(),
+                      entity.getId());
             }
         }
     }

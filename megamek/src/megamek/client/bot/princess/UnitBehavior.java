@@ -211,6 +211,13 @@ public class UnitBehavior {
               && !isFollowingOrdersOverWithdrawal(entity, owner)) {
             return Optional.empty();
         }
+        if (entity.getUnitOrders().hasRoute()) {
+            // a formation unit heads for its slot beside the leader rather than the waypoint itself
+            Optional<Coords> formationSlot = owner.getUnitOrdersFollower().getFormationSlot(entity);
+            if (formationSlot.isPresent()) {
+                return formationSlot;
+            }
+        }
         return getWaypointForEntity(entity);
     }
 

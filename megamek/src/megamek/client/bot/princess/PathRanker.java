@@ -752,15 +752,17 @@ public abstract class PathRanker implements IPathRanker {
             Coords target = waypoint.get();
             boolean isRouteHead = !route.isEmpty() && route.get(0).equals(target);
             Coords nextWaypoint = (isRouteHead && (route.size() > 1)) ? route.get(1) : null;
-            boolean hasArrived = position.distance(target) <= Princess.DISTANCE_TO_WAYPOINT;
+            // a formation slot counts as reached within its slack, a waypoint within DISTANCE_TO_WAYPOINT
+            int arrivalRadius = getOwner().getUnitOrdersFollower().arrivalRadius(movingUnit);
+            boolean hasArrived = position.distance(target) <= arrivalRadius;
             if (nextWaypoint != null) {
                 if (hasArrived) {
                     return costToward(movingUnit, nextWaypoint, position, 0);
                 }
-                return costToward(movingUnit, target, position, Princess.DISTANCE_TO_WAYPOINT)
+                return costToward(movingUnit, target, position, arrivalRadius)
                       + costToward(movingUnit, nextWaypoint, target, 0);
             }
-            return hasArrived ? 0 : costToward(movingUnit, target, position, Princess.DISTANCE_TO_WAYPOINT);
+            return hasArrived ? 0 : costToward(movingUnit, target, position, arrivalRadius);
         }
         return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
     }

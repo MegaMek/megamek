@@ -41,6 +41,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import megamek.common.OffBoardDirection;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 
 /**
@@ -68,7 +69,7 @@ public final class UnitOrders implements Serializable {
 
     /** A unit with no orders. */
     public static final UnitOrders NONE = new UnitOrders(new ArrayList<>(), OrderPriority.NORMAL, FACING_AUTO,
-          FACING_AUTO, false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND);
+          FACING_AUTO, false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, null);
 
     private static final int FACING_COUNT = 6;
 
@@ -80,9 +81,11 @@ public final class UnitOrders implements Serializable {
     private final EdgeOrder edgeOrder;
     private final OffBoardDirection edge;
     private final int stopRound;
+    private final FormationOrder formation;
 
     private UnitOrders(List<Coords> route, OrderPriority priority, int facingWhileMoving, int facingWhenStopped,
-          boolean paused, EdgeOrder edgeOrder, OffBoardDirection edge, int stopRound) {
+          boolean paused, EdgeOrder edgeOrder, OffBoardDirection edge, int stopRound,
+          @Nullable FormationOrder formation) {
         this.route = new ArrayList<>(route);
         this.priority = Objects.requireNonNull(priority);
         this.facingWhileMoving = validFacing(facingWhileMoving);
@@ -91,6 +94,7 @@ public final class UnitOrders implements Serializable {
         this.edgeOrder = Objects.requireNonNull(edgeOrder);
         this.edge = Objects.requireNonNull(edge);
         this.stopRound = stopRound;
+        this.formation = formation;
     }
 
     private static int validFacing(int facing) {
@@ -193,7 +197,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withRoute(List<Coords> newRoute) {
         return new UnitOrders(newRoute, priority, facingWhileMoving, facingWhenStopped, false, EdgeOrder.NONE,
-              OffBoardDirection.NONE, NO_ROUND);
+              OffBoardDirection.NONE, NO_ROUND, formation);
     }
 
     /**
@@ -205,7 +209,7 @@ public final class UnitOrders implements Serializable {
         List<Coords> newRoute = new ArrayList<>(route);
         newRoute.addAll(waypoints);
         return new UnitOrders(newRoute, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound);
+              stopRound, formation);
     }
 
     /**
@@ -218,7 +222,7 @@ public final class UnitOrders implements Serializable {
         List<Coords> newRoute = new ArrayList<>(route);
         newRoute.remove(newRoute.size() - 1);
         return new UnitOrders(newRoute, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound);
+              stopRound, formation);
     }
 
     /**
@@ -229,7 +233,7 @@ public final class UnitOrders implements Serializable {
             return this;
         }
         return new UnitOrders(route.subList(1, route.size()), priority, facingWhileMoving, facingWhenStopped, paused,
-              edgeOrder, edge, stopRound);
+              edgeOrder, edge, stopRound, formation);
     }
 
     /**
@@ -239,7 +243,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withPriority(OrderPriority newPriority) {
         return new UnitOrders(route, newPriority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
-              stopRound);
+              stopRound, formation);
     }
 
     /**
@@ -250,7 +254,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withFacings(int newFacingWhileMoving, int newFacingWhenStopped) {
         return new UnitOrders(route, priority, newFacingWhileMoving, newFacingWhenStopped, paused, edgeOrder, edge,
-              stopRound);
+              stopRound, formation);
     }
 
     /**
@@ -260,7 +264,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withPaused(boolean isPaused) {
         return new UnitOrders(route, priority, facingWhileMoving, facingWhenStopped, isPaused, edgeOrder, edge,
-              stopRound);
+              stopRound, formation);
     }
 
     /**
@@ -274,7 +278,8 @@ public final class UnitOrders implements Serializable {
             throw new IllegalArgumentException("An edge order needs an edge");
         }
         return new UnitOrders(new ArrayList<>(), priority, facingWhileMoving, facingWhenStopped, false,
-              newEdgeOrder, (newEdgeOrder == EdgeOrder.NONE) ? OffBoardDirection.NONE : newEdge, NO_ROUND);
+              newEdgeOrder, (newEdgeOrder == EdgeOrder.NONE) ? OffBoardDirection.NONE : newEdge, NO_ROUND,
+              formation);
     }
 
     /**
@@ -285,7 +290,24 @@ public final class UnitOrders implements Serializable {
      */
     public static UnitOrders stoppedInRound(int round) {
         return new UnitOrders(new ArrayList<>(), OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO, false,
-              EdgeOrder.NONE, OffBoardDirection.NONE, round);
+              EdgeOrder.NONE, OffBoardDirection.NONE, round, null);
+    }
+
+    /**
+     * @return this unit's place in a formation, or empty when it is not in one
+     */
+    public Optional<FormationOrder> getFormation() {
+        return Optional.ofNullable(formation);
+    }
+
+    /**
+     * @param newFormation the unit's place in a formation, or {@code null} to leave the formation
+     *
+     * @return these orders with the formation replaced; the route and every other order are kept
+     */
+    public UnitOrders withFormation(@Nullable FormationOrder newFormation) {
+        return new UnitOrders(route, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge,
+              stopRound, newFormation);
     }
 
     @Override
@@ -303,12 +325,14 @@ public final class UnitOrders implements Serializable {
               && route.equals(otherOrders.route)
               && (priority == otherOrders.priority)
               && (edgeOrder == otherOrders.edgeOrder)
-              && (edge == otherOrders.edge);
+              && (edge == otherOrders.edge)
+              && Objects.equals(formation, otherOrders.formation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(route, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound);
+        return Objects.hash(route, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound,
+              formation);
     }
 
     @Override
@@ -321,6 +345,7 @@ public final class UnitOrders implements Serializable {
         text.append(", paused=").append(paused);
         text.append(", edgeOrder=").append(edgeOrder).append(' ').append(edge);
         text.append(", stopRound=").append(stopRound);
+        text.append(", formation=").append(formation);
         return text.append(']').toString();
     }
 }

@@ -41,43 +41,27 @@ import megamek.common.board.Coords;
 import megamek.common.units.Entity;
 
 /**
- * Gives a bot's unit the orders a player would give it, for scripted headless tests.
+ * Gives a bot's unit the orders a player would give it, for scripted headless tests, and reads back the orders the
+ * unit holds so the trace can show them.
  *
- * <p>This is the one seam between the test harness and wherever the bot keeps its orders. Today that is the bot's
- * in-memory waypoint list ({@link UnitBehaviorOrderApplier}); a later branch moves orders onto the unit itself, and
- * only a new implementation of this interface is needed then. Keep implementations thin: no game logic here.</p>
+ * <p>This is the one seam between the test harness and wherever the bot keeps its orders. On the #9038 fix branch
+ * that was the bot's in-memory waypoint list; since the unit orders model, orders live on the unit
+ * ({@link UnitOrdersApplier}). Keep implementations thin: no game logic here.</p>
  */
 public interface OrderApplier {
 
     /**
-     * Replaces the unit's waypoints.
+     * Applies one scripted unit order (anything except test damage and the bot-wide flee).
      *
-     * @param bot       the bot that owns the unit
-     * @param unit      the bot's own copy of the unit
-     * @param waypoints the hexes, in order
+     * @param bot        the bot that owns the unit
+     * @param botUnit    the bot's own copy of the unit
+     * @param serverUnit the server's copy of the unit
+     * @param order      the order
+     * @param round      the current round
      *
-     * @return how many of the hexes the bot accepted
+     * @return a short description of the result, for the log and the trace
      */
-    int setWaypoints(Princess bot, Entity unit, List<Coords> waypoints);
-
-    /**
-     * Appends to the unit's waypoints.
-     *
-     * @param bot       the bot that owns the unit
-     * @param unit      the bot's own copy of the unit
-     * @param waypoints the hexes, in order
-     *
-     * @return how many of the hexes the bot accepted
-     */
-    int addWaypoints(Princess bot, Entity unit, List<Coords> waypoints);
-
-    /**
-     * Clears the unit's orders.
-     *
-     * @param bot  the bot that owns the unit
-     * @param unit the bot's own copy of the unit
-     */
-    void clearOrders(Princess bot, Entity unit);
+    String apply(Princess bot, Entity botUnit, Entity serverUnit, ScriptedOrder order, int round);
 
     /**
      * Orders the whole bot to flee toward an edge, as the panel's flee order does; {@link CardinalEdge#NONE} cancels.
@@ -88,13 +72,35 @@ public interface OrderApplier {
     void orderFlee(Princess bot, CardinalEdge edge);
 
     /**
-     * Returns the unit's current waypoint as the bot holds it, whether or not the bot is following it right now.
+     * Returns the orders the unit holds right now.
      *
      * @param bot  the bot that owns the unit
      * @param unit the bot's own copy of the unit
      *
-     * @return the head waypoint, or {@code null} when there is none
+     * @return the unit's orders
      */
-    @Nullable
-    Coords headWaypoint(Princess bot, Entity unit);
+    OrderSnapshot snapshot(Princess bot, Entity unit);
+
+    /**
+     * The orders a unit holds at one moment, as written to the trace.
+     *
+     * @param headWaypoint  the next waypoint, or {@code null}
+     * @param route         every waypoint still to go, in order
+     * @param priority      the route priority, or an empty string when the model has none
+     * @param paused        whether a Pause order holds the unit
+     * @param stopped       whether a Stop order holds the unit this round
+     * @param edgeOrder     MOVE_TO, EXIT_BY or NONE (empty when the model has none)
+     * @param edge          the edge of the edge order, or an empty string
+     * @param facingMoving  the ordered facing while moving, 0-5, or -1 for automatic
+     * @param facingStopped the ordered facing when stopped, 0-5, or -1 for automatic
+     */
+    record OrderSnapshot(@Nullable Coords headWaypoint, List<Coords> route, String priority, boolean paused,
+          boolean stopped, String edgeOrder, String edge, int facingMoving, int facingStopped) {
+
+        /** A snapshot with only a waypoint list, for a model without the other orders. */
+        public static OrderSnapshot ofRoute(List<Coords> route) {
+            return new OrderSnapshot(route.isEmpty() ? null : route.getFirst(), route, "", false, false, "", "", -1,
+                  -1);
+        }
+    }
 }

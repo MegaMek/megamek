@@ -95,6 +95,27 @@ class ScenarioOrderScriptTest {
     }
 
     @Test
+    void parsesUnitOrdersModelActions() {
+        ScriptedOrder route = ScenarioOrderScript.parseLine("round 1 | unit id 3 | route imperative 1210 0805", 1);
+        ScriptedOrder edge = ScenarioOrderScript.parseLine("round 2 | unit id 3 | move to edge NORTH", 2);
+        ScriptedOrder exit = ScenarioOrderScript.parseLine("round 2 | unit id 3 | exit by edge WEST", 3);
+        ScriptedOrder facing = ScenarioOrderScript.parseLine("round 2 | unit id 3 | facing moving N stopped SE", 4);
+        ScriptedOrder stoppedOnly = ScenarioOrderScript.parseLine("round 2 | unit id 3 | facing stopped S", 5);
+        ScriptedOrder pause = ScenarioOrderScript.parseLine("round 3 | unit id 3 | pause", 6);
+
+        assertEquals(OrderAction.WAYPOINTS, route.action());
+        assertEquals(List.of("1210", "0805"), ScenarioOrderScript.hexArguments(route.arguments()));
+        assertEquals("IMPERATIVE", ScenarioOrderScript.priorityKeyword(route.arguments().getFirst()));
+        assertEquals(OrderAction.MOVE_TO_EDGE, edge.action());
+        assertEquals(List.of("NORTH"), edge.arguments());
+        assertEquals(OrderAction.EXIT_BY_EDGE, exit.action());
+        assertEquals(List.of("WEST"), exit.arguments());
+        assertEquals(List.of("0", "2"), facing.arguments());
+        assertEquals(List.of("-1", "3"), stoppedOnly.arguments());
+        assertEquals(OrderAction.PAUSE, pause.action());
+    }
+
+    @Test
     void rejectsMalformedLines() {
         assertThrows(IllegalArgumentException.class,
               () -> ScenarioOrderScript.parseLine("round x | unit id 5 | clear", 1));

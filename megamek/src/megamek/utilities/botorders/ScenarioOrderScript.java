@@ -60,7 +60,17 @@ import megamek.utilities.botorders.ScriptedOrder.TargetKind;
  * round 3 | bot "Lyran" | flee NORTH
  * round 4 | unit id 5 | clear
  * round 4 | all | add waypoints 1610
+ * round 1 | unit id 103 | route imperative 1210 0805
+ * round 3 | unit id 103 | pause
+ * round 4 | unit id 103 | resume
+ * round 5 | unit id 104 | stop
+ * round 2 | unit id 105 | move to edge NORTH
+ * round 2 | unit id 106 | exit by edge WEST
+ * round 1 | unit id 107 | facing moving N stopped SE
+ * round 3 | unit id 107 | priority normal
  * </pre>
+ *
+ * <p>The last group needs the per-unit orders model; the waypoint adapter logs them as not supported.</p>
  *
  * <p>Hexes are MegaMek board numbers (column then row, 1-based): {@code 1501} is column 15, row 1. Boards wider or
  * taller than 99 hexes use six digits.</p>
@@ -187,13 +197,30 @@ public final class ScenarioOrderScript {
                 boolean hasNoun = (words.length > 1) && words[1].equalsIgnoreCase("internal");
                 firstArgument = hasNoun ? 2 : 1;
             }
+            case "pause" -> action = OrderAction.PAUSE;
+            case "resume" -> action = OrderAction.RESUME;
+            case "stop" -> action = OrderAction.STOP;
+            case "move", "edge" -> {
+                action = OrderAction.MOVE_TO_EDGE;
+                firstArgument = skipWords(words, 1, "to", "edge");
+            }
+            case "exit" -> {
+                action = OrderAction.EXIT_BY_EDGE;
+                firstArgument = skipWords(words, 1, "by", "edge");
+            }
+            case "facing" -> action = OrderAction.FACING;
+            case "priority" -> action = OrderAction.PRIORITY;
             default -> throw new IllegalArgumentException(problem(lineNumber, line, "unknown action " + verb
-                  + " (waypoints, add waypoints, clear, flee, cripple, damage internal N%)"));
+                  + " (waypoints, add waypoints, clear, flee, cripple, damage internal N%, pause, resume, stop,"
+                  + " move to edge E, exit by edge E, facing moving F stopped F, priority P)"));
         }
 
         List<String> arguments = new ArrayList<>();
         for (int index = firstArgument; index < words.length; index++) {
             arguments.add(words[index]);
+        }
+        if (action == OrderAction.FACING) {
+            arguments = facingArguments(arguments, lineNumber, line);
         }
         validateArguments(action, arguments, lineNumber, line);
         return new ScriptedOrder(round, targetKind, targetValue, action, List.copyOf(arguments), lineNumber, line);
@@ -202,10 +229,10 @@ public final class ScenarioOrderScript {
     private static void validateArguments(OrderAction action, List<String> arguments, int lineNumber, String line) {
         switch (action) {
             case WAYPOINTS, ADD_WAYPOINTS -> {
-                if (arguments.isEmpty()) {
+                if (hexArguments(arguments).isEmpty()) {
                     throw new IllegalArgumentException(problem(lineNumber, line, "waypoints need at least one hex"));
                 }
-                for (String hexNumber : arguments) {
+                for (String hexNumber : hexArguments(arguments)) {
                     parseHexNumber(hexNumber);
                 }
             }
@@ -219,8 +246,18 @@ public final class ScenarioOrderScript {
                     throw new IllegalArgumentException(problem(lineNumber, line, "damage internal needs N%"));
                 }
             }
-            case CLEAR, CRIPPLE -> {
-                // these take no arguments
+            case MOVE_TO_EDGE, EXIT_BY_EDGE -> {
+                if (arguments.size() != 1) {
+                    throw new IllegalArgumentException(problem(lineNumber, line, "an edge order needs one edge"));
+                }
+            }
+            case PRIORITY -> {
+                if ((arguments.size() != 1) || (priorityKeyword(arguments.getFirst()) == null)) {
+                    throw new IllegalArgumentException(problem(lineNumber, line, "priority needs NORMAL or IMPERATIVE"));
+                }
+            }
+            case FACING, CLEAR, CRIPPLE, PAUSE, RESUME, STOP -> {
+                // no further arguments to check
             }
         }
     }
@@ -275,6 +312,82 @@ public final class ScenarioOrderScript {
             return 0;
         }
         return Math.max(0, Math.min(100, Integer.parseInt(matcher.group(1))));
+    }
+
+    private static int skipWords(String[] words, int start, String... fillers) {
+        int index = start;
+        for (String filler : fillers) {
+            if ((index < words.length) && words[index].equalsIgnoreCase(filler)) {
+                index++;
+            }
+        }
+        return index;
+    }
+
+    /**
+     * Normalizes {@code facing moving N stopped SE}, {@code facing N SE} or {@code facing stopped S} to two
+     * arguments, moving then stopped, each a facing 0-5 or -1 for automatic.
+     */
+    private static List<String> facingArguments(List<String> words, int lineNumber, String line) {
+        String moving = "-1";
+        String stopped = "-1";
+        List<String> positional = new ArrayList<>();
+        for (int index = 0; index < words.size(); index++) {
+            String word = words.get(index).toLowerCase(Locale.ROOT);
+            if ((word.equals("moving") || word.equals("stopped")) && (index + 1 < words.size())) {
+                String facing = Integer.toString(parseFacing(words.get(index + 1), lineNumber, line));
+                if (word.equals("moving")) {
+                    moving = facing;
+                } else {
+                    stopped = facing;
+                }
+                index++;
+            } else {
+                positional.add(Integer.toString(parseFacing(words.get(index), lineNumber, line)));
+            }
+        }
+        if (!positional.isEmpty()) {
+            moving = positional.getFirst();
+        }
+        if (positional.size() > 1) {
+            stopped = positional.get(1);
+        }
+        return List.of(moving, stopped);
+    }
+
+    /**
+     * Parses a facing name (N, NE, SE, S, SW, NW), a number 0-5, or AUTO (-1).
+     */
+    public static int parseFacing(String text, int lineNumber, String line) {
+        String upper = text.toUpperCase(Locale.ROOT);
+        return switch (upper) {
+            case "N", "0" -> 0;
+            case "NE", "1" -> 1;
+            case "SE", "2" -> 2;
+            case "S", "3" -> 3;
+            case "SW", "4" -> 4;
+            case "NW", "5" -> 5;
+            case "AUTO", "-1" -> -1;
+            default -> throw new IllegalArgumentException(problem(lineNumber, line, "not a facing: " + text));
+        };
+    }
+
+    /**
+     * Returns the priority keyword in upper case (NORMAL or IMPERATIVE), or {@code null} if the text is not one.
+     */
+    public static @Nullable String priorityKeyword(String text) {
+        String upper = text.toUpperCase(Locale.ROOT);
+        return (upper.equals("NORMAL") || upper.equals("IMPERATIVE")) ? upper : null;
+    }
+
+    /**
+     * Returns the hex arguments of a waypoint order, without a leading priority keyword.
+     */
+    public static List<String> hexArguments(List<String> arguments) {
+        if (!arguments.isEmpty() && (priorityKeyword(arguments.getFirst()) != null)) {
+            return arguments.subList(1, arguments.size());
+        }
+        return arguments;
     }
 
     private static String problem(int lineNumber, String line, String reason) {

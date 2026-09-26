@@ -65,7 +65,7 @@ public record ScriptedOrder(int round, TargetKind targetKind, String targetValue
 
     /** The actions a script can give. */
     public enum OrderAction {
-        /** Replace the unit's waypoints with the given hexes. */
+        /** Replace the unit's waypoints with the given hexes; an optional first argument sets the priority. */
         WAYPOINTS,
         /** Append the given hexes to the unit's waypoints. */
         ADD_WAYPOINTS,
@@ -76,6 +76,20 @@ public record ScriptedOrder(int round, TargetKind targetKind, String targetValue
         /** Test only: damage the internal structure of the side torsos so the unit counts as crippled. */
         CRIPPLE,
         /** Test only: remove the given percentage of internal structure from every location except the head. */
-        DAMAGE_INTERNAL
+        DAMAGE_INTERNAL,
+        /** Hold in place, keeping the route. Unit orders model only. */
+        PAUSE,
+        /** Carry on after a pause. Unit orders model only. */
+        RESUME,
+        /** Clear every order and hold this round. Unit orders model only. */
+        STOP,
+        /** Move to the given edge and hold there. Unit orders model only. */
+        MOVE_TO_EDGE,
+        /** Move to the given edge and leave the board by it. Unit orders model only. */
+        EXIT_BY_EDGE,
+        /** Set the facing while moving and when stopped (N, NE, SE, S, SW, NW, 0-5 or AUTO). Unit orders only. */
+        FACING,
+        /** Set the route priority, NORMAL or IMPERATIVE. Unit orders model only. */
+        PRIORITY
     }
 }

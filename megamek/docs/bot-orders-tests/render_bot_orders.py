@@ -221,6 +221,7 @@ class UnitTrack:
         self.paths = defaultdict(list)  # round -> [(column, row, facing)]
         self.orders = []              # row dicts
         self.gone = None              # row dict
+        self.events = defaultdict(list)  # round -> [text], bot order events such as a waypoint reached
         self.colour = None
 
     @property
@@ -281,6 +282,8 @@ class Trace:
                 track.orders.append(row)
             elif stage == "gone":
                 track.gone = row
+            elif stage == "event":
+                track.events[round_number].append(row.get("detail", ""))
         # bot-wide flee orders count as orders for every unit of that bot
         for bot_row in self.bot_orders:
             for track in self.units.values():
@@ -306,9 +309,15 @@ def position_of(row):
 # ----------------------------------------------------------------------------------------------------------------
 
 def analyse_unit(track, width, height):
-    """Walk the unit's rounds, tracking its standing orders, and judge each end-of-movement row."""
-    route = []          # current waypoint list (0-based coords)
-    route_history = []  # (round, [coords]) each time the route was set/extended
+    """Walk the unit's rounds, tracking its standing orders, and judge each end-of-movement row.
+
+    Traces from the unit orders model carry the unit's orders on every row (route, paused, stopped, edgeOrder,
+    facings); those are used as the orders in force. Older traces only have the order rows and the bot's head
+    waypoint, so the orders are replayed from the order rows.
+    """
+    route = []          # current waypoint list (0-based coords), replayed from order rows
+    route_history = []  # (round, [coords], ordered-from position, priority) each time the route was set/extended
+    edge_history = []   # (round, EDGE_ORDER, edge, ordered-from position)
     flee_edge = ""
     order_index = 0
     orders = track.orders
@@ -316,6 +325,7 @@ def analyse_unit(track, width, height):
     rule_counts = defaultdict(int)
     rounds = sorted(set(list(track.starts.keys()) + list(track.ends.keys())))
     last_waypoint_ordered = None
+    facing_orders = []  # (round, moving, stopped)
     for round_number in rounds:
         while order_index < len(orders) and int(orders[order_index]["round"]) <= round_number:
             order = orders[order_index]
@@ -323,17 +333,24 @@ def analyse_unit(track, width, height):
             action = order["orderAction"]
             arguments = order["orderArgs"].split()
             if action in ("WAYPOINTS", "ADD_WAYPOINTS"):
+                priority = ""
+                if arguments and arguments[0].upper() in ("NORMAL", "IMPERATIVE"):
+                    priority = arguments[0].upper()
                 hexes = [parse_hex_number(argument) for argument in arguments]
                 hexes = [coords for coords in hexes if coords is not None]
                 route = hexes if action == "WAYPOINTS" else route + hexes
-                route_history.append((int(order["round"]), list(route), position_of(order)))
+                route_history.append((int(order["round"]), list(route), position_of(order), priority))
                 if route:
                     last_waypoint_ordered = route[-1]
-            elif action == "CLEAR":
+            elif action in ("CLEAR", "STOP"):
                 route = []
             elif action == "FLEE":
                 flee_edge = "" if (arguments and arguments[0].upper() == "NONE") else (arguments[0].upper()
                                                                                         if arguments else "")
+            elif action in ("MOVE_TO_EDGE", "EXIT_BY_EDGE") and arguments:
+                edge_history.append((int(order["round"]), action, arguments[0].upper(), position_of(order)))
+            elif action == "FACING" and len(arguments) >= 2:
+                facing_orders.append((int(order["round"]), int(arguments[0]), int(arguments[1])))
         end_row = track.ends.get(round_number)
         start_row = track.starts.get(round_number)
         if not end_row:
@@ -347,38 +364,93 @@ def analyse_unit(track, width, height):
         home_edge = (start_row.get("homeEdge") if start_row else "") or end_row.get("homeEdge", "")
         effective_flee = end_row.get("fleeEdge", "") or flee_edge
         withdrawing = end_row.get("withdrawing") == "true"
+        has_model = bool(end_row.get("edgeOrder"))
+        paused = end_row.get("paused") == "true"
+        stopped = end_row.get("stopped") == "true"
+        edge_order = end_row.get("edgeOrder", "") if has_model else ""
+        edge = end_row.get("edge", "")
+        model_route = [parse_hex_number(text) for text in end_row.get("route", "").split()]
+        model_route = [coords for coords in model_route if coords is not None]
+        start_route = [parse_hex_number(text) for text in (start_row or {}).get("route", "").split()]
+        start_route = [coords for coords in start_route if coords is not None]
+        priority = end_row.get("priority", "")
+        facing_moving = int(end_row["facingMoving"]) if end_row.get("facingMoving") not in (None, "") else -1
+        facing_stopped = int(end_row["facingStopped"]) if end_row.get("facingStopped") not in (None, "") else -1
+        start_position = position_of(start_row)
+        end_position = position_of(end_row)
+        moved = bool(start_position and end_position and start_position != end_position)
+
         rule_label = rule if rule else derived_rule(behaviour, effective_flee, start_head or head, withdrawing)
         rule_counts[rule_label] += 1
 
         expected = ""
         followed = None
         reason = ""
-        if effective_flee:
+        target = None
+        if has_model and (paused or stopped):
+            expected = "HOLD (" + ("paused" if paused else "stopped this round") + ")"
+            followed = (rule == "HOLD") or not moved
+            if not followed:
+                reason = describe(rule_label, detail, behaviour, home_edge) + "; moved while ordered to hold"
+        elif has_model and edge_order not in ("", "NONE"):
+            expected = edge_order + " " + edge
+            followed = rule.startswith(edge_order + "_EDGE") and not detail.startswith("no path")
+            if not followed:
+                reason = describe(rule_label, detail, behaviour, home_edge)
+        elif effective_flee:
             expected = "FLEE " + effective_flee
             heading = edge_in_detail(detail) or ((home_edge or "") if behaviour in ("ForcedWithdrawal",
                                                                                     "MoveToDestination") else "")
             followed = (heading == effective_flee) and behaviour in ("ForcedWithdrawal", "MoveToDestination")
             if not followed:
                 reason = describe(rule_label, detail, behaviour, home_edge)
-        elif (start_head or head) and route:
-            target = start_head or head
-            expected = "WAYPOINT " + hex_number(*target)
+        elif (has_model and (start_route or model_route)) or (not has_model and (start_head or head) and route):
+            target = (start_route[0] if start_route else (model_route[0] if model_route else None)) \
+                if has_model else (start_head or head)
+            expected = "ROUTE " + (hex_number(*target) if target else "?") + ((" " + priority) if priority else "")
             if rule:
-                followed = rule == "PLAYER_WAYPOINT"
+                followed = rule in ("PLAYER_WAYPOINT", "PLAYER_ROUTE") and "no reachable" not in detail
             else:
                 followed = behaviour == "MoveToDestination" and not withdrawing
             if not followed:
                 reason = describe(rule_label, detail, behaviour, home_edge)
+
+        distance_before = distance_after = None
+        if target and start_position and end_position:
+            distance_before = hex_distance(start_position, target)
+            distance_after = hex_distance(end_position, target)
+
+        facing_note = ""
+        end_facing = int(end_row["facing"]) if end_row.get("facing") else None
+        if end_facing is not None:
+            if facing_moving >= 0 and moved and not (paused or stopped):
+                if end_facing != facing_moving:
+                    facing_note = "moving: ordered %s, ended %s" % (FACING_NAMES[facing_moving],
+                                                                   FACING_NAMES[end_facing])
+                else:
+                    facing_note = "moving: %s as ordered" % FACING_NAMES[facing_moving]
+            elif facing_stopped >= 0 and (not moved or paused or stopped):
+                if end_facing != facing_stopped:
+                    facing_note = "stopped: ordered %s, ended %s" % (FACING_NAMES[facing_stopped],
+                                                                    FACING_NAMES[end_facing])
+                else:
+                    facing_note = "stopped: %s as ordered" % FACING_NAMES[facing_stopped]
+
         verdicts[round_number] = {
             "expected": expected, "followed": followed, "rule": rule_label, "detail": detail,
             "behaviour": behaviour, "reason": reason, "homeEdge": home_edge, "withdrawing": withdrawing,
-            "crippled": end_row.get("crippled") == "true", "head": head, "position": position_of(end_row),
-            "facing": int(end_row["facing"]) if end_row.get("facing") else None,
+            "crippled": end_row.get("crippled") == "true", "head": head, "position": end_position,
+            "facing": end_facing, "facing_moving": facing_moving, "facing_stopped": facing_stopped,
+            "facing_note": facing_note, "distance_before": distance_before, "distance_after": distance_after,
+            "events": track.events.get(round_number, []), "moved": moved,
         }
     final_row = track.ends[next(reversed(track.ends))] if track.ends else None
     final_position = position_of(final_row)
+    final_edge = edge_history[-1] if edge_history else None
     summary = {
         "route_history": route_history,
+        "edge_history": edge_history,
+        "facing_orders": facing_orders,
         "flee_edge": flee_edge,
         "final_position": final_position,
         "final_waypoint": last_waypoint_ordered,
@@ -386,10 +458,16 @@ def analyse_unit(track, width, height):
                            if final_position and last_waypoint_ordered else None),
         "flee_distance": (distance_to_edge(final_position, flee_edge, width, height)
                           if final_position and flee_edge else None),
+        "edge_distance": (distance_to_edge(final_position, final_edge[2], width, height)
+                          if final_position and final_edge else None),
         "rule_counts": dict(rule_counts),
         "followed_rounds": sum(1 for verdict in verdicts.values() if verdict["followed"] is True),
         "overridden_rounds": sum(1 for verdict in verdicts.values() if verdict["followed"] is False),
         "ordered_rounds": sum(1 for verdict in verdicts.values() if verdict["expected"]),
+        "facing_misses": sum(1 for verdict in verdicts.values() if "ended" in verdict["facing_note"]),
+        "moved_away_rounds": sum(1 for verdict in verdicts.values()
+                                 if verdict["followed"] and verdict["distance_before"] is not None
+                                 and verdict["distance_after"] > verdict["distance_before"]),
     }
     return verdicts, summary
 
@@ -487,6 +565,7 @@ svg.numbers .hexno { display: inline; }
 .roadline { stroke: var(--road); stroke-width: 1.5; stroke-linecap: round; fill: none; opacity: 0.55; }
 .roundlabel { font-size: 8px; font-weight: 700; paint-order: stroke; stroke: var(--panel); stroke-width: 2.2px; }
 .mismatch { fill: none; stroke: var(--bad); stroke-width: 2.4; }
+.facingmiss { fill: none; stroke: var(--warn); stroke-width: 1.6; stroke-dasharray: 2 2; }
 .toolbar { margin: 6px 0 10px; } .toolbar button { font: inherit; padding: 2px 8px; }
 a { color: var(--accent); }
 .small { font-size: 12px; color: var(--muted); }
@@ -602,15 +681,17 @@ def svg_unit(track, verdicts, summary, size, width, height, is_enemy):
                         escape(track.name)))
     if not is_enemy:
         # ordered routes: dashed line from where the unit stood when ordered through each waypoint
-        for route_index, (order_round, route, ordered_from) in enumerate(summary["route_history"]):
+        for route_index, (order_round, route, ordered_from, priority) in enumerate(summary["route_history"]):
             if not route:
                 continue
             origin = ordered_from or first_start
             route_points = ([origin] if origin else []) + route
             coordinates = " ".join("%.1f,%.1f" % centre(column, row, size) for column, row in route_points)
-            parts.append('<polyline points="%s" fill="none" stroke="%s" stroke-width="1.8" stroke-dasharray="6 4" '
-                         'opacity="0.9"><title>%s ordered route (round %d)</title></polyline>'
-                         % (coordinates, colour, escape(track.name), order_round))
+            imperative = priority == "IMPERATIVE"
+            parts.append('<polyline points="%s" fill="none" stroke="%s" stroke-width="%s" stroke-dasharray="%s" '
+                         'opacity="0.9"><title>%s ordered route (round %d%s)</title></polyline>'
+                         % (coordinates, colour, "3" if imperative else "1.8", "10 3" if imperative else "6 4",
+                            escape(track.name), order_round, (", " + priority) if priority else ""))
             for waypoint_index, (column, row) in enumerate(route):
                 centre_x, centre_y = centre(column, row, size)
                 parts.append('<circle cx="%.1f" cy="%.1f" r="%.1f" fill="var(--panel)" stroke="%s" '
@@ -634,6 +715,29 @@ def svg_unit(track, verdicts, summary, size, width, height, is_enemy):
                              'stroke-dasharray="2 4" marker-end="url(#arrow)"><title>%s ordered to flee %s'
                              '</title></line>' % (start_x, start_y, end_x, end_y, colour, escape(track.name),
                                                   summary["flee_edge"]))
+    if not is_enemy:
+        for order_round, edge_action, edge, ordered_from in summary["edge_history"]:
+            origin = ordered_from or first_start
+            if not origin:
+                continue
+            target = edge_point(origin, edge, width, height)
+            start_x, start_y = centre(origin[0], origin[1], size)
+            end_x, end_y = centre(target[0], target[1], size)
+            label = ("EXIT " if edge_action == "EXIT_BY_EDGE" else "TO ") + edge[:1]
+            parts.append('<line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="%s" stroke-width="2" '
+                         'stroke-dasharray="1 5" stroke-linecap="round" marker-end="url(#arrow)"><title>%s: %s %s '
+                         '(round %d)</title></line>' % (start_x, start_y, end_x, end_y, colour, escape(track.name),
+                                                        edge_action, edge, order_round))
+            parts.append('<text class="roundlabel" x="%.1f" y="%.1f" fill="%s" text-anchor="middle">%s</text>'
+                         % (end_x, end_y + (size * 1.1 if edge == "NORTH" else -size * 0.6), colour, label))
+        # ordered facing when stopped: a bold arrow at the last waypoint (or where the unit ends)
+        if summary["facing_orders"]:
+            facing_round, facing_moving, facing_stopped = summary["facing_orders"][-1]
+            anchor = summary["final_waypoint"] or summary["final_position"]
+            if facing_stopped >= 0 and anchor:
+                parts.append(ordered_arrow(anchor[0], anchor[1], facing_stopped, size, colour, 1.35,
+                                           "%s ordered facing when stopped: %s" % (track.name,
+                                                                                   FACING_NAMES[facing_stopped])))
     # end-of-round markers
     for round_number, end_row in track.ends.items():
         position = position_of(end_row)
@@ -643,6 +747,14 @@ def svg_unit(track, verdicts, summary, size, width, height, is_enemy):
         verdict = verdicts.get(round_number, {})
         if end_row.get("facing"):
             parts.append(facing_tick(position[0], position[1], int(end_row["facing"]), size, colour))
+        if not is_enemy and verdict.get("facing_moving", -1) >= 0 and verdict.get("moved"):
+            parts.append(ordered_arrow(position[0], position[1], verdict["facing_moving"], size, colour, 0.9,
+                                       "%s ordered facing while moving: %s" % (track.name,
+                                                                              FACING_NAMES[verdict["facing_moving"]])))
+        if not is_enemy and "ended" in verdict.get("facing_note", ""):
+            parts.append('<circle class="facingmiss" cx="%.1f" cy="%.1f" r="%.1f"><title>Round %d facing %s'
+                         '</title></circle>' % (centre_x, centre_y, size * 0.62, round_number,
+                                                escape(verdict["facing_note"])))
         parts.append('<circle cx="%.1f" cy="%.1f" r="%.1f" fill="%s" stroke="var(--panel)" stroke-width="0.8">'
                      '<title>%s round %d at %s facing %s: %s</title></circle>'
                      % (centre_x, centre_y, size * 0.28, colour, escape(track.name), round_number,
@@ -664,6 +776,23 @@ def svg_unit(track, verdicts, summary, size, width, height, is_enemy):
                                                             escape(track.name), escape(track.gone.get("note", ""))))
     layer_class = "enemy-layer" if is_enemy else "unit-layer"
     return '<g class="%s">%s</g>' % (layer_class, "\n".join(parts))
+
+
+def ordered_arrow(column, row, facing, size, colour, length, title):
+    """A hollow arrow from the hex centre toward an ordered facing."""
+    centre_x, centre_y = centre(column, row, size)
+    vector_x, vector_y = FACING_VECTORS[facing % 6]
+    tip_x = centre_x + vector_x * size * length
+    tip_y = centre_y + vector_y * size * length
+    base_x = centre_x + vector_x * size * (length - 0.45)
+    base_y = centre_y + vector_y * size * (length - 0.45)
+    side_x, side_y = -vector_y * size * 0.25, vector_x * size * 0.25
+    return ('<g><title>%s</title><line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" stroke="var(--fg)" '
+            'stroke-width="3.2" stroke-linecap="round"/><line x1="%.1f" y1="%.1f" x2="%.1f" y2="%.1f" '
+            'stroke="%s" stroke-width="1.6" stroke-linecap="round"/><polygon points="%.1f,%.1f %.1f,%.1f %.1f,%.1f" '
+            'fill="%s" stroke="var(--fg)" stroke-width="0.8"/></g>'
+            % (escape(title), centre_x, centre_y, base_x, base_y, centre_x, centre_y, base_x, base_y, colour,
+               tip_x, tip_y, base_x + side_x, base_y + side_y, base_x - side_x, base_y - side_y, colour))
 
 
 def edge_point(origin, edge, width, height):
@@ -696,6 +825,15 @@ def legend_html():
          "Round where the unit did not follow its order"),
         ('<svg width="30" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#4363d8" stroke-width="1.6" '
          'stroke-dasharray="2 4"/></svg>', "Flee order toward an edge"),
+        ('<svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="#4363d8" stroke-width="3" '
+         'stroke-dasharray="10 3"/></svg>', "Imperative route"),
+        ('<svg width="30" height="10"><line x1="0" y1="5" x2="26" y2="5" stroke="#4363d8" stroke-width="2" '
+         'stroke-dasharray="1 5" stroke-linecap="round"/></svg>', "Move to / exit by edge order"),
+        ('<svg width="24" height="16"><line x1="3" y1="8" x2="14" y2="8" stroke="var(--fg)" stroke-width="3.2"/>'
+         '<line x1="3" y1="8" x2="14" y2="8" stroke="#4363d8" stroke-width="1.6"/><polygon points="21,8 14,4 14,12" '
+         'fill="#4363d8" stroke="var(--fg)" stroke-width="0.8"/></svg>', "Ordered facing (big: when stopped)"),
+        ('<svg width="16" height="16"><circle cx="8" cy="8" r="6" class="facingmiss"/></svg>',
+         "Ended the round not facing as ordered"),
         ('<svg width="30" height="10"><line x1="0" y1="5" x2="30" y2="5" stroke="var(--enemy)" '
          'stroke-width="1.6"/></svg>', "Units without orders (grey)"),
         ('<span class="swatch" style="background:var(--t-woods)"></span>', "Light woods"),
@@ -754,11 +892,19 @@ def render_game(trace, board, output_path, label):
         final_text = hex_number(*final_position) if final_position else "-"
         if track.gone:
             final_text += " (" + escape(track.gone.get("note", "")) + " r" + escape(track.gone.get("round", "")) + ")"
-        distance_text = "-"
+        distance_parts = []
         if summary["final_distance"] is not None:
-            distance_text = "%d hexes to %s" % (summary["final_distance"], hex_number(*summary["final_waypoint"]))
+            distance_parts.append("%d hexes to %s" % (summary["final_distance"],
+                                                      hex_number(*summary["final_waypoint"])))
         if summary["flee_distance"] is not None:
-            distance_text += "; %d to %s edge" % (summary["flee_distance"], summary["flee_edge"])
+            distance_parts.append("%d to %s edge" % (summary["flee_distance"], summary["flee_edge"]))
+        if summary["edge_distance"] is not None:
+            distance_parts.append("%d to %s edge" % (summary["edge_distance"], summary["edge_history"][-1][2]))
+        if summary["facing_misses"]:
+            distance_parts.append("facing off in %d round(s)" % summary["facing_misses"])
+        if summary["moved_away_rounds"]:
+            distance_parts.append("ended farther from its waypoint in %d round(s)" % summary["moved_away_rounds"])
+        distance_text = "; ".join(distance_parts) if distance_parts else "-"
         rules = ", ".join("%s x%d" % (rule, count) for rule, count in sorted(summary["rule_counts"].items()))
         verdict_class = "bad" if summary["overridden_rounds"] else "good"
         unit_rows.append(
@@ -778,14 +924,24 @@ def render_game(trace, board, output_path, label):
                 flags.append("crippled")
             if verdict["withdrawing"]:
                 flags.append("withdrawing")
+            distance_text = "-"
+            distance_class = ""
+            if verdict["distance_before"] is not None:
+                distance_text = "%d -> %d" % (verdict["distance_before"], verdict["distance_after"])
+                if verdict["distance_after"] > verdict["distance_before"]:
+                    distance_class = "warn"
+            facing_class = "warn" if "ended" in verdict["facing_note"] else ""
             decision_rows.append(
                 "<tr><td><span class='swatch' style='background:%s'></span>%s</td><td>%d</td><td>%s</td><td>%s</td>"
-                "<td>%s</td><td>%s</td><td class='%s'>%s</td><td>%s</td></tr>"
+                "<td>%s</td><td>%s</td><td class='%s'>%s</td><td class='%s'>%s</td><td class='%s'>%s</td>"
+                "<td>%s</td></tr>"
                 % (track.colour, escape(track.name), round_number,
                    hex_number(*verdict["position"]) if verdict["position"] else "-",
                    escape(", ".join(flags)), escape(verdict["expected"] or "-"),
-                   escape(verdict["rule"]), status_class, status,
-                   escape(verdict["detail"] or (verdict["reason"] if verdict["followed"] is False else ""))))
+                   escape(verdict["rule"]), status_class, status, distance_class, distance_text, facing_class,
+                   escape(verdict["facing_note"] or "-"),
+                   escape("; ".join([verdict["detail"] or (verdict["reason"] if verdict["followed"] is False
+                                                           else "")] + verdict["events"]).strip("; "))))
 
     rounds_played = (trace.rounds[-1] - trace.rounds[0] + 1) if trace.rounds else 0
     title = "%s - game %s" % (trace.header.get("scenarioName", "Bot orders"), trace.game)
@@ -814,7 +970,8 @@ Orders: <code>%(orders)s</code>. Trace: <code>%(trace)s</code>.</div>
 <p class="small">Rule comes from the bot's [BotOrders] log line; a * means it was derived from the bot's cached behaviour
 because the build does not log one. "Expected" is the order in force that round.</p>
 <table><tr><th>Unit</th><th>Round</th><th>End hex</th><th>State</th><th>Expected</th><th>Rule</th><th>Result</th>
-<th>Logged reason</th></tr>%(decisions)s</table>
+<th>Hexes to next waypoint (start -> end)</th><th>Facing</th><th>Logged reason and events</th></tr>%(decisions)s
+</table>
 </body></html>
 """ % {
         "title": escape(title), "style": STYLE, "script": THEME_SCRIPT,
@@ -840,6 +997,8 @@ because the build does not log one. "Expected" is the order in force that round.
             "final_waypoint": hex_number(*summary["final_waypoint"]) if summary["final_waypoint"] else "",
             "final_distance": summary["final_distance"], "flee_edge": summary["flee_edge"],
             "flee_distance": summary["flee_distance"], "gone": track.gone.get("note", "") if track.gone else "",
+            "edge_distance": summary["edge_distance"], "facing_misses": summary["facing_misses"],
+            "moved_away_rounds": summary["moved_away_rounds"],
             "overrides": [{"round": round_number, "expected": verdict["expected"], "reason": verdict["reason"]}
                           for round_number, verdict in verdicts.items() if verdict["followed"] is False],
         })

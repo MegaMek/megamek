@@ -1,0 +1,17 @@
+# Bot orders script for edges-pause-32x34.mms. Needs the unit orders model (edge orders, pause, stop, facing).
+# Round 0 is the first round of these scenario games. Hexes are column then row (1606 = column 16, row 6).
+
+# Wolverine: move to the west edge and hold there.
+round 0 | unit id 101 | move to edge WEST
+# Jenner: leave the board by the east edge.
+round 0 | unit id 102 | exit by edge EAST
+# Marauder: route north, paused in round 2, resumed in round 4.
+round 0 | unit id 103 | route 1606
+round 2 | unit id 103 | pause
+round 4 | unit id 103 | resume
+# Archer: route north-east, stopped in round 2 (holds that round, then its own AI).
+round 0 | unit id 104 | route 2406
+round 2 | unit id 104 | stop
+# Phoenix Hawk: route north-west, facing north while moving and south-west once there.
+round 0 | unit id 105 | route 0806
+round 0 | unit id 105 | facing moving N stopped SW

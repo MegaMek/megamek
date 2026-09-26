@@ -1,0 +1,10 @@
+# Bot orders script for imperative-vs-normal-32x34.mms. Needs the unit orders model (route priority, facing).
+# Round 0 is the first round of these scenario games. Hexes are column then row (0414 = column 4, row 14).
+
+# Wolverines: same waypoint beyond the lake; 101 Normal, 102 Imperative.
+round 0 | unit id 101 | route normal 0414
+round 0 | unit id 102 | route imperative 0414
+# Shadow Hawks: same again; 103 Normal, 104 Imperative. 104 should face south-east once it arrives.
+round 0 | unit id 103 | route normal 0514
+round 0 | unit id 104 | route imperative 0514
+round 0 | unit id 104 | facing stopped SE

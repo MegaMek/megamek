@@ -82,7 +82,7 @@ import megamek.utilities.botorders.BotOrderRecorder;
 import megamek.utilities.botorders.OrderApplier;
 import megamek.utilities.botorders.ScenarioOrderScript;
 import megamek.utilities.botorders.ScriptedOrderDirector;
-import megamek.utilities.botorders.UnitBehaviorOrderApplier;
+import megamek.utilities.botorders.UnitOrdersApplier;
 
 /**
  * Runs a Scenario file headless as a fully automated bot-vs-bot game, without any GUI or human interaction.
@@ -280,10 +280,10 @@ public class ScenarioGameRunner {
         ScriptedOrderDirector orderDirector = null;
         BotOrderRecorder orderRecorder = null;
         if (orderScript != null) {
-            OrderApplier orderApplier = new UnitBehaviorOrderApplier();
+            OrderApplier orderApplier = new UnitOrdersApplier(gameManager);
             if (orderTraceFile != null) {
                 orderRecorder = new BotOrderRecorder(orderTraceFile, orderTraceGameNumber, orderApplier,
-                      traceHeader(roundsLimit));
+                      game::getCurrentRound, traceHeader(roundsLimit));
             }
             orderDirector = new ScriptedOrderDirector(orderScript, orderApplier, game, gameManager,
                   botsByPlayerId(), orderRecorder);

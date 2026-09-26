@@ -42,9 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
-import megamek.common.units.UnitLocation;
 import megamek.common.annotations.Nullable;
-import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -52,6 +50,7 @@ import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.UnitLocation;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
 import megamek.utilities.botorders.ScriptedOrder.OrderAction;
@@ -283,23 +282,10 @@ public class ScriptedOrderDirector {
             botUnit = serverUnit;
         }
         String result = switch (order.action()) {
-            case WAYPOINTS -> {
-                List<Coords> waypoints = hexes(order);
-                int accepted = orderApplier.setWaypoints(bot, botUnit, waypoints);
-                yield "waypoints set, " + accepted + " of " + waypoints.size() + " reachable";
-            }
-            case ADD_WAYPOINTS -> {
-                List<Coords> waypoints = hexes(order);
-                int accepted = orderApplier.addWaypoints(bot, botUnit, waypoints);
-                yield "waypoints added, " + accepted + " of " + waypoints.size() + " reachable";
-            }
-            case CLEAR -> {
-                orderApplier.clearOrders(bot, botUnit);
-                yield "orders cleared";
-            }
             case CRIPPLE -> damageInternal(serverUnit, 50, true);
             case DAMAGE_INTERNAL -> damageInternal(serverUnit, ScenarioOrderScript.damagePercent(order), false);
             case FLEE -> "flee handled per bot";
+            default -> orderApplier.apply(bot, botUnit, serverUnit, order, round);
         };
         logger.info("[BotOrdersHarness] round {}: {} (ID {}) {}: {}", round, serverUnit.getDisplayName(),
               serverUnit.getId(), order.action(), result);
@@ -333,14 +319,6 @@ public class ScriptedOrderDirector {
         }
         gameManager.entityUpdate(serverUnit.getId());
         return "internal damaged " + percent + "%, now crippled=" + serverUnit.isCrippled(true);
-    }
-
-    private static List<Coords> hexes(ScriptedOrder order) {
-        List<Coords> waypoints = new ArrayList<>();
-        for (String hexNumber : order.arguments()) {
-            waypoints.add(ScenarioOrderScript.parseHexNumber(hexNumber));
-        }
-        return waypoints;
     }
 
     private List<Entity> selectTargets(ScriptedOrder order) {

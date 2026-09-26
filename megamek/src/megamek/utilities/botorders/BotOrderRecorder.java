@@ -38,25 +38,26 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.TreeSet;
+import java.util.function.IntSupplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
-import megamek.client.bot.princess.UnitBehavior;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.common.units.UnitLocation;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
+import megamek.common.units.UnitLocation;
 import megamek.logging.MMLogger;
+import megamek.utilities.botorders.OrderApplier.OrderSnapshot;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LogEvent;
@@ -67,23 +68,19 @@ import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.log4j.core.config.Property;
 
 /**
- * Writes one TSV per scripted game: every order applied, every bot unit's position and decision at the start and
- * end of each movement phase, and the hexes each unit moved through. The Python renderer
- * ({@code docs/bot-orders-tests/render_bot_orders.py}) turns it into a map of "what we ordered vs what it did".
+ * Writes one TSV per scripted game: every order applied, every bot unit's position, decision and standing orders at
+ * the start and end of each movement phase, the hexes each unit moved through, and bot order events such as a
+ * waypoint reached. The Python renderer ({@code docs/bot-orders-tests/render_bot_orders.py}) turns it into a map of
+ * "what we ordered vs what it did".
  *
- * <p>The rule each unit followed is taken from the bot's {@code [BotOrders]} log line when the build writes one
- * (the #9038 fix does), captured by a temporary log appender. Builds without it still get the bot's cached
- * behaviour, from which the renderer derives the rule.</p>
+ * <p>The rule each unit followed is taken from the bot's {@code [BotOrders]} log line when the build writes one,
+ * captured by a temporary log appender on the {@code megamek.client.bot} loggers. Builds without it still get the
+ * bot's cached behaviour, from which the renderer derives the rule.</p>
  *
- * <p>Columns (hexes are 1-based board columns and rows, as MegaMek shows them):</p>
- * <pre>
- * game stage round unitId name owner col row facing crippled withdrawing behaviour rule detail headWaypoint
- * fleeEdge retreatEdge homeEdge orderAction orderArgs note
- * </pre>
- * <p>{@code homeEdge} is the edge the bot resolves for the unit right now ({@code Princess#getHomeEdge}, read by
- * reflection because it is package-private): the edge a withdrawing or fleeing unit is heading for.</p>
- * <p>{@code stage} is {@code order}, {@code start}, {@code end}, {@code path} or {@code gone}. A {@code path} row
- * lists the hexes of one move in {@code detail} as {@code col,row,facing;...}.</p>
+ * <p>Hexes are 1-based board columns and rows, as MegaMek shows them; waypoints are hex numbers. {@code stage} is
+ * {@code order}, {@code start}, {@code end}, {@code path}, {@code event} or {@code gone}. A {@code path} row lists
+ * the hexes of one move in {@code detail} as {@code col,row,facing;...}. {@code homeEdge} is the edge the bot
+ * resolves for the unit ({@code Princess#getHomeEdge}, read by reflection because it is package-private).</p>
  */
 public class BotOrderRecorder implements AutoCloseable {
     private static final MMLogger logger = MMLogger.create(BotOrderRecorder.class);
@@ -92,17 +89,23 @@ public class BotOrderRecorder implements AutoCloseable {
     public static final String STAGE_START = "start";
     public static final String STAGE_END = "end";
     public static final String STAGE_PATH = "path";
+    public static final String STAGE_EVENT = "event";
     public static final String STAGE_GONE = "gone";
 
-    private static final String HEADER = String.join("\t", "game", "stage", "round", "unitId", "name", "owner",
-          "col", "row", "facing", "crippled", "withdrawing", "behaviour", "rule", "detail", "headWaypoint",
-          "fleeEdge", "retreatEdge", "homeEdge", "orderAction", "orderArgs", "note");
+    private static final List<String> COLUMNS = List.of("game", "stage", "round", "unitId", "name", "owner", "col",
+          "row", "facing", "crippled", "withdrawing", "behaviour", "rule", "detail", "headWaypoint", "fleeEdge",
+          "retreatEdge", "homeEdge", "route", "priority", "paused", "stopped", "edgeOrder", "edge", "facingMoving",
+          "facingStopped", "orderAction", "orderArgs", "note");
 
-    /** Matches the #9038 decision line: "[BotOrders] name (ID 12) round 3: RULE - detail". */
+    /** Matches a decision line: "[BotOrders] name (ID 12) round 3: RULE - detail". */
     private static final Pattern DECISION_PATTERN =
           Pattern.compile("^\\[BotOrders] .*\\(ID (\\d+)\\) round (\\d+): (\\S+) - (.*)$");
 
-    private static final String CAPTURED_LOGGER = UnitBehavior.class.getName();
+    /** Matches other per-unit order lines, such as "[BotOrders] name (ID 12) reached waypoint 1508". */
+    private static final Pattern EVENT_PATTERN = Pattern.compile("^\\[BotOrders] (.*) \\(ID (\\d+)\\):? (.*)$");
+
+    /** The bot loggers; the capture sits on their shared configuration so every bot class's lines are seen. */
+    private static final String CAPTURED_LOGGER = "megamek.client.bot";
 
     /** {@code Princess#getHomeEdge(Entity)}, or {@code null} when it cannot be reached. */
     private static final Method HOME_EDGE_METHOD = findHomeEdgeMethod();
@@ -110,6 +113,7 @@ public class BotOrderRecorder implements AutoCloseable {
     private final PrintWriter writer;
     private final int gameNumber;
     private final OrderApplier orderApplier;
+    private final IntSupplier currentRound;
     private final Map<String, String[]> decisionsByUnitAndRound = new HashMap<>();
     private final TreeSet<Integer> goneUnitIds = new TreeSet<>();
     private final DecisionCapture decisionCapture;
@@ -120,20 +124,22 @@ public class BotOrderRecorder implements AutoCloseable {
      *
      * @param traceFile    the TSV to write
      * @param gameNumber   the game's number in its batch
-     * @param orderApplier where to read the units' waypoints from
+     * @param orderApplier where to read the units' orders from
+     * @param currentRound the game's current round, for log events that do not name one
      * @param headerLines  comment lines written at the top, each as {@code # key<TAB>value}
      *
      * @throws IOException when the file cannot be opened
      */
-    public BotOrderRecorder(File traceFile, int gameNumber, OrderApplier orderApplier,
+    public BotOrderRecorder(File traceFile, int gameNumber, OrderApplier orderApplier, IntSupplier currentRound,
           Map<String, String> headerLines) throws IOException {
         this.writer = new PrintWriter(traceFile, StandardCharsets.UTF_8);
         this.gameNumber = gameNumber;
         this.orderApplier = orderApplier;
+        this.currentRound = currentRound;
         for (Map.Entry<String, String> headerLine : headerLines.entrySet()) {
             writer.println("# " + headerLine.getKey() + "\t" + clean(headerLine.getValue()));
         }
-        writer.println(HEADER);
+        writer.println(String.join("\t", COLUMNS));
         writer.flush();
         decisionCapture = new DecisionCapture("BotOrdersCapture-" + System.identityHashCode(this));
         startCapture();
@@ -143,28 +149,27 @@ public class BotOrderRecorder implements AutoCloseable {
     /**
      * Records one order applied to one unit (or to a bot, for flee; then {@code unit} is {@code null}).
      */
-    public synchronized void recordOrder(int round, @Nullable Entity unit, String ownerName, ScriptedOrder order,
+    public synchronized void recordOrder(int round, Entity unit, String ownerName, ScriptedOrder order,
           String note) {
+        Map<String, String> row = newRow(STAGE_ORDER, round);
         StringJoiner arguments = new StringJoiner(" ");
         for (String argument : order.arguments()) {
             arguments.add(argument);
         }
-        String unitId = (unit == null) ? "" : Integer.toString(unit.getId());
-        String unitName = (unit == null) ? "" : unit.getDisplayName();
-        String col = "";
-        String row = "";
-        String facing = "";
-        if ((unit != null) && (unit.getPosition() != null)) {
-            col = Integer.toString(unit.getPosition().getX() + 1);
-            row = Integer.toString(unit.getPosition().getY() + 1);
-            facing = Integer.toString(unit.getFacing());
+        if (unit != null) {
+            row.put("unitId", Integer.toString(unit.getId()));
+            row.put("name", unit.getDisplayName());
+            putPosition(row, unit);
         }
-        writeRow(STAGE_ORDER, round, unitId, unitName, ownerName, col, row, facing, "", "", "", "", "", "", "", "",
-              "", order.action().name(), arguments.toString(), note + " [line " + order.lineNumber() + "]");
+        row.put("owner", ownerName);
+        row.put("orderAction", order.action().name());
+        row.put("orderArgs", arguments.toString());
+        row.put("note", note + " [line " + order.lineNumber() + "]");
+        writeRow(row);
     }
 
     /**
-     * Records every unit of every bot: position from the server's game, decision and waypoint from the bot.
+     * Records every unit of every bot: position from the server's game, decision and orders from the bot.
      *
      * @param stage        {@link #STAGE_START} or {@link #STAGE_END}
      * @param serverGame   the server's game, which holds the true positions
@@ -175,16 +180,18 @@ public class BotOrderRecorder implements AutoCloseable {
         for (Map.Entry<Integer, Princess> botEntry : botsByPlayer.entrySet()) {
             Princess bot = botEntry.getValue();
             for (Entity serverUnit : serverGame.getEntitiesVector()) {
-                if (serverUnit.getOwnerId() != botEntry.getKey()) {
-                    continue;
+                if (serverUnit.getOwnerId() == botEntry.getKey()) {
+                    recordUnit(stage, round, serverUnit, bot);
                 }
-                recordUnit(stage, round, serverUnit, bot);
             }
             for (Entity removedUnit : serverGame.getOutOfGameEntitiesVector()) {
                 if ((removedUnit.getOwnerId() == botEntry.getKey()) && goneUnitIds.add(removedUnit.getId())) {
-                    writeRow(STAGE_GONE, round, Integer.toString(removedUnit.getId()), removedUnit.getDisplayName(),
-                          bot.getName(), "", "", "", "", "", "", "", "", "", "", "", "", "", "",
-                          removalName(removedUnit.getRemovalCondition()));
+                    Map<String, String> row = newRow(STAGE_GONE, round);
+                    row.put("unitId", Integer.toString(removedUnit.getId()));
+                    row.put("name", removedUnit.getDisplayName());
+                    row.put("owner", bot.getName());
+                    row.put("note", removalName(removedUnit.getRemovalCondition()));
+                    writeRow(row);
                 }
             }
         }
@@ -195,30 +202,43 @@ public class BotOrderRecorder implements AutoCloseable {
         if (botUnit == null) {
             botUnit = serverUnit;
         }
-        Coords position = serverUnit.getPosition();
-        String col = (position == null) ? "" : Integer.toString(position.getX() + 1);
-        String row = (position == null) ? "" : Integer.toString(position.getY() + 1);
-
+        Map<String, String> row = newRow(stage, round);
+        row.put("unitId", Integer.toString(serverUnit.getId()));
+        row.put("name", serverUnit.getDisplayName());
+        row.put("owner", bot.getName());
+        putPosition(row, serverUnit);
+        row.put("crippled", Boolean.toString(serverUnit.isCrippled(true)));
+        row.put("withdrawing", Boolean.toString(bot.getForcedWithdrawalTracker().isWithdrawing(botUnit)));
         BehaviorType behaviour = bot.getUnitBehaviorTracker().getCachedBehaviorType(botUnit);
-        boolean withdrawing = bot.getForcedWithdrawalTracker().isWithdrawing(botUnit);
-        BehaviorSettings settings = bot.getBehaviorSettings();
-        boolean fleeOrdered = settings.shouldAutoFlee() && (settings.getDestinationEdge() != CardinalEdge.NONE);
-        String fleeEdge = fleeOrdered ? settings.getDestinationEdge().name() : "";
-
-        String rule = "";
-        String detail = "";
+        row.put("behaviour", (behaviour == null) ? "" : behaviour.name());
         if (STAGE_END.equals(stage)) {
             String[] decision = decisionsByUnitAndRound.get(serverUnit.getId() + ":" + round);
             if (decision != null) {
-                rule = decision[0];
-                detail = decision[1];
+                row.put("rule", decision[0]);
+                row.put("detail", decision[1]);
             }
         }
-        writeRow(stage, round, Integer.toString(serverUnit.getId()), serverUnit.getDisplayName(), bot.getName(),
-              col, row, Integer.toString(serverUnit.getFacing()), Boolean.toString(serverUnit.isCrippled(true)),
-              Boolean.toString(withdrawing), (behaviour == null) ? "" : behaviour.name(), rule, detail,
-              ScenarioOrderScript.toHexNumber(orderApplier.headWaypoint(bot, botUnit)), fleeEdge,
-              settings.getRetreatEdge().name(), homeEdge(bot, botUnit), "", "", "");
+        BehaviorSettings settings = bot.getBehaviorSettings();
+        boolean fleeOrdered = settings.shouldAutoFlee() && (settings.getDestinationEdge() != CardinalEdge.NONE);
+        row.put("fleeEdge", fleeOrdered ? settings.getDestinationEdge().name() : "");
+        row.put("retreatEdge", settings.getRetreatEdge().name());
+        row.put("homeEdge", homeEdge(bot, botUnit));
+
+        OrderSnapshot orders = orderApplier.snapshot(bot, botUnit);
+        row.put("headWaypoint", ScenarioOrderScript.toHexNumber(orders.headWaypoint()));
+        StringJoiner route = new StringJoiner(" ");
+        for (Coords waypoint : orders.route()) {
+            route.add(ScenarioOrderScript.toHexNumber(waypoint));
+        }
+        row.put("route", route.toString());
+        row.put("priority", orders.priority());
+        row.put("paused", Boolean.toString(orders.paused()));
+        row.put("stopped", Boolean.toString(orders.stopped()));
+        row.put("edgeOrder", orders.edgeOrder());
+        row.put("edge", orders.edge());
+        row.put("facingMoving", Integer.toString(orders.facingMoving()));
+        row.put("facingStopped", Integer.toString(orders.facingStopped()));
+        writeRow(row);
     }
 
     /**
@@ -231,17 +251,36 @@ public class BotOrderRecorder implements AutoCloseable {
                 steps.add((step.coords().getX() + 1) + "," + (step.coords().getY() + 1) + "," + step.facing());
             }
         }
-        writeRow(STAGE_PATH, round, Integer.toString(unit.getId()), unit.getDisplayName(), "", "", "", "", "", "",
-              "", "", steps.toString(), "", "", "", "", "", "", "");
+        Map<String, String> row = newRow(STAGE_PATH, round);
+        row.put("unitId", Integer.toString(unit.getId()));
+        row.put("name", unit.getDisplayName());
+        row.put("detail", steps.toString());
+        writeRow(row);
     }
 
-    private void writeRow(String stage, int round, String unitId, String name, String owner, String col, String row,
-          String facing, String crippled, String withdrawing, String behaviour, String rule, String detail,
-          String headWaypoint, String fleeEdge, String retreatEdge, String homeEdge, String orderAction,
-          String orderArgs, String note) {
-        writer.println(String.join("\t", Integer.toString(gameNumber), stage, Integer.toString(round), unitId,
-              clean(name), clean(owner), col, row, facing, crippled, withdrawing, behaviour, rule, clean(detail),
-              headWaypoint, fleeEdge, retreatEdge, homeEdge, orderAction, clean(orderArgs), clean(note)));
+    private Map<String, String> newRow(String stage, int round) {
+        Map<String, String> row = new LinkedHashMap<>();
+        row.put("game", Integer.toString(gameNumber));
+        row.put("stage", stage);
+        row.put("round", Integer.toString(round));
+        return row;
+    }
+
+    private static void putPosition(Map<String, String> row, Entity unit) {
+        Coords position = unit.getPosition();
+        if (position != null) {
+            row.put("col", Integer.toString(position.getX() + 1));
+            row.put("row", Integer.toString(position.getY() + 1));
+            row.put("facing", Integer.toString(unit.getFacing()));
+        }
+    }
+
+    private void writeRow(Map<String, String> row) {
+        StringJoiner line = new StringJoiner("\t");
+        for (String column : COLUMNS) {
+            line.add(clean(row.getOrDefault(column, "")));
+        }
+        writer.println(line);
         writer.flush();
     }
 
@@ -289,11 +328,22 @@ public class BotOrderRecorder implements AutoCloseable {
         if ((message == null) || !message.startsWith("[BotOrders]")) {
             return;
         }
-        Matcher matcher = DECISION_PATTERN.matcher(message);
-        if (matcher.matches()) {
+        Matcher decisionMatcher = DECISION_PATTERN.matcher(message);
+        if (decisionMatcher.matches()) {
             synchronized (this) {
-                decisionsByUnitAndRound.put(matcher.group(1) + ":" + matcher.group(2),
-                      new String[] { matcher.group(3), matcher.group(4) });
+                decisionsByUnitAndRound.put(decisionMatcher.group(1) + ":" + decisionMatcher.group(2),
+                      new String[] { decisionMatcher.group(3), decisionMatcher.group(4) });
+            }
+            return;
+        }
+        Matcher eventMatcher = EVENT_PATTERN.matcher(message);
+        if (eventMatcher.matches()) {
+            synchronized (this) {
+                Map<String, String> row = newRow(STAGE_EVENT, currentRound.getAsInt());
+                row.put("unitId", eventMatcher.group(2));
+                row.put("name", eventMatcher.group(1));
+                row.put("detail", eventMatcher.group(3));
+                writeRow(row);
             }
         }
     }
@@ -306,8 +356,8 @@ public class BotOrderRecorder implements AutoCloseable {
             configuration.addAppender(decisionCapture);
             LoggerConfig loggerConfig = configuration.getLoggerConfig(CAPTURED_LOGGER);
             if (!loggerConfig.getName().equals(CAPTURED_LOGGER)) {
-                // give UnitBehavior its own config so INFO reaches the capture even under an ERROR-level parent,
-                // without hiding DEBUG lines the parent would have written
+                // give the bot loggers their own config so INFO reaches the capture even under an ERROR-level
+                // parent, without hiding DEBUG lines the parent would have written
                 Level parentLevel = loggerConfig.getLevel();
                 Level level = parentLevel.isLessSpecificThan(Level.INFO) ? parentLevel : Level.INFO;
                 LoggerConfig ownConfig = new LoggerConfig(CAPTURED_LOGGER, level, true);

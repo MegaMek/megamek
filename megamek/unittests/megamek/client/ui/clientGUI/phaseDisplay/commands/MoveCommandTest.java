@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,7 +33,12 @@
 package megamek.client.ui.clientGUI.phaseDisplay.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
+
+import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
 import megamek.client.ui.panels.phaseDisplay.commands.MoveCommand;
 import org.junit.jupiter.api.Test;
 
@@ -93,5 +98,23 @@ class MoveCommandTest {
     @Test
     void testDefaultHotKeyString() {
         assertEquals("<BR>U", MoveCommand.MOVE_GET_UP.getHotKeyDesc());
+    }
+
+    /**
+     * Issue #9046: a LAM in AirMek mode that crashes lands prone and must be able to get up (IO:AE p.108), so the
+     * AirMek button set has to include Get Up.
+     */
+    @Test
+    void airMekButtonsIncludeGetUp() {
+        int airMekFlag = MovementDisplay.CMD_TANK | MovementDisplay.CMD_CONVERTER | MovementDisplay.CMD_AIR_MEK;
+
+        assertTrue(List.of(MoveCommand.values(airMekFlag, null, false)).contains(MoveCommand.MOVE_GET_UP));
+    }
+
+    /** The control: an ordinary vehicle still has no Get Up button. */
+    @Test
+    void vehicleButtonsDoNotIncludeGetUp() {
+        assertFalse(List.of(MoveCommand.values(MovementDisplay.CMD_TANK, null, false))
+              .contains(MoveCommand.MOVE_GET_UP));
     }
 }

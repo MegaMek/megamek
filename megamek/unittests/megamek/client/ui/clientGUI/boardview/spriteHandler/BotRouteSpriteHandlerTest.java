@@ -48,6 +48,7 @@ import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,6 +61,9 @@ import org.junit.jupiter.api.Test;
 class BotRouteSpriteHandlerTest {
 
     private static final int OUR_TEAM = 1;
+    private static final int AUTO = UnitOrders.FACING_AUTO;
+    private static final int NORTH = 0;
+    private static final int NORTH_EAST = 1;
     private static final int ENEMY_TEAM = 2;
     private static final Coords FIRST_WAYPOINT = Coords.parseHexNumber("1623");
     private static final Coords SECOND_WAYPOINT = Coords.parseHexNumber("1615");
@@ -117,8 +121,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H +2", 1),
-              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H +2", 2)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H +2", 1, AUTO, 0),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H +2", 2, AUTO, 0)), flags);
     }
 
     @Test
@@ -128,8 +132,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1),
-              new RouteFlag(SECOND_WAYPOINT, 0, 1, "CN9-A", 1)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1, AUTO, 0),
+              new RouteFlag(SECOND_WAYPOINT, 0, 1, "CN9-A", 1, AUTO, 0)), flags);
     }
 
     @Test
@@ -138,5 +142,18 @@ class BotRouteSpriteHandlerTest {
         unit(2, "TBR-A", enemyBot, UnitOrders.NONE.withRoute(List.of(SECOND_WAYPOINT)));
 
         assertTrue(BotRouteSpriteHandler.routeFlags(units, human).isEmpty());
+    }
+
+    @Test
+    void aFlagShowsTheWaypointsHoldAndFacing() {
+        unit(1, "GHR-5H", ourBot, UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT, SECOND_WAYPOINT),
+              List.of(new WaypointOrder(NORTH_EAST, 2), new WaypointOrder(NORTH, 0))));
+
+        List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
+
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", 1, NORTH_EAST, 2),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H", 2, NORTH, 0)), flags);
+        assertEquals("1 hold 2", flags.get(0).progressText());
+        assertEquals("2", flags.get(1).progressText());
     }
 }

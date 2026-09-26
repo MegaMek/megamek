@@ -125,42 +125,39 @@ class FormationFollowerTest {
     }
 
     @Test
-    void aFollowerStandsInItsSlotBesideTheLeader() {
+    void aFollowersTargetIsItsSlotAroundTheLeadersWaypoint() {
         member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
 
-        // heading north toward the waypoint, the Echelon Right steps back south-east
-        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
+        // heading north to the waypoint, the Echelon Right forms there, stepping back south-east
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
     @Test
-    void aFollowerMovingBeforeItsLeaderLinesUpOnWhereTheLeaderIsGoing() {
-        // Units move one at a time; lining up on the leader's current hex leaves a follower a move behind.
+    void theSlotStaysPutWhileTheLeaderMoves() {
+        // HammerGS's playtest: slots worked out around the leader's moving hex left the Wedge bunched up and drifting.
+        // The slot is fixed by where the leader is going, so each unit has one hex to make for all the way.
         game.setPhase(GamePhase.MOVEMENT);
         BipedMek leader = member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
-        Coords projectedLeader = LEADER_HEX.translated(NORTH, 3);
+        Optional<Coords> slot = princess.getUnitOrdersFollower().getFormationSlot(second);
 
-        assertEquals(Optional.of(projectedLeader.translated(SOUTH_EAST, 2)),
-              princess.getUnitOrdersFollower().getFormationSlot(second));
-
+        leader.setPosition(LEADER_HEX.translated(NORTH, 3));
         leader.setDone(true);
-        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
-              princess.getUnitOrdersFollower().getFormationSlot(second));
+
+        assertEquals(slot, princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
     @Test
-    void theProjectionDoesNotCrossDeepWater() {
-        // A projected leader hex across a river put every slot on the far bank and folded the formation (test games).
-        game.setPhase(GamePhase.MOVEMENT);
-        for (int x = 0; x < WIDTH; x++) {
-            board.getHex(x, LEADER_HEX.getY() - 2).addTerrain(new Terrain(Terrains.WATER, 3));
-        }
-        member(20, LEADER_HEX, 0, 3);
+    void atAWaypointPartWayTheShapeFacesTheNextLeg() {
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)));
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
 
-        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
+        // facing south-east for the next leg, Echelon Right steps back two facings round, to the south-west
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_WEST, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
@@ -176,7 +173,7 @@ class FormationFollowerTest {
     void aBlockedSlotTakesTheBestHexNextToIt() {
         member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
-        Coords ideal = LEADER_HEX.translated(SOUTH_EAST, 2);
+        Coords ideal = NORTH_WAYPOINT.translated(SOUTH_EAST, 2);
         board.getHex(ideal).setLevel(CLIFF_LEVEL);
         board.getHex(ideal).addTerrain(new Terrain(Terrains.IMPASSABLE,
               1));
@@ -190,15 +187,15 @@ class FormationFollowerTest {
     void aFormationThatCannotFitFoldsIntoAColumn() {
         member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
-        // wall off everything south-east of the leader, leaving the column behind it open
-        for (int x = LEADER_HEX.getX() + 1; x < WIDTH; x++) {
+        // wall off everything east of the waypoint, leaving the column behind it open
+        for (int x = NORTH_WAYPOINT.getX() + 1; x < WIDTH; x++) {
             for (int y = 0; y < HEIGHT; y++) {
                 board.getHex(x, y).addTerrain(new Terrain(
                       Terrains.IMPASSABLE, 1));
             }
         }
 
-        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH, 2)),
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
@@ -247,6 +244,7 @@ class FormationFollowerTest {
     void aFormationFormsAtTheEndOfItsRouteInsteadOfStoppingWhereItStands() {
         // HammerGS's playtest: an Echelon Left whose one waypoint was already within 3 hexes of every unit stopped
         // where it stood, roughly abreast, because every unit counted the waypoint itself as "arrived".
+        // Now the leader ends on the waypoint and the follower in its slot around it.
         Coords waypoint = Coords.parseHexNumber("0906");
         FormationOrder echelonLeft = new FormationOrder(FormationShape.ECHELON_LEFT, 20, 2, 0, FormationPace.WALK,
               ContactRule.HOLD);
@@ -258,13 +256,17 @@ class FormationFollowerTest {
               .withFormation(new FormationOrder(FormationShape.ECHELON_LEFT, 20, 2, 1, FormationPace.WALK,
                     ContactRule.HOLD)));
 
-        assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(wolverine));
+        // the leader has to stand on its waypoint exactly, since the shape is laid out around that hex
+        assertFalse(princess.getUnitOrdersFollower().isAtRouteEnd(wolverine));
+        assertEquals(0, princess.getUnitOrdersFollower().arrivalRadius(wolverine));
         assertFalse(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
-        // the leader faces north when stopped, so Echelon Left steps back to the south-west
-        Coords slot = Coords.parseHexNumber("1206").translated(SOUTH_WEST, 2);
+        // the leader faces north when stopped, so Echelon Left steps back to the south-west of the waypoint
+        Coords slot = waypoint.translated(SOUTH_WEST, 2);
         assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getFormationSlot(firestarter));
 
+        wolverine.setPosition(waypoint);
         firestarter.setPosition(slot);
+        assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(wolverine));
         assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
     }
 

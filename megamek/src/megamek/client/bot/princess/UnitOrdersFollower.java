@@ -102,9 +102,12 @@ public class UnitOrdersFollower {
     private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
 
     /**
-     * A formation unit's worked-out slot, kept until the round or its leader's position changes.
+     * A formation unit's worked-out slot, kept while the leader's waypoint and the formation's heading stay the same.
      */
-    private record SlotChoice(int round, Coords leaderPosition, boolean hasLeaderMoved, @Nullable Coords slot) {}
+    private record SlotChoice(Coords anchor, int heading, @Nullable Coords slot) {}
+
+    /** The heading a formation takes at its final waypoint when no stopped facing is ordered, fixed once seen. */
+    private final Map<String, Integer> finalHeadings = new HashMap<>();
 
     /**
      * @param owner the bot whose units follow orders
@@ -142,7 +145,8 @@ public class UnitOrdersFollower {
     /**
      * @param entity a unit of the bot
      *
-     * @return {@code true} if the unit is within {@link Princess#DISTANCE_TO_WAYPOINT} of the last hex of its route
+     * @return {@code true} if the unit is within {@link Princess#DISTANCE_TO_WAYPOINT} of the last hex of its route;
+     *       a formation's leader must stand on that hex, and its other units in their slots around it
      */
     public boolean isAtRouteEnd(Entity entity) {
         List<Coords> route = entity.getUnitOrders().getRoute();
@@ -157,7 +161,8 @@ public class UnitOrdersFollower {
             return isAtRouteEnd(leader.get()) && slot.isPresent()
                   && (entity.getPosition().distance(slot.get()) <= FORMATION_SLACK);
         }
-        return entity.getPosition().distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT;
+        int arrivalRadius = isLeadingFormationToLastWaypoint(entity) ? 0 : Princess.DISTANCE_TO_WAYPOINT;
+        return entity.getPosition().distance(route.get(0)) <= arrivalRadius;
     }
 
     /**
@@ -442,7 +447,7 @@ public class UnitOrdersFollower {
                 LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
                       waypoint.get().getBoardNum());
                 change(entity, UnitOrderAction.REACHED);
-            } else if (arrivedUnitIds.add(entity.getId())) {
+            } else if (isAtRouteEnd(entity) && arrivedUnitIds.add(entity.getId())) {
                 // the last hex stays in the route: the unit holds it and comes back to it after a fight
                 LOGGER.info("[BotOrders] {} (ID {}) reached the end of its route at {}", entity.getDisplayName(),
                       entity.getId(), waypoint.get().getBoardNum());
@@ -455,8 +460,10 @@ public class UnitOrdersFollower {
 
 
     /**
-     * The hex a formation unit should head for this move: its slot beside the formation's leader. Empty for a unit
-     * not in a formation, for the unit leading it, and while a formation that breaks on contact has an enemy near.
+     * The hex a formation unit heads for: its slot around the hex its leader is heading for, laid out along the
+     * leader's heading. It stays the same while the leader moves, so each unit has one fixed hex to make for.
+     * Empty for a unit not in a formation, for the unit leading it, and while a formation that breaks on contact has an
+     * enemy near.
      *
      * <p>If the slot hex is blocked - off the board, somewhere the unit cannot go, or across deep water from the
      * leader - the unit takes the best hex within {@link #FORMATION_SLACK}. If none will do, the formation folds into
@@ -486,48 +493,66 @@ public class UnitOrdersFollower {
                   entity.getId(), contactRange, leader.getDisplayName());
             return Optional.empty();
         }
+        Optional<Coords> leaderWaypoint = leader.getUnitOrders().getNextWaypoint();
+        Coords anchor = leaderWaypoint.orElse(leader.getPosition());
+        int heading = formationHeading(leader, anchor);
         SlotChoice cached = slotChoices.get(entity.getId());
-        if ((cached != null) && (cached.round() == currentRound())
-              && cached.leaderPosition().equals(leader.getPosition()) && (cached.hasLeaderMoved() == leader.isDone())) {
+        if ((cached != null) && cached.anchor().equals(anchor) && (cached.heading() == heading)) {
             return Optional.ofNullable(cached.slot());
         }
-        Coords slot = chooseSlot(entity, leader, members, formation.get(), members.indexOf(entity));
-        slotChoices.put(entity.getId(), new SlotChoice(currentRound(), leader.getPosition(), leader.isDone(), slot));
+        Coords slot = chooseSlot(entity, anchor, heading, formation.get(), members.indexOf(entity));
+        slotChoices.put(entity.getId(), new SlotChoice(anchor, heading, slot));
         return Optional.ofNullable(slot);
     }
 
-    private @Nullable Coords chooseSlot(Entity entity, Entity leader, List<Entity> members, FormationOrder formation,
+    /**
+     * The way the formation faces around its leader's waypoint: toward the next waypoint while more follow; at the
+     * last one, the leader's ordered stopped facing, or else the direction of the last leg, fixed the first time it is
+     * worked out so the shape does not swing as the leader closes in.
+     */
+    private int formationHeading(Entity leader, Coords anchor) {
+        List<Coords> leaderRoute = leader.getUnitOrders().getRoute();
+        if (leaderRoute.size() > 1) {
+            return anchor.direction(leaderRoute.get(1));
+        }
+        int stoppedFacing = leader.getUnitOrders().getFacingWhenStopped();
+        if (stoppedFacing != UnitOrders.FACING_AUTO) {
+            return stoppedFacing;
+        }
+        if (leaderRoute.isEmpty()) {
+            return leader.getFacing();
+        }
+        String key = leader.getId() + "|" + anchor.getBoardNum();
+        return finalHeadings.computeIfAbsent(key, ignored -> leader.getPosition().equals(anchor)
+              ? leader.getFacing() : leader.getPosition().direction(anchor));
+    }
+
+    /**
+     * Works out a unit's slot around its leader's waypoint. Each unit heads straight for its own slot, so the shape
+     * forms where the leader is going, with the full spacing, rather than trailing the leader's moving hex
+     * (HammerGS's playtest, 2026-09-26).
+     */
+    private @Nullable Coords chooseSlot(Entity entity, Coords anchor, int heading, FormationOrder formation,
           int slotIndex) {
         Board board = owner.getGame().getBoard(entity);
         if (board == null) {
             return null;
         }
-        Optional<Coords> leaderWaypoint = leader.getUnitOrders().getNextWaypoint()
-              .filter(waypoint -> !waypoint.equals(leader.getPosition()));
-        int heading = leaderWaypoint.map(leader.getPosition()::direction).orElse(leader.getFacing());
-        if (isAtRouteEnd(leader)) {
-            // once the leader has arrived, lay the shape out along its ordered stopped facing, or the way it faces,
-            // not toward a waypoint it is already standing next to
-            int stoppedFacing = leader.getUnitOrders().getFacingWhenStopped();
-            heading = (stoppedFacing != UnitOrders.FACING_AUTO) ? stoppedFacing : leader.getFacing();
-            leaderWaypoint = Optional.empty();
-        }
-        Coords leaderPosition = projectedLeaderPosition(leader, leaderWaypoint, heading, board,
-              paceLimit(members, formation.getPace()));
-        Coords ideal = FormationPlanner.idealSlot(leaderPosition, heading, formation.getShape(),
-              formation.getSpacing(), slotIndex);
-        Coords settled = settle(entity, board, leaderPosition, ideal);
+        Coords ideal = FormationPlanner.idealSlot(anchor, heading, formation.getShape(), formation.getSpacing(),
+              slotIndex);
+        Coords settled = settle(entity, board, anchor, ideal);
         if (settled != null) {
-            LOGGER.debug("[BotOrders] {} (ID {}): {} slot {} at {}", entity.getDisplayName(), entity.getId(),
-                  formation.getShape(), slotIndex, settled.getBoardNum());
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_SLOT - {} slot {} at {} (around {}, facing {})",
+                  entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
+                  settled.getBoardNum(), anchor.getBoardNum(), heading);
             return settled;
         }
-        Coords columnSlot = settle(entity, board, leaderPosition, FormationPlanner.idealSlot(leaderPosition, heading,
+        Coords columnSlot = settle(entity, board, anchor, FormationPlanner.idealSlot(anchor, heading,
               FormationShape.COLUMN, formation.getSpacing(), slotIndex));
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
-              (columnSlot == null) ? "the leader" : columnSlot.getBoardNum());
-        return (columnSlot == null) ? leaderPosition : columnSlot;
+              (columnSlot == null) ? anchor.getBoardNum() : columnSlot.getBoardNum());
+        return (columnSlot == null) ? anchor : columnSlot;
     }
 
     /**
@@ -607,34 +632,30 @@ public class UnitOrdersFollower {
     /**
      * @param entity a unit of the bot
      *
-     * @return how close counts as arrived: {@link #FORMATION_SLACK} for a formation slot, else
-     *       {@link Princess#DISTANCE_TO_WAYPOINT}
+     * @return how close counts as arrived: {@link #FORMATION_SLACK} for a formation slot, 0 for a formation's leader
+     *       at its last waypoint, else {@link Princess#DISTANCE_TO_WAYPOINT}
      */
     int arrivalRadius(Entity entity) {
-        return getFormationSlot(entity).isPresent() ? FORMATION_SLACK : Princess.DISTANCE_TO_WAYPOINT;
+        if (getFormationSlot(entity).isPresent()) {
+            return FORMATION_SLACK;
+        }
+        return isLeadingFormationToLastWaypoint(entity) ? 0 : Princess.DISTANCE_TO_WAYPOINT;
     }
 
     /**
-     * Where the leader will stand at the end of this movement phase. Units move one at a time, so a follower may move
-     * before its leader; lining up on the leader's current hex would leave it a full move behind once the leader goes.
-     * Until the leader has moved, it is expected to advance toward its next waypoint by the formation's pace; after
-     * that, its actual hex is used.
+     * A formation's leader must end on its last waypoint exactly, since the shape is laid out around that hex.
      *
-     * @return the hex the formation lines up on
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit leads a formation and is heading for the last hex of its route
      */
-    private Coords projectedLeaderPosition(Entity leader, Optional<Coords> leaderWaypoint, int heading, Board board,
-          int paceLimit) {
-        Coords leaderPosition = leader.getPosition();
-        if (leader.isDone() || leaderWaypoint.isEmpty() || !owner.getGame().getPhase().isMovement()) {
-            return leaderPosition;
+    boolean isLeadingFormationToLastWaypoint(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (entity.getUnitOrders().getRoute().size() != 1)) {
+            return false;
         }
-        int expectedAdvance = Math.min(paceLimit, leaderPosition.distance(leaderWaypoint.get()));
-        Coords projected = leaderPosition.translated(heading, expectedAdvance);
-        // a projection across deep water would put every slot on the far bank and fold the formation for nothing
-        if (!board.contains(projected) || !FormationSide.sameSide(board, leaderPosition, projected)) {
-            return leaderPosition;
-        }
-        return projected;
+        List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+        return (members.size() >= 2) && (members.get(0).getId() == entity.getId());
     }
 
     /**

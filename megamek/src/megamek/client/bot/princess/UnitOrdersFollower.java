@@ -444,6 +444,11 @@ public class UnitOrdersFollower {
                 continue;
             }
             if (entity.getUnitOrders().getRoute().size() > 1) {
+                if (getFormationSlot(entity).isPresent()) {
+                    // a unit in formation takes its route from its leader's; ticking off a waypoint it merely passed
+                    // near sent it on toward the next one, ahead of the formation (HammerGS's playtest, 2026-09-26)
+                    continue;
+                }
                 LOGGER.info("[BotOrders] {} (ID {}) reached waypoint {}", entity.getDisplayName(), entity.getId(),
                       waypoint.get().getBoardNum());
                 change(entity, UnitOrderAction.REACHED);

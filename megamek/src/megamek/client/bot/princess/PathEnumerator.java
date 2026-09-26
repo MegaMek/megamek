@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -389,7 +390,16 @@ public class PathEnumerator {
                       true);
                 break;
             case MoveToDestination:
-                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                // The hex the unit's moves are scored against: a formation unit's slot rather than its route's next
+                // waypoint. Aiming the long-range path at the waypoint while ranking by the slot left the unit no
+                // move that went to its slot (HammerGS's playtest, 2026-09-26).
+                Optional<Coords> activeWaypoint = getOwner().getUnitBehaviorTracker()
+                      .getActiveWaypoint(mover, getOwner());
+                if (activeWaypoint.isPresent()) {
+                    destinations.add(activeWaypoint.get());
+                    logger.info("[BotOrders] {} (ID {}): long-range path toward {}", mover.getDisplayName(),
+                          mover.getId(), activeWaypoint.get().getBoardNum());
+                }
                 if (destinations.isEmpty()) {
                     destinations = getOwner().getClusterTracker()
                           .getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);

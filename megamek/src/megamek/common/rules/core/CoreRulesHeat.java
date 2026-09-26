@@ -33,13 +33,13 @@ package megamek.common.rules.core;
  */
 
 
+import java.util.ArrayList;
+
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.rules.RulesHeat;
-
-import java.util.ArrayList;
 
 public class CoreRulesHeat extends RulesHeat {
 
@@ -50,6 +50,16 @@ public class CoreRulesHeat extends RulesHeat {
     @Override
     public int standingHeat() {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * The Core Rules roll against the plain Avoid number, Core p.103; Avoiding Shutdown is a Tactical Operations
+     * rule that the Core Rules do not include.
+     */
+    @Override
+    public boolean usesAvoidingShutdown(boolean avoidingShutdownOption) {
+        return false;
     }
 
     /**

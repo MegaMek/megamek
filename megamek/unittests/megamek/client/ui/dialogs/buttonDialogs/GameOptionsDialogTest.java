@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
-import java.lang.reflect.InvocationTargetException;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -203,7 +203,8 @@ class GameOptionsDialogTest {
               OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
               OptionsConstants.ADVANCED_MINEFIELDS,
               OptionsConstants.ADVANCED_ALTERNATE_MASC,
-              OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
+              OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED,
+              OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN);
         GameOptions options = new GameOptions();
         Map<String, List<DialogOptionComponentYPanel>> optionComponents = new LinkedHashMap<>();
 

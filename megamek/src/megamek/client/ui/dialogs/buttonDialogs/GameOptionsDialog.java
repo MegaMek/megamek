@@ -60,8 +60,6 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.DocumentBuilder;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.DialogOptionListener;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
@@ -84,6 +82,7 @@ import megamek.common.units.Tank;
 import megamek.common.weapons.bayWeapons.capital.CapitalMissileBayWeapon;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
+import org.apache.commons.text.StringEscapeUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -101,7 +100,8 @@ public class GameOptionsDialog extends AbstractButtonDialog implements ActionLis
           OptionsConstants.INIT_FRONT_LOAD_INITIATIVE,
           OptionsConstants.ADVANCED_MINEFIELDS,
           OptionsConstants.ADVANCED_ALTERNATE_MASC,
-          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED);
+          OptionsConstants.ADVANCED_ALTERNATE_MASC_ENHANCED,
+          OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN);
 
     private ClientGUI clientGui;
     private JFrame frame;

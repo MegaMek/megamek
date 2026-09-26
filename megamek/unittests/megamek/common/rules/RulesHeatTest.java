@@ -18,8 +18,10 @@
  */
 package megamek.common.rules;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.rules.core.CoreRulesHeat;
 import megamek.common.rules.totalwarfare.TWRulesHeat;
@@ -39,5 +41,21 @@ class RulesHeatTest {
         assertNotNull(totalWarfare, "Total warfare rules implementation should be constructible.");
         assertInstanceOf(RulesHeat.class, core, "Core rules should extend the base rules type.");
         assertInstanceOf(RulesHeat.class, totalWarfare, "Total warfare rules should extend the base rules type.");
+    }
+
+    @Test
+    @DisplayName("total warfare follows the Avoiding Shutdown option")
+    void totalWarfareFollowsTheAvoidingShutdownOption() {
+        TWRulesHeat totalWarfare = new TWRulesHeat();
+
+        assertTrue(totalWarfare.usesAvoidingShutdown(true), "The TacOps rule applies when its option is on.");
+        assertFalse(totalWarfare.usesAvoidingShutdown(false), "Off by default, the plain Avoid number applies.");
+    }
+
+    @Test
+    @DisplayName("core rules never use Avoiding Shutdown")
+    void coreRulesNeverUseAvoidingShutdown() {
+        // Avoiding Shutdown is a Tactical Operations rule, which the Core Rules do not include (Core p.103).
+        assertFalse(new CoreRulesHeat().usesAvoidingShutdown(true));
     }
 }

@@ -33,15 +33,13 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import java.util.ArrayList;
+
 import megamek.common.CriticalSlot;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rules.RulesHeat;
-import megamek.common.units.Mek;
-
-import java.util.ArrayList;
 
 public class TWRulesHeat extends RulesHeat {
 
@@ -57,6 +55,15 @@ public class TWRulesHeat extends RulesHeat {
 
     /**
      * {@inheritDoc}
+     * Avoiding Shutdown is an optional Tactical Operations rule, TO:AR p.102.
+     */
+    @Override
+    public boolean usesAvoidingShutdown(boolean avoidingShutdownOption) {
+        return avoidingShutdownOption;
+    }
+
+    /**
+     * {@inheritDoc}
      * How does heat affect when life support is hit.
      */
     @Nullable
@@ -64,7 +71,7 @@ public class TWRulesHeat extends RulesHeat {
     public LifeSupportHeat checkLifeSupportHeat(int damageHeat,
           boolean torsoMountedCockpit,
           boolean mtHeat, boolean bPainShunt) {
-        
+
         int warriorDamage = (torsoMountedCockpit && !bPainShunt) ? 1 : 0;
         if ((damageHeat >= 47) && mtHeat) {
             // mekwarrior takes 5 damage

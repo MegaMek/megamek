@@ -79,8 +79,10 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.SettableHeat;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.InfantryAttack;
@@ -98,8 +100,14 @@ public class UnitDamagePanelBuilder {
 
     private static final MMLogger LOGGER = MMLogger.create(UnitDamagePanelBuilder.class);
 
-    /** The most heat that can be set, matching the range the lobby's heat menu offers. */
-    public static final int MAX_HEAT = 40;
+    /**
+     * The most heat that can be set on the standard scale, before dissipation.
+     *
+     * @deprecated use {@link SettableHeat#maximum(Game, int, int)}, which also covers the Expanded Heat Scale and the
+     *       unit's dissipation
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public static final int MAX_HEAT = SettableHeat.STANDARD_MAXIMUM;
 
     /**
      * The most hits a crew member can be given. Six hits kill (TW p.41), and a unit whose whole crew is dead is
@@ -668,7 +676,9 @@ public class UnitDamagePanelBuilder {
         if (!entity.tracksHeat()) {
             return;
         }
-        controls.spnHeat = new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1));
+        int currentHeat = Math.max(entity.heat, 0);
+        controls.spnHeat = new JSpinner(new SpinnerNumberModel(currentHeat, 0,
+              SettableHeat.maximum(entity.getGame(), currentHeat, entity.getHeatCapacityWithWater()), 1));
         controls.spnHeat.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.heat.tooltip")));
         addLabeledRow(targetPanel(heatLocation()), Messages.getString("UnitEditorDialog.heat"), controls.spnHeat);

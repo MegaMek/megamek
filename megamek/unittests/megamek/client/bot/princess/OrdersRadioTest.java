@@ -52,6 +52,7 @@ import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
+import megamek.server.commands.RadioCommand;
 import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -126,8 +127,9 @@ class OrdersRadioTest {
         princess.getOrdersRadio().report(atlas, "arrived", "1508");
         princess.getOrdersRadio().report(marauder, "arrived", "1508");
 
-        verify(princess, times(1)).sendChat("Command One: "
-              + Messages.getString("Princess.radio.INNER_SPHERE.arrived", "1508"), Level.INFO);
+        // the call goes to the server, which relays it to the bot's own side only, as a toast and a chat line
+        verify(princess, times(1)).sendChat(RadioCommand.commandText(atlas.getId(), "Command One: "
+              + Messages.getString("Princess.radio.INNER_SPHERE.arrived", "1508")), Level.INFO);
         verify(princess, times(1)).sendChat(anyString(), any(Level.class));
     }
 

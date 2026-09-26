@@ -289,6 +289,10 @@ class Trace:
             for track in self.units.values():
                 if track.owner == bot_row["owner"]:
                     track.orders.append(bot_row)
+        # ejected crew belong to the bot and inherit its flee order, but are not units anyone ordered
+        for unit_id in list(self.units.keys()):
+            if self.units[unit_id].name.startswith("Pilot ") or self.units[unit_id].name.startswith("Crew "):
+                del self.units[unit_id]
         for track in self.units.values():
             track.orders.sort(key=lambda order_row: int(order_row["round"]))
         rounds = set()
@@ -327,10 +331,13 @@ def analyse_unit(track, width, height):
     last_waypoint_ordered = None
     facing_orders = []  # (round, moving, stopped)
     for round_number in rounds:
+        actions_this_round = set()
         while order_index < len(orders) and int(orders[order_index]["round"]) <= round_number:
             order = orders[order_index]
             order_index += 1
             action = order["orderAction"]
+            if int(order["round"]) == round_number:
+                actions_this_round.add(action)
             arguments = order["orderArgs"].split()
             if action in ("WAYPOINTS", "ADD_WAYPOINTS"):
                 priority = ""
@@ -373,6 +380,9 @@ def analyse_unit(track, width, height):
         model_route = [coords for coords in model_route if coords is not None]
         start_route = [parse_hex_number(text) for text in (start_row or {}).get("route", "").split()]
         start_route = [coords for coords in start_route if coords is not None]
+        if actions_this_round & {"CLEAR", "STOP", "WAYPOINTS", "MOVE_TO_EDGE", "EXIT_BY_EDGE"}:
+            # the order came after the start snapshot; the start row still shows the old route
+            start_route = []
         priority = end_row.get("priority", "")
         facing_moving = int(end_row["facingMoving"]) if end_row.get("facingMoving") not in (None, "") else -1
         facing_stopped = int(end_row["facingStopped"]) if end_row.get("facingStopped") not in (None, "") else -1
@@ -394,7 +404,8 @@ def analyse_unit(track, width, height):
                 reason = describe(rule_label, detail, behaviour, home_edge) + "; moved while ordered to hold"
         elif has_model and edge_order not in ("", "NONE"):
             expected = edge_order + " " + edge
-            followed = rule.startswith(edge_order + "_EDGE") and not detail.startswith("no path")
+            followed = (rule.startswith(edge_order + "_EDGE") and not detail.startswith("no path")
+                        and behaviour != "NoPathToDestination")
             if not followed:
                 reason = describe(rule_label, detail, behaviour, home_edge)
         elif effective_flee:
@@ -409,7 +420,8 @@ def analyse_unit(track, width, height):
                 if has_model else (start_head or head)
             expected = "ROUTE " + (hex_number(*target) if target else "?") + ((" " + priority) if priority else "")
             if rule:
-                followed = rule in ("PLAYER_WAYPOINT", "PLAYER_ROUTE") and "no reachable" not in detail
+                followed = (rule in ("PLAYER_WAYPOINT", "PLAYER_ROUTE") and "no reachable" not in detail
+                            and behaviour != "NoPathToDestination")
             else:
                 followed = behaviour == "MoveToDestination" and not withdrawing
             if not followed:
@@ -468,6 +480,10 @@ def analyse_unit(track, width, height):
         "moved_away_rounds": sum(1 for verdict in verdicts.values()
                                  if verdict["followed"] and verdict["distance_before"] is not None
                                  and verdict["distance_after"] > verdict["distance_before"]),
+        "stalled_rounds": sum(1 for verdict in verdicts.values()
+                              if verdict["followed"] and verdict["distance_before"] is not None
+                              and verdict["distance_after"] == verdict["distance_before"]
+                              and not verdict["moved"]),
     }
     return verdicts, summary
 
@@ -497,6 +513,9 @@ def edge_in_detail(detail):
 
 
 def describe(rule_label, detail, behaviour, home_edge):
+    if behaviour == "NoPathToDestination" and not rule_label.startswith("NO_PATH"):
+        return (rule_label + (" - " + detail if detail else "") + "; but the bot found no move toward it this turn "
+                "(behaviour overridden to NoPathToDestination)")
     if detail:
         return rule_label + " - " + detail
     text = rule_label + " (behaviour " + (behaviour or "?") + ")"
@@ -1040,6 +1059,8 @@ def render_game(trace, board, output_path, label):
             distance_parts.append("%d to %s edge" % (summary["edge_distance"], summary["edge_history"][-1][2]))
         if summary["facing_misses"]:
             distance_parts.append("facing off in %d round(s)" % summary["facing_misses"])
+        if summary["stalled_rounds"]:
+            distance_parts.append("did not move toward its waypoint in %d round(s)" % summary["stalled_rounds"])
         if summary["moved_away_rounds"]:
             distance_parts.append("ended farther from its waypoint in %d round(s)" % summary["moved_away_rounds"])
         slot_offsets = []
@@ -1057,6 +1078,15 @@ def render_game(trace, board, output_path, label):
                     fold_count += 1
         if fold_count:
             distance_parts.append("folded to column %d time(s)" % fold_count)
+        dropped = []
+        for round_number_key, round_events in sorted(track.events.items()):
+            for event_text in round_events:
+                if "cannot be reached; dropping" in event_text:
+                    dropped.append("r%d %s" % (round_number_key, event_text.split()[1]))
+        if dropped:
+            distance_parts.append("waypoints dropped as unreachable: " + ", ".join(dropped))
+        summary["dropped_waypoints"] = dropped
+        summary["folds"] = fold_count
         distance_text = "; ".join(distance_parts) if distance_parts else "-"
         rules = ", ".join("%s x%d" % (rule, count) for rule, count in sorted(summary["rule_counts"].items()))
         verdict_class = "bad" if summary["overridden_rounds"] else "good"
@@ -1081,7 +1111,7 @@ def render_game(trace, board, output_path, label):
             distance_class = ""
             if verdict["distance_before"] is not None:
                 distance_text = "%d -> %d" % (verdict["distance_before"], verdict["distance_after"])
-                if verdict["distance_after"] > verdict["distance_before"]:
+                if verdict["distance_after"] >= verdict["distance_before"]:
                     distance_class = "warn"
             facing_class = "warn" if "ended" in verdict["facing_note"] else ""
             formation_text = "-"
@@ -1166,7 +1196,8 @@ leader's end hex)</th><th>Logged reason and events</th></tr>%(decisions)s
             "final_distance": summary["final_distance"], "flee_edge": summary["flee_edge"],
             "flee_distance": summary["flee_distance"], "gone": track.gone.get("note", "") if track.gone else "",
             "edge_distance": summary["edge_distance"], "facing_misses": summary["facing_misses"],
-            "moved_away_rounds": summary["moved_away_rounds"],
+            "moved_away_rounds": summary["moved_away_rounds"], "stalled_rounds": summary["stalled_rounds"],
+            "dropped_waypoints": summary.get("dropped_waypoints", []), "folds": summary.get("folds", 0),
             "overrides": [{"round": round_number, "expected": verdict["expected"], "reason": verdict["reason"]}
                           for round_number, verdict in verdicts.items() if verdict["followed"] is False],
         })

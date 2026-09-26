@@ -116,6 +116,20 @@ class ScenarioOrderScriptTest {
     }
 
     @Test
+    void parsesUnitListAndFormation() {
+        ScriptedOrder formation = ScenarioOrderScript.parseLine(
+              "round 0 | units 101 102 103 | formation WEDGE spacing 2 contact HOLD", 1);
+        ScriptedOrder off = ScenarioOrderScript.parseLine("round 3 | units 101 102 | formation off", 2);
+
+        assertEquals(TargetKind.UNIT_IDS, formation.targetKind());
+        assertEquals("101 102 103", formation.targetValue());
+        assertEquals(OrderAction.FORMATION, formation.action());
+        assertEquals(List.of("WEDGE", "spacing", "2", "contact", "HOLD"), formation.arguments());
+        assertEquals(List.of(101, 102, 103), ScriptedOrderDirector.listedUnitIds(formation));
+        assertEquals(OrderAction.FORMATION_OFF, off.action());
+    }
+
+    @Test
     void rejectsMalformedLines() {
         assertThrows(IllegalArgumentException.class,
               () -> ScenarioOrderScript.parseLine("round x | unit id 5 | clear", 1));

@@ -80,6 +80,8 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--label", default="")
     parser.add_argument("--games", type=int, default=3)
+    parser.add_argument("--first-game", type=int, default=1, help="number of the first game, to add to a set")
+    parser.add_argument("--no-render", action="store_true", help="collect traces only")
     parser.add_argument("--rounds", type=int, default=14)
     parser.add_argument("--timeout", type=int, default=25, help="minutes per game")
     parser.add_argument("--project", default=DEFAULT_PROJECT, help="the megamek project folder to run in")
@@ -97,14 +99,13 @@ def main():
         scenario_name = os.path.splitext(os.path.basename(scenario_path))[0]
         target_dir = os.path.join(arguments.out, scenario_name)
         os.makedirs(target_dir, exist_ok=True)
-        for game_number in range(1, arguments.games + 1):
+        for game_number in range(arguments.first_game, arguments.first_game + arguments.games):
             before = set(glob.glob(os.path.join(logs_dir, "ai_match_results_*")))
             started = time.time()
             command = ["java"] + JVM_OPTIONS + ["-cp", classpath, "megamek.utilities.AIMatchRunner",
                                                 os.path.relpath(scenario_path, project), "1",
                                                 str(arguments.rounds), str(arguments.timeout)]
-            print("running %s game %d/%d (%d rounds)" % (scenario_name, game_number, arguments.games,
-                                                          arguments.rounds), flush=True)
+            print("running %s game %d (%d rounds)" % (scenario_name, game_number, arguments.rounds), flush=True)
             console_path = os.path.join(target_dir, "%s_game%d_console.log" % (scenario_name, game_number))
             with open(console_path, "w", encoding="utf-8") as console:
                 subprocess.run(command, cwd=project, stdout=console, stderr=subprocess.STDOUT, check=False)
@@ -118,6 +119,8 @@ def main():
                     destination = os.path.join(target_dir, "%s_game%d_results.csv" % (scenario_name, game_number))
                 copy_with_game_number(new_file, destination, game_number)
             print("  finished in %d s, %d files" % (time.time() - started, len(new_files)), flush=True)
+    if arguments.no_render:
+        return
     if not all_traces:
         print("no traces produced", file=sys.stderr)
         sys.exit(1)

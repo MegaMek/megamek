@@ -53,9 +53,12 @@ class RulesHeatTest {
     }
 
     @Test
-    @DisplayName("core rules never use Avoiding Shutdown")
-    void coreRulesNeverUseAvoidingShutdown() {
-        // Avoiding Shutdown is a Tactical Operations rule, which the Core Rules do not include (Core p.103).
-        assertFalse(new CoreRulesHeat().usesAvoidingShutdown(true));
+    @DisplayName("core rules also follow the Avoiding Shutdown option")
+    void coreRulesAlsoFollowTheAvoidingShutdownOption() {
+        // The Core Rules have no such rule of their own (Core p.104), but the TacOps option can be played on top.
+        CoreRulesHeat core = new CoreRulesHeat();
+
+        assertTrue(core.usesAvoidingShutdown(true), "The TacOps rule applies when its option is on.");
+        assertFalse(core.usesAvoidingShutdown(false), "Off by default, the plain Avoid number applies.");
     }
 }

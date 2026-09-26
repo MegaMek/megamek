@@ -49,8 +49,9 @@ public abstract class RulesHeat {
 
     /**
      * Whether the optional Avoiding Shutdown rule (TO:AR p.102) is in play, which turns the roll to avoid a heat
-     * shutdown into a Piloting Skill Roll. It is a Tactical Operations rule, so only the Total Warfare ruleset
-     * offers it.
+     * shutdown into a Piloting Skill Roll. Both rulesets roll against the plain Avoid number by default; the rule is
+     * a Tactical Operations option that either can use, and each implementation cites where its own default comes
+     * from.
      *
      * @param avoidingShutdownOption the value of the Avoiding Shutdown game option
      *

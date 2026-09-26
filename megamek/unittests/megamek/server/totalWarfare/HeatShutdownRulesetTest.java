@@ -48,8 +48,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the server's shutdown roll against the game options and the ruleset, issue #9025: the Expanded Heat Scale no
- * longer brings in the Avoiding Shutdown rule, which has its own option and only the Total Warfare ruleset offers.
+ * Tests the server's shutdown roll against the game options under both rulesets, issue #9025: the Expanded Heat Scale
+ * no longer brings in the Avoiding Shutdown rule, which has its own option.
  */
 class HeatShutdownRulesetTest {
 
@@ -121,10 +121,18 @@ class HeatShutdownRulesetTest {
     }
 
     @Test
-    void theCoreRulesIgnoreTheAvoidingShutdownOption() {
+    void theCoreRulesUseThePlainAvoidNumberByDefault() {
+        Game.rulesManager = new CoreRulesManager();
+        setOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT, true);
+
+        assertEquals(4, shutdownTarget());
+    }
+
+    @Test
+    void theAvoidingShutdownOptionAlsoAppliesUnderTheCoreRules() {
         Game.rulesManager = new CoreRulesManager();
         setOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN, true);
 
-        assertEquals(4, shutdownTarget());
+        assertEquals(-1, shutdownTarget());
     }
 }

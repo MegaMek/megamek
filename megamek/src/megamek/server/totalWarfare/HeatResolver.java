@@ -1398,9 +1398,8 @@ class HeatResolver extends AbstractTWRuleHandler {
     }
 
     /**
-     * Returns the target number for a unit to avoid a heat shutdown under the rules in play. The Avoiding Shutdown
-     * rule (TO:AR p.102) applies only when its game option is on and the ruleset offers it: the Total Warfare ruleset
-     * does, the Core Rules do not.
+     * Returns the target number for a unit to avoid a heat shutdown under the rules in play. The ruleset in play
+     * decides whether the Avoiding Shutdown rule (TO:AR p.102) applies; both play it when its game option is on.
      *
      * @param entity         the unit rolling to avoid shutdown, at 14 heat or more
      * @param hotDogModifier how much the Hot Dog ability lowers the roll, or 0 without it

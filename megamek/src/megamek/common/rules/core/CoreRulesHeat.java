@@ -54,12 +54,12 @@ public class CoreRulesHeat extends RulesHeat {
 
     /**
      * {@inheritDoc}
-     * The Core Rules roll against the plain Avoid number, Core p.103; Avoiding Shutdown is a Tactical Operations
-     * rule that the Core Rules do not include.
+     * The Core Rules roll 2D6 against the Shutdown Avoid Target Number, Core p.104, and have no Avoiding Shutdown rule
+     * of their own. The Tactical Operations rule, TO:AR p.102, is still played on top of them when its option is on.
      */
     @Override
     public boolean usesAvoidingShutdown(boolean avoidingShutdownOption) {
-        return false;
+        return avoidingShutdownOption;
     }
 
     /**

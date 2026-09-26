@@ -55,7 +55,8 @@ public class TWRulesHeat extends RulesHeat {
 
     /**
      * {@inheritDoc}
-     * Avoiding Shutdown is an optional Tactical Operations rule, TO:AR p.102.
+     * Total Warfare rolls 2D6 against the Avoid number, TW p.102. Avoiding Shutdown is an optional Tactical Operations
+     * rule, TO:AR p.102, played when its option is on.
      */
     @Override
     public boolean usesAvoidingShutdown(boolean avoidingShutdownOption) {

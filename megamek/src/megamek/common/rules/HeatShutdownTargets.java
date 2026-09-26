@@ -39,12 +39,13 @@ import megamek.common.rolls.TargetRoll;
  * The target numbers for heat shutdown: the roll to avoid shutting down, and the roll to restart a unit that did.
  *
  * <p>Both start from the heat scale's Avoid number: 4+ at 14 heat, rising by 2 every 4 heat, to 12+ at 30 on the
- * standard scale (TW p.102) and on to 20+ at 46 on the Expanded Heat Scale (TO:AR p.102).</p>
+ * standard scale and on to 20+ at 46 on the Expanded Heat Scale (TO:AR p.102). The standard scale is the same in
+ * both rulesets: Total Warfare (TW p.102) and the Core Rules (Core p.103-104).</p>
  *
  * <p>The optional Avoiding Shutdown rule (TO:AR p.102) turns only the roll to <em>avoid</em> shutdown into a
  * Piloting Skill Roll: the Avoid number with a -5 modifier, then a modifier for the pilot's skill. It is its own
- * optional rule, used with or without the expanded scale, and never applies to restarting, which is always a plain
- * 2D6 roll against the Avoid number (TW p.102).</p>
+ * optional rule, used with or without the expanded scale and with either ruleset, and never applies to restarting,
+ * which is always a plain 2D6 roll against the Avoid number (TW p.102, Core p.105).</p>
  */
 public final class HeatShutdownTargets {
 
@@ -95,7 +96,7 @@ public final class HeatShutdownTargets {
 
     /**
      * Returns the target number to restart a unit shut down by heat: the Avoid number alone, since the Avoiding
-     * Shutdown rule covers only avoiding a shutdown (TW p.102, TO:AR p.102).
+     * Shutdown rule covers only avoiding a shutdown (TW p.102, Core p.105, TO:AR p.102).
      *
      * @param heat           the unit's heat, at least {@link #FIRST_SHUTDOWN_HEAT}
      * @param hotDogModifier how much the Hot Dog ability lowers the roll, or 0 without it

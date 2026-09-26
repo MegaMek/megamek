@@ -99,7 +99,7 @@ public class BotOrderRecorder implements AutoCloseable {
 
     /** Matches a decision line: "[BotOrders] name (ID 12) round 3: RULE - detail". */
     private static final Pattern DECISION_PATTERN =
-          Pattern.compile("^\\[BotOrders] .*\\(ID (\\d+)\\) round (\\d+): (\\S+) - (.*)$");
+          Pattern.compile("^\\[BotOrders] .*\\(ID (\\d+)\\) round (\\d+): (\\S+(?: over \\S+)?) - (.*)$");
 
     /** Matches other per-unit order lines, such as "[BotOrders] name (ID 12) reached waypoint 1508". */
     private static final Pattern EVENT_PATTERN = Pattern.compile("^\\[BotOrders] (.*) \\(ID (\\d+)\\):? (.*)$");

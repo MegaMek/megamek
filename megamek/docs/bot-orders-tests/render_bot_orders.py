@@ -289,6 +289,15 @@ class Trace:
             for track in self.units.values():
                 if track.owner == bot_row["owner"]:
                     track.orders.append(bot_row)
+        # older traces kept "RULE over OTHER - detail" decisions as events; put them back on the end rows
+        for track in self.units.values():
+            for round_number, round_events in track.events.items():
+                for event_text in round_events:
+                    match = re.match(r"^round (\d+): (\S+ over \S+) - (.*)$", event_text)
+                    end_row = track.ends.get(int(match.group(1))) if match else None
+                    if end_row is not None and not end_row.get("rule"):
+                        end_row["rule"] = match.group(2)
+                        end_row["detail"] = match.group(3)
         # ejected crew belong to the bot and inherit its flee order, but are not units anyone ordered
         for unit_id in list(self.units.keys()):
             if self.units[unit_id].name.startswith("Pilot ") or self.units[unit_id].name.startswith("Crew "):
@@ -424,7 +433,7 @@ def analyse_unit(track, width, height, threat_lookup=None):
             expected = "ROUTE " + (hex_number(*target) if target else "?") + ((" " + priority) if priority else "")
             if rule:
                 # at the last hex a unit holds it, or fights and then returns (ROUTE_END), as designed
-                followed = (rule in ("PLAYER_WAYPOINT", "PLAYER_ROUTE", "ROUTE_END", "HOLD")
+                followed = (rule.split(" ")[0] in ("PLAYER_WAYPOINT", "PLAYER_ROUTE", "ROUTE_END", "HOLD")
                             and "no reachable" not in detail and behaviour != "NoPathToDestination")
             else:
                 followed = behaviour == "MoveToDestination" and not withdrawing

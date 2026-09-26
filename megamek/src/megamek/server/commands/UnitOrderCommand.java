@@ -41,6 +41,10 @@ import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -78,6 +82,12 @@ public class UnitOrderCommand extends ClientServerCommand {
     public static final String FACING_WHILE_MOVING = "moving";
     public static final String FACING_WHEN_STOPPED = "stopped";
     public static final String PRIORITY = "priority";
+    public static final String SHAPE = "shape";
+    public static final String LEADER = "leader";
+    public static final String SPACING = "spacing";
+    public static final String SLOT = "slot";
+    public static final String PACE = "pace";
+    public static final String CONTACT = "contact";
 
     private static final int HIGHEST_FACING = 5;
 
@@ -97,7 +107,14 @@ public class UnitOrderCommand extends ClientServerCommand {
               new OptionalIntegerArgument(FACING_WHEN_STOPPED, Messages.getString("UnitOrder.cmd.stopped"),
                     UnitOrders.FACING_AUTO, HIGHEST_FACING),
               new OptionalEnumArgument<>(PRIORITY, Messages.getString("UnitOrder.cmd.priority"),
-                    OrderPriority.class));
+                    OrderPriority.class),
+              new OptionalEnumArgument<>(SHAPE, Messages.getString("UnitOrder.cmd.shape"), FormationShape.class),
+              new OptionalIntegerArgument(LEADER, Messages.getString("UnitOrder.cmd.leader")),
+              new OptionalIntegerArgument(SPACING, Messages.getString("UnitOrder.cmd.spacing"),
+                    FormationOrder.MINIMUM_SPACING, FormationOrder.MAXIMUM_SPACING),
+              new OptionalIntegerArgument(SLOT, Messages.getString("UnitOrder.cmd.slot"), 0, Integer.MAX_VALUE),
+              new OptionalEnumArgument<>(PACE, Messages.getString("UnitOrder.cmd.pace"), FormationPace.class),
+              new OptionalEnumArgument<>(CONTACT, Messages.getString("UnitOrder.cmd.contact"), ContactRule.class));
     }
 
     @Override
@@ -125,7 +142,8 @@ public class UnitOrderCommand extends ClientServerCommand {
 
         UnitOrders newOrders = action.apply(entity.getUnitOrders(), hexes,
               (edge == null) ? OffBoardDirection.NONE : edge,
-              facingWhileMoving, facingWhenStopped, priority, gameManager.getGame().getCurrentRound());
+              facingWhileMoving, facingWhenStopped, priority, gameManager.getGame().getCurrentRound(),
+              formationArgument(args, entity));
         entity.setUnitOrders(newOrders);
         LOGGER.info("[BotOrders] {} (ID {}) given {}: now {}", entity.getDisplayName(), entity.getId(), action,
               newOrders);
@@ -186,6 +204,25 @@ public class UnitOrderCommand extends ClientServerCommand {
             text.append(hexes.get(index).getBoardNum());
         }
         return text.toString();
+    }
+
+    /**
+     * @return the unit's place in a formation from the {@code shape}, {@code leader}, {@code spacing}, {@code slot},
+     *       {@code pace} and {@code contact} arguments, or {@code null} when no shape was given
+     */
+    private static @Nullable FormationOrder formationArgument(Arguments args, Entity entity) {
+        FormationShape shape = (FormationShape) args.get(SHAPE).getValue();
+        if (shape == null) {
+            return null;
+        }
+        int leaderId = args.get(LEADER, OptionalIntegerArgument.class).getValue().orElse(entity.getId());
+        int spacing = args.get(SPACING, OptionalIntegerArgument.class).getValue()
+              .orElse(FormationOrder.DEFAULT_SPACING);
+        int slot = args.get(SLOT, OptionalIntegerArgument.class).getValue().orElse(0);
+        FormationPace pace = (FormationPace) args.get(PACE).getValue();
+        ContactRule contactRule = (ContactRule) args.get(CONTACT).getValue();
+        return new FormationOrder(shape, leaderId, spacing, slot, (pace == null) ? FormationPace.WALK : pace,
+              (contactRule == null) ? ContactRule.BREAK : contactRule);
     }
 
     private static int facingArgument(Arguments args, String name) {

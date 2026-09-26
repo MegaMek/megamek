@@ -110,6 +110,7 @@ public class BotCommandsPanel extends JPanel {
     private MegaMekButton pauseContinue;
     private List<MegaMekButton> commandButtons = List.of();
     private BotOrdersMenuBuilder ordersMenuBuilder;
+    private BotFormationsMenuBuilder formationsMenuBuilder;
 
     /**
      * Bot Commands Panel constructor.
@@ -195,19 +196,22 @@ public class BotCommandsPanel extends JPanel {
               (orderDescription, singleHex, onPicked) -> pickTargetHexes(orderDescription, singleHex, 0,
                     "BotCommandPanel.WaypointPrompt.message", onPicked),
               this::acknowledgeOrder);
+        formationsMenuBuilder = new BotFormationsMenuBuilder(client, ordersMenuBuilder, this::acknowledgeOrder);
         pauseContinue = createButton("PauseGame");
         var orders = createButton("Orders");
         if (clientGUI != null) {
             ordersMenuBuilder.withUnitChooser((botPlayer, unitsByLance) -> chooseUnits(orders, botPlayer, unitsByLance))
                   .withFacingChooser(this::chooseFacings);
         }
+        var formations = createButton("Formations");
         var targets = createButton("Targets");
         var maneuver = createButton("Maneuver");
         var setBehavior = createButton("SetBehavior");
         var artillery = createButton("Artillery");
-        commandButtons = List.of(orders, targets, maneuver, setBehavior, artillery);
+        commandButtons = List.of(orders, formations, targets, maneuver, setBehavior, artillery);
 
         orders.addActionListener(evt -> showButtonPopup(orders, this::createOrdersPopup));
+        formations.addActionListener(evt -> showButtonPopup(formations, this::createFormationsPopup));
         targets.addActionListener(evt -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
@@ -217,6 +221,7 @@ public class BotCommandsPanel extends JPanel {
         // Add them to the buttonPanel. With 2 rows set, the grid grows columns as needed.
         this.add(pauseContinue);
         this.add(orders);
+        this.add(formations);
         this.add(targets);
         this.add(maneuver);
         this.add(setBehavior);
@@ -446,6 +451,14 @@ public class BotCommandsPanel extends JPanel {
      */
     private JPopupMenu createOrdersPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populate(botMenu, botPlayer, null),
+              this::hasOnBoardUnits);
+    }
+
+    /**
+     * The formation of each lance, or of all units: shape, spacing, leader, pace and what to do on contact.
+     */
+    private JPopupMenu createFormationsPopup() {
+        return createBotFirstPopup((botMenu, botPlayer) -> formationsMenuBuilder.populate(botMenu, botPlayer),
               this::hasOnBoardUnits);
     }
 

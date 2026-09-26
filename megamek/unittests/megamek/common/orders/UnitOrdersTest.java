@@ -195,6 +195,25 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aFormationSurvivesASaveAndLoadAndLeavesWithStop() {
+        BipedMek mek = new BipedMek();
+        FormationOrder formation = new FormationOrder(FormationShape.WEDGE, 12, 3, 2, FormationPace.RUN,
+              ContactRule.HOLD);
+        UnitOrders orders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX)).withFormation(formation);
+        mek.setUnitOrders(orders);
+
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(savedXml);
+
+        assertEquals(Optional.of(formation), restored.getUnitOrders().getFormation());
+        assertEquals(Optional.of(formation), orders.withRoute(List.of(SECOND_HEX)).getFormation());
+        assertTrue(apply(UnitOrderAction.STOP, orders, List.of()).getFormation().isEmpty());
+        assertTrue(apply(UnitOrderAction.FORMATION_OFF, orders, List.of()).getFormation().isEmpty());
+        assertThrows(IllegalArgumentException.class, () -> new FormationOrder(FormationShape.LINE, 12, 7, 0,
+              FormationPace.WALK, ContactRule.BREAK));
+    }
+
+    @Test
     void aUnitFromASaveMadeBeforeOrdersExistedHasNoOrders() {
         // Loading skips field initialisers, so a save without the element restores the field as null.
         BipedMek mek = new BipedMek();

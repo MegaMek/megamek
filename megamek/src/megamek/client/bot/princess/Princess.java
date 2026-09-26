@@ -3280,7 +3280,9 @@ public class Princess extends BotClient {
             // fall tolerance range between 0.50 and 1.0
             final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
 
-            final TreeSet<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(paths,
+            // a formation's leader keeps to the pace of its slowest unit
+            final List<MovePath> pacedPaths = getUnitOrdersFollower().limitToFormationPace(entity, paths);
+            final TreeSet<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(pacedPaths,
                   getGame(),
                   getMaxWeaponRange(entity),
                   fallTolerance,

@@ -1,0 +1,12 @@
+# Bot orders script for 9038-champion-waypoints.mms (read by AIMatchRunner / ScenarioGameRunner).
+# Format: round N | unit "name" / unit id N / bot "name" / all | action
+# Hexes are MegaMek hex numbers, column then row (1806 = column 18, row 6).
+
+# Round 0 is the first round of these scenario games (the game log's "Round #0"), so round 2 is the third.
+# Round 2: Champion 101 is crippled (both side torsos take internal damage), then both get a waypoint north.
+round 2 | unit id 101 | cripple
+round 2 | unit id 101 | waypoints 1806
+round 2 | unit id 102 | waypoints 2006
+
+# Round 4: the whole Lyran bot is ordered to flee NORTH (the panel's Movement > flee order).
+round 4 | bot "Lyran" | flee NORTH

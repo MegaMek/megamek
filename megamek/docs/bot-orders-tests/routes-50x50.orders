@@ -1,0 +1,24 @@
+# Bot orders script for routes-50x50.mms. Hexes are column then row (2412 = column 24, row 12).
+# Round 0 is the first round of these scenario games (the game log's "Round #0").
+
+# A1 Command: Marauder MAD-3R
+round 0 | unit id 101 | waypoints 1138 1729 2222 2312 2306
+# A1 Command: Archer ARC-2R
+round 0 | unit id 102 | waypoints 1238 1829 2322 2412 2406
+# A1 Command: Warhammer WHM-6R
+round 0 | unit id 103 | waypoints 1338 1929 2422 2512 2506
+# A1 Command: Rifleman RFL-3N
+round 0 | unit id 104 | waypoints 1438 2029 2522 2612 2606
+# A2 Battle: Wolverine WVR-6R
+round 0 | unit id 105 | waypoints 2140 2927 2910 2804
+# A2 Battle: Shadow Hawk SHD-2H
+round 0 | unit id 106 | waypoints 2240 3027 3010 2904
+# A2 Battle: Hunchback HBK-4G
+round 0 | unit id 107 | waypoints 2340 3127 3110 3004
+# A2 Battle: Enforcer ENF-4R
+round 0 | unit id 108 | waypoints 2440 3227 3210 3104
+
+# Round 5: a Battle lance unit on a route is crippled (the #9038 case at scale): it should keep its route.
+round 5 | unit id 106 | cripple
+# Round 8: the Command lance's Archer has its route cleared and should go back to its own AI.
+round 8 | unit id 102 | clear

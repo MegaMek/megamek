@@ -1,0 +1,16 @@
+# Bot orders script for routes-32x34.mms. Hexes are column then row (2826 = column 28, row 26).
+
+# Round 0 is the first round of these scenario games (the game log's "Round #0").
+# Wolverine: east bank of the lake, then north-west to the hills.
+round 0 | unit id 101 | waypoints 2826 3017 2408 2003
+# Jenner: straight through the lake (1614 is depth 1 water).
+round 0 | unit id 102 | waypoints 1822 1614 1208 0804
+# Marauder: long way round the west side of the lake.
+round 0 | unit id 103 | waypoints 1228 0521 0412 0606
+# Archer: follows the Marauder a little to the east.
+round 0 | unit id 104 | waypoints 1430 1124 0915 0908
+
+# Round 5: the Archer's route is cleared (it should go back to its own AI).
+round 5 | unit id 104 | clear
+# Round 6: the Wolverine gets one more waypoint added at the end of its route.
+round 6 | unit id 101 | add waypoints 1602

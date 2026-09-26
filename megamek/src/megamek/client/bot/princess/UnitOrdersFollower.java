@@ -693,14 +693,16 @@ public class UnitOrdersFollower {
     /**
      * The hex a formation member should deploy in: its slot beside the formation's leader, once the leader is on the
      * board. The slot comes from the member's place in the formation as set in the lobby, since an undeployed unit
-     * has no position yet. The shape faces the leader's first waypoint if it has a route, else the way the leader
-     * faces.
+     * has no position yet. The shape faces the leader's first waypoint if it has a route, else the middle of the
+     * board. Where the formation's own shape does not fit the deployment zone around the leader, the member takes
+     * its place in a Line abreast instead, and the formation forms its shape on the move.
      *
-     * @param entity a unit about to deploy
+     * @param entity     a unit about to deploy
+     * @param legalHexes the hexes the unit may deploy in
      *
      * @return the slot hex, or empty for a unit not in a formation, the leader itself, or a leader not yet deployed
      */
-    public Optional<Coords> getDeploymentSlot(Entity entity) {
+    public Optional<Coords> getDeploymentSlot(Entity entity, List<Coords> legalHexes) {
         Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
         if (formation.isEmpty() || (formation.get().getSlot() == 0)
               || (formation.get().getLeaderId() == entity.getId())) {
@@ -711,13 +713,16 @@ public class UnitOrdersFollower {
               || (leader.getBoardId() != entity.getBoardId())) {
             return Optional.empty();
         }
+        Board board = owner.getGame().getBoard(leader);
+        if (board == null) {
+            return Optional.empty();
+        }
         Coords leaderPosition = leader.getPosition();
-        int heading = leader.getUnitOrders().getNextWaypoint()
-              .filter(waypoint -> !waypoint.equals(leaderPosition))
-              .map(leaderPosition::direction)
-              .orElse(leader.getFacing());
-        return Optional.of(FormationPlanner.idealSlot(leaderPosition, heading, formation.get().getShape(),
-              formation.get().getSpacing(), formation.get().getSlot()));
+        int heading = deploymentHeading(leader, leaderPosition, board);
+        FormationShape shape = fittingDeploymentShape(formation.get(), leaderPosition, heading,
+              new HashSet<>(legalHexes), memberSlots(leader.getId())).orElse(formation.get().getShape());
+        return Optional.of(FormationPlanner.idealSlot(leaderPosition, heading, shape, formation.get().getSpacing(),
+              formation.get().getSlot()));
     }
 
     /**
@@ -731,7 +736,7 @@ public class UnitOrdersFollower {
      * @return the same hexes, nearest the slot first, or unchanged for a unit with no deployment slot
      */
     public List<Coords> preferDeploymentSlot(Entity entity, List<Coords> possibleDeployCoords) {
-        Optional<Coords> slot = getDeploymentSlot(entity);
+        Optional<Coords> slot = getDeploymentSlot(entity, possibleDeployCoords);
         if (slot.isEmpty()) {
             return possibleDeployCoords;
         }
@@ -741,6 +746,104 @@ public class UnitOrdersFollower {
               entity.getDisplayName(), entity.getId(), slot.get().getBoardNum(),
               ordered.isEmpty() ? "none" : ordered.get(0).getBoardNum());
         return ordered;
+    }
+
+    /**
+     * Keeps a formation leader's deployment hexes to those its formation fits around, so the members have room for
+     * their slots. A shallow zone along a board edge rarely has room for a Vee or a Wedge, whose arms reach several
+     * rows; then the leader takes a hex a Line abreast fits around, and the formation forms its shape on the move.
+     * The bot still picks among the fitting hexes by terrain.
+     *
+     * @param entity               the unit about to deploy
+     * @param possibleDeployCoords the legal deployment hexes, in the bot's own order
+     *
+     * @return the hexes the formation fits around, in the same order; unchanged for a unit that leads no formation,
+     *       or when the formation fits nowhere
+     */
+    public List<Coords> preferFormationFit(Entity entity, List<Coords> possibleDeployCoords) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (formation.get().getLeaderId() != entity.getId())) {
+            return possibleDeployCoords;
+        }
+        List<Integer> slots = memberSlots(entity.getId());
+        Board board = owner.getGame().getBoard(entity);
+        if (slots.isEmpty() || (board == null)) {
+            return possibleDeployCoords;
+        }
+        Set<Coords> legalHexes = new HashSet<>(possibleDeployCoords);
+        for (FormationShape shape : List.of(formation.get().getShape(), FormationShape.LINE)) {
+            List<Coords> fitting = new ArrayList<>();
+            for (Coords candidate : possibleDeployCoords) {
+                if (fits(shape, formation.get(), candidate, deploymentHeading(entity, candidate, board), legalHexes,
+                      slots)) {
+                    fitting.add(candidate);
+                }
+            }
+            if (!fitting.isEmpty()) {
+                LOGGER.info("[BotOrders] {} (ID {}): deploying to lead a {} ({} slots) - {} of {} legal hexes fit it{}",
+                      entity.getDisplayName(), entity.getId(), shape, slots.size(), fitting.size(),
+                      possibleDeployCoords.size(), (shape == formation.get().getShape()) ? ""
+                            : "; the zone is too shallow for a " + formation.get().getShape()
+                                  + ", so the formation forms it on the move");
+                return fitting;
+            }
+        }
+        LOGGER.info("[BotOrders] {} (ID {}): no legal hex fits a {} or a Line; deploying on terrain alone",
+              entity.getDisplayName(), entity.getId(), formation.get().getShape());
+        return possibleDeployCoords;
+    }
+
+    /**
+     * The way a formation faces while it deploys: toward its leader's first waypoint, else toward the middle of the
+     * board, the way the bot faces a unit it deploys with no enemy in sight.
+     */
+    private static int deploymentHeading(Entity leader, Coords leaderPosition, Board board) {
+        Optional<Coords> waypoint = leader.getUnitOrders().getNextWaypoint();
+        if (waypoint.isPresent() && !waypoint.get().equals(leaderPosition)) {
+            return leaderPosition.direction(waypoint.get());
+        }
+        Coords middle = new Coords(board.getWidth() / 2, board.getHeight() / 2);
+        return middle.equals(leaderPosition) ? leader.getFacing() : leaderPosition.direction(middle);
+    }
+
+    /**
+     * @return the formation's own shape if every member's slot around the leader hex is a legal deployment hex, else
+     *       a Line if that fits, else empty
+     */
+    private static Optional<FormationShape> fittingDeploymentShape(FormationOrder formation, Coords leaderPosition,
+          int heading, Set<Coords> legalHexes, List<Integer> slots) {
+        for (FormationShape shape : List.of(formation.getShape(), FormationShape.LINE)) {
+            if (fits(shape, formation, leaderPosition, heading, legalHexes, slots)) {
+                return Optional.of(shape);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static boolean fits(FormationShape shape, FormationOrder formation, Coords leaderPosition, int heading,
+          Set<Coords> legalHexes, List<Integer> slots) {
+        for (int slot : slots) {
+            Coords slotHex = FormationPlanner.idealSlot(leaderPosition, heading, shape, formation.getSpacing(), slot);
+            if (!legalHexes.contains(slotHex)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @return the slots of a formation's units other than its leader, deployed or not
+     */
+    private List<Integer> memberSlots(int leaderId) {
+        List<Integer> slots = new ArrayList<>();
+        for (Entity unit : owner.getGame().getEntitiesVector()) {
+            Optional<FormationOrder> unitFormation = unit.getUnitOrders().getFormation();
+            if (unitFormation.isPresent() && unitFormation.get().sharesLeader(leaderId)
+                  && (unitFormation.get().getSlot() != 0)) {
+                slots.add(unitFormation.get().getSlot());
+            }
+        }
+        return slots;
     }
 
     /**

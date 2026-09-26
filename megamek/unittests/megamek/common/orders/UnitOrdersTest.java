@@ -93,6 +93,17 @@ class UnitOrdersTest {
     }
 
     @Test
+    void skippingAnUnreachableLastWaypointDoesNotPauseTheUnit() {
+        // a waypoint dropped because it cannot be reached is not an arrival: the unit must not park (test games)
+        UnitOrders orders = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX));
+
+        UnitOrders skipped = apply(UnitOrderAction.SKIP, orders, List.of());
+
+        assertFalse(skipped.hasRoute());
+        assertFalse(skipped.isPaused());
+    }
+
+    @Test
     void reachingTheLastWaypointHoldsTheUnitThere() {
         UnitOrders orders = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX, SECOND_HEX));
 

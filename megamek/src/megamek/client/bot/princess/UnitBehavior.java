@@ -93,10 +93,8 @@ public class UnitBehavior {
         } else if (isFleeOrdered) {
             return edgeBehavior(entity, owner, "FLEE_ORDER", BehaviorType.MoveToDestination);
         } else if (entity.getUnitOrders().hasRoute()) {
-            while (getWaypointForEntity(entity).isPresent() &&
-                  owner.getClusterTracker()
-                        .getDestinationCoords(entity, getWaypointForEntity(entity).get(), true)
-                        .isEmpty()) {
+            while (getWaypointForEntity(entity).isPresent()
+                  && !owner.getUnitOrdersFollower().canReach(entity, getWaypointForEntity(entity).get())) {
                 owner.getUnitOrdersFollower().dropUnreachableWaypoint(entity);
             }
             if (getWaypointForEntity(entity).isPresent()) {
@@ -260,7 +258,7 @@ public class UnitBehavior {
     private List<Coords> reachableWaypoints(Entity entity, List<Coords> waypoints, Princess owner) {
         List<Coords> reachable = new ArrayList<>();
         for (Coords waypoint : waypoints) {
-            if (isDestinationValidForEntity(entity, waypoint, owner)) {
+            if (!owner.getUnitOrdersFollower().canReach(entity, waypoint)) {
                 // just discard any invalid waypoint
                 LOGGER.info("[BotOrders] {}: waypoint {} cannot be reached; not used", entity.getDisplayName(),
                       waypoint.getBoardNum());

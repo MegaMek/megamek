@@ -156,8 +156,9 @@ public class UnitOrdersFollower {
             // a formation unit's route ends in its slot beside the leader, once the leader has arrived; checking the
             // waypoint itself stopped the whole formation wherever it stood when the waypoint came within reach
             Optional<Coords> slot = getFormationSlot(entity);
-            return isAtRouteEnd(leader.get()) && slot.isPresent()
-                  && (entity.getPosition().distance(slot.get()) <= FORMATION_SLACK);
+            // exactly on the slot: a unit one hex off counted as arrived and held there, leaving the column
+            // ragged (HammerGS's playtest, 2026-09-26); a blocked slot has already moved to a free hex beside it
+            return isAtRouteEnd(leader.get()) && slot.isPresent() && entity.getPosition().equals(slot.get());
         }
         int arrivalRadius = isLeadingFormationToLastWaypoint(entity) ? 0 : Princess.DISTANCE_TO_WAYPOINT;
         return entity.getPosition().distance(route.get(0)) <= arrivalRadius;
@@ -452,9 +453,10 @@ public class UnitOrdersFollower {
                 change(entity, UnitOrderAction.REACHED);
             } else if (isAtRouteEnd(entity) && arrivedUnitIds.add(entity.getId())) {
                 // the last hex stays in the route: the unit holds it and comes back to it after a fight
+                String arrivalHex = entity.getPosition().getBoardNum();
                 LOGGER.info("[BotOrders] {} (ID {}) reached the end of its route at {}", entity.getDisplayName(),
-                      entity.getId(), waypoint.get().getBoardNum());
-                owner.getOrdersRadio().report(entity, "arrived", waypoint.get().getBoardNum());
+                      entity.getId(), arrivalHex);
+                owner.getOrdersRadio().report(entity, "arrived", arrivalHex);
             }
         }
         syncFollowerRoutes();
@@ -562,7 +564,7 @@ public class UnitOrdersFollower {
      * @return the ideal hex if the unit can stand there, else the best hex within {@link #FORMATION_SLACK} of it,
      *       else {@code null}
      */
-    private static @Nullable Coords settle(Entity entity, Board board, Coords leaderPosition, Coords ideal) {
+    private @Nullable Coords settle(Entity entity, Board board, Coords leaderPosition, Coords ideal) {
         if (isUsableSlot(entity, board, leaderPosition, ideal)) {
             return ideal;
         }
@@ -583,9 +585,26 @@ public class UnitOrdersFollower {
         return best;
     }
 
-    private static boolean isUsableSlot(Entity entity, Board board, Coords leaderPosition, Coords slot) {
+    private boolean isUsableSlot(Entity entity, Board board, Coords leaderPosition, Coords slot) {
         return board.contains(slot) && !slot.equals(leaderPosition) && !entity.isLocationProhibited(slot)
-              && FormationSide.sameSide(board, leaderPosition, slot);
+              && FormationSide.sameSide(board, leaderPosition, slot) && !isHeldByOutsider(entity, slot);
+    }
+
+    /**
+     * @return {@code true} if a unit from outside the formation stands on the hex. Formation members are left out:
+     *       they are on the move to their own slots.
+     */
+    private boolean isHeldByOutsider(Entity entity, Coords slot) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        for (Entity occupant : owner.getGame().getEntitiesVector(slot, entity.getBoardId())) {
+            Optional<FormationOrder> occupantFormation = occupant.getUnitOrders().getFormation();
+            boolean isMember = formation.isPresent() && occupantFormation.isPresent()
+                  && occupantFormation.get().sharesLeader(formation.get().getLeaderId());
+            if ((occupant.getId() != entity.getId()) && !isMember) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -635,14 +654,12 @@ public class UnitOrdersFollower {
     /**
      * @param entity a unit of the bot
      *
-     * @return how close counts as arrived: {@link #FORMATION_SLACK} for a formation slot, 0 for a formation's leader
-     *       at its last waypoint, else {@link Princess#DISTANCE_TO_WAYPOINT}
+     * @return how close counts as arrived: 0 for a formation slot and for a formation's leader at its last
+     *       waypoint, which must be reached exactly, else {@link Princess#DISTANCE_TO_WAYPOINT}
      */
     int arrivalRadius(Entity entity) {
-        if (getFormationSlot(entity).isPresent()) {
-            return FORMATION_SLACK;
-        }
-        return isLeadingFormationToLastWaypoint(entity) ? 0 : Princess.DISTANCE_TO_WAYPOINT;
+        boolean holdsExactHex = getFormationSlot(entity).isPresent() || isLeadingFormationToLastWaypoint(entity);
+        return holdsExactHex ? 0 : Princess.DISTANCE_TO_WAYPOINT;
     }
 
     /**

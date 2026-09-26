@@ -114,7 +114,7 @@ class OrdersRadioTest {
     void theVoiceFollowsTheForceAndTheSetting() {
         assertEquals(RadioVoice.INNER_SPHERE, princess.getOrdersRadio().voice());
 
-        princess.getOrdersRadio().setRadioChatter(false);
+        princess.getOrdersRadio().setRadioSetting(OrdersRadio.RadioSetting.OFF);
 
         assertEquals(RadioVoice.PLAIN, princess.getOrdersRadio().voice());
     }
@@ -129,5 +129,21 @@ class OrdersRadioTest {
         verify(princess, times(1)).sendChat("Command One: "
               + Messages.getString("Princess.radio.INNER_SPHERE.arrived", "1508"), Level.INFO);
         verify(princess, times(1)).sendChat(anyString(), any(Level.class));
+    }
+
+    @Test
+    void aBotNamedForComStarTalksLikeComStar() {
+        Princess comstar = spy(new Princess("ComStar Level II Alpha", UUID.randomUUID().toString(), 1));
+        doReturn(List.<Entity>of(atlas)).when(comstar).getEntitiesOwned();
+
+        assertEquals(RadioVoice.COMSTAR, comstar.getOrdersRadio().voice());
+        assertEquals("Command Lance, Adept One", OrdersRadio.callsign(atlas, commandLance, RadioVoice.COMSTAR));
+    }
+
+    @Test
+    void aVoiceThePlayerSetWins() {
+        princess.getOrdersRadio().setRadioSetting(OrdersRadio.RadioSetting.CLAN);
+
+        assertEquals(RadioVoice.CLAN, princess.getOrdersRadio().voice());
     }
 }

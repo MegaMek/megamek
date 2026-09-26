@@ -34,6 +34,7 @@ package megamek.client.bot.princess;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import megamek.client.bot.Messages;
@@ -66,11 +67,29 @@ public class OrdersRadio {
         /** Modern military radio talk with lance callsigns. */
         INNER_SPHERE,
         /** Clan radio talk: Stars and Points, no contractions. */
-        CLAN
+        CLAN,
+        /** ComStar and Word of Blake radio talk: Level IIs and Adepts, formal. */
+        COMSTAR
     }
 
+    /** The voice a player has set for the bot, or AUTO to let the bot work it out. */
+    public enum RadioSetting {
+        /** Work the voice out from the bot's name and units. */
+        AUTO,
+        /** Plain replies. */
+        OFF,
+        /** Always the Inner Sphere voice. */
+        INNER_SPHERE,
+        /** Always the Clan voice. */
+        CLAN,
+        /** Always the ComStar voice. */
+        COMSTAR
+    }
+
+    private static final List<String> COMSTAR_NAMES = List.of("comstar", "word of blake", "com guard", "wob");
+
     private final Princess owner;
-    private boolean isRadioChatterOn = true;
+    private RadioSetting setting = RadioSetting.AUTO;
     private final Set<String> spokenThisRound = new HashSet<>();
     private int spokenRound = -1;
 
@@ -82,25 +101,45 @@ public class OrdersRadio {
     }
 
     /**
-     * @param radioChatterOn {@code true} for radio calls, {@code false} for plain replies
+     * @param radioSetting the voice to use, or AUTO to let the bot work it out
      */
-    public void setRadioChatter(boolean radioChatterOn) {
-        isRadioChatterOn = radioChatterOn;
+    public void setRadioSetting(RadioSetting radioSetting) {
+        setting = radioSetting;
     }
 
     /**
-     * @return {@code true} if the bot answers with radio calls
+     * @return the voice setting
      */
-    public boolean isRadioChatterOn() {
-        return isRadioChatterOn;
+    public RadioSetting getRadioSetting() {
+        return setting;
     }
 
     /**
-     * @return the voice the bot uses: plain when radio chatter is off, else Clan when most of its units are Clan
+     * The voice the bot uses. A voice the player set wins. Otherwise a bot named for ComStar, the Word of Blake or the
+     * Com Guards talks like ComStar and one named for a Clan like a Clan - MegaMek players carry no faction, so the
+     * name is the best hint there is - and failing both, the bot talks like a Clan when most of its units are Clan.
+     *
+     * @return the voice
      */
     RadioVoice voice() {
-        if (!isRadioChatterOn) {
-            return RadioVoice.PLAIN;
+        RadioVoice chosenVoice = switch (setting) {
+            case OFF -> RadioVoice.PLAIN;
+            case INNER_SPHERE -> RadioVoice.INNER_SPHERE;
+            case CLAN -> RadioVoice.CLAN;
+            case COMSTAR -> RadioVoice.COMSTAR;
+            case AUTO -> null;
+        };
+        if (chosenVoice != null) {
+            return chosenVoice;
+        }
+        String botName = owner.getName().toLowerCase(Locale.ROOT);
+        for (String comstarName : COMSTAR_NAMES) {
+            if (botName.contains(comstarName)) {
+                return RadioVoice.COMSTAR;
+            }
+        }
+        if (botName.startsWith("clan ") || botName.contains(" clan ")) {
+            return RadioVoice.CLAN;
         }
         int clanUnits = 0;
         int allUnits = 0;
@@ -155,6 +194,9 @@ public class OrdersRadio {
               : String.valueOf(place + 1);
         if (voice == RadioVoice.CLAN) {
             return lance.getName() + ", Point " + placeWord;
+        }
+        if (voice == RadioVoice.COMSTAR) {
+            return lance.getName() + ", Adept " + placeWord;
         }
         String base = lance.getName().replaceAll("(?i)\\s+(lance|company|star|binary|level ii)$", "");
         return base + ' ' + placeWord;

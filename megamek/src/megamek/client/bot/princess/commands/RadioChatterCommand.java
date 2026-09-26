@@ -35,28 +35,29 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
+import megamek.client.bot.princess.OrdersRadio.RadioSetting;
 import megamek.client.bot.princess.Princess;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.BooleanArgument;
+import megamek.server.commands.arguments.EnumArgument;
 
 /**
- * Turns the bot's radio chatter on or off: with it on, the bot reports on its units' orders with short radio calls
- * and callsigns; with it off, it uses plain replies.
+ * Sets how the bot reports on its units' orders: AUTO (the default) works the radio voice out from the bot's name and
+ * units, OFF gives plain replies, and INNER_SPHERE, CLAN or COMSTAR fix the voice.
  */
 public class RadioChatterCommand implements ChatCommand {
-    private static final String ON = "on";
+    private static final String VOICE = "voice";
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(new BooleanArgument(ON, Messages.getString("Princess.command.radioChatter.on"), true));
+        return List.of(new EnumArgument<>(VOICE, Messages.getString("Princess.command.radioChatter.voice"),
+              RadioSetting.class, RadioSetting.AUTO));
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        boolean isOn = arguments.get(ON, BooleanArgument.class).getValue();
-        princess.getOrdersRadio().setRadioChatter(isOn);
-        princess.sendChat(Messages.getString(isOn ? "Princess.command.radioChatter.enabled"
-              : "Princess.command.radioChatter.disabled"));
+        RadioSetting setting = arguments.getEnum(VOICE, RadioSetting.class);
+        princess.getOrdersRadio().setRadioSetting(setting);
+        princess.sendChat(Messages.getString("Princess.command.radioChatter.set", setting.name()));
     }
 }

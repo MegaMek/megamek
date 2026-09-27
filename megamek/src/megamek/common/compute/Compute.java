@@ -1142,16 +1142,9 @@ public class Compute {
                   .getId())) || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
-                LosEffects los = LosEffects.calculateLOS(game, other, target, true);
-                ToHitData mods = los.losModifiers(game);
-                // If the target isn't spotted, can't target
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                      && !Compute.inVisualRange(game, los, other, target)
-                      && !Compute.inSensorRange(game, los, other, target, null)) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE,
-                          "outside of visual and sensor range");
-                }
-                los.setTargetCover(LosEffects.COVER_NONE);
+                ToHitData mods = isCameraSpotter && ReconCameraRules.isAerospaceCamera(other)
+                      ? new ToHitData() // the camera spot itself was the look from above; no line of sight to judge
+                      : spotterLineOfSightModifiers(game, other, target);
                 mods.append(Compute.getAttackerMovementModifier(game,
                       other.getId()));
 
@@ -1172,6 +1165,23 @@ public class Compute {
         }
 
         return spotter;
+    }
+
+    /**
+     * The line of sight modifiers a spotter adds to an indirect attack, impossible under double-blind when the spotter
+     * can neither see nor sense the target.
+     */
+    private static ToHitData spotterLineOfSightModifiers(Game game, Entity spotter, Targetable target) {
+        LosEffects los = LosEffects.calculateLOS(game, spotter, target, true);
+        ToHitData mods = los.losModifiers(game);
+        // If the target isn't spotted, can't target
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+              && !Compute.inVisualRange(game, los, spotter, target)
+              && !Compute.inSensorRange(game, los, spotter, target, null)) {
+            mods.addModifier(TargetRoll.IMPOSSIBLE,
+                  "outside of visual and sensor range");
+        }
+        return mods;
     }
 
     /**

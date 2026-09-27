@@ -32,6 +32,8 @@
  */
 package megamek.server.totalWarfare;
 
+import java.util.List;
+
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.ReconCameraSpotAction;
@@ -43,9 +45,10 @@ import megamek.common.units.ReconCameraRules;
 import megamek.logging.MMLogger;
 
 /**
- * Resolves Recon Camera spots by ground units at the end of the Off-Board phase (TO:AUE p.150). The spot is rolled like
- * a TAG shot from the same unit; on a hit the unit spots the target for LRM indirect fire for the rest of the turn, and
- * its side sees the target under double-blind. Every declaration uses up the unit's camera for the turn, hit or miss.
+ * Resolves the Recon Camera on the server (TO:AUE p.150). Camera spots are rolled at the end of the Off-Board phase; on a
+ * hit the unit spots the target for LRM indirect fire and artillery for the rest of the turn, and its side sees the
+ * target under double-blind. Aerospace units flying with the camera set to Reveal get their reveal rolls at the end of
+ * the Movement phase, against every hostile hidden unit below their flight. Either use takes the camera for the turn.
  */
 class ReconCameraHandler extends AbstractTWRuleHandler {
 
@@ -54,6 +57,8 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
     static final int REPORT_CAMERA_SPOTTED = 7160;
     static final int REPORT_CAMERA_MISSED = 7161;
     static final int REPORT_CAMERA_REFUSED = 7162;
+    static final int REPORT_CAMERA_REVEALED = 7163;
+    static final int REPORT_CAMERA_STAYED_HIDDEN = 7164;
 
     ReconCameraHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -108,6 +113,74 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
         if (isHit && gameManager.doBlind()) {
             gameManager.updateVisibilityIndicator(null);
         }
+    }
+
+    /**
+     * Gives every aerospace unit that flew with its camera set to Reveal this turn its reveal rolls: each hostile hidden
+     * unit below its flight path is revealed when its owner rolls the target number or more. Called at the end of the
+     * Movement phase.
+     */
+    void revealHiddenUnits() {
+        for (Entity camera : getGame().getEntitiesVector()) {
+            if (ReconCameraRules.canRevealHiddenUnits(camera)) {
+                revealBelow(camera);
+            }
+        }
+    }
+
+    private void revealBelow(Entity camera) {
+        // trying to reveal uses the camera for the turn: no spot and no other attack
+        camera.setReconCameraSpotResult(Entity.NONE);
+        List<Entity> hiddenUnits = ReconCameraRules.hiddenUnitsBelowFlightPath(getGame(), camera);
+        int revealed = 0;
+        for (Entity hiddenUnit : hiddenUnits) {
+            if (rollToReveal(camera, hiddenUnit)) {
+                revealed++;
+            }
+        }
+        LOGGER.debug("[ReconCamera] {}: flew in Reveal mode over {} hostile hidden unit(s), {} revealed",
+              camera.getShortName(), hiddenUnits.size(), revealed);
+    }
+
+    private boolean rollToReveal(Entity camera, Entity hiddenUnit) {
+        ToHitData targetNumber = ReconCameraRules.revealTargetNumber(getGame(), hiddenUnit);
+        Roll roll = rollReveal();
+        boolean isRevealed = roll.getIntValue() >= targetNumber.getValue();
+        LOGGER.trace("[ReconCamera] reveal roll for {}: needed {}, rolled {}", hiddenUnit.getShortName(),
+              targetNumber.getValue(), roll.getIntValue());
+        if (isRevealed) {
+            hiddenUnit.setHidden(false);
+            gameManager.entityUpdate(hiddenUnit.getId());
+            Report report = new Report(REPORT_CAMERA_REVEALED);
+            report.subject = camera.getId();
+            report.addDesc(camera);
+            report.add(hiddenUnit.getShortName());
+            report.add(hiddenUnit.getPosition().getBoardNum());
+            report.add(targetNumber.getValue());
+            report.add(targetNumber.getDesc());
+            report.add(roll.getIntValue());
+            addReport(report);
+        } else {
+            // only the hidden unit's owner learns of the roll; the camera side is not told something is there
+            Report report = new Report(REPORT_CAMERA_STAYED_HIDDEN, Report.PLAYER);
+            report.player = hiddenUnit.getOwnerId();
+            report.add(hiddenUnit.getShortName());
+            report.add(camera.getShortName());
+            report.add(targetNumber.getValue());
+            report.add(targetNumber.getDesc());
+            report.add(roll.getIntValue());
+            addReport(report);
+        }
+        return isRevealed;
+    }
+
+    /**
+     * Rolls 2D6 for a hidden unit under a camera. Package-private so a test can fix the result.
+     *
+     * @return the roll
+     */
+    Roll rollReveal() {
+        return Compute.rollD6(2);
     }
 
     /**

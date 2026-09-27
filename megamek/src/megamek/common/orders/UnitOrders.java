@@ -69,7 +69,7 @@ public final class UnitOrders implements Serializable {
 
     /** A unit with no orders. */
     public static final UnitOrders NONE = new UnitOrders(new ArrayList<>(), List.of(), NO_ROUND,
-          OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO, false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, null);
+          OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO, false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, null, null);
 
     private static final int FACING_COUNT = 6;
 
@@ -86,10 +86,13 @@ public final class UnitOrders implements Serializable {
     private final OffBoardDirection edge;
     private final int stopRound;
     private final FormationOrder formation;
+    // where a lance set to Break and fight stands after coming under fire, or null when it is not fighting; null in a
+    // save made before lances could break to fight
+    private final FightState fightState;
 
     private UnitOrders(List<Coords> route, List<WaypointOrder> waypointOrders, int holdSinceRound,
           OrderPriority priority, int facingWhileMoving, int facingWhenStopped, boolean paused, EdgeOrder edgeOrder,
-          OffBoardDirection edge, int stopRound, @Nullable FormationOrder formation) {
+          OffBoardDirection edge, int stopRound, @Nullable FormationOrder formation, @Nullable FightState fightState) {
         this.route = new ArrayList<>(route);
         this.waypointOrders = new ArrayList<>();
         for (int index = 0; index < route.size(); index++) {
@@ -105,6 +108,27 @@ public final class UnitOrders implements Serializable {
         this.edge = Objects.requireNonNull(edge);
         this.stopRound = stopRound;
         this.formation = formation;
+        this.fightState = fightState;
+    }
+
+    /**
+     * @return where the lance stands after coming under fire with Break and fight set, or empty when it is not
+     *       fighting
+     */
+    public Optional<FightState> getFightState() {
+        return Optional.ofNullable(fightState);
+    }
+
+    /**
+     * @param newFightState where the lance now stands in its fight, or {@code null} for no fight
+     *
+     * @return these orders with the fight state changed; an end to the fight holds the unit in place, keeping its
+     *       route, until the Resume order
+     */
+    public UnitOrders withFightState(@Nullable FightState newFightState) {
+        boolean isAwaitingOrders = newFightState == FightState.AWAITING_ORDERS;
+        return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
+              facingWhenStopped, paused || isAwaitingOrders, edgeOrder, edge, stopRound, formation, newFightState);
     }
 
     private static int validFacing(int facing) {
@@ -274,7 +298,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withRoute(List<Coords> newRoute, List<WaypointOrder> newWaypointOrders) {
         return new UnitOrders(newRoute, newWaypointOrders, NO_ROUND, priority, facingWhileMoving, facingWhenStopped,
-              false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, formation);
+              false, EdgeOrder.NONE, OffBoardDirection.NONE, NO_ROUND, formation, null);
     }
 
     /**
@@ -287,7 +311,7 @@ public final class UnitOrders implements Serializable {
     public UnitOrders withRouteEdited(List<Coords> newRoute, List<WaypointOrder> newWaypointOrders) {
         boolean isSameNextWaypoint = !route.isEmpty() && !newRoute.isEmpty() && route.get(0).equals(newRoute.get(0));
         return new UnitOrders(newRoute, newWaypointOrders, isSameNextWaypoint ? holdSinceRound : NO_ROUND, priority,
-              facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -314,7 +338,7 @@ public final class UnitOrders implements Serializable {
                   : WaypointOrder.PASS_THROUGH);
         }
         return new UnitOrders(newRoute, newWaypointOrders, holdSinceRound, priority, facingWhileMoving,
-              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -330,7 +354,7 @@ public final class UnitOrders implements Serializable {
         newWaypointOrders.remove(newWaypointOrders.size() - 1);
         int newHoldSinceRound = newRoute.isEmpty() ? NO_ROUND : holdSinceRound;
         return new UnitOrders(newRoute, newWaypointOrders, newHoldSinceRound, priority, facingWhileMoving,
-              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -342,7 +366,7 @@ public final class UnitOrders implements Serializable {
         }
         List<WaypointOrder> newWaypointOrders = getWaypointOrders();
         return new UnitOrders(route.subList(1, route.size()), newWaypointOrders.subList(1, newWaypointOrders.size()),
-              NO_ROUND, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              NO_ROUND, priority, facingWhileMoving, facingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -352,7 +376,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withHoldStarted(int round) {
         return new UnitOrders(route, getWaypointOrders(), round, priority, facingWhileMoving, facingWhenStopped,
-              paused, edgeOrder, edge, stopRound, formation);
+              paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -362,7 +386,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withPriority(OrderPriority newPriority) {
         return new UnitOrders(route, getWaypointOrders(), holdSinceRound, newPriority, facingWhileMoving,
-              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -373,7 +397,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withFacings(int newFacingWhileMoving, int newFacingWhenStopped) {
         return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, newFacingWhileMoving,
-              newFacingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              newFacingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     /**
@@ -383,7 +407,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withPaused(boolean isPaused) {
         return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
-              facingWhenStopped, isPaused, edgeOrder, edge, stopRound, formation);
+              facingWhenStopped, isPaused, edgeOrder, edge, stopRound, formation, isPaused ? fightState : null);
     }
 
     /**
@@ -398,7 +422,7 @@ public final class UnitOrders implements Serializable {
         }
         return new UnitOrders(new ArrayList<>(), List.of(), NO_ROUND, priority, facingWhileMoving,
               facingWhenStopped, false, newEdgeOrder, (newEdgeOrder == EdgeOrder.NONE) ? OffBoardDirection.NONE
-              : newEdge, NO_ROUND, formation);
+              : newEdge, NO_ROUND, formation, null);
     }
 
     /**
@@ -409,7 +433,7 @@ public final class UnitOrders implements Serializable {
      */
     public static UnitOrders stoppedInRound(int round) {
         return new UnitOrders(new ArrayList<>(), List.of(), NO_ROUND, OrderPriority.NORMAL, FACING_AUTO, FACING_AUTO,
-              false, EdgeOrder.NONE, OffBoardDirection.NONE, round, null);
+              false, EdgeOrder.NONE, OffBoardDirection.NONE, round, null, null);
     }
 
     /**
@@ -426,7 +450,7 @@ public final class UnitOrders implements Serializable {
      */
     public UnitOrders withFormation(@Nullable FormationOrder newFormation) {
         return new UnitOrders(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
-              facingWhenStopped, paused, edgeOrder, edge, stopRound, newFormation);
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, newFormation, fightState);
     }
 
     @Override
@@ -447,13 +471,14 @@ public final class UnitOrders implements Serializable {
               && (priority == otherOrders.priority)
               && (edgeOrder == otherOrders.edgeOrder)
               && (edge == otherOrders.edge)
-              && Objects.equals(formation, otherOrders.formation);
+              && Objects.equals(formation, otherOrders.formation)
+              && (fightState == otherOrders.fightState);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(route, getWaypointOrders(), holdSinceRound, priority, facingWhileMoving,
-              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation);
+              facingWhenStopped, paused, edgeOrder, edge, stopRound, formation, fightState);
     }
 
     @Override
@@ -466,6 +491,9 @@ public final class UnitOrders implements Serializable {
         text.append(", facingWhileMoving=").append(facingWhileMoving);
         text.append(", facingWhenStopped=").append(facingWhenStopped);
         text.append(", paused=").append(paused);
+        if (fightState != null) {
+            text.append(", fight=").append(fightState);
+        }
         text.append(", edgeOrder=").append(edgeOrder).append(' ').append(edge);
         text.append(", stopRound=").append(stopRound);
         text.append(", formation=").append(formation);

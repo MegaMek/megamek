@@ -85,7 +85,11 @@ public enum UnitOrderAction {
     /** Put the unit in a formation, or change its place in one. */
     FORMATION,
     /** Take the unit out of its formation. */
-    FORMATION_OFF;
+    FORMATION_OFF,
+    /** The lance was hit on its way with Break and fight set: it leaves its route to fight. */
+    BREAK_TO_FIGHT,
+    /** The lance's fight is over: it holds where it is, keeping its route, until the Resume order. */
+    FIGHT_OVER;
 
     /**
      * Returns the orders after this action.
@@ -187,6 +191,8 @@ public enum UnitOrderAction {
                 yield current.withFormation(formation);
             }
             case FORMATION_OFF -> current.withFormation(null);
+            case BREAK_TO_FIGHT -> current.withFightState(FightState.FIGHTING);
+            case FIGHT_OVER -> current.withFightState(FightState.AWAITING_ORDERS);
         };
     }
 

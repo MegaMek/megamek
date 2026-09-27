@@ -41,6 +41,7 @@ import java.util.Optional;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.ForcedWithdrawalOrder;
+import megamek.common.orders.FightState;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
@@ -92,6 +93,10 @@ public class UnitBehavior {
             return edgeBehavior(entity, owner, "FORCED_WITHDRAWAL", BehaviorType.ForcedWithdrawal);
         } else if (isFleeOrdered) {
             return edgeBehavior(entity, owner, "FLEE_ORDER", BehaviorType.MoveToDestination);
+        } else if (entity.getUnitOrders().getFightState().orElse(null) == FightState.FIGHTING) {
+            // hit on its way with Break and fight set: the lance fights its attackers; the route waits
+            logDecision(entity, "UNDER_FIRE", "breaking off the route to fight");
+            return BehaviorType.Engaged;
         } else if (entity.getUnitOrders().hasRoute()) {
             while (getWaypointForEntity(entity).isPresent()
                   && !owner.getUnitOrdersFollower().canReach(entity, getWaypointForEntity(entity).get())) {
@@ -218,6 +223,10 @@ public class UnitBehavior {
         }
         if (owner.getForcedWithdrawalTracker().isWithdrawing(entity)
               && !isFollowingOrdersOverWithdrawal(entity, owner)) {
+            return Optional.empty();
+        }
+        if (entity.getUnitOrders().getFightState().orElse(null) == FightState.FIGHTING) {
+            // fighting off its route: nothing pulls it back to the route until the fight is over
             return Optional.empty();
         }
         if (entity.getUnitOrders().hasRoute() || owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)) {

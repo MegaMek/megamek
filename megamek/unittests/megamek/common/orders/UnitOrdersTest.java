@@ -201,6 +201,27 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aLanceHoldingAfterAFightSurvivesASaveAndLoadAndGoesOnWithResume() {
+        BipedMek mek = new BipedMek();
+        UnitOrders fighting = apply(UnitOrderAction.BREAK_TO_FIGHT,
+              UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX)), List.of());
+        UnitOrders awaiting = apply(UnitOrderAction.FIGHT_OVER, fighting, List.of());
+        mek.setUnitOrders(awaiting);
+
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(savedXml);
+
+        assertEquals(Optional.of(FightState.FIGHTING), fighting.getFightState());
+        assertEquals(awaiting, restored.getUnitOrders());
+        assertTrue(restored.getUnitOrders().isPaused());
+        UnitOrders resumed = apply(UnitOrderAction.RESUME, restored.getUnitOrders(), List.of());
+        assertTrue(resumed.getFightState().isEmpty());
+        assertEquals(List.of(FIRST_HEX, SECOND_HEX), resumed.getRoute());
+        // a new route ends the fight too
+        assertTrue(awaiting.withRoute(List.of(SECOND_HEX)).getFightState().isEmpty());
+    }
+
+    @Test
     void aFormationSurvivesASaveAndLoadAndLeavesWithStop() {
         BipedMek mek = new BipedMek();
         FormationOrder formation = new FormationOrder(FormationShape.WEDGE, 12, 3, 2, FormationPace.RUN,

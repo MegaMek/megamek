@@ -72,7 +72,7 @@ class WaypointTableModel extends AbstractTableModel {
 
     /** The formation a first waypoint gets for a group of two or more units: a Wedge moving as a block. */
     static final WaypointFormation DEFAULT_FORMATION = new WaypointFormation(FormationShape.WEDGE,
-          FormationOrder.DEFAULT_SPACING, FormationPace.WALK, ContactRule.BREAK, true);
+          FormationOrder.DEFAULT_SPACING, FormationPace.WALK, ContactRule.TURN_AND_FIRE, true);
 
     private static final int FACING_COUNT = 6;
     private static final String[] COLUMN_KEYS = {"number", "hex", "shape", "change", "spacing", "pace", "contact",

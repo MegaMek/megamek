@@ -203,10 +203,11 @@ public final class ReconCameraRules {
             if (cameraOwner == null) {
                 continue;
             }
+            boolean hasTeam = cameraOwner.getTeam() != Player.TEAM_NONE;
             for (Player player : game.getPlayersList()) {
-                boolean isCameraSide = (player.getId() == cameraOwner.getId())
-                      || ((cameraOwner.getTeam() != Player.TEAM_NONE) && (player.getTeam() == cameraOwner.getTeam()));
-                if (isCameraSide && !viewers.contains(player)) {
+                boolean isCameraOwner = player.getId() == cameraOwner.getId();
+                boolean isTeammate = hasTeam && (player.getTeam() == cameraOwner.getTeam());
+                if ((isCameraOwner || isTeammate) && !viewers.contains(player)) {
                     viewers.add(player);
                 }
             }

@@ -13938,7 +13938,8 @@ public abstract class Entity extends TurnOrdered
      * @return the unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} when it spotted nothing
      */
     public int getReconCameraSpotTargetId() {
-        return reconCameraSpotTargetId;
+        // a unit from an older save has the id field at 0, not NONE; only a spot made this turn counts
+        return hasTriedReconCameraSpot ? reconCameraSpotTargetId : Entity.NONE;
     }
 
     /**

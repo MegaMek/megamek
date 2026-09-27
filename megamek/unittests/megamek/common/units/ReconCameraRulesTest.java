@@ -44,6 +44,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 
 import megamek.common.Player;
 import megamek.common.SimpleTechLevel;
@@ -275,6 +276,18 @@ class ReconCameraRulesTest {
 
         assertFalse(ReconCameraRules.isCameraSpotting(camera, target));
         assertNull(Compute.findSpotter(game, lrmCarrier, target));
+    }
+
+    @Test
+    void testAUnitFromAnOlderSaveSpotsNothing() throws ReflectiveOperationException {
+        BipedMek target = enemyAt(7);
+        // an older save has no camera fields, so loading leaves the id at a default rather than NONE
+        Field spotTargetField = Entity.class.getDeclaredField("reconCameraSpotTargetId");
+        spotTargetField.setAccessible(true);
+        spotTargetField.setInt(camera, target.getId());
+
+        assertFalse(ReconCameraRules.isCameraSpotting(camera, target), "no camera spot was made this turn");
+        assertEquals(Entity.NONE, camera.getReconCameraSpotTargetId());
     }
 
     @Test

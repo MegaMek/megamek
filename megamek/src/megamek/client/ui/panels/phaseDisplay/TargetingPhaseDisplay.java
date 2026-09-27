@@ -63,6 +63,7 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -364,8 +365,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
                 continue;
             }
             // only a unit carrying a Recon Camera gets the Camera Spot button
-            if ((cmd == TargetingCommand.FIRE_CAMERA_SPOT) && ((currentEntity() == null)
-                  || !currentEntity().hasWorkingMisc(MiscType.F_RECON_CAMERA))) {
+            if ((cmd == TargetingCommand.FIRE_CAMERA_SPOT) && !hasReconCamera(currentEntity())) {
                 continue;
             }
             // The Directional Torso Mount (BMM p.83) is a Mek-only quirk, so other unit types never show its button.
@@ -1405,12 +1405,20 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
      */
     private void doCameraSpot() {
         Entity camera = currentEntity();
-        if ((camera == null) || (target == null) || hasQueuedCameraSpot()
-              || (ReconCameraRules.spotRefusal(game, camera, target) != null)) {
+        if ((camera == null) || (target == null)) {
+            return;
+        }
+        boolean isAlreadyQueued = hasQueuedCameraSpot();
+        boolean isRefused = ReconCameraRules.spotRefusal(game, camera, target) != null;
+        if (isAlreadyQueued || isRefused) {
             return;
         }
         addAttack(new ReconCameraSpotAction(currentEntity, target.getId()));
         updateCameraSpot();
+    }
+
+    private static boolean hasReconCamera(@Nullable Entity entity) {
+        return (entity != null) && entity.hasWorkingMisc(MiscType.F_RECON_CAMERA);
     }
 
     private boolean hasQueuedCameraSpot() {
@@ -1430,7 +1438,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         MegaMekButton cameraButton = buttons.get(TargetingCommand.FIRE_CAMERA_SPOT);
         Entity camera = currentEntity();
         String baseToolTip = Messages.getString("TargetingPhaseDisplay.fireCameraSpot.tooltip");
-        if ((camera == null) || !game.getPhase().isOffboard() || !camera.hasWorkingMisc(MiscType.F_RECON_CAMERA)) {
+        boolean isCameraPhase = game.getPhase().isOffboard();
+        if (!isCameraPhase || !hasReconCamera(camera)) {
             cameraButton.setEnabled(false);
             cameraButton.setToolTipText(baseToolTip);
             return;

@@ -52,6 +52,7 @@ import megamek.common.game.Game;
 import megamek.common.orders.NavPoint;
 import megamek.common.orders.RouteGroups;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.common.units.Entity;
 
@@ -180,6 +181,91 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
             colorIndex++;
         }
         return flags;
+    }
+
+    /**
+     * The orders at a waypoint, for the hex tooltip when the viewer hovers over its flag: which units, the nav point,
+     * the formation on the way or re-formed into there, the facing on arrival, what the units do there and the
+     * route's priority. One block per route that has a waypoint on the hex.
+     *
+     * @param units   every unit in the game, in id order
+     * @param viewer  the player at this client, or {@code null} for none
+     * @param hex     the hex hovered over
+     * @param boardId the board it is on
+     *
+     * @return the summary as lines joined by {@code <br>}, one blank line between routes; empty when no route the
+     *       viewer may see has a waypoint there
+     */
+    public static String tooltipFor(List<Entity> units, @Nullable Player viewer, Coords hex, int boardId) {
+        List<String> blocks = new ArrayList<>();
+        for (RouteGroups.RouteGroup group : RouteGroups.visibleTo(units, viewer)) {
+            Entity guide = group.guide();
+            UnitOrders orders = guide.getUnitOrders();
+            List<Coords> route = orders.getRoute();
+            for (int step = 0; step < route.size(); step++) {
+                if ((guide.getBoardId() == boardId) && route.get(step).equals(hex)) {
+                    blocks.add(describeWaypoint(group, orders, step));
+                }
+            }
+        }
+        return String.join("<br><br>", blocks);
+    }
+
+    private static String describeWaypoint(RouteGroups.RouteGroup group, UnitOrders orders, int step) {
+        WaypointOrder waypointOrder = orders.getWaypointOrder(step);
+        Coords hex = orders.getRoute().get(step);
+        List<String> lines = new ArrayList<>();
+        int navNumber = waypointOrder.getNavNumber();
+        lines.add("<b>" + ((navNumber == NavPoint.UNNAMED)
+              ? Messages.getString("BotCommandPanel.Waypoint.tooltip.step", step + 1, hex.getBoardNum(), group.label())
+              : Messages.getString("BotCommandPanel.Waypoint.tooltip.nav", NavPoint.name(navNumber),
+                    hex.getBoardNum(), group.label())) + "</b>");
+        WaypointFormation leg = waypointOrder.getFormation();
+        String legText = (leg != null) ? formationText(leg)
+              : orders.getFormation().map(unitsOwn -> formationText(new WaypointFormation(unitsOwn.getShape(),
+                    unitsOwn.getSpacing(), unitsOwn.getPace(), unitsOwn.getContactRule(), unitsOwn.isKeepTogether())))
+                    .orElse(Messages.getString("BotCommandPanel.Waypoint.tooltip.noFormation"));
+        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.formation", legText));
+        if (waypointOrder.getArrivalFormation() != null) {
+            lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.reform",
+                  formationText(waypointOrder.getArrivalFormation())));
+        }
+        String facingKey = (waypointOrder.getFacing() == UnitOrders.FACING_AUTO) ? "auto"
+              : String.valueOf(waypointOrder.getFacing());
+        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.facing",
+              Messages.getString("BotCommandPanel.Orders.facing." + facingKey)));
+        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.then",
+              thenText(waypointOrder, step == orders.getRoute().size() - 1)));
+        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.priority",
+              Messages.getString("BotCommandPanel.Orders.priority." + orders.getPriority().name())));
+        return String.join("<br>", lines);
+    }
+
+    private static String thenText(WaypointOrder waypointOrder, boolean isLast) {
+        if (isLast) {
+            return Messages.getString(waypointOrder.isExitBoard() ? "BotCommandPanel.MoveOrder.then.EXIT"
+                  : "BotCommandPanel.MoveOrder.then.STAY");
+        }
+        if (waypointOrder.isAssemble()) {
+            return Messages.getString("BotCommandPanel.Waypoint.tooltip.upTo",
+                  Messages.getString("BotCommandPanel.MoveOrder.then.ASSEMBLE"), waypointOrder.getHoldTurns());
+        }
+        if (waypointOrder.isHold()) {
+            return Messages.getString("BotCommandPanel.MoveOrder.then.HOLD") + ' '
+                  + Messages.getString("BotCommandPanel.MoveOrder.holdTurns", waypointOrder.getHoldTurns());
+        }
+        return Messages.getString("BotCommandPanel.MoveOrder.then.PASS");
+    }
+
+    private static String formationText(WaypointFormation formation) {
+        if (formation.isNone()) {
+            return Messages.getString("BotCommandPanel.Waypoint.tooltip.noFormation");
+        }
+        return Messages.getString("BotCommandPanel.Formations.shape." + formation.getShape()) + ", "
+              + Messages.getString("BotCommandPanel.Formations.spacing.hexes", formation.getSpacing()) + ", "
+              + Messages.getString("BotCommandPanel.Formations.pace." + formation.getPace().name()) + ", "
+              + Messages.getString("BotCommandPanel.Formations.contact." + formation.getContactRule().name())
+              + (formation.isKeepTogether() ? Messages.getString("BotCommandPanel.Waypoint.tooltip.together") : "");
     }
 
     @Override

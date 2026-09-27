@@ -35,6 +35,7 @@ package megamek.client.ui.clientGUI.boardview.toolTip;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +47,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.AttackSprite;
+import megamek.client.ui.clientGUI.boardview.spriteHandler.BotRouteSpriteHandler;
 import megamek.client.ui.clientGUI.tooltip.HexTooltip;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.util.UIUtil;
@@ -249,6 +251,20 @@ public class TWBoardViewTooltip implements BoardViewTooltipProvider {
                 String table = UIUtil.tag("TABLE", attr, row);
                 result.append(table);
             }
+        }
+
+        // Bot route waypoints: hovering over a flag shows the orders at that waypoint
+        List<Entity> unitsById = new ArrayList<>(game.getEntitiesVector());
+        unitsById.sort(Comparator.comparingInt(Entity::getId));
+        String waypointOrders = BotRouteSpriteHandler.tooltipFor(unitsById, localPlayer, coords, bv.getBoardId());
+        if (!waypointOrders.isEmpty()) {
+            String attr = String.format("FACE=Dialog  COLOR=%s",
+                  UIUtil.toColorHexString(GUIP.getUnitToolTipAltFGColor()));
+            String block = UIUtil.tag("span", fontSizeAttr, UIUtil.tag("FONT", attr, waypointOrders));
+            String row = UIUtil.tag("TR", "", UIUtil.tag("TD", "", block));
+            attr = String.format("BORDER=0 BGCOLOR=%s width=100%%",
+                  GUIPreferences.hexColor(GUIP.getUnitToolTipAltBGColor()));
+            result.append(UIUtil.tag("TABLE", attr, row));
         }
 
         // Artillery attacks

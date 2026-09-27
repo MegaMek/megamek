@@ -372,7 +372,8 @@ class WaypointTableModel extends AbstractTableModel {
 
     /**
      * @return what to do at each waypoint, in route order, each with the formation for the leg ending there; the end
-     *       of the route has no hold, and leaves the board if set to
+     *       of the route has no hold, and leaves the board if set to. Each is named as a nav point in order, Alpha
+     *       first, which the radio calls and the map flags use
      */
     List<WaypointOrder> getWaypointOrders() {
         List<WaypointOrder> orders = new ArrayList<>();
@@ -381,7 +382,7 @@ class WaypointTableModel extends AbstractTableModel {
             int holdTurns = getHoldTurns(index);
             WaypointOrder.HoldMode holdMode = (holdTurns == 0) ? WaypointOrder.HoldMode.PASS : row.holdMode;
             orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, row.formation,
-                  isEndOfRoute(index) && row.exitBoard));
+                  isEndOfRoute(index) && row.exitBoard).withNavNumber(index + 1));
         }
         return orders;
     }

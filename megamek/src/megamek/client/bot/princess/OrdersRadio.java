@@ -47,39 +47,52 @@ import org.apache.logging.log4j.Level;
 
 /**
  * How the bot tells its teammates what its units are doing with their orders. With radio chatter on (the default) the
- * replies are short radio calls with callsigns: Inner Sphere forces talk like a modern military ("Command One: Set at
- * 1508."), Clan forces use Stars and Points and no contractions ("Alpha Star, Point One: In position at 1508."). With
- * it off, the plain replies are used.
+ * replies are short radio calls with callsigns and nav points: Inner Sphere forces talk like a modern military
+ * ("Charlie Lance, proceeding to Nav Point Gamma (1617)."), Clan forces use Stars and Points and no contractions
+ * ("Alpha Star proceeds to Nav Point Gamma (1617)."). With it off, the plain replies are used.
  *
- * <p>A lance speaks once per kind of event per round, not once per unit, so an order to thirty lances does not bury
- * the chat. The same event always goes to the log in plain words, whatever the voice.</p>
+ * <p>Whole-lance events - an order taken, a shape formed, a waypoint reached - are called by the lance ("Charlie
+ * Lance, ..."); a single unit's trouble by the unit ("Charlie Three, taking damage..."). A lance speaks once per kind of
+ * event per round, not once per unit, so an order to thirty lances does not bury the chat. The same event always goes
+ * to the log in plain words, whatever the voice.</p>
  */
 public class OrdersRadio {
 
     /** The events a bot reports on its units' orders; each names its calls in the bot's messages. */
     enum RadioEvent {
-        /** A unit reached its waypoint and holds there. */
-        ARRIVED("arrived"),
-        /** A unit holds at a waypoint as ordered. */
-        HOLDING("holding"),
-        /** A unit leaves the board at the end of its route. */
-        EXITING("exiting"),
+        /** The lance, or a unit on its own, took a new route: the call names its first nav point. */
+        ORDERED("ordered", true),
+        /** The lance reached the end of its route and holds there. */
+        ARRIVED("arrived", true),
+        /** The lance holds at a waypoint as ordered. */
+        HOLDING("holding", true),
+        /** The lance formed up at a waypoint and moves on: the call names the waypoint and the next nav point. */
+        FORMED("formed", true),
+        /** The lance leaves the board at the end of its route. */
+        EXITING("exiting", true),
+        /** The lance folds into a Column to get through a gap. */
+        FOLD("fold", true),
         /** A unit cannot reach its waypoint and skips it. */
-        UNREACHABLE("unreachable"),
+        UNREACHABLE("unreachable", false),
         /** A unit follows the player's orders over its own withdrawal. */
-        FOLLOWING_ORDERS("followingOrders"),
-        /** A formation folds into a Column to get through a gap. */
-        FOLD("fold");
+        FOLLOWING_ORDERS("followingOrders", false);
 
         private final String key;
+        private final boolean isLanceCall;
 
-        RadioEvent(String key) {
+        RadioEvent(String key, boolean isLanceCall) {
             this.key = key;
+            this.isLanceCall = isLanceCall;
         }
 
         /** @return the event's part of the message key, e.g. {@code arrived} */
         String key() {
             return key;
+        }
+
+        /** @return {@code true} if the lance makes the call, rather than the unit it happened to */
+        boolean isLanceCall() {
+            return isLanceCall;
         }
     }
 
@@ -181,31 +194,46 @@ public class OrdersRadio {
     }
 
     /**
-     * Reports an event about one unit's orders, once per lance and kind of event per round.
+     * Reports an event about a unit's orders, once per lance and kind of event per round. A whole-lance event is
+     * called by the lance, anything else by the unit.
      *
-     * @param entity the unit
-     * @param event  the kind of event
-     * @param detail the hex or edge the event is about
+     * @param entity  the unit
+     * @param event   the kind of event
+     * @param details what the event is about, usually a nav point such as {@code Nav Point Gamma (1617)}, or an edge;
+     *                {@link RadioEvent#FORMED} takes the waypoint and then the next nav point
      */
-    void report(Entity entity, RadioEvent event, String detail) {
-        String plain = Messages.getString("Princess.radio.PLAIN." + event.key(), entity.getDisplayName(), detail);
+    void report(Entity entity, RadioEvent event, String... details) {
+        Force lance = owner.getGame().getForces().getForce(entity);
+        String plainSpeaker = (event.isLanceCall() && (lance != null)) ? lance.getName() : entity.getDisplayName();
+        String plain = Messages.getString("Princess.radio.PLAIN." + event.key(), withSpeaker(plainSpeaker, details));
         LOGGER.info("[BotOrders] {}", plain);
         int round = owner.getGame().getCurrentRound();
         if (round != spokenRound) {
             spokenThisRound.clear();
             spokenRound = round;
         }
-        Force lance = owner.getGame().getForces().getForce(entity);
         String speaker = (lance == null) ? ("unit" + entity.getId()) : ("force" + lance.getId());
         if (!spokenThisRound.add(speaker + '|' + event)) {
             return;
         }
         RadioVoice voice = voice();
-        String call = (voice == RadioVoice.PLAIN) ? plain : callsign(entity, lance, voice) + ": "
-              + Messages.getString("Princess.radio." + voice.name() + '.' + event.key(), detail);
+        String call = plain;
+        if (voice != RadioVoice.PLAIN) {
+            String callsign = (event.isLanceCall() && (lance != null)) ? lance.getName()
+                  : callsign(entity, lance, voice);
+            call = Messages.getString("Princess.radio." + voice.name() + '.' + event.key(),
+                  withSpeaker(callsign, details));
+        }
         // the server relays the call to the unit's own side only, as a toast with the unit's icon and a chat line;
         // it names the hex the unit is heading for, so the other side must not hear it
         owner.sendChat(RadioCommand.commandText(entity.getId(), call), Level.INFO);
+    }
+
+    private static Object[] withSpeaker(String speaker, String... details) {
+        Object[] arguments = new Object[details.length + 1];
+        arguments[0] = speaker;
+        System.arraycopy(details, 0, arguments, 1, details.length);
+        return arguments;
     }
 
     /**

@@ -37,11 +37,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import megamek.client.bot.Messages;
 import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -54,6 +56,7 @@ import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.NavPoint;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -140,6 +143,9 @@ public class UnitOrdersFollower {
 
     /** The leaders waiting at a waypoint for their formation, by unit id; the bot's own bookkeeping, not saved. */
     private final Map<Integer, ReformWait> reformWaits = new HashMap<>();
+
+    /** Each unit's route as last seen, by unit id, to tell a new order from waypoints ticked off; not saved. */
+    private final Map<Integer, List<Coords>> knownRoutes = new HashMap<>();
 
     /** The leaders holding at a waypoint until their formation assembles, by unit id; not saved. */
     private final Map<Integer, ReformWait> assemblyWaits = new HashMap<>();
@@ -693,8 +699,10 @@ public class UnitOrdersFollower {
             }
             Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
             if (waypoint.isEmpty()) {
+                knownRoutes.remove(entity.getId());
                 continue;
             }
+            announceNewRoute(entity);
             boolean isPartWay = entity.getUnitOrders().getRoute().size() > 1;
             if (isPartWay && getFormationSlot(entity).isPresent()) {
                 // a unit in formation takes its route from its leader's; ticking off a waypoint it merely passed
@@ -726,10 +734,50 @@ public class UnitOrdersFollower {
                 String arrivalHex = entity.getPosition().getBoardNum();
                 LOGGER.info("[BotOrders] {} (ID {}) reached the end of its route at {}", entity.getDisplayName(),
                       entity.getId(), arrivalHex);
-                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.ARRIVED, arrivalHex);
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.ARRIVED,
+                      navLabel(entity, waypoint.get()));
             }
         }
         syncFollowerRoutes();
+    }
+
+    /**
+     * Calls a new route on the radio: "Charlie Lance, proceeding to Nav Point Alpha (1625)." A route that is the one
+     * seen before with waypoints ticked off the front is not new. The formation's leader calls for the lance.
+     */
+    private void announceNewRoute(Entity entity) {
+        List<Coords> route = entity.getUnitOrders().getRoute();
+        List<Coords> known = knownRoutes.put(entity.getId(), route);
+        boolean isSameOrder = (known != null) && (route.size() <= known.size())
+              && known.subList(known.size() - route.size(), known.size()).equals(route);
+        if (isSameOrder || isFormationFollower(entity)) {
+            return;
+        }
+        String firstNavPoint = navLabel(entity, route.get(0));
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: NEW_ROUTE - {} waypoint(s), first {}", entity.getDisplayName(),
+              entity.getId(), currentRound(), route.size(), firstNavPoint);
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.ORDERED, firstNavPoint);
+    }
+
+    /**
+     * @param entity a unit of the bot
+     * @param hex    a hex on its route
+     *
+     * @return the hex as the radio names it: its nav point and hex, e.g. {@code Nav Point Gamma (1617)}; the hex
+     *       alone for a waypoint with no nav point name, or a hex not on the route
+     */
+    String navLabel(Entity entity, Coords hex) {
+        List<Coords> route = entity.getUnitOrders().getRoute();
+        for (int index = 0; index < route.size(); index++) {
+            if (route.get(index).equals(hex)) {
+                int navNumber = entity.getUnitOrders().getWaypointOrder(index).getNavNumber();
+                if (navNumber != NavPoint.UNNAMED) {
+                    return Messages.getString("Princess.radio.navPoint", NavPoint.name(navNumber), hex.getBoardNum());
+                }
+                break;
+            }
+        }
+        return hex.getBoardNum();
     }
 
     /**
@@ -791,6 +839,11 @@ public class UnitOrdersFollower {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FORMED at {} - moving on together",
                   leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum());
             reformWaits.remove(leader.getId());
+            if (route.size() > 1) {
+                // at the end of the route the exit call says it all
+                owner.getOrdersRadio().report(leader, OrdersRadio.RadioEvent.FORMED, navLabel(leader, waypoint),
+                      navLabel(leader, route.get(1)));
+            }
             return false;
         }
         if (roundsWaited >= wait.maxRounds()) {
@@ -931,7 +984,7 @@ public class UnitOrdersFollower {
                   unit.getDisplayName(), unit.getId(), currentRound(), lastWaypoint.getBoardNum(), edge);
             orderExit(unit, edge);
         }
-        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.EXITING, edge.toString());
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.EXITING, edge.name().toLowerCase(Locale.ROOT));
     }
 
     /**
@@ -980,7 +1033,7 @@ public class UnitOrdersFollower {
                       entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(), holdTurns,
                       currentRound() + holdTurns);
                 change(entity, UnitOrderAction.HOLD_STARTED);
-                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.HOLDING, waypoint.getBoardNum());
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.HOLDING, navLabel(entity, waypoint));
             }
             return;
         }
@@ -1114,7 +1167,7 @@ public class UnitOrdersFollower {
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
               (columnSlot == null) ? anchor.getBoardNum() : columnSlot.getBoardNum());
-        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLD, anchor.getBoardNum());
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLD, navLabel(entity, anchor));
         return (columnSlot == null) ? anchor : columnSlot;
     }
 
@@ -1656,7 +1709,7 @@ public class UnitOrdersFollower {
         }
         LOGGER.info("[BotOrders] {} (ID {}): waypoint {} cannot be reached; dropping it", entity.getDisplayName(),
               entity.getId(), waypoint.get().getBoardNum());
-        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.UNREACHABLE, waypoint.get().getBoardNum());
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.UNREACHABLE, navLabel(entity, waypoint.get()));
         change(entity, UnitOrderAction.SKIP);
     }
 

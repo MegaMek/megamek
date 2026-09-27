@@ -44,7 +44,6 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import java.util.UUID;
 
-import megamek.client.bot.Messages;
 import megamek.client.bot.princess.OrdersRadio.RadioVoice;
 import megamek.common.Player;
 import megamek.common.equipment.EquipmentType;
@@ -124,13 +123,25 @@ class OrdersRadioTest {
     void aLanceCallsOncePerEventPerRound() {
         game.setCurrentRound(3);
 
-        princess.getOrdersRadio().report(atlas, OrdersRadio.RadioEvent.ARRIVED, "1508");
-        princess.getOrdersRadio().report(marauder, OrdersRadio.RadioEvent.ARRIVED, "1508");
+        princess.getOrdersRadio().report(atlas, OrdersRadio.RadioEvent.ARRIVED, "Nav Point Gamma (1508)");
+        princess.getOrdersRadio().report(marauder, OrdersRadio.RadioEvent.ARRIVED, "Nav Point Gamma (1508)");
 
-        // the call goes to the server, which relays it to the bot's own side only, as a toast and a chat line
-        verify(princess, times(1)).sendChat(RadioCommand.commandText(atlas.getId(), "Command One: "
-              + Messages.getString("Princess.radio.INNER_SPHERE.arrived", "1508")), Level.INFO);
+        // the call goes to the server, which relays it to the bot's own side only, as a toast and a chat line; a
+        // whole-lance event is called by the lance
+        verify(princess, times(1)).sendChat(RadioCommand.commandText(atlas.getId(),
+              "Command Lance, on station at Nav Point Gamma (1508). Holding."), Level.INFO);
         verify(princess, times(1)).sendChat(anyString(), any(Level.class));
+    }
+
+    @Test
+    void aUnitsOwnTroubleIsCalledByTheUnit() {
+        // a fellow dev: "Charlie Lance, proceed to Nav Point Gamma" - the lance speaks for the lance, a unit for itself
+        game.setCurrentRound(3);
+
+        princess.getOrdersRadio().report(marauder, OrdersRadio.RadioEvent.UNREACHABLE, "Nav Point Beta (1510)");
+
+        verify(princess).sendChat(RadioCommand.commandText(marauder.getId(),
+              "Command Two, negative. No route to Nav Point Beta (1510). Skipping it."), Level.INFO);
     }
 
     @Test

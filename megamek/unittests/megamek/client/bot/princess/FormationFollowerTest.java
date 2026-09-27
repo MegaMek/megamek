@@ -38,10 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -616,6 +619,30 @@ class FormationFollowerTest {
         assertEquals(FormationShape.COLUMN, follower.activeFormation(second).orElseThrow().getShape());
         follower.advanceRoutes();
         assertEquals(2, leader.getUnitOrders().getRoute().size());
+    }
+
+    @Test
+    void aNewRouteIsCalledOnceByItsFirstNavPoint() {
+        // a fellow dev's example: "Charlie Lance, proceed to Nav Point Gamma"
+        Coords secondWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 4);
+        UnitOrders route = UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, secondWaypoint),
+              List.of(WaypointOrder.PASS_THROUGH.withNavNumber(1), WaypointOrder.PASS_THROUGH.withNavNumber(2)));
+        BipedMek scout = loneUnit(32, LEADER_HEX, route);
+        doReturn(List.<Entity>of(scout)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        follower.advanceRoutes();
+        verify(princess).sendChat(argThat((String call) -> call.contains("proceeding to Nav Point Alpha ("
+              + NORTH_WAYPOINT.getBoardNum() + ")")), any(Level.class));
+
+        // ticking a waypoint off the front is the same order, not a new one
+        scout.setUnitOrders(scout.getUnitOrders().withNextWaypointReached());
+        game.setCurrentRound(2);
+        follower.advanceRoutes();
+        verify(princess, times(1)).sendChat(argThat((String call) -> call.contains("proceeding to")),
+              any(Level.class));
     }
 
     private static MovePath moveTo(Coords end, int movementPoints) {

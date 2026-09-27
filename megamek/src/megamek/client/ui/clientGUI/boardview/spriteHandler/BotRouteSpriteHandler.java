@@ -49,6 +49,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.game.Game;
+import megamek.common.orders.NavPoint;
 import megamek.common.orders.RouteGroups;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointOrder;
@@ -95,28 +96,29 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
      * @param boardId    the board it is on
      * @param colorIndex the group's place in unit order, which picks its banner color
      * @param label      who follows the route, e.g. {@code GHR-5H +3}
-     * @param stepNumber the waypoint's place in the route, from 1
+     * @param step       the waypoint's name: its nav point, as the radio calls it ({@code Gamma}), or its place in
+     *                   the route, from 1, when it has none
      * @param facing     the facing set on the waypoint, 0-5, or {@link UnitOrders#FACING_AUTO}
      * @param holdTurns  the turns set to hold there; 0 passes through
      * @param isAssemble {@code true} if the units wait there until in position rather than for a fixed delay
      * @param isExit     {@code true} if the units leave the board from there, at the end of the route
      */
-    record RouteFlag(Coords hex, int boardId, int colorIndex, String label, int stepNumber, int facing,
+    record RouteFlag(Coords hex, int boardId, int colorIndex, String label, String step, int facing,
           int holdTurns, boolean isAssemble, boolean isExit) {
 
         /**
-         * @return the line under the unit's name: the waypoint's number, and what the units do there if they stop or
-         *       leave, e.g. {@code 2 hold 2}, {@code 2 form up} or {@code 4 exit}
+         * @return the line under the unit's name: the waypoint's name, and what the units do there if they stop or
+         *       leave, e.g. {@code Beta hold 2}, {@code Beta form up} or {@code Delta exit}
          */
         String progressText() {
             if (isExit) {
-                return Messages.getString("BotCommandPanel.MoveOrder.flagExit", stepNumber);
+                return Messages.getString("BotCommandPanel.MoveOrder.flagExit", step);
             }
             if (isAssemble) {
-                return Messages.getString("BotCommandPanel.MoveOrder.flagAssemble", stepNumber);
+                return Messages.getString("BotCommandPanel.MoveOrder.flagAssemble", step);
             }
-            return (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", stepNumber, holdTurns)
-                  : String.valueOf(stepNumber);
+            return (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", step, holdTurns)
+                  : step;
         }
     }
 
@@ -167,7 +169,11 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
                 // the last waypoint is held until new orders or left by the board edge: it has no hold count to show
                 boolean isLast = step == route.size() - 1;
                 int holdTurns = isLast ? 0 : waypointOrder.getHoldTurns();
-                flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), step + 1,
+                // the flag carries the nav point name the radio uses, so "Nav Point Gamma" can be found on the map
+                int navNumber = waypointOrder.getNavNumber();
+                String stepName = (navNumber == NavPoint.UNNAMED) ? String.valueOf(step + 1)
+                      : NavPoint.name(navNumber);
+                flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), stepName,
                       waypointOrder.getFacing(), holdTurns, !isLast && waypointOrder.isAssemble(),
                       isLast && waypointOrder.isExitBoard()));
             }

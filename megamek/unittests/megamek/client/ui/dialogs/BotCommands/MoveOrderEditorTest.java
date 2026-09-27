@@ -86,8 +86,9 @@ class MoveOrderEditorTest {
         waypoints.setHoldTurns(1, 3);
 
         assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_TURNS));
-        assertEquals(List.of(new WaypointOrder(NORTH_EAST, 2, WaypointFormation.NONE),
-              new WaypointOrder(NORTH, 0, WaypointFormation.NONE)), waypoints.getWaypointOrders());
+        // each waypoint is named as a nav point in order: Alpha, Beta
+        assertEquals(List.of(new WaypointOrder(NORTH_EAST, 2, WaypointFormation.NONE).withNavNumber(1),
+              new WaypointOrder(NORTH, 0, WaypointFormation.NONE).withNavNumber(2)), waypoints.getWaypointOrders());
         // a hold beyond the editor's range is kept to it
         waypoints.setHoldTurns(0, 99);
         assertEquals(WaypointTableModel.MAXIMUM_HOLD_TURNS, waypoints.getHoldTurns(0));

@@ -378,6 +378,19 @@ class UnitOrdersTest {
     }
 
     @Test
+    void waypointsAreNamedAsNavPointsThroughTheGreekAlphabet() {
+        assertEquals("Alpha", NavPoint.name(1));
+        assertEquals("Gamma", NavPoint.name(3));
+        assertEquals("Omega", NavPoint.name(24));
+        assertEquals("Alpha 2", NavPoint.name(25));
+
+        WaypointOrder gamma = new WaypointOrder(0, 2).withNavNumber(3);
+        assertEquals("/N/2/NAV3", gamma.toCommandSuffix());
+        assertEquals(gamma, WaypointOrder.parse(List.of("N", "2", "NAV3")));
+        assertEquals(3, gamma.withFacing(1).getNavNumber());
+    }
+
+    @Test
     void mistypedRouteTextIsRefusedWithAPlainReason() {
         // CodeQL, PR #9086: typed text such as 2X reached Integer.parseInt and failed with Java's own message
         IllegalArgumentException badHold = assertThrows(IllegalArgumentException.class,

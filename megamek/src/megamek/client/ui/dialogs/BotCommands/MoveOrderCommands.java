@@ -174,7 +174,7 @@ final class MoveOrderCommands {
         for (WaypointOrder order : waypointOrders) {
             // only the formation goes: a lone unit still exits at the end or waits there as ordered
             plain.add(new WaypointOrder(order.getFacing(), order.getHoldMode(), order.getHoldTurns(), null,
-                  order.isExitBoard()));
+                  order.isExitBoard()).withNavNumber(order.getNavNumber()));
         }
         return plain;
     }

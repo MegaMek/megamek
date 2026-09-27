@@ -76,6 +76,9 @@ public final class WaypointOrder implements Serializable {
     /** The code for leaving the board at the end of the route. */
     private static final String EXIT_CODE = "EXIT";
 
+    // the waypoint's nav point number in route text, e.g. NAV3 for Nav Point Gamma
+    private static final String NAV_CODE = "NAV";
+
     /**
      * How a unit leaves a waypoint.
      */
@@ -99,6 +102,9 @@ public final class WaypointOrder implements Serializable {
     // the formation the units re-form into here before moving on, or null to change shape on the way; null in a save
     // made before formations could change at a waypoint
     private final WaypointFormation arrivalFormation;
+    // the waypoint's number in the order it was given, naming it Nav Point Alpha, Beta...; NavPoint.UNNAMED (0) in a
+    // save made before waypoints had names, and for a waypoint added by a typed order
+    private final int navNumber;
 
     /**
      * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
@@ -141,6 +147,11 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard, @Nullable WaypointFormation arrivalFormation) {
+        this(facing, holdMode, holdTurns, formation, exitBoard, arrivalFormation, NavPoint.UNNAMED);
+    }
+
+    private WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
+          boolean exitBoard, @Nullable WaypointFormation arrivalFormation, int navNumber) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -153,6 +164,25 @@ public final class WaypointOrder implements Serializable {
         this.formation = formation;
         this.exitBoard = exitBoard;
         this.arrivalFormation = arrivalFormation;
+        this.navNumber = Math.max(NavPoint.UNNAMED, navNumber);
+    }
+
+    /**
+     * @param newNavNumber the waypoint's number in the order it was given, from 1
+     *
+     * @return this waypoint's settings named as that nav point, everything else kept
+     */
+    public WaypointOrder withNavNumber(int newNavNumber) {
+        return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
+              newNavNumber);
+    }
+
+    /**
+     * @return the waypoint's number in the order it was given, naming it Nav Point Alpha, Beta...; or
+     *       {@link NavPoint#UNNAMED} when it has none
+     */
+    public int getNavNumber() {
+        return navNumber;
     }
 
     /**
@@ -161,7 +191,8 @@ public final class WaypointOrder implements Serializable {
      * @return this waypoint's settings with the facing changed and everything else kept
      */
     public WaypointOrder withFacing(int newFacing) {
-        return new WaypointOrder(newFacing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation);
+        return new WaypointOrder(newFacing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
+              navNumber);
     }
 
     /**
@@ -171,7 +202,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withHoldTurns(int turns) {
         return new WaypointOrder(facing, (turns > 0) ? HoldMode.HOLD : HoldMode.PASS, turns, formation, exitBoard,
-              arrivalFormation);
+              arrivalFormation, navNumber);
     }
 
     /**
@@ -258,6 +289,9 @@ public final class WaypointOrder implements Serializable {
         if (exitBoard) {
             suffix.append('/').append(EXIT_CODE);
         }
+        if (navNumber != NavPoint.UNNAMED) {
+            suffix.append('/').append(NAV_CODE).append(navNumber);
+        }
         return suffix.toString();
     }
 
@@ -293,6 +327,7 @@ public final class WaypointOrder implements Serializable {
         boolean parsedExit = false;
         WaypointFormation parsedFormation = null;
         WaypointFormation parsedArrival = null;
+        int parsedNavNumber = NavPoint.UNNAMED;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
             if (code.isEmpty()) {
@@ -304,6 +339,8 @@ public final class WaypointOrder implements Serializable {
                 parsedFormation = WaypointFormation.parse(code);
             } else if (code.equals(EXIT_CODE)) {
                 parsedExit = true;
+            } else if (code.startsWith(NAV_CODE) && (code.length() > NAV_CODE.length())) {
+                parsedNavNumber = parseTurns(code.substring(NAV_CODE.length()), segment);
             } else if (code.startsWith(ASSEMBLE_CODE) && (code.length() > 1)
                   && Character.isDigit(code.charAt(1))) {
                 parsedHold = parseTurns(code.substring(1), segment);
@@ -322,7 +359,8 @@ public final class WaypointOrder implements Serializable {
         if (parsedHold == 0) {
             parsedMode = HoldMode.PASS;
         }
-        return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit, parsedArrival);
+        return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit, parsedArrival,
+              parsedNavNumber);
     }
 
     @Override
@@ -333,12 +371,12 @@ public final class WaypointOrder implements Serializable {
         return (other instanceof WaypointOrder otherOrder) && (facing == otherOrder.facing)
               && (holdTurns == otherOrder.holdTurns) && (getHoldMode() == otherOrder.getHoldMode())
               && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation)
-              && Objects.equals(arrivalFormation, otherOrder.arrivalFormation);
+              && Objects.equals(arrivalFormation, otherOrder.arrivalFormation) && (navNumber == otherOrder.navNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation);
+        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation, navNumber);
     }
 
     @Override

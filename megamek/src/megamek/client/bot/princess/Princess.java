@@ -4009,7 +4009,8 @@ public class Princess extends BotClient {
         if (orderedEdge.isPresent()) {
             return Messages.getString("Princess.orders.edge", orderedEdge.get().name());
         }
-        return getUnitBehaviorTracker().getWaypointForEntity(entity).map(Coords::getBoardNum).orElse("?");
+        return getUnitBehaviorTracker().getWaypointForEntity(entity)
+              .map(waypoint -> getUnitOrdersFollower().navLabel(entity, waypoint)).orElse("?");
     }
 
     /**

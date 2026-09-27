@@ -34,6 +34,7 @@ package megamek.common.units;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -49,6 +50,7 @@ import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.SimpleTechLevel;
+import megamek.common.TagInfo;
 import megamek.common.ToHitData;
 import megamek.common.actions.ReconCameraSpotAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -57,6 +59,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechRating;
+import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -279,6 +282,58 @@ class ReconCameraRulesTest {
 
         assertEquals(ordinarySpot.getValue() - 1, cameraSpot.getValue(),
               "ordinary spot: " + ordinarySpot.getDesc() + " / camera spot: " + cameraSpot.getDesc());
+    }
+
+    @Test
+    void testSemiGuidedLrmsGetNoTagBenefitFromACameraSpot() throws LocationFullException {
+        game.getOptions().getOption(OptionsConstants.BASE_INDIRECT_FIRE).setValue(true);
+        game.getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_INDIRECT_ALWAYS_POSSIBLE).setValue(true);
+        Weapon lrmType = (Weapon) EquipmentType.get("ISLRM10");
+        lrmType.adaptToGameOptions(game.getOptions());
+        BipedMek target = enemyAt(7);
+        BipedMek standardCarrier = lrmCarrier(new Coords(4, 2), (AmmoType) EquipmentType.get("IS Ammo LRM-10"));
+        BipedMek semiGuidedCarrier = lrmCarrier(new Coords(6, 2), semiGuidedLrm10Ammo());
+        game.setPhase(GamePhase.FIRING);
+        camera.setReconCameraSpotResult(target.getId());
+
+        int standardToHit = indirectToHit(standardCarrier, target).getValue();
+        ToHitData semiGuidedToHit = indirectToHit(semiGuidedCarrier, target);
+
+        assertEquals(standardToHit, semiGuidedToHit.getValue(),
+              "a camera spot treats semi-guided missiles as standard LRMs: " + semiGuidedToHit.getDesc());
+
+        // the control: a real TAG designation does change the semi-guided shot, so the comparison above can see one
+        game.addTagInfo(new TagInfo(camera.getId(), Targetable.TYPE_ENTITY, target, false));
+        target.setTaggedBy(camera.getId());
+        assertNotEquals(semiGuidedToHit.getValue(), indirectToHit(semiGuidedCarrier, target).getValue());
+    }
+
+    private BipedMek lrmCarrier(Coords position, AmmoType ammo) throws LocationFullException {
+        BipedMek carrier = placeMek("LRM carrier", cameraOwner, position);
+        carrier.setFacing(3);
+        carrier.setSecondaryFacing(3);
+        WeaponMounted lrm = (WeaponMounted) carrier.addEquipment(EquipmentType.get("ISLRM10"), Mek.LOC_LEFT_TORSO);
+        carrier.addEquipment(ammo, Mek.LOC_LEFT_TORSO);
+        carrier.loadAllWeapons();
+        lrm.setMode("Indirect");
+        return carrier;
+    }
+
+    private ToHitData indirectToHit(BipedMek carrier, Targetable target) {
+        WeaponMounted lrm = carrier.getWeaponList().getFirst();
+        return WeaponAttackAction.toHit(game, carrier.getId(), target, carrier.getEquipmentNum(lrm), false);
+    }
+
+    private static AmmoType semiGuidedLrm10Ammo() {
+        for (EquipmentType equipment : EquipmentType.allTypes()) {
+            boolean isLrm10 = (equipment instanceof AmmoType ammo)
+                  && (ammo.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) && (ammo.getRackSize() == 10);
+            if (isLrm10 && ((AmmoType) equipment).getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
+                  && !equipment.isClan()) {
+                return (AmmoType) equipment;
+            }
+        }
+        throw new IllegalStateException("no Inner Sphere semi-guided LRM-10 ammunition is defined");
     }
 
     @Test

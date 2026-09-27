@@ -119,8 +119,8 @@ public final class BotWaypointMenuBuilder {
         for (WaypointTableModel.FacingOption option : WaypointTableModel.facingOptions()) {
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(option.toString(),
                   option.facing() == current.getFacing());
-            WaypointOrder edited = new WaypointOrder(option.facing(), current.getHoldTurns(),
-                  current.getFormation());
+            // only the facing changes: the hold, the formations and an exit stay as they were
+            WaypointOrder edited = current.withFacing(option.facing());
             item.addActionListener(event -> sendEdit(client, group, route,
                   replaced(waypointOrders, waypointIndex, edited), acknowledger, waypointName + ": " + option));
             facingMenu.add(item);
@@ -137,7 +137,7 @@ public final class BotWaypointMenuBuilder {
                   : Messages.getString("BotCommandPanel.MoveOrder.holdTurns", turns);
             JRadioButtonMenuItem item = new JRadioButtonMenuItem(title, turns == current.getHoldTurns());
             final int chosenTurns = turns;
-            WaypointOrder edited = new WaypointOrder(current.getFacing(), chosenTurns, current.getFormation());
+            WaypointOrder edited = current.withHoldTurns(chosenTurns);
             item.addActionListener(event -> sendEdit(client, group, route,
                   replaced(waypointOrders, waypointIndex, edited), acknowledger, waypointName + ": " + title));
             holdMenu.add(item);

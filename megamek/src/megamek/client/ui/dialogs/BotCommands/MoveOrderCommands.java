@@ -66,11 +66,16 @@ final class MoveOrderCommands {
      */
     static List<String> commands(List<Integer> unitIds, int leaderId, boolean wasInFormation, List<Coords> hexes,
           List<WaypointOrder> waypointOrders, OrderPriority priority) {
-        // the formation order carries the leader and slots; the first leg in formation sets its starting shape
+        // the formation order carries the leader and slots; the first shape on the route, on a leg or re-formed into at
+        // a waypoint, sets its starting shape
         WaypointFormation firstFormation = null;
         for (WaypointOrder order : waypointOrders) {
             if ((order.getFormation() != null) && !order.getFormation().isNone()) {
                 firstFormation = order.getFormation();
+                break;
+            }
+            if ((order.getArrivalFormation() != null) && !order.getArrivalFormation().isNone()) {
+                firstFormation = order.getArrivalFormation();
                 break;
             }
         }

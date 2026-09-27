@@ -545,13 +545,21 @@ class FormationFollowerTest {
     }
 
     /** A leader on the first of two waypoints and one other unit far from its slot, both keeping together. */
+    /**
+     * A lance kept together whose route turns from a Wedge into a Column at its first waypoint, so it stops there to
+     * re-form; the leader stands on that waypoint and the second unit is well short of its slot.
+     */
     private List<BipedMek> lanceKeepingTogether() {
         Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        List<WaypointOrder> wedgeThenColumn = List.of(WaypointOrder.PASS_THROUGH,
+              new WaypointOrder(UnitOrders.FACING_AUTO, 0, column));
         BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
-        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint), wedgeThenColumn)
               .withFormation(keptTogether(0)));
         BipedMek second = member(21, new Coords(16, 25), 1, 3);
-        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint), wedgeThenColumn)
               .withFormation(keptTogether(1)));
         doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
         doNothing().when(princess).sendChat(anyString());
@@ -625,6 +633,53 @@ class FormationFollowerTest {
 
         assertEquals(List.of(walkThree), princess.getUnitOrdersFollower().limitToFormationPace(lance.get(0),
               List.of(walkThree, walkFive)));
+    }
+
+    @Test
+    void aLanceKeptTogetherPassesAWaypointWhereItsShapeStaysTheSame() {
+        // HammerGS's playtest: stopping to re-form at every waypoint a few hexes apart cost 12 of 16 rounds
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 3);
+        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(1)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertEquals(List.of(eastWaypoint), leader.getUnitOrders().getRoute());
+    }
+
+    @Test
+    void aWaypointsFacingTurnsTheShapeOnlyWhereTheLanceStops() {
+        // HammerGS's playtest: a facing of NE on a waypoint the Column only passed laid its tail back to the
+        // south-west, and the last Mek walked seven hexes off the route and back
+        Coords northAgain = NORTH_WAYPOINT.translated(NORTH, 1);
+        WaypointOrder faceNorthEast = new WaypointOrder(1, 0);
+        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, northAgain),
+              List.of(faceNorthEast, WaypointOrder.PASS_THROUGH)).withFormation(columnOf(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(leader.getUnitOrders().withFormation(columnOf(1)));
+
+        // passing through, the Column trails straight back along the way north
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+
+        // holding there, it faces the way it was told
+        WaypointOrder holdFacingNorthEast = new WaypointOrder(1, 2);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, northAgain),
+              List.of(holdFacingNorthEast, WaypointOrder.PASS_THROUGH)).withFormation(columnOf(0)));
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_WEST, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    private static FormationOrder columnOf(int slot) {
+        return new FormationOrder(FormationShape.COLUMN, 20, 2, slot, FormationPace.WALK, ContactRule.HOLD);
     }
 
     @Test

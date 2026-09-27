@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -57,6 +58,7 @@ import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
 import megamek.common.util.BoardUtilities;
@@ -758,6 +760,18 @@ public class UnitOrdersFollower {
         if (formation.isEmpty() || (!formation.get().isKeepTogether() && !isReformingHere)) {
             return false;
         }
+        // one kept together stops to re-form only where it matters: at the end of the route, and where its shape
+        // changes. Stopping at every waypoint along the way cost 12 of 16 rounds on a route with waypoints a few hexes
+        // apart; between the stops the leader keeps pace with the last unit instead (HammerGS, 2026-09-27)
+        List<Coords> route = leader.getUnitOrders().getRoute();
+        boolean isRouteEnd = route.size() <= 1;
+        if (!isRouteEnd && !isReformingHere && !changesShapeAfter(leader.getUnitOrders())) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PASS at {} - same shape on the next leg; not "
+                        + "stopping to re-form", leader.getDisplayName(), leader.getId(), currentRound(),
+                  waypoint.getBoardNum());
+            reformWaits.remove(leader.getId());
+            return false;
+        }
         List<Entity> members = formationMembers(leader, formation.get().getLeaderId());
         boolean isLeading = (members.size() >= 2) && (members.get(0).getId() == leader.getId());
         boolean isBroken = (formation.get().getContactRule() == ContactRule.BREAK)
@@ -791,6 +805,17 @@ public class UnitOrdersFollower {
               members.size() - 1);
         reformWaits.put(leader.getId(), wait);
         return true;
+    }
+
+    /**
+     * @return {@code true} if the leg after the next waypoint is set to travel in a different formation from the leg
+     *       ending there, so the lance changes shape at the waypoint
+     */
+    private static boolean changesShapeAfter(UnitOrders orders) {
+        if (orders.getRoute().size() < 2) {
+            return false;
+        }
+        return !Objects.equals(orders.getWaypointOrder(0).getFormation(), orders.getWaypointOrder(1).getFormation());
     }
 
     /**
@@ -1032,17 +1057,22 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * The way the formation faces around its leader's waypoint: the facing set on that waypoint; else toward the next
-     * waypoint while more follow; at the last one, the leader's ordered stopped facing, or else the direction of the last leg, fixed the first time it is
-     * worked out so the shape does not swing as the leader closes in.
+     * The way the formation faces around its leader's waypoint: where the lance stops there (a hold, or the end of the
+     * route), the facing set on that waypoint; else toward the next waypoint while more follow; at the last one, the
+     * leader's ordered stopped facing, or else the direction of the last leg, fixed the first time it is worked out so
+     * the shape does not swing as the leader closes in.
+     *
+     * <p>A waypoint the lance only passes through lays the shape along the way it is going. Its facing is where the
+     * units face if they stop there; turning the shape by it sent the tail of a Column seven hexes off the route
+     * (HammerGS's playtest, 2026-09-27).</p>
      */
     private int formationHeading(Entity leader, Coords anchor) {
         List<Coords> leaderRoute = leader.getUnitOrders().getRoute();
-        // a facing set on the waypoint lays the shape out that way
-        int waypointFacing = leader.getUnitOrders().getWaypointOrder(0).getFacing();
-        if (!leaderRoute.isEmpty() && anchor.equals(leaderRoute.get(0))
-              && (waypointFacing != UnitOrders.FACING_AUTO)) {
-            return waypointFacing;
+        WaypointOrder headOrder = leader.getUnitOrders().getWaypointOrder(0);
+        boolean isStopHere = headOrder.isHold() || (leaderRoute.size() == 1);
+        if (!leaderRoute.isEmpty() && anchor.equals(leaderRoute.get(0)) && isStopHere
+              && (headOrder.getFacing() != UnitOrders.FACING_AUTO)) {
+            return headOrder.getFacing();
         }
         if (leaderRoute.size() > 1) {
             return anchor.direction(leaderRoute.get(1));

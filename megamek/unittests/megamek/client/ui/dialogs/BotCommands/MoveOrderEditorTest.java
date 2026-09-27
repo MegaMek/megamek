@@ -202,9 +202,9 @@ class MoveOrderEditorTest {
         List<String> commands = MoveOrderCommands.followCommands(List.of(20, 22), 30);
 
         assertEquals(List.of("/unitOrder 20 CLEAR",
-              "/unitOrder 20 FORMATION shape=WEDGE leader=30 spacing=2 slot=1 pace=WALK contact=BREAK together=true",
+              "/unitOrder 20 FORMATION shape=WEDGE leader=30 spacing=1 slot=1 pace=WALK contact=BREAK together=true",
               "/unitOrder 22 CLEAR",
-              "/unitOrder 22 FORMATION shape=WEDGE leader=30 spacing=2 slot=2 pace=WALK contact=BREAK together=true"),
+              "/unitOrder 22 FORMATION shape=WEDGE leader=30 spacing=1 slot=2 pace=WALK contact=BREAK together=true"),
               commands);
     }
 }

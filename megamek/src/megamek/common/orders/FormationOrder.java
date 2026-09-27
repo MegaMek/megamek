@@ -48,8 +48,8 @@ public final class FormationOrder implements Serializable {
     @Serial
     private static final long serialVersionUID = -2714659302167423058L;
 
-    /** The spacing a formation gets unless the player picks another. */
-    public static final int DEFAULT_SPACING = 2;
+    /** The spacing a formation gets unless the player picks another: slots next to each other (HammerGS, 2026-09-27). */
+    public static final int DEFAULT_SPACING = 1;
     /** The closest spacing: two units can never share a hex. */
     public static final int MINIMUM_SPACING = 1;
     /** The widest spacing offered. */

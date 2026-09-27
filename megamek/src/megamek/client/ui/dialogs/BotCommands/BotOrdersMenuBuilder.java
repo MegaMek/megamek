@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import javax.swing.JMenu;
@@ -50,6 +51,8 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -179,6 +182,10 @@ public class BotOrdersMenuBuilder {
             groupMenu.add(createPriorityMenu(botPlayer, group));
             groupMenu.addSeparator();
             addOrder(groupMenu, botPlayer, group, "formationOff", UnitOrderAction.FORMATION_OFF);
+            if (group.unitIds().size() == 1) {
+                addIfNotEmpty(groupMenu, createJoinFormationMenu(botPlayer, group));
+            }
+            addIfNotEmpty(groupMenu, createFollowUnitMenu(botPlayer, group));
             botMenu.add(groupMenu);
         }
         if (botMenu.getItemCount() > GROUP_SCROLL_THRESHOLD) {
@@ -263,12 +270,95 @@ public class BotOrdersMenuBuilder {
     }
 
     /**
-     * @return {@code true} for a unit the orders apply to: on the board and not airborne, since airborne units get
-     *       orders in a later version
+     * @return {@code true} for a unit the orders apply to: on the board and of a kind that takes orders there, see
+     *       {@link OrderEligibility}
      */
     private static boolean canTakeOrders(Entity entity) {
         return entity.isDeployed() && !entity.isDestroyed() && !entity.isDoomed() && (entity.getPosition() != null)
-              && !entity.isOffBoard() && !entity.isAirborne();
+              && !entity.isOffBoard() && OrderEligibility.isOrderableKind(entity);
+    }
+
+    private static void addIfNotEmpty(JMenu menu, JMenu submenu) {
+        if (submenu.getItemCount() > 0) {
+            menu.add(submenu);
+        }
+    }
+
+    /**
+     * Lists the bot's formations the unit can join, each by its leader. Joining puts the unit in the place after the
+     * last unit, on the leader's route.
+     */
+    private JMenu createJoinFormationMenu(Player botPlayer, OrderGroup group) {
+        String menuTitle = Messages.getString("BotCommandPanel.Orders.joinFormation");
+        JMenu menu = new JMenu(menuTitle);
+        if (!(client.getGame() instanceof Game game)) {
+            return menu;
+        }
+        int unitId = group.unitIds().get(0);
+        Entity unit = game.getEntity(unitId);
+        int currentLeaderId = ((unit == null) || unit.getUnitOrders().getFormation().isEmpty()) ? Entity.NONE
+              : unit.getUnitOrders().getFormation().get().getLeaderId();
+        for (Entity leader : game.getPlayerEntities(botPlayer, false)) {
+            Optional<FormationOrder> formation = leader.getUnitOrders().getFormation();
+            if ((leader.getId() == unitId) || (leader.getId() == currentLeaderId) || formation.isEmpty()
+                  || (formation.get().getLeaderId() != leader.getId()) || !canTakeOrders(leader)) {
+                continue;
+            }
+            int unitCount = 0;
+            int highestSlot = 0;
+            for (Entity member : game.getEntitiesVector()) {
+                Optional<FormationOrder> memberFormation = member.getUnitOrders().getFormation();
+                if (memberFormation.isPresent() && memberFormation.get().sharesLeader(leader.getId())) {
+                    unitCount++;
+                    highestSlot = Math.max(highestSlot, memberFormation.get().getSlot());
+                }
+            }
+            Force lance = game.getForces().getForce(leader);
+            String title = Messages.getString("BotCommandPanel.Orders.joinFormation.item",
+                  (lance == null) ? leader.getDisplayName() : lance.getName(), leader.getDisplayName(), unitCount);
+            JMenuItem item = new JMenuItem(title);
+            int slotAbove = highestSlot;
+            item.addActionListener(event -> {
+                for (String command : MoveOrderCommands.joinCommands(unitId, leader.getUnitOrders(), leader.getId(),
+                      slotAbove)) {
+                    client.sendChat(command);
+                }
+                acknowledge(botPlayer, group, menuTitle + " " + title);
+            });
+            menu.add(item);
+        }
+        return menu;
+    }
+
+    /**
+     * Lists the human players' units on the bot's side that the group can follow: the group forms up on the unit and
+     * keeps with it until given other orders.
+     */
+    private JMenu createFollowUnitMenu(Player botPlayer, OrderGroup group) {
+        String menuTitle = Messages.getString("BotCommandPanel.Orders.followUnit");
+        JMenu menu = new JMenu(menuTitle);
+        if (!(client.getGame() instanceof Game game)) {
+            return menu;
+        }
+        for (Entity playerUnit : game.getEntitiesVector()) {
+            Player unitOwner = playerUnit.getOwner();
+            if ((unitOwner == null) || unitOwner.isBot() || unitOwner.isEnemyOf(botPlayer)
+                  || (playerUnit.getPosition() == null) || !playerUnit.isDeployed() || playerUnit.isDestroyed()
+                  || playerUnit.isDoomed() || playerUnit.isOffBoard()) {
+                continue;
+            }
+            String title = Messages.getString("BotCommandPanel.Orders.followUnit.item", playerUnit.getDisplayName(),
+                  unitOwner.getName());
+            JMenuItem item = new JMenuItem(title);
+            item.addActionListener(event -> {
+                for (String command : MoveOrderCommands.followCommands(group.unitIds(), playerUnit.getId())) {
+                    client.sendChat(command);
+                }
+                acknowledge(botPlayer, group, menuTitle + " " + title);
+            });
+            menu.add(item);
+        }
+        return menu;
     }
 
     private static List<Integer> idsOf(List<Entity> units) {

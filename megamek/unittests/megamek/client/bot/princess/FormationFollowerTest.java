@@ -34,6 +34,7 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -140,6 +141,59 @@ class FormationFollowerTest {
         // heading north to the waypoint, the Echelon Right forms there, stepping back south-east
         assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
+    void aUnitLeavingTheFormationLetsTheOthersCloseUp() {
+        // HammerGS: detach a unit, and the rest re-slot to close the gap
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        BipedMek third = member(22, new Coords(17, 25), 2, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        Coords secondPlace = follower.getFormationSlot(second).orElseThrow();
+        assertNotEquals(secondPlace, follower.getFormationSlot(third).orElseThrow());
+
+        second.setUnitOrders(second.getUnitOrders().withFormation(null));
+
+        assertEquals(Optional.of(secondPlace), follower.getFormationSlot(third));
+    }
+
+    @Test
+    void aBotUnitFollowsAPlayersUnitWithoutARouteOfItsOwn() {
+        // HammerGS: follow a player's unit - the bot's units form up on it wherever it goes
+        Player human = new Player(2, "Lyran Allies Commander");
+        human.setTeam(1);
+        bot.setTeam(1);
+        game.addPlayer(2, human);
+        BipedMek playerMek = new BipedMek();
+        playerMek.setId(30);
+        playerMek.setOwner(human);
+        game.addEntity(playerMek);
+        playerMek.setPosition(LEADER_HEX);
+        playerMek.setFacing(0);
+        BipedMek escort = loneUnit(31, new Coords(10, 10), UnitOrders.NONE.withFormation(
+              new FormationOrder(FormationShape.ECHELON_RIGHT, 30, 2, 1, FormationPace.WALK, ContactRule.BREAK)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertTrue(follower.isFollowingPlayerUnit(escort));
+        // facing north, the Echelon Right steps back south-east from the player's unit
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)), follower.getFormationSlot(escort));
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
+              princess.getUnitBehaviorTracker().getActiveWaypoint(escort, princess));
+
+        playerMek.setPosition(NORTH_WAYPOINT);
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)), follower.getFormationSlot(escort));
+    }
+
+    @Test
+    void aBotUnitThatLeftItsFormationDoesNotLeadItAgain() {
+        // only a player's unit leads without a formation order; a bot leader that left hands over to the next unit
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        leader.setUnitOrders(leader.getUnitOrders().withFormation(null));
+
+        assertFalse(princess.getUnitOrdersFollower().isFollowingPlayerUnit(second));
+        assertEquals(Optional.empty(), princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
     @Test

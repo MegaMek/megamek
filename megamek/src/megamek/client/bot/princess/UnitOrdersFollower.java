@@ -110,9 +110,10 @@ public class UnitOrdersFollower {
     private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
 
     /**
-     * A formation unit's worked-out slot, kept while the leader's waypoint and the formation's heading stay the same.
+     * A formation unit's worked-out slot, kept while the leader's waypoint, the formation's heading and the unit's
+     * place in it stay the same. A unit leaving or joining the formation moves the others up or down a place.
      */
-    private record SlotChoice(Coords anchor, int heading, @Nullable Coords slot) {}
+    private record SlotChoice(Coords anchor, int heading, int slotIndex, int memberCount, @Nullable Coords slot) {}
 
     /** The heading a formation takes at its final waypoint when no stopped facing is ordered, fixed once seen. */
     private final Map<String, Integer> finalHeadings = new HashMap<>();
@@ -427,6 +428,10 @@ public class UnitOrdersFollower {
      * @return the movement points to the waypoint, or {@link WaypointDistanceField#UNREACHABLE}
      */
     int routeCostFrom(Entity mover, Coords waypoint, Coords position) {
+        if (MovementType.getMovementType(mover) == MovementType.Flyer) {
+            // a VTOL or fighter flies over the terrain; the straight line stands in
+            return WaypointDistanceField.UNREACHABLE;
+        }
         if (distanceFieldsRound != currentRound()) {
             distanceFields.clear();
             distanceFieldsRound = currentRound();
@@ -453,6 +458,9 @@ public class UnitOrdersFollower {
      *       {@link WaypointDistanceField#UNREACHABLE}
      */
     int edgeCostFrom(Entity mover, CardinalEdge edge, Coords position) {
+        if (MovementType.getMovementType(mover) == MovementType.Flyer) {
+            return WaypointDistanceField.UNREACHABLE;
+        }
         if (distanceFieldsRound != currentRound()) {
             distanceFields.clear();
             distanceFieldsRound = currentRound();
@@ -984,12 +992,20 @@ public class UnitOrdersFollower {
         Optional<Coords> leaderWaypoint = leader.getUnitOrders().getNextWaypoint();
         Coords anchor = leaderWaypoint.orElse(leader.getPosition());
         int heading = formationHeading(leader, anchor);
+        // the place in the formation counts only the units still in it, so a unit that leaves closes up the gap
+        int slotIndex = members.indexOf(entity);
         SlotChoice cached = slotChoices.get(entity.getId());
-        if ((cached != null) && cached.anchor().equals(anchor) && (cached.heading() == heading)) {
+        if ((cached != null) && cached.anchor().equals(anchor) && (cached.heading() == heading)
+              && (cached.slotIndex() == slotIndex) && (cached.memberCount() == members.size())) {
             return Optional.ofNullable(cached.slot());
         }
-        Coords slot = chooseSlot(entity, anchor, heading, formation.get(), members.indexOf(entity));
-        slotChoices.put(entity.getId(), new SlotChoice(anchor, heading, slot));
+        if ((cached != null) && (cached.slotIndex() != slotIndex)) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: moves from place {} to place {} of {} in the formation",
+                  entity.getDisplayName(), entity.getId(), currentRound(), cached.slotIndex(), slotIndex,
+                  members.size());
+        }
+        Coords slot = chooseSlot(entity, anchor, heading, formation.get(), slotIndex);
+        slotChoices.put(entity.getId(), new SlotChoice(anchor, heading, slotIndex, members.size(), slot));
         return Optional.ofNullable(slot);
     }
 
@@ -1099,7 +1115,8 @@ public class UnitOrdersFollower {
 
     /**
      * @return the formation's units still on the board, any owner on the same side, in slot order; the first is the
-     *       acting leader, which is the original leader while it lives and the next unit after that
+     *       acting leader, which is the original leader while it lives and the next unit after that. A player's unit
+     *       being followed leads without a formation order of its own.
      */
     private List<Entity> formationMembers(Entity entity, int leaderId) {
         List<Entity> members = new ArrayList<>();
@@ -1116,7 +1133,35 @@ public class UnitOrdersFollower {
         }
         members.sort(Comparator.comparingInt(member -> member.getUnitOrders().getFormation()
               .map(FormationOrder::getSlot).orElse(Integer.MAX_VALUE)));
+        Entity leader = owner.getGame().getEntity(leaderId);
+        if (isFollowablePlayerUnit(leader, entity) && !members.contains(leader)) {
+            members.add(0, leader);
+        }
         return members;
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is ordered to follow a player's unit: its formation leader belongs to a human
+     *       player on its side and is on the board
+     */
+    public boolean isFollowingPlayerUnit(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (formation.get().getLeaderId() == entity.getId())) {
+            return false;
+        }
+        return isFollowablePlayerUnit(owner.getGame().getEntity(formation.get().getLeaderId()), entity);
+    }
+
+    /**
+     * @return {@code true} if the leader is a human player's unit on the follower's side, alive and on the board; a
+     *       bot's unit leads only while it has a formation order, so a leader that left its formation does not
+     */
+    private static boolean isFollowablePlayerUnit(@Nullable Entity leader, Entity follower) {
+        return (leader != null) && (leader.getPosition() != null) && !leader.isDestroyed() && !leader.isDoomed()
+              && (leader.getOwner() != null) && !leader.getOwner().isBot()
+              && !leader.getOwner().isEnemyOf(follower.getOwner());
     }
 
     /**

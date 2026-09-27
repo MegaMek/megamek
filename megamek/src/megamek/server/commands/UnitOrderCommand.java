@@ -45,6 +45,7 @@ import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.OrderEligibility;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
@@ -165,6 +166,9 @@ public class UnitOrderCommand extends ClientServerCommand {
         Player owner = entity.getOwner();
         if ((owner == null) || !owner.isBot()) {
             return Messages.getString("UnitOrder.cmd.notBot", entity.getDisplayName());
+        }
+        if (!OrderEligibility.isOrderableKind(entity)) {
+            return Messages.getString("UnitOrder.cmd.notOrderable", entity.getDisplayName());
         }
         if ((connId == SERVER_CONN) || isGM(connId)) {
             return null;

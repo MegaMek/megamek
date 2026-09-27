@@ -36,8 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.board.Coords;
+import megamek.common.orders.FormationOrder;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
+import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.server.commands.UnitOrderCommand;
@@ -78,14 +80,9 @@ final class MoveOrderCommands {
         for (int unitId : unitIds) {
             if (isInFormation) {
                 int slot = (unitId == leaderId) ? 0 : nextSlot++;
-                commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION,
-                      UnitOrderCommand.SHAPE + '=' + firstFormation.getShape().name(),
-                      UnitOrderCommand.LEADER + '=' + leaderId,
-                      UnitOrderCommand.SPACING + '=' + firstFormation.getSpacing(),
-                      UnitOrderCommand.SLOT + '=' + slot,
-                      UnitOrderCommand.PACE + '=' + firstFormation.getPace().name(),
-                      UnitOrderCommand.CONTACT + '=' + firstFormation.getContactRule().name(),
-                      UnitOrderCommand.TOGETHER + '=' + firstFormation.isKeepTogether()));
+                commands.add(formationCommand(unitId, leaderId, slot, firstFormation.getShape().name(),
+                      firstFormation.getSpacing(), firstFormation.getPace().name(),
+                      firstFormation.getContactRule().name(), firstFormation.isKeepTogether()));
             } else if (wasInFormation) {
                 commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION_OFF));
             }
@@ -103,12 +100,76 @@ final class MoveOrderCommands {
     }
 
     /**
+     * Puts a unit into an existing formation: it takes the place after the last unit and the same route as the
+     * leader, with the leader's formation, facing and hold at every waypoint and its priority.
+     *
+     * @param unitId        the unit joining
+     * @param leaderOrders  the orders of the formation's leader
+     * @param leaderId      the formation's leader
+     * @param highestSlot   the highest slot taken in the formation now
+     *
+     * @return the commands to send, in order; empty when the leader is not in a formation
+     */
+    static List<String> joinCommands(int unitId, UnitOrders leaderOrders, int leaderId, int highestSlot) {
+        List<String> commands = new ArrayList<>();
+        if (leaderOrders.getFormation().isEmpty()) {
+            return commands;
+        }
+        FormationOrder formation = leaderOrders.getFormation().get();
+        commands.add(formationCommand(unitId, leaderId, highestSlot + 1, formation.getShape().name(),
+              formation.getSpacing(), formation.getPace().name(), formation.getContactRule().name(),
+              formation.isKeepTogether()));
+        if (leaderOrders.hasRoute()) {
+            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.ROUTE,
+                  UnitOrderCommand.hexesArgument(leaderOrders.getRoute(), leaderOrders.getWaypointOrders()),
+                  UnitOrderCommand.PRIORITY + '=' + leaderOrders.getPriority().name()));
+        }
+        return commands;
+    }
+
+    /**
+     * Sets units to follow a player's unit: their own orders are cleared and they form up on it in the default
+     * formation, a Wedge that breaks to fight when the enemy comes near and forms up again after.
+     *
+     * @param unitIds  the units that follow, in slot order
+     * @param leaderId the player's unit they follow
+     *
+     * @return the commands to send, in order
+     */
+    static List<String> followCommands(List<Integer> unitIds, int leaderId) {
+        WaypointFormation formation = WaypointTableModel.DEFAULT_FORMATION;
+        List<String> commands = new ArrayList<>();
+        int slot = 1;
+        for (int unitId : unitIds) {
+            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.CLEAR));
+            commands.add(formationCommand(unitId, leaderId, slot++, formation.getShape().name(),
+                  formation.getSpacing(), formation.getPace().name(), formation.getContactRule().name(),
+                  formation.isKeepTogether()));
+        }
+        return commands;
+    }
+
+    private static String formationCommand(int unitId, int leaderId, int slot, String shape, int spacing,
+          String pace, String contact, boolean keepTogether) {
+        return UnitOrderCommand.commandText(unitId, UnitOrderAction.FORMATION,
+              UnitOrderCommand.SHAPE + '=' + shape,
+              UnitOrderCommand.LEADER + '=' + leaderId,
+              UnitOrderCommand.SPACING + '=' + spacing,
+              UnitOrderCommand.SLOT + '=' + slot,
+              UnitOrderCommand.PACE + '=' + pace,
+              UnitOrderCommand.CONTACT + '=' + contact,
+              UnitOrderCommand.TOGETHER + '=' + keepTogether);
+    }
+
+    /**
      * @return the orders with no formation on any leg, for units that travel out of formation throughout
      */
     private static List<WaypointOrder> withoutFormations(List<WaypointOrder> waypointOrders) {
         List<WaypointOrder> plain = new ArrayList<>();
         for (WaypointOrder order : waypointOrders) {
-            plain.add(new WaypointOrder(order.getFacing(), order.getHoldTurns()));
+            // only the formation goes: a lone unit still exits at the end or waits there as ordered
+            plain.add(new WaypointOrder(order.getFacing(), order.getHoldMode(), order.getHoldTurns(), null,
+                  order.isExitBoard()));
         }
         return plain;
     }

@@ -40,6 +40,7 @@ import java.util.Optional;
 
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.force.Force;
 import megamek.common.units.Entity;
 
 /**
@@ -58,12 +59,41 @@ public final class RouteGroups {
     public record RouteGroup(Entity guide, List<Entity> units) {
 
         /**
-         * @return who follows the route, e.g. {@code GHR-5H +3} for a Grasshopper and three others
+         * @return who follows the route: the force's name when the units are all of one force ({@code Alpha Lance}),
+         *       the unit's name for a single unit ({@code Grasshopper GHR-5H}), else the lead unit's model and how many
+         *       others follow it ({@code GHR-5H +3}) (HammerGS, 2026-09-27)
          */
         public String label() {
+            if (units.size() == 1) {
+                return guide.getShortName();
+            }
+            String forceName = sharedForceName();
+            if (forceName != null) {
+                return forceName;
+            }
             String model = guide.getModel();
             String name = ((model == null) || model.isBlank()) ? guide.getChassis() : model;
-            return name + ((units.size() > 1) ? (" +" + (units.size() - 1)) : "");
+            return name + " +" + (units.size() - 1);
+        }
+
+        /**
+         * @return the name of the force every unit of the group belongs to, or {@code null} when they are not all of
+         *       one force
+         */
+        private @Nullable String sharedForceName() {
+            if (guide.getGame() == null) {
+                return null;
+            }
+            Force force = guide.getGame().getForces().getForce(guide);
+            if ((force == null) || (force.getName() == null) || force.getName().isBlank()) {
+                return null;
+            }
+            for (Entity unit : units) {
+                if (!force.containsEntity(unit.getId())) {
+                    return null;
+                }
+            }
+            return force.getName();
         }
 
         /**

@@ -122,7 +122,7 @@ class BotWaypointMenuBuilderTest {
     @Test
     void aFlagsFacingIsChangedAndItsHoldKept() {
         JMenu menu = waypointMenuOn(FIRST_HEX);
-        assertEquals(Messages.getString("BotCommandPanel.Waypoint.menu", 1, "GHR-5H"), menu.getText());
+        assertEquals(Messages.getString("BotCommandPanel.Waypoint.menu", 1, "Grasshopper GHR-5H"), menu.getText());
         JMenu facingMenu = (JMenu) findItem(menu, Messages.getString("BotCommandPanel.MoveOrder.column.facing"));
         assertNotNull(facingMenu);
 

@@ -42,6 +42,7 @@ import megamek.client.ui.clientGUI.boardview.spriteHandler.BotRouteSpriteHandler
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
@@ -132,8 +133,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", "1", AUTO, 0, false, false),
-              new RouteFlag(SECOND_WAYPOINT, 0, 1, "CN9-A", "1", AUTO, 0, false, false)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "Test GHR-5H", "1", AUTO, 0, false, false),
+              new RouteFlag(SECOND_WAYPOINT, 0, 1, "Test CN9-A", "1", AUTO, 0, false, false)), flags);
     }
 
     @Test
@@ -151,8 +152,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", "1", NORTH_EAST, 2, false, false),
-              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H", "2", NORTH, 0, false, false)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "Test GHR-5H", "1", NORTH_EAST, 2, false, false),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "Test GHR-5H", "2", NORTH, 0, false, false)), flags);
         assertEquals("1 hold 2", flags.get(0).progressText());
         assertEquals("2", flags.get(1).progressText());
     }
@@ -165,10 +166,25 @@ class BotRouteSpriteHandlerTest {
 
         String summary = BotRouteSpriteHandler.tooltipFor(units, human, FIRST_WAYPOINT, 0);
 
-        assertTrue(summary.contains("Nav Point Alpha (" + FIRST_WAYPOINT.getBoardNum() + ") - GHR-5H"), summary);
+        assertTrue(summary.contains("Nav Point Alpha (" + FIRST_WAYPOINT.getBoardNum() + ") - Test GHR-5H"), summary);
         assertTrue(summary.contains("Facing on arrival: Northeast"), summary);
         assertTrue(summary.contains("Then: Hold 2 turns"), summary);
         assertTrue(summary.contains("Priority: Normal"), summary);
         assertTrue(BotRouteSpriteHandler.tooltipFor(units, human, FIRST_WAYPOINT.translated(0, 3), 0).isEmpty());
+    }
+
+    @Test
+    void aLancesFlagsCarryTheLancesName() {
+        // HammerGS: moving a force called Alpha Lance, the flag says Alpha Lance; one unit alone, its own name
+        int lanceId = game.getForces().addTopLevelForce(Force.createToplevelForce("Alpha Lance", ourBot), ourBot);
+        UnitOrders route = UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT));
+        game.getForces().addEntity(unit(1, "GHR-5H", ourBot, route), lanceId);
+        game.getForces().addEntity(unit(2, "CN9-A", ourBot, route), lanceId);
+        unit(3, "WHM-6R", ourBot, UnitOrders.NONE.withRoute(List.of(SECOND_WAYPOINT)));
+
+        List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
+
+        assertEquals("Alpha Lance", flags.get(0).label());
+        assertEquals("Test WHM-6R", flags.get(1).label());
     }
 }

@@ -40,6 +40,7 @@ import java.util.List;
 
 import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.OrderPriority;
@@ -163,5 +164,47 @@ class MoveOrderEditorTest {
 
         assertEquals(List.of("/unitOrder 20 FORMATION_OFF", "/unitOrder 20 PRIORITY priority=IMPERATIVE"), commands);
         assertEquals(UnitOrders.FACING_AUTO, new WaypointTableModel.FacingOption(UnitOrders.FACING_AUTO).facing());
+    }
+
+    @Test
+    void aLoneUnitKeepsItsExitAndWaitWhenTheFormationIsTakenOff() {
+        // a single unit travels out of formation, but still leaves the board at the end of its route
+        WaypointOrder waitThere = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.ASSEMBLE, 4,
+              WaypointTableModel.DEFAULT_FORMATION, false);
+        WaypointOrder leave = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0,
+              WaypointTableModel.DEFAULT_FORMATION, true);
+
+        List<String> commands = MoveOrderCommands.commands(List.of(20), 20, false, List.of(FIRST_HEX, SECOND_HEX),
+              List.of(waitThere, leave), OrderPriority.NORMAL);
+
+        assertEquals(List.of("/unitOrder 20 ROUTE hexes=1709/U4-1706/EXIT priority=NORMAL"), commands);
+    }
+
+    @Test
+    void aJoiningUnitTakesThePlaceAfterTheLastAndTheLeadersRoute() {
+        // HammerGS: attach a unit to a formation - next free slot, same route
+        UnitOrders leaderOrders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+                    List.of(new WaypointOrder(NORTH_EAST, 2), WaypointOrder.PASS_THROUGH))
+              .withPriority(OrderPriority.IMPERATIVE)
+              .withFormation(new FormationOrder(FormationShape.WEDGE, 21, 3, 0, FormationPace.RUN, ContactRule.HOLD,
+                    true));
+
+        List<String> commands = MoveOrderCommands.joinCommands(25, leaderOrders, 21, 3);
+
+        assertEquals(List.of(
+              "/unitOrder 25 FORMATION shape=WEDGE leader=21 spacing=3 slot=4 pace=RUN contact=HOLD together=true",
+              "/unitOrder 25 ROUTE hexes=1709/NE/2-1706 priority=IMPERATIVE"), commands);
+        assertTrue(MoveOrderCommands.joinCommands(25, UnitOrders.NONE, 21, 3).isEmpty());
+    }
+
+    @Test
+    void followingAPlayersUnitClearsTheOrdersAndFormsUpOnIt() {
+        List<String> commands = MoveOrderCommands.followCommands(List.of(20, 22), 30);
+
+        assertEquals(List.of("/unitOrder 20 CLEAR",
+              "/unitOrder 20 FORMATION shape=WEDGE leader=30 spacing=2 slot=1 pace=WALK contact=BREAK together=true",
+              "/unitOrder 22 CLEAR",
+              "/unitOrder 22 FORMATION shape=WEDGE leader=30 spacing=2 slot=2 pace=WALK contact=BREAK together=true"),
+              commands);
     }
 }

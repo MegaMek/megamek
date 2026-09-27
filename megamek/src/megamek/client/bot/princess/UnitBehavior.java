@@ -115,6 +115,15 @@ public class UnitBehavior {
 
             logDecision(entity, "PLAYER_ROUTE", "no reachable waypoint left");
             return BehaviorType.NoPathToDestination;
+        } else if (owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)) {
+            Optional<Coords> slot = owner.getUnitOrdersFollower().getFormationSlot(entity);
+            if (slot.isPresent()) {
+                logDecision(entity, "FOLLOW_UNIT", "head " + slot.get().getBoardNum());
+                return BehaviorType.MoveToDestination;
+            }
+            // the formation broke on contact: fight, and fall back in once the enemy is gone
+            logDecision(entity, "FOLLOW_UNIT", "engaging");
+            return BehaviorType.Engaged;
         } else if ((entity instanceof Mek) && ((Mek) entity).isJustMovedIntoIndustrialKillingWater()) {
             return edgeBehavior(entity, owner, "INDUSTRIAL_WATER", BehaviorType.ForcedWithdrawal);
         } else {
@@ -211,7 +220,7 @@ public class UnitBehavior {
               && !isFollowingOrdersOverWithdrawal(entity, owner)) {
             return Optional.empty();
         }
-        if (entity.getUnitOrders().hasRoute()) {
+        if (entity.getUnitOrders().hasRoute() || owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)) {
             // a formation unit heads for its slot beside the leader rather than the waypoint itself
             Optional<Coords> formationSlot = owner.getUnitOrdersFollower().getFormationSlot(entity);
             if (formationSlot.isPresent()) {

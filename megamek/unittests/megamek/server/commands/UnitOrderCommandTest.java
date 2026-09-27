@@ -45,6 +45,7 @@ import megamek.common.game.Game;
 import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.WaypointOrder;
+import megamek.common.units.AeroSpaceFighter;
 import megamek.common.units.BipedMek;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
@@ -165,6 +166,19 @@ class UnitOrderCommandTest {
         runAs(TEAMMATE_CONNECTION, HUMAN_UNIT_ID, "ROUTE", "hexes=1508");
 
         assertTrue(humanUnit.getUnitOrders().isEmpty());
+    }
+
+    @Test
+    void anAerospaceFighterIsRefusedEvenWhenTheOrderIsTyped() {
+        // HammerGS: unit orders are for the ground map; aerospace fighters fly their own missions
+        AeroSpaceFighter fighter = new AeroSpaceFighter();
+        fighter.setId(12);
+        fighter.setOwner(botUnit.getOwner());
+        botUnit.getGame().addEntity(fighter);
+
+        runAs(TEAMMATE_CONNECTION, 12, "ROUTE", "hexes=1508");
+
+        assertTrue(fighter.getUnitOrders().isEmpty());
     }
 
     @Test

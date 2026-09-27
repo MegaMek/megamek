@@ -609,8 +609,8 @@ public class LobbyActions {
      * Asks for a name and creates a new top-level force of that name.
      */
     void forceCreateEmpty() {
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        // Ask for a name, offering ones that suit the side and read well on the radio
+        String name = ForceNameChooser.choose(frame(), game(), localPlayer(), null);
         if ((name == null) || name.isBlank()) {
             return;
         }
@@ -647,8 +647,9 @@ public class LobbyActions {
             LobbyErrors.showOnlyTeam(frame());
             return;
         }
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        // Ask for a name, offering ones that suit the side and read well on the radio
+        String name = ForceNameChooser.choose(frame(), game(), CollectionUtil.anyOneElement(entities).getOwner(),
+              null);
         if ((name == null) || name.isBlank()) {
             return;
         }
@@ -663,8 +664,8 @@ public class LobbyActions {
         if (parentId == Force.NO_FORCE) {
             return;
         }
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        // Ask for a name, offering ones that suit the side and read well on the radio
+        String name = ForceNameChooser.choose(frame(), game(), game().getForces().getOwner(parentId), null);
         if ((name == null) || name.isBlank()) {
             return;
         }
@@ -937,8 +938,8 @@ public class LobbyActions {
             LobbyErrors.showCannotConfigEnemies(frame());
             return;
         }
-        // Ask for a name
-        String name = JOptionPane.showInputDialog(frame(), "Choose a force designation");
+        // Ask for a name, offering ones that suit the side and read well on the radio
+        String name = ForceNameChooser.choose(frame(), game(), forces.getOwner(forceId), force.getName());
         if ((name == null) || name.isBlank()) {
             return;
         }

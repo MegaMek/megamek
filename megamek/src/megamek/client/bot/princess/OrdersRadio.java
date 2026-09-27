@@ -40,6 +40,7 @@ import java.util.Set;
 import megamek.client.bot.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
+import megamek.common.force.ForceNames;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.commands.RadioCommand;
@@ -204,7 +205,8 @@ public class OrdersRadio {
      */
     void report(Entity entity, RadioEvent event, String... details) {
         Force lance = owner.getGame().getForces().getForce(entity);
-        String plainSpeaker = (event.isLanceCall() && (lance != null)) ? lance.getName() : entity.getDisplayName();
+        String lanceName = (lance == null) ? null : lanceName(lance);
+        String plainSpeaker = (event.isLanceCall() && (lanceName != null)) ? lanceName : entity.getDisplayName();
         String plain = Messages.getString("Princess.radio.PLAIN." + event.key(), withSpeaker(plainSpeaker, details));
         LOGGER.info("[BotOrders] {}", plain);
         int round = owner.getGame().getCurrentRound();
@@ -219,8 +221,8 @@ public class OrdersRadio {
         RadioVoice voice = voice();
         String call = plain;
         if (voice != RadioVoice.PLAIN) {
-            String callsign = (event.isLanceCall() && (lance != null)) ? lance.getName()
-                  : callsign(entity, lance, voice);
+            String callsign = (event.isLanceCall() && (lanceName != null)) ? lanceName
+                  : callsign(entity, lance, lanceName, voice);
             call = Messages.getString("Princess.radio." + voice.name() + '.' + event.key(),
                   withSpeaker(callsign, details));
         }
@@ -237,23 +239,64 @@ public class OrdersRadio {
     }
 
     /**
+     * @param lance one of the bot's lances
+     *
+     * @return the name the radio calls the lance by: its own name, or, when that says nothing (blank, the bot's own
+     *       name, "Force"), a callsign name by its place among the bot's forces with no usable name, Alpha Lance
+     *       first (Alpha Star for a Clan force)
+     */
+    String lanceName(Force lance) {
+        String botName = owner.getName();
+        if (!ForceNames.isGeneric(lance.getName(), botName)) {
+            return lance.getName();
+        }
+        // the place counts the older forces, by id, so each lance keeps its callsign name all game
+        int place = 0;
+        for (Force force : owner.getGame().getForces().getAllForces()) {
+            if ((force.getId() < lance.getId()) && (force.getOwnerId() == lance.getOwnerId())
+                  && ForceNames.isGeneric(force.getName(), botName)) {
+                place++;
+            }
+        }
+        return ForceNames.callsignName(place, styleOf(voice()));
+    }
+
+    private static ForceNames.Style styleOf(RadioVoice voice) {
+        return switch (voice) {
+            case CLAN -> ForceNames.Style.CLAN;
+            case COMSTAR -> ForceNames.Style.COMSTAR;
+            case INNER_SPHERE, PLAIN -> ForceNames.Style.INNER_SPHERE;
+        };
+    }
+
+    /**
      * @return the unit's callsign: its lance's name and its place in the lance ("Command One"), or for a Clan force
      *       the Star and Point ("Alpha Star, Point One"); a unit in no lance uses its own name
      */
     static String callsign(Entity entity, @Nullable Force lance, RadioVoice voice) {
-        if (lance == null) {
+        return callsign(entity, lance, (lance == null) ? null : lance.getName(), voice);
+    }
+
+    /**
+     * @param lanceName the name the lance is called by, which for a lance with no usable name of its own is a callsign
+     *                  name such as {@code Charlie Lance}
+     *
+     * @return the unit's callsign, as {@link #callsign(Entity, Force, RadioVoice)} but under the given lance name
+     */
+    static String callsign(Entity entity, @Nullable Force lance, @Nullable String lanceName, RadioVoice voice) {
+        if ((lance == null) || (lanceName == null)) {
             return entity.getShortName();
         }
         int place = lance.entityIndex(entity);
         String placeWord = ((place >= 0) && (place < NUMBER_WORDS.size())) ? NUMBER_WORDS.get(place)
               : String.valueOf(place + 1);
         if (voice == RadioVoice.CLAN) {
-            return lance.getName() + ", Point " + placeWord;
+            return lanceName + ", Point " + placeWord;
         }
         if (voice == RadioVoice.COMSTAR) {
-            return lance.getName() + ", Adept " + placeWord;
+            return lanceName + ", Adept " + placeWord;
         }
-        String base = lance.getName().replaceAll("(?i)\\s+(lance|company|star|binary|level ii)$", "");
+        String base = lanceName.replaceAll("(?i)\\s+(lance|company|star|binary|level ii)$", "");
         return base + ' ' + placeWord;
     }
 }

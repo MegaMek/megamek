@@ -397,7 +397,7 @@ public class PathEnumerator {
                       .getActiveWaypoint(mover, getOwner());
                 if (activeWaypoint.isPresent()) {
                     destinations.add(activeWaypoint.get());
-                    logger.info("[BotOrders] {} (ID {}): long-range path toward {}", mover.getDisplayName(),
+                    logger.debug("[BotOrders] {} (ID {}): long-range path toward {}", mover.getDisplayName(),
                           mover.getId(), activeWaypoint.get().getBoardNum());
                 }
                 if (destinations.isEmpty()) {

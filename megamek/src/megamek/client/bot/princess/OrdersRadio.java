@@ -56,6 +56,33 @@ import org.apache.logging.log4j.Level;
  */
 public class OrdersRadio {
 
+    /** The events a bot reports on its units' orders; each names its calls in the bot's messages. */
+    enum RadioEvent {
+        /** A unit reached its waypoint and holds there. */
+        ARRIVED("arrived"),
+        /** A unit holds at a waypoint as ordered. */
+        HOLDING("holding"),
+        /** A unit leaves the board at the end of its route. */
+        EXITING("exiting"),
+        /** A unit cannot reach its waypoint and skips it. */
+        UNREACHABLE("unreachable"),
+        /** A unit follows the player's orders over its own withdrawal. */
+        FOLLOWING_ORDERS("followingOrders"),
+        /** A formation folds into a Column to get through a gap. */
+        FOLD("fold");
+
+        private final String key;
+
+        RadioEvent(String key) {
+            this.key = key;
+        }
+
+        /** @return the event's part of the message key, e.g. {@code arrived} */
+        String key() {
+            return key;
+        }
+    }
+
     private static final MMLogger LOGGER = MMLogger.create(OrdersRadio.class);
 
     private static final List<String> NUMBER_WORDS = List.of("One", "Two", "Three", "Four", "Five", "Six", "Seven",
@@ -157,12 +184,11 @@ public class OrdersRadio {
      * Reports an event about one unit's orders, once per lance and kind of event per round.
      *
      * @param entity the unit
-     * @param event  the kind of event: {@code arrived}, {@code holding}, {@code exiting}, {@code unreachable},
-     *               {@code followingOrders} or {@code fold}
+     * @param event  the kind of event
      * @param detail the hex or edge the event is about
      */
-    void report(Entity entity, String event, String detail) {
-        String plain = Messages.getString("Princess.radio.PLAIN." + event, entity.getDisplayName(), detail);
+    void report(Entity entity, RadioEvent event, String detail) {
+        String plain = Messages.getString("Princess.radio.PLAIN." + event.key(), entity.getDisplayName(), detail);
         LOGGER.info("[BotOrders] {}", plain);
         int round = owner.getGame().getCurrentRound();
         if (round != spokenRound) {
@@ -176,7 +202,7 @@ public class OrdersRadio {
         }
         RadioVoice voice = voice();
         String call = (voice == RadioVoice.PLAIN) ? plain : callsign(entity, lance, voice) + ": "
-              + Messages.getString("Princess.radio." + voice.name() + '.' + event, detail);
+              + Messages.getString("Princess.radio." + voice.name() + '.' + event.key(), detail);
         // the server relays the call to the unit's own side only, as a toast with the unit's icon and a chat line;
         // it names the hex the unit is heading for, so the other side must not hear it
         owner.sendChat(RadioCommand.commandText(entity.getId(), call), Level.INFO);

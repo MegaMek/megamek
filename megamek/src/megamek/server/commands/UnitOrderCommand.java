@@ -95,6 +95,10 @@ public class UnitOrderCommand extends ClientServerCommand {
 
     private static final int HIGHEST_FACING = 5;
 
+    /**
+     * @param server      the server that relays the replies
+     * @param gameManager the game manager whose units are ordered
+     */
     public UnitOrderCommand(Server server, TWGameManager gameManager) {
         super(server, gameManager, COMMAND_NAME, Messages.getString("UnitOrder.cmd.help"),
               Messages.getString("UnitOrder.cmd.longName"));
@@ -147,10 +151,18 @@ public class UnitOrderCommand extends ClientServerCommand {
         int facingWhenStopped = facingArgument(args, FACING_WHEN_STOPPED);
         OrderPriority priority = (OrderPriority) args.get(PRIORITY).getValue();
 
-        UnitOrders newOrders = action.apply(entity.getUnitOrders(), hexes, waypointOrders,
-              (edge == null) ? OffBoardDirection.NONE : edge,
-              facingWhileMoving, facingWhenStopped, priority, gameManager.getGame().getCurrentRound(),
-              formationArgument(args, entity));
+        UnitOrders newOrders;
+        try {
+            newOrders = action.apply(entity.getUnitOrders(), hexes, waypointOrders,
+                  (edge == null) ? OffBoardDirection.NONE : edge,
+                  facingWhileMoving, facingWhenStopped, priority, gameManager.getGame().getCurrentRound(),
+                  formationArgument(args, entity));
+        } catch (IllegalArgumentException missingArgument) {
+            // the command base class replies to the sender with the reason and the usage
+            LOGGER.info("[BotOrders] {} for {} refused: {}", action, entity.getDisplayName(),
+                  missingArgument.getMessage());
+            throw missingArgument;
+        }
         entity.setUnitOrders(newOrders);
         LOGGER.info("[BotOrders] {} (ID {}) given {}: now {}", entity.getDisplayName(), entity.getId(), action,
               newOrders);

@@ -58,6 +58,10 @@ public class RouteArgument extends Argument<List<RouteArgument.RouteStep>> {
      */
     public record RouteStep(Coords hex, WaypointOrder order) {}
 
+    /**
+     * @param name        the argument's name, e.g. {@code hexes}
+     * @param description the argument's help text
+     */
     public RouteArgument(String name, String description) {
         super(name, description);
     }

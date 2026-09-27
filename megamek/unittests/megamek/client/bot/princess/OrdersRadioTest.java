@@ -124,8 +124,8 @@ class OrdersRadioTest {
     void aLanceCallsOncePerEventPerRound() {
         game.setCurrentRound(3);
 
-        princess.getOrdersRadio().report(atlas, "arrived", "1508");
-        princess.getOrdersRadio().report(marauder, "arrived", "1508");
+        princess.getOrdersRadio().report(atlas, OrdersRadio.RadioEvent.ARRIVED, "1508");
+        princess.getOrdersRadio().report(marauder, OrdersRadio.RadioEvent.ARRIVED, "1508");
 
         // the call goes to the server, which relays it to the bot's own side only, as a toast and a chat line
         verify(princess, times(1)).sendChat(RadioCommand.commandText(atlas.getId(), "Command One: "

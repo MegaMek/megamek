@@ -355,9 +355,6 @@ class LobbyMekPopup {
     }
 
     /**
-     * Returns the "Force" submenu, allowing assignment to forces
-     */
-    /**
      * Adds the Formation menu for a lance owned by a bot, so it starts the game in formation.
      */
     private static void addBotFormationMenu(ScalingPopup popup, ChatLounge lobby, Force force) {
@@ -404,6 +401,9 @@ class LobbyMekPopup {
         popup.add(item);
     }
 
+    /**
+     * Returns the "Force" submenu, allowing assignment to forces
+     */
     private static JMenu forceMenu(ChatLounge lobby, List<Entity> entities, List<Force> forces,
           ActionListener listener) {
         JMenu menu = new JMenu("Force");

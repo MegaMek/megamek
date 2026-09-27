@@ -206,9 +206,9 @@ public class BotCommandsPanel extends JPanel {
         var artillery = createButton("Artillery");
         commandButtons = List.of(moveOrder, quickOrders, targets, maneuver, setBehavior, artillery);
 
-        moveOrder.addActionListener(evt -> showButtonPopup(moveOrder, this::createMoveOrderPopup));
-        quickOrders.addActionListener(evt -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
-        targets.addActionListener(evt -> showButtonPopup(targets, this::createTargetsPopup));
+        moveOrder.addActionListener(event -> showButtonPopup(moveOrder, this::createMoveOrderPopup));
+        quickOrders.addActionListener(event -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
+        targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
         setBehavior.addActionListener(evt -> showButtonPopup(setBehavior, this::createSelectBehaviorPopup));
         artillery.addActionListener(evt -> showButtonPopup(artillery, this::createArtilleryPopup));
@@ -485,7 +485,7 @@ public class BotCommandsPanel extends JPanel {
               this::disableShootAndScoot);
         JMenuItem scootToHexItem = new JMenuItem(Messages.getString("BotCommandPanel.ScootToHex.title"));
         scootToHexItem.setToolTipText(Messages.getString("BotCommandPanel.ScootToHex.tooltip"));
-        scootToHexItem.addActionListener(evt -> scootToHex(botPlayer));
+        scootToHexItem.addActionListener(event -> scootToHex(botPlayer));
         botMenu.add(scootToHexItem);
         if (!canScoot) {
             String reason = Messages.getString("BotCommandPanel.ShootAndScoot.noOnBoardArtillery");

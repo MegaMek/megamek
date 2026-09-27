@@ -154,7 +154,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private BoardViewListenerAdapter hexClickListener;
     private Distractable suppressedDisplay;
     private boolean isLoadingDetail;
-    private boolean wasInFormation;
 
     /**
      * A unit as the leader list shows it.
@@ -524,13 +523,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         waypoints.setRoute(orders.getRoute(), orders.getWaypointOrders(), unitsFormation);
         priorityCombo.setSelectedItem(orders.getPriority());
         Optional<FormationOrder> formation = orders.getFormation();
-        wasInFormation = false;
-        for (int unitId : group.unitIds()) {
-            Entity unit = clientGUI.getClient().getGame().getEntity(unitId);
-            if ((unit != null) && unit.getUnitOrders().getFormation().isPresent()) {
-                wasInFormation = true;
-            }
-        }
         int leaderId = formation.map(FormationOrder::getLeaderId).orElse(group.unitIds().get(0));
         for (int index = 0; index < leaderCombo.getItemCount(); index++) {
             if (leaderCombo.getItemAt(index).unitId() == leaderId) {
@@ -555,6 +547,20 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
                   name)));
         }
         unitsLabel.setText("<html><b>" + group.label() + "</b><br>" + names + "</html>");
+    }
+
+    /**
+     * @return {@code true} if any of the units being ordered is in a formation now, so taking them out of formation
+     *       has to be sent; read when sending, since the units can be changed with Choose units
+     */
+    private boolean isAnyUnitInFormation() {
+        for (int unitId : group.unitIds()) {
+            Entity unit = clientGUI.getClient().getGame().getEntity(unitId);
+            if ((unit != null) && unit.getUnitOrders().getFormation().isPresent()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** A group of one unit travels out of formation: it has no one to form on. */
@@ -681,7 +687,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         }
         UnitOption leader = (UnitOption) leaderCombo.getSelectedItem();
         int leaderId = (leader == null) ? group.unitIds().get(0) : leader.unitId();
-        List<String> commands = MoveOrderCommands.commands(group.unitIds(), leaderId, wasInFormation,
+        List<String> commands = MoveOrderCommands.commands(group.unitIds(), leaderId, isAnyUnitInFormation(),
               waypoints.getHexes(), waypoints.getWaypointOrders(), (OrderPriority) priorityCombo.getSelectedItem());
         for (String command : commands) {
             clientGUI.getClient().sendChat(command);

@@ -76,6 +76,8 @@ public enum UnitOrderAction {
     MOVE_TO_EDGE,
     /** Move to an edge and leave the board by it. */
     EXIT_BY_EDGE,
+    /** Call off an edge order, keeping the formation, facings and priority. */
+    EDGE_OFF,
     /** Set the facing while moving and when stopped. */
     FACING,
     /** Set how hard the unit pushes for its route. */
@@ -170,6 +172,7 @@ public enum UnitOrderAction {
             case STOP -> UnitOrders.stoppedInRound(currentRound);
             case MOVE_TO_EDGE -> current.withEdgeOrder(EdgeOrder.MOVE_TO, requireEdge(edge));
             case EXIT_BY_EDGE -> current.withEdgeOrder(EdgeOrder.EXIT_BY, requireEdge(edge));
+            case EDGE_OFF -> current.withEdgeOrder(EdgeOrder.NONE, OffBoardDirection.NONE);
             case FACING -> current.withFacings(facingWhileMoving, facingWhenStopped);
             case PRIORITY -> {
                 if (priority == null) {

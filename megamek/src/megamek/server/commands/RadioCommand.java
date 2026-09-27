@@ -61,6 +61,10 @@ public class RadioCommand extends ServerCommand {
 
     private final TWGameManager gameManager;
 
+    /**
+     * @param server      the server that relays the calls
+     * @param gameManager the game manager whose units the calls are about
+     */
     public RadioCommand(Server server, TWGameManager gameManager) {
         super(server, COMMAND_NAME, "Relays a bot's radio call about its unit to its own side. "
               + "Usage: /radio <unit id> <message>");
@@ -88,7 +92,8 @@ public class RadioCommand extends ServerCommand {
         Entity unit = gameManager.getGame().getEntity(MathUtility.parseInt(args[1], Entity.NONE));
         Player sender = gameManager.getGame().getPlayer(connId);
         if ((unit == null) || (sender == null) || (unit.getOwnerId() != sender.getId())) {
-            LOGGER.debug("[BotOrders] radio call refused from connection {} about unit {}", connId, args[1]);
+            LOGGER.info("[BotOrders] radio call refused from connection {} about unit {}: not the unit's owner",
+                  connId, args[1]);
             return;
         }
         String message = String.join(" ", Arrays.copyOfRange(args, 2, args.length));

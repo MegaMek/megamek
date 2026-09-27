@@ -46,6 +46,7 @@ import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
 import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
@@ -156,6 +157,9 @@ final class WaypointDistanceField {
         return hexes;
     }
 
+    /** The margin Princess allows over a unit's weight before it trusts a building to bear it. */
+    private static final int COLLAPSE_MARGIN_TONS = 10;
+
     /**
      * What a building hex adds to the way through it, in movement points: enough that a way round a few hexes longer
      * wins, while a route with no way round still goes through.
@@ -220,7 +224,23 @@ final class WaypointDistanceField {
 
     private static boolean isEnterable(Entity mover, MovementType movementType, Coords coords) {
         return !mover.isLocationProhibited(coords)
-              && !BoardClusterTracker.buildingPlowThroughRequired(mover, movementType, coords);
+              && !BoardClusterTracker.buildingPlowThroughRequired(mover, movementType, coords)
+              && !wouldBringDownBuilding(mover, coords);
+    }
+
+    /**
+     * The rule Princess moves by: it never takes a path through a building that could not bear the unit's weight plus
+     * a ten-ton margin ({@code PathRanker.willBuildingCollapse}). The route must not lead through one either, or it
+     * points the unit where it will never step and the unit stands still: a 65-ton Longbow froze in front of a CF 15
+     * building for two rounds (HammerGS's playtest, 2026-09-27).
+     */
+    private static boolean wouldBringDownBuilding(Entity mover, Coords coords) {
+        if ((mover.getGame() == null) || mover.isAirborne() || mover.hasETypeFlag(Entity.ETYPE_VTOL)) {
+            return false;
+        }
+        Board board = mover.getGame().getBoard(mover);
+        IBuilding building = (board == null) ? null : board.getBuildingAt(coords);
+        return (building != null) && ((mover.getWeight() + COLLAPSE_MARGIN_TONS) > building.getCurrentCF(coords));
     }
 
     /**

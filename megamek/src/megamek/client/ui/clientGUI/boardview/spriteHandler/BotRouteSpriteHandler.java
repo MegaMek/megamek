@@ -220,15 +220,20 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
               ? Messages.getString("BotCommandPanel.Waypoint.tooltip.step", step + 1, hex.getBoardNum(), group.label())
               : Messages.getString("BotCommandPanel.Waypoint.tooltip.nav", NavPoint.name(navNumber),
                     hex.getBoardNum(), group.label())) + "</b>");
-        WaypointFormation leg = waypointOrder.getFormation();
-        String legText = (leg != null) ? formationText(leg)
-              : orders.getFormation().map(unitsOwn -> formationText(new WaypointFormation(unitsOwn.getShape(),
-                    unitsOwn.getSpacing(), unitsOwn.getPace(), unitsOwn.getContactRule(), unitsOwn.isKeepTogether())))
-                    .orElse(Messages.getString("BotCommandPanel.Waypoint.tooltip.noFormation"));
-        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.formation", legText));
+        // HammerGS: say which formation the lance moves here in, and where it changes shape
+        String place = placeName(waypointOrder, step, hex);
+        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.formation", place,
+              formationText(legFormation(orders, step))));
         if (waypointOrder.getArrivalFormation() != null) {
-            lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.reform",
+            lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.reform", place,
                   formationText(waypointOrder.getArrivalFormation())));
+        } else if (step < orders.getRoute().size() - 1) {
+            WaypointFormation nextLeg = legFormation(orders, step + 1);
+            if (!formationText(nextLeg).equals(formationText(legFormation(orders, step)))) {
+                Coords nextHex = orders.getRoute().get(step + 1);
+                lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.changeAfter",
+                      placeName(orders.getWaypointOrder(step + 1), step + 1, nextHex), formationText(nextLeg)));
+            }
         }
         String facingText = (waypointOrder.getFacing() == UnitOrders.FACING_AUTO)
               ? Messages.getString("BotCommandPanel.MoveOrder.facing.next")
@@ -239,6 +244,28 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
         lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.priority",
               Messages.getString("BotCommandPanel.Orders.priority." + orders.getPriority().name())));
         return String.join("<br>", lines);
+    }
+
+    /**
+     * @return the formation for the leg ending at that waypoint: the one set on it, else the units' own
+     */
+    private static WaypointFormation legFormation(UnitOrders orders, int step) {
+        WaypointFormation leg = orders.getWaypointOrder(step).getFormation();
+        if (leg != null) {
+            return leg;
+        }
+        return orders.getFormation().map(unitsOwn -> new WaypointFormation(unitsOwn.getShape(), unitsOwn.getSpacing(),
+              unitsOwn.getPace(), unitsOwn.getContactRule(), unitsOwn.isKeepTogether())).orElse(WaypointFormation.NONE);
+    }
+
+    /**
+     * @return the waypoint as the summary names it: {@code Nav Point Beta}, or {@code waypoint 2} when it has no name
+     */
+    private static String placeName(WaypointOrder waypointOrder, int step, Coords hex) {
+        int navNumber = waypointOrder.getNavNumber();
+        return (navNumber == NavPoint.UNNAMED)
+              ? Messages.getString("BotCommandPanel.Waypoint.tooltip.placeStep", step + 1, hex.getBoardNum())
+              : Messages.getString("BotCommandPanel.Waypoint.tooltip.placeNav", NavPoint.name(navNumber));
     }
 
     private static String thenText(WaypointOrder waypointOrder, boolean isLast) {
@@ -261,11 +288,12 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
         if (formation.isNone()) {
             return Messages.getString("BotCommandPanel.Waypoint.tooltip.noFormation");
         }
-        return Messages.getString("BotCommandPanel.Formations.shape." + formation.getShape()) + ", "
+        return Messages.getString("BotCommandPanel.Formations.shape." + formation.getShape()) + " ("
               + Messages.getString("BotCommandPanel.Formations.spacing.hexes", formation.getSpacing()) + ", "
               + Messages.getString("BotCommandPanel.Formations.pace." + formation.getPace().name()) + ", "
               + Messages.getString("BotCommandPanel.Formations.contact." + formation.getContactRule().name())
-              + (formation.isKeepTogether() ? Messages.getString("BotCommandPanel.Waypoint.tooltip.together") : "");
+              + (formation.isKeepTogether() ? Messages.getString("BotCommandPanel.Waypoint.tooltip.together") : "")
+              + ")";
     }
 
     @Override

@@ -223,8 +223,11 @@ public class UnitOrdersFollower {
      */
     public int stoppedFacing(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
+        // a lance waiting at a flag for its formation to re-form stops there too, and should face on toward the next
+        // flag rather than the way it came in (HammerGS's playtest, 2026-09-27: backs turned to the next flag)
+        boolean isWaitingAtFlag = isWaitingForFormation(formationLeaderOf(entity).orElse(entity));
         boolean isStoppedAtWaypoint = orders.hasRoute()
-              && ((orders.getRoute().size() == 1) || isHoldingAtWaypoint(entity));
+              && ((orders.getRoute().size() == 1) || isHoldingAtWaypoint(entity) || isWaitingAtFlag);
         if (isStoppedAtWaypoint) {
             // a formation unit holding with its leader faces the way set on the leader's waypoint
             Entity waypointOwner = formationLeaderOf(entity).orElse(entity);
@@ -685,19 +688,22 @@ public class UnitOrdersFollower {
      *       move ends on it; {@link UnitOrders#FACING_AUTO} when there is none
      */
     private int facingAlongRoute(Entity entity, Coords finalHex) {
-        UnitOrders routeOrders = formationLeaderOf(entity).map(Entity::getUnitOrders).orElse(entity.getUnitOrders());
-        List<Coords> route = routeOrders.getRoute();
+        Entity routeOwner = formationLeaderOf(entity).orElse(entity);
+        List<Coords> route = routeOwner.getUnitOrders().getRoute();
         if (route.isEmpty()) {
             return UnitOrders.FACING_AUTO;
         }
         Coords next = route.get(0);
-        if (next.equals(finalHex)) {
+        // once the leader stands on its flag, the lance looks on to the flag after it; followers waiting in their
+        // slots faced the flag they were waiting at, turning their backs on the way ahead (HammerGS, 2026-09-27)
+        boolean isAtFlag = next.equals(finalHex) || next.equals(routeOwner.getPosition());
+        if (isAtFlag) {
             if (route.size() < 2) {
                 return UnitOrders.FACING_AUTO;
             }
             next = route.get(1);
         }
-        return finalHex.direction(next);
+        return next.equals(finalHex) ? UnitOrders.FACING_AUTO : finalHex.direction(next);
     }
 
     /**

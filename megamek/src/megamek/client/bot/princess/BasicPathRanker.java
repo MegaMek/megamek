@@ -1645,10 +1645,10 @@ public class BasicPathRanker extends PathRanker {
               getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
               path.getFinalCoords(), expectedThreat);
         if (orderedFacing != UnitOrders.FACING_AUTO) {
-            // a torso twist or turret covers the order for free in the fire phase, so only the sides beyond its
-            // reach cost a turn
+            // a unit stopping may leave the last sides to a torso twist or turret, free in the fire phase; one on its
+            // way faces the route with its legs
             int orderedFacingDiff = Math.max(0, UnitOrdersFollower.sidesApart(path.getFinalFacing(), orderedFacing)
-                  - UnitOrdersFollower.twistReach(movingUnit));
+                  - getOwner().getUnitOrdersFollower().twistAllowance(movingUnit, path.getFinalCoords()));
             logger.trace("facing mod [ordered facing {}, {} sides off beyond twist]", orderedFacing,
                   orderedFacingDiff);
             return ORDERED_FACING_MOD_MULTIPLIER * orderedFacingDiff;

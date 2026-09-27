@@ -771,6 +771,16 @@ class FormationFollowerTest {
               List.of(standStill, sideways)));
     }
 
+    @Test
+    void aUnitOnItsWayFacesTheRouteWithItsLegsAndOnlyAUnitStoppingLeavesItToATwist() {
+        // HammerGS's playtest: units ended moves a side off the route because a torso twist would cover it
+        BipedMek scout = loneUnit(33, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertEquals(0, follower.twistAllowance(scout, LEADER_HEX.translated(NORTH, 3)));
+        assertEquals(UnitOrdersFollower.twistReach(scout), follower.twistAllowance(scout, NORTH_WAYPOINT));
+    }
+
     private static MovePath moveTo(Coords end, int movementPoints) {
         MovePath path = moveUsing(movementPoints);
         when(path.getFinalCoords()).thenReturn(end);

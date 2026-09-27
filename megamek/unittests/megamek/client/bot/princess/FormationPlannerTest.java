@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.board.Coords;
 import megamek.common.orders.FormationShape;
@@ -75,16 +76,32 @@ class FormationPlannerTest {
     }
 
     @Test
-    void aWedgeStepsBackToBothSidesInTurn() {
+    void aWedgeIsTheTwoLeadersSideBySideWithTheirWingmenBehindAndOutside() {
+        // FM 3-21.71: platoon leader and platoon sergeant in the center, wingmen to the rear of and outside of them
+        Coords secondInCommand = slot(FormationShape.LINE, NORTH, 2);
         assertEquals(LEADER.translated(SOUTH_WEST, 2), slot(FormationShape.WEDGE, NORTH, 1));
-        assertEquals(LEADER.translated(SOUTH_EAST, 2), slot(FormationShape.WEDGE, NORTH, 2));
-        assertEquals(LEADER.translated(SOUTH_WEST, 4), slot(FormationShape.WEDGE, NORTH, 3));
+        assertEquals(secondInCommand, slot(FormationShape.WEDGE, NORTH, 2));
+        assertEquals(secondInCommand.translated(SOUTH_EAST, 2), slot(FormationShape.WEDGE, NORTH, 3));
+        assertEquals(LEADER.translated(SOUTH_WEST, 4), slot(FormationShape.WEDGE, NORTH, 4));
     }
 
     @Test
-    void aVeeStepsForwardToBothSides() {
+    void aVeeIsTheTwoLeadersSideBySideWithTheirWingmenAheadAndOutside() {
+        Coords secondInCommand = slot(FormationShape.LINE, NORTH, 2);
         assertEquals(LEADER.translated(NORTH_WEST, 2), slot(FormationShape.VEE, NORTH, 1));
-        assertEquals(LEADER.translated(NORTH_EAST, 2), slot(FormationShape.VEE, NORTH, 2));
+        assertEquals(secondInCommand, slot(FormationShape.VEE, NORTH, 2));
+        assertEquals(secondInCommand.translated(NORTH_EAST, 2), slot(FormationShape.VEE, NORTH, 3));
+    }
+
+    @Test
+    void aLineRunsTwoOneThreeFourFromLeftToRight() {
+        // the commander's wingman on its left, the second-in-command on its right and its wingman beyond
+        Coords left = slot(FormationShape.LINE, NORTH, 1);
+        Coords right = slot(FormationShape.LINE, NORTH, 2);
+        Coords farRight = slot(FormationShape.LINE, NORTH, 3);
+        assertTrue(left.getX() < LEADER.getX());
+        assertTrue((LEADER.getX() < right.getX()) && (right.getX() < farRight.getX()));
+        assertEquals(2 * SPACING, LEADER.distance(farRight));
     }
 
     @Test

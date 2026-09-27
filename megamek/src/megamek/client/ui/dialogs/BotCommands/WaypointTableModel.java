@@ -124,8 +124,9 @@ class WaypointTableModel extends AbstractTableModel {
     record FacingOption(int facing) {
         @Override
         public String toString() {
-            String key = (facing == UnitOrders.FACING_AUTO) ? "auto" : String.valueOf(facing);
-            return Messages.getString("BotCommandPanel.Orders.facing." + key);
+            // a waypoint left without a facing faces on toward the next flag (HammerGS, 2026-09-27)
+            return (facing == UnitOrders.FACING_AUTO) ? Messages.getString("BotCommandPanel.MoveOrder.facing.next")
+                  : Messages.getString("BotCommandPanel.Orders.facing." + facing);
         }
     }
 

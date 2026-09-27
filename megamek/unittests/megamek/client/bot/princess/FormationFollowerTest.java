@@ -786,16 +786,20 @@ class FormationFollowerTest {
     }
 
     @Test
-    void withNoEnemyInSightAutoFacingPointsAlongTheRoute() {
-        // HammerGS's playtest: with no opponent on the board, units on Auto facing ended their moves facing anywhere
+    void aUnitOnARouteFacesTheNextFlagEvenWithAnEnemyInSight() {
+        // HammerGS: the player's route is the plan, so a waypoint with no facing set faces toward the next flag, and
+        // an enemy behind does not turn the unit round (2026-09-27)
         BipedMek scout = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
 
-        assertEquals(NORTH, princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX));
+        assertEquals(NORTH, follower.orderedFacing(scout, LEADER_HEX));
 
         Entity enemy = mock(Entity.class);
-        when(enemy.getPosition()).thenReturn(new Coords(2, 2));
+        Coords behind = LEADER_HEX.translated(SOUTH, 4);
+        when(enemy.getPosition()).thenReturn(behind);
         enemies.add(enemy);
-        assertEquals(UnitOrders.FACING_AUTO, princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX));
+        assertEquals(NORTH, follower.orderedFacing(scout, LEADER_HEX));
+        assertEquals(NORTH, follower.facingThatStandsFor(scout, NORTH, LEADER_HEX, behind));
     }
 
     @Test

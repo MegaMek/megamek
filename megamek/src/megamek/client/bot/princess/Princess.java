@@ -874,8 +874,8 @@ public class Princess extends BotClient {
         }
         Coords closestEnemyPosition = findClosestEnemyPosition(entity);
         // a player's "when stopped" facing stands while the closest enemy is in that facing's front arc
-        int orderedFacing = UnitOrdersFollower.facingThatStands(getUnitOrdersFollower().stoppedFacing(entity),
-              entity.getPosition(), closestEnemyPosition);
+        int orderedFacing = getUnitOrdersFollower().facingThatStandsFor(entity,
+              getUnitOrdersFollower().stoppedFacing(entity), entity.getPosition(), closestEnemyPosition);
         int desiredFacing;
         if ((orderedFacing != UnitOrders.FACING_AUTO)
               && (UnitOrdersFollower.sidesApart(entity.getFacing(), orderedFacing)

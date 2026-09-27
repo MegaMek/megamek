@@ -134,6 +134,21 @@ class OrdersRadioTest {
     }
 
     @Test
+    void aLanceWithNoUsableNameIsCalledByACallsignName() {
+        // HammerGS: force names we can actually use - a lance named only "Force" is called Alpha Lance, its units
+        // Alpha One, Alpha Two
+        game.getForces().renameForce("Force", commandLance.getId());
+        game.setCurrentRound(3);
+
+        princess.getOrdersRadio().report(atlas, OrdersRadio.RadioEvent.ORDERED, "Nav Point Alpha (1508)");
+
+        verify(princess).sendChat(RadioCommand.commandText(atlas.getId(),
+              "Alpha Lance, proceeding to Nav Point Alpha (1508)."), Level.INFO);
+        assertEquals("Alpha Two", OrdersRadio.callsign(marauder, commandLance,
+              princess.getOrdersRadio().lanceName(commandLance), RadioVoice.INNER_SPHERE));
+    }
+
+    @Test
     void aUnitsOwnTroubleIsCalledByTheUnit() {
         // a fellow dev: "Charlie Lance, proceed to Nav Point Gamma" - the lance speaks for the lance, a unit for itself
         game.setCurrentRound(3);

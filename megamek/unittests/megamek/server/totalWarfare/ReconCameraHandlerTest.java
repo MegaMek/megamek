@@ -214,6 +214,17 @@ class ReconCameraHandlerTest {
     }
 
     @Test
+    void testASpotOnAUnitThatHasLeftTheGameIsIgnored() {
+        int missingUnitId = target.getId() + 100;
+
+        new HandlerUnderTest(gameManager, 12).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), missingUnitId));
+
+        assertEquals(Entity.NONE, camera.getReconCameraSpotTargetId());
+        assertFalse(camera.hasReconCameraSpotThisTurn(), "an order for a vanished unit does not use up the camera");
+    }
+
+    @Test
     void testTheOwnersOrderIsRolledAtTheEndOfTheOffBoardPhase() {
         // gunnery 0 at short range with nobody moving needs 0: any roll spots
         camera.getCrew().setGunnery(0, 0);

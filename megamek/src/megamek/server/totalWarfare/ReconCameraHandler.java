@@ -32,7 +32,6 @@
  */
 package megamek.server.totalWarfare;
 
-import megamek.client.ui.Messages;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.ReconCameraSpotAction;
@@ -73,12 +72,17 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
             return;
         }
         Entity target = getGame().getEntity(action.getTargetId());
+        if (target == null) {
+            LOGGER.warn("[ReconCamera] {}: camera spot ignored - target {} is no longer in the game",
+                  camera.getShortName(), action.getTargetId());
+            return;
+        }
         String refusal = ReconCameraRules.spotRefusal(getGame(), camera, target);
         if (refusal != null) {
             Report report = new Report(REPORT_CAMERA_REFUSED);
             report.subject = camera.getId();
             report.addDesc(camera);
-            report.add((target == null) ? Messages.getString("ReconCamera.unknownTarget") : target.getShortName());
+            report.add(target.getShortName());
             report.add(refusal);
             addReport(report);
             return;

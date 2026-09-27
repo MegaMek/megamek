@@ -655,6 +655,29 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * How many hexsides of an ordered facing a move may leave to a torso twist or turret. A unit stopping - holding,
+     * or ending its route - may: turning in place would spend movement for nothing its weapons cannot already reach.
+     * A unit on its way along a route faces it with its legs, so it walks on toward the next flag; ending a move one
+     * side off because the twist would cover it left units side-on to the way ahead (HammerGS's playtest,
+     * 2026-09-27).
+     *
+     * @param entity   the unit
+     * @param finalHex where the move ends
+     *
+     * @return the hexsides the twist may cover, 0 on the way along a route
+     */
+    int twistAllowance(Entity entity, Coords finalHex) {
+        UnitOrders orders = entity.getUnitOrders();
+        List<Coords> route = orders.getRoute();
+        if (route.isEmpty()) {
+            return twistReach(entity);
+        }
+        boolean endsRoute = (route.size() == 1) && (finalHex.distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT);
+        boolean stopsForHold = orders.getWaypointOrder(0).isHold() && finalHex.equals(route.get(0));
+        return (endsRoute || stopsForHold || isHolding(entity)) ? twistReach(entity) : 0;
+    }
+
+    /**
      * @param fromFacing the facing turned from, 0-5
      * @param toFacing   the facing turned to, 0-5
      *

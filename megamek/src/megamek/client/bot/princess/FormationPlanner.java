@@ -40,9 +40,11 @@ import megamek.common.orders.FormationShape;
  * turned to the leader's heading; spacing is the number of hexes along each step of the shape.
  *
  * <p>Hex facings run 0-5 clockwise from north. With the leader heading north (0), an Echelon Right steps back along
- * the south-east hex line (2), an Echelon Left along the south-west line (4), a Wedge down both, a Vee up the
- * north-east (1) and north-west (5) lines, and a Column straight back (3). A Line runs across the heading; a hex map
- * has no straight row across, so it alternates between the two hex lines either side of the perpendicular.</p>
+ * the south-east hex line (2), an Echelon Left along the south-west line (4), and a Column straight back (3). A Wedge,
+ * a Vee and a Line are laid out as a tank platoon forms them, the commander and the second-in-command side by side in
+ * the middle with their wingmen outside (HammerGS, 2026-09-27: mirror what the military does). A Line runs across the
+ * heading; a hex map has no straight row across, so it alternates between the two hex lines either side of the
+ * perpendicular.</p>
  */
 final class FormationPlanner {
 
@@ -61,15 +63,13 @@ final class FormationPlanner {
      * @return the hex the unit should stand in; it may be off the board or somewhere the unit cannot go
      */
     static Coords idealSlot(Coords leaderPosition, int heading, FormationShape shape, int spacing, int slotIndex) {
-        int armStep = (slotIndex + 1) / 2;
-        boolean isLeftArm = (slotIndex % 2) == 1;
         return switch (shape) {
             case COLUMN -> leaderPosition.translated(turn(heading, 3), spacing * slotIndex);
             case ECHELON_RIGHT -> leaderPosition.translated(turn(heading, 2), spacing * slotIndex);
             case ECHELON_LEFT -> leaderPosition.translated(turn(heading, 4), spacing * slotIndex);
-            case WEDGE -> leaderPosition.translated(turn(heading, isLeftArm ? 4 : 2), spacing * armStep);
-            case VEE -> leaderPosition.translated(turn(heading, isLeftArm ? 5 : 1), spacing * armStep);
-            case LINE -> lineSlot(leaderPosition, heading, spacing * armStep, isLeftArm);
+            case WEDGE -> sectionSlot(leaderPosition, heading, spacing, slotIndex, 4, 2);
+            case VEE -> sectionSlot(leaderPosition, heading, spacing, slotIndex, 5, 1);
+            case LINE -> lineAbreast(leaderPosition, heading, spacing, slotIndex);
         };
     }
 
@@ -77,6 +77,47 @@ final class FormationPlanner {
      * Steps across the heading, alternating between the two hex lines either side of the perpendicular, so the line
      * stays as level as a hex map allows.
      */
+    /**
+     * A Wedge or Vee as a tank platoon forms it: the commander and the second-in-command side by side in the middle,
+     * the second-in-command on the commander's right, each with a wingman out to its own side - behind for a Wedge,
+     * ahead for a Vee (FM 3-21.71: "both the platoon leader and platoon sergeant stay in the center of the formation,
+     * with their wingmen located to the rear of and outside of them"). Places 1 and 4 are the commander's side, 2 is
+     * the second-in-command, 3 and 5 its side; a sixth goes on the commander's side.
+     *
+     * @param commanderSide     the hexside, counted from the heading, the commander's wingmen step out along
+     * @param secondInCommandSide the hexside the second-in-command's wingmen step out along
+     */
+    private static Coords sectionSlot(Coords leaderPosition, int heading, int spacing, int slotIndex, int commanderSide,
+          int secondInCommandSide) {
+        Coords secondInCommand = lineSlot(leaderPosition, heading, spacing, false);
+        if (slotIndex == 2) {
+            return secondInCommand;
+        }
+        if (slotIndex == 1) {
+            return leaderPosition.translated(turn(heading, commanderSide), spacing);
+        }
+        int wingPlace = slotIndex - 3;
+        boolean isSecondInCommandSide = (wingPlace % 2) == 0;
+        int steps = isSecondInCommandSide ? ((wingPlace / 2) + 1) : (((wingPlace + 1) / 2) + 1);
+        return isSecondInCommandSide
+              ? secondInCommand.translated(turn(heading, secondInCommandSide), spacing * steps)
+              : leaderPosition.translated(turn(heading, commanderSide), spacing * steps);
+    }
+
+    /**
+     * A Line as a tank platoon forms it: the commander's wingman on its left, the second-in-command on its right and
+     * that one's wingman beyond it (2 1 3 4, left to right); a fifth and sixth extend each end.
+     */
+    private static Coords lineAbreast(Coords leaderPosition, int heading, int spacing, int slotIndex) {
+        return switch (slotIndex) {
+            case 1 -> lineSlot(leaderPosition, heading, spacing, true);
+            case 2 -> lineSlot(leaderPosition, heading, spacing, false);
+            case 3 -> lineSlot(leaderPosition, heading, spacing * 2, false);
+            case 4 -> lineSlot(leaderPosition, heading, spacing * 2, true);
+            default -> lineSlot(leaderPosition, heading, spacing * (((slotIndex - 1) / 2) + 1), (slotIndex % 2) == 0);
+        };
+    }
+
     private static Coords lineSlot(Coords leaderPosition, int heading, int steps, boolean isLeftArm) {
         int firstDirection = turn(heading, isLeftArm ? 5 : 1);
         int secondDirection = turn(heading, isLeftArm ? 4 : 2);

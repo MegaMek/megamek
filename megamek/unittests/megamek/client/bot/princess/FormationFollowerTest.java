@@ -64,9 +64,11 @@ import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.EdgeOrder;
+import megamek.common.orders.FightState;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
@@ -309,7 +311,8 @@ class FormationFollowerTest {
     }
 
     @Test
-    void aFormationBreaksOnContactButOneOrderedToHoldDoesNot() {
+    void anEnemyInRangeThatHasNotFiredDoesNotBreakTheLance() {
+        // HammerGS: the trigger is being hit, not an enemy walking into range
         member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
         Entity enemy = mock(Entity.class);
@@ -317,11 +320,99 @@ class FormationFollowerTest {
         when(enemy.getBoardId()).thenReturn(0);
         enemies.add(enemy);
 
-        assertTrue(princess.getUnitOrdersFollower().getFormationSlot(second).isEmpty());
-
-        second.setUnitOrders(second.getUnitOrders().withFormation(
-              new FormationOrder(FormationShape.ECHELON_RIGHT, 20, 2, 1, FormationPace.WALK, ContactRule.HOLD)));
         assertTrue(princess.getUnitOrdersFollower().getFormationSlot(second).isPresent());
+    }
+
+    @Test
+    void aLanceSetToBreakAndFightFightsWhenHitThenHoldsForOrders() {
+        // QA's case: missile fire from the flank. Break and fight leaves the route to fight, then waits for Resume.
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(second.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        doReturn(40).when(second).getTotalArmor();
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        game.setCurrentRound(3);
+        follower.advanceRoutes();
+        assertTrue(leader.getUnitOrders().getFightState().isEmpty());
+
+        // the Longbow's flank is hit by missiles in round 3's firing
+        doReturn(34).when(second).getTotalArmor();
+        game.setCurrentRound(4);
+        follower.advanceRoutes();
+        assertEquals(Optional.of(FightState.FIGHTING), leader.getUnitOrders().getFightState());
+        assertEquals(Optional.of(FightState.FIGHTING), second.getUnitOrders().getFightState());
+        assertTrue(princess.getUnitBehaviorTracker().getActiveWaypoint(leader, princess).isEmpty());
+        assertTrue(follower.getFormationSlot(second).isEmpty());
+
+        // a full turn without a hit: the lance holds, keeping its route, until the Resume order
+        game.setCurrentRound(5);
+        follower.advanceRoutes();
+        assertEquals(Optional.of(FightState.AWAITING_ORDERS), leader.getUnitOrders().getFightState());
+        assertTrue(leader.getUnitOrders().isPaused());
+        assertEquals(2, leader.getUnitOrders().getRoute().size());
+
+        leader.setUnitOrders(UnitOrderAction.RESUME.apply(leader.getUnitOrders(), List.of(), OffBoardDirection.NONE,
+              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, 5));
+        assertTrue(leader.getUnitOrders().getFightState().isEmpty());
+        assertFalse(leader.getUnitOrders().isPaused());
+    }
+
+    @Test
+    void aLanceSetToTurnAndFireSquaresUpToItsAttackersOnlyOnceHit() {
+        // Turn and fire: keep moving along the route, but turn to bring attackers into the front arc
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        List<WaypointOrder> turnAndFire = List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0,
+              new WaypointFormation(FormationShape.ECHELON_RIGHT, 2, FormationPace.WALK, ContactRule.TURN_AND_FIRE,
+                    false)), WaypointOrder.PASS_THROUGH);
+        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint), turnAndFire));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doReturn(40).when(leader).getTotalArmor();
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        Coords attackerOnTheLeftFlank = LEADER_HEX.translated(SOUTH_WEST, 4);
+        game.setCurrentRound(3);
+
+        // not yet hit: the route facing holds
+        assertEquals(NORTH, follower.facingThatStandsFor(leader, NORTH, LEADER_HEX, attackerOnTheLeftFlank));
+
+        doReturn(33).when(leader).getTotalArmor();
+        game.setCurrentRound(4);
+        assertEquals(UnitOrders.FACING_AUTO, follower.facingThatStandsFor(leader, NORTH, LEADER_HEX,
+              attackerOnTheLeftFlank));
+    }
+
+    @Test
+    void aLanceSetToPushThroughKeepsToItsRouteWhenHit() {
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        FormationOrder pushThrough = new FormationOrder(FormationShape.ECHELON_RIGHT, 20, 2, 0, FormationPace.WALK,
+              ContactRule.HOLD);
+        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(pushThrough));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)).withFormation(
+              new FormationOrder(FormationShape.ECHELON_RIGHT, 20, 2, 1, FormationPace.WALK, ContactRule.HOLD)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        doReturn(40).when(second).getTotalArmor();
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setCurrentRound(3);
+        follower.advanceRoutes();
+
+        doReturn(34).when(second).getTotalArmor();
+        game.setCurrentRound(4);
+        follower.advanceRoutes();
+
+        assertTrue(leader.getUnitOrders().getFightState().isEmpty());
+        assertTrue(follower.getFormationSlot(second).isPresent());
     }
 
     private static MovePath moveUsing(int movementPoints) {
@@ -370,13 +461,10 @@ class FormationFollowerTest {
     }
 
     @Test
-    void aFormationBrokenOnContactIsNotPaced() {
+    void aLanceThatBrokeOffToFightIsNotPaced() {
         BipedMek leader = member(20, LEADER_HEX, 0, 6);
+        leader.setUnitOrders(leader.getUnitOrders().withFightState(FightState.FIGHTING));
         member(21, new Coords(16, 25), 1, 3);
-        Entity enemy = mock(Entity.class);
-        when(enemy.getPosition()).thenReturn(LEADER_HEX.translated(0, 5));
-        when(enemy.getBoardId()).thenReturn(0);
-        enemies.add(enemy);
         MovePath walkThree = moveUsing(3);
         MovePath runNine = moveUsing(9);
 

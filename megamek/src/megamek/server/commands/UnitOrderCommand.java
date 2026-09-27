@@ -258,7 +258,7 @@ public class UnitOrderCommand extends ClientServerCommand {
         ContactRule contactRule = (ContactRule) args.get(CONTACT).getValue();
         boolean keepTogether = args.get(TOGETHER, BooleanArgument.class).getValue();
         return new FormationOrder(shape, leaderId, spacing, slot, (pace == null) ? FormationPace.WALK : pace,
-              (contactRule == null) ? ContactRule.BREAK : contactRule, keepTogether);
+              (contactRule == null) ? ContactRule.TURN_AND_FIRE : contactRule, keepTogether);
     }
 
     private static int facingArgument(Arguments args, String name) {

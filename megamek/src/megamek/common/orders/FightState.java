@@ -33,15 +33,13 @@
 package megamek.common.orders;
 
 /**
- * What a lance does on a leg of its route when it comes under fire - any of its units hit by enemy fire the turn
- * before (HammerGS, 2026-09-27). The names are kept from when this was the formation's rule on contact, so saves read
- * as before: a Break then read as Break and fight, a Hold as Push through.
+ * Where a lance set to Break and fight stands after coming under fire on its route. While it fights it leaves the
+ * route to the bot's own combat; once it has gone a full turn without being hit it holds where it is, keeping its
+ * route, until the player gives the Resume order (HammerGS, 2026-09-27).
  */
-public enum ContactRule {
-    /** Push through: keep moving and keep the route's facing, firing back only with torso twists and turrets. */
-    HOLD,
-    /** Turn and fire: keep moving along the route, but turn to bring the attackers into the front arc. */
-    TURN_AND_FIRE,
-    /** Break and fight: leave the route to fight the attackers, then hold until given the Resume order. */
-    BREAK
+public enum FightState {
+    /** Hit on its way, the lance has broken off its route to fight its attackers. */
+    FIGHTING,
+    /** The fight is over; the lance holds where it is until the player gives the Resume order. */
+    AWAITING_ORDERS
 }

@@ -73,6 +73,10 @@ public class OrdersRadio {
         EXITING("exiting", true),
         /** The lance folds into a Column to get through a gap. */
         FOLD("fold", true),
+        /** The lance was hit on its way and breaks off its route to fight, set to Break and fight. */
+        BREAKING("breaking", true),
+        /** The lance's fight is over: it holds where it is, awaiting the Resume order. */
+        CONTACT_BROKEN("contactBroken", true),
         /** A unit cannot reach its waypoint and skips it. */
         UNREACHABLE("unreachable", false),
         /** A unit follows the player's orders over its own withdrawal. */

@@ -138,7 +138,7 @@ class FormationFollowerTest {
 
     @Test
     void aFollowersTargetIsItsSlotAroundTheLeadersWaypoint() {
-        member(20, LEADER_HEX, 0, 3);
+        member(20, NORTH_WAYPOINT, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
 
         // heading north to the waypoint, the Echelon Right forms there, stepping back south-east
@@ -216,24 +216,26 @@ class FormationFollowerTest {
     }
 
     @Test
-    void theSlotStaysPutWhileTheLeaderMoves() {
-        // HammerGS's playtest: slots worked out around the leader's moving hex left the Wedge bunched up and drifting.
-        // The slot is fixed by where the leader is going, so each unit has one hex to make for all the way.
+    void aUnitNeverRunsAheadOfALeaderStillOnItsWay() {
+        // HammerGS's playtest: with slots laid out around the next flag, a Centurion ran two hexes in front of the
+        // Grasshopper leading it. On the way the shape sits around the leader; at the flag it forms there.
         game.setPhase(GamePhase.MOVEMENT);
         BipedMek leader = member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
-        Optional<Coords> slot = princess.getUnitOrdersFollower().getFormationSlot(second);
 
-        leader.setPosition(LEADER_HEX.translated(NORTH, 3));
-        leader.setDone(true);
+        // heading north, the Echelon Right steps back south-east of the leader itself
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
 
-        assertEquals(slot, princess.getUnitOrdersFollower().getFormationSlot(second));
+        leader.setPosition(NORTH_WAYPOINT);
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
     @Test
     void atAWaypointPartWayTheShapeFacesTheNextLeg() {
         Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
-        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 3);
         leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)));
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
 
@@ -268,7 +270,7 @@ class FormationFollowerTest {
 
     @Test
     void aBlockedSlotTakesTheBestHexNextToIt() {
-        member(20, LEADER_HEX, 0, 3);
+        member(20, NORTH_WAYPOINT, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
         Coords ideal = NORTH_WAYPOINT.translated(SOUTH_EAST, 2);
         board.getHex(ideal).setLevel(CLIFF_LEVEL);
@@ -435,7 +437,7 @@ class FormationFollowerTest {
 
     @Test
     void aSlotHeldByAUnitOutsideTheFormationMovesBesideIt() {
-        member(20, LEADER_HEX, 0, 3);
+        member(20, NORTH_WAYPOINT, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
         Coords ideal = NORTH_WAYPOINT.translated(SOUTH_EAST, 2);
         BipedMek bystander = new BipedMek();
@@ -645,6 +647,42 @@ class FormationFollowerTest {
               any(Level.class));
     }
 
+    @Test
+    void aFormationsLeaderStandsOnEveryFlag() {
+        // HammerGS's playtest: the Grasshopper cut the corner at 1526 by two hexes, off the route it was leading
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, NORTH_WAYPOINT.translated(SOUTH, 2), 0, 5);
+        leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(second.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertEquals(0, follower.arrivalRadius(leader));
+        follower.advanceRoutes();
+        assertEquals(2, leader.getUnitOrders().getRoute().size());
+
+        leader.setPosition(NORTH_WAYPOINT);
+        follower.advanceRoutes();
+        assertEquals(List.of(eastWaypoint), leader.getUnitOrders().getRoute());
+    }
+
+    @Test
+    void aLeaderHeldBackForTheLastUnitStaysOnItsHex() {
+        // HammerGS's playtest: held back for the Longbow, the Grasshopper wandered sideways from 1906 to 1604 and back
+        BipedMek grasshopper = member(20, new Coords(14, 14), 0, 5);
+        grasshopper.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withFormation(keptTogether(0)));
+        BipedMek longbow = member(21, new Coords(14, 28), 1, 3);
+        longbow.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withFormation(keptTogether(1)));
+        MovePath standStill = moveTo(new Coords(14, 14), 0);
+        MovePath sideways = moveTo(new Coords(12, 14), 2);
+
+        assertEquals(List.of(standStill), princess.getUnitOrdersFollower().limitToFormationPace(grasshopper,
+              List.of(standStill, sideways)));
+    }
+
     private static MovePath moveTo(Coords end, int movementPoints) {
         MovePath path = moveUsing(movementPoints);
         when(path.getFinalCoords()).thenReturn(end);
@@ -687,22 +725,26 @@ class FormationFollowerTest {
         // south-west, and the last Mek walked seven hexes off the route and back
         Coords northAgain = NORTH_WAYPOINT.translated(NORTH, 1);
         WaypointOrder faceNorthEast = new WaypointOrder(1, 0);
-        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
         leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, northAgain),
-              List.of(faceNorthEast, WaypointOrder.PASS_THROUGH)).withFormation(columnOf(0)));
+              List.of(faceNorthEast, WaypointOrder.PASS_THROUGH)).withFormation(echelonRightOf(0)));
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
-        second.setUnitOrders(leader.getUnitOrders().withFormation(columnOf(1)));
+        second.setUnitOrders(leader.getUnitOrders().withFormation(echelonRightOf(1)));
 
-        // passing through, the Column trails straight back along the way north
-        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 2)),
+        // passing through, the Echelon Right lies along the way north, stepping back south-east
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
 
-        // holding there, it faces the way it was told
+        // holding there, it faces the way it was told, north-east, stepping back to the south
         WaypointOrder holdFacingNorthEast = new WaypointOrder(1, 2);
         leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, northAgain),
-              List.of(holdFacingNorthEast, WaypointOrder.PASS_THROUGH)).withFormation(columnOf(0)));
-        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_WEST, 2)),
+              List.of(holdFacingNorthEast, WaypointOrder.PASS_THROUGH)).withFormation(echelonRightOf(0)));
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 2)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    private static FormationOrder echelonRightOf(int slot) {
+        return new FormationOrder(FormationShape.ECHELON_RIGHT, 20, 2, slot, FormationPace.WALK, ContactRule.HOLD);
     }
 
     private static FormationOrder columnOf(int slot) {
@@ -766,9 +808,30 @@ class FormationFollowerTest {
               List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0, column))));
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
 
-        // the units' own Echelon Right gives way to the leg's Column, three hexes apart behind the waypoint
-        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 3)),
+        // the units' own Echelon Right gives way to the leg's Column: three hexes behind the leader, facing its flag
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH, 3)),
               princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
+    void aColumnFollowsTheHexesItsCommanderWalked() {
+        // HammerGS: in a Column the commander is at the head and the rest fall in behind, not lined up at the flag
+        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        leader.setUnitOrders(leader.getUnitOrders().withFormation(columnOf(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(second.getUnitOrders().withFormation(new FormationOrder(FormationShape.COLUMN, 20, 1, 1,
+              FormationPace.WALK, ContactRule.HOLD)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        follower.getFormationSlot(second);
+
+        // the commander walks three hexes north-east, then two north
+        leader.setPosition(LEADER_HEX.translated(NORTH_EAST, 3));
+        follower.getFormationSlot(second);
+        leader.setPosition(LEADER_HEX.translated(NORTH_EAST, 3).translated(NORTH, 2));
+
+        // one hex apart, the second unit's place is the hex the commander walked through one step back
+        assertEquals(Optional.of(LEADER_HEX.translated(NORTH_EAST, 3).translated(NORTH, 1)),
+              follower.getFormationSlot(second));
     }
 
     @Test
@@ -901,7 +964,7 @@ class FormationFollowerTest {
 
     @Test
     void aFormationLaysItsShapeOutAlongTheFacingSetOnAWaypoint() {
-        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 3);
         Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
         leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint),
               List.of(new WaypointOrder(SOUTH_WEST, 1))));

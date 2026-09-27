@@ -230,10 +230,10 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
             lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.reform",
                   formationText(waypointOrder.getArrivalFormation())));
         }
-        String facingKey = (waypointOrder.getFacing() == UnitOrders.FACING_AUTO) ? "auto"
-              : String.valueOf(waypointOrder.getFacing());
-        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.facing",
-              Messages.getString("BotCommandPanel.Orders.facing." + facingKey)));
+        String facingText = (waypointOrder.getFacing() == UnitOrders.FACING_AUTO)
+              ? Messages.getString("BotCommandPanel.MoveOrder.facing.next")
+              : Messages.getString("BotCommandPanel.Orders.facing." + waypointOrder.getFacing());
+        lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.facing", facingText));
         lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.then",
               thenText(waypointOrder, step == orders.getRoute().size() - 1)));
         lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.priority",

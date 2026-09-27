@@ -1641,7 +1641,7 @@ public class BasicPathRanker extends PathRanker {
         // enemy when squaring up, else the enemy median - still falls in the ordered facing's front arc.
         Coords expectedThreat = (squareUpOnClosestEnemy || (enemyMedianPosition == null))
               ? closestEnemyPosition : enemyMedianPosition;
-        int orderedFacing = UnitOrdersFollower.facingThatStands(
+        int orderedFacing = getOwner().getUnitOrdersFollower().facingThatStandsFor(movingUnit,
               getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
               path.getFinalCoords(), expectedThreat);
         if (orderedFacing != UnitOrders.FACING_AUTO) {

@@ -149,6 +149,9 @@ class BasicPathRankerTest {
         when(noOrdersFollower.orderedFacing(any(Entity.class), any(Coords.class))).thenReturn(UnitOrders.FACING_AUTO);
         when(noOrdersFollower.routeWeight(any(Entity.class))).thenReturn(1.0);
         when(noOrdersFollower.damageWeight(any(Entity.class))).thenReturn(1.0);
+        when(noOrdersFollower.orderedFacing(any(Entity.class), any())).thenReturn(UnitOrders.FACING_AUTO);
+        when(noOrdersFollower.facingThatStandsFor(any(Entity.class), anyInt(), any(), any()))
+              .thenReturn(UnitOrders.FACING_AUTO);
         when(mockPrincess.getUnitOrdersFollower()).thenReturn(noOrdersFollower);
         when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);

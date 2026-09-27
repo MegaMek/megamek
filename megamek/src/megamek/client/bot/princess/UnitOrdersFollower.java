@@ -227,9 +227,16 @@ public class UnitOrdersFollower {
         if (isStoppedAtWaypoint) {
             // a formation unit holding with its leader faces the way set on the leader's waypoint
             Entity waypointOwner = formationLeaderOf(entity).orElse(entity);
-            int waypointFacing = waypointOwner.getUnitOrders().getWaypointOrder(0).getFacing();
+            UnitOrders waypointOrders = waypointOwner.getUnitOrders();
+            int waypointFacing = waypointOrders.getWaypointOrder(0).getFacing();
             if (waypointFacing != UnitOrders.FACING_AUTO) {
                 return waypointFacing;
+            }
+            // a hold part-way along the route faces on toward the next flag, unless the player set a facing
+            boolean isPartWay = waypointOrders.getRoute().size() > 1;
+            if (isPartWay && (orders.getFacingWhenStopped() == UnitOrders.FACING_AUTO)
+                  && (entity.getPosition() != null) && !entity.getPosition().equals(waypointOrders.getRoute().get(1))) {
+                return entity.getPosition().direction(waypointOrders.getRoute().get(1));
             }
         }
         return orders.getFacingWhenStopped();
@@ -538,11 +545,45 @@ public class UnitOrdersFollower {
      */
     int orderedFacing(Entity entity, Coords finalHex) {
         int facing = playerOrderedFacing(entity, finalHex);
+        if ((facing == UnitOrders.FACING_AUTO) && entity.getUnitOrders().hasRoute()) {
+            // a waypoint with no facing set faces toward the next flag, enemies or not: the player has a plan for
+            // which way the units go, and a unit turning round to look behind it broke it (HammerGS, 2026-09-27).
+            // At the end of the route the unit faces the way it came.
+            int alongRoute = facingAlongRoute(entity, finalHex);
+            if ((alongRoute == UnitOrders.FACING_AUTO) && (entity.getPosition() != null)
+                  && !entity.getPosition().equals(finalHex)) {
+                return entity.getPosition().direction(finalHex);
+            }
+            return alongRoute;
+        }
         if ((facing == UnitOrders.FACING_AUTO) && owner.getEnemyEntities().isEmpty()) {
             // with no enemy to face, Auto faces along the route rather than wherever the move happens to end
             return facingAlongRoute(entity, finalHex);
         }
         return facing;
+    }
+
+    /**
+     * Decides whether an ordered facing stands against the fire the bot expects. A unit on its way along a route keeps
+     * the route's facing whatever is behind or beside it, and twists its torso or turret onto what it can reach in the
+     * fire phase (HammerGS, 2026-09-27); anywhere else - holding the end of its route, or with no route - the usual
+     * rule applies, see {@link #facingThatStands}.
+     *
+     * @param entity        the unit
+     * @param orderedFacing the ordered facing 0-5, or {@link UnitOrders#FACING_AUTO}
+     * @param position      where the unit ends its move
+     * @param threat        where the bot expects fire from, or {@code null} when it knows of no enemy
+     *
+     * @return the ordered facing if it stands, otherwise {@link UnitOrders#FACING_AUTO}
+     */
+    public int facingThatStandsFor(Entity entity, int orderedFacing, Coords position, @Nullable Coords threat) {
+        boolean isOnItsWay = entity.getUnitOrders().hasRoute() && !isAtRouteEnd(entity);
+        if (isOnItsWay && (orderedFacing != UnitOrders.FACING_AUTO)) {
+            LOGGER.debug("[BotOrders] {} (ID {}): keeps the route facing {} on its way", entity.getDisplayName(),
+                  entity.getId(), orderedFacing);
+            return orderedFacing;
+        }
+        return facingThatStands(orderedFacing, position, threat);
     }
 
     /**
@@ -622,19 +663,24 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * @return the direction from the hex toward the unit's next target - its slot or waypoint, or the waypoint after
-     *       it when the move ends on it - or {@link UnitOrders#FACING_AUTO} when there is none
+     * @return the direction from the hex toward the next flag of the route - the leader's, for a unit in formation,
+     *       so the lance faces the same way rather than toward each unit's own slot - or the flag after it when the
+     *       move ends on it; {@link UnitOrders#FACING_AUTO} when there is none
      */
     private int facingAlongRoute(Entity entity, Coords finalHex) {
-        Optional<Coords> target = owner.getUnitBehaviorTracker().getActiveWaypoint(entity, owner);
-        if (target.isEmpty()) {
+        UnitOrders routeOrders = formationLeaderOf(entity).map(Entity::getUnitOrders).orElse(entity.getUnitOrders());
+        List<Coords> route = routeOrders.getRoute();
+        if (route.isEmpty()) {
             return UnitOrders.FACING_AUTO;
         }
-        if (!target.get().equals(finalHex)) {
-            return finalHex.direction(target.get());
+        Coords next = route.get(0);
+        if (next.equals(finalHex)) {
+            if (route.size() < 2) {
+                return UnitOrders.FACING_AUTO;
+            }
+            next = route.get(1);
         }
-        List<Coords> route = entity.getUnitOrders().getRoute();
-        return (route.size() > 1) ? finalHex.direction(route.get(1)) : UnitOrders.FACING_AUTO;
+        return finalHex.direction(next);
     }
 
     /**

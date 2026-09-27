@@ -46,6 +46,7 @@ import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 import megamek.logging.MMLogger;
 
 /**
@@ -156,6 +157,12 @@ final class WaypointDistanceField {
     }
 
     /**
+     * What a building hex adds to the way through it, in movement points: enough that a way round a few hexes longer
+     * wins, while a route with no way round still goes through.
+     */
+    static final int BUILDING_DETOUR_COST = 6;
+
+    /**
      * Spreads the cost outward from the goal hexes, which cost nothing, walking backward: a unit in each neighbour
      * would step into the hex already reached.
      */
@@ -194,6 +201,11 @@ final class WaypointDistanceField {
                     continue;
                 }
                 int stepCost = 1 + Math.max(0, currentHex.movementCost(mover)) + elevationChange;
+                if (currentHex.containsTerrain(Terrains.BUILDING)) {
+                    // walk round a building rather than through it: going in damages it and can bring it down on
+                    // the unit (HammerGS's playtest, 2026-09-27)
+                    stepCost += BUILDING_DETOUR_COST;
+                }
                 int neighborCost = cost + stepCost;
                 if (neighborCost < costToGoal.getOrDefault(neighbor, UNREACHABLE)) {
                     costToGoal.put(neighbor, neighborCost);

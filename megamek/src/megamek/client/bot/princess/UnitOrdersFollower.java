@@ -67,6 +67,7 @@ import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
 import megamek.server.commands.UnitOrderCommand;
@@ -1402,7 +1403,10 @@ public class UnitOrdersFollower {
     }
 
     private boolean isUsableSlot(Entity entity, Board board, Coords leaderPosition, Coords slot) {
+        // a slot in a building would have the unit walk into it, damaging it or bringing it down; the best hex next to
+        // it is taken instead
         return board.contains(slot) && !slot.equals(leaderPosition) && !entity.isLocationProhibited(slot)
+              && !board.getHex(slot).containsTerrain(Terrains.BUILDING)
               && FormationSide.sameSide(board, leaderPosition, slot) && !isHeldByOutsider(entity, slot);
     }
 

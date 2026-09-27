@@ -177,4 +177,22 @@ class WaypointDistanceFieldTest {
         // stepping into heavy woods costs more than stepping into clear ground the same distance away
         assertTrue(field.costFrom(new Coords(2, 2)) > field.costFrom(new Coords(6, 2)));
     }
+
+    @Test
+    void theWayRoundABuildingBeatsGoingThroughIt() {
+        // HammerGS's playtest: units walked into buildings in their way, wrecking them, rather than round them
+        Board board = boardWithWall();
+        Coords waypoint = new Coords(6, 2);
+        Coords between = waypoint.translated(0, 1);
+        Coords start = waypoint.translated(0, 2);
+        board.getHex(between).addTerrain(new Terrain(Terrains.BUILDING, 1));
+        Game game = new Game();
+        game.setBoard(board);
+        mek.setGame(game);
+
+        WaypointDistanceField field = WaypointDistanceField.build(mek, waypoint);
+
+        // two hexes straight through the building, three round it: the way round is cheaper
+        assertTrue(field.costFrom(start) < 2 + WaypointDistanceField.BUILDING_DETOUR_COST, "" + field.costFrom(start));
+    }
 }

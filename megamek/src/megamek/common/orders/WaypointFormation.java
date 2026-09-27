@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.Objects;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -183,7 +184,8 @@ public final class WaypointFormation implements Serializable {
         if ((parts.length != PART_COUNT) || !parts[0].equals(PREFIX)) {
             throw new IllegalArgumentException("Not a formation, such as F:WEDGE:2:WALK:BREAK:T: " + text);
         }
-        return new WaypointFormation(FormationShape.valueOf(parts[1]), Integer.parseInt(parts[2]),
+        // a spacing that is not a number reads as 0, which the constructor refuses with the allowed range
+        return new WaypointFormation(FormationShape.valueOf(parts[1]), MathUtility.parseInt(parts[2], 0),
               FormationPace.valueOf(parts[3]), ContactRule.valueOf(parts[4]), parts[5].equals(KEEP_TOGETHER));
     }
 

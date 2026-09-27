@@ -349,6 +349,21 @@ class UnitOrdersTest {
     }
 
     @Test
+    void mistypedRouteTextIsRefusedWithAPlainReason() {
+        // CodeQL, PR #9086: typed text such as 2X reached Integer.parseInt and failed with Java's own message
+        IllegalArgumentException badHold = assertThrows(IllegalArgumentException.class,
+              () -> WaypointOrder.parse(List.of("2X")));
+        IllegalArgumentException tooLong = assertThrows(IllegalArgumentException.class,
+              () -> WaypointOrder.parse(List.of("U99999999999")));
+        IllegalArgumentException badSpacing = assertThrows(IllegalArgumentException.class,
+              () -> WaypointFormation.parse("F:WEDGE:X:WALK:BREAK:T"));
+
+        assertEquals("Not a number of turns: 2X", badHold.getMessage());
+        assertEquals("Not a number of turns: U99999999999", tooLong.getMessage());
+        assertTrue(badSpacing.getMessage().startsWith("Spacing must be 1-6"), badSpacing.getMessage());
+    }
+
+    @Test
     void aWaypointCanWaitUntilInPositionOrEndTheRouteByLeavingTheBoard() {
         WaypointOrder waitForTheLance = WaypointOrder.parse(List.of("U8"));
         WaypointOrder leave = WaypointOrder.parse(List.of("N", "EXIT"));

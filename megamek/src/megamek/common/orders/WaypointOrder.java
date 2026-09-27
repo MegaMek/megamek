@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import megamek.codeUtilities.MathUtility;
 import megamek.common.annotations.Nullable;
 
 /**
@@ -213,6 +214,19 @@ public final class WaypointOrder implements Serializable {
     }
 
     /**
+     * @return the digits as a number of turns
+     *
+     * @throws IllegalArgumentException when they are not a number, such as {@code 2X} or one too big to hold
+     */
+    private static int parseTurns(String digits, String segment) {
+        int turns = MathUtility.parseInt(digits, -1);
+        if (turns < 0) {
+            throw new IllegalArgumentException("Not a number of turns: " + segment);
+        }
+        return turns;
+    }
+
+    /**
      * Reads the settings a route order writes after a hex: letters are a facing (N, NE, SE, S, SW, NW, or A for the
      * bot's choice), digits are the turns to hold, {@code U} and digits a wait for the formation to assemble with the
      * most turns to wait, {@code EXIT} leaves the board at the end of the route, and a part starting {@code F:} is the
@@ -241,10 +255,10 @@ public final class WaypointOrder implements Serializable {
                 parsedExit = true;
             } else if (code.startsWith(ASSEMBLE_CODE) && (code.length() > 1)
                   && Character.isDigit(code.charAt(1))) {
-                parsedHold = Integer.parseInt(code.substring(1));
+                parsedHold = parseTurns(code.substring(1), segment);
                 parsedMode = HoldMode.ASSEMBLE;
             } else if (Character.isDigit(code.charAt(0))) {
-                parsedHold = Integer.parseInt(code);
+                parsedHold = parseTurns(code, segment);
                 parsedMode = HoldMode.HOLD;
             } else if (code.equals(AUTO_CODE)) {
                 parsedFacing = UnitOrders.FACING_AUTO;

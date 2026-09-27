@@ -50,6 +50,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.panels.FacingPickerPanel;
 import megamek.client.ui.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.orders.UnitOrders;
 import megamek.common.units.Entity;
 
@@ -99,7 +100,7 @@ public class BotOrderFacingDialog extends AbstractButtonDialog {
             if (autoBox.isSelected() || (buttonGroup.getSelection() == null)) {
                 return UnitOrders.FACING_AUTO;
             }
-            return Integer.parseInt(buttonGroup.getSelection().getActionCommand());
+            return MathUtility.parseInt(buttonGroup.getSelection().getActionCommand(), UnitOrders.FACING_AUTO);
         }
     }
 

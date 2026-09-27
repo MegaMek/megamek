@@ -37,6 +37,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -47,6 +49,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -57,6 +60,7 @@ import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -65,6 +69,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
@@ -120,6 +125,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     // bitmask for drawing all six hex edges of the highlight sprite
     private static final int ALL_HEX_BORDERS = 63;
     private static final int GAP = 8;
+    private static final String REMOVE_WAYPOINT_ACTION = "removeWaypoint";
     private static final int TABLE_WIDTH = 960;
     private static final int TABLE_HEIGHT = 170;
     private static final int ROW_HEIGHT = 26;
@@ -319,10 +325,18 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         JButton downButton = new JButton(Messages.getString("BotCommandPanel.MoveOrder.down"));
         downButton.addActionListener(event -> selectRow(waypoints.moveDown(waypointTable.getSelectedRow())));
         JButton removeButton = new JButton(Messages.getString("BotCommandPanel.MoveOrder.remove"));
-        removeButton.addActionListener(event -> {
-            int row = waypointTable.getSelectedRow();
-            waypoints.removeWaypoint(row);
-            selectRow(Math.min(row, waypoints.getRowCount() - 1));
+        removeButton.addActionListener(event -> removeSelectedWaypoint());
+        // Delete or Backspace on the table removes the selected waypoint too; a cell being edited keeps its own keys,
+        // since the key then goes to the editor rather than the table
+        waypointTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0),
+              REMOVE_WAYPOINT_ACTION);
+        waypointTable.getInputMap(JComponent.WHEN_FOCUSED).put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0),
+              REMOVE_WAYPOINT_ACTION);
+        waypointTable.getActionMap().put(REMOVE_WAYPOINT_ACTION, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                removeSelectedWaypoint();
+            }
         });
         rowButtons.add(upButton);
         rowButtons.add(downButton);
@@ -582,6 +596,15 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             updateUnits();
             updateCanForm();
         }
+    }
+
+    private void removeSelectedWaypoint() {
+        int row = waypointTable.getSelectedRow();
+        if (row < 0) {
+            return;
+        }
+        waypoints.removeWaypoint(row);
+        selectRow(Math.min(row, waypoints.getRowCount() - 1));
     }
 
     private void selectRow(int row) {

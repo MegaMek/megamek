@@ -32,8 +32,10 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -105,6 +107,15 @@ public class UnitOrdersFollower {
      */
     static final int MAXIMUM_REFORM_WAIT_ROUNDS = 6;
 
+    /** The hexes of a leader's walk a Column remembers, enough for a long column at wide spacing. */
+    private static final int MAXIMUM_TRAIL_LENGTH = 48;
+
+    /** The longest move filled in hex by hex; anything longer, such as a unit set down elsewhere, restarts the trail. */
+    private static final int MAXIMUM_TRAIL_GAP = 20;
+
+    // marks a cached Column slot taken from the leader's trail rather than laid out by heading
+    private static final int TRAIL_HEADING = -1;
+
     /** Contact range for a formation none of whose units has a weapon: an enemy this close still breaks it. */
     static final int FALLBACK_CONTACT_RANGE = 12;
 
@@ -116,6 +127,10 @@ public class UnitOrdersFollower {
     private final Map<Integer, Integer> contactRanges = new HashMap<>();
     private int contactRangesRound = -1;
     private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
+    // slots laid out around a leader still on its way, never ahead of it; kept like slotChoices
+    private final Map<Integer, SlotChoice> movingSlotChoices = new HashMap<>();
+    // the hexes each formation leader has walked, newest first and hex by hex, for a Column to follow; not saved
+    private final Map<Integer, Deque<Coords>> leaderTrails = new HashMap<>();
 
     /**
      * A formation unit's worked-out slot, kept while the leader's waypoint, the formation's heading and the unit's
@@ -713,7 +728,9 @@ public class UnitOrdersFollower {
                 advanceHold(entity, waypoint.get());
                 continue;
             }
-            if (waypoint.get().distance(entity.getPosition()) > Princess.DISTANCE_TO_WAYPOINT) {
+            int reachedWithin = isLeadingFormationOnRoute(entity) ? flagRadius(entity, waypoint.get())
+                  : Princess.DISTANCE_TO_WAYPOINT;
+            if (waypoint.get().distance(entity.getPosition()) > reachedWithin) {
                 continue;
             }
             if (isPartWay && shouldWaitForFormation(entity, waypoint.get())) {
@@ -1094,6 +1111,13 @@ public class UnitOrdersFollower {
         int heading = formationHeading(leader, anchor);
         // the place in the formation counts only the units still in it, so a unit that leaves closes up the gap
         int slotIndex = members.indexOf(entity);
+        if (formation.get().getShape() == FormationShape.COLUMN) {
+            // a Column falls in behind its commander, on the hexes the commander walked (HammerGS, 2026-09-27)
+            Coords trailSlot = trailSlot(entity, leader, anchor, formation.get(), slotIndex);
+            if (trailSlot != null) {
+                return Optional.of(trailSlot);
+            }
+        }
         SlotChoice cached = slotChoices.get(entity.getId());
         if ((cached != null) && cached.anchor().equals(anchor) && (cached.heading() == heading)
               && (cached.slotIndex() == slotIndex) && (cached.memberCount() == members.size())) {
@@ -1106,7 +1130,113 @@ public class UnitOrdersFollower {
         }
         Coords slot = chooseSlot(entity, anchor, heading, formation.get(), slotIndex);
         slotChoices.put(entity.getId(), new SlotChoice(anchor, heading, slotIndex, members.size(), slot));
-        return Optional.ofNullable(slot);
+        return Optional.ofNullable(behindMovingLeader(entity, leader, anchor, slot, formation.get(), slotIndex));
+    }
+
+    /**
+     * A slot laid out around the leader's next flag can lie ahead of a leader still on its way there, and the unit
+     * then ran ahead of its commander (HammerGS's playtest, 2026-09-27: a Centurion two hexes in front of the
+     * Grasshopper leading it). While the leader is further from the flag than the slot is, the shape is laid out
+     * around the leader instead, facing the flag; it settles onto the flag as the leader comes up to it.
+     */
+    private @Nullable Coords behindMovingLeader(Entity entity, Entity leader, Coords flag, @Nullable Coords slot,
+          FormationOrder formation, int slotIndex) {
+        Coords leaderPosition = leader.getPosition();
+        if ((slot == null) || leaderPosition.equals(flag) || (slot.distance(flag) >= leaderPosition.distance(flag))) {
+            return slot;
+        }
+        int heading = leaderPosition.direction(flag);
+        SlotChoice cached = movingSlotChoices.get(entity.getId());
+        if ((cached != null) && cached.anchor().equals(leaderPosition) && (cached.heading() == heading)
+              && (cached.slotIndex() == slotIndex)) {
+            return cached.slot();
+        }
+        Board board = owner.getGame().getBoard(entity);
+        Coords ideal = FormationPlanner.idealSlot(leaderPosition, heading, formation.getShape(), formation.getSpacing(),
+              slotIndex);
+        Coords moving = (board == null) ? null : settle(entity, board, leaderPosition, ideal);
+        Coords chosen = (moving == null) ? slot : moving;
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_BEHIND - {} slot {} at {} beside {}, which is still "
+                    + "on its way to {}", entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(),
+              slotIndex, chosen.getBoardNum(), leader.getDisplayName(), flag.getBoardNum());
+        movingSlotChoices.put(entity.getId(), new SlotChoice(leaderPosition, heading, slotIndex, 0, chosen));
+        return chosen;
+    }
+
+    /**
+     * A Column's slot: the hex its commander walked {@code place x spacing} hexes back, so the column snakes through
+     * the ground behind it rather than lining up behind the next flag. Until the commander has walked that far, the
+     * slot lies straight behind it, facing the flag.
+     *
+     * @return the slot, or {@code null} when neither the trail nor the hexes behind the commander will do
+     */
+    private @Nullable Coords trailSlot(Entity entity, Entity leader, Coords flag, FormationOrder formation,
+          int slotIndex) {
+        Board board = owner.getGame().getBoard(entity);
+        if (board == null) {
+            return null;
+        }
+        SlotChoice cached = movingSlotChoices.get(entity.getId());
+        if ((cached != null) && cached.anchor().equals(leader.getPosition()) && (cached.slotIndex() == slotIndex)
+              && (cached.heading() == TRAIL_HEADING)) {
+            return cached.slot();
+        }
+        Deque<Coords> trail = recordTrail(leader);
+        int hexesBack = slotIndex * formation.getSpacing();
+        Coords ideal = null;
+        int stepsBack = 0;
+        for (Coords walked : trail) {
+            if (stepsBack == hexesBack) {
+                ideal = walked;
+                break;
+            }
+            stepsBack++;
+        }
+        if (ideal == null) {
+            int heading = leader.getPosition().equals(flag) ? leader.getFacing() : leader.getPosition().direction(flag);
+            ideal = FormationPlanner.idealSlot(leader.getPosition(), heading, FormationShape.COLUMN,
+                  formation.getSpacing(), slotIndex);
+        }
+        Coords settled = settle(entity, board, leader.getPosition(), ideal);
+        if (settled != null) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_TRAIL - column place {} at {}, {} hex(es) behind "
+                        + "{} along its path", entity.getDisplayName(), entity.getId(), currentRound(), slotIndex,
+                  settled.getBoardNum(), hexesBack, leader.getDisplayName());
+            movingSlotChoices.put(entity.getId(), new SlotChoice(leader.getPosition(), TRAIL_HEADING, slotIndex, 0,
+                  settled));
+        }
+        return settled;
+    }
+
+    /**
+     * Adds the leader's hex to its trail if it has moved, filling in the hexes between so the trail runs hex by hex.
+     * A jump too long to fill in starts the trail again.
+     *
+     * @return the trail, newest first
+     */
+    private Deque<Coords> recordTrail(Entity leader) {
+        Deque<Coords> trail = leaderTrails.computeIfAbsent(leader.getId(), id -> new ArrayDeque<>());
+        Coords now = leader.getPosition();
+        Coords last = trail.peekFirst();
+        if (now.equals(last)) {
+            return trail;
+        }
+        if ((last != null) && (last.distance(now) <= MAXIMUM_TRAIL_GAP)) {
+            for (Coords between : Coords.intervening(last, now)) {
+                if (!between.equals(trail.peekFirst())) {
+                    trail.addFirst(between);
+                }
+            }
+        } else {
+            trail.clear();
+        }
+        if (!now.equals(trail.peekFirst())) {
+            trail.addFirst(now);
+        }
+        while (trail.size() > MAXIMUM_TRAIL_LENGTH) {
+            trail.removeLast();
+        }
+        return trail;
     }
 
     /**
@@ -1302,13 +1432,50 @@ public class UnitOrdersFollower {
     /**
      * @param entity a unit of the bot
      *
-     * @return how close counts as arrived: 0 for a formation slot and for a formation's leader at its last
-     *       waypoint, which must be reached exactly, else {@link Princess#DISTANCE_TO_WAYPOINT}
+     * @return how close counts as arrived: 0 for a formation slot and a waypoint set to hold, which must be reached
+     *       exactly; for a formation's leader, its flag (see {@link #flagRadius}); else
+     *       {@link Princess#DISTANCE_TO_WAYPOINT}
      */
     int arrivalRadius(Entity entity) {
-        boolean holdsExactHex = getFormationSlot(entity).isPresent() || isLeadingFormationToLastWaypoint(entity)
-              || isHeadingForHold(entity);
-        return holdsExactHex ? 0 : Princess.DISTANCE_TO_WAYPOINT;
+        if (getFormationSlot(entity).isPresent() || isHeadingForHold(entity)) {
+            return 0;
+        }
+        Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
+        if (waypoint.isPresent() && isLeadingFormationOnRoute(entity)) {
+            return flagRadius(entity, waypoint.get());
+        }
+        return Princess.DISTANCE_TO_WAYPOINT;
+    }
+
+    /**
+     * A formation's leader walks onto every flag of its route, so the lance traces the route and a Column's head is
+     * on the flag; cutting a corner by the usual three hexes left the column's commander off the route (HammerGS's
+     * playtest, 2026-09-27).
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit leads a formation of two or more units along a route
+     */
+    boolean isLeadingFormationOnRoute(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || !entity.getUnitOrders().hasRoute()) {
+            return false;
+        }
+        List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
+        return (members.size() >= 2) && (members.get(0).getId() == entity.getId());
+    }
+
+    /**
+     * @return how near a leader must come to its flag to have reached it: on it, or next to it when another unit
+     *       stands there
+     */
+    private int flagRadius(Entity leader, Coords flag) {
+        for (Entity occupant : owner.getGame().getEntitiesVector(flag, leader.getBoardId())) {
+            if (occupant.getId() != leader.getId()) {
+                return 1;
+            }
+        }
+        return 0;
     }
 
     /**
@@ -1632,15 +1799,25 @@ public class UnitOrdersFollower {
         int lastUnitTurns = estimatedAssemblyTurns(leader);
         // the others may already have moved this turn, so the leader can be one turn ahead of the last of them; a
         // leader already too far ahead is not sent back, only held where it is
-        int turnsToKeep = Math.min(lastUnitTurns - 1, turnsToWaypoint(leader, waypoint.get(), leader.getPosition(),
-              leaderPace));
+        int turnsNow = turnsToWaypoint(leader, waypoint.get(), leader.getPosition(), leaderPace);
+        int turnsToKeep = Math.min(lastUnitTurns - 1, turnsNow);
         if (turnsToKeep <= 0) {
             return paths;
         }
+        // held back, the leader stays on its hex, turning at most: any move that only kept its distance let it wander
+        // sideways, as a Grasshopper did from 1906 to 1604 and back (HammerGS's playtest, 2026-09-27). Allowed to
+        // close in, it may go no further back than it is now
+        boolean isHeldInPlace = turnsToKeep >= turnsNow;
+        Coords position = leader.getPosition();
         List<MovePath> kept = new ArrayList<>();
         for (MovePath path : paths) {
             Coords end = path.getFinalCoords();
-            if ((end == null) || (turnsToWaypoint(leader, waypoint.get(), end, leaderPace) >= turnsToKeep)) {
+            if ((end == null) || end.equals(position)) {
+                kept.add(path);
+                continue;
+            }
+            int turnsLeft = turnsToWaypoint(leader, waypoint.get(), end, leaderPace);
+            if (!isHeldInPlace && (turnsLeft >= turnsToKeep) && (turnsLeft < turnsNow)) {
                 kept.add(path);
             }
         }
@@ -1648,8 +1825,9 @@ public class UnitOrdersFollower {
             return paths;
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_MARCH - the last unit needs {} turn(s) to its slot at "
-                    + "{}; keeping {} turn(s) out, {} of {} moves kept", leader.getDisplayName(), leader.getId(),
-              currentRound(), lastUnitTurns, waypoint.get().getBoardNum(), turnsToKeep, kept.size(), paths.size());
+                    + "{}; keeping {} turn(s) out{}, {} of {} moves kept", leader.getDisplayName(), leader.getId(),
+              currentRound(), lastUnitTurns, waypoint.get().getBoardNum(), turnsToKeep,
+              isHeldInPlace ? ", holding in place" : "", kept.size(), paths.size());
         return kept;
     }
 

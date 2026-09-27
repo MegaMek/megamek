@@ -126,6 +126,20 @@ class BotOrdersMenuBuilderTest {
     }
 
     @Test
+    void aLanceStillToDeployCanBeGivenItsOrders() {
+        // HammerGS: the Move Order should be there before the bot deploys, so a lance moves off along its route
+        for (BipedMek mek : units) {
+            mek.setDeployed(false);
+            mek.setPosition(null);
+        }
+
+        List<BotOrdersMenuBuilder.OrderGroup> groups = builder.groupsFor(bot);
+
+        assertEquals(List.of(20, 21, 22), groups.get(0).unitIds());
+        assertEquals("Command Lance (2)", groups.get(1).label());
+    }
+
+    @Test
     void aRouteOrderGoesToEveryUnitOfTheLance() {
         JMenu botMenu = new JMenu();
         builder.populate(botMenu, bot, null);

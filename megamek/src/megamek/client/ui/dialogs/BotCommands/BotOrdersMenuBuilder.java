@@ -271,12 +271,17 @@ public class BotOrdersMenuBuilder {
     }
 
     /**
-     * @return {@code true} for a unit the orders apply to: on the board and of a kind that takes orders there, see
-     *       {@link OrderEligibility}
+     * @return {@code true} for a unit the orders apply to: on the board, or still to deploy onto it - so a lance can be
+     *       given its route before the bot deploys it (HammerGS, 2026-09-27) - and of a kind that takes orders there,
+     *       see {@link OrderEligibility}. Units carried in a transport and off-board units are left out.
      */
     private static boolean canTakeOrders(Entity entity) {
-        return entity.isDeployed() && !entity.isDestroyed() && !entity.isDoomed() && (entity.getPosition() != null)
-              && !entity.isOffBoard() && OrderEligibility.isOrderableKind(entity);
+        if (entity.isDestroyed() || entity.isDoomed() || entity.isOffBoard()
+              || !OrderEligibility.isOrderableKind(entity)) {
+            return false;
+        }
+        boolean isStillToDeploy = !entity.isDeployed() && (entity.getTransportId() == Entity.NONE);
+        return isStillToDeploy || (entity.getPosition() != null);
     }
 
     private static void addIfNotEmpty(JMenu menu, JMenu submenu) {

@@ -134,8 +134,10 @@ public final class RouteGroups {
 
     private static boolean isRouteShownTo(Entity unit, @Nullable Player viewer) {
         Player owner = unit.getOwner();
+        // a lance given its route before it deploys shows it too, so the player sees what was set
+        boolean isOnOrToTheBoard = (unit.getPosition() != null) || !unit.isDeployed();
         return (viewer != null) && (owner != null) && owner.isBot() && !viewer.isEnemyOf(owner)
-              && (unit.getPosition() != null) && unit.getUnitOrders().hasRoute();
+              && isOnOrToTheBoard && unit.getUnitOrders().hasRoute();
     }
 
     private static String groupKey(Entity unit) {

@@ -58,13 +58,14 @@ class WaypointTableModel extends AbstractTableModel {
     static final int COLUMN_NUMBER = 0;
     static final int COLUMN_HEX = 1;
     static final int COLUMN_SHAPE = 2;
-    static final int COLUMN_SPACING = 3;
-    static final int COLUMN_PACE = 4;
-    static final int COLUMN_CONTACT = 5;
-    static final int COLUMN_TOGETHER = 6;
-    static final int COLUMN_FACING = 7;
-    static final int COLUMN_THEN = 8;
-    static final int COLUMN_TURNS = 9;
+    static final int COLUMN_CHANGE = 3;
+    static final int COLUMN_SPACING = 4;
+    static final int COLUMN_PACE = 5;
+    static final int COLUMN_CONTACT = 6;
+    static final int COLUMN_TOGETHER = 7;
+    static final int COLUMN_FACING = 8;
+    static final int COLUMN_THEN = 9;
+    static final int COLUMN_TURNS = 10;
 
     /** The longest hold the editor offers; a player wanting longer holds with Pause. */
     static final int MAXIMUM_HOLD_TURNS = 20;
@@ -74,8 +75,8 @@ class WaypointTableModel extends AbstractTableModel {
           FormationOrder.DEFAULT_SPACING, FormationPace.WALK, ContactRule.BREAK, true);
 
     private static final int FACING_COUNT = 6;
-    private static final String[] COLUMN_KEYS = {"number", "hex", "shape", "spacing", "pace", "contact", "together",
-          "facing", "then", "turns"};
+    private static final String[] COLUMN_KEYS = {"number", "hex", "shape", "change", "spacing", "pace", "contact",
+          "together", "facing", "then", "turns"};
 
     /**
      * The turns a new hold waits: a two-turn delay; or, waiting until in position, at most eight turns - the leader's
@@ -98,6 +99,20 @@ class WaypointTableModel extends AbstractTableModel {
         @Override
         public String toString() {
             return Messages.getString("BotCommandPanel.MoveOrder.then." + name());
+        }
+    }
+
+    /**
+     * Where the units take a waypoint's formation: on the way to it, or on reaching it, keeping their old shape until
+     * then and re-forming there before moving on.
+     */
+    enum Change {
+        ON_THE_WAY,
+        AT_WAYPOINT;
+
+        @Override
+        public String toString() {
+            return Messages.getString("BotCommandPanel.MoveOrder.change." + name());
         }
     }
 
@@ -158,6 +173,7 @@ class WaypointTableModel extends AbstractTableModel {
         private int holdTurns;
         private boolean exitBoard;
         private WaypointFormation formation;
+        private boolean isChangeAtWaypoint;
 
         private Row(Coords hex, int facing, WaypointOrder.HoldMode holdMode, int holdTurns, boolean exitBoard,
               WaypointFormation formation) {
@@ -172,6 +188,8 @@ class WaypointTableModel extends AbstractTableModel {
 
     private final List<Row> rows = new ArrayList<>();
     private boolean canForm = true;
+    // the units' formation when the order was loaded: the shape they keep to a first waypoint that changes it there
+    private WaypointFormation unitsFormation = WaypointFormation.NONE;
 
     /**
      * @param canFormNow {@code false} for a group of one unit, which travels out of formation on every leg
@@ -195,12 +213,18 @@ class WaypointTableModel extends AbstractTableModel {
      */
     void setRoute(List<Coords> hexes, List<WaypointOrder> waypointOrders, WaypointFormation unitsFormation) {
         rows.clear();
+        this.unitsFormation = unitsFormation;
         for (int index = 0; index < hexes.size(); index++) {
             WaypointOrder order = (index < waypointOrders.size()) ? waypointOrders.get(index)
                   : WaypointOrder.PASS_THROUGH;
-            WaypointFormation formation = (order.getFormation() == null) ? unitsFormation : order.getFormation();
-            rows.add(new Row(hexes.get(index), order.getFacing(), order.getHoldMode(), order.getHoldTurns(),
-                  order.isExitBoard(), canForm ? formation : WaypointFormation.NONE));
+            // a waypoint that changes shape there shows the shape it changes to
+            boolean isChangeAtWaypoint = order.getArrivalFormation() != null;
+            WaypointFormation formation = isChangeAtWaypoint ? order.getArrivalFormation()
+                  : ((order.getFormation() == null) ? unitsFormation : order.getFormation());
+            Row row = new Row(hexes.get(index), order.getFacing(), order.getHoldMode(), order.getHoldTurns(),
+                  order.isExitBoard(), canForm ? formation : WaypointFormation.NONE);
+            row.isChangeAtWaypoint = canForm && isChangeAtWaypoint;
+            rows.add(row);
         }
         fireTableDataChanged();
     }
@@ -338,6 +362,43 @@ class WaypointTableModel extends AbstractTableModel {
         return rows.get(index).formation;
     }
 
+    /**
+     * @param index a row
+     *
+     * @return where the units take that waypoint's formation
+     */
+    Change getChange(int index) {
+        return rows.get(index).isChangeAtWaypoint ? Change.AT_WAYPOINT : Change.ON_THE_WAY;
+    }
+
+    void setChange(int index, Change change) {
+        rows.get(index).isChangeAtWaypoint = canForm && (change == Change.AT_WAYPOINT);
+        fireTableRowsUpdated(index, index);
+    }
+
+    /**
+     * @param index a row
+     *
+     * @return one line on what the units do at that waypoint, for under the table: how they take its formation and
+     *       what they do there, e.g. "Waypoint 2 - hex 1617: The lance takes the Wedge on the way here. Hold 2: ..."
+     */
+    String describe(int index) {
+        Row row = rows.get(index);
+        StringBuilder text = new StringBuilder(Messages.getString("BotCommandPanel.MoveOrder.help.selected",
+              index + 1, row.hex.getBoardNum()));
+        text.append(' ');
+        if (row.formation.isNone()) {
+            text.append(Messages.getString("BotCommandPanel.MoveOrder.help.noFormation"));
+        } else {
+            String shape = new ShapeOption(row.formation.getShape()).toString();
+            text.append(Messages.getString(row.isChangeAtWaypoint ? "BotCommandPanel.MoveOrder.help.shapeAtWaypoint"
+                  : "BotCommandPanel.MoveOrder.help.shapeOnTheWay", shape));
+        }
+        text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help." + getThen(index).name(),
+              row.holdTurns));
+        return text.toString();
+    }
+
     void setFacing(int index, int facing) {
         rows.get(index).facing = facing;
         fireTableRowsUpdated(index, index);
@@ -381,8 +442,16 @@ class WaypointTableModel extends AbstractTableModel {
             Row row = rows.get(index);
             int holdTurns = getHoldTurns(index);
             WaypointOrder.HoldMode holdMode = (holdTurns == 0) ? WaypointOrder.HoldMode.PASS : row.holdMode;
-            orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, row.formation,
-                  isEndOfRoute(index) && row.exitBoard).withNavNumber(index + 1));
+            boolean isExit = isEndOfRoute(index) && row.exitBoard;
+            if (row.isChangeAtWaypoint && !row.formation.isNone()) {
+                // the leg keeps the shape the units had before, and they re-form in this one on arrival
+                WaypointFormation shapeBefore = (index == 0) ? unitsFormation : rows.get(index - 1).formation;
+                orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, shapeBefore, isExit, row.formation)
+                      .withNavNumber(index + 1));
+            } else {
+                orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, row.formation, isExit)
+                      .withNavNumber(index + 1));
+            }
         }
         return orders;
     }
@@ -415,6 +484,7 @@ class WaypointTableModel extends AbstractTableModel {
             case COLUMN_NUMBER -> rowIndex + 1;
             case COLUMN_HEX -> row.hex.getBoardNum();
             case COLUMN_SHAPE -> new ShapeOption(formation.getShape());
+            case COLUMN_CHANGE -> getChange(rowIndex);
             case COLUMN_SPACING -> formation.getSpacing();
             case COLUMN_PACE -> formation.getPace();
             case COLUMN_CONTACT -> formation.getContactRule();
@@ -430,7 +500,7 @@ class WaypointTableModel extends AbstractTableModel {
         boolean hasShape = !rows.get(rowIndex).formation.isNone();
         return switch (columnIndex) {
             case COLUMN_SHAPE -> canForm;
-            case COLUMN_SPACING, COLUMN_PACE, COLUMN_CONTACT, COLUMN_TOGETHER -> hasShape;
+            case COLUMN_CHANGE, COLUMN_SPACING, COLUMN_PACE, COLUMN_CONTACT, COLUMN_TOGETHER -> hasShape;
             case COLUMN_FACING, COLUMN_THEN -> true;
             case COLUMN_TURNS -> !isEndOfRoute(rowIndex) && (rows.get(rowIndex).holdMode != WaypointOrder.HoldMode.PASS);
             default -> false;
@@ -470,6 +540,11 @@ class WaypointTableModel extends AbstractTableModel {
                 if (value instanceof Boolean keepTogether) {
                     setFormation(rowIndex, new WaypointFormation(formation.getShape(), formation.getSpacing(),
                           formation.getPace(), formation.getContactRule(), keepTogether));
+                }
+            }
+            case COLUMN_CHANGE -> {
+                if (value instanceof Change change) {
+                    setChange(rowIndex, change);
                 }
             }
             case COLUMN_FACING -> {

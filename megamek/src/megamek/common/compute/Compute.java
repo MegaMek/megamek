@@ -1136,8 +1136,10 @@ public class Compute {
         ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
         for (Entity other : game.getEntitiesVector()) {
+            // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
+            boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
             if (((other.isSpotting() && (other.getSpotTargetId() == target
-                  .getId())) || (taggedBy == other.getId()))
+                  .getId())) || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 LosEffects los = LosEffects.calculateLOS(game, other, target, true);
@@ -1154,8 +1156,8 @@ public class Compute {
                       other.getId()));
 
                 // a spotter suffers a penalty if it's also making an attack this round
-                // unless it has a command console or has TAG-ged the target
-                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() &&
+                // unless it has a command console, has TAG-ged the target or spotted it with a Recon Camera
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && !isCameraSpotter &&
                       (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }

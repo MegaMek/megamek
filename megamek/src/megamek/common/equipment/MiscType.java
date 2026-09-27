@@ -6270,7 +6270,7 @@ public class MiscType extends EquipmentType {
     }
 
     public static MiscType createISReconCamera() {
-        // TODO: implement game rules
+        // Ground-unit camera spotting: ReconCameraRules. Still to come (#1709): the aerospace rules and the bomb pod.
         MiscType misc = new MiscType();
         misc.name = "Recon Camera";
         misc.setInternalName("ISReconCamera");
@@ -6288,12 +6288,13 @@ public class MiscType extends EquipmentType {
               F_RECON_CAMERA);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 150);
         misc.techAdvancement.setTechBase(TechBase.ALL)
-              .setTechRating(TechRating.B)
+              .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false);
+              .setClanApproximate(false, false, false, false, false)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
         return misc;
     }
 

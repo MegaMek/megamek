@@ -932,6 +932,12 @@ public abstract class Entity extends TurnOrdered
      */
     private int spotTargetId = Entity.NONE;
 
+    /** The unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} (TO:AUE p.150). */
+    private int reconCameraSpotTargetId = Entity.NONE;
+
+    /** Whether this unit has tried a Recon Camera spot this turn; a miss uses up the turn's attempt too. */
+    private boolean hasTriedReconCameraSpot = false;
+
     /** The scan this unit has ordered for the End Phase, or {@code null} (Objectives series, scanning). */
     private ScanAction pendingScan = null;
 
@@ -8024,6 +8030,8 @@ public abstract class Entity extends TurnOrdered
         setFindingClub(false);
         setSpotting(false);
         spotTargetId = Entity.NONE;
+        reconCameraSpotTargetId = Entity.NONE;
+        hasTriedReconCameraSpot = false;
         pendingScan = null;
         setClearingMinefield(false);
         setClearingWoods(false);
@@ -11863,7 +11871,8 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        return false;// only things w/ tag are
+        // a Recon Camera spot is made in this phase too, like TAG (TO:AUE p.150)
+        return (game != null) && ReconCameraRules.hasAnyTarget(game, this);
     }
 
     public boolean isAttackingThisTurn() {
@@ -13923,6 +13932,28 @@ public abstract class Entity extends TurnOrdered
 
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+
+    /**
+     * @return the unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} when it spotted nothing
+     */
+    public int getReconCameraSpotTargetId() {
+        return reconCameraSpotTargetId;
+    }
+
+    /**
+     * Records the result of this unit's Recon Camera spot for the turn. Any call uses up the turn's attempt.
+     *
+     * @param targetId the unit spotted, or {@link Entity#NONE} when the spot missed
+     */
+    public void setReconCameraSpotResult(int targetId) {
+        reconCameraSpotTargetId = targetId;
+        hasTriedReconCameraSpot = true;
+    }
+
+    /** @return {@code true} if this unit has already tried a Recon Camera spot this turn, hit or miss */
+    public boolean hasReconCameraSpotThisTurn() {
+        return hasTriedReconCameraSpot;
     }
 
     /** @return the scan this unit has ordered for the End Phase, or {@code null} when it has not ordered one */

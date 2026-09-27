@@ -333,6 +333,18 @@ class ReconCameraRulesTest {
     }
 
     @Test
+    void testOnlyTheCameraSideIsShownTheSpot() {
+        Player teammate = new Player(2, "Teammate");
+        teammate.setTeam(1);
+        game.addPlayer(2, teammate);
+
+        assertTrue(ReconCameraRules.isOnCameraSide(camera, cameraOwner));
+        assertTrue(ReconCameraRules.isOnCameraSide(camera, teammate));
+        assertFalse(ReconCameraRules.isOnCameraSide(camera, enemy), "the enemy is not told it has been spotted");
+        assertFalse(ReconCameraRules.isOnCameraSide(camera, null), "no local player, as on a dedicated server");
+    }
+
+    @Test
     void testTheSpotOrderAndTheSpotResultSurviveSerialization() throws IOException, ClassNotFoundException {
         BipedMek target = enemyAt(7);
         camera.setReconCameraSpotResult(target.getId());

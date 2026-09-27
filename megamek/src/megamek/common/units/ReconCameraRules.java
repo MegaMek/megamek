@@ -326,20 +326,33 @@ public final class ReconCameraRules {
             if (camera.getReconCameraSpotTargetId() != target.getId()) {
                 continue;
             }
-            Player cameraOwner = camera.getOwner();
-            if (cameraOwner == null) {
-                continue;
-            }
-            boolean hasTeam = cameraOwner.getTeam() != Player.TEAM_NONE;
             for (Player player : game.getPlayersList()) {
-                boolean isCameraOwner = player.getId() == cameraOwner.getId();
-                boolean isTeammate = hasTeam && (player.getTeam() == cameraOwner.getTeam());
-                if ((isCameraOwner || isTeammate) && !viewers.contains(player)) {
+                if (isOnCameraSide(camera, player) && !viewers.contains(player)) {
                     viewers.add(player);
                 }
             }
         }
         return viewers;
+    }
+
+    /**
+     * Checks whether a player is on a camera's side: its owner or a teammate. That side sees what the camera spotted,
+     * and only that side is shown which units the camera is spotting.
+     *
+     * @param camera the unit with the camera
+     * @param player the player to check, may be {@code null}
+     *
+     * @return {@code true} if the player owns the camera or is on its owner's team
+     */
+    public static boolean isOnCameraSide(Entity camera, @Nullable Player player) {
+        Player cameraOwner = camera.getOwner();
+        if ((player == null) || (cameraOwner == null)) {
+            return false;
+        }
+        boolean isCameraOwner = player.getId() == cameraOwner.getId();
+        boolean hasTeam = cameraOwner.getTeam() != Player.TEAM_NONE;
+        boolean isTeammate = hasTeam && (player.getTeam() == cameraOwner.getTeam());
+        return isCameraOwner || isTeammate;
     }
 
     /**

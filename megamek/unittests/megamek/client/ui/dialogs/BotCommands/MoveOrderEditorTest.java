@@ -208,4 +208,41 @@ class MoveOrderEditorTest {
               "/unitOrder 22 FORMATION shape=WEDGE leader=30 spacing=1 slot=2 pace=WALK contact=BREAK together=true"),
               commands);
     }
+
+    @Test
+    void aWaypointSetToChangeShapeThereKeepsTheShapeBeforeOnTheWay() {
+        // HammerGS: free move to the waypoint, form a Column there, then go on in Column
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 1, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 1, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), wedge);
+        waypoints.setFormation(0, column);
+        waypoints.setChange(0, WaypointTableModel.Change.AT_WAYPOINT);
+
+        WaypointOrder first = waypoints.getWaypointOrders().get(0);
+        assertEquals(wedge, first.getFormation());
+        assertEquals(column, first.getArrivalFormation());
+        assertTrue(waypoints.describe(0).contains("keeps its shape on the way here, forms the Column here"),
+              waypoints.describe(0));
+
+        // sent and loaded back, the row shows the shape it changes to, set to change at the waypoint
+        WaypointTableModel reloaded = new WaypointTableModel();
+        reloaded.setRoute(waypoints.getHexes(), waypoints.getWaypointOrders(), wedge);
+        assertEquals(column, reloaded.getFormation(0));
+        assertEquals(WaypointTableModel.Change.AT_WAYPOINT, reloaded.getChange(0));
+    }
+
+    @Test
+    void theLineUnderTheTableSaysWhatTheUnitsDoAtTheSelectedWaypoint() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointTableModel.DEFAULT_FORMATION);
+        waypoints.setHoldTurns(0, 2);
+
+        assertEquals("Waypoint 1 - hex 1706: The lance takes the Wedge on the way here. Hold 2: it waits 2 turns here,"
+              + " firing at anything in range but not chasing it, then moves on.", waypoints.describe(0));
+        assertTrue(waypoints.describe(1).endsWith("holds this hex until given new orders, and comes back to it after a"
+              + " fight."), waypoints.describe(1));
+    }
 }

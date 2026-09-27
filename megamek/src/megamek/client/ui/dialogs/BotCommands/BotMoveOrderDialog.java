@@ -54,17 +54,14 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
@@ -93,7 +90,6 @@ import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
 import megamek.client.ui.dialogs.BotCommands.BotOrdersMenuBuilder.OrderGroup;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.enums.DialogResult;
-import megamek.client.ui.panels.FacingPickerPanel;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.RangeType;
@@ -126,20 +122,21 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private static final int ALL_HEX_BORDERS = 63;
     private static final int GAP = 8;
     private static final String REMOVE_WAYPOINT_ACTION = "removeWaypoint";
-    private static final int TABLE_WIDTH = 960;
-    private static final int TABLE_HEIGHT = 170;
+    // the columns' widths added up, and a header and four rows: the window opens wide and short (HammerGS, 2026-09-27)
+    private static final int TABLE_WIDTH = 1140;
+    private static final int TABLE_HEIGHT = 132;
     private static final int ROW_HEIGHT = 26;
     private static final int NUMBER_COLUMN_WIDTH = 32;
     private static final int HEX_COLUMN_WIDTH = 56;
     private static final int SHAPE_COLUMN_WIDTH = 120;
+    private static final int CHANGE_COLUMN_WIDTH = 120;
     private static final int SPACING_COLUMN_WIDTH = 90;
     private static final int PACE_COLUMN_WIDTH = 80;
-    private static final int CONTACT_COLUMN_WIDTH = 190;
+    private static final int CONTACT_COLUMN_WIDTH = 170;
     private static final int TOGETHER_COLUMN_WIDTH = 100;
     private static final int FACING_COLUMN_WIDTH = 150;
     private static final int THEN_COLUMN_WIDTH = 130;
     private static final int TURNS_COLUMN_WIDTH = 70;
-    private static final int NOTE_WIDTH = 260;
 
     private final ClientGUI clientGUI;
     private final BoardView boardView;
@@ -149,19 +146,15 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private OrderGroup group;
 
     private final WaypointTableModel waypoints = new WaypointTableModel();
-    private final List<JRadioButton> facingButtons = new ArrayList<>();
-    private final ButtonGroup facingButtonGroup = new ButtonGroup();
     private final List<Sprite> routeSprites = new ArrayList<>();
     private JTable waypointTable;
     private JLabel unitsLabel;
     private JComboBox<UnitOption> leaderCombo;
     private JToggleButton pickButton;
-    private JLabel selectedLabel;
-    private JCheckBox autoFacingBox;
+    private JLabel helpLabel;
     private JComboBox<OrderPriority> priorityCombo;
     private BoardViewListenerAdapter hexClickListener;
     private Distractable suppressedDisplay;
-    private boolean isLoadingDetail;
 
     /**
      * A unit as the leader list shows it.
@@ -206,7 +199,11 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             }
         });
         loadCurrentOrders();
-        waypoints.addTableModelListener(event -> refreshRouteSprites());
+        waypoints.addTableModelListener(event -> {
+            refreshRouteSprites();
+            // the line under the table follows the selected waypoint's settings as they are changed
+            loadDetail();
+        });
         refreshRouteSprites();
         if (waypoints.getRowCount() == 0) {
             pickButton.setSelected(true);
@@ -223,8 +220,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         content.add(createUnitsPanel());
         content.add(Box.createVerticalStrut(gap));
         content.add(createWaypointsPanel());
-        content.add(Box.createVerticalStrut(gap));
-        content.add(createRoutePanel());
         return content;
     }
 
@@ -260,9 +255,13 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         chooseButton.addActionListener(event -> chooseUnits());
         leaderCombo = new JComboBox<>();
         leaderCombo.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.leader.tooltip"));
+        priorityCombo = new JComboBox<>(OrderPriority.values());
+        priorityCombo.setRenderer(labelRenderer("BotCommandPanel.Orders.priority."));
         JPanel controls = new JPanel(new FlowLayout(FlowLayout.TRAILING, UIUtil.scaleForGUI(GAP), 0));
         controls.add(new JLabel(Messages.getString("BotCommandPanel.Formations.leader")));
         controls.add(leaderCombo);
+        controls.add(new JLabel(Messages.getString("BotCommandPanel.Orders.priority")));
+        controls.add(priorityCombo);
         controls.add(chooseButton);
         panel.add(controls, BorderLayout.LINE_END);
         return panel;
@@ -342,58 +341,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         rowButtons.add(downButton);
         rowButtons.add(removeButton);
         below.add(rowButtons, BorderLayout.PAGE_START);
-        below.add(createDetailPanel(), BorderLayout.CENTER);
+        // one line on the selected waypoint, as wide as the table; the HTML wraps it when the text runs long
+        helpLabel = new JLabel();
+        below.add(helpLabel, BorderLayout.CENTER);
         panel.add(below, BorderLayout.PAGE_END);
-        return panel;
-    }
-
-    private JPanel createDetailPanel() {
-        JPanel detail = new JPanel(new BorderLayout(UIUtil.scaleForGUI(GAP * 2), 0));
-        for (int facing = 0; facing < 6; facing++) {
-            JRadioButton button = new JRadioButton();
-            final int chosenFacing = facing;
-            button.addActionListener(event -> setSelectedFacing(chosenFacing));
-            facingButtons.add(button);
-            facingButtonGroup.add(button);
-        }
-        autoFacingBox = new JCheckBox(Messages.getString("BotCommandPanel.Orders.facing.auto"));
-        autoFacingBox.addActionListener(event -> {
-            if (autoFacingBox.isSelected()) {
-                setSelectedFacing(UnitOrders.FACING_AUTO);
-            }
-        });
-        JPanel dial = new JPanel(new BorderLayout(0, UIUtil.scaleForGUI(4)));
-        Entity previewUnit = firstUnit();
-        if (previewUnit != null) {
-            dial.add(new FacingPickerPanel(facingButtons, FacingPickerPanel.previewOnHex(clientGUI, previewUnit, 0)),
-                  BorderLayout.CENTER);
-        }
-        dial.add(autoFacingBox, BorderLayout.PAGE_END);
-        detail.add(dial, BorderLayout.LINE_START);
-
-        JPanel text = new JPanel();
-        text.setLayout(new BoxLayout(text, BoxLayout.PAGE_AXIS));
-        selectedLabel = new JLabel();
-        selectedLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-        text.add(selectedLabel);
-        text.add(Box.createVerticalStrut(UIUtil.scaleForGUI(GAP)));
-        JLabel note = new JLabel("<html><div style='width:" + UIUtil.scaleForGUI(NOTE_WIDTH) + "px'>"
-              + Messages.getString("BotCommandPanel.MoveOrder.holdNote") + "</div></html>");
-        note.setAlignmentX(Component.LEFT_ALIGNMENT);
-        text.add(note);
-        detail.add(text, BorderLayout.CENTER);
-        return detail;
-    }
-
-    private JPanel createRoutePanel() {
-        JPanel panel = section("BotCommandPanel.MoveOrder.route");
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEADING, UIUtil.scaleForGUI(GAP), 0));
-        priorityCombo = new JComboBox<>(OrderPriority.values());
-        priorityCombo.setRenderer(labelRenderer("BotCommandPanel.Orders.priority."));
-        row.add(new JLabel(Messages.getString("BotCommandPanel.Orders.priority")));
-        row.add(priorityCombo);
-        row.add(new JLabel(Messages.getString("BotCommandPanel.MoveOrder.lastWaypointNote")));
-        panel.add(row, BorderLayout.CENTER);
         return panel;
     }
 
@@ -403,9 +354,9 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
      */
     private void setUpColumns() {
         TableColumnModel columns = waypointTable.getColumnModel();
-        int[] widths = {NUMBER_COLUMN_WIDTH, HEX_COLUMN_WIDTH, SHAPE_COLUMN_WIDTH, SPACING_COLUMN_WIDTH,
-              PACE_COLUMN_WIDTH, CONTACT_COLUMN_WIDTH, TOGETHER_COLUMN_WIDTH, FACING_COLUMN_WIDTH, THEN_COLUMN_WIDTH,
-              TURNS_COLUMN_WIDTH};
+        int[] widths = {NUMBER_COLUMN_WIDTH, HEX_COLUMN_WIDTH, SHAPE_COLUMN_WIDTH, CHANGE_COLUMN_WIDTH,
+              SPACING_COLUMN_WIDTH, PACE_COLUMN_WIDTH, CONTACT_COLUMN_WIDTH, TOGETHER_COLUMN_WIDTH, FACING_COLUMN_WIDTH,
+              THEN_COLUMN_WIDTH, TURNS_COLUMN_WIDTH};
         for (int column = 0; column < widths.length; column++) {
             columns.getColumn(column).setPreferredWidth(UIUtil.scaleForGUI(widths[column]));
         }
@@ -415,6 +366,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         }
         setComboColumn(columns.getColumn(WaypointTableModel.COLUMN_SHAPE),
               WaypointTableModel.shapeOptions().toArray(), String::valueOf);
+        setComboColumn(columns.getColumn(WaypointTableModel.COLUMN_CHANGE), WaypointTableModel.Change.values(),
+              String::valueOf);
         setComboColumn(columns.getColumn(WaypointTableModel.COLUMN_SPACING), spacings.toArray(),
               value -> Messages.getString("BotCommandPanel.Formations.spacing.hexes", value));
         setComboColumn(columns.getColumn(WaypointTableModel.COLUMN_PACE), FormationPace.values(),
@@ -616,42 +569,13 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         loadDetail();
     }
 
-    /** Shows the selected waypoint's facing on the dial and its hold on the spinner. */
+    /** Shows what the units do at the selected waypoint, in one line under the table. */
     private void loadDetail() {
         int row = waypointTable.getSelectedRow();
-        isLoadingDetail = true;
-        try {
-            boolean hasRow = row >= 0;
-            for (JRadioButton button : facingButtons) {
-                button.setEnabled(hasRow);
-            }
-            autoFacingBox.setEnabled(hasRow);
-            if (!hasRow) {
-                selectedLabel.setText(Messages.getString("BotCommandPanel.MoveOrder.noneSelected"));
-                facingButtonGroup.clearSelection();
-                return;
-            }
-            selectedLabel.setText(Messages.getString("BotCommandPanel.MoveOrder.selected", row + 1,
-                  waypoints.getHex(row).getBoardNum()));
-            int facing = waypoints.getFacing(row);
-            autoFacingBox.setSelected(facing == UnitOrders.FACING_AUTO);
-            if (facing == UnitOrders.FACING_AUTO) {
-                facingButtonGroup.clearSelection();
-            } else {
-                facingButtons.get(facing).setSelected(true);
-            }
-        } finally {
-            isLoadingDetail = false;
-        }
-    }
-
-    private void setSelectedFacing(int facing) {
-        int row = waypointTable.getSelectedRow();
-        if (isLoadingDetail || (row < 0)) {
-            return;
-        }
-        waypoints.setFacing(row, facing);
-        loadDetail();
+        String text = (row < 0) ? Messages.getString("BotCommandPanel.MoveOrder.noneSelected")
+              : waypoints.describe(row);
+        helpLabel.setText("<html><div style='width:" + UIUtil.scaleForGUI(TABLE_WIDTH - (2 * GAP)) + "px'>"
+              + text + "</div></html>");
     }
 
     /** Starts adding a waypoint at each hex the player clicks on the board. */

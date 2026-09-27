@@ -265,6 +265,14 @@ public class UnitOrdersFollower {
         Entity leader = owner.getGame().getEntity(base.get().getLeaderId());
         boolean isLeaderRouted = (leader != null) && !leader.isDestroyed() && leader.getUnitOrders().hasRoute();
         UnitOrders legOrders = isLeaderRouted ? leader.getUnitOrders() : entity.getUnitOrders();
+        // a waypoint set to change shape there: once the leader has reached it, the units re-form in the new shape
+        // around it before moving on, having kept the old shape on the way (HammerGS, 2026-09-27)
+        Entity legLeader = isLeaderRouted ? leader : entity;
+        WaypointFormation arrival = legOrders.hasRoute() ? legOrders.getWaypointOrder(0).getArrivalFormation() : null;
+        if ((arrival != null) && (legLeader.getPosition() != null)
+              && (legLeader.getPosition().distance(legOrders.getRoute().get(0)) <= Princess.DISTANCE_TO_WAYPOINT)) {
+            return arrival.isNone() ? Optional.empty() : Optional.of(arrival.applyTo(base.get()));
+        }
         WaypointFormation leg = legOrders.hasRoute() ? legOrders.getWaypointOrder(0).getFormation() : null;
         if (leg == null) {
             return base;
@@ -735,15 +743,19 @@ public class UnitOrdersFollower {
     }
 
     /**
-     * Decides, once a formation leader that keeps together has reached a waypoint part-way along its route, whether it
-     * waits there for its formation: until every other unit is within {@link #REFORM_SLACK} of its slot, for at most
-     * {@link #MAXIMUM_REFORM_WAIT_ROUNDS} rounds. Then the formation moves on to the next waypoint together.
+     * Decides, once a formation leader that keeps together, or that changes shape at this waypoint, has reached a
+     * waypoint part-way along its route, whether it waits there for its formation: until every other unit is within
+     * {@link #REFORM_SLACK} of its slot, for at most {@link #MAXIMUM_REFORM_WAIT_ROUNDS} rounds. Then the formation
+     * moves on to the next waypoint together.
      *
      * @return {@code true} to wait another round
      */
     private boolean shouldWaitForFormation(Entity leader, Coords waypoint) {
         Optional<FormationOrder> formation = activeFormation(leader);
-        if (formation.isEmpty() || !formation.get().isKeepTogether()) {
+        // a formation that changes shape at this waypoint re-forms here before moving on, kept together or not
+        boolean isReformingHere = leader.getUnitOrders().hasRoute()
+              && (leader.getUnitOrders().getWaypointOrder(0).getArrivalFormation() != null);
+        if (formation.isEmpty() || (!formation.get().isKeepTogether() && !isReformingHere)) {
             return false;
         }
         List<Entity> members = formationMembers(leader, formation.get().getLeaderId());
@@ -1511,7 +1523,64 @@ public class UnitOrdersFollower {
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} up to {} {} MP, {} of {} moves kept",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.get().getPace(),
               isHeldToSlowest ? "the slowest unit's" : "its own", paceLimit, pacedPaths.size(), paths.size());
-        return pacedPaths.isEmpty() ? paths : pacedPaths;
+        List<MovePath> keptPaths = pacedPaths.isEmpty() ? paths : pacedPaths;
+        return isHeldToSlowest ? keepLastUnitInReach(entity, keptPaths, paceLimit) : keptPaths;
+    }
+
+    /**
+     * Keeps a leader whose formation keeps together from reaching its waypoint more than a turn before the last of its
+     * units can reach its slot there. Holding the leader to the slowest unit's movement points is not enough on its
+     * own: when the shape changes, a unit's new slot can lie well off to the side, and in rougher ground, so it has
+     * further to go than the leader (HammerGS's playtest, 2026-09-27: a Longbow walking 3 reached its Line slot six
+     * turns after the Grasshopper leading it).
+     *
+     * @param leader      the formation's leader, about to move
+     * @param paths       its moves within the pace
+     * @param leaderPace  the movement points it may spend a turn
+     *
+     * @return the moves that leave it at least as many turns from its waypoint as the last unit needs, less one, but
+     *       never more than it is now: a leader too far ahead waits where it stands rather than walking back
+     */
+    private List<MovePath> keepLastUnitInReach(Entity leader, List<MovePath> paths, int leaderPace) {
+        Optional<Coords> waypoint = leader.getUnitOrders().getNextWaypoint();
+        if (waypoint.isEmpty() || paths.isEmpty()) {
+            return paths;
+        }
+        int lastUnitTurns = estimatedAssemblyTurns(leader);
+        // the others may already have moved this turn, so the leader can be one turn ahead of the last of them; a
+        // leader already too far ahead is not sent back, only held where it is
+        int turnsToKeep = Math.min(lastUnitTurns - 1, turnsToWaypoint(leader, waypoint.get(), leader.getPosition(),
+              leaderPace));
+        if (turnsToKeep <= 0) {
+            return paths;
+        }
+        List<MovePath> kept = new ArrayList<>();
+        for (MovePath path : paths) {
+            Coords end = path.getFinalCoords();
+            if ((end == null) || (turnsToWaypoint(leader, waypoint.get(), end, leaderPace) >= turnsToKeep)) {
+                kept.add(path);
+            }
+        }
+        if (kept.isEmpty()) {
+            return paths;
+        }
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_MARCH - the last unit needs {} turn(s) to its slot at "
+                    + "{}; keeping {} turn(s) out, {} of {} moves kept", leader.getDisplayName(), leader.getId(),
+              currentRound(), lastUnitTurns, waypoint.get().getBoardNum(), turnsToKeep, kept.size(), paths.size());
+        return kept;
+    }
+
+    /**
+     * @return the turns the unit needs from the position to the waypoint by the way it can really go, at the given
+     *       movement points a turn; by the straight line where no route is known
+     */
+    private int turnsToWaypoint(Entity unit, Coords waypoint, Coords position, int movementPointsPerTurn) {
+        int cost = routeCostFrom(unit, waypoint, position);
+        if (cost == WaypointDistanceField.UNREACHABLE) {
+            cost = position.distance(waypoint);
+        }
+        int perTurn = Math.max(1, movementPointsPerTurn);
+        return (cost + perTurn - 1) / perTurn;
     }
 
     private static int paceMovementPoints(Entity unit, FormationPace pace) {

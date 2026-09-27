@@ -349,6 +349,35 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aWaypointCanChangeTheShapeThereRatherThanOnTheWay() {
+        // HammerGS: travel to the waypoint as the units are, form a Column there, then go on in Column
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        WaypointOrder formThere = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0,
+              WaypointFormation.NONE, false, column);
+
+        assertEquals("/F:NONE/R:COLUMN:2:WALK:BREAK:T", formThere.toCommandSuffix());
+        assertEquals(formThere, WaypointOrder.parse(List.of("F:NONE", "R:COLUMN:2:WALK:BREAK:T")));
+    }
+
+    @Test
+    void changingAFacingFromTheMapKeepsTheRestOfTheWaypoint() {
+        // the flag menu used to rebuild a waypoint from its facing and turns, dropping Until in position and Exit
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        WaypointOrder waitThenLeave = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.ASSEMBLE, 4,
+              null, true, column);
+
+        WaypointOrder faced = waitThenLeave.withFacing(2);
+
+        assertEquals(2, faced.getFacing());
+        assertTrue(faced.isAssemble());
+        assertTrue(faced.isExitBoard());
+        assertEquals(column, faced.getArrivalFormation());
+        assertEquals(column, waitThenLeave.withHoldTurns(2).getArrivalFormation());
+    }
+
+    @Test
     void mistypedRouteTextIsRefusedWithAPlainReason() {
         // CodeQL, PR #9086: typed text such as 2X reached Integer.parseInt and failed with Java's own message
         IllegalArgumentException badHold = assertThrows(IllegalArgumentException.class,

@@ -96,6 +96,9 @@ public final class WaypointOrder implements Serializable {
     private final boolean exitBoard;
     // the formation for the leg ending here, or null to keep the units' own; null in a save made before legs had one
     private final WaypointFormation formation;
+    // the formation the units re-form into here before moving on, or null to change shape on the way; null in a save
+    // made before formations could change at a waypoint
+    private final WaypointFormation arrivalFormation;
 
     /**
      * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
@@ -124,6 +127,20 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard) {
+        this(facing, holdMode, holdTurns, formation, exitBoard, null);
+    }
+
+    /**
+     * @param facing           the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
+     * @param holdMode         pass through, hold the turns, or hold until the formation has assembled
+     * @param holdTurns        the turns to hold, or at most to wait for the formation; 0 passes through
+     * @param formation        the formation for the leg ending here, or {@code null} to keep the units' own
+     * @param exitBoard        {@code true} to leave the board by the nearest edge from the last waypoint
+     * @param arrivalFormation the formation to re-form into here before moving on, or {@code null} to take the
+     *                         leg's formation on the way
+     */
+    public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
+          boolean exitBoard, @Nullable WaypointFormation arrivalFormation) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -135,6 +152,34 @@ public final class WaypointOrder implements Serializable {
         this.holdTurns = (holdMode == HoldMode.PASS) ? 0 : holdTurns;
         this.formation = formation;
         this.exitBoard = exitBoard;
+        this.arrivalFormation = arrivalFormation;
+    }
+
+    /**
+     * @param newFacing the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
+     *
+     * @return this waypoint's settings with the facing changed and everything else kept
+     */
+    public WaypointOrder withFacing(int newFacing) {
+        return new WaypointOrder(newFacing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation);
+    }
+
+    /**
+     * @param turns the turns to hold; 0 passes through
+     *
+     * @return this waypoint's settings holding a fixed number of turns, everything else kept
+     */
+    public WaypointOrder withHoldTurns(int turns) {
+        return new WaypointOrder(facing, (turns > 0) ? HoldMode.HOLD : HoldMode.PASS, turns, formation, exitBoard,
+              arrivalFormation);
+    }
+
+    /**
+     * @return the formation the units re-form into at this waypoint before moving on, or {@code null} when they take
+     *       the leg's formation on the way to it
+     */
+    public @Nullable WaypointFormation getArrivalFormation() {
+        return arrivalFormation;
     }
 
     /**
@@ -207,6 +252,9 @@ public final class WaypointOrder implements Serializable {
         if (formation != null) {
             suffix.append('/').append(formation.toCommandText());
         }
+        if (arrivalFormation != null) {
+            suffix.append('/').append(arrivalFormation.toArrivalCommandText());
+        }
         if (exitBoard) {
             suffix.append('/').append(EXIT_CODE);
         }
@@ -244,12 +292,15 @@ public final class WaypointOrder implements Serializable {
         HoldMode parsedMode = HoldMode.PASS;
         boolean parsedExit = false;
         WaypointFormation parsedFormation = null;
+        WaypointFormation parsedArrival = null;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
             if (code.isEmpty()) {
                 continue;
             }
-            if (WaypointFormation.isCommandText(code)) {
+            if (WaypointFormation.isArrivalCommandText(code)) {
+                parsedArrival = WaypointFormation.parse(code);
+            } else if (WaypointFormation.isCommandText(code)) {
                 parsedFormation = WaypointFormation.parse(code);
             } else if (code.equals(EXIT_CODE)) {
                 parsedExit = true;
@@ -271,7 +322,7 @@ public final class WaypointOrder implements Serializable {
         if (parsedHold == 0) {
             parsedMode = HoldMode.PASS;
         }
-        return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit);
+        return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit, parsedArrival);
     }
 
     @Override
@@ -281,12 +332,13 @@ public final class WaypointOrder implements Serializable {
         }
         return (other instanceof WaypointOrder otherOrder) && (facing == otherOrder.facing)
               && (holdTurns == otherOrder.holdTurns) && (getHoldMode() == otherOrder.getHoldMode())
-              && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation);
+              && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation)
+              && Objects.equals(arrivalFormation, otherOrder.arrivalFormation);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation);
+        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation);
     }
 
     @Override

@@ -61,6 +61,8 @@ public final class WaypointFormation implements Serializable {
           FormationPace.WALK, ContactRule.BREAK, false);
 
     private static final String PREFIX = "F";
+    // a formation to re-form into at the waypoint, rather than on the way to it
+    private static final String ARRIVAL_PREFIX = "R";
     private static final String NO_SHAPE = "NONE";
     private static final String SEPARATOR = ":";
     private static final String KEEP_TOGETHER = "T";
@@ -159,6 +161,23 @@ public final class WaypointFormation implements Serializable {
     }
 
     /**
+     * @return the formation as a route order writes one the units re-form into at the waypoint, e.g.
+     *       {@code R:COLUMN:2:WALK:BREAK:T}
+     */
+    public String toArrivalCommandText() {
+        return ARRIVAL_PREFIX + toCommandText().substring(PREFIX.length());
+    }
+
+    /**
+     * @param text a route order's part
+     *
+     * @return {@code true} if the part is a formation to re-form into at the waypoint, starting {@code R:}
+     */
+    public static boolean isArrivalCommandText(String text) {
+        return text.toUpperCase(Locale.ROOT).startsWith(ARRIVAL_PREFIX + SEPARATOR);
+    }
+
+    /**
      * @param text a route order's part
      *
      * @return {@code true} if the part is a leg's formation, starting {@code F:}
@@ -181,7 +200,8 @@ public final class WaypointFormation implements Serializable {
         if ((parts.length == 2) && parts[1].equals(NO_SHAPE)) {
             return NONE;
         }
-        if ((parts.length != PART_COUNT) || !parts[0].equals(PREFIX)) {
+        boolean isFormation = parts[0].equals(PREFIX) || parts[0].equals(ARRIVAL_PREFIX);
+        if ((parts.length != PART_COUNT) || !isFormation) {
             throw new IllegalArgumentException("Not a formation, such as F:WEDGE:2:WALK:BREAK:T: " + text);
         }
         // a spacing that is not a number reads as 0, which the constructor refuses with the allowed range

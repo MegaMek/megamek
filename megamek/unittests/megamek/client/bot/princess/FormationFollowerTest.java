@@ -560,6 +560,63 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aLeaderKeepingTogetherWaitsForAUnitWithFurtherToGo() {
+        // HammerGS's playtest: capped at the Longbow's 3 MP, the Grasshopper still reached its waypoint six turns
+        // before the Longbow reached its slot, because the Longbow's slot lay further off. The leader now holds back.
+        BipedMek grasshopper = member(20, new Coords(14, 14), 0, 5);
+        grasshopper.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withFormation(keptTogether(0)));
+        BipedMek longbow = member(21, new Coords(14, 28), 1, 3);
+        longbow.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withFormation(keptTogether(1)));
+        MovePath standStill = moveTo(new Coords(14, 14), 0);
+        MovePath walkThreeOn = moveTo(new Coords(14, 11), 3);
+
+        // twelve hexes to go is four turns at 3 MP; the Longbow needs eight or more, so the Grasshopper waits
+        assertEquals(List.of(standStill), princess.getUnitOrdersFollower().limitToFormationPace(grasshopper,
+              List.of(standStill, walkThreeOn)));
+
+        longbow.setPosition(princess.getUnitOrdersFollower().getFormationSlot(longbow).orElseThrow());
+        assertEquals(List.of(standStill, walkThreeOn), princess.getUnitOrdersFollower()
+              .limitToFormationPace(grasshopper, List.of(standStill, walkThreeOn)));
+    }
+
+    @Test
+    void aLanceChangingShapeAtAWaypointKeepsItsShapeThereAndReformsBeforeGoingOn() {
+        // HammerGS: stay in the formation until the waypoint, form the Column there, then go on in Column
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 2, FormationPace.WALK,
+              ContactRule.BREAK, false);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.WALK,
+              ContactRule.BREAK, false);
+        WaypointOrder formColumnThere = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0,
+              wedge, false, column);
+        UnitOrders route = UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint),
+              List.of(formColumnThere, new WaypointOrder(UnitOrders.FACING_AUTO, 0, column)));
+        BipedMek leader = member(20, LEADER_HEX, 0, 5);
+        leader.setUnitOrders(route.withFormation(paced(0, FormationPace.WALK, ContactRule.BREAK)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(route.withFormation(paced(1, FormationPace.WALK, ContactRule.BREAK)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        // on the way the lance keeps the Wedge
+        assertEquals(FormationShape.WEDGE, follower.activeFormation(second).orElseThrow().getShape());
+
+        // at the waypoint it re-forms as a Column, and the leader waits there for it, though not kept together
+        leader.setPosition(NORTH_WAYPOINT);
+        assertEquals(FormationShape.COLUMN, follower.activeFormation(second).orElseThrow().getShape());
+        follower.advanceRoutes();
+        assertEquals(2, leader.getUnitOrders().getRoute().size());
+    }
+
+    private static MovePath moveTo(Coords end, int movementPoints) {
+        MovePath path = moveUsing(movementPoints);
+        when(path.getFinalCoords()).thenReturn(end);
+        return path;
+    }
+
+    @Test
     void aFormationKeptTogetherAdvancesAtItsSlowestUnitsSpeed() {
         // HammerGS's playtest: without it a Grasshopper outran a Longbow walking 3 and the lance spread across the map
         List<BipedMek> lance = lanceKeepingTogether();

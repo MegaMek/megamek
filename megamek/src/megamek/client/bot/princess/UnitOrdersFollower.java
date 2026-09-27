@@ -1210,8 +1210,9 @@ public class UnitOrdersFollower {
         int heading = formationHeading(leader, anchor);
         // the place in the formation counts only the units still in it, so a unit that leaves closes up the gap
         int slotIndex = members.indexOf(entity);
-        if (formation.get().getShape() == FormationShape.COLUMN) {
-            // a Column falls in behind its commander, on the hexes the commander walked (HammerGS, 2026-09-27)
+        if ((formation.get().getShape() == FormationShape.COLUMN) && !isStoppedOnFlag(leader)) {
+            // a Column on the move falls in behind its commander, on the hexes the commander walked (HammerGS,
+            // 2026-09-27); stopped on a flag it forms straight behind the way it faces there, below
             Coords trailSlot = trailSlot(entity, leader, anchor, formation.get(), slotIndex);
             if (trailSlot != null) {
                 return Optional.of(trailSlot);
@@ -1260,6 +1261,21 @@ public class UnitOrdersFollower {
               slotIndex, chosen.getBoardNum(), leader.getDisplayName(), flag.getBoardNum());
         movingSlotChoices.put(entity.getId(), new SlotChoice(leaderPosition, heading, slotIndex, 0, chosen));
         return chosen;
+    }
+
+    /**
+     * @return {@code true} if the leader stands on its flag and the lance stops there: the end of the route, a hold,
+     *       or a wait for the formation to re-form. A Column stopped there forms straight behind the facing set on the
+     *       flag, not back along the way it came in (HammerGS's playtest, 2026-09-27: ordered to face north at
+     *       2403, the Column trailed off to the south-west along its approach)
+     */
+    private boolean isStoppedOnFlag(Entity leader) {
+        List<Coords> route = leader.getUnitOrders().getRoute();
+        if (route.isEmpty() || (leader.getPosition() == null) || !route.get(0).equals(leader.getPosition())) {
+            return false;
+        }
+        return (route.size() == 1) || leader.getUnitOrders().getWaypointOrder(0).isHold()
+              || isWaitingForFormation(leader);
     }
 
     /**

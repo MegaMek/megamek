@@ -781,6 +781,23 @@ class FormationFollowerTest {
         assertEquals(UnitOrdersFollower.twistReach(scout), follower.twistAllowance(scout, NORTH_WAYPOINT));
     }
 
+    @Test
+    void aColumnStoppedOnItsLastFlagFormsBehindTheFacingSetThere() {
+        // HammerGS's playtest: told to face north at 2403, the Column trailed off south-west along the way it came
+        Coords approach = NORTH_WAYPOINT.translated(SOUTH_WEST, 4);
+        BipedMek leader = member(20, approach, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT), List.of(new WaypointOrder(NORTH, 0)))
+              .withFormation(columnOf(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        second.setUnitOrders(leader.getUnitOrders().withFormation(columnOf(1)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        follower.getFormationSlot(second);
+
+        leader.setPosition(NORTH_WAYPOINT);
+
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 2)), follower.getFormationSlot(second));
+    }
+
     private static MovePath moveTo(Coords end, int movementPoints) {
         MovePath path = moveUsing(movementPoints);
         when(path.getFinalCoords()).thenReturn(end);

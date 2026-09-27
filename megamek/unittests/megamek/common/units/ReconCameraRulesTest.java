@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.SimpleTechLevel;
@@ -62,6 +63,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
 import megamek.common.weapons.Weapon;
 import megamek.utils.BoardLoader;
@@ -142,6 +144,18 @@ class ReconCameraRulesTest {
         assertNull(ReconCameraRules.spotRefusal(game, camera, target));
         assertTrue(ReconCameraRules.hasAnyTarget(game, camera));
         assertTrue(camera.isEligibleForOffboard(), "a camera unit with a target gets an Off-Board turn");
+    }
+
+    @Test
+    void testTheOffBoardPhaseIsPlayedForACameraWithNoLrmsInTheGame() {
+        BipedMek target = enemyAt(7);
+        game.setTurnVector(List.of(new GameTurn(cameraOwner.getId())));
+        game.setTurnIndex(0, Player.PLAYER_NONE);
+
+        assertTrue(game.isCurrentPhasePlayable(), "nobody carries LRM or homing ammo, but the camera can spot");
+
+        camera.setReconCameraSpotResult(target.getId());
+        assertFalse(game.isCurrentPhasePlayable(), "with the camera used and no LRM ammo there is nothing to do");
     }
 
     @Test

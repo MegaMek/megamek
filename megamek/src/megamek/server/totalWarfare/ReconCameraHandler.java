@@ -97,7 +97,7 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
         Roll roll = rollSpot();
         boolean isHit = (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) && (roll.getIntValue() >= toHit.getValue());
         camera.setReconCameraSpotResult(isHit ? target.getId() : Entity.NONE);
-        LOGGER.debug("[ReconCamera] {}: camera spot on {} - needed {} [{}], rolled {}: {}", camera.getShortName(),
+        LOGGER.info("[ReconCamera] {}: camera spot on {} - needed {} [{}], rolled {}: {}", camera.getShortName(),
               target.getShortName(), toHit.getValue(), toHit.getDesc(), roll.getIntValue(), isHit ? "hit" : "miss");
 
         Report report = new Report(isHit ? REPORT_CAMERA_SPOTTED : REPORT_CAMERA_MISSED);
@@ -138,7 +138,7 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
                 revealed++;
             }
         }
-        LOGGER.debug("[ReconCamera] {}: flew in Reveal mode over {} hostile hidden unit(s), {} revealed",
+        LOGGER.info("[ReconCamera] {}: flew in Reveal mode over {} hostile hidden unit(s), {} revealed",
               camera.getShortName(), hiddenUnits.size(), revealed);
     }
 

@@ -107,18 +107,30 @@ public final class WaypointFormation implements Serializable {
         return shape;
     }
 
+    /**
+     * @return the hexes between neighbouring slots on this leg
+     */
     public int getSpacing() {
         return spacing;
     }
 
+    /**
+     * @return how the units move on this leg
+     */
     public FormationPace getPace() {
         return pace;
     }
 
+    /**
+     * @return whether the formation breaks or holds its shape when the enemy comes near on this leg
+     */
     public ContactRule getContactRule() {
         return contactRule;
     }
 
+    /**
+     * @return {@code true} if the formation moves as a block on this leg, its leader waiting for the others
+     */
     public boolean isKeepTogether() {
         return keepTogether;
     }

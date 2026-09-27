@@ -211,6 +211,7 @@ public class Princess extends BotClient {
 
     // Carries out the orders players give the bot's units. Reach it through getUnitOrdersFollower().
     private UnitOrdersFollower unitOrdersFollower;
+    private final EnemyDeploymentZone enemyDeploymentZone = new EnemyDeploymentZone();
 
     // Reports on the units' orders, by radio or plainly. Reach it through getOrdersRadio().
     private OrdersRadio ordersRadio;
@@ -1359,6 +1360,19 @@ public class Princess extends BotClient {
     }
 
     /**
+     * The middle of the enemy's deployment zones on a board: the average of every hex an enemy player may deploy in.
+     * The bot faces the units it deploys this way, toward where the enemy will come from, and lays its formations out
+     * facing it.
+     *
+     * @param board the board the bot is deploying on
+     *
+     * @return the hex, or empty when no enemy player with units is known
+     */
+    public Optional<Coords> getEnemyDeploymentCenter(@Nullable Board board) {
+        return enemyDeploymentZone.center(getGame(), board, getLocalPlayer());
+    }
+
+    /**
      * Rank possible deployment coordinates by hazard, path freedom, concealment
      * <p>
      * <ol>
@@ -1374,53 +1388,6 @@ public class Princess extends BotClient {
      *     </li>
      * </ol>
      */
-    /**
-     * The middle of the enemy's deployment zones on a board: the average of every hex an enemy player may deploy in.
-     * The bot faces the units it deploys this way, toward where the enemy will come from, and lays its formations out
-     * facing it.
-     *
-     * @param board the board the bot is deploying on
-     *
-     * @return the hex, or empty when no enemy player with units is known
-     */
-    public Optional<Coords> getEnemyDeploymentCenter(@Nullable Board board) {
-        Player localPlayer = getLocalPlayer();
-        if ((board == null) || (localPlayer == null)) {
-            return Optional.empty();
-        }
-        Game currentGame = getGame();
-        List<Player> enemies = new ArrayList<>();
-        for (Player player : currentGame.getPlayersList()) {
-            if (player.isEnemyOf(localPlayer) && !player.isObserver()
-                  && !currentGame.getPlayerEntities(player, false).isEmpty()) {
-                enemies.add(player);
-            }
-        }
-        if (enemies.isEmpty()) {
-            return Optional.empty();
-        }
-        long totalX = 0;
-        long totalY = 0;
-        int zoneHexes = 0;
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                Coords hex = new Coords(x, y);
-                for (Player enemy : enemies) {
-                    if (board.isLegalDeployment(hex, enemy)) {
-                        totalX += x;
-                        totalY += y;
-                        zoneHexes++;
-                        break;
-                    }
-                }
-            }
-        }
-        if (zoneHexes == 0) {
-            return Optional.empty();
-        }
-        return Optional.of(new Coords((int) (totalX / zoneHexes), (int) (totalY / zoneHexes)));
-    }
-
     /**
      * Orders the candidate deployment hexes that {@link #rankDeploymentCoords(Entity, List)} will scan.
      *
@@ -3281,18 +3248,8 @@ public class Princess extends BotClient {
 
             if (getUnitOrdersFollower().isHolding(entity) && !entity.isAirborne()
                   && !entity.isAirborneVTOLorWIGE()) {
-                String holdReason;
-                if (entity.getUnitOrders().isPaused()) {
-                    holdReason = "paused";
-                } else if (entity.getUnitOrders().isStoppedInRound(game.getCurrentRound())) {
-                    holdReason = "stopped this round";
-                } else if (getUnitOrdersFollower().isHoldingAtWaypoint(entity)) {
-                    holdReason = "holding at waypoint " + entity.getPosition().getBoardNum();
-                } else {
-                    holdReason = "holding the end of its route at " + entity.getPosition().getBoardNum();
-                }
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: HOLD - {}", entity.getDisplayName(), entity.getId(),
-                      game.getCurrentRound(), holdReason);
+                      game.getCurrentRound(), getUnitOrdersFollower().holdReason(entity));
                 return getHoldPositionPath(entity);
             }
 
@@ -3313,7 +3270,7 @@ public class Princess extends BotClient {
             if (getUnitBehaviorTracker().isFollowingOrdersOverWithdrawal(entity, this)) {
                 // A crippled unit the player has sent somewhere goes there instead of withdrawing (issue #9038). It
                 // stays a withdrawing unit for firing and honor, but does not run for, or leave by, its retreat edge.
-                getOrdersRadio().report(entity, "followingOrders", describeOrderedDestination(entity));
+                getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLLOWING_ORDERS, describeOrderedDestination(entity));
             } else if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {

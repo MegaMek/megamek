@@ -358,7 +358,6 @@ public class ClientGUI extends AbstractClientGUI
     private MovementEnvelopeSpriteHandler movementEnvelopeHandler;
     private MovementModifierSpriteHandler movementModifierSpriteHandler;
     private FleeZoneSpriteHandler fleeZoneSpriteHandler;
-    private BotRouteSpriteHandler botRouteSpriteHandler;
     private SensorRangeSpriteHandler sensorRangeSpriteHandler;
     private CollapseWarningSpriteHandler collapseWarningSpriteHandler;
     private SawClearingSpriteHandler sawClearingSpriteHandler;
@@ -969,7 +968,7 @@ public class ClientGUI extends AbstractClientGUI
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
-        botRouteSpriteHandler = new BotRouteSpriteHandler(this, client.getGame());
+        BotRouteSpriteHandler botRouteSpriteHandler = new BotRouteSpriteHandler(this, client.getGame());
         FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
         DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
         RubbleClearSpriteHandler rubbleClearSpriteHandler = new RubbleClearSpriteHandler(this, client.getGame());
@@ -4008,7 +4007,6 @@ public class ClientGUI extends AbstractClientGUI
               .filter(bv -> bv instanceof BoardView)
               .map(bv -> (BoardView) bv)
               .forEach(bv -> bv.selectEntity(client.getGame().getEntity(selectedEntityNum)));
-        botRouteSpriteHandler.showRouteFor(selectedEntityNum);
     }
 
     public RandomArmyDialog getRandomArmyDialog() {
@@ -4168,8 +4166,7 @@ public class ClientGUI extends AbstractClientGUI
 
     @Override
     public void unitSelected(BoardViewEvent b) {
-        // show the ordered route when the player selects a bot unit
-        botRouteSpriteHandler.showRouteFor(b.getEntityId());
+        // ignored
     }
 
     @Override

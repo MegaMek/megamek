@@ -107,11 +107,20 @@ public class UnitOrdersFollower {
     private final Set<Integer> arrivedUnitIds = new HashSet<>();
     private final Map<String, WaypointDistanceField> distanceFields = new HashMap<>();
     private int distanceFieldsRound = -1;
+    // a formation's contact range by leader id, worked out once a round: it reads every weapon of every unit
+    private final Map<Integer, Integer> contactRanges = new HashMap<>();
+    private int contactRangesRound = -1;
     private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
 
     /**
      * A formation unit's worked-out slot, kept while the leader's waypoint, the formation's heading and the unit's
      * place in it stay the same. A unit leaving or joining the formation moves the others up or down a place.
+     *
+     * @param anchor      the leader's waypoint the slot is laid out around
+     * @param heading     the formation's heading, 0-5
+     * @param slotIndex   the unit's place in the formation, the leader being 0
+     * @param memberCount how many units the formation had
+     * @param slot        the slot, or {@code null} when no hex would do
      */
     private record SlotChoice(Coords anchor, int heading, int slotIndex, int memberCount, @Nullable Coords slot) {}
 
@@ -350,10 +359,11 @@ public class UnitOrdersFollower {
     public void cancelExitOrders() {
         for (Entity entity : owner.getEntitiesOwned()) {
             if (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.EXIT_BY) {
-                change(entity, UnitOrderAction.CLEAR);
+                // only the exit goes: the unit keeps its formation, facings and priority
+                change(entity, UnitOrderAction.EDGE_OFF);
             }
         }
-        LOGGER.info("[BotOrders] {}: flee order cancelled - exit orders cleared", owner.getName());
+        LOGGER.info("[BotOrders] {}: flee order cancelled - exit orders called off", owner.getName());
     }
 
     /**
@@ -706,7 +716,7 @@ public class UnitOrdersFollower {
                 String arrivalHex = entity.getPosition().getBoardNum();
                 LOGGER.info("[BotOrders] {} (ID {}) reached the end of its route at {}", entity.getDisplayName(),
                       entity.getId(), arrivalHex);
-                owner.getOrdersRadio().report(entity, "arrived", arrivalHex);
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.ARRIVED, arrivalHex);
             }
         }
         syncFollowerRoutes();
@@ -811,7 +821,7 @@ public class UnitOrdersFollower {
      *       for luck, at least one and at most the cap
      */
     private int assemblyWaitRounds(Entity leader, Coords waypoint, int cap) {
-        int rounds = Math.max(1, Math.min(cap, estimatedAssemblyTurns(leader) + 1));
+        int rounds = Math.clamp(estimatedAssemblyTurns(leader) + 1, 1, Math.max(1, cap));
         LOGGER.info("[BotOrders] {} (ID {}) round {}: waits at {} up to {} round(s) for the formation (at most {})",
               leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), rounds, cap);
         return rounds;
@@ -884,7 +894,7 @@ public class UnitOrdersFollower {
                   unit.getDisplayName(), unit.getId(), currentRound(), lastWaypoint.getBoardNum(), edge);
             orderExit(unit, edge);
         }
-        owner.getOrdersRadio().report(entity, "exiting", edge.toString());
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.EXITING, edge.toString());
     }
 
     /**
@@ -933,7 +943,7 @@ public class UnitOrdersFollower {
                       entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(), holdTurns,
                       currentRound() + holdTurns);
                 change(entity, UnitOrderAction.HOLD_STARTED);
-                owner.getOrdersRadio().report(entity, "holding", waypoint.getBoardNum());
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.HOLDING, waypoint.getBoardNum());
             }
             return;
         }
@@ -1062,7 +1072,7 @@ public class UnitOrdersFollower {
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
               (columnSlot == null) ? anchor.getBoardNum() : columnSlot.getBoardNum());
-        owner.getOrdersRadio().report(entity, "fold", anchor.getBoardNum());
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLD, anchor.getBoardNum());
         return (columnSlot == null) ? anchor : columnSlot;
     }
 
@@ -1168,7 +1178,15 @@ public class UnitOrdersFollower {
      * How close an enemy must come to break a formation: the longest effective range among its units, so a lance of
      * missile boats breaks to fight at long range while a lance of brawlers keeps its shape until the enemy is close.
      */
-    private static int contactRange(List<Entity> members) {
+    private int contactRange(List<Entity> members) {
+        if (contactRangesRound != currentRound()) {
+            contactRanges.clear();
+            contactRangesRound = currentRound();
+        }
+        return contactRanges.computeIfAbsent(members.get(0).getId(), leaderId -> longestEffectiveRange(members));
+    }
+
+    private static int longestEffectiveRange(List<Entity> members) {
         int longestRange = 0;
         for (Entity member : members) {
             longestRange = Math.max(longestRange, SupportEnvelope.of(member).effectiveRange());
@@ -1397,16 +1415,35 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * @param entity a unit holding in place under its orders
+     *
+     * @return why it holds, for the log: paused, stopped, holding at a waypoint or holding the end of its route
+     */
+    String holdReason(Entity entity) {
+        UnitOrders orders = entity.getUnitOrders();
+        if (orders.isPaused()) {
+            return "paused";
+        }
+        if (orders.isStoppedInRound(currentRound())) {
+            return "stopped this round";
+        }
+        if (isHoldingAtWaypoint(entity)) {
+            return "holding at waypoint " + entity.getPosition().getBoardNum();
+        }
+        return "holding the end of its route at " + entity.getPosition().getBoardNum();
+    }
+
+    /**
      * Picks which unit to deploy this turn so a formation's leader goes down before its members, which then deploy
      * in their slots around it. A member due to deploy is swapped for its leader when the leader may deploy this
      * turn too.
      *
      * @param firstDeployable the unit the game would deploy next
-     * @param turn            the bot's deployment turn
+     * @param turn            the bot's deployment turn, or {@code null} when the game has none for it
      *
      * @return the unit to deploy
      */
-    public int chooseUnitToDeploy(int firstDeployable, GameTurn turn) {
+    public int chooseUnitToDeploy(int firstDeployable, @Nullable GameTurn turn) {
         Entity unit = owner.getGame().getEntity(firstDeployable);
         if ((unit == null) || (turn == null)) {
             return firstDeployable;
@@ -1453,6 +1490,8 @@ public class UnitOrdersFollower {
         Entity leader = members.get(0);
         if ((formation.get().getContactRule() == ContactRule.BREAK) && (leader.getPosition() != null)
               && isEnemyNear(leader, contactRange(members))) {
+            LOGGER.debug("[BotOrders] {} (ID {}) round {}: formation broken on contact - not paced",
+                  entity.getDisplayName(), entity.getId(), currentRound());
             return paths;
         }
         int paceLimit = paceMovementPoints(entity, formation.get().getPace());
@@ -1518,7 +1557,7 @@ public class UnitOrdersFollower {
         }
         LOGGER.info("[BotOrders] {} (ID {}): waypoint {} cannot be reached; dropping it", entity.getDisplayName(),
               entity.getId(), waypoint.get().getBoardNum());
-        owner.getOrdersRadio().report(entity, "unreachable", waypoint.get().getBoardNum());
+        owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.UNREACHABLE, waypoint.get().getBoardNum());
         change(entity, UnitOrderAction.SKIP);
     }
 

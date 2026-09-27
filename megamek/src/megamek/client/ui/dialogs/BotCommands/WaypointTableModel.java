@@ -345,7 +345,7 @@ class WaypointTableModel extends AbstractTableModel {
 
     void setHoldTurns(int index, int holdTurns) {
         Row row = rows.get(index);
-        row.holdTurns = Math.max(0, Math.min(MAXIMUM_HOLD_TURNS, holdTurns));
+        row.holdTurns = Math.clamp(holdTurns, 0, MAXIMUM_HOLD_TURNS);
         if (row.holdTurns == 0) {
             row.holdMode = WaypointOrder.HoldMode.PASS;
         } else if (row.holdMode == WaypointOrder.HoldMode.PASS) {

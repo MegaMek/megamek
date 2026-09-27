@@ -228,7 +228,8 @@ public class BotOrdersMenuBuilder {
                 }
             }
             if (!lanceUnitIds.isEmpty() && (lanceUnitIds.size() < units.size())) {
-                groups.add(new OrderGroup(force.getName() + " (" + lanceUnitIds.size() + ")", lanceUnitIds));
+                groups.add(new OrderGroup(Messages.getString("BotCommandPanel.Orders.lance", force.getName(),
+                      lanceUnitIds.size()), lanceUnitIds));
             }
         }
         for (Entity unit : units) {

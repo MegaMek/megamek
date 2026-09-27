@@ -148,11 +148,6 @@ public final class FormationOrder implements Serializable {
     }
 
     /**
-     * @param otherLeaderId another unit's leader
-     *
-     * @return {@code true} if a unit with that leader is in the same formation as this one
-     */
-    /**
      * @return {@code true} if the formation moves as a block: its leader moves no faster than its slowest unit and
      *       waits at each waypoint until the others have formed up
      */
@@ -160,6 +155,11 @@ public final class FormationOrder implements Serializable {
         return keepTogether;
     }
 
+    /**
+     * @param otherLeaderId another unit's leader
+     *
+     * @return {@code true} if a unit with that leader is in the same formation as this one
+     */
     public boolean sharesLeader(int otherLeaderId) {
         return leaderId == otherLeaderId;
     }

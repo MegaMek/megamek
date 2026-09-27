@@ -186,6 +186,22 @@ class FormationFollowerTest {
     }
 
     @Test
+    void callingOffAFleeKeepsTheLanceInFormation() {
+        // cancelling a flee ends the exit order only; the unit's formation, facings and priority stay
+        BipedMek leader = member(20, LEADER_HEX, 0, 3);
+        leader.setUnitOrders(leader.getUnitOrders().withFacings(2, 3)
+              .withEdgeOrder(EdgeOrder.EXIT_BY, OffBoardDirection.NORTH));
+        doReturn(List.<Entity>of(leader)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+
+        princess.getUnitOrdersFollower().cancelExitOrders();
+
+        assertEquals(EdgeOrder.NONE, leader.getUnitOrders().getEdgeOrder());
+        assertTrue(leader.getUnitOrders().getFormation().isPresent());
+        assertEquals(3, leader.getUnitOrders().getFacingWhenStopped());
+    }
+
+    @Test
     void aBotUnitThatLeftItsFormationDoesNotLeadItAgain() {
         // only a player's unit leads without a formation order; a bot leader that left hands over to the next unit
         BipedMek leader = member(20, LEADER_HEX, 0, 3);

@@ -79,6 +79,10 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
 
     private final Game game;
 
+    /**
+     * @param clientGUI the client GUI whose board views show the flags
+     * @param game      the game whose bot units' routes are shown
+     */
     public BotRouteSpriteHandler(AbstractClientGUI clientGUI, Game game) {
         super(clientGUI);
         this.game = game;
@@ -114,15 +118,6 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
             return (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", stepNumber, holdTurns)
                   : String.valueOf(stepNumber);
         }
-    }
-
-    /**
-     * Redraws the flags. Kept for the unit selection hooks; the flags no longer depend on which unit is selected.
-     *
-     * @param unitId the selected unit (unused)
-     */
-    public void showRouteFor(int unitId) {
-        renewSprites();
     }
 
     private void renewSprites() {

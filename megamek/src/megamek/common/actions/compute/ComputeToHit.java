@@ -403,16 +403,7 @@ public class ComputeToHit {
             losMods = new ToHitData();
         } else if (!isIndirect || (spotter == null)) {
             if (!exchangeSwarmTarget) {
-                Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
-                int firingHeight = weaponEntity.getWeaponFiringHeight(weapon);
-                los = LosEffects.calculateLOS(game,
-                      game.getEntity(ae.getId()),
-                      target,
-                      firingPosition,
-                      target.getPosition(),
-                      firingHeight,
-                      ae.getBoardId(),
-                      false);
+                los = weaponLineOfSight(game, weaponEntity, game.getEntity(ae.getId()), weapon, target);
             } else {
                 // Swarm should draw LoS between targets, not attacker, since we don't want LoS to be blocked
                 if (oldTarget.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -993,6 +984,35 @@ public class ComputeToHit {
     private record OverheadArmsLos(LosEffects los, ToHitData losMods) {}
 
     /**
+     * Line of sight for a direct-fire weapon. Most units use the normal LOS check, which tries every hex of a
+     * multi-hex unit on both sides and keeps the best line: a grounded DropShip covers seven hexes, so it can be seen
+     * and fire through any of them, not just its center hex. A building entity or gun emplacement weapon fires from
+     * its own hex and floor, so that firing position is kept, but every hex of the target is still tried.
+     *
+     * @param game         the current {@link Game}
+     * @param weaponEntity the entity carrying the firing weapon
+     * @param attacker     the attacking entity used as the line-of-sight origin, which may be {@code null}
+     * @param weapon       the firing weapon
+     * @param target       the target of the attack
+     *
+     * @return the line of sight for this weapon to the target
+     */
+    static LosEffects weaponLineOfSight(Game game, Entity weaponEntity, @Nullable Entity attacker,
+          WeaponMounted weapon, Targetable target) {
+        if (!weaponEntity.isBuildingEntityOrGunEmplacement()) {
+            logger.debug("[WeaponLOS] {} {}: LOS checked across every hex of both units",
+                  weaponEntity.getShortName(), weapon.getName());
+            return LosEffects.calculateLOS(game, attacker, target);
+        }
+        Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
+        int firingHeight = weaponEntity.getWeaponFiringHeight(weapon);
+        logger.debug("[WeaponLOS] {} {}: fires from {} at height {}, LOS checked to every hex of the target",
+              weaponEntity.getShortName(), weapon.getName(), firingPosition, firingHeight);
+        return LosEffects.calculateLOSToBestTargetHex(game, attacker, target, firingPosition, firingHeight,
+              weaponEntity.getBoardId(), false);
+    }
+
+    /**
      * Applies the Overhead Arms quirk (BMM p.85) to weapon-fire line of sight. A standing {@code Mek} with this quirk
      * treats its arm-mounted weapons as one level higher when determining the effect of terrain on line of sight
      * (intervening woods, partial cover). The quirk may not create line of sight where none exists, so it only takes
@@ -1033,8 +1053,8 @@ public class ComputeToHit {
         }
         Coords firingPosition = weaponEntity.getWeaponFiringPosition(weapon);
         int elevatedFiringHeight = weaponEntity.getWeaponFiringHeight(weapon) + 1;
-        LosEffects elevatedLos = LosEffects.calculateLOS(game, attacker, target, firingPosition,
-              target.getPosition(), elevatedFiringHeight, weaponEntity.getBoardId(), false);
+        LosEffects elevatedLos = LosEffects.calculateLOSToBestTargetHex(game, attacker, target, firingPosition,
+              elevatedFiringHeight, weaponEntity.getBoardId(), false);
         ToHitData elevatedLosMods = elevatedLos.losModifiers(game, eiSystemStatus, underWater);
         // A higher vantage point can never be more blocked than a lower one, but guard the result so the
         // quirk can never turn an otherwise-legal shot into an impossible one.

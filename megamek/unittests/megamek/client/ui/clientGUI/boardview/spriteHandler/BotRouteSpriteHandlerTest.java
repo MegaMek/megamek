@@ -156,4 +156,19 @@ class BotRouteSpriteHandlerTest {
         assertEquals("1 hold 2", flags.get(0).progressText());
         assertEquals("2", flags.get(1).progressText());
     }
+
+    @Test
+    void hoveringOverAFlagSummarisesTheOrdersAtThatWaypoint() {
+        // HammerGS: hovering on a waypoint flag gives a summary of the orders there
+        unit(1, "GHR-5H", ourBot, UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT, SECOND_WAYPOINT),
+              List.of(new WaypointOrder(NORTH_EAST, 2).withNavNumber(1), WaypointOrder.PASS_THROUGH.withNavNumber(2))));
+
+        String summary = BotRouteSpriteHandler.tooltipFor(units, human, FIRST_WAYPOINT, 0);
+
+        assertTrue(summary.contains("Nav Point Alpha (" + FIRST_WAYPOINT.getBoardNum() + ") - GHR-5H"), summary);
+        assertTrue(summary.contains("Facing on arrival: Northeast"), summary);
+        assertTrue(summary.contains("Then: Hold 2 turns"), summary);
+        assertTrue(summary.contains("Priority: Normal"), summary);
+        assertTrue(BotRouteSpriteHandler.tooltipFor(units, human, FIRST_WAYPOINT.translated(0, 3), 0).isEmpty());
+    }
 }

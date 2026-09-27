@@ -75,6 +75,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import megamek.MegaMek;
+import megamek.SuiteConstants;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
@@ -192,6 +194,9 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             @Override
             public void windowClosed(WindowEvent event) {
                 cleanUp();
+                // window sizes and positions are otherwise saved only on a clean exit from the main menu, and a game
+                // is often left some other way; save now so the editor opens where the player left it
+                MegaMek.getMMPreferences().saveToFile(SuiteConstants.MM_PREFERENCES_FILE);
             }
         });
         loadCurrentOrders();

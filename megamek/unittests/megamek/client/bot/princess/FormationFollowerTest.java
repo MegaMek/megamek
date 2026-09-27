@@ -840,6 +840,23 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aLanceWaitingAtAFlagFacesOnToTheNextOne() {
+        // HammerGS's playtest: waiting to re-form at a flag, the lance had turned its back on the next one
+        List<BipedMek> lance = lanceKeepingTogether();
+        BipedMek leader = lance.get(0);
+        BipedMek second = lance.get(1);
+        Coords eastWaypoint = leader.getUnitOrders().getRoute().get(1);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setCurrentRound(3);
+        follower.advanceRoutes();
+        assertTrue(follower.isWaitingForFormation(leader));
+
+        assertEquals(NORTH_WAYPOINT.direction(eastWaypoint), follower.stoppedFacing(leader));
+        Coords slot = follower.getFormationSlot(second).orElseThrow();
+        assertEquals(slot.direction(eastWaypoint), follower.orderedFacing(second, slot));
+    }
+
+    @Test
     void aLeaderKeepingTogetherWaitsAtAWaypointUntilItsFormationFormsUp() {
         List<BipedMek> lance = lanceKeepingTogether();
         BipedMek leader = lance.get(0);

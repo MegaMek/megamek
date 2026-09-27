@@ -49,6 +49,7 @@ import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -186,5 +187,22 @@ class BotRouteSpriteHandlerTest {
 
         assertEquals("Alpha Lance", flags.get(0).label());
         assertEquals("Test WHM-6R", flags.get(1).label());
+    }
+
+    @Test
+    void theSummarySaysWhichFormationTheLanceMovesInAndWhereItChanges() {
+        // HammerGS: "moving to the flag in formation X", and a note where the formation changes
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 1, FormationPace.WALK,
+              ContactRule.TURN_AND_FIRE, true);
+        WaypointFormation line = new WaypointFormation(FormationShape.LINE, 1, FormationPace.WALK,
+              ContactRule.TURN_AND_FIRE, true);
+        unit(1, "GHR-5H", ourBot, UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT, SECOND_WAYPOINT),
+              List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0, column).withNavNumber(1),
+                    new WaypointOrder(UnitOrders.FACING_AUTO, 0, line).withNavNumber(2))));
+
+        String summary = BotRouteSpriteHandler.tooltipFor(units, human, FIRST_WAYPOINT, 0);
+
+        assertTrue(summary.contains("Moving to Nav Point Alpha in: Column (1 hex"), summary);
+        assertTrue(summary.contains("Then changes on the way to Nav Point Beta, to: Line (1 hex"), summary);
     }
 }

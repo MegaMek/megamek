@@ -655,13 +655,16 @@ public class EntitySprite extends Sprite {
                 stStr.add(new Status(GUIP.getPrecautionColor(), "SCANNED"));
             }
 
-            // A Recon Camera spot that hit this turn, shown to the camera's side on the camera and on its target
+            // A Recon Camera spot that hit this turn, shown to the camera's side on the camera and on its target. The
+            // labels are drawn from the bottom up, so the second word goes in first to read "CAMERA" above it.
             if (isSpottingWithItsCamera(entity)) {
                 stStr.add(new Status(GUIP.getPrecautionColor(), "CAMERA_SPOTTING"));
+                stStr.add(new Status(GUIP.getPrecautionColor(), "CAMERA"));
             }
 
             if (isSpottedByAFriendlyCamera(entity)) {
                 stStr.add(new Status(GUIP.getPrecautionColor(), "CAMERA_SPOTTED"));
+                stStr.add(new Status(GUIP.getPrecautionColor(), "CAMERA"));
             }
 
             if (entity.isGyroDestroyed()) {

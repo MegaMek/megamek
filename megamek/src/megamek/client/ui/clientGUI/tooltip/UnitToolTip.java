@@ -1796,6 +1796,35 @@ public final class UnitToolTip {
         return result;
     }
 
+    /**
+     * Lists the unit's Recon Camera spots this turn (TO:AUE p.150): the unit its camera spotted, and the cameras that
+     * spotted it. Only the camera's side is told, as on the map.
+     *
+     * @param game        the game
+     * @param entity      the unit the tooltip is for
+     * @param localPlayer the player viewing the tooltip, or {@code null} when there is none
+     *
+     * @return the camera status text; empty when there is nothing to show
+     */
+    private static String getReconCameraStatus(Game game, Entity entity, @Nullable Player localPlayer) {
+        String result = "";
+        Entity spottedUnit = game.getEntity(entity.getReconCameraSpotTargetId());
+        if ((spottedUnit != null) && ReconCameraRules.isOnCameraSide(entity, localPlayer)) {
+            result += addToTT("CameraSpotting", NOBR, spottedUnit.getDisplayName()) + " ";
+        }
+        for (Entity camera : game.getEntitiesVector()) {
+            boolean hasSpottedThisUnit = camera.getReconCameraSpotTargetId() == entity.getId();
+            if (hasSpottedThisUnit && ReconCameraRules.isOnCameraSide(camera, localPlayer)) {
+                result += addToTT("CameraSpotted", NOBR, camera.getDisplayName()) + " ";
+            }
+        }
+        if (result.isEmpty()) {
+            return result;
+        }
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getPrecautionColor())));
+        return UIUtil.tag("FONT", attr, result);
+    }
+
     private static String getUnitStatus(Game game, Entity entity, boolean isGunEmplacement) {
         String attr;
         String result = "";
@@ -2130,6 +2159,15 @@ public final class UnitToolTip {
         if (!unitStatus.isEmpty()) {
             unitStatus = UIUtil.tag("span", fontSizeAttr, unitStatus);
             col = UIUtil.tag("TD", "", unitStatus);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+        }
+
+        // Recon Camera spot this turn, shown only to the camera's side
+        String cameraStatus = getReconCameraStatus(game, entity, localPlayer);
+        if (!cameraStatus.isEmpty()) {
+            cameraStatus = UIUtil.tag("span", fontSizeAttr, cameraStatus);
+            col = UIUtil.tag("TD", "", cameraStatus);
             row = UIUtil.tag("TR", "", col);
             rows += row;
         }

@@ -32,11 +32,16 @@
  */
 package megamek.server.totalWarfare;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
@@ -45,6 +50,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.net.packets.Packet;
+import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Aero;
 import megamek.common.units.AeroSpaceFighter;
@@ -201,6 +207,39 @@ class ReconCameraRevealTest {
 
         assertTrue(hiddenEnemy.isHidden());
         assertTrue(fighter.hasReconCameraSpotThisTurn(), "the attempt still uses the camera for the turn");
+    }
+
+    @Test
+    void testAFailedRollIsNotReportedToEveryoneWithoutDoubleBlind() {
+        setRevealMode();
+
+        new HandlerUnderTest(gameManager, 2).revealHiddenUnits();
+
+        assertTrue(stayedHiddenReports().isEmpty(),
+              "without double-blind every player gets every report, so the camera side would learn a unit is there");
+    }
+
+    @Test
+    void testAFailedRollIsReportedToTheHiddenUnitsOwnerUnderDoubleBlind() {
+        game.getOptions().getOption(OptionsConstants.ADVANCED_DOUBLE_BLIND).setValue(true);
+        setRevealMode();
+
+        new HandlerUnderTest(gameManager, 2).revealHiddenUnits();
+
+        List<Report> reports = stayedHiddenReports();
+        assertEquals(1, reports.size());
+        assertEquals(Report.PLAYER, reports.getFirst().type);
+        assertEquals(enemy.getId(), reports.getFirst().player, "only the hidden unit's owner is told");
+    }
+
+    private List<Report> stayedHiddenReports() {
+        List<Report> reports = new ArrayList<>();
+        for (Report report : gameManager.getMainPhaseReport()) {
+            if (report.messageId == ReconCameraHandler.REPORT_CAMERA_STAYED_HIDDEN) {
+                reports.add(report);
+            }
+        }
+        return reports;
     }
 
     @Test

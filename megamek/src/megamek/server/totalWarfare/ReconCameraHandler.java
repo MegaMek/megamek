@@ -175,8 +175,9 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
             report.add(targetNumber.getDesc());
             report.add(roll.getIntValue());
             addReport(report);
-        } else {
-            // only the hidden unit's owner learns of the roll; the camera side is not told something is there
+        } else if (gameManager.doBlind()) {
+            // only the hidden unit's owner learns of the roll; the camera side is not told something is there. Without
+            // double-blind every player receives every report, so the roll then goes to the log only.
             Report report = new Report(REPORT_CAMERA_STAYED_HIDDEN, Report.PLAYER);
             report.player = hiddenUnit.getOwnerId();
             report.add(hiddenUnit.getShortName());

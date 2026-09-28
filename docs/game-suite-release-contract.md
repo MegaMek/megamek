@@ -1,13 +1,14 @@
-# Game-suite release record, version 1 (draft handoff)
+# Game-suite release record (schema version 1)
 
-This is a **future release contract**, not a release mechanism. Nothing in this
-change publishes, schedules, reserves a version, creates tags, or changes the
-public launcher. A release coordinator must arrange the builds and verify
-their outputs before attaching **one complete JSON file** to the MegaMek
-GitHub Release **last**. Never publish a partial record or a mutable "latest"
-pointer. A record is a snapshot of exactly one release.
+This document describes the build input and release-record format implemented
+in this PR. They let future release jobs give MegaMek a shared game version and
+check a proposed record describing a complete set of three game downloads.
+**This PR does not publish a record or a release.** It does not schedule builds,
+reserve versions, create tags, or change the launcher.
 
-## Build input
+## Implemented in this PR
+
+### Build input
 
 `-PsuiteReleaseVersion=0.51.01` overrides the Gradle version of the root and
 its subprojects and the packaged `Version.properties` used by `new Version()`.
@@ -25,7 +26,7 @@ With the input, a source revision is suppressed, including in the packaged
 resource. The existing `extraVersion` build suffix remains available and
 is not part of the release record version.
 
-## JSON contract
+### JSON record and local validation
 
 `megamek/testresources/suite-records/complete.json` is a **synthetic example**
 (fake commits, release and asset IDs, digests and sizes, not a real release). Validate a candidate
@@ -64,16 +65,19 @@ additional JSON documents are rejected. A record describes one downloadable
 asset per product and one pinned mm-data source commit; it contains no
 live URLs or floating branches.
 
-## Future coordinator handoff
+## Planned for later PRs (not implemented here)
 
-Allocate the next numeric version **across the suite**, treating unpadded
-aliases as the same number and leaving the optional fourth component to
-historical special point releases. Build all three products at that
-identity against explicitly pinned source commits and mm-data commit.
-Check the actual tag and GitHub release ID in each product repository, inspect
-each produced asset's ID and name and calculate its SHA-256 and byte size.
-Validate the completed record,
-verify the pinned commits and download digests against the real artifacts,
-then attach the single JSON record to the MegaMek GitHub Release only after
-all three product assets exist. Cross-repository orchestration, allocation,
-tagging, uploads, website and launcher consumption are future work.
+Later product-build PRs must produce the three full archives at one version
+from explicitly pinned source commits and an mm-data commit. A coordinating
+release job must reserve the next unused numeric version across the suite,
+treating unpadded aliases as the same number and leaving the optional fourth
+component to historical special point releases. It must check the real tags
+and GitHub release IDs, inspect each uploaded asset's ID and name, and verify
+its SHA-256 and byte size against the downloaded bytes.
+
+Only after all three product assets exist and pass those checks should the
+coordinator attach **one complete JSON record** to the MegaMek GitHub Release
+as its last publication step. A partial record or mutable "latest" pointer
+must not be published. The website and launcher can later use these records
+to find complete releases. Update this document alongside the validator,
+record example, and consumers if the format or publication rules change.

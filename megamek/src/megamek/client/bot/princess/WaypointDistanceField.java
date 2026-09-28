@@ -93,7 +93,7 @@ final class WaypointDistanceField {
     static WaypointDistanceField build(Entity mover, Coords waypoint) {
         Board board = (mover.getGame() == null) ? null : mover.getGame().getBoard(mover);
         if ((board == null) || !board.contains(waypoint) || !isEnterable(mover, MovementType.getMovementType(mover),
-              waypoint)) {
+              board, waypoint)) {
             LOGGER.debug("[BotOrders] {}: waypoint {} cannot be entered; no distance field", mover.getDisplayName(),
                   waypoint.getBoardNum());
             return new WaypointDistanceField(waypoint, new HashMap<>());
@@ -119,7 +119,7 @@ final class WaypointDistanceField {
         MovementType movementType = MovementType.getMovementType(mover);
         List<Coords> edgeHexes = new ArrayList<>();
         for (Coords hex : edgeHexes(board, edge)) {
-            if (isEnterable(mover, movementType, hex)) {
+            if (isEnterable(mover, movementType, board, hex)) {
                 edgeHexes.add(hex);
             }
         }
@@ -195,7 +195,7 @@ final class WaypointDistanceField {
                   isAmphibious);
             for (int direction = 0; direction < 6; direction++) {
                 Coords neighbor = current.translated(direction);
-                if (!board.contains(neighbor) || !isEnterable(mover, movementType, neighbor)) {
+                if (!board.contains(neighbor) || !isEnterable(mover, movementType, board, neighbor)) {
                     continue;
                 }
                 int neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor),
@@ -222,10 +222,10 @@ final class WaypointDistanceField {
         return costToGoal;
     }
 
-    private static boolean isEnterable(Entity mover, MovementType movementType, Coords coords) {
+    private static boolean isEnterable(Entity mover, MovementType movementType, Board board, Coords coords) {
         return !mover.isLocationProhibited(coords)
               && !BoardClusterTracker.buildingPlowThroughRequired(mover, movementType, coords)
-              && !wouldBringDownBuilding(mover, coords);
+              && !wouldBringDownBuilding(mover, board, coords);
     }
 
     /**
@@ -234,13 +234,13 @@ final class WaypointDistanceField {
      * points the unit where it will never step and the unit stands still: a 65-ton Longbow froze in front of a CF 15
      * building for two rounds (HammerGS's playtest, 2026-09-27).
      */
-    private static boolean wouldBringDownBuilding(Entity mover, Coords coords) {
-        if ((mover.getGame() == null) || mover.isAirborne() || mover.hasETypeFlag(Entity.ETYPE_VTOL)) {
+    private static boolean wouldBringDownBuilding(Entity mover, Board board, Coords coords) {
+        // most hexes hold no building: look for one before asking anything of the unit
+        IBuilding building = board.getBuildingAt(coords);
+        if ((building == null) || mover.isAirborne() || mover.hasETypeFlag(Entity.ETYPE_VTOL)) {
             return false;
         }
-        Board board = mover.getGame().getBoard(mover);
-        IBuilding building = (board == null) ? null : board.getBuildingAt(coords);
-        return (building != null) && ((mover.getWeight() + COLLAPSE_MARGIN_TONS) > building.getCurrentCF(coords));
+        return (mover.getWeight() + COLLAPSE_MARGIN_TONS) > building.getCurrentCF(coords);
     }
 
     /**

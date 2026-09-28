@@ -115,6 +115,12 @@ public class UnitOrdersFollower {
     /** The longest move filled in hex by hex; anything longer, such as a unit set down elsewhere, restarts the trail. */
     private static final int MAXIMUM_TRAIL_GAP = 20;
 
+    /** How many hexsides from a unit's facing its rear arc lies: straight behind. */
+    private static final int REAR_SIDES_APART = 3;
+
+    /** The least extra movement a slot may cost over the unit's column place before the unit folds into the column. */
+    private static final int MINIMUM_FOLD_MARGIN_MP = 3;
+
     // marks a cached Column slot taken from the leader's trail rather than laid out by heading
     private static final int TRAIL_HEADING = -1;
 
@@ -600,11 +606,28 @@ public class UnitOrdersFollower {
             return facingThatStands(orderedFacing, position, threat);
         }
         if (isOnItsWay && (orderedFacing != UnitOrders.FACING_AUTO)) {
+            if (isInRearArc(orderedFacing, position, threat)) {
+                // never the rear arc into the line of fire (HammerGS, 2026-09-27): a threat squarely behind the route
+                // facing turns the unit as the bot would; one off to a side leaves the route facing as it is
+                LOGGER.info("[BotOrders] {} (ID {}): the threat at {} would be behind facing {}; turning to it",
+                      entity.getDisplayName(), entity.getId(), threat.getBoardNum(), orderedFacing);
+                return UnitOrders.FACING_AUTO;
+            }
             LOGGER.debug("[BotOrders] {} (ID {}): keeps the route facing {} on its way", entity.getDisplayName(),
                   entity.getId(), orderedFacing);
             return orderedFacing;
         }
         return facingThatStands(orderedFacing, position, threat);
+    }
+
+    /**
+     * @return {@code true} if the threat lies straight behind the facing, in the unit's rear arc
+     */
+    static boolean isInRearArc(int facing, Coords position, @Nullable Coords threat) {
+        if ((threat == null) || threat.equals(position)) {
+            return false;
+        }
+        return sidesApart(facing, position.direction(threat)) == REAR_SIDES_APART;
     }
 
     /**
@@ -712,6 +735,10 @@ public class UnitOrdersFollower {
      *       move ends on it; {@link UnitOrders#FACING_AUTO} when there is none
      */
     private int facingAlongRoute(Entity entity, Coords finalHex) {
+        int formationFacing = formationFacing(entity);
+        if (formationFacing != UnitOrders.FACING_AUTO) {
+            return formationFacing;
+        }
         Entity routeOwner = formationLeaderOf(entity).orElse(entity);
         List<Coords> route = routeOwner.getUnitOrders().getRoute();
         if (route.isEmpty()) {
@@ -1264,6 +1291,33 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * The way a unit in formation faces: the way the formation itself faces - the facing set where it stops, the next
+     * leg where it passes a flag, else from its leader toward the leader's flag. Facing the flag's hex instead turned
+     * a unit whose slot lay beyond the flag round to look back at it (HammerGS's town playtest, 2026-09-27: the
+     * Centurion at 1410 faced south toward 1512).
+     *
+     * @return the facing 0-5, or {@link UnitOrders#FACING_AUTO} for a unit not following a formation leader
+     */
+    private int formationFacing(Entity entity) {
+        Optional<Entity> leader = formationLeaderOf(entity);
+        if (leader.isEmpty() || (leader.get().getPosition() == null)) {
+            return UnitOrders.FACING_AUTO;
+        }
+        List<Coords> route = leader.get().getUnitOrders().getRoute();
+        if (route.isEmpty()) {
+            return UnitOrders.FACING_AUTO;
+        }
+        Coords flag = route.get(0);
+        if (isStoppedOnFlag(leader.get())) {
+            return formationHeading(leader.get(), flag);
+        }
+        if (leader.get().getPosition().equals(flag)) {
+            return (route.size() > 1) ? flag.direction(route.get(1)) : UnitOrders.FACING_AUTO;
+        }
+        return leader.get().getPosition().direction(flag);
+    }
+
+    /**
      * @return {@code true} if the leader stands on its flag and the lance stops there: the end of the route, a hold,
      *       or a wait for the formation to re-form. A Column stopped there forms straight behind the facing set on the
      *       flag, not back along the way it came in (HammerGS's playtest, 2026-09-27: ordered to face north at
@@ -1401,19 +1455,48 @@ public class UnitOrdersFollower {
         Coords ideal = FormationPlanner.idealSlot(anchor, heading, formation.getShape(), formation.getSpacing(),
               slotIndex);
         Coords settled = settle(entity, board, anchor, ideal);
-        if (settled != null) {
+        Coords columnSlot = settle(entity, board, anchor, FormationPlanner.idealSlot(anchor, heading,
+              FormationShape.COLUMN, formation.getSpacing(), slotIndex));
+        if ((settled != null) && !isFarHarderThan(entity, settled, columnSlot)) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_SLOT - {} slot {} at {} (around {}, facing {})",
                   entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
                   settled.getBoardNum(), anchor.getBoardNum(), heading);
             return settled;
         }
-        Coords columnSlot = settle(entity, board, anchor, FormationPlanner.idealSlot(anchor, heading,
-              FormationShape.COLUMN, formation.getSpacing(), slotIndex));
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
               entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
               (columnSlot == null) ? anchor.getBoardNum() : columnSlot.getBoardNum());
         owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLD, navLabel(entity, anchor));
         return (columnSlot == null) ? anchor : columnSlot;
+    }
+
+    /**
+     * A slot the unit can stand in may still lie behind a row of buildings or across water, a long way round for a
+     * short distance, while its place in a Column behind the leader is along the way the leader came. Such a slot
+     * counts as blocked, so the unit folds into the Column and the shape opens out again beyond the obstacle
+     * (HammerGS's town playtest, 2026-09-27: a Longbow waded a hex a turn toward a Line slot behind a building row
+     * while its lance waited five rounds).
+     *
+     * @return {@code true} if reaching the slot costs more than a turn's walk beyond reaching the column place
+     */
+    private boolean isFarHarderThan(Entity entity, Coords slot, @Nullable Coords columnSlot) {
+        if ((columnSlot == null) || slot.equals(columnSlot) || (entity.getPosition() == null)) {
+            return false;
+        }
+        int toSlot = routeCostFrom(entity, slot, entity.getPosition());
+        int toColumn = routeCostFrom(entity, columnSlot, entity.getPosition());
+        if (toColumn == WaypointDistanceField.UNREACHABLE) {
+            return false;
+        }
+        int margin = Math.max(MINIMUM_FOLD_MARGIN_MP, entity.getWalkMP());
+        boolean isFarHarder = (toSlot == WaypointDistanceField.UNREACHABLE) || (toSlot > toColumn + margin);
+        if (isFarHarder) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: slot {} costs {} MP to reach, its column place {} only {} MP; "
+                        + "folding", entity.getDisplayName(), entity.getId(), currentRound(), slot.getBoardNum(),
+                  (toSlot == WaypointDistanceField.UNREACHABLE) ? "unreachable" : String.valueOf(toSlot),
+                  columnSlot.getBoardNum(), toColumn);
+        }
+        return isFarHarder;
     }
 
     /**

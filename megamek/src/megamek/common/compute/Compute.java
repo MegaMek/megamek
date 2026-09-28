@@ -1128,22 +1128,6 @@ public class Compute {
      */
     public static Entity findSpotter(Game game, Entity attacker,
           Targetable target) {
-        return findSpotter(game, attacker, target, true);
-    }
-
-    /**
-     * Finds the best spotter for the attacker, optionally leaving out units that spotted the target only with a Recon
-     * Camera: semi-guided ammunition is TAG-guided and can never use a camera spot (TO:AUE p.150).
-     *
-     * @param game                  the game
-     * @param attacker              the unit making the indirect attack
-     * @param target                the target
-     * @param canUseCameraSpotters  {@code false} for semi-guided ammunition, which a camera spot cannot guide
-     *
-     * @return the spotter with the lowest modifiers, or {@code null} when there is none
-     */
-    public static @Nullable Entity findSpotter(Game game, Entity attacker, Targetable target,
-          boolean canUseCameraSpotters) {
         Entity spotter = null;
         int taggedBy = -1;
         if (target instanceof Entity) {
@@ -1153,7 +1137,7 @@ public class Compute {
 
         for (Entity other : game.getEntitiesVector()) {
             // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
-            boolean isCameraSpotter = canUseCameraSpotters && ReconCameraRules.isCameraSpotting(other, target);
+            boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
             if (((other.isSpotting() && (other.getSpotTargetId() == target
                   .getId())) || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {

@@ -174,13 +174,10 @@ public class ComputeTerrainMods {
 
 
         // TW p.111
-        // semi-guided rounds are TAG-guided and can never use a Recon Camera spot (TO:AUE p.150)
-        boolean isSemiGuidedAmmo = (ammoType != null)
-              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED);
         boolean indirectMortarWithoutSpotter = (weaponType != null)
               && weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)
               && isIndirect
-              && (Compute.findSpotter(game, attacker, target, !isSemiGuidedAmmo) == null);
+              && (Compute.findSpotter(game, attacker, target) == null);
 
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units

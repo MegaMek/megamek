@@ -68,7 +68,6 @@ import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.options.OptionsConstants;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.weapons.Weapon;
 import megamek.utils.BoardLoader;
 import org.junit.jupiter.api.BeforeAll;
@@ -286,7 +285,7 @@ class ReconCameraRulesTest {
     }
 
     @Test
-    void testSemiGuidedLrmsCannotUseACameraSpot() throws LocationFullException {
+    void testSemiGuidedLrmsGetNoTagBenefitFromACameraSpot() throws LocationFullException {
         game.getOptions().getOption(OptionsConstants.BASE_INDIRECT_FIRE).setValue(true);
         game.getOptions().getOption(OptionsConstants.ADVANCED_COMBAT_INDIRECT_ALWAYS_POSSIBLE).setValue(true);
         Weapon lrmType = (Weapon) EquipmentType.get("ISLRM10");
@@ -297,18 +296,16 @@ class ReconCameraRulesTest {
         game.setPhase(GamePhase.FIRING);
         camera.setReconCameraSpotResult(target.getId());
 
-        ToHitData standardToHit = indirectToHit(standardCarrier, target);
+        int standardToHit = indirectToHit(standardCarrier, target).getValue();
         ToHitData semiGuidedToHit = indirectToHit(semiGuidedCarrier, target);
 
-        assertNotEquals(TargetRoll.IMPOSSIBLE, standardToHit.getValue(),
-              "standard LRMs fire indirectly off the camera spot: " + standardToHit.getDesc());
-        assertEquals(TargetRoll.IMPOSSIBLE, semiGuidedToHit.getValue(),
-              "semi-guided LRMs never use a camera spot, so they have no spotter");
+        assertEquals(standardToHit, semiGuidedToHit.getValue(),
+              "a camera spot treats semi-guided missiles as standard LRMs: " + semiGuidedToHit.getDesc());
 
-        // with a real TAG designation the semi-guided missiles have their guidance again
+        // the control: a real TAG designation does change the semi-guided shot, so the comparison above can see one
         game.addTagInfo(new TagInfo(camera.getId(), Targetable.TYPE_ENTITY, target, false));
         target.setTaggedBy(camera.getId());
-        assertNotEquals(TargetRoll.IMPOSSIBLE, indirectToHit(semiGuidedCarrier, target).getValue());
+        assertNotEquals(semiGuidedToHit.getValue(), indirectToHit(semiGuidedCarrier, target).getValue());
     }
 
     private BipedMek lrmCarrier(Coords position, AmmoType ammo) throws LocationFullException {

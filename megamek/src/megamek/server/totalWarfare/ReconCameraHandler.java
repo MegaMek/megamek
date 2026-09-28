@@ -35,6 +35,7 @@ package megamek.server.totalWarfare;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -60,7 +61,6 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
     static final int REPORT_CAMERA_MISSED = 7161;
     static final int REPORT_CAMERA_REFUSED = 7162;
     static final int REPORT_CAMERA_REVEALED = 7163;
-    static final int REPORT_CAMERA_STAYED_HIDDEN = 7164;
 
     ReconCameraHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -175,17 +175,13 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
             report.add(targetNumber.getDesc());
             report.add(roll.getIntValue());
             addReport(report);
-        } else if (gameManager.doBlind()) {
-            // only the hidden unit's owner learns of the roll; the camera side is not told something is there. Without
-            // double-blind every player receives every report, so the roll then goes to the log only.
-            Report report = new Report(REPORT_CAMERA_STAYED_HIDDEN, Report.PLAYER);
-            report.player = hiddenUnit.getOwnerId();
-            report.add(hiddenUnit.getShortName());
-            report.add(camera.getShortName());
-            report.add(targetNumber.getValue());
-            report.add(targetNumber.getDesc());
-            report.add(roll.getIntValue());
-            addReport(report);
+        } else {
+            // Only the hidden unit's owner may learn of the roll, or the camera side would know something is there. A
+            // report cannot do that: without double-blind every player gets every report, and with it the others get
+            // an obscured copy. A private server message reaches the owner alone.
+            gameManager.sendServerChat(hiddenUnit.getOwnerId(), Messages.getString("ReconCamera.stayedHidden",
+                  hiddenUnit.getShortName(), camera.getShortName(), targetNumber.getValue(), targetNumber.getDesc(),
+                  roll.getIntValue()));
         }
         return isRevealed;
     }

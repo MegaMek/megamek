@@ -32,13 +32,10 @@
  */
 package megamek.server.totalWarfare;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import megamek.common.Player;
 import megamek.common.Report;
@@ -136,6 +133,7 @@ class ReconCameraRevealTest {
         gameManager = Mockito.spy(new TWGameManager());
         Mockito.doNothing().when(gameManager).send(any(Packet.class));
         Mockito.doNothing().when(gameManager).send(Mockito.anyInt(), any(Packet.class));
+        Mockito.doNothing().when(gameManager).sendServerChat(Mockito.anyInt(), Mockito.anyString());
         game = gameManager.getGame();
         Player owner = new Player(0, "Camera side");
         owner.setTeam(1);
@@ -210,36 +208,33 @@ class ReconCameraRevealTest {
     }
 
     @Test
-    void testAFailedRollIsNotReportedToEveryoneWithoutDoubleBlind() {
+    void testAFailedRollIsToldOnlyToTheHiddenUnitsOwner() {
         setRevealMode();
 
         new HandlerUnderTest(gameManager, 2).revealHiddenUnits();
 
-        assertTrue(stayedHiddenReports().isEmpty(),
-              "without double-blind every player gets every report, so the camera side would learn a unit is there");
+        assertOnlyTheOwnerIsTold();
     }
 
     @Test
-    void testAFailedRollIsReportedToTheHiddenUnitsOwnerUnderDoubleBlind() {
+    void testAFailedRollIsToldOnlyToTheHiddenUnitsOwnerUnderDoubleBlind() {
+        // under double-blind the other players would get an obscured copy of a report, so it must not be a report
         game.getOptions().getOption(OptionsConstants.ADVANCED_DOUBLE_BLIND).setValue(true);
         setRevealMode();
 
         new HandlerUnderTest(gameManager, 2).revealHiddenUnits();
 
-        List<Report> reports = stayedHiddenReports();
-        assertEquals(1, reports.size());
-        assertEquals(Report.PLAYER, reports.getFirst().type);
-        assertEquals(enemy.getId(), reports.getFirst().player, "only the hidden unit's owner is told");
+        assertOnlyTheOwnerIsTold();
     }
 
-    private List<Report> stayedHiddenReports() {
-        List<Report> reports = new ArrayList<>();
+    private void assertOnlyTheOwnerIsTold() {
+        Mockito.verify(gameManager).sendServerChat(Mockito.eq(enemy.getId()), Mockito.anyString());
+        Mockito.verify(gameManager, Mockito.never()).sendServerChat(Mockito.eq(fighter.getOwnerId()),
+              Mockito.anyString());
         for (Report report : gameManager.getMainPhaseReport()) {
-            if (report.messageId == ReconCameraHandler.REPORT_CAMERA_STAYED_HIDDEN) {
-                reports.add(report);
-            }
+            assertNotEquals(ReconCameraHandler.REPORT_CAMERA_REVEALED, report.messageId,
+                  "a failed roll reveals nothing and is not reported to the table");
         }
-        return reports;
     }
 
     @Test

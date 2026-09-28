@@ -918,20 +918,50 @@ class FormationFollowerTest {
     }
 
     @Test
-    void aUnitOnARouteFacesTheNextFlagEvenWithAnEnemyInSight() {
+    void aUnitOnARouteFacesTheNextFlagButNeverTurnsItsBackToTheEnemy() {
         // HammerGS: the player's route is the plan, so a waypoint with no facing set faces toward the next flag, and
-        // an enemy behind does not turn the unit round (2026-09-27)
+        // an enemy off to a side does not turn the unit; but never the rear arc into the line of fire (2026-09-27)
         BipedMek scout = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
 
         assertEquals(NORTH, follower.orderedFacing(scout, LEADER_HEX));
 
         Entity enemy = mock(Entity.class);
-        Coords behind = LEADER_HEX.translated(SOUTH, 4);
-        when(enemy.getPosition()).thenReturn(behind);
+        Coords offToTheSide = LEADER_HEX.translated(SOUTH_WEST, 4);
+        when(enemy.getPosition()).thenReturn(offToTheSide);
         enemies.add(enemy);
         assertEquals(NORTH, follower.orderedFacing(scout, LEADER_HEX));
-        assertEquals(NORTH, follower.facingThatStandsFor(scout, NORTH, LEADER_HEX, behind));
+        assertEquals(NORTH, follower.facingThatStandsFor(scout, NORTH, LEADER_HEX, offToTheSide));
+
+        Coords behind = LEADER_HEX.translated(SOUTH, 4);
+        assertEquals(UnitOrders.FACING_AUTO, follower.facingThatStandsFor(scout, NORTH, LEADER_HEX, behind));
+    }
+
+    @Test
+    void aUnitInFormationFacesTheWayTheFormationFacesNotBackAtTheFlag() {
+        // HammerGS's town playtest: the Centurion, its slot beyond the flag, faced south to look back at it
+        member(20, LEADER_HEX, 0, 5);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        Coords beyondTheFlag = NORTH_WAYPOINT.translated(NORTH, 1);
+
+        assertEquals(NORTH, princess.getUnitOrdersFollower().orderedFacing(second, beyondTheFlag));
+    }
+
+    @Test
+    void aSlotWalledOffFromTheUnitFoldsItIntoTheColumn() {
+        // HammerGS's town playtest: a Longbow waded toward a Line slot behind a building row while its lance waited
+        member(20, NORTH_WAYPOINT, 0, 5);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        Coords echelonSlot = NORTH_WAYPOINT.translated(SOUTH_EAST, 2);
+        for (int direction = 0; direction < 6; direction++) {
+            Coords wall = echelonSlot.translated(direction);
+            board.getHex(wall).setLevel(CLIFF_LEVEL);
+            board.getHex(wall).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
+        }
+
+        // the Echelon Right slot can be stood in but not reached; the unit takes its Column place instead
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH, 2)),
+              princess.getUnitOrdersFollower().getFormationSlot(second));
     }
 
     @Test

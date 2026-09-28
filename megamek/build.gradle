@@ -68,23 +68,19 @@ def suiteIdentity = {
     values
 }
 def gitOutput = { File directory, String... arguments ->
-    def output = new ByteArrayOutputStream()
-    def errors = new ByteArrayOutputStream()
     def command = ['git', '-C', directory.canonicalPath] + arguments.toList()
     try {
-        def result = project.exec {
+        def execution = providers.exec {
             commandLine command
-            standardOutput = output
-            errorOutput = errors
             ignoreExitValue = true
         }
-        if (result.exitValue != 0) {
-            throw new GradleException("${command.join(' ')} failed: ${errors.toString('UTF-8')}")
+        if (execution.result.get().exitValue != 0) {
+            throw new GradleException("${command.join(' ')} failed: ${execution.standardError.asText.get()}")
         }
+        return execution.standardOutput.asText.get().trim()
     } catch (IOException e) {
         throw new GradleException("Cannot inspect Git checkout ${directory}", e)
     }
-    output.toString('UTF-8').trim()
 }
 // Run before any staging task can modify the workspace, not merely before distTar itself.
 gradle.taskGraph.whenReady { graph ->

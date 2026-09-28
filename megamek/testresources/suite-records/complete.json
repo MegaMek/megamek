@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "version": "0.51.100",
+  "membership": "milestone",
+  "tag": "v0.51.100",
+  "minimumLauncherVersion": "0.14.5",
+  "products": {
+    "MegaMek": {
+      "repository": "https://github.com/MegaMek/megamek",
+      "commit": "1111111111111111111111111111111111111111",
+      "version": "0.51.100",
+      "tag": "v0.51.100",
+      "releaseId": 101,
+      "asset": {
+        "assetId": 201,
+        "name": "MegaMek-0.51.100.tar.gz",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "size": 123456
+      }
+    },
+    "MegaMekLab": {
+      "repository": "https://github.com/MegaMek/megameklab",
+      "commit": "2222222222222222222222222222222222222222",
+      "version": "0.51.100",
+      "tag": "v0.51.100",
+      "releaseId": 102,
+      "asset": {
+        "assetId": 202,
+        "name": "MegaMekLab-0.51.100.tar.gz",
+        "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "size": 234567
+      }
+    },
+    "MekHQ": {
+      "repository": "https://github.com/MegaMek/mekhq",
+      "commit": "3333333333333333333333333333333333333333",
+      "version": "0.51.100",
+      "tag": "v0.51.100",
+      "releaseId": 103,
+      "asset": {
+        "assetId": 203,
+        "name": "MekHQ-0.51.100.tar.gz",
+        "sha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+        "size": 345678
+      }
+    }
+  },
+  "mmData": {
+    "repository": "https://github.com/MegaMek/mm-data",
+    "commit": "4444444444444444444444444444444444444444"
+  }
+}

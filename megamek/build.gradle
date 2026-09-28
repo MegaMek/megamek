@@ -41,6 +41,63 @@ sourceSets {
     }
 }
 
+// Filter only the packaged properties file; leave the source and other presentation keys untouched.
+// processResources is also used by run and test, so Version() sees the same identity as the archive.
+def suiteReleaseVersion = rootProject.findProperty('suiteReleaseVersion')
+if (suiteReleaseVersion != null) {
+    def components = suiteReleaseVersion.toString().split(/\./)
+    tasks.named('processResources') {
+        inputs.property('suiteReleaseVersion', suiteReleaseVersion.toString())
+        filesMatching('Version.properties') {
+            filter { line ->
+                if (line ==~ /(?:major|minor|patch)=.*/) {
+                    def key = line.substring(0, line.indexOf('='))
+                    return "${key}=${components[['major': 0, 'minor': 1, 'patch': 2][key]]}"
+                }
+                // A suite release is not a historical four-component point release.
+                return line ==~ /\s*revision=.*/ ? '# revision suppressed by suiteReleaseVersion' : line
+            }
+        }
+    }
+}
+
+tasks.register('verifySuiteVersion') {
+    description = 'Checks that the packaged Version.properties agrees with the Gradle suite version.'
+    group = 'verification'
+    dependsOn tasks.named('processResources')
+    doLast {
+        def packaged = new Properties()
+        layout.buildDirectory.file('resources/main/Version.properties').get().asFile.withInputStream {
+            packaged.load(it)
+        }
+        def actual = String.format('%d.%02d.%02d', Integer.parseInt(packaged.getProperty('major')),
+                Integer.parseInt(packaged.getProperty('minor')), Integer.parseInt(packaged.getProperty('patch')))
+        if (packaged.getProperty('revision')?.trim()) {
+            def revision = Integer.parseInt(packaged.getProperty('revision').trim())
+            if (revision > 0) {
+                actual += ".${revision}"
+            }
+        }
+        def expected = project.version.toString().split('-', 2)[0]
+        if (actual != expected) {
+            throw new GradleException("Packaged version ${actual} does not match project version ${expected}")
+        }
+    }
+}
+
+tasks.register('validateSuiteRecord', JavaExec) {
+    description = 'Validates a complete suite record: -PsuiteRecordFile=path/to/record.json'
+    group = 'verification'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'megamek.release.SuiteRecordValidator'
+    doFirst {
+        if (!project.hasProperty('suiteRecordFile')) {
+            throw new GradleException('Supply -PsuiteRecordFile=path/to/record.json')
+        }
+        args = [project.file(project.property('suiteRecordFile')).absolutePath]
+    }
+}
+
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-core:2.21.4'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2'

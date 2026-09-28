@@ -303,8 +303,9 @@ public interface IBomber {
             EquipmentType et = EquipmentType.get(bombType.getWeaponName());
             m = ((Entity) this).addBomb(et, loc);
             m.setInternalBomb(internal);
-            // Add bomb itself as single-shot ammo.
-            if (bombType != BombTypeEnum.TAG) {
+            // Add bomb itself as single-shot ammo. A TAG or camera pod is equipment, not something fired off.
+            boolean isEquipmentPod = (bombType == BombTypeEnum.TAG) || (bombType == BombTypeEnum.RECON_CAMERA);
+            if (!isEquipmentPod) {
                 Mounted<?> ammo = Mounted.createMounted((Entity) this,
                       EquipmentType.get(bombType.getInternalName()));
                 ammo.setShotsLeft(1);

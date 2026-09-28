@@ -1663,8 +1663,10 @@ public class ComputeToHit {
                 // Unless the target has been tagged, or the spotter has an active command
                 // console
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
+                // a Recon Camera that spotted this target spares the shot the penalty (TO:AUE p.150)
                 if (spotter.isAttackingThisTurn() &&
                       !spotter.getCrew().hasActiveCommandConsole() &&
+                      !ReconCameraRules.isCameraSpotting(spotter, target) &&
                       !Compute.isTargetTagged(target, game)) {
                     toHit.addModifier(1, Messages.getString("WeaponAttackAction.SpotterAttacking"));
                 }

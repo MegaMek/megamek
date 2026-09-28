@@ -53,6 +53,7 @@ import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.units.ReconCameraRules;
 import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 import megamek.server.totalWarfare.TWGameManager;
@@ -80,18 +81,24 @@ public final class ArtilleryHandlerHelper {
                 boolean active = entity.isActive();
                 boolean notAirborne = !(entity.isAero() && entity.isAirborne());
                 boolean notHaywired = !entity.isINarcedWith(INarcPod.HAYWIRE);
+                // a Recon Camera that spotted a unit at the target designates it, even from the air (TO:AUE p.150)
+                boolean isCameraSpotter = ReconCameraRules.isCameraSpottingAt(game, entity, target);
 
                 logger.debug(
-                      "  Checking entity {}: sameOwner={}, inList={}, hasLOS={}, active={}, notAirborne={}, notHaywired={}",
+                      "  Checking entity {}: sameOwner={}, inList={}, hasLOS={}, active={}, notAirborne={}, notHaywired={}"
+                            + ", cameraSpotter={}",
                       entity.getDisplayName(),
                       sameOwner,
                       inList,
                       hasLOS,
                       active,
                       notAirborne,
-                      notHaywired);
+                      notHaywired,
+                      isCameraSpotter);
 
-                return sameOwner && inList && hasLOS && active && notAirborne && notHaywired;
+                boolean isEligibleUnit = sameOwner && active && notHaywired;
+                boolean isOrdinarySpotter = inList && hasLOS && notAirborne;
+                return isEligibleUnit && (isOrdinarySpotter || isCameraSpotter);
             });
 
             // Out of any valid spotters, pick the best.

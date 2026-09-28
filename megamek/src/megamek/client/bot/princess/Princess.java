@@ -1824,19 +1824,25 @@ public class Princess extends BotClient {
               getGame(),
               this);
 
+        Vector<EntityAction> actions;
         if (!firingPlan.getEntityActionVector().isEmpty()) {
             LOGGER.info("{}: targeting phase turn for {}: sending {} attack action(s)",
                   getLocalPlayer().getName(), entityToFire.getDisplayName(),
                   firingPlan.getEntityActionVector().size());
-            sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
+            actions = new Vector<>(firingPlan.getEntityActionVector());
         } else {
             LOGGER.info("{}: targeting phase turn for {}: no artillery attacks planned",
                   getLocalPlayer().getName(), entityToFire.getDisplayName());
             if (fireControls == null) {
                 initializeFireControls();
             }
-            sendAttackData(entityToFire.getId(), getFireControl(entityToFire).getUnjamWeaponPlan(entityToFire));
+            actions = new Vector<>(getFireControl(entityToFire).getUnjamWeaponPlan(entityToFire));
         }
+        ReconCameraSpotAction cameraSpot = ReconCameraPlanner.planSpot(getGame(), entityToFire);
+        if (cameraSpot != null) {
+            actions.add(cameraSpot);
+        }
+        sendAttackData(entityToFire.getId(), actions);
         sendDone(true);
     }
 

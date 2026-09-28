@@ -11147,6 +11147,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction ->
                       new WeaponMalfunctionRepairHandler(this).repair(entity, repairWeaponMalfunctionAction);
+                case ReconCameraSpotAction cameraSpotAction ->
+                      new ReconCameraHandler(this).resolveSpot(entity, cameraSpotAction);
                 case DisengageAction ignored -> {
                     MovePath path = new MovePath(game, entity);
                     path.addStep(MoveStepType.FLEE);
@@ -26027,6 +26029,12 @@ public class TWGameManager extends AbstractGameManager {
                 vCanSee.addElement(player);
             }
         }
+        // A Recon Camera's whole side sees what the camera spotted this turn (TO:AUE p.150)
+        for (Player player : ReconCameraRules.playersSeeingThroughCameras(game, entity)) {
+            if (!vCanSee.contains(player)) {
+                vCanSee.addElement(player);
+            }
+        }
 
         // If the entity is hidden, skip; no one else will be able to see it.
         if (entity.isHidden()) {
@@ -26210,6 +26218,10 @@ public class TWGameManager extends AbstractGameManager {
             } else if (entity.isOffBoardObserved(pViewer.getTeam())) {
                 // if it's hostile and has been observed for counter-battery fire, we can "see"
                 // it
+                addVisibleEntity(vCanSee, entity);
+                continue;
+            } else if (ReconCameraRules.playersSeeingThroughCameras(game, entity).contains(pViewer)) {
+                // a Recon Camera on the viewer's side spotted it this turn (TO:AUE p.150)
                 addVisibleEntity(vCanSee, entity);
                 continue;
             }

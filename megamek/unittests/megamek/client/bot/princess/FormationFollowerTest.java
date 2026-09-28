@@ -902,6 +902,32 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aLeaderWaitingBesideAnOccupiedFlagStepsOntoItOnceItIsClear() {
+        // HammerGS's playtest: the Stalker began waiting a hex short of 1223 while another unit stood on it, and the
+        // wait then held it there for good - its lance formed a Line round the flag and never moved on
+        List<BipedMek> lance = lanceKeepingTogether();
+        BipedMek leader = lance.get(0);
+        leader.setPosition(NORTH_WAYPOINT.translated(SOUTH, 1));
+        BipedMek bystander = new BipedMek();
+        bystander.setId(30);
+        bystander.setOwner(bot);
+        game.addEntity(bystander);
+        bystander.setDeployed(true);
+        bystander.setPosition(NORTH_WAYPOINT);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setCurrentRound(3);
+        follower.advanceRoutes();
+        assertTrue(follower.isWaitingForFormation(leader));
+
+        bystander.setPosition(NORTH_WAYPOINT.translated(NORTH, 3));
+        game.setCurrentRound(4);
+        follower.advanceRoutes();
+
+        assertFalse(follower.isWaitingForFormation(leader));
+        assertFalse(follower.isHolding(leader));
+    }
+
+    @Test
     void aLeaderStopsWaitingForAUnitThatCannotFormUpAfterThreeRounds() {
         List<BipedMek> lance = lanceKeepingTogether();
         BipedMek leader = lance.get(0);

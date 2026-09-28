@@ -859,6 +859,14 @@ public class UnitOrdersFollower {
             int reachedWithin = isLeadingFormationOnRoute(entity) ? flagRadius(entity, waypoint.get())
                   : Princess.DISTANCE_TO_WAYPOINT;
             if (waypoint.get().distance(entity.getPosition()) > reachedWithin) {
+                if (reformWaits.remove(entity.getId()) != null) {
+                    // a leader that began waiting beside an occupied flag must not go on waiting once the flag is
+                    // clear: the wait held it in place, so it never stepped onto the flag, and nothing looked at the
+                    // wait again (HammerGS's playtest, 2026-09-27: the lance formed a Line round 1223 and never left)
+                    LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT at {} ends - the flag is clear; "
+                                + "stepping onto it", entity.getDisplayName(), entity.getId(), currentRound(),
+                          waypoint.get().getBoardNum());
+                }
                 continue;
             }
             if (isPartWay && shouldWaitForFormation(entity, waypoint.get())) {
@@ -1973,6 +1981,9 @@ public class UnitOrdersFollower {
         }
         if (isHoldingAtWaypoint(entity)) {
             return "holding at waypoint " + entity.getPosition().getBoardNum();
+        }
+        if (isWaitingForFormation(entity)) {
+            return "waiting at " + entity.getPosition().getBoardNum() + " for the formation";
         }
         return "holding the end of its route at " + entity.getPosition().getBoardNum();
     }

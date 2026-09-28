@@ -116,7 +116,16 @@ public final class SuiteRecordValidator {
     }
 
     private static String version(JsonNode value, String field) {
-        return match(value, VERSION, field);
+        String result = match(value, VERSION, field);
+        for (String component : result.split("\\.")) {
+            try {
+                Integer.parseInt(component);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid " + field + ": version component exceeds Java int range",
+                      e);
+            }
+        }
+        return result;
     }
 
     private static void positiveLong(JsonNode value, String field) {

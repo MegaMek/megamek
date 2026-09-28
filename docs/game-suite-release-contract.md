@@ -16,7 +16,8 @@ the processed resource to the effective project version (excluding the
 optional `-extraVersion` suffix); `:megamek:processResources` creates the
 packaged file. The input accepts only canonical three-component decimal
 versions: major has no leading zeros; minor and patch use two digits for
-0–99 and no leading zeros above 99. Thus `0.51.01`, `0.51.02`,
+0–99 and no leading zeros above 99. Each component must fit in a Java
+signed 32-bit integer (0–2147483647). Thus `0.51.01`, `0.51.02`,
 `0.51.100` are distinct, while `0.51.1` and `0.51.001` are *not*
 alternate allocatable slots. Without the input, the existing source-based
 version and optional historic fourth-component revision are unchanged.

@@ -17,6 +17,7 @@ package megamek.release;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,6 +50,34 @@ class SuiteRecordValidatorTest {
         Files.writeString(longIds, good.replace("\"releaseId\": 101", "\"releaseId\": 2147483648")
               .replace("\"assetId\": 201", "\"assetId\": 2147483649"));
         assertDoesNotThrow(() -> SuiteRecordValidator.validate(longIds));
+    }
+
+    @Test
+    void versionComponentsMustFitJavaIntForSuiteAndProducts() throws IOException {
+        String good = Files.readString(COMPLETE).replace("\r\n", "\n");
+        String[] tooLarge = {"2147483648.51.100", "0.2147483648.100", "0.51.2147483648"};
+        String[] largest = {"2147483647.51.100", "0.2147483647.100", "0.51.2147483647"};
+        for (int i = 0; i < tooLarge.length; i++) {
+            // Keep tags and filenames in sync to isolate the numeric validation.
+            String suite = good.replace("0.51.100", tooLarge[i]);
+            Path suiteFile = temp.resolve("suite-" + i + ".json");
+            Files.writeString(suiteFile, suite);
+            IllegalArgumentException suiteError = assertThrows(IllegalArgumentException.class,
+                  () -> SuiteRecordValidator.validate(suiteFile));
+            assertTrue(suiteError.getMessage().contains("Invalid version:"));
+
+            String product = good.replace("\"version\": \"0.51.100\",\n      \"tag\"",
+                  "\"version\": \"" + tooLarge[i] + "\",\n      \"tag\"");
+            Path productFile = temp.resolve("product-" + i + ".json");
+            Files.writeString(productFile, product);
+            IllegalArgumentException productError = assertThrows(IllegalArgumentException.class,
+                  () -> SuiteRecordValidator.validate(productFile));
+            assertTrue(productError.getMessage().contains(".version:"));
+
+            Path maximumFile = temp.resolve("maximum-" + i + ".json");
+            Files.writeString(maximumFile, good.replace("0.51.100", largest[i]));
+            assertDoesNotThrow(() -> SuiteRecordValidator.validate(maximumFile));
+        }
     }
 
     @Test

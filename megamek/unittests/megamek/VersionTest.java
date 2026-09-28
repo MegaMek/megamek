@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ResourceBundle;
 
+import megamek.codeUtilities.MathUtility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,12 +53,19 @@ class VersionTest {
     void defaultVersionReadsPackagedProperties() {
         ResourceBundle packaged = ResourceBundle.getBundle("Version");
         Version running = new Version();
-        assertEquals(Integer.parseInt(packaged.getString("major")), running.getMajor());
-        assertEquals(Integer.parseInt(packaged.getString("minor")), running.getMinor());
-        assertEquals(Integer.parseInt(packaged.getString("patch")), running.getPatch());
+        assertEquals(packagedComponent(packaged.getString("major")), running.getMajor());
+        assertEquals(packagedComponent(packaged.getString("minor")), running.getMinor());
+        assertEquals(packagedComponent(packaged.getString("patch")), running.getPatch());
         int revision = packaged.containsKey("revision") && !packaged.getString("revision").isBlank()
-              ? Integer.parseInt(packaged.getString("revision").trim()) : Version.NO_REVISION;
+              ? packagedComponent(packaged.getString("revision").trim()) : Version.NO_REVISION;
         assertEquals(revision, running.getRevision());
+    }
+
+    private static int packagedComponent(String value) {
+        assertTrue(value.matches("[0-9]+"), "Malformed packaged version component: " + value);
+        int parsed = MathUtility.parseInt(value, -1);
+        assertNotEquals(-1, parsed, "Nonrepresentable packaged version component: " + value);
+        return parsed;
     }
 
     @BeforeEach

@@ -14,15 +14,31 @@ allprojects {
     }
 }
 
+if (hasProperty('suiteReleaseVersion')) {
+    def requested = property('suiteReleaseVersion').toString()
+    if (!(requested ==~ /(?:0|[1-9][0-9]*)\.(?:[0-9]{2}|[1-9][0-9]{2,})\.(?:[0-9]{2}|[1-9][0-9]{2,})/)) {
+        throw new GradleException("suiteReleaseVersion must be canonical padded major.minor.patch (e.g. 0.51.01)")
+    }
+    version = requested
+}
+
 subprojects {
     Properties versionProperties = new Properties()
     versionProperties.load(rootProject.file("megamek/resources/Version.properties").newDataInputStream())
     def processedVersion = String.format("%d.%02d.%02d", Integer.parseInt(versionProperties.getProperty("major")), Integer.parseInt(versionProperties.getProperty("minor")), Integer.parseInt(versionProperties.getProperty("patch")))
 
+    // A suite build supplies an ordinary, canonical three-component version without changing tracked sources.
+    // Do not inherit the historic point-release revision from Version.properties in that case.
+    def suiteVersion = rootProject.findProperty('suiteReleaseVersion')
+    if (suiteVersion != null) {
+        suiteVersion = suiteVersion.toString()
+        processedVersion = suiteVersion
+    }
+
     // Optional fourth component, present only for a special point release such as 0.51.0.1. See the comment in
     // megamek/resources/Version.properties.
     def revisionProperty = versionProperties.getProperty("revision")
-    if (revisionProperty != null && !revisionProperty.trim().isEmpty()) {
+    if (suiteVersion == null && revisionProperty != null && !revisionProperty.trim().isEmpty()) {
         def parsedRevision = Integer.parseInt(revisionProperty.trim())
         if (parsedRevision > 0) {
             processedVersion = String.format("%s.%d", processedVersion, parsedRevision)

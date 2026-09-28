@@ -39,12 +39,26 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ResourceBundle;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class VersionTest {
     private Version version;
+
+    @Test
+    void defaultVersionReadsPackagedProperties() {
+        ResourceBundle packaged = ResourceBundle.getBundle("Version");
+        Version running = new Version();
+        assertEquals(Integer.parseInt(packaged.getString("major")), running.getMajor());
+        assertEquals(Integer.parseInt(packaged.getString("minor")), running.getMinor());
+        assertEquals(Integer.parseInt(packaged.getString("patch")), running.getPatch());
+        int revision = packaged.containsKey("revision") && !packaged.getString("revision").isBlank()
+              ? Integer.parseInt(packaged.getString("revision").trim()) : Version.NO_REVISION;
+        assertEquals(revision, running.getRevision());
+    }
 
     @BeforeEach
     void setUp() {

@@ -45,6 +45,7 @@ import megamek.common.actions.EntityAction;
 import megamek.common.actions.ReconCameraSpotAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.exceptions.LocationFullException;
@@ -180,6 +181,16 @@ class ReconCameraHandlerTest {
 
         assertEquals(target.getId(), camera.getReconCameraSpotTargetId(), "6 meets the 6 needed");
         assertTrue(camera.hasReconCameraSpotThisTurn());
+    }
+
+    @Test
+    void testACameraHitIsNeverATagDesignation() {
+        new HandlerUnderTest(gameManager, 12).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), target.getId()));
+
+        assertEquals(target.getId(), camera.getReconCameraSpotTargetId(), "the spot hit");
+        assertTrue(game.getTagInfo().isEmpty(), "homing artillery and laser-guided bombs follow TAG designations only");
+        assertFalse(Compute.isTargetTagged(target, game), "semi-guided missiles get no TAG bonus from a camera spot");
     }
 
     @Test

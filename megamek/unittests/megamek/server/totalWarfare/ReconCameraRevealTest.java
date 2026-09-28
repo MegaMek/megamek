@@ -198,6 +198,30 @@ class ReconCameraRevealTest {
     }
 
     @Test
+    void testARevealIsToastedToTheCameraSideAndTheOwner() {
+        setRevealMode();
+
+        new HandlerUnderTest(gameManager, 9).revealHiddenUnits();
+
+        Mockito.verify(gameManager).send(Mockito.eq(fighter.getOwnerId()),
+              Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager).send(Mockito.eq(enemy.getId()), Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager, Mockito.never()).send(Mockito.argThat(ReconCameraHandlerTest::isToast));
+    }
+
+    @Test
+    void testAFailedRollIsToastedToTheOwnerOnly() {
+        setRevealMode();
+
+        new HandlerUnderTest(gameManager, 2).revealHiddenUnits();
+
+        Mockito.verify(gameManager).send(Mockito.eq(enemy.getId()), Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager, Mockito.never()).send(Mockito.eq(fighter.getOwnerId()),
+              Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager, Mockito.never()).send(Mockito.argThat(ReconCameraHandlerTest::isToast));
+    }
+
+    @Test
     void testALowRollLeavesTheUnitHidden() {
         setRevealMode();
 

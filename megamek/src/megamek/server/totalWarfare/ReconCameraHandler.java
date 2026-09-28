@@ -41,6 +41,9 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.ReconCameraSpotAction;
 import megamek.common.compute.Compute;
+import megamek.common.event.GameToastEvent;
+import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.Packet;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -128,6 +131,18 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
             }
         }
         target.addReconCameraSpot(camera.getDisplayName(), viewerIds);
+        String toast = Messages.getString("ReconCamera.toast.spotted", camera.getShortName(), target.getShortName());
+        for (int viewerId : viewerIds) {
+            sendToast(viewerId, GameToastEvent.Level.SUCCESS, toast, camera);
+        }
+    }
+
+    /**
+     * Sends a toast to one player only. The shared toast goes to every player, which would tell the other side about
+     * a camera spot or a hidden unit.
+     */
+    private void sendToast(int playerId, GameToastEvent.Level level, String message, Entity iconUnit) {
+        gameManager.send(playerId, new Packet(PacketCommand.SEND_TOAST, level, message, iconUnit.getId()));
     }
 
     /**
@@ -175,6 +190,7 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
             report.add(targetNumber.getDesc());
             report.add(roll.getIntValue());
             addReport(report);
+            toastReveal(camera, hiddenUnit);
         } else {
             // Only the hidden unit's owner may learn of the roll, or the camera side would know something is there. A
             // report cannot do that: without double-blind every player gets every report, and with it the others get
@@ -182,8 +198,26 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
             gameManager.sendServerChat(hiddenUnit.getOwnerId(), Messages.getString("ReconCamera.stayedHidden",
                   hiddenUnit.getShortName(), camera.getShortName(), targetNumber.getValue(), targetNumber.getDesc(),
                   roll.getIntValue()));
+            sendToast(hiddenUnit.getOwnerId(), GameToastEvent.Level.INFO, Messages.getString(
+                  "ReconCamera.toast.stayedHidden", hiddenUnit.getShortName(), camera.getShortName()), hiddenUnit);
         }
         return isRevealed;
+    }
+
+    /**
+     * Tells the camera's side what it revealed, and the hidden unit's owner that its unit is revealed. Nobody else is
+     * told, so under double-blind the camera is not named to players who cannot see it.
+     */
+    private void toastReveal(Entity camera, Entity hiddenUnit) {
+        String cameraSideToast = Messages.getString("ReconCamera.toast.revealed", camera.getShortName(),
+              hiddenUnit.getShortName());
+        for (Player player : getGame().getPlayersList()) {
+            if (ReconCameraRules.isOnCameraSide(camera, player)) {
+                sendToast(player.getId(), GameToastEvent.Level.SUCCESS, cameraSideToast, hiddenUnit);
+            }
+        }
+        sendToast(hiddenUnit.getOwnerId(), GameToastEvent.Level.WARNING,
+              Messages.getString("ReconCamera.toast.yourUnitRevealed", hiddenUnit.getShortName()), hiddenUnit);
     }
 
     /**

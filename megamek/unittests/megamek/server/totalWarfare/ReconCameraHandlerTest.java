@@ -218,6 +218,36 @@ class ReconCameraHandlerTest {
     }
 
     @Test
+    void testAHitIsToastedToTheCameraSideOnly() {
+        Player teammate = new Player(TEAMMATE_CONNECTION, "Teammate");
+        teammate.setTeam(1);
+        game.addPlayer(TEAMMATE_CONNECTION, teammate);
+
+        new HandlerUnderTest(gameManager, 12).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), target.getId()));
+
+        Mockito.verify(gameManager).send(Mockito.eq(OWNER_CONNECTION), Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager).send(Mockito.eq(TEAMMATE_CONNECTION),
+              Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager, Mockito.never()).send(Mockito.eq(ENEMY_CONNECTION),
+              Mockito.argThat(ReconCameraHandlerTest::isToast));
+        Mockito.verify(gameManager, Mockito.never()).send(Mockito.argThat(ReconCameraHandlerTest::isToast));
+    }
+
+    @Test
+    void testAMissIsNotToasted() {
+        new HandlerUnderTest(gameManager, 2).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), target.getId()));
+
+        Mockito.verify(gameManager, Mockito.never()).send(Mockito.anyInt(),
+              Mockito.argThat(ReconCameraHandlerTest::isToast));
+    }
+
+    static boolean isToast(Packet packet) {
+        return (packet != null) && (packet.command() == PacketCommand.SEND_TOAST);
+    }
+
+    @Test
     void testAMissMarksNothing() {
         new HandlerUnderTest(gameManager, 2).resolveSpot(camera,
               new ReconCameraSpotAction(camera.getId(), target.getId()));

@@ -1,9 +1,9 @@
 # Game-suite release record (schema version 1)
 
-This document describes the build input and release-record format implemented
-in this PR. They let future release jobs give MegaMek a shared game version and
-check a proposed record describing a complete set of three game downloads.
-**This PR does not publish a record or a release.** It does not schedule builds,
+This document describes the suite build input and release-record format. They
+let future release jobs give MegaMek a shared game version and check a proposed
+record describing a complete set of three game downloads.
+**These tasks do not publish a record or a release.** They do not schedule builds,
 reserve versions, create tags, or change the launcher.
 
 ## Implemented in this PR
@@ -25,6 +25,30 @@ version and optional historic fourth-component revision are unchanged.
 With the input, a source revision is suppressed, including in the packaged
 resource. The existing `extraVersion` build suffix remains available and
 is not part of the release record version.
+
+### MegaMek suite product archive (local preparation only)
+
+Build with `./gradlew :megamek:buildMegaMekPackage
+-PsuiteReleaseVersion=0.51.01 -PsuiteMegaMekCommit=<sha>
+-PsuiteMegaMekLabCommit=<sha> -PsuiteMekHQCommit=<sha>
+-PsuiteMmDataCommit=<sha>` (on one command line). Each pin is a lowercase
+40-character SHA-1. Before any packaging tasks run, the suite tar task checks
+that MegaMek, sibling `megameklab`, `mekhq`, and `mm-data` are separate Git
+checkouts at the supplied HEADs with no tracked changes. Untracked files are
+not checked; they must not be staged into a release. `extraVersion` cannot be
+used for a suite product archive. The normal MegaMek distribution and historical
+point-release path remain available without `suiteReleaseVersion`.
+
+The full launcher-compatible `MegaMek-<version>.tar.gz` contains bundled
+mm-data and a root-level `suite-build.properties` with `schemaVersion=1`,
+`product=MegaMek`, `version`, `megamekCommit`, `megameklabCommit`,
+`mekhqCommit`, `mmDataCommit`, and `minimumJavaVersion=21`. The
+`:megamek:verifySuiteMegaMekArchive` task checks the archive root, file name,
+identity, packaged jar version, launcher and bundled data, and rejects user
+settings. `buildMegaMekPackage` runs this verification after packaging.
+For local inspection of an existing archive, supply
+`-PsuiteArchiveFile=/path/to/MegaMek-<version>.tar.gz` to the verification
+task (with the suite version and four pins); this does not rebuild the archive.
 
 ### JSON record and local validation
 
@@ -67,7 +91,7 @@ live URLs or floating branches.
 
 ## Planned for later PRs (not implemented here)
 
-Later product-build PRs must produce the three full archives at one version
+The other product-build PRs must produce their full archives at one version
 from explicitly pinned source commits and an mm-data commit. A coordinating
 release job must reserve the next unused numeric version across the suite,
 treating unpadded aliases as the same number and leaving the optional fourth

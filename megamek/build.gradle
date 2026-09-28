@@ -1,4 +1,5 @@
 import java.time.LocalDateTime
+import java.util.jar.JarFile
 
 plugins {
     id 'application'
@@ -44,6 +45,67 @@ sourceSets {
 // Filter only the packaged properties file; leave the source and other presentation keys untouched.
 // processResources is also used by run and test, so Version() sees the same identity as the archive.
 def suiteReleaseVersion = rootProject.findProperty('suiteReleaseVersion')
+def suitePins = [megamekCommit: ['suiteMegaMekCommit', rootDir],
+                 megameklabCommit: ['suiteMegaMekLabCommit', new File(rootDir, '../megameklab')],
+                 mekhqCommit: ['suiteMekHQCommit', new File(rootDir, '../mekhq')],
+                 mmDataCommit: ['suiteMmDataCommit', new File(rootDir, '../mm-data')]]
+def suiteIdentity = {
+    if (suiteReleaseVersion == null) {
+        throw new GradleException('Supply -PsuiteReleaseVersion for a suite product package')
+    }
+    if (project.version.toString() != suiteReleaseVersion.toString()) {
+        throw new GradleException('Suite product archive version must equal suiteReleaseVersion (omit extraVersion)')
+    }
+    def values = [schemaVersion: '1', product: 'MegaMek', version: suiteReleaseVersion.toString()]
+    suitePins.each { key, pin ->
+        def value = rootProject.findProperty(pin[0])?.toString()
+        if (!(value ==~ /[0-9a-f]{40}/)) {
+            throw new GradleException("${pin[0]} must be a lowercase 40-character SHA-1 commit")
+        }
+        values[key] = value
+    }
+    values.minimumJavaVersion = '21'
+    values
+}
+def gitOutput = { File directory, String... arguments ->
+    def output = new ByteArrayOutputStream()
+    def errors = new ByteArrayOutputStream()
+    def command = ['git', '-C', directory.canonicalPath] + arguments.toList()
+    try {
+        def result = project.exec {
+            commandLine command
+            standardOutput = output
+            errorOutput = errors
+            ignoreExitValue = true
+        }
+        if (result.exitValue != 0) {
+            throw new GradleException("${command.join(' ')} failed: ${errors.toString('UTF-8')}")
+        }
+    } catch (IOException e) {
+        throw new GradleException("Cannot inspect Git checkout ${directory}", e)
+    }
+    output.toString('UTF-8').trim()
+}
+// Run before any staging task can modify the workspace, not merely before distTar itself.
+gradle.taskGraph.whenReady { graph ->
+    if (suiteReleaseVersion != null && graph.hasTask(tasks.named('distTar').get())) {
+        def identity = suiteIdentity()
+        suitePins.each { key, pin ->
+            File directory = pin[1]
+            if (!directory.isDirectory() || gitOutput(directory, 'rev-parse', '--show-toplevel')
+                    .replace('\\', '/').toLowerCase(Locale.ROOT) !=
+                    directory.canonicalPath.replace('\\', '/').toLowerCase(Locale.ROOT)) {
+                throw new GradleException("${pin[0]} must refer to its own sibling Git checkout: ${directory}")
+            }
+            if (gitOutput(directory, 'rev-parse', 'HEAD') != identity[key]) {
+                throw new GradleException("${pin[0]} does not match HEAD of ${directory}")
+            }
+            if (gitOutput(directory, 'status', '--porcelain=v1', '--untracked-files=no')) {
+                throw new GradleException("Tracked changes in ${directory}; suite packages require clean checkouts")
+            }
+        }
+    }
+}
 if (suiteReleaseVersion != null) {
     def components = suiteReleaseVersion.toString().split(/\./)
     tasks.named('processResources') {
@@ -472,6 +534,21 @@ tasks.register('createStartScripts', CreateStartScripts) {
             .filter { it.name.endsWith(".jar") }
 }
 
+tasks.register('generateSuiteBuildProperties') {
+    description = 'Writes the pinned suite identity into the archive root.'
+    def output = layout.buildDirectory.file('suite/suite-build.properties')
+    outputs.file(output)
+    if (suiteReleaseVersion != null) {
+        inputs.property('suiteIdentity', providers.provider { suiteIdentity().toString() })
+    }
+    doLast {
+        def identity = suiteIdentity()
+        def file = output.get().asFile
+        file.parentFile.mkdirs()
+        file.setText(identity.collect { key, value -> "${key}=${value}\n" }.join(''), 'UTF-8')
+    }
+}
+
 distributions {
     main {
         distributionBaseName = 'MegaMek'
@@ -491,11 +568,16 @@ distributions {
 
             from(jar)
             from fileStagingDir
+            if (suiteReleaseVersion != null) {
+                from(tasks.named('generateSuiteBuildProperties'))
+            }
 
             from(project.sourceSets.main.runtimeClasspath.files
                     .findAll { it.name.endsWith(".jar") }) {
                 into "lib"
             }
+
+
 
             duplicatesStrategy = 'exclude'
         }
@@ -548,6 +630,83 @@ distTar {
     compression = Compression.GZIP
 }
 
+tasks.register('verifySuiteMegaMekArchive') {
+    description = 'Verifies the suite tarball layout, packaged version and pinned identity.'
+    group = 'verification'
+    if (!project.hasProperty('suiteArchiveFile')) {
+        dependsOn distTar
+    }
+    doLast {
+        def identity = suiteIdentity()
+        File archive = project.hasProperty('suiteArchiveFile')
+                ? project.file(project.property('suiteArchiveFile'))
+                : layout.buildDirectory.file("distributions/MegaMek-${project.version}.tar.gz").get().asFile
+        if (!archive.isFile()) {
+            throw new GradleException("Missing suite archive ${archive}")
+        }
+        if (archive.name != "MegaMek-${identity.version}.tar.gz") {
+            throw new GradleException("Wrong suite archive name: ${archive.name}")
+        }
+        String root = "MegaMek-${identity.version}/"
+        def paths = [] as Set
+        def propertiesFiles = []
+        def jarFiles = []
+        def forbidden = ['clientsettings.xml', 'gameoptions.xml', 'mm.preferences',
+                         'mml.preferences', 'mhq.preferences', 'megameklab.properties',
+                         'megameklab.properties.bak', 'recent-advanced-searches.json']
+        tarTree(resources.gzip(archive)).visit { entry ->
+            String path = entry.path.replace('\\', '/')
+            if (path != root.substring(0, root.length() - 1) && !path.startsWith(root)) {
+                throw new GradleException("Wrong suite archive root: ${path}")
+            }
+            if (!entry.directory) {
+                if (!paths.add(path)) {
+                    throw new GradleException("Duplicate suite archive entry: ${path}")
+                }
+                if (forbidden.contains(path.substring(path.lastIndexOf('/') + 1))) {
+                    throw new GradleException("User settings in suite archive: ${path}")
+                }
+                if (path.startsWith(root + 'mmconf/searches/')) {
+                    throw new GradleException("User searches in suite archive: ${path}")
+                }
+                if (path == root + 'suite-build.properties') {
+                    def packaged = new Properties()
+                    entry.file.withInputStream { packaged.load(it) }
+                    propertiesFiles.add(packaged)
+                }
+                if (path == root + 'MegaMek.jar') {
+                    def jar = new JarFile(entry.file)
+                    try {
+                        def versionEntry = jar.getJarEntry('Version.properties')
+                        if (versionEntry == null) {
+                            throw new GradleException("Missing Version.properties in ${path}")
+                        }
+                        def props = new Properties()
+                        jar.getInputStream(versionEntry).withCloseable { props.load(it) }
+                        jarFiles.add(props)
+                    } finally {
+                        jar.close()
+                    }
+                }
+            }
+        }
+        if (propertiesFiles.size() != 1 || propertiesFiles[0].size() != identity.size()
+                || identity.any { key, value -> propertiesFiles[0].getProperty(key) != value }) {
+            throw new GradleException('Suite archive identity is missing or does not match declared pins')
+        }
+        if (jarFiles.size() != 1 || jarFiles[0].getProperty('major') != identity.version.split(/\./)[0]
+                || jarFiles[0].getProperty('minor') != identity.version.split(/\./)[1]
+                || jarFiles[0].getProperty('patch') != identity.version.split(/\./)[2]
+                || jarFiles[0].getProperty('revision')?.trim()) {
+            throw new GradleException('Suite archive packaged Version.properties does not match suite version')
+        }
+        if (!paths.contains(root + 'MegaMek.sh') || !paths.any { it.startsWith(root + 'data/boards/') }
+                || !paths.any { it.startsWith(root + 'data/mekfiles/') }) {
+            throw new GradleException('Suite archive is missing launcher or bundled mm-data')
+        }
+    }
+}
+
 run {
     dependsOn(stageDataFiles)
     jvmArgs = mmJvmOptions
@@ -572,6 +731,9 @@ tasks.register('buildMegaMekPackage') {
 
     dependsOn clean
     dependsOn assembleDist
+    if (suiteReleaseVersion != null) {
+        finalizedBy tasks.named('verifySuiteMegaMekArchive')
+    }
 
     doLast {
         File releasePackage = layout.buildDirectory

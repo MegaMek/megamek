@@ -32,8 +32,10 @@
  */
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.ReconCameraSpotAction;
@@ -97,6 +99,9 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
         Roll roll = rollSpot();
         boolean isHit = (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) && (roll.getIntValue() >= toHit.getValue());
         camera.setReconCameraSpotResult(isHit ? target.getId() : Entity.NONE);
+        if (isHit) {
+            markSpotted(camera, target);
+        }
         LOGGER.info("[ReconCamera] {}: camera spot on {} - needed {} [{}], rolled {}: {}", camera.getShortName(),
               target.getShortName(), toHit.getValue(), toHit.getDesc(), roll.getIntValue(), isHit ? "hit" : "miss");
 
@@ -113,6 +118,16 @@ class ReconCameraHandler extends AbstractTWRuleHandler {
         if (isHit && gameManager.doBlind()) {
             gameManager.updateVisibilityIndicator(null);
         }
+    }
+
+    private void markSpotted(Entity camera, Entity target) {
+        List<Integer> viewerIds = new ArrayList<>();
+        for (Player player : getGame().getPlayersList()) {
+            if (ReconCameraRules.isOnCameraSide(camera, player)) {
+                viewerIds.add(player.getId());
+            }
+        }
+        target.addReconCameraSpot(camera.getDisplayName(), viewerIds);
     }
 
     /**

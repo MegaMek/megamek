@@ -37,6 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Vector;
 
@@ -191,6 +197,68 @@ class ReconCameraHandlerTest {
         assertEquals(target.getId(), camera.getReconCameraSpotTargetId(), "the spot hit");
         assertTrue(game.getTagInfo().isEmpty(), "homing artillery and laser-guided bombs follow TAG designations only");
         assertFalse(Compute.isTargetTagged(target, game), "semi-guided missiles get no TAG bonus from a camera spot");
+    }
+
+    @Test
+    void testAHitMarksTheTargetForTheCameraSideOnly() throws IOException, ClassNotFoundException {
+        Player teammate = new Player(TEAMMATE_CONNECTION, "Teammate");
+        teammate.setTeam(1);
+        game.addPlayer(TEAMMATE_CONNECTION, teammate);
+
+        new HandlerUnderTest(gameManager, 12).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), target.getId()));
+
+        // what a teammate's client receives is the target alone, perhaps without the camera: the mark must travel
+        // with the target
+        BipedMek targetAsSent = roundTrip(target);
+        assertTrue(targetAsSent.isReconCameraSpottedFor(owner));
+        assertTrue(targetAsSent.isReconCameraSpottedFor(teammate), "a teammate who cannot see the camera still sees it");
+        assertFalse(targetAsSent.isReconCameraSpottedFor(enemy), "the enemy is not told");
+        assertEquals(List.of(camera.getDisplayName()), targetAsSent.getReconCameraSpotterNames());
+    }
+
+    @Test
+    void testAMissMarksNothing() {
+        new HandlerUnderTest(gameManager, 2).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), target.getId()));
+
+        assertFalse(target.isReconCameraSpottedFor(owner));
+    }
+
+    @Test
+    void testTheMarkEndsWithTheTurn() {
+        new HandlerUnderTest(gameManager, 12).resolveSpot(camera,
+              new ReconCameraSpotAction(camera.getId(), target.getId()));
+
+        target.newRound(2);
+
+        assertFalse(target.isReconCameraSpottedFor(owner));
+        assertTrue(target.getReconCameraSpotterNames().isEmpty());
+    }
+
+    @Test
+    void testAUnitFromAnOlderSaveHasNoMark() throws ReflectiveOperationException {
+        // an older save has no camera mark fields, so loading leaves them null
+        for (String fieldName : List.of("reconCameraViewerIds", "reconCameraSpotterNames")) {
+            Field field = Entity.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, null);
+        }
+
+        assertFalse(target.isReconCameraSpottedFor(owner));
+        assertTrue(target.getReconCameraSpotterNames().isEmpty());
+        target.newRound(2);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T roundTrip(T original) throws IOException, ClassNotFoundException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream output = new ObjectOutputStream(bytes)) {
+            output.writeObject(original);
+        }
+        try (ObjectInputStream input = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            return (T) input.readObject();
+        }
     }
 
     @Test

@@ -1812,10 +1812,10 @@ public final class UnitToolTip {
         if ((spottedUnit != null) && ReconCameraRules.isOnCameraSide(entity, localPlayer)) {
             result += addToTT("CameraSpotting", NOBR, spottedUnit.getDisplayName()) + " ";
         }
-        for (Entity camera : game.getEntitiesVector()) {
-            boolean hasSpottedThisUnit = camera.getReconCameraSpotTargetId() == entity.getId();
-            if (hasSpottedThisUnit && ReconCameraRules.isOnCameraSide(camera, localPlayer)) {
-                result += addToTT("CameraSpotted", NOBR, camera.getDisplayName()) + " ";
+        // read from the spotted unit, so the line shows even when the camera itself is not visible to this player
+        if (entity.isReconCameraSpottedFor(localPlayer)) {
+            for (String cameraName : entity.getReconCameraSpotterNames()) {
+                result += addToTT("CameraSpotted", NOBR, cameraName) + " ";
             }
         }
         if (result.isEmpty()) {

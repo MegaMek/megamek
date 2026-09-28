@@ -429,7 +429,8 @@ public class EntitySprite extends Sprite {
      * @return {@code true} when the camera spotted label belongs on this unit
      */
     private boolean isSpottedByAFriendlyCamera(Entity entity) {
-        return ReconCameraRules.playersSeeingThroughCameras(bv.game, entity).contains(bv.getLocalPlayer());
+        // read from the spotted unit, so the mark shows even when the camera itself is not visible to this player
+        return entity.isReconCameraSpottedFor(bv.getLocalPlayer());
     }
 
     private boolean isOwnedByTheLocalPlayer(Entity entity) {

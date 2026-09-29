@@ -47,7 +47,9 @@ import static org.mockito.Mockito.when;
 
 import megamek.client.ui.Messages;
 import megamek.common.GameBoardTestCase;
+import megamek.common.LosEffects;
 import megamek.common.Player;
+import megamek.common.TargetRollModifier;
 import megamek.common.Team;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -401,6 +403,33 @@ public class ComputeToHitTest extends GameBoardTestCase {
                             + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
                             .collect(java.util.stream.Collectors.joining(", ")));
                 assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
+
+            @Test
+            @DisplayName("A ground-floor weapon in the center hex does not fire from another hex of the building")
+            void centerWeaponDoesNotBorrowAnotherBuildingHex() throws LocationFullException {
+                // Issue #8348 guard: a building fires each weapon from its own hex and floor. The building also
+                // covers 0105, which has a clear view of 0101; the center hex 0205 does not. The weapon at the
+                // center on floor 0 must stay blocked rather than borrow the 0105 view.
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(0, 0));
+                int boardId = attacker.getBoardId();
+
+                LosEffects fromCenter = LosEffects.calculateLOS(game, attacker, target, new Coords(1, 4),
+                      targetEntity.getPosition(), 0, boardId, false);
+                LosEffects fromOtherHex = LosEffects.calculateLOS(game, attacker, target, new Coords(0, 4),
+                      targetEntity.getPosition(), 0, boardId, false);
+                assertFalse(fromCenter.canSee(), "Test setup: the center hex 0205 should not see 0101");
+                assertTrue(fromOtherHex.canSee(), "Test setup: the building hex 0105 should see 0101");
+
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+                assertTrue(result.cannotSucceed(),
+                      "The center weapon must fire from its own hex and stay blocked. Result: " + result.getDesc());
             }
 
             @Test
@@ -931,6 +960,136 @@ public class ComputeToHitTest extends GameBoardTestCase {
             assertTrue(blockedByTerrain,
                   "Overhead Arms must not create LOS over a level-4 hill. Modifiers: " + describe(result));
             assertTrue(result.cannotSucceed(), "Shot should remain impossible");
+        }
+    }
+
+    /**
+     * Issue #8348: a grounded DropShip covers seven hexes, and a shot may be traced to or from any of them. The board
+     * is a single column with a level 5 hill at 0104. The DropShip is an aerodyne, 4 levels tall, with its center at
+     * 0105; facing north, it also covers 0104, and its other hexes are off the board. The hill is higher than both
+     * units, so it blocks the line from the Mek at 0101 to the center hex, but the DropShip hex on the hill is in clear
+     * view.
+     */
+    @Nested
+    @DisplayName(value = "toHitCalc Tests - Grounded DropShip")
+    class GroundedDropShipTests {
+
+        private static final String BOARD_01_BY_05_HILL_DATA = """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "" ""
+              hex 0104 5 "" ""
+              hex 0105 0 "" ""
+              end""";
+
+        private Mek mek;
+        private Dropship dropShip;
+        private WeaponMounted mekLaser;
+        private WeaponMounted dropShipLaser;
+
+        @BeforeEach
+        void beforeEach() throws LocationFullException {
+            initializeBoard("01_BY_05_HILL", BOARD_01_BY_05_HILL_DATA);
+            setBoard("01_BY_05_HILL");
+
+            mek = createMek("Attacker", "ATK-1", "Alice");
+            when(mek.getCrew().isActive()).thenReturn(true);
+            when(mek.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+            mek.setOwnerId(player1.getId());
+            mek.setId(1);
+            mek.setPosition(new Coords(0, 0));
+            mek.setFacing(3);
+            mekLaser = (WeaponMounted) mek.addEquipment(mediumLaserType, Mek.LOC_CENTER_TORSO);
+
+            dropShip = new Dropship();
+            dropShip.setGame(game);
+            dropShip.setChassis("Target");
+            dropShip.setModel("TGT-2");
+            // Aerodyne, like the Leopard in the issue: 4 levels tall when grounded (a spheroid is 9)
+            dropShip.setSpheroid(false);
+            Crew dropShipCrew = mock(Crew.class);
+            when(dropShipCrew.getName(anyInt())).thenCallRealMethod();
+            when(dropShipCrew.getNames()).thenReturn(new String[] { "Bob" });
+            when(dropShipCrew.getOptions()).thenReturn(new PilotOptions());
+            when(dropShipCrew.isActive()).thenReturn(true);
+            when(dropShipCrew.getCrewType()).thenReturn(CrewType.VESSEL);
+            dropShip.setCrew(dropShipCrew);
+            dropShip.setOwnerId(player2.getId());
+            dropShip.setId(2);
+            dropShip.setAltitude(0);
+            dropShip.setFacing(0);
+            dropShip.setPosition(new Coords(0, 4));
+            dropShipLaser = (WeaponMounted) dropShip.addEquipment(mediumLaserType, Aero.LOC_NOSE);
+
+            game.addEntity(mek);
+            game.addEntity(dropShip);
+        }
+
+        private ToHitData toHit(Entity attacker, Targetable target, WeaponMounted weapon) {
+            return ComputeToHit.toHitCalc(game, attacker.getId(), target, weapon.getEquipmentNum(), Entity.LOC_NONE,
+                  AimingMode.NONE, false, false, null, null, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+        }
+
+        private boolean isBlockedByTerrain(ToHitData toHitData) {
+            for (TargetRollModifier modifier : toHitData.getModifiers()) {
+                if ((modifier.value() == TARGET_IMPOSSIBLE) && LOS_BLOCKED_BY_TERRAIN.equals(modifier.description())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Test
+        @DisplayName("The hill really does block the line to the DropShip's center hex")
+        void centerHexIsBlocked() {
+            LosEffects centerLos = LosEffects.calculateLOS(game, mek, dropShip, mek.getPosition(),
+                  dropShip.getPosition(), mek.getBoardId(), false);
+
+            assertFalse(centerLos.canSee(),
+                  "The level 5 hill is higher than both units, so it should block the line to the center hex 0105");
+        }
+
+        @Test
+        @DisplayName("A Mek can fire at a grounded DropShip through a hex other than its center")
+        void mekCanTargetDropShipThroughOuterHex() {
+            ToHitData result = toHit(mek, dropShip, mekLaser);
+
+            assertFalse(isBlockedByTerrain(result),
+                  "The DropShip hex at 0104 is in clear view, so LOS must not be blocked. Result: "
+                        + result.getDesc());
+        }
+
+        @Test
+        @DisplayName("A grounded DropShip can fire from a hex other than its center")
+        void dropShipCanFireFromOuterHex() {
+            ToHitData result = toHit(dropShip, mek, dropShipLaser);
+
+            assertFalse(isBlockedByTerrain(result),
+                  "The DropShip hex at 0104 has a clear view of the Mek, so LOS must not be blocked. Result: "
+                        + result.getDesc());
+        }
+
+        @Test
+        @DisplayName("A swarm attack whose previous target has left the game fails instead of crashing")
+        void swarmAttackWithMissingPreviousTargetFails() {
+            // The swarm's previous target lookup returns null once that unit has left the game
+            ToHitData result = ComputeToHit.toHitCalc(game, mek.getId(), dropShip, mekLaser.getEquipmentNum(),
+                  Entity.LOC_NONE, AimingMode.NONE, false, true, null, dropShip, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+            assertEquals(TargetRoll.AUTOMATIC_FAIL, result.getValue(),
+                  "A missing previous swarm target should give an automatic fail. Result: " + result.getDesc());
+        }
+
+        @Test
+        @DisplayName("A weapon with a fixed firing hex still sees every hex of a grounded DropShip")
+        void fixedFiringPositionChecksEveryTargetHex() {
+            LosEffects los = LosEffects.calculateLOSToBestTargetHex(game, mek, dropShip, mek.getPosition(),
+                  mek.getHeight(), mek.getBoardId(), false);
+
+            assertTrue(los.canSee(), "The DropShip hex at 0104 is in clear view from 0101");
         }
     }
 }

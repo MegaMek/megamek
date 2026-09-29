@@ -2872,6 +2872,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             Coords coords = boardViewEvent.getCoords();
             int boardId = boardViewEvent.getBoardId();
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+                int tempFacing = currentlySelectedEntity.getFacing();
                 DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
                 if (!deploymentHelper.checkDeployment(game.getBoard(boardId),
                                                       currentlySelectedEntity,
@@ -2879,7 +2880,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                       false)) {
                     return;
                 }
-                if (originalFacing == -1) {
+                // If we have not got a stored facing, or the deployment check changed our facing to make it legal
+                if (originalFacing == -1 && tempFacing == currentlySelectedEntity.getFacing()) {
                     deploymentHelper.setStartingFacing(currentlySelectedEntity, game.getPlayersList(), coords);
                 }
                 DeploymentPosition deploymentPosition = deploymentHelper.determineDeploymentPosition(
@@ -2889,7 +2891,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         lastHexDeploymentOptions,
                         lastDeploymentOption);
                 if (deploymentPosition == null) {
-
                     return;
                 }
                 int elevation = deploymentPosition.elevation();
@@ -2911,6 +2912,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     currentlySelectedEntity.setDeployed(true);
                     cmd = new MovePath(game, currentlySelectedEntity);
                     addDeploymentToMovePath();
+                    deployTrain(currentlySelectedEntity);
                 } else {
                     String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                                                     currentlySelectedEntity.getShortName(),
@@ -9477,6 +9479,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void processDeploymentTurn(Entity entity,
                                        Coords coords) {
+        DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+        if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
+                                              entity,
+                                              coords,
+                                              false)) {
+            return;
+        }
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
         deployTrain(entity);

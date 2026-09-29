@@ -8,12 +8,12 @@
     "MegaMek": {
       "repository": "https://github.com/MegaMek/megamek",
       "commit": "1111111111111111111111111111111111111111",
-      "version": "0.51.100",
-      "tag": "v0.51.100",
+      "version": "0.51.99",
+      "tag": "v0.51.99",
       "releaseId": 101,
       "asset": {
         "assetId": 201,
-        "name": "MegaMek-0.51.100.tar.gz",
+        "name": "MegaMek-0.51.99.tar.gz",
         "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
         "size": 123456
       }

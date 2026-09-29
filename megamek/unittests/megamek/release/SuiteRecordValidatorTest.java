@@ -38,6 +38,37 @@ class SuiteRecordValidatorTest {
     }
 
     @Test
+    void reusedProductKeepsItsOwnTagAndFilename() throws IOException {
+        String good = Files.readString(COMPLETE);
+        String[] bad = {
+              good.replace("MegaMek-0.51.99.tar.gz", "MegaMek-0.51.100.tar.gz"),
+              good.replace("\"tag\": \"v0.51.99\"", "\"tag\": \"v0.51.100\""),
+              good.replace("\"version\": \"0.51.99\"", "\"version\": \"0.51.101\"")
+                    .replace("v0.51.99", "v0.51.101")
+                    .replace("MegaMek-0.51.99", "MegaMek-0.51.101")
+        };
+        for (int i = 0; i < bad.length; i++) {
+            Path file = temp.resolve("mixed-" + i + ".json");
+            Files.writeString(file, bad[i]);
+            assertThrows(IllegalArgumentException.class, () -> SuiteRecordValidator.validate(file));
+        }
+    }
+
+    @Test
+    void rejectsBundleOlderThanChangedDependency() throws IOException {
+        String good = Files.readString(COMPLETE).replace("\r\n", "\n");
+        String staleHq = good.replace("\"version\": \"0.51.100\",\n      \"tag\": \"v0.51.100\",\n      \"releaseId\": 103",
+              "\"version\": \"0.51.99\",\n      \"tag\": \"v0.51.99\",\n      \"releaseId\": 103")
+              .replace("MekHQ-0.51.100.tar.gz", "MekHQ-0.51.99.tar.gz");
+        assertTrue(staleHq.contains("\"version\": \"0.51.99\",\n      \"tag\": \"v0.51.99\",\n      \"releaseId\": 103"));
+        Path file = temp.resolve("stale-hq.json");
+        Files.writeString(file, staleHq);
+        IllegalArgumentException error = assertThrows(IllegalArgumentException.class,
+              () -> SuiteRecordValidator.validate(file));
+        assertTrue(error.getMessage().contains("Bundled product version cannot predate its dependency"));
+    }
+
+    @Test
     void acceptsOptionalLauncherVersion() throws IOException {
         String good = Files.readString(COMPLETE);
         Path withoutMinimum = temp.resolve("no-minimum.json");
@@ -66,7 +97,7 @@ class SuiteRecordValidatorTest {
                   () -> SuiteRecordValidator.validate(suiteFile));
             assertTrue(suiteError.getMessage().contains("Invalid version:"));
 
-            String product = good.replace("\"version\": \"0.51.100\",\n      \"tag\"",
+            String product = good.replace("\"version\": \"0.51.99\",\n      \"tag\"",
                   "\"version\": \"" + tooLarge[i] + "\",\n      \"tag\"");
             Path productFile = temp.resolve("product-" + i + ".json");
             Files.writeString(productFile, product);
@@ -85,7 +116,6 @@ class SuiteRecordValidatorTest {
         String good = Files.readString(COMPLETE);
         String[] bad = {
               good.replace("\"version\": \"0.51.100\"", "\"version\": \"0.51.0100\""),
-              good.replace("\"version\": \"0.51.100\"", "\"version\": \"0.51.99\""),
               good.replace("\"version\": \"0.51.100\"", "\"version\": \"0.51.101\""),
               good.replace("\"version\": \"0.51.100\"", "\"version\": \"0.51.1\""),
               good.replace("\"membership\": \"milestone\"", "\"membership\": \"stable\""),
@@ -99,9 +129,9 @@ class SuiteRecordValidatorTest {
                     "\"sha256\": \"not-a-digest\""),
               good.replace("\"size\": 123456", "\"size\": 0"),
               good.replace("\"size\": 123456", "\"size\": 1.5"),
-              good.replace("MegaMek-0.51.100.tar.gz", "../MegaMek-0.51.100.tar.gz"),
-              good.replace("MegaMek-0.51.100.tar.gz", "MegaMek-0.51.100.txt"),
-              good.replace("MegaMek-0.51.100.tar.gz", "MegaMek-0.51.100.tar.gz.bak"),
+              good.replace("MegaMek-0.51.99.tar.gz", "../MegaMek-0.51.99.tar.gz"),
+              good.replace("MegaMek-0.51.99.tar.gz", "MegaMek-0.51.99.txt"),
+              good.replace("MegaMek-0.51.99.tar.gz", "MegaMek-0.51.99.tar.gz.bak"),
               good.replace("\"releaseId\": 101,", ""),
               good.replace("\"assetId\": 201,", ""),
               good.replace("\"releaseId\": 101", "\"releaseId\": 0"),

@@ -128,7 +128,7 @@ def gitOutput = { File directory, String... arguments ->
                     return
                 }
                 def mirror = path =~ /^(?:megamek\/|megameklab\/|MekHQ\/)data\/(.+)$/
-                def source = mirror.matches() ? "data/${mirror.group(1)}" : null
+                def source = mirror.matches() ? "data/${mirror.group(1)}".toString() : null
                 if (source?.startsWith('data/images/force/Units/') && !trackedData.contains(source)) {
                     source = source.replace('data/images/force/Units/', 'data/images/universe/factions/')
                 }

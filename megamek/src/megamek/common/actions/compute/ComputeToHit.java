@@ -77,9 +77,10 @@ public class ComputeToHit {
      * To-hit number for attacker firing a weapon at the target.
      */
     public static ToHitData toHitCalc(Game game, int attackerId, Targetable target, int weaponId, int aimingAt,
-          AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget, Targetable oldTarget,
-          Targetable originalTarget, boolean isStrafing, boolean isPointblankShot, List<ECMInfo> allECMInfo,
-          boolean evenIfAlreadyFired, int ammoId, int ammoCarrier) {
+          AimingMode aimingMode, boolean isNemesisConfused, boolean exchangeSwarmTarget,
+          @Nullable Targetable oldTarget, @Nullable Targetable originalTarget, boolean isStrafing,
+          boolean isPointblankShot, List<ECMInfo> allECMInfo, boolean evenIfAlreadyFired, int ammoId,
+          int ammoCarrier) {
 
         final Entity weaponEntity = game.getEntity(attackerId);
         final Entity ae = weaponEntity.getAttackingEntity();
@@ -106,6 +107,12 @@ public class ComputeToHit {
         }
 
         Targetable swarmSecondaryTarget = target;
+        if (exchangeSwarmTarget && ((oldTarget == null) || (originalTarget == null))) {
+            // The swarm's earlier target may have left the game, so its lookup returns null
+            logger.warn("{} Swarm attack is missing its previous target (old: {}, original: {})", attackerId,
+                  oldTarget, originalTarget);
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL, Messages.getString("MovementDisplay.NoTarget"));
+        }
         if (exchangeSwarmTarget) {
             // this is a swarm attack against a new target
             // first, exchange original and new targets to get all mods

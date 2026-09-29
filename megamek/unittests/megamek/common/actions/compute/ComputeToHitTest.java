@@ -1072,6 +1072,18 @@ public class ComputeToHitTest extends GameBoardTestCase {
         }
 
         @Test
+        @DisplayName("A swarm attack whose previous target has left the game fails instead of crashing")
+        void swarmAttackWithMissingPreviousTargetFails() {
+            // The swarm's previous target lookup returns null once that unit has left the game
+            ToHitData result = ComputeToHit.toHitCalc(game, mek.getId(), dropShip, mekLaser.getEquipmentNum(),
+                  Entity.LOC_NONE, AimingMode.NONE, false, true, null, dropShip, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+            assertEquals(TargetRoll.AUTOMATIC_FAIL, result.getValue(),
+                  "A missing previous swarm target should give an automatic fail. Result: " + result.getDesc());
+        }
+
+        @Test
         @DisplayName("A weapon with a fixed firing hex still sees every hex of a grounded DropShip")
         void fixedFiringPositionChecksEveryTargetHex() {
             LosEffects los = LosEffects.calculateLOSToBestTargetHex(game, mek, dropShip, mek.getPosition(),

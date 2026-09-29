@@ -33,10 +33,6 @@
 
 package megamek.client.ui.panels.phaseDisplay;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
@@ -59,6 +55,10 @@ import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class DeploymentHelper {
 
@@ -114,16 +114,58 @@ public class DeploymentHelper {
             return BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA;
         }
         // A train deploys as one piece, so every hex it would occupy has to be legal, not just the tractor's.
+        boolean illegalDeployment = false;
+        Coords illegalHex = null;
         if (!entity.getAllTowedUnits().isEmpty() && !assaultDropPreference) {
             for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
                                                                    entity,
                                                                    coords,
                                                                    entity.getFacing())) {
                 if (!board.isLegalDeployment(trainHex, entity)) {
-                    logger.info("[Train] {} cannot deploy at {} facing {}: trailer hex {} is outside the "
-                                + "deployment area", entity.getShortName(), coords, entity.getFacing(), trainHex);
-                    return BoardValidationResult.TRAIN_DOES_NOT_FIT;
+                    illegalDeployment = true;
+                    illegalHex = trainHex;
+                    break;
                 }
+            }
+            // Backup the original facing
+            int originalFacing = entity.getFacing();
+
+            if (illegalDeployment) {
+                // Try turning it by one facing
+                entity.setFacing(originalFacing + 1);
+                illegalDeployment = false;
+                for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
+                                                                       entity,
+                                                                       coords,
+                                                                       entity.getFacing())) {
+                    if (!board.isLegalDeployment(trainHex, entity)) {
+                        illegalDeployment = true;
+                        break;
+                    }
+                }
+            }
+            if (illegalDeployment) {
+                // That didn't work? Try the other facing
+                entity.setFacing(originalFacing - 1);
+                for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
+                                                                       entity,
+                                                                       coords,
+                                                                       entity.getFacing())) {
+                    if (!board.isLegalDeployment(trainHex, entity)) {
+                        illegalDeployment = true;
+                        break;
+                    }
+                }
+            }
+            if (illegalDeployment) {
+                logger.info("[Train] {} cannot deploy at {} facing {}: trailer hex {} is outside the "
+                            + "deployment area",
+                            entity.getShortName(),
+                            coords,
+                            entity.getFacing(),
+                            illegalHex);
+                entity.setFacing(originalFacing);
+                return BoardValidationResult.TRAIN_DOES_NOT_FIT;
             }
         }
         // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give

@@ -35,17 +35,6 @@
 
 package megamek.common.board;
 
-import static java.util.stream.Collectors.toList;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_DRIFT;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_HIT;
-import static megamek.common.SpecialHexDisplay.Type.BOMB_MISS;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.Configuration;
 import megamek.common.Hex;
@@ -69,6 +58,17 @@ import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static java.util.stream.Collectors.toList;
+import static megamek.common.SpecialHexDisplay.Type.BOMB_DRIFT;
+import static megamek.common.SpecialHexDisplay.Type.BOMB_HIT;
+import static megamek.common.SpecialHexDisplay.Type.BOMB_MISS;
 
 public class Board implements Serializable {
 
@@ -985,6 +985,19 @@ public class Board implements Serializable {
                                                                         e.getStartingPos(), e.getStartingWidth());
         if (e.isDropShip()) {
             startingWidth = e.getStartingWidth();
+        }
+
+        int towedSize = e.getAllTowedUnits().size();
+        // Vehicles fit 2/hex. Deployment width of 1 can do 2 hexes / 4 vehicles
+        if (towedSize > 3 && e.getGame().rulesManager.getRulesGame().canWalkOnThisRound(e)) {
+            /**
+             * Towed size of 3 = 4 units, 2 hexes.
+             * towedsize + 1 is the first hex
+             * divide by 2 is the total number 
+             * always round up (no partial hexes)
+             */
+            startingWidth = (int) (Math.ceil((towedSize + 1) / 2));
+
         }
         return isLegalDeployment(c,
                                  e.getStartingPos(),

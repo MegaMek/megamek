@@ -36,8 +36,11 @@ Build with `./gradlew :megamek:buildMegaMekPackage
 -PsuiteMmDataCommit=<sha>` (on one command line). Each pin is a lowercase
 40-character SHA-1. Before any packaging tasks run, the suite tar task checks
 that MegaMek, sibling `megameklab`, `mekhq`, and `mm-data` are separate Git
-checkouts at the supplied HEADs with no tracked changes. Untracked files are
-not checked; they must not be staged into a release. `extraVersion` cannot be
+checkouts at the supplied HEADs with no tracked changes or unknown untracked
+or ignored package-source inputs. Ignored local data mirrors are allowed only
+when byte-identical to tracked mm-data files; known generated outputs and
+excluded private settings are not source inputs. Build and Gradle cache
+outputs are outside this check. `extraVersion` cannot be
 used for a suite product archive. The normal MegaMek distribution and historical
 point-release path remain available without `suiteReleaseVersion`.
 
@@ -50,7 +53,9 @@ identity, packaged jar version, launcher and bundled data, and rejects user
 settings. `buildMegaMekPackage` runs this verification after packaging.
 For local inspection of an existing archive, supply
 `-PsuiteArchiveFile=/path/to/MegaMek-<version>.tar.gz` to the verification
-task (with the suite version and four pins); this does not rebuild the archive.
+task (with the suite version and four pins); this does not rebuild the archive
+or check local Git inputs. It inspects the archived root and lib jars, not
+possibly stale local build outputs.
 
 ### JSON record and local validation
 

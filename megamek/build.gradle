@@ -116,7 +116,8 @@ def gitOutput = { File directory, String... arguments ->
                     return
                 }
                 def relative = path.replaceFirst(/^(?:megamek|megameklab|MekHQ)\//, '')
-                if (relative ==~ /mmconf\/(?:clientsettings\.xml|gameoptions\.xml|(?:mm|mml|mhq)\.preferences|megameklab\.properties(?:\.bak)?|recent-advanced-searches\.json|recent_boards\.yml|searches\/[^\/]+\.json)/
+                if (relative.startsWith('userdata/')
+                        || relative ==~ /mmconf\/(?:clientsettings\.xml|gameoptions\.xml|(?:mm|mml|mhq)\.preferences|megameklab\.properties(?:\.bak)?|recent-advanced-searches\.json|recent_boards\.yml|searches\/[^\/]+\.json)/
                         || relative in ['docs/OfficialUnitList.txt', 'docs/mm-revision.txt',
                                         'docs/mml-revision.txt', 'docs/mhq-revision.txt',
                                         'MegaMek.l4j.ini', 'MegaMekLab.l4j.ini', 'MekHQ.l4j.ini',
@@ -538,6 +539,9 @@ tasks.register('copyFiles', Copy) {
     exclude "mmconf/recent-advanced-searches.json"
     exclude "mmconf/recent_boards.yml"
     exclude "mmconf/searches/*.json"
+    if (suiteReleaseVersion != null) {
+        exclude "userdata/**"
+    }
 
     include "userdata/"
 
@@ -742,6 +746,9 @@ tasks.register('verifySuiteMegaMekArchive') {
                 }
                 if (path.startsWith(root + 'mmconf/searches/')) {
                     throw new GradleException("User searches in suite archive: ${path}")
+                }
+                if (path.startsWith(root + 'userdata/')) {
+                    throw new GradleException("User data in suite archive: ${path}")
                 }
                 if (path == root + 'suite-build.properties') {
                     def packaged = new Properties()

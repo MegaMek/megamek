@@ -39,7 +39,7 @@ that MegaMek, sibling `megameklab`, `mekhq`, and `mm-data` are separate Git
 checkouts at the supplied HEADs with no tracked changes or unknown untracked
 or ignored package-source inputs. Ignored local data mirrors are allowed only
 when byte-identical to tracked mm-data files; known generated outputs and
-excluded private settings are not source inputs. Build and Gradle cache
+excluded private settings and user data are not source inputs. Build and Gradle cache
 outputs are outside this check. `extraVersion` cannot be
 used for a suite product archive. The normal MegaMek distribution and historical
 point-release path remain available without `suiteReleaseVersion`.

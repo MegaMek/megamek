@@ -105,12 +105,12 @@ def gitOutput = { File directory, String... arguments ->
                                        'MekHQ/sentry.properties']
             def dataRepo = new File(rootDir, '../mm-data')
             def trackedData = gitOutput(dataRepo, 'ls-files', '-z', '--cached', '--', 'data')
-                    .split('\u0000').toSet()
+                    .split('\u0000').toList().toSet()
             def untracked = gitOutput(directory, (['ls-files', '-z', '--others', '--exclude-standard', '--'] + scopes)
                     as String[]).split('\u0000')
             def ignored = gitOutput(directory, (['ls-files', '-z', '--others', '--ignored',
                     '--exclude-standard', '--'] + scopes) as String[]).split('\u0000')
-            def unknown = (untracked + ignored).unique()
+            def unknown = (untracked.toList() + ignored.toList()).unique()
             unknown.each { path ->
                 if (!path) {
                     return

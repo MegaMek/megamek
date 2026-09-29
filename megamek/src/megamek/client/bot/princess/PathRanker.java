@@ -724,6 +724,29 @@ public abstract class PathRanker implements IPathRanker {
         return distance;
     }
 
+    /**
+     * How far a position is from where a unit on a movement mission is going: its current waypoint when it follows
+     * waypoints, otherwise its home edge. Before issue #9038 a unit following a waypoint was scored by its distance to
+     * the home edge, which is NORTH when no edge is set, so a waypoint anywhere else was pulled toward the north edge.
+     *
+     * <p>Anywhere within {@link Princess#DISTANCE_TO_WAYPOINT} of the waypoint counts as arrived, matching the point at
+     * which the bot moves on to the next waypoint.</p>
+     *
+     * @param movingUnit the unit on the mission
+     * @param position   the position to measure from
+     * @param boardId    the board of that position
+     * @param game       the game
+     *
+     * @return the distance in hexes; {@code 0} means the unit has arrived
+     */
+    protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game) {
+        Optional<Coords> waypoint = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner());
+        if (waypoint.isPresent() && (boardId == movingUnit.getBoardId())) {
+            return Math.max(0, position.distance(waypoint.get()) - Princess.DISTANCE_TO_WAYPOINT);
+        }
+        return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
+    }
+
     private boolean validRange(Coords finalCoords, Targetable target, int startingTargetDistance,
           int maxRange, boolean inRange) {
         if (target == null) {

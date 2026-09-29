@@ -664,6 +664,14 @@ public final class Game extends AbstractGame implements Serializable,
      * Skip off board phase, if there is no homing / semi guided ammo in play
      */
     private boolean isOffboardPlayable() {
+        // a Recon Camera spots in this phase, for any LRM or artillery unit (TO:AUE p.150)
+        for (final Entity entity : getEntitiesVector()) {
+            if (ReconCameraRules.canUseCamera(entity)) {
+                logger.info("[ReconCamera] Off-Board phase is played: {} can use its recon camera",
+                      entity.getShortName());
+                return true;
+            }
+        }
         for (final Entity entity : getEntitiesVector()) {
             for (final AmmoMounted mounted : entity.getAmmo()) {
                 AmmoType ammoType = mounted.getType();

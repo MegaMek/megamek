@@ -1824,19 +1824,25 @@ public class Princess extends BotClient {
               getGame(),
               this);
 
+        Vector<EntityAction> actions;
         if (!firingPlan.getEntityActionVector().isEmpty()) {
             LOGGER.info("{}: targeting phase turn for {}: sending {} attack action(s)",
                   getLocalPlayer().getName(), entityToFire.getDisplayName(),
                   firingPlan.getEntityActionVector().size());
-            sendAttackData(entityToFire.getId(), firingPlan.getEntityActionVector());
+            actions = new Vector<>(firingPlan.getEntityActionVector());
         } else {
             LOGGER.info("{}: targeting phase turn for {}: no artillery attacks planned",
                   getLocalPlayer().getName(), entityToFire.getDisplayName());
             if (fireControls == null) {
                 initializeFireControls();
             }
-            sendAttackData(entityToFire.getId(), getFireControl(entityToFire).getUnjamWeaponPlan(entityToFire));
+            actions = new Vector<>(getFireControl(entityToFire).getUnjamWeaponPlan(entityToFire));
         }
+        ReconCameraSpotAction cameraSpot = ReconCameraPlanner.planSpot(getGame(), entityToFire);
+        if (cameraSpot != null) {
+            actions.add(cameraSpot);
+        }
+        sendAttackData(entityToFire.getId(), actions);
         sendDone(true);
     }
 
@@ -3170,7 +3176,16 @@ public class Princess extends BotClient {
             LOGGER.debug("Moving {} (ID {})", entity.getDisplayName(), entity.getId());
             getPrecognition().ensureUpToDate();
 
-            if (isFallingBack(entity)) {
+            Optional<Coords> overridingWaypoint = getUnitBehaviorTracker().isFollowingWaypointOverWithdrawal(entity,
+                  this) ? getUnitBehaviorTracker().getActiveWaypoint(entity, this) : Optional.empty();
+            if (overridingWaypoint.isPresent()) {
+                // A crippled unit the player has sent somewhere goes there instead of withdrawing (issue #9038). It
+                // stays a withdrawing unit for firing and honor, but does not run for, or leave by, its retreat edge.
+                String msg = Messages.getString("Princess.followingOrders", entity.getDisplayName(),
+                      overridingWaypoint.get().toFriendlyString());
+                LOGGER.info("[BotOrders] {}", msg);
+                sendChat(msg, Level.ERROR);
+            } else if (isFallingBack(entity)) {
                 String msg = entity.getDisplayName();
                 if (getFallBack()) {
                     msg = Messages.getString("Princess.fallingBack", entity.getDisplayName());
@@ -3942,8 +3957,9 @@ public class Princess extends BotClient {
      * retreat Guaranteed to return a cardinal edge or NONE.
      */
     CardinalEdge getHomeEdge(Entity entity) {
-        // if I am withdrawing under forced withdrawal, my home edge is the "retreat" edge
-        if (getForcedWithdrawalTracker().isWithdrawing(entity)) {
+        // if I am withdrawing under forced withdrawal, my home edge is the "retreat" edge - unless the player has
+        // ordered the bot to flee toward an edge, which every unit follows, crippled or not (issue #9038)
+        if (getForcedWithdrawalTracker().isWithdrawing(entity) && !UnitBehavior.isFleeOrdered(this)) {
             if (getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
                 return BoardUtilities.getClosestEdge(entity);
             } else {

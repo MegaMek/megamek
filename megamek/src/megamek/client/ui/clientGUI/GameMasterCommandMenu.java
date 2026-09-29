@@ -41,8 +41,8 @@ import javax.swing.JMenuItem;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
-import megamek.common.annotations.Nullable;
 import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.Terrains;

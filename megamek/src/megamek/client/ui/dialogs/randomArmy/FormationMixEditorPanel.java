@@ -48,14 +48,13 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.UIManager;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
-import megamek.client.ratgenerator.FormationMix;
 import megamek.client.ratgenerator.FormationMixPreview;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ui.Messages;

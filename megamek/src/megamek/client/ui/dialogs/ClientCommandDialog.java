@@ -33,8 +33,8 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

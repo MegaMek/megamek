@@ -92,8 +92,9 @@ public final class SuiteRecordValidator {
                 throw new IllegalArgumentException(name + " repository mismatch");
             }
             match(product.get("commit"), COMMIT, name + ".commit");
-            if (!version(product.get("version"), name + ".version").equals(version)
-                  || !text(product.get("tag"), name + ".tag").equals(tag)) {
+            String productVersion = version(product.get("version"), name + ".version");
+            if (compareVersions(productVersion, version) > 0
+                  || !text(product.get("tag"), name + ".tag").equals("v" + productVersion)) {
                 throw new IllegalArgumentException(name + " identity mismatch");
             }
             positiveLong(product.get("releaseId"), name + ".releaseId");
@@ -101,11 +102,17 @@ public final class SuiteRecordValidator {
             fields(asset, name + ".asset", Set.of("assetId", "name", "sha256", "size"), Set.of());
             positiveLong(asset.get("assetId"), name + ".asset.assetId");
             String filename = text(asset.get("name"), name + ".asset.name");
-            if (!filename.equals(name + "-" + version + ".tar.gz") || !assetNames.add(filename)) {
+            if (!filename.equals(name + "-" + productVersion + ".tar.gz") || !assetNames.add(filename)) {
                 throw new IllegalArgumentException(name + " asset name mismatch or duplicate");
             }
             match(asset.get("sha256"), SHA256, name + ".asset.sha256");
             positiveLong(asset.get("size"), name + ".asset.size");
+        }
+        String gameVersion = products.get("MegaMek").get("version").textValue();
+        String labVersion = products.get("MegaMekLab").get("version").textValue();
+        String hqVersion = products.get("MekHQ").get("version").textValue();
+        if (compareVersions(gameVersion, labVersion) > 0 || compareVersions(labVersion, hqVersion) > 0) {
+            throw new IllegalArgumentException("Bundled product version cannot predate its dependency");
         }
         JsonNode data = root.get("mmData");
         fields(data, "mmData", Set.of("repository", "commit"), Set.of());
@@ -113,6 +120,18 @@ public final class SuiteRecordValidator {
             throw new IllegalArgumentException("mmData repository mismatch");
         }
         match(data.get("commit"), COMMIT, "mmData.commit");
+    }
+
+    private static int compareVersions(String left, String right) {
+        String[] a = left.split("\\.");
+        String[] b = right.split("\\.");
+        for (int i = 0; i < a.length; i++) {
+            int comparison = Integer.compare(Integer.parseInt(a[i]), Integer.parseInt(b[i]));
+            if (comparison != 0) {
+                return comparison;
+            }
+        }
+        return 0;
     }
 
     private static String version(JsonNode value, String field) {

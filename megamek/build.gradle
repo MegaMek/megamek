@@ -45,6 +45,7 @@ sourceSets {
 // Filter only the packaged properties file; leave the source and other presentation keys untouched.
 // processResources is also used by run and test, so Version() sees the same identity as the archive.
 def suiteReleaseVersion = rootProject.findProperty('suiteReleaseVersion')
+def suiteProductVersion = rootProject.findProperty('suiteMegaMekVersion') ?: suiteReleaseVersion
 def suitePins = [megamekCommit: ['suiteMegaMekCommit', rootDir],
                  megameklabCommit: ['suiteMegaMekLabCommit', new File(rootDir, '../megameklab')],
                  mekhqCommit: ['suiteMekHQCommit', new File(rootDir, '../mekhq')],
@@ -53,10 +54,10 @@ def suiteIdentity = {
     if (suiteReleaseVersion == null) {
         throw new GradleException('Supply -PsuiteReleaseVersion for a suite product package')
     }
-    if (project.version.toString() != suiteReleaseVersion.toString()) {
-        throw new GradleException('Suite product archive version must equal suiteReleaseVersion (omit extraVersion)')
+    if (project.version.toString() != suiteProductVersion.toString()) {
+        throw new GradleException('Suite product archive version must equal suiteMegaMekVersion (omit extraVersion)')
     }
-    def values = [schemaVersion: '1', product: 'MegaMek', version: suiteReleaseVersion.toString()]
+    def values = [schemaVersion: '1', product: 'MegaMek', version: suiteProductVersion.toString()]
     suitePins.each { key, pin ->
         def value = rootProject.findProperty(pin[0])?.toString()
         if (!(value ==~ /[0-9a-f]{40}/)) {
@@ -103,9 +104,9 @@ gradle.taskGraph.whenReady { graph ->
     }
 }
 if (suiteReleaseVersion != null) {
-    def components = suiteReleaseVersion.toString().split(/\./)
+    def components = suiteProductVersion.toString().split(/\./)
     tasks.named('processResources') {
-        inputs.property('suiteReleaseVersion', suiteReleaseVersion.toString())
+        inputs.property('suiteMegaMekVersion', suiteProductVersion.toString())
         filesMatching('Version.properties') {
             filter { line ->
                 if (line ==~ /(?:major|minor|patch)=.*/) {

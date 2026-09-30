@@ -808,13 +808,15 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // WiGEs get bonus MP for each string of three consecutive hexes they descend.
+        // WiGEs get bonus MP for each string of three consecutive hexes they descend. Measure the unit's own
+        // altitude: a WiGE holding its altitude (Keep Elevation) over lower terrain is not descending.
         if (entity.getMovementMode() == EntityMovementMode.WIGE &&
             getClearance() > 0 &&
             game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS)) {
 
-            if (game.getBoard(boardId).getHex(getPosition()).ceiling() <
-                game.getBoard(boardId).getHex(prev.getPosition()).ceiling()) {
+            int altitude = game.getBoard(boardId).getHex(getPosition()).getLevel() + getElevation();
+            int previousAltitude = game.getBoard(boardId).getHex(prev.getPosition()).getLevel() + prev.getElevation();
+            if (altitude < previousAltitude) {
                 nWigeDescent = prev.getNWigeDescent() + 1;
                 if (nWigeDescent >= 3) {
                     wigeBonus++;

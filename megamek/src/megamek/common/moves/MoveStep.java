@@ -3928,6 +3928,11 @@ public class MoveStep implements Serializable {
             }
         }
 
+        // Airborne WiGE steps are MOVE_VTOL_*, so the elevation change check above is skipped for them
+        if (isAirborneWiGERiseTooHigh(src, srcHex, srcEl, srcAlt, dest, destHex)) {
+            return false;
+        }
+
         // Sheer Cliffs, TO p.39
         // Roads over cliffs cancel the cliff effects for units that move on roads
         boolean vehicleAffectedByCliff = entity instanceof Tank && !entity.isAirborneVTOLorWIGE();
@@ -4334,6 +4339,45 @@ public class MoveStep implements Serializable {
 
     public int getElevation() {
         return elevation;
+    }
+
+    /**
+     * TW p.55: a WiGE may enter a hex one level higher than its current hex, never two or more. A WiGE holding its
+     * altitude over lower hexes (TW p.56 example) is measured from that altitude rather than from the ground below it,
+     * so its altitude may rise by at most one level per hex entered. Building roofs count as the surface (see
+     * {@link Entity#calcElevation}). Grounded WiGEs, jumps and steps within one hex are not checked here.
+     *
+     * @param src     the hex the step starts in
+     * @param srcHex  the hex at {@code src}
+     * @param srcEl   the unit's elevation in the source hex
+     * @param srcAlt  the unit's absolute altitude in the source hex (hex level plus elevation)
+     * @param dest    the hex the step enters
+     * @param destHex the hex at {@code dest}
+     *
+     * @return {@code true} if this step would lift an airborne WiGE more than one level
+     */
+    private boolean isAirborneWiGERiseTooHigh(Coords src, Hex srcHex, int srcEl, int srcAlt, Coords dest,
+          Hex destHex) {
+        if ((movementMode != EntityMovementMode.WIGE) || (movementType == EntityMovementType.MOVE_JUMP)
+              || src.equals(dest)) {
+            return false;
+        }
+        int sourceClearance = srcEl;
+        if (srcHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            sourceClearance -= srcHex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        if (sourceClearance <= 0) {
+            return false;
+        }
+        // Use the step elevation rather than isMovementPossible's destAlt, which is clamped to the floor of
+        // building hexes in some climb mode cases
+        int altitudeRise = (elevation + destHex.getLevel()) - srcAlt;
+        if (altitudeRise > 1) {
+            LOGGER.debug("isValidStep: airborne WiGE {} cannot rise {} levels into {}",
+                  getEntity().getDisplayName(), altitudeRise, dest);
+            return true;
+        }
+        return false;
     }
 
     /**

@@ -65,7 +65,10 @@ an unreviewed worktree or fall back to a previous record.
 
 Focused offline checks (fake GitHub/Gradle, no remote writes):
 `python3 -m unittest discover -s scripts -p 'test_suite_*.py'`.
-The shared archive regression suite (including external adapter task graphs)
-is `python3 -m unittest discover -s gradle -p 'test_suite_archive_verifier.py'`
+The shared archive and canonical-data regression suites (including external
+adapter task graphs) run with `python3 -m unittest discover -s gradle -p 'test_suite_*.py'`
 from MegaMek, with the Lab/HQ/mm-data sibling checkouts present. Merge the
 MegaMek shared verifier before Lab/HQ, whose builds load it from that sibling.
+Use clean disposable sibling checkouts for producer checks: a normal developer
+worktree may contain ignored custom images or other unpinned package inputs,
+which suite builds intentionally reject even when `git status` is clean.

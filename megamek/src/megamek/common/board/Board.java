@@ -64,7 +64,9 @@ import megamek.common.loaders.MapSettings;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityWeightClass;
 import megamek.common.units.IBuilding;
+import megamek.common.units.SupportTank;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -988,7 +990,12 @@ public class Board implements Serializable {
         }
 
         int towedSize = e.getAllTowedUnits().size();
+        boolean largeSupportVee = e instanceof SupportTank && e.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT;
         // Vehicles fit 2/hex. Deployment width of 1 can do 2 hexes / 4 vehicles
+        if (largeSupportVee) {
+            // Large support vehicles take up their entire hex, so are the equivalent of 2 units
+            towedSize++;
+        }
         if (towedSize > 3 && e.getGame().rulesManager.getRulesGame().canWalkOnThisRound(e)) {
             /**
              * Towed size of 3 = 4 units, 2 hexes.

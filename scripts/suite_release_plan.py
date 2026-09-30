@@ -35,19 +35,31 @@ def failure_detail(error):
     if isinstance(error, OSError):
         return f"could not start executable ({type(error).__name__}; check installation/PATH)"
     code = getattr(error, "returncode", "unknown")
-    output = getattr(error, "stderr", None) or getattr(error, "stdout", None) or ""
-    if isinstance(output, bytes):
-        output = output.decode("utf-8", errors="replace")
-    lines = []
-    for line in output.splitlines():
-        # Do not display credentials, URLs with embedded credentials, or opaque
-        # strings that could be tokens. Keep ordinary Gradle/gh error messages.
-        if re.search(r"token|authorization|password|secret|cookie|https?://", line, re.I):
+    tails = []
+    gradle_errors = []
+    for output in (getattr(error, "stderr", None), getattr(error, "stdout", None)):
+        if not output:
             continue
-        line = re.sub(r"[A-Za-z0-9_+/\-=]{32,}", "[redacted]", line.strip())
-        if line:
-            lines.append(line[:200])
-    return f"exit {code}" + (": " + " | ".join(lines[-5:]) if lines else
+        if isinstance(output, bytes):
+            output = output.decode("utf-8", errors="replace")
+        lines = []
+        for line in output.splitlines():
+            # Do not display credentials, URLs with embedded credentials, or opaque
+            # strings that could be tokens. Keep ordinary Gradle/gh error messages.
+            if re.search(r"token|authorization|password|secret|cookie|https?://", line, re.I):
+                continue
+            line = re.sub(r"[A-Za-z0-9_+/\-=]{32,}", "[redacted]", line.strip())
+            if line:
+                lines.append(line[:200])
+        tails.extend(lines[-5:])
+        if "* What went wrong:" in lines:
+            start = lines.index("* What went wrong:")
+            end = next((i for i in range(start + 1, len(lines))
+                        if lines[i].startswith("* ")), len(lines))
+            gradle_errors.extend(lines[start:end][:10])
+    # Gradle's trailing advice otherwise displaces the actual failure.
+    lines = gradle_errors or tails
+    return f"exit {code}" + (": " + " | ".join(lines) if lines else
                              " (inspect local command output for details)")
 
 

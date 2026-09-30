@@ -63,6 +63,21 @@ Missing tasks, incomplete official commits, mutable refs, unavailable
 dependencies, and changed inventories are blockers, not reasons to switch to
 an unreviewed worktree or fall back to a previous record.
 
+## Diagnosing failed dry runs
+
+Pinned Gradle failures identify the product and requested task. Subprocess
+diagnostics inspect both stderr and stdout and prefer Gradle's
+`What went wrong` section over its trailing advice. Excerpts remain bounded
+and omit credential-bearing or URL-bearing lines and redact opaque strings;
+they are not full build logs. For other commands, diagnostics retain a bounded
+tail from each stream.
+
+A failed preparation is not a verified bootstrap: dry-run completion and
+publication must not be inferred from earlier successful steps. Check the
+failed step and confirm the App-token/publication steps were skipped. Correct
+the reported cause before a reviewed retry; never disable verification or
+change the frozen commits to bypass a failure.
+
 Focused offline checks (fake GitHub/Gradle, no remote writes):
 `python3 -m unittest discover -s scripts -p 'test_suite_*.py'`.
 The shared archive and canonical-data regression suites (including external

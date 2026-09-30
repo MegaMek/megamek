@@ -111,9 +111,34 @@ class PinnedBuildTests(unittest.TestCase):
             self.assertNotIn("--offline", command)
             raise subprocess.CalledProcessError(
                 1, command, stderr="Could not resolve dependency: repository unavailable")
-        with self.assertRaisesRegex(UnsafeInventory, "Could not resolve dependency"):
+        with self.assertRaisesRegex(
+                UnsafeInventory,
+                "MegaMek :megamek:test failed: .*Could not resolve dependency"):
             pinned.gradle("MegaMek", pinned.TASKS["MegaMek"][0],
                           {"MegaMek": directory}, [], unavailable)
+
+    def test_gradle_failure_names_product_and_task_without_retry(self):
+        directory = self.root / "megamek"
+        directory.mkdir()
+        (directory / "gradlew").touch()
+        (directory / "gradlew.bat").touch()
+        calls = []
+
+        def failed(command, **kwargs):
+            calls.append(command)
+            raise subprocess.CalledProcessError(
+                1, command,
+                output="* What went wrong:\nExecution failed for task ':megamek:distTar'.\n"
+                       "> Missing pinned data.\n* Try:\n" + "advice\n" * 10,
+                stderr="JVM warning\n")
+
+        with self.assertRaises(UnsafeInventory) as caught:
+            pinned.gradle("MegaMek", pinned.TASKS["MegaMek"][1],
+                          {"MegaMek": directory}, [], failed)
+        self.assertIn(f"MegaMek {pinned.TASKS['MegaMek'][1]} failed:", str(caught.exception))
+        self.assertIn("Execution failed for task ':megamek:distTar'.", str(caught.exception))
+        self.assertIn("Missing pinned data.", str(caught.exception))
+        self.assertEqual(len(calls), 1)
 
     def test_fail_closed_before_clone(self):
         for change in ({"previous": None}, {"commits": {"megamek": "main"}}):

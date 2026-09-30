@@ -98,8 +98,11 @@ def gradle(product, task, worktrees, properties, runner):
     executable = directory / ("gradlew.bat" if os.name == "nt" else "gradlew")
     if not executable.is_file():
         raise UnsafeInventory(f"missing pinned Gradle wrapper: {product}")
-    run([str(executable), task, "--no-daemon", *properties],
-        runner, cwd=directory)
+    try:
+        run([str(executable), task, "--no-daemon", *properties],
+            runner, cwd=directory)
+    except UnsafeInventory as error:
+        raise UnsafeInventory(f"{product} {task} failed: {error}") from None
 
 
 def build(inventory, sources, prior_paths, output, *, bootstrap=False,

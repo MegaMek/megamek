@@ -7980,14 +7980,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 isUsingChaff = true;
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_CLEAR_DEPLOY.getCmd())) {
-            clear(false);
             Entity currentlySelectedEntity = currentEntity();
+            if (currentlySelectedEntity != null) {
+                DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+                deploymentHelper.setStartingFacing(currentlySelectedEntity,
+                                                   game.getPlayersList(),
+                                                   currentlySelectedEntity.getPosition());
+            }
+            clear(false);
             if (currentlySelectedEntity != null) {
                 lastDeploymentOption = null;
                 lastHexDeploymentOptions.clear();
                 originalFacing = -1;
             }
-
         }
 
         refreshButtons();
@@ -9478,15 +9483,23 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void processDeploymentTurn(Entity entity,
                                        Coords coords) {
+        int originalFacing = entity.getFacing();
+        // Update the facing first so we can check the train
+        entity.setFacing(entity.getPosition().direction(coords));
         DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
         if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
                                               entity,
-                                              coords,
+                                              entity.getPosition(),
                                               false, false)) {
+            // Reset original facing
+            entity.setFacing(originalFacing);
             return;
         }
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
+        // Clear the train and refresh the UI
+        clearTrain(entity);
+        // redeploy the train and refresh the UI
         deployTrain(entity);
         cmd = new MovePath(game, entity);
         addDeploymentToMovePath();

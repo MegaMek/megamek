@@ -873,9 +873,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 processTurn(entity, coords, turnMode && !shiftHeld);
                 return;
             }
-
+            int tempFacing = entity.getFacing();
             DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
-            if (originalFacing == -1) {
+            if (originalFacing == -1 && tempFacing == entity.getFacing()) {
                 deploymentHelper.setStartingFacing(entity, game.getPlayersList(), coords);
                 originalFacing = entity.getFacing();
             }
@@ -922,16 +922,24 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             return;
         }
+        // Backup facing and then set the new prospective facing
+        int originalFacing = entity.getFacing();
+        entity.setFacing(entity.getPosition().direction(coords));
         DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
         if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
                                               entity,
-                                              coords,
+                                              entity.getPosition(),
                                               false, false)) {
+            // Restore the facing since it won't work
+            entity.setFacing(originalFacing);
             return;
         }
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
         if (!entity.getAllTowedUnits().isEmpty()) {
+            // clear any sprites
+            clearTrain(entity);
+            // deploy the train
             deployTrain(entity);
         }
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
@@ -1221,10 +1229,14 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
         } else if (actionCmd.equals(DeployCommand.DEPLOY_CLEAR_DEPLOY.getCmd())) {
             Entity entity = currentEntity();
             if (entity != null) {
+                DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+                deploymentHelper.setStartingFacing(entity,
+                                                   game.getPlayersList(),
+                                                   entity.getPosition());
                 lastDeploymentOption = null;
                 lastHexDeploymentOptions.clear();
-                clear();
                 originalFacing = -1;
+                clear();
             }
         }
     }

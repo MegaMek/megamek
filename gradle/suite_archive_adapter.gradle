@@ -16,7 +16,7 @@ ext.suitePython = {
     String executable = rootProject.findProperty('suitePythonExecutable')?.toString()
             ?: (System.getProperty('os.name').toLowerCase().contains('windows') ? 'python' : 'python3')
     def command = [executable, '-c',
-                   'import sys; print("%d.%d.%d" % sys.version_info[:3]); sys.exit(sys.version_info < (3, 10))']
+                   'import sys; print(*sys.version_info[:3], sep=chr(46)); sys.exit(sys.version_info < (3, 10))']
     try {
         def process = new ProcessBuilder(command).redirectErrorStream(true).start()
         if (!process.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) {
@@ -36,10 +36,28 @@ ext.suitePython = {
     }
     executable
 }
+ext.runSuitePython = { List args, String failure ->
+    def execution = providers.exec {
+        commandLine args.collect { it.toString() }
+        ignoreExitValue = true
+    }
+    def output = execution.standardOutput.asText.get().trim()
+    def error = execution.standardError.asText.get().trim()
+    if (execution.result.get().exitValue != 0) {
+        throw new GradleException("${failure}\n${error}\n${output}".trim())
+    }
+    if (output) {
+        logger.lifecycle(output)
+    }
+    if (error) {
+        logger.warn(error)
+    }
+}
 ext.suiteMirrorMatchesPin = { File local, String source ->
     File repo = rootProject.file('../mm-data')
     def git = { List<String> args ->
-        def process = new ProcessBuilder(['git', '-C', repo.absolutePath] + args)
+        def process = new ProcessBuilder((['git', '-C', repo.absolutePath] + args)
+                .collect { it.toString() })
                 .redirectErrorStream(true).start()
         def result = process.inputStream.getText('UTF-8').trim()
         if (process.waitFor() != 0) {
@@ -64,10 +82,7 @@ if (suiteDataFromPin) {
             def args = [suitePython(), script.absolutePath, '--data-repo',
                         rootProject.file('../mm-data').absolutePath, '--pin', pin,
                         '--output', suiteDataRoot.absolutePath]
-            def execution = new ProcessBuilder(args).inheritIO().start()
-            if (execution.waitFor() != 0) {
-                throw new GradleException('Suite pinned mm-data preparation failed')
-            }
+            runSuitePython(args, 'Suite pinned mm-data preparation failed')
         }
     }
     tasks.matching { it.name in ['stageDataImages', 'stageDataBoards', 'stageDataFonts',
@@ -134,8 +149,5 @@ ext.verifySuiteArchiveShared = { String product, File archive, File copyJar = nu
             args += ['--source-jar', "${dependency}=${source.absolutePath}"]
         }
     }
-    def execution = new ProcessBuilder(args).inheritIO().start()
-    if (execution.waitFor() != 0) {
-        throw new GradleException("Suite archive verification failed: ${archive}")
-    }
+    runSuitePython(args, "Suite archive verification failed: ${archive}".toString())
 }

@@ -14,21 +14,22 @@ from suite_archive_verifier import GENERATED, pinned_tree, verify_zip_data
 
 
 class PinnedDataTests(unittest.TestCase):
-    def test_gradle_python_preflight_rejects_missing_and_old_interpreters(self):
+    def test_gradle_python_preflight_accepts_supported_and_rejects_missing_and_old_interpreters(self):
         root = Path(__file__).resolve().parents[1]
         gradle = root / ("gradlew.bat" if os.name == "nt" else "gradlew")
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)
             missing = base / "missing-python"
-            executables = [missing]
+            executables = [(missing, "Python 3.10+")]
             old = base / ("old-python.cmd" if os.name == "nt" else "old-python")
             if os.name == "nt":
                 old.write_bytes(b"@echo off\r\necho 3.9.0\r\n")
             else:
                 old.write_text("#!/bin/sh\nprintf '3.9.0\\n'\n")
                 old.chmod(0o755)
-            executables.append(old)
-            for executable in executables:
+            executables.append((old, "Python 3.10+"))
+            executables.append((Path(sys.executable), "missing or incorrectly named archive"))
+            for executable, expected_detail in executables:
                 with self.subTest(executable=executable):
                     command = [str(gradle), ":megamek:verifySuiteMegaMekArchive",
                                "--console=plain", "-PsuiteReleaseVersion=0.51.01",
@@ -41,8 +42,9 @@ class PinnedDataTests(unittest.TestCase):
                                             text=True, check=False, timeout=180)
                     self.assertNotEqual(result.returncode, 0)
                     message = result.stdout + result.stderr
-                    self.assertIn("Python 3.10+", message)
-                    self.assertIn("suitePythonExecutable", message)
+                    self.assertIn(expected_detail, message)
+                    if executable != Path(sys.executable):
+                        self.assertIn("suitePythonExecutable", message)
 
     def test_crlf_checkout_stages_exact_blobs_for_loose_files_and_all_zips(self):
         with tempfile.TemporaryDirectory() as directory:

@@ -553,10 +553,7 @@ public class LosEffects {
             for (final Coords targetPosition : targetPositions) {
                 LosEffects newLos = calculateLOS(game, attacker, target, attackerPosition, targetPosition, boardId,
                       spotting);
-                // is the new one better?
-                if ((bestLOS == null) ||
-                      bestLOS.isBlocked() ||
-                      (newLos.losModifiers(game).getValue() < bestLOS.losModifiers(game).getValue())) {
+                if (isBetterLos(game, bestLOS, newLos)) {
                     bestLOS = newLos;
                 }
             }
@@ -568,6 +565,57 @@ public class LosEffects {
 
         bestLOS.targetLoc = target.getPosition();
         return bestLOS;
+    }
+
+    /**
+     * Calculates LOS from one fixed firing position and height to the best hex of the target. This is for a weapon
+     * that fires from its own spot, such as a weapon on one floor of a building entity. The attacker's position stays
+     * fixed, but a multi-hex target (a grounded DropShip covers seven hexes) is checked at every hex it occupies and
+     * the best line is kept, the same way {@link #calculateLOS(Game, Entity, Targetable, boolean)} does.
+     *
+     * @param game             The current {@link Game}
+     * @param attacker         the attacking entity, which may be {@code null}; the view is then blocked
+     * @param target           the target, which may be {@code null}; the view is then blocked
+     * @param attackerPosition the hex the weapon fires from
+     * @param attackHeight     the height the weapon fires from
+     * @param boardId          the board both positions are on
+     * @param spotting         whether this LOS is for spotting
+     *
+     * @return the best LOS effects from the firing position to any hex of the target
+     */
+    public static LosEffects calculateLOSToBestTargetHex(final Game game, final @Nullable Entity attacker,
+          final @Nullable Targetable target, final @Nullable Coords attackerPosition, final int attackHeight,
+          final int boardId, final boolean spotting) {
+        if (target == null) {
+            return calculateLOS(game, attacker, null, attackerPosition, null, attackHeight, boardId, spotting);
+        }
+        final List<Coords> targetPositions = new ArrayList<>();
+        if (target.getSecondaryPositions().isEmpty()) {
+            targetPositions.add(target.getPosition());
+        } else {
+            targetPositions.addAll(target.getSecondaryPositions().values());
+        }
+
+        LosEffects bestLOS = null;
+        for (final Coords targetPosition : targetPositions) {
+            LosEffects newLos = calculateLOS(game, attacker, target, attackerPosition, targetPosition, attackHeight,
+                  boardId, spotting);
+            if (isBetterLos(game, bestLOS, newLos)) {
+                bestLOS = newLos;
+            }
+        }
+        bestLOS.targetLoc = target.getPosition();
+        return bestLOS;
+    }
+
+    /**
+     * @return {@code true} if the candidate LOS should replace the best one found so far: there is none yet, the best
+     *       one is blocked, or the candidate has a lower modifier
+     */
+    private static boolean isBetterLos(final Game game, final @Nullable LosEffects bestLos,
+          final LosEffects candidateLos) {
+        return (bestLos == null) || bestLos.isBlocked()
+              || (candidateLos.losModifiers(game).getValue() < bestLos.losModifiers(game).getValue());
     }
 
     public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,

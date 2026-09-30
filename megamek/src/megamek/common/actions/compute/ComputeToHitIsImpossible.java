@@ -683,6 +683,11 @@ class ComputeToHitIsImpossible {
             return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
         }
 
+        // An airborne unit that used its Recon Camera this turn makes no other attack (TO:AUE p.150)
+        if (ReconCameraRules.forbidsOtherAttacks(attacker)) {
+            return Messages.getString("ReconCamera.noOtherAttacks");
+        }
+
         // Hull Down
 
         // Hull down meks cannot fire any leg weapons

@@ -229,6 +229,8 @@ class WiGEElevationChangeTest extends GameBoardTestCase {
         private LandAirMek airMek() {
             LandAirMek lam = (LandAirMek) MMTestUtilities.getEntityForUnitTesting("Shadow Hawk LAM SHD-X2", false);
             assertNotNull(lam, "the Shadow Hawk LAM test unit should load");
+            // The SHD-X2 is bimodal (no AirMek mode); make it a standard LAM so AirMek mode is legal
+            lam.setLAMType(LandAirMek.LAM_STANDARD);
             lam.setConversionMode(LandAirMek.CONV_MODE_AIR_MEK);
             return lam;
         }

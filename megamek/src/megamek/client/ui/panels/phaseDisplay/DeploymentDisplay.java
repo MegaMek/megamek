@@ -46,9 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.ToolTipManager;
+import javax.swing.*;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
@@ -90,6 +88,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
+import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay {
@@ -621,6 +620,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
     private void takeBackDeployment(Entity entity,
                                     String reason) {
         entity.setPosition(null);
+        if (!currentEntity().getAllTowedUnits().isEmpty()) {
+            clearTrain(entity);
+        }
         clientgui.boardViews().forEach(boardView -> ((BoardView) boardView).redrawEntity(entity));
         clientgui.boardViews().forEach(IBoardView::repaint);
         butDone.setEnabled(false);
@@ -646,6 +648,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                     other.setTransportId(Entity.NONE);
                     other.newRound(client.getGame().getRoundCount());
                 }
+            }
+            if (!currentEntity().getAllTowedUnits().isEmpty()) {
+                clearTrain(currentEntity());
             }
         }
         clientgui.boardViews().forEach(IBoardView::repaint);
@@ -815,6 +820,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                     boolean shiftHeld) {
         entity.setPosition(coords);
         entity.setBoardId(boardId);
+        deployTrain(entity);
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawAllEntities());
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
@@ -873,7 +879,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                 deploymentHelper.setStartingFacing(entity, game.getPlayersList(), coords);
                 originalFacing = entity.getFacing();
             }
-            if (!deploymentHelper.checkDeployment(board, entity, coords, assaultDropPreference)) {
+            if (!deploymentHelper.checkDeployment(board, entity, coords, assaultDropPreference, true)) {
                 return;
             }
 
@@ -916,8 +922,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
             return;
         }
+        DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+        if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
+                                              entity,
+                                              coords,
+                                              false, false)) {
+            return;
+        }
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            deployTrain(entity);
+        }
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));
         clientgui.updateFiringArc(entity);
         clientgui.showSensorRanges(entity);
@@ -1222,6 +1238,67 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                                                                : "DeploymentDisplay.deployHullDown"));
     }
 
+    /**
+     * Clear the entity's train from the display
+     *
+     * @param entity
+     */
+    private void clearTrain(Entity entity) {
+        List<Integer> towedUnits = entity.getAllTowedUnits();
+        if (towedUnits.isEmpty()) {
+            return;
+        }
+        for (Integer unitId : towedUnits) {
+            Entity towedUnit = entity.getGame().getEntity(unitId);
+            towedUnit.setPosition(null);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(towedUnit));
+        }
+    }
+
+    /**
+     * Deploy the train for the entity (at least in the local UI)
+     *
+     * @param entity the tractor
+     */
+    private void deployTrain(Entity entity) {
+        if (entity.getAllTowedUnits().isEmpty()) {
+            return;
+        }
+
+        int trailerCount = entity.getAllTowedUnits().size();
+        List<Coords> trainPath = TrainLayout.deploymentPath(entity.getPosition(),
+                                                            entity.getFacing(),
+                                                            trailerCount);
+        List<Integer> trainFacings = new ArrayList<>();
+        for (int step = 0; step < trainPath.size(); step++) {
+            trainFacings.add(entity.getFacing());
+        }
+
+        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(
+                entity.getGame(),
+                entity,
+                entity.getPosition(),
+                entity.getFacing(),
+                trainPath,
+                trainFacings);
+
+        // The footprint was checked against the deployment zone in receiveDeployment, before the tractor was placed.
+
+        TrainLayout.applyLayout(entity.getGame(), placements);
+
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = entity.getGame().getEntity(placement.entityId());
+            if (trailer == null) {
+                continue;
+            }
+            trailer.setBoardId(entity.getBoardId());
+            trailer.setElevation(entity.getElevation());
+            trailer.setSecondaryFacing(trailer.getFacing());
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(trailer));
+        }
+    }
+
+
     @Override
     public void clear() {
         clientgui.maybeShowUnitDisplay();
@@ -1229,6 +1306,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             selectEntity(currentEntity().getId());
             currentEntity().setPosition(null);
             clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentEntity()));
+            if (!currentEntity().getAllTowedUnits().isEmpty()) {
+                clearTrain(currentEntity());
+            }
         }
         clientgui.boardViews().forEach(IBoardView::repaint);
         setNextEnabled(true);
@@ -1281,6 +1361,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
                                 other.setTransportId(Entity.NONE);
                                 other.newRound(client.getGame().getRoundCount());
                             }
+                        }
+                        if (!currentEntity().getAllTowedUnits().isEmpty()) {
+                            clearTrain(currentEntity());
                         }
                     }
                     selectEntity(e.getId());

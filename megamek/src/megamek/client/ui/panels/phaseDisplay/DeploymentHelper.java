@@ -33,6 +33,10 @@
 
 package megamek.client.ui.panels.phaseDisplay;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
@@ -56,10 +60,6 @@ import megamek.common.units.Terrains;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
 public class DeploymentHelper {
 
     private final ClientGUI clientgui;
@@ -75,7 +75,19 @@ public class DeploymentHelper {
                                    Entity entity,
                                    Coords coords,
                                    boolean assaultDropPreference) {
-        BoardValidationResult validationResult = validateDeploymentBoard(entity, board, coords, assaultDropPreference);
+        return checkDeployment(board, entity, coords, assaultDropPreference, false);
+    }
+
+    public boolean checkDeployment(Board board,
+                                   Entity entity,
+                                   Coords coords,
+                                   boolean assaultDropPreference,
+                                   boolean findAlternateFacing) {
+        BoardValidationResult validationResult = validateDeploymentBoard(entity,
+                                                                         board,
+                                                                         coords,
+                                                                         assaultDropPreference,
+                                                                         findAlternateFacing);
         if (validationResult == BoardValidationResult.WRONG_BOARD_TYPE) {
             showWrongBoardTypeMessage(board, entity);
             return false;
@@ -96,17 +108,37 @@ public class DeploymentHelper {
     }
 
     /**
-     * Validates whether an entity can deploy on the given board at the specified coordinates.
+     * If anyone needs to call this without the checkAlternateFacings boolean
+     * entity The entity to deploy
      *
-     * @param entity The entity to deploy
-     * @param board  The board to deploy on
-     * @param coords The coordinates for deployment
+     * @param entity                The entity to deploy
+     * @param board                 The board to deploy on
+     * @param coords                The coordinates for deployment
+     * @param assaultDropPreference is it an assault drop
      * @return VALID if deployment can proceed, WRONG_BOARD_TYPE or OUTSIDE_DEPLOYMENT_AREA otherwise
      */
     BoardValidationResult validateDeploymentBoard(Entity entity,
                                                   Board board,
                                                   Coords coords,
                                                   boolean assaultDropPreference) {
+        return validateDeploymentBoard(entity, board, coords, assaultDropPreference, false);
+    }
+
+    /**
+     * Validates whether an entity can deploy on the given board at the specified coordinates.
+     *
+     * @param entity The entity to deploy
+     * @param board  The board to deploy on
+     * @param coords The coordinates for deployment
+     * @param assaultDropPreference is it an assault drop
+     * @param checkAlternateFacings should I check other facings (for trains)
+     * @return VALID if deployment can proceed, WRONG_BOARD_TYPE or OUTSIDE_DEPLOYMENT_AREA otherwise
+     */
+    BoardValidationResult validateDeploymentBoard(Entity entity,
+                                                  Board board,
+                                                  Coords coords,
+                                                  boolean assaultDropPreference,
+                                                  boolean checkAlternateFacings) {
         if (entity.isBoardProhibited(board)) {
             return BoardValidationResult.WRONG_BOARD_TYPE;
         }
@@ -130,7 +162,7 @@ public class DeploymentHelper {
             // Backup the original facing
             int originalFacing = entity.getFacing();
 
-            if (illegalDeployment) {
+            if (illegalDeployment && checkAlternateFacings) {
                 // Try turning it by one facing
                 entity.setFacing(originalFacing + 1);
                 illegalDeployment = false;
@@ -144,7 +176,7 @@ public class DeploymentHelper {
                     }
                 }
             }
-            if (illegalDeployment) {
+            if (illegalDeployment && checkAlternateFacings) {
                 // That didn't work? Try the other facing
                 entity.setFacing(originalFacing - 1);
                 for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
@@ -164,7 +196,9 @@ public class DeploymentHelper {
                             coords,
                             entity.getFacing(),
                             illegalHex);
-                entity.setFacing(originalFacing);
+                if (originalFacing != entity.getFacing()) {
+                    entity.setFacing(originalFacing);
+                }
                 return BoardValidationResult.TRAIN_DOES_NOT_FIT;
             }
         }

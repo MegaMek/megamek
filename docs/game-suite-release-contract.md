@@ -5,7 +5,7 @@ let future release jobs give each changed product its own version and check a pr
 record describing a complete set of three game downloads.
 **These Gradle tasks do not publish a record or a release.** The separate
 manual coordinator workflow can publish after a protected live approval;
-see `docs/game-suite-coordinator-checkpoint.md` for setup and recovery.
+see [game-suite release operations](game-suite-release-operations.md) for setup and recovery.
 There is no schedule, version reservation, or launcher change here.
 
 ## Implemented in this PR

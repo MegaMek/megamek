@@ -79,7 +79,7 @@ if (suiteDataFromPin) {
             def script = rootProject.name == 'MegaMekRoot'
                     ? rootProject.file('scripts/suite_pinned_data.py')
                     : rootProject.file('../megamek/scripts/suite_pinned_data.py')
-            def args = [suitePython(), script.absolutePath, '--data-repo',
+            def args = [suitePython(), '-B', script.absolutePath, '--data-repo',
                         rootProject.file('../mm-data').absolutePath, '--pin', pin,
                         '--output', suiteDataRoot.absolutePath]
             runSuitePython(args, 'Suite pinned mm-data preparation failed')
@@ -110,7 +110,7 @@ ext.verifySuiteArchiveShared = { String product, File archive, File copyJar = nu
     if (product == 'MegaMek' && rootProject.name == 'MegaMekRoot') {
         shared = rootProject.file('gradle/suite_archive_verifier.py')
     }
-    def args = [suitePython(), shared.absolutePath, '--product', product, '--archive', archive.absolutePath,
+    def args = [suitePython(), '-B', shared.absolutePath, '--product', product, '--archive', archive.absolutePath,
                 '--version', productVersion.toString(), '--data-repo',
                 rootProject.file('../mm-data').absolutePath]
     required.each { key ->

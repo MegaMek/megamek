@@ -143,6 +143,8 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 break;
             case MOVEMENT:
                 gameManager.detectHiddenUnits();
+                // Recon Cameras flown in Reveal mode (TO:AUE p.150)
+                new ReconCameraHandler(gameManager).revealHiddenUnits();
                 ServerHelper.detectMinefields(gameManager.getGame(), gameManager.getMainPhaseReport(), gameManager);
                 gameManager.updateSpacecraftDetection();
                 gameManager.detectSpacecraft();
@@ -201,6 +203,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
+                gameManager.resolveUnJams();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
                 gameManager.addReport(gameManager.resolveCrewConsciousness());

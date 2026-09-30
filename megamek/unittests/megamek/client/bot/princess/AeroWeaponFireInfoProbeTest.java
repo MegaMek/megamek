@@ -46,8 +46,6 @@ import java.util.List;
 import java.util.Map;
 
 import megamek.common.Hex;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
 import megamek.common.Player;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
@@ -55,6 +53,8 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;

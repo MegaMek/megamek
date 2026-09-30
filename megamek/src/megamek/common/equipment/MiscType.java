@@ -1660,6 +1660,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(MiscType.createISVehicularMineDispenser());
         EquipmentType.addType(MiscType.createMiningDrill());
         EquipmentType.addType(MiscType.createISReconCamera());
+        EquipmentType.addType(MiscType.createBombReconCamera());
         EquipmentType.addType(MiscType.createISCombatVehicleEscapePod());
         EquipmentType.addType(MiscType.createISSmallNavalCommScannerSuite());
         EquipmentType.addType(MiscType.createISLargeNavalCommScannerSuite());
@@ -6269,8 +6270,11 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    /**
+     * The Recon Camera (TO:AUE p.150). Its rules live in {@link ReconCameraRules}; it spots by
+     * default and can be switched to reveal hidden units, which only an airborne aerospace unit can do.
+     */
     public static MiscType createISReconCamera() {
-        // TODO: implement game rules
         MiscType misc = new MiscType();
         misc.name = "Recon Camera";
         misc.setInternalName("ISReconCamera");
@@ -6288,13 +6292,46 @@ public class MiscType extends EquipmentType {
               F_RECON_CAMERA);
         misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 150);
         misc.techAdvancement.setTechBase(TechBase.ALL)
-              .setTechRating(TechRating.B)
+              .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
               .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
-              .setClanApproximate(false, false, false, false, false);
+              .setClanApproximate(false, false, false, false, false)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        addReconCameraModes(misc);
         return misc;
+    }
+
+    /**
+     * The camera a Recon Camera bomb pod gives the fighter carrying it (TO:AUE p.150: "Recon Cameras can be mounted on
+     * external hardpoints as a bomb type"). It is added only by the bomb loadout, so it carries no unit equipment
+     * flags and never appears in construction.
+     */
+    public static MiscType createBombReconCamera() {
+        MiscType misc = new MiscType();
+        misc.name = "Recon Camera Pod";
+        misc.setInternalName("BombReconCamera");
+        misc.tonnage = 0;
+        misc.criticalSlots = 0;
+        misc.cost = 0;
+        misc.flags = misc.flags.or(F_RECON_CAMERA);
+        misc.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 150);
+        misc.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
+        addReconCameraModes(misc);
+        return misc;
+    }
+
+    private static void addReconCameraModes(MiscType camera) {
+        camera.setModes(ReconCameraRules.MODE_SPOT, ReconCameraRules.MODE_REVEAL);
+        camera.setInstantModeSwitch(true);
     }
 
     public static MiscType createRemoteSensorDispenser() {

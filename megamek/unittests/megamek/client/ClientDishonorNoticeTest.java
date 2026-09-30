@@ -33,16 +33,25 @@
 package megamek.client;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import megamek.common.Player;
+import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameToastEvent;
+import megamek.common.game.BotHonorReport;
 import megamek.common.net.enums.PacketCommand;
+import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
+import megamek.common.units.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -74,7 +83,8 @@ class ClientDishonorNoticeTest {
     }
 
     private Packet dishonoredPacket(int botPlayerId, List<Integer> dishonoredPlayerIds) {
-        return new Packet(PacketCommand.PRINCESS_DISHONORED, botPlayerId, dishonoredPlayerIds);
+        return new Packet(PacketCommand.PRINCESS_DISHONORED, botPlayerId,
+              new BotHonorReport(dishonoredPlayerIds, true, Set.of()));
     }
 
     @Test
@@ -109,5 +119,41 @@ class ClientDishonorNoticeTest {
         client.receivePrincessDishonored(dishonoredPacket(BOT_PLAYER_ID, List.of()));
 
         assertEquals(0, toasts.get());
+    }
+
+    @Test
+    void recordsWhichBotUnitsAreWithdrawing() throws Exception {
+        Entity withdrawingUnit = mock(Entity.class);
+        when(withdrawingUnit.getId()).thenReturn(20);
+        when(withdrawingUnit.getOwnerId()).thenReturn(BOT_PLAYER_ID);
+        Entity fightingUnit = mock(Entity.class);
+        when(fightingUnit.getId()).thenReturn(21);
+        when(fightingUnit.getOwnerId()).thenReturn(BOT_PLAYER_ID);
+
+        client.receivePrincessDishonored(new Packet(PacketCommand.PRINCESS_DISHONORED, BOT_PLAYER_ID,
+              new BotHonorReport(List.of(), true, Set.of(20))));
+
+        assertTrue(client.getGame().getForcedWithdrawalReports().isWithdrawing(withdrawingUnit));
+        assertFalse(client.getGame().getForcedWithdrawalReports().isWithdrawing(fightingUnit));
+    }
+
+    @Test
+    void rejectsAPacketWithoutAReport() {
+        assertThrows(InvalidPacketDataException.class, () -> client.receivePrincessDishonored(
+              new Packet(PacketCommand.PRINCESS_DISHONORED, BOT_PLAYER_ID, List.of(LOCAL_PLAYER_ID))));
+    }
+
+    @Test
+    void returningToTheLobbyForgetsWithdrawingUnits() throws Exception {
+        // Seen in play: last game's crippled unit 3 tagged the next game's unhurt unit 3 at deployment.
+        Entity unitThree = mock(Entity.class);
+        when(unitThree.getId()).thenReturn(3);
+        when(unitThree.getOwnerId()).thenReturn(BOT_PLAYER_ID);
+        client.receivePrincessDishonored(new Packet(PacketCommand.PRINCESS_DISHONORED, BOT_PLAYER_ID,
+              new BotHonorReport(List.of(), true, Set.of(3))));
+
+        client.changePhase(GamePhase.LOUNGE);
+
+        assertFalse(client.getGame().getForcedWithdrawalReports().isWithdrawing(unitThree));
     }
 }

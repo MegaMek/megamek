@@ -54,17 +54,16 @@ import javax.swing.JLayer;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
-import javax.swing.Scrollable;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.text.html.HTML;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.common.ui.FastJScrollPane;
+import org.apache.commons.text.StringEscapeUtils;
 
 /** Owns the central scrollable settings content and an optional sticky help panel. */
 public class SettingsContentHost extends JPanel {

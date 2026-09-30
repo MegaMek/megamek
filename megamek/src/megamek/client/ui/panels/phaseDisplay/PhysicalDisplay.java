@@ -664,6 +664,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             String title = Messages.getString("HonorNag.title");
             String body = dishonorWarning;
             if (checkNagForDishonor(title, body)) {
+                takeBackDeclinedAttack();
                 return true;
             }
             // Player accepted; remember it so the rest of this turn isn't re-warned before the bot's report arrives.
@@ -671,6 +672,18 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         return currentEntity() == null;
+    }
+
+    /**
+     * Undoes an attack the player declined at the honor warning. Declaring an attack greys out every button before the
+     * warning appears, so the attack is cleared and Done and Next are switched back on; otherwise the player is left
+     * with the attack still queued and nothing to click.
+     */
+    private void takeBackDeclinedAttack() {
+        logger.debug("[HonorNag] Player declined the honor warning; clearing the declared attack");
+        clear();
+        setNextEnabled(true);
+        butDone.setEnabled(true);
     }
 
     @Override

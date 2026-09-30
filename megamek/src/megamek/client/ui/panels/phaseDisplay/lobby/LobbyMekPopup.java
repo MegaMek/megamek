@@ -79,6 +79,7 @@ import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.rules.SettableHeat;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
@@ -165,6 +166,11 @@ class LobbyMekPopup {
     private static final String NO_INFO = "|-1";
 
     static final String LMP_UNLOAD_ALL_FROM_BAY = "UNLOADALLFROMBAY";
+
+    /** Heat values listed directly in the heat menu; higher values sit in its "More heat" submenu. */
+    private static final int HEAT_WITHOUT_SUBMENU = 10;
+    /** How many heat values each group of the "More heat" submenu holds. */
+    private static final int HEAT_GROUP_SIZE = 10;
 
     static ScalingPopup getPopup(List<Entity> entities, List<Force> forces, ActionListener listener,
           ChatLounge lobby) {
@@ -598,6 +604,43 @@ class LobbyMekPopup {
     }
 
     /**
+     * Returns the "Heat at start" submenu. It reaches the top of the heat scale in play plus the dissipation of the
+     * selected unit that sinks the most, since the first Heat Phase takes the dissipation off before it checks heat
+     * effects (see {@link SettableHeat}). Heat past 10 is grouped by tens so the long range stays easy to scan.
+     *
+     * @param game     the game in the lobby
+     * @param listener the popup's listener
+     * @param entities the selected units, which all get the chosen heat
+     * @param eIds     the selected units' command token
+     *
+     * @return the submenu
+     */
+    private static JMenu heatMenu(Game game, ActionListener listener, Collection<Entity> entities, String eIds) {
+        int maximumHeat = SettableHeat.maximum(game, entities);
+        JMenu heatMenu = new JMenu(Messages.getString("ChatLounge.heat.menu"));
+        heatMenu.add(menuItem(Messages.getString("ChatLounge.heat.none"), LMP_HEAT + "|0" + eIds, true, listener));
+        for (int heat = 1; heat <= HEAT_WITHOUT_SUBMENU; heat++) {
+            heatMenu.add(heatItem(heat, eIds, listener));
+        }
+        JMenu moreHeatMenu = new JMenu(Messages.getString("ChatLounge.heat.more"));
+        for (int groupStart = HEAT_WITHOUT_SUBMENU + 1; groupStart <= maximumHeat; groupStart += HEAT_GROUP_SIZE) {
+            int groupEnd = Math.min(groupStart + HEAT_GROUP_SIZE - 1, maximumHeat);
+            JMenu groupMenu = new JMenu(Messages.getString("ChatLounge.heat.range", groupStart, groupEnd));
+            for (int heat = groupStart; heat <= groupEnd; heat++) {
+                groupMenu.add(heatItem(heat, eIds, listener));
+            }
+            moreHeatMenu.add(groupMenu);
+        }
+        heatMenu.add(moreHeatMenu);
+        return heatMenu;
+    }
+
+    private static JMenuItem heatItem(int heat, String eIds, ActionListener listener) {
+        return menuItem(Messages.getString("ChatLounge.heat.value", heat), LMP_HEAT + "|" + heat + eIds, true,
+              listener);
+    }
+
+    /**
      * Returns true when the loader can load all the given entities (under lobby conditions).
      */
     private static boolean canLoadAll(Entity loader, Collection<Entity> entities) {
@@ -665,18 +708,7 @@ class LobbyMekPopup {
             }
             menu.add(ScalingPopup.spacer());
 
-            // Heat
-            JMenu heatMenu = new JMenu("Heat at start");
-            heatMenu.add(menuItem("No heat", LMP_HEAT + "|0" + eIds, true, listener));
-            for (int i = 1; i < 11; i++) {
-                heatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, true, listener));
-            }
-            JMenu subHeatMenu = new JMenu("More heat");
-            for (int i = 11; i < 41; i++) {
-                subHeatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, true, listener));
-            }
-            heatMenu.add(subHeatMenu);
-            menu.add(heatMenu);
+            menu.add(heatMenu(clientGui.getClient().getGame(), listener, entities, eIds));
             menu.add(ScalingPopup.spacer());
 
             // Late deployment

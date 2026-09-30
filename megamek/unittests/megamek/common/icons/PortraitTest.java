@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
-import megamek.utilities.xml.MMXMLUtility;
 
+import megamek.utilities.xml.MMXMLUtility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

@@ -49,6 +49,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -78,8 +79,10 @@ import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.options.OptionsConstants;
+import megamek.common.rules.SettableHeat;
 import megamek.common.units.*;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.InfantryAttack;
@@ -97,8 +100,14 @@ public class UnitDamagePanelBuilder {
 
     private static final MMLogger LOGGER = MMLogger.create(UnitDamagePanelBuilder.class);
 
-    /** The most heat that can be set, matching the range the lobby's heat menu offers. */
-    public static final int MAX_HEAT = 40;
+    /**
+     * The most heat that can be set on the standard scale, before dissipation.
+     *
+     * @deprecated use {@link SettableHeat#maximum(Game, int, int)}, which also covers the Expanded Heat Scale and the
+     *       unit's dissipation
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
+    public static final int MAX_HEAT = SettableHeat.STANDARD_MAXIMUM;
 
     /**
      * The most hits a crew member can be given. Six hits kill (TW p.41), and a unit whose whole crew is dead is
@@ -127,6 +136,8 @@ public class UnitDamagePanelBuilder {
     private final UnitDamageControls controls;
     /** Whether the gamemaster-only controls are offered: refilling ammo bins and temporary skill modifiers. */
     private final boolean offerGameMasterTools;
+    /** The general panel's gamemaster column, holding the owner and the skill modifiers; created on first use. */
+    private JPanel gamemasterColumn;
 
     public UnitDamagePanelBuilder(Entity entity, UnitDamageControls controls) {
         this(entity, controls, false);
@@ -243,17 +254,62 @@ public class UnitDamagePanelBuilder {
     }
 
     /**
-     * Adds the gamemaster's skill modifier controls to the general panel, as a column of their own so they stand
-     * apart from the unit's systems and are always in view, unlike a location panel that only shows when its
-     * location is chosen. Called by the dialog after every other general row is in place, so the column is the
-     * panel's last.
+     * Adds the gamemaster's skill modifier controls to the general panel's gamemaster column, so they stand apart
+     * from the unit's systems and are always in view, unlike a location panel that only shows when its location is
+     * chosen. Called by the dialog after every other general row is in place.
      */
     public void addSkillModifiersColumn() {
         if (!offersSkillModifiers()) {
             return;
         }
-        startNewColumn(generalPanel());
-        initSkillModifiers(generalPanel());
+        initSkillModifiers(gamemasterColumn());
+    }
+
+    /**
+     * Returns the general panel's last column, which holds the gamemaster's controls: the owner and the temporary
+     * skill modifiers. It is a panel of its own set beside the general rows, rather than more rows of the general
+     * panel's grid. Rows of one grid share their height across columns, so the taller spinner rows used to stretch
+     * the checkbox rows beside them into uneven gaps.
+     *
+     * <p>Created on first use, which must come after every other general row is in place: rows added to the general
+     * panel afterwards would land under this column.</p>
+     *
+     * @return the gamemaster column
+     */
+    public JPanel gamemasterColumn() {
+        if (gamemasterColumn == null) {
+            gamemasterColumn = new JPanel(new GridBagLayout());
+            controls.panelRows.put(gamemasterColumn, 1);
+            attachBesideGeneralRows(gamemasterColumn);
+        }
+        return gamemasterColumn;
+    }
+
+    /**
+     * Places a column panel to the right of the general panel's rows, spanning their height and pinned to the top.
+     * A glue row under the rows takes up any height the column needs beyond theirs, so the last general row is never
+     * stretched to make room.
+     */
+    private void attachBesideGeneralRows(JPanel column) {
+        JPanel general = generalPanel();
+        int itemCount = controls.panelRows.getOrDefault(general, 1) - 1;
+        int columnsUsed = Math.max(1, Math.ceilDiv(itemCount, MAX_ROWS_PER_COLUMN));
+        int glueRow = MAX_ROWS_PER_COLUMN + 1;
+
+        GridBagConstraints columnConstraints = new GridBagConstraints();
+        columnConstraints.gridx = columnsUsed * 2;
+        columnConstraints.gridy = 1;
+        columnConstraints.gridwidth = 2;
+        columnConstraints.gridheight = glueRow;
+        columnConstraints.anchor = GridBagConstraints.NORTHWEST;
+        columnConstraints.insets = new Insets(0, UIUtil.scaleForGUI(10), 0, 0);
+        general.add(column, columnConstraints);
+
+        GridBagConstraints glueConstraints = new GridBagConstraints();
+        glueConstraints.gridx = 0;
+        glueConstraints.gridy = glueRow;
+        glueConstraints.weighty = 1.0;
+        general.add(Box.createGlue(), glueConstraints);
     }
 
     /**
@@ -620,7 +676,9 @@ public class UnitDamagePanelBuilder {
         if (!entity.tracksHeat()) {
             return;
         }
-        controls.spnHeat = new JSpinner(new SpinnerNumberModel(Math.max(entity.heat, 0), 0, MAX_HEAT, 1));
+        int currentHeat = Math.max(entity.heat, 0);
+        controls.spnHeat = new JSpinner(new SpinnerNumberModel(currentHeat, 0,
+              SettableHeat.maximum(entity.getGame(), currentHeat, entity.getHeatCapacityWithWater()), 1));
         controls.spnHeat.setToolTipText(UIUtil.formatSideTooltip(
               Messages.getString("UnitEditorDialog.heat.tooltip")));
         addLabeledRow(targetPanel(heatLocation()), Messages.getString("UnitEditorDialog.heat"), controls.spnHeat);

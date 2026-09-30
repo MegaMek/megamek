@@ -1136,26 +1136,21 @@ public class Compute {
         ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
         for (Entity other : game.getEntitiesVector()) {
+            // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
+            boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
             if (((other.isSpotting() && (other.getSpotTargetId() == target
-                  .getId())) || (taggedBy == other.getId()))
+                  .getId())) || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
-                LosEffects los = LosEffects.calculateLOS(game, other, target, true);
-                ToHitData mods = los.losModifiers(game);
-                // If the target isn't spotted, can't target
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                      && !Compute.inVisualRange(game, los, other, target)
-                      && !Compute.inSensorRange(game, los, other, target, null)) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE,
-                          "outside of visual and sensor range");
-                }
-                los.setTargetCover(LosEffects.COVER_NONE);
+                ToHitData mods = isCameraSpotter && ReconCameraRules.isAerospaceCamera(other)
+                      ? new ToHitData() // the camera spot itself was the look from above; no line of sight to judge
+                      : spotterLineOfSightModifiers(game, other, target);
                 mods.append(Compute.getAttackerMovementModifier(game,
                       other.getId()));
 
                 // a spotter suffers a penalty if it's also making an attack this round
-                // unless it has a command console or has TAG-ged the target
-                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() &&
+                // unless it has a command console, has TAG-ged the target or spotted it with a Recon Camera
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && !isCameraSpotter &&
                       (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
@@ -1170,6 +1165,23 @@ public class Compute {
         }
 
         return spotter;
+    }
+
+    /**
+     * The line of sight modifiers a spotter adds to an indirect attack, impossible under double-blind when the spotter
+     * can neither see nor sense the target.
+     */
+    private static ToHitData spotterLineOfSightModifiers(Game game, Entity spotter, Targetable target) {
+        LosEffects los = LosEffects.calculateLOS(game, spotter, target, true);
+        ToHitData mods = los.losModifiers(game);
+        // If the target isn't spotted, can't target
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+              && !Compute.inVisualRange(game, los, spotter, target)
+              && !Compute.inSensorRange(game, los, spotter, target, null)) {
+            mods.addModifier(TargetRoll.IMPOSSIBLE,
+                  "outside of visual and sensor range");
+        }
+        return mods;
     }
 
     /**
@@ -2049,25 +2061,48 @@ public class Compute {
             distance += (2 * attacker.getAltitude());
         }
 
-        if (game.isOnSpaceMap(attacker) && !attacker.getPosition().equals(targetPos.getFirst())) {
-            // Atmospheric hexes count as extra range
-            Board attackerBoard = game.getBoard(attacker);
-            Coords currentCoords = attacker.getPosition();
-            currentCoords = Coords.nextHex(currentCoords, targetPos.getFirst());
-            int safetyCounter = 0;
-            while (!currentCoords.equals(targetPos.getFirst()) && (safetyCounter < 1000)) {
-                safetyCounter++; // prevent infinite loops
-                currentCoords = Coords.nextHex(currentCoords, targetPos.getFirst());
-                if (BoardHelper.isAtmosphericRow(game, attackerBoard, currentCoords)
-                      || BoardHelper.isGroundRowHex(attackerBoard, currentCoords)) {
-                    distance += BoardHelper.highAltAtmosphereRowRangeIncrease(game);
-                } else if (BoardHelper.isSpaceAtmosphereInterface(game, attackerBoard, currentCoords)) {
-                    distance += BoardHelper.highAltSpaceAtmosphereRangeIncrease(game);
-                }
-            }
+        if (game.isOnSpaceMap(attacker)) {
+            Coords targetPosition = targetPos.isEmpty() ? null : targetPos.getFirst();
+            distance += spaceMapAtmosphereRangeIncrease(game, attacker, targetPosition);
         }
 
         return distance;
+    }
+
+    /**
+     * Returns the extra range a space-map attack pays for crossing atmospheric hexes between the attacker and the
+     * target.
+     *
+     * <p>A unit that is in the game but has no hex of its own - an ejected pilot who has been picked up, for
+     * example - has nothing to walk towards, so it adds no extra range. The plain distance to such a unit is already
+     * out of reach (see {@link #smallestDistance(Collection, Collection)}).</p>
+     *
+     * @param game           The current {@link Game}
+     * @param attacker       the attacking unit, which is on a space map
+     * @param targetPosition the target's hex, or {@code null} if the target has none
+     *
+     * @return the extra range from atmospheric hexes along the way, or {@code 0} if either side has no hex
+     */
+    private static int spaceMapAtmosphereRangeIncrease(Game game, Entity attacker, @Nullable Coords targetPosition) {
+        Coords attackerPosition = attacker.getPosition();
+        if ((attackerPosition == null) || (targetPosition == null) || attackerPosition.equals(targetPosition)) {
+            return 0;
+        }
+        int rangeIncrease = 0;
+        Board attackerBoard = game.getBoard(attacker);
+        Coords currentCoords = Coords.nextHex(attackerPosition, targetPosition);
+        int safetyCounter = 0;
+        while (!currentCoords.equals(targetPosition) && (safetyCounter < 1000)) {
+            safetyCounter++; // prevent infinite loops
+            currentCoords = Coords.nextHex(currentCoords, targetPosition);
+            if (BoardHelper.isAtmosphericRow(game, attackerBoard, currentCoords)
+                  || BoardHelper.isGroundRowHex(attackerBoard, currentCoords)) {
+                rangeIncrease += BoardHelper.highAltAtmosphereRowRangeIncrease(game);
+            } else if (BoardHelper.isSpaceAtmosphereInterface(game, attackerBoard, currentCoords)) {
+                rangeIncrease += BoardHelper.highAltSpaceAtmosphereRangeIncrease(game);
+            }
+        }
+        return rangeIncrease;
     }
 
     static int smallestDistance(Collection<Coords> firstList, Collection<Coords> secondList) {

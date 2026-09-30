@@ -2092,8 +2092,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     FighterSquadron fighterSquadron = new FighterSquadron();
                     fighterSquadron.setDeployed(true);
                     fighterSquadron.setId(getGame().getNextEntityId());
-                    fighterSquadron.setCurrentVelocity(((Aero) loader).getCurrentVelocity());
-                    fighterSquadron.setNextVelocity(((Aero) loader).getNextVelocity());
+                    fighterSquadron.setCurrentVelocity(((IAero) loader).getCurrentVelocity());
+                    fighterSquadron.setNextVelocity(((IAero) loader).getNextVelocity());
                     fighterSquadron.setVectors(loader.getVectors());
                     fighterSquadron.setFacing(loader.getFacing());
                     fighterSquadron.setOwner(entity.getOwner());

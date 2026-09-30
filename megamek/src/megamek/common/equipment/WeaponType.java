@@ -586,7 +586,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_MISSILE = WeaponTypeFlag.F_MISSILE;
     // for Arrow IV
     public static final WeaponTypeFlag F_ARROW_IV = WeaponTypeFlag.F_ARROW_IV;
-    
+
     // fires
     public static final WeaponTypeFlag F_PLASMA = WeaponTypeFlag.F_PLASMA;
     public static final WeaponTypeFlag F_INCENDIARY_NEEDLES = WeaponTypeFlag.F_INCENDIARY_NEEDLES;
@@ -602,7 +602,7 @@ public class WeaponType extends EquipmentType {
     public static final WeaponTypeFlag F_NARC = WeaponTypeFlag.F_NARC;
     public static final WeaponTypeFlag F_GAUSS = WeaponTypeFlag.F_GAUSS;
     public static final WeaponTypeFlag F_HVAC = WeaponTypeFlag.F_HVAC;
-    
+
 
     // War of 3039 prototypes
     public static final WeaponTypeFlag F_PROTOTYPE = WeaponTypeFlag.F_PROTOTYPE;

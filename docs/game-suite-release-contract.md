@@ -3,8 +3,10 @@
 This document describes the suite build input and release-record format. They
 let future release jobs give each changed product its own version and check a proposed
 record describing a complete set of three game downloads.
-**These tasks do not publish a record or a release.** They do not schedule builds,
-reserve versions, create tags, or change the launcher.
+**These Gradle tasks do not publish a record or a release.** The separate
+manual coordinator workflow can publish after a protected live approval;
+see `docs/game-suite-coordinator-checkpoint.md` for setup and recovery.
+There is no schedule, version reservation, or launcher change here.
 
 ## Implemented in this PR
 
@@ -56,6 +58,40 @@ For local inspection of an existing archive, supply
 task (with the suite version and four pins); this does not rebuild the archive
 or check local Git inputs. It inspects the archived root and lib jars, not
 possibly stale local build outputs.
+
+The three suite archive tasks use the **same** read-only verifier in
+`megamek/gradle/suite_archive_verifier.py`, invoked through
+`megamek/gradle/suite_archive_adapter.gradle` by each composite build. The
+suite build/verification tasks require an executable Python 3.10 or newer
+(`python` on Windows, `python3` elsewhere); set
+`-PsuitePythonExecutable=/absolute/path/to/python` when it is not on PATH.
+The suite workflow installs Python 3.11. A missing, unusable or older
+interpreter fails preflight before verification or data staging. Suite
+producers stage tracked mm-data **Git blob bytes** at the declared pin in
+their own build directories, including all four generated ZIPs; the
+mm-data working tree is not rewritten. Non-suite builds continue to stage
+the working checkout and its usual mm-data ZIP tasks. External archive
+verification does not stage data or schedule any producer. The product
+Sync image/loose-data patterns (HQ's unrestricted image copy is
+implicit) and the verifier's expected pinned mm-data selection share
+`megamek/gradle/suite_data_rules.json`; the verifier
+also checks generated ZIP members against the pinned source tree and accounts
+for the product's image-atlas substitutions. TAR headers/extensions and JAR
+ZIP directories are bounded before parsing; payloads are streamed, never
+extracted. `scripts/suite_archive_attestation.py` uses this scanner for its
+preflight and retains the record/ref/SHA checks before invoking the same
+Gradle verification tasks. In external `-PsuiteArchiveFile` mode no producer
+task is scheduled; Lab also needs `-PsuiteMegaMekArchiveFile`, and HQ needs
+both `-PsuiteMegaMekArchiveFile` and `-PsuiteMegaMekLabArchiveFile`.
+Companion archives may have older *unrelated successor* commit pins, but
+their own source/data identity, runtime version and packaged JAR bytes must
+match the consuming archive. The shared regression suite is
+`megamek/gradle/test_suite_archive_verifier.py`.
+
+**Merge prerequisite:** land MegaMek's shared `gradle/` verifier, adapter
+and data rules before merging Lab or HQ changes that reference sibling
+`../megamek/gradle/`. Keep all three suite adapters together when releasing;
+normal non-suite distribution tasks retain their existing names and behavior.
 
 ### JSON record and local validation
 
@@ -113,9 +149,9 @@ remote asset identity. An older MegaMek archive can legitimately contain
 older, unrelated Lab/HQ pins; those are *not* claims that its bytes were built
 from the newer suite's Lab/HQ sources.
 
-## Planned for later PRs (not implemented here)
+## Coordinator integration
 
-The other product-build PRs must produce full archives at their assigned product
+The other product-build repositories must produce full archives at their assigned product
 versions from explicitly pinned source commits and an mm-data commit. Unchanged
 product archives can instead be reused without republishing them. A coordinating
 release job must reserve the next unused numeric version across the suite,

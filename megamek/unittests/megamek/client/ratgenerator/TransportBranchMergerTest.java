@@ -40,7 +40,6 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import megamek.common.units.UnitType;
-
 import org.junit.jupiter.api.Test;
 
 /**

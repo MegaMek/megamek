@@ -38,8 +38,8 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -57,7 +57,6 @@ import megamek.common.units.Entity;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.ThunderBoltWeaponHandler;
 import megamek.common.weapons.handlers.ThunderboltScatterableHandler;
-import megamek.common.weapons.handlers.lrm.LRMScatterableHandler;
 import megamek.common.weapons.missiles.MissileWeapon;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -97,7 +96,7 @@ public abstract class ThunderboltWeapon extends MissileWeapon {
             Entity entity = game.getEntity(waa.getEntityId());
             Mounted<?> weapon = (entity == null) ? null : entity.getEquipment(waa.getWeaponId());
             Mounted<?> linked = (weapon == null) ? null : weapon.getLinked();
-            
+
             AmmoType atype = (linked != null && linked.getType() instanceof AmmoType)
                   ? (AmmoType) linked.getType()
                   : null;

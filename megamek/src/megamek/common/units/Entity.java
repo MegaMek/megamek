@@ -2806,6 +2806,13 @@ public abstract class Entity extends TurnOrdered
                 // Otherwise we move to one elevation level above the effective surface.
                 nextLevel = nextSurface + 1;
             }
+            // An airborne WiGE cannot fly at the level of a bridge deck, so it flies over the deck instead.
+            // It pays the +2 MP for flying more than one level above the ground (MoveStep). Higher decks
+            // are flown under.
+            if ((level - curSurface > 0) && next.containsTerrain(Terrains.BRIDGE)
+                  && ((nextLevel - next.getLevel()) == next.terrainLevel(Terrains.BRIDGE_ELEV))) {
+                nextLevel++;
+            }
             // Elevation is this height of the level above the actual surface elevation of
             // the hex.
             retVal = nextLevel - next.getLevel();

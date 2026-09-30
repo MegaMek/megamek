@@ -2004,7 +2004,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         currentlySelectedEntity.setCarefulStand(false);
         currentlySelectedEntity.setIsJumpingNow(false);
         currentlySelectedEntity.setConvertingNow(false);
-        currentlySelectedEntity.setClimbMode(GUIP.getMoveDefaultClimbMode());
+        currentlySelectedEntity.setClimbMode(ClimbingHelper.getDefaultClimbMode(currentlySelectedEntity));
 
         // switch back from swimming to normal mode.
         if (currentlySelectedEntity.getMovementMode() == EntityMovementMode.BIPED_SWIM) {

@@ -33,8 +33,8 @@
 
 package megamek.common.weapons.lrms;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;

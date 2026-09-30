@@ -8237,7 +8237,7 @@ public abstract class Entity extends TurnOrdered
 
         setSelfDestructedThisTurn(false);
 
-        setClimbMode(GUIP.getMoveDefaultClimbMode());
+        setClimbMode(ClimbingHelper.getDefaultClimbMode(this));
 
         endOfTurnCargoInteraction = false;
 

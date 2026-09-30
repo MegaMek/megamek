@@ -69,7 +69,7 @@ public class MunitionChoice {
     private final JCheckBox chHalfAmmo = new JCheckBox(Messages.getString("CustomMekDialog.halfAmmo"));
 
     private boolean numShotsChanged = false;
-    
+
     public MunitionChoice(AmmoMounted ammoMounted, Vector<AmmoType> ammoTypes,
                           List<WeaponAmmoChoice> weaponAmmoChoices, Entity entity, Game game, JPanel parentPanel, GBC2 gbc) {
 
@@ -88,7 +88,7 @@ public class MunitionChoice {
                 chHalfAmmo.addItemListener(halfAmmoListener);
             }
         };
-        
+
         halfAmmoListener = evt -> {
             AmmoType selectedAmmoType = getSelectedAmmoType();
             int numberOfShotsPerTon = selectedAmmoType.getShots();
@@ -122,7 +122,7 @@ public class MunitionChoice {
                 comboNumberOfShots.addItemListener(numShotsListener);
             }
         };
-        
+
         int shotsPerTon = ammoType.getShots();
         // BattleArmor always have a certain number of shots per slot
         int stepSize = 1;
@@ -184,7 +184,7 @@ public class MunitionChoice {
         });
 
         chHalfAmmo.addItemListener(halfAmmoListener);
-        
+
         int ammoMountedLocation = ammoMounted.getLocation();
         boolean isOneShot = false;
 
@@ -220,7 +220,7 @@ public class MunitionChoice {
             parentPanel.add(comboNumberOfShots, gameUsesHotLoad ? gbc.oneColumn() : gbc.eol());
             parentPanel.add(chHalfAmmo, gameUsesHotLoad ? gbc.oneColumn() : gbc.eol());
         }
-        
+
         if (ammoAllowsHotLoad) {
             parentPanel.add(chHotLoad, gbc.eol());
         } else {
@@ -253,7 +253,7 @@ public class MunitionChoice {
         } else if (!chHalfAmmo.isSelected() && ammoMounted.isHalfLoadAmmo()) {
             ammoMounted.setHalfLoadAmmo(false);
         }
-        
+
         if (gameOptions.booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD)) {
             if (chHotLoad.isSelected() != ammoMounted.isHotLoaded()) {
                 ammoMounted.setHotLoad(chHotLoad.isSelected());

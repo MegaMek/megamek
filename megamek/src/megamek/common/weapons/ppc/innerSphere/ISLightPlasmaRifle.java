@@ -118,4 +118,3 @@ public class ISLightPlasmaRifle extends AmmoWeapon {
         return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 1 : 0;
     }
 }
-

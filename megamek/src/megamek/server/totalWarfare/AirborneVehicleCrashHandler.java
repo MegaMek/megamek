@@ -64,6 +64,34 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * TW p.67: a failed sideslip moves the unit a number of hexes equal to the Margin of Failure, but never more than
+     * one less than the number of hexes it entered this turn before the sideslip. Example: a unit that moved 3 hexes and
+     * fails by 4 or more sideslips 2 hexes.
+     *
+     * @param marginOfFailure        the Driving Skill Roll's margin of failure
+     * @param hexesEnteredBeforeSlip the hexes the unit entered this turn before the sideslip
+     *
+     * @return the number of hexes to sideslip, never negative
+     */
+    static int sideslipDistanceCap(int marginOfFailure, int hexesEnteredBeforeSlip) {
+        return Math.max(0, Math.min(marginOfFailure, hexesEnteredBeforeSlip - 1));
+    }
+
+    /**
+     * TW p.68: a VTOL or WiGE that crashes while sideslipping takes damage equal to the number of hexes it moved that
+     * turn times its tonnage, divided by 10 (rounded up). The hexes moved include the sideslipped hexes and the hex it
+     * crashed in.
+     *
+     * @param tonnage    the vehicle's tonnage
+     * @param hexesMoved the hexes the vehicle moved this turn, including sideslipped hexes and the crash hex
+     *
+     * @return the crash damage, never negative
+     */
+    static int sideslipCrashDamage(double tonnage, int hexesMoved) {
+        return (int) Math.ceil((Math.max(0, hexesMoved) * tonnage) / 10.0);
+    }
+
+    /**
      * Resolves the forced landing of one airborne {@code VTOL} or {@code WiGE} in its current hex. As this method is
      * only for internal use and not part of the exported public API, it simply relies on its client code to only ever
      * hand it a valid airborne vehicle and does not run any further checks of its own.
@@ -159,7 +187,8 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
      * @param rerollRotorHits Whether any rotor hits from the crash should be rerolled, typically after a "rotor
      *                        destroyed" critical hit.
      * @param sideSlipCrash   A <code>boolean</code> value indicating whether this is a sideslip crash or not.
-     * @param hexesMoved      The <code>int</code> number of hexes moved.
+     * @param hexesMoved      For a sideslip crash, the hexes moved this turn, including sideslipped hexes and the
+     *                        crash hex.
      * @param crashPos        The <code>Coords</code> of the crash
      * @param crashElevation  The <code>int</code> elevation of the VTOL
      * @param impactSide      The <code>int</code> describing the side on which the VTOL falls
@@ -321,7 +350,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
             r.subject = en.getId();
             r.addDesc(en);
             vDesc.addElement(r);
-            int damage = (int) Math.round(en.getWeight() / 10.0) * (hexesMoved + 1);
+            int damage = sideslipCrashDamage(en.getWeight(), hexesMoved);
             boolean exploded = false;
 
             // standard damage loop

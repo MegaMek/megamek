@@ -35,7 +35,12 @@ package megamek.server.totalWarfare;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -45,9 +50,13 @@ import megamek.common.MMRandom;
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
+import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
+import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.SupportTank;
@@ -57,9 +66,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Pins how airborne WiGE crashes resolve today, through the {@link TWGameManager} entry points that other code
- * uses. Issue #9102 first moves the crash code into {@link AirborneVehicleCrashHandler} without changing behaviour;
- * these tests must pass unchanged before and after that move. Later #9102 changes update them on purpose.
+ * Airborne VTOL and WiGE crashes and sideslips (issue #9102, TW pp.67-68), tested through the {@link TWGameManager}
+ * and {@link MovePathHandler} entry points other code uses, plus the rule calculations in
+ * {@link AirborneVehicleCrashHandler}.
  */
 class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
 
@@ -76,6 +85,41 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         initializeBoard("DEEP_WATER", """
               size 1 1
               hex 0101 0 "water:2" ""
+              end""");
+
+        // Open ground for a full move: south 4 hexes, turn, then fail the sideslip roll
+        initializeBoard("OPEN_GROUND", """
+              size 3 10
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "" ""
+              hex 0104 0 "" ""
+              hex 0105 0 "" ""
+              hex 0106 0 "" ""
+              hex 0107 0 "" ""
+              hex 0108 0 "" ""
+              hex 0109 0 "" ""
+              hex 0110 0 "" ""
+              hex 0201 0 "" ""
+              hex 0202 0 "" ""
+              hex 0203 0 "" ""
+              hex 0204 0 "" ""
+              hex 0205 0 "" ""
+              hex 0206 0 "" ""
+              hex 0207 0 "" ""
+              hex 0208 0 "" ""
+              hex 0209 0 "" ""
+              hex 0210 0 "" ""
+              hex 0301 0 "" ""
+              hex 0302 0 "" ""
+              hex 0303 0 "" ""
+              hex 0304 0 "" ""
+              hex 0305 0 "" ""
+              hex 0306 0 "" ""
+              hex 0307 0 "" ""
+              hex 0308 0 "" ""
+              hex 0309 0 "" ""
+              hex 0310 0 "" ""
               end""");
 
         // Clear, clear, then a level 3 hill the sideslipping WiGE crashes into
@@ -118,20 +162,26 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         }
     }
 
-    /** A 30-ton combat WiGE, airborne at elevation 1 in hex 0101, with armor deep enough that crashes never kill it. */
-    private SupportTank airborneWiGE() {
+    /** A 30-ton combat WiGE with armor deep enough that crashes never kill it. Not yet in the game. */
+    private SupportTank newWiGE(int walkMP) {
         SupportTank wige = new SupportTank();
         wige.setChassis("Test");
         wige.setModel("WiGE");
         wige.setMovementMode(EntityMovementMode.WIGE);
         wige.setWeight(WIGE_TONNAGE);
-        wige.setOriginalWalkMP(8);
+        wige.setOriginalWalkMP(walkMP);
         wige.autoSetInternal();
         for (int location = 0; location < wige.locations(); location++) {
             wige.initializeArmor(ARMOR_PER_LOCATION, location);
         }
         wige.setCrew(new Crew(CrewType.SINGLE));
         wige.setOwner(getGame().getPlayer(0));
+        return wige;
+    }
+
+    /** The WiGE above, airborne at elevation 1 in hex 0101 facing south. */
+    private SupportTank airborneWiGE() {
+        SupportTank wige = newWiGE(8);
         wige.setId(5);
         getGame().addEntity(wige);
         wige.setPosition(new Coords(0, 0));
@@ -165,9 +215,11 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
     }
 
     @Test
-    void sideslipIntoAHillCrashesWithTheLeftoverSkidDistance() {
+    void sideslipCrashDamageCountsEveryHexMovedThisTurn() {
         setBoard("HILL_AHEAD");
         SupportTank wige = airborneWiGE();
+        // The WiGE entered 4 hexes before the sideslip began
+        wige.delta_distance = 4;
         int armorBefore = wige.getTotalArmor();
         MoveStep step = mock(MoveStep.class);
         when(step.getFacing()).thenReturn(SOUTH);
@@ -176,7 +228,44 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 2, step, EntityMovementType.MOVE_VTOL_RUN);
 
         assertEquals(0, wige.getElevation(), "the WiGE crashed and is on the ground");
-        // Today the crash uses the skid distance still left (0 here): round(30 / 10) x (0 + 1)
-        assertEquals(3, armorBefore - wige.getTotalArmor());
+        // 4 hexes before + 1 sideslipped + the crash hex = 6 hexes; 6 x 30 / 10 = 18
+        assertEquals(18, armorBefore - wige.getTotalArmor());
+    }
+
+    @Test
+    void failedSideslipFollowsTheTwCapAndCountsForTheTargetMovementModifier() throws Exception {
+        setBoard("OPEN_GROUND");
+        TWGameManager spiedManager = spy(gameManager);
+        ServerFactory.createServer(spiedManager);
+        // Walk 4, flank 6: four hexes south, a facing change, then the step that triggers the sideslip roll
+        SupportTank wige = newWiGE(4);
+        MovePath path = getMovePathFor(wige, 1, EntityMovementMode.WIGE,
+              MoveStepType.FORWARDS, MoveStepType.FORWARDS, MoveStepType.FORWARDS, MoveStepType.FORWARDS,
+              MoveStepType.TURN_LEFT, MoveStepType.FORWARDS);
+        assertTrue(path.isMoveLegal(), "the test path should be legal");
+        // Fail the sideslip roll by 4
+        doReturn(4).when(spiedManager).doSkillCheckWhileMoving(any(Entity.class), anyInt(), any(Coords.class),
+              any(Coords.class), any(PilotingRollData.class), anyBoolean());
+
+        new MovePathHandler(spiedManager, wige, path, null).processMovement();
+
+        // 4 hexes entered before the slip, so the cap is 3 (TW p.67): from 0105 it slips south to 0108
+        assertEquals(new Coords(0, 7), wige.getPosition(), "the WiGE sideslips 3 hexes south");
+        assertEquals(7, wige.delta_distance, "the 3 sideslipped hexes count with the 4 hexes moved");
+    }
+
+    @Test
+    void sideslipDistanceIsCappedAtOneLessThanTheHexesEntered() {
+        assertEquals(2, AirborneVehicleCrashHandler.sideslipDistanceCap(4, 3), "TW p.67 example");
+        assertEquals(1, AirborneVehicleCrashHandler.sideslipDistanceCap(1, 5), "a small margin of failure");
+        assertEquals(0, AirborneVehicleCrashHandler.sideslipDistanceCap(3, 1), "one hex entered: no sideslip");
+        assertEquals(0, AirborneVehicleCrashHandler.sideslipDistanceCap(3, 0), "never negative");
+    }
+
+    @Test
+    void sideslipCrashDamageIsHexesTimesTonnageOverTenRoundedUp() {
+        assertEquals(15, AirborneVehicleCrashHandler.sideslipCrashDamage(30.0, 5));
+        assertEquals(8, AirborneVehicleCrashHandler.sideslipCrashDamage(25.0, 3), "7.5 rounds up to 8");
+        assertEquals(0, AirborneVehicleCrashHandler.sideslipCrashDamage(30.0, 0));
     }
 }

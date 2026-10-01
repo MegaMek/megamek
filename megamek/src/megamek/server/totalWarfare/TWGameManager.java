@@ -4879,7 +4879,8 @@ public class TWGameManager extends AbstractGameManager {
                     int table = getTable(direction, step);
                     elevation = nextElevation;
                     if (entity instanceof Tank) {
-                        addReport(airborneVehicleCrashHandler.crashVTOLorWiGE((Tank) entity, false, true, distance, curPos, elevation, table));
+                        addReport(airborneVehicleCrashHandler.crashVTOLorWiGE((Tank) entity, false, true,
+                              entity.delta_distance + skidDistance + 1, curPos, elevation, table));
                     }
 
                     if ((nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)) ||
@@ -4949,7 +4950,8 @@ public class TWGameManager extends AbstractGameManager {
                     int table = getTable(direction, step);
                     elevation = nextElevation;
                     if (entity instanceof VTOL vtol) {
-                        addReport(airborneVehicleCrashHandler.crashVTOLorWiGE(vtol, false, true, distance, curPos, elevation, table));
+                        addReport(airborneVehicleCrashHandler.crashVTOLorWiGE(vtol, false, true,
+                              entity.delta_distance + skidDistance + 1, curPos, elevation, table));
                     }
                     break;
                 }

@@ -32,12 +32,14 @@
  */
 package megamek.server.totalWarfare;
 
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.actions.ChargeAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -47,6 +49,11 @@ import megamek.common.game.IGame;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
+import megamek.common.units.Dropship;
+import megamek.common.units.Entity;
+import megamek.common.units.IBuilding;
+import megamek.common.units.Infantry;
+import megamek.common.units.LargeSupportTank;
 import megamek.common.units.PilotSPAHelper;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
@@ -89,6 +96,145 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
      */
     static int sideslipCrashDamage(double tonnage, int hexesMoved) {
         return (int) Math.ceil((Math.max(0, hexesMoved) * tonnage) / 10.0);
+    }
+
+    /**
+     * The level of the top of a unit standing in a hex, as TW counts it (TW p.68 "the level of the underlying terrain,
+     * plus the level of the unit"; unit heights from TW p.99). MegaMek heights are one lower than TW's: a vehicle is 0
+     * levels tall in MegaMek and 1 in TW.
+     *
+     * @param hex  the hex the unit stands in
+     * @param unit the unit
+     *
+     * @return the unit's top level for sideslip collisions
+     */
+    static int sideslipCollisionLevel(Hex hex, Entity unit) {
+        return hex.getLevel() + unit.relHeight() + 1;
+    }
+
+    /**
+     * TW p.68: a sideslipping VTOL or WiGE crashes into a building whose level is at or higher than its own, and charges
+     * it.
+     *
+     * @param nextHex      the hex the vehicle is sideslipping into
+     * @param slipAltitude the vehicle's altitude (absolute level) while sideslipping
+     *
+     * @return {@code true} if a building in the hex reaches the vehicle
+     */
+    static boolean isBuildingInSideslipPath(Hex nextHex, int slipAltitude) {
+        return nextHex.containsTerrain(Terrains.BLDG_ELEV)
+              && ((nextHex.getLevel() + nextHex.terrainLevel(Terrains.BLDG_ELEV)) >= slipAltitude);
+    }
+
+    /**
+     * Finds a grounded DropShip or Large Support Vehicle in the hex that reaches a sideslipping VTOL or WiGE (TW p.68).
+     *
+     * @param nextHex      the hex the vehicle is sideslipping into
+     * @param occupants    the units in that hex
+     * @param slipAltitude the vehicle's altitude (absolute level) while sideslipping
+     *
+     * @return the unit it collides with, or {@code null} if none
+     */
+    static @Nullable Entity findLargeUnitInSideslipPath(Hex nextHex, List<Entity> occupants, int slipAltitude) {
+        for (Entity occupant : occupants) {
+            boolean isLargeUnit = (occupant instanceof Dropship) || (occupant instanceof LargeSupportTank);
+            if (isLargeUnit && !occupant.isAirborne()
+                  && (sideslipCollisionLevel(nextHex, occupant) >= slipAltitude)) {
+                return occupant;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * TW p.68: a VTOL or WiGE that sideslips into a hex where it could charge an infantry unit drops to the level of
+     * that hex's terrain and crashes.
+     *
+     * @param nextHex      the hex the vehicle is sideslipping into
+     * @param occupants    the units in that hex
+     * @param slipAltitude the vehicle's altitude (absolute level) while sideslipping
+     *
+     * @return {@code true} if an infantry unit in the hex reaches the vehicle
+     */
+    static boolean isInfantryInSideslipPath(Hex nextHex, List<Entity> occupants, int slipAltitude) {
+        for (Entity occupant : occupants) {
+            if ((occupant instanceof Infantry) && (sideslipCollisionLevel(nextHex, occupant) >= slipAltitude)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Resolves an airborne VTOL or WiGE sideslipping into a building, a DropShip or Large Support Vehicle, or an infantry
+     * unit (TW p.68). The vehicle charges the building or large unit, then crashes in the hex it was sliding out of, as
+     * a skidding unit stops in the hex before the obstacle.
+     *
+     * @param tank         the sideslipping VTOL or WiGE, currently at {@code curPos}
+     * @param curPos       the hex the vehicle is sliding out of
+     * @param nextPos      the hex it is sliding into
+     * @param nextHex      the hex at {@code nextPos}
+     * @param occupants    the units in {@code nextPos}
+     * @param slipAltitude the vehicle's altitude (absolute level) while sideslipping
+     * @param direction    the direction of the sideslip
+     * @param impactSide   the side of the vehicle that hits the obstacle
+     * @param hexesMoved   the hexes moved this turn, including sideslipped hexes and the crash hex
+     *
+     * @return the reports, or {@code null} if nothing in {@code nextPos} stops the vehicle
+     */
+    @Nullable
+    Vector<Report> resolveSideslipCollision(Tank tank, Coords curPos, Coords nextPos, Hex nextHex,
+          List<Entity> occupants, int slipAltitude, int direction, int impactSide, int hexesMoved) {
+        Vector<Report> reports = new Vector<>();
+        if (isBuildingInSideslipPath(nextHex, slipAltitude)) {
+            IBuilding building = getGame().getBoard(tank).getBuildingAt(nextPos);
+            reports.add(sideslipObstacleReport(tank, building.getName(), nextPos));
+            int chargeDamage = ChargeAttackAction.getDamageFor(tank,
+                  getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_CHARGE_DAMAGE),
+                  tank.delta_distance);
+            Vector<Report> buildingReports = gameManager.damageBuilding(building,
+                  ChargeAttackAction.getBuildingChargeDamage(tank, chargeDamage), nextPos);
+            for (Report report : buildingReports) {
+                report.subject = tank.getId();
+            }
+            reports.addAll(buildingReports);
+            HitData hit = tank.rollHitLocation(ToHitData.HIT_NORMAL, impactSide);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
+            reports.addAll(gameManager.damageEntity(tank, hit,
+                  ChargeAttackAction.getDamageTakenBy(tank, building, nextPos)));
+            if (building.getCurrentCF(nextPos) <= 0) {
+                gameManager.checkForCollapse(building, nextPos, true, gameManager.getMainPhaseReport());
+            }
+        } else {
+            Entity largeUnit = findLargeUnitInSideslipPath(nextHex, occupants, slipAltitude);
+            if (largeUnit != null) {
+                reports.add(sideslipObstacleReport(tank, largeUnit.getShortName(), nextPos));
+                ChargeAttackAction charge = new ChargeAttackAction(tank.getId(), largeUnit.getTargetType(),
+                      largeUnit.getId(), largeUnit.getPosition());
+                gameManager.resolveChargeDamage(tank, largeUnit, charge.toHit(getGame(), true), direction);
+            } else if (isInfantryInSideslipPath(nextHex, occupants, slipAltitude)) {
+                Report report = new Report(2052);
+                report.subject = tank.getId();
+                report.indent();
+                report.add(nextPos.getBoardNum(), true);
+                reports.add(report);
+            } else {
+                return null;
+            }
+        }
+        if (!tank.isDoomed()) {
+            reports.addAll(crashVTOLorWiGE(tank, false, true, hexesMoved, curPos, tank.getElevation(), impactSide));
+        }
+        return reports;
+    }
+
+    private static Report sideslipObstacleReport(Tank tank, String obstacle, Coords nextPos) {
+        Report report = new Report(2051);
+        report.subject = tank.getId();
+        report.indent();
+        report.add(obstacle, true);
+        report.add(nextPos.getBoardNum(), true);
+        return report;
     }
 
     /**

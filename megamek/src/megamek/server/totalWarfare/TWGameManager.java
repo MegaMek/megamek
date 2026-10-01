@@ -4806,11 +4806,12 @@ public class TWGameManager extends AbstractGameManager {
             int nextElevation = nextAltitude - nextHex.getLevel();
 
             boolean crashedIntoTerrain = curAltitude < nextAltitude;
+            boolean crashedIntoTrees = false;
             if (entity.getMovementMode() == EntityMovementMode.VTOL &&
                   (nextHex.containsTerrain(Terrains.WOODS) || nextHex.containsTerrain(Terrains.JUNGLE)) &&
                   nextElevation <= nextHex.terrainLevel(Terrains.FOLIAGE_ELEV)) {
                 crashedIntoTerrain = true;
-
+                crashedIntoTrees = true;
             }
 
             if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
@@ -4843,6 +4844,28 @@ public class TWGameManager extends AbstractGameManager {
                 }
             }
 
+            // Airborne VTOL and WiGE vehicles (not LAMs, which use IO:AE p.107) follow TW p.68 when sliding
+            boolean isAirborneVehicleSlip = (entity instanceof Tank) && (elevation > 0)
+                  && ((entity.getMovementMode() == EntityMovementMode.VTOL)
+                  || (entity.getMovementMode() == EntityMovementMode.WIGE));
+            // TW p.55: a WiGE that enters a woods or jungle hex, including by a sideslip, crashes
+            if (isAirborneVehicleSlip && (entity.getMovementMode() == EntityMovementMode.WIGE)
+                  && (nextHex.containsTerrain(Terrains.WOODS) || nextHex.containsTerrain(Terrains.JUNGLE))) {
+                crashedIntoTerrain = true;
+                crashedIntoTrees = true;
+            }
+            // TW p.68: buildings, DropShips, Large Support Vehicles and infantry at or above the vehicle stop it
+            if (isAirborneVehicleSlip && !crashedIntoTerrain && (entity instanceof Tank slippingTank)) {
+                int slipAltitude = Math.max(curAltitude, nextHex.getLevel() + nextElevation);
+                Vector<Report> collisionReports = airborneVehicleCrashHandler.resolveSideslipCollision(slippingTank,
+                      curPos, nextPos, nextHex, game.getEntitiesVector(nextPos), slipAltitude, direction,
+                      getTable(direction, step), entity.delta_distance + skidDistance + 1);
+                if (collisionReports != null) {
+                    addReport(collisionReports);
+                    break;
+                }
+            }
+
             Entity crashDropShip = null;
             for (Entity en : game.getEntitiesVector(nextPos)) {
                 if ((en instanceof Dropship) && !en.isAirborne() && (nextAltitude <= (en.relHeight()))) {
@@ -4865,6 +4888,8 @@ public class TWGameManager extends AbstractGameManager {
                         r = new Report(2045);
                     }
 
+                } else if (crashedIntoTrees) {
+                    r = new Report(2053);
                 } else {
                     r = new Report(2045);
                 }
@@ -4993,8 +5018,10 @@ public class TWGameManager extends AbstractGameManager {
                 while (targets.hasNext()) {
                     Entity target = targets.next();
 
+                    // An airborne VTOL or WiGE only charges a unit whose TW height reaches it (TW p.68, p.99)
+                    int targetTop = isAirborneVehicleSlip ? (target.relHeight() + 1) : target.relHeight();
                     if ((target.getElevation() > (nextElevation + entity.getHeight())) ||
-                          (target.relHeight() < nextElevation)) {
+                          (targetTop < nextElevation)) {
                         // target is not in the way
                         continue;
                     }
@@ -15910,7 +15937,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Handle a charge's damage
      */
-    private void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
+    void resolveChargeDamage(Entity ae, Entity te, ToHitData toHit, int direction) {
         resolveChargeDamage(ae, te, toHit, direction, false, true, false);
     }
 

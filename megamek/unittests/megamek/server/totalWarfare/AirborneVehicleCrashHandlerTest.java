@@ -46,17 +46,21 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import megamek.common.GameBoardTestCase;
+import megamek.common.Hex;
 import megamek.common.Player;
+import megamek.common.Report;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.rolls.PilotingRollData;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
+import megamek.common.units.IBuilding;
 import megamek.common.units.SupportTank;
 import megamek.utils.ServerFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -117,6 +121,25 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
               hex 0308 0 "" ""
               hex 0309 0 "" ""
               hex 0310 0 "" ""
+              end""");
+
+        initializeBoard("WOODS_AHEAD", """
+              size 1 2
+              hex 0101 0 "" ""
+              hex 0102 0 "woods:1;foliage_elev:2" ""
+              end""");
+
+        initializeBoard("BUILDING_AHEAD", """
+              size 1 2
+              hex 0101 0 "" ""
+              hex 0102 0 "bldg_elev:1;building:2:0;bldg_cf:40" ""
+              end""");
+
+        initializeBoard("OPEN_ROW", """
+              size 1 3
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "" ""
               end""");
 
         // Clear, clear, then a level 3 hill the sideslipping WiGE crashes into
@@ -230,6 +253,105 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         // 4 hexes entered before the slip, so the cap is 3 (TW p.67): from 0105 it slips south to 0108
         assertEquals(new Coords(0, 7), wige.getPosition(), "the WiGE sideslips 3 hexes south");
         assertEquals(7, wige.delta_distance, "the 3 sideslipped hexes count with the 4 hexes moved");
+    }
+
+    private MoveStep southFacingStep() {
+        MoveStep step = mock(MoveStep.class);
+        when(step.getFacing()).thenReturn(SOUTH);
+        return step;
+    }
+
+    private boolean reported(int messageId) {
+        for (Report report : gameManager.getMainPhaseReport()) {
+            if (report.messageId == messageId) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Test
+    void wigeSideslippingIntoWoodsCrashesAndIsDestroyed() {
+        setBoard("WOODS_AHEAD");
+        SupportTank wige = airborneWiGE();
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 1, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertTrue(reported(2053), "the crash report names the trees");
+        assertTrue(wige.isDoomed(), "a WiGE cannot land in woods, so the crash destroys it (TW p.68)");
+    }
+
+    @Test
+    void sideslipIntoABuildingChargesItAndCrashesBeforeIt() {
+        setBoard("BUILDING_AHEAD");
+        SupportTank wige = airborneWiGE();
+        wige.delta_distance = 4;
+        Coords buildingHex = new Coords(0, 1);
+        IBuilding building = getGame().getBoard().getBuildingAt(buildingHex);
+        int buildingCfBefore = building.getCurrentCF(buildingHex);
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 1, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertTrue(reported(2051), "the WiGE crashes into the building");
+        assertTrue(building.getCurrentCF(buildingHex) < buildingCfBefore, "the building takes the charge");
+        assertEquals(new Coords(0, 0), wige.getPosition(), "the WiGE crashes in the hex before the building");
+        assertEquals(0, wige.getElevation(), "the WiGE is on the ground after the crash");
+    }
+
+    @Test
+    void sideslipIntoInfantryDropsAndCrashes() {
+        setBoard("OPEN_ROW");
+        SupportTank wige = airborneWiGE();
+        ConvInfantry infantry = new ConvInfantry();
+        infantry.setOwner(getGame().getPlayer(0));
+        infantry.setId(6);
+        infantry.setPosition(new Coords(0, 1));
+        infantry.setDeployed(true);
+        getGame().addEntity(infantry);
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 2, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertTrue(reported(2052), "the WiGE drops onto the infantry and crashes");
+        assertEquals(new Coords(0, 0), wige.getPosition(), "the WiGE crashes in the hex before the infantry");
+        assertEquals(0, wige.getElevation());
+    }
+
+    @Test
+    void sideslipChargesAGroundVehicleOneLevelTall() {
+        setBoard("OPEN_ROW");
+        SupportTank wige = airborneWiGE();
+        SupportTank groundVehicle = newWiGE(4);
+        groundVehicle.setMovementMode(EntityMovementMode.TRACKED);
+        groundVehicle.setId(6);
+        groundVehicle.setPosition(new Coords(0, 1));
+        groundVehicle.setElevation(0);
+        groundVehicle.setDeployed(true);
+        // A unit that has already moved cannot try to dodge the sliding WiGE
+        groundVehicle.setDone(true);
+        getGame().addEntity(groundVehicle);
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 2, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        // TW counts the vehicle as 1 level tall, which reaches a WiGE at elevation 1 (TW p.68, p.99)
+        assertTrue(reported(2050), "the WiGE runs into the vehicle instead of passing over it");
+    }
+
+    @Test
+    void collisionLevelsUseTwUnitHeights() {
+        Hex levelTwo = new Hex(2);
+        SupportTank vehicle = newWiGE(4);
+        vehicle.setMovementMode(EntityMovementMode.TRACKED);
+        vehicle.setElevation(0);
+        assertEquals(3, AirborneVehicleCrashHandler.sideslipCollisionLevel(levelTwo, vehicle),
+              "a vehicle on a level 2 hex reaches level 3");
+
+        Hex building = new Hex(0, "bldg_elev:2;building:2:0;bldg_cf:40", "", new Coords(0, 0));
+        assertTrue(AirborneVehicleCrashHandler.isBuildingInSideslipPath(building, 2), "roof level with the unit");
+        assertFalse(AirborneVehicleCrashHandler.isBuildingInSideslipPath(building, 3), "the unit flies over");
     }
 
     @Test

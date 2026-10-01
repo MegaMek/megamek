@@ -4550,6 +4550,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
         if (entity == null) {
             return new ClimbModeContext(null, null, Messages.getString("MovementDisplay.climbModeTip.none"));
         }
+        // For WiGE movement the toggle means Keep Elevation / Follow Terrain, whatever terrain is nearby
+        EntityMovementMode pathMovementMode = (cmd != null) ? cmd.getFinalConversionMode()
+                                                            : entity.getMovementMode();
+        if (pathMovementMode == EntityMovementMode.WIGE) {
+            String wigeLabel = climbModeOn
+                               ? Messages.getString("MovementDisplay.climbModeBtn.wigeKeepElevation")
+                               : Messages.getString("MovementDisplay.climbModeBtn.wigeFollowTerrain");
+            return new ClimbModeContext(null, wigeLabel, Messages.getString("MovementDisplay.climbModeTip.wige"));
+        }
         // Use end-of-path position/facing if a path is being plotted, else the entity's current state.
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();

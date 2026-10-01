@@ -593,10 +593,12 @@ public class MMXMLUtility {
             try {
                 DocumentBuilder documentBuilder = buildDocumentBuilderWithLimit(entitySizeLimit);
                 Document document = documentBuilder.parse(new ByteArrayInputStream(documentBytes));
-                LOGGER.info("Parsed XML document ({} nodes){}",
-                      document.getElementsByTagName("*").getLength(),
-                      entitySizeLimit == initialEntitySizeLimit ? "" : " after raising JAXP entity size limit from "
-                            + initialEntitySizeLimit + " to " + entitySizeLimit + " characters");
+                if (LOGGER.isInfoEnabled()) {
+                    int nodeCount = document.getElementsByTagName("*").getLength();
+                    LOGGER.info("Parsed XML document ({} nodes){}", nodeCount,
+                          entitySizeLimit == initialEntitySizeLimit ? "" : " after raising JAXP entity size limit from "
+                                + initialEntitySizeLimit + " to " + entitySizeLimit + " characters");
+                }
                 return document;
             } catch (SAXParseException parseException) {
                 // JAXP00010003 = maxGeneralEntitySizeLimit (single entity too large)
@@ -609,6 +611,10 @@ public class MMXMLUtility {
                     throw parseException;
                 }
 
+                // In JAXP a limit of 0 or less means "unlimited", so doubling it can't help
+                if (entitySizeLimit <= 0) {
+                    throw parseException;
+                }
                 if (entitySizeLimit > Integer.MAX_VALUE / 2) {
                     LOGGER.error(
                           "XML document exceeds JAXP entity size limits even at maximum ({} characters); giving up",

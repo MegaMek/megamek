@@ -278,6 +278,7 @@ public class TWGameManager extends AbstractGameManager {
     private BuildingEditHandler buildingEditHandler;
     private final InfantryActionTracker infantryActionTracker = new InfantryActionTracker();
     private final BuildingCollapseHandler buildingCollapseHandler = new BuildingCollapseHandler(this);
+    private final AirborneVehicleCrashHandler airborneVehicleCrashHandler = new AirborneVehicleCrashHandler(this);
     private final DeploymentProcessor deploymentProcessor = new DeploymentProcessor(this);
     final HeatResolver heatResolver = new HeatResolver(this);
     private final MinefieldManager minefieldManager = new MinefieldManager(this);
@@ -4878,7 +4879,7 @@ public class TWGameManager extends AbstractGameManager {
                     int table = getTable(direction, step);
                     elevation = nextElevation;
                     if (entity instanceof Tank) {
-                        addReport(crashVTOLorWiGE((Tank) entity, false, true, distance, curPos, elevation, table));
+                        addReport(airborneVehicleCrashHandler.crashVTOLorWiGE((Tank) entity, false, true, distance, curPos, elevation, table));
                     }
 
                     if ((nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)) ||
@@ -4948,7 +4949,7 @@ public class TWGameManager extends AbstractGameManager {
                     int table = getTable(direction, step);
                     elevation = nextElevation;
                     if (entity instanceof VTOL vtol) {
-                        addReport(crashVTOLorWiGE(vtol, false, true, distance, curPos, elevation, table));
+                        addReport(airborneVehicleCrashHandler.crashVTOLorWiGE(vtol, false, true, distance, curPos, elevation, table));
                     }
                     break;
                 }
@@ -7860,7 +7861,7 @@ public class TWGameManager extends AbstractGameManager {
      *
      * @return - <code>true</code> if the entity set off any mines
      */
-    private boolean enterMinefield(Entity entity, Coords c, int curElev, boolean isOnGround, Vector<Report> vMineReport,
+    boolean enterMinefield(Entity entity, Coords c, int curElev, boolean isOnGround, Vector<Report> vMineReport,
           int target) {
         Report r;
         boolean trippedMine = false;
@@ -8236,7 +8237,7 @@ public class TWGameManager extends AbstractGameManager {
     /**
      * Clear any detonated mines at these coords
      */
-    private void clearDetonatedMines(Coords c, int target) {
+    void clearDetonatedMines(Coords c, int target) {
         Enumeration<Minefield> minefields = game.getMinefields(c).elements();
         List<Minefield> mfRemoved = new ArrayList<>();
         while (minefields.hasMoreElements()) {
@@ -19132,7 +19133,7 @@ public class TWGameManager extends AbstractGameManager {
             // airborne VTOL/WiGE movement but crash through their own handlers
             if (entity instanceof Tank tank && tank.isShutDown() && tank.isAirborneVTOLorWIGE()
                   && !(tank.isDestroyed() || tank.isDoomed())) {
-                addReport(forceLandVTOLorWiGE(tank));
+                addReport(airborneVehicleCrashHandler.forceLandVTOLorWiGE(tank));
             }
         }
     }
@@ -22382,7 +22383,7 @@ public class TWGameManager extends AbstractGameManager {
                     reports.add(r);
                     tank.getCrew().setDoomed(true);
                     if (tank.isAirborneVTOLorWIGE()) {
-                        reports.addAll(crashVTOLorWiGE(tank));
+                        reports.addAll(airborneVehicleCrashHandler.crashVTOLorWiGE(tank));
                     }
                 } else if (tank.hasActiveDNI() &&
                       tank.hasAbility(OptionsConstants.MD_VDNI) &&
@@ -22408,7 +22409,7 @@ public class TWGameManager extends AbstractGameManager {
                         reports.add(r);
                         tank.getCrew().setDoomed(true);
                         if (tank.isAirborneVTOLorWIGE()) {
-                            reports.addAll(crashVTOLorWiGE(tank));
+                            reports.addAll(airborneVehicleCrashHandler.crashVTOLorWiGE(tank));
                         }
                     }
                 }
@@ -22428,7 +22429,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (!(tank.isDestroyed() || tank.isDoomed())) {
                     tank.immobilize();
                     if (tank.isAirborneVTOLorWIGE()) {
-                        reports.addAll(forceLandVTOLorWiGE(tank));
+                        reports.addAll(airborneVehicleCrashHandler.forceLandVTOLorWiGE(tank));
                     } else if (tank.getMovementMode() == EntityMovementMode.HOVER) {
                         reports.addAll(sinkImmobilizedHover(tank));
                     }
@@ -22569,7 +22570,7 @@ public class TWGameManager extends AbstractGameManager {
                         crash = !tank.canGoDown();
                     }
                     if (crash) {
-                        reports.addAll(crashVTOLorWiGE(tank));
+                        reports.addAll(airborneVehicleCrashHandler.crashVTOLorWiGE(tank));
                     }
                 }
                 break;
@@ -22593,7 +22594,7 @@ public class TWGameManager extends AbstractGameManager {
                               // Don't bother with forcing a landing if
                               // we're already otherwise destroyed.
                               && !(tank.isDestroyed() || tank.isDoomed())) {
-                            reports.addAll(forceLandVTOLorWiGE(tank));
+                            reports.addAll(airborneVehicleCrashHandler.forceLandVTOLorWiGE(tank));
                         }
                     }
                 }
@@ -22609,7 +22610,7 @@ public class TWGameManager extends AbstractGameManager {
                     r.subject = tank.getId();
                     reports.add(r);
                     tank.immobilize();
-                    reports.addAll(crashVTOLorWiGE(tank, true));
+                    reports.addAll(airborneVehicleCrashHandler.crashVTOLorWiGE(tank, true));
                 }
                 break;
             case VTOL.CRIT_FLIGHT_STABILIZER:
@@ -22738,332 +22739,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Resolves the forced landing of one airborne {@code VTOL} or {@code WiGE} in its current hex. As this method is
-     * only for internal use and not part of the exported public API, it simply relies on its client code to only ever
-     * hand it a valid airborne vehicle and does not run any further checks of its own.
+     * Crashes an airborne VTOL or WiGE in its current hex. See {@link AirborneVehicleCrashHandler}.
      *
-     * @param en The {@code VTOL} or {@code WiGE} in question.
+     * @param tank the airborne VTOL or WiGE to crash
      *
-     * @return The resulting {@code Vector} of {@code Report}s.
+     * @return the resulting reports
      */
-    private Vector<Report> forceLandVTOLorWiGE(Tank en) {
-        Vector<Report> vDesc = new Vector<>();
-        PilotingRollData psr = en.getBasePilotingRoll();
-        Hex hex = game.getBoard().getHex(en.getPosition());
-
-        if (en instanceof VTOL) {
-            psr.addModifier(4, "VTOL making forced landing");
-        } else {
-            psr.addModifier(0, "WiGE making forced landing");
-        }
-
-        if (en.hasAbility(OptionsConstants.PILOT_WIND_WALKER) && PilotSPAHelper.isWindWalkerValid(en)) {
-            psr.addModifier(-1, "Wind Walker SPA");
-        }
-
-        int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
-        elevation = Math.max(elevation, 0);
-        elevation = Math.min(elevation, en.getElevation());
-        if (en.getElevation() > elevation) {
-            if (!hex.containsTerrain(Terrains.FUEL_TANK) &&
-                  !hex.containsTerrain(Terrains.JUNGLE) &&
-                  !hex.containsTerrain(Terrains.MAGMA) &&
-                  !hex.containsTerrain(Terrains.MUD) &&
-                  !hex.containsTerrain(Terrains.RUBBLE) &&
-                  !hex.containsTerrain(Terrains.WATER) &&
-                  !hex.containsTerrain(Terrains.WOODS)) {
-                Report r = new Report(2180);
-                r.subject = en.getId();
-                r.addDesc(en);
-                r.add(psr.getLastPlainDesc(), true);
-                vDesc.add(r);
-
-                // roll
-                final Roll diceRoll = Compute.rollD6(2);
-                r = new Report(2185);
-                r.subject = en.getId();
-                r.add(psr.getValueAsString());
-                r.add(psr.getDesc());
-                r.add(diceRoll);
-
-                if (diceRoll.getIntValue() < psr.getValue()) {
-                    r.choose(false);
-                    vDesc.add(r);
-                    vDesc.addAll(crashVTOLorWiGE(en, true));
-                } else {
-                    r.choose(true);
-                    vDesc.add(r);
-                    en.setElevation(elevation);
-                }
-            } else {
-                vDesc.addAll(crashVTOLorWiGE(en, true));
-            }
-        }
-        return vDesc;
-    }
-
-    /**
-     * Crash a VTOL
-     *
-     * @param en the <code>VTOL</code> to be crashed
-     *
-     * @return the <code>Vector<Report></code> containing phase reports
-     */
-    Vector<Report> crashVTOLorWiGE(Tank en) {
-        return crashVTOLorWiGE(en, false, false, 0, en.getPosition(), en.getElevation(), 0);
-    }
-
-    /**
-     * Crash a VTOL or WiGE.
-     *
-     * @param en              The {@code VTOL} or {@code WiGE} to crash.
-     * @param rerollRotorHits Whether any rotor hits from the crash should be rerolled, typically after a "rotor
-     *                        destroyed" critical hit.
-     *
-     * @return The {@code Vector<Report>} of resulting reports.
-     */
-    private Vector<Report> crashVTOLorWiGE(Tank en, boolean rerollRotorHits) {
-        return crashVTOLorWiGE(en, rerollRotorHits, false, 0, en.getPosition(), en.getElevation(), 0);
-    }
-
-    /**
-     * Crash a VTOL or WiGE.
-     *
-     * @param en              The {@code VTOL} or {@code WiGE} to crash.
-     * @param rerollRotorHits Whether any rotor hits from the crash should be rerolled, typically after a "rotor
-     *                        destroyed" critical hit.
-     * @param sideSlipCrash   A <code>boolean</code> value indicating whether this is a sideslip crash or not.
-     * @param hexesMoved      The <code>int</code> number of hexes moved.
-     * @param crashPos        The <code>Coords</code> of the crash
-     * @param crashElevation  The <code>int</code> elevation of the VTOL
-     * @param impactSide      The <code>int</code> describing the side on which the VTOL falls
-     *
-     * @return a <code>Vector<Report></code> of Reports.
-     */
-
-    private Vector<Report> crashVTOLorWiGE(Tank en, boolean rerollRotorHits, boolean sideSlipCrash, int hexesMoved,
-          Coords crashPos, int crashElevation, int impactSide) {
-        Vector<Report> vDesc = new Vector<>();
-        Report r;
-
-        // we might be off the board after a DFA, so return then
-        if (!game.getBoard().contains(crashPos)) {
-            return vDesc;
-        }
-
-        if (!sideSlipCrash) {
-            // report lost movement and crashing
-            r = new Report(6260);
-            r.subject = en.getId();
-            r.newlines = 0;
-            r.addDesc(en);
-            vDesc.addElement(r);
-            int newElevation = 0;
-            Hex fallHex = game.getBoard().getHex(crashPos);
-
-            // May land on roof of building or bridge
-            if (fallHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                newElevation = fallHex.terrainLevel(Terrains.BLDG_ELEV);
-            } else if (fallHex.containsTerrain(Terrains.BRIDGE_ELEV)) {
-                newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
-                if (newElevation > crashElevation) {
-                    newElevation = 0; // vtol was under bridge already
-                }
-            }
-
-            int fall = crashElevation - newElevation;
-            if (fall == 0) {
-                // already on ground, no harm done
-                r = new Report(6265);
-                r.subject = en.getId();
-                vDesc.addElement(r);
-                return vDesc;
-            }
-            // set elevation 1st to avoid multiple crashes
-            en.setElevation(newElevation);
-
-            // plummets to ground
-            r = new Report(6270);
-            r.subject = en.getId();
-            r.add(fall);
-            vDesc.addElement(r);
-
-            // facing after fall
-            String side;
-            int table;
-            int facing = Game.rulesManager.getRulesCharts().getFacingForFall();
-            table = switch (facing) {
-                case 1, 2 -> {
-                    side = "right side";
-                    yield ToHitData.SIDE_RIGHT;
-                }
-                case 3 -> {
-                    side = "rear";
-                    yield ToHitData.SIDE_REAR;
-                }
-                case 4, 5 -> {
-                    side = "left side";
-                    yield ToHitData.SIDE_LEFT;
-                }
-                default -> {
-                    side = "front";
-                    yield ToHitData.SIDE_FRONT;
-                }
-            };
-
-            if (newElevation <= 0) {
-                boolean waterFall = fallHex.containsTerrain(Terrains.WATER);
-                if (waterFall && fallHex.containsTerrain(Terrains.ICE)) {
-                    Roll diceRoll = Compute.rollD6(1);
-                    r = new Report(2119);
-                    r.subject = en.getId();
-                    r.addDesc(en);
-                    r.add(diceRoll);
-                    r.subject = en.getId();
-                    vDesc.add(r);
-                    if (diceRoll.getIntValue() > 3) {
-                        vDesc.addAll(resolveIceBroken(crashPos));
-                    } else {
-                        waterFall = false; // saved by ice
-                    }
-                }
-                if (waterFall) {
-                    // falls into water and is destroyed
-                    r = new Report(6275);
-                    r.subject = en.getId();
-                    vDesc.addElement(r);
-                    vDesc.addAll(destroyEntity(en, "Fell into water", false, false));
-                    // not sure, is this salvageable?
-                }
-            }
-
-            // calculate damage for hitting the surface
-            int damage = (int) Math.round(en.getWeight() / 10.0) * (fall + 1);
-
-            // adjust damage for gravity
-            damage = Math.round(damage * game.getPlanetaryConditions().getGravity());
-            // report falling
-            r = new Report(6280);
-            r.subject = en.getId();
-            r.indent();
-            r.addDesc(en);
-            r.add(side);
-            r.add(damage);
-            // r.newlines = 0;
-            vDesc.addElement(r);
-
-            en.setFacing((en.getFacing() + (facing)) % 6);
-
-            boolean exploded = false;
-
-            // standard damage loop
-            while (damage > 0) {
-                int cluster = Math.min(5, damage);
-                HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
-                if ((en instanceof VTOL) && (hit.getLocation() == VTOL.LOC_ROTOR) && rerollRotorHits) {
-                    continue;
-                }
-                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
-                int[] isBefore = { en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT),
-                                   en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR) };
-                vDesc.addAll(damageEntity(en, hit, cluster));
-                int[] isAfter = { en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT),
-                                  en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR) };
-                for (int x = 0; x <= 3; x++) {
-                    if (isBefore[x] != isAfter[x]) {
-                        exploded = true;
-                        break;
-                    }
-                }
-                damage -= cluster;
-            }
-            if (exploded) {
-                r = new Report(6285);
-                r.subject = en.getId();
-                r.addDesc(en);
-                vDesc.addElement(r);
-                vDesc.addAll(explodeVTOLorWiGE(en));
-            }
-
-            // check for location exposure
-            vDesc.addAll(doSetLocationsExposure(en, fallHex, false, newElevation));
-
-        } else {
-            en.setElevation(0);// considered landed in the hex.
-            // crashes into ground thanks to sideslip
-            r = new Report(6290);
-            r.subject = en.getId();
-            r.addDesc(en);
-            vDesc.addElement(r);
-            int damage = (int) Math.round(en.getWeight() / 10.0) * (hexesMoved + 1);
-            boolean exploded = false;
-
-            // standard damage loop
-            while (damage > 0) {
-                int cluster = Math.min(5, damage);
-                HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, impactSide);
-                hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL);
-                int[] isBefore = { en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT),
-                                   en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR) };
-                vDesc.addAll(damageEntity(en, hit, cluster));
-                int[] isAfter = { en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT),
-                                  en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR) };
-                for (int x = 0; x <= 3; x++) {
-                    if (isBefore[x] != isAfter[x]) {
-                        exploded = true;
-                        break;
-                    }
-                }
-                damage -= cluster;
-            }
-            if (exploded) {
-                r = new Report(6295);
-                r.subject = en.getId();
-                r.addDesc(en);
-                vDesc.addElement(r);
-                vDesc.addAll(explodeVTOLorWiGE(en));
-            }
-
-        }
-
-        if (game.containsMinefield(crashPos)) {
-            // may set off any minefields in the hex
-            enterMinefield(en, crashPos, 0, true, vDesc, 7);
-            // it may also clear any minefields that it detonated
-            clearDetonatedMines(crashPos, 5);
-            resetMines();
-        }
-
-        return vDesc;
-
-    }
-
-    /**
-     * Explodes a VTOL or WiGE unit.
-     *
-     * @param entity The unit to explode.
-     *
-     * @return The new reports created by the events
-     */
-    private Vector<Report> explodeVTOLorWiGE(@Nullable Tank entity) {
-        Vector<Report> newReports = new Vector<>();
-        if (entity == null) {
-            IGame.LOGGER.error("Tried to explode null entity");
-            return newReports;
-
-        } else if (entity.hasEngine() && entity.getEngine().isFusion()) {
-            // fusion engine, no effect
-            newReports.addElement(new Report(6300).subject(entity.getId()));
-
-        } else {
-            if (game.hasBoardLocationOf(entity)) {
-                Hex hex = game.getHexOf(entity);
-                int fireTerrain = hex.hasVegetation() ? Terrains.FIRE_LVL_NORMAL : Terrains.FIRE_LVL_INFERNO;
-                ignite(entity.getPosition(), entity.getBoardId(), fireTerrain, newReports);
-            }
-            newReports.addAll(destroyEntity(entity, "crashed and burned", false, false));
-        }
-        return newReports;
+    Vector<Report> crashVTOLorWiGE(Tank tank) {
+        return airborneVehicleCrashHandler.crashVTOLorWiGE(tank);
     }
 
     /**
@@ -30440,7 +30123,7 @@ public class TWGameManager extends AbstractGameManager {
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected(true);
         if (entity instanceof VTOL) {
-            vDesc.addAll(crashVTOLorWiGE((VTOL) entity));
+            vDesc.addAll(airborneVehicleCrashHandler.crashVTOLorWiGE((VTOL) entity));
         }
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 
@@ -31764,7 +31447,7 @@ public class TWGameManager extends AbstractGameManager {
                               // ...but don't bother to resolve that if we're
                               // already otherwise destroyed.
                               && !(te.isDestroyed() || te.isDoomed())) {
-                            vDesc.addAll(forceLandVTOLorWiGE(te));
+                            vDesc.addAll(airborneVehicleCrashHandler.forceLandVTOLorWiGE(te));
                         }
                     }
                 }
@@ -31877,7 +31560,7 @@ public class TWGameManager extends AbstractGameManager {
         if (((te.getMovementMode() == EntityMovementMode.WIGE) && (te.isAirborneVTOLorWIGE())) &&
               (te.isMovementHitPending() || (te.getWalkMP() <= 0))) {
             // report problem: add tab
-            vDesc.addAll(crashVTOLorWiGE(te));
+            vDesc.addAll(airborneVehicleCrashHandler.crashVTOLorWiGE(te));
         }
         return vDesc;
     }

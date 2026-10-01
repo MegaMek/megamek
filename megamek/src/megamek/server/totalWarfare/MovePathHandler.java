@@ -3758,8 +3758,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             report.add(sideslipDistance);
                             addReport(report);
 
-                            // Charges and crash damage during the sideslip use the hexes moved before it
+                            // Charges and crash damage during the sideslip use the hexes moved before it, and a WiGE
+                            // needs MP left to avoid a fall (TW p.68)
                             entity.delta_distance = hexesEnteredBeforeSlip;
+                            entity.mpUsed = mpUsed;
                             if (gameManager.processSkid(entity,
                                                         start,
                                                         elev,

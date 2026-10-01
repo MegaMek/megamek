@@ -3050,7 +3050,13 @@ public class TWGameManager extends AbstractGameManager {
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
             Entity entity = (Entity) team_order.nextElement();
-            if (entity.isSelectableThisTurn()) {
+            if (phase.isDeployment()) {
+                if (Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
+                    continue;
+                }
+            }
+
+            if (entity.isSelectableThisTurn() && Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
                 if (!protoMeksMoveMulti && (entity instanceof ProtoMek) && (entity.getUnitNumber() != Entity.NONE)) {
                     turns.addElement(new UnitNumberTurn(entity.getOwnerId(), entity.getUnitNumber()));
                 } else {
@@ -4156,10 +4162,7 @@ public class TWGameManager extends AbstractGameManager {
     boolean launchUnit(Entity unloader, Targetable unloaded, Coords pos, int facing, int velocity, int altitude,
           int[] moveVec, int bonus) {
 
-        Entity unit;
-        if (unloaded instanceof Entity && unloader instanceof Aero) {
-            unit = (Entity) unloaded;
-        } else {
+        if (!(unloaded instanceof Entity unit) || !(unloader instanceof IAero aeroUnloader)) {
             return false;
         }
 
@@ -4256,8 +4259,8 @@ public class TWGameManager extends AbstractGameManager {
 
         // launching from an OOC vessel causes damage
         // same thing if faster than 2 velocity in atmosphere
-        if ((((Aero) unloader).isOutControlTotal() && !unit.isDoomed()) ||
-              ((((Aero) unloader).getCurrentVelocity() > 2) && !game.getBoard().isSpace())) {
+        if ((aeroUnloader.isOutControlTotal() && !unit.isDoomed()) ||
+              ((aeroUnloader.getCurrentVelocity() > 2) && !game.getBoard().isSpace())) {
             Roll diceRoll = Compute.rollD6(2);
             int damage = diceRoll.getIntValue() * 10;
             String rollCalc = damage + "[" + diceRoll.getIntValue() + " * 10]";
@@ -6908,13 +6911,19 @@ public class TWGameManager extends AbstractGameManager {
 
         if (unsecured) {
             // roll hit location to get a new critical
-            HitData hit = ((Entity) a).rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
-            addReport(applyCriticalHit((Entity) a,
-                  hit.getLocation(),
-                  new CriticalSlot(0, ((Aero) a).getPotCrit()),
-                  true,
-                  1,
-                  false));
+            Entity takingOff = (Entity) a;
+            HitData hit = takingOff.rollHitLocation(ToHitData.HIT_ABOVE, ToHitData.SIDE_FRONT);
+            if (a instanceof Aero aero) {
+                addReport(applyCriticalHit(takingOff,
+                      hit.getLocation(),
+                      new CriticalSlot(0, aero.getPotCrit()),
+                      true,
+                      1,
+                      false));
+            } else {
+                // A LAM takes criticals by slot, like a Mek, so it has no aerospace critical to apply (issue #8027)
+                addReport(oneCriticalEntity(takingOff, hit.getLocation(), hit.isRear(), 0));
+            }
         }
 
     }
@@ -11103,7 +11112,6 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 case FlipArmsAction faa -> entity.setArmsFlipped(faa.getIsFlipped());
                 case FindClubAction ignored -> resolveFindClub(entity);
-                case UnjamAction ignored -> resolveUnjam(entity);
                 case ClearMinefieldAction clearMinefieldAction ->
                       resolveClearMinefield(entity, clearMinefieldAction.getMinefield());
                 case TriggerAPPodAction tapa -> {
@@ -11147,6 +11155,8 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 case RepairWeaponMalfunctionAction repairWeaponMalfunctionAction ->
                       new WeaponMalfunctionRepairHandler(this).repair(entity, repairWeaponMalfunctionAction);
+                case ReconCameraSpotAction cameraSpotAction ->
+                      new ReconCameraHandler(this).resolveSpot(entity, cameraSpotAction);
                 case DisengageAction ignored -> {
                     MovePath path = new MovePath(game, entity);
                     path.addStep(MoveStepType.FLEE);
@@ -11166,6 +11176,23 @@ public class TWGameManager extends AbstractGameManager {
                 }
                 default -> {
                 }
+            }
+        }
+    }
+
+    /**
+     * Called to complete weapon unjams
+     */
+    void resolveUnJams() {
+        // loop through actions and handle everything we expect except attacks
+        for (Enumeration<EntityAction> gameActions = game.getActions(); gameActions.hasMoreElements(); ) {
+            EntityAction ea = gameActions.nextElement();
+            Entity entity = game.getEntity(ea.getEntityId());
+            if (entity == null) {
+                continue;
+            }
+            if (ea instanceof UnjamAction) {
+                resolveUnjam(entity);
             }
         }
     }
@@ -26010,6 +26037,12 @@ public class TWGameManager extends AbstractGameManager {
                 vCanSee.addElement(player);
             }
         }
+        // A Recon Camera's whole side sees what the camera spotted this turn (TO:AUE p.150)
+        for (Player player : ReconCameraRules.playersSeeingThroughCameras(game, entity)) {
+            if (!vCanSee.contains(player)) {
+                vCanSee.addElement(player);
+            }
+        }
 
         // If the entity is hidden, skip; no one else will be able to see it.
         if (entity.isHidden()) {
@@ -26193,6 +26226,10 @@ public class TWGameManager extends AbstractGameManager {
             } else if (entity.isOffBoardObserved(pViewer.getTeam())) {
                 // if it's hostile and has been observed for counter-battery fire, we can "see"
                 // it
+                addVisibleEntity(vCanSee, entity);
+                continue;
+            } else if (ReconCameraRules.playersSeeingThroughCameras(game, entity).contains(pViewer)) {
+                // a Recon Camera on the viewer's side spotted it this turn (TO:AUE p.150)
                 addVisibleEntity(vCanSee, entity);
                 continue;
             }

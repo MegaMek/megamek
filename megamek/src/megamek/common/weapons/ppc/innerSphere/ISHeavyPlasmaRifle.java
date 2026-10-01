@@ -118,5 +118,3 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
         return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 5 : 0;
     }
 }
-
-

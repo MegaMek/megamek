@@ -458,6 +458,7 @@ public class OptionsConstants {
     public static final String ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW = "tacops_direct_blow";
     public static final String ADVANCED_COMBAT_TAC_OPS_BURST = "tacops_burst";
     public static final String ADVANCED_COMBAT_TAC_OPS_HEAT = "tacops_heat";
+    public static final String ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN = "tacops_avoiding_shutdown";
     public static final String ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER = "tacops_partial_cover";
     public static final String ADVANCED_COMBAT_TAC_OPS_BA_CRITICAL_SLOTS = "tacops_ba_criticals";
     public static final String ADVANCED_COMBAT_TAC_OPS_HOT_LOAD = "tacops_hotload";

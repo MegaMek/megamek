@@ -1,0 +1,153 @@
+// Common invocation contract for the one archive verifier in MegaMek.
+// Included builds deliberately load this file from their sibling ../megamek checkout.
+def sharedRules = rootProject.name == 'MegaMekRoot'
+        ? rootProject.file('gradle/suite_data_rules.json')
+        : rootProject.file('../megamek/gradle/suite_data_rules.json')
+ext.suiteDataRules = new groovy.json.JsonSlurper().parse(sharedRules)
+// These helpers are shared by the three consumers. External verification never
+// schedules a data producer, nor does it inspect the local staged data.
+def suiteMode = rootProject.findProperty('suiteReleaseVersion') != null
+ext.suiteDataFromPin = suiteMode && !rootProject.hasProperty('suiteArchiveFile')
+ext.suiteDataRoot = layout.buildDirectory.dir('suite/pinned-mm-data').get().asFile
+ext.suiteGeneratedRoot = suiteDataFromPin
+        ? new File(suiteDataRoot, 'generated/data')
+        : rootProject.file('../mm-data/build/staging')
+ext.suitePython = {
+    String executable = rootProject.findProperty('suitePythonExecutable')?.toString()
+            ?: (System.getProperty('os.name').toLowerCase().contains('windows') ? 'python' : 'python3')
+    def command = [executable, '-c',
+                   'import sys; print(*sys.version_info[:3], sep=chr(46)); sys.exit(sys.version_info < (3, 10))']
+    try {
+        def process = new ProcessBuilder(command).redirectErrorStream(true).start()
+        if (!process.waitFor(10, java.util.concurrent.TimeUnit.SECONDS)) {
+            process.destroyForcibly()
+            throw new GradleException("Python preflight timed out for '${executable}'; install Python 3.10+ or set -PsuitePythonExecutable=/path/to/python")
+        }
+        def output = process.inputStream.getText('UTF-8').trim()
+        def match = output =~ /^([0-9]+)\.([0-9]+)\.([0-9]+)$/
+        boolean supported = match.matches() &&
+                (match.group(1).toInteger() > 3 ||
+                 (match.group(1).toInteger() == 3 && match.group(2).toInteger() >= 10))
+        if (process.exitValue() != 0 || !supported) {
+            throw new GradleException("Suite archive tooling requires Python 3.10+; '${executable}' failed the version check (${output}). Install Python 3.10+ or set -PsuitePythonExecutable=/path/to/python")
+        }
+    } catch (IOException e) {
+        throw new GradleException("Cannot run suite Python '${executable}'; install Python 3.10+ or set -PsuitePythonExecutable=/path/to/python", e)
+    }
+    executable
+}
+ext.runSuitePython = { List args, String failure ->
+    def execution = providers.exec {
+        commandLine args.collect { it.toString() }
+        ignoreExitValue = true
+    }
+    def output = execution.standardOutput.asText.get().trim()
+    def error = execution.standardError.asText.get().trim()
+    if (execution.result.get().exitValue != 0) {
+        throw new GradleException("${failure}\n${error}\n${output}".trim())
+    }
+    if (output) {
+        logger.lifecycle(output)
+    }
+    if (error) {
+        logger.warn(error)
+    }
+}
+ext.suiteMirrorMatchesPin = { File local, String source ->
+    File repo = rootProject.file('../mm-data')
+    def git = { List<String> args ->
+        def process = new ProcessBuilder((['git', '-C', repo.absolutePath] + args)
+                .collect { it.toString() })
+                .redirectErrorStream(true).start()
+        def result = process.inputStream.getText('UTF-8').trim()
+        if (process.waitFor() != 0) {
+            throw new GradleException("Cannot check pinned mirror ${source}: ${result}")
+        }
+        result
+    }
+    git(['hash-object', '--no-filters', local.absolutePath]) ==
+            git(['rev-parse', "HEAD:${source}"])
+}
+if (suiteDataFromPin) {
+    def prepare = tasks.register('prepareSuitePinnedData') {
+        description = 'Stages canonical mm-data Git blobs and generated ZIPs in this build directory.'
+        doLast {
+            def pin = rootProject.findProperty('suiteMmDataCommit')?.toString()
+            if (!(pin ==~ /[0-9a-f]{40}/)) {
+                throw new GradleException('Supply -PsuiteMmDataCommit as a lowercase 40-character SHA-1')
+            }
+            def script = rootProject.name == 'MegaMekRoot'
+                    ? rootProject.file('scripts/suite_pinned_data.py')
+                    : rootProject.file('../megamek/scripts/suite_pinned_data.py')
+            def args = [suitePython(), '-B', script.absolutePath, '--data-repo',
+                        rootProject.file('../mm-data').absolutePath, '--pin', pin,
+                        '--output', suiteDataRoot.absolutePath]
+            runSuitePython(args, 'Suite pinned mm-data preparation failed')
+        }
+    }
+    tasks.matching { it.name in ['stageDataImages', 'stageDataBoards', 'stageDataFonts',
+                                  'stageDataMekfiles', 'stageDataRat', 'stageData'] }
+            .configureEach { dependsOn prepare }
+}
+ext.verifySuiteArchiveShared = { String product, File archive, File copyJar = null,
+                                  Map sourceJars = [:], Map companionArchives = [:],
+                                  boolean reusedCompanion = false ->
+    def properties = [suiteMegaMekCommit: 'megamekCommit',
+                      suiteMegaMekLabCommit: 'megameklabCommit',
+                      suiteMekHQCommit: 'mekhqCommit',
+                      suiteMmDataCommit: 'mmDataCommit']
+    def required = !reusedCompanion ? properties.keySet().toList()
+            : product == 'MegaMek' ? ['suiteMegaMekCommit', 'suiteMmDataCommit']
+                    : ['suiteMegaMekCommit', 'suiteMegaMekLabCommit', 'suiteMmDataCommit']
+    def gameVersion = rootProject.findProperty('suiteMegaMekVersion')
+            ?: rootProject.findProperty('suiteReleaseVersion')
+    def labVersion = rootProject.findProperty('suiteMegaMekLabVersion')
+            ?: rootProject.findProperty('suiteReleaseVersion')
+    def productVersion = product == 'MegaMek' ? gameVersion :
+            product == 'MegaMekLab' ? labVersion :
+                    rootProject.findProperty('suiteMekHQVersion') ?: rootProject.findProperty('suiteReleaseVersion')
+    File shared = rootProject.file('../megamek/gradle/suite_archive_verifier.py')
+    if (product == 'MegaMek' && rootProject.name == 'MegaMekRoot') {
+        shared = rootProject.file('gradle/suite_archive_verifier.py')
+    }
+    def args = [suitePython(), '-B', shared.absolutePath, '--product', product, '--archive', archive.absolutePath,
+                '--version', productVersion.toString(), '--data-repo',
+                rootProject.file('../mm-data').absolutePath]
+    required.each { key ->
+        args += ['--pin', "${properties[key]}=${rootProject.property(key)}"]
+    }
+    if (product != 'MegaMek') {
+        args += ['--dependency-version', "megamekVersion=${gameVersion}"]
+    }
+    if (product == 'MekHQ') {
+        args += ['--dependency-version', "megameklabVersion=${labVersion}"]
+    }
+    if (rootProject.hasProperty('suiteArchiveFile') && product != 'MegaMek') {
+        def companion = rootProject.findProperty('suiteMegaMekArchiveFile')
+        if (companion == null) {
+            throw new GradleException('External suite verification requires -PsuiteMegaMekArchiveFile')
+        }
+        args += ['--companion', "MegaMek=${rootProject.file(companion).absolutePath}"]
+        if (product == 'MekHQ') {
+            companion = rootProject.findProperty('suiteMegaMekLabArchiveFile')
+            if (companion == null) {
+                throw new GradleException('External HQ verification requires -PsuiteMegaMekLabArchiveFile')
+            }
+            args += ['--companion', "MegaMekLab=${rootProject.file(companion).absolutePath}"]
+        }
+    }
+    if (!rootProject.hasProperty('suiteArchiveFile')) {
+        companionArchives.each { dependency, companion ->
+            args += ['--companion', "${dependency}=${companion.absolutePath}"]
+        }
+    }
+    if (copyJar != null) {
+        args += ['--copy-jar', copyJar.absolutePath]
+    }
+    if (!rootProject.hasProperty('suiteArchiveFile')) {
+        sourceJars.each { dependency, source ->
+            args += ['--source-jar', "${dependency}=${source.absolutePath}"]
+        }
+    }
+    runSuitePython(args, "Suite archive verification failed: ${archive}".toString())
+}

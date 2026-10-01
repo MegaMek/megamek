@@ -43,9 +43,9 @@ import static org.mockito.Mockito.mock;
 import java.lang.reflect.Field;
 import java.util.Vector;
 
+import megamek.common.Hex;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.Hex;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;

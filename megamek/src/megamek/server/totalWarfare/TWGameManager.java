@@ -9386,7 +9386,7 @@ public class TWGameManager extends AbstractGameManager {
      */
     boolean resolveAccidentalFallFromAboveHit(Entity faller, Entity target, int fallElevation,
           Vector<Report> reports) {
-        Report r;
+        Report report;
         // determine to-hit number
         ToHitData toHit = new ToHitData(7, "base");
         if ((target instanceof Tank) || (target instanceof Dropship)) {
@@ -9398,9 +9398,9 @@ public class TWGameManager extends AbstractGameManager {
 
         if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             // automatic miss
-            r = new Report(2213);
-            r.add(toHit.getDesc());
-            reports.add(r);
+            report = new Report(2213);
+            report.add(toHit.getDesc());
+            reports.add(report);
             return false;
         }
 
@@ -9408,18 +9408,18 @@ public class TWGameManager extends AbstractGameManager {
         final Roll diceRoll = Compute.rollD6(2);
 
         if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-            r = new Report(2212);
-            r.add(toHit.getValue());
+            report = new Report(2212);
+            report.add(toHit.getValue());
         } else {
-            r = new Report(2215);
-            r.subject = faller.getId();
-            r.add(toHit.getValue());
-            r.add(diceRoll);
-            r.newlines = 0;
+            report = new Report(2215);
+            report.subject = faller.getId();
+            report.add(toHit.getValue());
+            report.add(diceRoll);
+            report.newlines = 0;
         }
 
-        r.indent();
-        reports.add(r);
+        report.indent();
+        reports.add(report);
 
         if (diceRoll.getIntValue() < toHit.getValue()) {
             return false;
@@ -9427,11 +9427,11 @@ public class TWGameManager extends AbstractGameManager {
         // deal damage to target
         int damage = Compute.getAccidentalFallFromAboveDamageFor(faller,
               Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation, target.getHeight()));
-        r = new Report(2220);
-        r.subject = target.getId();
-        r.addDesc(target);
-        r.add(damage);
-        reports.add(r);
+        report = new Report(2220);
+        report.subject = target.getId();
+        report.addDesc(target);
+        report.add(damage);
+        reports.add(report);
         while (damage > 0) {
             int cluster = Math.min(5, damage);
             HitData hit = Game.rulesManager.getRulesPhysical().getFallFromAboveTable(target);
@@ -9447,23 +9447,23 @@ public class TWGameManager extends AbstractGameManager {
      * be, when the hex now breaks the stacking limits. A DropShip is never pushed; the faller is instead.
      *
      * @param faller    the unit that fell
-     * @param dest      the hex it fell into
+     * @param fallPosition      the hex it fell into
      * @param direction the direction of the fall
      * @param reports   the reports to add to
      */
-    void displaceUnitFallenOn(Entity faller, Coords dest, int direction, Vector<Report> reports) {
+    void displaceUnitFallenOn(Entity faller, Coords fallPosition, int direction, Vector<Report> reports) {
         // defender pushed away, or destroyed, if there is a
         // stacking violation
-        Entity violation = Compute.stackingViolation(game, faller, dest, null, faller.climbMode(), false);
+        Entity violation = Compute.stackingViolation(game, faller, fallPosition, null, faller.climbMode(), false);
         if (violation != null) {
-            PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
+            PilotingRollData displacementRoll = new PilotingRollData(violation.getId(), 2, "fallen on");
             if (violation instanceof Dropship) {
                 violation = faller;
-                prd = null;
+                displacementRoll = null;
             }
-            Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
-            if (targetDest != null) {
-                reports.addAll(doEntityDisplacement(violation, dest, targetDest, prd));
+            Coords displacedTo = Compute.getValidDisplacement(game, violation.getId(), fallPosition, direction);
+            if (displacedTo != null) {
+                reports.addAll(doEntityDisplacement(violation, fallPosition, displacedTo, displacementRoll));
                 // Update the violating entity's position on the
                 // client.
                 entityUpdate(violation.getId());

@@ -33,22 +33,6 @@
  */
 package megamek.client.ui.panels.phaseDisplay;
 
-import static megamek.common.LandingDirection.HORIZONTAL;
-import static megamek.common.LandingDirection.VERTICAL;
-import static megamek.common.bays.Bay.UNSET_BAY;
-import static megamek.common.equipment.MiscType.F_CHAFF_POD;
-import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
-
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.io.Serial;
-import java.util.*;
-import java.util.List;
-import java.util.stream.Stream;
-import javax.swing.*;
-
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
@@ -138,6 +122,22 @@ import megamek.common.units.*;
 import megamek.common.weapons.TeleMissile;
 import megamek.logging.MMLogger;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.io.Serial;
+import java.util.*;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static megamek.common.LandingDirection.HORIZONTAL;
+import static megamek.common.LandingDirection.VERTICAL;
+import static megamek.common.bays.Bay.UNSET_BAY;
+import static megamek.common.equipment.MiscType.F_CHAFF_POD;
+import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
+
 public class MovementDisplay extends ActionPhaseDisplay {
 
     private record DeploymentAnchor(Coords coords, int boardId, int elevation, int facing) {
@@ -213,9 +213,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         for (MoveStep step : path.getStepVector()) {
             if (step.getType() == MoveStepType.DEPLOY) {
+                int elevation = (step.getAltitude() >= 0 ? step.getAltitude() : step.getElevation());
                 return new DeploymentAnchor(step.getPosition(),
                                             step.getBoardId(),
-                                            step.getElevation(),
+                                            elevation,
                                             step.getFacing());
             }
         }
@@ -3523,6 +3524,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (currentEntity.isAirborne()) {
             // then use altitude not elevation
+            if (cmd.getFinalAltitude() == 0) {
+                setRaiseEnabled(false);
+                setLowerEnabled(false);
+                updateLowerButtonLabel(false);
+                return;
+            }
             setRaiseEnabled(currentEntity.canGoUp(cmd.getFinalAltitude(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
             setLowerEnabled(currentEntity.canGoDown(cmd.getFinalAltitude(),
                                                     cmd.getFinalCoords(),

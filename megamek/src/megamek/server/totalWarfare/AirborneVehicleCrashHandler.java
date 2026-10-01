@@ -51,6 +51,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.LargeSupportTank;
@@ -65,6 +66,9 @@ import megamek.common.units.VTOL;
  * keep control of report order.
  */
 class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
+
+    /** The extra MP a WiGE pays per hex to hold its elevation over lower terrain (TW p.55). */
+    static final int KEEP_ELEVATION_MP = 2;
 
     AirborneVehicleCrashHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -186,6 +190,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     Vector<Report> resolveSideslipCollision(Tank tank, Coords curPos, Coords nextPos, Hex nextHex,
           List<Entity> occupants, int slipAltitude, int direction, int impactSide, int hexesMoved) {
         Vector<Report> reports = new Vector<>();
+        int fallElevation = tank.getElevation();
         if (isBuildingInSideslipPath(nextHex, slipAltitude)) {
             IBuilding building = getGame().getBoard(tank).getBuildingAt(nextPos);
             reports.add(sideslipObstacleReport(tank, building.getName(), nextPos));
@@ -224,6 +229,82 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
         }
         if (!tank.isDoomed()) {
             reports.addAll(crashVTOLorWiGE(tank, false, true, hexesMoved, curPos, tank.getElevation(), impactSide));
+            reports.addAll(resolveSideslipCrashAftermath(tank, curPos, fallElevation, direction));
+        }
+        return reports;
+    }
+
+    /**
+     * TW p.68: a VTOL or WiGE that survives a sideslip crash has landed if it can normally land in the crash hex, and
+     * is destroyed otherwise. A WiGE lands in clear, paved or water hexes (TW p.55); a VTOL lands in clear or paved
+     * hexes, or on a building roof (TW p.54).
+     *
+     * @param tank the crashed VTOL or WiGE
+     * @param hex  the hex it crashed in
+     *
+     * @return {@code true} if the vehicle can land in the hex
+     */
+    static boolean canLandAfterSideslipCrash(Tank tank, Hex hex) {
+        if (hex.isClearForTakeoff()) {
+            return true;
+        }
+        if (tank.getMovementMode() == EntityMovementMode.WIGE) {
+            return hex.containsTerrain(Terrains.WATER);
+        }
+        return hex.containsTerrain(Terrains.BLDG_ELEV);
+    }
+
+    /**
+     * TW p.68: a WiGE that sideslips toward a drop that would make a ground vehicle fall can avoid the fall if it has
+     * the MP to hold its elevation (+2 MP, TW p.55). A VTOL keeps its altitude and never falls.
+     *
+     * @param tank the sideslipping VTOL or WiGE; its {@code mpUsed} holds the MP spent so far this turn
+     *
+     * @return {@code true} if the vehicle does not fall
+     */
+    static boolean canAvoidSideslipFall(Tank tank) {
+        if (tank.getMovementMode() != EntityMovementMode.WIGE) {
+            return true;
+        }
+        return (tank.getRunMP() - tank.mpUsed) >= KEEP_ELEVATION_MP;
+    }
+
+    /**
+     * Finishes a sideslip crash (TW p.68). A unit on the ground in the crash hex is hit as an accidental fall from above
+     * (TW p.152); if that misses, the vehicle comes down in a valid adjacent hex instead. The vehicle is then destroyed
+     * unless it can land in the hex it ended in.
+     *
+     * @param tank          the crashed VTOL or WiGE, already in {@code crashPos}
+     * @param crashPos      the hex it crashed in
+     * @param fallElevation the elevation it fell from
+     * @param direction     the direction of the sideslip
+     *
+     * @return the reports
+     */
+    Vector<Report> resolveSideslipCrashAftermath(Tank tank, Coords crashPos, int fallElevation, int direction) {
+        Vector<Report> reports = new Vector<>();
+        Entity fallenOn = getGame().getAFFATarget(crashPos, tank);
+        if ((fallenOn != null) && (fallElevation > 0) && !tank.isDoomed()) {
+            Report report = new Report(2054);
+            report.subject = tank.getId();
+            report.indent();
+            report.addDesc(fallenOn);
+            report.add(crashPos.getBoardNum(), true);
+            reports.add(report);
+            if (gameManager.resolveAccidentalFallFromAboveHit(tank, fallenOn, fallElevation, reports)) {
+                gameManager.displaceUnitFallenOn(tank, crashPos, direction, reports);
+            } else {
+                Coords landing = Compute.getValidDisplacement(getGame(), tank.getId(), crashPos, direction);
+                if (landing != null) {
+                    tank.setPosition(landing);
+                } else {
+                    reports.addAll(gameManager.destroyEntity(tank, "impossible displacement", false, false));
+                }
+            }
+        }
+        if (!tank.isDoomed()
+              && !canLandAfterSideslipCrash(tank, getGame().getHex(tank.getPosition(), tank.getBoardId()))) {
+            reports.addAll(gameManager.destroyEntity(tank, "could not land in crash site"));
         }
         return reports;
     }
@@ -491,6 +572,8 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
 
         } else {
             en.setElevation(0);// considered landed in the hex.
+            // TW p.68: the vehicle may not attack in the turn it crashes
+            en.setCrashedThisTurn(true);
             // crashes into ground thanks to sideslip
             r = new Report(6290);
             r.subject = en.getId();

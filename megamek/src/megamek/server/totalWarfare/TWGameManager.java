@@ -4902,15 +4902,17 @@ public class TWGameManager extends AbstractGameManager {
                 if ((entity.getMovementMode() == EntityMovementMode.WIGE) ||
                       (entity.getMovementMode() == EntityMovementMode.VTOL)) {
                     int table = getTable(direction, step);
+                    int crashFallElevation = Math.max(0, curAltitude - nextHex.getLevel());
                     elevation = nextElevation;
                     if (entity instanceof Tank) {
                         addReport(airborneVehicleCrashHandler.crashVTOLorWiGE((Tank) entity, false, true,
                               entity.delta_distance + skidDistance + 1, curPos, elevation, table));
                     }
 
-                    if ((nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)) ||
-                          nextHex.containsTerrain(Terrains.WOODS) ||
-                          nextHex.containsTerrain(Terrains.JUNGLE)) {
+                    if (!(entity instanceof Tank) &&
+                          ((nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)) ||
+                                nextHex.containsTerrain(Terrains.WOODS) ||
+                                nextHex.containsTerrain(Terrains.JUNGLE))) {
                         addReport(destroyEntity(entity, "could not land in crash site"));
                     } else if (elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
                         IBuilding bldg = board.getBuildingAt(nextPos);
@@ -4932,6 +4934,10 @@ public class TWGameManager extends AbstractGameManager {
                         entity.setPosition(nextPos);
                         entity.setElevation(0);
                         addReport(doEntityDisplacementMinefieldCheck(entity, curPos, nextPos, nextElevation));
+                        if ((entity instanceof Tank crashedTank) && !crashedTank.isDoomed()) {
+                            addReport(airborneVehicleCrashHandler.resolveSideslipCrashAftermath(crashedTank, nextPos,
+                                  crashFallElevation, direction));
+                        }
                     }
                     break;
 
@@ -4988,7 +4994,9 @@ public class TWGameManager extends AbstractGameManager {
             // Have skidding units suffer falls (off a cliff).
             else if ((curAltitude > (nextAltitude + entity.getMaxElevationChange()) ||
                   (curHex.hasCliffTopTowards(nextHex) && curAltitude > nextAltitude)) &&
-                  !(entity.getMovementMode() == EntityMovementMode.WIGE && elevation > curHex.ceiling())) {
+                  !(isAirborneVehicleSlip
+                        ? AirborneVehicleCrashHandler.canAvoidSideslipFall((Tank) entity)
+                        : (entity.getMovementMode() == EntityMovementMode.WIGE && elevation > curHex.ceiling()))) {
                 addReport(doEntityFallsInto(entity,
                       entity.getElevation(),
                       curPos,
@@ -9365,6 +9373,113 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Rolls an accidental fall from above (TW p.152) against the unit below: an automatic hit on a vehicle or DropShip,
+     * otherwise 7 plus the target's movement and terrain modifiers. On a hit, the target takes the falling damage in
+     * 5-point groups on the fall from above table.
+     *
+     * @param faller        the unit falling
+     * @param target        the unit being fallen on
+     * @param fallElevation the levels the unit falls
+     * @param reports       the reports to add to
+     *
+     * @return {@code true} if the fall hits the target
+     */
+    boolean resolveAccidentalFallFromAboveHit(Entity faller, Entity target, int fallElevation,
+          Vector<Report> reports) {
+        Report r;
+        // determine to-hit number
+        ToHitData toHit = new ToHitData(7, "base");
+        if ((target instanceof Tank) || (target instanceof Dropship)) {
+            toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Target is a Tank");
+        } else {
+            toHit.append(Compute.getTargetMovementModifier(game, target.getId()));
+            toHit.append(Compute.getTargetTerrainModifier(game, target));
+        }
+
+        if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+            // automatic miss
+            r = new Report(2213);
+            r.add(toHit.getDesc());
+            reports.add(r);
+            return false;
+        }
+
+        // collision roll
+        final Roll diceRoll = Compute.rollD6(2);
+
+        if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            r = new Report(2212);
+            r.add(toHit.getValue());
+        } else {
+            r = new Report(2215);
+            r.subject = faller.getId();
+            r.add(toHit.getValue());
+            r.add(diceRoll);
+            r.newlines = 0;
+        }
+
+        r.indent();
+        reports.add(r);
+
+        if (diceRoll.getIntValue() < toHit.getValue()) {
+            return false;
+        }
+        // deal damage to target
+        int damage = Compute.getAccidentalFallFromAboveDamageFor(faller,
+              Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation, target.getHeight()));
+        r = new Report(2220);
+        r.subject = target.getId();
+        r.addDesc(target);
+        r.add(damage);
+        reports.add(r);
+        while (damage > 0) {
+            int cluster = Math.min(5, damage);
+            HitData hit = Game.rulesManager.getRulesPhysical().getFallFromAboveTable(target);
+            hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
+            reports.addAll(damageEntity(target, hit, cluster));
+            damage -= cluster;
+        }
+        return true;
+    }
+
+    /**
+     * After an accidental fall from above hits, the unit fallen on is pushed out of the hex, or destroyed if it cannot
+     * be, when the hex now breaks the stacking limits. A DropShip is never pushed; the faller is instead.
+     *
+     * @param faller    the unit that fell
+     * @param dest      the hex it fell into
+     * @param direction the direction of the fall
+     * @param reports   the reports to add to
+     */
+    void displaceUnitFallenOn(Entity faller, Coords dest, int direction, Vector<Report> reports) {
+        // defender pushed away, or destroyed, if there is a
+        // stacking violation
+        Entity violation = Compute.stackingViolation(game, faller, dest, null, faller.climbMode(), false);
+        if (violation != null) {
+            PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
+            if (violation instanceof Dropship) {
+                violation = faller;
+                prd = null;
+            }
+            Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
+            if (targetDest != null) {
+                reports.addAll(doEntityDisplacement(violation, dest, targetDest, prd));
+                // Update the violating entity's position on the
+                // client.
+                entityUpdate(violation.getId());
+            } else {
+                // ack! automatic death! Tanks
+                // suffer an ammo/power plant hit.
+                // TODO : a Mek suffers a Head Blown Off crit.
+                reports.addAll(destroyEntity(violation,
+                      "impossible displacement",
+                      violation instanceof Mek,
+                      violation instanceof Mek));
+            }
+        }
+    }
+
+    /**
      * Process a fall when moving from the source hex to the destination hex. Depending on the elevations of the hexes,
      * the Entity could land in the source or destination hexes. Check for any conflicts and resolve them. Deal damage
      * to faller.
@@ -9459,94 +9574,18 @@ public class TWGameManager extends AbstractGameManager {
             r.addDesc(affaTarget);
             vPhaseReport.add(r);
 
-            // determine to-hit number
-            ToHitData toHit = new ToHitData(7, "base");
-            if ((affaTarget instanceof Tank) || (affaTarget instanceof Dropship)) {
-                toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Target is a Tank");
-            } else {
-                toHit.append(Compute.getTargetMovementModifier(game, affaTarget.getId()));
-                toHit.append(Compute.getTargetTerrainModifier(game, affaTarget));
-            }
-
-            if (toHit.getValue() != TargetRoll.AUTOMATIC_FAIL) {
-                // collision roll
-                final Roll diceRoll = Compute.rollD6(2);
-
-                if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
-                    r = new Report(2212);
-                    r.add(toHit.getValue());
-                } else {
-                    r = new Report(2215);
-                    r.subject = entity.getId();
-                    r.add(toHit.getValue());
-                    r.add(diceRoll);
-                    r.newlines = 0;
-                }
-
-                r.indent();
-                vPhaseReport.add(r);
-
-                if (diceRoll.getIntValue() >= toHit.getValue()) {
-                    // deal damage to target
-                    int damage = Compute.getAccidentalFallFromAboveDamageFor(entity,
-                          Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation,
-                                affaTarget.getHeight()));
-                    r = new Report(2220);
-                    r.subject = affaTarget.getId();
-                    r.addDesc(affaTarget);
-                    r.add(damage);
-                    vPhaseReport.add(r);
-                    while (damage > 0) {
-                        int cluster = Math.min(5, damage);
-                        HitData hit = Game.rulesManager.getRulesPhysical().getFallFromAboveTable(affaTarget);
-                        hit.setGeneralDamageType(HitDamageType.DAMAGE_PHYSICAL_NONATTACK);
-                        vPhaseReport.addAll(damageEntity(affaTarget, hit, cluster));
-                        damage -= cluster;
-                    }
-
-                    // attacker falls as normal, on his back
-                    // only given a modifier, so flesh out into a full piloting
-                    // roll
-                    PilotingRollData pilotRoll = entity.getBasePilotingRoll();
-                    pilotRoll.append(roll);
-                    vPhaseReport.addAll(doEntityFall(entity, dest,
-                          Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation,
-                                affaTarget.getHeight()), 3, pilotRoll, false, false));
-                    vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
-
-                    // defender pushed away, or destroyed, if there is a
-                    // stacking violation
-                    Entity violation = Compute.stackingViolation(game, entity, dest, null, entity.climbMode(),
-                          false);
-                    if (violation != null) {
-                        PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
-                        if (violation instanceof Dropship) {
-                            violation = entity;
-                            prd = null;
-                        }
-                        Coords targetDest = Compute.getValidDisplacement(game, violation.getId(), dest, direction);
-                        if (targetDest != null) {
-                            vPhaseReport.addAll(doEntityDisplacement(violation, dest, targetDest, prd));
-                            // Update the violating entity's position on the
-                            // client.
-                            entityUpdate(violation.getId());
-                        } else {
-                            // ack! automatic death! Tanks
-                            // suffer an ammo/power plant hit.
-                            // TODO : a Mek suffers a Head Blown Off crit.
-                            vPhaseReport.addAll(destroyEntity(violation,
-                                  "impossible displacement",
-                                  violation instanceof Mek,
-                                  violation instanceof Mek));
-                        }
-                    }
-                    return vPhaseReport;
-                }
-            } else {
-                // automatic miss
-                r = new Report(2213);
-                r.add(toHit.getDesc());
-                vPhaseReport.add(r);
+            if (resolveAccidentalFallFromAboveHit(entity, affaTarget, fallElevation, vPhaseReport)) {
+                // attacker falls as normal, on his back
+                // only given a modifier, so flesh out into a full piloting
+                // roll
+                PilotingRollData pilotRoll = entity.getBasePilotingRoll();
+                pilotRoll.append(roll);
+                vPhaseReport.addAll(doEntityFall(entity, dest,
+                      Game.rulesManager.getRulesMovement().getAccidentalFallElevation(fallElevation,
+                            affaTarget.getHeight()), 3, pilotRoll, false, false));
+                vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
+                displaceUnitFallenOn(entity, dest, direction, vPhaseReport);
+                return vPhaseReport;
             }
             // ok, we missed, let's fall into a valid other hex and not cause an
             // AFFA while doing so

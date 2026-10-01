@@ -138,6 +138,21 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
               hex 0102 0 "bldg_elev:1;building:2:0;bldg_cf:40" ""
               end""");
 
+        // A rough level 3 hill: a WiGE cannot land there after crashing into it
+        initializeBoard("ROUGH_HILL_AHEAD", """
+              size 1 3
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 3 "rough:1" ""
+              end""");
+
+        // A level 3 ridge with a drop to level 0 beyond it
+        initializeBoard("DROP_AHEAD", """
+              size 1 2
+              hex 0101 3 "" ""
+              hex 0102 0 "" ""
+              end""");
+
         initializeBoard("OPEN_ROW", """
               size 1 3
               hex 0101 0 "" ""
@@ -374,6 +389,106 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         Hex building = new Hex(0, "bldg_elev:2;building:2:0;bldg_cf:40", "", new Coords(0, 0));
         assertTrue(AirborneVehicleCrashHandler.isBuildingInSideslipPath(building, 2), "roof level with the unit");
         assertFalse(AirborneVehicleCrashHandler.isBuildingInSideslipPath(building, 3), "the unit flies over");
+    }
+
+    @Test
+    void wigeCannotLandAfterCrashingIntoRoughTerrain() {
+        setBoard("ROUGH_HILL_AHEAD");
+        SupportTank wige = airborneWiGE();
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 2, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertTrue(wige.isDoomed(), "a WiGE can only land in clear, paved or water hexes (TW p.55, p.68)");
+    }
+
+    @Test
+    void crashedVehicleCannotAttackThatTurn() {
+        setBoard("HILL_AHEAD");
+        SupportTank wige = airborneWiGE();
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 2, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertFalse(wige.isDoomed(), "the WiGE lands on the clear hilltop");
+        assertTrue(wige.hasCrashedThisTurn(), "a vehicle that crashes after a sideslip may not attack (TW p.68)");
+        wige.newRound(2);
+        assertFalse(wige.hasCrashedThisTurn(), "the next turn it may attack again");
+    }
+
+    @Test
+    void crashOntoAGroundUnitIsAnAccidentalFallFromAbove() {
+        setBoard("BUILDING_AHEAD");
+        SupportTank wige = airborneWiGE();
+        SupportTank groundVehicle = newWiGE(4);
+        groundVehicle.setMovementMode(EntityMovementMode.TRACKED);
+        groundVehicle.setId(6);
+        groundVehicle.setPosition(new Coords(0, 0));
+        groundVehicle.setElevation(0);
+        groundVehicle.setDeployed(true);
+        getGame().addEntity(groundVehicle);
+        int armorBefore = groundVehicle.getTotalArmor();
+
+        // The WiGE slips into the building and crashes back in 0101, on top of the ground vehicle
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 1, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertTrue(reported(2054), "the WiGE crashes down onto the ground vehicle");
+        // A vehicle is hit automatically; 30 tons / 10 x 1 level fallen
+        assertEquals(3, armorBefore - groundVehicle.getTotalArmor());
+    }
+
+    @Test
+    void wigeWithMpLeftAvoidsFallingOffADrop() {
+        setBoard("DROP_AHEAD");
+        SupportTank wige = airborneWiGE();
+        // Following the terrain (Keep Elevation off), as a WiGE starts each turn
+        wige.setClimbMode(false);
+        wige.mpUsed = 0;
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 1, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertEquals(new Coords(0, 1), wige.getPosition(), "the WiGE keeps sliding over the drop");
+        assertTrue(wige.getElevation() > 0, "it stays airborne instead of falling (TW p.68)");
+    }
+
+    @Test
+    void wigeWithoutMpLeftFallsOffADrop() {
+        setBoard("DROP_AHEAD");
+        SupportTank wige = airborneWiGE();
+        wige.setClimbMode(false);
+        wige.mpUsed = wige.getRunMP() - 1;
+
+        gameManager.processSkid(wige, new Coords(0, 0), 1, SOUTH, 1, southFacingStep(),
+              EntityMovementType.MOVE_VTOL_RUN);
+
+        assertEquals(0, wige.getElevation(), "with less than 2 MP left the WiGE falls (TW p.68, p.55)");
+    }
+
+    @Test
+    void crashSiteLandingFollowsEachVehicleType() {
+        SupportTank wige = newWiGE(4);
+        SupportTank vtol = newWiGE(4);
+        vtol.setMovementMode(EntityMovementMode.VTOL);
+        Hex clear = new Hex(0);
+        Hex water = new Hex(0, "water:2", "", new Coords(0, 0));
+        Hex rough = new Hex(0, "rough:1", "", new Coords(0, 0));
+
+        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, clear));
+        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, water), "WiGEs treat water as clear");
+        assertFalse(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, rough));
+        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(vtol, clear));
+        assertFalse(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(vtol, water), "a VTOL cannot land on water");
+    }
+
+    @Test
+    void wigeNeedsTwoMpToAvoidAFall() {
+        SupportTank wige = newWiGE(8);
+        wige.mpUsed = wige.getRunMP() - 2;
+        assertTrue(AirborneVehicleCrashHandler.canAvoidSideslipFall(wige));
+        wige.mpUsed = wige.getRunMP() - 1;
+        assertFalse(AirborneVehicleCrashHandler.canAvoidSideslipFall(wige));
     }
 
     @Test

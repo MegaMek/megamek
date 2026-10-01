@@ -46,10 +46,12 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import megamek.common.GameBoardTestCase;
+import megamek.common.MMRandom;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Coords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -63,6 +65,7 @@ import megamek.common.units.EntityMovementType;
 import megamek.common.units.IBuilding;
 import megamek.common.units.SupportTank;
 import megamek.utils.ServerFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -153,8 +156,27 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
 
     private TWGameManager gameManager;
 
+    /** Dice that always roll the middle: every d6 is a 4, so 2D6 is 8 and no critical or special result fires. */
+    private static final class MiddleDice extends MMRandom {
+        @Override
+        public int randomInt(int maxValue) {
+            return maxValue / 2;
+        }
+
+        @Override
+        public float randomFloat() {
+            return 0.5f;
+        }
+    }
+
+    @AfterEach
+    void restoreDice() {
+        Compute.setRNG(MMRandom.R_DEFAULT);
+    }
+
     @BeforeEach
     void setUp() throws IOException {
+        Compute.setRNG(new MiddleDice());
         gameManager = new TWGameManager();
         gameManager.setGame(getGame());
         ServerFactory.createServer(gameManager);

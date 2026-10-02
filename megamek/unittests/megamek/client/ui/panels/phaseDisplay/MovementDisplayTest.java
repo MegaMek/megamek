@@ -40,6 +40,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Field;
@@ -222,6 +223,10 @@ class MovementDisplayTest {
     @Test
     @DisplayName("clear keeps aerospace deployment at altitude 4, and a following UP raises it to 5")
     void clearWithAerospaceDeploymentPathCanRiseFromAltitudeFour() throws Exception {
+        Game spiedGame = spy(game);
+        when(spiedGame.getEntitiesVector(any(Coords.class))).thenReturn(List.of());
+        setGameField(movementDisplay, spiedGame);
+
         AeroSpaceFighter fighter = new AeroSpaceFighter();
         fighter.setGame(game);
         fighter.setPosition(new Coords(0, 0));
@@ -302,6 +307,13 @@ class MovementDisplayTest {
                                  String fieldName,
                                  Object value) throws Exception {
         Field field = MovementDisplay.class.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(target, value);
+    }
+
+    private static void setGameField(MovementDisplay target,
+                                    Game value) throws Exception {
+        Field field = ActionPhaseDisplay.class.getDeclaredField("game");
         field.setAccessible(true);
         field.set(target, value);
     }

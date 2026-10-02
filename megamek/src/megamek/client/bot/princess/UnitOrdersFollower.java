@@ -2013,9 +2013,11 @@ public class UnitOrdersFollower {
                     spots.put(unit.getId(), newSpot);
                     places.put(unit.getId(), placeOfSpot.getOrDefault(newSpot, places.get(unit.getId())));
                 }
+                String gain = (lastArrivalAfter < lastArrivalNow)
+                      ? ("the last in by turn " + lastArrivalAfter + " instead of " + lastArrivalNow)
+                      : ("the last in by the same turn, " + (costNow - costAfter) + " MP less in all");
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PLACES - the units still coming change places, "
-                            + "the last in by turn {} instead of {}: {}", members.get(0).getDisplayName(),
-                      members.get(0).getId(), currentRound(), lastArrivalAfter, lastArrivalNow,
+                            + "{}: {}", members.get(0).getDisplayName(), members.get(0).getId(), currentRound(), gain,
                       describeSpots(pairing));
             }
         }

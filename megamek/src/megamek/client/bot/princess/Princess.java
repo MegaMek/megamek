@@ -33,13 +33,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotHeatEquipmentManager;
 import megamek.client.bot.ChatProcessor;
@@ -114,6 +107,13 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger LOGGER = MMLogger.create(Princess.class);
@@ -3237,7 +3237,7 @@ public class Princess extends BotClient {
         }
 
         getPrecognition().ensureUpToDate();
-        final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
+        final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false, true);
         if ((paths == null) || paths.isEmpty()) {
             final MovePath deployOnly = new MovePath(game, entity);
             deployOnly.addStep(MoveStepType.DEPLOY);
@@ -3255,39 +3255,12 @@ public class Princess extends BotClient {
               getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
         if (rankedPaths.isEmpty()) {
             final MovePath deployOnly = new MovePath(game, entity);
-            if (hasJumpDeclaration(paths)) {
-               deployOnly.addStep(MoveStepType.START_JUMP);
-            }
             deployOnly.addStep(MoveStepType.DEPLOY);
             return deployOnly;
         }
 
         final RankedPath bestPath = pathRanker.getBestPath(rankedPaths);
-        final MovePath deploymentMovePath = new MovePath(game, entity);
-        if (hasJumpDeclaration(bestPath != null ? bestPath.getPath() : null)) {
-            deploymentMovePath.addStep(MoveStepType.START_JUMP);
-        }
-        deploymentMovePath.addStep(MoveStepType.DEPLOY);
-        if (bestPath != null) {
-            final ListIterator<MoveStep> pathSteps = bestPath.getPath().getSteps();
-            while (pathSteps.hasNext()) {
-               final MoveStep step = pathSteps.next();
-               if (isJumpDeclaration(step.getType())) {
-                   continue;
-               }
-               if ((step.getTarget(game) != null) || (step.getTargetPosition() != null)
-                     || !step.getAdditionalData().isEmpty()) {
-                   deploymentMovePath.addStep(new MoveStep(deploymentMovePath,
-                         step.getType(),
-                         step.getTarget(game),
-                         step.getTargetPosition(),
-                         new HashMap<>(step.getAdditionalData())));
-               } else {
-                   deploymentMovePath.addStep(step.getType());
-               }
-            }
-        }
-        return deploymentMovePath;
+        return (bestPath == null) ? null : bestPath.getPath();
     }
 
     private static boolean hasJumpDeclaration(@Nullable MovePath path) {
@@ -3554,9 +3527,19 @@ public class Princess extends BotClient {
      * standard "circle", sometimes it's pruned long-range movement paths
      */
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
+        return getMovePathsAndSetNecessaryTargets(mover, forceMoveToContact, false);
+    }
+
+    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover,
+          boolean forceMoveToContact,
+          boolean includeDeploymentStep) {
         // if the mover can't move, then there's nothing for us to do here, let's cut out.
         if (mover.isImmobile()) {
             return Collections.emptyList();
+        }
+
+        if (includeDeploymentStep) {
+            getPrecognition().getPathEnumerator().recalculateMovesFor(mover, true);
         }
 
         BehaviorType behavior = forceMoveToContact ?
@@ -3568,6 +3551,7 @@ public class Princess extends BotClient {
         getClusterTracker().clearMovableAreas();
         getClusterTracker().updateMovableAreas(mover);
 
+        List<MovePath> result;
         // basic idea:
         // if we're "in battle", just use the standard set of move paths
         // if we're trying to get somewhere
@@ -3578,7 +3562,8 @@ public class Princess extends BotClient {
         //  - if we're unable to get where we're going, use standard set of move paths
         switch (behavior) {
             case Engaged:
-                return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                break;
             case MoveToDestination:
             case MoveToContact:
             case ForcedWithdrawal:
@@ -3594,7 +3579,8 @@ public class Princess extends BotClient {
                     if (!mover.isAirborne()) {
                         getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
                     }
-                    return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                    result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                    break;
                 }
 
                 bulldozerPaths.sort(new MPCostComparator());
@@ -3637,7 +3623,8 @@ public class Princess extends BotClient {
                                 getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
                             }
 
-                            return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                            result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                            break;
                         }
                     }
 
@@ -3651,9 +3638,12 @@ public class Princess extends BotClient {
                     prunedPaths.addAll(getPrecognition().getPathEnumerator()
                           .getSimilarUnitPaths(mover.getId(), prunedPath));
                 }
-                return prunedPaths;
+                result = prunedPaths;
+                break;
             }
         }
+
+        return result;
     }
 
     private void checkForDishonoredEnemies() {

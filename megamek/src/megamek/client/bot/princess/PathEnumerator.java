@@ -53,6 +53,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
@@ -161,11 +162,15 @@ public class PathEnumerator {
      * issues
      */
     public synchronized void recalculateMovesFor(final Entity mover) {
+        recalculateMovesFor(mover, false);
+    }
+
+    public synchronized void recalculateMovesFor(final Entity mover, final boolean includeDeploymentStep) {
         int retryCount = 0;
         boolean success = false;
 
         while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
-            success = recalculateMovesForWorker(mover);
+            success = recalculateMovesForWorker(mover, includeDeploymentStep);
 
             if (!success) {
                 // if we fail, take a nap for 500-1500 milliseconds, then try again
@@ -188,6 +193,10 @@ public class PathEnumerator {
      * calculates all moves for a given unit, keeping the shortest (or longest, depending) path to each facing/pair
      */
     private boolean recalculateMovesForWorker(final Entity mover) {
+        return recalculateMovesForWorker(mover, false);
+    }
+
+    private boolean recalculateMovesForWorker(final Entity mover, final boolean includeDeploymentStep) {
         try {
             // Record it's current position.
             getLastKnownLocations().put(
@@ -217,7 +226,7 @@ public class PathEnumerator {
             // in air mode
             if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder groundPathFinder = getOwner().aeroGroundPathFinder(getGame());
-                MovePath startPath = new MovePath(getGame(), mover, wayPoint);
+                MovePath startPath = createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false);
                 groundPathFinder.run(startPath);
                 paths.addAll(groundPathFinder.getAllComputedPathsUncategorized());
 
@@ -250,32 +259,32 @@ public class PathEnumerator {
                 // space flight" rules being on
             } else if (mover.isAero() && game.useVectorMove()) {
                 NewtonianAerospacePathFinder npf = NewtonianAerospacePathFinder.getInstance(getGame());
-                npf.run(new MovePath(game, mover, wayPoint));
+                npf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(npf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an aerospace unit on a space map
             } else if (mover.isAero() && game.getBoard(mover).isSpace()) {
                 AeroSpacePathFinder apf = AeroSpacePathFinder.getInstance(getGame());
-                apf.run(new MovePath(game, mover, wayPoint));
+                apf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being a winged aerospace unit on a
                 // low-atmosphere map
             } else if (mover.isAero() && game.getBoard(mover).isLowAltitude()
                   && !Compute.useSpheroidAtmosphere(game, mover)) {
                 AeroLowAltitudePathFinder apf = AeroLowAltitudePathFinder.getInstance(getGame());
-                apf.run(new MovePath(game, mover, wayPoint));
+                apf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(apf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover acting like a spheroid aerospace unit in
                 // an atmosphere
             } else if (Compute.useSpheroidAtmosphere(game, mover)) {
                 int dir = AeroPathUtil.getSpheroidDir(game, mover);
                 SpheroidPathFinder spf = SpheroidPathFinder.getInstance(game, dir);
-                spf.run(new MovePath(game, mover, wayPoint));
+                spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(spf.getAllComputedPathsUncategorized());
                 // this handles the case of the mover being an infantry unit of some kind,
                 // that's not airborne.
             } else if (mover.hasETypeFlag(Entity.ETYPE_INFANTRY) && !mover.isAirborne()) {
                 InfantryPathFinder ipf = InfantryPathFinder.getInstance(getGame());
-                ipf.run(new MovePath(game, mover, wayPoint));
+                ipf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
 
                 // generate long-range paths appropriate to the bot's current state
@@ -293,19 +302,19 @@ public class PathEnumerator {
                 LongestPathFinder lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove,
                       MoveStepType.FORWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(game, mover, wayPoint));
+                lpf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add walking moves
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
                       mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                lpf.run(new MovePath(getGame(), mover, wayPoint));
+                lpf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(lpf.getLongestComputedPaths());
 
                 // add all moves that involve the entity remaining prone
                 PronePathFinder ppf = new PronePathFinder();
-                ppf.run(new MovePath(getGame(), mover, wayPoint));
+                ppf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(ppf.getPronePaths());
 
                 // add jumping moves
@@ -313,12 +322,12 @@ public class PathEnumerator {
                     ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getAnyTypeMaxJumpMP(),
                           MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
-                    spf.run(new MovePath(game, mover, wayPoint).addStep(MoveStepType.START_JUMP));
+                    spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, true));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
                 // add moves that take off first: a grounded WiGE has only 1 MP on the ground
-                MovePath takeoffPath = new MovePath(game, mover, wayPoint);
+                MovePath takeoffPath = createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false);
                 if (PathDecorator.addWiGETakeoff(takeoffPath)) {
                     lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove, MoveStepType.FORWARDS, getGame());
                     lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
@@ -373,6 +382,22 @@ public class PathEnumerator {
             logger.error(e, "recalculateMovesForWorker");
             return false;
         }
+    }
+
+    private MovePath createDeploymentAwarePath(final Entity mover,
+          final Coords waypoint,
+          final boolean includeDeploymentStep,
+          final boolean shouldJump) {
+        MovePath path = new MovePath(game, mover, waypoint);
+        if (!includeDeploymentStep) {
+            return path;
+        }
+
+        if (shouldJump) {
+            path.addStep(MoveStepType.START_JUMP);
+        }
+        path.addStep(MoveStepType.DEPLOY);
+        return path;
     }
 
     /**

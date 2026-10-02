@@ -365,7 +365,7 @@ class WiGELandingTerrainTest extends GameBoardTestCase {
         }
 
         @Test
-        @DisplayName("Landing in clear or water hexes, or flying 5 hexes, is not a crash")
+        @DisplayName("Landing in a clear or water hex is not a crash")
         void safeLandingsAreNotCrashes() {
             setBoard("CLEAR_AHEAD");
             assertFalse(airbornePath(newWiGE(), MoveStepType.FORWARDS, MoveStepType.FORWARDS)

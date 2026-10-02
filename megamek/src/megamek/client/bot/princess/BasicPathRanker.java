@@ -1691,6 +1691,12 @@ public class BasicPathRanker extends PathRanker {
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
                   game);
+            // in a town, a move ending in cover wins a close call over one ending in the open
+            int coverDiscount = getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+                  path.getFinalCoords());
+            if (newDistanceToHome > coverDiscount) {
+                newDistanceToHome -= coverDiscount;
+            }
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
 
@@ -2078,6 +2084,9 @@ public class BasicPathRanker extends PathRanker {
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
+        // in a town: the movement points a move ending in cover counted as saving (0 elsewhere)
+        scores.put("townCover", (double) getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+              pathCopy.getFinalCoords()));
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);

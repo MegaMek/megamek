@@ -105,6 +105,8 @@ public final class WaypointOrder implements Serializable {
     // the waypoint's number in the order it was given, naming it Nav Point Alpha, Beta...; NavPoint.UNNAMED (0) in a
     // save made before waypoints had names, and for a waypoint added by a typed order
     private final int navNumber;
+    // the phase line this waypoint is on, or null; null in a save made before phase lines
+    private final String phaseLine;
 
     /**
      * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
@@ -147,11 +149,12 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard, @Nullable WaypointFormation arrivalFormation) {
-        this(facing, holdMode, holdTurns, formation, exitBoard, arrivalFormation, NavPoint.UNNAMED);
+        this(facing, holdMode, holdTurns, formation, exitBoard, arrivalFormation, NavPoint.UNNAMED, null);
     }
 
     private WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
-          boolean exitBoard, @Nullable WaypointFormation arrivalFormation, int navNumber) {
+          boolean exitBoard, @Nullable WaypointFormation arrivalFormation, int navNumber,
+          @Nullable String phaseLine) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -165,6 +168,25 @@ public final class WaypointOrder implements Serializable {
         this.exitBoard = exitBoard;
         this.arrivalFormation = arrivalFormation;
         this.navNumber = Math.max(NavPoint.UNNAMED, navNumber);
+        this.phaseLine = PhaseLine.cleanName(phaseLine);
+    }
+
+    /**
+     * @param newPhaseLine the phase line's name, or {@code null} for none
+     *
+     * @return this waypoint's settings on that phase line, everything else kept
+     */
+    public WaypointOrder withPhaseLine(@Nullable String newPhaseLine) {
+        return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation, navNumber,
+              newPhaseLine);
+    }
+
+    /**
+     * @return the phase line this waypoint is on, or {@code null}: every lance with a waypoint on the same phase line
+     *       holds there until all of them have reached it
+     */
+    public @Nullable String getPhaseLine() {
+        return phaseLine;
     }
 
     /**
@@ -174,7 +196,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withNavNumber(int newNavNumber) {
         return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
-              newNavNumber);
+              newNavNumber, phaseLine);
     }
 
     /**
@@ -192,7 +214,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withFacing(int newFacing) {
         return new WaypointOrder(newFacing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
-              navNumber);
+              navNumber, phaseLine);
     }
 
     /**
@@ -202,7 +224,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withHoldTurns(int turns) {
         return new WaypointOrder(facing, (turns > 0) ? HoldMode.HOLD : HoldMode.PASS, turns, formation, exitBoard,
-              arrivalFormation, navNumber);
+              arrivalFormation, navNumber, phaseLine);
     }
 
     /**
@@ -292,6 +314,9 @@ public final class WaypointOrder implements Serializable {
         if (navNumber != NavPoint.UNNAMED) {
             suffix.append('/').append(NAV_CODE).append(navNumber);
         }
+        if (phaseLine != null) {
+            suffix.append('/').append(PhaseLine.toCode(phaseLine));
+        }
         return suffix.toString();
     }
 
@@ -312,7 +337,7 @@ public final class WaypointOrder implements Serializable {
      * Reads the settings a route order writes after a hex: letters are a facing (N, NE, SE, S, SW, NW, or A for the
      * bot's choice), digits are the turns to hold, {@code U} and digits a wait for the formation to assemble with the
      * most turns to wait, {@code EXIT} leaves the board at the end of the route, and a part starting {@code F:} is the
-     * formation for the leg ending here, in any order.
+     * formation for the leg ending here, and {@code PL:} and a name the phase line it is on, in any order.
      *
      * @param segments the parts after the hex, e.g. {@code ["NE", "2"]}; none for a plain waypoint
      *
@@ -328,12 +353,16 @@ public final class WaypointOrder implements Serializable {
         WaypointFormation parsedFormation = null;
         WaypointFormation parsedArrival = null;
         int parsedNavNumber = NavPoint.UNNAMED;
+        String parsedPhaseLine = null;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
             if (code.isEmpty()) {
                 continue;
             }
-            if (WaypointFormation.isArrivalCommandText(code)) {
+            if (PhaseLine.isCode(segment)) {
+                // read before the upper-casing: a phase line keeps the name the player gave it
+                parsedPhaseLine = PhaseLine.fromCode(segment);
+            } else if (WaypointFormation.isArrivalCommandText(code)) {
                 parsedArrival = WaypointFormation.parse(code);
             } else if (WaypointFormation.isCommandText(code)) {
                 parsedFormation = WaypointFormation.parse(code);
@@ -360,7 +389,7 @@ public final class WaypointOrder implements Serializable {
             parsedMode = HoldMode.PASS;
         }
         return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit, parsedArrival,
-              parsedNavNumber);
+              parsedNavNumber, parsedPhaseLine);
     }
 
     @Override
@@ -371,12 +400,14 @@ public final class WaypointOrder implements Serializable {
         return (other instanceof WaypointOrder otherOrder) && (facing == otherOrder.facing)
               && (holdTurns == otherOrder.holdTurns) && (getHoldMode() == otherOrder.getHoldMode())
               && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation)
-              && Objects.equals(arrivalFormation, otherOrder.arrivalFormation) && (navNumber == otherOrder.navNumber);
+              && Objects.equals(arrivalFormation, otherOrder.arrivalFormation) && (navNumber == otherOrder.navNumber)
+              && Objects.equals(phaseLine, otherOrder.phaseLine);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation, navNumber);
+        return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation, navNumber,
+              phaseLine);
     }
 
     @Override

@@ -439,6 +439,32 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aLanceAtAPhaseLineHoldsUntilEveryLanceOnItIsIn() {
+        // HammerGS: lances of different speeds arrive in step - the fast one holds at the phase line for the slow one
+        // (2026-10-02)
+        WaypointOrder onAlfa = WaypointOrder.PASS_THROUGH.withPhaseLine("Alfa");
+        Coords fastLanceNext = NORTH_WAYPOINT.translated(NORTH, 1);
+        BipedMek fast = loneUnit(30, NORTH_WAYPOINT, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, fastLanceNext),
+              List.of(onAlfa, WaypointOrder.PASS_THROUGH)));
+        Coords slowLanceFlag = new Coords(6, 4);
+        BipedMek slow = loneUnit(31, new Coords(6, 14), UnitOrders.NONE.withRoute(
+              List.of(slowLanceFlag, slowLanceFlag.translated(NORTH, 2)), List.of(onAlfa, WaypointOrder.PASS_THROUGH)));
+        doReturn(List.<Entity>of(fast, slow)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertTrue(follower.isWaitingAtPhaseLine(fast));
+        assertTrue(follower.isHolding(fast));
+        assertEquals(List.of(slow), follower.stillComingToPhaseLine(fast, "Alfa"));
+
+        slow.setPosition(slowLanceFlag);
+
+        assertFalse(follower.isWaitingAtPhaseLine(fast));
+        assertFalse(follower.isWaitingAtPhaseLine(slow), "the last one in does not wait either");
+    }
+
+    @Test
     void atAWaypointPartWayTheShapeFacesTheNextLeg() {
         Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
         BipedMek leader = member(20, NORTH_WAYPOINT, 0, 3);

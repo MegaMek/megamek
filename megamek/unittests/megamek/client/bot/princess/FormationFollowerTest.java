@@ -374,6 +374,25 @@ class FormationFollowerTest {
     }
 
     @Test
+    void clearingAWayThroughBuildingsIsOnlyForWhenNoWayOnFootExists() {
+        // HammerGS: "the bulldozer plan should be a last resort when no walk path exists" (2026-10-01)
+        BipedMek scout = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setPhase(GamePhase.MOVEMENT);
+
+        assertTrue(follower.hasWalkingRoute(scout));
+
+        for (int direction = 0; direction < 6; direction++) {
+            Coords wall = NORTH_WAYPOINT.translated(direction);
+            board.getHex(wall).setLevel(CLIFF_LEVEL);
+            board.getHex(wall).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
+        }
+        game.setCurrentRound(game.getCurrentRound() + 1);
+
+        assertFalse(follower.hasWalkingRoute(scout));
+    }
+
+    @Test
     void atAWaypointPartWayTheShapeFacesTheNextLeg() {
         Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
         BipedMek leader = member(20, NORTH_WAYPOINT, 0, 3);

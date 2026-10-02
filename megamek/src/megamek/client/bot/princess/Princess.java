@@ -3526,6 +3526,17 @@ public class Princess extends BotClient {
 
                 bulldozerPaths.sort(new MPCostComparator());
 
+                if (bulldozerPaths.getFirst().needsLeveling() && getUnitOrdersFollower().hasWalkingRoute(mover)) {
+                    // clearing a way is the last resort, for when no way on foot exists (HammerGS, 2026-10-01): a unit
+                    // on a player's route that can walk round goes round. Clearing one stopped a Stalker to shoot the
+                    // town's south block and took away its route's pull, and it fell out of its lance
+                    LOGGER.info("[BotOrders] {} (ID {}) round {}: NO_LEVELING - the quickest way runs through {}, but "
+                                + "a way on foot exists; walking round", mover.getDisplayName(), mover.getId(),
+                          game.getCurrentRound(),
+                          bulldozerPaths.getFirst().getCoordsToLevel().getFirst().getBoardNum());
+                    return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                }
+
                 // if the quickest route needs some terrain adjustments, let's get working on that
                 Targetable levelingTarget = null;
 

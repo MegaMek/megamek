@@ -33,13 +33,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotHeatEquipmentManager;
 import megamek.client.bot.ChatProcessor;
@@ -113,6 +106,13 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger LOGGER = MMLogger.create(Princess.class);
@@ -2759,7 +2759,7 @@ public class Princess extends BotClient {
      */
     Entity getEntityToMove() {
 
-        if ((game != null) && (game.getPhase() == GamePhase.MOVEMENT)) {
+        if (game.getPhase() == GamePhase.MOVEMENT) {
             for (final Entity entity : getEntitiesOwned()) {
                 if (entity.isDone() || entity.isOffBoard()) {
                     continue;

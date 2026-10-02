@@ -77,6 +77,12 @@ public class OrdersRadio {
         BREAKING("breaking", true),
         /** The lance's fight is over: it holds where it is, awaiting the Resume order. */
         CONTACT_BROKEN("contactBroken", true),
+        /** A unit in the lance is out of action and the lance moves on: the call names the unit and its hex. */
+        UNIT_DOWN("unitDown", true),
+        /** A unit in the lance makes no headway and the lance stops waiting: the call names the unit and its hex. */
+        FALLING_BEHIND("fallingBehind", true),
+        /** The commander is lost and another unit takes command: the call names the new commander. */
+        COMMAND("command", true),
         /** A unit cannot reach its waypoint and skips it. */
         UNREACHABLE("unreachable", false),
         /** A unit follows the player's orders over its own withdrawal. */

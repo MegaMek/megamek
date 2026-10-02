@@ -91,6 +91,20 @@ final class WaypointDistanceField {
      * @return the field
      */
     static WaypointDistanceField build(Entity mover, Coords waypoint) {
+        return build(mover, waypoint, Map.of());
+    }
+
+    /**
+     * Works out the field for one unit's way of moving, with some hexes costing more to enter, such as those in front
+     * of units already in their places (see {@link TownLegPlanner#frontOfUnitsInPlace}).
+     *
+     * @param mover     a unit whose movement type decides which hexes can be entered and climbed
+     * @param waypoint  the hex to measure to
+     * @param extraCost the extra movement points to enter each such hex
+     *
+     * @return the field
+     */
+    static WaypointDistanceField build(Entity mover, Coords waypoint, Map<Coords, Integer> extraCost) {
         Board board = (mover.getGame() == null) ? null : mover.getGame().getBoard(mover);
         if ((board == null) || !board.contains(waypoint) || !isEnterable(mover, MovementType.getMovementType(mover),
               board, waypoint)) {
@@ -98,7 +112,8 @@ final class WaypointDistanceField {
                   waypoint.getBoardNum());
             return new WaypointDistanceField(waypoint, new HashMap<>());
         }
-        return new WaypointDistanceField(waypoint, fill(mover, board, List.of(waypoint), waypoint.getBoardNum()));
+        return new WaypointDistanceField(waypoint, fill(mover, board, List.of(waypoint), waypoint.getBoardNum(),
+              extraCost));
     }
 
     /**
@@ -123,7 +138,7 @@ final class WaypointDistanceField {
                 edgeHexes.add(hex);
             }
         }
-        return new WaypointDistanceField(null, fill(mover, board, edgeHexes, edge.name() + " edge"));
+        return new WaypointDistanceField(null, fill(mover, board, edgeHexes, edge.name() + " edge", Map.of()));
     }
 
     private static List<Coords> edgeHexes(Board board, CardinalEdge edge) {
@@ -170,8 +185,12 @@ final class WaypointDistanceField {
      * Spreads the cost outward from the goal hexes, which cost nothing, walking backward: a unit in each neighbour
      * would step into the hex already reached.
      */
-    private static Map<Coords, Integer> fill(Entity mover, Board board, List<Coords> goals, String goalName) {
+    private static Map<Coords, Integer> fill(Entity mover, Board board, List<Coords> goals, String goalName,
+          Map<Coords, Integer> extraCost) {
         Map<Coords, Integer> costToGoal = new HashMap<>();
+        // each hex's answers, asked of the unit once rather than once for every neighbour that looks at the hex
+        Map<Coords, Boolean> enterableHexes = new HashMap<>();
+        Map<Coords, Integer> unitElevations = new HashMap<>();
         MovementType movementType = MovementType.getMovementType(mover);
         boolean isHovercraft = movementType == MovementType.Hover;
         boolean isAmphibious = (movementType == MovementType.WheeledAmphibious)
@@ -191,25 +210,30 @@ final class WaypointDistanceField {
                 continue;
             }
             Hex currentHex = board.getHex(current);
-            int currentElevation = BoardEdgePathFinder.calculateUnitElevationInHex(currentHex, mover, isHovercraft,
-                  isAmphibious);
+            int currentElevation = unitElevations.computeIfAbsent(current,
+                  hex -> BoardEdgePathFinder.calculateUnitElevationInHex(currentHex, mover, isHovercraft,
+                        isAmphibious));
+            // the cost of stepping into this hex, the same from every neighbour but for the climb
+            int enteringCost = 1 + Math.max(0, currentHex.movementCost(mover)) + extraCost.getOrDefault(current, 0);
+            if (currentHex.containsTerrain(Terrains.BUILDING)) {
+                // walk round a building rather than through it: going in damages it and can bring it down on the
+                // unit (HammerGS's playtest, 2026-09-27)
+                enteringCost += BUILDING_DETOUR_COST;
+            }
             for (int direction = 0; direction < 6; direction++) {
                 Coords neighbor = current.translated(direction);
-                if (!board.contains(neighbor) || !isEnterable(mover, movementType, board, neighbor)) {
+                if (!board.contains(neighbor) || !enterableHexes.computeIfAbsent(neighbor,
+                      hex -> isEnterable(mover, movementType, board, hex))) {
                     continue;
                 }
-                int neighborElevation = BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(neighbor),
-                      mover, isHovercraft, isAmphibious);
+                int neighborElevation = unitElevations.computeIfAbsent(neighbor,
+                      hex -> BoardEdgePathFinder.calculateUnitElevationInHex(board.getHex(hex), mover, isHovercraft,
+                            isAmphibious));
                 int elevationChange = Math.abs(currentElevation - neighborElevation);
                 if (elevationChange > maxElevationChange) {
                     continue;
                 }
-                int stepCost = 1 + Math.max(0, currentHex.movementCost(mover)) + elevationChange;
-                if (currentHex.containsTerrain(Terrains.BUILDING)) {
-                    // walk round a building rather than through it: going in damages it and can bring it down on
-                    // the unit (HammerGS's playtest, 2026-09-27)
-                    stepCost += BUILDING_DETOUR_COST;
-                }
+                int stepCost = enteringCost + elevationChange;
                 int neighborCost = cost + stepCost;
                 if (neighborCost < costToGoal.getOrDefault(neighbor, UNREACHABLE)) {
                     costToGoal.put(neighbor, neighborCost);
@@ -234,7 +258,7 @@ final class WaypointDistanceField {
      * points the unit where it will never step and the unit stands still: a 65-ton Longbow froze in front of a CF 15
      * building for two rounds (HammerGS's playtest, 2026-09-27).
      */
-    private static boolean wouldBringDownBuilding(Entity mover, Board board, Coords coords) {
+    static boolean wouldBringDownBuilding(Entity mover, Board board, Coords coords) {
         // most hexes hold no building: look for one before asking anything of the unit
         IBuilding building = board.getBuildingAt(coords);
         if ((building == null) || mover.isAirborne() || mover.hasETypeFlag(Entity.ETYPE_VTOL)) {

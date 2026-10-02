@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
@@ -62,6 +63,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.FightState;
@@ -95,6 +97,7 @@ class FormationFollowerTest {
     private static final int SOUTH_EAST = 2;
     private static final int SOUTH = 3;
     private static final int SOUTH_WEST = 4;
+    private static final int NORTH_WEST = 5;
     private static final Coords LEADER_HEX = new Coords(14, 20);
     private static final Coords NORTH_WAYPOINT = new Coords(14, 2);
 
@@ -126,13 +129,60 @@ class FormationFollowerTest {
         doReturn(enemies).when(princess).getEnemyEntities();
     }
 
+    /**
+     * A Mek whose movement, armor and state a test can set. A Mockito spy did the same, but made every call on the
+     * unit slow, and the route fields ask the unit thousands of questions: the formation tests took minutes each.
+     */
+    private static final class TestMek extends BipedMek {
+        private int walkMP;
+        private Integer runMP;
+        private Integer totalArmor;
+        private Double weight;
+        private boolean immobile;
+        private boolean prone;
+
+        @Override
+        public int getWalkMP() {
+            return walkMP;
+        }
+
+        @Override
+        public int getRunMP() {
+            return (runMP == null) ? super.getRunMP() : runMP;
+        }
+
+        @Override
+        public int getTotalArmor() {
+            return (totalArmor == null) ? super.getTotalArmor() : totalArmor;
+        }
+
+        @Override
+        public double getWeight() {
+            return (weight == null) ? super.getWeight() : weight;
+        }
+
+        @Override
+        public boolean isImmobile() {
+            return immobile || super.isImmobile();
+        }
+
+        @Override
+        public boolean isProne() {
+            return prone || super.isProne();
+        }
+    }
+
+    private static TestMek fake(BipedMek mek) {
+        return (TestMek) mek;
+    }
+
     private BipedMek member(int unitId, Coords position, int slot, int walkMP) {
-        BipedMek mek = spy(new BipedMek());
+        TestMek mek = new TestMek();
         mek.setId(unitId);
         mek.setOwner(bot);
         game.addEntity(mek);
         mek.setPosition(position);
-        doReturn(walkMP).when(mek).getWalkMP();
+        mek.walkMP = walkMP;
         mek.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withFormation(
               new FormationOrder(FormationShape.ECHELON_RIGHT, 20, 2, slot, FormationPace.WALK, ContactRule.BREAK)));
         return mek;
@@ -235,6 +285,95 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aUnitStaysBesideItsLeaderTurnAfterTurnNotJustTheFirst() {
+        // HammerGS's playtest: only the first look at the slot kept the unit beside its moving leader; every look
+        // after it sent the Griffin on to its slot at the next flag, four rounds ahead of its Stalker
+        game.setPhase(GamePhase.MOVEMENT);
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        Optional<Coords> firstLook = follower.getFormationSlot(second);
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)), firstLook);
+        assertEquals(firstLook, follower.getFormationSlot(second));
+    }
+
+    @Test
+    void aUnitOnItsWayFacesTheWayRoundAnObstacleNotStraightAtTheFlag() {
+        // HammerGS's playtest: facing the flag straight through a building block, a 3 MP Stalker could not step round
+        // the corner and turn back to the flag in one move, and rocked between two hexes for ten rounds
+        BipedMek scout = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        Coords blocked = LEADER_HEX.translated(NORTH, 1);
+        board.getHex(blocked).setLevel(CLIFF_LEVEL);
+        board.getHex(blocked).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
+
+        int facing = princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX);
+
+        assertTrue((facing == NORTH_EAST) || (facing == NORTH_WEST), "faced " + facing);
+    }
+
+    private void buildStreetNorthOfTheLeader() {
+        for (int y = 6; y <= 16; y++) {
+            board.getHex(LEADER_HEX.getX() - 1, y).addTerrain(new Terrain(Terrains.BUILDING, 1));
+            board.getHex(LEADER_HEX.getX() + 1, y).addTerrain(new Terrain(Terrains.BUILDING, 1));
+        }
+    }
+
+    @Test
+    void aLanceGoingThroughATownBreaksFormationAndEachUnitMakesForItsPlaceAtTheFlag() {
+        // HammerGS's town walk (2026-10-01): through the streets the line came apart and formed again at the far
+        // side; out on open ground the same lance keeps its places beside its leader (see the test above)
+        game.setPhase(GamePhase.MOVEMENT);
+        buildStreetNorthOfTheLeader();
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)), follower.getFormationSlot(second));
+        assertTrue(follower.isOnTownLeg(second));
+    }
+
+    @Test
+    void throughATownTheFirstUnitThroughTakesTheNearestPlace() {
+        // HammerGS's town walk: the places were not fixed at the start; the Griffin, through first, took the nearest
+        // end spot and the Stalker coming round the long way took what was left (2026-10-01)
+        game.setPhase(GamePhase.MOVEMENT);
+        buildStreetNorthOfTheLeader();
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        BipedMek third = member(22, new Coords(12, 25), 2, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setCurrentRound(3);
+        Coords secondPlace = follower.getFormationSlot(second).orElseThrow();
+        Coords thirdPlace = follower.getFormationSlot(third).orElseThrow();
+
+        // each finds itself next to the other's place
+        second.setPosition(thirdPlace.translated(SOUTH, 1));
+        third.setPosition(secondPlace.translated(SOUTH, 1));
+        game.setCurrentRound(4);
+
+        assertEquals(Optional.of(thirdPlace), follower.getFormationSlot(second));
+        assertEquals(Optional.of(secondPlace), follower.getFormationSlot(third));
+    }
+
+    @Test
+    void aUnitGoingRoundAnObstacleKeepsTheFlagInItsFrontArc() {
+        // HammerGS: each Mek faced "a mix of both" - the way it was going next, and the objective (2026-10-01)
+        Coords flagNorthEast = LEADER_HEX.translated(NORTH_EAST, 6);
+        BipedMek scout = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(flagNorthEast)));
+        for (int direction : new int[] { NORTH, NORTH_EAST, SOUTH_EAST }) {
+            Coords blocked = LEADER_HEX.translated(direction, 1);
+            board.getHex(blocked).setLevel(CLIFF_LEVEL);
+            board.getHex(blocked).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
+        }
+
+        // the way round leaves two or more hexsides off the flag; the unit turns one hexside toward it, no further
+        int facing = princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX);
+        int towardFlag = LEADER_HEX.direction(flagNorthEast);
+        assertEquals(1, UnitOrdersFollower.sidesApart(facing, towardFlag), "faced " + facing);
+    }
+
+    @Test
     void atAWaypointPartWayTheShapeFacesTheNextLeg() {
         Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
         BipedMek leader = member(20, NORTH_WAYPOINT, 0, 3);
@@ -301,10 +440,11 @@ class FormationFollowerTest {
     }
 
     @Test
-    void theNextUnitLeadsWhenTheLeaderIsGone() {
+    void theNextUnitLeadsWhenTheLeaderIsGoneAndThereIsNoSecondInCommand() {
+        // with a second-in-command (place 3) it takes over instead: see theSecondInCommandTakesCommandWhenTheCommander
+        // IsLost
         BipedMek leader = member(20, LEADER_HEX, 0, 3);
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
-        member(22, new Coords(18, 26), 2, 5);
         leader.setDestroyed(true);
 
         assertTrue(princess.getUnitOrdersFollower().getFormationSlot(second).isEmpty());
@@ -334,7 +474,7 @@ class FormationFollowerTest {
         doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
         doNothing().when(princess).sendChat(anyString());
         doNothing().when(princess).sendChat(anyString(), any(Level.class));
-        doReturn(40).when(second).getTotalArmor();
+        fake(second).totalArmor = 40;
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
 
         game.setCurrentRound(3);
@@ -342,7 +482,7 @@ class FormationFollowerTest {
         assertTrue(leader.getUnitOrders().getFightState().isEmpty());
 
         // the Longbow's flank is hit by missiles in round 3's firing
-        doReturn(34).when(second).getTotalArmor();
+        fake(second).totalArmor = 34;
         game.setCurrentRound(4);
         follower.advanceRoutes();
         assertEquals(Optional.of(FightState.FIGHTING), leader.getUnitOrders().getFightState());
@@ -374,7 +514,7 @@ class FormationFollowerTest {
         leader.setUnitOrders(leader.getUnitOrders().withRoute(List.of(NORTH_WAYPOINT, eastWaypoint), turnAndFire));
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
         doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
-        doReturn(40).when(leader).getTotalArmor();
+        fake(leader).totalArmor = 40;
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
         Coords attackerOnTheLeftFlank = LEADER_HEX.translated(SOUTH_WEST, 4);
         game.setCurrentRound(3);
@@ -382,7 +522,7 @@ class FormationFollowerTest {
         // not yet hit: the route facing holds
         assertEquals(NORTH, follower.facingThatStandsFor(leader, NORTH, LEADER_HEX, attackerOnTheLeftFlank));
 
-        doReturn(33).when(leader).getTotalArmor();
+        fake(leader).totalArmor = 33;
         game.setCurrentRound(4);
         assertEquals(UnitOrders.FACING_AUTO, follower.facingThatStandsFor(leader, NORTH, LEADER_HEX,
               attackerOnTheLeftFlank));
@@ -402,12 +542,12 @@ class FormationFollowerTest {
         doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
         doNothing().when(princess).sendChat(anyString());
         doNothing().when(princess).sendChat(anyString(), any(Level.class));
-        doReturn(40).when(second).getTotalArmor();
+        fake(second).totalArmor = 40;
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
         game.setCurrentRound(3);
         follower.advanceRoutes();
 
-        doReturn(34).when(second).getTotalArmor();
+        fake(second).totalArmor = 34;
         game.setCurrentRound(4);
         follower.advanceRoutes();
 
@@ -418,6 +558,8 @@ class FormationFollowerTest {
     private static MovePath moveUsing(int movementPoints) {
         MovePath path = mock(MovePath.class);
         when(path.getMpUsed()).thenReturn(movementPoints);
+        // a real move always has its steps; the formation filter reads them for buildings it would bring down
+        when(path.getStepVector()).thenReturn(new Vector<>());
         return path;
     }
 
@@ -442,14 +584,48 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aFormationUnitNeverChoosesAMoveThatBringsABuildingDownWhileAnotherIsLeft() {
+        // HammerGS's playtest: narrowed by its lance's pace, an 85-ton Stalker stepped into the CF 15 building at 1119
+        // rather than stand still; the building came down and left it prone
+        BipedMek stalker = member(20, LEADER_HEX, 0, 3);
+        member(21, new Coords(16, 25), 1, 3);
+        fake(stalker).weight = 85.0;
+        Coords lightBuilding = LEADER_HEX.translated(NORTH, 1);
+        board.getHex(lightBuilding).addTerrain(new Terrain(Terrains.BUILDING, 1));
+        board.getHex(lightBuilding).addTerrain(new Terrain(Terrains.BLDG_CF, 15));
+        board.getHex(lightBuilding).addTerrain(new Terrain(Terrains.BLDG_ELEV, 1));
+        Hex[] hexes = new Hex[WIDTH * HEIGHT];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = board.getHex(index % WIDTH, index / WIDTH);
+        }
+        board.newData(WIDTH, HEIGHT, hexes, null);
+        MovePath intoTheBuilding = moveThrough(lightBuilding);
+        MovePath roundIt = moveThrough(LEADER_HEX.translated(NORTH_EAST, 1));
+
+        assertEquals(List.of(roundIt), princess.getUnitOrdersFollower().limitToFormationPace(stalker,
+              List.of(intoTheBuilding, roundIt)));
+        // with no other move left, the bot keeps it
+        assertEquals(List.of(intoTheBuilding), princess.getUnitOrdersFollower().limitToFormationPace(stalker,
+              List.of(intoTheBuilding)));
+    }
+
+    private static MovePath moveThrough(Coords hex) {
+        MovePath path = moveTo(hex, 1);
+        MoveStep step = mock(MoveStep.class);
+        when(step.getPosition()).thenReturn(hex);
+        when(path.getStepVector()).thenReturn(new Vector<>(List.of(step)));
+        return path;
+    }
+
+    @Test
     void atARunPaceEachUnitMayRunUpToItsOwnRun() {
         BipedMek grasshopper = member(20, LEADER_HEX, 0, 5);
         grasshopper.setUnitOrders(grasshopper.getUnitOrders().withFormation(paced(0, FormationPace.RUN,
               ContactRule.BREAK)));
         BipedMek longbow = member(21, new Coords(16, 25), 1, 3);
         longbow.setUnitOrders(longbow.getUnitOrders().withFormation(paced(1, FormationPace.RUN, ContactRule.BREAK)));
-        doReturn(8).when(grasshopper).getRunMP();
-        doReturn(5).when(longbow).getRunMP();
+        fake(grasshopper).runMP = 8;
+        fake(longbow).runMP = 5;
         MovePath runFive = moveUsing(5);
         MovePath runEight = moveUsing(8);
         MovePath sprintTen = moveUsing(10);
@@ -492,11 +668,12 @@ class FormationFollowerTest {
         assertFalse(princess.getUnitOrdersFollower().isAtRouteEnd(wolverine));
         assertEquals(0, princess.getUnitOrdersFollower().arrivalRadius(wolverine));
         assertFalse(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
-        // the leader faces north when stopped, so Echelon Left steps back to the south-west of the waypoint
+        // once the leader stands on its waypoint, facing north when stopped, Echelon Left steps back to the
+        // south-west of it; before that the follower keeps its place beside the leader still on its way
+        wolverine.setPosition(waypoint);
         Coords slot = waypoint.translated(SOUTH_WEST, 2);
         assertEquals(Optional.of(slot), princess.getUnitOrdersFollower().getFormationSlot(firestarter));
 
-        wolverine.setPosition(waypoint);
         firestarter.setPosition(slot);
         assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(wolverine));
         assertTrue(princess.getUnitOrdersFollower().isAtRouteEnd(firestarter));
@@ -928,19 +1105,98 @@ class FormationFollowerTest {
     }
 
     @Test
-    void aLeaderStopsWaitingForAUnitThatCannotFormUpAfterThreeRounds() {
+    void aLeaderStopsWaitingForAUnitStillComingAfterSixRounds() {
         List<BipedMek> lance = lanceKeepingTogether();
         BipedMek leader = lance.get(0);
+        BipedMek second = lance.get(1);
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
         for (int round = 3; round < 3 + UnitOrdersFollower.MAXIMUM_REFORM_WAIT_ROUNDS; round++) {
             game.setCurrentRound(round);
             follower.advanceRoutes();
             assertEquals(2, leader.getUnitOrders().getRoute().size(), "moved on early in round " + round);
+            // a hex nearer each round: slow, but getting there, so the lance keeps waiting
+            second.setPosition(second.getPosition().translated(NORTH, 1));
         }
 
         game.setCurrentRound(3 + UnitOrdersFollower.MAXIMUM_REFORM_WAIT_ROUNDS);
         follower.advanceRoutes();
         assertEquals(1, leader.getUnitOrders().getRoute().size());
+    }
+
+    @Test
+    void aLeaderStopsWaitingForAUnitThatGetsNoCloserAfterThreeRounds() {
+        // HammerGS: a unit that makes no headway for three rounds - wading, blocked, going back and forth - is not
+        // waited for; it follows on and rejoins the shape when it catches up (2026-09-27)
+        List<BipedMek> lance = lanceKeepingTogether();
+        BipedMek leader = lance.get(0);
+        BipedMek second = lance.get(1);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        for (int round = 3; round < 3 + UnitOrdersFollower.ROUNDS_WITHOUT_PROGRESS; round++) {
+            game.setCurrentRound(round);
+            follower.advanceRoutes();
+            assertEquals(2, leader.getUnitOrders().getRoute().size(), "moved on early in round " + round);
+        }
+
+        game.setCurrentRound(3 + UnitOrdersFollower.ROUNDS_WITHOUT_PROGRESS);
+        follower.advanceRoutes();
+
+        assertTrue(follower.isFallingBehind(second));
+        assertEquals(1, leader.getUnitOrders().getRoute().size());
+    }
+
+    @Test
+    void aUnitThatCannotMoveDropsOutAndTheOthersCloseUp() {
+        // HammerGS: an immobile unit holds and fights where it is while the lance closes up and moves on (2026-09-27)
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        BipedMek third = member(22, new Coords(12, 25), 2, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        Optional<Coords> secondPlace = follower.getFormationSlot(second);
+
+        fake(second).immobile = true;
+
+        assertTrue(follower.isOutOfAction(second));
+        assertEquals(Optional.empty(), follower.getFormationSlot(second));
+        assertEquals(secondPlace, follower.getFormationSlot(third));
+    }
+
+    @Test
+    void aUnitDownTwoRoundsIsLeftBehind() {
+        // HammerGS: the lance waits for a fallen unit to get up, but one still down after two rounds counts as out
+        // of action (2026-09-27)
+        List<BipedMek> lance = lanceKeepingTogether();
+        BipedMek second = lance.get(1);
+        fake(second).prone = true;
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        for (int round = 3; round < 3 + UnitOrdersFollower.PRONE_ROUNDS_BEFORE_DROPPED; round++) {
+            game.setCurrentRound(round);
+            follower.advanceRoutes();
+            assertFalse(follower.isOutOfAction(second), "dropped early in round " + round);
+        }
+        game.setCurrentRound(3 + UnitOrdersFollower.PRONE_ROUNDS_BEFORE_DROPPED);
+        follower.advanceRoutes();
+        assertTrue(follower.isOutOfAction(second));
+
+        fake(second).prone = false;
+        game.setCurrentRound(4 + UnitOrdersFollower.PRONE_ROUNDS_BEFORE_DROPPED);
+        follower.advanceRoutes();
+        assertFalse(follower.isOutOfAction(second), "back on its feet, it rejoins");
+    }
+
+    @Test
+    void theSecondInCommandTakesCommandWhenTheCommanderIsLost() {
+        // HammerGS: as in a tank platoon, the second-in-command (place 3) takes over, not the commander's wingman
+        BipedMek commander = member(20, LEADER_HEX, 0, 3);
+        BipedMek wingman = member(21, new Coords(16, 25), 1, 4);
+        BipedMek secondInCommand = member(22, new Coords(12, 25), 2, 4);
+        member(23, new Coords(10, 25), 3, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        fake(commander).immobile = true;
+
+        assertEquals(Optional.empty(), follower.getFormationSlot(secondInCommand), "the new commander has no slot");
+        assertTrue(follower.getFormationSlot(wingman).isPresent());
     }
 
     @Test

@@ -63,6 +63,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.Option;
@@ -1099,11 +1100,11 @@ class ComputeTest {
         Entity groundMover = mock(Entity.class);
         when(groundMover.isAirborne()).thenReturn(false);
 
-        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 0),
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 0, false),
               "moving into the hidden unit's own hex reveals it");
-        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 1),
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 1, false),
               "moving adjacent reveals it, whether or not the mover stops there");
-        assertFalse(Compute.revealsHiddenUnitForPointblankShot(groundMover, 2),
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(groundMover, 2, false),
               "two hexes away is out of reach");
     }
 
@@ -1113,8 +1114,8 @@ class ComputeTest {
         when(flyer.isAirborne()).thenReturn(true);
         when(flyer.getBAPRange()).thenReturn(0);
 
-        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0), "it reveals what it overflies");
-        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 1),
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0, false), "it reveals what it overflies");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 1, false),
               "without an Active Probe an adjacent hex is not revealed");
     }
 
@@ -1124,9 +1125,46 @@ class ComputeTest {
         when(flyerWithProbe.isAirborne()).thenReturn(true);
         when(flyerWithProbe.getBAPRange()).thenReturn(4);
 
-        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 1),
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 1, false),
               "an Active Probe extends the reveal to an adjacent hex");
-        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 0),
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 0, false),
               "with a probe the reveal is the adjacent hex, not the overflown one");
+    }
+
+    @Test
+    void vtolOrWiGEFlyingOverAHiddenUnitDoesNotRevealIt() {
+        // TW errata v12.0, p.260 (Airborne Units): non-aerospace airborne units moving over hexes do not reveal
+        // hidden units in them. Passing next to one, or ending the move over or next to it, still does.
+        Entity flyer = mock(Entity.class);
+        when(flyer.isAirborne()).thenReturn(false);
+
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 0, true),
+              "flying over the hidden unit's hex does not reveal it");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 1, true),
+              "passing next to the hidden unit still reveals it, as for a ground unit");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0, false),
+              "ending the move over the hidden unit reveals it");
+    }
+
+    @Test
+    void onlyAVTOLOrWiGEInFlightAndNotStoppingIsAnOverflight() {
+        MoveStep flyingStep = mock(MoveStep.class);
+        when(flyingStep.getClearance()).thenReturn(2);
+        MoveStep groundStep = mock(MoveStep.class);
+        when(groundStep.getClearance()).thenReturn(0);
+
+        Entity vtol = mock(Entity.class);
+        when(vtol.getMovementMode()).thenReturn(EntityMovementMode.VTOL);
+        Entity wige = mock(Entity.class);
+        when(wige.getMovementMode()).thenReturn(EntityMovementMode.WIGE);
+        Entity tank = mock(Entity.class);
+        when(tank.getMovementMode()).thenReturn(EntityMovementMode.TRACKED);
+
+        assertTrue(Compute.isNonAerospaceOverflight(vtol, flyingStep, false), "a VTOL in flight flies over the hex");
+        assertTrue(Compute.isNonAerospaceOverflight(wige, flyingStep, false), "a WiGE in flight flies over the hex");
+        assertFalse(Compute.isNonAerospaceOverflight(wige, flyingStep, true),
+              "the hex where the move ends is not flown over");
+        assertFalse(Compute.isNonAerospaceOverflight(wige, groundStep, false), "a WiGE on the ground is not flying");
+        assertFalse(Compute.isNonAerospaceOverflight(tank, flyingStep, false), "a ground vehicle never flies over");
     }
 }

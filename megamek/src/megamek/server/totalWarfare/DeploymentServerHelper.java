@@ -251,11 +251,36 @@ public class DeploymentServerHelper {
                          entity.getDisplayName());
         }
 
+        clearHiddenIfAirborne(entity);
+
         entity.setDone(setDone);
         entity.setDeployed(true);
         gameManager.entityUpdate(entity.getId());
 
         deployTowedTrailers(entity);
+    }
+
+    /**
+     * An airborne unit cannot be hidden; only one grounded at the start of the scenario can (TW errata v12.0, p.260,
+     * Airborne Units). The lobby lets a VTOL or WiGE be set hidden because it may still deploy landed, so the check
+     * can only be made here, once its deployment elevation is known. A hidden unit that deploys in the air deploys
+     * visible. This is the authoritative check: it also catches a unit that a client, a bot or a loaded file sent
+     * hidden.
+     *
+     * @param entity the unit that has just been placed at its deployment position and elevation
+     */
+    static void clearHiddenIfAirborne(Entity entity) {
+        if (!entity.isHidden()) {
+            return;
+        }
+        if (entity.canHide()) {
+            LOGGER.debug("[Hidden] {}: deployed hidden at elevation {}", entity.getDisplayName(),
+                  entity.getElevation());
+        } else {
+            entity.setHidden(false);
+            LOGGER.debug("[Hidden] {}: deployed airborne (elevation {}, altitude {}), so it is not hidden",
+                  entity.getDisplayName(), entity.getElevation(), entity.getAltitude());
+        }
     }
 
     /**

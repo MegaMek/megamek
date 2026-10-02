@@ -213,9 +213,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
         for (MoveStep step : path.getStepVector()) {
             if (step.getType() == MoveStepType.DEPLOY) {
+                int elevation = (step.getAltitude() >= 0 ? step.getAltitude() : step.getElevation());
                 return new DeploymentAnchor(step.getPosition(),
                                             step.getBoardId(),
-                                            step.getElevation(),
+                                            elevation,
                                             step.getFacing());
             }
         }
@@ -3535,6 +3536,12 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
         if (currentEntity.isAirborne()) {
             // then use altitude not elevation
+            if (cmd.getFinalAltitude() == 0) {
+                setRaiseEnabled(false);
+                setLowerEnabled(false);
+                updateLowerButtonLabel(false);
+                return;
+            }
             setRaiseEnabled(currentEntity.canGoUp(cmd.getFinalAltitude(), cmd.getFinalCoords(), cmd.getFinalBoardId()));
             setLowerEnabled(currentEntity.canGoDown(cmd.getFinalAltitude(),
                                                     cmd.getFinalCoords(),

@@ -41,7 +41,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.Serial;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +52,6 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
 import megamek.MMConstants;
-import megamek.common.units.Entity;
-import megamek.common.units.TrainLayout;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -62,6 +59,8 @@ import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
+import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
 public final class UIUtil {

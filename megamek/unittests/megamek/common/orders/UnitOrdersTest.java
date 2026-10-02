@@ -201,6 +201,38 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aPhaseLineSurvivesTheRouteTextASaveAndLoad() {
+        // HammerGS: phase lines take the ICAO names, or one the player types, shown with PL in front (2026-10-02)
+        WaypointOrder onXray = WaypointOrder.PASS_THROUGH.withPhaseLine("X-ray");
+        WaypointOrder onRidge = new WaypointOrder(FACING_NORTH, 2).withPhaseLine("Nine Mile Ridge");
+
+        assertEquals("/PL:X.ray", onXray.toCommandSuffix());
+        assertEquals(onXray, WaypointOrder.parse(List.of("PL:X.ray")));
+        assertEquals("/N/2/PL:Nine_Mile_Ridge", onRidge.toCommandSuffix());
+        assertEquals("Nine Mile Ridge", WaypointOrder.parse(List.of("N", "2", "PL:Nine_Mile_Ridge")).getPhaseLine());
+
+        BipedMek mek = new BipedMek();
+        UnitOrders orders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX), List.of(onRidge, onXray));
+        mek.setUnitOrders(orders);
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(savedXml);
+
+        assertEquals(orders, restored.getUnitOrders());
+        assertEquals("X-ray", restored.getUnitOrders().getWaypointOrder(1).getPhaseLine());
+    }
+
+    @Test
+    void newPhaseLinesTakeTheNextIcaoNameAndTypedNamesAreCleaned() {
+        assertEquals("Alfa", PhaseLine.nextName(List.of()));
+        assertEquals("Charlie", PhaseLine.nextName(List.of("alfa", "Bravo")));
+        assertEquals("PL Bravo", PhaseLine.display("Bravo"));
+        assertEquals("Hill 312", PhaseLine.cleanName("  Hill   312!? "));
+        assertEquals(null, PhaseLine.cleanName(" /// "));
+        assertTrue(PhaseLine.isSame("Alfa", "ALFA"));
+        assertFalse(PhaseLine.isSame(null, "Alfa"));
+    }
+
+    @Test
     void aLanceHoldingAfterAFightSurvivesASaveAndLoadAndGoesOnWithResume() {
         BipedMek mek = new BipedMek();
         UnitOrders fighting = apply(UnitOrderAction.BREAK_TO_FIGHT,

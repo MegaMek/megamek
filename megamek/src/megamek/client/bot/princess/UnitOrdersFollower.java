@@ -61,6 +61,7 @@ import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.NavPoint;
 import megamek.common.orders.OrderPriority;
+import megamek.common.orders.PhaseLine;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -236,6 +237,9 @@ public class UnitOrdersFollower {
     /** The most rounds a lance assembling at its first waypoint waits for its last unit; a stuck unit drops out sooner. */
     static final int MAXIMUM_ASSEMBLY_WAIT_ROUNDS = 12;
 
+    /** The units holding at a phase line, by unit id, with the phase line's name; to call the hold and the release. */
+    private final Map<Integer, String> phaseLineHolds = new HashMap<>();
+
     /** Each formation's current leg, by the formation's leader id; not saved. */
     private final Map<Integer, FormationLeg> formationLegs = new HashMap<>();
 
@@ -263,7 +267,7 @@ public class UnitOrdersFollower {
     public boolean isHolding(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
         return orders.isPaused() || orders.isStoppedInRound(currentRound()) || isHoldingAtWaypoint(entity)
-              || isWaitingForFormation(entity)
+              || isWaitingForFormation(entity) || isWaitingAtPhaseLine(entity)
               || isHoldingRouteEnd(entity);
     }
 
@@ -1020,6 +1024,10 @@ public class UnitOrdersFollower {
                 // near sent it on toward the next one, ahead of the formation (HammerGS's playtest, 2026-09-26)
                 continue;
             }
+            if (isPartWay && isWaitingAtPhaseLine(entity)) {
+                // at a phase line: the route waits until every lance on the line is in
+                continue;
+            }
             if (isPartWay && entity.getUnitOrders().getWaypointOrder(0).isHold()) {
                 advanceHold(entity, waypoint.get());
                 continue;
@@ -1245,6 +1253,106 @@ public class UnitOrdersFollower {
             cost = entity.getPosition().distance(slot.get());
         }
         return cost > entity.getWalkMP();
+    }
+
+    /**
+     * Whether a unit holds at its phase line: its next waypoint, part-way along its route, is on a phase line, it has
+     * reached it, and some other friendly lance with a waypoint on the same line has not yet reached its own. A
+     * formation's units hold with their leader. Every lance on the line moves on together once all are in (HammerGS,
+     * 2026-10-02: lances of different speeds arrive in step without guessing a number of turns).
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is holding at a phase line
+     */
+    boolean isWaitingAtPhaseLine(Entity entity) {
+        UnitOrders orders = entity.getUnitOrders();
+        if ((orders.getRoute().size() < 2) || (entity.getPosition() == null) || isFormationFollower(entity)) {
+            return false;
+        }
+        String phaseLine = orders.getWaypointOrder(0).getPhaseLine();
+        if ((phaseLine == null) || !hasReachedPhaseLine(entity)) {
+            return false;
+        }
+        List<Entity> stillComing = stillComingToPhaseLine(entity, phaseLine);
+        String label = PhaseLine.display(phaseLine);
+        if (stillComing.isEmpty()) {
+            if (phaseLineHolds.remove(entity.getId()) != null) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: PHASE_LINE_CLEAR - every lance is in at {}; moving on",
+                      entity.getDisplayName(), entity.getId(), currentRound(), label);
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_CLEAR, label);
+            }
+            return false;
+        }
+        StringBuilder waitingFor = new StringBuilder();
+        for (Entity other : stillComing) {
+            waitingFor.append((waitingFor.length() == 0) ? "" : ", ").append(other.getShortName());
+        }
+        if (phaseLineHolds.put(entity.getId(), phaseLine) == null) {
+            owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_HOLD, label,
+                  orders.getRoute().get(0).getBoardNum());
+        }
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: PHASE_LINE_WAIT at {} ({}) - waiting for {}",
+              entity.getDisplayName(), entity.getId(), currentRound(), label, orders.getRoute().get(0).getBoardNum(),
+              waitingFor);
+        return true;
+    }
+
+    /**
+     * @return {@code true} if the unit stands at its next waypoint: on it for a formation's leader, else within
+     *       {@link Princess#DISTANCE_TO_WAYPOINT}
+     */
+    private boolean hasReachedPhaseLine(Entity entity) {
+        Coords waypoint = entity.getUnitOrders().getRoute().get(0);
+        int reachedWithin = isLeadingFormationOnRoute(entity) ? flagRadius(entity, waypoint)
+              : Princess.DISTANCE_TO_WAYPOINT;
+        return entity.getPosition().distance(waypoint) <= reachedWithin;
+    }
+
+    /**
+     * The friendly units, of this bot or another on the same side, that lead a route with a waypoint on the phase
+     * line still ahead of them: further along than their next waypoint, or their next waypoint and not yet reached.
+     * A formation's other units go with their leader and are not counted.
+     *
+     * @param entity    the unit holding at the line
+     * @param phaseLine the phase line's name
+     *
+     * @return the units still to come
+     */
+    List<Entity> stillComingToPhaseLine(Entity entity, String phaseLine) {
+        List<Entity> stillComing = new ArrayList<>();
+        for (Entity other : owner.getGame().getEntitiesVector()) {
+            if ((other.getId() == entity.getId()) || (other.getPosition() == null) || other.isDestroyed()
+                  || other.isDoomed() || (other.getOwner() == null) || other.getOwner().isEnemyOf(entity.getOwner())
+                  || isLedByAnother(other)) {
+                continue;
+            }
+            List<Coords> route = other.getUnitOrders().getRoute();
+            for (int index = 0; index < route.size(); index++) {
+                if (!PhaseLine.isSame(phaseLine, other.getUnitOrders().getWaypointOrder(index).getPhaseLine())) {
+                    continue;
+                }
+                boolean isIn = (index == 0)
+                      && (other.getPosition().distance(route.get(0)) <= Princess.DISTANCE_TO_WAYPOINT);
+                if (!isIn) {
+                    stillComing.add(other);
+                }
+                break;
+            }
+        }
+        return stillComing;
+    }
+
+    /**
+     * @return {@code true} if the unit follows another unit of its formation, which leads its route
+     */
+    private boolean isLedByAnother(Entity unit) {
+        Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (formation.get().getLeaderId() == unit.getId())) {
+            return false;
+        }
+        Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
+        return (leader != null) && (leader.getPosition() != null) && !leader.isDestroyed() && !leader.isDoomed();
     }
 
     /**
@@ -2795,6 +2903,10 @@ public class UnitOrdersFollower {
         }
         if (isWaitingForFormation(entity)) {
             return "waiting at " + entity.getPosition().getBoardNum() + " for the formation";
+        }
+        if (isWaitingAtPhaseLine(entity)) {
+            return "holding at " + PhaseLine.display(entity.getUnitOrders().getWaypointOrder(0).getPhaseLine())
+                  + " for the other lances on it";
         }
         return "holding the end of its route at " + entity.getPosition().getBoardNum();
     }

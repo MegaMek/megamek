@@ -83,6 +83,10 @@ public class OrdersRadio {
         FALLING_BEHIND("fallingBehind", true),
         /** The commander is lost and another unit takes command: the call names the new commander. */
         COMMAND("command", true),
+        /** The lance holds at a phase line for the others on it: the call names the line and the hex. */
+        PHASE_LINE_HOLD("phaseLineHold", true),
+        /** Every lance on the phase line is in and they move on: the call names the line. */
+        PHASE_LINE_CLEAR("phaseLineClear", true),
         /** A unit cannot reach its waypoint and skips it. */
         UNREACHABLE("unreachable", false),
         /** A unit follows the player's orders over its own withdrawal. */

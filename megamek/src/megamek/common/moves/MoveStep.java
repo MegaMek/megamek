@@ -2768,21 +2768,22 @@ public class MoveStep implements Serializable {
                 // or into stacking violation.
                 Targetable target = getTarget(game);
                 if (target instanceof Entity other) {
+                    // Only jump and VTOL infantry may leave a VTOL or WiGE that has not landed, in its own hex; jump
+                    // infantry land on the ground or roof, VTOL infantry stay at its elevation (TW p.225, errata
+                    // v12.0)
+                    int unloadElevation = getElevation();
+                    Hex carrierHex = game.getBoard(boardId).getHex(curPos);
+                    if (AirborneDismountRules.isCarrierAirborne(entity, carrierHex, getElevation())) {
+                        boolean leavesCarrierHex = (getTargetPosition() != null) && !getTargetPosition().equals(curPos);
+                        if (leavesCarrierHex
+                              || !AirborneDismountRules.canDismountFromAirborneCarrier(game, entity, other)) {
+                            movementType = EntityMovementType.MOVE_ILLEGAL;
+                        }
+                        unloadElevation = AirborneDismountRules.dismountElevation(other, carrierHex, getElevation());
+                    }
                     // Change the destination hex if an unload dialog box set it elsewhere
                     if (getTargetPosition() != null) {
                         curPos = getTargetPosition();
-                    }
-                    // Infantry with jump capability or glider wings dismounting from VTOLs
-                    // land at ground level, not VTOL elevation (TW p.31, IO:AE p.79)
-                    int unloadElevation = getElevation();
-                    if (entity instanceof VTOL && other.isInfantry()) {
-                        Infantry inf = (Infantry) other;
-                        if (inf.getJumpMP() > 0 || inf.canExitVTOLWithGliderWings()) {
-                            Hex destHex = game.getBoard(boardId).getHex(curPos);
-                            if (destHex != null) {
-                                unloadElevation = destHex.getLevel();
-                            }
-                        }
                     }
                     if ((Compute.stackingViolation(game, other, curPos, entity, climbMode, true) != null) ||
                         other.isLocationProhibited(curPos, unloadElevation)) {

@@ -3948,6 +3948,13 @@ public class TWGameManager extends AbstractGameManager {
                     return false;
                 }
             }
+        } else if (!evacuation && AirborneDismountRules.isCarrierAirborne(unloader, hex, elevation)) {
+            // Leaving a WiGE that has not landed: VTOL infantry stay at its elevation, jump infantry land on the
+            // ground or roof and count as having jumped (TW p.225, errata v12.0)
+            unit.setElevation(AirborneDismountRules.dismountElevation(unit, hex, elevation));
+            if ((unit.getMovementMode() != EntityMovementMode.VTOL) && (unit.getJumpMP() > 0)) {
+                unit.moved = EntityMovementType.MOVE_JUMP;
+            }
         } else if (game.getBuildingAt(pos, unit.getBoardId()).isPresent()) {
             // non-flying unit unloading units into a building
             // -> sit in the building at the same elevation

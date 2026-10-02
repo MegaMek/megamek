@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,6 +53,7 @@ import java.util.Vector;
 import java.util.stream.Stream;
 
 import megamek.common.GameBoardTestCase;
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IndustrialElevator;
 import megamek.common.Player;
@@ -71,8 +72,10 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.BuildingTerrain;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
+import megamek.common.units.SupportTank;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -839,6 +842,121 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
 
             // Verify adjacent entity was NOT damaged
             verify(gameManager, Mockito.never()).damageEntity(eq(mockMek), any(HitData.class), anyInt());
+        }
+    }
+
+    /**
+     * A WiGE flying over a building collapses the whole building hex if its tonnage x 0.25 exceeds the hex's current
+     * CF, and then flies on one level above the rubble (TW p.55; Xotl, 2017-11-05). The building here is a 3-level
+     * light building with CF 15, so the WiGE flies over it at elevation 4.
+     */
+    @Nested
+    class WiGEFlyoverTests {
+
+        private static final int BUILDING_CF = 15;
+        private static final int ELEVATION_OVER_ROOF = 4;
+
+        private final Coords position = new Coords(0, 0);
+        private IBuilding building;
+        private int nextEntityId = 10;
+
+        @BeforeEach
+        void beforeEachWiGETest() {
+            initializeBoard("WIGE_FLYOVER_BOARD", """
+                  size 1 1
+                  hex 0101 0 "bldg_elev:3;building:1;bldg_class:0;bldg_cf:15" ""
+                  end"""
+            );
+            setupBoardForTest(getBoard("WIGE_FLYOVER_BOARD"));
+            building = board.getBuildingAt(position);
+            initializeBuildingCF(building, BUILDING_CF);
+            mockGameManagerDamageMethods();
+        }
+
+        private SupportTank wigeAt(double tonnage, int elevation) {
+            SupportTank wige = new SupportTank();
+            wige.setChassis("Test");
+            wige.setModel("WiGE");
+            wige.setMovementMode(EntityMovementMode.WIGE);
+            wige.setWeight(tonnage);
+            wige.setOwner(game.getPlayer(0));
+            wige.setId(nextEntityId++);
+            game.addEntity(wige);
+            wige.setPosition(position);
+            wige.setElevation(elevation);
+            return wige;
+        }
+
+        private boolean checkForCollapse(Entity... unitsInHex) {
+            Map<BoardLocation, List<Entity>> positionMap = new HashMap<>();
+            positionMap.put(BoardLocation.of(position, board.getBoardId()), new ArrayList<>(List.of(unitsInHex)));
+            return collapseHandler.checkForCollapse(building, positionMap, position, true, new Vector<>());
+        }
+
+        @Test
+        void heavyWiGECollapsesTheWholeBuildingHex() {
+            // 80 tons x 0.25 = 20, more than CF 15
+            SupportTank wige = wigeAt(80, ELEVATION_OVER_ROOF);
+
+            assertTrue(checkForCollapse(wige));
+
+            Hex hex = board.getHex(position);
+            assertFalse(hex.containsTerrain(Terrains.BUILDING), "The whole building hex collapses, not the top floor");
+            assertFalse(hex.containsTerrain(Terrains.BLDG_ELEV), "No building levels are left standing");
+            assertTrue(hex.containsTerrain(Terrains.RUBBLE), "The building hex becomes rubble");
+        }
+
+        @Test
+        void wigeFliesOnOneLevelAboveTheRubble() {
+            SupportTank wige = wigeAt(80, ELEVATION_OVER_ROOF);
+
+            checkForCollapse(wige);
+
+            assertEquals(1, wige.getElevation(), "The WiGE flies one elevation above the rubble");
+        }
+
+        @Test
+        void unitInsideTheBuildingTakesCollapseDamage() {
+            SupportTank wige = wigeAt(80, ELEVATION_OVER_ROOF);
+            // 10 tons on the first floor is under CF 15, so only the WiGE brings the hex down
+            Mek mekOnFirstFloor = createMockMek(1, 1, "Mek inside", 10.0);
+
+            checkForCollapse(mekOnFirstFloor, wige);
+
+            verify(gameManager, atLeastOnce()).damageEntity(eq(mekOnFirstFloor), any(HitData.class), anyInt());
+            verify(gameManager, times(1)).doEntityFallsInto(eq(mekOnFirstFloor), eq(position),
+                  any(PilotingRollData.class), eq(true));
+        }
+
+        @Test
+        void lightWiGEDoesNotCollapseTheBuilding() {
+            // 60 tons x 0.25 = 15, which does not exceed CF 15
+            SupportTank wige = wigeAt(60, ELEVATION_OVER_ROOF);
+
+            assertFalse(checkForCollapse(wige));
+
+            Hex hex = board.getHex(position);
+            assertEquals(3, hex.terrainLevel(Terrains.BLDG_ELEV), "The building keeps all its levels");
+            assertEquals(ELEVATION_OVER_ROOF, wige.getElevation(), "The WiGE stays over the roof");
+        }
+
+        @Test
+        void eachWiGEIsCheckedOnItsOwnTonnage() {
+            // TW p.55 compares "its tonnage": two 40-ton WiGEs (10 each) do not add up against CF 15
+            SupportTank firstWiGE = wigeAt(40, ELEVATION_OVER_ROOF);
+            SupportTank secondWiGE = wigeAt(40, ELEVATION_OVER_ROOF);
+
+            assertFalse(checkForCollapse(firstWiGE, secondWiGE));
+            assertEquals(3, board.getHex(position).terrainLevel(Terrains.BLDG_ELEV));
+        }
+
+        @Test
+        void wigeLandedOnTheRoofCountsFullTonnage() {
+            // Landed on the roof, the WiGE's full 20 tons exceed CF 15
+            SupportTank wige = wigeAt(20, 3);
+
+            assertTrue(checkForCollapse(wige));
+            assertFalse(board.getHex(position).containsTerrain(Terrains.BUILDING));
         }
     }
 }

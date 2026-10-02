@@ -17,6 +17,79 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "megamek/testresources/suite-records/complete.json"
 
 
+class FailureDetailTests(unittest.TestCase):
+    def test_gradle_failure_survives_advice_footer_in_either_stream(self):
+        output = (
+            "FAILURE: Build failed with an exception.\n\n"
+            "* What went wrong:\n"
+            "Execution failed for task ':megamek:test'.\n"
+            "> There were failing tests.\n\n"
+            "* Try:\n"
+            "> Run with --stacktrace option to get the stack trace.\n"
+            "> Run with --info or --debug option to get more log output.\n"
+            "> Run with --scan to get full insights.\n"
+            "> Get more help at https://help.gradle.org.\n\n"
+            "BUILD FAILED in 15s\n"
+        )
+        for stream in ("stdout", "stderr"):
+            with self.subTest(stream=stream):
+                error = subprocess.CalledProcessError(
+                    1, ["gradlew", ":megamek:test"],
+                    output=output if stream == "stdout" else "JVM warning\n",
+                    stderr=output if stream == "stderr" else "JVM warning\n")
+                detail = release.failure_detail(error)
+                self.assertTrue(detail.startswith("exit 1: "))
+                self.assertIn("Execution failed for task ':megamek:test'.", detail)
+                self.assertIn("There were failing tests.", detail)
+                self.assertNotIn("Run with", detail)
+                self.assertNotIn("JVM warning", detail)
+
+    def test_non_gradle_failure_retains_both_streams(self):
+        error = subprocess.CalledProcessError(
+            2, ["tool"], output=b"output cause\n", stderr=b"error cause\n")
+        self.assertEqual(release.failure_detail(error),
+                         "exit 2: error cause | output cause")
+
+    def test_credentials_and_commands_are_not_exposed_in_either_stream(self):
+        output = (
+            "* What went wrong:\n"
+            "Execution failed for task ':megamek:distTar'.\n"
+            "Authorization: bearer credential-value\n"
+            "password=credential-value\n"
+            "cookie=credential-value\n"
+            "download https://user:credential-value@example.invalid/file\n"
+            + "opaque " + "a" * 40 + "\n"
+            "* Try:\n"
+            "token=credential-value\n"
+        )
+        error = subprocess.CalledProcessError(
+            1, ["tool", "command-credential-value"],
+            output=output.encode("utf-8"), stderr=output)
+        detail = release.failure_detail(error)
+        self.assertIn("Execution failed for task ':megamek:distTar'.", detail)
+        self.assertIn("opaque [redacted]", detail)
+        self.assertNotIn("credential-value", detail)
+        self.assertNotIn("a" * 40, detail)
+        self.assertNotIn("https://", detail)
+
+    def test_long_gradle_sections_and_lines_are_bounded(self):
+        output = "* What went wrong:\n" + "".join(
+            f"cause {i}: " + "diagnostic text " * 40 + "\n" for i in range(100))
+        output += "* Try:\n" + "footer\n" * 100
+        error = subprocess.CalledProcessError(1, ["tool"], output=output, stderr=output)
+        detail = release.failure_detail(error)
+        self.assertLessEqual(len(detail), len("exit 1: ") + 20 * 200 + 19 * 3)
+        self.assertIn("cause 0:", detail)
+        self.assertIn("cause 8:", detail)
+        self.assertNotIn("cause 9:", detail)
+        self.assertNotIn("footer", detail)
+
+    def test_missing_executable_remains_explicit(self):
+        self.assertEqual(
+            release.failure_detail(FileNotFoundError("private executable path")),
+            "could not start executable (FileNotFoundError; check installation/PATH)")
+
+
 class PlanTests(unittest.TestCase):
     def setUp(self):
         self.old = json.loads(FIXTURE.read_text(encoding="utf-8"))

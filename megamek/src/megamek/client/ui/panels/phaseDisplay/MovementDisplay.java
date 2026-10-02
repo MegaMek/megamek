@@ -39,15 +39,15 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Stream;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -2035,6 +2035,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             currentlySelectedEntity.setBoardId(anchor.boardId());
             currentlySelectedEntity.setFacing(anchor.facing());
             currentlySelectedEntity.setDeployed(true);
+            deployTrain(currentlySelectedEntity);
             if (savedGear == GEAR_JUMP) {
                 gear = GEAR_JUMP;
             }
@@ -2048,6 +2049,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 markDeploymentHexes(currentlySelectedEntity);
                 currentlySelectedEntity.setDeployed(false);
                 currentlySelectedEntity.setPosition(null);
+                clearTrain(currentlySelectedEntity);
                 clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
                 refreshButtons();
             }
@@ -2870,14 +2872,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
             Coords coords = boardViewEvent.getCoords();
             int boardId = boardViewEvent.getBoardId();
             if (!currentlySelectedEntity.isDeployed() && boardViewEvent.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+                int tempFacing = currentlySelectedEntity.getFacing();
                 DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
                 if (!deploymentHelper.checkDeployment(game.getBoard(boardId),
                                                       currentlySelectedEntity,
                                                       coords,
-                                                      false)) {
+                                                      false, true)) {
                     return;
                 }
-                if (originalFacing == -1) {
+                // If we have not got a stored facing, or the deployment check changed our facing to make it legal
+                if (originalFacing == -1 && tempFacing == currentlySelectedEntity.getFacing()) {
                     deploymentHelper.setStartingFacing(currentlySelectedEntity, game.getPlayersList(), coords);
                 }
                 DeploymentPosition deploymentPosition = deploymentHelper.determineDeploymentPosition(
@@ -2887,7 +2891,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                         lastHexDeploymentOptions,
                         lastDeploymentOption);
                 if (deploymentPosition == null) {
-
                     return;
                 }
                 int elevation = deploymentPosition.elevation();
@@ -2909,6 +2912,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     currentlySelectedEntity.setDeployed(true);
                     cmd = new MovePath(game, currentlySelectedEntity);
                     addDeploymentToMovePath();
+                    deployTrain(currentlySelectedEntity);
                 } else {
                     String msg = Messages.getString("DeploymentDisplay.cantDeployInto",
                                                     currentlySelectedEntity.getShortName(),
@@ -3295,6 +3299,58 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 return;
             }
             refreshButtons();
+        }
+    }
+
+    private void deployTrain(Entity entity) {
+        if (entity.getAllTowedUnits().isEmpty()) {
+            return;
+        }
+
+        int trailerCount = entity.getAllTowedUnits().size();
+        List<Coords> trainPath = TrainLayout.deploymentPath(entity.getPosition(),
+                                                            entity.getFacing(),
+                                                            trailerCount);
+        List<Integer> trainFacings = new ArrayList<>();
+        for (int step = 0; step < trainPath.size(); step++) {
+            trainFacings.add(entity.getFacing());
+        }
+
+        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(
+                entity.getGame(),
+                entity,
+                entity.getPosition(),
+                entity.getFacing(),
+                trainPath,
+                trainFacings);
+
+        // The footprint was checked against the deployment zone in receiveDeployment, before the tractor was placed.
+
+        TrainLayout.applyLayout(entity.getGame(), placements);
+
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = entity.getGame().getEntity(placement.entityId());
+            if (trailer == null) {
+                continue;
+            }
+            trailer.setBoardId(entity.getBoardId());
+            trailer.setElevation(entity.getElevation());
+            trailer.setSecondaryFacing(trailer.getFacing());
+            trailer.setDeployed(true);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(trailer));
+        }
+    }
+
+    private void clearTrain(Entity entity) {
+        List<Integer> towedUnits = entity.getAllTowedUnits();
+        if (towedUnits.isEmpty()) {
+            return;
+        }
+        for (Integer unitId : towedUnits) {
+            Entity towedUnit = entity.getGame().getEntity(unitId);
+            towedUnit.setPosition(null);
+            towedUnit.setDeployed(false);
+            clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(towedUnit));
         }
     }
 
@@ -4307,7 +4363,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
      */
     private ClimbingChoiceDialog.ClimbingOption showClimbingLevelDialog(Mek mek,
                                                                         boolean isContinuation,
-                                                                        @megamek.common.annotations.Nullable MoveStep climbingStep) {
+                                                                        @Nullable MoveStep climbingStep) {
         LOGGER.debug("[CLIMB-TRACE] showClimbingLevelDialog: entity={}, isContinuation={}, " +
                      "position={}, elevation={}, facing={}, climbingStep={}",
                      mek.getDisplayName(), isContinuation, mek.getPosition(), mek.getElevation(), mek.getFacing(),
@@ -4419,7 +4475,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         int climbPsrTarget = basePiloting + climbPsrMod;
 
         // Build climbing options
-        List<ClimbingChoiceDialog.ClimbingOption> climbingOptions = new java.util.ArrayList<>();
+        List<ClimbingChoiceDialog.ClimbingOption> climbingOptions = new ArrayList<>();
         for (int i = 1; i <= maxLevels; i++) {
             int cost = i * costPerLevel;
             String baseLabel = (i == 1)
@@ -4535,8 +4591,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
      *                  Bridge")
      * @param tooltip   HTML tooltip describing the toggle's current effect
      */
-    private record ClimbModeContext(@megamek.common.annotations.Nullable String suffix,
-                                    @megamek.common.annotations.Nullable String fullLabel,
+    private record ClimbModeContext(@Nullable String suffix,
+                                    @Nullable String fullLabel,
                                     String tooltip) {
 
     }
@@ -4549,6 +4605,15 @@ public class MovementDisplay extends ActionPhaseDisplay {
         Entity entity = currentEntity();
         if (entity == null) {
             return new ClimbModeContext(null, null, Messages.getString("MovementDisplay.climbModeTip.none"));
+        }
+        // For WiGE movement the toggle means Keep Elevation / Follow Terrain, whatever terrain is nearby
+        EntityMovementMode pathMovementMode = (cmd != null) ? cmd.getFinalConversionMode()
+                                                            : entity.getMovementMode();
+        if (pathMovementMode == EntityMovementMode.WIGE) {
+            String wigeLabel = climbModeOn
+                               ? Messages.getString("MovementDisplay.climbModeBtn.wigeKeepElevation")
+                               : Messages.getString("MovementDisplay.climbModeBtn.wigeFollowTerrain");
+            return new ClimbModeContext(null, wigeLabel, Messages.getString("MovementDisplay.climbModeTip.wige"));
         }
         // Use end-of-path position/facing if a path is being plotted, else the entity's current state.
         Coords curPos = entity.getPosition();
@@ -7924,14 +7989,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 isUsingChaff = true;
             }
         } else if (actionCmd.equals(MoveCommand.MOVE_CLEAR_DEPLOY.getCmd())) {
-            clear(false);
             Entity currentlySelectedEntity = currentEntity();
+            if (currentlySelectedEntity != null) {
+                DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+                deploymentHelper.setStartingFacing(currentlySelectedEntity,
+                                                   game.getPlayersList(),
+                                                   currentlySelectedEntity.getPosition());
+            }
+            clear(false);
             if (currentlySelectedEntity != null) {
                 lastDeploymentOption = null;
                 lastHexDeploymentOptions.clear();
                 originalFacing = -1;
             }
-
         }
 
         refreshButtons();
@@ -9422,8 +9492,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private void processDeploymentTurn(Entity entity,
                                        Coords coords) {
+        int originalFacing = entity.getFacing();
+        // Update the facing first so we can check the train
+        entity.setFacing(entity.getPosition().direction(coords));
+        DeploymentHelper deploymentHelper = new DeploymentHelper(clientgui);
+        if (!deploymentHelper.checkDeployment(game.getBoard(entity.getBoardId()),
+                                              entity,
+                                              entity.getPosition(),
+                                              false, false)) {
+            // Reset original facing
+            entity.setFacing(originalFacing);
+            return;
+        }
         entity.setFacing(entity.getPosition().direction(coords));
         entity.setSecondaryFacing(entity.getFacing());
+        // Clear the train and refresh the UI
+        clearTrain(entity);
+        // redeploy the train and refresh the UI
+        deployTrain(entity);
         cmd = new MovePath(game, entity);
         addDeploymentToMovePath();
         clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(entity));

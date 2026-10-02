@@ -68,7 +68,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
-import javax.xml.parsers.DocumentBuilder;
 
 import megamek.MMConstants;
 import megamek.MegaMek;
@@ -1194,10 +1193,8 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 gzi = is;
             }
 
-            // Using factory get an instance of document builder
-            final DocumentBuilder documentBuilder = MMXMLUtility.newSafeDocumentBuilder();
-            // Parse using builder to get DOM representation of the XML file
-            final Document xmlDocument = documentBuilder.parse(gzi);
+            // Parse to a DOM representation, raising the JAXP entity size limit if a large save exceeds it
+            final Document xmlDocument = MMXMLUtility.parseDocument(gzi);
 
             final Element gameElement = xmlDocument.getDocumentElement();
             gameElement.normalize();

@@ -3049,7 +3049,13 @@ public class TWGameManager extends AbstractGameManager {
         // add the turns (this is easy)
         while (team_order.hasMoreElements()) {
             Entity entity = (Entity) team_order.nextElement();
-            if (entity.isSelectableThisTurn()) {
+            if (phase.isDeployment()) {
+                if (Game.rulesManager.getRulesGame().canWalkOnThisRound(entity)) {
+                    continue;
+                }
+            }
+
+            if (entity.isSelectableThisTurn() && Game.rulesManager.getRulesGame().eligibleForPhase(entity, phase)) {
                 if (!protoMeksMoveMulti && (entity instanceof ProtoMek) && (entity.getUnitNumber() != Entity.NONE)) {
                     turns.addElement(new UnitNumberTurn(entity.getOwnerId(), entity.getUnitNumber()));
                 } else {

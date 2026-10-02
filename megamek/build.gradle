@@ -1,5 +1,4 @@
 import java.time.LocalDateTime
-import java.util.jar.JarFile
 
 plugins {
     id 'application'
@@ -11,6 +10,8 @@ plugins {
     id 'checkstyle'
     id 'com.diffplug.spotless' version '8.10.1'
 }
+
+apply from: file("${rootDir}/gradle/suite_archive_adapter.gradle")
 
 tasks.withType(AbstractArchiveTask).configureEach {
     preserveFileTimestamps = true
@@ -136,7 +137,8 @@ def gitOutput = { File directory, String... arguments ->
                 File local = new File(directory, path)
                 File canonical = source == null ? null : new File(dataRepo, source)
                 if (source == null || !trackedData.contains(source) || !canonical.isFile()
-                        || !java.util.Arrays.equals(local.bytes, canonical.bytes)) {
+                        || (!java.util.Arrays.equals(local.bytes, canonical.bytes)
+                            && !suiteMirrorMatchesPin(local, source))) {
                     throw new GradleException("Unpinned package input in ${directory}: ${path}")
                 }
             }
@@ -217,7 +219,7 @@ tasks.register('validateSuiteRecord', JavaExec) {
 }
 
 dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.4'
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.21.7'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.21.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.21.2'
 
@@ -234,7 +236,7 @@ dependencies {
     implementation 'jakarta.annotation:jakarta.annotation-api:3.0.0'
 
     implementation 'org.apache.commons:commons-collections4:4.5.0'
-    implementation 'org.apache.commons:commons-lang3:3.20.0'
+    implementation 'org.apache.commons:commons-lang3:3.21.0'
     implementation 'org.apache.commons:commons-text:1.15.0'
 
     implementation 'org.apache.logging.log4j:log4j-api:2.25.5'
@@ -364,7 +366,8 @@ spotless {
 // Derived from rootDir (the megamek build root) rather than a build-file-relative path,
 // so it survives project-layout changes. mm-data is a sibling of this build root
 // (settings.gradle includes it as ../mm-data).
-def mmDataDir = "${rootDir}/../mm-data"
+def mmDataDir = suiteDataFromPin ? suiteDataRoot.absolutePath : "${rootDir}/../mm-data"
+def mmGeneratedDir = suiteGeneratedRoot.absolutePath
 def mmDataOut = "${layout.projectDirectory.asFile}/data"
 
 // Never stage macOS/Windows directory-metadata junk, regardless of what a developer's
@@ -378,15 +381,7 @@ tasks.register('stageDataImages', Sync) {
     description = "Syncs image data from mm-data"
     group = 'build'
     from("${mmDataDir}/data/images") {
-        include "camo/**/*.*"
-        include "fluff/**/*.*"
-        include "hexes/**/*.*"
-        include "misc/**/*.*"
-        include "portraits/**/*.*"
-        include "temp/**/*.*"
-        include "units/**/*.*"
-        include "universe/**/*.*"
-        include "widgets/**/*.*"
+        suiteDataRules.MegaMek.images.each { category -> include "${category}/**/*.*" }
     }
     into "${mmDataOut}/images"
 }
@@ -406,22 +401,30 @@ tasks.register('stageDataFonts', Sync) {
 }
 
 tasks.register('stageDataMekfiles', Sync) {
-    dependsOn gradle.includedBuild('mm-data').task(':unitFilesZip')
+    if (!suiteDataFromPin) {
+        dependsOn gradle.includedBuild('mm-data').task(':unitFilesZip')
+    }
     description = "Syncs unit files (loose text plus the zipped unit archive) from mm-data"
     group = 'build'
     from("${mmDataDir}/data/mekfiles") {
         include "*.txt"
         include "*.xml"
     }
-    from "${mmDataDir}/build/staging/mekfiles"
+    from("${mmGeneratedDir}/mekfiles") {
+        if (suiteDataFromPin) { include "unit_files.zip" }
+    }
     into "${mmDataOut}/mekfiles"
 }
 
 tasks.register('stageDataRat', Sync) {
-    dependsOn gradle.includedBuild('mm-data').task(':ratZip')
+    if (!suiteDataFromPin) {
+        dependsOn gradle.includedBuild('mm-data').task(':ratZip')
+    }
     description = "Syncs the random assignment table archive from mm-data"
     group = 'build'
-    from "${mmDataDir}/build/staging/rat"
+    from("${mmGeneratedDir}/rat") {
+        if (suiteDataFromPin) { include "rat_default.zip" }
+    }
     into "${mmDataOut}/rat"
 }
 
@@ -429,18 +432,7 @@ tasks.register('stageData', Sync) {
     description = "Syncs all remaining loose data from mm-data"
     group = 'build'
     from("${mmDataDir}/data") {
-        include "css/**/*.*"
-        include "forcegenerator/**/*.*"
-        include "mapgen/**/*.*"
-        include "mapsetup/**/*.*"
-        include "names/**/*.*"
-        include "scenarios/**/*.*"
-        include "sounds/**/*.*"
-        include "sourcebooks/*.*"
-        include "universe/eras.xml"
-        include "universe/ranks.xml"
-        include "universe/commands/**/*.*"
-        include "universe/factions/**/*.*"
+        suiteDataRules.MegaMek.loose.each { pattern -> include pattern }
     }
     into mmDataOut
     // The big asset trees are owned by the dedicated tasks above; don't delete them.
@@ -717,83 +709,8 @@ tasks.register('verifySuiteMegaMekArchive') {
         File archive = project.hasProperty('suiteArchiveFile')
                 ? project.file(project.property('suiteArchiveFile'))
                 : layout.buildDirectory.file("distributions/MegaMek-${project.version}.tar.gz").get().asFile
-        if (!archive.isFile()) {
-            throw new GradleException("Missing suite archive ${archive}")
-        }
-        if (archive.name != "MegaMek-${identity.version}.tar.gz") {
-            throw new GradleException("Wrong suite archive name: ${archive.name}")
-        }
-        String root = "MegaMek-${identity.version}/"
-        def paths = [] as Set
-        def propertiesFiles = []
-        def jarFiles = []
-        def jarDigests = [:]
-        def forbidden = ['clientsettings.xml', 'gameoptions.xml', 'mm.preferences',
-                         'mml.preferences', 'mhq.preferences', 'megameklab.properties',
-                         'megameklab.properties.bak', 'recent-advanced-searches.json',
-                         'recent_boards.yml']
-        tarTree(resources.gzip(archive)).visit { entry ->
-            String path = entry.path.replace('\\', '/')
-            if (path != root.substring(0, root.length() - 1) && !path.startsWith(root)) {
-                throw new GradleException("Wrong suite archive root: ${path}")
-            }
-            if (!entry.directory) {
-                if (!paths.add(path)) {
-                    throw new GradleException("Duplicate suite archive entry: ${path}")
-                }
-                if (forbidden.contains(path.substring(path.lastIndexOf('/') + 1))) {
-                    throw new GradleException("User settings in suite archive: ${path}")
-                }
-                if (path.startsWith(root + 'mmconf/searches/')) {
-                    throw new GradleException("User searches in suite archive: ${path}")
-                }
-                if (path.startsWith(root + 'userdata/')) {
-                    throw new GradleException("User data in suite archive: ${path}")
-                }
-                if (path == root + 'suite-build.properties') {
-                    def packaged = new Properties()
-                    entry.file.withInputStream { packaged.load(it) }
-                    propertiesFiles.add(packaged)
-                }
-                if (path == root + 'MegaMek.jar' || path == root + 'lib/MegaMek.jar') {
-                    jarDigests[path] = java.security.MessageDigest.getInstance('SHA-256').digest(entry.file.bytes)
-                    def jar = new JarFile(entry.file)
-                    try {
-                        def versionEntry = jar.getJarEntry('Version.properties')
-                        if (versionEntry == null) {
-                            throw new GradleException("Missing Version.properties in ${path}")
-                        }
-                        def props = new Properties()
-                        jar.getInputStream(versionEntry).withCloseable { props.load(it) }
-                        if (path == root + 'MegaMek.jar') {
-                            jarFiles.add(props)
-                        }
-                    } finally {
-                        jar.close()
-                    }
-                }
-            }
-        }
-        if (propertiesFiles.size() != 1 || propertiesFiles[0].size() != identity.size()
-                || identity.any { key, value -> propertiesFiles[0].getProperty(key) != value }) {
-            throw new GradleException('Suite archive identity is missing or does not match declared pins')
-        }
-        if (jarFiles.size() != 1 || jarFiles[0].getProperty('major') != identity.version.split(/\./)[0]
-                || jarFiles[0].getProperty('minor') != identity.version.split(/\./)[1]
-                || jarFiles[0].getProperty('patch') != identity.version.split(/\./)[2]
-                || jarFiles[0].getProperty('revision')?.trim()) {
-            throw new GradleException('Suite archive packaged Version.properties does not match suite version')
-        }
-        if (!jarDigests.containsKey(root + 'MegaMek.jar')
-                || !jarDigests.containsKey(root + 'lib/MegaMek.jar')
-                || !java.util.Arrays.equals(jarDigests[root + 'MegaMek.jar'],
-                        jarDigests[root + 'lib/MegaMek.jar'])) {
-            throw new GradleException('Suite archive root and lib MegaMek jars disagree')
-        }
-        if (!paths.contains(root + 'MegaMek.sh') || !paths.any { it.startsWith(root + 'data/boards/') }
-                || !paths.any { it.startsWith(root + 'data/mekfiles/') }) {
-            throw new GradleException('Suite archive is missing launcher or bundled mm-data')
-        }
+        verifySuiteArchiveShared('MegaMek', archive, null,
+                [MegaMek: tasks.named('jar').get().archiveFile.get().asFile])
     }
 }
 

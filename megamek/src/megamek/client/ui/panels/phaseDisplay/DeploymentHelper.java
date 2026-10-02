@@ -75,7 +75,19 @@ public class DeploymentHelper {
                                    Entity entity,
                                    Coords coords,
                                    boolean assaultDropPreference) {
-        BoardValidationResult validationResult = validateDeploymentBoard(entity, board, coords, assaultDropPreference);
+        return checkDeployment(board, entity, coords, assaultDropPreference, false);
+    }
+
+    public boolean checkDeployment(Board board,
+                                   Entity entity,
+                                   Coords coords,
+                                   boolean assaultDropPreference,
+                                   boolean findAlternateFacing) {
+        BoardValidationResult validationResult = validateDeploymentBoard(entity,
+                                                                         board,
+                                                                         coords,
+                                                                         assaultDropPreference,
+                                                                         findAlternateFacing);
         if (validationResult == BoardValidationResult.WRONG_BOARD_TYPE) {
             showWrongBoardTypeMessage(board, entity);
             return false;
@@ -96,17 +108,37 @@ public class DeploymentHelper {
     }
 
     /**
-     * Validates whether an entity can deploy on the given board at the specified coordinates.
+     * If anyone needs to call this without the checkAlternateFacings boolean
+     * entity The entity to deploy
      *
-     * @param entity The entity to deploy
-     * @param board  The board to deploy on
-     * @param coords The coordinates for deployment
+     * @param entity                The entity to deploy
+     * @param board                 The board to deploy on
+     * @param coords                The coordinates for deployment
+     * @param assaultDropPreference is it an assault drop
      * @return VALID if deployment can proceed, WRONG_BOARD_TYPE or OUTSIDE_DEPLOYMENT_AREA otherwise
      */
     BoardValidationResult validateDeploymentBoard(Entity entity,
                                                   Board board,
                                                   Coords coords,
                                                   boolean assaultDropPreference) {
+        return validateDeploymentBoard(entity, board, coords, assaultDropPreference, false);
+    }
+
+    /**
+     * Validates whether an entity can deploy on the given board at the specified coordinates.
+     *
+     * @param entity The entity to deploy
+     * @param board  The board to deploy on
+     * @param coords The coordinates for deployment
+     * @param assaultDropPreference is it an assault drop
+     * @param checkAlternateFacings should I check other facings (for trains)
+     * @return VALID if deployment can proceed, WRONG_BOARD_TYPE or OUTSIDE_DEPLOYMENT_AREA otherwise
+     */
+    BoardValidationResult validateDeploymentBoard(Entity entity,
+                                                  Board board,
+                                                  Coords coords,
+                                                  boolean assaultDropPreference,
+                                                  boolean checkAlternateFacings) {
         if (entity.isBoardProhibited(board)) {
             return BoardValidationResult.WRONG_BOARD_TYPE;
         }
@@ -114,16 +146,60 @@ public class DeploymentHelper {
             return BoardValidationResult.OUTSIDE_DEPLOYMENT_AREA;
         }
         // A train deploys as one piece, so every hex it would occupy has to be legal, not just the tractor's.
+        boolean illegalDeployment = false;
+        Coords illegalHex = null;
         if (!entity.getAllTowedUnits().isEmpty() && !assaultDropPreference) {
             for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
                                                                    entity,
                                                                    coords,
                                                                    entity.getFacing())) {
                 if (!board.isLegalDeployment(trainHex, entity)) {
-                    logger.info("[Train] {} cannot deploy at {} facing {}: trailer hex {} is outside the "
-                                + "deployment area", entity.getShortName(), coords, entity.getFacing(), trainHex);
-                    return BoardValidationResult.TRAIN_DOES_NOT_FIT;
+                    illegalDeployment = true;
+                    illegalHex = trainHex;
+                    break;
                 }
+            }
+            // Backup the original facing
+            int originalFacing = entity.getFacing();
+
+            if (illegalDeployment && checkAlternateFacings) {
+                // Try turning it by one facing
+                entity.setFacing(originalFacing + 1);
+                illegalDeployment = false;
+                for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
+                                                                       entity,
+                                                                       coords,
+                                                                       entity.getFacing())) {
+                    if (!board.isLegalDeployment(trainHex, entity)) {
+                        illegalDeployment = true;
+                        break;
+                    }
+                }
+            }
+            if (illegalDeployment && checkAlternateFacings) {
+                // That didn't work? Try the other facing
+                entity.setFacing(originalFacing - 1);
+                for (Coords trainHex : TrainLayout.deploymentFootprint(entity.getGame(),
+                                                                       entity,
+                                                                       coords,
+                                                                       entity.getFacing())) {
+                    if (!board.isLegalDeployment(trainHex, entity)) {
+                        illegalDeployment = true;
+                        break;
+                    }
+                }
+            }
+            if (illegalDeployment) {
+                logger.info("[Train] {} cannot deploy at {} facing {}: trailer hex {} is outside the "
+                            + "deployment area",
+                            entity.getShortName(),
+                            coords,
+                            entity.getFacing(),
+                            illegalHex);
+                if (originalFacing != entity.getFacing()) {
+                    entity.setFacing(originalFacing);
+                }
+                return BoardValidationResult.TRAIN_DOES_NOT_FIT;
             }
         }
         // A hidden unit cannot start in a fortified hex - the fortification is visible terrain that would give

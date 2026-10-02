@@ -3728,6 +3728,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         int elev;
                         int sideslipDistance;
                         int skidDirection;
+                        // distance already counts the hex this step was about to enter
+                        int hexesEnteredBeforeSlip;
                         Coords start;
                         if (step.getType() == MoveStepType.LATERAL_LEFT
                             || step.getType() == MoveStepType.LATERAL_RIGHT
@@ -3739,10 +3741,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             sideslipDistance = 1;
                             skidDirection = lastPos.direction(curPos);
                             start = curPos;
+                            hexesEnteredBeforeSlip = distance;
                         } else {
                             elev = (prevStep == null) ? curElevation : prevStep.getElevation();
-                            // maximum distance is hexes moved / 2
-                            sideslipDistance = Math.min(moF, distance / 2);
+                            hexesEnteredBeforeSlip = distance - 1;
+                            sideslipDistance = AirborneVehicleCrashHandler.sideslipDistanceCap(moF,
+                                  hexesEnteredBeforeSlip);
                             skidDirection = prevFacing;
                             start = lastPos;
                         }
@@ -3754,6 +3758,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             report.add(sideslipDistance);
                             addReport(report);
 
+                            // Charges and crash damage during the sideslip use the hexes moved before it, and a WiGE
+                            // needs MP left to avoid a fall (TW p.68)
+                            entity.delta_distance = hexesEnteredBeforeSlip;
+                            entity.mpUsed = mpUsed;
                             if (gameManager.processSkid(entity,
                                                         start,
                                                         elev,
@@ -3763,6 +3771,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                         lastStepMoveType)) {
                                 return;
                             }
+                            // Sideslipped hexes count toward the target movement modifier (TW p.67)
+                            distance = hexesEnteredBeforeSlip + start.distance(entity.getPosition());
 
                             if (!entity.isDestroyed() && !entity.isDoomed() && (mpUsed < entity.getRunMP())) {
                                 fellDuringMovement = true; // No, but it should

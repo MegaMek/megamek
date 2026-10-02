@@ -725,7 +725,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
                 // TW p.68: the vehicle may not attack in the turn it crashes, and is destroyed unless it can
                 // normally land in the crash hex
                 tank.setCrashedThisTurn(true);
-                if (!tank.isDoomed() && !canLandAfterSideslipCrash(tank, fallHex)) {
+                if (!tank.isDoomed() && !tank.canLandIn(fallHex)) {
                     reports.addAll(gameManager.destroyEntity(tank, "could not land in crash site"));
                 }
             }

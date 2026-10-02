@@ -896,6 +896,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay {
             }
 
             updateDeploymentUI(entity, coords, b.getBoardId(), shiftHeld);
+            deploymentHelper.warnIfHiddenUnitDeploysAirborne(entity);
             setClearEnabled(true);
         } finally {
             ToolTipManager.sharedInstance().setEnabled(true);

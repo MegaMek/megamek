@@ -1088,65 +1088,96 @@ public class Princess extends BotClient {
     protected void calculateDeployment() {
         // get the first unit
         final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
-        sendChat("deploying unit " + getEntity(entityNum).getChassis(), Level.INFO);
-
-        // a unit that is withdrawing under forced withdrawal is not deployed
-        if (getForcedWithdrawalTracker().isWithdrawing(getEntity(entityNum))) {
-            LOGGER.info("Declining to deploy withdrawing unit: {}. Removing unit.", getEntity(entityNum).getChassis());
-            sendDeleteEntity(entityNum);
-            return;
-        }
-
-        // get a list of all coordinates to which we can deploy
-        final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
-        if (startingCoords.isEmpty()) {
-            LOGGER.error("No valid locations to deploy {}", getEntity(entityNum).getDisplayName());
-        }
-
-        // get the coordinates I can deploy on
-        final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
-        if (deployCoords == null) {
-            // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business
-            LOGGER.error("getCoordsAround gave no location for {}. Removing unit.", getEntity(entityNum).getChassis());
-
-            sendDeleteEntity(entityNum);
-            return;
-        }
-
         final Entity deployEntity = getEntity(entityNum);
+        sendChat("deploying unit " + deployEntity.getChassis(), Level.INFO);
+
+        final Coords deployCoords = getDeploymentCoords(deployEntity, entityNum, true, "deployment");
+        if (deployCoords == null) {
+            return;
+        }
 
         // For now, just use whatever board the unit is set to be on, usually board 0 by default
-        Board board = game.getBoard(deployEntity);
+        final Board board = game.getBoard(deployEntity);
+        final int decentFacing = getDeploymentFacing(deployEntity, board, deployCoords);
+        final Hex deployHex = board.getHex(deployCoords);
+        final Integer deployElevation = getDeploymentElevation(deployEntity, board, deployCoords, deployHex, true, entityNum);
+        if (deployElevation == null) {
+            return;
+        }
+        deploy(entityNum, deployCoords, board.getBoardId(), decentFacing, deployElevation, new Vector<>(), false);
+    }
 
-        // first coordinate that it is legal to put this unit on now find some sort of reasonable
-        // facing. If there are deployed enemies, face them
+    private @Nullable Coords getDeploymentCoords(final Entity entity,
+          final int entityId,
+          final boolean deleteEntityOnFailure,
+          final String phaseDescription) {
+        if (entity == null) {
+            return null;
+        }
 
-        // specifically, face the last deployed enemy.
+        if (getForcedWithdrawalTracker().isWithdrawing(entity)) {
+            LOGGER.info("Declining to deploy withdrawing unit: {}.", entity.getChassis());
+            if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                sendDeleteEntity(entityId);
+            }
+            return null;
+        }
+
+        final List<Coords> startingCoords = getStartingCoordsArray(entity);
+        if (startingCoords.isEmpty()) {
+            LOGGER.error("No valid locations to deploy {} during {}.", entity.getDisplayName(), phaseDescription);
+            if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                sendDeleteEntity(entityId);
+            }
+            return null;
+        }
+
+        final Coords deployCoords = getFirstValidCoords(entity, startingCoords);
+        if (deployCoords == null) {
+            LOGGER.error("getCoordsAround gave no location for {} during {}.{}",
+                  entity.getChassis(),
+                  phaseDescription,
+                  deleteEntityOnFailure ? " Removing unit." : "");
+            if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                sendDeleteEntity(entityId);
+            }
+            return null;
+        }
+
+        return deployCoords;
+    }
+
+    private int getDeploymentFacing(final Entity entity, final Board board, final Coords deployCoords) {
         int decentFacing = -1;
         for (final Entity enemy : getEnemyEntities()) {
-            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(deployEntity, enemy)) {
+            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(entity, enemy)) {
                 decentFacing = deployCoords.direction(enemy.getPosition());
                 break;
             }
         }
 
-        // if I haven't found a decent facing, then at least face towards
-        // the center of the board
         if (-1 == decentFacing) {
             final Coords center = new Coords(board.getWidth() / 2, board.getHeight() / 2);
             decentFacing = deployCoords.direction(center);
         }
+        return decentFacing;
+    }
 
-        final Hex deployHex = board.getHex(deployCoords);
-        int deployElevation = deployEntity.getElevation();
+    private @Nullable Integer getDeploymentElevation(final Entity entity,
+          final Board board,
+          final Coords deployCoords,
+          final Hex deployHex,
+          final boolean deleteEntityOnFailure,
+          final int entityId) {
+        int deployElevation = entity.getElevation();
 
-        if (deployEntity.isAero()) {
+        if (entity.isAero()) {
             if (board.isGround()) {
                 // keep the altitude set in the lobby, possibly starting grounded
-                deployElevation = deployEntity.getAltitude();
+                deployElevation = entity.getAltitude();
             } else if (board.isLowAltitude()) {
                 // try to keep the altitude set in the lobby, but stay above the terrain
-                var deploymentHelper = new AllowedDeploymentHelper(deployEntity,
+                var deploymentHelper = new AllowedDeploymentHelper(entity,
                       deployCoords,
                       board,
                       deployHex,
@@ -1155,19 +1186,19 @@ public class Princess extends BotClient {
                 if (allowedDeployment.isEmpty()) {
                     // that's bad, cannot deploy at all
                     LOGGER.error("Cannot find viable altitude to deploy to");
-                    sendDeleteEntity(entityNum);
-                    return;
-                } else {
-                    deployElevation = Math.max(deployEntity.getAltitude(),
-                          Collections.min(allowedDeployment).elevation());
+                    if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                        sendDeleteEntity(entityId);
+                    }
+                    return null;
                 }
+                deployElevation = Math.max(entity.getAltitude(), Collections.min(allowedDeployment).elevation());
             }
         } else {
-            deployElevation = getDeployElevation(deployEntity, deployHex);
+            deployElevation = getDeployElevation(entity, deployHex);
             // Compensate for hex elevation where != 0...
             deployElevation -= deployHex.getLevel();
         }
-        deploy(entityNum, deployCoords, board.getBoardId(), decentFacing, deployElevation, new Vector<>(), false);
+        return deployElevation;
     }
 
     /**
@@ -3181,56 +3212,17 @@ public class Princess extends BotClient {
             return null;
         }
 
-        final List<Coords> startingCoords = getStartingCoordsArray(entity);
-        if (startingCoords.isEmpty()) {
-            LOGGER.warn("No valid deployment hexes found for {} during movement-phase deployment.", entity.getDisplayName());
-            return null;
-        }
-
-        final Coords deployCoords = getFirstValidCoords(entity, startingCoords);
+        final Coords deployCoords = getDeploymentCoords(entity, Entity.NONE, false, "movement-phase deployment");
         if (deployCoords == null) {
-            LOGGER.warn("No valid deployment coordinates found for {} during movement-phase deployment.", entity.getDisplayName());
             return null;
         }
 
         final Board board = game.getBoard(entity);
         final Hex deployHex = board.getHex(deployCoords);
-        final int decentFacing;
-        int deployElevation = entity.getElevation();
-
-        int bestFacing = -1;
-        for (final Entity enemy : getEnemyEntities()) {
-            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(entity, enemy)) {
-                bestFacing = deployCoords.direction(enemy.getPosition());
-                break;
-            }
-        }
-        if (-1 == bestFacing) {
-            final Coords center = new Coords(board.getWidth() / 2, board.getHeight() / 2);
-            bestFacing = deployCoords.direction(center);
-        }
-        decentFacing = bestFacing;
-
-        if (entity.isAero()) {
-            if (board.isGround()) {
-                deployElevation = entity.getAltitude();
-            } else if (board.isLowAltitude()) {
-                final var deploymentHelper = new AllowedDeploymentHelper(entity,
-                      deployCoords,
-                      board,
-                      deployHex,
-                      game);
-                final List<ElevationOption> allowedDeployment = deploymentHelper.findAllowedElevations(
-                      DeploymentElevationType.ALTITUDE);
-                if (allowedDeployment.isEmpty()) {
-                    LOGGER.warn("No valid deployment altitude for {} during movement-phase deployment.",
-                          entity.getDisplayName());
-                    return null;
-                }
-                deployElevation = Math.max(entity.getAltitude(), Collections.min(allowedDeployment).elevation());
-            }
-        } else {
-            deployElevation = getDeployElevation(entity, deployHex) - deployHex.getLevel();
+        final int decentFacing = getDeploymentFacing(entity, board, deployCoords);
+        final Integer deployElevation = getDeploymentElevation(entity, board, deployCoords, deployHex, false, Entity.NONE);
+        if (deployElevation == null) {
+            return null;
         }
 
         entity.setPosition(deployCoords);

@@ -40,11 +40,13 @@ import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
 import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrains;
 
@@ -70,6 +72,8 @@ import megamek.common.units.Terrains;
  *   <li>The lance's slowest units keep to the open outer lanes and leave the narrow streets to the faster ones
  *       ({@link #narrowHexes}); both Stalkers went round the edges while the Griffin and the Grasshopper took the
  *       middle street.</li>
+ *   <li>Where two or more units need the same way into the streets, they stack up outside it and go through one
+ *       after another, the nearest first ({@link #keepPlaceInStack}).</li>
  * </ul>
  *
  * <p>The methods here only decide; {@link UnitOrdersFollower} applies them.</p>
@@ -116,15 +120,31 @@ final class TownLegPlanner {
      */
     static int hexesBesideBuildings(Board board, Coords start, Coords flag, ToIntFunction<Coords> costToFlag) {
         int count = 0;
+        for (Coords hex : wayTo(board, start, flag, costToFlag)) {
+            if (!hex.equals(start) && !hex.equals(flag) && isInOrBesideBuilding(board, hex)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * The cheapest way from a hex to a goal, downhill on the given costs, hex by hex.
+     *
+     * @return the hexes from the start to the goal, both included; just the start when the goal cannot be reached
+     */
+    static List<Coords> wayTo(Board board, Coords start, Coords goal, ToIntFunction<Coords> costToGoal) {
+        List<Coords> way = new ArrayList<>();
+        way.add(start);
         Coords current = start;
-        int currentCost = costToFlag.applyAsInt(current);
+        int currentCost = costToGoal.applyAsInt(current);
         int stepsLeft = board.getWidth() * board.getHeight();
-        while (!current.equals(flag) && (currentCost != WaypointDistanceField.UNREACHABLE) && (stepsLeft-- > 0)) {
+        while (!current.equals(goal) && (currentCost != WaypointDistanceField.UNREACHABLE) && (stepsLeft-- > 0)) {
             Coords next = null;
             int nextCost = currentCost;
             for (int direction = 0; direction < 6; direction++) {
                 Coords neighbour = current.translated(direction);
-                int cost = board.contains(neighbour) ? costToFlag.applyAsInt(neighbour)
+                int cost = board.contains(neighbour) ? costToGoal.applyAsInt(neighbour)
                       : WaypointDistanceField.UNREACHABLE;
                 if (cost < nextCost) {
                     nextCost = cost;
@@ -136,11 +156,60 @@ final class TownLegPlanner {
             }
             current = next;
             currentCost = nextCost;
-            if (!current.equals(flag) && isInOrBesideBuilding(board, current)) {
-                count++;
+            way.add(current);
+        }
+        return way;
+    }
+
+    /**
+     * The door on a way into a town: the first narrow hex the way enters from open ground. A unit already in a street
+     * is through its door and has none.
+     *
+     * @param way the hexes of the way, the unit's own first
+     *
+     * @return the door, or {@code null} when the way enters no street or the unit is in one already
+     */
+    static @Nullable Coords doorOn(Board board, List<Coords> way) {
+        if (way.isEmpty() || isNarrow(board, way.get(0))) {
+            return null;
+        }
+        for (Coords hex : way.subList(1, way.size())) {
+            if (isNarrow(board, hex)) {
+                return hex;
             }
         }
-        return count;
+        return null;
+    }
+
+    /**
+     * Holds a unit in the stack outside a door until those ahead of it are through: it may not end its move in the
+     * door, pass through it, or end nearer the door than its place in the stack - the second waits a hex out, the
+     * third two. Infantry going through a door queue up the same way (HammerGS, 2026-10-01).
+     *
+     * @param paths        the unit's candidate moves
+     * @param door         the door
+     * @param placeInStack how many units are ahead of it, at least 1
+     *
+     * @return the moves that keep its place, or all of them when none does
+     */
+    static List<MovePath> keepPlaceInStack(List<MovePath> paths, Coords door, int placeInStack) {
+        List<MovePath> kept = new ArrayList<>();
+        for (MovePath path : paths) {
+            Coords end = path.getFinalCoords();
+            if ((end == null) || ((end.distance(door) >= placeInStack) && !passesThrough(path, door))) {
+                kept.add(path);
+            }
+        }
+        return kept.isEmpty() ? paths : kept;
+    }
+
+    private static boolean passesThrough(MovePath path, Coords hex) {
+        for (MoveStep step : path.getStepVector()) {
+            if (hex.equals(step.getPosition())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static boolean isInOrBesideBuilding(Board board, Coords hex) {

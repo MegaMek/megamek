@@ -184,6 +184,32 @@ class PrincessTest {
     }
 
     @Test
+    void testGetEntityToMoveEvaluatesAlreadyDeployedUnits() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity deployed = mock(Entity.class);
+        when(deployed.isDone()).thenReturn(false);
+        when(deployed.isOffBoard()).thenReturn(false);
+        when(deployed.isDeployed()).thenReturn(true);
+        when(deployed.getPosition()).thenReturn(new Coords(2, 2));
+        when(deployed.getDisplayName()).thenReturn("Deployed");
+
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed));
+
+        assertEquals(deployed, mockPrincess.getEntityToMove());
+    }
+
+    @Test
     void testGetMessageGuardsNonFiniteEstimate() {
         Entity mockEntity = mock(Entity.class);
         when(mockEntity.getChassis()).thenReturn("Flashman");

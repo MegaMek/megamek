@@ -46,8 +46,8 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 
 import megamek.common.GameBoardTestCase;
-import megamek.common.MMRandom;
 import megamek.common.Hex;
+import megamek.common.MMRandom;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Coords;

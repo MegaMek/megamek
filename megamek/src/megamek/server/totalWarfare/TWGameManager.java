@@ -24025,6 +24025,8 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addElement(r);
                     // Swarming infantry shouldn't take damage when their target dies
                     // http://bg.battletech.com/forums/total-warfare/swarming-question
+                    // unless it is a VTOL or WiGE destroyed in the air (TW p.222, errata v12.0)
+                    vDesc.addAll(new SwarmShakeOffHandler(this).damageSwarmerOfDestroyedUnit(entity, swarmer));
                     entityUpdate(swarmerId);
                 }
             }

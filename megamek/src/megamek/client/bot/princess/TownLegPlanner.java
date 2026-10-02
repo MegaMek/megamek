@@ -229,18 +229,22 @@ final class TownLegPlanner {
     }
 
     /**
-     * Pairs units with places by trying every pairing: the least movement in all wins, and between pairings as cheap,
-     * the one whose straight lines from unit to place cross least. A lance of four has 24 pairings, of six 720.
+     * Pairs units with places by trying every pairing. The lance is formed only when its last unit arrives, so the
+     * pairing that gets the last one in soonest wins - which gives the slowest unit the nearest place (HammerGS's
+     * playtest, 2026-10-01: paired by least movement in all, the slow Stalker drew the far place beyond the water and
+     * came in three rounds after the rest). Between pairings as quick, the least movement in all wins, and then the one
+     * whose straight lines from unit to place cross least. A lance of four has 24 pairings, of six 720.
      *
-     * @param units  the units to place
-     * @param spots  the places, at least as many as the units
-     * @param cost   the movement points from a unit to a place, or {@link WaypointDistanceField#UNREACHABLE}
+     * @param units           the units to place
+     * @param spots           the places, at least as many as the units
+     * @param cost            the movement points from a unit to a place, or {@link WaypointDistanceField#UNREACHABLE}
+     * @param movementPerTurn the movement points each unit covers a turn
      *
      * @return each unit's place by unit id; empty when there are more units than {@link #MAXIMUM_UNITS_TO_PAIR} or
      *       than places, so the units keep the places they have
      */
     static Map<Integer, Coords> assignSpots(List<Entity> units, List<Coords> spots,
-          ToIntBiFunction<Entity, Coords> cost) {
+          ToIntBiFunction<Entity, Coords> cost, ToIntFunction<Entity> movementPerTurn) {
         if (units.isEmpty() || (units.size() > MAXIMUM_UNITS_TO_PAIR) || (units.size() > spots.size())) {
             return new HashMap<>();
         }
@@ -252,8 +256,15 @@ final class TownLegPlanner {
                       ? UNREACHABLE_PAIRING_COST : movement;
             }
         }
+        int[][] turns = new int[units.size()][spots.size()];
+        for (int unitIndex = 0; unitIndex < units.size(); unitIndex++) {
+            int perTurn = Math.max(1, movementPerTurn.applyAsInt(units.get(unitIndex)));
+            for (int spotIndex = 0; spotIndex < spots.size(); spotIndex++) {
+                turns[unitIndex][spotIndex] = (costs[unitIndex][spotIndex] + perTurn - 1) / perTurn;
+            }
+        }
         Pairing best = new Pairing();
-        tryPairings(units, spots, costs, 0, new int[units.size()], new boolean[spots.size()], best);
+        tryPairings(units, spots, costs, turns, 0, new int[units.size()], new boolean[spots.size()], best);
         Map<Integer, Coords> assignment = new HashMap<>();
         for (int unitIndex = 0; unitIndex < units.size(); unitIndex++) {
             assignment.put(units.get(unitIndex).getId(), spots.get(best.spotOfUnit[unitIndex]));
@@ -263,22 +274,28 @@ final class TownLegPlanner {
 
     private static final class Pairing {
         private int[] spotOfUnit;
+        private int lastArrival = Integer.MAX_VALUE;
         private int totalCost = Integer.MAX_VALUE;
         private int crossings = Integer.MAX_VALUE;
     }
 
-    private static void tryPairings(List<Entity> units, List<Coords> spots, int[][] costs, int unitIndex,
-          int[] chosen, boolean[] taken, Pairing best) {
+    private static void tryPairings(List<Entity> units, List<Coords> spots, int[][] costs, int[][] turns,
+          int unitIndex, int[] chosen, boolean[] taken, Pairing best) {
         if (unitIndex == units.size()) {
+            int lastArrival = 0;
             int totalCost = 0;
             for (int index = 0; index < chosen.length; index++) {
+                lastArrival = Math.max(lastArrival, turns[index][chosen[index]]);
                 totalCost += costs[index][chosen[index]];
             }
-            if (totalCost > best.totalCost) {
+            if ((lastArrival > best.lastArrival)
+                  || ((lastArrival == best.lastArrival) && (totalCost > best.totalCost))) {
                 return;
             }
             int crossings = countCrossings(units, spots, chosen);
-            if ((totalCost < best.totalCost) || (crossings < best.crossings)) {
+            boolean isQuicker = (lastArrival < best.lastArrival) || (totalCost < best.totalCost);
+            if (isQuicker || (crossings < best.crossings)) {
+                best.lastArrival = lastArrival;
                 best.totalCost = totalCost;
                 best.crossings = crossings;
                 best.spotOfUnit = chosen.clone();
@@ -289,7 +306,7 @@ final class TownLegPlanner {
             if (!taken[spotIndex]) {
                 taken[spotIndex] = true;
                 chosen[unitIndex] = spotIndex;
-                tryPairings(units, spots, costs, unitIndex + 1, chosen, taken, best);
+                tryPairings(units, spots, costs, turns, unitIndex + 1, chosen, taken, best);
                 taken[spotIndex] = false;
             }
         }

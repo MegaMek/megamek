@@ -119,7 +119,7 @@ class TownLegPlannerTest {
         Coords rightPlace = new Coords(8, 2);
 
         Map<Integer, Coords> spots = TownLegPlanner.assignSpots(List.of(startedLeft, startedRight),
-              List.of(leftPlace, rightPlace), (unit, spot) -> unit.getPosition().distance(spot));
+              List.of(leftPlace, rightPlace), (unit, spot) -> unit.getPosition().distance(spot), unit -> 4);
 
         assertEquals(rightPlace, spots.get(1));
         assertEquals(leftPlace, spots.get(2));
@@ -134,10 +134,27 @@ class TownLegPlannerTest {
 
         // every pairing costs the same, so only the crossing tells them apart
         Map<Integer, Coords> spots = TownLegPlanner.assignSpots(List.of(west, east), List.of(eastPlace, westPlace),
-              (unit, spot) -> 1);
+              (unit, spot) -> 1, unit -> 4);
 
         assertEquals(westPlace, spots.get(1));
         assertEquals(eastPlace, spots.get(2));
+    }
+
+    @Test
+    void theSlowestUnitGetsTheNearerPlaceSoTheLastArrivesSoonest() {
+        // HammerGS's playtest: paired by least movement in all, the slow Stalker drew the far place beyond the water
+        // and came in three rounds after the rest (2026-10-01)
+        Entity stalker = unitAt(1, new Coords(5, 9));
+        Entity griffin = unitAt(2, new Coords(5, 9));
+        Coords near = new Coords(5, 6);
+        Coords far = new Coords(5, 1);
+        Map<Entity, Integer> walk = Map.of(stalker, 3, griffin, 5);
+
+        Map<Integer, Coords> spots = TownLegPlanner.assignSpots(List.of(stalker, griffin), List.of(far, near),
+              (unit, spot) -> unit.getPosition().distance(spot), walk::get);
+
+        assertEquals(near, spots.get(1));
+        assertEquals(far, spots.get(2));
     }
 
     @Test
@@ -149,7 +166,7 @@ class TownLegPlannerTest {
             spots.add(new Coords(id, 1));
         }
 
-        assertTrue(TownLegPlanner.assignSpots(units, spots, (unit, spot) -> 1).isEmpty());
+        assertTrue(TownLegPlanner.assignSpots(units, spots, (unit, spot) -> 1, unit -> 4).isEmpty());
     }
 
     @Test

@@ -104,6 +104,7 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     private int m_nTurretOffset = 0;
     private int m_nDualTurretOffset = 0;
     private int m_nStunnedTurns = 0;
+    private boolean crashedThisTurn = false;
     private boolean immobilized = false;
     private boolean markForImmobilize = false;
     private int burningLocations = 0;
@@ -984,6 +985,30 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
         return m_nStunnedTurns;
     }
 
+    /**
+     * @return {@code true} if this VTOL or WiGE crashed after a sideslip this turn and so may not attack (TW p.68)
+     */
+    public boolean hasCrashedThisTurn() {
+        return crashedThisTurn;
+    }
+
+    /**
+     * @param crashedThisTurn {@code true} when this VTOL or WiGE crashes after a sideslip (TW p.68)
+     */
+    public void setCrashedThisTurn(boolean crashedThisTurn) {
+        this.crashedThisTurn = crashedThisTurn;
+    }
+
+    @Override
+    public boolean isEligibleForFiring() {
+        return !crashedThisTurn && super.isEligibleForFiring();
+    }
+
+    @Override
+    public boolean isEligibleForPhysical() {
+        return !crashedThisTurn && super.isEligibleForPhysical();
+    }
+
     public void setStunnedTurns(int turns) {
         m_nStunnedTurns = turns;
     }
@@ -1037,6 +1062,8 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     @Override
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
+
+        crashedThisTurn = false;
 
         incrementMASCAndSuperchargerLevels();
 

@@ -1123,11 +1123,18 @@ public class UnitOrdersFollower {
         List<Coords> route = leader.getUnitOrders().getRoute();
         boolean isRouteEnd = route.size() <= 1;
         if (!isRouteEnd && !isReformingHere && !changesShapeAfter(leader.getUnitOrders())) {
-            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PASS at {} - same shape on the next leg; not "
-                        + "stopping to re-form", leader.getDisplayName(), leader.getId(), currentRound(),
-                  waypoint.getBoardNum());
-            reformWaits.remove(leader.getId());
-            return false;
+            String reasonToStop = reasonToFormUpHere(leader, formation.get(), waypoint, route);
+            if (reasonToStop == null) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PASS at {} - same shape on the next leg and "
+                            + "the lance is together; not stopping to re-form", leader.getDisplayName(),
+                      leader.getId(), currentRound(), waypoint.getBoardNum());
+                reformWaits.remove(leader.getId());
+                return false;
+            }
+            if (!reformWaits.containsKey(leader.getId())) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_STOP at {} - {}; forming up before moving on",
+                      leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), reasonToStop);
+            }
         }
         List<Entity> members = formationMembers(leader, formation.get().getLeaderId());
         boolean isLeading = (members.size() >= 2) && (members.get(0).getId() == leader.getId());
@@ -1166,6 +1173,56 @@ public class UnitOrdersFollower {
               members.size() - 1);
         reformWaits.put(leader.getId(), wait);
         return true;
+    }
+
+    /**
+     * Why a lance keeping together should stop to form up at a flag where its shape does not change, or {@code null}
+     * to pass on. It stops where it has come apart - a unit more than a turn's move from its place - and before a leg
+     * through a town, as a unit assembles before going through the doors (HammerGS's playtest, 2026-10-01: a lance
+     * that never formed up passed its first flag and went into the town strung out over half the map). A lance that
+     * is together still passes through.
+     */
+    private @Nullable String reasonToFormUpHere(Entity leader, FormationOrder formation, Coords flag,
+          List<Coords> route) {
+        Board board = owner.getGame().getBoard(leader);
+        if ((board != null) && (route.size() > 1) && (formation.getShape() != FormationShape.COLUMN)) {
+            Coords nextFlag = route.get(1);
+            int townHexes = TownLegPlanner.hexesBesideBuildings(board, flag, nextFlag,
+                  hex -> routeCostFrom(leader, nextFlag, hex));
+            if (townHexes >= TownLegPlanner.TOWN_HEXES) {
+                return "the next leg runs through a town (" + townHexes + " hexes in or beside buildings)";
+            }
+        }
+        for (Entity member : formationMembers(leader, formation.getLeaderId())) {
+            if ((member.getId() == leader.getId()) || isFallingBehind(member)) {
+                continue;
+            }
+            Optional<Coords> slot = getFormationSlot(member);
+            if (slot.isEmpty() || (member.getPosition() == null)) {
+                continue;
+            }
+            int cost = routeCostFrom(member, slot.get(), member.getPosition());
+            int turnsMove = Math.max(1, paceMovementPoints(member, formation.getPace()));
+            if ((cost != WaypointDistanceField.UNREACHABLE) && (cost > turnsMove)) {
+                return member.getShortName() + " is " + cost + " MP from its place at " + slot.get().getBoardNum();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @return {@code true} if the unit is more than a turn's walk from its place in its formation
+     */
+    private boolean isLagging(Entity entity) {
+        Optional<Coords> slot = getFormationSlot(entity);
+        if (slot.isEmpty() || (entity.getPosition() == null) || entity.getPosition().equals(slot.get())) {
+            return false;
+        }
+        int cost = routeCostFrom(entity, slot.get(), entity.getPosition());
+        if (cost == WaypointDistanceField.UNREACHABLE) {
+            cost = entity.getPosition().distance(slot.get());
+        }
+        return cost > entity.getWalkMP();
     }
 
     /**
@@ -2698,6 +2755,14 @@ public class UnitOrdersFollower {
         boolean isTownLeg = isOnTownLeg(entity);
         boolean isHeldToSlowest = formation.get().isKeepTogether() && (leader.getId() == entity.getId())
               && !isTownLeg;
+        if ((formation.get().getPace() == FormationPace.WALK) && !isHeldToSlowest && isLagging(entity)) {
+            // at a walk, a unit more than a turn's walk from its place may run or jump to catch up (HammerGS,
+            // 2026-10-01); one in its place, or nearly, keeps to the walk
+            paceLimit = Math.max(entity.getRunMP(), entity.getJumpMP());
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_CATCH_UP - more than a turn's walk from its place; "
+                        + "may run or jump, up to {} MP", entity.getDisplayName(), entity.getId(), currentRound(),
+                  paceLimit);
+        }
         if (isHeldToSlowest) {
             // a formation keeping together advances no faster than its slowest unit can follow
             for (Entity member : members) {

@@ -595,11 +595,28 @@ class FormationFollowerTest {
         MovePath walkThree = moveUsing(3);
         MovePath jumpFive = moveUsing(5);
         MovePath runSeven = moveUsing(7);
+        // in its place, the Longbow keeps to the walk
+        longbow.setPosition(princess.getUnitOrdersFollower().getFormationSlot(longbow).orElseThrow());
 
         assertEquals(List.of(walkThree, jumpFive), princess.getUnitOrdersFollower().limitToFormationPace(grasshopper,
               List.of(walkThree, jumpFive, runSeven)));
         assertEquals(List.of(walkThree), princess.getUnitOrdersFollower().limitToFormationPace(longbow,
               List.of(walkThree, jumpFive, runSeven)));
+    }
+
+    @Test
+    void atAWalkPaceAUnitFallenBehindMayRunToCatchUp() {
+        // HammerGS: "if we set the lance to walk, we need to give permission for lagging units to run or jump"
+        member(20, LEADER_HEX, 0, 5);
+        BipedMek longbow = member(21, new Coords(16, 25), 1, 3);
+        fake(longbow).runMP = 5;
+        MovePath walkThree = moveUsing(3);
+        MovePath runFive = moveUsing(5);
+        MovePath sprintSeven = moveUsing(7);
+
+        // more than a turn's walk from its place, it may run - but no further
+        assertEquals(List.of(walkThree, runFive), princess.getUnitOrdersFollower().limitToFormationPace(longbow,
+              List.of(walkThree, runFive, sprintSeven)));
     }
 
     @Test
@@ -1024,10 +1041,32 @@ class FormationFollowerTest {
         doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
         doNothing().when(princess).sendChat(anyString());
         doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        second.setPosition(princess.getUnitOrdersFollower().getFormationSlot(second).orElseThrow());
 
         princess.getUnitOrdersFollower().advanceRoutes();
 
         assertEquals(List.of(eastWaypoint), leader.getUnitOrders().getRoute());
+    }
+
+    @Test
+    void aLanceThatHasComeApartStopsToFormUpEvenWhereItsShapeStaysTheSame() {
+        // HammerGS's playtest: a lance that never formed up passed its first flag and went on strung out over half
+        // the map (2026-10-01); a lance that is together still passes, as above
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 3);
+        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(1)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertEquals(List.of(NORTH_WAYPOINT, eastWaypoint), leader.getUnitOrders().getRoute());
+        assertTrue(princess.getUnitOrdersFollower().isWaitingForFormation(leader));
     }
 
     @Test

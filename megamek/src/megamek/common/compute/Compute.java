@@ -1136,26 +1136,21 @@ public class Compute {
         ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
         for (Entity other : game.getEntitiesVector()) {
+            // a Recon Camera that spotted the target counts as a spotter without the attack penalty (TO:AUE p.150)
+            boolean isCameraSpotter = ReconCameraRules.isCameraSpotting(other, target);
             if (((other.isSpotting() && (other.getSpotTargetId() == target
-                  .getId())) || (taggedBy == other.getId()))
+                  .getId())) || isCameraSpotter || (taggedBy == other.getId()))
                   && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
-                LosEffects los = LosEffects.calculateLOS(game, other, target, true);
-                ToHitData mods = los.losModifiers(game);
-                // If the target isn't spotted, can't target
-                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
-                      && !Compute.inVisualRange(game, los, other, target)
-                      && !Compute.inSensorRange(game, los, other, target, null)) {
-                    mods.addModifier(TargetRoll.IMPOSSIBLE,
-                          "outside of visual and sensor range");
-                }
-                los.setTargetCover(LosEffects.COVER_NONE);
+                ToHitData mods = isCameraSpotter && ReconCameraRules.isAerospaceCamera(other)
+                      ? new ToHitData() // the camera spot itself was the look from above; no line of sight to judge
+                      : spotterLineOfSightModifiers(game, other, target);
                 mods.append(Compute.getAttackerMovementModifier(game,
                       other.getId()));
 
                 // a spotter suffers a penalty if it's also making an attack this round
-                // unless it has a command console or has TAG-ged the target
-                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() &&
+                // unless it has a command console, has TAG-ged the target or spotted it with a Recon Camera
+                if (other.isAttackingThisTurn() && !other.getCrew().hasActiveCommandConsole() && !isCameraSpotter &&
                       (!isTargetTagged(attacker, target, game) || (taggedBy != -1))) {
                     mods.addModifier(1, "spotter is making an attack this turn");
                 }
@@ -1170,6 +1165,23 @@ public class Compute {
         }
 
         return spotter;
+    }
+
+    /**
+     * The line of sight modifiers a spotter adds to an indirect attack, impossible under double-blind when the spotter
+     * can neither see nor sense the target.
+     */
+    private static ToHitData spotterLineOfSightModifiers(Game game, Entity spotter, Targetable target) {
+        LosEffects los = LosEffects.calculateLOS(game, spotter, target, true);
+        ToHitData mods = los.losModifiers(game);
+        // If the target isn't spotted, can't target
+        if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_DOUBLE_BLIND)
+              && !Compute.inVisualRange(game, los, spotter, target)
+              && !Compute.inSensorRange(game, los, spotter, target, null)) {
+            mods.addModifier(TargetRoll.IMPOSSIBLE,
+                  "outside of visual and sensor range");
+        }
+        return mods;
     }
 
     /**

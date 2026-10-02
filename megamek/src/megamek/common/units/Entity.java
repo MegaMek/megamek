@@ -938,6 +938,22 @@ public abstract class Entity extends TurnOrdered
      */
     private int spotTargetId = Entity.NONE;
 
+    /** The unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} (TO:AUE p.150). */
+    private int reconCameraSpotTargetId = Entity.NONE;
+
+    /** Whether this unit has tried a Recon Camera spot this turn; a miss uses up the turn's attempt too. */
+    private boolean hasTriedReconCameraSpot = false;
+
+    /**
+     * The players shown that a Recon Camera spotted this unit this turn: the camera's side. Kept on the spotted unit
+     * so a player sees the mark even when the camera itself is not visible to them. May be {@code null} in a unit
+     * loaded from an older save.
+     */
+    private HashSet<Integer> reconCameraViewerIds = new HashSet<>();
+
+    /** The names of the cameras that spotted this unit this turn. May be {@code null} from an older save. */
+    private ArrayList<String> reconCameraSpotterNames = new ArrayList<>();
+
     /** The scan this unit has ordered for the End Phase, or {@code null} (Objectives series, scanning). */
     private ScanAction pendingScan = null;
 
@@ -8047,6 +8063,10 @@ public abstract class Entity extends TurnOrdered
         setFindingClub(false);
         setSpotting(false);
         spotTargetId = Entity.NONE;
+        reconCameraSpotTargetId = Entity.NONE;
+        hasTriedReconCameraSpot = false;
+        getReconCameraViewerIds().clear();
+        getReconCameraSpotterNames().clear();
         pendingScan = null;
         setClearingMinefield(false);
         setClearingWoods(false);
@@ -11886,7 +11906,8 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        return false;// only things w/ tag are
+        // a Recon Camera spot is made in this phase too, like TAG (TO:AUE p.150)
+        return (game != null) && ReconCameraRules.hasAnyTarget(game, this);
     }
 
     public boolean isAttackingThisTurn() {
@@ -13946,6 +13967,65 @@ public abstract class Entity extends TurnOrdered
 
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+
+    /**
+     * @return the unit this unit's Recon Camera spotted this turn, or {@link Entity#NONE} when it spotted nothing
+     */
+    public int getReconCameraSpotTargetId() {
+        // a unit from an older save has the id field at 0, not NONE; only a spot made this turn counts
+        return hasTriedReconCameraSpot ? reconCameraSpotTargetId : Entity.NONE;
+    }
+
+    /**
+     * Records the result of this unit's Recon Camera spot for the turn. Any call uses up the turn's attempt.
+     *
+     * @param targetId the unit spotted, or {@link Entity#NONE} when the spot missed
+     */
+    public void setReconCameraSpotResult(int targetId) {
+        reconCameraSpotTargetId = targetId;
+        hasTriedReconCameraSpot = true;
+    }
+
+    /** @return {@code true} if this unit has already tried a Recon Camera spot this turn, hit or miss */
+    public boolean hasReconCameraSpotThisTurn() {
+        return hasTriedReconCameraSpot;
+    }
+
+    /**
+     * Marks this unit as spotted by a Recon Camera this turn, for the camera's side to see on the map and in the
+     * tooltip.
+     *
+     * @param cameraName the camera unit's name
+     * @param viewerIds  the ids of the players on the camera's side
+     */
+    public void addReconCameraSpot(String cameraName, Collection<Integer> viewerIds) {
+        getReconCameraSpotterNames().add(cameraName);
+        getReconCameraViewerIds().addAll(viewerIds);
+    }
+
+    /**
+     * @param player the player to check, may be {@code null}
+     *
+     * @return {@code true} if a Recon Camera on the player's side spotted this unit this turn
+     */
+    public boolean isReconCameraSpottedFor(@Nullable Player player) {
+        return (player != null) && getReconCameraViewerIds().contains(player.getId());
+    }
+
+    /** @return the names of the cameras that spotted this unit this turn; empty when none did */
+    public List<String> getReconCameraSpotterNames() {
+        if (reconCameraSpotterNames == null) {
+            reconCameraSpotterNames = new ArrayList<>();
+        }
+        return reconCameraSpotterNames;
+    }
+
+    private Set<Integer> getReconCameraViewerIds() {
+        if (reconCameraViewerIds == null) {
+            reconCameraViewerIds = new HashSet<>();
+        }
+        return reconCameraViewerIds;
     }
 
     /** @return the scan this unit has ordered for the End Phase, or {@code null} when it has not ordered one */

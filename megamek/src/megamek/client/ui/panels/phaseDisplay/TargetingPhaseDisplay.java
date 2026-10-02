@@ -63,6 +63,7 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -71,6 +72,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
@@ -86,6 +88,7 @@ import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Mek;
+import megamek.common.units.ReconCameraRules;
 import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
@@ -123,6 +126,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         FIRE_ROTATE_TURRET("fireRotateTurret"),
         FIRE_ROTATE_TURRET_2("fireRotateTurret2"),
         FIRE_SEARCHLIGHT("fireSearchlight"),
+        FIRE_CAMERA_SPOT("fireCameraSpot"),
         FIRE_CANCEL("fireCancel"),
         FIRE_DISENGAGE("fireDisengage"),
         FIRE_CLEAR_WEAPON("fireClearWeaponJam");
@@ -360,6 +364,10 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             if (cmd == TargetingCommand.FIRE_CLEAR_WEAPON && !(currentEntity() instanceof Tank)) {
                 continue;
             }
+            // only a unit carrying a Recon Camera gets the Camera Spot button
+            if ((cmd == TargetingCommand.FIRE_CAMERA_SPOT) && !hasReconCamera(currentEntity())) {
+                continue;
+            }
             // The Directional Torso Mount (BMM p.83) is a Mek-only quirk, so other unit types never show its button.
             if ((cmd == TargetingCommand.FIRE_FLIP_MOUNT) && (currentEntity() != null)
                   && !(currentEntity() instanceof Mek)) {
@@ -432,6 +440,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             setTwistEnabled(entity.canChangeSecondaryFacing() && entity.getCrew().isActive());
             setFlipArmsEnabled(entity.canFlipArms() && entity.getCrew().isActive());
             updateSearchlight();
+            updateCameraSpot();
             // Rebuild the button ribbon for the newly selected unit: the Flip Mount button is Mek-only, so the
             // ribbon differs by unit type (see getButtonList()).
             setupButtonPanel();
@@ -546,6 +555,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
         setNextTargetEnabled(false);
         setDisengageEnabled(false);
         setFireClearWeaponJamEnabled(false);
+        buttons.get(TargetingCommand.FIRE_CAMERA_SPOT).setEnabled(false);
     }
 
     /**
@@ -927,6 +937,7 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clientgui.getUnitDisplay().wPan.clearToHit();
         }
         updateSearchlight();
+        updateCameraSpot();
         updateFlipMount();
         updateRotateTurret();
     }
@@ -1325,6 +1336,8 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
             clear();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_SEARCHLIGHT.getCmd())) {
             doSearchlight();
+        } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_CAMERA_SPOT.getCmd())) {
+            doCameraSpot();
         } else if (ev.getActionCommand().equals(TargetingCommand.FIRE_DISENGAGE.getCmd())
               && clientgui.doYesNoDialog(Messages.getString("MovementDisplay.EscapeDialog.title"),
               Messages.getString("MovementDisplay.EscapeDialog.message"))) {
@@ -1384,6 +1397,71 @@ public class TargetingPhaseDisplay extends AttackPhaseDisplay implements ListSel
               && currentEntity().isUsingSearchlight()
               && currentEntity().getCrew().isActive()
               && SearchlightAttackAction.isPossible(game, currentEntity, target, null));
+    }
+
+    /**
+     * Queues a Recon Camera spot on the current target (TO:AUE p.150). It is sent with the unit's other Off-Board
+     * actions and rolled at the end of the phase.
+     */
+    private void doCameraSpot() {
+        Entity camera = currentEntity();
+        if ((camera == null) || (target == null)) {
+            return;
+        }
+        boolean isAlreadyQueued = hasQueuedCameraSpot();
+        boolean isRefused = ReconCameraRules.spotRefusal(game, camera, target) != null;
+        if (isAlreadyQueued || isRefused) {
+            return;
+        }
+        addAttack(new ReconCameraSpotAction(currentEntity, target.getId()));
+        updateCameraSpot();
+    }
+
+    private static boolean hasReconCamera(@Nullable Entity entity) {
+        return (entity != null) && entity.hasWorkingMisc(MiscType.F_RECON_CAMERA);
+    }
+
+    private boolean hasQueuedCameraSpot() {
+        for (EntityAction action : attacks) {
+            if (action instanceof ReconCameraSpotAction) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Enables the Camera Spot button when the current unit may spot the current target with its Recon Camera, and
+     * puts the roll needed (or the reason it is refused) in the button's tooltip.
+     */
+    private void updateCameraSpot() {
+        MegaMekButton cameraButton = buttons.get(TargetingCommand.FIRE_CAMERA_SPOT);
+        Entity camera = currentEntity();
+        String baseToolTip = Messages.getString("TargetingPhaseDisplay.fireCameraSpot.tooltip");
+        boolean isCameraPhase = game.getPhase().isOffboard();
+        if (!isCameraPhase || !hasReconCamera(camera)) {
+            cameraButton.setEnabled(false);
+            cameraButton.setToolTipText(baseToolTip);
+            return;
+        }
+        String detail;
+        boolean isAllowed = false;
+        if (hasQueuedCameraSpot()) {
+            detail = Messages.getString("ReconCamera.queued");
+        } else if (target == null) {
+            detail = Messages.getString("ReconCamera.chooseTarget");
+        } else {
+            String refusal = ReconCameraRules.spotRefusal(game, camera, target);
+            if ((refusal == null) && (target instanceof Entity targetUnit)) {
+                ToHitData toHit = ReconCameraRules.spotToHit(game, camera, targetUnit);
+                detail = Messages.getString("ReconCamera.needs", toHit.getValueAsString(), toHit.getDesc());
+                isAllowed = true;
+            } else {
+                detail = (refusal == null) ? Messages.getString("ReconCamera.refusal.notUnit") : refusal;
+            }
+        }
+        cameraButton.setEnabled(isAllowed);
+        cameraButton.setToolTipText("<html>" + baseToolTip + "<br>" + detail + "</html>");
     }
 
     private void updateClearWeaponJam() {

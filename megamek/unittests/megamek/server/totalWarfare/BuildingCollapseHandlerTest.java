@@ -245,7 +245,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
         positionMap.put(elevatorLocation, new ArrayList<>());
         Vector<Report> vPhaseReport = new Vector<>();
 
-        collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+        collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
         assertFalse(elevator.isFunctional(), "Elevator should stop functioning when its building hex collapses");
     }
@@ -294,7 +294,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             buildingEntity.setPhaseCF(50, position);
 
             // Call collapseBuilding with the BuildingEntity as both the building parameter and in the position map
-            collapseHandler.collapseBuilding(buildingEntity, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(buildingEntity, positionMap, position, vPhaseReport);
 
             // Verify that the building's CF is set to 0 after collapse
             assertEquals(0, buildingEntity.getCurrentCF(position),
@@ -343,7 +343,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             Vector<Report> vPhaseReport = new Vector<>();
 
             // Collapse the building
-            collapseHandler.collapseBuilding(buildingEntity, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(buildingEntity, positionMap, position, vPhaseReport);
 
             // Verify collapse occurred - CF should be set to 0
             assertEquals(0, buildingEntity.getCurrentCF(position),
@@ -408,7 +408,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             Vector<Report> vPhaseReport = new Vector<>();
 
             // Collapse the building
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             // Verify collapse occurred - CF should be set to 0
             assertEquals(0, building.getCurrentCF(position),
@@ -453,7 +453,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             mockGameManagerDamageMethods();
 
             // Collapse the building
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             // Verify collapse occurred - CF should be set to 0
             assertEquals(0, building.getCurrentCF(position),
@@ -535,7 +535,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             mockGameManagerDamageMethods();
 
             // Collapse the building
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             // Verify collapse occurred - CF should be set to 0
             assertEquals(0, building.getCurrentCF(position),
@@ -647,7 +647,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
                         building.getClass().getSimpleName()));
 
             // Collapse only the first hex
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             assertEquals(0, building.getCurrentCF(position),
                   String.format("%s: First hex CF should be 0 after collapse", building.getClass().getSimpleName()));
@@ -703,7 +703,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
                   String.format("%s: Building should have 3 hexes before collapse",
                         building.getClass().getSimpleName()));
 
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             // Collapse the second hex
 
@@ -713,7 +713,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
                 entities2.add((BuildingEntity) building);
             }
             positionMap.put(BoardLocation.of(secondHex, IGame.DEFAULT_BOARD_ID), entities2);
-            collapseHandler.collapseBuilding(building, positionMap, secondHex, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, secondHex, vPhaseReport);
 
             // Verify both destroyed hexes have CF = 0
             assertEquals(0, building.getCurrentCF(position),
@@ -781,7 +781,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             mockGameManagerDamageMethods();
 
             // Collapse only the first hex
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             // Verify collapse occurred
             assertEquals(0, building.getCurrentCF(position),
@@ -835,7 +835,7 @@ public class BuildingCollapseHandlerTest extends GameBoardTestCase {
             mockGameManagerDamageMethods();
 
             // Collapse first hex
-            collapseHandler.collapseBuilding(building, positionMap, position, true, vPhaseReport);
+            collapseHandler.collapseBuilding(building, positionMap, position, vPhaseReport);
 
             // Verify collapse occurred
             assertEquals(0, building.getCurrentCF(position));

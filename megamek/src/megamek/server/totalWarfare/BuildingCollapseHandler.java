@@ -245,17 +245,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             r.add(bldg.getName());
             vPhaseReport.add(r);
 
-            collapseBuilding(bldg, positionMap, coords, false, vPhaseReport);
+            collapseBuilding(bldg, positionMap, coords, vPhaseReport);
         }
 
         // Return true if the building collapsed.
         return collapse;
 
-    }
-
-    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
-          Vector<Report> vPhaseReport) {
-        collapseBuilding(bldg, positionMap, coords, true, vPhaseReport);
     }
 
     /**
@@ -365,11 +360,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entity's at
      *                    that position. This value should not be null.
      * @param coords      The Coords of the building hex that has collapsed
-     * @param collapseAll A boolean indicating whether this collapse of a hex should be able to collapse the whole
-     *                    building
      */
     void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
-          boolean collapseAll, Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
         // sometimes, buildings that reach CF 0 decide against collapsing,
         // but we want them to go away anyway, as a building with CF 0 cannot stand
         final int phaseCF = bldg.hasCFIn(coords) ? bldg.getPhaseCF(coords) : 0;
@@ -516,7 +509,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         if (bldg.getCollapsedHexCount() > ((double) bldg.getOriginalHexCount() / 2.0)) {
             for (Enumeration<Coords> coordsEnum = bldg.getCoords(); coordsEnum.hasMoreElements(); ) {
                 coords = coordsEnum.nextElement();
-                collapseBuilding(bldg, getGame().getPositionMapMulti(), coords, false, vPhaseReport);
+                collapseBuilding(bldg, getGame().getPositionMapMulti(), coords, vPhaseReport);
             }
             if (bldg instanceof BuildingEntity buildingEntity) {
                 vPhaseReport.addAll(gameManager.destroyEntity(buildingEntity, "building collapse"));

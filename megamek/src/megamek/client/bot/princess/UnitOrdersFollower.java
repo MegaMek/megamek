@@ -212,17 +212,29 @@ public class UnitOrdersFollower {
      * @param anchor    the flag the leg leads to
      * @param memberIds the formation's units in action when it was worked out, the leader first
      * @param isTown    {@code true} if the way runs through a town, so the lance breaks formation until the flag
-     * @param spots     on a town leg, each unit's place at the flag by unit id, the leader's being the flag
+     * @param spots     each unit's place at the flag by unit id, the leader's being the flag; on a town leg the unit
+     *                  makes straight for it
+     * @param places    each unit's place in the formation by unit id, the leader's being 0
      * @param round     the round the places were last shared out
      */
     private record FormationLeg(Coords anchor, List<Integer> memberIds, boolean isTown, Map<Integer, Coords> spots,
-          int round) {}
+          Map<Integer, Integer> places, int round) {}
 
     /** The movement points a new sharing out of places must save before units still coming change places. */
     private static final int REPAIR_MARGIN_MP = 2;
 
     /** The round each unit was last found past its place in a column, by unit id, to log it once a round. */
     private final Map<Integer, Integer> heldPastPlaceRounds = new HashMap<>();
+
+    /**
+     * The formations that have formed up since their route was given, by the formation's leader id; not saved. Until
+     * then the lance is assembling: deployment is usually done before the move order, so the lance starts scattered and
+     * its first waypoint is where it assembles (HammerGS, 2026-10-01).
+     */
+    private final Set<Integer> assembledFormations = new HashSet<>();
+
+    /** The most rounds a lance assembling at its first waypoint waits for its last unit; a stuck unit drops out sooner. */
+    static final int MAXIMUM_ASSEMBLY_WAIT_ROUNDS = 12;
 
     /** Each formation's current leg, by the formation's leader id; not saved. */
     private final Map<Integer, FormationLeg> formationLegs = new HashMap<>();
@@ -1062,6 +1074,11 @@ public class UnitOrdersFollower {
         if (isSameOrder || isFormationFollower(entity)) {
             return;
         }
+        if (known != null) {
+            // a changed order: the lance assembles again at its new first waypoint before it marches. Every lance
+            // starts out assembling, so the first order needs nothing here
+            entity.getUnitOrders().getFormation().ifPresent(order -> assembledFormations.remove(order.getLeaderId()));
+        }
         String firstNavPoint = navLabel(entity, route.get(0));
         LOGGER.info("[BotOrders] {} (ID {}) round {}: NEW_ROUTE - {} waypoint(s), first {}", entity.getDisplayName(),
               entity.getId(), currentRound(), route.size(), firstNavPoint);
@@ -1114,7 +1131,8 @@ public class UnitOrdersFollower {
         // a formation that changes shape at this waypoint re-forms here before moving on, kept together or not
         boolean isReformingHere = leader.getUnitOrders().hasRoute()
               && (leader.getUnitOrders().getWaypointOrder(0).getArrivalFormation() != null);
-        if (formation.isEmpty() || (!formation.get().isKeepTogether() && !isReformingHere)) {
+        boolean isAssembling = isAssembling(leader);
+        if (formation.isEmpty() || (!formation.get().isKeepTogether() && !isReformingHere && !isAssembling)) {
             return false;
         }
         // one kept together stops to re-form only where it matters: at the end of the route, and where its shape
@@ -1123,7 +1141,8 @@ public class UnitOrdersFollower {
         List<Coords> route = leader.getUnitOrders().getRoute();
         boolean isRouteEnd = route.size() <= 1;
         if (!isRouteEnd && !isReformingHere && !changesShapeAfter(leader.getUnitOrders())) {
-            String reasonToStop = reasonToFormUpHere(leader, formation.get(), waypoint, route);
+            String reasonToStop = isAssembling ? "assembling at the first waypoint since the order"
+                  : reasonToFormUpHere(leader, formation.get(), waypoint, route);
             if (reasonToStop == null) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PASS at {} - same shape on the next leg and "
                             + "the lance is together; not stopping to re-form", leader.getDisplayName(),
@@ -1147,13 +1166,15 @@ public class UnitOrdersFollower {
         ReformWait wait = reformWaits.get(leader.getId());
         if ((wait == null) || !wait.waypoint().equals(waypoint)) {
             wait = new ReformWait(waypoint, currentRound(), assemblyWaitRounds(leader, waypoint,
-                  MAXIMUM_REFORM_WAIT_ROUNDS));
+                  isAssembling ? MAXIMUM_ASSEMBLY_WAIT_ROUNDS : MAXIMUM_REFORM_WAIT_ROUNDS));
         }
         int roundsWaited = currentRound() - wait.sinceRound();
         if (outOfPlace == 0) {
-            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FORMED at {} - moving on together",
-                  leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum());
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FORMED at {} - moving on together{}",
+                  leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(),
+                  isAssembling ? "; assembled, now marching" : "");
             reformWaits.remove(leader.getId());
+            noteAssembled(formation.get().getLeaderId());
             if (route.size() > 1) {
                 // at the end of the route the exit call says it all
                 owner.getOrdersRadio().report(leader, OrdersRadio.RadioEvent.FORMED, navLabel(leader, waypoint),
@@ -1166,6 +1187,7 @@ public class UnitOrdersFollower {
                         + "after {} round(s); moving on", leader.getDisplayName(), leader.getId(), currentRound(),
                   waypoint.getBoardNum(), outOfPlace, roundsWaited);
             reformWaits.remove(leader.getId());
+            noteAssembled(formation.get().getLeaderId());
             return false;
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT at {} - {} of {} unit(s) still forming up",
@@ -1223,6 +1245,26 @@ public class UnitOrdersFollower {
             cost = entity.getPosition().distance(slot.get());
         }
         return cost > entity.getWalkMP();
+    }
+
+    /**
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit's formation has not yet formed up since its route was given, so it is assembling
+     *       at its first waypoint rather than marching
+     */
+    boolean isAssembling(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        return formation.isPresent() && !assembledFormations.contains(formation.get().getLeaderId());
+    }
+
+    /**
+     * Marks a formation as formed up: from here on it marches, keeping its places beside its leader.
+     *
+     * @param formationId the formation's leader id
+     */
+    void noteAssembled(int formationId) {
+        assembledFormations.add(formationId);
     }
 
     /**
@@ -1458,14 +1500,16 @@ public class UnitOrdersFollower {
         Coords anchor = leaderWaypoint.orElse(leader.getPosition());
         int heading = formationHeading(leader, anchor);
         // the place in the formation counts only the units still in it, so a unit that leaves closes up the gap
-        int slotIndex = members.indexOf(entity);
-        if (slotIndex < 0) {
+        if (!members.contains(entity)) {
             // out of action: it holds where it is
             return Optional.empty();
         }
         FormationLeg leg = formationLeg(members, anchor, heading, formation.get());
-        if (leg.isTown() && leg.spots().containsKey(entity.getId())) {
-            // through a town the lance breaks formation: each unit makes straight for its place at the flag
+        // the place each unit takes is shared out by the way each would go there, the last arrival soonest
+        int slotIndex = leg.places().getOrDefault(entity.getId(), members.indexOf(entity));
+        if ((leg.isTown() || isAssembling(entity)) && leg.spots().containsKey(entity.getId())) {
+            // through a town the lance breaks formation, and assembling at its first waypoint it has not formed yet:
+            // either way each unit makes straight for its place at the flag
             return Optional.of(leg.spots().get(entity.getId()));
         }
         if ((formation.get().getShape() == FormationShape.COLUMN) && !isStoppedOnFlag(leader)) {
@@ -1826,12 +1870,14 @@ public class UnitOrdersFollower {
         }
         FormationLeg cached = formationLegs.get(formationId);
         if ((cached != null) && cached.anchor().equals(anchor) && cached.memberIds().equals(memberIds)) {
-            if (cached.isTown() && (cached.round() != currentRound())) {
+            if (cached.round() != currentRound()) {
                 return repairStillComing(cached, members, formationId);
             }
             return cached;
         }
-        FormationLeg leg = new FormationLeg(anchor, memberIds, false, Map.of(), currentRound());
+        Map<Integer, Coords> spots = pairPlaces(members, anchor, heading, formation);
+        Map<Integer, Integer> places = placeNumbers(spots, members, anchor, heading, formation);
+        FormationLeg leg = new FormationLeg(anchor, memberIds, false, spots, places, currentRound());
         Board board = owner.getGame().getBoard(leader);
         if ((board != null) && (formation.getShape() != FormationShape.COLUMN)) {
             int mostTownHexes = 0;
@@ -1843,34 +1889,71 @@ public class UnitOrdersFollower {
                 }
             }
             if (mostTownHexes >= TownLegPlanner.TOWN_HEXES) {
-                leg = new FormationLeg(anchor, memberIds, true, townSpots(members, anchor, heading, formation),
-                      currentRound());
+                leg = new FormationLeg(anchor, memberIds, true, spots, places, currentRound());
             }
             LOGGER.info("[BotOrders] {} (ID {}) round {}: {} to {} - {} hex(es) in or beside buildings on the way "
                         + "(a town leg from {}){}", leader.getDisplayName(), leader.getId(), currentRound(),
                   leg.isTown() ? "TOWN_LEG" : "OPEN_LEG", anchor.getBoardNum(), mostTownHexes,
-                  TownLegPlanner.TOWN_HEXES, leg.isTown() ? "; places " + describeSpots(leg.spots()) : "");
+                  TownLegPlanner.TOWN_HEXES, "; places " + describeSpots(leg.spots()));
+        } else {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: COLUMN_LEG to {}; places {}", leader.getDisplayName(),
+                  leader.getId(), currentRound(), anchor.getBoardNum(), describeSpots(leg.spots()));
         }
         formationLegs.put(formationId, leg);
         return leg;
     }
 
     /**
-     * The places at the flag for a town leg: the leader's is the flag itself, and the others' are the formation's
-     * slots, shared out by the way each unit would go to them.
+     * @return the formation's slots at the flag, place 1 first, as the shape lays them out
      */
-    private Map<Integer, Coords> townSpots(List<Entity> members, Coords anchor, int heading,
-          FormationOrder formation) {
+    private List<Coords> slotsAtFlag(List<Entity> members, Coords anchor, int heading, FormationOrder formation) {
         Board board = owner.getGame().getBoard(members.get(0));
-        List<Entity> followers = members.subList(1, members.size());
         List<Coords> slots = new ArrayList<>();
         for (int place = 1; place < members.size(); place++) {
             Coords ideal = FormationPlanner.idealSlot(anchor, heading, formation.getShape(), formation.getSpacing(),
                   place);
-            Coords settled = settle(members.get(place), board, anchor, ideal);
+            Coords settled = (board == null) ? null : settle(members.get(place), board, anchor, ideal);
             slots.add((settled == null) ? ideal : settled);
         }
-        Map<Integer, Coords> spots = TownLegPlanner.assignSpots(followers, slots, this::pairingCost);
+        return slots;
+    }
+
+    /**
+     * @return each unit's number in the formation from its place at the flag: the leader 0, the others by which of the
+     *       shape's slots they were given
+     */
+    private Map<Integer, Integer> placeNumbers(Map<Integer, Coords> spots, List<Entity> members, Coords anchor,
+          int heading, FormationOrder formation) {
+        List<Coords> slots = slotsAtFlag(members, anchor, heading, formation);
+        Map<Integer, Integer> places = new HashMap<>();
+        places.put(members.get(0).getId(), 0);
+        for (int index = 1; index < members.size(); index++) {
+            int slot = slots.indexOf(spots.get(members.get(index).getId()));
+            places.put(members.get(index).getId(), (slot < 0) ? index : (slot + 1));
+        }
+        return places;
+    }
+
+    /**
+     * @return the pace's movement points a turn for each unit, for pairing units with places by when they arrive
+     */
+    private int turnsMovement(Entity unit) {
+        Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
+        return paceMovementPoints(unit, formation.map(FormationOrder::getPace).orElse(FormationPace.WALK));
+    }
+
+    /**
+     * The places at the flag: the leader's is the flag itself, and the others' are the formation's slots, shared out
+     * by the way each unit would go to them so the last one arrives soonest. HammerGS did not mind which Mek took
+     * which place, only that they could support each other (2026-10-01); kept in lobby order, the slow Stalker
+     * deployed furthest west drew the far east end of the Line and crossed the whole lance.
+     */
+    private Map<Integer, Coords> pairPlaces(List<Entity> members, Coords anchor, int heading,
+          FormationOrder formation) {
+        List<Entity> followers = members.subList(1, members.size());
+        List<Coords> slots = slotsAtFlag(members, anchor, heading, formation);
+        Map<Integer, Coords> spots = TownLegPlanner.assignSpots(followers, slots, this::pairingCost,
+              this::turnsMovement);
         if (spots.isEmpty()) {
             // too many to pair by trying every way: each keeps its own place
             for (int place = 1; place < members.size(); place++) {
@@ -1899,22 +1982,45 @@ public class UnitOrdersFollower {
             stillComing.add(member);
             freeSpots.add(spot);
         }
+        Map<Integer, Integer> places = new HashMap<>(leg.places());
         if (stillComing.size() >= 2) {
-            Map<Integer, Coords> pairing = TownLegPlanner.assignSpots(stillComing, freeSpots, this::pairingCost);
+            Map<Integer, Coords> pairing = TownLegPlanner.assignSpots(stillComing, freeSpots, this::pairingCost,
+                  this::turnsMovement);
             int costNow = 0;
             int costAfter = 0;
+            int lastArrivalNow = 0;
+            int lastArrivalAfter = 0;
             for (Entity unit : stillComing) {
-                costNow += pairingCost(unit, spots.get(unit.getId()));
-                costAfter += pairing.isEmpty() ? 0 : pairingCost(unit, pairing.get(unit.getId()));
+                int perTurn = Math.max(1, turnsMovement(unit));
+                int now = pairingCost(unit, spots.get(unit.getId()));
+                costNow += now;
+                lastArrivalNow = Math.max(lastArrivalNow, (now + perTurn - 1) / perTurn);
+                if (!pairing.isEmpty()) {
+                    int after = pairingCost(unit, pairing.get(unit.getId()));
+                    costAfter += after;
+                    lastArrivalAfter = Math.max(lastArrivalAfter, (after + perTurn - 1) / perTurn);
+                }
             }
-            if (!pairing.isEmpty() && ((costAfter + REPAIR_MARGIN_MP) <= costNow)) {
-                spots.putAll(pairing);
-                LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_PLACES - the units still coming change places to "
-                            + "save {} MP: {}", members.get(0).getDisplayName(), members.get(0).getId(),
-                      currentRound(), costNow - costAfter, describeSpots(pairing));
+            boolean isQuicker = (lastArrivalAfter < lastArrivalNow)
+                  || ((lastArrivalAfter == lastArrivalNow) && ((costAfter + REPAIR_MARGIN_MP) <= costNow));
+            if (!pairing.isEmpty() && isQuicker) {
+                Map<Coords, Integer> placeOfSpot = new HashMap<>();
+                for (Entity unit : stillComing) {
+                    placeOfSpot.put(spots.get(unit.getId()), places.get(unit.getId()));
+                }
+                for (Entity unit : stillComing) {
+                    Coords newSpot = pairing.get(unit.getId());
+                    spots.put(unit.getId(), newSpot);
+                    places.put(unit.getId(), placeOfSpot.getOrDefault(newSpot, places.get(unit.getId())));
+                }
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PLACES - the units still coming change places, "
+                            + "the last in by turn {} instead of {}: {}", members.get(0).getDisplayName(),
+                      members.get(0).getId(), currentRound(), lastArrivalAfter, lastArrivalNow,
+                      describeSpots(pairing));
             }
         }
-        FormationLeg repaired = new FormationLeg(leg.anchor(), leg.memberIds(), true, spots, currentRound());
+        FormationLeg repaired = new FormationLeg(leg.anchor(), leg.memberIds(), leg.isTown(), spots, places,
+              currentRound());
         formationLegs.put(formationId, repaired);
         return repaired;
     }
@@ -2754,7 +2860,7 @@ public class UnitOrdersFollower {
         int paceLimit = paceMovementPoints(entity, formation.get().getPace());
         boolean isTownLeg = isOnTownLeg(entity);
         boolean isHeldToSlowest = formation.get().isKeepTogether() && (leader.getId() == entity.getId())
-              && !isTownLeg;
+              && !isTownLeg && !isAssembling(entity);
         if ((formation.get().getPace() == FormationPace.WALK) && !isHeldToSlowest && isLagging(entity)) {
             // at a walk, a unit more than a turn's walk from its place may run or jump to catch up (HammerGS,
             // 2026-10-01); one in its place, or nearly, keeps to the walk

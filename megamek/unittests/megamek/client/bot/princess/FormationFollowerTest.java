@@ -92,6 +92,7 @@ class FormationFollowerTest {
     private static final int WIDTH = 30;
     private static final int HEIGHT = 30;
     private static final int CLIFF_LEVEL = 5;
+    private static final int FORMATION_LEADER_ID = 20;
     private static final int NORTH = 0;
     private static final int NORTH_EAST = 1;
     private static final int SOUTH_EAST = 2;
@@ -127,6 +128,8 @@ class FormationFollowerTest {
         princess = spy(new Princess("Lyran Allies", UUID.randomUUID().toString(), 1));
         doReturn(game).when(princess).getGame();
         doReturn(enemies).when(princess).getEnemyEntities();
+        // most tests are of a lance on the march; the assembly tests below clear this
+        princess.getUnitOrdersFollower().noteAssembled(FORMATION_LEADER_ID);
     }
 
     /**
@@ -265,6 +268,49 @@ class FormationFollowerTest {
 
         assertFalse(princess.getUnitOrdersFollower().isFollowingPlayerUnit(second));
         assertEquals(Optional.empty(), princess.getUnitOrdersFollower().getFormationSlot(second));
+    }
+
+    @Test
+    void assemblingAfterTheOrderEachUnitMakesStraightForItsPlaceAtTheFirstWaypoint() {
+        // HammerGS: deployment is usually done before the move order, so the first waypoint is where the lance
+        // assembles; once it has formed up it marches, keeping its places beside its leader (2026-10-01)
+        UnitOrdersFollower follower = new UnitOrdersFollower(princess);
+        doReturn(follower).when(princess).getUnitOrdersFollower();
+        game.setPhase(GamePhase.MOVEMENT);
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+
+        assertTrue(follower.isAssembling(second));
+        assertEquals(Optional.of(NORTH_WAYPOINT.translated(SOUTH_EAST, 2)), follower.getFormationSlot(second));
+
+        follower.noteAssembled(FORMATION_LEADER_ID);
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)), follower.getFormationSlot(second));
+    }
+
+    @Test
+    void anAssemblingLanceAlwaysFormsUpAtItsFirstWaypointThenMarches() {
+        UnitOrdersFollower follower = new UnitOrdersFollower(princess);
+        doReturn(follower).when(princess).getUnitOrdersFollower();
+        Coords eastWaypoint = NORTH_WAYPOINT.translated(SOUTH_EAST, 8);
+        BipedMek leader = member(20, NORTH_WAYPOINT, 0, 5);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(0)));
+        BipedMek second = member(21, new Coords(16, 25), 1, 3);
+        second.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT, eastWaypoint))
+              .withFormation(keptTogether(1)));
+        doReturn(List.<Entity>of(leader, second)).when(princess).getEntitiesOwned();
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
+        game.setCurrentRound(3);
+
+        follower.advanceRoutes();
+        assertTrue(follower.isWaitingForFormation(leader), "waits at the first waypoint for its lance");
+
+        second.setPosition(follower.getFormationSlot(second).orElseThrow());
+        game.setCurrentRound(4);
+        follower.advanceRoutes();
+        assertEquals(List.of(eastWaypoint), leader.getUnitOrders().getRoute());
+        assertFalse(follower.isAssembling(leader), "formed up, it marches");
     }
 
     @Test
@@ -1209,13 +1255,13 @@ class FormationFollowerTest {
         BipedMek second = member(21, new Coords(16, 25), 1, 4);
         BipedMek third = member(22, new Coords(12, 25), 2, 4);
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
-        Optional<Coords> secondPlace = follower.getFormationSlot(second);
 
         fake(second).immobile = true;
 
+        // the Grasshopper's place beside its leader is the first one now, where the Longbow stood
         assertTrue(follower.isOutOfAction(second));
         assertEquals(Optional.empty(), follower.getFormationSlot(second));
-        assertEquals(secondPlace, follower.getFormationSlot(third));
+        assertEquals(Optional.of(LEADER_HEX.translated(SOUTH_EAST, 2)), follower.getFormationSlot(third));
     }
 
     @Test

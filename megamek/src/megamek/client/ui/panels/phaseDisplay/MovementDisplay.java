@@ -2413,7 +2413,19 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
 
-        if (needNagForWiGELanding()) {
+        // TW p.55: a WiGE vehicle that lands anywhere but a clear, paved or water hex crashes, and is destroyed
+        boolean warnedOfCrashLanding = false;
+        if (needNagForDoomedMove() && (currentlySelectedEntity != null) && cmd.landsWiGEVehicleWhereItCrashes()) {
+            String title = Messages.getString("MovementDisplay.areYouSure");
+            String body = Messages.getString("MovementDisplay.ConfirmWiGECrashLanding",
+                  currentlySelectedEntity.getShortName());
+            if (checkNagForDoomedMove(title, body)) {
+                return true;
+            }
+            warnedOfCrashLanding = true;
+        }
+
+        if (needNagForWiGELanding() && !warnedOfCrashLanding) {
             if (cmd.automaticWiGELanding(true)) {
                 String title = Messages.getString("MovementDisplay.areYouSure");
                 String body = Messages.getString("MovementDisplay.ConfirmWiGELanding");

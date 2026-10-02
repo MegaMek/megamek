@@ -22824,6 +22824,21 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Resolves a WiGE vehicle landing in its current hex: it crashes unless the hex is clear, paved or water, and it
+     * charges a grounded DropShip or Large Support Vehicle there (TW p.55). Adds the reports to the phase report. See
+     * {@link AirborneVehicleCrashHandler#resolveWiGELanding(Tank, int, int)}.
+     *
+     * @param wige          the landing WiGE vehicle, already placed in the hex it lands in
+     * @param fromElevation the elevation it lands from
+     * @param hexesMoved    the hexes it moved this turn
+     *
+     * @return {@code true} if the WiGE landed safely, {@code false} if it crashed or was destroyed
+     */
+    boolean resolveWiGELanding(Tank wige, int fromElevation, int hexesMoved) {
+        return airborneVehicleCrashHandler.resolveWiGELanding(wige, fromElevation, hexesMoved);
+    }
+
+    /**
      * rolls and resolves one tank critical hit
      *
      * @param t       the <code>Tank</code> to be critted

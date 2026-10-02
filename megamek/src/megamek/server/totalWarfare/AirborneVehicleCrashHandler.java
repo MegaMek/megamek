@@ -235,23 +235,68 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * TW p.68: a VTOL or WiGE that survives a sideslip crash has landed if it can normally land in the crash hex, and
-     * is destroyed otherwise. A WiGE lands in clear, paved or water hexes (TW p.55); a VTOL lands in clear or paved
-     * hexes, or on a building roof (TW p.54).
+     * Finds a grounded DropShip or Large Support Vehicle in the hex a WiGE vehicle lands in. TW p.55: the landing WiGE
+     * automatically charges it.
      *
-     * @param tank the crashed VTOL or WiGE
-     * @param hex  the hex it crashed in
+     * @param wige      the landing WiGE vehicle
+     * @param occupants the units in the hex it lands in
      *
-     * @return {@code true} if the vehicle can land in the hex
+     * @return the unit it charges, or {@code null} if none
      */
-    static boolean canLandAfterSideslipCrash(Tank tank, Hex hex) {
-        if (hex.isClearForTakeoff()) {
+    static @Nullable Entity findLargeUnitInLandingHex(Tank wige, List<Entity> occupants) {
+        for (Entity occupant : occupants) {
+            boolean isLargeUnit = (occupant instanceof Dropship) || (occupant instanceof LargeSupportTank);
+            boolean isGrounded = !occupant.isAirborne() && !occupant.isAirborneVTOLorWIGE();
+            if (isLargeUnit && isGrounded && (occupant != wige)) {
+                return occupant;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resolves a WiGE vehicle landing in the hex it is in, whether by choice or because it moved fewer than 5 hexes
+     * (TW p.55). It first charges any grounded DropShip or Large Support Vehicle in the hex (TW p.55, using the
+     * collision rules of p.67). A WiGE may only land in a clear, paved or water hex; anywhere else it crashes, using
+     * the VTOL and WiGE crash rules of TW p.68. A vehicle that crashes in a hex it cannot land in is destroyed (p.68),
+     * so such a landing destroys it unless an accidental fall from above moves it to a hex where it can land. Land-Air
+     * Meks and glider ProtoMeks follow their own landing rules and are not handled here.
+     *
+     * @param wige          the landing WiGE vehicle, already placed in the hex it lands in
+     * @param fromElevation the elevation it lands from
+     * @param hexesMoved    the hexes it moved this turn, for the crash damage
+     *
+     * @return {@code true} if the WiGE landed safely, {@code false} if it crashed or was destroyed
+     */
+    boolean resolveWiGELanding(Tank wige, int fromElevation, int hexesMoved) {
+        Coords landingPos = wige.getPosition();
+        Entity largeUnit = findLargeUnitInLandingHex(wige, getGame().getEntitiesVector(landingPos, wige.getBoardId()));
+        if (largeUnit != null) {
+            Report report = new Report(2127);
+            report.subject = wige.getId();
+            report.addDesc(wige);
+            report.addDesc(largeUnit);
+            addReport(report);
+            ChargeAttackAction charge = new ChargeAttackAction(wige.getId(), largeUnit.getTargetType(),
+                  largeUnit.getId(), largeUnit.getPosition());
+            gameManager.resolveChargeDamage(wige, largeUnit, charge.toHit(getGame(), true), wige.getFacing());
+        }
+        if (wige.isDoomed()) {
+            return false;
+        }
+        Hex landingHex = getGame().getHex(wige.getPosition(), wige.getBoardId());
+        if (wige.canLandIn(landingHex)) {
             return true;
         }
-        if (tank.getMovementMode() == EntityMovementMode.WIGE) {
-            return hex.containsTerrain(Terrains.WATER);
-        }
-        return hex.containsTerrain(Terrains.BLDG_ELEV);
+        Report report = new Report(2124);
+        report.subject = wige.getId();
+        report.addDesc(wige);
+        addReport(report);
+        Coords crashPos = wige.getPosition();
+        // A landing vehicle comes down moving forward, so its front meets the ground
+        addReport(crashVTOLorWiGE(wige, false, true, hexesMoved, crashPos, fromElevation, ToHitData.SIDE_FRONT));
+        addReport(resolveSideslipCrashAftermath(wige, crashPos, fromElevation, wige.getFacing()));
+        return false;
     }
 
     /**
@@ -270,14 +315,14 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Finishes a sideslip crash (TW p.68). A unit on the ground in the crash hex is hit as an accidental fall from above
-     * (TW p.152); if that misses, the vehicle comes down in a valid adjacent hex instead. The vehicle is then destroyed
-     * unless it can land in the hex it ended in.
+     * Finishes a sideslip or landing crash (TW p.68). A unit on the ground in the crash hex is hit as an accidental
+     * fall from above (TW p.152); if that misses, the vehicle comes down in a valid adjacent hex instead. The vehicle
+     * is then destroyed unless it can land in the hex it ended in.
      *
      * @param tank          the crashed VTOL or WiGE, already in {@code crashPos}
      * @param crashPos      the hex it crashed in
      * @param fallElevation the elevation it fell from
-     * @param direction     the direction of the sideslip
+     * @param direction     the direction of the sideslip, or the vehicle's facing for a landing
      *
      * @return the reports
      */
@@ -303,7 +348,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
             }
         }
         if (!tank.isDoomed()
-              && !canLandAfterSideslipCrash(tank, getGame().getHex(tank.getPosition(), tank.getBoardId()))) {
+              && !tank.canLandIn(getGame().getHex(tank.getPosition(), tank.getBoardId()))) {
             reports.addAll(gameManager.destroyEntity(tank, "could not land in crash site"));
         }
         return reports;
@@ -413,8 +458,9 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
      * @param tank              The {@code VTOL} or {@code WiGE} to crash.
      * @param rerollRotorHits Whether any rotor hits from the crash should be rerolled, typically after a "rotor
      *                        destroyed" critical hit.
-     * @param sideSlipCrash   A <code>boolean</code> value indicating whether this is a sideslip crash or not.
-     * @param hexesMoved      For a sideslip crash, the hexes moved this turn, including sideslipped hexes and the
+     * @param sideSlipCrash   Whether this crash uses the VTOL and WiGE crash rules of TW p.68 (a sideslip crash or a
+     *                        WiGE landing crash) rather than falling damage.
+     * @param hexesMoved      For a TW p.68 crash, the hexes moved this turn, including sideslipped hexes and the
      *                        crash hex.
      * @param crashPos        The <code>Coords</code> of the crash
      * @param crashElevation  The <code>int</code> elevation of the VTOL

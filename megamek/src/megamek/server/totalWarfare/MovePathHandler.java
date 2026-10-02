@@ -1936,7 +1936,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(report);
                     }
 
-                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    if (entity instanceof Tank landingWiGE) {
+                        // TW p.55: a WiGE vehicle lands only in a clear, paved or water hex and crashes anywhere else
+                        if (gameManager.resolveWiGELanding(landingWiGE, elevation, entity.delta_distance)) {
+                            entity.setElevation(0);
+                        }
+                    } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                        // Land-Air Meks and glider ProtoMeks use Mek terrain rules and may land on a roof
                         IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         gameManager.addAffectedBldg(bldg,
@@ -1949,21 +1955,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         report.subject = entity.getId();
                         addReport(report);
-
-                        if (entity instanceof Tank tankEntity) {
-                            addReport(gameManager.crashVTOLorWiGE(tankEntity));
-                        }
                     } else {
                         entity.setElevation(0);
                     }
 
-                    // Check for stacking violations in the target hex
-                    Entity violation = Compute.stackingViolation(getGame(),
-                                                                 entity,
-                                                                 entity.getPosition(),
-                                                                 null,
-                                                                 entity.climbMode(),
-                                                                 false);
+                    // Check for stacking violations in the target hex; a WiGE destroyed by its landing has none
+                    Entity violation = entity.isDoomed() ? null : Compute.stackingViolation(getGame(), entity,
+                          entity.getPosition(), null, entity.climbMode(), false);
                     if (violation != null) {
                         PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
                         if (violation instanceof Dropship) {
@@ -2440,6 +2438,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.landAirMek((LandAirMek) entity, step.getPosition(), elevation, distance));
                     } else if (entity instanceof ProtoMek) {
                         addReport(gameManager.landGliderPM((ProtoMek) entity, step.getPosition(), elevation, distance));
+                    } else if (entity instanceof Tank landingWiGE) {
+                        // TW p.55: a WiGE vehicle lands only in a clear, paved or water hex and crashes anywhere else
+                        landingWiGE.setPosition(step.getPosition());
+                        landingWiGE.setFacing(step.getFacing());
+                        landingWiGE.delta_distance = distance;
+                        if (!gameManager.resolveWiGELanding(landingWiGE, elevation, distance)) {
+                            // the crash ends its movement where it came down
+                            curPos = landingWiGE.getPosition();
+                            curFacing = landingWiGE.getFacing();
+                            break;
+                        }
                     }
                     // landing always ends movement whether successful or not
                 }

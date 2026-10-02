@@ -238,6 +238,20 @@ public class DeploymentHelper {
         clientgui.addToast(ToastLevel.ERROR, msg);
     }
 
+    /**
+     * Warns the player when a unit set hidden is placed in the air. An airborne unit cannot be hidden (TW errata
+     * v12.0, p.260, Airborne Units), so the server deploys it visible; see {@link Entity#canHide()}. Call this once the
+     * unit carries its deployment position and elevation.
+     *
+     * @param entity the unit being deployed
+     */
+    public void warnIfHiddenUnitDeploysAirborne(Entity entity) {
+        if (entity.isHidden() && !entity.canHide()) {
+            String msg = Messages.getString("DeploymentDisplay.hiddenAirborne", entity.getShortName());
+            clientgui.addToast(ToastLevel.WARNING, msg, entity);
+        }
+    }
+
     private void showHiddenInFortifiedMessage() {
         String msg = Messages.getString("DeploymentDisplay.hiddenInFortified");
         clientgui.addToast(ToastLevel.WARNING, msg);

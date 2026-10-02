@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -58,7 +58,9 @@ import megamek.common.enums.BuildingType;
 import megamek.common.game.Game;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.IBuilding;
+import megamek.common.units.SupportTank;
 import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -306,4 +308,61 @@ public class DeploymentProcessorTest extends GameBoardTestCase {
         }
     }
 
+    // ========== Hidden airborne units (TW errata v12.0, p.260, Airborne Units) ==========
+
+    /** A hidden support vehicle with the given movement mode, in the game but not yet deployed. */
+    private SupportTank hiddenVehicle(EntityMovementMode movementMode) {
+        SupportTank vehicle = new SupportTank();
+        vehicle.setChassis("Test");
+        vehicle.setModel(movementMode.name());
+        vehicle.setMovementMode(movementMode);
+        vehicle.setOwner(game.getPlayer(0));
+        vehicle.setId(1);
+        game.addEntity(vehicle);
+        vehicle.setHidden(true);
+        return vehicle;
+    }
+
+    private void deployAtElevation(Entity entity, int elevation) {
+        DeploymentServerHelper deploymentServerHelper = new DeploymentServerHelper(mockTWGameManager);
+        deploymentServerHelper.processDeployment(entity, new Coords(1, 1), 0, 0, elevation, new Vector<>(), false,
+              true);
+    }
+
+    @Test
+    void hiddenWiGEDeployedAirborneIsNotHidden() {
+        SupportTank wige = hiddenVehicle(EntityMovementMode.WIGE);
+
+        deployAtElevation(wige, 1);
+
+        assertEquals(1, wige.getElevation(), "the WiGE deploys in the air");
+        assertFalse(wige.isHidden(), "an airborne WiGE cannot be hidden");
+    }
+
+    @Test
+    void hiddenVTOLDeployedAirborneIsNotHidden() {
+        SupportTank vtol = hiddenVehicle(EntityMovementMode.VTOL);
+
+        deployAtElevation(vtol, 3);
+
+        assertFalse(vtol.isHidden(), "an airborne VTOL cannot be hidden");
+    }
+
+    @Test
+    void hiddenWiGEDeployedLandedStaysHidden() {
+        SupportTank wige = hiddenVehicle(EntityMovementMode.WIGE);
+
+        deployAtElevation(wige, 0);
+
+        assertTrue(wige.isHidden(), "a WiGE grounded at the start of the scenario may be hidden");
+    }
+
+    @Test
+    void hiddenGroundVehicleStaysHidden() {
+        SupportTank groundVehicle = hiddenVehicle(EntityMovementMode.TRACKED);
+
+        deployAtElevation(groundVehicle, 0);
+
+        assertTrue(groundVehicle.isHidden(), "a ground vehicle keeps its hidden setting");
+    }
 }

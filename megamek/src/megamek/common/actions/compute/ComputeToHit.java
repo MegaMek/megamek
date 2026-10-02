@@ -153,8 +153,9 @@ public class ComputeToHit {
             bMekTankStealthActive = ae.isStealthActive();
         }
 
+        // TW p.114: includes a VTOL or WiGE that flew this turn and then landed
         boolean isFlakAttack = (te != null) &&
-              Compute.isFlakAttack(ae, te) &&
+              Compute.isFlakToHitTarget(ae, te) &&
               (weaponType instanceof CLBALBX ||
                     ((ammoType != null) &&
                           ((((ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.AC_LBX) ||

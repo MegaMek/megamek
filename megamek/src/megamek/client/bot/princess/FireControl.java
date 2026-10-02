@@ -1134,17 +1134,20 @@ public class FireControl {
                 }
             }
             // Handle cluster, flak, AAA vs Airborne, Arty-only vs Airborne
-            if (target.isAirborne() || target.isAirborneVTOLorWIGE()) {
-                if (munitionTypes.stream().anyMatch(aaMunitions::contains)
-                      || ammoType.countsAsFlak()) {
-                    if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
-                        toHit.addModifier(TH_WEAPON_FLAK_HAG);
-                    } else {
-                        toHit.addModifier(TH_WEAPON_FLAK);
-                    }
-                } else if (munitionTypes.stream().anyMatch(ArtyOnlyMunitions::contains)) {
-                    toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
+            boolean isAirborneTarget = target.isAirborne() || target.isAirborneVTOLorWIGE();
+            // TW p.114: flak also counts against a VTOL or WiGE that flew this turn and then landed
+            boolean isFlakTarget = isAirborneTarget
+                  || ((targetEntity != null) && Compute.isFlakToHitTarget(shooter, targetEntity));
+            boolean isFlakMunition = !Collections.disjoint(munitionTypes, aaMunitions) || ammoType.countsAsFlak();
+            boolean isArtilleryOnlyMunition = !Collections.disjoint(munitionTypes, ArtyOnlyMunitions);
+            if (isFlakTarget && isFlakMunition) {
+                if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.HAG) {
+                    toHit.addModifier(TH_WEAPON_FLAK_HAG);
+                } else {
+                    toHit.addModifier(TH_WEAPON_FLAK);
                 }
+            } else if (isAirborneTarget && isArtilleryOnlyMunition) {
+                toHit.addModifier(TH_WEAPON_CANNOT_FIRE);
             }
             // Handle homing munitions
             if (munitionTypes.stream().anyMatch(homingMunitions::contains)) {

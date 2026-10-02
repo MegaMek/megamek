@@ -24093,6 +24093,10 @@ public class TWGameManager extends AbstractGameManager {
         if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
             survivable = false;
         }
+        // A VTOL or WiGE destroyed in a crash takes all its infantry with it (TW p.224)
+        if (airborneVehicleCrashHandler.isCrashing(entity)) {
+            survivable = false;
+        }
 
         // Kill any picked up MekWarriors
         Enumeration<Integer> iter = entity.getPickedUpMekWarriors().elements();

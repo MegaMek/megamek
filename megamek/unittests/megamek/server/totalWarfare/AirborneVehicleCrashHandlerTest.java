@@ -243,13 +243,14 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
     }
 
     @Test
-    void crashIntoDeepWaterDestroysTheWiGE() {
+    void crashIntoDeepWaterLandsTheWiGEOnTheSurface() {
         setBoard("DEEP_WATER");
         SupportTank wige = airborneWiGE();
 
         gameManager.crashVTOLorWiGE(wige);
 
-        assertTrue(wige.isDoomed(), "a crash into water destroys the WiGE today (TW says water counts as clear)");
+        assertFalse(wige.isDoomed(), "a WiGE floats and treats water as clear terrain (TW p.55)");
+        assertEquals(0, wige.getElevation());
     }
 
     @Test

@@ -221,6 +221,9 @@ public class UnitOrdersFollower {
     /** The movement points a new sharing out of places must save before units still coming change places. */
     private static final int REPAIR_MARGIN_MP = 2;
 
+    /** The round each unit was last found past its place in a column, by unit id, to log it once a round. */
+    private final Map<Integer, Integer> heldPastPlaceRounds = new HashMap<>();
+
     /** Each formation's current leg, by the formation's leader id; not saved. */
     private final Map<Integer, FormationLeg> formationLegs = new HashMap<>();
 
@@ -591,6 +594,28 @@ public class UnitOrdersFollower {
             }
         }
         return field.costFrom(position);
+    }
+
+    /**
+     * Whether a unit following a player's orders can get where it is going on foot, without bringing anything down:
+     * the route field reaches it from where the unit stands. Clearing a way through buildings is for when it cannot
+     * (HammerGS, 2026-10-01: "the bulldozer plan should be a last resort when no walk path exists").
+     *
+     * @param mover a unit of the bot
+     *
+     * @return {@code true} if the unit has a route or edge order and a way on foot to it
+     */
+    boolean hasWalkingRoute(Entity mover) {
+        Coords position = mover.getPosition();
+        if (position == null) {
+            return false;
+        }
+        Optional<Coords> destination = owner.getUnitBehaviorTracker().getActiveWaypoint(mover, owner);
+        if (destination.isPresent()) {
+            return routeCostFrom(mover, destination.get(), position) != WaypointDistanceField.UNREACHABLE;
+        }
+        Optional<CardinalEdge> edge = getOrderedEdge(mover);
+        return edge.isPresent() && (edgeCostFrom(mover, edge.get(), position) != WaypointDistanceField.UNREACHABLE);
     }
 
     /**
@@ -1391,7 +1416,7 @@ public class UnitOrdersFollower {
             // 2026-09-27); stopped on a flag it forms straight behind the way it faces there, below
             Coords trailSlot = trailSlot(entity, leader, anchor, formation.get(), slotIndex);
             if (trailSlot != null) {
-                return Optional.of(trailSlot);
+                return Optional.of(holdIfPastPlace(entity, anchor, trailSlot));
             }
         }
         SlotChoice cached = slotChoices.get(entity.getId());
@@ -1484,6 +1509,33 @@ public class UnitOrdersFollower {
         }
         return (route.size() == 1) || leader.getUnitOrders().getWaypointOrder(0).isHold()
               || isWaitingForFormation(leader);
+    }
+
+    /**
+     * A unit already further along the way than its place in the column holds where it is and lets the column come up
+     * to it, rather than walking back to its place: a Stalker last in a column walked back south from 1127 to 1129 to
+     * stand six hexes behind its commander (HammerGS's playtest, 2026-10-01).
+     *
+     * @return the unit's own hex when it is past its place, else its place
+     */
+    private Coords holdIfPastPlace(Entity entity, Coords flag, Coords place) {
+        Coords position = entity.getPosition();
+        if (position.equals(place)) {
+            return place;
+        }
+        int fromHere = routeCost(entity, flag, position, false, false);
+        int fromPlace = routeCost(entity, flag, place, false, false);
+        if ((fromHere == WaypointDistanceField.UNREACHABLE) || (fromPlace == WaypointDistanceField.UNREACHABLE)
+              || (fromHere >= fromPlace)) {
+            return place;
+        }
+        Integer lastLogged = heldPastPlaceRounds.put(entity.getId(), currentRound());
+        if ((lastLogged == null) || (lastLogged != currentRound())) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_HOLD - already past its column place at {}; holding "
+                        + "at {} for the column to come up", entity.getDisplayName(), entity.getId(), currentRound(),
+                  place.getBoardNum(), position.getBoardNum());
+        }
+        return position;
     }
 
     /**

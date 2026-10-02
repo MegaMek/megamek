@@ -153,6 +153,12 @@ public class Compute {
                                                    ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
     };
 
+    /** Movement types that mean a unit spent VTOL or WiGE MP this turn (TW p.114 flak). */
+    private static final Set<EntityMovementType> FLIGHT_MOVEMENT_TYPES = EnumSet.of(
+          EntityMovementType.MOVE_VTOL_WALK,
+          EntityMovementType.MOVE_VTOL_RUN,
+          EntityMovementType.MOVE_VTOL_SPRINT);
+
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
     private static final int[][] clusterHitsTable = new int[][] {
@@ -7871,11 +7877,50 @@ public class Compute {
     }
 
     public static boolean isFlakAttack(Entity attacker, Entity target) {
-        boolean validLocation = !(attacker.isSpaceborne()
+        return isValidFlakLocation(attacker, target) && (target.isAirborne() || target.isAirborneVTOLorWIGE());
+    }
+
+    /**
+     * Returns whether a flak weapon (LB-X cluster, flak ammo, HAG and the like) gets its to-hit bonus against the
+     * target. TW p.114 (errata v12.0): flak applies "against a unit that presently has an Altitude or Elevation, or
+     * that expended any VTOL or WiGE MP or Thrust Points that turn (even if it landed at the end of that Movement
+     * Phase)". A VTOL or WiGE that flew and then landed is therefore still a flak target for the rest of the turn.
+     *
+     * <p>This is the to-hit check only. Artillery flak, which bursts at the target's height, keeps using
+     * {@link #isFlakAttack(Entity, Entity)}.</p>
+     *
+     * @param attacker the attacking unit
+     * @param target   the unit being attacked
+     *
+     * @return {@code true} if a flak weapon gets its to-hit bonus against the target
+     */
+    public static boolean isFlakToHitTarget(Entity attacker, Entity target) {
+        return isFlakAttack(attacker, target)
+              || (isValidFlakLocation(attacker, target) && expendedFlightMovementThisTurn(target));
+    }
+
+    /**
+     * Returns whether the unit spent VTOL or WiGE MP this turn, even if it has since landed. A WiGE (including a LAM
+     * in AirMek mode) that lands keeps a VTOL movement type. A VTOL's landing step is typed as a walk, so for units
+     * that move as VTOLs any movement counts, the same test the airborne target movement modifier uses (see
+     * {@link #getTargetMovementModifier(Game, int)}).
+     *
+     * @param unit the unit to check
+     *
+     * @return {@code true} if the unit flew this turn
+     */
+    private static boolean expendedFlightMovementThisTurn(Entity unit) {
+        boolean flewThisTurn = FLIGHT_MOVEMENT_TYPES.contains(unit.moved);
+        boolean movedAsVtol = (unit.getMovementMode() == EntityMovementMode.VTOL)
+              && (unit.moved != EntityMovementType.MOVE_NONE);
+        return flewThisTurn || movedAsVtol;
+    }
+
+    private static boolean isValidFlakLocation(Entity attacker, Entity target) {
+        return !(attacker.isSpaceborne()
               || target.isSpaceborne()
               || attacker.isOffBoard()
               || target.isOffBoard());
-        return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
     }
 
     public static int turnsTilHit(int distance) {

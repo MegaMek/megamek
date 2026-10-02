@@ -6001,7 +6001,7 @@ public class TWGameManager extends AbstractGameManager {
                 crash_damage *= 2;
             }
             if (bldg != null) {
-                buildingCollapseHandler.collapseBuilding(bldg, game.getPositionMapMulti(), hitCoords, true, vReport);
+                buildingCollapseHandler.collapseBuilding(bldg, game.getPositionMapMulti(), hitCoords, vReport);
             }
             if (!damageDealt) {
                 report = new Report(9700, Report.PUBLIC);

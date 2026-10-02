@@ -4746,16 +4746,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             Terrains.BRIDGE_ELEV) && curElevation > curHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     boolean collapse = gameManager.checkBuildingCollapseWhileMoving(bldg, entity, curPos);
                     gameManager.addAffectedBldg(bldg, collapse);
-                    // If the building is collapsed by a WiGE flying over it, the WiGE drops one
-                    // level of elevation.
-                    // This could invalidate the remainder of the movement path, so we will send it
-                    // back to the client.
+                    // If the building collapses under a WiGE flying over it, the collapse drops the WiGE to one
+                    // level above the rubble (TW p.55). This could invalidate the remainder of the movement path,
+                    // so we will send it back to the client.
                     if (collapse && wigeFlyingOver) {
-                        curElevation--;
-                        report = new Report(2378);
-                        report.subject = entity.getId();
-                        report.addDesc(entity);
-                        addReport(report);
+                        curElevation = entity.getElevation();
                         continueTurnFromLevelDrop = true;
                         entity.setPosition(curPos);
                         entity.setFacing(curFacing);

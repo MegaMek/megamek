@@ -188,10 +188,6 @@ public class DeploymentServerHelper {
 
         }
 
-        boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
-                              hex.containsTerrain(Terrains.BLDG_ELEV) &&
-                              entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
-
         // when first entering a building, we need to roll what type
         // of basement it has
         IBuilding bldg = gameManager.getGame()
@@ -208,12 +204,8 @@ public class DeploymentServerHelper {
             }
             boolean collapse = gameManager.checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
             if (collapse) {
+                // A WiGE deployed flying over the building is dropped over the rubble by the collapse (TW p.55)
                 gameManager.addAffectedBldg(bldg, true);
-                if (wigeFlyover) {
-                    // If the building is collapsed by a WiGE flying over it, the WiGE drops one
-                    // level of elevation.
-                    entity.setElevation(entity.getElevation() - 1);
-                }
             }
         }
 

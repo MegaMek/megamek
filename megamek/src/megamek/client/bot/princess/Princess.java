@@ -2752,6 +2752,18 @@ public class Princess extends BotClient {
      */
     Entity getEntityToMove() {
 
+        if ((game != null) && (game.getPhase() == GamePhase.MOVEMENT)) {
+            for (final Entity entity : getEntitiesOwned()) {
+                if (entity.isDone() || entity.isOffBoard() || (entity.getPosition() != null) && entity.isDeployed()) {
+                    continue;
+                }
+                if (entity.getPosition() == null || !entity.isDeployed()) {
+                    LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
+                    return entity;
+                }
+            }
+        }
+
         // first move useless units: immobile units, ejected MekWarrior, etc
         Entity movingEntity = null;
         final List<Entity> myEntities = getEntitiesOwned();
@@ -3143,9 +3155,162 @@ public class Princess extends BotClient {
         return getGame().getOptions().booleanOption(name);
     }
 
+    private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
+        if ((entity == null) || entity.isDeployed() || (entity.getPosition() != null)) {
+            return null;
+        }
+
+        final List<Coords> startingCoords = getStartingCoordsArray(entity);
+        if (startingCoords.isEmpty()) {
+            LOGGER.warn("No valid deployment hexes found for {} during movement-phase deployment.", entity.getDisplayName());
+            return null;
+        }
+
+        final Coords deployCoords = getFirstValidCoords(entity, startingCoords);
+        if (deployCoords == null) {
+            LOGGER.warn("No valid deployment coordinates found for {} during movement-phase deployment.", entity.getDisplayName());
+            return null;
+        }
+
+        final Board board = game.getBoard(entity);
+        final Hex deployHex = board.getHex(deployCoords);
+        final int decentFacing;
+        int deployElevation = entity.getElevation();
+
+        int bestFacing = -1;
+        for (final Entity enemy : getEnemyEntities()) {
+            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(entity, enemy)) {
+                bestFacing = deployCoords.direction(enemy.getPosition());
+                break;
+            }
+        }
+        if (-1 == bestFacing) {
+            final Coords center = new Coords(board.getWidth() / 2, board.getHeight() / 2);
+            bestFacing = deployCoords.direction(center);
+        }
+        decentFacing = bestFacing;
+
+        if (entity.isAero()) {
+            if (board.isGround()) {
+                deployElevation = entity.getAltitude();
+            } else if (board.isLowAltitude()) {
+                final var deploymentHelper = new AllowedDeploymentHelper(entity,
+                      deployCoords,
+                      board,
+                      deployHex,
+                      game);
+                final List<ElevationOption> allowedDeployment = deploymentHelper.findAllowedElevations(
+                      DeploymentElevationType.ALTITUDE);
+                if (allowedDeployment.isEmpty()) {
+                    LOGGER.warn("No valid deployment altitude for {} during movement-phase deployment.",
+                          entity.getDisplayName());
+                    return null;
+                }
+                deployElevation = Math.max(entity.getAltitude(), Collections.min(allowedDeployment).elevation());
+            }
+        } else {
+            deployElevation = getDeployElevation(entity, deployHex) - deployHex.getLevel();
+        }
+
+        entity.setPosition(deployCoords);
+        entity.setBoardId(board.getBoardId());
+        entity.setFacing(decentFacing);
+        entity.setSecondaryFacing(decentFacing);
+        entity.setDeployed(true);
+        if (entity.isAero()) {
+            entity.setAltitude(deployElevation);
+        } else {
+            entity.setElevation(deployElevation);
+        }
+
+        getPrecognition().ensureUpToDate();
+        final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
+        if ((paths == null) || paths.isEmpty()) {
+            final MovePath deployOnly = new MovePath(game, entity);
+            if (hasJumpDeclaration(paths)) {
+               deployOnly.addStep(MoveStepType.START_JUMP);
+            }
+            deployOnly.addStep(MoveStepType.DEPLOY);
+            return deployOnly;
+        }
+
+        final IPathRanker pathRanker = getPathRanker(entity);
+        pathRanker.initUnitTurn(entity, getGame());
+        final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
+        final TreeSet<RankedPath> rankedPaths = pathRanker.rankPaths(paths,
+              getGame(),
+              getMaxWeaponRange(entity),
+              fallTolerance,
+              getEnemyEntities(),
+              getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
+        if (rankedPaths.isEmpty()) {
+            final MovePath deployOnly = new MovePath(game, entity);
+            if (hasJumpDeclaration(paths)) {
+               deployOnly.addStep(MoveStepType.START_JUMP);
+            }
+            deployOnly.addStep(MoveStepType.DEPLOY);
+            return deployOnly;
+        }
+
+        final RankedPath bestPath = pathRanker.getBestPath(rankedPaths);
+        final MovePath deploymentMovePath = new MovePath(game, entity);
+        if (hasJumpDeclaration(bestPath != null ? bestPath.getPath() : null)) {
+            deploymentMovePath.addStep(MoveStepType.START_JUMP);
+        }
+        deploymentMovePath.addStep(MoveStepType.DEPLOY);
+        if (bestPath != null) {
+            final ListIterator<MoveStep> pathSteps = bestPath.getPath().getSteps();
+            while (pathSteps.hasNext()) {
+               final MoveStep step = pathSteps.next();
+               if (isJumpDeclaration(step.getType())) {
+                   continue;
+               }
+               if ((step.getTarget(game) != null) || (step.getTargetPosition() != null)
+                     || !step.getAdditionalData().isEmpty()) {
+                   deploymentMovePath.addStep(new MoveStep(deploymentMovePath,
+                         step.getType(),
+                         step.getTarget(game),
+                         step.getTargetPosition(),
+                         new HashMap<>(step.getAdditionalData())));
+               } else {
+                   deploymentMovePath.addStep(step.getType());
+               }
+            }
+        }
+        return deploymentMovePath;
+    }
+
+    private static boolean hasJumpDeclaration(@Nullable MovePath path) {
+        return (path != null) && (path.contains(MoveStepType.START_JUMP)
+              || path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
+    }
+
+    private static boolean hasJumpDeclaration(List<MovePath> paths) {
+        if ((paths == null) || paths.isEmpty()) {
+            return false;
+        }
+        for (MovePath path : paths) {
+            if (hasJumpDeclaration(path)) {
+               return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isJumpDeclaration(MoveStepType type) {
+        return (type == MoveStepType.START_JUMP) || (type == MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+    }
+
     @Override
     protected MovePath continueMovementFor(final Entity entity) {
         Objects.requireNonNull(entity, "Entity is null.");
+
+        if (!entity.isDeployed() || (entity.getPosition() == null)) {
+            final MovePath deploymentMovePath = calculateDeploymentPathForMovementPhase(entity);
+            if (deploymentMovePath != null) {
+                return deploymentMovePath;
+            }
+        }
 
         try {
             // a hold position order trumps all other movement; airborne units are exempt because they

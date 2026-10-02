@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
@@ -147,6 +148,39 @@ class PrincessTest {
 
         // Test a null ticks argument.
         assertEquals(0, Princess.calculateAdjustment(null));
+    }
+
+    @Test
+    void testGetEntityToMovePrefersUndeployedUnitDuringMovementPhase() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity deployed = mock(Entity.class);
+        when(deployed.isDone()).thenReturn(false);
+        when(deployed.isOffBoard()).thenReturn(false);
+        when(deployed.isDeployed()).thenReturn(true);
+        when(deployed.getPosition()).thenReturn(new Coords(2, 2));
+        when(deployed.getDisplayName()).thenReturn("Deployed");
+
+        Entity undeployed = mock(Entity.class);
+        when(undeployed.isDone()).thenReturn(false);
+        when(undeployed.isOffBoard()).thenReturn(false);
+        when(undeployed.isDeployed()).thenReturn(false);
+        when(undeployed.getPosition()).thenReturn(null);
+        when(undeployed.getDisplayName()).thenReturn("Undeployed");
+
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed, undeployed));
+
+        assertEquals(undeployed, mockPrincess.getEntityToMove());
     }
 
     @Test

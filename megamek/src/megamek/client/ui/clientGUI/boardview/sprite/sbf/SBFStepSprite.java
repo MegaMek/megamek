@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ import java.awt.geom.AffineTransform;
 
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
+import megamek.client.ui.clientGUI.boardview.sprite.HexLabelFitter;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
@@ -147,8 +148,9 @@ public class SBFStepSprite extends Sprite {
 
         // Convert the buffer to a String and draw it.
         String costString = String.valueOf(totalMp);
-        graph.setFont(getMovementFont());
         int costX = stepPos.x + 42;
+        int availableWidth = shiftFlag ? HexLabelFitter.centredLabelWidth() : HexLabelFitter.labelWidthFrom(costX);
+        graph.setFont(HexLabelFitter.fitToWidth(graph, getMovementFont(), costString, availableWidth));
         if (shiftFlag) {
             costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
         }

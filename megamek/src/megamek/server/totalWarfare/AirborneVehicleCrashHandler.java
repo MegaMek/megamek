@@ -32,7 +32,10 @@
  */
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -46,6 +49,7 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
@@ -69,6 +73,17 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
 
     /** The extra MP a WiGE pays per hex to hold its elevation over lower terrain (TW p.55). */
     static final int KEEP_ELEVATION_MP = 2;
+
+    /** Terrain that is not clear, paved, rough, building or water, so a WiGE crashes over it (TW p.199). */
+    private static final int[] TERRAIN_WITHOUT_WIGE_LANDING_ROLL = { Terrains.WOODS, Terrains.JUNGLE, Terrains.RUBBLE,
+                                                                     Terrains.SAND, Terrains.TUNDRA, Terrains.MAGMA,
+                                                                     Terrains.FIELDS, Terrains.INDUSTRIAL,
+                                                                     Terrains.SWAMP, Terrains.MUD, Terrains.SNOW,
+                                                                     Terrains.FUEL_TANK, Terrains.GEYSER,
+                                                                     Terrains.HAZARDOUS_LIQUID, Terrains.IMPASSABLE };
+
+    /** The IDs of the vehicles whose crash in their own hex is being resolved right now. */
+    private final Set<Integer> crashingVehicleIds = new HashSet<>();
 
     AirborneVehicleCrashHandler(TWGameManager gameManager) {
         super(gameManager);
@@ -235,23 +250,68 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * TW p.68: a VTOL or WiGE that survives a sideslip crash has landed if it can normally land in the crash hex, and
-     * is destroyed otherwise. A WiGE lands in clear, paved or water hexes (TW p.55); a VTOL lands in clear or paved
-     * hexes, or on a building roof (TW p.54).
+     * Finds a grounded DropShip or Large Support Vehicle in the hex a WiGE vehicle lands in. TW p.55: the landing WiGE
+     * automatically charges it.
      *
-     * @param tank the crashed VTOL or WiGE
-     * @param hex  the hex it crashed in
+     * @param wige      the landing WiGE vehicle
+     * @param occupants the units in the hex it lands in
      *
-     * @return {@code true} if the vehicle can land in the hex
+     * @return the unit it charges, or {@code null} if none
      */
-    static boolean canLandAfterSideslipCrash(Tank tank, Hex hex) {
-        if (hex.isClearForTakeoff()) {
+    static @Nullable Entity findLargeUnitInLandingHex(Tank wige, List<Entity> occupants) {
+        for (Entity occupant : occupants) {
+            boolean isLargeUnit = (occupant instanceof Dropship) || (occupant instanceof LargeSupportTank);
+            boolean isGrounded = !occupant.isAirborne() && !occupant.isAirborneVTOLorWIGE();
+            if (isLargeUnit && isGrounded && (occupant != wige)) {
+                return occupant;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Resolves a WiGE vehicle landing in the hex it is in, whether by choice or because it moved fewer than 5 hexes
+     * (TW p.55). It first charges any grounded DropShip or Large Support Vehicle in the hex (TW p.55, using the
+     * collision rules of p.67). A WiGE may only land in a clear, paved or water hex; anywhere else it crashes, using
+     * the VTOL and WiGE crash rules of TW p.68. A vehicle that crashes in a hex it cannot land in is destroyed (p.68),
+     * so such a landing destroys it unless an accidental fall from above moves it to a hex where it can land. Land-Air
+     * Meks and glider ProtoMeks follow their own landing rules and are not handled here.
+     *
+     * @param wige          the landing WiGE vehicle, already placed in the hex it lands in
+     * @param fromElevation the elevation it lands from
+     * @param hexesMoved    the hexes it moved this turn, for the crash damage
+     *
+     * @return {@code true} if the WiGE landed safely, {@code false} if it crashed or was destroyed
+     */
+    boolean resolveWiGELanding(Tank wige, int fromElevation, int hexesMoved) {
+        Coords landingPos = wige.getPosition();
+        Entity largeUnit = findLargeUnitInLandingHex(wige, getGame().getEntitiesVector(landingPos, wige.getBoardId()));
+        if (largeUnit != null) {
+            Report report = new Report(2127);
+            report.subject = wige.getId();
+            report.addDesc(wige);
+            report.addDesc(largeUnit);
+            addReport(report);
+            ChargeAttackAction charge = new ChargeAttackAction(wige.getId(), largeUnit.getTargetType(),
+                  largeUnit.getId(), largeUnit.getPosition());
+            gameManager.resolveChargeDamage(wige, largeUnit, charge.toHit(getGame(), true), wige.getFacing());
+        }
+        if (wige.isDoomed()) {
+            return false;
+        }
+        Hex landingHex = getGame().getHex(wige.getPosition(), wige.getBoardId());
+        if (wige.canLandIn(landingHex)) {
             return true;
         }
-        if (tank.getMovementMode() == EntityMovementMode.WIGE) {
-            return hex.containsTerrain(Terrains.WATER);
-        }
-        return hex.containsTerrain(Terrains.BLDG_ELEV);
+        Report report = new Report(2124);
+        report.subject = wige.getId();
+        report.addDesc(wige);
+        addReport(report);
+        Coords crashPos = wige.getPosition();
+        // A landing vehicle comes down moving forward, so its front meets the ground
+        addReport(crashVTOLorWiGE(wige, false, true, hexesMoved, crashPos, fromElevation, ToHitData.SIDE_FRONT));
+        addReport(resolveSideslipCrashAftermath(wige, crashPos, fromElevation, wige.getFacing()));
+        return false;
     }
 
     /**
@@ -270,14 +330,14 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Finishes a sideslip crash (TW p.68). A unit on the ground in the crash hex is hit as an accidental fall from above
-     * (TW p.152); if that misses, the vehicle comes down in a valid adjacent hex instead. The vehicle is then destroyed
-     * unless it can land in the hex it ended in.
+     * Finishes a sideslip or landing crash (TW p.68). A unit on the ground in the crash hex is hit as an accidental
+     * fall from above (TW p.152); if that misses, the vehicle comes down in a valid adjacent hex instead. The vehicle
+     * is then destroyed unless it can land in the hex it ended in.
      *
      * @param tank          the crashed VTOL or WiGE, already in {@code crashPos}
      * @param crashPos      the hex it crashed in
      * @param fallElevation the elevation it fell from
-     * @param direction     the direction of the sideslip
+     * @param direction     the direction of the sideslip, or the vehicle's facing for a landing
      *
      * @return the reports
      */
@@ -303,7 +363,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
             }
         }
         if (!tank.isDoomed()
-              && !canLandAfterSideslipCrash(tank, getGame().getHex(tank.getPosition(), tank.getBoardId()))) {
+              && !tank.canLandIn(getGame().getHex(tank.getPosition(), tank.getBoardId()))) {
             reports.addAll(gameManager.destroyEntity(tank, "could not land in crash site"));
         }
         return reports;
@@ -345,14 +405,20 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
         int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
         elevation = Math.max(elevation, 0);
         elevation = Math.min(elevation, tank.getElevation());
-        if (tank.getElevation() > elevation) {
-            if (!hex.containsTerrain(Terrains.FUEL_TANK) &&
+        boolean canRollToLand;
+        if (tank.getMovementMode().isWiGE()) {
+            canRollToLand = canWiGERollToLand(hex);
+        } else {
+            canRollToLand = !hex.containsTerrain(Terrains.FUEL_TANK) &&
                   !hex.containsTerrain(Terrains.JUNGLE) &&
                   !hex.containsTerrain(Terrains.MAGMA) &&
                   !hex.containsTerrain(Terrains.MUD) &&
                   !hex.containsTerrain(Terrains.RUBBLE) &&
                   !hex.containsTerrain(Terrains.WATER) &&
-                  !hex.containsTerrain(Terrains.WOODS)) {
+                  !hex.containsTerrain(Terrains.WOODS);
+        }
+        if (tank.getElevation() > elevation) {
+            if (canRollToLand) {
                 Report report = new Report(2180);
                 report.subject = tank.getId();
                 report.addDesc(tank);
@@ -375,12 +441,70 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
                     report.choose(true);
                     reports.add(report);
                     tank.setElevation(elevation);
+                    reports.addAll(checkRoofLandingCollapse(tank, elevation));
                 }
             } else {
                 reports.addAll(crashVTOLorWiGE(tank, true));
             }
         }
         return reports;
+    }
+
+    /**
+     * TW p.199 Engine Damage: a flying WiGE whose engine is hit over a clear, paved, rough or building hex makes a
+     * Driving Skill Roll to land there; over any other terrain it crashes automatically. A WiGE treats water hexes as
+     * clear terrain (TW p.55), so it also rolls over water. Ultra-rough terrain is not rough terrain and gives no roll.
+     * A road counts as paved, as it does for landing.
+     *
+     * @param hex the hex the WiGE is flying over
+     *
+     * @return {@code true} if the WiGE may roll to land, {@code false} if it crashes automatically
+     */
+    static boolean canWiGERollToLand(Hex hex) {
+        if (hex.containsTerrain(Terrains.BLDG_ELEV) || hex.hasPavementOrRoad()) {
+            return true;
+        }
+        if (hex.terrainLevel(Terrains.ROUGH) > 1) {
+            return false;
+        }
+        for (int terrain : TERRAIN_WITHOUT_WIGE_LANDING_ROLL) {
+            if (hex.containsTerrain(terrain)) {
+                return false;
+            }
+        }
+        // Ice on a water hex is still a water hex
+        return !hex.containsTerrain(Terrains.ICE) || hex.containsTerrain(Terrains.WATER);
+    }
+
+    /**
+     * A vehicle forced to land on a roof or bridge checks whether the building can carry it, and collapses the hex if
+     * not (TW p.199 Buildings; Construction Factor and Collapse, pp.166 and 176).
+     *
+     * @param tank             the landed vehicle, in the hex it landed in
+     * @param landingElevation the elevation it landed at
+     *
+     * @return the reports
+     */
+    private Vector<Report> checkRoofLandingCollapse(Tank tank, int landingElevation) {
+        Vector<Report> reports = new Vector<>();
+        if (landingElevation <= 0) {
+            return reports;
+        }
+        IBuilding building = getGame().getBoard(tank).getBuildingAt(tank.getPosition());
+        if (building != null) {
+            gameManager.checkForCollapse(building, tank.getPosition(), false, reports);
+        }
+        return reports;
+    }
+
+    /**
+     * @param entity a unit being destroyed
+     *
+     * @return {@code true} while the unit is a VTOL or WiGE being destroyed by a crash in its own hex, so that all the
+     *       infantry it carries die with it (TW p.224)
+     */
+    boolean isCrashing(Entity entity) {
+        return crashingVehicleIds.contains(entity.getId());
     }
 
     /**
@@ -408,13 +532,17 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
     }
 
     /**
-     * Crash a VTOL or WiGE.
+     * Crash a VTOL or WiGE. A crash that is not a sideslip drops the vehicle to the ground (or a roof or bridge) in
+     * its hex and applies falling damage. For such a crash, all the infantry it carries die if the crash destroys it,
+     * and each rolls 1D6 to survive if it does not (TW p.224). A WiGE floats on water (TW p.55), does not explode
+     * (TW p.199: WiGEs use the ground Combat Vehicle rules) and is destroyed unless it can land in the hex (TW p.68).
      *
      * @param tank              The {@code VTOL} or {@code WiGE} to crash.
      * @param rerollRotorHits Whether any rotor hits from the crash should be rerolled, typically after a "rotor
      *                        destroyed" critical hit.
-     * @param sideSlipCrash   A <code>boolean</code> value indicating whether this is a sideslip crash or not.
-     * @param hexesMoved      For a sideslip crash, the hexes moved this turn, including sideslipped hexes and the
+     * @param sideSlipCrash   Whether this crash uses the VTOL and WiGE crash rules of TW p.68 (a sideslip crash or a
+     *                        WiGE landing crash) rather than falling damage.
+     * @param hexesMoved      For a TW p.68 crash, the hexes moved this turn, including sideslipped hexes and the
      *                        crash hex.
      * @param crashPos        The <code>Coords</code> of the crash
      * @param crashElevation  The <code>int</code> elevation of the VTOL
@@ -425,8 +553,26 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
 
     Vector<Report> crashVTOLorWiGE(Tank tank, boolean rerollRotorHits, boolean sideSlipCrash, int hexesMoved,
           Coords crashPos, int crashElevation, int impactSide) {
+        if (sideSlipCrash) {
+            return resolveCrash(tank, rerollRotorHits, true, hexesMoved, crashPos, crashElevation, impactSide);
+        }
+        // TW p.224: if the vehicle is destroyed in the crash, all the infantry it carries are destroyed too
+        boolean markedAsCrashing = crashingVehicleIds.add(tank.getId());
+        try {
+            return resolveCrash(tank, rerollRotorHits, false, hexesMoved, crashPos, crashElevation, impactSide);
+        } finally {
+            if (markedAsCrashing) {
+                crashingVehicleIds.remove(tank.getId());
+            }
+        }
+    }
+
+    private Vector<Report> resolveCrash(Tank tank, boolean rerollRotorHits, boolean sideSlipCrash, int hexesMoved,
+          Coords crashPos, int crashElevation, int impactSide) {
         Vector<Report> reports = new Vector<>();
         Report report;
+        // TW p.199: WiGEs use the ground Combat Vehicle rules, not the VTOL rules for water and explosions
+        boolean isWiGE = tank.getMovementMode().isWiGE();
 
         // we might be off the board after a DFA, so return then
         if (!getGame().getBoard().contains(crashPos)) {
@@ -493,7 +639,12 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
                 }
             };
 
-            if (newElevation <= 0) {
+            if ((newElevation <= 0) && isWiGE && fallHex.containsTerrain(Terrains.WATER)) {
+                // TW p.55: a WiGE floats and treats water as clear terrain, so it comes down on the surface
+                report = new Report(6276);
+                report.subject = tank.getId();
+                reports.addElement(report);
+            } else if (newElevation <= 0) {
                 boolean waterFall = fallHex.containsTerrain(Terrains.WATER);
                 if (waterFall && fallHex.containsTerrain(Terrains.ICE)) {
                     Roll diceRoll = Compute.rollD6(1);
@@ -559,7 +710,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
                 }
                 damage -= cluster;
             }
-            if (exploded) {
+            if (exploded && !isWiGE) {
                 report = new Report(6285);
                 report.subject = tank.getId();
                 report.addDesc(tank);
@@ -569,6 +720,15 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
 
             // check for location exposure
             reports.addAll(gameManager.doSetLocationsExposure(tank, fallHex, false, newElevation));
+
+            if (isWiGE) {
+                // TW p.68: the vehicle may not attack in the turn it crashes, and is destroyed unless it can
+                // normally land in the crash hex
+                tank.setCrashedThisTurn(true);
+                if (!tank.isDoomed() && !tank.canLandIn(fallHex)) {
+                    reports.addAll(gameManager.destroyEntity(tank, "could not land in crash site"));
+                }
+            }
 
         } else {
             tank.setElevation(0);// considered landed in the hex.
@@ -600,7 +760,7 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
                 }
                 damage -= cluster;
             }
-            if (exploded) {
+            if (exploded && !isWiGE) {
                 report = new Report(6295);
                 report.subject = tank.getId();
                 report.addDesc(tank);
@@ -618,8 +778,44 @@ class AirborneVehicleCrashHandler extends AbstractTWRuleHandler {
             gameManager.resetMines();
         }
 
+        if (!sideSlipCrash && !tank.isDoomed() && !tank.isDestroyed()) {
+            reports.addAll(rollCarriedInfantrySurvival(tank));
+        }
+
         return reports;
 
+    }
+
+    /**
+     * TW p.224: when a VTOL or WiGE survives a crash, roll 1D6 for each infantry unit it carries. On 1-3 the infantry
+     * survives; on 4-6 it is destroyed.
+     *
+     * @param tank the vehicle that survived its crash
+     *
+     * @return the reports
+     */
+    private Vector<Report> rollCarriedInfantrySurvival(Tank tank) {
+        Vector<Report> reports = new Vector<>();
+        // Copy the list: a destroyed passenger is unloaded from the vehicle
+        List<Entity> passengers = new ArrayList<>(tank.getLoadedUnits());
+        for (Entity passenger : passengers) {
+            if (!passenger.isInfantry() || passenger.isDestroyed()) {
+                continue;
+            }
+            Roll survivalRoll = Compute.rollD6(1);
+            boolean survives = survivalRoll.getIntValue() <= 3;
+            Report report = new Report(6378);
+            report.subject = passenger.getId();
+            report.indent();
+            report.addDesc(passenger);
+            report.add(survivalRoll);
+            reports.add(report);
+            if (!survives) {
+                gameManager.destroyCarriedUnit(tank, passenger, IEntityRemovalConditions.REMOVE_SALVAGEABLE, 6376,
+                      reports);
+            }
+        }
+        return reports;
     }
 
     /**

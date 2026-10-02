@@ -317,6 +317,18 @@ public class PathEnumerator {
                     paths.addAll(spf.getAllComputedPathsUncategorized());
                 }
 
+                // add moves that take off first: a grounded WiGE has only 1 MP on the ground
+                MovePath takeoffPath = new MovePath(game, mover, wayPoint);
+                if (PathDecorator.addWiGETakeoff(takeoffPath)) {
+                    lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove, MoveStepType.FORWARDS, getGame());
+                    lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    lpf.run(takeoffPath);
+                    List<MovePath> takeoffPaths = lpf.getLongestComputedPaths();
+                    logger.debug("{} is a grounded WiGE; added {} takeoff paths", mover.getDisplayName(),
+                          takeoffPaths.size());
+                    paths.addAll(takeoffPaths);
+                }
+
                 // calling .debug is expensive even if we don't actually log anything
                 // so let's not do this unless we're debugging
                 /*

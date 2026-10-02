@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -99,6 +99,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             } else {
                 startPath.addStep(MoveStepType.CLIMB_MODE_ON);
             }
+        }
+
+        // a grounded WiGE has only 1 MP on the ground, so take off first when it can
+        if (!jump) {
+            PathDecorator.addWiGETakeoff(startPath);
         }
 
         // if we're on the ground, let's try to get up first before moving

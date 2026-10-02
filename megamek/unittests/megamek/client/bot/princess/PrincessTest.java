@@ -184,6 +184,40 @@ class PrincessTest {
     }
 
     @Test
+    void testGetEntityToMoveUsesDeploymentOrderForUndeployedUnits() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(2);
+        when(game.getEntity(2)).thenReturn(null);
+
+        Entity firstUndeployed = mock(Entity.class);
+        when(firstUndeployed.isDone()).thenReturn(false);
+        when(firstUndeployed.isOffBoard()).thenReturn(false);
+        when(firstUndeployed.isDeployed()).thenReturn(false);
+        when(firstUndeployed.getPosition()).thenReturn(null);
+        when(firstUndeployed.getDisplayName()).thenReturn("First");
+
+        Entity secondUndeployed = mock(Entity.class);
+        when(secondUndeployed.isDone()).thenReturn(false);
+        when(secondUndeployed.isOffBoard()).thenReturn(false);
+        when(secondUndeployed.isDeployed()).thenReturn(false);
+        when(secondUndeployed.getPosition()).thenReturn(null);
+        when(secondUndeployed.getDisplayName()).thenReturn("Second");
+
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(firstUndeployed, secondUndeployed));
+        when(game.getEntity(2)).thenReturn(secondUndeployed);
+
+        assertEquals(secondUndeployed, mockPrincess.getEntityToMove());
+    }
+
+    @Test
     void testGetEntityToMoveEvaluatesAlreadyDeployedUnits() {
         when(mockPrincess.getEntityToMove()).thenCallRealMethod();
 
@@ -352,6 +386,7 @@ class PrincessTest {
         when(mockMek.getRunMP()).thenReturn(6);
         when(mockMek.isOffBoard()).thenReturn(false);
         when(mockMek.getPosition()).thenReturn(mockCoords);
+        when(mockMek.isDeployed()).thenReturn(true);
         when(mockMek.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockMek), any(StringBuilder.class))).thenReturn(1.111);
 
@@ -359,6 +394,7 @@ class PrincessTest {
         when(mockBA.getRunMP()).thenReturn(3);
         when(mockBA.isOffBoard()).thenReturn(false);
         when(mockBA.getPosition()).thenReturn(mockCoords);
+        when(mockBA.isDeployed()).thenReturn(true);
         when(mockBA.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockBA), any(StringBuilder.class))).thenReturn(6.666);
 
@@ -366,6 +402,7 @@ class PrincessTest {
         when(mockTank.getRunMP()).thenReturn(6);
         when(mockTank.isOffBoard()).thenReturn(false);
         when(mockTank.getPosition()).thenReturn(mockCoords);
+        when(mockTank.isDeployed()).thenReturn(true);
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockTank), any(StringBuilder.class))).thenReturn(2.5);
 
@@ -373,18 +410,21 @@ class PrincessTest {
         when(mockEjectedMekwarrior.getRunMP()).thenReturn(1);
         when(mockEjectedMekwarrior.isOffBoard()).thenReturn(false);
         when(mockEjectedMekwarrior.getPosition()).thenReturn(mockCoords);
+        when(mockEjectedMekwarrior.isDeployed()).thenReturn(true);
         when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(true);
 
         Entity mockImmobileMek = mock(BipedMek.class);
         when(mockImmobileMek.getRunMP()).thenReturn(0);
         when(mockImmobileMek.isOffBoard()).thenReturn(false);
         when(mockImmobileMek.getPosition()).thenReturn(mockCoords);
+        when(mockImmobileMek.isDeployed()).thenReturn(true);
         when(mockImmobileMek.isSelectableThisTurn()).thenReturn(true);
         when(mockImmobileMek.isImmobile()).thenReturn(true);
 
         Entity mockOffBoardArty = mock(Tank.class);
         when(mockOffBoardArty.getRunMP()).thenReturn(6);
         when(mockOffBoardArty.getPosition()).thenReturn(mockCoords);
+        when(mockOffBoardArty.isDeployed()).thenReturn(true);
         when(mockOffBoardArty.isSelectableThisTurn()).thenReturn(true);
         when(mockOffBoardArty.isOffBoard()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockOffBoardArty), any(StringBuilder.class))).thenReturn(10.0);

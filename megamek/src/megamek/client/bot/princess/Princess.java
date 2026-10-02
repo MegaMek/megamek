@@ -92,6 +92,7 @@ import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.BotHonorReport;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
@@ -2758,13 +2759,26 @@ public class Princess extends BotClient {
      * @return The entity that should be moved next.
      */
     Entity getEntityToMove() {
+        final Game currentGame = getGame();
 
-        if (game.getPhase() == GamePhase.MOVEMENT) {
+        if ((currentGame != null) && (currentGame.getPhase() == GamePhase.MOVEMENT)) {
+            final GameTurn turn = currentGame.getTurnForPlayer(getLocalPlayerNumber());
+            if (turn != null) {
+                final int deployEntityNum = currentGame.getFirstDeployableEntityNum(turn);
+                if (deployEntityNum != Entity.NONE) {
+                    final Entity deployEntity = currentGame.getEntity(deployEntityNum);
+                    if ((deployEntity != null) && !deployEntity.isDone() && !deployEntity.isOffBoard()) {
+                        LOGGER.info("Choosing {} to deploy during the movement phase.", deployEntity.getDisplayName());
+                        return deployEntity;
+                    }
+                }
+            }
+
             for (final Entity entity : getEntitiesOwned()) {
                 if (entity.isDone() || entity.isOffBoard()) {
                     continue;
                 }
-                if (entity.getPosition() == null || !entity.isDeployed()) {
+                if ((entity.getPosition() == null) || !entity.isDeployed()) {
                     LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
                     return entity;
                 }
@@ -2784,10 +2798,10 @@ public class Princess extends BotClient {
                 continue;
             }
 
-            if (!getGame().getPhase().isSimultaneous(getGame()) &&
-                  (entity.isOffBoard() ||
-                   (entity.isUnloadedThisTurn() ||
-                    !Objects.requireNonNull(getGame().getTurn()).isValidEntity(entity, getGame())))) {
+            if ((currentGame != null) && !currentGame.getPhase().isSimultaneous(currentGame)
+                  && (entity.isOffBoard() ||
+                  (entity.isUnloadedThisTurn() ||
+                   !Objects.requireNonNull(currentGame.getTurn()).isValidEntity(entity, currentGame)))) {
                 msg.append("cannot be moved.");
                 continue;
             }

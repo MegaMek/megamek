@@ -1520,18 +1520,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(report);
                         addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
                     } else {
-                        // Swarming infantry take a 3d6 point hit.
-                        // ASSUMPTION : damage should not be doubled.
-                        report = new Report(2140);
-                        report.subject = entity.getId();
-                        report.indent();
-                        report.addDesc(swarmer);
-                        report.add("3d6");
-                        addReport(report);
-                        addReport(gameManager.damageEntity(swarmer,
-                                                           swarmer.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                                                   ToHitData.SIDE_FRONT),
-                                                           Compute.d6(3)));
+                        // Conventional infantry take 3D6; battle armor take damage on each trooper (TW p.222)
+                        addReport(new SwarmShakeOffHandler(gameManager).damageDislodgedSwarmer(entity, swarmer,
+                              SwarmShakeOffHandler.vehicleShakeOffDamagePerTrooper(entity)));
                         addNewLines();
                         swarmer.setPosition(curPos);
                     }
@@ -1763,18 +1754,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             addReport(report);
                             addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
                         } else {
-                            // Swarming infantry take a 3d6 point hit.
-                            // ASSUMPTION : damage should not be doubled.
-                            report = new Report(2140);
-                            report.subject = entity.getId();
-                            report.indent();
-                            report.addDesc(swarmer);
-                            report.add("3d6");
-                            addReport(report);
-                            addReport(gameManager.damageEntity(swarmer,
-                                                               swarmer.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                                                       ToHitData.SIDE_FRONT),
-                                                               Compute.d6(3)));
+                            // Conventional infantry take 3D6; each battle armor trooper takes 1 per Jump MP used
+                            // (TW p.222)
+                            addReport(new SwarmShakeOffHandler(gameManager).damageDislodgedSwarmer(entity, swarmer,
+                                  entity.mpUsed));
                             addNewLines();
                             swarmer.setPosition(curPos);
                         }

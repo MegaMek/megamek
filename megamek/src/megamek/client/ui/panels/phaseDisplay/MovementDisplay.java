@@ -4889,6 +4889,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
             // A grounded carrier's Unload also offers the units only its cranes can unload (TW p.91), and the units
             // the cranes are already unloading, so that work can be stopped
             boolean hasUnitToUnload = !unloadableUnits.isEmpty() || !craneUnloadChoices(currentEntity).isEmpty();
+            if (isCarrierAirborneAtEndOfPath(currentEntity)) {
+                // A support VTOL or WiGE that has not landed lets only jump and VTOL infantry out (TW p.225)
+                hasUnitToUnload = hasAirborneDismountableUnit(currentEntity);
+            }
             boolean hasUnitToStopUnloading = !craneStopUnloadingChoices(currentEntity).isEmpty();
             if (hasUnitToStopUnloading && !hasUnitToUnload) {
                 // Nothing to unload, only crane unloading to stop: the button says so, as Mount reads Stop Loading
@@ -4908,7 +4912,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean canUnloadHere = false;
 
         // A unit that has somehow exited the map is assumed to be unable to unload
-        if (isFinalPositionOnBoard()) {
+        if (isFinalPositionOnBoard() && isCarrierAirborneAtEndOfPath(currentEntity)) {
+            // A VTOL or WiGE that has not landed lets only jump and VTOL infantry out (TW p.225, errata v12.0)
+            canUnloadHere = hasAirborneDismountableUnit(currentEntity);
+        } else if (isFinalPositionOnBoard()) {
             canUnloadHere = unloadableUnits.stream()
                                            .anyMatch(en -> en.isElevationValid(unloadEl, hex) || (en.getJumpMP() > 0));
             // Zip lines, TO pg 219
@@ -4926,6 +4933,41 @@ public class MovementDisplay extends ActionPhaseDisplay {
             }
         }
         setUnloadEnabled(legalGear && canUnloadHere && !unloadableUnits.isEmpty());
+    }
+
+    /**
+     * Checks whether the current unit is a VTOL or WiGE that is still airborne at the end of its planned path, so only
+     * jump and VTOL infantry may leave it (TW p.225, errata v12.0).
+     *
+     * @param carrier the unit that would unload
+     *
+     * @return {@code true} if the carrier has not landed at the end of its path
+     */
+    private boolean isCarrierAirborneAtEndOfPath(Entity carrier) {
+        if ((cmd == null) || (cmd.getFinalCoords() == null)) {
+            return false;
+        }
+        Hex hex = game.getBoard(carrier).getHex(cmd.getFinalCoords());
+        return AirborneDismountRules.isCarrierAirborne(carrier, hex, cmd.getFinalElevation());
+    }
+
+    /**
+     * Checks whether any carried unit may leave the airborne carrier (TW p.225, errata v12.0).
+     *
+     * @param carrier the airborne VTOL or WiGE
+     *
+     * @return {@code true} if at least one unit may dismount
+     */
+    private boolean hasAirborneDismountableUnit(Entity carrier) {
+        for (Entity passenger : unloadableUnits) {
+            if (AirborneDismountRules.canDismountFromAirborneCarrier(game, carrier, passenger)) {
+                LOGGER.debug("[Airborne dismount] {} may leave airborne {}", passenger.getDisplayName(),
+                      carrier.getDisplayName());
+                return true;
+            }
+        }
+        LOGGER.debug("[Airborne dismount] no unit may leave airborne {}", carrier.getDisplayName());
+        return false;
     }
 
     private void updateMountButton() {
@@ -5687,9 +5729,13 @@ public class MovementDisplay extends ActionPhaseDisplay {
             LOGGER.error("No loaded units");
         } else if ((unloadableUnits.size() + craneUnits.size()) > 1) {
             // Only show the units we are not already planning to unload, then the units only the cranes can unload
+            // An airborne VTOL or WiGE offers only the units that may leave it in the air (TW p.225, errata v12.0)
+            boolean carrierAirborne = isCarrierAirborneAtEndOfPath(currentEntity);
             List<Entity> filteredUnits = new ArrayList<>();
             for (Entity unloadable : unloadableUnits) {
-                if (unloadable.getTargetBay() == UNSET_BAY) {
+                boolean mayLeave = !carrierAirborne
+                      || AirborneDismountRules.canDismountFromAirborneCarrier(game, currentEntity, unloadable);
+                if ((unloadable.getTargetBay() == UNSET_BAY) && mayLeave) {
                     filteredUnits.add(unloadable);
                 }
             }
@@ -7541,14 +7587,16 @@ public class MovementDisplay extends ActionPhaseDisplay {
                     unloadByCrane(carrier, other);
                 }
             } else if (other != null) {
-                if (!other.isInfantry() ||
+                // A unit leaving a VTOL or WiGE that has not landed stays in its hex (TW p.225, errata v12.0)
+                boolean unloadsIntoCarrierHex = isCarrierAirborneAtEndOfPath(currentEntity());
+                if (!unloadsIntoCarrierHex && (!other.isInfantry() ||
                     currentEntity() instanceof SmallCraft ||
                     (currentEntity().isSupportVehicle() && (currentEntity().getWeightClass()
                                                             == EntityWeightClass.WEIGHT_LARGE_SUPPORT))
                     // FIXME: unclear why towed/towing is checked here:
                     ||
                     !currentEntity().getAllTowedUnits().isEmpty() ||
-                    currentEntity().getTowedBy() != Entity.NONE) {
+                    currentEntity().getTowedBy() != Entity.NONE)) {
                     // unload into adjacent hexes
                     Coords pos = null;
                     if (currentEntity() instanceof SmallCraft carrier) {

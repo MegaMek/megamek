@@ -1951,6 +1951,66 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * On a town leg, units whose ways into the streets go through the same door stack up outside it and go through
+     * one after another, the nearest first (HammerGS, 2026-10-01: "when infantry are going through a door, they queue
+     * up then go in"). See {@link TownLegPlanner#keepPlaceInStack}.
+     */
+    private List<MovePath> stackAtDoor(Entity entity, List<Entity> members, List<MovePath> paths) {
+        Board board = owner.getGame().getBoard(entity);
+        FormationLeg leg = formationLegs.get(entity.getUnitOrders().getFormation().map(FormationOrder::getLeaderId)
+              .orElse(-1));
+        if ((board == null) || (leg == null) || !leg.isTown()) {
+            return paths;
+        }
+        Coords ownDoor = null;
+        int ownStepsToDoor = 0;
+        List<Entity> ahead = new ArrayList<>();
+        Map<Integer, Integer> stepsToDoor = new HashMap<>();
+        Map<Integer, Coords> doors = new HashMap<>();
+        for (Entity member : members) {
+            Coords spot = leg.spots().get(member.getId());
+            Coords position = member.getPosition();
+            if ((spot == null) || (position == null) || position.equals(spot)) {
+                continue;
+            }
+            List<Coords> way = TownLegPlanner.wayTo(board, position, spot, hex -> routeCostFrom(member, spot, hex));
+            Coords door = TownLegPlanner.doorOn(board, way);
+            if (door != null) {
+                doors.put(member.getId(), door);
+                stepsToDoor.put(member.getId(), way.indexOf(door));
+            }
+        }
+        ownDoor = doors.get(entity.getId());
+        if (ownDoor == null) {
+            return paths;
+        }
+        ownStepsToDoor = stepsToDoor.get(entity.getId());
+        for (Entity member : members) {
+            Integer memberSteps = stepsToDoor.get(member.getId());
+            if ((member.getId() == entity.getId()) || !ownDoor.equals(doors.get(member.getId()))) {
+                continue;
+            }
+            boolean isNearer = (memberSteps < ownStepsToDoor)
+                  || ((memberSteps == ownStepsToDoor) && (member.getId() < entity.getId()));
+            if (isNearer) {
+                ahead.add(member);
+            }
+        }
+        if (ahead.isEmpty()) {
+            if (stepsToDoor.values().size() > 1) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_DOOR - first through the door at {}",
+                      entity.getDisplayName(), entity.getId(), currentRound(), ownDoor.getBoardNum());
+            }
+            return paths;
+        }
+        List<MovePath> kept = TownLegPlanner.keepPlaceInStack(paths, ownDoor, ahead.size());
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_DOOR - number {} in the stack for the door at {}, behind {}; "
+                    + "{} of {} moves kept", entity.getDisplayName(), entity.getId(), currentRound(), ahead.size() + 1,
+              ownDoor.getBoardNum(), ahead.get(ahead.size() - 1).getShortName(), kept.size(), paths.size());
+        return kept;
+    }
+
+    /**
      * On a town leg, keeps each unit within its leash of a friend (see {@link TownLegPlanner#keepWithinReach}).
      */
     private List<MovePath> keepFriendsInReach(Entity entity, List<Entity> members, List<MovePath> paths) {
@@ -2606,7 +2666,7 @@ public class UnitOrdersFollower {
         List<MovePath> keptPaths = pacedPaths.isEmpty() ? paths : pacedPaths;
         keptPaths = withoutBuildingCollapses(entity, keptPaths);
         if (isTownLeg) {
-            return keepFriendsInReach(entity, members, keptPaths);
+            return keepFriendsInReach(entity, members, stackAtDoor(entity, members, keptPaths));
         }
         return isHeldToSlowest ? keepLastUnitInReach(entity, keptPaths, paceLimit) : keptPaths;
     }

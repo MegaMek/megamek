@@ -195,4 +195,21 @@ class WaypointDistanceFieldTest {
         // two hexes straight through the building, three round it: the way round is cheaper
         assertTrue(field.costFrom(start) < 2 + WaypointDistanceField.BUILDING_DETOUR_COST, "" + field.costFrom(start));
     }
+
+    @Test
+    void wadingCostsMoreThanItsMovementPoints() {
+        // HammerGS's playtest: a 3 MP Stalker waded a lake a hex a turn because the way round cost the same; his own
+        // walk through the town never entered water (2026-10-01)
+        Coords start = new Coords(2, 4);
+        int onDryGround = WaypointDistanceField.build(mek, WAYPOINT).costFrom(start);
+        Board board = mek.getGame().getBoard(mek);
+        for (int x = 0; x <= GAP_COLUMN; x++) {
+            board.getHex(x, 3).addTerrain(new Terrain(Terrains.WATER, 1));
+        }
+
+        int throughTheLake = WaypointDistanceField.build(mek, WAYPOINT).costFrom(start);
+
+        assertTrue(throughTheLake >= onDryGround + WaypointDistanceField.WATER_DETOUR_COST,
+              "dry " + onDryGround + ", through the lake " + throughTheLake);
+    }
 }

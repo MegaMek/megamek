@@ -182,6 +182,15 @@ final class WaypointDistanceField {
     static final int BUILDING_DETOUR_COST = 6;
 
     /**
+     * What a hex of water a unit stands in up to its knees or deeper adds to the way through it, in movement points,
+     * for a unit that wades: the way round wins unless it is much longer (HammerGS, 2026-10-01).
+     */
+    static final int WATER_DETOUR_COST = 4;
+
+    /** What a hex of shallow water adds to the way through it, for a unit that wades. */
+    static final int SHALLOW_WATER_DETOUR_COST = 1;
+
+    /**
      * Spreads the cost outward from the goal hexes, which cost nothing, walking backward: a unit in each neighbour
      * would step into the hex already reached.
      */
@@ -196,6 +205,8 @@ final class WaypointDistanceField {
         boolean isAmphibious = (movementType == MovementType.WheeledAmphibious)
               || (movementType == MovementType.TrackedAmphibious);
         int maxElevationChange = mover.getMaxElevationChange();
+        // a hovercraft, a boat or an amphibious unit crosses water as it crosses land
+        boolean isWading = !isHovercraft && !isAmphibious && (movementType != MovementType.Water);
 
         PriorityQueue<long[]> frontier = new PriorityQueue<>((first, second) -> Long.compare(first[0], second[0]));
         for (Coords goal : goals) {
@@ -219,6 +230,11 @@ final class WaypointDistanceField {
                 // walk round a building rather than through it: going in damages it and can bring it down on the
                 // unit (HammerGS's playtest, 2026-09-27)
                 enteringCost += BUILDING_DETOUR_COST;
+            }
+            if (isWading && currentHex.containsTerrain(Terrains.WATER)) {
+                // walk round water rather than wade it: a 3 MP Stalker waded a lake a hex a turn because the way
+                // round cost the same (HammerGS's playtest, 2026-10-01); his own walk never entered water
+                enteringCost += (currentHex.depth() >= 1) ? WATER_DETOUR_COST : SHALLOW_WATER_DETOUR_COST;
             }
             for (int direction = 0; direction < 6; direction++) {
                 Coords neighbor = current.translated(direction);

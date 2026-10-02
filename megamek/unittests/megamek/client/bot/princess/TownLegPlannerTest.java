@@ -41,6 +41,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.board.Board;
@@ -48,6 +49,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -87,6 +89,7 @@ class TownLegPlannerTest {
     private static MovePath moveEndingAt(Coords end) {
         MovePath path = mock(MovePath.class);
         when(path.getFinalCoords()).thenReturn(end);
+        when(path.getStepVector()).thenReturn(new Vector<>());
         return path;
     }
 
@@ -248,5 +251,53 @@ class TownLegPlannerTest {
         assertFalse(TownLegPlanner.isSlowest(grasshopper, lance, walk::get));
         assertFalse(TownLegPlanner.isSlowest(stalker, List.of(stalker, otherStalker), walk::get),
               "a lance all of one speed has no one to make way for");
+    }
+
+    @Test
+    void theDoorIsWhereTheWayFirstEntersAStreet() {
+        Board board = boardWithStreet();
+        Coords flag = new Coords(4, 1);
+        List<Coords> way = TownLegPlanner.wayTo(board, new Coords(4, 11), flag, flag::distance);
+
+        Coords door = TownLegPlanner.doorOn(board, way);
+
+        assertTrue(TownLegPlanner.isNarrow(board, door), "door " + door);
+        assertFalse(TownLegPlanner.isNarrow(board, way.get(way.indexOf(door) - 1)), "the hex before it is open");
+    }
+
+    @Test
+    void aUnitAlreadyInTheStreetHasNoDoor() {
+        Board board = boardWithStreet();
+        Coords flag = new Coords(4, 1);
+        List<Coords> way = TownLegPlanner.wayTo(board, new Coords(4, 6), flag, flag::distance);
+
+        assertEquals(null, TownLegPlanner.doorOn(board, way));
+    }
+
+    @Test
+    void theSecondInTheStackWaitsAHexOutsideTheDoorAndTheThirdTwo() {
+        // HammerGS: "when infantry are going through a door, they queue up then go in" (2026-10-01)
+        Coords door = new Coords(4, 5);
+        MovePath intoTheDoor = moveThrough(door);
+        MovePath aHexOut = moveThrough(new Coords(4, 6));
+        MovePath twoHexesOut = moveThrough(new Coords(4, 7));
+        MovePath throughAndBeyond = moveThrough(door, new Coords(4, 3));
+
+        assertEquals(List.of(aHexOut, twoHexesOut), TownLegPlanner.keepPlaceInStack(
+              List.of(intoTheDoor, aHexOut, twoHexesOut, throughAndBeyond), door, 1));
+        assertEquals(List.of(twoHexesOut), TownLegPlanner.keepPlaceInStack(
+              List.of(intoTheDoor, aHexOut, twoHexesOut, throughAndBeyond), door, 2));
+    }
+
+    private static MovePath moveThrough(Coords... hexes) {
+        MovePath path = moveEndingAt(hexes[hexes.length - 1]);
+        Vector<MoveStep> steps = new Vector<>();
+        for (Coords hex : hexes) {
+            MoveStep step = mock(MoveStep.class);
+            when(step.getPosition()).thenReturn(hex);
+            steps.add(step);
+        }
+        when(path.getStepVector()).thenReturn(steps);
+        return path;
     }
 }

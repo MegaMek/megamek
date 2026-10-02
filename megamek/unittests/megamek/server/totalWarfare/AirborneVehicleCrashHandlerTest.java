@@ -475,11 +475,11 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         Hex water = new Hex(0, "water:2", "", new Coords(0, 0));
         Hex rough = new Hex(0, "rough:1", "", new Coords(0, 0));
 
-        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, clear));
-        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, water), "WiGEs treat water as clear");
-        assertFalse(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, rough));
-        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(vtol, clear));
-        assertFalse(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(vtol, water), "a VTOL cannot land on water");
+        assertTrue(wige.canLandIn(clear));
+        assertTrue(wige.canLandIn(water), "WiGEs treat water as clear");
+        assertFalse(wige.canLandIn(rough));
+        assertTrue(vtol.canLandIn(clear));
+        assertFalse(vtol.canLandIn(water), "a VTOL cannot land on water");
     }
 
     @Test

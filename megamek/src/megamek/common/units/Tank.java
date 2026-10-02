@@ -986,17 +986,37 @@ public class Tank extends Entity implements Fortifiable, RubbleClearer {
     }
 
     /**
-     * @return {@code true} if this VTOL or WiGE crashed after a sideslip this turn and so may not attack (TW p.68)
+     * @return {@code true} if this VTOL or WiGE crashed this turn, after a sideslip or a landing, and so may not
+     *       attack (TW p.68)
      */
     public boolean hasCrashedThisTurn() {
         return crashedThisTurn;
     }
 
     /**
-     * @param crashedThisTurn {@code true} when this VTOL or WiGE crashes after a sideslip (TW p.68)
+     * @param crashedThisTurn {@code true} when this VTOL or WiGE crashes after a sideslip or a landing (TW p.68)
      */
     public void setCrashedThisTurn(boolean crashedThisTurn) {
         this.crashedThisTurn = crashedThisTurn;
+    }
+
+    /**
+     * Returns whether this VTOL or WiGE can land in the given hex. A WiGE may only land in clear or paved hexes, and
+     * treats water as clear (TW p.55, errata v12.0); a VTOL may land in clear or paved hexes, or on a building roof
+     * (TW p.54). A road or bridge counts as paved. Landing anywhere else is a crash (TW p.68).
+     *
+     * @param hex the hex to land in
+     *
+     * @return {@code true} if the vehicle can land in the hex
+     */
+    public boolean canLandIn(Hex hex) {
+        if (hex.isClearForTakeoff()) {
+            return true;
+        }
+        if (getMovementMode() == EntityMovementMode.WIGE) {
+            return hex.containsTerrain(Terrains.WATER);
+        }
+        return hex.containsTerrain(Terrains.BLDG_ELEV);
     }
 
     @Override

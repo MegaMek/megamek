@@ -8061,22 +8061,49 @@ public class Compute {
      * ground unit reveals as it passes rather than only when it stops. Requiring the mover to stop meant walking
      * past a hidden unit did nothing at all.</p>
      *
-     * <p>An airborne mover is different: it reveals what it flies over, so the range depends on whether it carries
-     * an Active Probe.</p>
+     * <p>An airborne aerospace mover is different: it reveals what it flies over, so the range depends on whether it
+     * carries an Active Probe.</p>
      *
-     * @param mover    the unit that is moving
-     * @param distance hexes between the mover's current step and the hidden unit
+     * <p>A VTOL or WiGE flying over a hex does not reveal a unit hidden in that hex (TW errata v12.0, p.260, Airborne
+     * Units). It still reveals a unit it passes next to, and one in the hex where it ends its move, as a ground unit
+     * would.</p>
+     *
+     * @param mover      the unit that is moving
+     * @param distance   hexes between the mover's current step and the hidden unit
+     * @param overflight {@code true} when this step is a VTOL or WiGE flying over the hex without ending its move
+     *                   there; see {@link #isNonAerospaceOverflight(Entity, MoveStep, boolean)}
      *
      * @return {@code true} if the hidden unit is revealed and may take its shot
      */
-    public static boolean revealsHiddenUnitForPointblankShot(Entity mover, int distance) {
+    public static boolean revealsHiddenUnitForPointblankShot(Entity mover, int distance, boolean overflight) {
         if (distance > 1) {
             return false;
         }
-        if (!mover.isAirborne()) {
-            return true;
+        if (mover.isAirborne()) {
+            return distance == ((mover.getBAPRange() > 0) ? 1 : 0);
         }
-        return distance == ((mover.getBAPRange() > 0) ? 1 : 0);
+        return !(overflight && (distance == 0));
+    }
+
+    /**
+     * Whether a step is a non-aerospace airborne unit flying over a hex: a unit using VTOL or WiGE movement (VTOLs,
+     * WiGEs, LAMs in AirMek mode, powered flight infantry) that is above the terrain of the step's hex and does not
+     * end its move there. Such a unit does not reveal units hidden in the hexes it flies over (TW errata v12.0,
+     * p.260, Airborne Units).
+     *
+     * @param mover   the unit that is moving
+     * @param step    the step being taken
+     * @param endStep {@code true} when this is the last step of the move
+     *
+     * @return {@code true} if the step flies over its hex
+     */
+    public static boolean isNonAerospaceOverflight(Entity mover, MoveStep step, boolean endStep) {
+        if (endStep) {
+            return false;
+        }
+        EntityMovementMode movementMode = mover.getMovementMode();
+        boolean fliesLikeVTOLOrWiGE = movementMode.isVTOL() || movementMode.isWiGE();
+        return fliesLikeVTOLOrWiGE && (step.getClearance() > 0);
     }
 
     /**

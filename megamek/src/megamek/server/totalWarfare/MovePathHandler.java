@@ -2300,6 +2300,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Check for hidden units point-blank shots
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+                boolean overflight = Compute.isNonAerospaceOverflight(this.entity, step, md.isEndStep(step));
                 for (Entity hiddenEntity : hiddenEnemies) {
                     int dist = hiddenEntity.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation; do _not_ ignore hidden units here.
@@ -2373,7 +2374,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // Potential point-blank shot when not causing stacking violation, but only in some situations:
                         // 1. mover is a ground unit and moves adjacent to / into the hidden unit's hex;
                         // 2. mover is Aerospace and hidden unit is within detection range of its flight path
-                        //    (with or without Active Probe).
+                        //    (with or without Active Probe);
+                        // 3. mover is a VTOL or WiGE in flight: as a ground unit, except that flying over the hidden
+                        //    unit's hex without ending the move there reveals nothing (TW errata v12.0, p.260).
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
                         //
                         // The ground case deliberately does not wait for the end of the move. TW: a hidden unit
@@ -2381,7 +2384,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // its move after the attack" if it has MP left - which can only happen part way through a
                         // move. Requiring the mover to stop meant walking past a hidden unit did nothing at all.
                     } else if (!hiddenEntity.madePointblankShot()
-                          && Compute.revealsHiddenUnitForPointblankShot(this.entity, dist)) {
+                          && Compute.revealsHiddenUnitForPointblankShot(this.entity, dist, overflight)) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
 
@@ -2413,6 +2416,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.subject = this.entity.getId();
                         report.add(hiddenEntity.getPosition().getBoardNum());
                         gameManager.getMainPhaseReport().addElement(report);
+                    } else if (overflight && (dist == 0)) {
+                        logger.debug("[Hidden] {} flies over hidden {} at {} without revealing it (TW p.260)",
+                                     this.entity.getShortName(),
+                                     hiddenEntity.getShortName(),
+                                     step.getPosition().getBoardNum());
                     }
                 }
             }

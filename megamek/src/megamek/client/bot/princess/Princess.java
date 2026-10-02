@@ -33,13 +33,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.io.File;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.BotHeatEquipmentManager;
 import megamek.client.bot.ChatProcessor;
@@ -57,7 +50,14 @@ import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
+import megamek.common.actions.ReconCameraSpotAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.SpotAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -106,6 +106,13 @@ import megamek.common.weapons.Weapon;
 import megamek.common.weapons.attacks.StopSwarmAttack;
 import megamek.logging.MMLogger;
 import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class Princess extends BotClient {
     private static final MMLogger LOGGER = MMLogger.create(Princess.class);
@@ -3227,9 +3234,6 @@ public class Princess extends BotClient {
         final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false);
         if ((paths == null) || paths.isEmpty()) {
             final MovePath deployOnly = new MovePath(game, entity);
-            if (hasJumpDeclaration(paths)) {
-               deployOnly.addStep(MoveStepType.START_JUMP);
-            }
             deployOnly.addStep(MoveStepType.DEPLOY);
             return deployOnly;
         }

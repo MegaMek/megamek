@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -77,5 +77,13 @@ public class AlamoMissileWeapon extends CapitalMissileWeapon {
               .setISAdvancement(3071, DATE_NONE, DATE_NONE)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.E);
+    }
+
+    /**
+     * The Alamo deals capital damage but uses the standard Medium range bracket (IO:AE p. 169).
+     */
+    @Override
+    public boolean usesCapitalRangeBrackets() {
+        return false;
     }
 }

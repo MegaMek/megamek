@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -506,7 +506,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 maxRange = weaponType.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
-                int rangeMultiplier = weaponType.isCapital() ? 2 : 1;
+                int rangeMultiplier = weaponType.usesCapitalRangeBrackets() ? 2 : 1;
                 if (game.getBoard(firingEntity).isGround()) {
                     rangeMultiplier *= 8;
                 }

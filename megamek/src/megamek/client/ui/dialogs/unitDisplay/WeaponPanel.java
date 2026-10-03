@@ -188,6 +188,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private Targetable prevTarget = null;
     private JScrollPane tWeaponScroll;
     private JComboBox<String> m_chAmmo;
+    /**
+     * The weapon the ammo selector was last filled for. Until the selector is refilled, its selection belongs to this
+     * weapon and must not be applied to another one.
+     */
+    private WeaponMounted ammoSelectorWeapon;
     public JComboBox<String> m_chBayWeapon;
 
     private JLabel wBayWeapon;
@@ -560,8 +565,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wInfantryRange5R = new JLabel("---", SwingConstants.CENTER);
         setupLabel(wInfantryRange5R);
 
-        // range panel
-        JPanel pRange = new JPanel(new GridBagLayout());
+        // range panel. Its row count changes with the unit (aerospace adds the AV row), so its minimum height follows
+        // its content: when space is short the parent lays out at minimum sizes, and a fixed minimum cut off the AV row.
+        JPanel pRange = new JPanel(new GridBagLayout()) {
+            @Override
+            public Dimension getMinimumSize() {
+                return new Dimension(INTERNAL_PANE_WIDTH, getPreferredSize().height);
+            }
+        };
         pRange.setAlignmentX(Component.LEFT_ALIGNMENT);
         pRange.setAlignmentY(Component.TOP_ALIGNMENT);
         pRange.setOpaque(false);
@@ -1680,7 +1691,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wMedL.setVisible(true);
             wLongL.setVisible(true);
 
-            wMinR.setVisible(true);
             wShortR.setVisible(true);
             wMedR.setVisible(true);
             wLongR.setVisible(true);
@@ -1853,8 +1863,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // Update the range display to account for the selected ammo, or the loaded ammo
-        // if none is selected
-        AmmoMounted mAmmo = getSelectedAmmo().orElse(mounted.getLinkedAmmo());
+        // if none is selected. The ammo selector is only refilled further down, so after switching weapons it still
+        // holds the previous weapon's ammo; its selection only counts when it was filled for this weapon.
+        Optional<AmmoMounted> selectedAmmo = (ammoSelectorWeapon == mounted) ? getSelectedAmmo() : Optional.empty();
+        AmmoMounted mAmmo = selectedAmmo.orElse(mounted.getLinkedAmmo());
         if (mAmmo != null) {
             updateRangeDisplayForAmmo(mAmmo);
         }
@@ -1910,6 +1922,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             weaponType = mounted.getType();
         }
 
+        // Only the branches below that offer a choice fill vAmmo. The others clear it, so a later refresh cannot read
+        // the previous weapon's ammo through the selector.
+        vAmmo = new ArrayList<>();
         if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
             m_chAmmo.setEnabled(false);
         } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)
@@ -1997,6 +2012,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 m_chAmmo.setSelectedIndex(newSelectedIndex);
             }
         }
+        ammoSelectorWeapon = oldMount;
 
         // send event to other parts of the UI which care
         unitDisplayPanel.getClientGUI().showSensorRanges(entity);
@@ -2212,9 +2228,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wMedR.setText("---");
         wLongR.setText("---");
         wExtR.setText("---");
+        // range labels follow the range scale, which can differ from the damage scale
+        boolean usesCapitalRangeBrackets = weaponType.usesCapitalRangeBrackets();
         // every weapon gets at least short range
         wShortAVR.setText(Integer.toString(avShort));
-        if (weaponType.isCapital()) {
+        if (usesCapitalRangeBrackets) {
             wShortR.setText("1-12");
         } else if (weaponType.hasFlag(WeaponType.F_PD_BAY)) {
             // Point Defense bays have a variable range too, depending on the mode they're
@@ -2229,7 +2247,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (maxRange > WeaponType.RANGE_SHORT) {
             wMedAVR.setText(Integer.toString(avMed));
-            if (weaponType.isCapital()) {
+            if (usesCapitalRangeBrackets) {
                 wMedR.setText("13-24");
             } else {
                 wMedR.setText("7-12");
@@ -2237,7 +2255,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (maxRange > WeaponType.RANGE_MED) {
             wLongAVR.setText(Integer.toString(avLong));
-            if (weaponType.isCapital()) {
+            if (usesCapitalRangeBrackets) {
                 wLongR.setText("25-40");
             } else {
                 wLongR.setText("13-20");
@@ -2245,7 +2263,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (maxRange > WeaponType.RANGE_LONG) {
             wExtAVR.setText(Integer.toString(avExt));
-            if (weaponType.isCapital()) {
+            if (usesCapitalRangeBrackets) {
                 wExtR.setText("41-50");
             } else {
                 wExtR.setText("21-25");

@@ -1136,8 +1136,22 @@ public class WeaponType extends EquipmentType {
         return baDamageClass;
     }
 
+    /**
+     * Returns {@code true} if this weapon uses the capital range brackets (12/24/40/50) when fired in aerospace
+     * combat, and {@code false} if it uses the standard brackets (6/12/20/25).
+     *
+     * <p>This usually matches {@link #isCapital()}, but range scale and damage scale are separate. Some bomb missiles
+     * deal standard damage at capital ranges (TO:AuE p. 169-171), and the Alamo deals capital damage at standard
+     * ranges (IO:AE p. 169). Those weapons override this method.</p>
+     *
+     * @return {@code true} to use the capital range brackets
+     */
+    public boolean usesCapitalRangeBrackets() {
+        return isCapital();
+    }
+
     public int[] getATRanges() {
-        if (isCapital()) {
+        if (usesCapitalRangeBrackets()) {
             return new int[] { Integer.MIN_VALUE, 12, 24, 40, 50 };
         }
         return new int[] { Integer.MIN_VALUE, 6, 12, 20, 25 };

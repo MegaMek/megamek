@@ -96,6 +96,19 @@ final class ConvoyTracker {
         return convoy;
     }
 
+    /**
+     * @return the convoy's front unit, deployed or not; empty when none of its units is left
+     */
+    Optional<Entity> lead(int convoyForceId) {
+        List<Entity> convoy = new ArrayList<>();
+        for (Entity unit : owner.getGame().getEntitiesVector()) {
+            if ((unit.getForceId() == convoyForceId) && !unit.isDestroyed() && !unit.isDoomed()) {
+                convoy.add(unit);
+            }
+        }
+        return convoy.isEmpty() ? Optional.empty() : Optional.of(head(convoy));
+    }
+
     static boolean isOnBoardAndAlive(Entity unit) {
         return (unit.getPosition() != null) && !unit.isOffBoard() && !unit.isDestroyed() && !unit.isDoomed()
               && unit.isDeployed();

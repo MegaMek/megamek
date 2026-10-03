@@ -793,6 +793,15 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         for (String command : MoveOrderCommands.roleCommands(units(), role)) {
             clientGUI.getClient().sendChat(command);
         }
+        if (rolePanel.lanceToMakeConvoy().isPresent()) {
+            LanceRoles.ConvoyChoice lance = rolePanel.lanceToMakeConvoy().get();
+            for (String command : MoveOrderCommands.makeConvoyCommands(
+                  LanceRoles.unitsOf(clientGUI.getClient().getGame(), lance.forceId()), lance.newExitEdge())) {
+                clientGUI.getClient().sendChat(command);
+            }
+            LOGGER.info("[BotOrders] {} made a convoy, leaving by the {} edge, to be escorted by {}", lance.name(),
+                  lance.newExitEdge(), group.label());
+        }
         if (rolePanel.isEscortChosen()) {
             LOGGER.info("[BotOrders] escort role sent to {} of {}: {}", group.label(), botPlayer.getName(), role);
             acknowledger.accept(botPlayer, Messages.getString("BotCommandPanel.MoveOrder.toastEscort", group.label()));

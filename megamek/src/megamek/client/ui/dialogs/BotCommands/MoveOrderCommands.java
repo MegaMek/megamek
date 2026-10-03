@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
@@ -165,6 +166,28 @@ final class MoveOrderCommands {
             }
         }
         return false;
+    }
+
+    /**
+     * Makes a lance a convoy because an escort was given it: the convoy role on each of its bot units, and a Column
+     * unless it has a shape already.
+     *
+     * @param units the lance's units
+     * @param edge  the edge it leaves by
+     *
+     * @return the commands to send, in order
+     */
+    static List<String> makeConvoyCommands(List<Entity> units, OffBoardDirection edge) {
+        List<Entity> botUnits = new ArrayList<>();
+        for (Entity unit : units) {
+            if ((unit.getOwner() != null) && unit.getOwner().isBot()) {
+                botUnits.add(unit);
+            }
+        }
+        LanceRole convoy = LanceRole.convoy(edge);
+        List<String> commands = new ArrayList<>(roleCommands(botUnits, convoy));
+        commands.addAll(convoyColumnCommands(botUnits, convoy));
+        return commands;
     }
 
     /**

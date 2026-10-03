@@ -44,6 +44,7 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -202,9 +203,13 @@ public class LanceRolePanel extends JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                   boolean isSelected, boolean hasFocus) {
-                String text = (value instanceof LanceRoles.ConvoyChoice convoy)
-                      ? Messages.getString("BotCommandPanel.Role.escort.convoyChoice", convoy.name(), convoy.unitCount())
-                      : Messages.getString("BotCommandPanel.Role.escort.noConvoy");
+                String text;
+                if (value instanceof LanceRoles.ConvoyChoice convoy) {
+                    text = Messages.getString(convoy.isConvoy() ? "BotCommandPanel.Role.escort.convoyChoice"
+                          : "BotCommandPanel.Role.escort.lanceChoice", convoy.name(), convoy.unitCount());
+                } else {
+                    text = Messages.getString("BotCommandPanel.Role.escort.noConvoy");
+                }
                 return super.getListCellRendererComponent(list, text, index, isSelected, hasFocus);
             }
         });
@@ -376,6 +381,18 @@ public class LanceRolePanel extends JPanel {
     }
 
     /**
+     * @return the lance the escort is given when it is not a convoy yet, and so becomes one when the role is sent;
+     *       empty otherwise
+     */
+    public Optional<LanceRoles.ConvoyChoice> lanceToMakeConvoy() {
+        if (!isEscortChosen() || !(convoyCombo.getSelectedItem() instanceof LanceRoles.ConvoyChoice choice)
+              || choice.isConvoy()) {
+            return Optional.empty();
+        }
+        return Optional.of(choice);
+    }
+
+    /**
      * @return {@code true} when Escort is chosen: the lance then has no route of its own
      */
     public boolean isEscortChosen() {
@@ -469,7 +486,9 @@ public class LanceRolePanel extends JPanel {
               + Messages.getString("BotCommandPanel.Role.summary.leave."
               + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name(), LanceRole.BRIEF_CHASE_HEXES) + ' '
               + Messages.getString("BotCommandPanel.Role.summary.gone."
-              + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name());
+              + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name())
+              + (convoy.isConvoy() ? "" : ' ' + Messages.getString("BotCommandPanel.Role.summary.becomesConvoy",
+              convoy.name(), Messages.getString("BotCommandPanel.Role.edge." + convoy.newExitEdge().name())));
     }
 
     private static String html(String text, int width) {

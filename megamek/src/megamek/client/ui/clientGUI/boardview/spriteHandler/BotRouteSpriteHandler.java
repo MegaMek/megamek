@@ -180,6 +180,10 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
                 int navNumber = waypointOrder.getNavNumber();
                 String stepName = (navNumber == NavPoint.UNNAMED) ? String.valueOf(step + 1)
                       : NavPoint.name(navNumber);
+                if (waypointOrder.isPlannedTurn()) {
+                    // a turning point the bot planned on its way, not one the player set
+                    stepName = Messages.getString("BotCommandPanel.MoveOrder.flagPlanned");
+                }
                 flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), stepName,
                       waypointOrder.getFacing(), holdTurns, !isLast && waypointOrder.isAssemble(),
                       isLast && waypointOrder.isExitBoard(), waypointOrder.getPhaseLine()));

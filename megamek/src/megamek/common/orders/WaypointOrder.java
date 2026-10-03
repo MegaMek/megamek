@@ -79,6 +79,24 @@ public final class WaypointOrder implements Serializable {
     // the waypoint's nav point number in route text, e.g. NAV3 for Nav Point Gamma
     private static final String NAV_CODE = "NAV";
 
+    // the bot plans the way to this waypoint; this waypoint is a turning point the bot planned
+    private static final String PLAN_CODE = "PLAN";
+    private static final String TURN_CODE = "TURN";
+
+    /**
+     * Whether the bot plans the way to a waypoint, and whether the waypoint is one it planned (HammerGS, 2026-10-03:
+     * a convoy drove straight at a hill, then along its foot to the pass, the way being no longer than heading
+     * straight for the pass).
+     */
+    public enum RoutePlan {
+        /** A waypoint the unit makes for as it finds best, turn by turn. */
+        NONE,
+        /** The bot works out the way to this waypoint once, and adds the turning points on it as waypoints. */
+        PLAN_LEG,
+        /** A turning point the bot added on its planned way; the unit drives straight from one to the next. */
+        TURN_POINT
+    }
+
     /**
      * How a unit leaves a waypoint.
      */
@@ -107,6 +125,8 @@ public final class WaypointOrder implements Serializable {
     private final int navNumber;
     // the phase line this waypoint is on, or null; null in a save made before phase lines
     private final String phaseLine;
+    // whether the bot plans the way here, or planned this waypoint; null, read as NONE, in a save made before
+    private final RoutePlan routePlan;
 
     /**
      * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
@@ -149,12 +169,13 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard, @Nullable WaypointFormation arrivalFormation) {
-        this(facing, holdMode, holdTurns, formation, exitBoard, arrivalFormation, NavPoint.UNNAMED, null);
+        this(facing, holdMode, holdTurns, formation, exitBoard, arrivalFormation, NavPoint.UNNAMED, null,
+              RoutePlan.NONE);
     }
 
     private WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard, @Nullable WaypointFormation arrivalFormation, int navNumber,
-          @Nullable String phaseLine) {
+          @Nullable String phaseLine, RoutePlan routePlan) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -169,6 +190,31 @@ public final class WaypointOrder implements Serializable {
         this.arrivalFormation = arrivalFormation;
         this.navNumber = Math.max(NavPoint.UNNAMED, navNumber);
         this.phaseLine = PhaseLine.cleanName(phaseLine);
+        this.routePlan = Objects.requireNonNull(routePlan);
+    }
+
+    /**
+     * @param newRoutePlan whether the bot plans the way here, or planned this waypoint
+     *
+     * @return this waypoint's settings with that, everything else kept
+     */
+    public WaypointOrder withRoutePlan(RoutePlan newRoutePlan) {
+        return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation, navNumber,
+              phaseLine, newRoutePlan);
+    }
+
+    /**
+     * @return whether the bot plans the way to this waypoint, or planned this waypoint
+     */
+    public RoutePlan getRoutePlan() {
+        return (routePlan == null) ? RoutePlan.NONE : routePlan;
+    }
+
+    /**
+     * @return {@code true} if this is a turning point the bot added on a way it planned
+     */
+    public boolean isPlannedTurn() {
+        return getRoutePlan() == RoutePlan.TURN_POINT;
     }
 
     /**
@@ -178,7 +224,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withPhaseLine(@Nullable String newPhaseLine) {
         return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation, navNumber,
-              newPhaseLine);
+              newPhaseLine, getRoutePlan());
     }
 
     /**
@@ -196,7 +242,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withNavNumber(int newNavNumber) {
         return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
-              newNavNumber, phaseLine);
+              newNavNumber, phaseLine, getRoutePlan());
     }
 
     /**
@@ -214,7 +260,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withFacing(int newFacing) {
         return new WaypointOrder(newFacing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
-              navNumber, phaseLine);
+              navNumber, phaseLine, getRoutePlan());
     }
 
     /**
@@ -224,7 +270,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withHoldTurns(int turns) {
         return new WaypointOrder(facing, (turns > 0) ? HoldMode.HOLD : HoldMode.PASS, turns, formation, exitBoard,
-              arrivalFormation, navNumber, phaseLine);
+              arrivalFormation, navNumber, phaseLine, getRoutePlan());
     }
 
     /**
@@ -317,6 +363,11 @@ public final class WaypointOrder implements Serializable {
         if (phaseLine != null) {
             suffix.append('/').append(PhaseLine.toCode(phaseLine));
         }
+        if (getRoutePlan() == RoutePlan.PLAN_LEG) {
+            suffix.append('/').append(PLAN_CODE);
+        } else if (getRoutePlan() == RoutePlan.TURN_POINT) {
+            suffix.append('/').append(TURN_CODE);
+        }
         return suffix.toString();
     }
 
@@ -354,6 +405,7 @@ public final class WaypointOrder implements Serializable {
         WaypointFormation parsedArrival = null;
         int parsedNavNumber = NavPoint.UNNAMED;
         String parsedPhaseLine = null;
+        RoutePlan parsedPlan = RoutePlan.NONE;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
             if (code.isEmpty()) {
@@ -368,6 +420,10 @@ public final class WaypointOrder implements Serializable {
                 parsedFormation = WaypointFormation.parse(code);
             } else if (code.equals(EXIT_CODE)) {
                 parsedExit = true;
+            } else if (code.equals(PLAN_CODE)) {
+                parsedPlan = RoutePlan.PLAN_LEG;
+            } else if (code.equals(TURN_CODE)) {
+                parsedPlan = RoutePlan.TURN_POINT;
             } else if (code.startsWith(NAV_CODE) && (code.length() > NAV_CODE.length())) {
                 parsedNavNumber = parseTurns(code.substring(NAV_CODE.length()), segment);
             } else if (code.startsWith(ASSEMBLE_CODE) && (code.length() > 1)
@@ -389,7 +445,7 @@ public final class WaypointOrder implements Serializable {
             parsedMode = HoldMode.PASS;
         }
         return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit, parsedArrival,
-              parsedNavNumber, parsedPhaseLine);
+              parsedNavNumber, parsedPhaseLine, parsedPlan);
     }
 
     @Override
@@ -401,13 +457,13 @@ public final class WaypointOrder implements Serializable {
               && (holdTurns == otherOrder.holdTurns) && (getHoldMode() == otherOrder.getHoldMode())
               && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation)
               && Objects.equals(arrivalFormation, otherOrder.arrivalFormation) && (navNumber == otherOrder.navNumber)
-              && Objects.equals(phaseLine, otherOrder.phaseLine);
+              && Objects.equals(phaseLine, otherOrder.phaseLine) && (getRoutePlan() == otherOrder.getRoutePlan());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation, navNumber,
-              phaseLine);
+              phaseLine, getRoutePlan());
     }
 
     @Override

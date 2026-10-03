@@ -52,6 +52,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.GameTurn;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.orders.ContactRule;
@@ -60,6 +61,7 @@ import megamek.common.orders.FightState;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.LanceRoles;
 import megamek.common.orders.NavPoint;
 import megamek.common.orders.OrderPriority;
@@ -250,6 +252,12 @@ public class UnitOrdersFollower {
 
     /** The units holding at a phase line, by unit id; to call the hold, the reminders and the release. */
     private final Map<Integer, PhaseLineHold> phaseLineHolds = new HashMap<>();
+    // escorts: each escort lance's places, by its force id; the place each escort keeps, by unit id; where each
+    // convoy was last seen, by its force id, for escorts set to hold where it fell; escorts already told it is gone
+    private final Map<Integer, EscortPlan> escortPlans = new HashMap<>();
+    private final Map<Integer, LanceRole.Position> escortPositionsKept = new HashMap<>();
+    private final Map<Integer, Coords> lastConvoyCenters = new HashMap<>();
+    private final Set<Integer> convoyGoneLogged = new HashSet<>();
 
     /** How often, in rounds, a lance still holding at a phase line reminds the player whom it is waiting for. */
     static final int PHASE_LINE_REMINDER_ROUNDS = 3;
@@ -526,7 +534,8 @@ public class UnitOrdersFollower {
     public Optional<CardinalEdge> getOrderedEdge(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
         if (orders.getEdgeOrder() == EdgeOrder.NONE) {
-            return Optional.empty();
+            // an escort set to Follow leaves by the edge its convoy left by
+            return escortExitEdge(entity).map(UnitOrdersFollower::toCardinalEdge);
         }
         return Optional.of(toCardinalEdge(orders.getEdge()));
     }
@@ -537,7 +546,8 @@ public class UnitOrdersFollower {
      * @return {@code true} if the unit is ordered to leave the board by an edge
      */
     public boolean isOrderedToExit(Entity entity) {
-        return entity.getUnitOrders().getEdgeOrder() == EdgeOrder.EXIT_BY;
+        return (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.EXIT_BY)
+              || ((entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE) && escortExitEdge(entity).isPresent());
     }
 
     /**
@@ -2678,6 +2688,10 @@ public class UnitOrdersFollower {
         if (getFormationSlot(entity).isPresent() || isHeadingForHold(entity)) {
             return 0;
         }
+        if (isEscorting(entity)) {
+            // a hex either side of its place keeps an escort in its band without dancing for the exact hex
+            return 1;
+        }
         Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
         if (waypoint.isPresent() && isLeadingFormationOnRoute(entity)) {
             return flagRadius(entity, waypoint.get());
@@ -2742,6 +2756,271 @@ public class UnitOrdersFollower {
         }
         List<Entity> members = formationMembers(entity, formation.get().getLeaderId());
         return (members.size() >= 2) && (members.get(0).getId() == entity.getId());
+    }
+
+    /**
+     * The hex an escort heads for this turn: its place round its convoy - ahead of the head, beside the middle or
+     * behind the tail, with "ahead" aimed at the convoy's next waypoint (HammerGS, 2026-10-02). Where the convoy has
+     * still to move this turn, the places are round where it will be, a walk on toward that waypoint. Once the convoy
+     * is gone: an escort set to Follow holds where the convoy fell, or leaves with it by its edge (see
+     * {@link #getOrderedEdge}); one set to Break off fights as an ordinary lance.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return the place, or empty for a unit that is not escorting a convoy on the board
+     */
+    public Optional<Coords> getEscortPlace(Entity entity) {
+        LanceRole role = entity.getLanceRole();
+        if ((role == null) || !role.isEscort() || (entity.getPosition() == null)) {
+            return Optional.empty();
+        }
+        List<Entity> convoy = convoyOnBoard(role.getConvoyForceId(), entity.getBoardId());
+        if (convoy.isEmpty()) {
+            Coords fellAt = lastConvoyCenters.get(role.getConvoyForceId());
+            if ((role.getWhenConvoyGone() == LanceRole.WhenConvoyGone.FOLLOW) && (fellAt != null)
+                  && convoyExitEdge(role.getConvoyForceId()).isEmpty()) {
+                logConvoyGone(entity, "holding where the convoy fell, " + fellAt.getBoardNum());
+                return Optional.of(fellAt);
+            }
+            logConvoyGone(entity, (role.getWhenConvoyGone() == LanceRole.WhenConvoyGone.FOLLOW)
+                  ? "following it off the board" : "breaking off to fight as a lance");
+            return Optional.empty();
+        }
+        return Optional.ofNullable(escortPlan(entity, role, convoy).places().get(entity.getId()));
+    }
+
+    /**
+     * @return {@code true} if the unit escorts a convoy that is on the board
+     */
+    public boolean isEscorting(Entity entity) {
+        return getEscortPlace(entity).isPresent();
+    }
+
+    /**
+     * The places of one escort lance, worked out once for a moment of the turn: the path ranker asks for a unit's
+     * place for every path it scores.
+     */
+    private record EscortPlan(String moment, Map<Integer, Coords> places) {}
+
+    private EscortPlan escortPlan(Entity escort, LanceRole role, List<Entity> convoy) {
+        Entity head = convoyHead(convoy);
+        boolean isConvoyStillToMove = owner.getGame().getPhase().isMovement() && !head.isDone();
+        List<Entity> escorts = escortsOf(escort, role);
+        String moment = currentRound() + ":" + owner.getGame().getPhase() + ":" + head.getId() + ":"
+              + head.getPosition() + ":" + isConvoyStillToMove + ":" + escorts.size() + ":" + convoy.size();
+        EscortPlan known = escortPlans.get(escort.getForceId());
+        if ((known != null) && known.moment().equals(moment)) {
+            return known;
+        }
+        Board board = owner.getGame().getBoard(head);
+        Coords headNow = head.getPosition();
+        Optional<Coords> convoyWaypoint = head.getUnitOrders().getNextWaypoint();
+        int heading = convoyHeading(head, board);
+        // a convoy that has still to move this turn will be a walk on toward its waypoint by the time it stops
+        int predictedSteps = isConvoyStillToMove ? head.getWalkMP() : 0;
+        Coords headThen = convoyWaypoint.isPresent()
+              ? EscortPlanner.stepToward(headNow, convoyWaypoint.get(), predictedSteps)
+              : headNow.translated(heading, predictedSteps);
+        EscortPlanner.ConvoyShape shape = convoyShape(convoy, head, headThen, heading);
+        lastConvoyCenters.put(role.getConvoyForceId(), shape.middle());
+
+        int distance = escortDistance(role);
+        List<LanceRole.Position> positions = new ArrayList<>(role.getPositions());
+        Map<LanceRole.Position, Coords> placeHexes = new HashMap<>();
+        for (LanceRole.Position position : positions) {
+            placeHexes.put(position, EscortPlanner.place(shape, position, distance, board));
+        }
+        Map<Integer, Coords> escortPositions = new HashMap<>();
+        for (Entity unit : escorts) {
+            escortPositions.put(unit.getId(), unit.getPosition());
+        }
+        Map<Integer, LanceRole.Position> assigned = EscortPlanner.assign(escortPositions, positions, placeHexes,
+              escortPositionsKept);
+        escortPositionsKept.putAll(assigned);
+
+        Map<Integer, Coords> places = new HashMap<>();
+        StringBuilder detail = new StringBuilder();
+        for (LanceRole.Position position : positions) {
+            int order = 0;
+            for (Entity unit : escorts) {
+                if (assigned.get(unit.getId()) == position) {
+                    Coords place = EscortPlanner.sharedPlace(placeHexes.get(position), heading, order++);
+                    places.put(unit.getId(), place);
+                    detail.append(String.format("; %s %s at %s (now %s)", position, unit.getShortName(),
+                          place.getBoardNum(), unit.getPosition().getBoardNum()));
+                }
+            }
+        }
+        LOGGER.info("[BotOrders] ESCORT_PLACES round {} {}: convoy head {} at {}{} heading {} toward {}, {} hexes out{}",
+              currentRound(), owner.getGame().getPhase(), head.getShortName(), headNow.getBoardNum(),
+              isConvoyStillToMove ? " (still to move, expected at " + headThen.getBoardNum() + ")" : "", heading,
+              convoyWaypoint.map(Coords::getBoardNum).orElse("its exit edge"), distance, detail);
+        EscortPlan plan = new EscortPlan(moment, places);
+        escortPlans.put(escort.getForceId(), plan);
+        return plan;
+    }
+
+    /**
+     * @param headThen where the head will be; the middle and tail are moved on with it
+     */
+    private static EscortPlanner.ConvoyShape convoyShape(List<Entity> convoy, Entity head, Coords headThen,
+          int heading) {
+        Coords headNow = head.getPosition();
+        int shift = headNow.distance(headThen);
+        List<Entity> byDistance = new ArrayList<>(convoy);
+        byDistance.sort(Comparator.comparingInt(unit -> unit.getPosition().distance(headNow)));
+        Coords middle = byDistance.get(byDistance.size() / 2).getPosition().translated(heading, shift);
+        Coords tail = byDistance.get(byDistance.size() - 1).getPosition().translated(heading, shift);
+        return new EscortPlanner.ConvoyShape(headThen, middle, tail, heading);
+    }
+
+    /**
+     * @return how far out an escort keeps: the middle of its band, 5 hexes for Medium
+     */
+    private static int escortDistance(LanceRole role) {
+        return (role.getDistance().getNearest() + role.getDistance().getFurthest()) / 2;
+    }
+
+    /**
+     * Where an escort should deploy: at an open place round its convoy, once the convoy is on the board. The places
+     * are filled in the role's order as the escorts deploy - the first at Lead, the next at Left, and so on.
+     *
+     * @param entity a unit about to deploy
+     *
+     * @return the place, or empty for a unit that is not an escort, or whose convoy has not deployed yet
+     */
+    public Optional<Coords> getEscortDeploymentPlace(Entity entity) {
+        LanceRole role = entity.getLanceRole();
+        if ((role == null) || !role.isEscort()) {
+            return Optional.empty();
+        }
+        List<Entity> convoy = convoyOnBoard(role.getConvoyForceId(), entity.getBoardId());
+        if (convoy.isEmpty()) {
+            return Optional.empty();
+        }
+        Entity head = convoyHead(convoy);
+        Board board = owner.getGame().getBoard(head);
+        int heading = convoyHeading(head, board);
+        EscortPlanner.ConvoyShape shape = convoyShape(convoy, head, head.getPosition(), heading);
+        List<LanceRole.Position> positions = new ArrayList<>(role.getPositions());
+        int deployed = 0;
+        for (Entity unit : owner.getGame().getEntitiesVector()) {
+            if ((unit.getId() != entity.getId()) && (unit.getForceId() == entity.getForceId())
+                  && (unit.getLanceRole() != null) && unit.getLanceRole().isEscort() && isOnBoardAndAlive(unit)) {
+                deployed++;
+            }
+        }
+        LanceRole.Position position = positions.get(deployed % positions.size());
+        Coords place = EscortPlanner.place(shape, position, escortDistance(role), board);
+        LOGGER.info("[BotOrders] {} (ID {}): deploying as the convoy's {} escort, place {}", entity.getDisplayName(),
+              entity.getId(), position, place.getBoardNum());
+        return Optional.of(place);
+    }
+
+    /**
+     * @return the units of the escort's lance escorting the same convoy, on the board and able to move
+     */
+    private List<Entity> escortsOf(Entity escort, LanceRole role) {
+        List<Entity> escorts = new ArrayList<>();
+        for (Entity unit : owner.getGame().getEntitiesVector()) {
+            LanceRole unitRole = unit.getLanceRole();
+            if ((unit.getForceId() == escort.getForceId()) && (unitRole != null) && unitRole.isEscort()
+                  && (unitRole.getConvoyForceId() == role.getConvoyForceId()) && isOnBoardAndAlive(unit)
+                  && (unit.getBoardId() == escort.getBoardId())) {
+                escorts.add(unit);
+            }
+        }
+        if (escorts.isEmpty()) {
+            escorts.add(escort);
+        }
+        return escorts;
+    }
+
+    /**
+     * @return the convoy lance's units on the board, alive
+     */
+    private List<Entity> convoyOnBoard(int convoyForceId, int boardId) {
+        List<Entity> convoy = new ArrayList<>();
+        for (Entity unit : owner.getGame().getEntitiesVector()) {
+            if ((unit.getForceId() == convoyForceId) && isOnBoardAndAlive(unit) && (unit.getBoardId() == boardId)) {
+                convoy.add(unit);
+            }
+        }
+        return convoy;
+    }
+
+    private static boolean isOnBoardAndAlive(Entity unit) {
+        return (unit.getPosition() != null) && !unit.isOffBoard() && !unit.isDestroyed() && !unit.isDoomed()
+              && unit.isDeployed();
+    }
+
+    /**
+     * @return the convoy's front unit: the one its Column forms on, else the first
+     */
+    private static Entity convoyHead(List<Entity> convoy) {
+        for (Entity unit : convoy) {
+            Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
+            if (formation.isPresent() && (formation.get().getLeaderId() == unit.getId())) {
+                return unit;
+            }
+        }
+        Entity first = convoy.get(0);
+        for (Entity unit : convoy) {
+            if (unit.getId() < first.getId()) {
+                first = unit;
+            }
+        }
+        return first;
+    }
+
+    /**
+     * @return the way the convoy is going: toward its next waypoint, else toward its exit edge, else its facing
+     */
+    private static int convoyHeading(Entity head, Board board) {
+        Coords headNow = head.getPosition();
+        Optional<Coords> waypoint = head.getUnitOrders().getNextWaypoint();
+        if (waypoint.isPresent() && !waypoint.get().equals(headNow)) {
+            return headNow.direction(waypoint.get());
+        }
+        OptionalInt exitFacing = LanceRoles.convoyExitFacing(head, headNow, board);
+        return exitFacing.isPresent() ? exitFacing.getAsInt() : head.getFacing();
+    }
+
+    /**
+     * @return the edge a convoy left the board by, once one of its units has; empty while none has, or when all
+     *       were destroyed
+     */
+    private Optional<OffBoardDirection> convoyExitEdge(int convoyForceId) {
+        for (Entity unit : owner.getGame().getOutOfGameEntitiesVector()) {
+            int removal = unit.getRemovalCondition();
+            boolean hasLeft = (removal == IEntityRemovalConditions.REMOVE_IN_RETREAT)
+                  || (removal == IEntityRemovalConditions.REMOVE_PUSHED);
+            if ((unit.getForceId() == convoyForceId) && hasLeft && (unit.getLanceRole() != null)
+                  && unit.getLanceRole().isConvoy()) {
+                return Optional.of(unit.getLanceRole().getExitEdge());
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @return the edge an escort set to Follow leaves by: its convoy's, once the convoy has left the board by it
+     */
+    private Optional<OffBoardDirection> escortExitEdge(Entity entity) {
+        LanceRole role = entity.getLanceRole();
+        if ((role == null) || !role.isEscort() || (role.getWhenConvoyGone() != LanceRole.WhenConvoyGone.FOLLOW)
+              || (entity.getPosition() == null) || !convoyOnBoard(role.getConvoyForceId(),
+              entity.getBoardId()).isEmpty()) {
+            return Optional.empty();
+        }
+        return convoyExitEdge(role.getConvoyForceId());
+    }
+
+    private void logConvoyGone(Entity entity, String what) {
+        if (convoyGoneLogged.add(entity.getId())) {
+            LOGGER.info("[BotOrders] ESCORT_CONVOY_GONE {} (ID {}) round {}: its convoy is off the board; {}",
+                  entity.getDisplayName(), entity.getId(), currentRound(), what);
+        }
     }
 
     /**

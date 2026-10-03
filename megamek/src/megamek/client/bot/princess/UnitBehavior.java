@@ -107,7 +107,8 @@ public class UnitBehavior {
                   && !owner.getUnitOrdersFollower().canReach(entity, getWaypointForEntity(entity).get())) {
                 owner.getUnitOrdersFollower().dropUnreachableWaypoint(entity);
             }
-            if (owner.getUnitOrdersFollower().isAtRouteEnd(entity)
+            boolean isConvoy = (entity.getLanceRole() != null) && entity.getLanceRole().isConvoy();
+            if (owner.getUnitOrdersFollower().isAtRouteEnd(entity) && !isConvoy
                   && owner.getUnitOrdersFollower().isEnemyInRange(entity)) {
                 // holding the end of its route, with an enemy in range: fight, then the route end pulls it back
                 logDecision(entity, "ROUTE_END", "engaging, will return to "

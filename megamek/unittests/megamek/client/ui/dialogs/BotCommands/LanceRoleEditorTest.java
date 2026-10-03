@@ -268,4 +268,17 @@ class LanceRoleEditorTest {
         panel.setRole(null);
         assertTrue(panel.lanceToMakeConvoy().isEmpty());
     }
+
+    @Test
+    void aConvoySetToWaitIsSentAsSuch() {
+        LanceRole waiting = LanceRole.convoy(OffBoardDirection.EAST, true);
+        LanceRolePanel panel = new LanceRolePanel("Supply Lance", List.of(), OffBoardDirection.NORTH);
+
+        panel.setRole(waiting);
+
+        assertEquals(waiting, panel.getRole());
+        assertEquals("CONVOY:EAST:WAIT", waiting.toCommandText());
+        assertEquals(waiting, LanceRole.parse("CONVOY:EAST:WAIT"));
+        assertFalse(LanceRole.parse("CONVOY:EAST").isWaitingAtRouteEnd(), "a convoy leaves unless told to wait");
+    }
 }

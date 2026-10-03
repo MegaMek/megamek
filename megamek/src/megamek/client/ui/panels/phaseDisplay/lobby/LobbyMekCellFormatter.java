@@ -1185,6 +1185,9 @@ class LobbyMekCellFormatter {
         if (role == null) {
             return null;
         }
+        if (role.isConvoy() && role.isWaitingAtRouteEnd()) {
+            return Messages.getString("BotCommandPanel.Role.tag.convoyWaits");
+        }
         if (role.isConvoy()) {
             return Messages.getString("BotCommandPanel.Role.tag.convoy",
                   Messages.getString("BotCommandPanel.Role.edge." + role.getExitEdge().name()));

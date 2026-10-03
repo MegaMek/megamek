@@ -293,7 +293,7 @@ public class UnitOrdersFollower {
         UnitOrders orders = entity.getUnitOrders();
         return orders.isPaused() || orders.isStoppedInRound(currentRound()) || isHoldingAtWaypoint(entity)
               || isWaitingForFormation(entity) || isWaitingAtPhaseLine(entity)
-              || isHoldingRouteEnd(entity);
+              || isHoldingRouteEnd(entity) || isConvoyWaitingForOrders(entity);
     }
 
     /**
@@ -482,8 +482,8 @@ public class UnitOrdersFollower {
     private void routeConvoyOut(Entity entity) {
         LanceRole role = entity.getLanceRole();
         UnitOrders orders = entity.getUnitOrders();
-        if ((role == null) || !role.isConvoy() || isFormationFollower(entity) || entity.isAirborne()
-              || (orders.getEdgeOrder() != EdgeOrder.NONE) || orders.isPaused()
+        if ((role == null) || !role.isConvoy() || role.isWaitingAtRouteEnd() || isFormationFollower(entity)
+              || entity.isAirborne() || (orders.getEdgeOrder() != EdgeOrder.NONE) || orders.isPaused()
               || orders.isStoppedInRound(currentRound())) {
             // paused or stopped, it waits where it is like any lance
             return;
@@ -547,6 +547,20 @@ public class UnitOrdersFollower {
             }
         }
         return Optional.empty();
+    }
+
+    /**
+     * A convoy set to wait, with no route left, holds where it is until given one; set to leave, it would be on its
+     * way to its edge.
+     *
+     * @param entity a unit of the bot
+     *
+     * @return {@code true} if the unit is a convoy waiting for orders
+     */
+    boolean isConvoyWaitingForOrders(Entity entity) {
+        LanceRole role = entity.getLanceRole();
+        return (role != null) && role.isConvoy() && role.isWaitingAtRouteEnd() && !entity.getUnitOrders().hasRoute()
+              && (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE) && !isFormationFollower(entity);
     }
 
     /**

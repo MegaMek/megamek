@@ -36,6 +36,7 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -79,6 +80,12 @@ public class LanceRolePanel extends JPanel {
     private static final int HINT_WIDTH = 300;
     private static final String NONE_CARD = "none";
 
+    /** What a convoy does once its route is done. */
+    private enum ConvoyEnd {
+        LEAVE,
+        WAIT
+    }
+
     /** The role choices at the top: none, or one of the kinds. */
     private enum Choice {
         NONE,
@@ -92,6 +99,7 @@ public class LanceRolePanel extends JPanel {
     private final CardLayout cards = new CardLayout();
     private final JPanel cardPanel = new JPanel(cards);
     private final Map<OffBoardDirection, JToggleButton> edgeButtons = new EnumMap<>(OffBoardDirection.class);
+    private final Map<ConvoyEnd, JToggleButton> endButtons = new EnumMap<>(ConvoyEnd.class);
     private final JLabel convoyHelp = new JLabel();
     private final JComboBox<LanceRoles.ConvoyChoice> convoyCombo = new JComboBox<>();
     private final Map<LanceRole.Position, JToggleButton> positionButtons = new EnumMap<>(LanceRole.Position.class);
@@ -127,6 +135,7 @@ public class LanceRolePanel extends JPanel {
         ButtonGroup choiceGroup = new ButtonGroup();
         for (Choice choice : Choice.values()) {
             JToggleButton button = new JToggleButton(Messages.getString("BotCommandPanel.Role." + choice.name()));
+            boldWhenPicked(button);
             button.addActionListener(event -> showChoice(choice));
             choiceGroup.add(button);
             choiceButtons.put(choice, button);
@@ -148,6 +157,12 @@ public class LanceRolePanel extends JPanel {
     private JPanel createConvoyCard() {
         JPanel card = new JPanel(new GridBagLayout());
         GridBagConstraints constraints = formConstraints();
+        card.add(new JLabel(Messages.getString("BotCommandPanel.Role.convoy.then")), constraints);
+        constraints.gridx = 1;
+        card.add(segmentedRow(endButtons, List.of(ConvoyEnd.values()), "BotCommandPanel.Role.convoy.then."),
+              constraints);
+        constraints.gridx = 0;
+        constraints.gridy++;
         card.add(new JLabel(Messages.getString("BotCommandPanel.Role.convoy.exitEdge")), constraints);
         constraints.gridx = 1;
         JPanel edges = segmentedRow(edgeButtons, List.of(OffBoardDirection.NORTH, OffBoardDirection.EAST,
@@ -253,11 +268,22 @@ public class LanceRolePanel extends JPanel {
           int row) {
         JToggleButton button = new JToggleButton(Messages.getString("BotCommandPanel.Role.position."
               + position.name()));
+        boldWhenPicked(button);
         button.addActionListener(event -> fireChange());
         positionButtons.put(position, button);
         cell.gridx = column;
         cell.gridy = row;
         compass.add(button, cell);
+    }
+
+    /**
+     * Sets a toggle button's text in bold while it is picked: the theme shades a picked button only a little lighter,
+     * and which edge or place was on was hard to tell (HammerGS, 2026-10-03).
+     */
+    private static void boldWhenPicked(JToggleButton button) {
+        Font plain = button.getFont();
+        button.addItemListener(event -> button.setFont(plain.deriveFont(button.isSelected() ? Font.BOLD
+              : Font.PLAIN)));
     }
 
     private static GridBagConstraints formConstraints() {
@@ -294,6 +320,7 @@ public class LanceRolePanel extends JPanel {
         ButtonGroup group = new ButtonGroup();
         for (T value : values) {
             JToggleButton button = new JToggleButton(Messages.getString(keyPrefix + value.name()));
+            boldWhenPicked(button);
             button.addActionListener(event -> fireChange());
             group.add(button);
             buttons.put(value, button);
@@ -306,6 +333,7 @@ public class LanceRolePanel extends JPanel {
         isLoading = true;
         edgeButtons.get(edgeButtons.containsKey(defaultExitEdge) ? defaultExitEdge : OffBoardDirection.NORTH)
               .setSelected(true);
+        endButtons.get(ConvoyEnd.LEAVE).setSelected(true);
         LanceRole escort = LanceRole.defaultEscort(-1);
         loadEscort(escort);
         isLoading = false;
@@ -340,6 +368,7 @@ public class LanceRolePanel extends JPanel {
             showCard(Choice.NONE);
         } else if (role.isConvoy()) {
             edgeButtons.get(role.getExitEdge()).setSelected(true);
+            endButtons.get(role.isWaitingAtRouteEnd() ? ConvoyEnd.WAIT : ConvoyEnd.LEAVE).setSelected(true);
             choiceButtons.get(Choice.CONVOY).setSelected(true);
             showCard(Choice.CONVOY);
         } else {
@@ -357,7 +386,8 @@ public class LanceRolePanel extends JPanel {
      */
     public @Nullable LanceRole getRole() {
         if (choiceButtons.get(Choice.CONVOY).isSelected()) {
-            return LanceRole.convoy(selected(edgeButtons, OffBoardDirection.NORTH));
+            return LanceRole.convoy(selected(edgeButtons, OffBoardDirection.NORTH),
+                  selected(endButtons, ConvoyEnd.LEAVE) == ConvoyEnd.WAIT);
         }
         if (!choiceButtons.get(Choice.ESCORT).isSelected() || !isComplete()) {
             return null;
@@ -447,7 +477,13 @@ public class LanceRolePanel extends JPanel {
     private void refreshText() {
         String edge = Messages.getString("BotCommandPanel.Role.edge." + selected(edgeButtons,
               OffBoardDirection.NORTH).name());
-        convoyHelp.setText(html(Messages.getString("BotCommandPanel.Role.convoy.help", edge), TEXT_WIDTH));
+        boolean isWaiting = selected(endButtons, ConvoyEnd.LEAVE) == ConvoyEnd.WAIT;
+        // the exit edge matters only to a convoy that leaves
+        for (JToggleButton edgeButton : edgeButtons.values()) {
+            edgeButton.setEnabled(!isWaiting);
+        }
+        convoyHelp.setText(html(Messages.getString(isWaiting ? "BotCommandPanel.Role.convoy.helpWait"
+              : "BotCommandPanel.Role.convoy.help", edge), TEXT_WIDTH));
         escortSummary.setText(html(escortSummaryText(), TEXT_WIDTH));
         // each hint says what the choice picked on its row means, and changes with it
         distanceHint.setText(hint("distance." + selected(distanceButtons, LanceRole.Distance.MEDIUM).name()));

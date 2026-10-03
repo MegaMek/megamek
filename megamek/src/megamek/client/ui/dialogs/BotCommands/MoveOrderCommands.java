@@ -202,6 +202,11 @@ final class MoveOrderCommands {
           RouteStyle style) {
         List<WaypointOrder> marked = new ArrayList<>();
         for (WaypointOrder order : waypointOrders) {
+            if (order.isPlannedTurn()) {
+                // a turning point the bot planned stays one: passed straight through
+                marked.add(order.withRouteStyle(style));
+                continue;
+            }
             marked.add(order.withRoutePlan(isPlanning ? WaypointOrder.RoutePlan.PLAN_LEG
                   : WaypointOrder.RoutePlan.NONE).withRouteStyle(style));
         }

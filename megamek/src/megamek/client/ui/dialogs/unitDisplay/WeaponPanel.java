@@ -2212,9 +2212,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wMedR.setText("---");
         wLongR.setText("---");
         wExtR.setText("---");
+        // range labels follow the range scale, which can differ from the damage scale
+        boolean usesCapitalRangeBrackets = weaponType.usesCapitalRangeBrackets();
         // every weapon gets at least short range
         wShortAVR.setText(Integer.toString(avShort));
-        if (weaponType.isCapital()) {
+        if (usesCapitalRangeBrackets) {
             wShortR.setText("1-12");
         } else if (weaponType.hasFlag(WeaponType.F_PD_BAY)) {
             // Point Defense bays have a variable range too, depending on the mode they're
@@ -2229,7 +2231,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (maxRange > WeaponType.RANGE_SHORT) {
             wMedAVR.setText(Integer.toString(avMed));
-            if (weaponType.isCapital()) {
+            if (usesCapitalRangeBrackets) {
                 wMedR.setText("13-24");
             } else {
                 wMedR.setText("7-12");
@@ -2237,7 +2239,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (maxRange > WeaponType.RANGE_MED) {
             wLongAVR.setText(Integer.toString(avLong));
-            if (weaponType.isCapital()) {
+            if (usesCapitalRangeBrackets) {
                 wLongR.setText("25-40");
             } else {
                 wLongR.setText("13-20");
@@ -2245,7 +2247,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
         if (maxRange > WeaponType.RANGE_LONG) {
             wExtAVR.setText(Integer.toString(avExt));
-            if (weaponType.isCapital()) {
+            if (usesCapitalRangeBrackets) {
                 wExtR.setText("41-50");
             } else {
                 wExtR.setText("21-25");

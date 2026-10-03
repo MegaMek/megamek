@@ -65,10 +65,11 @@ public class CLLAAMissileWeapon extends CapitalRangeBombMissileWeapon {
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;
-        this.shortRange = 6;
-        this.mediumRange = 12;
-        this.longRange = 24;
-        this.extremeRange = 40;
+        this.minimumRange = 7;
+        this.shortRange = 14;
+        this.mediumRange = 21;
+        this.longRange = 28;
+        this.extremeRange = 42;
         this.tonnage = 0.5;
         this.criticalSlots = 0;
         this.hittable = false;

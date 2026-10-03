@@ -676,8 +676,9 @@ public class MoveStep implements Serializable {
                 int subDepth = Math.max(depth, building);
 
                 switch (entity.getMovementMode()) {
-                    // WiGE ends the jump at 1 elevation
-                    case WIGE -> setElevation(ceiling + 1);
+                    // A WiGE vehicle has landed at the end of a jump (rules answer, forum topic 68110). Land-Air
+                    // Meks and glider ProtoMeks also move as WiGEs but follow their own rules.
+                    case WIGE -> setElevation((entity instanceof Tank) ? subDepth : ceiling + 1);
                     // Hover ends the jump above the water
                     case HOVER -> setElevation(ceiling);
                     default -> setElevation(subDepth);

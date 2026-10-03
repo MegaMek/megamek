@@ -1787,6 +1787,16 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 Report.addNewline(gameManager.getMainPhaseReport());
             }
 
+            // A WiGE vehicle has landed at the end of a jump (rules answer, forum topic 68110), and it lands only
+            // in a clear, paved or water hex (TW p.55)
+            if ((entity instanceof Tank jumpingWiGE) && (entity.getMovementMode() == EntityMovementMode.WIGE)
+                  && !entity.isDoomed()) {
+                boolean landedSafely = gameManager.resolveWiGELanding(jumpingWiGE, entity.getElevation(),
+                      entity.delta_distance);
+                logger.info("WiGE jump landing: entity={}, hex={}, elevation={}, landedSafely={}",
+                      entity.getDisplayName(), curPos, entity.getElevation(), landedSafely);
+            }
+
             // Jump exhaust can set a flammable atmosphere alight at both ends of the jump (TO:AR p.54).
             TaintedAtmosphereHandler taintedAtmosphereHandler = new TaintedAtmosphereHandler(gameManager);
             taintedAtmosphereHandler.checkJumpIgnition(entity, jumpLiftOffCoords, jumpLiftOffBoardId,

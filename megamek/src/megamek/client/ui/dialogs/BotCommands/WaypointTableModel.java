@@ -210,7 +210,7 @@ class WaypointTableModel extends AbstractTableModel {
 
     /** One waypoint being edited. */
     private static final class Row {
-        private final Coords hex;
+        private Coords hex;
         private int facing;
         private WaypointOrder.HoldMode holdMode;
         private int holdTurns;
@@ -445,6 +445,34 @@ class WaypointTableModel extends AbstractTableModel {
      */
     private static WaypointOrder planned(Row row, WaypointOrder order) {
         return row.isPlanned ? order.withRoutePlan(WaypointOrder.RoutePlan.TURN_POINT) : order;
+    }
+
+    /**
+     * @param hex a hex
+     *
+     * @return the last row on that hex, or -1 when none is
+     */
+    int rowAt(Coords hex) {
+        for (int index = rows.size() - 1; index >= 0; index--) {
+            if (rows.get(index).hex.equals(hex)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Moves a waypoint to another hex, its settings kept: the player dragged its flag. A turning point the bot planned
+     * becomes the player's own once moved.
+     *
+     * @param index the row
+     * @param hex   the hex it moves to
+     */
+    void moveWaypoint(int index, Coords hex) {
+        Row row = rows.get(index);
+        row.hex = hex;
+        row.isPlanned = false;
+        fireTableRowsUpdated(index, index);
     }
 
     /**

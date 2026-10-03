@@ -278,4 +278,21 @@ class MoveOrderEditorTest {
         assertEquals("PL Alfa (new)", new WaypointTableModel.PhaseLineOption("Alfa", true).toString());
         assertEquals("Alfa", WaypointTableModel.PhaseLineOption.typed("PL Alfa (new)").name());
     }
+
+    @Test
+    void aDraggedWaypointMovesAndKeepsItsSettings() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(SECOND_HEX, true);
+        waypoints.setFacing(1, NORTH_EAST);
+
+        int row = waypoints.rowAt(SECOND_HEX);
+        waypoints.moveWaypoint(row, LAST_HEX);
+
+        assertEquals(1, row);
+        assertEquals(List.of(FIRST_HEX, LAST_HEX), waypoints.getHexes());
+        assertEquals(NORTH_EAST, waypoints.getWaypointOrders().get(1).getFacing());
+        assertFalse(waypoints.isPlanned(1), "a planned turning point moved by hand is the player's own");
+        assertEquals(-1, waypoints.rowAt(SECOND_HEX));
+    }
 }

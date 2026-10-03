@@ -176,6 +176,18 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private final Map<RouteStyle, JToggleButton> styleButtons = new EnumMap<>(RouteStyle.class);
     // true while a clicked hex is planned to rather than added as it is
     private boolean isAutoRouting;
+    // dragging a waypoint on the board: its row, or -1; whether it has moved; the display held still while it drags,
+    // when picking was not already holding it; and the release that ended the last drag, which is no click
+    private final BoardViewListenerAdapter dragListener = new BoardViewListenerAdapter() {
+        @Override
+        public void hexMoused(BoardViewEvent event) {
+            dragWaypoint(event);
+        }
+    };
+    private int draggedRow = -1;
+    private boolean hasDragMoved;
+    private Distractable dragHeldDisplay;
+    private BoardViewEvent dragEndingClick;
     // the role kind last shown, so picking Convoy can tick Plan the route
     private String shownRoleKind = "";
     private BoardViewListenerAdapter hexClickListener;
@@ -230,6 +242,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             loadDetail();
         });
         refreshRouteSprites();
+        // a waypoint's flag can be dragged to another hex while the editor is open (HammerGS, 2026-10-03)
+        boardView.addBoardViewListener(dragListener);
         if ((waypoints.getRowCount() == 0) && !rolePanel.isEscortChosen()) {
             pickButton.setSelected(true);
             startPicking();
@@ -804,6 +818,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
                       || (event.getCoords() == null)) {
                     return;
                 }
+                if ((event == dragEndingClick) || ((draggedRow >= 0) && hasDragMoved)) {
+                    // the release at the end of a drag moved a waypoint: it adds none
+                    return;
+                }
                 if (isAutoRouting) {
                     autoRouteTo(event.getCoords());
                 } else {
@@ -898,7 +916,56 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         boardView.addSprites(routeSprites);
     }
 
+    /**
+     * Drags a waypoint: pressed on one of the route's hexes, it follows the mouse hex by hex, and the release leaves
+     * it there. The display under the board is held still while it drags, so the drag selects and moves nothing.
+     */
+    private void dragWaypoint(BoardViewEvent event) {
+        Coords hex = event.getCoords();
+        if (hex == null) {
+            return;
+        }
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (draggedRow < 0) {
+                // the press: a drag starts only on one of the route's hexes, with the left button
+                int row = (event.getButton() == MouseEvent.BUTTON1) ? waypoints.rowAt(hex) : -1;
+                if (row >= 0) {
+                    draggedRow = row;
+                    hasDragMoved = false;
+                    if ((suppressedDisplay == null) && (clientGUI.getCurrentPanel() instanceof Distractable display)) {
+                        dragHeldDisplay = display;
+                        dragHeldDisplay.setIgnoringEvents(true);
+                    }
+                }
+                return;
+            }
+            if (!hex.equals(waypoints.getHex(draggedRow))) {
+                waypoints.moveWaypoint(draggedRow, hex);
+                hasDragMoved = true;
+                selectRow(draggedRow);
+            }
+        } else if ((event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) && (draggedRow >= 0)) {
+            if (hasDragMoved) {
+                dragEndingClick = event;
+                LOGGER.info("[BotOrders] Move Order editor: waypoint {} dragged to {}", draggedRow + 1,
+                      hex.getBoardNum());
+            }
+            endDrag();
+        }
+    }
+
+    private void endDrag() {
+        draggedRow = -1;
+        hasDragMoved = false;
+        if (dragHeldDisplay != null) {
+            dragHeldDisplay.setIgnoringEvents(false);
+            dragHeldDisplay = null;
+        }
+    }
+
     private void cleanUp() {
+        boardView.removeBoardViewListener(dragListener);
+        endDrag();
         stopPicking();
         boardView.removeSprites(routeSprites);
         routeSprites.clear();

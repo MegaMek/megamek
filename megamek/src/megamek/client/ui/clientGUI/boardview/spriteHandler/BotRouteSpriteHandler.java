@@ -35,13 +35,16 @@ package megamek.client.ui.clientGUI.boardview.spriteHandler;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.IBoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.RouteDotSprite;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
@@ -105,9 +108,18 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
      * @param isAssemble {@code true} if the units wait there until in position rather than for a fixed delay
      * @param isExit     {@code true} if the units leave the board from there, at the end of the route
      * @param phaseLine  the phase line the waypoint is on, or {@code null}
+     * @param isPlanned  {@code true} for a turning point the bot planned, drawn as a dot rather than a flag
      */
     record RouteFlag(Coords hex, int boardId, int colorIndex, String label, String step, int facing,
-          int holdTurns, boolean isAssemble, boolean isExit, @Nullable String phaseLine) {
+          int holdTurns, boolean isAssemble, boolean isExit, @Nullable String phaseLine, boolean isPlanned) {
+
+        /**
+         * A waypoint the player set.
+         */
+        RouteFlag(Coords hex, int boardId, int colorIndex, String label, String step, int facing, int holdTurns,
+              boolean isAssemble, boolean isExit, @Nullable String phaseLine) {
+            this(hex, boardId, colorIndex, label, step, facing, holdTurns, isAssemble, isExit, phaseLine, false);
+        }
 
         /**
          * @return the line under the unit's name: the waypoint's name, and what the units do there if they stop or
@@ -129,12 +141,70 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
         }
     }
 
+    /**
+     * A hex on the way between two points of a route, marked with a small dot so the route reads as a line.
+     *
+     * @param hex        the hex
+     * @param boardId    its board
+     * @param colorIndex which route's colour it takes
+     */
+    record TrailDot(Coords hex, int boardId, int colorIndex) {}
+
+    /**
+     * Works out the dots between the points of each route the viewer may see: every hex a straight line crosses from
+     * the lead unit to its first waypoint, and from each waypoint to the next, the points themselves left out
+     * (HammerGS, 2026-10-03).
+     *
+     * @param units  every unit in the game, in id order
+     * @param viewer the player at this client, or {@code null} for none
+     *
+     * @return the dots, route by route, in the colours {@link #routeFlags} gives the routes
+     */
+    static List<TrailDot> routeTrails(List<Entity> units, @Nullable Player viewer) {
+        List<TrailDot> dots = new ArrayList<>();
+        int colorIndex = 0;
+        for (RouteGroups.RouteGroup group : RouteGroups.visibleTo(units, viewer)) {
+            Entity guide = group.guide();
+            List<Coords> points = new ArrayList<>();
+            if ((guide.getPosition() != null) && guide.isDeployed()) {
+                points.add(guide.getPosition());
+            }
+            points.addAll(guide.getUnitOrders().getRoute());
+            Set<Coords> marked = new HashSet<>(points);
+            for (int index = 1; index < points.size(); index++) {
+                for (Coords hex : Coords.intervening(points.get(index - 1), points.get(index))) {
+                    if (marked.add(hex)) {
+                        dots.add(new TrailDot(hex, guide.getBoardId(), colorIndex));
+                    }
+                }
+            }
+            colorIndex++;
+        }
+        return dots;
+    }
+
     private void renewSprites() {
         clear();
         List<Entity> units = new ArrayList<>(game.getEntitiesVector());
         units.sort(Comparator.comparingInt(Entity::getId));
+        for (TrailDot dot : routeTrails(units, localPlayer())) {
+            if (clientGUI.getBoardView(dot.boardId()) instanceof BoardView tacticalBoardView) {
+                RouteDotSprite sprite = new RouteDotSprite(tacticalBoardView, dot.hex(),
+                      ROUTE_COLORS.get(dot.colorIndex() % ROUTE_COLORS.size()), RouteDotSprite.TRAIL_DIAMETER);
+                currentSprites.add(sprite);
+                tacticalBoardView.addSprites(List.of(sprite));
+            }
+        }
         for (RouteFlag flag : routeFlags(units, localPlayer())) {
             IBoardView boardView = clientGUI.getBoardView(flag.boardId());
+            if (flag.isPlanned() && (boardView instanceof BoardView tacticalBoardView)) {
+                // a turning point the bot planned is a dot on the way, not a flag of its own
+                RouteDotSprite sprite = new RouteDotSprite(tacticalBoardView, flag.hex(),
+                      ROUTE_COLORS.get(flag.colorIndex() % ROUTE_COLORS.size()), RouteDotSprite.TURN_DIAMETER);
+                currentSprites.add(sprite);
+                tacticalBoardView.addSprites(List.of(sprite));
+                continue;
+            }
             if (boardView instanceof BoardView tacticalBoardView) {
                 int arrowFacing = (flag.facing() == UnitOrders.FACING_AUTO) ? HexFlagSprite.NO_FACING
                       : flag.facing();
@@ -186,7 +256,8 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
                 }
                 flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), stepName,
                       waypointOrder.getFacing(), holdTurns, !isLast && waypointOrder.isAssemble(),
-                      isLast && waypointOrder.isExitBoard(), waypointOrder.getPhaseLine()));
+                      isLast && waypointOrder.isExitBoard(), waypointOrder.getPhaseLine(),
+                      waypointOrder.isPlannedTurn()));
             }
             colorIndex++;
         }

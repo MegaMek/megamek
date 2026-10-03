@@ -65,7 +65,9 @@ public final class RouteGroups {
          */
         public String label() {
             if (units.size() == 1) {
-                return guide.getShortName();
+                // a lance's leader leads for the lance, even while the others are not on its route yet
+                String forceName = guide.getUnitOrders().getFormation().isPresent() ? sharedForceName() : null;
+                return (forceName == null) ? guide.getShortName() : forceName;
             }
             String forceName = sharedForceName();
             if (forceName != null) {

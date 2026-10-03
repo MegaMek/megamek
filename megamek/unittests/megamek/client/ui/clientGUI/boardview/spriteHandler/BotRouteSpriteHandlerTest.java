@@ -215,4 +215,36 @@ class BotRouteSpriteHandlerTest {
         assertEquals("Beta - PL Bravo", onBravo.progressText());
         assertEquals("Beta hold 2 - PL Bravo", holdingOnBravo.progressText());
     }
+
+    @Test
+    void aRouteReadsAsALineOfDotsBetweenItsPoints() {
+        BipedMek mek = unit(1, "GHR-5H", ourBot, UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT, SECOND_WAYPOINT)));
+        mek.setDeployed(true);
+        mek.setPosition(Coords.parseHexNumber("1630"));
+
+        List<BotRouteSpriteHandler.TrailDot> dots = BotRouteSpriteHandler.routeTrails(units, human);
+
+        // 1630 to 1623 and 1623 to 1615: the hexes between, not the unit's hex or the waypoints
+        assertEquals(6 + 7, dots.size());
+        for (BotRouteSpriteHandler.TrailDot dot : dots) {
+            assertTrue(dot.hex().getX() == 15, "a straight north line stays in column 16: " + dot.hex());
+            assertTrue(!dot.hex().equals(FIRST_WAYPOINT) && !dot.hex().equals(SECOND_WAYPOINT));
+        }
+    }
+
+    @Test
+    void aPlannedTurnIsADotAndALeadersFlagCarriesItsLancesName() {
+        int lanceId = game.getForces().addTopLevelForce(Force.createToplevelForce("Convoy", ourBot), ourBot);
+        WaypointOrder turn = WaypointOrder.PASS_THROUGH.withRoutePlan(WaypointOrder.RoutePlan.TURN_POINT);
+        BipedMek leader = unit(1, "Sherpa", ourBot, UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT, SECOND_WAYPOINT),
+              List.of(turn, WaypointOrder.PASS_THROUGH)).withFormation(new FormationOrder(FormationShape.COLUMN, 1, 1,
+              0, FormationPace.WALK, ContactRule.HOLD)));
+        game.getForces().addEntity(leader, lanceId);
+
+        List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
+
+        assertEquals("Convoy", flags.get(0).label(), "the lance's name, not the truck's");
+        assertTrue(flags.get(0).isPlanned());
+        assertTrue(!flags.get(1).isPlanned());
+    }
 }

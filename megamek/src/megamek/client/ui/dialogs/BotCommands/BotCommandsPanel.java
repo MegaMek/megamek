@@ -242,10 +242,30 @@ public class BotCommandsPanel extends JPanel {
         updateButtonStates();
         client.getGame().addGameListener(new GameListenerAdapter() {
             @Override
-            public void gamePhaseChange(GamePhaseChangeEvent e) {
+            public void gamePhaseChange(GamePhaseChangeEvent event) {
                 updateButtonStates();
+                pauseAtStartWhenWatching(event);
             }
         });
+    }
+
+    /**
+     * Starts a game of bots only, watched by a human, paused: the bots would otherwise deploy and move before the
+     * player can give them a single order (HammerGS, 2026-10-03). Orders are chat commands, which the server handles
+     * while paused, so the player sets roles and routes, then presses Continue.
+     */
+    private void pauseAtStartWhenWatching(GamePhaseChangeEvent event) {
+        boolean isLeavingLobby = (event.getOldPhase() == GamePhase.LOUNGE) && (event.getNewPhase() != GamePhase.LOUNGE);
+        if (!isLeavingLobby) {
+            return;
+        }
+        if (pauseLatch || !canBePaused()) {
+            LOGGER.info("[BotOrders] game starts unpaused: {}", pauseLatch ? "already paused"
+                  : "a human player has units in it");
+            return;
+        }
+        LOGGER.info("[BotOrders] game starts paused: only bots have units, so orders can be given first");
+        pauseUnpause();
     }
 
     /**

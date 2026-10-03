@@ -133,6 +133,8 @@ public class UnitOrdersFollower {
 
     /** The place of a lance's second-in-command, who takes command when the commander is lost. */
     private static final int SECOND_IN_COMMAND_PLACE = 2;
+    // a planned turning point counts as passed this near: the unit makes for the next one, it need not stand on it
+    private static final int TURN_POINT_RADIUS = 2;
 
     // marks a cached Column slot taken from the leader's trail rather than laid out by heading
     private static final int TRAIL_HEADING = -1;
@@ -260,6 +262,8 @@ public class UnitOrdersFollower {
     private final Set<Integer> convoyGoneLogged = new HashSet<>();
     // where each formation deploys, picked by its first unit down while the leader has still to deploy; by leader id
     private final Map<Integer, Coords> deploymentAnchors = new HashMap<>();
+    // the waypoint each unit last planned its way to, so a leg is planned once
+    private final Map<Integer, Coords> legsPlannedTo = new HashMap<>();
 
     /** How often, in rounds, a lance still holding at a phase line reminds the player whom it is waiting for. */
     static final int PHASE_LINE_REMINDER_ROUNDS = 3;
@@ -505,8 +509,13 @@ public class UnitOrdersFollower {
         for (int index = 0; index < route.size(); index++) {
             waypointOrders.add(orders.getWaypointOrder(index));
         }
-        // the last leg travels in the convoy's own formation, as a leg that sets none does
-        waypointOrders.add(new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, null, true));
+        // the last leg travels in the convoy's own formation, as a leg that sets none does; it is planned when the bot
+        // made the whole route, else as the player's last leg was
+        WaypointOrder.RoutePlan exitPlan = route.isEmpty() ? WaypointOrder.RoutePlan.PLAN_LEG
+              : orders.getWaypointOrder(route.size() - 1).getRoutePlan();
+        waypointOrders.add(new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, null, true)
+              .withRoutePlan((exitPlan == WaypointOrder.RoutePlan.TURN_POINT) ? WaypointOrder.RoutePlan.NONE
+                    : exitPlan));
         entity.setUnitOrders(UnitOrderAction.ROUTE.apply(orders, hexes, waypointOrders, OffBoardDirection.NONE,
               UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound(), null));
         owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.ROUTE,
@@ -701,9 +710,19 @@ public class UnitOrdersFollower {
      */
     private int routeCost(Entity mover, Coords waypoint, Coords position, boolean isGoingRoundUnitsInPlace,
           boolean isKeepingOutOfStreets) {
+        WaypointDistanceField field = routeField(mover, waypoint, isGoingRoundUnitsInPlace, isKeepingOutOfStreets);
+        return (field == null) ? WaypointDistanceField.UNREACHABLE : field.costFrom(position);
+    }
+
+    /**
+     * @return the unit's route field to the waypoint, worked out once a round for each way of moving; {@code null} for
+     *       a unit that flies over the terrain
+     */
+    private @Nullable WaypointDistanceField routeField(Entity mover, Coords waypoint,
+          boolean isGoingRoundUnitsInPlace, boolean isKeepingOutOfStreets) {
         if (MovementType.getMovementType(mover) == MovementType.Flyer) {
             // a VTOL or fighter flies over the terrain; the straight line stands in
-            return WaypointDistanceField.UNREACHABLE;
+            return null;
         }
         if (distanceFieldsRound != currentRound()) {
             distanceFields.clear();
@@ -737,7 +756,7 @@ public class UnitOrdersFollower {
                       waypoint.getBoardNum());
             }
         }
-        return field.costFrom(position);
+        return field;
     }
 
     /**
@@ -1160,6 +1179,9 @@ public class UnitOrdersFollower {
                 continue;
             }
             announceNewRoute(entity);
+            if (planRouteLeg(entity)) {
+                waypoint = entity.getUnitOrders().getNextWaypoint();
+            }
             boolean isPartWay = entity.getUnitOrders().getRoute().size() > 1;
             if (isPartWay && getFormationSlot(entity).isPresent()) {
                 // a unit in formation takes its route from its leader's; ticking off a waypoint it merely passed
@@ -1174,8 +1196,10 @@ public class UnitOrdersFollower {
                 advanceHold(entity, waypoint.get());
                 continue;
             }
-            int reachedWithin = isLeadingFormationOnRoute(entity) ? flagRadius(entity, waypoint.get())
-                  : Princess.DISTANCE_TO_WAYPOINT;
+            boolean isPlannedTurn = entity.getUnitOrders().getWaypointOrder(0).isPlannedTurn();
+            int reachedWithin = isPlannedTurn ? TURN_POINT_RADIUS
+                  : (isLeadingFormationOnRoute(entity) ? flagRadius(entity, waypoint.get())
+                        : Princess.DISTANCE_TO_WAYPOINT);
             if (waypoint.get().distance(entity.getPosition()) > reachedWithin) {
                 if (reformWaits.remove(entity.getId()) != null) {
                     // a leader that began waiting beside an occupied flag must not go on waiting once the flag is
@@ -1187,7 +1211,7 @@ public class UnitOrdersFollower {
                 }
                 continue;
             }
-            if (isPartWay && shouldWaitForFormation(entity, waypoint.get())) {
+            if (isPartWay && !isPlannedTurn && shouldWaitForFormation(entity, waypoint.get())) {
                 continue;
             }
             if (isPartWay) {
@@ -1213,6 +1237,64 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * Plans the way to the unit's next waypoint when that waypoint is set to be planned: works out the whole way once,
+     * and puts the turning points on it on the route as waypoints, so the unit drives straight from one to the next
+     * instead of along whatever hill is in front of it (HammerGS, 2026-10-03). Planned once a leg; a new order plans
+     * again. Only a formation's leader, or a unit in none, plans: the formation follows it.
+     *
+     * @param entity a unit of the bot with a route
+     *
+     * @return {@code true} if turning points were put on the route
+     */
+    private boolean planRouteLeg(Entity entity) {
+        UnitOrders orders = entity.getUnitOrders();
+        if (!orders.hasRoute() || isFormationFollower(entity) || (entity.getPosition() == null) || isFlying(entity)
+              || (orders.getWaypointOrder(0).getRoutePlan() != WaypointOrder.RoutePlan.PLAN_LEG)) {
+            return false;
+        }
+        Coords target = orders.getRoute().get(0);
+        if (target.equals(legsPlannedTo.get(entity.getId()))) {
+            return false;
+        }
+        legsPlannedTo.put(entity.getId(), target);
+        Board board = owner.getGame().getBoard(entity);
+        WaypointDistanceField field = routeField(entity, target, false, false);
+        if ((board == null) || (field == null)) {
+            return false;
+        }
+        List<Coords> turns = RoutePlanner.turningPoints(entity, field, entity.getPosition(), board);
+        if (turns.isEmpty()) {
+            LOGGER.info("[BotOrders] ROUTE_PLAN {} (ID {}) round {}: the way to {} is a straight line",
+                  entity.getDisplayName(), entity.getId(), currentRound(), target.getBoardNum());
+            return false;
+        }
+        List<Coords> hexes = new ArrayList<>(turns);
+        hexes.addAll(orders.getRoute());
+        // the turning points travel the leg's own formation, passed straight through
+        WaypointOrder turnOrder = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0,
+              orders.getWaypointOrder(0).getFormation(), false).withRoutePlan(WaypointOrder.RoutePlan.TURN_POINT);
+        List<WaypointOrder> waypointOrders = new ArrayList<>();
+        for (int index = 0; index < turns.size(); index++) {
+            waypointOrders.add(turnOrder);
+        }
+        waypointOrders.addAll(orders.getWaypointOrders());
+        entity.setUnitOrders(UnitOrderAction.ROUTE.apply(orders, hexes, waypointOrders, OffBoardDirection.NONE,
+              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound(), null));
+        owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.ROUTE,
+              UnitOrderCommand.hexesArgument(hexes, waypointOrders)));
+        // the planned route is the same order: the lance does not assemble again for it
+        knownRoutes.put(entity.getId(), entity.getUnitOrders().getRoute());
+        List<String> turnNames = new ArrayList<>();
+        for (Coords turn : turns) {
+            turnNames.add(turn.getBoardNum());
+        }
+        LOGGER.info("[BotOrders] ROUTE_PLAN {} (ID {}) round {}: planned the way to {} - turning at {}",
+              entity.getDisplayName(), entity.getId(), currentRound(), target.getBoardNum(),
+              String.join(", ", turnNames));
+        return true;
+    }
+
+    /**
      * Calls a new route on the radio: "Charlie Lance, proceeding to Nav Point Alpha (1625)." A route that is the one
      * seen before with waypoints ticked off the front is not new. The formation's leader calls for the lance.
      */
@@ -1224,6 +1306,7 @@ public class UnitOrdersFollower {
         if (isSameOrder || isFormationFollower(entity)) {
             return;
         }
+        legsPlannedTo.remove(entity.getId());
         if (known != null) {
             // a changed order: the lance assembles again at its new first waypoint before it marches. Every lance
             // starts out assembling, so the first order needs nothing here
@@ -2814,6 +2897,9 @@ public class UnitOrdersFollower {
     int arrivalRadius(Entity entity) {
         if (getFormationSlot(entity).isPresent() || isHeadingForHold(entity)) {
             return 0;
+        }
+        if (entity.getUnitOrders().hasRoute() && entity.getUnitOrders().getWaypointOrder(0).isPlannedTurn()) {
+            return TURN_POINT_RADIUS;
         }
         if (isEscorting(entity)) {
             // a hex either side of its place keeps an escort in its band without dancing for the exact hex

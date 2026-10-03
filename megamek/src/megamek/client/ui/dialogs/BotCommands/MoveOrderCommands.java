@@ -191,6 +191,21 @@ final class MoveOrderCommands {
     }
 
     /**
+     * @param waypointOrders the orders at each waypoint, as the editor holds them
+     * @param isPlanning     {@code true} to have the bot plan the way to each waypoint
+     *
+     * @return the same orders, each set to have the way to it planned, or not
+     */
+    static List<WaypointOrder> withRoutePlan(List<WaypointOrder> waypointOrders, boolean isPlanning) {
+        List<WaypointOrder> marked = new ArrayList<>();
+        for (WaypointOrder order : waypointOrders) {
+            marked.add(order.withRoutePlan(isPlanning ? WaypointOrder.RoutePlan.PLAN_LEG
+                  : WaypointOrder.RoutePlan.NONE));
+        }
+        return marked;
+    }
+
+    /**
      * Sets the lance role on each unit that does not have it already, so resending an unchanged order adds nothing.
      *
      * @param units the units ordered

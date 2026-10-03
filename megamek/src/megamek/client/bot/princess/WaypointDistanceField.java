@@ -228,17 +228,7 @@ final class WaypointDistanceField {
                   hex -> BoardEdgePathFinder.calculateUnitElevationInHex(currentHex, mover, isHovercraft,
                         isAmphibious));
             // the cost of stepping into this hex, the same from every neighbour but for the climb
-            int enteringCost = 1 + Math.max(0, currentHex.movementCost(mover)) + extraCost.getOrDefault(current, 0);
-            if (currentHex.containsTerrain(Terrains.BUILDING)) {
-                // walk round a building rather than through it: going in damages it and can bring it down on the
-                // unit (HammerGS's playtest, 2026-09-27)
-                enteringCost += BUILDING_DETOUR_COST;
-            }
-            if (isWading && currentHex.containsTerrain(Terrains.WATER)) {
-                // walk round water rather than wade it: a 3 MP Stalker waded a lake a hex a turn because the way
-                // round cost the same (HammerGS's playtest, 2026-10-01); his own walk never entered water
-                enteringCost += (currentHex.depth() >= 1) ? WATER_DETOUR_COST : SHALLOW_WATER_DETOUR_COST;
-            }
+            int enteringCost = enteringCost(mover, currentHex, isWading) + extraCost.getOrDefault(current, 0);
             for (int direction = 0; direction < 6; direction++) {
                 Coords neighbor = current.translated(direction);
                 if (!board.contains(neighbor) || !enterableHexes.computeIfAbsent(neighbor,
@@ -268,6 +258,60 @@ final class WaypointDistanceField {
         LOGGER.debug("[BotOrders] distance field to {} for {}: {} hexes reachable", goalName, movementType,
               costToGoal.size());
         return costToGoal;
+    }
+
+    /**
+     * @return the movement points to step into a hex, the climb aside: its terrain, and the detours that keep units
+     *       out of buildings and water
+     */
+    private static int enteringCost(Entity mover, Hex hex, boolean isWading) {
+        int cost = 1 + Math.max(0, hex.movementCost(mover));
+        if (hex.containsTerrain(Terrains.BUILDING)) {
+            // walk round a building rather than through it: going in damages it and can bring it down on the
+            // unit (HammerGS's playtest, 2026-09-27)
+            cost += BUILDING_DETOUR_COST;
+        }
+        if (isWading && hex.containsTerrain(Terrains.WATER)) {
+            // walk round water rather than wade it: a 3 MP Stalker waded a lake a hex a turn because the way
+            // round cost the same (HammerGS's playtest, 2026-10-01); his own walk never entered water
+            cost += (hex.depth() >= 1) ? WATER_DETOUR_COST : SHALLOW_WATER_DETOUR_COST;
+        }
+        return cost;
+    }
+
+    /**
+     * What one step costs a unit by the same rules the field is worked out by, so a way planned along the field can
+     * be checked hex by hex.
+     *
+     * @param mover the unit
+     * @param board its board
+     * @param from  the hex it steps from
+     * @param into  the neighbouring hex it steps into
+     *
+     * @return the movement points, or {@link #UNREACHABLE} when it cannot step there
+     */
+    static int stepCost(Entity mover, Board board, Coords from, Coords into) {
+        MovementType movementType = MovementType.getMovementType(mover);
+        if (!board.contains(into) || !isEnterable(mover, movementType, board, into)) {
+            return UNREACHABLE;
+        }
+        boolean isHovercraft = movementType == MovementType.Hover;
+        boolean isAmphibious = (movementType == MovementType.WheeledAmphibious)
+              || (movementType == MovementType.TrackedAmphibious);
+        boolean isWading = !isHovercraft && !isAmphibious && (movementType != MovementType.Water);
+        Hex fromHex = board.getHex(from);
+        Hex intoHex = board.getHex(into);
+        int climb = Math.abs(BoardEdgePathFinder.calculateUnitElevationInHex(fromHex, mover, isHovercraft,
+              isAmphibious) - BoardEdgePathFinder.calculateUnitElevationInHex(intoHex, mover, isHovercraft,
+              isAmphibious));
+        if (climb > mover.getMaxElevationChange()) {
+            return UNREACHABLE;
+        }
+        boolean isOnRoads = (mover.getLanceRole() != null) && mover.getLanceRole().isConvoy();
+        if (isOnRoads && fromHex.containsTerrain(Terrains.ROAD) && intoHex.containsTerrain(Terrains.ROAD)) {
+            return 1 + climb;
+        }
+        return enteringCost(mover, intoHex, isWading) + climb;
     }
 
     private static boolean isEnterable(Entity mover, MovementType movementType, Board board, Coords coords) {

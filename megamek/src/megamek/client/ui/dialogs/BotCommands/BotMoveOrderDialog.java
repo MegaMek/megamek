@@ -57,6 +57,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -106,6 +107,7 @@ import megamek.common.orders.OrderPriority;
 import megamek.common.orders.PhaseLine;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
+import megamek.common.orders.WaypointOrder;
 import megamek.common.units.Entity;
 import megamek.common.util.Distractable;
 import megamek.logging.MMLogger;
@@ -165,6 +167,9 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private JTabbedPane tabs;
     private LanceRolePanel rolePanel;
     private JButton roleButton;
+    private JCheckBox planRouteBox;
+    // the role kind last shown, so picking Convoy can tick Plan the route
+    private String shownRoleKind = "";
     private BoardViewListenerAdapter hexClickListener;
     private Distractable suppressedDisplay;
 
@@ -263,7 +268,14 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
 
     /** An escort keeps its places round its convoy, so it has no route of its own to set. */
     private void updateRouteTab() {
-        String roleName = Messages.getString("BotCommandPanel.Role." + roleChoiceName());
+        String roleKind = roleChoiceName();
+        if (!roleKind.equals(shownRoleKind) && LanceRole.Kind.CONVOY.name().equals(roleKind)
+              && (waypoints.getRowCount() == 0)) {
+            // a convoy plans its route unless the player says otherwise
+            planRouteBox.setSelected(true);
+        }
+        shownRoleKind = roleKind;
+        String roleName = Messages.getString("BotCommandPanel.Role." + roleKind);
         roleButton.setText(Messages.getString("BotCommandPanel.MoveOrder.roleButton", roleName));
         tabs.setTitleAt(ROLE_TAB, Messages.getString("BotCommandPanel.MoveOrder.tab.roleNamed", roleName));
         boolean isEscort = rolePanel.isEscortChosen();
@@ -320,6 +332,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         roleButton.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.roleButton.tooltip"));
         roleButton.addActionListener(event -> tabs.setSelectedIndex(ROLE_TAB));
         controls.add(roleButton);
+        // the bot works out the whole way to each waypoint and adds the turning points (HammerGS, 2026-10-03)
+        planRouteBox = new JCheckBox(Messages.getString("BotCommandPanel.MoveOrder.planRoute"));
+        planRouteBox.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.planRoute.tooltip"));
+        controls.add(planRouteBox);
         controls.add(chooseButton);
         panel.add(controls, BorderLayout.LINE_END);
         return panel;
@@ -621,7 +637,21 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         WaypointFormation unitsFormation = orders.getFormation().map(unitsOrder -> new WaypointFormation(
               unitsOrder.getShape(), unitsOrder.getSpacing(), unitsOrder.getPace(), unitsOrder.getContactRule(),
               unitsOrder.isKeepTogether())).orElse(WaypointFormation.NONE);
-        waypoints.setRoute(orders.getRoute(), orders.getWaypointOrders(), unitsFormation);
+        // the turning points the bot planned are its own: the player's waypoints are shown, and planned again
+        List<Coords> playerRoute = new ArrayList<>();
+        List<WaypointOrder> playerOrders = new ArrayList<>();
+        boolean isPlanned = false;
+        for (int index = 0; index < orders.getRoute().size(); index++) {
+            WaypointOrder order = orders.getWaypointOrder(index);
+            if (order.isPlannedTurn()) {
+                continue;
+            }
+            playerRoute.add(orders.getRoute().get(index));
+            playerOrders.add(order);
+            isPlanned |= order.getRoutePlan() == WaypointOrder.RoutePlan.PLAN_LEG;
+        }
+        waypoints.setRoute(playerRoute, playerOrders, unitsFormation);
+        planRouteBox.setSelected(isPlanned);
         priorityCombo.setSelectedItem(orders.getPriority());
         rolePanel.setRole(LanceRoles.roleOf(units()));
         updateRouteTab();
@@ -811,8 +841,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         }
         UnitOption leader = (UnitOption) leaderCombo.getSelectedItem();
         int leaderId = (leader == null) ? group.unitIds().get(0) : leader.unitId();
+        List<WaypointOrder> sentOrders = MoveOrderCommands.withRoutePlan(waypoints.getWaypointOrders(),
+              planRouteBox.isSelected());
         List<String> commands = MoveOrderCommands.commands(group.unitIds(), leaderId, isAnyUnitInFormation(),
-              waypoints.getHexes(), waypoints.getWaypointOrders(), (OrderPriority) priorityCombo.getSelectedItem());
+              waypoints.getHexes(), sentOrders, (OrderPriority) priorityCombo.getSelectedItem());
         for (String command : commands) {
             clientGUI.getClient().sendChat(command);
         }

@@ -145,29 +145,41 @@ public final class BotFormationsMenuBuilder {
 
         OffBoardDirection defaultExitEdge = LanceRoles.defaultExitEdge(units.isEmpty() ? null : units.get(0));
         JMenuItem convoyItem = new JMenuItem(Messages.getString("BotCommandPanel.Role.lobbyConvoy"));
-        convoyItem.addActionListener(event -> chooseRole(client, frame, lance, units, List.of(), defaultExitEdge,
-              ((current != null) && current.isConvoy()) ? current : LanceRole.convoy(defaultExitEdge)));
+        convoyItem.addActionListener(event -> chooseRole(client, frame, game, lance, units, List.of(),
+              defaultExitEdge, ((current != null) && current.isConvoy()) ? current
+                    : LanceRole.convoy(defaultExitEdge)));
         menu.add(convoyItem);
 
         List<LanceRoles.ConvoyChoice> convoys = LanceRoles.convoyChoices(game, owner, lance.getId());
         JMenuItem escortItem = new JMenuItem(Messages.getString("BotCommandPanel.Role.lobbyEscort"));
         escortItem.setEnabled(!convoys.isEmpty());
         if (convoys.isEmpty()) {
-            escortItem.setToolTipText(Messages.getString("BotCommandPanel.Role.escort.noConvoy"));
+            escortItem.setToolTipText(Messages.getString("BotCommandPanel.Role.escort.noLance"));
         }
-        escortItem.addActionListener(event -> chooseRole(client, frame, lance, units, convoys, defaultExitEdge,
-              ((current != null) && current.isEscort()) ? current
+        escortItem.addActionListener(event -> chooseRole(client, frame, game, lance, units, convoys,
+              defaultExitEdge, ((current != null) && current.isEscort()) ? current
                     : LanceRole.defaultEscort(convoys.get(0).forceId())));
         menu.add(escortItem);
         return menu;
     }
 
-    private static void chooseRole(AbstractClient client, JFrame frame, Force lance, List<Entity> units,
+    private static void chooseRole(AbstractClient client, JFrame frame, Game game, Force lance, List<Entity> units,
           List<LanceRoles.ConvoyChoice> convoys, OffBoardDirection defaultExitEdge, LanceRole shown) {
         LanceRoleDialog dialog = new LanceRoleDialog(frame, lance.getName(), convoys, defaultExitEdge, shown);
-        if (dialog.showDialog() == DialogResult.CONFIRMED) {
-            sendRole(client, lance, units, dialog.getRole());
+        if (dialog.showDialog() != DialogResult.CONFIRMED) {
+            return;
         }
+        if (dialog.lanceToMakeConvoy().isPresent()) {
+            // the lance given an escort that was not a convoy yet becomes one
+            LanceRoles.ConvoyChoice convoy = dialog.lanceToMakeConvoy().get();
+            for (String command : MoveOrderCommands.makeConvoyCommands(LanceRoles.unitsOf(game, convoy.forceId()),
+                  convoy.newExitEdge())) {
+                client.sendChat(command);
+            }
+            LOGGER.info("[BotOrders] lobby: {} made a convoy, leaving by the {} edge, to be escorted by {}",
+                  convoy.name(), convoy.newExitEdge(), lance.getName());
+        }
+        sendRole(client, lance, units, dialog.getRole());
     }
 
     private static void sendRole(AbstractClient client, Force lance, List<Entity> units, @Nullable LanceRole role) {

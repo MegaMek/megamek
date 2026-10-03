@@ -37,11 +37,16 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 
 import megamek.common.OffBoardDirection;
+import megamek.common.Player;
 import megamek.common.board.Board;
+import megamek.common.force.Force;
+import megamek.common.game.Game;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
@@ -61,7 +66,7 @@ class LanceRoleEditorTest {
 
     private static final int CONVOY_FORCE_ID = 7;
     private static final List<LanceRoles.ConvoyChoice> ONE_CONVOY = List.of(
-          new LanceRoles.ConvoyChoice(CONVOY_FORCE_ID, "Supply Lance", 4));
+          LanceRoles.ConvoyChoice.convoy(CONVOY_FORCE_ID, "Supply Lance", 4));
 
     private static Entity unit(int unitId, int startingPosition) {
         Entity unit = new BipedMek();
@@ -161,5 +166,106 @@ class LanceRoleEditorTest {
         trucks.get(1).setUnitOrders(UnitOrders.NONE.withFormation(new FormationOrder(FormationShape.WEDGE, 3, 1, 1,
               FormationPace.WALK, ContactRule.BREAK)));
         assertTrue(MoveOrderCommands.convoyColumnCommands(trucks, convoy).isEmpty());
+    }
+
+    /** A game with two bot lances, Supply and Fire, and a human player's lance on the same side. */
+    private record Lances(Game game, Player bot, int supplyId, int fireId, int humanLanceId, List<Entity> supply,
+          List<Entity> fire, Entity humanUnit) {}
+
+    private static Lances lances() {
+        Game game = new Game();
+        Player bot = new Player(1, "Princess");
+        bot.setBot(true);
+        game.addPlayer(1, bot);
+        bot.setTeam(1);
+        Player human = new Player(0, "Raven's Nest");
+        human.setTeam(1);
+        game.addPlayer(0, human);
+        int supplyId = game.getForces().addTopLevelForce(Force.createToplevelForce("Supply Lance", bot), bot);
+        int fireId = game.getForces().addTopLevelForce(Force.createToplevelForce("Fire Lance", bot), bot);
+        int humanLanceId = game.getForces().addTopLevelForce(Force.createToplevelForce("Wraith", human), human);
+        List<Entity> supply = List.of(lanceUnit(game, 3, bot, supplyId), lanceUnit(game, 4, bot, supplyId));
+        List<Entity> fire = List.of(lanceUnit(game, 10, bot, fireId), lanceUnit(game, 11, bot, fireId));
+        Entity humanUnit = lanceUnit(game, 20, human, humanLanceId);
+        return new Lances(game, bot, supplyId, fireId, humanLanceId, supply, fire, humanUnit);
+    }
+
+    private static List<String> names(List<LanceRoles.ConvoyChoice> choices) {
+        List<String> names = new ArrayList<>();
+        for (LanceRoles.ConvoyChoice choice : choices) {
+            names.add(choice.name());
+        }
+        return names;
+    }
+
+    private static Entity lanceUnit(Game game, int unitId, Player owner, int lanceId) {
+        Entity unit = new BipedMek();
+        unit.setId(unitId);
+        unit.setOwner(owner);
+        unit.setStartingPos(Board.START_S);
+        game.addEntity(unit);
+        game.getForces().addEntity(unit, lanceId);
+        return unit;
+    }
+
+    @Test
+    void aUnitAddedToALanceLaterTakesTheLancesRole() {
+        Lances lances = lances();
+        LanceRole convoy = LanceRole.convoy(OffBoardDirection.NORTH);
+        lances.supply().get(0).setLanceRole(convoy);
+
+        assertEquals(convoy, lances.supply().get(1).getLanceRole());
+        assertNull(lances.supply().get(1).getOwnLanceRole());
+        assertNull(lances.fire().get(0).getLanceRole(), "another lance does not take it");
+    }
+
+    @Test
+    void anyOtherLanceCanBeEscortedConvoysFirst() {
+        Lances lances = lances();
+        lances.fire().get(0).setLanceRole(LanceRole.convoy(OffBoardDirection.WEST));
+
+        List<LanceRoles.ConvoyChoice> choices = LanceRoles.convoyChoices(lances.game(), lances.bot(), -1);
+
+        // the Wraith's lance has no bot unit to take the convoy role
+        assertEquals(List.of("Fire Lance", "Supply Lance"), names(choices));
+        assertTrue(choices.get(0).isConvoy());
+        assertFalse(choices.get(1).isConvoy());
+        assertEquals(OffBoardDirection.NORTH, choices.get(1).newExitEdge(), "deploying south, it leaves north");
+    }
+
+    @Test
+    void anEscortLanceIsNotOfferedAsAConvoy() {
+        Lances lances = lances();
+        lances.fire().get(0).setLanceRole(LanceRole.defaultEscort(lances.supplyId()));
+
+        List<LanceRoles.ConvoyChoice> choices = LanceRoles.convoyChoices(lances.game(), lances.bot(), -1);
+
+        assertEquals(List.of("Supply Lance"), names(choices));
+    }
+
+    @Test
+    void aLanceGivenAnEscortBecomesAConvoyOnItsBotUnitsOnly() {
+        Lances lances = lances();
+        List<Entity> mixed = List.of(lances.supply().get(0), lances.supply().get(1), lances.humanUnit());
+
+        List<String> commands = MoveOrderCommands.makeConvoyCommands(mixed, OffBoardDirection.NORTH);
+
+        assertEquals(List.of("/unitOrder 3 SET_ROLE role=CONVOY:NORTH", "/unitOrder 4 SET_ROLE role=CONVOY:NORTH",
+              "/unitOrder 3 FORMATION shape=COLUMN leader=3 spacing=1 slot=0 pace=RUN contact=HOLD together=true",
+              "/unitOrder 4 FORMATION shape=COLUMN leader=3 spacing=1 slot=1 pace=RUN contact=HOLD together=true"),
+              commands);
+    }
+
+    @Test
+    void theRolePanelSaysWhenTheEscortedLanceBecomesAConvoy() {
+        LanceRoles.ConvoyChoice notYet = new LanceRoles.ConvoyChoice(5, "Fire Lance", 4, false,
+              OffBoardDirection.EAST);
+        LanceRolePanel panel = new LanceRolePanel("Striker Lance", List.of(notYet), OffBoardDirection.NORTH);
+
+        panel.setRole(LanceRole.defaultEscort(5));
+
+        assertEquals(Optional.of(notYet), panel.lanceToMakeConvoy());
+        panel.setRole(null);
+        assertTrue(panel.lanceToMakeConvoy().isEmpty());
     }
 }

@@ -35,6 +35,7 @@ package megamek.client.ui.dialogs.BotCommands;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.JFrame;
 
 import megamek.client.ui.Messages;
@@ -85,6 +86,13 @@ public class LanceRoleDialog extends AbstractButtonDialog {
         if (rolePanel.isComplete()) {
             super.okButtonActionPerformed(event);
         }
+    }
+
+    /**
+     * @return the lance the escort is given when it is not a convoy yet, so it becomes one; empty otherwise
+     */
+    public Optional<LanceRoles.ConvoyChoice> lanceToMakeConvoy() {
+        return rolePanel.lanceToMakeConvoy();
     }
 
     /**

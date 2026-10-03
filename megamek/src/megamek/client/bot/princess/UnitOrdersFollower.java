@@ -1212,7 +1212,11 @@ public class UnitOrdersFollower {
                 }
                 continue;
             }
-            if (isPartWay && !isPlannedTurn && shouldWaitForFormation(entity, waypoint.get())) {
+            // a planned turning point is passed straight through, but for the first, where a lance not yet formed up
+            // assembles like at any first waypoint: passing it, assembly never ended and the column raced flag to flag
+            // (HammerGS's playtest, 2026-10-03)
+            boolean isPassedThrough = isPlannedTurn && !isAssembling(entity);
+            if (isPartWay && !isPassedThrough && shouldWaitForFormation(entity, waypoint.get())) {
                 continue;
             }
             if (isPartWay) {

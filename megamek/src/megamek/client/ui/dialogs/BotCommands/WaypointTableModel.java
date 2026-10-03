@@ -218,6 +218,8 @@ class WaypointTableModel extends AbstractTableModel {
         private WaypointFormation formation;
         private boolean isChangeAtWaypoint;
         private String phaseLine;
+        // a turning point the bot planned, not one the player set
+        private boolean isPlanned;
 
         private Row(Coords hex, int facing, WaypointOrder.HoldMode holdMode, int holdTurns, boolean exitBoard,
               WaypointFormation formation) {
@@ -269,6 +271,7 @@ class WaypointTableModel extends AbstractTableModel {
                   order.isExitBoard(), canForm ? formation : WaypointFormation.NONE);
             row.isChangeAtWaypoint = canForm && isChangeAtWaypoint;
             row.phaseLine = order.getPhaseLine();
+            row.isPlanned = order.isPlannedTurn();
             rows.add(row);
         }
         fireTableDataChanged();
@@ -281,6 +284,14 @@ class WaypointTableModel extends AbstractTableModel {
      * @param hex the hex
      */
     void addWaypoint(Coords hex) {
+        addWaypoint(hex, false);
+    }
+
+    /**
+     * @param hex       the hex
+     * @param isPlanned {@code true} for a turning point the bot planned, shown as one and sent as one
+     */
+    void addWaypoint(Coords hex, boolean isPlanned) {
         WaypointFormation formation;
         if (!canForm) {
             formation = WaypointFormation.NONE;
@@ -289,7 +300,9 @@ class WaypointTableModel extends AbstractTableModel {
         } else {
             formation = rows.get(rows.size() - 1).formation;
         }
-        rows.add(new Row(hex, UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, false, formation));
+        Row row = new Row(hex, UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, false, formation);
+        row.isPlanned = isPlanned;
+        rows.add(row);
         fireTableDataChanged();
     }
 
@@ -427,10 +440,27 @@ class WaypointTableModel extends AbstractTableModel {
      * @return one line on what the units do at that waypoint, for under the table: how they take its formation and
      *       what they do there, e.g. "Waypoint 2 - hex 1617: The lance takes the Wedge on the way here. Hold 2: ..."
      */
+    /**
+     * @return the order, marked as a turning point the bot planned when the row is one
+     */
+    private static WaypointOrder planned(Row row, WaypointOrder order) {
+        return row.isPlanned ? order.withRoutePlan(WaypointOrder.RoutePlan.TURN_POINT) : order;
+    }
+
+    /**
+     * @return {@code true} if the row is a turning point the bot planned
+     */
+    boolean isPlanned(int index) {
+        return rows.get(index).isPlanned;
+    }
+
     String describe(int index) {
         Row row = rows.get(index);
         StringBuilder text = new StringBuilder(Messages.getString("BotCommandPanel.MoveOrder.help.selected",
               index + 1, row.hex.getBoardNum()));
+        if (row.isPlanned) {
+            text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help.planned"));
+        }
         text.append(' ');
         if (row.formation.isNone()) {
             text.append(Messages.getString("BotCommandPanel.MoveOrder.help.noFormation"));
@@ -521,11 +551,11 @@ class WaypointTableModel extends AbstractTableModel {
             if (row.isChangeAtWaypoint && !row.formation.isNone()) {
                 // the leg keeps the shape the units had before, and they re-form in this one on arrival
                 WaypointFormation shapeBefore = (index == 0) ? unitsFormation : rows.get(index - 1).formation;
-                orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, shapeBefore, isExit, row.formation)
-                      .withNavNumber(index + 1).withPhaseLine(row.phaseLine));
+                orders.add(planned(row, new WaypointOrder(row.facing, holdMode, holdTurns, shapeBefore, isExit,
+                      row.formation).withNavNumber(index + 1).withPhaseLine(row.phaseLine)));
             } else {
-                orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, row.formation, isExit)
-                      .withNavNumber(index + 1).withPhaseLine(row.phaseLine));
+                orders.add(planned(row, new WaypointOrder(row.facing, holdMode, holdTurns, row.formation, isExit)
+                      .withNavNumber(index + 1).withPhaseLine(row.phaseLine)));
             }
         }
         return orders;
@@ -557,7 +587,8 @@ class WaypointTableModel extends AbstractTableModel {
         WaypointFormation formation = row.formation;
         return switch (columnIndex) {
             case COLUMN_NUMBER -> rowIndex + 1;
-            case COLUMN_HEX -> row.hex.getBoardNum();
+            case COLUMN_HEX -> row.isPlanned ? Messages.getString("BotCommandPanel.MoveOrder.plannedHex",
+                  row.hex.getBoardNum()) : row.hex.getBoardNum();
             case COLUMN_SHAPE -> new ShapeOption(formation.getShape());
             case COLUMN_CHANGE -> getChange(rowIndex);
             case COLUMN_SPACING -> formation.getSpacing();

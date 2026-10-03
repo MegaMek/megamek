@@ -260,6 +260,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         rolePanel = new LanceRolePanel(group.label(), LanceRoles.convoyChoices(clientGUI.getClient().getGame(),
               botPlayer, forceId), LanceRoles.defaultExitEdge(first));
         rolePanel.addChangeListener(this::updateRouteTab);
+        rolePanel.addChangeListener(this::loadDetail);
         return rolePanel;
     }
 
@@ -661,23 +662,17 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         WaypointFormation unitsFormation = orders.getFormation().map(unitsOrder -> new WaypointFormation(
               unitsOrder.getShape(), unitsOrder.getSpacing(), unitsOrder.getPace(), unitsOrder.getContactRule(),
               unitsOrder.isKeepTogether())).orElse(WaypointFormation.NONE);
-        // the turning points the bot planned are its own: the player's waypoints are shown, and planned again
-        List<Coords> playerRoute = new ArrayList<>();
-        List<WaypointOrder> playerOrders = new ArrayList<>();
+        // the whole route the units follow, the turning points the bot planned among it, marked as planned
+        // (HammerGS, 2026-10-03: a route the bot made for itself should show here)
         boolean isPlanned = false;
         for (int index = 0; index < orders.getRoute().size(); index++) {
             WaypointOrder order = orders.getWaypointOrder(index);
-            if (order.isPlannedTurn()) {
-                continue;
-            }
-            playerRoute.add(orders.getRoute().get(index));
-            playerOrders.add(order);
             if (order.getRoutePlan() == WaypointOrder.RoutePlan.PLAN_LEG) {
                 isPlanned = true;
                 styleButtons.get(order.getRouteStyle()).setSelected(true);
             }
         }
-        waypoints.setRoute(playerRoute, playerOrders, unitsFormation);
+        waypoints.setRoute(orders.getRoute(), orders.getWaypointOrders(), unitsFormation);
         planRouteBox.setSelected(isPlanned);
         priorityCombo.setSelectedItem(orders.getPriority());
         rolePanel.setRole(LanceRoles.roleOf(units()));
@@ -774,10 +769,23 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     /** Shows what the units do at the selected waypoint, in one line under the table. */
     private void loadDetail() {
         int row = waypointTable.getSelectedRow();
-        String text = (row < 0) ? Messages.getString("BotCommandPanel.MoveOrder.noneSelected")
-              : waypoints.describe(row);
+        String text = (row < 0) ? noWaypointText() : waypoints.describe(row);
         helpLabel.setText("<html><div style='width:" + UIUtil.scaleForGUI(TABLE_WIDTH - (2 * GAP)) + "px'>"
               + text + "</div></html>");
+    }
+
+    /**
+     * @return what the line under the table says with no waypoint picked: for a convoy with no route, what it will do
+     *       on its own once on the board
+     */
+    private String noWaypointText() {
+        LanceRole role = (rolePanel == null) ? null : rolePanel.getRole();
+        if ((waypoints.getRowCount() == 0) && (role != null) && role.isConvoy()) {
+            return role.isWaitingAtRouteEnd() ? Messages.getString("BotCommandPanel.MoveOrder.convoyWaits")
+                  : Messages.getString("BotCommandPanel.MoveOrder.convoyHeadsOut",
+                        Messages.getString("BotCommandPanel.Role.edge." + role.getExitEdge().name()));
+        }
+        return Messages.getString("BotCommandPanel.MoveOrder.noneSelected");
     }
 
     /** Starts adding a waypoint at each hex the player clicks on the board. */
@@ -845,8 +853,9 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             return;
         }
         List<Coords> route = RoutePlanner.plan(leaderUnit, from, target, style);
-        for (Coords hex : route) {
-            waypoints.addWaypoint(hex);
+        for (int index = 0; index < route.size(); index++) {
+            // the turning points are the bot's; the hex clicked is the player's
+            waypoints.addWaypoint(route.get(index), index < (route.size() - 1));
         }
         LOGGER.info("[BotOrders] auto route for {} from {} to {} ({}): {} waypoint(s)", group.label(),
               from.getBoardNum(), target.getBoardNum(), style, route.size());

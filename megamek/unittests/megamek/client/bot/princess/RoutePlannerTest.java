@@ -51,6 +51,10 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.RouteStyle;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointOrder;
@@ -223,5 +227,41 @@ class RoutePlannerTest {
         assertEquals("/PLAN:COVERED", covered.toCommandSuffix());
         assertEquals(covered, WaypointOrder.parse(List.of("PLAN:COVERED")));
         assertEquals(RouteStyle.FASTEST, WaypointOrder.parse(List.of("PLAN")).getRouteStyle());
+    }
+
+    @Test
+    void aColumnStillFormingUpWaitsAtItsFirstPlannedTurn() {
+        for (int column = 0; column <= WALL_END_COLUMN; column++) {
+            board.getHex(column, WALL_ROW).setLevel(0);
+        }
+        Tank leader = truck();
+        Coords turn = new Coords(START.getX(), START.getY() - 6);
+        leader.setPosition(turn);
+        WaypointOrder turnOrder = WaypointOrder.PASS_THROUGH.withRoutePlan(WaypointOrder.RoutePlan.TURN_POINT);
+        FormationOrder column = new FormationOrder(FormationShape.COLUMN, leader.getId(), 1, 0, FormationPace.WALK,
+              ContactRule.HOLD);
+        leader.setUnitOrders(UnitOrders.NONE.withRoute(List.of(turn, TARGET), List.of(turnOrder,
+              WaypointOrder.PASS_THROUGH)).withFormation(column));
+        Tank follower = new Tank();
+        follower.setId(5);
+        follower.setOwner(bot);
+        follower.setMovementMode(EntityMovementMode.WHEELED);
+        follower.setOriginalWalkMP(4);
+        follower.setWeight(35);
+        game.addEntity(follower);
+        // far behind: the column has not formed up
+        follower.setPosition(new Coords(START.getX() + 6, START.getY()));
+        follower.setDeployed(true);
+        follower.setUnitOrders(UnitOrders.NONE.withFormation(new FormationOrder(FormationShape.COLUMN, leader.getId(),
+              1, 1, FormationPace.WALK, ContactRule.HOLD)));
+        owned.add(follower);
+        UnitOrdersFollower orders = princess.getUnitOrdersFollower();
+
+        orders.advanceRoutes();
+        assertEquals(turn, leader.getUnitOrders().getRoute().get(0), "it waits at the first turn to form up");
+
+        orders.noteAssembled(leader.getId());
+        orders.advanceRoutes();
+        assertEquals(TARGET, leader.getUnitOrders().getRoute().get(0), "formed up, it passes straight through");
     }
 }

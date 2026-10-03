@@ -127,6 +127,8 @@ public final class WaypointOrder implements Serializable {
     private final String phaseLine;
     // whether the bot plans the way here, or planned this waypoint; null, read as NONE, in a save made before
     private final RoutePlan routePlan;
+    // how the bot plans the way here; null, read as FASTEST, in a save made before route styles
+    private final RouteStyle routeStyle;
 
     /**
      * @param facing    the facing 0-5 on arrival, or {@link UnitOrders#FACING_AUTO}
@@ -170,12 +172,12 @@ public final class WaypointOrder implements Serializable {
     public WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard, @Nullable WaypointFormation arrivalFormation) {
         this(facing, holdMode, holdTurns, formation, exitBoard, arrivalFormation, NavPoint.UNNAMED, null,
-              RoutePlan.NONE);
+              RoutePlan.NONE, RouteStyle.FASTEST);
     }
 
     private WaypointOrder(int facing, HoldMode holdMode, int holdTurns, @Nullable WaypointFormation formation,
           boolean exitBoard, @Nullable WaypointFormation arrivalFormation, int navNumber,
-          @Nullable String phaseLine, RoutePlan routePlan) {
+          @Nullable String phaseLine, RoutePlan routePlan, RouteStyle routeStyle) {
         if ((facing != UnitOrders.FACING_AUTO) && ((facing < 0) || (facing >= FACING_CODES.size()))) {
             throw new IllegalArgumentException("Facing must be 0-5 or FACING_AUTO, was " + facing);
         }
@@ -191,6 +193,24 @@ public final class WaypointOrder implements Serializable {
         this.navNumber = Math.max(NavPoint.UNNAMED, navNumber);
         this.phaseLine = PhaseLine.cleanName(phaseLine);
         this.routePlan = Objects.requireNonNull(routePlan);
+        this.routeStyle = Objects.requireNonNull(routeStyle);
+    }
+
+    /**
+     * @param newRouteStyle how the bot plans the way to this waypoint
+     *
+     * @return this waypoint's settings with that style, everything else kept
+     */
+    public WaypointOrder withRouteStyle(RouteStyle newRouteStyle) {
+        return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation, navNumber,
+              phaseLine, getRoutePlan(), newRouteStyle);
+    }
+
+    /**
+     * @return how the bot plans the way to this waypoint, when it plans it
+     */
+    public RouteStyle getRouteStyle() {
+        return (routeStyle == null) ? RouteStyle.FASTEST : routeStyle;
     }
 
     /**
@@ -200,7 +220,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withRoutePlan(RoutePlan newRoutePlan) {
         return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation, navNumber,
-              phaseLine, newRoutePlan);
+              phaseLine, newRoutePlan, getRouteStyle());
     }
 
     /**
@@ -224,7 +244,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withPhaseLine(@Nullable String newPhaseLine) {
         return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation, navNumber,
-              newPhaseLine, getRoutePlan());
+              newPhaseLine, getRoutePlan(), getRouteStyle());
     }
 
     /**
@@ -242,7 +262,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withNavNumber(int newNavNumber) {
         return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
-              newNavNumber, phaseLine, getRoutePlan());
+              newNavNumber, phaseLine, getRoutePlan(), getRouteStyle());
     }
 
     /**
@@ -260,7 +280,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withFacing(int newFacing) {
         return new WaypointOrder(newFacing, getHoldMode(), holdTurns, formation, exitBoard, arrivalFormation,
-              navNumber, phaseLine, getRoutePlan());
+              navNumber, phaseLine, getRoutePlan(), getRouteStyle());
     }
 
     /**
@@ -270,7 +290,7 @@ public final class WaypointOrder implements Serializable {
      */
     public WaypointOrder withHoldTurns(int turns) {
         return new WaypointOrder(facing, (turns > 0) ? HoldMode.HOLD : HoldMode.PASS, turns, formation, exitBoard,
-              arrivalFormation, navNumber, phaseLine, getRoutePlan());
+              arrivalFormation, navNumber, phaseLine, getRoutePlan(), getRouteStyle());
     }
 
     /**
@@ -365,6 +385,9 @@ public final class WaypointOrder implements Serializable {
         }
         if (getRoutePlan() == RoutePlan.PLAN_LEG) {
             suffix.append('/').append(PLAN_CODE);
+            if (getRouteStyle() != RouteStyle.FASTEST) {
+                suffix.append(':').append(getRouteStyle().name());
+            }
         } else if (getRoutePlan() == RoutePlan.TURN_POINT) {
             suffix.append('/').append(TURN_CODE);
         }
@@ -406,6 +429,7 @@ public final class WaypointOrder implements Serializable {
         int parsedNavNumber = NavPoint.UNNAMED;
         String parsedPhaseLine = null;
         RoutePlan parsedPlan = RoutePlan.NONE;
+        RouteStyle parsedStyle = RouteStyle.FASTEST;
         for (String segment : segments) {
             String code = segment.trim().toUpperCase(Locale.ROOT);
             if (code.isEmpty()) {
@@ -420,8 +444,11 @@ public final class WaypointOrder implements Serializable {
                 parsedFormation = WaypointFormation.parse(code);
             } else if (code.equals(EXIT_CODE)) {
                 parsedExit = true;
-            } else if (code.equals(PLAN_CODE)) {
+            } else if (code.equals(PLAN_CODE) || code.startsWith(PLAN_CODE + ':')) {
                 parsedPlan = RoutePlan.PLAN_LEG;
+                if (code.length() > PLAN_CODE.length()) {
+                    parsedStyle = RouteStyle.valueOf(code.substring(PLAN_CODE.length() + 1));
+                }
             } else if (code.equals(TURN_CODE)) {
                 parsedPlan = RoutePlan.TURN_POINT;
             } else if (code.startsWith(NAV_CODE) && (code.length() > NAV_CODE.length())) {
@@ -445,7 +472,7 @@ public final class WaypointOrder implements Serializable {
             parsedMode = HoldMode.PASS;
         }
         return new WaypointOrder(parsedFacing, parsedMode, parsedHold, parsedFormation, parsedExit, parsedArrival,
-              parsedNavNumber, parsedPhaseLine, parsedPlan);
+              parsedNavNumber, parsedPhaseLine, parsedPlan, parsedStyle);
     }
 
     @Override
@@ -457,13 +484,14 @@ public final class WaypointOrder implements Serializable {
               && (holdTurns == otherOrder.holdTurns) && (getHoldMode() == otherOrder.getHoldMode())
               && (exitBoard == otherOrder.exitBoard) && Objects.equals(formation, otherOrder.formation)
               && Objects.equals(arrivalFormation, otherOrder.arrivalFormation) && (navNumber == otherOrder.navNumber)
-              && Objects.equals(phaseLine, otherOrder.phaseLine) && (getRoutePlan() == otherOrder.getRoutePlan());
+              && Objects.equals(phaseLine, otherOrder.phaseLine) && (getRoutePlan() == otherOrder.getRoutePlan())
+              && (getRouteStyle() == otherOrder.getRouteStyle());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(facing, holdTurns, getHoldMode(), exitBoard, formation, arrivalFormation, navNumber,
-              phaseLine, getRoutePlan());
+              phaseLine, getRoutePlan(), getRouteStyle());
     }
 
     @Override

@@ -202,6 +202,23 @@ public class BotOrdersMenuBuilder {
      * @return the groups; empty when the bot has no units on the board
      */
     List<OrderGroup> groupsFor(Player botPlayer) {
+        return groupsFor(botPlayer, true);
+    }
+
+    /**
+     * Lists the groups the Move Order menu offers: all the bot's units on the board and each lance. A single unit or
+     * a mix is picked inside the editor, with its Choose units... button; listing every unit here as well made the
+     * player pick units twice (HammerGS, 2026-10-02).
+     *
+     * @param botPlayer the bot
+     *
+     * @return the groups; empty when the bot has no units on the board
+     */
+    List<OrderGroup> lanceGroupsFor(Player botPlayer) {
+        return groupsFor(botPlayer, false);
+    }
+
+    private List<OrderGroup> groupsFor(Player botPlayer, boolean isListingUnits) {
         List<OrderGroup> groups = new ArrayList<>();
         if (!(client.getGame() instanceof Game game)) {
             return groups;
@@ -232,9 +249,11 @@ public class BotOrdersMenuBuilder {
                       lanceUnitIds.size()), lanceUnitIds));
             }
         }
-        for (Entity unit : units) {
-            groups.add(new OrderGroup(Messages.getString("BotCommandPanel.Orders.unit", unit.getId(),
-                  unit.getDisplayName()), List.of(unit.getId())));
+        if (isListingUnits) {
+            for (Entity unit : units) {
+                groups.add(new OrderGroup(Messages.getString("BotCommandPanel.Orders.unit", unit.getId(),
+                      unit.getDisplayName()), List.of(unit.getId())));
+            }
         }
         return groups;
     }

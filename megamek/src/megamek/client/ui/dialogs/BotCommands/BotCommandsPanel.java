@@ -64,7 +64,6 @@ import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
-import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
@@ -206,7 +205,16 @@ public class BotCommandsPanel extends JPanel {
         var artillery = createButton("Artillery");
         commandButtons = List.of(moveOrder, quickOrders, targets, maneuver, setBehavior, artillery);
 
-        moveOrder.addActionListener(event -> showButtonPopup(moveOrder, this::createMoveOrderPopup));
+        moveOrder.addActionListener(event -> {
+            // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
+            List<Player> botPlayers = getBotPlayersUnderYourCommand().stream().filter(this::hasOnBoardUnits).toList();
+            if ((clientGUI != null) && (botPlayers.size() == 1)
+                  && (ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst()).size() == 1)) {
+                openMoveOrder(botPlayers.getFirst(), ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst()).getFirst());
+                return;
+            }
+            showButtonPopup(moveOrder, this::createMoveOrderPopup);
+        });
         quickOrders.addActionListener(event -> showButtonPopup(quickOrders, this::createQuickOrdersPopup));
         targets.addActionListener(event -> showButtonPopup(targets, this::createTargetsPopup));
         maneuver.addActionListener(evt -> showButtonPopup(maneuver, this::createManeuverPopup));
@@ -410,8 +418,8 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * The Move Order editor for each bot: pick all its units, a lance, one unit, or any mix, then set their route,
-     * each waypoint's facing and hold, and their formation in one window.
+     * The Move Order editor for each bot: pick all its units or a lance here, then set their route, each waypoint's
+     * facing and hold, and their formation in one window. One unit or a mix is picked in the editor.
      */
     private JPopupMenu createMoveOrderPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
@@ -420,11 +428,7 @@ public class BotCommandsPanel extends JPanel {
                 ordersMenuBuilder.populate(botMenu, botPlayer, null);
                 return;
             }
-            JMenuItem chooseItem = new JMenuItem(Messages.getString("BotCommandPanel.Orders.chooseUnits"));
-            chooseItem.addActionListener(event -> chooseUnitsForMoveOrder(botPlayer));
-            botMenu.add(chooseItem);
-            botMenu.addSeparator();
-            for (BotOrdersMenuBuilder.OrderGroup group : ordersMenuBuilder.groupsFor(botPlayer)) {
+            for (BotOrdersMenuBuilder.OrderGroup group : ordersMenuBuilder.lanceGroupsFor(botPlayer)) {
                 JMenuItem groupItem = new JMenuItem(group.label());
                 groupItem.addActionListener(event -> openMoveOrder(botPlayer, group));
                 botMenu.add(groupItem);
@@ -438,20 +442,6 @@ public class BotCommandsPanel extends JPanel {
     private JPopupMenu createQuickOrdersPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),
               this::hasOnBoardUnits);
-    }
-
-    /**
-     * Opens the unit checklist, then the Move Order editor for the units the player ticks.
-     */
-    private void chooseUnitsForMoveOrder(Player botPlayer) {
-        if (clientGUI == null) {
-            return;
-        }
-        BotUnitChooserDialog dialog = new BotUnitChooserDialog(clientGUI.getFrame(),
-              ordersMenuBuilder.unitsByLance(botPlayer));
-        if ((dialog.showDialog() == DialogResult.CONFIRMED) && (dialog.getChosenGroup() != null)) {
-            openMoveOrder(botPlayer, dialog.getChosenGroup());
-        }
     }
 
     /**

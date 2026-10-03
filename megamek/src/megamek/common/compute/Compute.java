@@ -153,6 +153,12 @@ public class Compute {
                                                    ARC_VGL_REAR, ARC_VGL_LR, ARC_VGL_LF
     };
 
+    /** Movement types that mean a unit spent VTOL or WiGE MP this turn (TW p.114 flak). */
+    private static final Set<EntityMovementType> FLIGHT_MOVEMENT_TYPES = EnumSet.of(
+          EntityMovementType.MOVE_VTOL_WALK,
+          EntityMovementType.MOVE_VTOL_RUN,
+          EntityMovementType.MOVE_VTOL_SPRINT);
+
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
     private static final int[][] clusterHitsTable = new int[][] {
@@ -7871,11 +7877,50 @@ public class Compute {
     }
 
     public static boolean isFlakAttack(Entity attacker, Entity target) {
-        boolean validLocation = !(attacker.isSpaceborne()
+        return isValidFlakLocation(attacker, target) && (target.isAirborne() || target.isAirborneVTOLorWIGE());
+    }
+
+    /**
+     * Returns whether a flak weapon (LB-X cluster, flak ammo, HAG and the like) gets its to-hit bonus against the
+     * target. TW p.114 (errata v12.0): flak applies "against a unit that presently has an Altitude or Elevation, or
+     * that expended any VTOL or WiGE MP or Thrust Points that turn (even if it landed at the end of that Movement
+     * Phase)". A VTOL or WiGE that flew and then landed is therefore still a flak target for the rest of the turn.
+     *
+     * <p>This is the to-hit check only. Artillery flak, which bursts at the target's height, keeps using
+     * {@link #isFlakAttack(Entity, Entity)}.</p>
+     *
+     * @param attacker the attacking unit
+     * @param target   the unit being attacked
+     *
+     * @return {@code true} if a flak weapon gets its to-hit bonus against the target
+     */
+    public static boolean isFlakToHitTarget(Entity attacker, Entity target) {
+        return isFlakAttack(attacker, target)
+              || (isValidFlakLocation(attacker, target) && expendedFlightMovementThisTurn(target));
+    }
+
+    /**
+     * Returns whether the unit spent VTOL or WiGE MP this turn, even if it has since landed. A WiGE (including a LAM
+     * in AirMek mode) that lands keeps a VTOL movement type. A VTOL's landing step is typed as a walk, so for units
+     * that move as VTOLs any movement counts, the same test the airborne target movement modifier uses (see
+     * {@link #getTargetMovementModifier(Game, int)}).
+     *
+     * @param unit the unit to check
+     *
+     * @return {@code true} if the unit flew this turn
+     */
+    private static boolean expendedFlightMovementThisTurn(Entity unit) {
+        boolean flewThisTurn = FLIGHT_MOVEMENT_TYPES.contains(unit.moved);
+        boolean movedAsVtol = (unit.getMovementMode() == EntityMovementMode.VTOL)
+              && (unit.moved != EntityMovementType.MOVE_NONE);
+        return flewThisTurn || movedAsVtol;
+    }
+
+    private static boolean isValidFlakLocation(Entity attacker, Entity target) {
+        return !(attacker.isSpaceborne()
               || target.isSpaceborne()
               || attacker.isOffBoard()
               || target.isOffBoard());
-        return validLocation && (target.isAirborne() || target.isAirborneVTOLorWIGE());
     }
 
     public static int turnsTilHit(int distance) {
@@ -8016,22 +8061,49 @@ public class Compute {
      * ground unit reveals as it passes rather than only when it stops. Requiring the mover to stop meant walking
      * past a hidden unit did nothing at all.</p>
      *
-     * <p>An airborne mover is different: it reveals what it flies over, so the range depends on whether it carries
-     * an Active Probe.</p>
+     * <p>An airborne aerospace mover is different: it reveals what it flies over, so the range depends on whether it
+     * carries an Active Probe.</p>
      *
-     * @param mover    the unit that is moving
-     * @param distance hexes between the mover's current step and the hidden unit
+     * <p>A VTOL or WiGE flying over a hex does not reveal a unit hidden in that hex (TW errata v12.0, p.260, Airborne
+     * Units). It still reveals a unit it passes next to, and one in the hex where it ends its move, as a ground unit
+     * would.</p>
+     *
+     * @param mover      the unit that is moving
+     * @param distance   hexes between the mover's current step and the hidden unit
+     * @param overflight {@code true} when this step is a VTOL or WiGE flying over the hex without ending its move
+     *                   there; see {@link #isNonAerospaceOverflight(Entity, MoveStep, boolean)}
      *
      * @return {@code true} if the hidden unit is revealed and may take its shot
      */
-    public static boolean revealsHiddenUnitForPointblankShot(Entity mover, int distance) {
+    public static boolean revealsHiddenUnitForPointblankShot(Entity mover, int distance, boolean overflight) {
         if (distance > 1) {
             return false;
         }
-        if (!mover.isAirborne()) {
-            return true;
+        if (mover.isAirborne()) {
+            return distance == ((mover.getBAPRange() > 0) ? 1 : 0);
         }
-        return distance == ((mover.getBAPRange() > 0) ? 1 : 0);
+        return !(overflight && (distance == 0));
+    }
+
+    /**
+     * Whether a step is a non-aerospace airborne unit flying over a hex: a unit using VTOL or WiGE movement (VTOLs,
+     * WiGEs, LAMs in AirMek mode, powered flight infantry) that is above the terrain of the step's hex and does not
+     * end its move there. Such a unit does not reveal units hidden in the hexes it flies over (TW errata v12.0,
+     * p.260, Airborne Units).
+     *
+     * @param mover   the unit that is moving
+     * @param step    the step being taken
+     * @param endStep {@code true} when this is the last step of the move
+     *
+     * @return {@code true} if the step flies over its hex
+     */
+    public static boolean isNonAerospaceOverflight(Entity mover, MoveStep step, boolean endStep) {
+        if (endStep) {
+            return false;
+        }
+        EntityMovementMode movementMode = mover.getMovementMode();
+        boolean fliesLikeVTOLOrWiGE = movementMode.isVTOL() || movementMode.isWiGE();
+        return fliesLikeVTOLOrWiGE && (step.getClearance() > 0);
     }
 
     /**

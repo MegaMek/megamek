@@ -1867,6 +1867,30 @@ public class MovePath implements Cloneable,
     }
 
     /**
+     * Returns whether this path lands a WiGE vehicle in a hex it cannot land in, so that it crashes (TW p.55). That is
+     * the first landing step (Down to the ground), or else the automatic landing at the end of movement after moving
+     * fewer than 5 hexes. A WiGE may only land in clear, paved or water hexes. Land-Air Meks and glider ProtoMeks use
+     * their own landing rules and are never counted.
+     *
+     * @return {@code true} if the WiGE vehicle crashes when it lands
+     */
+    public boolean landsWiGEVehicleWhereItCrashes() {
+        if (!(getEntity() instanceof Tank wige) || (wige.getMovementMode() != EntityMovementMode.WIGE)) {
+            return false;
+        }
+        for (MoveStep step : steps) {
+            if ((step.getType() == MoveStepType.DOWN) && (step.getClearance() == 0)) {
+                return !wige.canLandIn(getGame().getBoard(step.getBoardId()).getHex(step.getPosition()));
+            }
+        }
+        Coords landingCoords = getFinalCoords();
+        if ((landingCoords != null) && automaticWiGELanding(true)) {
+            return !wige.canLandIn(getGame().getBoard(getFinalBoardId()).getHex(landingCoords));
+        }
+        return false;
+    }
+
+    /**
      * @return Whether the entire path is submerged. A unit is only considered submerged when entirely underwater.
      */
     public boolean isAllUnderwater(Game game) {

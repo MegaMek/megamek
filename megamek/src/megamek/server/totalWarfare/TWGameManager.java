@@ -3950,6 +3950,13 @@ public class TWGameManager extends AbstractGameManager {
                     return false;
                 }
             }
+        } else if (!evacuation && AirborneDismountRules.isCarrierAirborne(unloader, hex, elevation)) {
+            // Leaving a WiGE that has not landed: VTOL infantry stay at its elevation, jump infantry land on the
+            // ground or roof and count as having jumped (TW p.225, errata v12.0)
+            unit.setElevation(AirborneDismountRules.dismountElevation(unit, hex, elevation));
+            if ((unit.getMovementMode() != EntityMovementMode.VTOL) && (unit.getJumpMP() > 0)) {
+                unit.moved = EntityMovementType.MOVE_JUMP;
+            }
         } else if (game.getBuildingAt(pos, unit.getBoardId()).isPresent()) {
             // non-flying unit unloading units into a building
             // -> sit in the building at the same elevation
@@ -6003,7 +6010,7 @@ public class TWGameManager extends AbstractGameManager {
                 crash_damage *= 2;
             }
             if (bldg != null) {
-                buildingCollapseHandler.collapseBuilding(bldg, game.getPositionMapMulti(), hitCoords, true, vReport);
+                buildingCollapseHandler.collapseBuilding(bldg, game.getPositionMapMulti(), hitCoords, vReport);
             }
             if (!damageDealt) {
                 report = new Report(9700, Report.PUBLIC);
@@ -22826,6 +22833,21 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
+     * Resolves a WiGE vehicle landing in its current hex: it crashes unless the hex is clear, paved or water, and it
+     * charges a grounded DropShip or Large Support Vehicle there (TW p.55). Adds the reports to the phase report. See
+     * {@link AirborneVehicleCrashHandler#resolveWiGELanding(Tank, int, int)}.
+     *
+     * @param wige          the landing WiGE vehicle, already placed in the hex it lands in
+     * @param fromElevation the elevation it lands from
+     * @param hexesMoved    the hexes it moved this turn
+     *
+     * @return {@code true} if the WiGE landed safely, {@code false} if it crashed or was destroyed
+     */
+    boolean resolveWiGELanding(Tank wige, int fromElevation, int hexesMoved) {
+        return airborneVehicleCrashHandler.resolveWiGELanding(wige, fromElevation, hexesMoved);
+    }
+
+    /**
      * rolls and resolves one tank critical hit
      *
      * @param t       the <code>Tank</code> to be critted
@@ -24005,6 +24027,8 @@ public class TWGameManager extends AbstractGameManager {
                     vDesc.addElement(r);
                     // Swarming infantry shouldn't take damage when their target dies
                     // http://bg.battletech.com/forums/total-warfare/swarming-question
+                    // unless it is a VTOL or WiGE destroyed in the air (TW p.222, errata v12.0)
+                    vDesc.addAll(new SwarmShakeOffHandler(this).damageSwarmerOfDestroyedUnit(entity, swarmer));
                     entityUpdate(swarmerId);
                 }
             }
@@ -24093,6 +24117,10 @@ public class TWGameManager extends AbstractGameManager {
         // Units in an Aerospace unit that is already on the ground usually survive if
         // they can evacuate the wreck.
         if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+            survivable = false;
+        }
+        // A VTOL or WiGE destroyed in a crash takes all its infantry with it (TW p.224)
+        if (airborneVehicleCrashHandler.isCrashing(entity)) {
             survivable = false;
         }
 

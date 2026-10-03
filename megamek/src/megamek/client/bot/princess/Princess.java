@@ -4513,6 +4513,8 @@ public class Princess extends BotClient {
 
         final Entity movingEntity = path.getEntity();
         final Coords pathEndpoint = path.getFinalCoords();
+        final boolean carrierAirborne = AirborneDismountRules.isCarrierAirborne(movingEntity,
+              getGame().getBoard(path.getFinalBoardId()).getHex(pathEndpoint), path.getFinalElevation());
         Targetable closestEnemy = getPathRanker(movingEntity).findClosestEnemy(movingEntity,
               pathEndpoint,
               getGame(),
@@ -4537,6 +4539,11 @@ public class Princess extends BotClient {
                 // there's really no good reason for Princess to disconnect trailers.
                 // Let's skip those for now. We don't want to create a bogus 'unload' step for them anyhow.
                 if (loadedEntity.isTrailer() && loadedEntity.getTowedBy() != Entity.NONE) {
+                    continue;
+                }
+                // Only jump and VTOL infantry may leave a VTOL or WiGE that has not landed (TW p.225, errata v12.0)
+                if (carrierAirborne
+                      && !AirborneDismountRules.canDismountFromAirborneCarrier(getGame(), movingEntity, loadedEntity)) {
                     continue;
                 }
                 // favorable conditions include:

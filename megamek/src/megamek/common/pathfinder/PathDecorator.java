@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Terrains;
 
@@ -181,6 +182,29 @@ public class PathDecorator {
     }
 
     /**
+     * Adds a takeoff to a path for a grounded WiGE. A WiGE on the ground has only 1 MP, so a path that never takes off
+     * leaves it crawling one hex a turn. Taking off is an UP step that must be the first step; it costs a WiGE vehicle
+     * 5 MP (TW p.55).
+     *
+     * @param path a path with no movement steps yet (a climb mode step is allowed)
+     *
+     * @return {@code true} if a legal takeoff was added; {@code false} if the unit is not a grounded WiGE or cannot take
+     *       off, in which case the path is left unchanged
+     */
+    public static boolean addWiGETakeoff(MovePath path) {
+        Entity entity = path.getEntity();
+        if ((entity.getMovementMode() != EntityMovementMode.WIGE) || entity.isAirborneVTOLorWIGE()) {
+            return false;
+        }
+        path.addStep(MoveStepType.UP);
+        if (!path.isMoveLegal()) {
+            path.removeLastStep();
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * For units using VTOL movement, add "UP" steps to the end of the MovePath source so that a forward movement can
      * pass over intervening terrain
      */
@@ -211,9 +235,9 @@ public class PathDecorator {
         int destElevation = absHeight - destHex.getLevel();
         int safeElevation = destHex.maxTerrainFeatureElevation(false);
 
-        // Add as many UP steps as MP will allow, until able to move forward 
+        // Add as many UP steps as MP will allow, until able to move forward
         while (destElevation <= safeElevation) {
-            // Do not go up if the unit can go forward before rising above the 
+            // Do not go up if the unit can go forward before rising above the
             // maximum terrain elevation, e.g. under a bridge
             // VTOLs shouldn't land in this way, however.
             boolean noLanding = (destElevation >= 1);

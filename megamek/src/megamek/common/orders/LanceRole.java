@@ -48,7 +48,8 @@ import megamek.common.OffBoardDirection;
  * on the way, and never breaks off to fight; or an escort that keeps its places round a convoy lance (HammerGS,
  * 2026-10-02). A role belongs to the lance's units and outlasts their routes: a new route, Stop or Clear leaves it.
  *
- * <p>In order text: {@code CONVOY:NORTH}, or
+ * <p>In order text: {@code CONVOY:NORTH}, {@code CONVOY:NORTH:WAIT} for a convoy that waits at the end of its route
+ * instead of leaving, or
  * {@code ESCORT:<convoy force id>:LEAD.LEFT.RIGHT:MEDIUM:IN_STEP:SCREEN:BRIEFLY:FOLLOW}.</p>
  *
  * <p>This is a plain class and not a record on purpose: the save format uses XStream, which cannot read records
@@ -149,6 +150,7 @@ public final class LanceRole implements Serializable {
     // positions are joined by dots: order text splits arguments on spaces and routes on hyphens
     private static final String POSITION_SEPARATOR = ".";
     private static final int ESCORT_PARTS = 8;
+    private static final String WAIT_TEXT = "WAIT";
 
     private final Kind kind;
     private final OffBoardDirection exitEdge;
@@ -159,6 +161,8 @@ public final class LanceRole implements Serializable {
     private final Contact contact;
     private final LeaveToFight leaveToFight;
     private final WhenConvoyGone whenConvoyGone;
+    // false - leaving the board - in a savegame made before a convoy could wait
+    private final boolean waitsAtRouteEnd;
 
     private LanceRole(Kind kind, OffBoardDirection exitEdge, int convoyForceId, Set<Position> positions,
           Distance distance, Movement movement, Contact contact, LeaveToFight leaveToFight,
@@ -172,6 +176,20 @@ public final class LanceRole implements Serializable {
         this.contact = Objects.requireNonNull(contact);
         this.leaveToFight = Objects.requireNonNull(leaveToFight);
         this.whenConvoyGone = Objects.requireNonNull(whenConvoyGone);
+        this.waitsAtRouteEnd = false;
+    }
+
+    private LanceRole(OffBoardDirection exitEdge, boolean waitsAtRouteEnd) {
+        this.kind = Kind.CONVOY;
+        this.exitEdge = Objects.requireNonNull(exitEdge);
+        this.convoyForceId = -1;
+        this.positions = EnumSet.noneOf(Position.class);
+        this.distance = Distance.MEDIUM;
+        this.movement = Movement.IN_STEP;
+        this.contact = Contact.SCREEN;
+        this.leaveToFight = LeaveToFight.BRIEFLY;
+        this.whenConvoyGone = WhenConvoyGone.FOLLOW;
+        this.waitsAtRouteEnd = waitsAtRouteEnd;
     }
 
     /**
@@ -180,11 +198,21 @@ public final class LanceRole implements Serializable {
      * @return the convoy role
      */
     public static LanceRole convoy(OffBoardDirection exitEdge) {
+        return convoy(exitEdge, false);
+    }
+
+    /**
+     * @param exitEdge        the edge the convoy leaves by
+     * @param waitsAtRouteEnd {@code true} for a convoy that waits at the end of its route until given new orders,
+     *                        {@code false} for one that then leaves the board by its edge (HammerGS, 2026-10-03)
+     *
+     * @return the convoy role
+     */
+    public static LanceRole convoy(OffBoardDirection exitEdge, boolean waitsAtRouteEnd) {
         if ((exitEdge == null) || (exitEdge == OffBoardDirection.NONE)) {
             throw new IllegalArgumentException("A convoy needs an exit edge");
         }
-        return new LanceRole(Kind.CONVOY, exitEdge, -1, EnumSet.noneOf(Position.class), Distance.MEDIUM,
-              Movement.IN_STEP, Contact.SCREEN, LeaveToFight.BRIEFLY, WhenConvoyGone.FOLLOW);
+        return new LanceRole(exitEdge, waitsAtRouteEnd);
     }
 
     /**
@@ -235,6 +263,14 @@ public final class LanceRole implements Serializable {
         return exitEdge;
     }
 
+    /**
+     * @return {@code true} for a convoy that waits at the end of its route, {@code false} for one that then leaves the
+     *       board by its exit edge
+     */
+    public boolean isWaitingAtRouteEnd() {
+        return waitsAtRouteEnd;
+    }
+
     /** @return the force id of the convoy an escort guards; -1 for a convoy */
     public int getConvoyForceId() {
         return convoyForceId;
@@ -270,7 +306,7 @@ public final class LanceRole implements Serializable {
      */
     public String toCommandText() {
         if (isConvoy()) {
-            return Kind.CONVOY + SEPARATOR + exitEdge.name();
+            return Kind.CONVOY + SEPARATOR + exitEdge.name() + (waitsAtRouteEnd ? SEPARATOR + WAIT_TEXT : "");
         }
         List<String> positionNames = new ArrayList<>();
         for (Position position : positions) {
@@ -293,7 +329,7 @@ public final class LanceRole implements Serializable {
         try {
             Kind kind = Kind.valueOf(parts[0]);
             if (kind == Kind.CONVOY) {
-                return convoy(OffBoardDirection.valueOf(parts[1]));
+                return convoy(OffBoardDirection.valueOf(parts[1]), (parts.length > 2) && WAIT_TEXT.equals(parts[2]));
             }
             if (parts.length != ESCORT_PARTS) {
                 throw new IllegalArgumentException("Not an escort role: " + text);
@@ -319,13 +355,13 @@ public final class LanceRole implements Serializable {
               && (convoyForceId == otherRole.convoyForceId) && positions.equals(otherRole.positions)
               && (distance == otherRole.distance) && (movement == otherRole.movement)
               && (contact == otherRole.contact) && (leaveToFight == otherRole.leaveToFight)
-              && (whenConvoyGone == otherRole.whenConvoyGone);
+              && (whenConvoyGone == otherRole.whenConvoyGone) && (waitsAtRouteEnd == otherRole.waitsAtRouteEnd);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(kind, exitEdge, convoyForceId, positions, distance, movement, contact, leaveToFight,
-              whenConvoyGone);
+              whenConvoyGone, waitsAtRouteEnd);
     }
 
     @Override

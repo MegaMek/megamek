@@ -201,4 +201,20 @@ class ConvoyBehaviourTest {
 
         assertEquals(List.of(new Coords(START.getX(), 0)), mek.getUnitOrders().getRoute());
     }
+
+    @Test
+    void aConvoySetToWaitStaysAtTheEndOfItsRoute() {
+        Tank truck = truck(3, EntityMovementMode.WHEELED, true);
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH, true));
+        truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(WAYPOINT)));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+
+        follower.advanceRoutes();
+        assertEquals(List.of(WAYPOINT), truck.getUnitOrders().getRoute(), "no exit goes on its route");
+
+        truck.setUnitOrders(UnitOrders.NONE);
+        follower.advanceRoutes();
+        assertTrue(truck.getUnitOrders().getRoute().isEmpty());
+        assertTrue(follower.isHolding(truck), "with no route left it holds where it is");
+    }
 }

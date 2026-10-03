@@ -97,6 +97,11 @@ public class UnitBehavior {
             // hit on its way with Break and fight set: the lance fights its attackers; the route waits
             logDecision(entity, "UNDER_FIRE", "breaking off the route to fight");
             return BehaviorType.Engaged;
+        } else if (owner.getUnitOrdersFollower().getEscortPlace(entity).isPresent()) {
+            // an escort keeps its place round its convoy; it has no route of its own
+            logDecision(entity, "ESCORT", "head " + owner.getUnitOrdersFollower().getEscortPlace(entity).get()
+                  .getBoardNum());
+            return BehaviorType.MoveToDestination;
         } else if (entity.getUnitOrders().hasRoute()) {
             while (getWaypointForEntity(entity).isPresent()
                   && !owner.getUnitOrdersFollower().canReach(entity, getWaypointForEntity(entity).get())) {
@@ -228,6 +233,10 @@ public class UnitBehavior {
         if (entity.getUnitOrders().getFightState().orElse(null) == FightState.FIGHTING) {
             // fighting off its route: nothing pulls it back to the route until the fight is over
             return Optional.empty();
+        }
+        Optional<Coords> escortPlace = owner.getUnitOrdersFollower().getEscortPlace(entity);
+        if (escortPlace.isPresent()) {
+            return escortPlace;
         }
         if (entity.getUnitOrders().hasRoute() || owner.getUnitOrdersFollower().isFollowingPlayerUnit(entity)) {
             // a formation unit heads for its slot beside the leader rather than the waypoint itself

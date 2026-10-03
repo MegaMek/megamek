@@ -1472,6 +1472,17 @@ public class Princess extends BotClient {
             }
         }
 
+        // an escort deploys at its place round a convoy already on the board
+        Optional<Coords> escortPlace = getUnitOrdersFollower().getEscortDeploymentPlace(deployedUnit);
+        if (escortPlace.isPresent()) {
+            List<Coords> nearestFirst = new ArrayList<>(possibleDeployCoords);
+            nearestFirst.sort(Comparator.comparingInt(coords -> coords.distance(escortPlace.get())));
+            Coords escortHex = super.getFirstValidCoords(deployedUnit, nearestFirst);
+            if (escortHex != null) {
+                return escortHex;
+            }
+        }
+
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;
         int RADIUS = 3;

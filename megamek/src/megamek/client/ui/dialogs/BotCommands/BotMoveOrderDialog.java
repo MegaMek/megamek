@@ -787,9 +787,23 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         for (String command : commands) {
             clientGUI.getClient().sendChat(command);
         }
-        LOGGER.info("[BotOrders] move order sent to {} of {}: {} waypoint(s) {}, leader {}, role {}", group.label(),
+        boolean isConvoyColumn = (role != null) && role.isConvoy() && (group.unitIds().size() >= 2)
+              && !MoveOrderCommands.setsFormation(waypoints.getWaypointOrders());
+        if (isConvoyColumn) {
+            List<Integer> columnOrder = new ArrayList<>();
+            columnOrder.add(leaderId);
+            for (int unitId : group.unitIds()) {
+                if (unitId != leaderId) {
+                    columnOrder.add(unitId);
+                }
+            }
+            for (String command : MoveOrderCommands.columnCommands(columnOrder)) {
+                clientGUI.getClient().sendChat(command);
+            }
+        }
+        LOGGER.info("[BotOrders] move order sent to {} of {}: {} waypoint(s) {}, leader {}, role {}{}", group.label(),
               botPlayer.getName(), waypoints.getRowCount(), waypoints.getWaypointOrders(), leaderId,
-              (role == null) ? LanceRole.NONE_TEXT : role);
+              (role == null) ? LanceRole.NONE_TEXT : role, isConvoyColumn ? ", travelling in a Column" : "");
         acknowledger.accept(botPlayer, Messages.getString("BotCommandPanel.MoveOrder.toast", waypoints.getRowCount(),
               group.label()));
         setResult(DialogResult.CONFIRMED);

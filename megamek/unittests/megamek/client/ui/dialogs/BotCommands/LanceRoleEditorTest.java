@@ -42,8 +42,14 @@ import java.util.List;
 
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
+import megamek.common.board.Coords;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.LanceRole;
 import megamek.common.orders.LanceRoles;
+import megamek.common.orders.UnitOrders;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import org.junit.jupiter.api.Test;
@@ -131,5 +137,47 @@ class LanceRoleEditorTest {
         assertTrue(panel.isEscortChosen());
         assertFalse(panel.isComplete());
         assertNull(panel.getRole());
+    }
+
+    @Test
+    void aConvoyIsPutInARunningColumnLedByItsFirstUnit() {
+        List<Entity> trucks = List.of(unit(3, Board.START_S), unit(4, Board.START_S), unit(5, Board.START_S));
+
+        List<String> commands = MoveOrderCommands.convoyColumnCommands(trucks,
+              LanceRole.convoy(OffBoardDirection.NORTH));
+
+        assertEquals(3, commands.size());
+        assertEquals("/unitOrder 4 FORMATION shape=COLUMN leader=3 spacing=1 slot=1 pace=RUN contact=HOLD together=true",
+              commands.get(1));
+    }
+
+    @Test
+    void aShapeThePlayerSetIsKeptAndOnlyAConvoyGetsAColumn() {
+        List<Entity> trucks = List.of(unit(3, Board.START_S), unit(4, Board.START_S));
+        LanceRole convoy = LanceRole.convoy(OffBoardDirection.NORTH);
+
+        assertTrue(MoveOrderCommands.convoyColumnCommands(trucks, LanceRole.defaultEscort(CONVOY_FORCE_ID)).isEmpty());
+        assertTrue(MoveOrderCommands.convoyColumnCommands(trucks.subList(0, 1), convoy).isEmpty());
+
+        trucks.get(1).setUnitOrders(UnitOrders.NONE.withFormation(new FormationOrder(FormationShape.WEDGE, 3, 1, 1,
+              FormationPace.WALK, ContactRule.BREAK)));
+        assertTrue(MoveOrderCommands.convoyColumnCommands(trucks, convoy).isEmpty());
+    }
+
+    @Test
+    void aConvoyFacesItsExitEdge() {
+        Board board = new Board(32, 34);
+        Coords middle = new Coords(10, 17);
+        Entity truck = unit(3, Board.START_S);
+
+        assertTrue(LanceRoles.convoyExitFacing(truck, middle, board).isEmpty());
+
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
+        assertEquals(0, LanceRoles.convoyExitFacing(truck, middle, board).getAsInt());
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.SOUTH));
+        assertEquals(3, LanceRoles.convoyExitFacing(truck, middle, board).getAsInt());
+        // standing on the north edge already, it faces straight off it
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
+        assertEquals(0, LanceRoles.convoyExitFacing(truck, new Coords(10, 0), board).getAsInt());
     }
 }

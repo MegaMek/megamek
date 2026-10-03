@@ -72,7 +72,10 @@ public class LanceRolePanel extends JPanel {
 
     private static final int GAP = 8;
     private static final int PICTURE_SPACING = 6;
-    private static final int TEXT_WIDTH = 640;
+    // the summary and the hints wrap at these widths; wider ran the summary past the dialog's edge at a large GUI
+    // scale (HammerGS, 2026-10-02)
+    private static final int TEXT_WIDTH = 520;
+    private static final int HINT_WIDTH = 300;
     private static final String NONE_CARD = "none";
 
     /** The role choices at the top: none, or one of the kinds. */
@@ -99,6 +102,11 @@ public class LanceRolePanel extends JPanel {
     private final Map<LanceRole.WhenConvoyGone, JToggleButton> goneButtons = new EnumMap<>(
           LanceRole.WhenConvoyGone.class);
     private final JLabel escortSummary = new JLabel();
+    private final JLabel distanceHint = new JLabel();
+    private final JLabel movementHint = new JLabel();
+    private final JLabel contactHint = new JLabel();
+    private final JLabel leaveHint = new JLabel();
+    private final JLabel goneHint = new JLabel();
     private boolean isLoading;
 
     /**
@@ -204,10 +212,10 @@ public class LanceRolePanel extends JPanel {
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.escorting", convoyCombo, null);
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.distance",
               segmentedRow(distanceButtons, List.of(LanceRole.Distance.values()), "BotCommandPanel.Role.distance."),
-              Messages.getString("BotCommandPanel.Role.escort.distanceHint"));
+              distanceHint);
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.movement",
               segmentedRow(movementButtons, List.of(LanceRole.Movement.values()), "BotCommandPanel.Role.movement."),
-              Messages.getString("BotCommandPanel.Role.escort.movementHint"));
+              movementHint);
         contactCombo.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -218,13 +226,13 @@ public class LanceRolePanel extends JPanel {
             }
         });
         contactCombo.addActionListener(event -> fireChange());
-        addFormRow(form, constraints, "BotCommandPanel.Role.escort.contact", contactCombo, null);
+        addFormRow(form, constraints, "BotCommandPanel.Role.escort.contact", contactCombo, contactHint);
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.leave",
               segmentedRow(leaveButtons, List.of(LanceRole.LeaveToFight.values()), "BotCommandPanel.Role.leave."),
-              Messages.getString("BotCommandPanel.Role.escort.leaveHint", LanceRole.BRIEF_CHASE_HEXES));
+              leaveHint);
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.gone",
               segmentedRow(goneButtons, List.of(LanceRole.WhenConvoyGone.values()), "BotCommandPanel.Role.gone."),
-              Messages.getString("BotCommandPanel.Role.escort.goneHint"));
+              goneHint);
         constraints.gridx = 0;
         constraints.gridy++;
         constraints.gridwidth = 3;
@@ -258,7 +266,7 @@ public class LanceRolePanel extends JPanel {
     }
 
     private void addFormRow(JPanel form, GridBagConstraints constraints, String labelKey, Component control,
-          @Nullable String hint) {
+          @Nullable JLabel hint) {
         constraints.gridx = 0;
         constraints.gridwidth = 1;
         constraints.weightx = 0;
@@ -268,7 +276,7 @@ public class LanceRolePanel extends JPanel {
         form.add(control, constraints);
         if (hint != null) {
             constraints.gridx = 2;
-            form.add(new JLabel(hint), constraints);
+            form.add(hint, constraints);
         }
         constraints.gridy++;
     }
@@ -422,8 +430,19 @@ public class LanceRolePanel extends JPanel {
     private void refreshText() {
         String edge = Messages.getString("BotCommandPanel.Role.edge." + selected(edgeButtons,
               OffBoardDirection.NORTH).name());
-        convoyHelp.setText(html(Messages.getString("BotCommandPanel.Role.convoy.help", edge)));
-        escortSummary.setText(html(escortSummaryText()));
+        convoyHelp.setText(html(Messages.getString("BotCommandPanel.Role.convoy.help", edge), TEXT_WIDTH));
+        escortSummary.setText(html(escortSummaryText(), TEXT_WIDTH));
+        // each hint says what the choice picked on its row means, and changes with it
+        distanceHint.setText(hint("distance." + selected(distanceButtons, LanceRole.Distance.MEDIUM).name()));
+        movementHint.setText(hint("movement." + selected(movementButtons, LanceRole.Movement.IN_STEP).name()));
+        contactHint.setText(hint("contact." + ((LanceRole.Contact) contactCombo.getSelectedItem()).name()));
+        leaveHint.setText(hint("leave." + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name()));
+        goneHint.setText(hint("gone." + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name()));
+    }
+
+    private static String hint(String keySuffix) {
+        return html(Messages.getString("BotCommandPanel.Role.hint." + keySuffix, LanceRole.BRIEF_CHASE_HEXES),
+              HINT_WIDTH);
     }
 
     private String escortSummaryText() {
@@ -453,7 +472,7 @@ public class LanceRolePanel extends JPanel {
               + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name());
     }
 
-    private static String html(String text) {
-        return "<html><div style='width:" + UIUtil.scaleForGUI(TEXT_WIDTH) + "px'>" + text + "</div></html>";
+    private static String html(String text, int width) {
+        return "<html><div style='width:" + UIUtil.scaleForGUI(width) + "px'>" + text + "</div></html>";
     }
 }

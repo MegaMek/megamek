@@ -520,6 +520,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** The role filters as one row of the description form: a label, then the boxes for the unit type shown. */
     private int addMissionRoleFilters(GridBagConstraints constraints, int startRow) {
         int row = startRow;
+        // The section above leaves a full-width span behind. Inherited here, it stretched this label across the
+        // filter boxes, where it sat on top of them and took their clicks.
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
         constraints.gridy = row;
         lblMissionRoles = describedLabel("ForceGeneratorDialog.missionRoles");

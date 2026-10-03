@@ -33,11 +33,16 @@
 package megamek.client.bot.princess;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.orders.RouteStyle;
 import megamek.common.units.Entity;
+import megamek.common.units.Terrains;
 
 /**
  * Plans a unit's whole way to a waypoint at once and finds the turning points on it, so the unit drives straight from
@@ -46,7 +51,7 @@ import megamek.common.units.Entity;
  * hill (HammerGS's playtest, 2026-10-03: a convoy at 1326 went north to 1323, then east along the hill to 1621). A
  * planned way keeps to straight lines between turning points wherever a straight line costs no more.
  */
-final class RoutePlanner {
+public final class RoutePlanner {
 
     /** The most turning points a planned way is given, so a winding way through rough ground stays readable. */
     static final int MOST_TURNING_POINTS = 8;
@@ -74,6 +79,71 @@ final class RoutePlanner {
     }
 
     /**
+     * Plans a unit's way from a hex to a waypoint in a style, for the Move Order editor's Auto route and for a leg the
+     * bot plans in game.
+     *
+     * @param mover  the unit; its movement type decides where it can go
+     * @param from   where it sets out
+     * @param target where it is going
+     * @param style  the fastest way, or one keeping to better ground
+     *
+     * @return the turning points on the way and then the target; the target alone when the way is straight, or when
+     *       there is no way
+     */
+    public static List<Coords> plan(Entity mover, Coords from, Coords target, RouteStyle style) {
+        Board board = (mover.getGame() == null) ? null : mover.getGame().getBoard(mover);
+        List<Coords> route = new ArrayList<>();
+        if ((board != null) && board.contains(from)) {
+            Map<Coords, Integer> styleCost = styleCosts(board, style);
+            WaypointDistanceField field = WaypointDistanceField.build(mover, target, styleCost);
+            route.addAll(turningPoints(mover, field, from, board, styleCost));
+        }
+        route.add(target);
+        return route;
+    }
+
+    /**
+     * What each hex counts extra on a way planned in a style: a hex with no defensive modifier counts the style's
+     * exposed-hex cost, so the way keeps to woods, jungle, buildings and the lee of hills where it costs little more.
+     *
+     * @return the extra movement points by hex; empty for the fastest way
+     */
+    static Map<Coords, Integer> styleCosts(Board board, RouteStyle style) {
+        Map<Coords, Integer> costs = new HashMap<>();
+        if (style.getExposedHexCost() == 0) {
+            return costs;
+        }
+        for (int column = 0; column < board.getWidth(); column++) {
+            for (int row = 0; row < board.getHeight(); row++) {
+                Coords hex = new Coords(column, row);
+                if (!isDefensiveGround(board, hex)) {
+                    costs.put(hex, style.getExposedHexCost());
+                }
+            }
+        }
+        return costs;
+    }
+
+    /**
+     * @return {@code true} if a unit in the hex gets a defensive modifier from the ground: woods or jungle, a
+     *       building, or the lee of higher ground beside it for partial cover
+     */
+    static boolean isDefensiveGround(Board board, Coords hex) {
+        Hex terrain = board.getHex(hex);
+        if ((terrain == null) || terrain.containsTerrain(Terrains.WOODS) || terrain.containsTerrain(Terrains.JUNGLE)
+              || terrain.containsTerrain(Terrains.BUILDING)) {
+            return terrain != null;
+        }
+        for (int direction = 0; direction < DIRECTIONS; direction++) {
+            Coords neighbor = hex.translated(direction);
+            if (board.contains(neighbor) && (board.getHex(neighbor).getLevel() > terrain.getLevel())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * @param mover the unit
      * @param field the unit's route field to the waypoint
      * @param from  where it sets out
@@ -83,6 +153,14 @@ final class RoutePlanner {
      *       straight line, or there is no way
      */
     static List<Coords> turningPoints(Entity mover, WaypointDistanceField field, Coords from, Board board) {
+        return turningPoints(mover, field, from, board, Map.of());
+    }
+
+    /**
+     * @param styleCost what each hex counts extra by the route's style, as the field was built with
+     */
+    static List<Coords> turningPoints(Entity mover, WaypointDistanceField field, Coords from, Board board,
+          Map<Coords, Integer> styleCost) {
         List<Coords> points = new ArrayList<>();
         int startCost = field.costFrom(from);
         if ((startCost == WaypointDistanceField.UNREACHABLE) || (startCost == 0)) {
@@ -90,7 +168,7 @@ final class RoutePlanner {
         }
         Coords anchor = from;
         while ((field.costFrom(anchor) > 0) && (points.size() <= MOST_TURNING_POINTS)) {
-            Coords next = bestStraight(mover, field, anchor, board);
+            Coords next = bestStraight(mover, field, anchor, board, styleCost);
             if (next == null) {
                 // no straight line makes headway: take the next hex of the cheapest way and look again from there
                 List<Coords> way = cheapestWay(field, anchor, board);
@@ -124,7 +202,8 @@ final class RoutePlanner {
      *
      * @return the hex, or {@code null} when no straight line from the anchor makes headway
      */
-    private static Coords bestStraight(Entity mover, WaypointDistanceField field, Coords anchor, Board board) {
+    private static Coords bestStraight(Entity mover, WaypointDistanceField field, Coords anchor, Board board,
+          Map<Coords, Integer> styleCost) {
         int anchorCost = field.costFrom(anchor);
         Coords best = null;
         int bestScore = Integer.MAX_VALUE;
@@ -139,7 +218,7 @@ final class RoutePlanner {
                       || (distance > (anchorCost - cost + STRAIGHT_LINE_ALLOWANCE))) {
                     continue;
                 }
-                int[] line = lineCostAndWalls(mover, anchor, candidate, board);
+                int[] line = lineCostAndWalls(mover, anchor, candidate, board, styleCost);
                 int overrun = line[0] - (anchorCost - cost);
                 if ((line[0] == WaypointDistanceField.UNREACHABLE) || (overrun > STRAIGHT_LINE_ALLOWANCE)) {
                     continue;
@@ -160,7 +239,8 @@ final class RoutePlanner {
      *       {@link WaypointDistanceField#UNREACHABLE}; and how many of its hexes run along ground the unit cannot
      *       step onto
      */
-    private static int[] lineCostAndWalls(Entity mover, Coords start, Coords end, Board board) {
+    private static int[] lineCostAndWalls(Entity mover, Coords start, Coords end, Board board,
+          Map<Coords, Integer> styleCost) {
         List<Coords> line = Coords.intervening(start, end);
         int lineCost = 0;
         int walls = 0;
@@ -169,7 +249,8 @@ final class RoutePlanner {
             if (step == WaypointDistanceField.UNREACHABLE) {
                 return new int[] { WaypointDistanceField.UNREACHABLE, 0 };
             }
-            lineCost += step;
+            // a straight line over open ground counts what the style puts on it, or the plan would cut across it
+            lineCost += step + styleCost.getOrDefault(line.get(index), 0);
             if (isAlongWall(mover, line.get(index), board)) {
                 walls++;
             }

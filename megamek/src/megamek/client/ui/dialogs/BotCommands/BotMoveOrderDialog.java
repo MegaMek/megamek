@@ -43,6 +43,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +55,7 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -81,6 +83,7 @@ import javax.swing.table.TableColumnModel;
 
 import megamek.MegaMek;
 import megamek.SuiteConstants;
+import megamek.client.bot.princess.RoutePlanner;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
@@ -105,6 +108,7 @@ import megamek.common.orders.LanceRole;
 import megamek.common.orders.LanceRoles;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.PhaseLine;
+import megamek.common.orders.RouteStyle;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
@@ -168,6 +172,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private LanceRolePanel rolePanel;
     private JButton roleButton;
     private JCheckBox planRouteBox;
+    private JToggleButton autoRouteButton;
+    private final Map<RouteStyle, JToggleButton> styleButtons = new EnumMap<>(RouteStyle.class);
+    // true while a clicked hex is planned to rather than added as it is
+    private boolean isAutoRouting;
     // the role kind last shown, so picking Convoy can tick Plan the route
     private String shownRoleKind = "";
     private BoardViewListenerAdapter hexClickListener;
@@ -358,14 +366,30 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
 
         JPanel toolbar = new JPanel(new BorderLayout(UIUtil.scaleForGUI(GAP), 0));
         pickButton = new JToggleButton(Messages.getString("BotCommandPanel.MoveOrder.pick"));
-        pickButton.addActionListener(event -> {
-            if (pickButton.isSelected()) {
-                startPicking();
-            } else {
-                stopPicking();
-            }
-        });
-        toolbar.add(pickButton, BorderLayout.LINE_START);
+        pickButton.addActionListener(event -> pickMode(pickButton.isSelected(), false));
+        // click a hex and the bot plans the way there in the chosen style, the turning points filled in as waypoints
+        // (HammerGS, 2026-10-03)
+        autoRouteButton = new JToggleButton(Messages.getString("BotCommandPanel.MoveOrder.autoRoute"));
+        autoRouteButton.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.autoRoute.tooltip"));
+        autoRouteButton.addActionListener(event -> pickMode(autoRouteButton.isSelected(), true));
+        JPanel pickControls = new JPanel(new FlowLayout(FlowLayout.LEADING, UIUtil.scaleForGUI(GAP), 0));
+        pickControls.add(pickButton);
+        pickControls.add(autoRouteButton);
+        pickControls.add(new JLabel(Messages.getString("BotCommandPanel.MoveOrder.routeStyle")));
+        ButtonGroup styleGroup = new ButtonGroup();
+        JPanel styles = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        for (RouteStyle style : RouteStyle.values()) {
+            JToggleButton styleButton = new JToggleButton(Messages.getString("BotCommandPanel.MoveOrder.routeStyle."
+                  + style.name()));
+            styleButton.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.routeStyle." + style.name()
+                  + ".tooltip"));
+            styleGroup.add(styleButton);
+            styleButtons.put(style, styleButton);
+            styles.add(styleButton);
+        }
+        styleButtons.get(RouteStyle.FASTEST).setSelected(true);
+        pickControls.add(styles);
+        toolbar.add(pickControls, BorderLayout.LINE_START);
         toolbar.add(new JLabel(Messages.getString("BotCommandPanel.MoveOrder.pickHint")), BorderLayout.CENTER);
         JButton clearButton = new JButton(Messages.getString("BotCommandPanel.MoveOrder.clear"));
         clearButton.addActionListener(event -> waypoints.clear());
@@ -648,7 +672,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             }
             playerRoute.add(orders.getRoute().get(index));
             playerOrders.add(order);
-            isPlanned |= order.getRoutePlan() == WaypointOrder.RoutePlan.PLAN_LEG;
+            if (order.getRoutePlan() == WaypointOrder.RoutePlan.PLAN_LEG) {
+                isPlanned = true;
+                styleButtons.get(order.getRouteStyle()).setSelected(true);
+            }
         }
         waypoints.setRoute(playerRoute, playerOrders, unitsFormation);
         planRouteBox.setSelected(isPlanned);
@@ -769,12 +796,72 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
                       || (event.getCoords() == null)) {
                     return;
                 }
-                waypoints.addWaypoint(event.getCoords());
+                if (isAutoRouting) {
+                    autoRouteTo(event.getCoords());
+                } else {
+                    waypoints.addWaypoint(event.getCoords());
+                }
                 selectRow(waypoints.getRowCount() - 1);
             }
         };
         boardView.addBoardViewListener(hexClickListener);
-        pickButton.setText(Messages.getString("BotCommandPanel.MoveOrder.picking"));
+        if (isAutoRouting) {
+            autoRouteButton.setText(Messages.getString("BotCommandPanel.MoveOrder.autoRouting"));
+        } else {
+            pickButton.setText(Messages.getString("BotCommandPanel.MoveOrder.picking"));
+        }
+    }
+
+    /**
+     * Starts or stops taking clicked hexes, as waypoints or as places to plan a route to; the two buttons are one
+     * or the other.
+     */
+    private void pickMode(boolean isOn, boolean isAuto) {
+        isAutoRouting = isOn && isAuto;
+        pickButton.setSelected(isOn && !isAuto);
+        autoRouteButton.setSelected(isOn && isAuto);
+        if (isOn) {
+            startPicking();
+        } else {
+            stopPicking();
+        }
+    }
+
+    /**
+     * Plans the way from the last waypoint, or from the leader where it stands, to the hex clicked, and adds the
+     * turning points and the hex as waypoints. A leader not yet on the board has nowhere to plan from: the hex is
+     * added alone, and the bot plans the way once it is down.
+     */
+    private void autoRouteTo(Coords target) {
+        UnitOption leader = (UnitOption) leaderCombo.getSelectedItem();
+        Entity leaderUnit = (leader == null) ? firstUnit() : clientGUI.getClient().getGame().getEntity(leader.unitId());
+        Coords from = (waypoints.getRowCount() > 0) ? waypoints.getHex(waypoints.getRowCount() - 1)
+              : ((leaderUnit == null) ? null : leaderUnit.getPosition());
+        RouteStyle style = routeStyle();
+        if ((leaderUnit == null) || (from == null)) {
+            waypoints.addWaypoint(target);
+            planRouteBox.setSelected(true);
+            helpLabel.setText(Messages.getString("BotCommandPanel.MoveOrder.autoRoute.notDeployed"));
+            return;
+        }
+        List<Coords> route = RoutePlanner.plan(leaderUnit, from, target, style);
+        for (Coords hex : route) {
+            waypoints.addWaypoint(hex);
+        }
+        LOGGER.info("[BotOrders] auto route for {} from {} to {} ({}): {} waypoint(s)", group.label(),
+              from.getBoardNum(), target.getBoardNum(), style, route.size());
+    }
+
+    /**
+     * @return the route style picked in the toolbar
+     */
+    private RouteStyle routeStyle() {
+        for (Map.Entry<RouteStyle, JToggleButton> entry : styleButtons.entrySet()) {
+            if (entry.getValue().isSelected()) {
+                return entry.getKey();
+            }
+        }
+        return RouteStyle.FASTEST;
     }
 
     private void stopPicking() {
@@ -787,6 +874,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             suppressedDisplay = null;
         }
         pickButton.setText(Messages.getString("BotCommandPanel.MoveOrder.pick"));
+        autoRouteButton.setText(Messages.getString("BotCommandPanel.MoveOrder.autoRoute"));
     }
 
     /** Draws the draft route on the board: each waypoint outlined and numbered in route order. */
@@ -842,7 +930,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         UnitOption leader = (UnitOption) leaderCombo.getSelectedItem();
         int leaderId = (leader == null) ? group.unitIds().get(0) : leader.unitId();
         List<WaypointOrder> sentOrders = MoveOrderCommands.withRoutePlan(waypoints.getWaypointOrders(),
-              planRouteBox.isSelected());
+              planRouteBox.isSelected(), routeStyle());
         List<String> commands = MoveOrderCommands.commands(group.unitIds(), leaderId, isAnyUnitInFormation(),
               waypoints.getHexes(), sentOrders, (OrderPriority) priorityCombo.getSelectedItem());
         for (String command : commands) {

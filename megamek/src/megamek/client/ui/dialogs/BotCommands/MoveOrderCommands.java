@@ -45,6 +45,7 @@ import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.LanceRole;
 import megamek.common.orders.OrderPriority;
+import megamek.common.orders.RouteStyle;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -193,14 +194,16 @@ final class MoveOrderCommands {
     /**
      * @param waypointOrders the orders at each waypoint, as the editor holds them
      * @param isPlanning     {@code true} to have the bot plan the way to each waypoint
+     * @param style          how it plans it
      *
-     * @return the same orders, each set to have the way to it planned, or not
+     * @return the same orders, each set to have the way to it planned in that style, or not
      */
-    static List<WaypointOrder> withRoutePlan(List<WaypointOrder> waypointOrders, boolean isPlanning) {
+    static List<WaypointOrder> withRoutePlan(List<WaypointOrder> waypointOrders, boolean isPlanning,
+          RouteStyle style) {
         List<WaypointOrder> marked = new ArrayList<>();
         for (WaypointOrder order : waypointOrders) {
             marked.add(order.withRoutePlan(isPlanning ? WaypointOrder.RoutePlan.PLAN_LEG
-                  : WaypointOrder.RoutePlan.NONE));
+                  : WaypointOrder.RoutePlan.NONE).withRouteStyle(style));
         }
         return marked;
     }

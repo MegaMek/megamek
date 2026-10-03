@@ -65,6 +65,7 @@ import megamek.common.orders.LanceRole;
 import megamek.common.orders.NavPoint;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.PhaseLine;
+import megamek.common.orders.RouteStyle;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -1258,11 +1259,12 @@ public class UnitOrdersFollower {
         }
         legsPlannedTo.put(entity.getId(), target);
         Board board = owner.getGame().getBoard(entity);
-        WaypointDistanceField field = routeField(entity, target, false, false);
-        if ((board == null) || (field == null)) {
+        if (board == null) {
             return false;
         }
-        List<Coords> turns = RoutePlanner.turningPoints(entity, field, entity.getPosition(), board);
+        RouteStyle style = orders.getWaypointOrder(0).getRouteStyle();
+        List<Coords> planned = RoutePlanner.plan(entity, entity.getPosition(), target, style);
+        List<Coords> turns = planned.subList(0, planned.size() - 1);
         if (turns.isEmpty()) {
             LOGGER.info("[BotOrders] ROUTE_PLAN {} (ID {}) round {}: the way to {} is a straight line",
                   entity.getDisplayName(), entity.getId(), currentRound(), target.getBoardNum());
@@ -1288,8 +1290,8 @@ public class UnitOrdersFollower {
         for (Coords turn : turns) {
             turnNames.add(turn.getBoardNum());
         }
-        LOGGER.info("[BotOrders] ROUTE_PLAN {} (ID {}) round {}: planned the way to {} - turning at {}",
-              entity.getDisplayName(), entity.getId(), currentRound(), target.getBoardNum(),
+        LOGGER.info("[BotOrders] ROUTE_PLAN {} (ID {}) round {}: planned the {} way to {} - turning at {}",
+              entity.getDisplayName(), entity.getId(), currentRound(), style, target.getBoardNum(),
               String.join(", ", turnNames));
         return true;
     }

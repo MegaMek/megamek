@@ -51,11 +51,15 @@ import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
+import megamek.common.orders.RouteStyle;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointOrder;
+import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Tank;
+import megamek.common.units.Terrain;
+import megamek.common.units.Terrains;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -183,5 +187,41 @@ class RoutePlannerTest {
         assertEquals(planned, WaypointOrder.parse(List.of("PLAN")));
         assertEquals(turn, WaypointOrder.parse(List.of("TURN")));
         assertEquals(WaypointOrder.RoutePlan.NONE, WaypointOrder.parse(List.of("NE")).getRoutePlan());
+    }
+
+    @Test
+    void aCoveredWayKeepsToWoodsBesideTheStraightLine() {
+        for (int column = 0; column <= WALL_END_COLUMN; column++) {
+            board.getHex(column, WALL_ROW).setLevel(0);
+        }
+        // a strip of light woods two columns east of the straight line
+        int woodsColumn = START.getX() + 2;
+        for (int row = 4; row <= 25; row++) {
+            board.getHex(woodsColumn, row).addTerrain(new Terrain(Terrains.WOODS, 1));
+        }
+        BipedMek mek = new BipedMek();
+        mek.setId(4);
+        mek.setOwner(bot);
+        game.addEntity(mek);
+        mek.setPosition(START);
+
+        List<Coords> fastest = RoutePlanner.plan(mek, START, TARGET, RouteStyle.FASTEST);
+        List<Coords> covered = RoutePlanner.plan(mek, START, TARGET, RouteStyle.COVERED);
+
+        assertEquals(List.of(TARGET), fastest, "open ground: the fastest way is straight");
+        assertTrue(covered.size() > 1, "the covered way turns for the woods: " + covered);
+        assertEquals(TARGET, covered.get(covered.size() - 1));
+        assertTrue(RoutePlanner.isDefensiveGround(board, new Coords(woodsColumn, 10)));
+        assertFalse(RoutePlanner.isDefensiveGround(board, new Coords(START.getX(), 10)));
+    }
+
+    @Test
+    void theStyleTravelsInRouteText() {
+        WaypointOrder covered = WaypointOrder.PASS_THROUGH.withRoutePlan(WaypointOrder.RoutePlan.PLAN_LEG)
+              .withRouteStyle(RouteStyle.COVERED);
+
+        assertEquals("/PLAN:COVERED", covered.toCommandSuffix());
+        assertEquals(covered, WaypointOrder.parse(List.of("PLAN:COVERED")));
+        assertEquals(RouteStyle.FASTEST, WaypointOrder.parse(List.of("PLAN")).getRouteStyle());
     }
 }

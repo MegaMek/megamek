@@ -928,7 +928,14 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (draggedRow < 0) {
                 // the press: a drag starts only on one of the route's hexes, with the left button
-                int row = (event.getButton() == MouseEvent.BUTTON1) ? waypoints.rowAt(hex) : -1;
+                if (event.getButton() != MouseEvent.BUTTON1) {
+                    // the right button pans the board; only the left drags a waypoint
+                    return;
+                }
+                int row = waypoints.rowAt(hex);
+                LOGGER.info("[BotOrders] Move Order editor: press at {} - {}", hex.getBoardNum(), (row >= 0)
+                      ? "picked up waypoint " + (row + 1) + ", drag it and release"
+                      : "not one of the route's " + waypoints.getRowCount() + " waypoint(s), nothing to drag");
                 if (row >= 0) {
                     draggedRow = row;
                     hasDragMoved = false;

@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
 import megamek.client.AbstractClient;
@@ -47,6 +48,7 @@ import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.orders.PhaseLine;
 import megamek.common.orders.RouteGroups;
 import megamek.common.orders.RouteGroups.RouteGroup;
 import megamek.common.orders.UnitOrderAction;
@@ -143,6 +145,7 @@ public final class BotWaypointMenuBuilder {
             holdMenu.add(item);
         }
         menu.add(holdMenu);
+        menu.add(phaseLineMenu(client, group, route, waypointOrders, waypointIndex, acknowledger, waypointName));
 
         menu.addSeparator();
         JMenuItem removeItem = new JMenuItem(Messages.getString("BotCommandPanel.Waypoint.remove"));
@@ -156,6 +159,49 @@ public final class BotWaypointMenuBuilder {
             menu.add(editItem);
         }
         return menu;
+    }
+
+    /**
+     * The flag's Phase line choices: none, any phase line already on the side's routes, or a new one named with the
+     * next ICAO name or one the player types. A phase line is a waypoint marked as one (HammerGS, 2026-10-02).
+     */
+    private static JMenu phaseLineMenu(AbstractClient client, RouteGroup group, List<Coords> route,
+          List<WaypointOrder> waypointOrders, int waypointIndex, BiConsumer<Player, String> acknowledger,
+          String waypointName) {
+        WaypointOrder current = waypointOrders.get(waypointIndex);
+        JMenu phaseLineMenu = new JMenu(Messages.getString("BotCommandPanel.MoveOrder.column.phase"));
+        JRadioButtonMenuItem noneItem = new JRadioButtonMenuItem(
+              Messages.getString("BotCommandPanel.Waypoint.phaseLine.none"), current.getPhaseLine() == null);
+        noneItem.addActionListener(event -> sendEdit(client, group, route,
+              replaced(waypointOrders, waypointIndex, current.withPhaseLine(null)), acknowledger,
+              waypointName + ": " + noneItem.getText()));
+        phaseLineMenu.add(noneItem);
+        List<String> namesInUse = PhaseLine.namesInUse(group.guide().getGame().getEntitiesVector(),
+              group.guide().getOwner());
+        for (String name : namesInUse) {
+            String title = Messages.getString("BotCommandPanel.Waypoint.phaseLine.join", PhaseLine.display(name));
+            JRadioButtonMenuItem item = new JRadioButtonMenuItem(title,
+                  PhaseLine.isSame(name, current.getPhaseLine()));
+            item.addActionListener(event -> sendEdit(client, group, route,
+                  replaced(waypointOrders, waypointIndex, current.withPhaseLine(name)), acknowledger,
+                  waypointName + ": " + PhaseLine.display(name)));
+            phaseLineMenu.add(item);
+        }
+        phaseLineMenu.addSeparator();
+        JMenuItem newItem = new JMenuItem(Messages.getString("BotCommandPanel.MoveOrder.phaseLine.new"));
+        newItem.addActionListener(event -> {
+            Object typed = JOptionPane.showInputDialog(null,
+                  Messages.getString("BotCommandPanel.MoveOrder.phaseLine.prompt"),
+                  Messages.getString("BotCommandPanel.MoveOrder.phaseLine.promptTitle"), JOptionPane.PLAIN_MESSAGE,
+                  null, null, PhaseLine.nextName(namesInUse));
+            String name = PhaseLine.cleanName((typed == null) ? null : typed.toString());
+            if (name != null) {
+                sendEdit(client, group, route, replaced(waypointOrders, waypointIndex, current.withPhaseLine(name)),
+                      acknowledger, waypointName + ": " + PhaseLine.display(name));
+            }
+        });
+        phaseLineMenu.add(newItem);
+        return phaseLineMenu;
     }
 
     private static List<WaypointOrder> replaced(List<WaypointOrder> waypointOrders, int index,

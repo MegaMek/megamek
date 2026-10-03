@@ -53,7 +53,6 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
-import megamek.common.moves.MoveStep;
 import megamek.common.pathfinder.*;
 import megamek.common.pathfinder.AeroGroundPathFinder.AeroGroundOffBoardFilter;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
@@ -319,7 +318,13 @@ public class PathEnumerator {
 
                 // add jumping moves
                 if (mover.getAnyTypeMaxJumpMP() > 0) {
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getAnyTypeMaxJumpMP(),
+                    /* If we are using jump and it is deployment, the deployment step takes 1 jump MP,
+                     * so we need to subtract that from the max jump MP for the pathfinder.
+                     * When the movestep is added in createDeploymentAwarePath, it will add the jump step back in,
+                     * so the total jump MP used will be correct.
+                     */
+                    int maxJumpMP = includeDeploymentStep ? mover.getAnyTypeMaxJumpMP() - 1 : mover.getAnyTypeMaxJumpMP();
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(maxJumpMP,
                           MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, true));
@@ -389,14 +394,12 @@ public class PathEnumerator {
           final boolean includeDeploymentStep,
           final boolean shouldJump) {
         MovePath path = new MovePath(game, mover, waypoint);
-        if (!includeDeploymentStep) {
-            return path;
-        }
-
         if (shouldJump) {
             path.addStep(MoveStepType.START_JUMP);
         }
-        path.addStep(MoveStepType.DEPLOY);
+        if (includeDeploymentStep) {
+            path.addStep(MoveStepType.DEPLOY);
+        }
         return path;
     }
 

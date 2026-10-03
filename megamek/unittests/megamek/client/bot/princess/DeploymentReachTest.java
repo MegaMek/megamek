@@ -193,4 +193,83 @@ class DeploymentReachTest {
               EAST_BANK.translated(0), WEST_BANK)).orElseThrow();
         assertTrue(slot.distance(EAST_BANK) <= 2, "the slot " + slot + " is beside the hex picked for the leader");
     }
+
+    private Tank lanceTruck(int unitId, int lanceId) {
+        Tank truck = new Tank();
+        truck.setId(unitId);
+        truck.setOwner(bot);
+        truck.setMovementMode(EntityMovementMode.WHEELED);
+        truck.setOriginalWalkMP(4);
+        truck.setWeight(35);
+        truck.setForceId(lanceId);
+        game.addEntity(truck);
+        return truck;
+    }
+
+    private BipedMek lanceMek(int unitId, int lanceId) {
+        BipedMek mek = new BipedMek();
+        mek.setId(unitId);
+        mek.setOwner(bot);
+        mek.setForceId(lanceId);
+        game.addEntity(mek);
+        return mek;
+    }
+
+    @Test
+    void aTruckWithNoOrdersDeploysOnItsLancesSideOfTheRiver() {
+        Tank first = lanceTruck(3, 0);
+        first.setPosition(EAST_BANK);
+        first.setDeployed(true);
+        Tank second = lanceTruck(4, 0);
+
+        List<Coords> kept = princess.getUnitOrdersFollower().keepReachable(second,
+              List.of(WEST_BANK, WEST_BANK.translated(0), EAST_BANK.translated(0), EAST_BANK.translated(3)));
+
+        assertEquals(List.of(EAST_BANK.translated(0), EAST_BANK.translated(3)), kept);
+    }
+
+    @Test
+    void aLanceThatCanAllWadeDeploysAsBefore() {
+        BipedMek first = lanceMek(3, 0);
+        first.setPosition(EAST_BANK);
+        first.setDeployed(true);
+        BipedMek second = lanceMek(4, 0);
+        List<Coords> hexes = List.of(WEST_BANK, EAST_BANK.translated(0));
+
+        assertEquals(hexes, princess.getUnitOrdersFollower().keepReachable(second, hexes));
+    }
+
+    @Test
+    void anotherLancesUnitsDoNotHoldATruckBack() {
+        Tank otherLance = lanceTruck(3, 0);
+        otherLance.setPosition(EAST_BANK);
+        otherLance.setDeployed(true);
+        Tank truck = lanceTruck(4, 1);
+        List<Coords> hexes = List.of(WEST_BANK, EAST_BANK.translated(0));
+
+        assertEquals(hexes, princess.getUnitOrdersFollower().keepReachable(truck, hexes));
+    }
+
+    @Test
+    void theFirstOfALanceDownKeepsHexesItsTrucksCanDriveTo() {
+        BipedMek mek = lanceMek(3, 0);
+        lanceTruck(4, 0);
+        // the middle of the river: the Mek could stand there, and the truck can still drive up beside it
+        Coords inRiver = new Coords(RIVER_COLUMN, 10);
+        // a hex walled in by water a truck cannot get near
+        Coords pond = new Coords(15, 10);
+        for (Coords ring : pond.allAtDistanceOrLess(3)) {
+            if (!ring.equals(pond)) {
+                game.getBoard().getHex(ring).addTerrain(new Terrain(Terrains.WATER, 1));
+            }
+        }
+
+        // each bank has room for the lance; the pond has room for one
+        Coords westNext = WEST_BANK.translated(0);
+        Coords eastNext = EAST_BANK.translated(0);
+        List<Coords> kept = princess.getUnitOrdersFollower().keepReachable(mek,
+              List.of(WEST_BANK, westNext, inRiver, pond, EAST_BANK, eastNext));
+
+        assertEquals(List.of(WEST_BANK, westNext, inRiver, EAST_BANK, eastNext), kept);
+    }
 }

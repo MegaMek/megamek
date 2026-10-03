@@ -51,6 +51,7 @@ import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.force.Force;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -2935,7 +2936,7 @@ public class UnitOrdersFollower {
      *
      * @return the hexes it is not blocked from its goal in, in the same order
      */
-    public List<Coords> keepReachable(Entity unit, List<Coords> hexes) {
+    List<Coords> keepReachableGoal(Entity unit, List<Coords> hexes) {
         Optional<DeploymentGoal> goal = deploymentGoal(unit);
         if (goal.isEmpty() || isFlying(unit) || hexes.isEmpty()) {
             return hexes;
@@ -2970,6 +2971,179 @@ public class UnitOrdersFollower {
                   (movers.size() > 1) ? " for " + movers.size() + " units of its formation" : "", kept.size());
         }
         return kept;
+    }
+
+    /**
+     * Keeps a unit from deploying where it is blocked from where it is going, or from its own lance. See
+     * {@link #keepReachableGoal} for the first and {@link #keepWithLance} for the second.
+     *
+     * @param unit  a unit about to deploy
+     * @param hexes the legal deployment hexes, in the bot's order
+     *
+     * @return the hexes it is blocked from neither in, in the same order
+     */
+    public List<Coords> keepReachable(Entity unit, List<Coords> hexes) {
+        return keepWithLance(unit, keepReachableGoal(unit, hexes));
+    }
+
+    /** How near a lance mate a unit has to be able to drive, so a mate in woods a truck cannot enter still counts. */
+    private static final int LANCE_REACH_RADIUS = 2;
+
+    /**
+     * Keeps a lance from deploying split across terrain one of its units cannot cross - a wheeled truck's lance
+     * across a river - with or without orders (HammerGS's playtest, 2026-10-03: a convoy deployed with trucks on
+     * both banks of a river they could never ford, so the lance could never come back together). A unit whose lance
+     * has units on the board keeps only the hexes from which it can drive to one of them; the first of a lance down
+     * keeps only the hexes every one of its lance mates can drive to, with room round them for the lance. Terrain
+     * then picks among those as before, so a lance of units that can all cross deploys as it always did.
+     *
+     * @param unit  a unit about to deploy
+     * @param hexes the deployment hexes left
+     *
+     * @return the hexes that keep the lance together, in the same order; all of them when none do
+     */
+    List<Coords> keepWithLance(Entity unit, List<Coords> hexes) {
+        if (isFlying(unit) || hexes.isEmpty() || (unit.getForceId() == Force.NO_FORCE)) {
+            return hexes;
+        }
+        List<Entity> mates = new ArrayList<>();
+        List<Entity> matesOnBoard = new ArrayList<>();
+        for (Entity mate : owner.getGame().getEntitiesVector()) {
+            if ((mate.getId() == unit.getId()) || (mate.getForceId() != unit.getForceId())
+                  || (mate.getOwnerId() != unit.getOwnerId()) || mate.isDestroyed() || isFlying(mate)) {
+                continue;
+            }
+            mates.add(mate);
+            if (mate.isDeployed() && (mate.getPosition() != null) && (mate.getBoardId() == unit.getBoardId())) {
+                matesOnBoard.add(mate);
+            }
+        }
+        if (mates.isEmpty()) {
+            return hexes;
+        }
+        List<Coords> kept = new ArrayList<>();
+        String rule;
+        if (!matesOnBoard.isEmpty()) {
+            rule = "can drive to none of its lance on the board";
+            for (DrivableArea area : drivableAreas(unit, hexes)) {
+                if (area.reachesNearAny(matesOnBoard)) {
+                    kept.addAll(area.hexes());
+                }
+            }
+        } else {
+            rule = "cannot be driven to by all of its lance";
+            Set<Coords> keptForAll = new HashSet<>(hexes);
+            for (Entity mover : distinctMovers(mates)) {
+                Set<Coords> keptForMover = new HashSet<>();
+                for (DrivableArea area : drivableAreas(mover, hexes)) {
+                    // the area has to hold the whole lance, or the others are left to deploy elsewhere
+                    if (area.hexes().size() > mates.size()) {
+                        for (Coords hex : hexes) {
+                            if (area.reachesNear(hex)) {
+                                keptForMover.add(hex);
+                            }
+                        }
+                    }
+                }
+                keptForAll.retainAll(keptForMover);
+            }
+            for (Coords hex : hexes) {
+                if (keptForAll.contains(hex)) {
+                    kept.add(hex);
+                }
+            }
+        }
+        if (kept.isEmpty()) {
+            LOGGER.info("[BotOrders] DEPLOY_REACH {} (ID {}): every legal hex {}; deploying as before",
+                  unit.getDisplayName(), unit.getId(), rule);
+            return hexes;
+        }
+        // keep the order the hexes came in
+        List<Coords> ordered = new ArrayList<>();
+        Set<Coords> keptSet = new HashSet<>(kept);
+        for (Coords hex : hexes) {
+            if (keptSet.contains(hex)) {
+                ordered.add(hex);
+            }
+        }
+        if (ordered.size() < hexes.size()) {
+            LOGGER.info("[BotOrders] DEPLOY_REACH {} (ID {}): {} of {} legal hexes {}; kept {} so the lance deploys "
+                        + "together", unit.getDisplayName(), unit.getId(), hexes.size() - ordered.size(), hexes.size(),
+                  rule, ordered.size());
+        }
+        return ordered;
+    }
+
+    /**
+     * @return one unit of each way of moving among the units: a field per way of moving does for all of them
+     */
+    private static List<Entity> distinctMovers(List<Entity> units) {
+        List<Entity> movers = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        for (Entity unit : units) {
+            // weight counts too: a building that bears a light unit may not bear a heavy one
+            String kind = MovementType.getMovementType(unit) + "|" + unit.getMaxElevationChange() + "|"
+                  + (int) unit.getWeight();
+            if (seen.add(kind)) {
+                movers.add(unit);
+            }
+        }
+        return movers;
+    }
+
+    /**
+     * Part of the board a unit can drive anywhere in.
+     *
+     * @param field the unit's route field into the area, which reaches every hex of it
+     * @param hexes the deployment hexes in it
+     */
+    private record DrivableArea(WaypointDistanceField field, List<Coords> hexes) {
+
+        boolean reachesNear(Coords target) {
+            for (Coords near : target.allAtDistanceOrLess(LANCE_REACH_RADIUS)) {
+                if (field.costFrom(near) != WaypointDistanceField.UNREACHABLE) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        boolean reachesNearAny(List<Entity> units) {
+            for (Entity unit : units) {
+                if (reachesNear(unit.getPosition())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    /**
+     * Splits deployment hexes into the parts of the board a unit can drive about in; a hex the unit cannot enter is
+     * in none. One route field per part, so a river makes two.
+     */
+    private static List<DrivableArea> drivableAreas(Entity mover, List<Coords> hexes) {
+        List<DrivableArea> areas = new ArrayList<>();
+        Set<Coords> placed = new HashSet<>();
+        for (Coords seed : hexes) {
+            if (placed.contains(seed)) {
+                continue;
+            }
+            placed.add(seed);
+            WaypointDistanceField field = WaypointDistanceField.build(mover, seed);
+            if (field.costFrom(seed) == WaypointDistanceField.UNREACHABLE) {
+                continue;
+            }
+            List<Coords> areaHexes = new ArrayList<>();
+            for (Coords hex : hexes) {
+                if (field.costFrom(hex) != WaypointDistanceField.UNREACHABLE) {
+                    areaHexes.add(hex);
+                    placed.add(hex);
+                }
+            }
+            areas.add(new DrivableArea(field, areaHexes));
+        }
+        return areas;
     }
 
     private boolean canAllDriveFrom(List<Entity> movers, DeploymentGoal goal, Coords hex) {

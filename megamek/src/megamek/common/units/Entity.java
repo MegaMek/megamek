@@ -104,6 +104,7 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PartialRepairs;
 import megamek.common.options.Quirks;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.UnitOrders;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.PlanetaryConditions;
@@ -509,6 +510,11 @@ public abstract class Entity extends TurnOrdered
      * through {@link #getUnitOrders()}, which reads a unit from an older savegame as having no orders.
      */
     private UnitOrders unitOrders = UnitOrders.NONE;
+    /**
+     * The role of this unit's lance - a convoy or an escort - or null for none; it outlasts the unit's routes. Null in
+     * a savegame made before lance roles.
+     */
+    private LanceRole lanceRole;
     public int mpUsed = 0;
     public int underwaterRounds = 0;
     public EntityMovementType moved = EntityMovementType.MOVE_NONE;
@@ -2335,6 +2341,22 @@ public abstract class Entity extends TurnOrdered
      */
     public void setUnitOrders(@Nullable UnitOrders orders) {
         unitOrders = (orders == null) ? UnitOrders.NONE : orders;
+    }
+
+    /**
+     * @return the role of this unit's lance - a convoy or an escort - or {@code null} for none
+     */
+    public @Nullable LanceRole getLanceRole() {
+        return lanceRole;
+    }
+
+    /**
+     * Sets the role of this unit's lance. A role outlasts the unit's routes: a new route, Stop or Clear leaves it.
+     *
+     * @param role the role, or {@code null} for none
+     */
+    public void setLanceRole(@Nullable LanceRole role) {
+        lanceRole = role;
     }
 
     /**

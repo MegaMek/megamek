@@ -233,6 +233,32 @@ class UnitOrdersTest {
     }
 
     @Test
+    void aLanceRoleSurvivesItsOrderTextASaveAndLoadAndANewRoute() {
+        // HammerGS: convoy and escort roles are set in the lobby and belong to the lance, not to a route (2026-10-02)
+        LanceRole convoy = LanceRole.convoy(OffBoardDirection.NORTH);
+        LanceRole escort = LanceRole.escort(12, java.util.EnumSet.of(LanceRole.Position.LEAD, LanceRole.Position.REAR),
+              LanceRole.Distance.FAR, LanceRole.Movement.BOUNDING, LanceRole.Contact.STAY, LanceRole.LeaveToFight.HUNT,
+              LanceRole.WhenConvoyGone.BREAK_OFF);
+
+        assertEquals("CONVOY:NORTH", convoy.toCommandText());
+        assertEquals(convoy, LanceRole.parse("convoy:north"));
+        assertEquals("ESCORT:12:LEAD.REAR:FAR:BOUNDING:STAY:HUNT:BREAK_OFF", escort.toCommandText());
+        assertEquals(escort, LanceRole.parse(escort.toCommandText()));
+        assertThrows(IllegalArgumentException.class, () -> LanceRole.convoy(OffBoardDirection.NONE));
+        assertThrows(IllegalArgumentException.class, () -> LanceRole.parse("ESCORT:12"));
+
+        BipedMek mek = new BipedMek();
+        mek.setLanceRole(escort);
+        mek.setUnitOrders(UnitOrders.NONE.withRoute(List.of(FIRST_HEX)));
+        String savedXml = SerializationHelper.getSaveGameXStream().toXML(mek);
+        BipedMek restored = (BipedMek) SerializationHelper.getLoadSaveGameXStream().fromXML(savedXml);
+
+        assertEquals(escort, restored.getLanceRole());
+        restored.setUnitOrders(restored.getUnitOrders().withRoute(List.of(SECOND_HEX)));
+        assertEquals(escort, restored.getLanceRole(), "a new route leaves the role");
+    }
+
+    @Test
     void aLanceHoldingAfterAFightSurvivesASaveAndLoadAndGoesOnWithResume() {
         BipedMek mek = new BipedMek();
         UnitOrders fighting = apply(UnitOrderAction.BREAK_TO_FIGHT,

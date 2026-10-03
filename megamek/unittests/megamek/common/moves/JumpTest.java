@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -361,12 +361,12 @@ public class JumpTest extends GameBoardTestCase {
                   MoveStepType.FORWARDS,
                   MoveStepType.FORWARDS);
             assertMovePathElevations(movePath,
-                  ExpectedElevation.of(1, "Jumping from the ground, level 0, wige +1 elevation"),
-                  ExpectedElevation.of(5, "Jumping from the ground, level 0 with height 4, wige +1 elevation"),
-                  ExpectedElevation.of(5, "Jumping over a building, level 0 with height 4, wige +1 elevation"),
-                  ExpectedElevation.of(1, "Jumping over ultra sublevel, level 0, wige +1 elevation"),
-                  ExpectedElevation.of(1, "Jumping into a water hex, level 0 with depth 2, wige stay above water " +
-                        "with 1 elevation"));
+                  ExpectedElevation.of(1, "Starting airborne, level 0, wige +1 elevation"),
+                  ExpectedElevation.of(4, "Jumping onto a building, level 0 with height 4, wige lands on the roof"),
+                  ExpectedElevation.of(4, "Jumping onto a building, level 0 with height 4, wige lands on the roof"),
+                  ExpectedElevation.of(0, "Jumping over ultra sublevel, level 0, wige lands"),
+                  ExpectedElevation.of(0, "Jumping into a water hex, level 0 with depth 2, wige lands floating on " +
+                        "the water"));
         }
 
         @Test
@@ -423,7 +423,8 @@ public class JumpTest extends GameBoardTestCase {
                   MoveStepType.FORWARDS,
                   MoveStepType.FORWARDS,
                   MoveStepType.FORWARDS);
-            assertMovePathElevations(movePath, 5, 5, 3, 1, 2);
+            // A WiGE vehicle has landed at the end of a jump (rules answer, forum topic 68110)
+            assertMovePathElevations(movePath, 5, 4, 2, 0, 1);
         }
 
         @Test

@@ -50,6 +50,7 @@ import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.event.entity.GameEntityNewEvent;
 import megamek.common.game.Game;
 import megamek.common.orders.NavPoint;
+import megamek.common.orders.PhaseLine;
 import megamek.common.orders.RouteGroups;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -103,23 +104,28 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
      * @param holdTurns  the turns set to hold there; 0 passes through
      * @param isAssemble {@code true} if the units wait there until in position rather than for a fixed delay
      * @param isExit     {@code true} if the units leave the board from there, at the end of the route
+     * @param phaseLine  the phase line the waypoint is on, or {@code null}
      */
     record RouteFlag(Coords hex, int boardId, int colorIndex, String label, String step, int facing,
-          int holdTurns, boolean isAssemble, boolean isExit) {
+          int holdTurns, boolean isAssemble, boolean isExit, @Nullable String phaseLine) {
 
         /**
          * @return the line under the unit's name: the waypoint's name, and what the units do there if they stop or
          *       leave, e.g. {@code Beta hold 2}, {@code Beta form up} or {@code Delta exit}
          */
         String progressText() {
+            String text;
             if (isExit) {
-                return Messages.getString("BotCommandPanel.MoveOrder.flagExit", step);
+                text = Messages.getString("BotCommandPanel.MoveOrder.flagExit", step);
+            } else if (isAssemble) {
+                text = Messages.getString("BotCommandPanel.MoveOrder.flagAssemble", step);
+            } else {
+                text = (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", step, holdTurns)
+                      : step;
             }
-            if (isAssemble) {
-                return Messages.getString("BotCommandPanel.MoveOrder.flagAssemble", step);
-            }
-            return (holdTurns > 0) ? Messages.getString("BotCommandPanel.MoveOrder.flagHold", step, holdTurns)
-                  : step;
+            // a phase line is named on its flag, so "holding at PL Bravo" can be found on the map
+            return (phaseLine == null) ? text
+                  : Messages.getString("BotCommandPanel.MoveOrder.flagPhaseLine", text, PhaseLine.display(phaseLine));
         }
     }
 
@@ -176,7 +182,7 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
                       : NavPoint.name(navNumber);
                 flags.add(new RouteFlag(route.get(step), guide.getBoardId(), colorIndex, group.label(), stepName,
                       waypointOrder.getFacing(), holdTurns, !isLast && waypointOrder.isAssemble(),
-                      isLast && waypointOrder.isExitBoard()));
+                      isLast && waypointOrder.isExitBoard(), waypointOrder.getPhaseLine()));
             }
             colorIndex++;
         }
@@ -241,6 +247,10 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
         lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.facing", facingText));
         lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.then",
               thenText(waypointOrder, step == orders.getRoute().size() - 1)));
+        if (waypointOrder.getPhaseLine() != null) {
+            lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.phaseLine",
+                  PhaseLine.display(waypointOrder.getPhaseLine())));
+        }
         lines.add(Messages.getString("BotCommandPanel.Waypoint.tooltip.priority",
               Messages.getString("BotCommandPanel.Orders.priority." + orders.getPriority().name())));
         return String.join("<br>", lines);

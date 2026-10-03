@@ -32,11 +32,14 @@
  */
 package megamek.common.orders;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 
 /**
  * The names of phase lines. A phase line is a waypoint marked as one: every lance with a waypoint on the same phase
@@ -153,6 +156,29 @@ public final class PhaseLine {
             throw new IllegalArgumentException("Not a phase line name: " + segment);
         }
         return name;
+    }
+
+    /**
+     * @param units the units in the game
+     * @param side  a player of the side
+     *
+     * @return the phase lines on the routes of every unit on that side, each once, in the order first met
+     */
+    public static List<String> namesInUse(Iterable<Entity> units, Player side) {
+        List<String> names = new ArrayList<>();
+        for (Entity unit : units) {
+            if ((unit.getOwner() == null) || unit.getOwner().isEnemyOf(side)) {
+                continue;
+            }
+            UnitOrders orders = unit.getUnitOrders();
+            for (int index = 0; index < orders.getRoute().size(); index++) {
+                String name = orders.getWaypointOrder(index).getPhaseLine();
+                if ((name != null) && !containsIgnoringCase(names, name)) {
+                    names.add(name);
+                }
+            }
+        }
+        return names;
     }
 
     /**

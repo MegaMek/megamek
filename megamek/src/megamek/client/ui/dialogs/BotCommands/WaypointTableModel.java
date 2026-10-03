@@ -43,6 +43,7 @@ import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.PhaseLine;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
@@ -66,6 +67,7 @@ class WaypointTableModel extends AbstractTableModel {
     static final int COLUMN_FACING = 8;
     static final int COLUMN_THEN = 9;
     static final int COLUMN_TURNS = 10;
+    static final int COLUMN_PHASE_LINE = 11;
 
     /** The longest hold the editor offers; a player wanting longer holds with Pause. */
     static final int MAXIMUM_HOLD_TURNS = 20;
@@ -76,7 +78,7 @@ class WaypointTableModel extends AbstractTableModel {
 
     private static final int FACING_COUNT = 6;
     private static final String[] COLUMN_KEYS = {"number", "hex", "shape", "change", "spacing", "pace", "contact",
-          "together", "facing", "then", "turns"};
+          "together", "facing", "then", "turns", "phase"};
 
     /**
      * The turns a new hold waits: a two-turn delay; or, waiting until in position, at most eight turns - the leader's
@@ -131,6 +133,26 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     /**
+     * A phase line as the phase line column shows it: none, one by name, or the choice to make a new one.
+     *
+     * @param name  the phase line's name, or {@code null}
+     * @param isNew {@code true} for the "New phase line..." choice
+     */
+    record PhaseLineOption(@Nullable String name, boolean isNew) {
+        static final PhaseLineOption NONE = new PhaseLineOption(null, false);
+        static final PhaseLineOption NEW = new PhaseLineOption(null, true);
+
+        @Override
+        public String toString() {
+            if (isNew) {
+                return Messages.getString("BotCommandPanel.MoveOrder.phaseLine.new");
+            }
+            return (name == null) ? Messages.getString("BotCommandPanel.MoveOrder.phaseLine.none")
+                  : PhaseLine.display(name);
+        }
+    }
+
+    /**
      * A shape as the shape column shows it, or no formation at all.
      *
      * @param shape the shape, or {@code null} to travel out of formation
@@ -175,6 +197,7 @@ class WaypointTableModel extends AbstractTableModel {
         private boolean exitBoard;
         private WaypointFormation formation;
         private boolean isChangeAtWaypoint;
+        private String phaseLine;
 
         private Row(Coords hex, int facing, WaypointOrder.HoldMode holdMode, int holdTurns, boolean exitBoard,
               WaypointFormation formation) {
@@ -225,6 +248,7 @@ class WaypointTableModel extends AbstractTableModel {
             Row row = new Row(hexes.get(index), order.getFacing(), order.getHoldMode(), order.getHoldTurns(),
                   order.isExitBoard(), canForm ? formation : WaypointFormation.NONE);
             row.isChangeAtWaypoint = canForm && isChangeAtWaypoint;
+            row.phaseLine = order.getPhaseLine();
             rows.add(row);
         }
         fireTableDataChanged();
@@ -397,7 +421,37 @@ class WaypointTableModel extends AbstractTableModel {
         }
         text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help." + getThen(index).name(),
               row.holdTurns));
+        if (row.phaseLine != null) {
+            text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help.phaseLine",
+                  PhaseLine.display(row.phaseLine)));
+        }
         return text.toString();
+    }
+
+    /**
+     * @param index     a row
+     * @param phaseLine the phase line that waypoint is on, or {@code null} for none
+     */
+    void setPhaseLine(int index, @Nullable String phaseLine) {
+        rows.get(index).phaseLine = PhaseLine.cleanName(phaseLine);
+        fireTableRowsUpdated(index, index);
+    }
+
+    @Nullable String getPhaseLine(int index) {
+        return rows.get(index).phaseLine;
+    }
+
+    /**
+     * @return the phase lines this route's waypoints are on
+     */
+    List<String> phaseLinesInUse() {
+        List<String> names = new ArrayList<>();
+        for (Row row : rows) {
+            if ((row.phaseLine != null) && !names.contains(row.phaseLine)) {
+                names.add(row.phaseLine);
+            }
+        }
+        return names;
     }
 
     void setFacing(int index, int facing) {
@@ -448,10 +502,10 @@ class WaypointTableModel extends AbstractTableModel {
                 // the leg keeps the shape the units had before, and they re-form in this one on arrival
                 WaypointFormation shapeBefore = (index == 0) ? unitsFormation : rows.get(index - 1).formation;
                 orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, shapeBefore, isExit, row.formation)
-                      .withNavNumber(index + 1));
+                      .withNavNumber(index + 1).withPhaseLine(row.phaseLine));
             } else {
                 orders.add(new WaypointOrder(row.facing, holdMode, holdTurns, row.formation, isExit)
-                      .withNavNumber(index + 1));
+                      .withNavNumber(index + 1).withPhaseLine(row.phaseLine));
             }
         }
         return orders;
@@ -492,6 +546,8 @@ class WaypointTableModel extends AbstractTableModel {
             case COLUMN_TOGETHER -> formation.isKeepTogether();
             case COLUMN_FACING -> new FacingOption(row.facing);
             case COLUMN_THEN -> getThen(rowIndex);
+            case COLUMN_PHASE_LINE -> (row.phaseLine == null) ? PhaseLineOption.NONE
+                  : new PhaseLineOption(row.phaseLine, false);
             default -> getHoldTurns(rowIndex);
         };
     }
@@ -502,7 +558,7 @@ class WaypointTableModel extends AbstractTableModel {
         return switch (columnIndex) {
             case COLUMN_SHAPE -> canForm;
             case COLUMN_CHANGE, COLUMN_SPACING, COLUMN_PACE, COLUMN_CONTACT, COLUMN_TOGETHER -> hasShape;
-            case COLUMN_FACING, COLUMN_THEN -> true;
+            case COLUMN_FACING, COLUMN_THEN, COLUMN_PHASE_LINE -> true;
             case COLUMN_TURNS -> !isEndOfRoute(rowIndex) && (rows.get(rowIndex).holdMode != WaypointOrder.HoldMode.PASS);
             default -> false;
         };
@@ -561,6 +617,12 @@ class WaypointTableModel extends AbstractTableModel {
             case COLUMN_TURNS -> {
                 if (value instanceof Integer turns) {
                     setHoldTurns(rowIndex, turns);
+                }
+            }
+            case COLUMN_PHASE_LINE -> {
+                // "New phase line..." asks for a name in the dialog, which sets it
+                if ((value instanceof PhaseLineOption option) && !option.isNew()) {
+                    setPhaseLine(rowIndex, option.name());
                 }
             }
             default -> {

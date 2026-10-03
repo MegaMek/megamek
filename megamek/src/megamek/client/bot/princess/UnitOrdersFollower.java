@@ -237,8 +237,20 @@ public class UnitOrdersFollower {
     /** The most rounds a lance assembling at its first waypoint waits for its last unit; a stuck unit drops out sooner. */
     static final int MAXIMUM_ASSEMBLY_WAIT_ROUNDS = 12;
 
-    /** The units holding at a phase line, by unit id, with the phase line's name; to call the hold and the release. */
-    private final Map<Integer, String> phaseLineHolds = new HashMap<>();
+    /**
+     * A unit holding at a phase line.
+     *
+     * @param phaseLine  the phase line's name
+     * @param sinceRound the round it began holding
+     * @param loggedRound the round its wait was last logged
+     */
+    private record PhaseLineHold(String phaseLine, int sinceRound, int loggedRound) {}
+
+    /** The units holding at a phase line, by unit id; to call the hold, the reminders and the release. */
+    private final Map<Integer, PhaseLineHold> phaseLineHolds = new HashMap<>();
+
+    /** How often, in rounds, a lance still holding at a phase line reminds the player whom it is waiting for. */
+    static final int PHASE_LINE_REMINDER_ROUNDS = 3;
 
     /** Each formation's current leg, by the formation's leader id; not saved. */
     private final Map<Integer, FormationLeg> formationLegs = new HashMap<>();
@@ -1288,13 +1300,26 @@ public class UnitOrdersFollower {
         for (Entity other : stillComing) {
             waitingFor.append((waitingFor.length() == 0) ? "" : ", ").append(other.getShortName());
         }
-        if (phaseLineHolds.put(entity.getId(), phaseLine) == null) {
+        PhaseLineHold hold = phaseLineHolds.get(entity.getId());
+        if ((hold == null) || !PhaseLine.isSame(hold.phaseLine(), phaseLine)) {
+            hold = new PhaseLineHold(phaseLine, currentRound(), -1);
             owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_HOLD, label,
                   orders.getRoute().get(0).getBoardNum());
         }
-        LOGGER.info("[BotOrders] {} (ID {}) round {}: PHASE_LINE_WAIT at {} ({}) - waiting for {}",
-              entity.getDisplayName(), entity.getId(), currentRound(), label, orders.getRoute().get(0).getBoardNum(),
-              waitingFor);
+        if (hold.loggedRound() != currentRound()) {
+            int roundsHeld = currentRound() - hold.sinceRound();
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: PHASE_LINE_WAIT at {} ({}) - waiting for {}, {} round(s) "
+                        + "so far", entity.getDisplayName(), entity.getId(), currentRound(), label,
+                  orders.getRoute().get(0).getBoardNum(), waitingFor, roundsHeld);
+            if ((roundsHeld > 0) && ((roundsHeld % PHASE_LINE_REMINDER_ROUNDS) == 0)) {
+                // the lance waits as long as it takes (HammerGS, 2026-10-02); the player hears whom for, and can
+                // send it on with Resume or new orders
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_STILL_HOLDING, label,
+                      waitingFor.toString(), String.valueOf(roundsHeld));
+            }
+            hold = new PhaseLineHold(phaseLine, hold.sinceRound(), currentRound());
+        }
+        phaseLineHolds.put(entity.getId(), hold);
         return true;
     }
 
@@ -1322,9 +1347,11 @@ public class UnitOrdersFollower {
     List<Entity> stillComingToPhaseLine(Entity entity, String phaseLine) {
         List<Entity> stillComing = new ArrayList<>();
         for (Entity other : owner.getGame().getEntitiesVector()) {
+            // a lance that cannot come is not waited for: gone, off the board, out of action, or one that must
+            // withdraw rather than follow its route
             if ((other.getId() == entity.getId()) || (other.getPosition() == null) || other.isDestroyed()
-                  || other.isDoomed() || (other.getOwner() == null) || other.getOwner().isEnemyOf(entity.getOwner())
-                  || isLedByAnother(other)) {
+                  || other.isDoomed() || other.isOffBoard() || (other.getOwner() == null)
+                  || other.getOwner().isEnemyOf(entity.getOwner()) || isLedByAnother(other) || isOutOfAction(other)) {
                 continue;
             }
             List<Coords> route = other.getUnitOrders().getRoute();

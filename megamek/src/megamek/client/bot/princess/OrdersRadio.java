@@ -85,6 +85,8 @@ public class OrdersRadio {
         COMMAND("command", true),
         /** The lance holds at a phase line for the others on it: the call names the line and the hex. */
         PHASE_LINE_HOLD("phaseLineHold", true),
+        /** The lance is still holding at a phase line: the call names the line, whom it waits for, and the turns. */
+        PHASE_LINE_STILL_HOLDING("phaseLineStillHolding", true),
         /** Every lance on the phase line is in and they move on: the call names the line. */
         PHASE_LINE_CLEAR("phaseLineClear", true),
         /** A unit cannot reach its waypoint and skips it. */

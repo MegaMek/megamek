@@ -245,4 +245,20 @@ class MoveOrderEditorTest {
         assertTrue(waypoints.describe(1).endsWith("holds this hex until given new orders, and comes back to it after a"
               + " fight."), waypoints.describe(1));
     }
+
+    @Test
+    void aPhaseLineIsKeptWhenAnOrderIsLoadedAndSentAgain() {
+        // editing a route must not drop a phase line set on one of its waypoints
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX),
+              List.of(WaypointOrder.PASS_THROUGH.withPhaseLine("Bravo"), WaypointOrder.PASS_THROUGH),
+              WaypointFormation.NONE);
+
+        assertEquals("Bravo", waypoints.getWaypointOrders().get(0).getPhaseLine());
+        assertEquals(List.of("Bravo"), waypoints.phaseLinesInUse());
+        assertEquals("PL Bravo", waypoints.getValueAt(0, WaypointTableModel.COLUMN_PHASE_LINE).toString());
+
+        waypoints.setPhaseLine(0, null);
+        assertEquals(null, waypoints.getWaypointOrders().get(0).getPhaseLine());
+    }
 }

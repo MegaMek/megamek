@@ -61,6 +61,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -70,6 +71,7 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
@@ -99,6 +101,7 @@ import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.OrderPriority;
+import megamek.common.orders.PhaseLine;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
 import megamek.common.units.Entity;
@@ -123,20 +126,22 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private static final int GAP = 8;
     private static final String REMOVE_WAYPOINT_ACTION = "removeWaypoint";
     // the columns' widths added up, and a header and four rows: the window opens wide and short (HammerGS, 2026-09-27)
-    private static final int TABLE_WIDTH = 1140;
+    private static final int TABLE_WIDTH = 1150;
     private static final int TABLE_HEIGHT = 132;
     private static final int ROW_HEIGHT = 26;
+    // narrowed to make room for the phase line column, as the approved mockup has them (HammerGS, 2026-10-02)
     private static final int NUMBER_COLUMN_WIDTH = 32;
     private static final int HEX_COLUMN_WIDTH = 56;
-    private static final int SHAPE_COLUMN_WIDTH = 120;
-    private static final int CHANGE_COLUMN_WIDTH = 120;
-    private static final int SPACING_COLUMN_WIDTH = 90;
-    private static final int PACE_COLUMN_WIDTH = 80;
-    private static final int CONTACT_COLUMN_WIDTH = 170;
-    private static final int TOGETHER_COLUMN_WIDTH = 100;
-    private static final int FACING_COLUMN_WIDTH = 150;
-    private static final int THEN_COLUMN_WIDTH = 130;
-    private static final int TURNS_COLUMN_WIDTH = 70;
+    private static final int SHAPE_COLUMN_WIDTH = 110;
+    private static final int CHANGE_COLUMN_WIDTH = 112;
+    private static final int SPACING_COLUMN_WIDTH = 80;
+    private static final int PACE_COLUMN_WIDTH = 72;
+    private static final int CONTACT_COLUMN_WIDTH = 160;
+    private static final int TOGETHER_COLUMN_WIDTH = 90;
+    private static final int FACING_COLUMN_WIDTH = 130;
+    private static final int THEN_COLUMN_WIDTH = 136;
+    private static final int TURNS_COLUMN_WIDTH = 56;
+    private static final int PHASE_LINE_COLUMN_WIDTH = 110;
 
     private final ClientGUI clientGUI;
     private final BoardView boardView;
@@ -356,7 +361,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         TableColumnModel columns = waypointTable.getColumnModel();
         int[] widths = {NUMBER_COLUMN_WIDTH, HEX_COLUMN_WIDTH, SHAPE_COLUMN_WIDTH, CHANGE_COLUMN_WIDTH,
               SPACING_COLUMN_WIDTH, PACE_COLUMN_WIDTH, CONTACT_COLUMN_WIDTH, TOGETHER_COLUMN_WIDTH, FACING_COLUMN_WIDTH,
-              THEN_COLUMN_WIDTH, TURNS_COLUMN_WIDTH};
+              THEN_COLUMN_WIDTH, TURNS_COLUMN_WIDTH, PHASE_LINE_COLUMN_WIDTH};
         for (int column = 0; column < widths.length; column++) {
             columns.getColumn(column).setPreferredWidth(UIUtil.scaleForGUI(widths[column]));
         }
@@ -376,6 +381,86 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
               value -> Messages.getString("BotCommandPanel.Formations.contact." + ((Enum<?>) value).name()));
         setComboColumn(columns.getColumn(WaypointTableModel.COLUMN_FACING),
               WaypointTableModel.facingOptions().toArray(), String::valueOf);
+        columns.getColumn(WaypointTableModel.COLUMN_PHASE_LINE).setCellEditor(new PhaseLineCellEditor());
+        columns.getColumn(WaypointTableModel.COLUMN_PHASE_LINE).setCellRenderer(new ComboCellRenderer(String::valueOf));
+    }
+
+    /**
+     * Edits a waypoint's phase line: none, one already used by any of the player's lances, or a new one, named with
+     * the next ICAO name or one the player types.
+     */
+    private final class PhaseLineCellEditor extends AbstractCellEditor implements TableCellEditor {
+        private final JComboBox<WaypointTableModel.PhaseLineOption> combo = new JComboBox<>();
+        private int editedRow = -1;
+
+        private PhaseLineCellEditor() {
+            combo.addActionListener(event -> {
+                if (combo.getSelectedItem() == WaypointTableModel.PhaseLineOption.NEW) {
+                    int row = editedRow;
+                    cancelCellEditing();
+                    SwingUtilities.invokeLater(() -> askForNewPhaseLine(row));
+                }
+            });
+        }
+
+        @Override
+        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
+              int column) {
+            editedRow = row;
+            combo.removeAllItems();
+            combo.addItem(WaypointTableModel.PhaseLineOption.NONE);
+            for (String name : knownPhaseLines()) {
+                combo.addItem(new WaypointTableModel.PhaseLineOption(name, false));
+            }
+            combo.addItem(WaypointTableModel.PhaseLineOption.NEW);
+            combo.setSelectedItem(value);
+            return combo;
+        }
+
+        @Override
+        public Object getCellEditorValue() {
+            return combo.getSelectedItem();
+        }
+    }
+
+    /**
+     * @return the phase lines already on any route of the player's side and on this one, so a second lance joins the
+     *       same line by picking it
+     */
+    private List<String> knownPhaseLines() {
+        List<String> names = new ArrayList<>(waypoints.phaseLinesInUse());
+        for (String name : PhaseLine.namesInUse(clientGUI.getClient().getGame().getEntitiesVector(), botPlayer)) {
+            if (!containsIgnoringCase(names, name)) {
+                names.add(name);
+            }
+        }
+        return names;
+    }
+
+    private static boolean containsIgnoringCase(List<String> names, String name) {
+        for (String candidate : names) {
+            if (candidate.equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Asks for a new phase line's name, offering the next ICAO name, and puts the waypoint on it.
+     */
+    private void askForNewPhaseLine(int row) {
+        if ((row < 0) || (row >= waypoints.getRowCount())) {
+            return;
+        }
+        Object typed = JOptionPane.showInputDialog(this,
+              Messages.getString("BotCommandPanel.MoveOrder.phaseLine.prompt"),
+              Messages.getString("BotCommandPanel.MoveOrder.phaseLine.promptTitle"), JOptionPane.PLAIN_MESSAGE, null,
+              null, PhaseLine.nextName(knownPhaseLines()));
+        String name = PhaseLine.cleanName((typed == null) ? null : typed.toString());
+        if (name != null) {
+            waypoints.setPhaseLine(row, name);
+        }
     }
 
     private static void setComboColumn(TableColumn column, Object[] choices, Function<Object, String> label) {

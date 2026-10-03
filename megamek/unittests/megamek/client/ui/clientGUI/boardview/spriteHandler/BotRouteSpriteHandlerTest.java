@@ -123,8 +123,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H +2", "1", AUTO, 0, false, false),
-              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H +2", "2", AUTO, 0, false, false)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H +2", "1", AUTO, 0, false, false, null),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "GHR-5H +2", "2", AUTO, 0, false, false, null)), flags);
     }
 
     @Test
@@ -134,8 +134,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "Test GHR-5H", "1", AUTO, 0, false, false),
-              new RouteFlag(SECOND_WAYPOINT, 0, 1, "Test CN9-A", "1", AUTO, 0, false, false)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "Test GHR-5H", "1", AUTO, 0, false, false, null),
+              new RouteFlag(SECOND_WAYPOINT, 0, 1, "Test CN9-A", "1", AUTO, 0, false, false, null)), flags);
     }
 
     @Test
@@ -153,8 +153,8 @@ class BotRouteSpriteHandlerTest {
 
         List<RouteFlag> flags = BotRouteSpriteHandler.routeFlags(units, human);
 
-        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "Test GHR-5H", "1", NORTH_EAST, 2, false, false),
-              new RouteFlag(SECOND_WAYPOINT, 0, 0, "Test GHR-5H", "2", NORTH, 0, false, false)), flags);
+        assertEquals(List.of(new RouteFlag(FIRST_WAYPOINT, 0, 0, "Test GHR-5H", "1", NORTH_EAST, 2, false, false, null),
+              new RouteFlag(SECOND_WAYPOINT, 0, 0, "Test GHR-5H", "2", NORTH, 0, false, false, null)), flags);
         assertEquals("1 hold 2", flags.get(0).progressText());
         assertEquals("2", flags.get(1).progressText());
     }
@@ -204,5 +204,15 @@ class BotRouteSpriteHandlerTest {
 
         assertTrue(summary.contains("Moving to Nav Point Alpha in: Column (1 hex"), summary);
         assertTrue(summary.contains("Then changes on the way to Nav Point Beta, to: Line (1 hex"), summary);
+    }
+
+    @Test
+    void aPhaseLineIsNamedOnItsFlag() {
+        RouteFlag onBravo = new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", "Beta", AUTO, 0, false, false, "Bravo");
+        RouteFlag holdingOnBravo = new RouteFlag(FIRST_WAYPOINT, 0, 0, "GHR-5H", "Beta", AUTO, 2, false, false,
+              "Bravo");
+
+        assertEquals("Beta - PL Bravo", onBravo.progressText());
+        assertEquals("Beta hold 2 - PL Bravo", holdingOnBravo.progressText());
     }
 }

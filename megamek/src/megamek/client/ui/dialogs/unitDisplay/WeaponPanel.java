@@ -188,6 +188,11 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
     private Targetable prevTarget = null;
     private JScrollPane tWeaponScroll;
     private JComboBox<String> m_chAmmo;
+    /**
+     * The weapon the ammo selector was last filled for. Until the selector is refilled, its selection belongs to this
+     * weapon and must not be applied to another one.
+     */
+    private WeaponMounted ammoSelectorWeapon;
     public JComboBox<String> m_chBayWeapon;
 
     private JLabel wBayWeapon;
@@ -1853,8 +1858,10 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         }
 
         // Update the range display to account for the selected ammo, or the loaded ammo
-        // if none is selected
-        AmmoMounted mAmmo = getSelectedAmmo().orElse(mounted.getLinkedAmmo());
+        // if none is selected. The ammo selector is only refilled further down, so after switching weapons it still
+        // holds the previous weapon's ammo; its selection only counts when it was filled for this weapon.
+        Optional<AmmoMounted> selectedAmmo = (ammoSelectorWeapon == mounted) ? getSelectedAmmo() : Optional.empty();
+        AmmoMounted mAmmo = selectedAmmo.orElse(mounted.getLinkedAmmo());
         if (mAmmo != null) {
             updateRangeDisplayForAmmo(mAmmo);
         }
@@ -1997,6 +2004,7 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
                 m_chAmmo.setSelectedIndex(newSelectedIndex);
             }
         }
+        ammoSelectorWeapon = oldMount;
 
         // send event to other parts of the UI which care
         unitDisplayPanel.getClientGUI().showSensorRanges(entity);

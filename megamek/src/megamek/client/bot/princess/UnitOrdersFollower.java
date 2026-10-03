@@ -258,6 +258,8 @@ public class UnitOrdersFollower {
     private final Map<Integer, LanceRole.Position> escortPositionsKept = new HashMap<>();
     private final Map<Integer, Coords> lastConvoyCenters = new HashMap<>();
     private final Set<Integer> convoyGoneLogged = new HashSet<>();
+    // the heading each convoy's escorts keep their places by, by convoy force id, and the round it was set
+    private final Map<Integer, ConvoyHeading> convoyHeadings = new HashMap<>();
 
     /** How often, in rounds, a lance still holding at a phase line reminds the player whom it is waiting for. */
     static final int PHASE_LINE_REMINDER_ROUNDS = 3;
@@ -2815,13 +2817,13 @@ public class UnitOrdersFollower {
         Board board = owner.getGame().getBoard(head);
         Coords headNow = head.getPosition();
         Optional<Coords> convoyWaypoint = head.getUnitOrders().getNextWaypoint();
-        int heading = convoyHeading(head, board);
+        int heading = convoyHeading(role.getConvoyForceId(), head, board);
         // a convoy that has still to move this turn will be a walk on toward its waypoint by the time it stops
         int predictedSteps = isConvoyStillToMove ? head.getWalkMP() : 0;
-        Coords headThen = convoyWaypoint.isPresent()
+        Coords headThen = EscortPlanner.clampToBoard(convoyWaypoint.isPresent()
               ? EscortPlanner.stepToward(headNow, convoyWaypoint.get(), predictedSteps)
-              : headNow.translated(heading, predictedSteps);
-        EscortPlanner.ConvoyShape shape = convoyShape(convoy, head, headThen, heading);
+              : headNow.translated(heading, predictedSteps), board);
+        EscortPlanner.ConvoyShape shape = convoyShape(convoy, head, headThen, heading, board);
         lastConvoyCenters.put(role.getConvoyForceId(), shape.middle());
 
         int distance = escortDistance(role);
@@ -2864,13 +2866,15 @@ public class UnitOrdersFollower {
      * @param headThen where the head will be; the middle and tail are moved on with it
      */
     private static EscortPlanner.ConvoyShape convoyShape(List<Entity> convoy, Entity head, Coords headThen,
-          int heading) {
+          int heading, Board board) {
         Coords headNow = head.getPosition();
         int shift = headNow.distance(headThen);
         List<Entity> byDistance = new ArrayList<>(convoy);
         byDistance.sort(Comparator.comparingInt(unit -> unit.getPosition().distance(headNow)));
-        Coords middle = byDistance.get(byDistance.size() / 2).getPosition().translated(heading, shift);
-        Coords tail = byDistance.get(byDistance.size() - 1).getPosition().translated(heading, shift);
+        Coords middle = EscortPlanner.clampToBoard(byDistance.get(byDistance.size() / 2).getPosition()
+              .translated(heading, shift), board);
+        Coords tail = EscortPlanner.clampToBoard(byDistance.get(byDistance.size() - 1).getPosition()
+              .translated(heading, shift), board);
         return new EscortPlanner.ConvoyShape(headThen, middle, tail, heading);
     }
 
@@ -2900,8 +2904,8 @@ public class UnitOrdersFollower {
         }
         Entity head = convoyHead(convoy);
         Board board = owner.getGame().getBoard(head);
-        int heading = convoyHeading(head, board);
-        EscortPlanner.ConvoyShape shape = convoyShape(convoy, head, head.getPosition(), heading);
+        int heading = convoyHeading(role.getConvoyForceId(), head, board);
+        EscortPlanner.ConvoyShape shape = convoyShape(convoy, head, head.getPosition(), heading, board);
         List<LanceRole.Position> positions = new ArrayList<>(role.getPositions());
         int deployed = 0;
         for (Entity unit : owner.getGame().getEntitiesVector()) {
@@ -2973,17 +2977,47 @@ public class UnitOrdersFollower {
         return first;
     }
 
+    /** The heading a convoy's escorts keep their places by, and the round it was set. */
+    private record ConvoyHeading(int round, int heading) {}
+
     /**
-     * @return the way the convoy is going: toward its next waypoint, else toward its exit edge, else its facing
+     * The way the convoy is going, as its escorts keep their places by it. It turns at most one hex side a round and
+     * holds through the round: aimed straight at the next waypoint, it swung round in the last hexes before each one
+     * and swapped the flanks over, sending the escorts back and forth across the convoy (HammerGS's playtest,
+     * 2026-10-02).
      */
-    private static int convoyHeading(Entity head, Board board) {
+    private int convoyHeading(int convoyForceId, Entity head, Board board) {
+        ConvoyHeading known = convoyHeadings.get(convoyForceId);
+        if ((known != null) && (known.round() == currentRound())) {
+            return known.heading();
+        }
+        int wanted = lookAheadHeading(head, board);
+        int heading = (known == null) ? wanted : EscortPlanner.turnOneSideToward(known.heading(), wanted);
+        convoyHeadings.put(convoyForceId, new ConvoyHeading(currentRound(), heading));
+        return heading;
+    }
+
+    /**
+     * @return the way the convoy is going: toward the first waypoint of its route more than
+     *       {@link EscortPlanner#LOOK_AHEAD_HEXES} hexes off, so a waypoint close by does not swing it; else toward
+     *       its exit edge; else toward the end of its route; else its facing
+     */
+    private static int lookAheadHeading(Entity head, Board board) {
         Coords headNow = head.getPosition();
-        Optional<Coords> waypoint = head.getUnitOrders().getNextWaypoint();
-        if (waypoint.isPresent() && !waypoint.get().equals(headNow)) {
-            return headNow.direction(waypoint.get());
+        List<Coords> route = head.getUnitOrders().getRoute();
+        for (Coords waypoint : route) {
+            if (headNow.distance(waypoint) > EscortPlanner.LOOK_AHEAD_HEXES) {
+                return headNow.direction(waypoint);
+            }
         }
         OptionalInt exitFacing = LanceRoles.convoyExitFacing(head, headNow, board);
-        return exitFacing.isPresent() ? exitFacing.getAsInt() : head.getFacing();
+        if (exitFacing.isPresent()) {
+            return exitFacing.getAsInt();
+        }
+        if (!route.isEmpty() && !route.get(route.size() - 1).equals(headNow)) {
+            return headNow.direction(route.get(route.size() - 1));
+        }
+        return head.getFacing();
     }
 
     /**

@@ -267,6 +267,56 @@ class EscortFollowerTest {
     }
 
     @Test
+    void aWaypointCloseByDoesNotSwingThePlaces() {
+        List<Entity> trucks = convoyHeadingNorth();
+        // two hexes off to the south-east, then on north: the convoy is aimed past the close one
+        Coords closeWaypoint = HEAD_HEX.translated(SOUTH_EAST, 2);
+        for (Entity truck : trucks) {
+            truck.setUnitOrders(truck.getUnitOrders().withRoute(List.of(closeWaypoint, NORTH_WAYPOINT)));
+        }
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2), LanceRole.defaultEscort(CONVOY_FORCE_ID));
+
+        Coords leadPlace = princess.getUnitOrdersFollower().getEscortPlace(lead).orElseThrow();
+
+        assertEquals(HEAD_HEX.direction(NORTH_WAYPOINT), HEAD_HEX.direction(leadPlace));
+    }
+
+    @Test
+    void theConvoyTurnsOneHexSideARound() {
+        List<Entity> trucks = convoyHeadingNorth();
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2), LanceRole.defaultEscort(CONVOY_FORCE_ID));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        follower.getEscortPlace(lead);
+
+        // the route now runs south-east, two hex sides round from north
+        Coords southEastWaypoint = HEAD_HEX.translated(SOUTH_EAST, 10);
+        for (Entity truck : trucks) {
+            truck.setUnitOrders(truck.getUnitOrders().withRoute(List.of(southEastWaypoint)));
+        }
+        game.setCurrentRound(game.getCurrentRound() + 1);
+        assertEquals(Optional.of(HEAD_HEX.translated(1, MEDIUM_DISTANCE)), follower.getEscortPlace(lead));
+
+        game.setCurrentRound(game.getCurrentRound() + 1);
+        assertEquals(Optional.of(HEAD_HEX.translated(SOUTH_EAST, MEDIUM_DISTANCE)), follower.getEscortPlace(lead));
+    }
+
+    @Test
+    void aPlacePastTheExitEdgeStandsOnTheEdge() {
+        List<Entity> trucks = convoyHeadingNorth();
+        Coords nearTheEdge = new Coords(14, 2);
+        trucks.get(0).setPosition(nearTheEdge);
+        for (Entity truck : trucks) {
+            truck.setUnitOrders(truck.getUnitOrders().withRoute(List.of()));
+        }
+        Entity lead = escort(10, new Coords(14, 6), LanceRole.defaultEscort(CONVOY_FORCE_ID));
+
+        Coords leadPlace = princess.getUnitOrdersFollower().getEscortPlace(lead).orElseThrow();
+
+        assertTrue(board.contains(leadPlace), "the Lead place " + leadPlace + " is on the board");
+        assertEquals(0, leadPlace.getY());
+    }
+
+    @Test
     void escortsFillEveryPlaceBeforeDoublingUp() {
         Map<Integer, Coords> escorts = new HashMap<>();
         escorts.put(1, new Coords(5, 5));

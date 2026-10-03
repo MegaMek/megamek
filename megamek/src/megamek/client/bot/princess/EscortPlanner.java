@@ -53,6 +53,8 @@ final class EscortPlanner {
     private static final int BACKWARD = 3;
     // a second escort sharing a place keeps this far behind the first, so they do not queue for one hex
     private static final int SHARED_PLACE_GAP = 2;
+    /** A convoy is aimed at the first waypoint further off than this, so one close by does not swing it round. */
+    static final int LOOK_AHEAD_HEXES = 5;
 
     /**
      * The convoy as the escorts see it.
@@ -118,11 +120,39 @@ final class EscortPlanner {
     }
 
     private static Coords keepOnBoard(Coords place, Coords anchor, Board board) {
+        if (!board.contains(anchor)) {
+            return clampToBoard(place, board);
+        }
         Coords onBoard = place;
-        while (!board.contains(onBoard) && !onBoard.equals(anchor)) {
+        while (!board.contains(onBoard)) {
             onBoard = onBoard.translated(onBoard.direction(anchor));
         }
         return onBoard;
+    }
+
+    /**
+     * @return the hex, or the nearest board hex in its row and column where it is off the board: a place past the
+     *       convoy's exit edge stands on the edge instead
+     */
+    static Coords clampToBoard(Coords hex, Board board) {
+        if (board.contains(hex)) {
+            return hex;
+        }
+        int column = Math.max(0, Math.min(board.getWidth() - 1, hex.getX()));
+        int row = Math.max(0, Math.min(board.getHeight() - 1, hex.getY()));
+        return new Coords(column, row);
+    }
+
+    /**
+     * @return the heading one hex side round from one heading toward another, the shorter way; the same heading when
+     *       they match
+     */
+    static int turnOneSideToward(int from, int to) {
+        int clockwiseSides = (to - from + DIRECTIONS) % DIRECTIONS;
+        if (clockwiseSides == 0) {
+            return from;
+        }
+        return (clockwiseSides <= (DIRECTIONS / 2)) ? (from + 1) % DIRECTIONS : (from + DIRECTIONS - 1) % DIRECTIONS;
     }
 
     /**

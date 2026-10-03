@@ -57,7 +57,14 @@ import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.BulldozerMovePath.MPCostComparator;
-import megamek.common.actions.*;
+import megamek.common.actions.ArtilleryAttackAction;
+import megamek.common.actions.DisengageAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.FindClubAction;
+import megamek.common.actions.ReconCameraSpotAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.SpotAction;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -85,6 +92,7 @@ import megamek.common.event.GameCFREvent;
 import megamek.common.event.player.GamePlayerChatEvent;
 import megamek.common.game.BotHonorReport;
 import megamek.common.game.Game;
+import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeRoll;
 import megamek.common.moves.MovePath;
@@ -1080,65 +1088,96 @@ public class Princess extends BotClient {
     protected void calculateDeployment() {
         // get the first unit
         final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
-        sendChat("deploying unit " + getEntity(entityNum).getChassis(), Level.INFO);
-
-        // a unit that is withdrawing under forced withdrawal is not deployed
-        if (getForcedWithdrawalTracker().isWithdrawing(getEntity(entityNum))) {
-            LOGGER.info("Declining to deploy withdrawing unit: {}. Removing unit.", getEntity(entityNum).getChassis());
-            sendDeleteEntity(entityNum);
-            return;
-        }
-
-        // get a list of all coordinates to which we can deploy
-        final List<Coords> startingCoords = getStartingCoordsArray(game.getEntity(entityNum));
-        if (startingCoords.isEmpty()) {
-            LOGGER.error("No valid locations to deploy {}", getEntity(entityNum).getDisplayName());
-        }
-
-        // get the coordinates I can deploy on
-        final Coords deployCoords = getFirstValidCoords(getEntity(entityNum), startingCoords);
-        if (deployCoords == null) {
-            // if I cannot deploy anywhere, then I get rid of the entity instead so that we may go about our business
-            LOGGER.error("getCoordsAround gave no location for {}. Removing unit.", getEntity(entityNum).getChassis());
-
-            sendDeleteEntity(entityNum);
-            return;
-        }
-
         final Entity deployEntity = getEntity(entityNum);
+        sendChat("deploying unit " + deployEntity.getChassis(), Level.INFO);
+
+        final Coords deployCoords = getDeploymentCoords(deployEntity, entityNum, true, "deployment");
+        if (deployCoords == null) {
+            return;
+        }
 
         // For now, just use whatever board the unit is set to be on, usually board 0 by default
-        Board board = game.getBoard(deployEntity);
+        final Board board = game.getBoard(deployEntity);
+        final int decentFacing = getDeploymentFacing(deployEntity, board, deployCoords);
+        final Hex deployHex = board.getHex(deployCoords);
+        final Integer deployElevation = getDeploymentElevation(deployEntity, board, deployCoords, deployHex, true, entityNum);
+        if (deployElevation == null) {
+            return;
+        }
+        deploy(entityNum, deployCoords, board.getBoardId(), decentFacing, deployElevation, new Vector<>(), false);
+    }
 
-        // first coordinate that it is legal to put this unit on now find some sort of reasonable
-        // facing. If there are deployed enemies, face them
+    private @Nullable Coords getDeploymentCoords(final Entity entity,
+          final int entityId,
+          final boolean deleteEntityOnFailure,
+          final String phaseDescription) {
+        if (entity == null) {
+            return null;
+        }
 
-        // specifically, face the last deployed enemy.
+        if (getForcedWithdrawalTracker().isWithdrawing(entity)) {
+            LOGGER.info("Declining to deploy withdrawing unit: {}.", entity.getChassis());
+            if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                sendDeleteEntity(entityId);
+            }
+            return null;
+        }
+
+        final List<Coords> startingCoords = getStartingCoordsArray(entity);
+        if (startingCoords.isEmpty()) {
+            LOGGER.error("No valid locations to deploy {} during {}.", entity.getDisplayName(), phaseDescription);
+            if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                sendDeleteEntity(entityId);
+            }
+            return null;
+        }
+
+        final Coords deployCoords = getFirstValidCoords(entity, startingCoords);
+        if (deployCoords == null) {
+            LOGGER.error("getCoordsAround gave no location for {} during {}.{}",
+                  entity.getChassis(),
+                  phaseDescription,
+                  deleteEntityOnFailure ? " Removing unit." : "");
+            if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                sendDeleteEntity(entityId);
+            }
+            return null;
+        }
+
+        return deployCoords;
+    }
+
+    private int getDeploymentFacing(final Entity entity, final Board board, final Coords deployCoords) {
         int decentFacing = -1;
         for (final Entity enemy : getEnemyEntities()) {
-            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(deployEntity, enemy)) {
+            if (enemy.isDeployed() && !enemy.isOffBoard() && game.onTheSameBoard(entity, enemy)) {
                 decentFacing = deployCoords.direction(enemy.getPosition());
                 break;
             }
         }
 
-        // if I haven't found a decent facing, then at least face towards
-        // the center of the board
         if (-1 == decentFacing) {
             final Coords center = new Coords(board.getWidth() / 2, board.getHeight() / 2);
             decentFacing = deployCoords.direction(center);
         }
+        return decentFacing;
+    }
 
-        final Hex deployHex = board.getHex(deployCoords);
-        int deployElevation = deployEntity.getElevation();
+    private @Nullable Integer getDeploymentElevation(final Entity entity,
+          final Board board,
+          final Coords deployCoords,
+          final Hex deployHex,
+          final boolean deleteEntityOnFailure,
+          final int entityId) {
+        int deployElevation = entity.getElevation();
 
-        if (deployEntity.isAero()) {
+        if (entity.isAero()) {
             if (board.isGround()) {
                 // keep the altitude set in the lobby, possibly starting grounded
-                deployElevation = deployEntity.getAltitude();
+                deployElevation = entity.getAltitude();
             } else if (board.isLowAltitude()) {
                 // try to keep the altitude set in the lobby, but stay above the terrain
-                var deploymentHelper = new AllowedDeploymentHelper(deployEntity,
+                var deploymentHelper = new AllowedDeploymentHelper(entity,
                       deployCoords,
                       board,
                       deployHex,
@@ -1147,19 +1186,19 @@ public class Princess extends BotClient {
                 if (allowedDeployment.isEmpty()) {
                     // that's bad, cannot deploy at all
                     LOGGER.error("Cannot find viable altitude to deploy to");
-                    sendDeleteEntity(entityNum);
-                    return;
-                } else {
-                    deployElevation = Math.max(deployEntity.getAltitude(),
-                          Collections.min(allowedDeployment).elevation());
+                    if (deleteEntityOnFailure && (entityId != Entity.NONE)) {
+                        sendDeleteEntity(entityId);
+                    }
+                    return null;
                 }
+                deployElevation = Math.max(entity.getAltitude(), Collections.min(allowedDeployment).elevation());
             }
         } else {
-            deployElevation = getDeployElevation(deployEntity, deployHex);
+            deployElevation = getDeployElevation(entity, deployHex);
             // Compensate for hex elevation where != 0...
             deployElevation -= deployHex.getLevel();
         }
-        deploy(entityNum, deployCoords, board.getBoardId(), decentFacing, deployElevation, new Vector<>(), false);
+        return deployElevation;
     }
 
     /**
@@ -2751,6 +2790,31 @@ public class Princess extends BotClient {
      * @return The entity that should be moved next.
      */
     Entity getEntityToMove() {
+        final Game currentGame = getGame();
+
+        if ((currentGame != null) && (currentGame.getPhase() == GamePhase.MOVEMENT)) {
+            final GameTurn turn = currentGame.getTurnForPlayer(getLocalPlayerNumber());
+            if (turn != null) {
+                final int deployEntityNum = currentGame.getFirstDeployableEntityNum(turn);
+                if (deployEntityNum != Entity.NONE) {
+                    final Entity deployEntity = currentGame.getEntity(deployEntityNum);
+                    if ((deployEntity != null) && !deployEntity.isDone() && !deployEntity.isOffBoard()) {
+                        LOGGER.info("Choosing {} to deploy during the movement phase.", deployEntity.getDisplayName());
+                        return deployEntity;
+                    }
+                }
+            }
+
+            for (final Entity entity : getEntitiesOwned()) {
+                if (entity.isDone() || entity.isOffBoard()) {
+                    continue;
+                }
+                if ((entity.getPosition() == null) || !entity.isDeployed()) {
+                    LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
+                    return entity;
+                }
+            }
+        }
 
         // first move useless units: immobile units, ejected MekWarrior, etc
         Entity movingEntity = null;
@@ -2765,10 +2829,10 @@ public class Princess extends BotClient {
                 continue;
             }
 
-            if (!getGame().getPhase().isSimultaneous(getGame()) &&
-                  (entity.isOffBoard() ||
-                   (entity.isUnloadedThisTurn() ||
-                    !Objects.requireNonNull(getGame().getTurn()).isValidEntity(entity, getGame())))) {
+            if ((currentGame != null) && !currentGame.getPhase().isSimultaneous(currentGame)
+                  && (entity.isOffBoard() ||
+                  (entity.isUnloadedThisTurn() ||
+                   !Objects.requireNonNull(currentGame.getTurn()).isValidEntity(entity, currentGame)))) {
                 msg.append("cannot be moved.");
                 continue;
             }
@@ -3143,9 +3207,99 @@ public class Princess extends BotClient {
         return getGame().getOptions().booleanOption(name);
     }
 
+    private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
+        if ((entity == null) || entity.isDeployed() || (entity.getPosition() != null)) {
+            return null;
+        }
+
+        final Coords deployCoords = getDeploymentCoords(entity, Entity.NONE, false, "movement-phase deployment");
+        if (deployCoords == null) {
+            return null;
+        }
+
+        final Board board = game.getBoard(entity);
+        final Hex deployHex = board.getHex(deployCoords);
+        final int decentFacing = getDeploymentFacing(entity, board, deployCoords);
+        final Integer deployElevation = getDeploymentElevation(entity, board, deployCoords, deployHex, false, Entity.NONE);
+        if (deployElevation == null) {
+            return null;
+        }
+
+        entity.setPosition(deployCoords);
+        entity.setBoardId(board.getBoardId());
+        entity.setFacing(decentFacing);
+        entity.setSecondaryFacing(decentFacing);
+        entity.setDeployed(true);
+        if (entity.isAero()) {
+            entity.setAltitude(deployElevation);
+        } else {
+            entity.setElevation(deployElevation);
+        }
+
+        getPrecognition().ensureUpToDate();
+        final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false, true);
+        if ((paths == null) || paths.isEmpty()) {
+            final MovePath deployOnly = new MovePath(game, entity);
+            deployOnly.addStep(MoveStepType.DEPLOY);
+            return deployOnly;
+        }
+
+        final IPathRanker pathRanker = getPathRanker(entity);
+        pathRanker.initUnitTurn(entity, getGame());
+        final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
+        final TreeSet<RankedPath> rankedPaths = pathRanker.rankPaths(paths,
+              getGame(),
+              getMaxWeaponRange(entity),
+              fallTolerance,
+              getEnemyEntities(),
+              getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
+        if (rankedPaths.isEmpty()) {
+            final MovePath deployOnly = new MovePath(game, entity);
+            deployOnly.addStep(MoveStepType.DEPLOY);
+            return deployOnly;
+        }
+        final RankedPath bestPath = pathRanker.getBestPath(rankedPaths);
+        LOGGER.info("{}: {} chose to {} with a distance of {} and MP used of {}. Deployment Step: {}",
+                    getName(),
+                    entity.getDisplayName(),
+                    bestPath.getPath().getLastStepMovementType(),
+                    bestPath.getPath().getDistanceTravelled(),
+                    bestPath.getPath().getMpUsed(),
+                    bestPath.getPath().contains(MoveStepType.DEPLOY));
+        return (bestPath == null) ? null : bestPath.getPath();
+    }
+
+    private static boolean hasJumpDeclaration(@Nullable MovePath path) {
+        return (path != null) && (path.contains(MoveStepType.START_JUMP)
+              || path.contains(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER));
+    }
+
+    private static boolean hasJumpDeclaration(List<MovePath> paths) {
+        if ((paths == null) || paths.isEmpty()) {
+            return false;
+        }
+        for (MovePath path : paths) {
+            if (hasJumpDeclaration(path)) {
+               return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isJumpDeclaration(MoveStepType type) {
+        return (type == MoveStepType.START_JUMP) || (type == MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+    }
+
     @Override
     protected MovePath continueMovementFor(final Entity entity) {
         Objects.requireNonNull(entity, "Entity is null.");
+
+        if (!entity.isDeployed() || (entity.getPosition() == null)) {
+            final MovePath deploymentMovePath = calculateDeploymentPathForMovementPhase(entity);
+            if (deploymentMovePath != null) {
+                return deploymentMovePath;
+            }
+        }
 
         try {
             // a hold position order trumps all other movement; airborne units are exempt because they
@@ -3379,9 +3533,19 @@ public class Princess extends BotClient {
      * standard "circle", sometimes it's pruned long-range movement paths
      */
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
+        return getMovePathsAndSetNecessaryTargets(mover, forceMoveToContact, false);
+    }
+
+    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover,
+          boolean forceMoveToContact,
+          boolean includeDeploymentStep) {
         // if the mover can't move, then there's nothing for us to do here, let's cut out.
         if (mover.isImmobile()) {
             return Collections.emptyList();
+        }
+
+        if (includeDeploymentStep) {
+            getPrecognition().getPathEnumerator().recalculateMovesFor(mover, true);
         }
 
         BehaviorType behavior = forceMoveToContact ?
@@ -3393,6 +3557,7 @@ public class Princess extends BotClient {
         getClusterTracker().clearMovableAreas();
         getClusterTracker().updateMovableAreas(mover);
 
+        List<MovePath> result;
         // basic idea:
         // if we're "in battle", just use the standard set of move paths
         // if we're trying to get somewhere
@@ -3403,7 +3568,8 @@ public class Princess extends BotClient {
         //  - if we're unable to get where we're going, use standard set of move paths
         switch (behavior) {
             case Engaged:
-                return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                break;
             case MoveToDestination:
             case MoveToContact:
             case ForcedWithdrawal:
@@ -3419,7 +3585,8 @@ public class Princess extends BotClient {
                     if (!mover.isAirborne()) {
                         getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
                     }
-                    return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                    result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                    break;
                 }
 
                 bulldozerPaths.sort(new MPCostComparator());
@@ -3462,7 +3629,8 @@ public class Princess extends BotClient {
                                 getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
                             }
 
-                            return getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                            result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                            break;
                         }
                     }
 
@@ -3476,9 +3644,11 @@ public class Princess extends BotClient {
                     prunedPaths.addAll(getPrecognition().getPathEnumerator()
                           .getSimilarUnitPaths(mover.getId(), prunedPath));
                 }
-                return prunedPaths;
+                result = prunedPaths;
+                break;
             }
         }
+        return result;
     }
 
     private void checkForDishonoredEnemies() {

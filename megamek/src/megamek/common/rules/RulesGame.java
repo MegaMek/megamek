@@ -210,9 +210,9 @@ public abstract class RulesGame {
      */
     public boolean restrictDeploymentWidth(@Nullable Player player,
                                            int deploymentArea) {
-        if ((player != null) && player.isBot()) {
-            return false;
-        }
+        /** if ((player != null) && player.isBot()) {
+         *    return false;
+         } **/
         if (isWalkOnDeployment() &&
             (deploymentArea != Board.START_CENTER &&
              deploymentArea != Board.START_ANY &&

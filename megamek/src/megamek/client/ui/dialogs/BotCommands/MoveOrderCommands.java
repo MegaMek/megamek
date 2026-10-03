@@ -34,14 +34,18 @@ package megamek.client.ui.dialogs.BotCommands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.orders.FormationOrder;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
 import megamek.common.orders.WaypointOrder;
+import megamek.common.units.Entity;
 import megamek.server.commands.UnitOrderCommand;
 
 /**
@@ -99,6 +103,25 @@ final class MoveOrderCommands {
                       UnitOrderCommand.hexesArgument(hexes, isInFormation ? waypointOrders
                             : withoutFormations(waypointOrders)),
                       UnitOrderCommand.PRIORITY + '=' + priority.name()));
+            }
+        }
+        return commands;
+    }
+
+    /**
+     * Sets the lance role on each unit that does not have it already, so resending an unchanged order adds nothing.
+     *
+     * @param units the units ordered
+     * @param role  the role, or {@code null} for none
+     *
+     * @return the commands to send, in order
+     */
+    static List<String> roleCommands(List<Entity> units, @Nullable LanceRole role) {
+        List<String> commands = new ArrayList<>();
+        for (Entity unit : units) {
+            if (!Objects.equals(unit.getLanceRole(), role)) {
+                commands.add(UnitOrderCommand.commandText(unit.getId(), UnitOrderAction.SET_ROLE,
+                      UnitOrderCommand.roleArgument(role)));
             }
         }
         return commands;

@@ -64,6 +64,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.KeyStroke;
@@ -95,9 +96,12 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.force.Force;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.PhaseLine;
 import megamek.common.orders.UnitOrders;
@@ -140,6 +144,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private static final int THEN_COLUMN_WIDTH = 136;
     private static final int TURNS_COLUMN_WIDTH = 56;
     private static final int PHASE_LINE_COLUMN_WIDTH = 110;
+    private static final int ROUTE_TAB = 0;
+    private static final int ROLE_TAB = 1;
 
     private final ClientGUI clientGUI;
     private final BoardView boardView;
@@ -156,6 +162,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private JToggleButton pickButton;
     private JLabel helpLabel;
     private JComboBox<OrderPriority> priorityCombo;
+    private JTabbedPane tabs;
+    private LanceRolePanel rolePanel;
     private BoardViewListenerAdapter hexClickListener;
     private Distractable suppressedDisplay;
 
@@ -208,7 +216,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             loadDetail();
         });
         refreshRouteSprites();
-        if (waypoints.getRowCount() == 0) {
+        if ((waypoints.getRowCount() == 0) && !rolePanel.isEscortChosen()) {
             pickButton.setSelected(true);
             startPicking();
         }
@@ -222,8 +230,35 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         content.setBorder(new EmptyBorder(gap, gap, gap, gap));
         content.add(createUnitsPanel());
         content.add(Box.createVerticalStrut(gap));
-        content.add(createWaypointsPanel());
+        // the units, leader and priority above the tabs belong to both: the route and the role are sent to the same
+        // units together (HammerGS, 2026-10-02)
+        tabs = new JTabbedPane();
+        tabs.setAlignmentX(Component.LEFT_ALIGNMENT);
+        tabs.addTab(Messages.getString("BotCommandPanel.MoveOrder.tab.route"), createWaypointsPanel());
+        tabs.addTab(Messages.getString("BotCommandPanel.MoveOrder.tab.role"), createRolePanel());
+        content.add(tabs);
         return content;
+    }
+
+    private JPanel createRolePanel() {
+        Entity first = firstUnit();
+        int forceId = (first == null) ? Force.NO_FORCE : first.getForceId();
+        rolePanel = new LanceRolePanel(group.label(), LanceRoles.convoyChoices(clientGUI.getClient().getGame(),
+              botPlayer, forceId), LanceRoles.defaultExitEdge(first));
+        rolePanel.addChangeListener(this::updateRouteTab);
+        return rolePanel;
+    }
+
+    /** An escort keeps its places round its convoy, so it has no route of its own to set. */
+    private void updateRouteTab() {
+        boolean isEscort = rolePanel.isEscortChosen();
+        tabs.setEnabledAt(ROUTE_TAB, !isEscort);
+        tabs.setToolTipTextAt(ROUTE_TAB, isEscort ? Messages.getString("BotCommandPanel.MoveOrder.tab.routeEscort")
+              : null);
+        if (isEscort) {
+            pickButton.setSelected(false);
+            stopPicking();
+        }
     }
 
     @Override
@@ -568,6 +603,11 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
               unitsOrder.isKeepTogether())).orElse(WaypointFormation.NONE);
         waypoints.setRoute(orders.getRoute(), orders.getWaypointOrders(), unitsFormation);
         priorityCombo.setSelectedItem(orders.getPriority());
+        rolePanel.setRole(LanceRoles.roleOf(units()));
+        updateRouteTab();
+        if (rolePanel.isEscortChosen()) {
+            tabs.setSelectedIndex(ROLE_TAB);
+        }
         Optional<FormationOrder> formation = orders.getFormation();
         int leaderId = formation.map(FormationOrder::getLeaderId).orElse(group.unitIds().get(0));
         for (int index = 0; index < leaderCombo.getItemCount(); index++) {
@@ -576,6 +616,17 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             }
         }
         selectRow(waypoints.getRowCount() - 1);
+    }
+
+    private List<Entity> units() {
+        List<Entity> units = new ArrayList<>();
+        for (int unitId : group.unitIds()) {
+            Entity unit = clientGUI.getClient().getGame().getEntity(unitId);
+            if (unit != null) {
+                units.add(unit);
+            }
+        }
+        return units;
     }
 
     /** Shows the group's units and offers them as leaders. */
@@ -706,10 +757,28 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         routeSprites.clear();
     }
 
-    /** Sends the whole order to every unit of the group and closes the editor. */
+    /**
+     * Sends the whole order - the route from the Route tab and the role from the Role tab - to every unit of the group
+     * and closes the editor. An escort gets only its role: it keeps round its convoy instead of following a route.
+     */
     private void sendOrders() {
         if (waypointTable.isEditing()) {
             waypointTable.getCellEditor().stopCellEditing();
+        }
+        if (!rolePanel.isComplete()) {
+            tabs.setSelectedIndex(ROLE_TAB);
+            return;
+        }
+        LanceRole role = rolePanel.getRole();
+        for (String command : MoveOrderCommands.roleCommands(units(), role)) {
+            clientGUI.getClient().sendChat(command);
+        }
+        if (rolePanel.isEscortChosen()) {
+            LOGGER.info("[BotOrders] escort role sent to {} of {}: {}", group.label(), botPlayer.getName(), role);
+            acknowledger.accept(botPlayer, Messages.getString("BotCommandPanel.MoveOrder.toastEscort", group.label()));
+            setResult(DialogResult.CONFIRMED);
+            dispose();
+            return;
         }
         UnitOption leader = (UnitOption) leaderCombo.getSelectedItem();
         int leaderId = (leader == null) ? group.unitIds().get(0) : leader.unitId();
@@ -718,8 +787,9 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         for (String command : commands) {
             clientGUI.getClient().sendChat(command);
         }
-        LOGGER.info("[BotOrders] move order sent to {} of {}: {} waypoint(s) {}, leader {}", group.label(),
-              botPlayer.getName(), waypoints.getRowCount(), waypoints.getWaypointOrders(), leaderId);
+        LOGGER.info("[BotOrders] move order sent to {} of {}: {} waypoint(s) {}, leader {}, role {}", group.label(),
+              botPlayer.getName(), waypoints.getRowCount(), waypoints.getWaypointOrders(), leaderId,
+              (role == null) ? LanceRole.NONE_TEXT : role);
         acknowledger.accept(botPlayer, Messages.getString("BotCommandPanel.MoveOrder.toast", waypoints.getRowCount(),
               group.label()));
         setResult(DialogResult.CONFIRMED);

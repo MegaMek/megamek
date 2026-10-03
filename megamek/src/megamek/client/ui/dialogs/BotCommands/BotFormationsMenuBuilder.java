@@ -32,16 +32,26 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
+import megamek.client.ui.enums.DialogResult;
+import megamek.common.OffBoardDirection;
+import megamek.common.Player;
+import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
+import megamek.common.game.Game;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.UnitOrderAction;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.commands.UnitOrderCommand;
 
@@ -98,5 +108,73 @@ public final class BotFormationsMenuBuilder {
         });
         menu.add(offItem);
         return menu;
+    }
+
+    /**
+     * The lobby's Role menu for one bot lance, beside Formation: None, Convoy... or Escort..., the last two opening
+     * the Role dialog on that choice. Roles are set in the lobby so a convoy and its escorts start the game knowing
+     * their jobs (HammerGS, 2026-10-02).
+     *
+     * @param client  the client that sends the orders
+     * @param frame   the owner of the Role dialog
+     * @param game    the game
+     * @param owner   the bot that owns the lance
+     * @param lance   the lance
+     * @param unitIds the lance's units
+     *
+     * @return the menu
+     */
+    public static JMenu lobbyRoleMenu(AbstractClient client, JFrame frame, Game game, Player owner, Force lance,
+          List<Integer> unitIds) {
+        List<Entity> units = new ArrayList<>();
+        for (int unitId : unitIds) {
+            Entity unit = game.getEntity(unitId);
+            if (unit != null) {
+                units.add(unit);
+            }
+        }
+        LanceRole current = LanceRoles.roleOf(units);
+        String currentName = Messages.getString("BotCommandPanel.Role." + ((current == null) ? "NONE"
+              : current.getKind().name()));
+        JMenu menu = new JMenu(Messages.getString("BotCommandPanel.Role.lobby", currentName));
+        menu.setEnabled(!units.isEmpty());
+
+        JMenuItem noneItem = new JMenuItem(Messages.getString("BotCommandPanel.Role.NONE"));
+        noneItem.addActionListener(event -> sendRole(client, lance, units, null));
+        menu.add(noneItem);
+
+        OffBoardDirection defaultExitEdge = LanceRoles.defaultExitEdge(units.isEmpty() ? null : units.get(0));
+        JMenuItem convoyItem = new JMenuItem(Messages.getString("BotCommandPanel.Role.lobbyConvoy"));
+        convoyItem.addActionListener(event -> chooseRole(client, frame, lance, units, List.of(), defaultExitEdge,
+              ((current != null) && current.isConvoy()) ? current : LanceRole.convoy(defaultExitEdge)));
+        menu.add(convoyItem);
+
+        List<LanceRoles.ConvoyChoice> convoys = LanceRoles.convoyChoices(game, owner, lance.getId());
+        JMenuItem escortItem = new JMenuItem(Messages.getString("BotCommandPanel.Role.lobbyEscort"));
+        escortItem.setEnabled(!convoys.isEmpty());
+        if (convoys.isEmpty()) {
+            escortItem.setToolTipText(Messages.getString("BotCommandPanel.Role.escort.noConvoy"));
+        }
+        escortItem.addActionListener(event -> chooseRole(client, frame, lance, units, convoys, defaultExitEdge,
+              ((current != null) && current.isEscort()) ? current
+                    : LanceRole.defaultEscort(convoys.get(0).forceId())));
+        menu.add(escortItem);
+        return menu;
+    }
+
+    private static void chooseRole(AbstractClient client, JFrame frame, Force lance, List<Entity> units,
+          List<LanceRoles.ConvoyChoice> convoys, OffBoardDirection defaultExitEdge, LanceRole shown) {
+        LanceRoleDialog dialog = new LanceRoleDialog(frame, lance.getName(), convoys, defaultExitEdge, shown);
+        if (dialog.showDialog() == DialogResult.CONFIRMED) {
+            sendRole(client, lance, units, dialog.getRole());
+        }
+    }
+
+    private static void sendRole(AbstractClient client, Force lance, List<Entity> units, @Nullable LanceRole role) {
+        for (String command : MoveOrderCommands.roleCommands(units, role)) {
+            client.sendChat(command);
+        }
+        LOGGER.info("[BotOrders] lobby role {} for {} ({} units)", (role == null) ? LanceRole.NONE_TEXT : role,
+              lance.getName(), units.size());
     }
 }

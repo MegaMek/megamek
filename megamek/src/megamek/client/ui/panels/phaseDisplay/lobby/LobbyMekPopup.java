@@ -361,7 +361,8 @@ class LobbyMekPopup {
     }
 
     /**
-     * Adds the Formation menu for a lance owned by a bot, so it starts the game in formation.
+     * Adds the Formation and Role menus for a lance owned by a bot, so it starts the game in formation and knowing
+     * its job.
      */
     private static void addBotFormationMenu(ScalingPopup popup, ChatLounge lobby, Force force) {
         Player owner = lobby.game().getForces().getOwner(force);
@@ -370,6 +371,8 @@ class LobbyMekPopup {
         }
         List<Integer> unitIds = new ArrayList<>(force.getEntities());
         popup.add(BotFormationsMenuBuilder.lobbyFormationMenu(lobby.getClientGUI().getClient(), force, unitIds));
+        popup.add(BotFormationsMenuBuilder.lobbyRoleMenu(lobby.getClientGUI().getClient(),
+              lobby.getClientGUI().getFrame(), lobby.game(), owner, force, unitIds));
     }
 
     /**

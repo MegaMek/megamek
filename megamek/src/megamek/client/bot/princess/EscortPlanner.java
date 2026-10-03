@@ -53,18 +53,6 @@ final class EscortPlanner {
     private static final int BACKWARD = 3;
     // a second escort sharing a place keeps this far behind the first, so they do not queue for one hex
     private static final int SHARED_PLACE_GAP = 2;
-    /** A convoy is aimed at the first waypoint further off than this, so one close by does not swing it round. */
-    static final int LOOK_AHEAD_HEXES = 5;
-
-    /**
-     * The convoy as the escorts see it.
-     *
-     * @param head    the convoy's front unit, where it will be
-     * @param middle  the unit in the middle of the column
-     * @param tail    the last unit of the column
-     * @param heading the way the convoy is going: toward its next waypoint
-     */
-    record ConvoyShape(Coords head, Coords middle, Coords tail, int heading) {}
 
     private EscortPlanner() {
     }
@@ -78,7 +66,7 @@ final class EscortPlanner {
      * @return the place: ahead of the head, beside the middle, or behind the tail; pulled in toward the convoy where
      *       it would be off the board
      */
-    static Coords place(ConvoyShape convoy, LanceRole.Position position, int distance, Board board) {
+    static Coords place(ConvoyTracker.Shape convoy, LanceRole.Position position, int distance, Board board) {
         int heading = convoy.heading();
         Coords anchor = switch (position) {
             case LEAD -> convoy.head();
@@ -108,51 +96,15 @@ final class EscortPlanner {
         return place;
     }
 
-    /**
-     * @return the hex the given steps from a hex toward a target, stopping on the target
-     */
-    static Coords stepToward(Coords from, Coords target, int steps) {
-        Coords position = from;
-        for (int step = 0; (step < steps) && !position.equals(target); step++) {
-            position = position.translated(position.direction(target));
-        }
-        return position;
-    }
-
     private static Coords keepOnBoard(Coords place, Coords anchor, Board board) {
         if (!board.contains(anchor)) {
-            return clampToBoard(place, board);
+            return ConvoyTracker.clampToBoard(place, board);
         }
         Coords onBoard = place;
         while (!board.contains(onBoard)) {
             onBoard = onBoard.translated(onBoard.direction(anchor));
         }
         return onBoard;
-    }
-
-    /**
-     * @return the hex, or the nearest board hex in its row and column where it is off the board: a place past the
-     *       convoy's exit edge stands on the edge instead
-     */
-    static Coords clampToBoard(Coords hex, Board board) {
-        if (board.contains(hex)) {
-            return hex;
-        }
-        int column = Math.max(0, Math.min(board.getWidth() - 1, hex.getX()));
-        int row = Math.max(0, Math.min(board.getHeight() - 1, hex.getY()));
-        return new Coords(column, row);
-    }
-
-    /**
-     * @return the heading one hex side round from one heading toward another, the shorter way; the same heading when
-     *       they match
-     */
-    static int turnOneSideToward(int from, int to) {
-        int clockwiseSides = (to - from + DIRECTIONS) % DIRECTIONS;
-        if (clockwiseSides == 0) {
-            return from;
-        }
-        return (clockwiseSides <= (DIRECTIONS / 2)) ? (from + 1) % DIRECTIONS : (from + DIRECTIONS - 1) % DIRECTIONS;
     }
 
     /**

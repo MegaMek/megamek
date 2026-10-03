@@ -317,6 +317,39 @@ class EscortFollowerTest {
     }
 
     @Test
+    void anEscortFacesTheWayTheConvoyIsGoingWithItsLegs() {
+        List<Entity> trucks = convoyHeadingNorth();
+        Coords eastWaypoint = HEAD_HEX.translated(SOUTH_EAST, 10);
+        for (Entity truck : trucks) {
+            truck.setUnitOrders(truck.getUnitOrders().withRoute(List.of(eastWaypoint)));
+        }
+        Entity right = escort(10, HEAD_HEX.translated(1, 4), LanceRole.defaultEscort(CONVOY_FORCE_ID));
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        Coords place = follower.getEscortPlace(right).orElseThrow();
+
+        assertEquals(SOUTH_EAST, follower.orderedFacing(right, place));
+        assertEquals(0, follower.twistAllowance(right, place));
+        // an enemy off to its side leaves the convoy's facing as it is
+        assertEquals(SOUTH_EAST, follower.facingThatStandsFor(right, SOUTH_EAST, place, place.translated(NORTH, 4)));
+    }
+
+    @Test
+    void aConvoyFacesItsExitEdge() {
+        Coords middle = new Coords(10, 17);
+        Entity truck = unit(3, CONVOY_FORCE_ID, middle);
+
+        assertTrue(ConvoyTracker.exitFacing(truck, middle, board).isEmpty());
+
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
+        assertEquals(0, ConvoyTracker.exitFacing(truck, middle, board).getAsInt());
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.SOUTH));
+        assertEquals(3, ConvoyTracker.exitFacing(truck, middle, board).getAsInt());
+        // standing on the north edge already, it faces straight off it
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
+        assertEquals(0, ConvoyTracker.exitFacing(truck, new Coords(10, 0), board).getAsInt());
+    }
+
+    @Test
     void escortsFillEveryPlaceBeforeDoublingUp() {
         Map<Integer, Coords> escorts = new HashMap<>();
         escorts.put(1, new Coords(5, 5));

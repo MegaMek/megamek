@@ -52,6 +52,7 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.force.Force;
@@ -62,6 +63,8 @@ import megamek.common.interfaces.IStartingPositions;
 import megamek.common.loaders.MapSettings;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.units.*;
 import megamek.common.util.CollectionUtil;
@@ -1166,6 +1169,31 @@ class LobbyMekCellFormatter {
         return formatForce(force, lobby);
     }
 
+    /**
+     * @return the lance's role as a short tag - "Convoy, exits North" or "Escort of Bravo Lance" - or {@code null}
+     *       when none of its own units has one
+     */
+    private static @Nullable String roleTag(Force force, Game game) {
+        List<Entity> units = new ArrayList<>();
+        for (int unitId : force.getEntities()) {
+            Entity unit = game.getEntity(unitId);
+            if (unit != null) {
+                units.add(unit);
+            }
+        }
+        LanceRole role = LanceRoles.roleOf(units);
+        if (role == null) {
+            return null;
+        }
+        if (role.isConvoy()) {
+            return Messages.getString("BotCommandPanel.Role.tag.convoy",
+                  Messages.getString("BotCommandPanel.Role.edge." + role.getExitEdge().name()));
+        }
+        Force convoy = game.getForces().getForce(role.getConvoyForceId());
+        return Messages.getString("BotCommandPanel.Role.tag.escort", (convoy == null)
+              ? Messages.getString("BotCommandPanel.Role.tag.convoyGone") : convoy.getName());
+    }
+
     private static String formatForce(Force force,
           ChatLounge lobby) {
         Client client = lobby.getClientGUI().getClient();
@@ -1200,6 +1228,13 @@ class LobbyMekCellFormatter {
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
             result.append(fontHTML(uiGray()));
             result.append(" [").append(force.getId()).append("]</FONT>");
+        }
+
+        // A bot lance's role, set from its Role menu
+        String roleTag = roleTag(force, game);
+        if (roleTag != null) {
+            result.append(fontHTML(uiGray()));
+            result.append(MekTableModel.DOT_SPACER).append(roleTag).append("</FONT>");
         }
 
         // Display force owner

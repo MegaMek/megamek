@@ -565,8 +565,14 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
         wInfantryRange5R = new JLabel("---", SwingConstants.CENTER);
         setupLabel(wInfantryRange5R);
 
-        // range panel
-        JPanel pRange = new JPanel(new GridBagLayout());
+        // range panel. Its row count changes with the unit (aerospace adds the AV row), so its minimum height follows
+        // its content: when space is short the parent lays out at minimum sizes, and a fixed minimum cut off the AV row.
+        JPanel pRange = new JPanel(new GridBagLayout()) {
+            @Override
+            public Dimension getMinimumSize() {
+                return new Dimension(INTERNAL_PANE_WIDTH, getPreferredSize().height);
+            }
+        };
         pRange.setAlignmentX(Component.LEFT_ALIGNMENT);
         pRange.setAlignmentY(Component.TOP_ALIGNMENT);
         pRange.setOpaque(false);
@@ -1685,7 +1691,6 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             wMedL.setVisible(true);
             wLongL.setVisible(true);
 
-            wMinR.setVisible(true);
             wShortR.setVisible(true);
             wMedR.setVisible(true);
             wLongR.setVisible(true);
@@ -1917,6 +1922,9 @@ public class WeaponPanel extends PicMap implements ListSelectionListener, Action
             weaponType = mounted.getType();
         }
 
+        // Only the branches below that offer a choice fill vAmmo. The others clear it, so a later refresh cannot read
+        // the previous weapon's ammo through the selector.
+        vAmmo = new ArrayList<>();
         if (weaponType.getAmmoType() == AmmoType.AmmoTypeEnum.NA) {
             m_chAmmo.setEnabled(false);
         } else if (weaponType.hasFlag(WeaponType.F_DOUBLE_ONE_SHOT)

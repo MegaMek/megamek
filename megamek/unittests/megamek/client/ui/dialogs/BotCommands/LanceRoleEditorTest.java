@@ -42,7 +42,6 @@ import java.util.List;
 
 import megamek.common.OffBoardDirection;
 import megamek.common.board.Board;
-import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
@@ -162,22 +161,5 @@ class LanceRoleEditorTest {
         trucks.get(1).setUnitOrders(UnitOrders.NONE.withFormation(new FormationOrder(FormationShape.WEDGE, 3, 1, 1,
               FormationPace.WALK, ContactRule.BREAK)));
         assertTrue(MoveOrderCommands.convoyColumnCommands(trucks, convoy).isEmpty());
-    }
-
-    @Test
-    void aConvoyFacesItsExitEdge() {
-        Board board = new Board(32, 34);
-        Coords middle = new Coords(10, 17);
-        Entity truck = unit(3, Board.START_S);
-
-        assertTrue(LanceRoles.convoyExitFacing(truck, middle, board).isEmpty());
-
-        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
-        assertEquals(0, LanceRoles.convoyExitFacing(truck, middle, board).getAsInt());
-        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.SOUTH));
-        assertEquals(3, LanceRoles.convoyExitFacing(truck, middle, board).getAsInt());
-        // standing on the north edge already, it faces straight off it
-        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
-        assertEquals(0, LanceRoles.convoyExitFacing(truck, new Coords(10, 0), board).getAsInt());
     }
 }

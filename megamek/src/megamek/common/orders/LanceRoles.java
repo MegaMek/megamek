@@ -34,13 +34,11 @@ package megamek.common.orders;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.OptionalInt;
 
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
-import megamek.common.board.Coords;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
@@ -113,40 +111,6 @@ public final class LanceRoles {
             case Board.START_W -> OffBoardDirection.EAST;
             default -> OffBoardDirection.NORTH;
         };
-    }
-
-    /**
-     * The way a convoy faces where it stands: straight at its exit edge, so it deploys pointing where it is going
-     * (HammerGS, 2026-10-02).
-     *
-     * @param unit     a unit
-     * @param position where it stands
-     * @param board    its board
-     *
-     * @return the facing toward its convoy's exit edge, or empty for a unit that is not in a convoy
-     */
-    public static OptionalInt convoyExitFacing(Entity unit, Coords position, Board board) {
-        LanceRole role = unit.getLanceRole();
-        if ((role == null) || !role.isConvoy()) {
-            return OptionalInt.empty();
-        }
-        Coords edgePoint = switch (role.getExitEdge()) {
-            case NORTH -> new Coords(position.getX(), 0);
-            case SOUTH -> new Coords(position.getX(), board.getHeight() - 1);
-            case EAST -> new Coords(board.getWidth() - 1, position.getY());
-            case WEST -> new Coords(0, position.getY());
-            default -> position;
-        };
-        if (edgePoint.equals(position)) {
-            // standing on the edge already: face straight off it
-            return OptionalInt.of(switch (role.getExitEdge()) {
-                case SOUTH -> 3;
-                case EAST -> 2;
-                case WEST -> 5;
-                default -> 0;
-            });
-        }
-        return OptionalInt.of(position.direction(edgePoint));
     }
 
     /**

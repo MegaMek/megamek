@@ -61,7 +61,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -71,7 +70,6 @@ import javax.swing.KeyStroke;
 import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
@@ -390,15 +388,16 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
      * the next ICAO name or one the player types.
      */
     private final class PhaseLineCellEditor extends AbstractCellEditor implements TableCellEditor {
-        private final JComboBox<WaypointTableModel.PhaseLineOption> combo = new JComboBox<>();
-        private int editedRow = -1;
+        private final JComboBox<Object> combo = new JComboBox<>();
+        private boolean isFilling;
 
         private PhaseLineCellEditor() {
+            // the player may also type a name of their own
+            combo.setEditable(true);
+            // a pick, or Enter after typing, takes effect at once rather than when the player clicks elsewhere
             combo.addActionListener(event -> {
-                if (combo.getSelectedItem() == WaypointTableModel.PhaseLineOption.NEW) {
-                    int row = editedRow;
-                    cancelCellEditing();
-                    SwingUtilities.invokeLater(() -> askForNewPhaseLine(row));
+                if (!isFilling) {
+                    stopCellEditing();
                 }
             });
         }
@@ -406,20 +405,27 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row,
               int column) {
-            editedRow = row;
+            isFilling = true;
             combo.removeAllItems();
             combo.addItem(WaypointTableModel.PhaseLineOption.NONE);
-            for (String name : knownPhaseLines()) {
+            List<String> known = knownPhaseLines();
+            for (String name : known) {
                 combo.addItem(new WaypointTableModel.PhaseLineOption(name, false));
             }
-            combo.addItem(WaypointTableModel.PhaseLineOption.NEW);
+            // the next free ICAO name, ready to pick: the first lance's order has nothing to join yet
+            combo.addItem(new WaypointTableModel.PhaseLineOption(PhaseLine.nextName(known), true));
             combo.setSelectedItem(value);
+            isFilling = false;
             return combo;
         }
 
         @Override
         public Object getCellEditorValue() {
-            return combo.getSelectedItem();
+            Object selected = combo.getSelectedItem();
+            if (selected instanceof WaypointTableModel.PhaseLineOption option) {
+                return option;
+            }
+            return WaypointTableModel.PhaseLineOption.typed((selected == null) ? "" : selected.toString());
         }
     }
 
@@ -444,23 +450,6 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
             }
         }
         return false;
-    }
-
-    /**
-     * Asks for a new phase line's name, offering the next ICAO name, and puts the waypoint on it.
-     */
-    private void askForNewPhaseLine(int row) {
-        if ((row < 0) || (row >= waypoints.getRowCount())) {
-            return;
-        }
-        Object typed = JOptionPane.showInputDialog(this,
-              Messages.getString("BotCommandPanel.MoveOrder.phaseLine.prompt"),
-              Messages.getString("BotCommandPanel.MoveOrder.phaseLine.promptTitle"), JOptionPane.PLAIN_MESSAGE, null,
-              null, PhaseLine.nextName(knownPhaseLines()));
-        String name = PhaseLine.cleanName((typed == null) ? null : typed.toString());
-        if (name != null) {
-            waypoints.setPhaseLine(row, name);
-        }
     }
 
     private static void setComboColumn(TableColumn column, Object[] choices, Function<Object, String> label) {

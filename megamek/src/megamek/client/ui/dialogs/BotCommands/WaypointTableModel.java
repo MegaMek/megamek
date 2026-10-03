@@ -133,22 +133,42 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     /**
-     * A phase line as the phase line column shows it: none, one by name, or the choice to make a new one.
+     * A phase line as the phase line column shows it: none, one already in use, or a new one offered by its next free
+     * name, e.g. "PL Alfa (new)". The first lance's order has no line to join yet, so the new one is in the list
+     * itself, ready to pick (HammerGS's playtest, 2026-10-02: behind a separate "New phase line..." prompt, the list
+     * read as empty).
      *
-     * @param name  the phase line's name, or {@code null}
-     * @param isNew {@code true} for the "New phase line..." choice
+     * @param name  the phase line's name, or {@code null} for none
+     * @param isNew {@code true} for a line not yet on any route
      */
     record PhaseLineOption(@Nullable String name, boolean isNew) {
         static final PhaseLineOption NONE = new PhaseLineOption(null, false);
-        static final PhaseLineOption NEW = new PhaseLineOption(null, true);
 
         @Override
         public String toString() {
-            if (isNew) {
-                return Messages.getString("BotCommandPanel.MoveOrder.phaseLine.new");
+            if (name == null) {
+                return Messages.getString("BotCommandPanel.MoveOrder.phaseLine.none");
             }
-            return (name == null) ? Messages.getString("BotCommandPanel.MoveOrder.phaseLine.none")
+            return isNew ? Messages.getString("BotCommandPanel.MoveOrder.phaseLine.newNamed", PhaseLine.display(name))
                   : PhaseLine.display(name);
+        }
+
+        /**
+         * @param typed what the player typed into the column, e.g. {@code Hill 312} or {@code PL Bravo}
+         *
+         * @return the option for it: the phase line named, or none for a blank entry
+         */
+        static PhaseLineOption typed(String typed) {
+            String text = typed.trim();
+            String newSuffix = Messages.getString("BotCommandPanel.MoveOrder.phaseLine.newNamed", "").trim();
+            if (!newSuffix.isEmpty() && text.endsWith(newSuffix)) {
+                text = text.substring(0, text.length() - newSuffix.length()).trim();
+            }
+            if (text.regionMatches(true, 0, "PL ", 0, 3)) {
+                text = text.substring(3);
+            }
+            String name = PhaseLine.cleanName(text);
+            return (name == null) ? NONE : new PhaseLineOption(name, false);
         }
     }
 
@@ -620,9 +640,10 @@ class WaypointTableModel extends AbstractTableModel {
                 }
             }
             case COLUMN_PHASE_LINE -> {
-                // "New phase line..." asks for a name in the dialog, which sets it
-                if ((value instanceof PhaseLineOption option) && !option.isNew()) {
+                if (value instanceof PhaseLineOption option) {
                     setPhaseLine(rowIndex, option.name());
+                } else if (value instanceof String typed) {
+                    setPhaseLine(rowIndex, PhaseLineOption.typed(typed).name());
                 }
             }
             default -> {

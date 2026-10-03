@@ -188,7 +188,15 @@ public final class BotWaypointMenuBuilder {
             phaseLineMenu.add(item);
         }
         phaseLineMenu.addSeparator();
-        JMenuItem newItem = new JMenuItem(Messages.getString("BotCommandPanel.MoveOrder.phaseLine.new"));
+        // the next free ICAO name, one click away; a name of the player's own through Other name...
+        String nextName = PhaseLine.nextName(namesInUse);
+        JMenuItem nextItem = new JMenuItem(Messages.getString("BotCommandPanel.Waypoint.phaseLine.newNamed",
+              PhaseLine.display(nextName)));
+        nextItem.addActionListener(event -> sendEdit(client, group, route,
+              replaced(waypointOrders, waypointIndex, current.withPhaseLine(nextName)), acknowledger,
+              waypointName + ": " + PhaseLine.display(nextName)));
+        phaseLineMenu.add(nextItem);
+        JMenuItem newItem = new JMenuItem(Messages.getString("BotCommandPanel.Waypoint.phaseLine.other"));
         newItem.addActionListener(event -> {
             Object typed = JOptionPane.showInputDialog(null,
                   Messages.getString("BotCommandPanel.MoveOrder.phaseLine.prompt"),

@@ -261,4 +261,21 @@ class MoveOrderEditorTest {
         waypoints.setPhaseLine(0, null);
         assertEquals(null, waypoints.getWaypointOrders().get(0).getPhaseLine());
     }
+
+    @Test
+    void theFirstLancePicksTheNewPhaseLineStraightFromTheList() {
+        // HammerGS's playtest: on the first lance's order there was no phase line to pick, only a separate prompt
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointFormation.NONE);
+
+        waypoints.setValueAt(new WaypointTableModel.PhaseLineOption("Alfa", true), 0,
+              WaypointTableModel.COLUMN_PHASE_LINE);
+        assertEquals("Alfa", waypoints.getPhaseLine(0));
+
+        // a name typed in, with or without the PL in front
+        waypoints.setValueAt("PL Hill 312", 1, WaypointTableModel.COLUMN_PHASE_LINE);
+        assertEquals("Hill 312", waypoints.getPhaseLine(1));
+        assertEquals("PL Alfa (new)", new WaypointTableModel.PhaseLineOption("Alfa", true).toString());
+        assertEquals("Alfa", WaypointTableModel.PhaseLineOption.typed("PL Alfa (new)").name());
+    }
 }

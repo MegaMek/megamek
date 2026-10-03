@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -300,7 +300,7 @@ public interface IBomber {
     private void applyBombWeapons(BombTypeEnum bombType, int loc, boolean internal) {
         Mounted<?> m;
         try {
-            EquipmentType et = EquipmentType.get(bombType.getWeaponName());
+            EquipmentType et = EquipmentType.get(bombType.getWeaponName(), ((Entity) this).getTechBase());
             m = ((Entity) this).addBomb(et, loc);
             m.setInternalBomb(internal);
             // Add bomb itself as single-shot ammo. A TAG or camera pod is equipment, not something fired off.

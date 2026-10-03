@@ -33,10 +33,12 @@
 package megamek.client.ui.dialogs.BotCommands;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +57,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
+import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
 import megamek.common.RangeType;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
@@ -85,6 +88,8 @@ public class HexTargetPicker {
 
     // insertion order matters: waypoints are followed in the order they were picked
     private final Map<Coords, FieldOfFireSprite> pickedHexes = new LinkedHashMap<>();
+    // the picked hexes numbered in click order, so a route shows the order it will be followed in
+    private final List<TextMarkerSprite> orderNumbers = new ArrayList<>();
     private JDialog controlDialog;
     private JLabel statusLabel;
     private BoardViewListenerAdapter hexClickListener;
@@ -152,6 +157,7 @@ public class HexTargetPicker {
             // clicking a selected hex again deselects it
             FieldOfFireSprite highlight = pickedHexes.remove(coords);
             boardView.removeSprites(List.of(highlight));
+            renumber();
             clientGUI.addToast(ToastLevel.INFO, Messages.getString("BotCommandPanel.HexPicker.hexRemoved",
                   coords.getBoardNum()));
             updateStatus();
@@ -166,6 +172,7 @@ public class HexTargetPicker {
               ALL_HEX_BORDERS);
         pickedHexes.put(coords, highlight);
         boardView.addSprites(List.of(highlight));
+        renumber();
         clientGUI.addToast(ToastLevel.INFO, Messages.getString("BotCommandPanel.HexPicker.hexAdded",
               coords.getBoardNum(), pickedHexes.size()));
         if (singleHex) {
@@ -173,6 +180,23 @@ public class HexTargetPicker {
         } else {
             updateStatus();
         }
+    }
+
+    /**
+     * Numbers the picked hexes in the order they were clicked. A single-hex pick needs no number.
+     */
+    private void renumber() {
+        boardView.removeSprites(orderNumbers);
+        orderNumbers.clear();
+        if (singleHex) {
+            return;
+        }
+        int number = 1;
+        for (Coords coords : pickedHexes.keySet()) {
+            orderNumbers.add(new TextMarkerSprite(boardView, coords, String.valueOf(number), Color.WHITE));
+            number++;
+        }
+        boardView.addSprites(orderNumbers);
     }
 
     private void createControlDialog() {
@@ -239,6 +263,7 @@ public class HexTargetPicker {
             controlDialog.dispose();
         }
         boardView.removeSprites(pickedHexes.values());
+        boardView.removeSprites(orderNumbers);
         if (sendSelection && !pickedHexes.isEmpty()) {
             String targets = pickedHexes.keySet().stream()
                   .map(coords -> coords.hexCode(boardView.getBoard()))

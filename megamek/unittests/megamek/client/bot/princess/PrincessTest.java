@@ -113,6 +113,8 @@ class PrincessTest {
         mockPrincess = mock(Princess.class);
         // the withdrawal decisions under test ask the real tracker, which reads the stubbed forced withdrawal setting
         when(mockPrincess.getForcedWithdrawalTracker()).thenReturn(new ForcedWithdrawalTracker(mockPrincess));
+        // units in these tests have no player orders
+        when(mockPrincess.getUnitOrdersFollower()).thenReturn(mock(UnitOrdersFollower.class));
         when(mockPrincess.getPathRanker(PathRankerType.Basic)).thenReturn(mockPathRanker);
         when(mockPrincess.getPathRanker(any(Entity.class))).thenReturn(mockPathRanker);
         when(mockPrincess.getMoraleUtil()).thenReturn(mockMoralUtil);

@@ -61,6 +61,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.UnitOrders;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -94,6 +95,8 @@ import megamek.logging.MMLogger;
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
     public static final int FACING_MOD_MULTIPLIER = 50;
+    /** A player's ordered facing counts double the bot's own facing preference, so it wins most close calls. */
+    public static final int ORDERED_FACING_MOD_MULTIPLIER = 2 * FACING_MOD_MULTIPLIER;
 
     // this is a value used to indicate how much we value the unit being at its destination
     private final int ARRIVED_AT_DESTINATION_FACTOR = 250;
@@ -1634,6 +1637,22 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition,
           boolean squareUpOnClosestEnemy) {
+        // A player's ordered facing replaces the bot's own point to face while the fire it expects - the closest
+        // enemy when squaring up, else the enemy median - still falls in the ordered facing's front arc.
+        Coords expectedThreat = (squareUpOnClosestEnemy || (enemyMedianPosition == null))
+              ? closestEnemyPosition : enemyMedianPosition;
+        int orderedFacing = getOwner().getUnitOrdersFollower().facingThatStandsFor(movingUnit,
+              getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
+              path.getFinalCoords(), expectedThreat);
+        if (orderedFacing != UnitOrders.FACING_AUTO) {
+            // a unit stopping may leave the last sides to a torso twist or turret, free in the fire phase; one on its
+            // way faces the route with its legs
+            int orderedFacingDiff = Math.max(0, UnitOrdersFollower.sidesApart(path.getFinalFacing(), orderedFacing)
+                  - getOwner().getUnitOrdersFollower().twistAllowance(movingUnit, path.getFinalCoords()));
+            logger.trace("facing mod [ordered facing {}, {} sides off beyond twist]", orderedFacing,
+                  orderedFacingDiff);
+            return ORDERED_FACING_MOD_MULTIPLIER * orderedFacingDiff;
+        }
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,
               game.getBoard(movingUnit).getCenter(),
@@ -1672,12 +1691,28 @@ public class BasicPathRanker extends PathRanker {
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
                   game);
+            // in a town, a move ending in cover wins a close call over one ending in the open
+            int coverDiscount = getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+                  path.getFinalCoords());
+            if (newDistanceToHome > coverDiscount) {
+                newDistanceToHome -= coverDiscount;
+            }
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
 
+            // an Imperative route pulls harder than anything else the unit weighs (issue #7615)
+            double routeWeight = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner())
+                  .isPresent() ? getOwner().getUnitOrdersFollower().routeWeight(movingUnit) : 1.0;
+
+            // a unit on a route gets its movement bonus going forward, not in a loop that doubles back past it
+            Optional<Coords> routeTarget = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit,
+                  getOwner());
+            int backtrackSteps = routeTarget.map(target -> UnitOrdersFollower.backtrackSteps(path, target))
+                  .orElse(0);
+
             // normally, we favor being closer to the edge we're trying to get to
             if (newDistanceToHome > 0) {
-                selfPreservationMod = newDistanceToHome * selfPreservation;
+                selfPreservationMod = (newDistanceToHome + backtrackSteps) * selfPreservation * routeWeight;
                 // if this path gets us to the edge, we value it considerably more than we do
                 // paths that don't get us there
             } else {
@@ -1902,6 +1937,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         scores.put("ignoreDamageOutput", getOwner().getBehaviorSettings().isIgnoreDamageOutput() ? 1.0 : 0.0);
+        // a unit on a player's route weighs the damage by the route's priority: Normal takes cover, Imperative pushes on
+        expectedDamageTaken *= getOwner().getUnitOrdersFollower().damageWeight(movingUnit);
         scores.put("damageExpectedTotal", expectedDamageTaken);
         scores.put("myAttackFiring", damageEstimate.firingDamage);
         scores.put("myAttackPhysical", damageEstimate.physicalDamage);
@@ -2047,6 +2084,9 @@ public class BasicPathRanker extends PathRanker {
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
+        // in a town: the movement points a move ending in cover counted as saving (0 elsewhere)
+        scores.put("townCover", (double) getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+              pathCopy.getFinalCoords()));
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);

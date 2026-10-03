@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 
 import megamek.client.bot.Messages;
@@ -59,6 +60,7 @@ import megamek.common.orders.FightState;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.NavPoint;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.PhaseLine;
@@ -2771,7 +2773,7 @@ public class UnitOrdersFollower {
             return Optional.empty();
         }
         Coords leaderPosition = leader.getPosition();
-        int heading = deploymentHeading(leader, leaderPosition, deploymentFacingTarget(board));
+        int heading = deploymentHeading(leader, leaderPosition, deploymentFacingTarget(board), board);
         FormationShape shape = fittingDeploymentShape(formation.get(), leaderPosition, heading,
               new HashSet<>(legalHexes), memberSlots(leader.getId())).orElse(formation.get().getShape());
         return Optional.of(FormationPlanner.idealSlot(leaderPosition, heading, shape, formation.get().getSpacing(),
@@ -2828,8 +2830,8 @@ public class UnitOrdersFollower {
         for (FormationShape shape : List.of(formation.get().getShape(), FormationShape.LINE)) {
             List<Coords> fitting = new ArrayList<>();
             for (Coords candidate : possibleDeployCoords) {
-                if (fits(shape, formation.get(), candidate, deploymentHeading(entity, candidate, facingTarget),
-                      legalHexes, slots)) {
+                if (fits(shape, formation.get(), candidate, deploymentHeading(entity, candidate, facingTarget,
+                      board), legalHexes, slots)) {
                     fitting.add(candidate);
                 }
             }
@@ -2849,13 +2851,17 @@ public class UnitOrdersFollower {
 
     /**
      * The way a formation faces while it deploys: the leader's ordered facing when stopped, as set in the lobby; else
-     * toward its first waypoint; else toward the facing target - the middle of the enemy's deployment zone, the way
-     * the bot faces the units it deploys.
+     * a convoy's exit edge; else toward its first waypoint; else toward the facing target - the middle of the enemy's
+     * deployment zone, the way the bot faces the units it deploys.
      */
-    private static int deploymentHeading(Entity leader, Coords leaderPosition, Coords facingTarget) {
+    private static int deploymentHeading(Entity leader, Coords leaderPosition, Coords facingTarget, Board board) {
         int orderedFacing = leader.getUnitOrders().getFacingWhenStopped();
         if (orderedFacing != UnitOrders.FACING_AUTO) {
             return orderedFacing;
+        }
+        OptionalInt convoyFacing = LanceRoles.convoyExitFacing(leader, leaderPosition, board);
+        if (convoyFacing.isPresent()) {
+            return convoyFacing.getAsInt();
         }
         Optional<Coords> waypoint = leader.getUnitOrders().getNextWaypoint();
         if (waypoint.isPresent() && !waypoint.get().equals(leaderPosition)) {

@@ -94,6 +94,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -1140,9 +1141,15 @@ public class Princess extends BotClient {
         // first coordinate that it is legal to put this unit on now find some sort of reasonable facing: the one a
         // player ordered for when it is stopped, else toward the enemy's deployment zone, where the enemy will come from
         int decentFacing = deployEntity.getUnitOrders().getFacingWhenStopped();
+        OptionalInt convoyFacing = LanceRoles.convoyExitFacing(deployEntity, deployCoords, board);
         if (decentFacing != UnitOrders.FACING_AUTO) {
             LOGGER.info("[Deployment] {} deploys at {} facing {}, as ordered", deployEntity.getDisplayName(),
                   deployCoords.getBoardNum(), decentFacing);
+        } else if (convoyFacing.isPresent()) {
+            decentFacing = convoyFacing.getAsInt();
+            LOGGER.info("[Deployment] {} deploys at {} facing {}, toward its convoy's exit edge {}",
+                  deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
+                  deployEntity.getLanceRole().getExitEdge());
         } else {
             Optional<Coords> enemyZoneCenter = getEnemyDeploymentCenter(board);
             if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(deployCoords)) {

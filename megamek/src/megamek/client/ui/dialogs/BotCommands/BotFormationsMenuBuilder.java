@@ -174,7 +174,11 @@ public final class BotFormationsMenuBuilder {
         for (String command : MoveOrderCommands.roleCommands(units, role)) {
             client.sendChat(command);
         }
-        LOGGER.info("[BotOrders] lobby role {} for {} ({} units)", (role == null) ? LanceRole.NONE_TEXT : role,
-              lance.getName(), units.size());
+        List<String> columnCommands = MoveOrderCommands.convoyColumnCommands(units, role);
+        for (String command : columnCommands) {
+            client.sendChat(command);
+        }
+        LOGGER.info("[BotOrders] lobby role {} for {} ({} units){}", (role == null) ? LanceRole.NONE_TEXT : role,
+              lance.getName(), units.size(), columnCommands.isEmpty() ? "" : ", put in a Column to travel");
     }
 }

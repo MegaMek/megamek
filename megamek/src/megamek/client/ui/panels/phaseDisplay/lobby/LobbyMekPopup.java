@@ -361,15 +361,33 @@ class LobbyMekPopup {
     }
 
     /**
-     * Adds the Formation and Role menus for a lance owned by a bot, so it starts the game in formation and knowing
-     * its job.
+     * Adds the Formation and Role menus for a lance with a bot's units in it, so they start the game in formation and
+     * knowing their job. Only the bot's units are ordered; a player's own units in the lance are left alone.
      */
     private static void addBotFormationMenu(ScalingPopup popup, ChatLounge lobby, Force force) {
-        Player owner = lobby.game().getForces().getOwner(force);
-        if ((owner == null) || !owner.isBot()) {
+        // decided by who owns the units, not the force: a lance a player builds and then hands to a bot still belongs
+        // to the player, and a lance may mix the player's units with the bot's (HammerGS, 2026-10-02)
+        Player owner = null;
+        List<Integer> unitIds = new ArrayList<>();
+        for (int unitId : force.getEntities()) {
+            Entity unit = lobby.game().getEntity(unitId);
+            if ((unit == null) || (unit.getOwner() == null) || !unit.getOwner().isBot()) {
+                continue;
+            }
+            if (owner == null) {
+                owner = unit.getOwner();
+            }
+            if (unit.getOwner().getId() == owner.getId()) {
+                unitIds.add(unitId);
+            }
+        }
+        if (owner == null) {
+            logger.info("[BotOrders] lobby menus for {}: no Formation or Role, none of its own units is a bot's",
+                  force.getName());
             return;
         }
-        List<Integer> unitIds = new ArrayList<>(force.getEntities());
+        logger.info("[BotOrders] lobby menus for {}: Formation and Role for {} unit(s) of {} ({} in the lance)",
+              force.getName(), unitIds.size(), owner.getName(), force.getEntities().size());
         popup.add(BotFormationsMenuBuilder.lobbyFormationMenu(lobby.getClientGUI().getClient(), force, unitIds));
         popup.add(BotFormationsMenuBuilder.lobbyRoleMenu(lobby.getClientGUI().getClient(),
               lobby.getClientGUI().getFrame(), lobby.game(), owner, force, unitIds));

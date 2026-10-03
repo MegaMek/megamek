@@ -38,7 +38,10 @@ import java.util.Objects;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
+import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
 import megamek.common.orders.LanceRole;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
@@ -106,6 +109,62 @@ final class MoveOrderCommands {
             }
         }
         return commands;
+    }
+
+    /**
+     * Puts a convoy into a Column when nothing else gives it a shape: a convoy that deploys or drives scattered is
+     * never what the player wants (HammerGS, 2026-10-02). It runs, and pushes through fire rather than turning to
+     * fight. Left out when the role is not a convoy, when there is only one unit, or when any unit is already in a
+     * formation - a shape the player set is kept.
+     *
+     * @param units the units ordered, the first leading
+     * @param role  the role being given
+     *
+     * @return the formation commands, or empty
+     */
+    static List<String> convoyColumnCommands(List<Entity> units, @Nullable LanceRole role) {
+        List<String> commands = new ArrayList<>();
+        if ((role == null) || !role.isConvoy() || (units.size() < 2)) {
+            return commands;
+        }
+        List<Integer> unitIds = new ArrayList<>();
+        for (Entity unit : units) {
+            if (unit.getUnitOrders().getFormation().isPresent()) {
+                return commands;
+            }
+            unitIds.add(unit.getId());
+        }
+        return columnCommands(unitIds);
+    }
+
+    /**
+     * @param unitIds the convoy's units, the first leading
+     *
+     * @return the commands that put them in a Column that runs and pushes through fire
+     */
+    static List<String> columnCommands(List<Integer> unitIds) {
+        List<String> commands = new ArrayList<>();
+        int slot = 0;
+        for (int unitId : unitIds) {
+            commands.add(formationCommand(unitId, unitIds.get(0), slot++, FormationShape.COLUMN.name(),
+                  FormationOrder.DEFAULT_SPACING, FormationPace.RUN.name(), ContactRule.HOLD.name(), true));
+        }
+        return commands;
+    }
+
+    /**
+     * @param waypointOrders a route's orders
+     *
+     * @return {@code true} if any leg of the route, or any waypoint, sets a formation
+     */
+    static boolean setsFormation(List<WaypointOrder> waypointOrders) {
+        for (WaypointOrder order : waypointOrders) {
+            if (((order.getFormation() != null) && !order.getFormation().isNone())
+                  || ((order.getArrivalFormation() != null) && !order.getArrivalFormation().isNone())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

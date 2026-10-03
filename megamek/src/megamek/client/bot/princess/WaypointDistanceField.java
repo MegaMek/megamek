@@ -207,6 +207,9 @@ final class WaypointDistanceField {
         int maxElevationChange = mover.getMaxElevationChange();
         // a hovercraft, a boat or an amphibious unit crosses water as it crosses land
         boolean isWading = !isHovercraft && !isAmphibious && (movementType != MovementType.Water);
+        // a convoy takes the fastest way: along a road a step costs 1 MP whatever the terrain (HammerGS, 2026-10-02)
+        boolean isOnRoads = (mover.getLanceRole() != null) && mover.getLanceRole().isConvoy();
+        Map<Coords, Boolean> roadHexes = new HashMap<>();
 
         PriorityQueue<long[]> frontier = new PriorityQueue<>((first, second) -> Long.compare(first[0], second[0]));
         for (Coords goal : goals) {
@@ -250,6 +253,11 @@ final class WaypointDistanceField {
                     continue;
                 }
                 int stepCost = enteringCost + elevationChange;
+                if (isOnRoads && roadHexes.computeIfAbsent(current, hex -> board.getHex(hex).containsTerrain(
+                      Terrains.ROAD)) && roadHexes.computeIfAbsent(neighbor, hex -> board.getHex(hex).containsTerrain(
+                      Terrains.ROAD))) {
+                    stepCost = 1 + elevationChange;
+                }
                 int neighborCost = cost + stepCost;
                 if (neighborCost < costToGoal.getOrDefault(neighbor, UNREACHABLE)) {
                     costToGoal.put(neighbor, neighborCost);

@@ -471,6 +471,93 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * Sends a convoy off the board by its exit edge once its route is done: a waypoint on that edge, set to exit, goes
+     * on the end of its route - or makes its route, when it has none - so the column drives there in formation and
+     * leaves together, the way any route ending in Exit does (HammerGS, 2026-10-03: a convoy given no route milled at
+     * the north edge for twelve rounds). Only the convoy's leader, or a convoy unit in no formation, is routed; the
+     * column follows it.
+     *
+     * @param entity a unit of the bot
+     */
+    private void routeConvoyOut(Entity entity) {
+        LanceRole role = entity.getLanceRole();
+        UnitOrders orders = entity.getUnitOrders();
+        if ((role == null) || !role.isConvoy() || isFormationFollower(entity) || entity.isAirborne()
+              || (orders.getEdgeOrder() != EdgeOrder.NONE) || orders.isPaused()
+              || orders.isStoppedInRound(currentRound())) {
+            // paused or stopped, it waits where it is like any lance
+            return;
+        }
+        List<Coords> route = orders.getRoute();
+        if (!route.isEmpty() && orders.getWaypointOrder(route.size() - 1).isExitBoard()) {
+            return;
+        }
+        Coords from = route.isEmpty() ? entity.getPosition() : route.get(route.size() - 1);
+        Optional<Coords> edgeHex = convoyExitHex(entity, from, role.getExitEdge());
+        if (edgeHex.isEmpty()) {
+            LOGGER.info("[BotOrders] CONVOY_EXIT {} (ID {}) round {}: no hex of the {} edge it can drive to",
+                  entity.getDisplayName(), entity.getId(), currentRound(), role.getExitEdge());
+            return;
+        }
+        List<Coords> hexes = new ArrayList<>(route);
+        hexes.add(edgeHex.get());
+        List<WaypointOrder> waypointOrders = new ArrayList<>();
+        for (int index = 0; index < route.size(); index++) {
+            waypointOrders.add(orders.getWaypointOrder(index));
+        }
+        // the last leg travels in the convoy's own formation, as a leg that sets none does
+        waypointOrders.add(new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0, null, true));
+        entity.setUnitOrders(UnitOrderAction.ROUTE.apply(orders, hexes, waypointOrders, OffBoardDirection.NONE,
+              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound(), null));
+        owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.ROUTE,
+              UnitOrderCommand.hexesArgument(hexes, waypointOrders)));
+        LOGGER.info("[BotOrders] CONVOY_EXIT {} (ID {}) round {}: {} - then off the {} edge at {}",
+              entity.getDisplayName(), entity.getId(), currentRound(),
+              route.isEmpty() ? "no route" : "following its route", role.getExitEdge(),
+              edgeHex.get().getBoardNum());
+    }
+
+    /** How many of the exit edge's hexes, nearest first, a convoy tries before it gives up on the edge. */
+    private static final int EXIT_HEXES_TRIED = 12;
+
+    /**
+     * @return the hex of the edge the convoy can drive to that is nearest the hex it sets out from
+     */
+    private Optional<Coords> convoyExitHex(Entity entity, Coords from, OffBoardDirection edge) {
+        Board board = owner.getGame().getBoard(entity);
+        if (board == null) {
+            return Optional.empty();
+        }
+        List<Coords> edgeHexes = new ArrayList<>();
+        boolean isAcross = (edge == OffBoardDirection.NORTH) || (edge == OffBoardDirection.SOUTH);
+        int length = isAcross ? board.getWidth() : board.getHeight();
+        for (int step = 0; step < length; step++) {
+            edgeHexes.add(switch (edge) {
+                case NORTH -> new Coords(step, 0);
+                case SOUTH -> new Coords(step, board.getHeight() - 1);
+                case WEST -> new Coords(0, step);
+                default -> new Coords(board.getWidth() - 1, step);
+            });
+        }
+        edgeHexes.sort(Comparator.comparingInt(hex -> hex.distance(from)));
+        for (int index = 0; (index < edgeHexes.size()) && (index < EXIT_HEXES_TRIED); index++) {
+            Coords hex = edgeHexes.get(index);
+            if (routeCost(entity, hex, entity.getPosition(), false, false) != WaypointDistanceField.UNREACHABLE) {
+                return Optional.of(hex);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
+     * @return {@code true} if the unit is in a convoy lance
+     */
+    private static boolean isConvoy(Entity entity) {
+        LanceRole role = entity.getLanceRole();
+        return (role != null) && role.isConvoy();
+    }
+
+    /**
      * Gives every one of the bot's units on the board an order to exit by an edge, replacing their routes: what the
      * bot-wide flee order now means. {@link CardinalEdge#NEAREST} sends each unit to its own nearest edge.
      *
@@ -609,7 +696,7 @@ public class UnitOrdersFollower {
             distanceFieldsRound = currentRound();
         }
         String key = waypoint.getBoardNum() + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId()
-              + '|' + mover.getMaxElevationChange();
+              + '|' + mover.getMaxElevationChange() + (isConvoy(mover) ? "|roads" : "");
         Map<Coords, Integer> extraCost = new HashMap<>();
         if (isGoingRoundUnitsInPlace) {
             Map<Coords, Integer> frontOfUnitsInPlace = TownLegPlanner.frontOfUnitsInPlace(unitsInPlaceBeside(mover));
@@ -681,7 +768,7 @@ public class UnitOrdersFollower {
             distanceFieldsRound = currentRound();
         }
         String key = "edge " + edge + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId() + '|'
-              + mover.getMaxElevationChange();
+              + mover.getMaxElevationChange() + (isConvoy(mover) ? "|roads" : "");
         WaypointDistanceField field = distanceFields.get(key);
         if (field == null) {
             field = WaypointDistanceField.buildToEdge(mover, edge);
@@ -1052,6 +1139,7 @@ public class UnitOrdersFollower {
             if (awaitingResume.remove(entity.getId())) {
                 skipWaypointsFoughtPast(entity);
             }
+            routeConvoyOut(entity);
             Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
             if (waypoint.isEmpty()) {
                 knownRoutes.remove(entity.getId());
@@ -1541,7 +1629,9 @@ public class UnitOrdersFollower {
      * formation it leads.
      */
     private void exitWithFormation(Entity entity, Coords lastWaypoint) {
-        OffBoardDirection edge = nearestEdge(entity, lastWaypoint);
+        // a convoy's exit hex sits on its exit edge, but a corner is as near another; it leaves by its own
+        OffBoardDirection edge = isConvoy(entity) ? entity.getLanceRole().getExitEdge()
+              : nearestEdge(entity, lastWaypoint);
         List<Entity> leaving = new ArrayList<>(List.of(entity));
         Optional<FormationOrder> formation = activeFormation(entity);
         if (formation.isPresent()) {
@@ -2655,6 +2745,13 @@ public class UnitOrdersFollower {
             List<Entity> members = formationMembers(leader, leader.getUnitOrders().getFormation().get().getLeaderId());
             boolean isHit = isLanceHit(leader);
             boolean isBreakAndFight = formation.isPresent() && (formation.get().getContactRule() == ContactRule.BREAK);
+            if (fightState.isEmpty() && isBreakAndFight && isHit && isConvoy(leader)) {
+                // a convoy pushes on whatever its legs are set to: guarding it is its escorts' job (HammerGS,
+                // 2026-10-02)
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: CONVOY_PUSHES_ON - the convoy was hit; a convoy never "
+                      + "breaks off to fight", leader.getDisplayName(), leader.getId(), currentRound());
+                continue;
+            }
             if (fightState.isEmpty() && isBreakAndFight && isHit) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: UNDER_FIRE - the lance was hit; breaking off the route to "
                       + "fight", leader.getDisplayName(), leader.getId(), currentRound());

@@ -45,6 +45,7 @@ import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.OrderEligibility;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
@@ -59,6 +60,7 @@ import megamek.server.commands.arguments.BooleanArgument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.OptionalEnumArgument;
 import megamek.server.commands.arguments.OptionalIntegerArgument;
+import megamek.server.commands.arguments.OptionalStringArgument;
 import megamek.server.commands.arguments.RouteArgument;
 import megamek.server.commands.arguments.UnitArgument;
 import megamek.server.totalWarfare.TWGameManager;
@@ -92,6 +94,7 @@ public class UnitOrderCommand extends ClientServerCommand {
     public static final String PACE = "pace";
     public static final String CONTACT = "contact";
     public static final String TOGETHER = "together";
+    public static final String ROLE = "role";
 
     private static final int HIGHEST_FACING = 5;
 
@@ -123,7 +126,8 @@ public class UnitOrderCommand extends ClientServerCommand {
               new OptionalIntegerArgument(SLOT, Messages.getString("UnitOrder.cmd.slot"), 0, Integer.MAX_VALUE),
               new OptionalEnumArgument<>(PACE, Messages.getString("UnitOrder.cmd.pace"), FormationPace.class),
               new OptionalEnumArgument<>(CONTACT, Messages.getString("UnitOrder.cmd.contact"), ContactRule.class),
-              new BooleanArgument(TOGETHER, Messages.getString("UnitOrder.cmd.together"), false));
+              new BooleanArgument(TOGETHER, Messages.getString("UnitOrder.cmd.together"), false),
+              new OptionalStringArgument(ROLE, Messages.getString("UnitOrder.cmd.role")));
     }
 
     @Override
@@ -140,6 +144,11 @@ public class UnitOrderCommand extends ClientServerCommand {
         if (refusal != null) {
             LOGGER.info("[BotOrders] {} for {} refused: {}", action, entity.getDisplayName(), refusal);
             server.sendServerChat(connId, refusal);
+            return;
+        }
+
+        if (action == UnitOrderAction.SET_ROLE) {
+            setRole(connId, entity, args);
             return;
         }
 
@@ -169,6 +178,34 @@ public class UnitOrderCommand extends ClientServerCommand {
         server.sendServerChat(connId,
               Messages.getString("UnitOrder.cmd.success", entity.getDisplayName(), action.name()));
         gameManager.entityUpdate(entity.getId());
+    }
+
+    /**
+     * Sets or clears the unit's lance role from the {@code role} argument: {@code NONE}, a convoy such as
+     * {@code CONVOY:NORTH}, or an escort.
+     */
+    private void setRole(int connId, Entity entity, Arguments args) {
+        Object roleText = args.get(ROLE).getValue();
+        if (roleText == null) {
+            throw new IllegalArgumentException(Messages.getString("UnitOrder.cmd.role"));
+        }
+        LanceRole role = LanceRole.NONE_TEXT.equalsIgnoreCase(roleText.toString().trim()) ? null
+              : LanceRole.parse(roleText.toString());
+        entity.setLanceRole(role);
+        LOGGER.info("[BotOrders] {} (ID {}) given the lance role {}", entity.getDisplayName(), entity.getId(),
+              (role == null) ? LanceRole.NONE_TEXT : role);
+        server.sendServerChat(connId, Messages.getString("UnitOrder.cmd.success", entity.getDisplayName(),
+              UnitOrderAction.SET_ROLE.name()));
+        gameManager.entityUpdate(entity.getId());
+    }
+
+    /**
+     * @param role the role, or {@code null} for none
+     *
+     * @return the named argument for it, e.g. {@code role=CONVOY:NORTH}
+     */
+    public static String roleArgument(@Nullable LanceRole role) {
+        return ROLE + '=' + ((role == null) ? LanceRole.NONE_TEXT : role.toCommandText());
     }
 
     /**

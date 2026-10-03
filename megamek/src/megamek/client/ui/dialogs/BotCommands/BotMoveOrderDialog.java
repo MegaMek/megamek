@@ -164,6 +164,7 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     private JComboBox<OrderPriority> priorityCombo;
     private JTabbedPane tabs;
     private LanceRolePanel rolePanel;
+    private JButton roleButton;
     private BoardViewListenerAdapter hexClickListener;
     private Distractable suppressedDisplay;
 
@@ -249,8 +250,22 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         return rolePanel;
     }
 
+    /**
+     * @return the role chosen on the Role tab, as its message key ends: NONE, CONVOY or ESCORT
+     */
+    private String roleChoiceName() {
+        if (rolePanel.isEscortChosen()) {
+            return LanceRole.Kind.ESCORT.name();
+        }
+        LanceRole role = rolePanel.getRole();
+        return (role == null) ? LanceRole.NONE_TEXT : role.getKind().name();
+    }
+
     /** An escort keeps its places round its convoy, so it has no route of its own to set. */
     private void updateRouteTab() {
+        String roleName = Messages.getString("BotCommandPanel.Role." + roleChoiceName());
+        roleButton.setText(Messages.getString("BotCommandPanel.MoveOrder.roleButton", roleName));
+        tabs.setTitleAt(ROLE_TAB, Messages.getString("BotCommandPanel.MoveOrder.tab.roleNamed", roleName));
         boolean isEscort = rolePanel.isEscortChosen();
         tabs.setEnabledAt(ROUTE_TAB, !isEscort);
         tabs.setToolTipTextAt(ROUTE_TAB, isEscort ? Messages.getString("BotCommandPanel.MoveOrder.tab.routeEscort")
@@ -300,6 +315,11 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         controls.add(leaderCombo);
         controls.add(new JLabel(Messages.getString("BotCommandPanel.Orders.priority")));
         controls.add(priorityCombo);
+        // the role, in the row everyone reads first: the Role tab alone was easy to miss (HammerGS, 2026-10-03)
+        roleButton = new JButton();
+        roleButton.setToolTipText(Messages.getString("BotCommandPanel.MoveOrder.roleButton.tooltip"));
+        roleButton.addActionListener(event -> tabs.setSelectedIndex(ROLE_TAB));
+        controls.add(roleButton);
         controls.add(chooseButton);
         panel.add(controls, BorderLayout.LINE_END);
         return panel;

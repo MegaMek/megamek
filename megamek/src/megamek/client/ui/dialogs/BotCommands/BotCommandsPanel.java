@@ -105,6 +105,8 @@ public class BotCommandsPanel extends JPanel {
           new MegaMekButton("", SkinSpecification.UIComponents.PhaseDisplayButton.getComp());
     // This latch is used only to change the state of the button from pause to continue and back
     private boolean pauseLatch = false;
+    // a watched bots-only game is paused once, as it starts; set again each time the game returns to the lobby
+    private boolean isStartPauseDue = true;
     /** How many groups the Move Order menu shows before it scrolls, so a bot with thirty lances still fits. */
     private static final int MOVE_ORDER_SCROLL_THRESHOLD = 20;
 
@@ -253,18 +255,30 @@ public class BotCommandsPanel extends JPanel {
      * Starts a game of bots only, watched by a human, paused: the bots would otherwise deploy and move before the
      * player can give them a single order (HammerGS, 2026-10-03). Orders are chat commands, which the server handles
      * while paused, so the player sets roles and routes, then presses Continue.
+     *
+     * <p>The pause waits for the initiative report, just before deployment, or the first deployment or movement phase
+     * if there is no report. Pausing as the game left the lobby froze it at Receiving Game Data: the server held the
+     * clients' replies while the game was still loading.</p>
      */
     private void pauseAtStartWhenWatching(GamePhaseChangeEvent event) {
-        boolean isLeavingLobby = (event.getOldPhase() == GamePhase.LOUNGE) && (event.getNewPhase() != GamePhase.LOUNGE);
-        if (!isLeavingLobby) {
+        GamePhase newPhase = event.getNewPhase();
+        if (newPhase == GamePhase.LOUNGE) {
+            isStartPauseDue = true;
             return;
         }
+        boolean isFirstPlayablePhase = newPhase.isInitiativeReport() || (newPhase == GamePhase.DEPLOYMENT)
+              || (newPhase == GamePhase.MOVEMENT);
+        if (!isStartPauseDue || !isFirstPlayablePhase) {
+            return;
+        }
+        isStartPauseDue = false;
         if (pauseLatch || !canBePaused()) {
             LOGGER.info("[BotOrders] game starts unpaused: {}", pauseLatch ? "already paused"
                   : "a human player has units in it");
             return;
         }
-        LOGGER.info("[BotOrders] game starts paused: only bots have units, so orders can be given first");
+        LOGGER.info("[BotOrders] game paused at its start, in {}: only bots have units, so orders can be given first",
+              newPhase);
         pauseUnpause();
     }
 

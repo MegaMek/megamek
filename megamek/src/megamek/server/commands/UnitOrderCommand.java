@@ -35,6 +35,7 @@ package megamek.server.commands;
 import static megamek.server.Server.SERVER_CONN;
 
 import java.util.List;
+import java.util.Optional;
 
 import megamek.client.ui.Messages;
 import megamek.common.OffBoardDirection;
@@ -185,12 +186,21 @@ public class UnitOrderCommand extends ClientServerCommand {
      * {@code CONVOY:NORTH}, or an escort.
      */
     private void setRole(int connId, Entity entity, Arguments args) {
-        Object roleText = args.get(ROLE).getValue();
-        if (roleText == null) {
+        // the argument holds an Optional: reading it as text gave "Optional[CONVOY:NORTH]", which no role parses
+        Optional<String> roleText = args.get(ROLE, OptionalStringArgument.class).getValue();
+        if (roleText.isEmpty() || roleText.get().isBlank()) {
+            LOGGER.info("[BotOrders] SET_ROLE for {} refused: no role given", entity.getDisplayName());
             throw new IllegalArgumentException(Messages.getString("UnitOrder.cmd.role"));
         }
-        LanceRole role = LanceRole.NONE_TEXT.equalsIgnoreCase(roleText.toString().trim()) ? null
-              : LanceRole.parse(roleText.toString());
+        LanceRole role;
+        try {
+            role = LanceRole.NONE_TEXT.equalsIgnoreCase(roleText.get().trim()) ? null
+                  : LanceRole.parse(roleText.get());
+        } catch (IllegalArgumentException notARole) {
+            // the command base class replies to the sender with the reason and the usage
+            LOGGER.info("[BotOrders] SET_ROLE for {} refused: {}", entity.getDisplayName(), notARole.getMessage());
+            throw notARole;
+        }
         entity.setLanceRole(role);
         LOGGER.info("[BotOrders] {} (ID {}) given the lance role {}", entity.getDisplayName(), entity.getId(),
               (role == null) ? LanceRole.NONE_TEXT : role);

@@ -33,6 +33,7 @@
 package megamek.server.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -43,6 +44,7 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.orders.EdgeOrder;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.WaypointOrder;
 import megamek.common.units.AeroSpaceFighter;
@@ -130,6 +132,31 @@ class UnitOrderCommandTest {
         assertEquals(List.of(Coords.parseHexNumber("1508"), Coords.parseHexNumber("1504")),
               botUnit.getUnitOrders().getRoute());
         assertEquals(OrderPriority.IMPERATIVE, botUnit.getUnitOrders().getPriority());
+    }
+
+    @Test
+    void aLanceRoleIsSetAndClearedByTheCommandTheEditorsSend() {
+        LanceRole convoy = LanceRole.convoy(OffBoardDirection.NORTH);
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "SET_ROLE", UnitOrderCommand.roleArgument(convoy));
+        assertEquals(convoy, botUnit.getLanceRole());
+
+        LanceRole escort = LanceRole.defaultEscort(3);
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "SET_ROLE", UnitOrderCommand.roleArgument(escort));
+        assertEquals(escort, botUnit.getLanceRole());
+
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "SET_ROLE", UnitOrderCommand.roleArgument(null));
+        assertNull(botUnit.getLanceRole());
+    }
+
+    @Test
+    void anUnreadableRoleChangesNothing() {
+        LanceRole convoy = LanceRole.convoy(OffBoardDirection.WEST);
+        botUnit.setLanceRole(convoy);
+
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "SET_ROLE", "role=CONVOY:SIDEWAYS");
+        runAs(TEAMMATE_CONNECTION, BOT_UNIT_ID, "SET_ROLE");
+
+        assertEquals(convoy, botUnit.getLanceRole());
     }
 
     @Test

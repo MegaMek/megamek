@@ -146,7 +146,8 @@ public class LobbyActions {
     }
 
     /**
-     * Sets/removes hidden deployment for the given entities. Sends an update to the server.
+     * Sets/removes hidden deployment for the given entities. Sends an update to the server. Units that cannot hide
+     * (see {@link Entity#canHide()}) are left visible, the same as in the unit's configuration dialog.
      */
     void applyHidden(Collection<Entity> entities, boolean newHidden) {
         if (!validateUpdate(entities)) {
@@ -154,6 +155,9 @@ public class LobbyActions {
         }
         Set<Entity> updateCandidates = new HashSet<>();
         for (Entity entity : entities) {
+            if (newHidden && !entity.canHide()) {
+                continue;
+            }
             if (entity.isHidden() != newHidden) {
                 entity.setHidden(newHidden);
                 updateCandidates.add(entity);

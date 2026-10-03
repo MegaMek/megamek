@@ -243,13 +243,14 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
     }
 
     @Test
-    void crashIntoDeepWaterDestroysTheWiGE() {
+    void crashIntoDeepWaterLandsTheWiGEOnTheSurface() {
         setBoard("DEEP_WATER");
         SupportTank wige = airborneWiGE();
 
         gameManager.crashVTOLorWiGE(wige);
 
-        assertTrue(wige.isDoomed(), "a crash into water destroys the WiGE today (TW says water counts as clear)");
+        assertFalse(wige.isDoomed(), "a WiGE floats and treats water as clear terrain (TW p.55)");
+        assertEquals(0, wige.getElevation());
     }
 
     @Test
@@ -475,11 +476,11 @@ class AirborneVehicleCrashHandlerTest extends GameBoardTestCase {
         Hex water = new Hex(0, "water:2", "", new Coords(0, 0));
         Hex rough = new Hex(0, "rough:1", "", new Coords(0, 0));
 
-        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, clear));
-        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, water), "WiGEs treat water as clear");
-        assertFalse(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(wige, rough));
-        assertTrue(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(vtol, clear));
-        assertFalse(AirborneVehicleCrashHandler.canLandAfterSideslipCrash(vtol, water), "a VTOL cannot land on water");
+        assertTrue(wige.canLandIn(clear));
+        assertTrue(wige.canLandIn(water), "WiGEs treat water as clear");
+        assertFalse(wige.canLandIn(rough));
+        assertTrue(vtol.canLandIn(clear));
+        assertFalse(vtol.canLandIn(water), "a VTOL cannot land on water");
     }
 
     @Test

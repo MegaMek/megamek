@@ -257,6 +257,8 @@ public class UnitOrdersFollower {
     private final Map<Integer, EscortPlan> escortPlans = new HashMap<>();
     private final Map<Integer, LanceRole.Position> escortPositionsKept = new HashMap<>();
     private final Set<Integer> convoyGoneLogged = new HashSet<>();
+    // where each formation deploys, picked by its first unit down while the leader has still to deploy; by leader id
+    private final Map<Integer, Coords> deploymentAnchors = new HashMap<>();
 
     /** How often, in rounds, a lance still holding at a phase line reminds the player whom it is waiting for. */
     static final int PHASE_LINE_REMINDER_ROUNDS = 3;
@@ -2876,6 +2878,173 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * Where a unit about to deploy has to be able to drive to: the next waypoint of the lance it moves with - its
+     * formation's leader, or for an escort its convoy's front unit - else that unit's edge order, else a convoy's exit
+     * edge.
+     *
+     * @param hex   the waypoint, or {@code null} for an edge
+     * @param edge  the edge, or {@code null} for a waypoint
+     * @param label how the log names it
+     */
+    private record DeploymentGoal(@Nullable Coords hex, @Nullable CardinalEdge edge, String label) {}
+
+    private Optional<DeploymentGoal> deploymentGoal(Entity unit) {
+        Entity guide = unit;
+        LanceRole role = unit.getLanceRole();
+        if ((role != null) && role.isEscort()) {
+            guide = convoys.lead(role.getConvoyForceId()).orElse(unit);
+        } else if (unit.getUnitOrders().getFormation().isPresent()) {
+            Entity leader = owner.getGame().getEntity(unit.getUnitOrders().getFormation().get().getLeaderId());
+            guide = (leader == null) ? unit : leader;
+        }
+        Optional<Coords> waypoint = guide.getUnitOrders().getNextWaypoint();
+        if (waypoint.isPresent()) {
+            return Optional.of(new DeploymentGoal(waypoint.get(), null, waypoint.get().getBoardNum()));
+        }
+        if (guide.getUnitOrders().getEdgeOrder() != EdgeOrder.NONE) {
+            CardinalEdge edge = toCardinalEdge(guide.getUnitOrders().getEdge());
+            return Optional.of(new DeploymentGoal(null, edge, "the " + edge + " edge"));
+        }
+        LanceRole guideRole = guide.getLanceRole();
+        if ((guideRole != null) && guideRole.isConvoy()) {
+            CardinalEdge edge = toCardinalEdge(guideRole.getExitEdge());
+            return Optional.of(new DeploymentGoal(null, edge, "the convoy's " + edge + " exit edge"));
+        }
+        return Optional.empty();
+    }
+
+    private int deploymentCost(Entity mover, DeploymentGoal goal, Coords hex) {
+        return (goal.hex() != null) ? routeCost(mover, goal.hex(), hex, false, false)
+              : edgeCostFrom(mover, goal.edge(), hex);
+    }
+
+    private static boolean isFlying(Entity unit) {
+        return unit.isAirborne() || (MovementType.getMovementType(unit) == MovementType.Flyer);
+    }
+
+    /**
+     * Keeps a unit from deploying where it is blocked from where it is going: a wheeled truck on the far bank of a
+     * river it cannot ford, or a unit walled in by buildings (HammerGS's playtest, 2026-10-03: a convoy's MASH truck
+     * deployed across a river it could never cross). Only the hexes from which the unit can drive to its lance's next
+     * waypoint or edge are kept; a unit leading a formation keeps only those every member can drive from, so the lance
+     * forms round a hex all of it can leave. A unit with nowhere to go, or that flies, keeps every hex, and so does one
+     * blocked from all of them.
+     *
+     * @param unit  a unit about to deploy
+     * @param hexes the legal deployment hexes, in the bot's order
+     *
+     * @return the hexes it is not blocked from its goal in, in the same order
+     */
+    public List<Coords> keepReachable(Entity unit, List<Coords> hexes) {
+        Optional<DeploymentGoal> goal = deploymentGoal(unit);
+        if (goal.isEmpty() || isFlying(unit) || hexes.isEmpty()) {
+            return hexes;
+        }
+        List<Entity> movers = new ArrayList<>();
+        movers.add(unit);
+        Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
+        if (formation.isPresent() && (formation.get().getLeaderId() == unit.getId())) {
+            for (Entity member : owner.getGame().getEntitiesVector()) {
+                Optional<FormationOrder> memberFormation = member.getUnitOrders().getFormation();
+                if ((member.getId() != unit.getId()) && memberFormation.isPresent()
+                      && memberFormation.get().sharesLeader(unit.getId()) && !member.isDestroyed()
+                      && !isFlying(member)) {
+                    movers.add(member);
+                }
+            }
+        }
+        List<Coords> kept = new ArrayList<>();
+        for (Coords hex : hexes) {
+            if (canAllDriveFrom(movers, goal.get(), hex)) {
+                kept.add(hex);
+            }
+        }
+        if (kept.isEmpty()) {
+            LOGGER.info("[BotOrders] DEPLOY_REACH {} (ID {}): blocked from {} in every legal hex; deploying as before",
+                  unit.getDisplayName(), unit.getId(), goal.get().label());
+            return hexes;
+        }
+        if (kept.size() < hexes.size()) {
+            LOGGER.info("[BotOrders] DEPLOY_REACH {} (ID {}): {} of {} legal hexes are blocked from {}{}; kept {}",
+                  unit.getDisplayName(), unit.getId(), hexes.size() - kept.size(), hexes.size(), goal.get().label(),
+                  (movers.size() > 1) ? " for " + movers.size() + " units of its formation" : "", kept.size());
+        }
+        return kept;
+    }
+
+    private boolean canAllDriveFrom(List<Entity> movers, DeploymentGoal goal, Coords hex) {
+        for (Entity mover : movers) {
+            if (deploymentCost(mover, goal, hex) == WaypointDistanceField.UNREACHABLE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param entity a unit about to deploy
+     *
+     * @return its formation's leader, when the leader has still to deploy and no hex has been picked for it yet: the
+     *       first of a formation to deploy picks the hex the whole formation forms round, whatever order the turns
+     *       come in (HammerGS, 2026-10-03; with individual initiative each turn names one unit, so a member came
+     *       before its leader and deployed on terrain alone)
+     */
+    public Optional<Entity> leaderStillToPlace(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty() || (formation.get().getLeaderId() == entity.getId())
+              || deploymentAnchors.containsKey(formation.get().getLeaderId())) {
+            return Optional.empty();
+        }
+        Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
+        if ((leader == null) || leader.isDeployed() || leader.isDestroyed()) {
+            return Optional.empty();
+        }
+        return Optional.of(leader);
+    }
+
+    /**
+     * Notes the hex a formation forms round while its leader has still to deploy.
+     *
+     * @param leader   the formation's leader
+     * @param hex      the hex picked for it
+     * @param pickedBy the member that picked it
+     */
+    public void setDeploymentAnchor(Entity leader, Coords hex, Entity pickedBy) {
+        deploymentAnchors.put(leader.getId(), hex);
+        LOGGER.info("[BotOrders] DEPLOY_ANCHOR {} (ID {}): its formation forms round {}, picked by {} (ID {}), the "
+              + "first of it to deploy", leader.getDisplayName(), leader.getId(), hex.getBoardNum(),
+              pickedBy.getDisplayName(), pickedBy.getId());
+    }
+
+    /**
+     * @param entity a unit about to deploy
+     *
+     * @return the hex picked for it as its formation's leader, by the formation's first unit to deploy; empty for a
+     *       unit no hex was picked for
+     */
+    public Optional<Coords> getDeploymentAnchor(Entity entity) {
+        if (entity.isDeployed()) {
+            return Optional.empty();
+        }
+        return Optional.ofNullable(deploymentAnchors.get(entity.getId()));
+    }
+
+    /**
+     * @return where the unit's formation leader stands, or the hex picked for it; {@code null} when neither is known
+     */
+    private @Nullable Coords formationDeploymentHex(Entity entity) {
+        Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
+        if (formation.isEmpty()) {
+            return null;
+        }
+        Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
+        if ((leader != null) && leader.isDeployed() && (leader.getPosition() != null)) {
+            return leader.getPosition();
+        }
+        return deploymentAnchors.get(formation.get().getLeaderId());
+    }
+
+    /**
      * Where an escort should deploy: at an open place round its convoy, once the convoy is on the board. The places
      * are filled in the role's order as the escorts deploy - the first at Lead, the next at Left, and so on.
      *
@@ -2986,15 +3155,22 @@ public class UnitOrdersFollower {
             return Optional.empty();
         }
         Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
-        if ((leader == null) || !leader.isDeployed() || (leader.getPosition() == null)
-              || (leader.getBoardId() != entity.getBoardId())) {
+        if ((leader == null) || (leader.getBoardId() != entity.getBoardId())) {
+            return Optional.empty();
+        }
+        Coords leaderPosition;
+        if (leader.isDeployed() && (leader.getPosition() != null)) {
+            leaderPosition = leader.getPosition();
+        } else if (deploymentAnchors.containsKey(leader.getId())) {
+            // the leader has still to deploy: the slot is round the hex picked for it
+            leaderPosition = deploymentAnchors.get(leader.getId());
+        } else {
             return Optional.empty();
         }
         Board board = owner.getGame().getBoard(leader);
         if (board == null) {
             return Optional.empty();
         }
-        Coords leaderPosition = leader.getPosition();
         int heading = deploymentHeading(leader, leaderPosition, deploymentFacingTarget(board), board);
         FormationShape shape = fittingDeploymentShape(formation.get(), leaderPosition, heading,
               new HashSet<>(legalHexes), memberSlots(leader.getId())).orElse(formation.get().getShape());
@@ -3019,6 +3195,20 @@ public class UnitOrdersFollower {
         }
         List<Coords> ordered = new ArrayList<>(possibleDeployCoords);
         ordered.sort(Comparator.comparingInt(coords -> coords.distance(slot.get())));
+        Coords formationHex = formationDeploymentHex(entity);
+        if ((formationHex != null) && !isFlying(entity)) {
+            // the nearest hex to the slot can lie across water the unit cannot cross: only hexes it can drive to
+            // its leader from count
+            List<Coords> reachable = new ArrayList<>();
+            for (Coords coords : ordered) {
+                if (routeCost(entity, formationHex, coords, false, false) != WaypointDistanceField.UNREACHABLE) {
+                    reachable.add(coords);
+                }
+            }
+            if (!reachable.isEmpty()) {
+                ordered = reachable;
+            }
+        }
         LOGGER.info("[BotOrders] {} (ID {}): deploying in formation, slot {}, nearest legal hex {}",
               entity.getDisplayName(), entity.getId(), slot.get().getBoardNum(),
               ordered.isEmpty() ? "none" : ordered.get(0).getBoardNum());

@@ -1410,6 +1410,24 @@ public class Princess extends BotClient {
         return possibleDeployCoords;
     }
 
+    /**
+     * Picks the hex a formation leader still to deploy will deploy on, the way it would pick it on its own turn. The
+     * starting-hex scoring stands the unit on every hex it scores and leaves it on the last, so the leader is put back
+     * off the board after: other code reads a unit with a position as one on the board.
+     */
+    private void chooseDeploymentAnchor(Entity leader, Entity pickedBy) {
+        Coords standing = leader.getPosition();
+        Coords anchor;
+        try {
+            anchor = rankDeploymentCoords(leader, getStartingCoordsArray(leader));
+        } finally {
+            leader.setPosition(standing);
+        }
+        if (anchor != null) {
+            getUnitOrdersFollower().setDeploymentAnchor(leader, anchor, pickedBy);
+        }
+    }
+
     protected Coords rankDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         StringBuilder sb = null;
         if (LOGGER.isDebugEnabled()) {
@@ -1455,9 +1473,31 @@ public class Princess extends BotClient {
                   .toList();
         }
 
+        // never where the unit is blocked from where its lance is going, such as across water it cannot cross
+        possibleDeployCoords = getUnitOrdersFollower().keepReachable(deployedUnit, possibleDeployCoords);
+
         // Order the candidates before the capped scan below only looks at the first handful of them. Princess hands
         // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
         possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
+
+        // a formation leader deploys on the hex its formation's first unit down picked for it, or the free one nearest
+        Optional<Coords> anchor = getUnitOrdersFollower().getDeploymentAnchor(deployedUnit);
+        if (anchor.isPresent()) {
+            List<Coords> nearestAnchor = new ArrayList<>(possibleDeployCoords);
+            nearestAnchor.sort(Comparator.comparingInt(coords -> coords.distance(anchor.get())));
+            Coords anchorHex = super.getFirstValidCoords(deployedUnit, nearestAnchor);
+            if (anchorHex != null) {
+                LOGGER.info("[BotOrders] {} (ID {}): deploying at {}, the hex picked for it as leader ({})",
+                      deployedUnit.getDisplayName(), deployedUnit.getId(), anchorHex.getBoardNum(),
+                      anchor.get().getBoardNum());
+                return anchorHex;
+            }
+        }
+        // a member first down while its leader has still to deploy picks the leader's hex, so it can take its slot
+        Optional<Entity> leaderToPlace = getUnitOrdersFollower().leaderStillToPlace(deployedUnit);
+        if (leaderToPlace.isPresent()) {
+            chooseDeploymentAnchor(leaderToPlace.get(), deployedUnit);
+        }
         // A formation leader deploys where its formation fits, and a member in its slot beside it. Done here rather
         // than in prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
         possibleDeployCoords = getUnitOrdersFollower().preferFormationFit(deployedUnit, possibleDeployCoords);

@@ -1093,6 +1093,7 @@ public class Princess extends BotClient {
 
         final Coords deployCoords = getDeploymentCoords(deployEntity, entityNum, true, "deployment");
         if (deployCoords == null) {
+            LOGGER.warn("Deployment failed, no coords for {}.", deployEntity.getChassis());
             return;
         }
 
@@ -1104,6 +1105,7 @@ public class Princess extends BotClient {
         if (deployElevation == null) {
             return;
         }
+        LOGGER.info("{} : {} deploying to {}", getName(), deployEntity.getChassis(), deployCoords);
         deploy(entityNum, deployCoords, board.getBoardId(), decentFacing, deployElevation, new Vector<>(), false);
     }
 
@@ -3214,6 +3216,7 @@ public class Princess extends BotClient {
 
         final Coords deployCoords = getDeploymentCoords(entity, Entity.NONE, false, "movement-phase deployment");
         if (deployCoords == null) {
+            LOGGER.warn("{}: {} has no deployment coordinates, so will not deploy", getName(), entity.getDisplayName());
             return null;
         }
 
@@ -3652,6 +3655,20 @@ public class Princess extends BotClient {
                 }
                 result = prunedPaths;
                 break;
+            }
+        }
+        if (includeDeploymentStep) {
+            for (MovePath path : result) {
+                int removedPaths = 0;
+                // If there is no deployment step, prune the path.
+                if (!path.contains(MoveStepType.DEPLOY)) {
+                    result.remove(path);
+                    removedPaths++;
+                }
+                if (removedPaths > 0) {
+                    LOGGER.info("{}: {} pruned {} paths that did not contain a deployment step", getName(),
+                                mover.getDisplayName(), removedPaths);
+                }
             }
         }
         return result;

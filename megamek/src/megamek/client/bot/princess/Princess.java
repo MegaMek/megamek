@@ -1074,9 +1074,13 @@ public class Princess extends BotClient {
     /**
      * @param unitId The ID of a unit.
      *
-     * @return How much this bot wants the unit as a target, 1 the most, or 0 when it is not a priority target.
+     * @return How much this bot wants the unit as a target, 1 the most, or 0 when it is not a priority target. An
+     *       enemy convoy unit is always priority 1, whatever the settings say.
      */
     public int getPriorityUnitLevel(int unitId) {
+        if (getUnitOrdersFollower().enemyConvoyUnitIds().contains(unitId)) {
+            return BehaviorSettings.HIGHEST_TARGET_PRIORITY;
+        }
         return getBehaviorSettings().getPriorityUnitLevel(unitId);
     }
 

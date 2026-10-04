@@ -776,6 +776,20 @@ class FormationFollowerTest {
     }
 
     @Test
+    void anEnemyConvoyIsTheMostWantedPriority() {
+        BipedMek truck = new BipedMek();
+        truck.setId(91);
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.SOUTH));
+        enemies.add(truck);
+        princess.getBehaviorSettings().addPriorityUnit(91, 4);
+        princess.getBehaviorSettings().addPriorityUnit(93, 2);
+
+        assertEquals(BehaviorSettings.HIGHEST_TARGET_PRIORITY, princess.getPriorityUnitLevel(91),
+              "a convoy truck is priority 1 even when set lower");
+        assertEquals(2, princess.getPriorityUnitLevel(93), "other targets keep the priority they were given");
+    }
+
+    @Test
     void atAWalkPaceAUnitFallenBehindMayRunToCatchUp() {
         // HammerGS: "if we set the lance to walk, we need to give permission for lagging units to run or jump"
         member(20, LEADER_HEX, 0, 5);

@@ -57,7 +57,6 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.EdgeOrder;
-import megamek.common.orders.FightState;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
@@ -144,12 +143,6 @@ public class UnitOrdersFollower {
     private final Set<Integer> arrivedUnitIds = new HashSet<>();
     private final Map<String, WaypointDistanceField> distanceFields = new HashMap<>();
     private int distanceFieldsRound = -1;
-    // each unit's armor and structure at the start of this round and the one before, to tell who was hit in between
-    private final Map<Integer, Integer> healthThisRound = new HashMap<>();
-    private final Map<Integer, Integer> healthLastRound = new HashMap<>();
-    private int healthRound = -1;
-    // units holding after a fight, awaiting the Resume order; on Resume they skip the waypoints they fought past
-    private final Set<Integer> awaitingResume = new HashSet<>();
     private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
     // slots laid out around a leader still on its way, never ahead of it; kept like slotChoices
     private final Map<Integer, SlotChoice> movingSlotChoices = new HashMap<>();
@@ -276,15 +269,19 @@ public class UnitOrdersFollower {
     private final Map<Integer, Map<Coords, Integer>> narrowHexesByBoard = new HashMap<>();
     private int narrowHexesRound = -1;
 
+    // who was hit, and lances breaking off their route to fight and holding after it
+    private final FireReaction fireReaction;
+
     /**
      * @param owner the bot whose units follow orders
      */
     UnitOrdersFollower(Princess owner) {
         this.owner = owner;
         this.convoys = new ConvoyTracker(owner);
+        this.fireReaction = new FireReaction(owner, this);
     }
 
-    private int currentRound() {
+    int currentRound() {
         return owner.getGame().getCurrentRound();
     }
 
@@ -576,7 +573,7 @@ public class UnitOrdersFollower {
     /**
      * @return {@code true} if the unit is in a convoy lance
      */
-    private static boolean isConvoy(Entity entity) {
+    static boolean isConvoy(Entity entity) {
         LanceRole role = entity.getLanceRole();
         return (role != null) && role.isConvoy();
     }
@@ -868,7 +865,7 @@ public class UnitOrdersFollower {
             return false;
         }
         Entity leader = owner.getGame().getEntity(formation.get().getLeaderId());
-        return isLanceHit((leader == null) ? entity : leader);
+        return fireReaction.isLanceHit((leader == null) ? entity : leader);
     }
 
     /**
@@ -1160,7 +1157,7 @@ public class UnitOrdersFollower {
      * its last waypoint holds there, facing as ordered, until it gets new orders.
      */
     void advanceRoutes() {
-        reactToFire();
+        fireReaction.reactToFire();
         trackFormationUnits();
         for (Entity entity : owner.getEntitiesOwned()) {
             if (entity.getPosition() == null) {
@@ -1170,9 +1167,7 @@ public class UnitOrdersFollower {
                 // fighting, or holding after the fight for the Resume order: the route waits
                 continue;
             }
-            if (awaitingResume.remove(entity.getId())) {
-                skipWaypointsFoughtPast(entity);
-            }
+            fireReaction.resumeAfterFight(entity);
             routeConvoyOut(entity);
             Optional<Coords> waypoint = entity.getUnitOrders().getNextWaypoint();
             if (waypoint.isEmpty()) {
@@ -1396,7 +1391,7 @@ public class UnitOrdersFollower {
         }
         List<Entity> members = formationMembers(leader, formation.get().getLeaderId());
         boolean isLeading = (members.size() >= 2) && (members.get(0).getId() == leader.getId());
-        boolean isBroken = isBrokenToFight(leader);
+        boolean isBroken = FireReaction.isBrokenToFight(leader);
         if (!isLeading || isBroken) {
             reformWaits.remove(leader.getId());
             return false;
@@ -1847,7 +1842,7 @@ public class UnitOrdersFollower {
         if ((leader.getId() == entity.getId()) || (leader.getPosition() == null)) {
             return Optional.empty();
         }
-        if (isBrokenToFight(leader)) {
+        if (FireReaction.isBrokenToFight(leader)) {
             LOGGER.debug("[BotOrders] {} (ID {}): formation broken - the lance is fighting", entity.getDisplayName(),
                   entity.getId());
             return Optional.empty();
@@ -2719,7 +2714,7 @@ public class UnitOrdersFollower {
      *       second-in-command, then the next in line. A player's unit being followed leads without a formation order
      *       of its own.
      */
-    private List<Entity> formationMembers(Entity entity, int leaderId) {
+    List<Entity> formationMembers(Entity entity, int leaderId) {
         List<Entity> members = new ArrayList<>();
         for (Entity candidate : owner.getGame().getEntitiesVector()) {
             Optional<FormationOrder> candidateFormation = candidate.getUnitOrders().getFormation();
@@ -2773,124 +2768,6 @@ public class UnitOrdersFollower {
         return (leader != null) && (leader.getPosition() != null) && !leader.isDestroyed() && !leader.isDoomed()
               && (leader.getOwner() != null) && !leader.getOwner().isBot()
               && !leader.getOwner().isEnemyOf(follower.getOwner());
-    }
-
-    /**
-     * Snapshots every one of the bot's units' armor and structure the first time it is asked in a round, keeping the
-     * round before, so {@link #wasHitLastTurn} can tell who was hit in between - by any enemy fire, artillery and unseen
-     * shooters included.
-     */
-    private void recordHealth() {
-        if (healthRound == currentRound()) {
-            return;
-        }
-        healthLastRound.clear();
-        healthLastRound.putAll(healthThisRound);
-        healthThisRound.clear();
-        for (Entity unit : owner.getEntitiesOwned()) {
-            healthThisRound.put(unit.getId(), unit.getTotalArmor() + unit.getTotalInternal());
-        }
-        healthRound = currentRound();
-    }
-
-    /**
-     * @param entity a unit of the bot
-     *
-     * @return {@code true} if the unit lost armor or structure between the start of last round and this one
-     */
-    boolean wasHitLastTurn(Entity entity) {
-        recordHealth();
-        Integer before = healthLastRound.get(entity.getId());
-        Integer now = healthThisRound.get(entity.getId());
-        return (before != null) && (now != null) && (now < before);
-    }
-
-    /**
-     * @param leader a formation's leader
-     *
-     * @return {@code true} if any unit of its formation was hit last turn: the lance reacts together when one of it
-     *       comes under fire
-     */
-    private boolean isLanceHit(Entity leader) {
-        Optional<FormationOrder> formation = leader.getUnitOrders().getFormation();
-        if (formation.isEmpty()) {
-            return wasHitLastTurn(leader);
-        }
-        for (Entity member : formationMembers(leader, formation.get().getLeaderId())) {
-            if (wasHitLastTurn(member)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * @param leader a formation's leader
-     *
-     * @return {@code true} if the lance has broken off its route to fight, or holds after the fight
-     */
-    private static boolean isBrokenToFight(Entity leader) {
-        return leader.getUnitOrders().getFightState().isPresent();
-    }
-
-    /**
-     * What each lance does on the leg it is on when it comes under fire (HammerGS, 2026-09-27). Set to Break and fight,
-     * a lance hit last turn leaves its route to fight its attackers; once it has gone a full turn without being hit it
-     * holds where it is, keeping its route, and calls for orders. Push through and Turn and fire keep it on its route.
-     */
-    private void reactToFire() {
-        for (Entity leader : owner.getEntitiesOwned()) {
-            if ((leader.getPosition() == null) || !isLeadingFormationOnRoute(leader)) {
-                continue;
-            }
-            Optional<FormationOrder> formation = activeFormation(leader);
-            Optional<FightState> fightState = leader.getUnitOrders().getFightState();
-            List<Entity> members = formationMembers(leader, leader.getUnitOrders().getFormation().get().getLeaderId());
-            boolean isHit = isLanceHit(leader);
-            boolean isBreakAndFight = formation.isPresent() && (formation.get().getContactRule() == ContactRule.BREAK);
-            if (fightState.isEmpty() && isBreakAndFight && isHit && isConvoy(leader)) {
-                // a convoy pushes on whatever its legs are set to: guarding it is its escorts' job (HammerGS,
-                // 2026-10-02)
-                LOGGER.info("[BotOrders] {} (ID {}) round {}: CONVOY_PUSHES_ON - the convoy was hit; a convoy never "
-                      + "breaks off to fight", leader.getDisplayName(), leader.getId(), currentRound());
-                continue;
-            }
-            if (fightState.isEmpty() && isBreakAndFight && isHit) {
-                LOGGER.info("[BotOrders] {} (ID {}) round {}: UNDER_FIRE - the lance was hit; breaking off the route to "
-                      + "fight", leader.getDisplayName(), leader.getId(), currentRound());
-                for (Entity member : members) {
-                    change(member, UnitOrderAction.BREAK_TO_FIGHT);
-                }
-                owner.getOrdersRadio().report(leader, OrdersRadio.RadioEvent.BREAKING,
-                      navLabel(leader, leader.getUnitOrders().getRoute().get(0)));
-            } else if ((fightState.orElse(null) == FightState.FIGHTING) && !isHit) {
-                LOGGER.info("[BotOrders] {} (ID {}) round {}: FIGHT_OVER - no hits for a turn; holding for the Resume "
-                      + "order", leader.getDisplayName(), leader.getId(), currentRound());
-                for (Entity member : members) {
-                    change(member, UnitOrderAction.FIGHT_OVER);
-                    awaitingResume.add(member.getId());
-                }
-                owner.getOrdersRadio().report(leader, OrdersRadio.RadioEvent.CONTACT_BROKEN,
-                      leader.getPosition().getBoardNum());
-            } else if (fightState.isPresent()) {
-                LOGGER.debug("[BotOrders] {} (ID {}) round {}: lance {}", leader.getDisplayName(), leader.getId(),
-                      currentRound(), fightState.get());
-            }
-        }
-    }
-
-    /**
-     * After the Resume order that ends a hold after a fight, drops the waypoints the unit is already past - ones that
-     * lie further from the next waypoint than the unit does - so it goes on rather than back.
-     */
-    private void skipWaypointsFoughtPast(Entity entity) {
-        List<Coords> route = entity.getUnitOrders().getRoute();
-        while ((route.size() > 1) && (entity.getPosition().distance(route.get(1)) < route.get(0).distance(route.get(1)))) {
-            LOGGER.info("[BotOrders] {} (ID {}) round {}: resuming past {} - already beyond it after the fight",
-                  entity.getDisplayName(), entity.getId(), currentRound(), route.get(0).getBoardNum());
-            change(entity, UnitOrderAction.SKIP);
-            route = entity.getUnitOrders().getRoute();
-        }
     }
 
     /**
@@ -3788,7 +3665,7 @@ public class UnitOrdersFollower {
             return paths;
         }
         Entity leader = members.get(0);
-        if (isBrokenToFight(leader)) {
+        if (FireReaction.isBrokenToFight(leader)) {
             LOGGER.debug("[BotOrders] {} (ID {}) round {}: the lance is fighting - not paced",
                   entity.getDisplayName(), entity.getId(), currentRound());
             return paths;
@@ -4042,7 +3919,7 @@ public class UnitOrdersFollower {
         change(entity, action, List.of());
     }
 
-    private void change(Entity entity, UnitOrderAction action, List<Coords> hexes) {
+    void change(Entity entity, UnitOrderAction action, List<Coords> hexes) {
         UnitOrders newOrders = action.apply(entity.getUnitOrders(), hexes, OffBoardDirection.NONE,
               UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound());
         entity.setUnitOrders(newOrders);

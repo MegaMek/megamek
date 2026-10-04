@@ -37,12 +37,14 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 import megamek.client.ui.Messages;
+import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.PhaseLine;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -236,6 +238,27 @@ class WaypointTableModel extends AbstractTableModel {
     private boolean canForm = true;
     // the units' formation when the order was loaded: the shape they keep to a first waypoint that changes it there
     private WaypointFormation unitsFormation = WaypointFormation.NONE;
+    // the edge a convoy leaves by after its last waypoint, or null when the units are no convoy or one that waits
+    private OffBoardDirection convoyExitEdge;
+
+    /**
+     * Tells the table the units are a convoy that leaves the board by an edge once its route is done, which the bot
+     * does whatever the last waypoint says. The last waypoint then shows, and sends, the exit rather than a hold
+     * (HammerGS, 2026-10-04: the convoy was set to leave by the north edge while its last waypoint read Hold here).
+     *
+     * @param role the role chosen for the units, or {@code null} for none
+     */
+    void setRole(@Nullable LanceRole role) {
+        boolean leavesByEdge = (role != null) && role.isConvoy() && !role.isWaitingAtRouteEnd()
+              && (role.getExitEdge() != null) && (role.getExitEdge() != OffBoardDirection.NONE);
+        convoyExitEdge = leavesByEdge ? role.getExitEdge() : null;
+        fireTableDataChanged();
+    }
+
+    /** @return {@code true} if the units are a convoy that leaves the board after its last waypoint */
+    boolean isConvoyLeaving() {
+        return convoyExitEdge != null;
+    }
 
     /**
      * @param canFormNow {@code false} for a group of one unit, which travels out of formation on every leg
@@ -382,7 +405,7 @@ class WaypointTableModel extends AbstractTableModel {
     Then getThen(int index) {
         Row row = rows.get(index);
         if (isEndOfRoute(index)) {
-            return row.exitBoard ? Then.EXIT : Then.STAY;
+            return (row.exitBoard || isConvoyLeaving()) ? Then.EXIT : Then.STAY;
         }
         return switch (row.holdMode) {
             case HOLD -> Then.HOLD;
@@ -397,7 +420,11 @@ class WaypointTableModel extends AbstractTableModel {
      * @return the choices for that waypoint: stay or exit at the end of the route, pass, hold or assemble before it
      */
     List<Then> thenOptions(int index) {
-        return isEndOfRoute(index) ? List.of(Then.STAY, Then.EXIT) : List.of(Then.PASS, Then.HOLD, Then.ASSEMBLE);
+        if (!isEndOfRoute(index)) {
+            return List.of(Then.PASS, Then.HOLD, Then.ASSEMBLE);
+        }
+        // a convoy leaving by its edge goes, whatever the last waypoint says, so holding there is not offered
+        return isConvoyLeaving() ? List.of(Then.EXIT) : List.of(Then.STAY, Then.EXIT);
     }
 
     void setThen(int index, Then then) {
@@ -499,8 +526,13 @@ class WaypointTableModel extends AbstractTableModel {
             text.append(Messages.getString(row.isChangeAtWaypoint ? "BotCommandPanel.MoveOrder.help.shapeAtWaypoint"
                   : "BotCommandPanel.MoveOrder.help.shapeOnTheWay", shape));
         }
-        text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help." + getThen(index).name(),
-              row.holdTurns));
+        if (isEndOfRoute(index) && isConvoyLeaving()) {
+            text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help.EXIT_CONVOY",
+                  Messages.getString("BotCommandPanel.Role.edge." + convoyExitEdge.name())));
+        } else {
+            text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help." + getThen(index).name(),
+                  row.holdTurns));
+        }
         if (row.phaseLine != null) {
             text.append(' ').append(Messages.getString("BotCommandPanel.MoveOrder.help.phaseLine",
                   PhaseLine.display(row.phaseLine)));
@@ -577,7 +609,7 @@ class WaypointTableModel extends AbstractTableModel {
             Row row = rows.get(index);
             int holdTurns = getHoldTurns(index);
             WaypointOrder.HoldMode holdMode = (holdTurns == 0) ? WaypointOrder.HoldMode.PASS : row.holdMode;
-            boolean isExit = isEndOfRoute(index) && row.exitBoard;
+            boolean isExit = isEndOfRoute(index) && (row.exitBoard || isConvoyLeaving());
             if (row.isChangeAtWaypoint && !row.formation.isNone()) {
                 // the leg keeps the shape the units had before, and they re-form in this one on arrival
                 WaypointFormation shapeBefore = (index == 0) ? unitsFormation : rows.get(index - 1).formation;

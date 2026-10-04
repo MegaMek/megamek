@@ -256,6 +256,8 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
         roleButton.setText(Messages.getString("BotCommandPanel.MoveOrder.roleButton", roleName));
         tabs.setTitleAt(ROLE_TAB, Messages.getString("BotCommandPanel.MoveOrder.tab.roleNamed", roleName));
         boolean isEscort = rolePanel.isEscortChosen();
+        // a convoy leaving by an edge shows that on its last waypoint, rather than a hold the bot would not keep
+        waypoints.setRole(isEscort ? null : rolePanel.getRole());
         tabs.setEnabledAt(ROUTE_TAB, !isEscort);
         tabs.setToolTipTextAt(ROUTE_TAB, isEscort ? Messages.getString("BotCommandPanel.MoveOrder.tab.routeEscort")
               : null);

@@ -38,11 +38,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
+import megamek.common.OffBoardDirection;
 import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -74,6 +76,45 @@ class MoveOrderEditorTest {
 
         waypoints.removeWaypoint(0);
         assertEquals(List.of(SECOND_HEX, LAST_HEX), waypoints.getHexes());
+    }
+
+    @Test
+    void aConvoyLeavingByAnEdgeShowsAndSendsAnExitOnItsLastWaypoint() {
+        // HammerGS, 2026-10-04: the convoy was set to leave by the north edge, but its last waypoint read Hold here
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(LAST_HEX);
+
+        waypoints.setRole(LanceRole.convoy(OffBoardDirection.NORTH));
+
+        assertEquals(WaypointTableModel.Then.EXIT, waypoints.getThen(1));
+        assertEquals(List.of(WaypointTableModel.Then.EXIT), waypoints.thenOptions(1), "no hold is offered");
+        assertTrue(waypoints.getWaypointOrders().get(1).isExitBoard());
+        assertFalse(waypoints.getWaypointOrders().get(0).isExitBoard(), "only the last waypoint exits");
+    }
+
+    @Test
+    void aConvoyThatWaitsAtTheEndOfItsRouteMayHoldThere() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(LAST_HEX);
+
+        waypoints.setRole(LanceRole.convoy(OffBoardDirection.NORTH, true));
+
+        assertEquals(WaypointTableModel.Then.STAY, waypoints.getThen(1));
+        assertFalse(waypoints.getWaypointOrders().get(1).isExitBoard());
+    }
+
+    @Test
+    void droppingTheConvoyRoleGivesTheHoldBack() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(LAST_HEX);
+        waypoints.setRole(LanceRole.convoy(OffBoardDirection.NORTH));
+
+        waypoints.setRole(null);
+
+        assertEquals(WaypointTableModel.Then.STAY, waypoints.getThen(0));
+        assertEquals(List.of(WaypointTableModel.Then.STAY, WaypointTableModel.Then.EXIT), waypoints.thenOptions(0));
     }
 
     @Test

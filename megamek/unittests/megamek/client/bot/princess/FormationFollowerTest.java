@@ -1261,13 +1261,13 @@ class FormationFollowerTest {
         BipedMek leader = lance.get(0);
         BipedMek second = lance.get(1);
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
-        for (int round = 3; round < 3 + UnitOrdersFollower.ROUNDS_WITHOUT_PROGRESS; round++) {
+        for (int round = 3; round < 3 + FormationRoster.ROUNDS_WITHOUT_PROGRESS; round++) {
             game.setCurrentRound(round);
             follower.advanceRoutes();
             assertEquals(2, leader.getUnitOrders().getRoute().size(), "moved on early in round " + round);
         }
 
-        game.setCurrentRound(3 + UnitOrdersFollower.ROUNDS_WITHOUT_PROGRESS);
+        game.setCurrentRound(3 + FormationRoster.ROUNDS_WITHOUT_PROGRESS);
         follower.advanceRoutes();
 
         assertTrue(follower.isFallingBehind(second));
@@ -1299,17 +1299,17 @@ class FormationFollowerTest {
         fake(second).prone = true;
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
 
-        for (int round = 3; round < 3 + UnitOrdersFollower.PRONE_ROUNDS_BEFORE_DROPPED; round++) {
+        for (int round = 3; round < 3 + FormationRoster.PRONE_ROUNDS_BEFORE_DROPPED; round++) {
             game.setCurrentRound(round);
             follower.advanceRoutes();
             assertFalse(follower.isOutOfAction(second), "dropped early in round " + round);
         }
-        game.setCurrentRound(3 + UnitOrdersFollower.PRONE_ROUNDS_BEFORE_DROPPED);
+        game.setCurrentRound(3 + FormationRoster.PRONE_ROUNDS_BEFORE_DROPPED);
         follower.advanceRoutes();
         assertTrue(follower.isOutOfAction(second));
 
         fake(second).prone = false;
-        game.setCurrentRound(4 + UnitOrdersFollower.PRONE_ROUNDS_BEFORE_DROPPED);
+        game.setCurrentRound(4 + FormationRoster.PRONE_ROUNDS_BEFORE_DROPPED);
         follower.advanceRoutes();
         assertFalse(follower.isOutOfAction(second), "back on its feet, it rejoins");
     }

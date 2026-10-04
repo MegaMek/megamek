@@ -1365,9 +1365,9 @@ public class ForceGenerationOptionsPanel extends JPanel implements ActionListene
          * messages bundle. Returning {@code null} avoids showing the {@code !key!} placeholder text Swing would display
          * if {@link Messages#getString(String)} were called for a missing key.
          */
+        /** Shared with the formation mix editor, so both describe a formation the same way. */
         private static String tooltipFor(FormationType ft) {
-            String key = ft.getTooltipKey();
-            return Messages.keyExists(key) ? Messages.getString(key) : null;
+            return FormationMixEditorPanel.tooltipFor(ft);
         }
     }
 

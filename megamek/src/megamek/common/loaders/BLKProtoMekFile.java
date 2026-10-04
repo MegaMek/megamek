@@ -149,11 +149,12 @@ public class BLKProtoMekFile extends BLKFile implements IMekLoader {
         loadQuirks(t);
 
         // ProtoMeks have EI built-in per IO:AE p.69. At BLK load time, game context is not
-        // available so default to Off (mode 0). The mode will be set correctly when the unit
-        // joins a game via setGameOptions().
-        for (Mounted<?> m : t.getEquipment()) {
-            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                m.setMode(0);
+        // available so default to Off. The mode will be set correctly when the unit joins a
+        // game via setGameOptions().
+        for (Mounted<?> eiInterface : t.getEquipment()) {
+            if ((eiInterface.getType() instanceof MiscType)
+                  && eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                eiInterface.setModeImmediately(Mounted.MODE_OFF);
                 break;
             }
         }

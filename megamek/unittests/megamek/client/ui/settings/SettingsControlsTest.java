@@ -42,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ListResourceBundle;
-import java.util.ResourceBundle;
 import javax.swing.SpinnerNumberModel;
 
 import org.junit.jupiter.api.Test;
@@ -85,6 +84,16 @@ class SettingsControlsTest {
         assertTrue(checkBox.getText().contains("Material Symbols Rounded"));
         assertTrue(checkBox.getToolTipText().contains("Legacy tooltip"));
         assertEquals("chklegacy", checkBox.getName());
+    }
+
+    @Test
+    void buttonResolvesTextAndExplicitHelp() {
+        SettingsButton button = new SettingsButton("normalButton", TEXT, "normal");
+
+        assertEquals("Normal", button.getText());
+        assertEquals("Normal tooltip", button.getSettingsHelpText());
+        assertTrue(button.getToolTipText().contains("Normal tooltip"));
+        assertEquals("normalButton", button.getName());
     }
 
     @Test

@@ -428,6 +428,15 @@ with our [style guide](https://github.com/MegaMek/megamek/wiki/MegaMek-Coding-St
 for line length, tabs vs. spaces, etc. When all else fails, we follow
 the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html).
 
+The build enforces formatting, so it does not matter which editor (or tool) wrote the code. Before you push:
+
+```
+./gradlew spotlessApply
+```
+
+That formats every Java file you changed. `./gradlew spotlessCheck` reports the same violations without changing
+anything. The check runs first on every pull request and lists every violation in one go.
+
 ## Support
 
 For bugs, crashes, or other issues you can fill out a [GitHub issue request](https://github.com/MegaMek/MegaMek/issues).

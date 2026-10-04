@@ -37,6 +37,7 @@ package megamek.common.weapons.lasers.innerSphere;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -80,7 +81,7 @@ public class ISBinaryLaserCannon extends LaserWeapon {
         maxRange = RANGE_MED;
         flags = flags.andNot(F_PROTO_WEAPON);
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
-        rulesRefs = "131, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 131);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)

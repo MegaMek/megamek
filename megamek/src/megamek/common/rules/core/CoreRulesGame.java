@@ -33,6 +33,10 @@ package megamek.common.rules.core;
  */
 
 
+import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+
+import java.util.EnumSet;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
@@ -43,16 +47,14 @@ import megamek.common.equipment.enums.BombType;
 import megamek.common.rules.RulesGame;
 import megamek.common.units.Entity;
 import megamek.common.units.IBomber;
-
-import java.util.EnumSet;
-
-import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
+import megamek.logging.MMLogger;
 
 public class CoreRulesGame extends RulesGame {
 
+    private static final MMLogger logger = MMLogger.create(CoreRulesGame.class);
+
     /**
-     * {@inheritDoc}
-     * Ammo dumping is not in Core
+     * {@inheritDoc} Ammo dumping is not in Core
      */
     @Override
     public boolean ammoDumping() {
@@ -60,13 +62,12 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc}
-     * Immobile not eligible in movement Core p.49
-     * RAC Unjamming does not prevent usage (only limits movement) Core p.183
-     * Finding a club can use in physical phase Core p.79
+     * {@inheritDoc} Immobile not eligible in movement Core p.49 RAC Unjamming does not prevent usage (only limits
+     * movement) Core p.183 Finding a club can use in physical phase Core p.79
      */
     @Override
-    public boolean eligibleForPhase(Entity entity, @Nullable GamePhase phase) {
+    public boolean eligibleForPhase(Entity entity,
+          @Nullable GamePhase phase) {
         if (phase != null) {
             if (entity.isImmobile() && phase.isMovement()) {
                 return false;
@@ -79,31 +80,35 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc}
-     * Front loaded initiative Core p.41
+     * {@inheritDoc} Front loaded initiative Core p.41
      */
     @Override
-    public int getInitiativeOrder(int[] num_turns, int index, int min, boolean frontLoadOption) {
+    public int getInitiativeOrder(int[] num_turns,
+          int index,
+          int min,
+          boolean frontLoadOption) {
         return ((int) Math.ceil(((double) num_turns[index]) / (double) min));
     }
 
     /**
-     * TAG can increase BV when homing arrow IV is present
-     * {@inheritDoc}
-     * 
-     * Core rules errata v0.1
-     * https://www.battletech.com/forums/index.php/topic,91365.0.html
+     * TAG can increase BV when homing arrow IV is present {@inheritDoc}
+     * <p>
+     * Core rules errata v0.1 https://www.battletech.com/forums/index.php/topic,91365.0.html
      */
     @Override
-    public double tagBVBump(Entity entity, CalculationReport bvReport, double adjustedBV,
-          long tagCount, boolean hasGuided) {
+    public double tagBVBump(Entity entity,
+          CalculationReport bvReport,
+          double adjustedBV,
+          long tagCount,
+          boolean hasGuided) {
         for (Entity otherEntity : entity.getGame().getEntitiesVector()) {
             if ((otherEntity.getOwner() == null) || otherEntity.getOwner().isEnemyOf(entity.getOwner())) {
                 continue;
             }
             for (Mounted<?> mounted : otherEntity.getWeaponList()) {
                 boolean foundHoming = false;
-                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) || mounted.getType().hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
+                if (mounted.getType().hasFlag(WeaponTypeFlag.F_ARROW_IV) || mounted.getType()
+                      .hasFlag(WeaponTypeFlag.F_ARTILLERY)) {
                     for (Mounted<?> mountedAmmo : otherEntity.getAmmo()) {
                         AmmoType ammoType = (AmmoType) mountedAmmo.getType();
                         EnumSet<AmmoType.Munitions> munitionType = ammoType.getMunitionType();
@@ -130,7 +135,7 @@ public class CoreRulesGame extends RulesGame {
                     }
                 }
             }
-            
+
             if (otherEntity instanceof IBomber asBomber) {
                 BombType bomb = BombType.createBombByType(BombType.BombTypeEnum.HOMING);
                 if (bomb != null) {
@@ -155,9 +160,39 @@ public class CoreRulesGame extends RulesGame {
     }
 
     /**
-     * {@inheritDoc}
-     * Core rules allows minefields
+     * {@inheritDoc} Core rules allows minefields
      */
     @Override
-    public boolean allowMinefields(boolean toMinefields) { return true; }
+    public boolean allowMinefields(boolean toMinefields) {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc} Core has walk on deployment by default
+     *
+     * @return true
+     */
+    @Override
+    public boolean isWalkOnDeployment() {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc} Core omits immobile units from movement/initiative
+     *
+     * @return false if it should not include them
+     */
+    @Override
+    public boolean includeInMovement(GamePhase phase,
+          Entity entity) {
+        return !((phase.isMovement() || phase.isInitiative()) && entity.isImmobile());
+    }
+
+    /**
+     * {@inheritDoc} This is not used by core at all.
+     */
+    @Override
+    public void setWalkOnDeployment(final boolean walkOn) {
+        logger.debug("Setting walk on deployment should never occur when running core.");
+    }
 }

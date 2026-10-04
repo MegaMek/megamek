@@ -146,8 +146,8 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  WeaponType.WEAPON_DIRECT_FIRE,
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(WeaponType.WEAPON_DIRECT_FIRE),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);

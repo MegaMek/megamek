@@ -200,7 +200,7 @@ public class BipedMek extends MekWithArms {
             mp = Math.max(mp - getCargoMpReduction(this), 0);
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -244,7 +244,7 @@ public class BipedMek extends MekWithArms {
 
         Game.rulesManager.getRulesPSR().legDamageModifiers(this, roll, gameOptions()
               .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
-        
+
         return super.addEntityBonuses(roll);
     }
 

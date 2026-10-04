@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -327,14 +327,15 @@ public interface IBuilding extends Serializable {
     }
 
     /**
-     * Returns the percentage of damage done to the building for attacks against infantry in the building from other
-     * units within the building. TW pg175.
+     * Returns the share of the damage the building absorbs when a unit inside it attacks infantry in the same
+     * building (Infantry Damage From Attacks Inside Buildings Table, TW p. 175): light and medium buildings absorb
+     * nothing, heavy buildings a quarter, hardened buildings half.
      */
     default double getInfDmgFromInside() {
         return switch (getBuildingType()) {
             case LIGHT, MEDIUM -> 0.0;
-            case HEAVY -> 0.5;
-            case HARDENED -> 0.75;
+            case HEAVY -> 0.25;
+            case HARDENED -> 0.5;
             default -> 0;
         };
     }
@@ -352,6 +353,21 @@ public interface IBuilding extends Serializable {
             case HEAVY -> 0.25f;
             default -> 0f;
         };
+    }
+
+    /**
+     * The damage that reaches the infantry inside this building from one attack on it from outside. A building that
+     * scales damage, such as a gun emplacement or fortress, scales the attack first, rounding down (TO:AR p. 124: the
+     * multiplier applies to the damage delivered to the building and its occupants). The infantry then take the
+     * building type's share of what is left, rounding .5 up (TW p. 172).
+     *
+     * @param damage the damage of the attack on the building
+     *
+     * @return the damage that reaches each infantry unit inside
+     */
+    default int damageReachingInfantryInside(int damage) {
+        int scaledDamage = (int) Math.floor(getDamageToScale() * damage);
+        return Math.round(scaledDamage * getDamageReductionFromOutside());
     }
 
     BasementType getBasement(Coords coords);

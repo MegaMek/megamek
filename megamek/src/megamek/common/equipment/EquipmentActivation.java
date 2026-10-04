@@ -33,6 +33,11 @@
 
 package megamek.common.equipment;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import megamek.common.annotations.Nullable;
+import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Entity;
 
 /**
@@ -58,6 +63,10 @@ public final class EquipmentActivation {
      *       {@code "Off"}
      */
     public static boolean isC3SwitchedOff(Entity entity) {
+        // An activated C3 Emergency Master may not be deliberately switched off (TO:AUE p.110)
+        if (entity.isC3EmergencyMasterActive()) {
+            return false;
+        }
         boolean hasOperableC3Equipment = false;
         for (Mounted<?> mounted : entity.getEquipment()) {
             EquipmentType equipmentType = mounted.getType();
@@ -123,6 +132,145 @@ public final class EquipmentActivation {
             }
             if (miscType.hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
                   && !mounted.isModeTurnedOffNextRound()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the unit's ECM suites that will be in use next round, i.e. those that are operable and whose next-round
+     * mode is anything other than {@code "Off"}. A suite set to ECCM or Ghost Targets is being used just as much as one
+     * set to ECM, so every non-{@code "Off"} mode counts. The next-round mode is the one that matters because ECM
+     * suites are built with {@code setInstantModeSwitch(false)}: a switch declared now takes effect in the End Phase
+     * (TO:AUE p.90).
+     * <p>
+     * A unit may only use one ECM suite at a time, of any type (TM p.213, CO p.200), so a returned list holding more
+     * than one entry describes a state the rules do not allow.
+     * </p>
+     *
+     * @param entity the unit to check
+     *
+     * @return a new modifiable list of the operable ECM suites that are not deactivated next round, in mount order
+     */
+    public static List<MiscMounted> ecmSuitesInUseNextRound(Entity entity) {
+        List<MiscMounted> suitesInUse = new ArrayList<>();
+        for (MiscMounted mounted : entity.getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            if (miscType.hasFlag(MiscType.F_ECM) && !mounted.isInoperable()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                suitesInUse.add(mounted);
+            }
+        }
+        return suitesInUse;
+    }
+
+    /**
+     * Returns the ECM suite to keep when the game has to resolve a multiple-suite conflict without asking the player,
+     * such as a unit that deploys with several suites already active. Angel ECM wins over any other type, matching the
+     * precedence {@code ECCMComparator} already applies to competing ECM fields; otherwise the first suite in mount
+     * order is kept so that the choice is stable from one game to the next.
+     *
+     * @param ecmSuites the candidate suites, normally the result of {@link #ecmSuitesInUseNextRound(Entity)}
+     *
+     * @return the suite to leave on, or {@code null} if the list is empty
+     */
+    public static @Nullable MiscMounted preferredEcmSuite(List<MiscMounted> ecmSuites) {
+        MiscMounted preferred = null;
+        for (MiscMounted mounted : ecmSuites) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            if (preferred == null) {
+                preferred = mounted;
+            } else if (miscType.hasFlag(MiscType.F_ANGEL_ECM)
+                  && !preferred.getType().hasFlag(MiscType.F_ANGEL_ECM)) {
+                preferred = mounted;
+            }
+        }
+        return preferred;
+    }
+
+    /**
+     * Returns a label that identifies one ECM suite among all of the unit's ECM suites, such as
+     * {@code "ECM Suite (Guardian) #2 (Body)"}. The number counts ECM suites in mount order and is only added when the
+     * unit carries more than one, because a unit can mount two suites of the same type in the same location - the
+     * Mantis Light Attack VTOL (ECCM) carries two Guardian suites in its Body - and neither the equipment name nor the
+     * location tells those apart. The client dialog, the lobby and the server chat all build the label here so that
+     * they name the same suite the same way.
+     *
+     * @param entity  the unit carrying the suite
+     * @param ecmSuite the ECM suite to label
+     *
+     * @return the display label for the suite
+     */
+    public static String ecmSuiteLabel(Entity entity, MiscMounted ecmSuite) {
+        int suiteNumber = 0;
+        int suiteCount = 0;
+        for (MiscMounted mounted : entity.getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || !miscType.hasFlag(MiscType.F_ECM)) {
+                continue;
+            }
+            suiteCount++;
+            if (mounted.equals(ecmSuite)) {
+                suiteNumber = suiteCount;
+            }
+        }
+        StringBuilder label = new StringBuilder(ecmSuite.getName());
+        if (suiteCount > 1) {
+            label.append(" #").append(suiteNumber);
+        }
+        return label.append(" (").append(entity.getLocationName(ecmSuite.getLocation())).append(')').toString();
+    }
+
+    /**
+     * Returns whether a weapon's linked fire control enhancement is both intact and switched on, so it applies its
+     * effect to a shot.
+     *
+     * <p>Covers the guidance systems a player may switch off per BMM p.12: Artemis IV, Artemis V, Proto Artemis and
+     * the Apollo MRM FCS. Equipment that defines no {@code "Off"} mode reports as switched on, so passing any other
+     * flag behaves exactly as the intact-and-installed check did before this method existed.</p>
+     *
+     * <p>Example: a Mad Dog Prime fires an LRM 20 with Artemis IV and Artemis-capable ammo. Normally that is a -1
+     * to hit and the missiles roll on a better cluster row. With the Artemis switched off, the shot resolves as a
+     * plain LRM 20 with unguided ammo instead.</p>
+     *
+     * @param linker the equipment the weapon is linked by, which may be {@code null} when nothing is linked
+     * @param flag   the fire control flag to look for
+     *
+     * @return {@code true} when the linked equipment carries that flag, is undamaged, and is not switched off
+     */
+    public static boolean isGuidanceActive(@Nullable Mounted<?> linker, MiscTypeFlag flag) {
+        return (linker != null)
+              && (linker.getType() instanceof MiscType)
+              && linker.getType().hasFlag(flag)
+              && !linker.isDestroyed()
+              && !linker.isMissing()
+              && !linker.isBreached()
+              && !linker.isModeTurnedOff();
+    }
+
+    /**
+     * Returns whether a unit mounts at least one fire control enhancement of the given kind that is intact and
+     * switched on.
+     *
+     * <p>Used to decide whether to offer the player an option that needs working guidance at all, such as the MRM
+     * saturation attack an Apollo allows. Whether a particular shot gets the benefit is a per-weapon question, which
+     * {@link #isGuidanceActive(Mounted, MiscTypeFlag)} answers.</p>
+     *
+     * @param entity the unit to check
+     * @param flag   the fire control flag to look for
+     *
+     * @return {@code true} when at least one such system is mounted, undamaged, and not switched off
+     */
+    public static boolean hasActiveGuidance(Entity entity, MiscTypeFlag flag) {
+        for (MiscMounted equipment : entity.getMisc()) {
+            if (isGuidanceActive(equipment, flag)) {
                 return true;
             }
         }

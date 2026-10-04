@@ -34,20 +34,20 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import megamek.codeUtilities.MathUtility;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
+
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
 import megamek.common.options.GameOptions;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 /**
  * This class is the framework for the random army dialog that is most prominently used in MM's lobby. Subclasses of it
@@ -177,6 +177,11 @@ public abstract class AbstractRandomArmyDialog extends JDialog {
         gameOptions = newOptions;
         bvTab.setGameOptions(newOptions);
         ratGenTab.setGameOptions(newOptions);
+        // The force generator was left out, so it kept the defaults this dialog is built with and
+        // never saw the game's real rules. A force was then generated against one set of options while
+        // the lobby it went to used another - a rule the player had switched on was simply invisible
+        // to generation.
+        forceGeneratorPanel.setGameOptions(newOptions);
         updateYear();
     }
 

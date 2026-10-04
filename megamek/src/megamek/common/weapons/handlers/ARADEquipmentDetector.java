@@ -34,6 +34,7 @@ package megamek.common.weapons.handlers;
 
 import java.util.Iterator;
 
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -155,10 +156,8 @@ public class ARADEquipmentDetector {
      */
     public static boolean hasArtemis(Entity target) {
         for (Mounted<?> equipment : target.getEquipment()) {
-            if (equipment.getType() instanceof MiscType miscType &&
-                  (miscType.hasFlag(MiscType.F_ARTEMIS) ||
-                        miscType.hasFlag(MiscType.F_ARTEMIS_V)) &&
-                  isValidEquipment(equipment)) {
+            if (EquipmentActivation.isGuidanceActive(equipment, MiscType.F_ARTEMIS)
+                  || EquipmentActivation.isGuidanceActive(equipment, MiscType.F_ARTEMIS_V)) {
                 return true;
             }
         }

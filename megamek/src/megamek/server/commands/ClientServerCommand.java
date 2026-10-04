@@ -58,7 +58,11 @@ import megamek.server.totalWarfare.TWGameManager;
 public abstract class ClientServerCommand extends ServerCommand {
     private static final String NEWLINE = "\n";
     private static final String WHITESPACE = " ";
-    private static final String LONG_WHITESPACE = " {3}";
+    /** The indent in front of each argument's description in the help text. */
+    private static final String INDENT = "   ";
+    /** Matches {@link #INDENT} when the help text is turned into HTML. Kept apart from the indent itself because it
+     * is a regular expression: using it as the indent printed the expression instead of spaces. */
+    private static final String INDENT_PATTERN = " {3}";
     private static final String EMPTY_ARGUMENT = null;
     protected final TWGameManager gameManager;
     protected final static MMLogger logger = MMLogger.create(ClientServerCommand.class);
@@ -215,7 +219,7 @@ public abstract class ClientServerCommand extends ServerCommand {
               this.getHelp()
                     .replace("<", "&lt;")
                     .replace(">", "&gt;")
-                    .replaceAll(LONG_WHITESPACE, "| ")
+                    .replaceAll(INDENT_PATTERN, "| ")
                     .replace(NEWLINE, "<br>") +
               "</html>";
     }
@@ -240,7 +244,7 @@ public abstract class ClientServerCommand extends ServerCommand {
               .append(NEWLINE);
 
         for (var arg : defineArguments()) {
-            help.append(LONG_WHITESPACE)
+            help.append(INDENT)
                   .append(arg.getName())
                   .append(":")
                   .append(WHITESPACE)

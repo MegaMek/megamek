@@ -82,6 +82,8 @@ public class KillCommand extends GamemasterServerCommand {
             gameManager.addReport(gameManager.abandonEntity(unit));
         }
         gameManager.destroyEntity(unit, Messages.getString("Gamemaster.cmd.kill.reason"), false, false);
+        // a unit killed while holding the current turn would otherwise keep it and stall the game
+        gameManager.settleTurnsAfterGamemasterAct(unit);
         server.sendServerChat(unit.getDisplayName() + Messages.getString("Gamemaster.cmd.kill.success"));
     }
 }

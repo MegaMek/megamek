@@ -34,14 +34,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
@@ -56,6 +49,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
 import java.util.jar.JarFile;
@@ -68,14 +62,15 @@ import megamek.MMConstants;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.TimerSingleton;
+import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.commands.*;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.event.MekDisplayListener;
+import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundManager;
@@ -94,21 +89,10 @@ import megamek.client.ui.clientGUI.boardview.overlay.TurnDetailsOverlay;
 import megamek.client.ui.clientGUI.boardview.overlay.UnitOverviewOverlay;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.*;
 import megamek.client.ui.clientGUI.boardview.toolTip.TWBoardViewTooltip;
-import megamek.client.ui.dialogs.AccessibilityDialog;
+import megamek.client.ui.dialogs.*;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsDialog;
 import megamek.client.ui.dialogs.BotCommands.BotCommandsPanel;
-import megamek.client.ui.dialogs.ChoiceDialog;
-import megamek.client.ui.dialogs.ConfirmDialog;
-import megamek.client.ui.dialogs.InformDialog;
-import megamek.client.ui.dialogs.MMAboutDialog;
-import megamek.client.ui.dialogs.GameMasterAppointedDialog;
-import megamek.client.ui.dialogs.GameMasterVoteDialog;
-import megamek.client.ui.dialogs.PlayerListDialog;
-import megamek.client.ui.dialogs.RandomNameDialog;
-import megamek.client.ui.dialogs.RoundsInAirDialog;
-import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
-import megamek.client.bot.AIType;
 import megamek.client.ui.dialogs.buttonDialogs.EditBotsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.GameOptionsDialog;
 import megamek.client.ui.dialogs.buttonDialogs.NetworkInformationDialog;
@@ -128,6 +112,7 @@ import megamek.client.ui.dialogs.unitDisplay.UnitDisplayDialog;
 import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
 import megamek.client.ui.dialogs.unitSelectorDialogs.MegaMekUnitSelectorDialog;
 import megamek.client.ui.enums.DialogResult;
+import megamek.client.ui.panels.CommonSettingsPane;
 import megamek.client.ui.panels.ReceivingGameDataPanel;
 import megamek.client.ui.panels.StartingScenarioPanel;
 import megamek.client.ui.panels.WaitingForServerPanel;
@@ -139,6 +124,7 @@ import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.BASE64ToolKit;
 import megamek.client.ui.util.KeyCommandBind;
+import megamek.client.ui.util.MULVersionValidator;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
@@ -156,6 +142,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.SensorFamily;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.event.*;
 import megamek.common.event.board.GameBoardChangeEvent;
@@ -264,6 +251,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_UNIT_OVERVIEW = "viewUnitOverview";
     public static final String VIEW_ZOOM_IN = "viewZoomIn";
     public static final String VIEW_ZOOM_OUT = "viewZoomOut";
+    public static final String VIEW_ZOOM_RESET = "viewZoomReset";
     public static final String VIEW_ZOOM_OVERVIEW_TOGGLE = "viewZoomOverviewToggle";
     public static final String VIEW_TOGGLE_ISOMETRIC = "viewToggleIsometric";
     public static final String VIEW_TOGGLE_HEX_COORDS = "viewToggleHexCoords";
@@ -274,6 +262,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String VIEW_TOGGLE_FOV_DARKEN = "viewToggleFovDarken";
     public static final String VIEW_TOGGLE_FOV_HIGHLIGHT = "viewToggleFovHighlight";
     public static final String VIEW_TOGGLE_FOV_SPOTTING = "viewToggleFovSpotting";
+    public static final String VIEW_TOGGLE_SHOW_OBJECTS = "viewToggleShowObjects";
     public static final String VIEW_TOGGLE_FIRING_SOLUTIONS = "viewToggleFiringSolutions";
     public static final String VIEW_TOGGLE_CF_WARNING = "viewToggleCFWarnings";
     public static final String VIEW_MOVE_ENV = "viewMovementEnvelope";
@@ -323,6 +312,7 @@ public class ClientGUI extends AbstractClientGUI
     public static final String CG_STARTING_SCENARIO = "JLabel-StartingScenario";
     public static final String CG_EXCHANGE = "JLabel-Exchange";
     public static final String CG_SELECT_ARTY_AUTO_HIT_HEX_DISPLAY = "SelectArtyAutoHitHexDisplay";
+    public static final String CG_VICTORY_SETUP_DISPLAY = "VictorySetupDisplay";
     public static final String CG_DEPLOY_MINEFIELD_DISPLAY = "DeployMinefieldDisplay";
     public static final String CG_DEPLOYMENT_DISPLAY = "DeploymentDisplay";
     public static final String CG_TARGETING_PHASE_DISPLAY = "TargetingPhaseDisplay";
@@ -421,6 +411,11 @@ public class ClientGUI extends AbstractClientGUI
 
     private File curFileBoardImage;
     private File curFileBoard;
+
+    /**
+     * Have we prompted about bing?
+     */
+    private boolean firstBing = true;
 
     /**
      * Map each phase to the name of the card for the main display area.
@@ -635,8 +630,8 @@ public class ClientGUI extends AbstractClientGUI
     /**
      * Shows a progress toast for each of the local player's platoons that is busy raising or dismantling a bridge
      * (TO:AUE). Called once per round at the start of the movement phase: a busy platoon is eligible only in the
-     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is
-     * its main per-turn feedback besides the hex indicator and the END phase report.
+     * movement phase (movement-only, so it can continue/cancel/pause/resume) and takes no other action, so this is its
+     * main per-turn feedback besides the hex indicator and the END phase report.
      */
     private void showBridgeBuildProgressToasts() {
         for (Entity entity : getClient().getGame().getEntitiesVector()) {
@@ -674,8 +669,8 @@ public class ClientGUI extends AbstractClientGUI
      * unaffected by that setting.</p>
      *
      * <p>Every reason to skip is checked before the report is formatted, because formatting is what records entries
-     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns
-     * toasts back on part way through the same phase.</p>
+     * as already toasted. Recording an entry that was never shown would suppress it later, when the player turns toasts
+     * back on part way through the same phase.</p>
      */
     private void showReportAsToasts(String defaultPrefix, String report) {
         if (toastOverlay == null) {
@@ -835,6 +830,7 @@ public class ClientGUI extends AbstractClientGUI
     protected void initializeFrame() {
         super.initializeFrame();
         menuBar = CommonMenuBar.getMenuBarForGame();
+        menuBar.setClientSupplier(() -> client);
         frame.setJMenuBar(menuBar);
     }
 
@@ -850,8 +846,8 @@ public class ClientGUI extends AbstractClientGUI
 
     /**
      * Opens, follows and closes the Game Master vote dialog as the server shares the vote's state: the dialog opens
-     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome
-     * itself is announced in the chat.
+     * when a vote is called, follows the ballots as they come in, and closes when the vote resolves. The outcome itself
+     * is announced in the chat.
      */
     private void updateGameMasterVoteDialog(Poll poll) {
         if (poll.getStatus().isResolved()) {
@@ -872,8 +868,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one:
-     * Give Up while the local player holds it, Become while the role is free, neither while another player has it.
+     * Keeps the Game menu's Game Master entries in step with who holds the role and whether the game allows one: Give
+     * Up while the local player holds it, Become while the role is free, neither while another player has it.
      */
     private void updateGameMasterMenuItems() {
         Player localPlayer = client.getLocalPlayer();
@@ -900,8 +896,8 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay
-     * with the server. The menu entry that leads here is only shown while the local player holds the role.
+     * Asks first, then gives up the Game Master role through the same /gm command that takes it, so the rules stay with
+     * the server. The menu entry that leads here is only shown while the local player holds the role.
      */
     private void giveUpGameMaster() {
         int choice = JOptionPane.showConfirmDialog(frame,
@@ -915,11 +911,10 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master
-     * gives it up (the lobby's GM Mode button or the Game menu's Give Up Game Master entry), or the host turns off
-     * Allow Game Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line
-     * of chat that scrolls away. Queued on the event thread so it does not block the game event that brought the
-     * result.
+     * Tells every player who won a passed Game Master vote and how the role is taken away again: the Game Master gives
+     * it up (the lobby's GM Mode button or the Game menu's Give Up Game Master entry), or the host turns off Allow Game
+     * Master in the game options. Shown after the vote dialog closes, so the outcome is not just a line of chat that
+     * scrolls away. Queued on the event thread so it does not block the game event that brought the result.
      *
      * @param gameMasterId the id of the player the vote made Game Master
      */
@@ -969,12 +964,15 @@ public class ClientGUI extends AbstractClientGUI
               client.getGame());
         BridgeDeploySpriteHandler bridgeDeploySpriteHandler = new BridgeDeploySpriteHandler(this, client.getGame());
         groundObjectSpriteHandler = new GroundObjectSpriteHandler(this, client.getGame());
+        ScanSpriteHandler scanSpriteHandler = new ScanSpriteHandler(this, client);
         firingSolutionSpriteHandler = new FiringSolutionSpriteHandler(this, client);
         firingArcSpriteHandler = new FiringArcSpriteHandler(this);
         fleeZoneSpriteHandler = new FleeZoneSpriteHandler(this);
         FortifyBuildSpriteHandler fortifyBuildSpriteHandler = new FortifyBuildSpriteHandler(this, client.getGame());
         DugInSpriteHandler dugInSpriteHandler = new DugInSpriteHandler(this, client.getGame());
         RubbleClearSpriteHandler rubbleClearSpriteHandler = new RubbleClearSpriteHandler(this, client.getGame());
+        CraneOperationSpriteHandler craneOperationSpriteHandler = new CraneOperationSpriteHandler(this,
+              client.getGame());
 
         spriteHandlers.addAll(List.of(movementEnvelopeHandler,
               movementModifierSpriteHandler,
@@ -986,18 +984,21 @@ public class ClientGUI extends AbstractClientGUI
               bridgeRepairedSpriteHandler,
               bridgeDeploySpriteHandler,
               groundObjectSpriteHandler,
+              scanSpriteHandler,
               firingSolutionSpriteHandler,
               firingArcSpriteHandler,
               fleeZoneSpriteHandler,
               fortifyBuildSpriteHandler,
               dugInSpriteHandler,
-              rubbleClearSpriteHandler));
+              rubbleClearSpriteHandler,
+              craneOperationSpriteHandler));
         spriteHandlers.forEach(BoardViewSpriteHandler::initialize);
     }
 
     @Override
     public void initialize() {
         menuBar = CommonMenuBar.getMenuBarForGame();
+        menuBar.setClientSupplier(() -> client);
         frame.setJMenuBar(menuBar);
         initializeFrame();
         super.initialize();
@@ -1216,6 +1217,18 @@ public class ClientGUI extends AbstractClientGUI
         // Do we need to create the "settings" dialog?
         if (commonSettingsDialog == null) {
             commonSettingsDialog = new CommonSettingsDialog(frame, this);
+        }
+
+        // Show the settings dialog.
+        commonSettingsDialog.setVisible(true);
+    }
+
+    private void showSettingsSubPage(String subpage) {
+        // Do we need to create the "settings" dialog?
+        if (commonSettingsDialog == null) {
+            commonSettingsDialog = new CommonSettingsDialog(frame, this, subpage);
+        } else {
+            commonSettingsDialog.selectRoute(subpage);
         }
 
         // Show the settings dialog.
@@ -1533,6 +1546,9 @@ public class ClientGUI extends AbstractClientGUI
             case VIEW_ZOOM_OUT:
                 boardViews.get(0).zoomOut();
                 break;
+            case VIEW_ZOOM_RESET:
+                boardViews.get(0).zoomReset();
+                break;
             case VIEW_ZOOM_OVERVIEW_TOGGLE:
                 boardViews.get(0).zoomOverviewToggle();
                 break;
@@ -1567,6 +1583,10 @@ public class ClientGUI extends AbstractClientGUI
                 GUIP.setFovSpottingMode(!GUIP.getFovSpottingMode());
                 boardViews.get(0).refreshDisplayables();
                 ((BoardView) boardViews.get(0)).clearHexImageCache();
+                break;
+            case VIEW_TOGGLE_SHOW_OBJECTS:
+                // the ground object sprite handler listens for the preference change and re-renders
+                GUIP.setShowObjectiveOverlays(!GUIP.getShowObjectiveOverlays());
                 break;
             case VIEW_TOGGLE_FIRING_SOLUTIONS:
                 GUIP.setShowFiringSolutions(!GUIP.getShowFiringSolutions());
@@ -1794,6 +1814,7 @@ public class ClientGUI extends AbstractClientGUI
                 boardViews().forEach(bv -> ((BoardView) bv).getTilesetManager().reset());
                 break;
             case POINTBLANK_SHOT:
+            case VICTORY_SETUP:
             case SET_ARTILLERY_AUTO_HIT_HEXES:
             case DEPLOY_MINEFIELDS:
             case DEPLOYMENT:
@@ -1886,6 +1907,17 @@ public class ClientGUI extends AbstractClientGUI
                 main = CG_EXCHANGE;
                 component.setName(main);
                 panMain.add(component, main);
+                break;
+            case VICTORY_SETUP:
+                component = new VictorySetupDisplay(this);
+                main = CG_BOARD_VIEW;
+                secondary = CG_VICTORY_SETUP_DISPLAY;
+                component.setName(secondary);
+                if (!mainNames.containsValue(main)) {
+                    panMain.add(panTop, main);
+                }
+                currPhaseDisplay = (StatusBarPhaseDisplay) component;
+                panSecondary.add(component, secondary);
                 break;
             case SET_ARTILLERY_AUTO_HIT_HEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);
@@ -2152,9 +2184,9 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
-     * @return {@code true} if any player in the game is a bot. Without one there is nobody the bot commands panel
-     *       could give orders to, so it stays hidden - leaving the command bar with only the Commands button - until
-     *       a bot joins (e.g. when a player is replaced by one).
+     * @return {@code true} if any player in the game is a bot. Without one there is nobody the bot commands panel could
+     *       give orders to, so it stays hidden - leaving the command bar with only the Commands button - until a bot
+     *       joins (e.g. when a player is replaced by one).
      */
     private boolean gameHasBots() {
         for (Player player : getClient().getGame().getPlayersList()) {
@@ -2702,6 +2734,22 @@ public class ClientGUI extends AbstractClientGUI
     }
 
     /**
+     * Loads a unit file onto a player as reinforcements, arriving next round.
+     *
+     * <p>Public so that a gamemaster tool which already knows which player it is setting up can send units to them
+     * without asking again in a second dialog.</p>
+     *
+     * @param player The player the units are for
+     */
+    public void reinforceFromFile(Player player) {
+        // the team check below is skipped because the caller has just set one. A team change is queued by the
+        // server and applied at the end of the round, so the player is still on no team at this instant even
+        // though they will have one before anything of theirs deploys; checking now would refuse the very case
+        // the gamemaster tools exist to handle.
+        loadListFile(player, true, false);
+    }
+
+    /**
      * Allow the player to select a MegaMek Unit List file to load. The
      * <code>Entity</code>s in the file will replace any that the player has
      * already selected. As such, this method should only be called in the chat lounge. The file can record damage
@@ -2710,10 +2758,23 @@ public class ClientGUI extends AbstractClientGUI
      * @param player The player to add the units to
      */
     protected void loadListFile(Player player, boolean reinforce) {
+        loadListFile(player, reinforce, true);
+    }
+
+    /**
+     * Loads a unit file onto a player.
+     *
+     * @param player        The player to add the units to
+     * @param reinforce     Whether the units arrive as reinforcements during a game
+     * @param requireATeam  Whether to refuse a player who is on no team. A gamemaster tool that has just assigned
+     *                      one passes {@code false}, because the change does not reach the board until the end of
+     *                      the round and the player has no team yet at the moment this is called
+     */
+    protected void loadListFile(Player player, boolean reinforce, boolean requireATeam) {
         if (player != null) {
             boolean addedUnits = false;
 
-            if (reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
+            if (requireATeam && reinforce && (player.getTeam() == Player.TEAM_UNASSIGNED)) {
                 addToast(ToastLevel.ERROR,
                       Messages.getString("ClientGUI.openUnitListFileDialog.noReinforceMessage"));
                 return;
@@ -2738,8 +2799,12 @@ public class ClientGUI extends AbstractClientGUI
 
             try {
                 // Read the units from the file.
-                final Vector<Entity> loadedUnits = new MULParser(unitFile,
-                      (GameOptions) getClient().getGame().getOptions()).getEntities();
+                final MULParser parser = new MULParser(unitFile,
+                      (GameOptions) getClient().getGame().getOptions());
+                if (!MULVersionValidator.isCorrectVersion(frame, parser)) {
+                    return;
+                }
+                final Vector<Entity> loadedUnits = parser.getEntities();
 
                 // in the Lounge, set default deployment to "Before Game Start", round 0
                 // but in a game in-progress, deploy at the start of next round
@@ -2974,7 +3039,7 @@ public class ClientGUI extends AbstractClientGUI
         // from the same directory that MM is in
         var mmlPath = CP.getMmlPath();
         var autodetect = false;
-        if (null == mmlPath || mmlPath.isBlank()) {
+        if (mmlPath == null || mmlPath.isBlank()) {
             autodetect = true;
             mmlPath = "MegaMekLab.jar";
         }
@@ -3102,7 +3167,103 @@ public class ClientGUI extends AbstractClientGUI
         audioService.playSound(SoundType.BING_CHAT);
     }
 
+    /**
+     * This prompts the user if they want to have the My Turn notifications enabled or not
+     */
+    private void promptForSound() {
+        JCheckBox chkSoundNagSuppress = new JCheckBox(Messages.getString("ClientGUI.bingRemember"));
+        JButton launchSettings = new JButton(Messages.getString("ClientGUI.bingLaunchSettings"));
+        JButton playMyTurnSound = new JButton(Messages.getString("ClientGUI.bingPlay"));
+        JLabel lblPlay = new JLabel(Messages.getString("ClientGUI.bingPlaySound"));
+        JLabel lblMessage = new JLabel(Messages.getString("ClientGUI.bingMessage"));
+        JLabel lblClientSettings = new JLabel(Messages.getString("ClientGUI.bingClientSettings"));
+
+        int padding;
+        // Action listeners
+        launchSettings.addActionListener(e -> showSettingsSubPage(CommonSettingsPane.SETTINGS_AUDIO));
+        playMyTurnSound.addActionListener(e -> audioService.playSoundNoMute(SoundType.BING_MY_TURN));
+
+        // Set alignments
+        lblPlay.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
+        launchSettings.setAlignmentX(Component.RIGHT_ALIGNMENT);
+        lblMessage.setAlignmentX(Component.LEFT_ALIGNMENT);
+        chkSoundNagSuppress.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblClientSettings.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Audio button panel
+        padding = UIUtil.scaleForGUI(5);
+        JPanel playSoundPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, padding, 0));
+        playSoundPanel.add(lblPlay);
+        playSoundPanel.add(playMyTurnSound);
+
+        // Client settings label panel
+        JPanel clientSettingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        clientSettingsPanel.add(lblClientSettings);
+
+        // Client Settings button panel
+        JPanel settingsButtonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        settingsButtonPanel.add(launchSettings);
+
+        // Panel alignment
+        playSoundPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        settingsButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        playSoundPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        settingsButtonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        clientSettingsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // Audio sub-panel
+        JPanel audioPanel = new JPanel();
+        audioPanel.setLayout(new BoxLayout(audioPanel, BoxLayout.Y_AXIS));
+
+        padding = UIUtil.scaleForGUI(10);
+        audioPanel.setBorder(
+                BorderFactory.createCompoundBorder(
+                        BorderFactory.createEtchedBorder(),
+                        BorderFactory.createEmptyBorder(padding, padding, padding, padding)
+                )
+        );
+
+        audioPanel.add(playSoundPanel);
+        padding = UIUtil.scaleForGUI(20);
+        audioPanel.add(Box.createVerticalStrut(padding));
+        audioPanel.add(clientSettingsPanel);
+        padding = UIUtil.scaleForGUI(5);
+        audioPanel.add(Box.createVerticalStrut(padding));
+        audioPanel.add(settingsButtonPanel);
+
+        // Main content panel
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        panel.add(lblMessage);
+        padding = UIUtil.scaleForGUI(10);
+        panel.add(Box.createVerticalStrut(padding));
+        panel.add(audioPanel);
+        panel.add(Box.createVerticalStrut(padding));
+        panel.add(chkSoundNagSuppress);
+
+        int response = JOptionPane.showConfirmDialog(null,
+                                                     panel,
+              Messages.getString("ClientGUI.bingTitle"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.QUESTION_MESSAGE);
+        boolean soundPrompt = (response == JOptionPane.YES_OPTION);
+        boolean currentSetting = GUIPreferences.getInstance().getSoundMuteMyTurn();
+        if (soundPrompt != currentSetting) {
+            GUIPreferences.getInstance().setSoundMuteMyTurn(soundPrompt);
+        }
+        if (chkSoundNagSuppress.isSelected()) {
+            GUIPreferences.getInstance()
+                          .setSoundPromptSuppress(soundPrompt);
+        }
+    }
+
     public void bingMyTurn() {
+        if (!GUIP.getSoundPromptSuppress() && firstBing) {
+            promptForSound();
+            firstBing = false;
+        }
         audioService.playSound(SoundType.BING_MY_TURN);
     }
 
@@ -3117,6 +3278,38 @@ public class ClientGUI extends AbstractClientGUI
                   && ((!entity.isDeployed()) || (prefChange))) {
                 entity.setWeaponSortOrder(GUIP.getDefaultWeaponSortOrder());
                 client.sendEntityWeaponOrderUpdate(entity);
+            }
+        }
+    }
+
+    /**
+     * Applies the player's sensor preference to their own units, picking for each one the first sensor family on the
+     * preference list that the unit actually carries a sensor for.
+     *
+     * <p>Example: the preference lists Active Probe, then Infrared, then Magscan. A Marauder MAD-3R carries Mek
+     * Radar, Mek IR, Mek Magscan and Mek Seismic but no probe, so it deploys on Mek IR instead of the Mek Radar it
+     * would otherwise have defaulted to. A Cicada CDA-3M carrying a Beagle Active Probe still deploys on the
+     * probe.</p>
+     *
+     * <p>Units belonging to anyone else are left alone, bots included, so this never changes what Princess or CASPAR
+     * do. A unit whose sensor the player picked by hand is left alone as well, in the lobby or in round zero.</p>
+     *
+     * <p>A unit that has already deployed is never touched. Changing the preference part-way through a game switches
+     * the sensors of reinforcements still waiting to come on, and nothing that is already on the board.</p>
+     */
+    private void setSensorPrefs() {
+        List<SensorFamily> preferenceOrder = GUIP.getSensorPreferenceOrder();
+        Player localPlayer = client.getLocalPlayer();
+        for (Entity entity : client.getGame().getEntitiesVector()) {
+            if (!entity.getOwner().equals(localPlayer)
+                  || entity.hasCustomSensorChoice()
+                  || entity.isDeployed()) {
+                continue;
+            }
+            int preferredSensorIndex = SensorFamily.preferredSensorIndex(entity, preferenceOrder);
+            if (preferredSensorIndex >= 0) {
+                entity.setNextSensor(entity.getSensors().elementAt(preferredSensorIndex));
+                client.sendSensorChange(entity.getId(), preferredSensorIndex);
             }
         }
     }
@@ -3270,6 +3463,7 @@ public class ClientGUI extends AbstractClientGUI
 
             if (phase.isDeployment()) {
                 setWeaponOrderPrefs(false);
+                setSensorPrefs();
             }
 
             menuBar.setPhase(phase);
@@ -3451,7 +3645,7 @@ public class ClientGUI extends AbstractClientGUI
                     Object[] options;
                     MovePath[] paths;
                     int optionType;
-                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true) 
+                    if (Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepForward, true)
                           && Game.rulesManager.getRulesMovement().isDominoMoveLegal(direction, entity, stepBackward,
                           false)) {
                         options = new Object[3];
@@ -4006,7 +4200,7 @@ public class ClientGUI extends AbstractClientGUI
             // An experimental bot that fails to stand up must not leave the seat empty: the player asked
             // for a bot in that slot, so Princess takes it instead. Guarded like the first attempt, so a
             // failure here degrades to an empty seat and a log line rather than a crash.
-            if ((null == botClient) && (AIType.PRINCESS != aiType)) {
+            if ((botClient == null) && (AIType.PRINCESS != aiType)) {
                 message.append(" Falling back to Princess. ");
                 try {
                     botClient = util.replaceGhostWithBot(AIType.PRINCESS, newBotSettings.get(ghostName),
@@ -4080,13 +4274,17 @@ public class ClientGUI extends AbstractClientGUI
                 setWeaponOrderPrefs(true);
                 getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
             }
+            case GUIPreferences.SENSOR_PREFERENCE_ORDER -> {
+                setSensorPrefs();
+                getUnitDisplay().displayEntity(getUnitDisplay().getCurrentEntity());
+            }
             case GUIPreferences.SOUND_BING_FILENAME_CHAT,
                  GUIPreferences.SOUND_BING_FILENAME_MY_TURN,
                  GUIPreferences.SOUND_BING_FILENAME_OTHERS_TURN -> audioService.loadSoundFiles();
             case GUIPreferences.MASTER_VOLUME -> audioService.setVolume();
             case GUIPreferences.BOT_COMMANDS_ENABLED, GUIPreferences.BOT_COMMANDS_LOCATION ->
-                  // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
-                  // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
+                // Route through maybeShowBotCommands() so the phase rules (non-board phases never show the panel)
+                // are enforced consistently, whether the change came from the menu, the hotkey, or a phase change.
                   maybeShowBotCommands();
         }
     }

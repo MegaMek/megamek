@@ -114,13 +114,13 @@ public class TeleMissileHandler extends CapitalMissileBayHandler {
             }
             int shots = bayW.getCurrentShots();
             for (int i = 0; i < shots; i++) {
-                if (null == bayWAmmo
-                      || bayWAmmo.getUsableShotsLeft() < 1) {
+                if (bayWAmmo == null
+                    || bayWAmmo.getUsableShotsLeft() < 1) {
                     // try loading something else
                     weaponEntity.loadWeaponWithSameAmmo(bayW);
                     bayWAmmo = bayW.getLinkedAmmo();
                 }
-                if (null != bayWAmmo) {
+                if (bayWAmmo != null) {
                     bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                 }
             }

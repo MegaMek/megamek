@@ -37,6 +37,7 @@ package megamek.common.weapons.artillery;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -73,7 +74,7 @@ public class Thumper extends ArtilleryWeapon {
         svSlots = 7;
         bv = 43;
         cost = 187500;
-        rulesRefs = "96, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 96);
         techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.C)

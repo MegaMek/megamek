@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.laser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -81,7 +82,7 @@ public class InfantrySupportERHeavyLaserWeapon extends InfantryWeapon {
         mediumRange = 12;
         longRange = 18;
         extremeRange = 24;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         tonnage = .250;
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3054, 3060, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)

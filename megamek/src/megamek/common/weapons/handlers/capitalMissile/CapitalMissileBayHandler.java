@@ -315,7 +315,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
         for (WeaponMounted bayW : weapon.getBayWeapons()) {
             // check the currently loaded ammo
             AmmoMounted bayWAmmo = bayW.getLinkedAmmo();
-            if (null == bayWAmmo || bayWAmmo.getUsableShotsLeft() < 1) {
+            if (bayWAmmo == null || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 attackingEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
@@ -366,13 +366,13 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                 if (current_av > 0) {
                     int shots = bayW.getCurrentShots();
                     for (int i = 0; i < shots; i++) {
-                        if (null == bayWAmmo
-                              || bayWAmmo.getUsableShotsLeft() < 1) {
+                        if (bayWAmmo == null
+                            || bayWAmmo.getUsableShotsLeft() < 1) {
                             // try loading something else
                             attackingEntity.loadWeaponWithSameAmmo(bayW);
                             bayWAmmo = bayW.getLinkedAmmo();
                         }
-                        if (null != bayWAmmo) {
+                        if (bayWAmmo != null) {
                             bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
                         }
                     }
@@ -768,7 +768,7 @@ public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
                     if (vPhaseReport.size() > replaceReport) {
                         // fix the reporting - is there a better way to do this
                         Report currentReport = vPhaseReport.get(replaceReport);
-                        while (null != currentReport) {
+                        while (currentReport != null) {
                             vPhaseReport.remove(replaceReport);
                             if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
                                 currentReport = null;

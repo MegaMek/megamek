@@ -34,7 +34,9 @@
 
 package megamek.common.units;
 
+import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -43,6 +45,7 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
@@ -65,6 +68,10 @@ import megamek.logging.MMLogger;
 public abstract class Infantry extends Entity {
 
     private static final MMLogger LOGGER = MMLogger.create(Infantry.class);
+
+    /** The phases in which a unit committed to an infantry action takes no turn, while the option is on. */
+    private static final Set<GamePhase> PHASES_SAT_OUT_BY_COMMITTED_UNITS = EnumSet.of(GamePhase.MOVEMENT,
+          GamePhase.TARGETING, GamePhase.OFFBOARD, GamePhase.FIRING, GamePhase.PHYSICAL);
 
     protected int squadCount = 1;
     protected int squadSize = 1;
@@ -454,9 +461,41 @@ public abstract class Infantry extends Entity {
             return false;
         } else if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             return false;
+        } else if (isHeldInPlaceByInfantryAction(phase)) {
+            return false;
         } else {
             return super.isEligibleFor(phase);
         }
+    }
+
+    /**
+     * Whether an infantry vs. infantry action (TO:AR p. 169) keeps this unit from taking a turn in the given phase.
+     * The book gives a committed unit one way out of the fight, a withdrawal with a last roll at half damage, and
+     * the End Phase roll never asks where the combatants stand; a unit free to walk out in the Movement Phase would
+     * skip that roll and go on fighting from across the map. So a committed unit takes no movement, targeting,
+     * off-board, weapon attack or physical attack turn. It still declares in the Pre-End Declarations phase, which is
+     * how it withdraws.
+     *
+     * <p>An interpretation, so it sits behind a game option, on by default.</p>
+     *
+     * @param phase the phase being asked about
+     *
+     * @return {@code true} if this unit is committed to an action and the phase is one it sits out
+     */
+    public boolean isHeldInPlaceByInfantryAction(GamePhase phase) {
+        boolean isCommitted = getInfantryCombatTargetId() != Entity.NONE;
+        if (!isCommitted) {
+            return false;
+        }
+        boolean isPhaseSatOut = PHASES_SAT_OUT_BY_COMMITTED_UNITS.contains(phase);
+        boolean isRuleInEffect = gameOptions().booleanOption(
+              OptionsConstants.ADVANCED_COMBAT_INFANTRY_ACTION_COMMITTED_UNITS_HOLD);
+        boolean isHeld = isPhaseSatOut && isRuleInEffect;
+        if (isHeld) {
+            LOGGER.trace("[InfantryAction] {} takes no {} turn: committed to the action in building {}",
+                  getShortName(), phase, getInfantryCombatTargetId());
+        }
+        return isHeld;
     }
 
     @Override
@@ -841,6 +880,14 @@ public abstract class Infantry extends Entity {
     }
 
     @Override
+    public boolean canDeclareInfantryAction() {
+        if ((game == null) || !game.hasBoardLocationOf(this)) {
+            return false;
+        }
+        return InfantryActionStrengths.hasStake(game, this);
+    }
+
+    @Override
     public boolean canReinforceInfantryVsInfantry() {
         if (!game.hasBoardLocationOf(this)) {
             return false; // not on board?
@@ -883,5 +930,10 @@ public abstract class Infantry extends Entity {
      */
     public boolean canExitVTOLWithGliderWings() {
         return false;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

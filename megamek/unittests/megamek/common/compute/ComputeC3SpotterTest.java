@@ -37,18 +37,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mockStatic;
-
-import megamek.common.Hex;
-import megamek.common.planetaryConditions.Light;
-import org.junit.jupiter.api.AfterEach;
-import org.mockito.MockedStatic;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import megamek.common.ECMInfo;
+import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.board.Board;
@@ -57,14 +53,17 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
+import megamek.common.planetaryConditions.Light;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 /**
  * Tests for the C3 spotter search, guarding the closest-connected-spotter selection and the precomputed-ECM overload
@@ -105,7 +104,7 @@ class ComputeC3SpotterTest {
 
         mockConditions = mock(PlanetaryConditions.class);
         when(mockConditions.getLight()).thenReturn(Light.DAY);
-        
+
         mockGame = mock(Game.class);
         when(mockGame.getBoard()).thenReturn(mockBoard);
         when(mockGame.getBoard(anyInt())).thenReturn(mockBoard);
@@ -119,7 +118,7 @@ class ComputeC3SpotterTest {
         when(mockGame.onConnectedBoards(any(Entity.class), any(Targetable.class))).thenReturn(true);
         when(mockGame.onTheSameBoard(any(Entity.class), any(Entity.class))).thenReturn(true);
         when(mockGame.hasBoardLocationOf(any(Targetable.class))).thenReturn(true);
-        when(mockGame.hasBoardLocation(any(Coords.class),anyInt())).thenReturn(true);
+        when(mockGame.hasBoardLocation(any(Coords.class), anyInt())).thenReturn(true);
         when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
 
         mockLosEffects = mock(LosEffects.class);

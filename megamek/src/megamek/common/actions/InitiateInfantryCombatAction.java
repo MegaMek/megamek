@@ -33,6 +33,10 @@
 package megamek.common.actions;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
 
@@ -42,6 +46,9 @@ import megamek.common.units.Entity;
  */
 public class InitiateInfantryCombatAction extends InfantryCombatAction {
 
+    /** The friendly units in the building that attack alongside the initiator, by id; never {@code null}. */
+    private final List<Integer> committedUnitIds;
+
     /**
      * Creates a new initiate infantry combat action.
      *
@@ -49,7 +56,27 @@ public class InitiateInfantryCombatAction extends InfantryCombatAction {
      * @param targetId the target entity ID (AbstractBuildingEntity)
      */
     public InitiateInfantryCombatAction(int entityId, int targetId) {
+        this(entityId, targetId, List.of());
+    }
+
+    /**
+     * Creates an initiation that commits other friendly units in the building with the initiator (TO:AR p. 169: the
+     * whole force present attacks, less what the player holds back).
+     *
+     * @param entityId         the initiating infantry entity ID
+     * @param targetId         the target entity ID (AbstractBuildingEntity)
+     * @param committedUnitIds the other units' ids; copied
+     */
+    public InitiateInfantryCombatAction(int entityId, int targetId, List<Integer> committedUnitIds) {
         super(entityId, targetId, false);
+        this.committedUnitIds = new ArrayList<>(committedUnitIds);
+    }
+
+    /**
+     * @return the ids of the friendly units committed with the initiator, empty when it attacks alone
+     */
+    public List<Integer> getCommittedUnitIds() {
+        return Collections.unmodifiableList(committedUnitIds);
     }
 
     @Override

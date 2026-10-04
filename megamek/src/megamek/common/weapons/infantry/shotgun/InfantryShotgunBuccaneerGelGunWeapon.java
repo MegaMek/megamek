@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.shotgun;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,7 @@ public class InfantryShotgunBuccaneerGelGunWeapon extends InfantryWeapon {
         ammoWeight = 0.00085;
         ammoCost = 20;
         shots = 15;
-        rulesRefs = "269, ATOW";
+        rulesRefs = rulesRefs(SourceBookCode.ATOW, 269);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3030, 3035, 3057, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FW)

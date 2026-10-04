@@ -37,6 +37,7 @@ import static megamek.client.ui.entityreadout.TableElement.JUSTIFIED_LEFT;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -102,6 +103,7 @@ class GeneralEntityReadout implements EntityReadout {
 
     private boolean initialized = false;
 
+    private final NumberFormat costFormatter;
     private final DecimalFormat dFormatter;
     private final List<ViewElement> headerSection = new ArrayList<>();
     private final List<ViewElement> techLevel = new ArrayList<>();
@@ -134,6 +136,9 @@ class GeneralEntityReadout implements EntityReadout {
         DecimalFormatSymbols unusualSymbols = new DecimalFormatSymbols();
         unusualSymbols.setDecimalSeparator('.');
         unusualSymbols.setGroupingSeparator(',');
+        costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
         dFormatter = new DecimalFormat("#,###", unusualSymbols);
     }
 
@@ -324,7 +329,7 @@ class GeneralEntityReadout implements EntityReadout {
         double cost = (useAlternateCost && entity.getAlternateCost() > 0)
               ? entity.getAlternateCost()
               : entity.getCost(false);
-        return new LabeledLine(Messages.getString("MekView.Cost"), dFormatter.format(cost) + " C-bills");
+        return new LabeledLine(Messages.getString("MekView.Cost"), costFormatter.format(cost) + " C-bills");
     }
 
     protected ViewElement createBVElement() {

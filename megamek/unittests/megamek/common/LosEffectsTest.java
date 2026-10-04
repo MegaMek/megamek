@@ -56,6 +56,9 @@ import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesManager;
+import megamek.common.rules.core.CoreRulesManager;
+import megamek.common.rules.totalwarfare.TWRulesManager;
 import megamek.common.units.BipedMek;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Crew;
@@ -63,7 +66,9 @@ import megamek.common.units.CrewType;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
+import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -200,6 +205,15 @@ public class LosEffectsTest extends GameBoardTestCase {
               hex 0103 0 "geyser:1" ""
               hex 0104 0 "" ""
               hex 0105 0 "" ""
+              end"""
+        );
+
+        // Board of Depth 2 water at level 0, for LOS across the water surface (bug #9113)
+        initializeBoard("01_BY_03_DEEP_WATER", """
+              size 1 3
+              hex 0101 0 "water:2" ""
+              hex 0102 0 "water:2" ""
+              hex 0103 0 "water:2" ""
               end"""
         );
 
@@ -960,6 +974,135 @@ public class LosEffectsTest extends GameBoardTestCase {
             assertFalse(spottingCanSee, "A plain VTOL gets no +1, so the level-3 hill still blocks it");
             assertEquals(directCanSee, spottingCanSee,
                   "The spotting flag must not change LOS for a unit without a Mast Mount");
+        }
+    }
+
+    /**
+     * TW p.102: units above the water, such as hovercraft, never have LOS to a submerged unit, even in the same hex.
+     * Surface naval vessels and WiGEs landed on the water (naval for LOS, TW p.55) keep their LOS (Underwater Line of
+     * Sight Table, TW p.108). Issue #9113.
+     */
+    @Nested
+    @DisplayName("Surface to submerged LOS Tests (Issue #9113)")
+    class SurfaceToSubmergedLosTests {
+        private static final Coords SURFACE_POSITION = new Coords(0, 0);
+        private static final Coords SUBMERGED_POSITION = new Coords(0, 1);
+
+        private RulesManager originalRulesManager;
+
+        @BeforeEach
+        void setUp() {
+            setBoard("01_BY_03_DEEP_WATER");
+            GameOptions mockGameOptions = mock(GameOptions.class);
+            game.setOptions(mockGameOptions);
+            when(mockGameOptions.booleanOption(anyString())).thenReturn(false);
+            originalRulesManager = Game.rulesManager;
+            Game.rulesManager = new TWRulesManager();
+        }
+
+        @AfterEach
+        void tearDown() {
+            Game.rulesManager = originalRulesManager;
+        }
+
+        private Tank createSurfaceVehicle(EntityMovementMode movementMode, Coords position) {
+            Tank vehicle = new Tank();
+            vehicle.setGame(game);
+            vehicle.setChassis("Surface");
+            vehicle.setModel(movementMode.name());
+            vehicle.setMovementMode(movementMode);
+            vehicle.setCrew(new Crew(CrewType.CREW));
+            vehicle.setId(1);
+            vehicle.setOwnerId(player.getId());
+            vehicle.setPosition(position);
+            vehicle.setElevation(0);
+            game.addEntity(vehicle);
+            return vehicle;
+        }
+
+        private Mek createSubmergedMek(Coords position) {
+            Mek submergedMek = new BipedMek();
+            submergedMek.setGame(game);
+            submergedMek.setChassis("Submerged");
+            submergedMek.setModel("SUB");
+            submergedMek.setCrew(new Crew(CrewType.SINGLE));
+            submergedMek.setId(2);
+            submergedMek.setOwnerId(player.getId());
+            submergedMek.setPosition(position);
+            // Standing on the bottom of Depth 2 water: fully submerged
+            submergedMek.setElevation(-2);
+            game.addEntity(submergedMek);
+            return submergedMek;
+        }
+
+        @Test
+        @DisplayName("a hovercraft on the water has no LOS to a submerged Mek")
+        void hovercraftCannotSeeSubmergedMek() {
+            Tank hovercraft = createSurfaceVehicle(EntityMovementMode.HOVER, SURFACE_POSITION);
+            Mek submergedMek = createSubmergedMek(SUBMERGED_POSITION);
+
+            LosEffects lineOfSight = LosEffects.calculateLOS(game, hovercraft, submergedMek);
+
+            assertFalse(lineOfSight.canSee(), "A hovercraft is above the water and cannot see a submerged unit");
+            assertTrue(lineOfSight.isBlockedByWater(), "The water surface should be what blocks the LOS");
+        }
+
+        @Test
+        @DisplayName("a submerged Mek has no LOS to a hovercraft on the water")
+        void submergedMekCannotSeeHovercraft() {
+            Tank hovercraft = createSurfaceVehicle(EntityMovementMode.HOVER, SURFACE_POSITION);
+            Mek submergedMek = createSubmergedMek(SUBMERGED_POSITION);
+
+            LosEffects lineOfSight = LosEffects.calculateLOS(game, submergedMek, hovercraft);
+
+            assertFalse(lineOfSight.canSee(), "Depth 2 water blocks LOS to and from a submerged Mek");
+            assertTrue(lineOfSight.isBlockedByWater(), "The water surface should be what blocks the LOS");
+        }
+
+        @Test
+        @DisplayName("a hovercraft has no LOS to a submerged Mek in its own hex")
+        void hovercraftCannotSeeSubmergedMekInSameHex() {
+            Tank hovercraft = createSurfaceVehicle(EntityMovementMode.HOVER, SURFACE_POSITION);
+            Mek submergedMek = createSubmergedMek(SURFACE_POSITION);
+
+            LosEffects lineOfSight = LosEffects.calculateLOS(game, hovercraft, submergedMek);
+
+            assertFalse(lineOfSight.canSee(), "TW p.102: no LOS even when both occupy the same water hex");
+        }
+
+        @Test
+        @DisplayName("a surface naval vessel keeps its LOS to a submerged Mek")
+        void surfaceNavalVesselCanSeeSubmergedMek() {
+            Tank navalVessel = createSurfaceVehicle(EntityMovementMode.NAVAL, SURFACE_POSITION);
+            Mek submergedMek = createSubmergedMek(SUBMERGED_POSITION);
+
+            LosEffects lineOfSight = LosEffects.calculateLOS(game, navalVessel, submergedMek);
+
+            assertTrue(lineOfSight.canSee(),
+                  "Underwater LOS Table: a surface naval attacker can see an underwater target");
+        }
+
+        @Test
+        @DisplayName("a WiGE landed on the water is naval for LOS and keeps its LOS to a submerged Mek")
+        void landedWigeCanSeeSubmergedMek() {
+            Tank landedWige = createSurfaceVehicle(EntityMovementMode.WIGE, SURFACE_POSITION);
+            Mek submergedMek = createSubmergedMek(SUBMERGED_POSITION);
+
+            LosEffects lineOfSight = LosEffects.calculateLOS(game, landedWige, submergedMek);
+
+            assertTrue(lineOfSight.canSee(), "TW p.55: a WiGE landed on water is treated as a naval vessel for LOS");
+        }
+
+        @Test
+        @DisplayName("Core rules: a hovercraft cannot shoot across the water line at a submerged Mek")
+        void hovercraftShotBlockedByWaterUnderCoreRules() {
+            Game.rulesManager = new CoreRulesManager();
+            Tank hovercraft = createSurfaceVehicle(EntityMovementMode.HOVER, SURFACE_POSITION);
+            Mek submergedMek = createSubmergedMek(SUBMERGED_POSITION);
+
+            LosEffects lineOfSight = LosEffects.calculateLOS(game, hovercraft, submergedMek);
+
+            assertTrue(lineOfSight.isShotBlockedByWater(), "Core p.62: attacks cannot cross the water line");
         }
     }
 }

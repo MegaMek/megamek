@@ -33,15 +33,14 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import java.util.Vector;
+
 import megamek.common.HitData;
 import megamek.common.Report;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rules.RulesArmor;
-import megamek.common.units.Entity;
 import megamek.server.totalWarfare.TWDamageManager;
-
-import java.util.Vector;
 
 public class TWRulesArmor extends RulesArmor {
     /**
@@ -73,13 +72,13 @@ public class TWRulesArmor extends RulesArmor {
 
     /**
      * {@inheritDoc}
-     * Impact Resistant Armor breach. 
+     * Impact Resistant Armor breach.
      */
     @Override
     public int impactArmorBreach() {
         return 1;
     }
-    
+
     /**
      * Impact resistant armor.
      * Impact armor reduces crit rolls.
@@ -88,7 +87,7 @@ public class TWRulesArmor extends RulesArmor {
      */
     @Override
     public int impactArmorMod() {return 1;}
-    
+
     /**
      * Does a lance penetrate the armor.
      * Hardened and ferro lam prevent penetration.
@@ -154,7 +153,11 @@ public class TWRulesArmor extends RulesArmor {
      * @return the reduced damage amount
      */
     @Override
-    public int reduceImpactDamage(int entityId,HitData hit, int damage, Vector<Report> reportVec, int damageType) {
+    public int reduceImpactDamage(int entityId,
+                                  HitData hit,
+                                  int damage,
+                                  Vector<Report> reportVec,
+                                  HitDamageType damageType) {
         // As long as there is even 1 point of armor in this location, reduce _all_ damage
         // to 2 points for every whole 3 points applied (IntOps pg 88).
         damage = Math.max(1, (2 * (damage / 3)) + (damage % 3));

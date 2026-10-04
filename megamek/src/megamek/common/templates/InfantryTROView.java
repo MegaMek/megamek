@@ -87,7 +87,7 @@ public class InfantryTROView extends TROView {
         String armorName;
         if (inf.hasArmor()) {
             EquipmentType armor = inf.getArmorKit();
-            if (null != armor) {
+            if (armor != null) {
                 armorName = armor.getName();
             } else {
                 armorName = inf.getCustomArmorName() != null ? inf.getCustomArmorName()

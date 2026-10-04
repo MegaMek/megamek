@@ -33,6 +33,7 @@
 package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -43,6 +44,7 @@ import java.util.EnumSet;
 
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
@@ -195,5 +197,20 @@ class AmmoTypeTest {
         // Normal weapon CAN switch to ammo with different munition type (M_INFERNO)
         assertTrue(AmmoType.canSwitchToAmmo(mockNormalWeapon, mockInferno4AmmoType),
               "Normal weapon should allow switching to ammo with different munition type");
+    }
+
+    @Test
+    void clanSemiGuidedAmmoIsUnofficial() {
+        EquipmentType.initializeTypes();
+
+        // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
+        for (String internalName : new String[] {
+              "Clan Ammo ProtoMech LRM-12 (Clan) Semi-Guided",
+              "Clan Ammo ProtoMech LRM-12 (Clan) Semi-Guided w/ Incendiary"
+        }) {
+            EquipmentType ammoType = EquipmentType.get(internalName);
+            assertNotNull(ammoType, internalName + " should be generated");
+            assertTrue(ammoType.isUnofficial(), internalName + " should be unofficial");
+        }
     }
 }

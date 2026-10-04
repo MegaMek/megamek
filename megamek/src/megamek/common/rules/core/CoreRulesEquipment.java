@@ -33,6 +33,12 @@ package megamek.common.rules.core;
  * affiliated with Microsoft.
  */
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.board.Coords;
@@ -45,12 +51,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.rules.RulesEquipment;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
 
 public class CoreRulesEquipment extends RulesEquipment {
     /**
@@ -90,20 +90,22 @@ public class CoreRulesEquipment extends RulesEquipment {
 
     /**
      * {@inheritDoc}
-     * Get the masc failure roll from the escalating chart
+     * Get the masc failure roll from the escalating chart.
+     * The level sent starts at 0, not 1. need to adjust
      */
     @Override
     public int getMascFailure(int nLevel) {
+        nLevel += 1;
         return Game.rulesManager.getRulesCharts().escalatingFailure(nLevel);
     }
 
     /**
      * {@inheritDoc}
-     * Blue Shield uses escalating failure for rounds after 6. Core p.207
+     * Blue Shield uses escalating failure for rounds starting at round 6. Core p.207
      */
     @Override
     public int getBlueShieldTarget(int blueShieldRounds) {
-        return Game.rulesManager.getRulesCharts().escalatingFailure(blueShieldRounds - 6);
+        return Game.rulesManager.getRulesCharts().escalatingFailure(blueShieldRounds - 5);
     }
 
     /**
@@ -114,7 +116,7 @@ public class CoreRulesEquipment extends RulesEquipment {
     public int radicalHeatSinkSuccessTarget(int consecutiveRounds) {
         return Game.rulesManager.getRulesCharts().escalatingFailure(consecutiveRounds);
     }
-    
+
     /**
      * {@inheritDoc}
      * ECM only affects if the target or source is under the bubble. Not intervening. Core p.200
@@ -124,7 +126,7 @@ public class CoreRulesEquipment extends RulesEquipment {
         ArrayList<Coords> coords = new ArrayList<>();
         coords.add(a);
         coords.add(b);
-        
+
         return coords;
     }
 
@@ -142,7 +144,7 @@ public class CoreRulesEquipment extends RulesEquipment {
         // all ECMs other than these two are the standard 6 hex range
         return 6;
     }
-    
+
     /**
      * {@inheritDoc}
      * Sensor ranges for probes. Core p.197 and 201 provide guidance due to how Watchdog is changed
@@ -171,7 +173,7 @@ public class CoreRulesEquipment extends RulesEquipment {
             default -> 0;
         };
     }
-    
+
     /**
      * {@inheritDoc}
      * Active probes are affected by ECM other than bloodhound. Core p.200
@@ -189,7 +191,7 @@ public class CoreRulesEquipment extends RulesEquipment {
         return !checkECM ||
               !ComputeECM.isAffectedByECM(entity, position, position);
     }
-    
+
     /**
      * {@inheritDoc}
      * No init bonus for command console or tech officer Core p.203, 236

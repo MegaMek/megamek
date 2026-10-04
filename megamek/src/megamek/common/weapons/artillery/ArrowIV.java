@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -69,7 +70,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         super();
 
         name = "Arrow IV";
-        // This class should not set the internal name! 
+        // This class should not set the internal name!
         // The exposed Arrow IV is in CLArrowIV and ISArrowIV
         heat = 10;
         rackSize = 20;
@@ -78,7 +79,11 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         cost = 450000;
         this.flags = flags.or(F_MISSILE).or(F_ARROW_IV);
         this.missileArmor = 20;
-        rulesRefs = "96, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 96),
+              rulesRef(SourceBookCode.BMM, 97),
+              rulesRef(SourceBookCode.CORE, 182)
+        );
     }
 
     @Override

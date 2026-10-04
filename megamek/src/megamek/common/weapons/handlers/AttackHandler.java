@@ -131,7 +131,7 @@ public interface AttackHandler {
           int nDamage) {
         // some buildings scale remaining damage that is not absorbed
         // TODO: this isn't quite right for castles brian
-        if ((null != bldg) && !targetStickingOutOfBuilding && (entityTarget.isInBuilding())) {
+        if ((bldg != null) && !targetStickingOutOfBuilding && (entityTarget.isInBuilding())) {
             nDamage = (int) Math.floor(bldg.getDamageToScale() * nDamage);
         }
         return nDamage;

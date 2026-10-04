@@ -172,7 +172,7 @@ public class TestAero extends TestEntity {
             }
             for (Bay bay : aero.getTransportBays()) {
                 Quarters q = getQuartersForBay(bay);
-                if (null != q) {
+                if (q != null) {
                     sizes.merge(q, (int) bay.getCapacity(), Integer::sum);
                 }
             }
@@ -512,7 +512,7 @@ public class TestAero extends TestEntity {
         // Conventional fighters with fusion engines require extra shielding.
         // Per TacOps fission engines require extra shielding as well.
         if (getEntity().hasETypeFlag(Entity.ETYPE_CONV_FIGHTER)
-              && (null != getEntity().getEngine())
+            && (getEntity().getEngine() != null)
               && (getEntity().getEngine().isFusion() || getEntity().getEngine().hasFlag(Engine.FISSION))) {
             wt = ceil(wt * 1.5, Ceil.HALF_TON);
         }
@@ -1357,6 +1357,21 @@ public class TestAero extends TestEntity {
      */
     public static int requiredGunners(Aero aero) {
         return Compute.getTotalGunnerNeeds(aero);
+    }
+
+    /**
+     * Returns the number of required officers of the entity.
+     * @param aero The entity
+     * @return The number of required officers
+     */
+    public static int requiredOfficers(Aero aero) {
+        if (aero.hasETypeFlag(Entity.ETYPE_SMALL_CRAFT)) {
+            return TestSmallCraft.requiredOfficers((SmallCraft) aero);
+        } else if (aero.hasETypeFlag(Entity.ETYPE_JUMPSHIP)) {
+            return TestAdvancedAerospace.requiredOfficers((Jumpship) aero);
+        } else {
+            return 0;
+        }
     }
 
     /**

@@ -43,16 +43,18 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
-import megamek.common.Player;
 import megamek.client.ui.dialogs.unitEditor.DamageEditorDiagram;
 import megamek.client.ui.dialogs.unitEditor.PreExistingDamageRoller;
 import megamek.client.ui.dialogs.unitEditor.UnitDamageControls;
@@ -62,9 +64,12 @@ import megamek.client.ui.preferences.JSplitPanePreference;
 import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.util.UIUtil;
+import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.damage.PreExistingDamageApplier;
 import megamek.common.compute.damage.PreExistingDamageLevel;
+import megamek.common.enums.ForcedWithdrawalOrder;
+import megamek.common.equipment.Mounted;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;
 
@@ -91,6 +96,13 @@ public class UnitEditorDialog extends JDialog {
     private static final String WITHDRAW_UNIT_COMMAND = "/rescue %d";
     /** Hands the unit to another player, by unit id then player id. */
     private static final String CHANGE_OWNER_COMMAND = "/changeOwner %d %d";
+    /** Sets off one piece of equipment as a critical hit would, by unit id then equipment number. */
+    private static final String EXPLODE_EQUIPMENT_COMMAND = "/explode %d %d";
+    /** Gives a bot unit a standing Forced Withdrawal order, by unit id then order name. */
+    private static final String WITHDRAW_ORDER_COMMAND = "/withdrawOrder %d %s";
+
+    /** The Forced Withdrawal order chooser; only present for a bot's unit in the gamemaster's editor in play. */
+    private JComboBox<ForcedWithdrawalOrder> comboForcedWithdrawalOrder;
 
     /** Guards the owner chooser against the listener firing again while its value is put back after a cancel. */
     private boolean reassigningOwner;
@@ -179,11 +191,15 @@ public class UnitEditorDialog extends JDialog {
             panMain.add(panelBuilder.initInfantryPanel(), gridBagConstraints);
         } else {
             panelBuilder.build();
+            addForcedWithdrawalOrder();
+            panelBuilder.addEjectionColumn();
+            // the owner and the modifiers share the general panel's gamemaster column, which has to come after
+            // every other general row; the owner first, at the top of the column
             addOwnerReassign();
-            // after the owner row, so the modifiers form the general panel's last column instead of trapping the
-            // owner chooser in the middle of their column
             panelBuilder.addSkillModifiersColumn();
             diagram = new DamageEditorDiagram(entity, controls);
+            wireDamageSummaryLinks();
+            wireExplodeButtons();
             GridBagConstraints gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 0;
@@ -243,6 +259,58 @@ public class UnitEditorDialog extends JDialog {
         // out above; centering afterwards would throw the remembered position away.
         setLocationRelativeTo(parent);
         setPreferences();
+    }
+
+    /**
+     * Makes each line of the damage summary open the panel of the location it names, so a gamemaster
+     * gets from "Rotary AC/5 (RA): Jammed" to the right arm's controls in one click.
+     */
+    private void wireDamageSummaryLinks() {
+        for (UnitDamageControls.EquipmentStateLink link : controls.equipmentStateLinks) {
+            link.label().addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent event) {
+                    diagram.locationSelected(link.location());
+                }
+            });
+        }
+    }
+
+    /** Makes each Explode button ask for confirmation and then have the server set the equipment off. */
+    private void wireExplodeButtons() {
+        for (Map.Entry<Integer, JButton> explodeButton : controls.explodeButtons.entrySet()) {
+            explodeButton.getValue().addActionListener(event -> explodeEquipment(explodeButton.getKey()));
+        }
+    }
+
+    /**
+     * Has the server explode the given equipment as a critical hit would, after the gamemaster confirms. Like
+     * Destroy Unit this is a server act, not an edit: the command goes out and the dialog closes without
+     * committing its other edits, since the explosion changes the very values they would overwrite.
+     */
+    private void explodeEquipment(int equipmentNumber) {
+        Mounted<?> mounted = entity.getEquipment(equipmentNumber);
+        if (mounted == null) {
+            return;
+        }
+        int choice = JOptionPane.showConfirmDialog(this,
+              String.format(Messages.getString("UnitEditorDialog.explode.confirm"), mounted.getName(),
+                    entity.getDisplayName()),
+              Messages.getString("UnitEditorDialog.explode"),
+              JOptionPane.YES_NO_OPTION,
+              JOptionPane.WARNING_MESSAGE);
+        if (choice != JOptionPane.YES_OPTION) {
+            return;
+        }
+        if (client == null) {
+            LOGGER.error("Cannot explode the {} on {}: the damage editor was opened without a client",
+                  mounted.getName(), entity.getDisplayName());
+            return;
+        }
+        LOGGER.info("Exploding the {} on {} at the request of the damage editor", mounted.getName(),
+              entity.getDisplayName());
+        client.sendChat(String.format(EXPLODE_EQUIPMENT_COMMAND, entity.getId(), equipmentNumber));
+        setVisible(false);
     }
 
     /**
@@ -343,6 +411,7 @@ public class UnitEditorDialog extends JDialog {
         DamageEditSpec spec = new UnitDamageSpecBuilder(entity, controls).build();
         if (commitsThroughServer()) {
             client.sendDamageEdit(spec);
+            sendForcedWithdrawalOrderIfChanged();
         } else {
             new DamageEditApplier(entity, spec).applyToEntity();
         }
@@ -449,7 +518,63 @@ public class UnitEditorDialog extends JDialog {
             }
         });
         comboOwner.addActionListener(event -> reassignOwner(comboOwner, currentOwner));
-        panelBuilder.addLabeledRow(controls.panGeneral, Messages.getString("UnitEditorDialog.owner"), comboOwner);
+        panelBuilder.addLabeledRow(panelBuilder.gamemasterColumn(), Messages.getString("UnitEditorDialog.owner"),
+              comboOwner);
+    }
+
+    /**
+     * Adds the Forced Withdrawal order chooser to the general panel: follow the bot's rules, withdraw now, or fight to
+     * the death. Only offered in the gamemaster's editor during play, and only for a bot's unit, since a human player
+     * decides for themselves when their units withdraw. The order is sent when the dialog is confirmed.
+     */
+    private void addForcedWithdrawalOrder() {
+        if (!offerGameMasterTools || !commitsThroughServer()) {
+            return;
+        }
+        if (controls.panGeneral == null) {
+            return;
+        }
+        Player owner = entity.getOwner();
+        if ((owner == null) || !owner.isBot()) {
+            LOGGER.debug("[ForcedWithdrawal] No order chooser for {}: not controlled by a bot", entity.getDisplayName());
+            return;
+        }
+        comboForcedWithdrawalOrder = new JComboBox<>(ForcedWithdrawalOrder.values());
+        comboForcedWithdrawalOrder.setSelectedItem(entity.getForcedWithdrawalOrder());
+        comboForcedWithdrawalOrder.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected,
+                  boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof ForcedWithdrawalOrder order) {
+                    setText(Messages.getString("ForcedWithdrawalOrder." + order.name()));
+                }
+                return this;
+            }
+        });
+        comboForcedWithdrawalOrder.setToolTipText(
+              UIUtil.formatSideTooltip(Messages.getString("UnitEditorDialog.forcedWithdrawal.tooltip")));
+        panelBuilder.addLabeledRow(controls.panGeneral, Messages.getString("UnitEditorDialog.forcedWithdrawal"),
+              comboForcedWithdrawalOrder);
+    }
+
+    /**
+     * Sends the Forced Withdrawal order chosen in the dialog, through the same gamemaster command a gamemaster could
+     * type, when it differs from the one the unit already has.
+     */
+    private void sendForcedWithdrawalOrderIfChanged() {
+        if (comboForcedWithdrawalOrder == null) {
+            return;
+        }
+        if (!(comboForcedWithdrawalOrder.getSelectedItem() instanceof ForcedWithdrawalOrder chosen)) {
+            return;
+        }
+        if (chosen == entity.getForcedWithdrawalOrder()) {
+            return;
+        }
+        LOGGER.info("[ForcedWithdrawal] Ordering {} to {} at the request of the damage editor",
+              entity.getDisplayName(), chosen);
+        client.sendChat(String.format(WITHDRAW_ORDER_COMMAND, entity.getId(), chosen.name()));
     }
 
     /**

@@ -33,13 +33,6 @@
  */
 package megamek.common.commandLine;
 
-import megamek.common.RangeType;
-import megamek.common.TechConstants;
-import megamek.common.equipment.AmmoType;
-import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.WeaponType;
-import megamek.logging.MMLogger;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -47,12 +40,24 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import megamek.common.RangeType;
+import megamek.common.RulesRef;
+import megamek.common.TechConstants;
+import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.WeaponType;
+import megamek.logging.MMLogger;
+
 /**
  * Utility methods for exporting the equipment database from the command line.
  */
 class EquipmentExporter {
 
     private static final MMLogger LOGGER = MMLogger.create(EquipmentType.class);
+
+    private static String formatRulesRefs(EquipmentType equipmentType) {
+        return equipmentType.getRulesRefs().stream().map(RulesRef::toString).collect(Collectors.joining("; "));
+    }
 
     static void writeEquipmentDatabase(File f) {
         try {
@@ -195,7 +200,7 @@ class EquipmentExporter {
                 }
 
                 bufferedWriter.write(",\"");
-                bufferedWriter.write(equipmentType.getRulesRefs());
+                bufferedWriter.write(formatRulesRefs(equipmentType));
 
                 bufferedWriter.write("\",\"");
                 for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements(); ) {
@@ -299,7 +304,7 @@ class EquipmentExporter {
                 }
 
                 bufferedWriter.write(",\"");
-                bufferedWriter.write(weaponType.getRulesRefs());
+                bufferedWriter.write(formatRulesRefs(weaponType));
 
                 int minimalRange = weaponType.getMinimumRange();
                 minimalRange = (minimalRange < 0) ? -1 : minimalRange;
@@ -458,7 +463,7 @@ class EquipmentExporter {
                 }
 
                 bufferedWriter.write(",\"");
-                bufferedWriter.write(ammoType.getRulesRefs());
+                bufferedWriter.write(formatRulesRefs(ammoType));
 
                 bufferedWriter.write("\",");
                 bufferedWriter.write(Boolean.toString(ammoType.countsAsFlak()));
@@ -599,7 +604,7 @@ class EquipmentExporter {
                 }
 
                 bufferedWriter.write(",\"");
-                bufferedWriter.write(equipmentType.getRulesRefs());
+                bufferedWriter.write(formatRulesRefs(equipmentType));
 
                 bufferedWriter.write("\",\"");
                 for (Enumeration<String> names = equipmentType.getNames(); names.hasMoreElements(); ) {

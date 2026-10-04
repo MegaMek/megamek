@@ -81,7 +81,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnNormalEnum() {
-        if (null == turnNormalEnum) {
+        if (turnNormalEnum == null) {
             // Only walk through "normal" turns.
             turnNormalEnum = normal_turns.elements();
         }
@@ -92,7 +92,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnTotalEnum() {
-        if (null == turnTotalEnum) {
+        if (turnTotalEnum == null) {
             turnTotalEnum = total_turns.elements();
         }
         return turnTotalEnum;
@@ -102,7 +102,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnSSEnum() {
-        if (null == turnSSEnum) {
+        if (turnSSEnum == null) {
             // Only walk through "normal" turns.
             turnSSEnum = space_station_turns.elements();
         }
@@ -113,7 +113,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnJSEnum() {
-        if (null == turnJSEnum) {
+        if (turnJSEnum == null) {
             // Only walk through "normal" turns.
             turnJSEnum = jumpship_turns.elements();
         }
@@ -124,7 +124,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnWSEnum() {
-        if (null == turnWSEnum) {
+        if (turnWSEnum == null) {
             // Only walk through "normal" turns.
             turnWSEnum = warship_turns.elements();
         }
@@ -135,7 +135,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnDSEnum() {
-        if (null == turnDSEnum) {
+        if (turnDSEnum == null) {
             turnDSEnum = dropship_turns.elements();
         }
         return turnDSEnum;
@@ -145,7 +145,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnSCEnum() {
-        if (null == turnSCEnum) {
+        if (turnSCEnum == null) {
             // Only walk through "normal" turns.
             turnSCEnum = small_craft_turns.elements();
         }
@@ -156,7 +156,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnTelemissileEnum() {
-        if (null == turnTelemissileEnum) {
+        if (turnTelemissileEnum == null) {
             // Only walk through "normal" turns.
             turnTelemissileEnum = telemissile_turns.elements();
         }
@@ -167,7 +167,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers.
      */
     private synchronized Enumeration<ITurnOrdered> getTurnAeroEnum() {
-        if (null == turnAeroEnum) {
+        if (turnAeroEnum == null) {
             // Only walk through "normal" turns.
             turnAeroEnum = aero_turns.elements();
         }
@@ -178,7 +178,7 @@ public class TurnVectors implements Enumeration<ITurnOrdered> {
      * Helper function to access the <code>Enumeration</code> through our recorded markers for "even" turns.
      */
     private synchronized Enumeration<ITurnOrdered> getEvenEnum() {
-        if (null == evenEnum) {
+        if (evenEnum == null) {
             evenEnum = even_turns.elements();
         }
         return evenEnum;

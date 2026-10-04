@@ -52,6 +52,7 @@ import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.VirtualRealityPilotingPod;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
@@ -1772,11 +1773,11 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                                                        + (armed.hasSupercharger() ?
-                                                           "(" + getSuperchargerTarget() + "+)" :
-                                                           "(NA)") : "");
+                      + (armed.hasSupercharger() ?
+                      "(" + getSuperchargerTarget() + "+)" :
+                      "(NA)") : "");
             }
             return str;
         }
@@ -2086,9 +2087,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
         /*
          CO:213
-         Jump jet performance depends on the weight class of the FrankenMech. 
+         Jump jet performance depends on the weight class of the FrankenMech.
          Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
-         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
+         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance
          as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
         */
         int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
@@ -2114,9 +2115,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             movement += locationJumpJetTonnage / centerTorsoJumpJetTonnage;
         }
 
-        // A FrankenMek might have more jump jets than the standard limitation 
-        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets) 
-        // so, we clamp it to that limitation. 
+        // A FrankenMek might have more jump jets than the standard limitation
+        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets)
+        // so, we clamp it to that limitation.
         return Math.min((int) Math.floor(movement), getJumpJetMovementCap());
     }
 
@@ -2788,8 +2789,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            if (Game.rulesManager.getRulesTarget().checkAimedLocation())
-            {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
@@ -3166,7 +3166,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                   hit.getSpecCrit(), hit.isFromFront(),
                   hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_HEAD -> {
-                if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+                if (hasTorsoMountedCockpit()) {
                     yield new HitData(LOC_NONE);
                 }
                 yield new HitData(LOC_DESTROYED);
@@ -4117,7 +4117,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
-        
+
         // gyro hit?
         int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
               Mek.LOC_CENTER_TORSO);
@@ -4129,7 +4129,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             } else {
                 gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
-            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged"); 
+            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged");
             roll.addModifier(Game.rulesManager.getRulesPSR().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
@@ -4175,6 +4175,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
                 roll.addModifier(4,
                       "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
+        } else if (hasVirtualRealityPilotingPod()) {
+            // IO:AE p.63: the pod's own piloting bonus, or the penalty while hostile interference disrupts it
+            VirtualRealityPilotingPod.addPilotingModifier(this, roll);
         } else if (getCockpitType() == Mek.COCKPIT_DUAL) {
             // Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner
             // acting as pilot.
@@ -4211,8 +4214,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement().reduceMaxElevation(this))  
-              ? 1 
+        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement()
+              .reduceMaxElevation(this))
+              ? 1
               : 2;
     }
 
@@ -4575,13 +4579,13 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number
-     * of sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the
-     * End Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are
-     * not part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number of
+     * sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the End
+     * Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are not
+     * part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
      * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
-     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number
-     * of operable sinks activates every sink.
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number of
+     * operable sinks activates every sink.
      *
      * @param sinks the number of heat sinks that should be active next round
      */
@@ -4630,8 +4634,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
-     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes
-     *       into account (prototype double heat sinks and Freezers excluded)
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes into
+     *       account (prototype double heat sinks and Freezers excluded)
      */
     public int getActiveSinksNextRound() {
         int activeSinks = 0;
@@ -4658,11 +4662,27 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     }
 
     /**
+     * @return {@code true} if the cockpit sits in the center torso: either a torso-mounted cockpit (TO:AR p.112) or a
+     *       Virtual Reality Piloting Pod (IO:AE p.63), which is built on one and shares its head-hit protection,
+     *       heat vulnerability and lack of an ejection seat
+     */
+    public boolean hasTorsoMountedCockpit() {
+        return (getCockpitType() == COCKPIT_TORSO_MOUNTED) || (getCockpitType() == COCKPIT_VRRP);
+    }
+
+    /**
+     * @return {@code true} if the cockpit is a Virtual Reality Piloting Pod (IO:AE p.63)
+     */
+    public boolean hasVirtualRealityPilotingPod() {
+        return getCockpitType() == COCKPIT_VRRP;
+    }
+
+    /**
      * @return unit has an ejection seat
      */
     public boolean hasEjectSeat() {
         // Ejection Seat
-        boolean result = getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED
+        boolean result = !hasTorsoMountedCockpit()
               && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
         // torso mounted cockpits don't have an ejection seat
         if (isIndustrial()) {
@@ -5087,11 +5107,21 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
     @Override
     public boolean isLocationDeadly(Coords c, int boardId) {
         return isIndustrial()
-              && hasEngine()
-              && getEngine().isICE()
-              && !hasEnvironmentalSealing()
+              && !EnvironmentalSealingRules.canOperateFullySubmerged(this)
               && game.hasBoardLocation(c, boardId)
               && game.getHex(c, boardId).terrainLevel(Terrains.WATER) >= 2;
+    }
+
+    /**
+     * BattleMeks are sealed as part of their basic construction, which is why they may not install Environmental
+     * Sealing (TM p.216). IndustrialMeks are the exception: without the sealing, and without an engine that runs
+     * with no air to breathe, the crew does not survive an airless world.
+     *
+     * @return {@code true} when this Mek will not survive vacuum conditions
+     */
+    @Override
+    public boolean doomedInVacuum() {
+        return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 
     /**
@@ -5103,6 +5133,9 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         String newLine = "\n";
 
         sb.append(MtfFile.UUID).append(getUnitFileUUID()).append(newLine);
+        if (getRefitFromUUID() != null) {
+            sb.append(MtfFile.REFIT_FROM_UUID).append(getRefitFromUUID()).append(newLine);
+        }
         sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
               .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 
@@ -6134,7 +6167,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 rate -= ((MiscMounted) m).getDamageAbsorption(this, m.getLocation());
                 ((MiscMounted) m).takeDamage(1);
                 return Math.max(0, rate);
@@ -6236,8 +6269,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         if (game != null && locationIsLeg(loc) && canFall()) {
             game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
                   Game.rulesManager.getRulesPSR().getLegDestroyedModifier(),
-                  "leg " 
-                  + "destroyed"));
+                  "leg "
+                        + "destroyed"));
         }
     }
 
@@ -6431,8 +6464,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     public boolean hasArmoredCockpit() {
 
-        int location = getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED ? Mek.LOC_CENTER_TORSO
-              : Mek.LOC_HEAD;
+        int location = hasTorsoMountedCockpit() ? Mek.LOC_CENTER_TORSO : Mek.LOC_HEAD;
 
         for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
@@ -6949,7 +6981,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         // certainly isn't leaving that hex under its own power anymore.
 
         int hitsToDestroyGyro = Game.rulesManager.getRulesEquipment().hitsToDestroyGyro(gyroType);
-        
+
         return getGyroHits() >= hitsToDestroyGyro;
     }
 
@@ -7118,7 +7150,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
     @Override
     public boolean isEjectionPossible() {
-        return (getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
+        return !hasTorsoMountedCockpit()
               && getCrew().isActive() && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
@@ -7419,5 +7451,10 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
             return false;
         }
         return getCrew().isEjected() && !isDestroyed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

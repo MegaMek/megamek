@@ -38,6 +38,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
+
+import megamek.common.RulesRef;
+import megamek.common.SourceBookCode;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscMounted;
@@ -603,7 +607,7 @@ class CombatVehicleEscapePodTest {
         void cvepMiscType_HasCorrectRulesRef() {
             MiscType cvepType = (MiscType) EquipmentType.get("ISCombatVehicleEscapePod");
 
-            assertEquals("121, TO:AUE", cvepType.getRulesRefs(),
+            assertEquals(List.of(new RulesRef(SourceBookCode.TO_AUE, 121)), cvepType.getRulesRefs(),
                   "CVEP should reference TO:AUE p.121");
         }
     }

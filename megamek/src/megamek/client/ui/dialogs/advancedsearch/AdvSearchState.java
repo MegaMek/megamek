@@ -368,6 +368,7 @@ class AdvSearchState {
         public String startBV = "";
         public String endBV = "";
         public String source = "";
+        public List<String> rulesRefs = new ArrayList<>();
         public String mulId = "";
 
         public TriStateItemListState cockpitType = new TriStateItemListState();

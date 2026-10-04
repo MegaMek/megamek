@@ -100,7 +100,7 @@ public class TestAdvancedAerospace extends TestAero {
      * @return The total number of armor points allowed to the vessel
      */
     public static int maxArmorPoints(Jumpship vessel) {
-        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon(vessel);
         int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
         if (vessel.isPrimitive()) {
             return (int) (baseArmor * 0.66);
@@ -330,6 +330,15 @@ public class TestAdvancedAerospace extends TestAero {
             crew += equipmentCrewRequirements(m);
         }
         return crew;
+    }
+
+    /**
+     * Returns the number of required officers of the vessel from total base crew and gunners.
+     * @param vessel The vessel
+     * @return The number of required officers
+     */
+    public static int requiredOfficers(Jumpship vessel) {
+        return (int) Math.ceil((vessel.getNCrew() - vessel.getBayPersonnel()) / 6.0);
     }
 
     public TestAdvancedAerospace(Jumpship vessel, TestEntityOption option, String fs) {
@@ -860,12 +869,13 @@ public class TestAdvancedAerospace extends TestAero {
         boolean illegal = false;
         int crewSize = vessel.getNCrew() - vessel.getBayPersonnel();
         int reqCrew = minimumBaseCrew(vessel) + requiredGunners(vessel);
+        int reqOfficers = requiredOfficers(vessel);
         if (crewSize < reqCrew) {
             buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
-        if (vessel.getNOfficers() < Math.ceil(reqCrew / 6.0)) {
-            buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 6.0)).append(" officers\n");
+        if (vessel.getNOfficers() < reqOfficers) {
+            buffer.append("Requires at least ").append(reqOfficers).append(" officers\n");
             illegal = true;
         }
         crewSize += vessel.getNPassenger();
@@ -874,7 +884,7 @@ public class TestAdvancedAerospace extends TestAero {
         int quarters = 0;
         for (Bay bay : vessel.getTransportBays()) {
             Quarters q = Quarters.getQuartersForBay(bay);
-            if (null != q) {
+            if (q != null) {
                 quarters += (int) bay.getCapacity();
             }
         }

@@ -110,7 +110,7 @@ public class ScenarioLoaderTest {
     private void checkScenarioFile(File file, List<String> errorAccumulator)
           throws ScenarioLoaderException, IOException {
         int port = 7770;
-        if (null == file) {
+        if (file == null) {
             return;
         }
         if (file.isFile() && file.getName().toLowerCase(Locale.ROOT).endsWith(".mms")) {

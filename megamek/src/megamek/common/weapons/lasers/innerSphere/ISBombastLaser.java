@@ -39,6 +39,7 @@ import static megamek.common.game.IGame.LOGGER;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
@@ -49,7 +50,6 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.Mounted;
-import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -72,7 +72,7 @@ public class ISBombastLaser extends LaserWeapon {
         setInternalName(name);
         addLookupName("IS Bombast Laser");
         addLookupName("ISBombastLaser");
-        String[] modeStrings = { "Damage 16", "Damage 12", "Damage 8"};
+        String[] modeStrings = { "Damage 16", "Damage 12", "Damage 8" };
         setModes(modeStrings);
         heat = 12;
         damage = 16;
@@ -92,7 +92,10 @@ public class ISBombastLaser extends LaserWeapon {
         medAV = 16;
         maxRange = RANGE_MED;
         flags = flags.or(F_BOMBAST_LASER).or(F_ENERGY).or(F_HEAT_VARIABLE).andNot(F_PROTO_WEAPON);
-        rulesRefs = "132, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 132),
+              rulesRef(SourceBookCode.CORE, 185)
+        );
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
@@ -128,26 +131,37 @@ public class ISBombastLaser extends LaserWeapon {
             return ToHitData.IMPOSSIBLE;
         } else if (!mounted.getChargeState().equals(ChargeLevel.CHARGED)) {
             switch (mounted.curMode().toString()) {
-                case "Damage 16": return modifier+2;
-                case "Damage 12": return modifier+1;
+                case "Damage 16":
+                    return modifier + 2;
+                case "Damage 12":
+                    return modifier + 1;
             }
-        } 
+        }
         return modifier;
     }
-    
+
     @Override
     public double getBattleForceDamage(int range, Mounted<?> fcs) {
         return (range <= AlphaStrikeElement.MEDIUM_RANGE) ? 1.02 : 0;
     }
-    
+
+    /**
+     * A Bombast Laser is only explosive while it is holding a charge, so this needs a specific mount to answer for.
+     *
+     * @param mounted      the specific weapon mount to test, or {@code null} to ask about the weapon type in the
+     *                     abstract (as the AlphaStrike ENE conversion does)
+     * @param ignoreCharge unused for this weapon; the charge state is what decides the answer
+     *
+     * @return {@code true} if the given mount is currently carrying a charge that can detonate, otherwise {@code false}
+     */
     @Override
-    public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
-        if (mounted.getType().hasFlag(WeaponType.F_BOMBAST_LASER) &&
-              mounted.getChargeState().equals(ChargeLevel.CHARGED) &&
-              !mounted.isUsedThisRound()) {
-            // Bombast laser is only explosive when charged.
-            return true;
+    public boolean isExplosive(@Nullable Mounted<?> mounted, boolean ignoreCharge) {
+        if (mounted == null || ignoreCharge) {
+            // No mount to inspect means no charge state to read, and an uncharged Bombast Laser is not explosive.
+            return false;
         }
-        return false;
+        // Bombast laser is only explosive when charged.
+        return mounted.getChargeState().equals(ChargeLevel.CHARGED) &&
+              !mounted.isUsedThisRound();
     }
 }

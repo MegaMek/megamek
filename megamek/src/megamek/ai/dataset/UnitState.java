@@ -39,6 +39,7 @@ import java.util.List;
 import megamek.ai.utility.EntityFeatureUtils;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitRole;
@@ -87,7 +88,10 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         ARMOR_LEFT_P,
         ARMOR_RIGHT_P,
         ARMOR_BACK_P,
-        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE
+        WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE,
+        REMOVAL,
+        ALTITUDE,
+        VELOCITY
     }
 
     /**
@@ -138,7 +142,12 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
               .put(Field.OFF_BOARD, entity.isOffBoard())
               .put(Field.CRIPPLED, entity.isCrippled())
               .put(Field.DESTROYED, entity.isDestroyed())
-              .put(Field.DONE, entity.isDone());
+              .put(Field.DONE, entity.isDone())
+              .put(Field.REMOVAL, removalConditionName(entity.getRemovalCondition()))
+              // The altitude profile IS the story of an aerospace round - cruise, let-down, attack run,
+              // climb-out - and X/Y alone cannot tell it. Zero for anything on the ground.
+              .put(Field.ALTITUDE, entity.getAltitude())
+              .put(Field.VELOCITY, (entity instanceof IAero aero) ? aero.getCurrentVelocity() : 0);
 
         // Health and armor
         map.put(Field.ARMOR_P, entity.getArmorRemainingPercent())
@@ -172,5 +181,37 @@ public class UnitState extends EntityDataMap<UnitState.Field> {
         map.put(Field.WEAPON_DMG_FACING_SHORT_MEDIUM_LONG_RANGE, weaponData);
 
         return map;
+    }
+
+    /**
+     * The reason a unit left the game, as a stable analysis-friendly token - or {@code ACTIVE} for a unit
+     * still in play. Distinguishes a kill from a retreat: {@code DESTROYED} alone cannot, because a unit
+     * that fled reads as not-destroyed and a dead unit only carries the flag for the brief window before
+     * it is moved to the graveyard.
+     *
+     * @param removalCondition the {@link IEntityRemovalConditions} constant from the entity
+     *
+     * @return the condition name, or {@code ACTIVE} when the unit has not been removed
+     */
+    static final String REMOVAL_IN_RETREAT = "IN_RETREAT";
+    static final String REMOVAL_PUSHED = "PUSHED";
+    static final String REMOVAL_CAPTURED = "CAPTURED";
+    static final String REMOVAL_SALVAGEABLE = "SALVAGEABLE";
+    static final String REMOVAL_EJECTED = "EJECTED";
+    static final String REMOVAL_DEVASTATED = "DEVASTATED";
+    static final String REMOVAL_NEVER_JOINED = "NEVER_JOINED";
+    static final String REMOVAL_ACTIVE = "ACTIVE";
+
+    private static String removalConditionName(int removalCondition) {
+        return switch (removalCondition) {
+            case IEntityRemovalConditions.REMOVE_IN_RETREAT -> REMOVAL_IN_RETREAT;
+            case IEntityRemovalConditions.REMOVE_PUSHED -> REMOVAL_PUSHED;
+            case IEntityRemovalConditions.REMOVE_CAPTURED -> REMOVAL_CAPTURED;
+            case IEntityRemovalConditions.REMOVE_SALVAGEABLE -> REMOVAL_SALVAGEABLE;
+            case IEntityRemovalConditions.REMOVE_EJECTED -> REMOVAL_EJECTED;
+            case IEntityRemovalConditions.REMOVE_DEVASTATED -> REMOVAL_DEVASTATED;
+            case IEntityRemovalConditions.REMOVE_NEVER_JOINED -> REMOVAL_NEVER_JOINED;
+            default -> REMOVAL_ACTIVE;
+        };
     }
 }

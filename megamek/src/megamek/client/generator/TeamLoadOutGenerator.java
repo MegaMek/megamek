@@ -480,7 +480,7 @@ public class TeamLoadOutGenerator {
         boolean clan = techBase.equals("CL");
 
         // Null-type is illegal!
-        if (null == aType) {
+        if (aType == null) {
             return false;
         }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,7 +47,10 @@ public record CrewRefBreak(Crew originalCrew) implements RefBreak<Crew> {
               originalCrew.getName(),
               originalCrew.getSize(),
               originalCrew.getGunnery(),
+              originalCrew.isHasNaturalAptitudeGunnery(),
+              originalCrew.isHasNaturalAptitudeArtillery(),
               originalCrew.getPiloting(),
+              originalCrew.isHasNaturalAptitudePiloting(),
               originalCrew.getGender(),
               originalCrew.isClanPilot(),
               originalCrew.getExtraData());
@@ -57,6 +60,10 @@ public record CrewRefBreak(Crew originalCrew) implements RefBreak<Crew> {
             newCrewRef.setHits(originalCrew.getHits(i), i);
             newCrewRef.setName(originalCrew.getName(i), i);
             newCrewRef.setNickname(originalCrew.getNickname(i), i);
+            newCrewRef.setHasNaturalAptitudeGunnery(originalCrew.isHasNaturalAptitudeGunnery(i), i);
+            newCrewRef.setHasNaturalAptitudeArtillery(originalCrew.isHasNaturalAptitudeArtillery(i), i);
+            newCrewRef.setHasNaturalAptitudePiloting(originalCrew.isHasNaturalAptitudePiloting(i), i);
+            newCrewRef.setHasNaturalAptitudeSmallArms(originalCrew.isHasNaturalAptitudeSmallArms(i), i);
         }
         return newCrewRef;
     }

@@ -89,6 +89,7 @@ class SettingsNavigationPanelTest {
         panel.setFilterText("Über Display");
 
         assertEquals("uber display", filter.get());
+        assertEquals("Über Display", panel.getFilterText());
     }
 
     @Test

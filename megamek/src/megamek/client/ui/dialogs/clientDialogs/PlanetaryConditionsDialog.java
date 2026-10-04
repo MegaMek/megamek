@@ -65,6 +65,7 @@ import megamek.client.ui.util.UIUtil.TipLabel;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
 import megamek.common.planetaryConditions.Atmosphere;
+import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.planetaryConditions.BlowingSand;
 import megamek.common.planetaryConditions.EMI;
 import megamek.common.planetaryConditions.Fog;
@@ -138,6 +139,9 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
     private final JComboBox<WindDirection> comWindDirection = new JComboBox<>(WindDirection.values());
     private final JLabel labAtmosphere = new TipLabel(Messages.getString(PCD + "labAtmosphere"), SwingConstants.RIGHT);
     private final JComboBox<Atmosphere> comAtmosphere = new JComboBox<>(Atmosphere.values());
+    private final JLabel labAtmosphericTaint = new TipLabel(Messages.getString(PCD + "labAtmosphericTaint"),
+          SwingConstants.RIGHT);
+    private final JComboBox<AtmosphericTaint> comAtmosphericTaint = new JComboBox<>(AtmosphericTaint.values());
     private final JLabel labFog = new TipLabel(Messages.getString(PCD + "labFog"), SwingConstants.RIGHT);
     private final JComboBox<Fog> comFog = new JComboBox<>(Fog.values());
     private final JLabel labBlowingSands = new TipLabel(Messages.getString(PCD + "BlowingSands"), SwingConstants.RIGHT);
@@ -200,7 +204,7 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
 
     private JPanel generalSection() {
         JPanel result = new OptionPanel("PlanetaryConditionsDialog.header.general");
-        Content panContent = new Content(new GridLayout(6, 2, 10, 5));
+        Content panContent = new Content(new GridLayout(7, 2, 10, 5));
         result.add(panContent);
         panContent.add(labTemp);
         panContent.add(fldTemp);
@@ -210,6 +214,8 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         panContent.add(comLight);
         panContent.add(labAtmosphere);
         panContent.add(comAtmosphere);
+        panContent.add(labAtmosphericTaint);
+        panContent.add(comAtmosphericTaint);
         panContent.add(labEMI);
         panContent.add(chkEMI);
         panContent.add(labTerrainAffected);
@@ -267,6 +273,7 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         comWind.addActionListener(listener);
         comWeather.addActionListener(listener);
         comFog.addActionListener(listener);
+        comAtmosphericTaint.addActionListener(listener);
         chkShiftWindStr.addActionListener(listener);
         chkBlowingSands.addActionListener(listener);
         comWindFrom.addActionListener(listener);
@@ -283,6 +290,7 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         comWind.removeActionListener(listener);
         comWeather.removeActionListener(listener);
         comFog.removeActionListener(listener);
+        comAtmosphericTaint.removeActionListener(listener);
         chkShiftWindStr.removeActionListener(listener);
         chkBlowingSands.removeActionListener(listener);
         comWindFrom.removeActionListener(listener);
@@ -299,6 +307,7 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         comWindTo.setSelectedItem(conditions.getWindMax());
         comWindDirection.setSelectedItem(conditions.getWindDirection());
         comAtmosphere.setSelectedItem(conditions.getAtmosphere());
+        comAtmosphericTaint.setSelectedItem(conditions.getAtmosphericTaint());
         comFog.setSelectedItem(conditions.getFog());
         chkBlowingSands.setSelected(conditions.isBlowingSand());
         chkShiftWindDir.setSelected(conditions.shiftingWindDirection());
@@ -322,6 +331,7 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         conditions.setWindDirection(comWindDirection.getItemAt(comWindDirection.getSelectedIndex()));
         refreshWindRange();
         conditions.setAtmosphere(comAtmosphere.getItemAt(comAtmosphere.getSelectedIndex()));
+        conditions.setAtmosphericTaint(comAtmosphericTaint.getItemAt(comAtmosphericTaint.getSelectedIndex()));
         conditions.setFog(comFog.getItemAt(comFog.getSelectedIndex()));
         BlowingSand blowingSand = chkBlowingSands.isSelected() ?
               BlowingSand.BLOWING_SAND :
@@ -449,6 +459,8 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
             comWind.setSelectedItem(Wind.CALM);
             comWeather.setSelectedItem(Weather.CLEAR);
             comFog.setSelectedItem(Fog.FOG_NONE);
+            // There is no air in a vacuum for a taint to be carried in.
+            comAtmosphericTaint.setSelectedItem(AtmosphericTaint.BREATHABLE);
         }
         if (weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm()) {
             chkShiftWindStr.setSelected(false);
@@ -468,6 +480,8 @@ public class PlanetaryConditionsDialog extends ClientDialog implements FocusList
         comWeather.setEnabled(isDense);
         labFog.setEnabled(isDense);
         comFog.setEnabled(isDense);
+        labAtmosphericTaint.setEnabled(!isVacuum);
+        comAtmosphericTaint.setEnabled(!isVacuum);
         labWind.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
         comWind.setEnabled(!isVacuum && !weather.isGustingRainOrSnowFlurriesOrIceStormOrLightningStorm());
         labBlowingSands.setEnabled(!isVacuum);

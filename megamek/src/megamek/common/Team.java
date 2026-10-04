@@ -214,7 +214,7 @@ public final class Team extends TurnOrdered {
         if (this == object) {
             return true;
         }
-        if ((null == object) || (getClass() != object.getClass())) {
+        if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
         final Team other = (Team) object;

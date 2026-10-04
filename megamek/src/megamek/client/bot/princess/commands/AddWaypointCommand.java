@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -88,10 +88,11 @@ public class AddWaypointCommand implements ChatCommand {
             }
         }
 
-        princess.getUnitBehaviorTracker().addEntityWaypoint(unitOpt.get(), multiHexNumberArgument.getValue(), princess);
+        int keptCount = princess.getUnitBehaviorTracker()
+              .addEntityWaypoint(unitOpt.get(), multiHexNumberArgument.getValue(), princess);
         if (!quietArgument.getValue()) {
-            princess.sendChat(Messages.getString("Princess.command.addWaypoint.success",
-                  unitOpt.get().getDisplayName()));
+            princess.sendChat(WaypointReply.build(princess, unitOpt.get(), keptCount,
+                  multiHexNumberArgument.getValue().size(), "Princess.command.addWaypoint"));
         }
     }
 }

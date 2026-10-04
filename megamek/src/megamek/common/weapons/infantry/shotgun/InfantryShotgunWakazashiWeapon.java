@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.shotgun;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -73,7 +74,7 @@ public class InfantryShotgunWakazashiWeapon extends InfantryWeapon {
         ammoCost = 2;
         shots = 10;
         bursts = 3;
-        rulesRefs = " 176,HBHK";
+        rulesRefs = rulesRefs(SourceBookCode.HB_HK, 176);
         techAdvancement.setTechBase(TechBase.ALL);
         techAdvancement.setAdvancement(DATE_NONE, DATE_NONE, 2100);
         techAdvancement.setTechRating(TechRating.D);

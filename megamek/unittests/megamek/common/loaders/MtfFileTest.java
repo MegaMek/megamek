@@ -106,6 +106,24 @@ class MtfFileTest {
     }
 
     @Test
+    void refitSourceRoundTripsAndCanBeRemoved() throws Exception {
+        Mek mek = new BipedMek();
+        String sourceUUID = "019f6767-0dcb-7bb8-992f-000000000001";
+        assertFalse(mek.getMtf().contains("refitfromuuid:"));
+        assertEquals(null, toMtfFile(mek).getEntity().getRefitFromUUID());
+
+        mek.setRefitFromUUID(sourceUUID);
+        assertTrue(mek.getMtf().contains("refitfromuuid:" + sourceUUID));
+        Mek loaded = (Mek) toMtfFile(mek).getEntity();
+        assertEquals(sourceUUID, loaded.getRefitFromUUID());
+        assertEquals(sourceUUID, toMtfFile(loaded).getEntity().getRefitFromUUID());
+
+        loaded.setRefitFromUUID(null);
+        assertFalse(loaded.getMtf().contains("refitfromuuid:"));
+        assertEquals(null, toMtfFile(loaded).getEntity().getRefitFromUUID());
+    }
+
+    @Test
     void forceGeneratorAvailabilityRoundTrips() throws Exception {
         Mek mek = new BipedMek();
         mek.setForceGeneratorAvailability(List.of(
@@ -527,7 +545,7 @@ class MtfFileTest {
         String rightLeg = "Right Leg:\nHip\nUpper Leg Actuator\nLower Leg Actuator\nFoot Actuator\n-Empty-\n-Empty-\n";
         String rightLegWithEndoSteel = "Right Leg:\nHip\nUpper Leg Actuator\nLower Leg Actuator\nFoot Actuator\n"
             + endoSteel.getInternalName() + "\n" + endoSteel.getInternalName() + "\n";
-        
+
         // We replace the 2 empty slots with 2 endo steel (to simulate a "donor" leg layout)
         String mtf = mek.getMtf().replace(rightLeg, rightLegWithEndoSteel);
 

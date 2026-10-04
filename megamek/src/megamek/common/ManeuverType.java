@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -102,7 +102,9 @@ public class ManeuverType {
             case MAN_IMMELMAN:
                 return (velocity >= 3) && (altitude < 9);
             case MAN_SPLIT_S:
-                return (altitude + 2) > ceiling;
+                // Loses two altitudes (TW p.85), so there must be room below: the unit has to end
+                // strictly above the terrain ceiling (0 on ground maps, where altitude 0 is the ground)
+                return (altitude - 2) > ceiling;
             case MAN_BARREL_ROLL:
                 return velocity >= 2;
             case MAN_SIDE_SLIP_LEFT:
@@ -178,12 +180,13 @@ public class ManeuverType {
      * @param canPerform Whether the maneuver can currently be performed
      * @param velocity   Current unit velocity
      * @param altitude   Current unit altitude
+     * @param ceiling    Terrain ceiling altitude below the unit (0 on ground maps)
      * @param isVSTOL_CF Whether the entity is a VSTOL with Improved Avionics
      *
      * @return HTML-formatted tooltip string
      */
     public static String getManeuverTooltip(int type, boolean canPerform, int velocity, int altitude,
-          boolean isVSTOL_CF) {
+          int ceiling, boolean isVSTOL_CF) {
         StringBuilder tooltip = new StringBuilder("<HTML><BODY>");
 
         // Maneuver name header
@@ -218,6 +221,12 @@ public class ManeuverType {
                     if ((velocity < 3) || (altitude >= 9)) {
                         tooltip.append(" ").append(MessageFormat.format(
                               Messages.getString("ManeuverChoiceDialog.currentValues"), velocity, altitude));
+                    }
+                    break;
+                case MAN_SPLIT_S:
+                    if ((altitude - 2) <= ceiling) {
+                        tooltip.append(" ").append(MessageFormat.format(
+                              Messages.getString("ManeuverChoiceDialog.currentAltitude"), altitude));
                     }
                     break;
                 case MAN_BARREL_ROLL:

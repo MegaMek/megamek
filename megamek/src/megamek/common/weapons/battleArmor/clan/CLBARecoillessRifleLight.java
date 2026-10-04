@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -83,10 +84,8 @@ public class CLBARecoillessRifleLight extends Weapon {
               .andNot(F_AERO_WEAPON)
               .andNot(F_PROTO_WEAPON);
         cost = 1000;
-        rulesRefs = "268, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 268);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.D)
               .setISAdvancement(3052, 3054, 3056, DATE_NONE, DATE_NONE)

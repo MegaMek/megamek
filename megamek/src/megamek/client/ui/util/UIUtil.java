@@ -41,7 +41,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.io.Serial;
-import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,8 +52,6 @@ import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
 import megamek.MMConstants;
-import megamek.common.units.Entity;
-import megamek.common.units.TrainLayout;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -62,6 +59,8 @@ import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
+import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;
 
 public final class UIUtil {
@@ -1414,7 +1413,8 @@ public final class UIUtil {
     private static final Color DARK_UI_YELLOW = new Color(200, 200, 60);
     private static final Color LIGHT_UI_LIGHTCYAN = new Color(40, 130, 130);
     private static final Color DARK_UI_LIGHTCYAN = new Color(100, 180, 180);
-    private static final Color LIGHT_UI_LIGHTGREEN = new Color(80, 180, 80);
+    // forest green: the old pale (80, 180, 80) washed out on a light background (GM lobby button, 2026-08-18)
+    private static final Color LIGHT_UI_LIGHTGREEN = new Color(34, 139, 34);
     private static final Color DARK_UI_LIGHTGREEN = new Color(150, 210, 150);
     private static final Color LIGHT_UI_DARKBLUE = new Color(225, 225, 245);
     private static final Color DARK_UI_DARKBLUE = new Color(50, 50, 80);

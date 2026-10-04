@@ -393,9 +393,11 @@ public class MekTileset {
                             LOGGER.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.getFirst().equals(CHASSIS_KEY)) {
-                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
+                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT),
+                              new MekEntry(tokens.get(2), tokens.size() == 4 ? tokens.get(3) : null));
                     } else {
-                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
+                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT),
+                              new MekEntry(tokens.get(2), tokens.size() == 4 ? tokens.get(3) : null));
                     }
                 } else {
                     LOGGER.warn("Malformed line in {}: {}", filename, tokens.toString());
@@ -469,10 +471,16 @@ public class MekTileset {
      */
     public class MekEntry {
         private final String imageFile;
+        private final String modelFile;
         private Image image;
 
         public MekEntry(String imageFile) {
+            this(imageFile, null);
+        }
+
+        public MekEntry(String imageFile, String modelFile) {
             this.imageFile = imageFile;
+            this.modelFile = modelFile;
             image = null;
         }
 
@@ -490,6 +498,10 @@ public class MekTileset {
 
         public String getImageFile() {
             return imageFile;
+        }
+
+        public String getModelFile() {
+            return modelFile;
         }
 
     }

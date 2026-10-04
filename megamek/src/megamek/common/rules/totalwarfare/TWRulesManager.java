@@ -33,9 +33,10 @@ package megamek.common.rules.totalwarfare;
  * affiliated with Microsoft.
  */
 
+import megamek.common.rules.*;
 import megamek.common.rules.RulesManager;
 import megamek.common.rules.RulesTarget;
-import megamek.common.rules.*;
+import megamek.common.rules.core.CoreRulesScanning;
 
 public class TWRulesManager implements RulesManager {
     private TWRulesTarget twRulesTarget = new TWRulesTarget();
@@ -53,6 +54,7 @@ public class TWRulesManager implements RulesManager {
     private TWRulesPhysical twRulesPhysical = new TWRulesPhysical();
     private TWRulesPilot twRulesPilot = new TWRulesPilot();
     private TWRulesPSR twRulesPsr = new TWRulesPSR();
+    private CoreRulesScanning missionScanning = new CoreRulesScanning();
     private TWRulesTerrain twRulesTerrain = new TWRulesTerrain();
     private TWRulesUnderwater twRulesUnderwater = new TWRulesUnderwater();
     private TWRulesUnits twRulesUnits = new TWRulesUnits();
@@ -150,6 +152,14 @@ public class TWRulesManager implements RulesManager {
 
     /**
      * {@inheritDoc}
+     * Returns the Core Rulebook's mission scanning check, which applies whichever ruleset is in play: scanning an
+     * objective is a mission rule rather than a Total Warfare one.
+     */
+    @Override
+    public RulesScanning getRulesScanning() { return missionScanning; }
+
+    /**
+     * {@inheritDoc}
      * Returns the Total Warfare implementation for terrain interactions.
      */
     public RulesTerrain getRulesTerrain() { return twRulesTerrain; }
@@ -172,4 +182,3 @@ public class TWRulesManager implements RulesManager {
      */
     public RulesWeapons getRulesWeapons() { return twRulesWeapons; }
 }
-

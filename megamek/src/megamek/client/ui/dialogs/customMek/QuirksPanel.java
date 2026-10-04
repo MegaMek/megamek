@@ -33,15 +33,7 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.Serial;
@@ -54,17 +46,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -79,16 +61,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
-import megamek.common.options.IOption;
-import megamek.common.options.IOptionGroup;
-import megamek.common.options.OptionsConstants;
-import megamek.common.options.QuirkCatalog;
-import megamek.common.options.QuirkCatalogEntry;
-import megamek.common.options.QuirkImplementationStatus;
-import megamek.common.options.QuirkKind;
-import megamek.common.options.QuirkPlaceholder;
-import megamek.common.options.Quirks;
-import megamek.common.options.WeaponQuirks;
+import megamek.common.options.*;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
@@ -344,7 +317,7 @@ public class QuirksPanel extends JPanel implements DialogOptionListener {
             List<QuirkRow> targetRows = isPositive ? positiveQuirkRows : negativeQuirkRows;
             for (Enumeration<IOption> groupOptions = group.getSortedOptions(); groupOptions.hasMoreElements(); ) {
                 IOption option = groupOptions.nextElement();
-                if ((null == option) || Quirks.isQuirkDisallowed(option, entity)) {
+                if ((option == null) || Quirks.isQuirkDisallowed(option, entity)) {
                     continue;
                 }
 

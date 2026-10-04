@@ -133,12 +133,12 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
         WeaponMounted bayW = (WeaponMounted) bayWAmmo.getLinkedBy();
         int shots = (bayW.getCurrentShots() * weapon.getBayWeapons().size());
         for (int i = 0; i < shots; i++) {
-            if ((null == bayWAmmo) || bayWAmmo.getUsableShotsLeft() < 1) {
+            if ((bayWAmmo == null) || bayWAmmo.getUsableShotsLeft() < 1) {
                 // try loading something else
                 attackingEntity.loadWeaponWithSameAmmo(bayW);
                 bayWAmmo = bayW.getLinkedAmmo();
             }
-            if (null != bayWAmmo) {
+            if (bayWAmmo != null) {
                 bayWAmmo.setShotsLeft(bayWAmmo.getBaseShotsLeft() - 1);
             }
         }
@@ -357,7 +357,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
                         if (vPhaseReport.size() > replaceReport) {
                             // fix the reporting - is there a better way to do this
                             Report currentReport = vPhaseReport.get(replaceReport);
-                            while (null != currentReport) {
+                            while (currentReport != null) {
                                 vPhaseReport.remove(replaceReport);
                                 if ((currentReport.newlines > 0) || (vPhaseReport.size() <= replaceReport)) {
                                     currentReport = null;
@@ -750,7 +750,7 @@ public class CapitalMissileBearingsOnlyHandler extends AmmoBayWeaponHandler {
             // check the currently loaded ammo
             AmmoMounted bayWeaponAmmoMounted = bayWeaponMounted.getLinkedAmmo();
 
-            if (null == bayWeaponAmmoMounted || bayWeaponAmmoMounted.getUsableShotsLeft() < 1) {
+            if (bayWeaponAmmoMounted == null || bayWeaponAmmoMounted.getUsableShotsLeft() < 1) {
                 // try loading something else
                 attackingEntity.loadWeaponWithSameAmmo(bayWeaponMounted);
                 bayWeaponAmmoMounted = bayWeaponMounted.getLinkedAmmo();

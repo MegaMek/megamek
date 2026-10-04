@@ -231,7 +231,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
         // According to TacOps errata, artillery cannons can only fire standard
         // rounds and fuel-air cannon shells (Interstellar Ops p165).
         // But, they're still in as unofficial tech, because they're fun. :)
-        if (null != ammoType) {
+        if (ammoType != null) {
             if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FLARE)) {
                 int radius;
                 if (ammoType.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) {

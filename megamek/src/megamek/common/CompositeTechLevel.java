@@ -449,7 +449,7 @@ public class CompositeTechLevel implements ITechnology, Serializable {
             } else if (previous.end == null) {
                 break;
             } else if (dr.start <= previous.end) {
-                if ((null == dr.end) || (previous.end < dr.end)) {
+                if ((dr.end == null) || (previous.end < dr.end)) {
                     previous.end = dr.end;
                 }
             } else {

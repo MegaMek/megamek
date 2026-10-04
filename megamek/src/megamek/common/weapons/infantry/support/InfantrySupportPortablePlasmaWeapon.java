@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -79,7 +80,7 @@ public class InfantrySupportPortablePlasmaWeapon extends InfantryWeapon {
         ammoWeight = 0.018;
         ammoCost = 10;
         shots = 10;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         tonnage = .030;
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3063, 3065, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)

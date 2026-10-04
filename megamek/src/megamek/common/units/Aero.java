@@ -484,7 +484,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
             mp = Math.max(0, mp - getCargoMpReduction(this));
         }
 
-        if ((null != game) && !mpCalculationSetting.ignoreWeather()) {
+        if ((game != null) && !mpCalculationSetting.ignoreWeather()) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -810,7 +810,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     @Override
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -820,7 +820,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     @Override
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -1733,7 +1733,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     @Override
     public int getThresh(int loc) {
         if (isCapitalFighter()) {
-            if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+            if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
                     return (int) Math.round(getCapArmor() / 40.0) + 1;
                 } else {
@@ -2697,12 +2697,12 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     @Override
     public boolean canSpot() {
         // per a recent ruling on the official forums, aero units can't spot
-        // for indirect LRM fire, unless they have a recon cam, an infrared or
-        // hyperspace imager, or a high-res imager and it's not night
+        // for indirect LRM fire, unless they have an infrared or hyperspectral
+        // imager, or a high-res imager and it's not night. A Recon Camera spots
+        // through its own roll instead (ReconCameraRules, TO:AUE p.150)
         boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
               game.getPlanetaryConditions().getLight().isDayOrDusk();
         return !isAirborne() ||
-              hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
               hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
               hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
               hiresLighted;
@@ -2731,7 +2731,7 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
         // Fix for #587. Only multiply if Aero Sanity is off
-        if ((null != game) && !gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && !gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt; // We already dealt a bunch of damage, move on.

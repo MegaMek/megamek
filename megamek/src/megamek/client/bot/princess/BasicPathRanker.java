@@ -36,17 +36,7 @@ package megamek.client.bot.princess;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Stream;
 
 import megamek.client.bot.Messages;
@@ -63,7 +53,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.Engine;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.WeaponMounted;
@@ -287,6 +276,24 @@ public class BasicPathRanker extends PathRanker {
     }
 
     /**
+     * Doctrine seam for atmospheric aerospace movement, overridden by CASPAR's aerospace ranker.
+     *
+     * <p>Returns 0 here, so the stock utility total is exactly what it was before this seam existed. It is a
+     * seam rather than a term because none of the modifiers above has any concept of altitude: they price
+     * distance, facing and cover on a flat board, while what decides an air-to-air engagement is whether the
+     * two units are close enough in altitude to shoot at all (TW p.241).</p>
+     *
+     * @param path    the path being ranked
+     * @param game    the current game
+     * @param enemies the enemies being weighed against this path
+     *
+     * @return the doctrine adjustment to this path's utility, 0 in the stock ranker
+     */
+    protected double calculateAerospaceMod(MovePath path, Game game, List<Entity> enemies) {
+        return 0;
+    }
+
+    /**
      * Guesses a number of things about an enemy that has not yet moved
      * TODO estimated damage is sloppy. Improve for missile attacks, gun skill, and
      * range
@@ -466,12 +473,27 @@ public class BasicPathRanker extends PathRanker {
         return posture;
     }
 
+    /**
+     * The posture already resolved for this board this round, without resolving one if none has been.
+     *
+     * <p>Deliberately does not call {@link #resolvePosture}: that announces the force's intent in the chat
+     * when it changes, so resolving merely to write a log line would make the bot say things it had not
+     * otherwise decided.</p>
+     */
+    @Override
+    protected @Nullable CombatPosture resolvedPostureFor(Game game, int boardId) {
+        if (game.getCurrentRound() != postureResolvedRound) {
+            return null;
+        }
+        return postureByBoard.get(boardId);
+    }
+
     /** The positions of the given units that are deployed on the given board; the rest have no say. */
     static List<Coords> deployedPositions(List<Entity> units, int boardId) {
         List<Coords> positions = new ArrayList<>(units.size());
         for (Entity unit : units) {
             Coords position = unit.getPosition();
-            if ((null != position) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
+            if ((position != null) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
                 positions.add(position);
             }
         }
@@ -1648,8 +1670,7 @@ public class BasicPathRanker extends PathRanker {
         BehaviorType behaviorType = getOwner().getUnitBehaviorTracker().getBehaviorType(movingUnit, getOwner());
 
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
-            int newDistanceToHome = distanceToHomeEdge(path.getFinalCoords(), path.getFinalBoardId(),
-                  getOwner().getHomeEdge(movingUnit),
+            int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
                   game);
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
@@ -2043,6 +2064,8 @@ public class BasicPathRanker extends PathRanker {
         scores.put("sprintExposurePenalty", sprintExposurePenalty);
 
         double offBoardMod = calculateOffBoardMod(pathCopy);
+        // Atmospheric aerospace doctrine. Zero in the stock ranker, so Princess's total is unchanged.
+        double aerospaceMod = calculateAerospaceMod(pathCopy, game, enemies);
         // if we're an aircraft, we want to devalue paths that will force us off the board on the subsequent turn.
         double utility = -fallMod;
         utility += braveryMod;
@@ -2055,6 +2078,7 @@ public class BasicPathRanker extends PathRanker {
         utility -= selfPreservationMod;
         utility -= sprintExposurePenalty;
         utility += positionHoldMod;
+        utility += aerospaceMod;
         utility -= utility * offBoardMod;
 
         formula.append("Calculation: {fall mod [")
@@ -2570,6 +2594,13 @@ public class BasicPathRanker extends PathRanker {
     public double checkPathForHazards(MovePath path, Entity movingUnit, Game game) {
         logger.trace("Checking Path ({}) for hazards.", path);
 
+        // TW p.55: a WiGE vehicle that lands anywhere but a clear, paved or water hex crashes, and as it cannot land
+        // there the crash destroys it (TW p.68). Checked before the flying check, as the path is airborne until then.
+        if (path.landsWiGEVehicleWhereItCrashes()) {
+            logger.trace("WiGE lands where it crashes ({}).", UNIT_DESTRUCTION_FACTOR);
+            return UNIT_DESTRUCTION_FACTOR;
+        }
+
         // If we're flying or swimming, we don't care about ground hazards.
         if (EntityMovementType.MOVE_FLYING.equals(path.getLastStepMovementType()) ||
               EntityMovementType.MOVE_OVER_THRUST.equals(path.getLastStepMovementType()) ||
@@ -2622,10 +2653,10 @@ public class BasicPathRanker extends PathRanker {
         // unit's ledger said stay, turn after turn. Price the water for the hex the unit stays in. The
         // elevation check keeps this to units actually in the water - a stationary path reports MOVE_NONE,
         // so a hovering VTOL would otherwise read as drowning.
-        if (null == previousCoords) {
+        if (previousCoords == null) {
             Coords finalCoords = path.getFinalCoords();
-            Hex finalHex = (null == finalCoords) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
-            if ((null != finalHex) && finalHex.containsTerrain(Terrains.WATER)
+            Hex finalHex = (finalCoords == null) ? null : game.getBoard(path.getFinalBoardId()).getHex(finalCoords);
+            if ((finalHex != null) && finalHex.containsTerrain(Terrains.WATER)
                   && !finalHex.containsTerrain(Terrains.ICE) && (movingUnit.getElevation() < 0)) {
                 totalHazard += waterHazard(movingUnit, finalHex, movingUnit.getElevation(),
                       movingUnit.isProne(), true, null);
@@ -2877,11 +2908,11 @@ public class BasicPathRanker extends PathRanker {
             return UNIT_DESTRUCTION_FACTOR;
         }
 
-        // Unsealed unit will drown.
-        if (movingUnit instanceof Mek &&
-              ((Mek) movingUnit).isIndustrial() &&
-              !movingUnit.hasEnvironmentalSealing() &&
-              (movingUnit.getEngine().getEngineType() == Engine.COMBUSTION_ENGINE) &&
+        // An IndustrialMek needs both the Environmental Sealing and a non-air-breathing engine to be completely
+        // submerged; lacking either, it drowns (TW p.52, Movement Costs Table footnote 8).
+        if ((movingUnit instanceof Mek industrialMek) &&
+              industrialMek.isIndustrial() &&
+              !EnvironmentalSealingRules.canOperateFullySubmerged(industrialMek) &&
               hex.depth() >= 1 &&
               endsInHex) {
             double destructionFactor = hex.depth() >= 2 ? UNIT_DESTRUCTION_FACTOR : UNIT_DESTRUCTION_FACTOR * 0.5d;
@@ -2917,7 +2948,7 @@ public class BasicPathRanker extends PathRanker {
         // Fall-contingent breaches: unarmored locations that submerge only if the unit falls prone. Compute
         // the fall probability lazily so a fully-armored unit never triggers it. A unit standing still makes
         // no water-entry roll, so there is nothing to fall from.
-        if (null != movePath) {
+        if (movePath != null) {
             double fallProbability = -1;
             for (int location : submergedWhileProne) {
                 if (submergedInCurrentPose.contains(location) || (movingUnit.getArmor(location) > 0)) {
@@ -3011,7 +3042,7 @@ public class BasicPathRanker extends PathRanker {
         if (waterRoll.getValue() == TargetRoll.CHECK_FALSE) {
             return 0.0;
         }
-        boolean naturalAptPilot = movingUnit.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean naturalAptPilot = movingUnit.isUseNaturalAptitudePiloting();
         return 1.0 - (Compute.oddsAbove(waterRoll.getValue(), naturalAptPilot) / 100.0);
     }
 

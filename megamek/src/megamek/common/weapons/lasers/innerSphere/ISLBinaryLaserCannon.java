@@ -37,6 +37,7 @@ package megamek.common.weapons.lasers.innerSphere;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class ISLBinaryLaserCannon extends LaserWeapon {
         maxRange = RANGE_SHORT;
         flags = flags.andNot(F_PROTO_WEAPON);
         // Nothing to see here, move along
-        rulesRefs = "Gothic";
+        rulesRefs = rulesRefs(SourceBookCode.GOTHIC);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D)

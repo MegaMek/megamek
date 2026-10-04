@@ -119,7 +119,8 @@ Modifier Envelope ----- Ctrl+W [menu]
 Field of Fire ----- R [menu]
 LOS Settings ----- L [menu]
 Visual & Sensor Ranges ----- C [menu]
-Show Spotting FOV ----- O [menu]
+Show Spotting FOV ----- CTRL-O [menu]
+Show Objects ---------- O [menu]
 
 
 REPORTS

@@ -361,6 +361,19 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     /**
+     * The levels of a decorative terrain the tileset has images for, given the structure described, so a user can be
+     * offered the pictures that exist rather than a range of numbers that mostly draw nothing.
+     *
+     * @param structure    A hex holding the structure the images are wanted for
+     * @param fluffTerrain The decorative terrain to look for
+     *
+     * @return The levels the tileset has images for, in order
+     */
+    public List<Integer> definedFluffLevels(Hex structure, int fluffTerrain) {
+        return hexTileset.definedFluffLevels(structure, fluffTerrain);
+    }
+
+    /**
      * Return a list of superimposed images for the hex
      */
     public List<Image> supersFor(Hex hex) {

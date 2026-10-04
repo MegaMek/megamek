@@ -79,6 +79,65 @@ public final class Version implements Comparable<Version>, Serializable {
     /** Key of the optional revision entry in {@code Version.properties}. Absent for ordinary releases. */
     private static final String REVISION_BUNDLE_KEY = "revision";
 
+    /** Key of the optional build note entry in {@code Version.properties}. Absent for ordinary releases. */
+    private static final String NOTES_BUNDLE_KEY = "notes";
+
+    /** Key of the optional colour name the build note is drawn in. Absent unless a build note sets one. */
+    private static final String NOTES_COLOR_BUNDLE_KEY = "notesColor";
+
+    /** Key of the optional point size the build note is drawn at. Absent unless a build note sets one. */
+    private static final String NOTES_FONT_SIZE_BUNDLE_KEY = "notesFontSize";
+
+    /** Key of the optional tag sprayed across the MegaMek logo on the splash art. Absent for ordinary releases. */
+    private static final String SPLASH_TAG_BUNDLE_KEY = "splashTag";
+
+    /** Key of the optional colour name the splash tag is sprayed in. Absent unless a splash tag sets one. */
+    private static final String SPLASH_TAG_COLOR_BUNDLE_KEY = "splashTagColor";
+
+    /** Key of the optional angle, in degrees, the splash tag is sprayed at. Absent unless a splash tag sets one. */
+    private static final String SPLASH_TAG_ROTATION_BUNDLE_KEY = "splashTagRotation";
+
+    /** The angle the splash tag is sprayed at when it does not ask for one: very slightly off level. */
+    public static final double DEFAULT_SPLASH_TAG_ROTATION = -2.5;
+
+    /**
+     * Bounds accepted for a configured splash tag angle. Anything past this is treated as a mistake rather than
+     * an intention, since a tag turned much further than this stops reading as paint on a sign and starts
+     * running off the artwork.
+     */
+    private static final double MINIMUM_SPLASH_TAG_ROTATION = -45.0;
+    private static final double MAXIMUM_SPLASH_TAG_ROTATION = 45.0;
+
+    /**
+     * The value {@link #getBuildNotesFontSize()} reports when no point size is configured, meaning the build note
+     * is drawn at whatever size the rest of the menu uses.
+     */
+    public static final int NO_NOTES_FONT_SIZE = 0;
+
+    /**
+     * Bounds accepted for a configured build note point size. A size outside these is treated as a mistake and
+     * ignored, because a note at 2 points is unreadable and one at 400 points would push the menu buttons off the
+     * bottom of the screen.
+     */
+    private static final int MINIMUM_NOTES_FONT_SIZE = 6;
+    private static final int MAXIMUM_NOTES_FONT_SIZE = 72;
+
+    /**
+     * The free-text note about this particular build, or {@code null} when the build carries none, which is the
+     * case for every ordinary release.
+     *
+     * <p>This describes the build the code is running as, not any one {@code Version} object, so it is read once
+     * at class load and is deliberately not part of a version's identity: it takes no part in {@link #toString()},
+     * {@link #compareTo(Version)} or {@link #equals(Object)}, and is never sent to another client. The colour and
+     * point size below are the presentation of that same note and are read the same way.</p>
+     */
+    private static final String BUILD_NOTES = readOptionalNotesFromBundle();
+    private static final String BUILD_NOTES_COLOR_NAME = readOptionalEntryFromBundle(NOTES_COLOR_BUNDLE_KEY);
+    private static final int BUILD_NOTES_FONT_SIZE = readOptionalNotesFontSizeFromBundle();
+    private static final String SPLASH_TAG = readOptionalEntryFromBundle(SPLASH_TAG_BUNDLE_KEY);
+    private static final String SPLASH_TAG_COLOR_NAME = readOptionalEntryFromBundle(SPLASH_TAG_COLOR_BUNDLE_KEY);
+    private static final double SPLASH_TAG_ROTATION = readOptionalSplashTagRotationFromBundle();
+
     private int major;
     private int minor;
     private int patch;
@@ -233,6 +292,208 @@ public final class Version implements Comparable<Version>, Serializable {
 
         LOGGER.debug("[Version] Optional revision component {} loaded from Version.properties", parsedRevision);
         return parsedRevision;
+    }
+
+    /**
+     * Reads the optional {@code notes} entry from {@code Version.properties}.
+     *
+     * <p>The key is absent for ordinary releases and is only filled in when a build needs to say something about
+     * itself on the main menu, so a missing key is the expected case and is not reported as a problem.</p>
+     *
+     * @return the configured build note, or {@code null} when the key is absent or blank
+     */
+    private static @Nullable String readOptionalNotesFromBundle() {
+        final String configuredNotes = readOptionalEntryFromBundle(NOTES_BUNDLE_KEY);
+        if (configuredNotes == null) {
+            return null;
+        }
+
+        LOGGER.info("[Version] Build note loaded from Version.properties: {}", configuredNotes);
+        return configuredNotes;
+    }
+
+    /**
+     * Reads the optional {@code notesFontSize} entry from {@code Version.properties}.
+     *
+     * @return the configured point size, or {@link #NO_NOTES_FONT_SIZE} when the key is absent, blank, not a
+     *       number, or outside the sizes that make sense on the menu
+     */
+    private static int readOptionalNotesFontSizeFromBundle() {
+        final String configuredFontSize = readOptionalEntryFromBundle(NOTES_FONT_SIZE_BUNDLE_KEY);
+        if (configuredFontSize == null) {
+            return NO_NOTES_FONT_SIZE;
+        }
+
+        final int parsedFontSize = MathUtility.parseInt(configuredFontSize, NO_NOTES_FONT_SIZE);
+        final boolean isTooSmall = parsedFontSize < MINIMUM_NOTES_FONT_SIZE;
+        final boolean isTooLarge = parsedFontSize > MAXIMUM_NOTES_FONT_SIZE;
+        if (isTooSmall || isTooLarge) {
+            LOGGER.warn(
+                  "[Version] Version.properties sets notesFontSize to '{}', which is not a point size between "
+                        + "{} and {}. The build note will be shown at the menu's ordinary size instead.",
+                  configuredFontSize,
+                  MINIMUM_NOTES_FONT_SIZE,
+                  MAXIMUM_NOTES_FONT_SIZE);
+            return NO_NOTES_FONT_SIZE;
+        }
+
+        LOGGER.debug("[Version] Build note point size {} loaded from Version.properties", parsedFontSize);
+        return parsedFontSize;
+    }
+
+    /**
+     * Reads the optional {@code splashTagRotation} entry from {@code Version.properties}.
+     *
+     * @return the configured angle in degrees, or {@link #DEFAULT_SPLASH_TAG_ROTATION} when the key is absent,
+     *       blank, not a number, or turned further than makes sense on the artwork
+     */
+    private static double readOptionalSplashTagRotationFromBundle() {
+        final String configuredRotation = readOptionalEntryFromBundle(SPLASH_TAG_ROTATION_BUNDLE_KEY);
+        if (configuredRotation == null) {
+            return DEFAULT_SPLASH_TAG_ROTATION;
+        }
+
+        final double parsedRotation = MathUtility.parseDouble(configuredRotation, Double.NaN);
+        final boolean isNotANumber = Double.isNaN(parsedRotation);
+        final boolean isTurnedTooFar = (parsedRotation < MINIMUM_SPLASH_TAG_ROTATION)
+              || (parsedRotation > MAXIMUM_SPLASH_TAG_ROTATION);
+        if (isNotANumber || isTurnedTooFar) {
+            LOGGER.warn("[Version] Version.properties sets splashTagRotation to '{}', which is not an angle "
+                        + "between {} and {} degrees. The splash tag will be sprayed at {} degrees instead.",
+                  configuredRotation,
+                  MINIMUM_SPLASH_TAG_ROTATION,
+                  MAXIMUM_SPLASH_TAG_ROTATION,
+                  DEFAULT_SPLASH_TAG_ROTATION);
+            return DEFAULT_SPLASH_TAG_ROTATION;
+        }
+
+        LOGGER.debug("[Version] Splash tag angle {} degrees loaded from Version.properties", parsedRotation);
+        return parsedRotation;
+    }
+
+    /**
+     * Reads an optional entry from {@code Version.properties}, treating an absent key and a blank value alike.
+     *
+     * @param bundleKey the key to read
+     *
+     * @return the trimmed value, or {@code null} when the key is absent or its value is blank
+     */
+    private static @Nullable String readOptionalEntryFromBundle(final String bundleKey) {
+        if (!VERSION_BUNDLE.containsKey(bundleKey)) {
+            return null;
+        }
+
+        final String normalizedEntry = normalizeOptionalEntry(VERSION_BUNDLE.getString(bundleKey));
+        if (normalizedEntry == null) {
+            LOGGER.debug("[Version] Version.properties has a {} entry, but it is blank; it is ignored", bundleKey);
+        }
+
+        return normalizedEntry;
+    }
+
+    /**
+     * Trims a configured entry and reduces an empty one to {@code null}, so that callers have a single "there is
+     * nothing configured" case to handle rather than also having to allow for whitespace.
+     *
+     * @param configuredEntry the raw value of the entry, or {@code null} when there is none
+     *
+     * @return the trimmed value, or {@code null} when there is nothing there
+     */
+    static @Nullable String normalizeOptionalEntry(final @Nullable String configuredEntry) {
+        if (configuredEntry == null) {
+            return null;
+        }
+
+        final String trimmedEntry = configuredEntry.trim();
+        return trimmedEntry.isEmpty() ? null : trimmedEntry;
+    }
+
+    /**
+     * Returns the free-text note this build was released with, such as a warning that it is a development build.
+     *
+     * @return the build note, or {@code null} when this build has none, which is the case for every ordinary
+     *       release
+     */
+    public static @Nullable String getBuildNotes() {
+        return BUILD_NOTES;
+    }
+
+    /**
+     * @return {@code true} if this build was released with a note to show the player, otherwise {@code false}
+     */
+    public static boolean hasBuildNotes() {
+        return BUILD_NOTES != null;
+    }
+
+    /**
+     * Returns the colour the build note asks to be drawn in, as the plain name written in
+     * {@code Version.properties} rather than as a colour object, because this class is also used well away from
+     * the user interface.
+     *
+     * @return the configured colour name, or {@code null} when the note did not ask for a particular colour
+     */
+    public static @Nullable String getBuildNotesColorName() {
+        return BUILD_NOTES_COLOR_NAME;
+    }
+
+    /**
+     * @return the point size the build note asks to be drawn at, or {@link #NO_NOTES_FONT_SIZE} when it did not
+     *       ask for a particular size
+     */
+    public static int getBuildNotesFontSize() {
+        return BUILD_NOTES_FONT_SIZE;
+    }
+
+    /**
+     * @return {@code true} if the build note asks for a particular point size, otherwise {@code false}
+     */
+    public static boolean hasBuildNotesFontSize() {
+        return BUILD_NOTES_FONT_SIZE != NO_NOTES_FONT_SIZE;
+    }
+
+    /**
+     * Returns the short tag this build sprays across the MegaMek logo on the splash art, such as the name of the
+     * edition it is celebrating.
+     *
+     * <p>This is separate from {@link #getBuildNotes()} so that the artwork and the menu can say different
+     * things, or so that a build can have one without the other.</p>
+     *
+     * @return the splash tag, or {@code null} when this build has none, which is the case for every ordinary
+     *       release
+     */
+    public static @Nullable String getSplashTag() {
+        return SPLASH_TAG;
+    }
+
+    /**
+     * @return {@code true} if this build has a tag to spray across the splash art, otherwise {@code false}
+     */
+    public static boolean hasSplashTag() {
+        return SPLASH_TAG != null;
+    }
+
+    /**
+     * Returns the colour the splash tag asks to be sprayed in, as the plain name written in
+     * {@code Version.properties} rather than as a colour object, for the same reason as
+     * {@link #getBuildNotesColorName()}: this class is also used well away from the user interface.
+     *
+     * @return the configured colour name, or {@code null} when the tag did not ask for a particular colour
+     */
+    public static @Nullable String getSplashTagColorName() {
+        return SPLASH_TAG_COLOR_NAME;
+    }
+
+    /**
+     * Returns the angle, in degrees, the splash tag is sprayed at.
+     *
+     * <p>Zero is level. A negative angle drops the left-hand end and lifts the right-hand end; a positive angle
+     * does the opposite. This follows the screen's own sense of rotation, where the vertical axis points
+     * downwards.</p>
+     *
+     * @return the configured angle, or {@link #DEFAULT_SPLASH_TAG_ROTATION} when the tag did not ask for one
+     */
+    public static double getSplashTagRotation() {
+        return SPLASH_TAG_ROTATION;
     }
 
     // region Getters

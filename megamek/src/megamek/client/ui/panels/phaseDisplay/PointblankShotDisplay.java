@@ -62,7 +62,6 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.enums.AimingMode;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
@@ -73,6 +72,7 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
+import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
@@ -97,6 +97,8 @@ public class PointblankShotDisplay extends FiringDisplay {
      */
     public enum FiringCommand implements PhaseCommand {
         FIRE_TWIST("fireTwist"),
+        FIRE_ROTATE_TURRET("fireRotateTurret"),
+        FIRE_ROTATE_TURRET_2("fireRotateTurret2"),
         FIRE_FIRE("fireFire"),
         FIRE_SKIP("fireSkip"),
         FIRE_MODE("fireMode"),
@@ -310,6 +312,11 @@ public class PointblankShotDisplay extends FiringDisplay {
                   || cmd == FiringCommand.FIRE_CANCEL) {
                 continue;
             }
+            // The rear-turret rotate button exists only for dual-turret vehicles, as in the firing phase.
+            if ((cmd == FiringCommand.FIRE_ROTATE_TURRET_2)
+                  && !((currentEntity() instanceof Tank tank) && !tank.hasNoDualTurret())) {
+                continue;
+            }
 
             buttonList.add(buttons.get(cmd));
             i++;
@@ -358,6 +365,8 @@ public class PointblankShotDisplay extends FiringDisplay {
                   && currentEntity().getCrew().isActive());
 
             setFlipArmsEnabled(currentEntity().canFlipArms());
+            // TW p.260 lets a hidden unit torso twist OR rotate its turret before the point-blank shot.
+            updateRotateTurret();
             updateSearchlight();
         } else {
             logger.error("Tried to select non-existent entity {}", en);
@@ -756,7 +765,7 @@ public class PointblankShotDisplay extends FiringDisplay {
                 clientgui.getUnitDisplay().wPan.setToHit(toHit);
                 setFireEnabled(true);
             } else {
-                boolean natAptGunnery = currentEntity().hasAbility(OptionsConstants.PILOT_APTITUDE_GUNNERY);
+                boolean natAptGunnery = currentEntity().isUseNaturalAptitudeGunnery(game, m);
                 clientgui.getUnitDisplay().wPan.setToHit(toHit, natAptGunnery);
                 setFireEnabled(true);
             }
@@ -778,7 +787,7 @@ public class PointblankShotDisplay extends FiringDisplay {
     // BoardListener
     //
     @Override
-    public void hexMoused(BoardViewEvent b) {
+    public void hexMoused(BoardViewEvent event) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -786,28 +795,25 @@ public class PointblankShotDisplay extends FiringDisplay {
 
         // ignore buttons other than 1
         if (!clientgui.isProcessingPointblankShot()
-              || ((b.getButton() != MouseEvent.BUTTON1))) {
+              || ((event.getButton() != MouseEvent.BUTTON1))) {
             return;
         }
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if (((b.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
-              || ((b.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
+        if (((event.getModifiers() & InputEvent.CTRL_DOWN_MASK) != 0)
+              || ((event.getModifiers() & InputEvent.ALT_DOWN_MASK) != 0)) {
             return;
         }
 
-        if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
-            if (b.isShiftHeld() || twisting) {
+        if (event.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
+            if (event.isShiftHeld() || twisting) {
                 updateFlipArms(false);
-                torsoTwist(b.getCoords());
+                torsoTwist(event.getCoords());
             }
-            b.getBoardView().cursor(b.getCoords());
-        } else if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
+        } else if (event.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             twisting = false;
-            if (!b.isShiftHeld()) {
-                b.getBoardView().select(b.getCoords());
-            }
         }
+        applyHexMouseAction(event, event.isShiftHeld());
     }
 
     @Override
@@ -862,6 +868,10 @@ public class PointblankShotDisplay extends FiringDisplay {
             nextWeapon();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_TWIST.getCmd())) {
             twisting = true;
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ROTATE_TURRET.getCmd())) {
+            rotateSelectedMount();
+        } else if (ev.getActionCommand().equals(FiringCommand.FIRE_ROTATE_TURRET_2.getCmd())) {
+            rotateRearTurret();
         } else if (ev.getActionCommand().equals(FiringCommand.FIRE_MORE.getCmd())) {
             currentButtonGroup++;
             currentButtonGroup %= numButtonGroups;
@@ -888,6 +898,24 @@ public class PointblankShotDisplay extends FiringDisplay {
     protected void setTwistEnabled(boolean enabled) {
         buttons.get(FiringCommand.FIRE_TWIST).setEnabled(enabled);
         clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_TWIST.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setRotateTurretLabel(boolean dualTurretTank) {
+        buttons.get(FiringCommand.FIRE_ROTATE_TURRET).setText(Messages.getString(
+              dualTurretTank ? "FiringDisplay.fireRotateTurretFront" : "FiringDisplay.fireRotateTurret"));
+    }
+
+    @Override
+    protected void setRotateTurretEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_ROTATE_TURRET).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET.getCmd(), enabled);
+    }
+
+    @Override
+    protected void setRotateRearTurretEnabled(boolean enabled) {
+        buttons.get(FiringCommand.FIRE_ROTATE_TURRET_2).setEnabled(enabled);
+        clientgui.getMenuBar().setEnabled(FiringCommand.FIRE_ROTATE_TURRET_2.getCmd(), enabled);
     }
 
     @Override

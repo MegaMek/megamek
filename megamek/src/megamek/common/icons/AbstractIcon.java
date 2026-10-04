@@ -39,6 +39,9 @@ import java.awt.image.BufferedImage;
 import java.io.PrintWriter;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.ImageIcon;
 
 import megamek.common.annotations.Nullable;
@@ -60,6 +63,18 @@ public abstract class AbstractIcon implements Serializable {
 
     public static final String ROOT_CATEGORY = "-- General --";
     public static final String DEFAULT_ICON_FILENAME = "None";
+
+    /**
+     * The pre-0.51.01 administrator portrait folder, and the sub-folders it was sorted into.
+     *
+     * @see #migrateAdministratorCategories(String)
+     */
+    private static final String LEGACY_ADMINISTRATOR_FOLDER = "Admin";
+    private static final String ADMINISTRATOR_FOLDER = "Administrator";
+    private static final List<String> LEGACY_ADMINISTRATOR_SUB_FOLDERS = List.of("Command",
+          "HR",
+          "Logistical",
+          "Transport");
 
     private String category;
     protected String filename;
@@ -257,6 +272,8 @@ public abstract class AbstractIcon implements Serializable {
                 category = category.replace("Vehicle Crewmember", "Vehicle Crew/Generic");
                 category = category.replace("Combat Technician", "Vehicle Crew/Generic");
                 category = category.replace("Conventional Aircraft Pilot", "Conventional Aircraft Crew");
+                // <51.01 compatibility handlers
+                category = migrateAdministratorCategories(category);
 
                 setCategory(category);
                 break;
@@ -271,6 +288,58 @@ public abstract class AbstractIcon implements Serializable {
             default:
                 break;
         }
+    }
+
+    /**
+     * Rewrites an icon category that still points at one of the pre-0.51.01 administrator portrait folders.
+     *
+     * <p>The four administrator roles were merged into a single Administrator role in 0.51.01. The portraits that
+     * shipped under {@code Admin/Command}, {@code Admin/HR}, {@code Admin/Logistical} and {@code Admin/Transport} were
+     * consolidated into {@code Administrator}, so those categories are rewritten to point there. Without this handler
+     * every character using one of those portraits would silently fall back to the default portrait, as the category
+     * saved against them no longer resolves.</p>
+     *
+     * <p>The four sub-folder names are used as the signature of a shipped portrait, because no portrait was ever
+     * shipped in the {@code Admin} folder itself. A category naming {@code Admin} without one of them - a bare
+     * {@code Admin}, or an {@code Admin} sub-folder of the user's own making - therefore refers to a folder the user
+     * created, which has not been renamed, and is deliberately left alone. The one case this cannot tell apart is a
+     * user folder that happens to share a name with a shipped sub-folder.</p>
+     *
+     * <p>Matching is by whole path element, so {@code Admin/HR Reserves} is not treated as {@code Admin/HR}.</p>
+     *
+     * @param category the category to migrate
+     *
+     * @return the migrated category, or {@code category} unchanged if it does not reference a shipped legacy folder
+     */
+    private static String migrateAdministratorCategories(final String category) {
+        if (!category.contains(LEGACY_ADMINISTRATOR_FOLDER)) {
+            return category;
+        }
+
+        final List<String> elements = new ArrayList<>(Arrays.asList(category.split("/")));
+        boolean migrated = false;
+
+        for (int index = 0; index < elements.size(); index++) {
+            final int subFolderIndex = index + 1;
+
+            if (!LEGACY_ADMINISTRATOR_FOLDER.equals(elements.get(index)) ||
+                  (subFolderIndex >= elements.size()) ||
+                  !LEGACY_ADMINISTRATOR_SUB_FOLDERS.contains(elements.get(subFolderIndex))) {
+                continue;
+            }
+
+            elements.set(index, ADMINISTRATOR_FOLDER);
+            elements.remove(subFolderIndex);
+            migrated = true;
+        }
+
+        if (!migrated) {
+            return category;
+        }
+
+        // Categories are normally stored with a trailing separator, so preserve whichever form was saved
+        final String joined = String.join("/", elements);
+        return category.endsWith("/") ? joined + '/' : joined;
     }
     //endregion File I/O
 

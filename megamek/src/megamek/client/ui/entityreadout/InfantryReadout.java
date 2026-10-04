@@ -249,7 +249,8 @@ class InfantryReadout extends GeneralEntityReadout {
     protected List<ViewElement> getWeapons(boolean showDetail) {
         List<ViewElement> result = new ArrayList<>();
         result.add(new LabeledLine(Messages.getString("MekView.PrimaryWeapon"),
-              (null != infantry.getPrimaryWeapon()) ? infantry.getPrimaryWeapon().getDesc() : MESSAGE_NONE));
+                                   (infantry.getPrimaryWeapon() != null) ? infantry.getPrimaryWeapon()
+                                                                                   .getDesc() : MESSAGE_NONE));
         result.add(new LabeledLine(Messages.getString("MekView.SecondWeapon"),
               secondaryCIWeaponDescriptor()));
         if (infantry.hasDisposableWeapon()) {
@@ -352,7 +353,7 @@ class InfantryReadout extends GeneralEntityReadout {
         String armorName;
         if (infantry.hasArmor()) {
             EquipmentType armor = infantry.getArmorKit();
-            if (null != armor) {
+            if (armor != null) {
                 armorName = armor.getName();
             } else {
                 armorName = infantry.getCustomArmorName() != null ? infantry.getCustomArmorName()

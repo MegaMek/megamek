@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -71,7 +72,10 @@ public class ISBASupportPPC extends PPCWeapon {
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         bv = 14;
         cost = 14000;
-        rulesRefs = "267, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 267),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.IS)
               .setISAdvancement(3046, 3053, 3056).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C);

@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.archaic;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -64,7 +65,7 @@ public class InfantryArchaicBokkenWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_INF_NONPENETRATING).or(F_INF_POINT_BLANK).or(F_INF_ARCHAIC);
         infantryDamage = 0.04;
         infantryRange = 0;
-        rulesRefs = "272, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 272);
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setApproximate(false, false, false, false, false).setTechRating(TechRating.A)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B);

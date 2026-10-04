@@ -44,6 +44,14 @@ public abstract class RulesUnderwater {
     public abstract int getBreachTarget();
 
     /**
+     * Whether a breached leg has the gameplay effects of a destroyed leg instead of individual actuator hits.
+     * The location retains its armor, internal structure, and hittable critical slots.
+     *
+     * @return true if a breached leg is treated as destroyed
+     */
+    public abstract boolean treatBreachedLegAsDestroyed();
+
+    /**
      * Does water block LOS?
      *
      * @return true if water blocks line of sight

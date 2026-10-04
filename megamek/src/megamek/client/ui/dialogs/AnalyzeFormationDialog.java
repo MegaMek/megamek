@@ -32,10 +32,7 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.*;
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -364,7 +361,7 @@ public class AnalyzeFormationDialog extends JDialog {
                     return sb.toString();
                 case COL_ROLE:
                     ModelRecord mr = RATGenerator.getInstance().getModelRecord(ms.getName());
-                    if (null == mr) {
+                    if (mr == null) {
                         return UnitRole.UNDETERMINED.toString();
                     } else {
                         return mr.getMekSummary().getRole().toString();

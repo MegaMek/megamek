@@ -36,6 +36,7 @@ package megamek.common.weapons.gaussRifles.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,10 +76,13 @@ public class CLAPGaussRifle extends GaussWeapon {
         maxRange = RANGE_SHORT;
         this.atClass = CLASS_POINT_DEFENSE;
         explosionDamage = 3;
-        rulesRefs = "218, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 218),
+              rulesRef(SourceBookCode.BMM, 99),
+              rulesRef(SourceBookCode.CORE, 184),
+              rulesRef(SourceBookCode.TW, 135)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setClanAdvancement(3065, 3069, 3072, DATE_NONE, DATE_NONE)

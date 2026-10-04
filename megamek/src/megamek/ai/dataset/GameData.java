@@ -129,6 +129,13 @@ public class GameData extends EntityDataMap<GameData.Field> {
                 entities.add(UnitState.fromEntity(entity, game));
             }
         }
+        // Dead and departed units stay in every later snapshot. A unit shot down in round 1 used to
+        // vanish from the log the moment it entered the graveyard, so post-game analysis could not
+        // tell a kill from a unit that was never there; the REMOVAL column carries why it left
+        // (SALVAGEABLE, EJECTED, IN_RETREAT, ...).
+        for (Entity entity : game.getOutOfGameEntitiesVector()) {
+            entities.add(UnitState.fromEntity(entity, game));
+        }
         data.put(Field.ENTITIES, entities);
 
         // Extract minefield data

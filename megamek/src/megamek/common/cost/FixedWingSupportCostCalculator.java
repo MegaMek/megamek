@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,16 +33,18 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.FixedWingSupport;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.ArmorType;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.FixedWingSupport;
 import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {
@@ -162,7 +164,9 @@ public class FixedWingSupportCostCalculator {
         systemNames.add("Equipment");
         systemNames.add("Omni Multiplier");
         systemNames.add("Tonnage Multiplier");
-        long roundedCost = Math.round(cost);
+        double roundedCost = BigDecimal.valueOf(cost)
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo,
               systemNames.toArray(new String[0]), equipmentIndex, structCostIdx, roundedCost, costs);
         return roundedCost;

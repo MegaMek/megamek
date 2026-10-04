@@ -32,6 +32,9 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import java.util.List;
+import java.util.Vector;
+
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
 import megamek.common.TargetRollModifier;
@@ -45,10 +48,6 @@ import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Vector;
 
 public abstract class RulesPilot {
 
@@ -65,7 +64,7 @@ public abstract class RulesPilot {
     public Vector<Report> pilotHits(Entity e, int totalHits, int damage, int crewPos, boolean toughness,
           GamePhase phase) {
         Vector<Report> vDesc = new Vector<>();
-        
+
         for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
             int rollTarget = Game.rulesManager.getRulesCharts().escalatingFailure(hit);
 
@@ -126,7 +125,7 @@ public abstract class RulesPilot {
                 boolean wasGunner = e.getCrew().getCurrentGunnerIndex() == crewPos;
                 e.getCrew().setUnconscious(true, crewPos);
                 Report r = createCrewTakeoverReport(e, crewPos, wasPilot, wasGunner);
-                if (null != r) {
+                if (r != null) {
                     vDesc.add(r);
                 }
                 return vDesc;
@@ -135,7 +134,7 @@ public abstract class RulesPilot {
 
         return vDesc;
     }
-    
+
     /**
      * How many pilot hits for an explosion.
      *
@@ -263,7 +262,7 @@ public abstract class RulesPilot {
      * @return The reports
      */
     @Nullable
-    public Vector<Report> rollConRolls(Entity entity, boolean toughness) { 
+    public Vector<Report> rollConRolls(Entity entity, boolean toughness) {
         return null;
     }
 }

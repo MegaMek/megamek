@@ -138,7 +138,7 @@ public class RangeType {
      */
     private static int calculateRangeBracket(int primaryDistance, int secondaryDistance, int[] ranges,
           boolean useExtremeRange, boolean useLOSRange, boolean isC3) {
-        if (null == ranges) {
+        if (ranges == null) {
             return RANGE_OUT;
         }
 

@@ -173,7 +173,7 @@ public class AeroTROView extends TROView {
         final Map<String, List<Map<String, Object>>> bayDetails = new HashMap<>();
         for (final String[] arcSet : arcSets) {
             final List<WeaponMounted> bayList = baysByLoc.get(arcSet[0]);
-            if (null != bayList) {
+            if (bayList != null) {
                 final List<Map<String, Object>> rows = new ArrayList<>();
                 int heat = 0;
                 for (final WeaponMounted bay : bayList) {
@@ -254,7 +254,7 @@ public class AeroTROView extends TROView {
         for (final Map.Entry<EquipmentKey, Integer> entry : weaponCount.entrySet()) {
             final StringBuilder sb = new StringBuilder();
             sb.append(entry.getValue()).append(" ").append(entry.getKey().name());
-            if (null != linker) {
+            if (linker != null) {
                 sb.append("+").append(linker.getName().replace(" FCS", ""));
             }
             weapons.add(sb.toString());

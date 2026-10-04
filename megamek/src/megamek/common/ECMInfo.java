@@ -277,7 +277,7 @@ public class ECMInfo {
     public boolean equals(Object object) {
         if (this == object) {
             return true;
-        } else if ((null == object) || (getClass() != object.getClass())) {
+        } else if ((object == null) || (getClass() != object.getClass())) {
             return false;
         }
 

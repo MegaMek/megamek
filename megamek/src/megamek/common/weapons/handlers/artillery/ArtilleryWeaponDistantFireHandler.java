@@ -43,6 +43,7 @@ import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.LosEffects;
+import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.SpecialHexDisplay.Type;
@@ -123,7 +124,6 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
         if (!cares(phase)) {
             return true;
         }
-        String artyMsg;
         ArtilleryAttackAction artilleryAttackAction = (ArtilleryAttackAction) weaponAttackAction;
         if (phase.isTargeting()) {
             if (!handledAmmoAndReport) {
@@ -144,17 +144,23 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                 // "Shot, over" - the battery announces the round is on the way, characterised by fire type
                 reportShot();
 
-                artyMsg = "Artillery fire Incoming, landing on round "
-                      + (game.getRoundCount() + artilleryAttackAction.getTurnsTilHit())
-                      + ", fired by "
-                      + game.getPlayer(artilleryAttackAction.getPlayerId()).getName();
-                if (artilleryAttackAction.getTarget(game) != null) {
-                    game.getBoard(artilleryAttackAction.getTarget(game).getBoardId()).addSpecialHexDisplay(
-                          artilleryAttackAction.getTarget(game).getPosition(),
+                // The incoming marker is meant for the firing player's team only. A null owner makes
+                // SpecialHexDisplay.isObscured() report the marker as visible to everyone, which would show the aim
+                // hex to the whole game under double-blind, so it is not drawn when the firer cannot be resolved -
+                // a team that has left the game has nobody left to warn.
+                Player firingPlayer = game.getPlayer(artilleryAttackAction.getPlayerId());
+                Targetable incomingTarget = artilleryAttackAction.getTarget(game);
+                if ((firingPlayer != null) && (incomingTarget != null)) {
+                    int landingRound = game.getRoundCount() + artilleryAttackAction.getTurnsTilHit();
+                    String artyMsg = "Artillery fire Incoming, landing on round "
+                          + landingRound
+                          + ", fired by "
+                          + firingPlayer.getName();
+                    game.getBoard(incomingTarget.getBoardId()).addSpecialHexDisplay(
+                          incomingTarget.getPosition(),
                           new SpecialHexDisplay(
-                                Type.ARTILLERY_INCOMING, game
-                                .getRoundCount() + artilleryAttackAction.getTurnsTilHit(),
-                                game.getPlayer(artilleryAttackAction.getPlayerId()), artyMsg,
+                                Type.ARTILLERY_INCOMING, landingRound,
+                                firingPlayer, artyMsg,
                                 SpecialHexDisplay.SHD_VISIBLE_TO_TEAM));
                 }
             }
@@ -191,7 +197,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
         Coords finalPos;
 
         // Handle counter-battery on fleeing/fled off-board targets.
-        if (null == targetPos) {
+        if (targetPos == null) {
             logger.error("Artillery Target {} is missing; off-board target fled?", weaponAttackAction.getTargetId());
             return false;
         }
@@ -591,7 +597,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                 String artyMsg = "Artillery hit here on round " +
                       game.getRoundCount() +
                       ", fired by " +
-                      game.getPlayer(aaa.getPlayerId()).getName() +
+                      ArtilleryHandlerHelper.firingPlayerName(game, aaa) +
                       " (this hex is now an auto-hit)";
                 game.getBoard()
                       .addSpecialHexDisplay(targetPos,
@@ -612,23 +618,28 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                   .omnidirectional(targetPos, toHit.getMoS(), scatterReduction);
             targetPos = scatterResult.landing();
             if (game.getBoard().contains(targetPos)) {
-                // misses and scatters to another hex
-                if (!isFlak) {
-                    r = new Report(3195);
+                // A shot can miss and still come to rest on the hex it was aimed at, when the drift is shortened
+                // to nothing - a narrow miss by an Oblique Artilleryman, say. Saying it "scatters to" the hex it
+                // was aimed at reads like the drift was lost, so name the intended hex instead.
+                boolean driftedOffTarget = scatterResult.distanceHexes() > 0;
+                if (isFlak) {
+                    r = new Report(3192);
+                } else {
+                    r = driftedOffTarget ? new Report(3195) : new Report(3196);
 
                     String artyMsg = "Artillery missed here on round "
                           + game.getRoundCount() + ", by "
-                          + game.getPlayer(aaa.getPlayerId()).getName()
-                          + ", drifted to " + targetPos.getBoardNum();
+                          + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
+                          + (driftedOffTarget ? ", drifted to " + targetPos.getBoardNum() : ", landed on target");
                     SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
                           game.getRoundCount(),
                           game.getPlayer(aaa.getPlayerId()),
                           artyMsg);
-                    // Record where the round actually drifted so the board view can draw the drift line.
-                    missMarker.setDriftHex(targetPos);
+                    if (driftedOffTarget) {
+                        // Record where the round actually drifted so the board view can draw the drift line.
+                        missMarker.setDriftHex(targetPos);
+                    }
                     game.getBoard().addSpecialHexDisplay(originalPosition, missMarker);
-                } else {
-                    r = new Report(3192);
                 }
                 r.subject = subjectId;
                 r.add(targetPos.getBoardNum());
@@ -652,7 +663,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
 
                 String artyMsg = "Artillery missed here on round "
                       + game.getRoundCount() + ", by "
-                      + game.getPlayer(aaa.getPlayerId()).getName()
+                      + ArtilleryHandlerHelper.firingPlayerName(game, aaa)
                       + ", drifted off the board";
                 SpecialHexDisplay missMarker = new SpecialHexDisplay(Type.ARTILLERY_MISS,
                       game.getRoundCount(),

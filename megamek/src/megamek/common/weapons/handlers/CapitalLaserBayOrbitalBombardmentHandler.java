@@ -35,6 +35,7 @@ package megamek.common.weapons.handlers;
 
 import static megamek.common.weapons.ArtilleryHandlerHelper.clearMines;
 import static megamek.common.weapons.ArtilleryHandlerHelper.findSpotter;
+import static megamek.common.weapons.ArtilleryHandlerHelper.firingPlayerName;
 import static megamek.common.weapons.ArtilleryHandlerHelper.isForwardObserver;
 
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             report = new Report(3203).subject(subjectId).add(numWeaponsHit).add(target.getPosition().getBoardNum());
             reports.addElement(report);
             String message = "Orbital Bombardment by %s hit here on round %d (this hex is now an auto-hit)"
-                  .formatted(owner().getName(), game.getRoundCount());
+                  .formatted(firingPlayerName(game, attackAction), game.getRoundCount());
 
             board.addSpecialHexDisplay(target.getPosition(),
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(), owner(), message));
@@ -166,7 +167,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             // We're only going to display one missed shot hex on the board, at the intended target
             // Any drifted shots will be indicated at their end points
             String message = "Orbital Bombardment by %s missed here on round %d"
-                  .formatted(owner().getName(), game.getRoundCount());
+                  .formatted(firingPlayerName(game, attackAction), game.getRoundCount());
             board.addSpecialHexDisplay(target.getPosition(),
                   SpecialHexDisplay.createArtyMiss(owner(), game.getRoundCount(), message));
 
@@ -231,7 +232,14 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         reports.addElement(report);
         Report.addNewline(reports);
 
+        // The incoming marker is meant for the firing player's team only. A null owner makes
+        // SpecialHexDisplay.isObscured() report the marker as visible to everyone, which would show the aim hex to the
+        // whole game under double-blind, so it is not drawn when the firer cannot be resolved - a team that has left
+        // the game has nobody left to warn.
         Player owner = game.getPlayer(aaa.getPlayerId());
+        if (owner == null) {
+            return;
+        }
         int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
         String message = "Orbital Bombardment incoming, landing this round, fired by " + owner.getName();
         SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);

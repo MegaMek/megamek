@@ -36,6 +36,7 @@ package megamek.common.weapons.tag;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,10 +69,13 @@ public class CLLightTAG extends TAGWeapon {
         bv = 0;
         cost = 40000;
         flags = flags.or(F_AERO_WEAPON).or(F_PROTO_WEAPON).andNot(F_BA_WEAPON);
-        rulesRefs = "238, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 238),
+              rulesRef(SourceBookCode.BMM, 114),
+              rulesRef(SourceBookCode.CORE, 200),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setClanAdvancement(3051, 3054, 3059, DATE_NONE, DATE_NONE)

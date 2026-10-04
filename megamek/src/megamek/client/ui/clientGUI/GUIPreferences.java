@@ -33,18 +33,14 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Window;
+import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
+import java.util.StringJoiner;
+import javax.swing.*;
 
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
@@ -52,6 +48,8 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
+import megamek.common.equipment.SensorFamily;
+import megamek.common.preference.IPreferenceStore;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 import megamek.common.units.EntityMovementType;
@@ -303,6 +301,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String FOV_STRIPES = "FoVFogStripes";
     public static final String FOV_GRAYSCALE = "FoVFogGrayscale";
     public static final String FOV_SPOTTING_MODE = "FovSpottingMode";
+    public static final String SHOW_OBJECTIVE_OVERLAYS = "ShowObjectiveOverlays";
     public static final String GUI_SCALE = "GUIScale";
     public static final String LOBBY_MEK_TABLE_UNIT_WIDTH = "LobbyMekTableUnitWidth";
     public static final String LOBBY_MEK_TABLE_PILOT_WIDTH = "LobbyMekTablePilotWidth";
@@ -391,6 +390,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String NAG_FOR_LAUNCH_DOORS = "NagForLaunchDoors";
     public static final String NAG_FOR_MECHANICAL_FALL_DAMAGE = "NagForMechanicalFallDamage";
     public static final String NAG_FOR_DOOMED = "NagForDoomed";
+    public static final String NAG_FOR_DOOMED_MOVE = "NagForDoomedMove";
+    public static final String NAG_FOR_AUTO_EJECT = "NagForAutoEject";
+    public static final String NAG_FOR_DISHONOR = "NagForDishonor";
     public static final String NAG_FOR_WIGE_LANDING = "NagForWiGELanding";
     public static final String NAG_FOR_ODD_SIZED_BOARD = "NagForOddSizedBoard";
     public static final String RULER_COLOR_1 = "RulerColor1";
@@ -416,6 +418,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
     public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
     public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
+    public static final String SOUND_PROMPT_SUPPRESS = "SoundPrompt";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
     public static final String TOOLTIP_DIST_SUPPRESSION = "TooltipDistSuppression";
@@ -450,6 +453,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SHOW_DAMAGE_DECAL = "ShowDamageDecal";
     public static final String SKIN_FILE = "SkinFile";
     public static final String DEFAULT_WEAPON_SORT_ORDER = "DefaultWeaponSortOrder";
+    public static final String SENSOR_PREFERENCE_ORDER = "SensorPreferenceOrder";
     public static final String UI_THEME = "UITheme";
     public static final String BOARD_EDIT_LOAD_SIZE_HEIGHT = "BoardEditLoadSizeHeight";
     public static final String BOARD_EDIT_LOAD_SIZE_WIDTH = "BoardEditLoadSizeWidth";
@@ -541,6 +545,9 @@ public class GUIPreferences extends PreferenceStoreProxy {
     private static final String _TAB_ORDER = "_tabOrder";
     private static final String _WINDOW = "_window";
 
+    // Persisted typo used by older releases; this is not a valid localization key.
+    static final String LEGACY_PLAYER_COLOUR_BROWN = "layerColour.BROWN.text";
+
     protected static GUIPreferences instance = new GUIPreferences();
 
     public static final int HIDE = 0;
@@ -549,6 +556,14 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public static GUIPreferences getInstance() {
         return instance;
+    }
+
+    static void migrateLegacyBrownPlayerColour(IPreferenceStore preferenceStore) {
+        if (preferenceStore.hasProperty(LEGACY_PLAYER_COLOUR_BROWN)
+              && !preferenceStore.hasProperty(PlayerColour.PLAYER_COLOUR_BROWN)) {
+            preferenceStore.setValue(PlayerColour.PLAYER_COLOUR_BROWN,
+                preferenceStore.getString(LEGACY_PLAYER_COLOUR_BROWN));
+        }
     }
 
     protected GUIPreferences() {
@@ -621,6 +636,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(PlayerColour.PLAYER_COLOUR_CHARTREUSE, new Color(0x7FFF00));
         setDefault(PlayerColour.PLAYER_COLOUR_DEEP_PURPLE, new Color(0x9400D3));
         setDefault(PlayerColour.PLAYER_COLOUR_YELLOW, new Color(0xF2F261));
+        migrateLegacyBrownPlayerColour(store);
 
         setDefault(BOARD_MOVE_DEFAULT_CLIMB_MODE, true);
         setDefault(BOARD_MOVE_DEFAULT_COLOR, Color.CYAN);
@@ -688,6 +704,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(FOV_STRIPES, 35);
         store.setDefault(FOV_GRAYSCALE, false);
         store.setDefault(FOV_SPOTTING_MODE, false);
+        store.setDefault(SHOW_OBJECTIVE_OVERLAYS, true);
 
         store.setDefault(HIGH_QUALITY_GRAPHICS, true);
         store.setDefault(AO_HEX_SHADOWS, false);
@@ -711,7 +728,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         // is force-hidden on every phase change; 2 (= MANUAL) leaves it as the player set it
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
-        store.setDefault(BOT_COMMANDS_ENABLED, false);
+        store.setDefault(BOT_COMMANDS_ENABLED, true);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -900,6 +917,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(MOUSE_WHEEL_ZOOM_FLIP, true);
 
         store.setDefault(NAG_FOR_CRUSHING_BUILDINGS, true);
+        store.setDefault(NAG_FOR_DOOMED_MOVE, true);
+        store.setDefault(NAG_FOR_AUTO_EJECT, true);
         store.setDefault(NAG_FOR_MAP_ED_README, true);
         store.setDefault(NAG_FOR_MASC, true);
         store.setDefault(NAG_FOR_NO_ACTION, true);
@@ -911,6 +930,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(NAG_FOR_LAUNCH_DOORS, true);
         store.setDefault(NAG_FOR_MECHANICAL_FALL_DAMAGE, true);
         store.setDefault(NAG_FOR_DOOMED, true);
+        store.setDefault(NAG_FOR_DISHONOR, true);
         store.setDefault(NAG_FOR_WIGE_LANDING, true);
         store.setDefault(NAG_FOR_ODD_SIZED_BOARD, true);
 
@@ -935,6 +955,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SOUND_MUTE_CHAT, true);
         store.setDefault(SOUND_MUTE_MY_TURN, false);
         store.setDefault(SOUND_MUTE_OTHERS_TURN, true);
+        store.setDefault(SOUND_PROMPT_SUPPRESS, false);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
@@ -961,6 +982,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
         store.setDefault(SHOW_UNIT_OVERVIEW, true);
         store.setDefault(DEFAULT_WEAPON_SORT_ORDER, WeaponSortOrder.DEFAULT.name());
+        store.setDefault(SENSOR_PREFERENCE_ORDER, joinSensorPreference(SensorFamily.defaultOrder()));
         store.setDefault(SHOW_DAMAGE_LEVEL, true);
         store.setDefault(SHOW_DAMAGE_DECAL, true);
         store.setDefault(SKIN_FILE, "BW - Default.xml");
@@ -1623,6 +1645,22 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return store.getBoolean(MOUSE_WHEEL_ZOOM_FLIP);
     }
 
+    public boolean getNagForDoomedMove() {
+        return store.getBoolean(NAG_FOR_DOOMED_MOVE);
+    }
+
+    public void setNagForDoomedMove(boolean shouldNag) {
+        store.setValue(NAG_FOR_DOOMED_MOVE, shouldNag);
+    }
+
+    public boolean getNagForAutoEject() {
+        return store.getBoolean(NAG_FOR_AUTO_EJECT);
+    }
+
+    public void setNagForAutoEject(boolean shouldNag) {
+        store.setValue(NAG_FOR_AUTO_EJECT, shouldNag);
+    }
+
     public boolean getNagForCrushingBuildings() {
         return store.getBoolean(NAG_FOR_CRUSHING_BUILDINGS);
     }
@@ -1657,6 +1695,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getNagForOverheat() {
         return store.getBoolean(NAG_FOR_OVERHEAT);
+    }
+
+    public boolean getNagForDishonor() {
+        return store.getBoolean(NAG_FOR_DISHONOR);
     }
 
     public boolean getNagForLaunchDoors() {
@@ -1832,6 +1874,41 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return WeaponSortOrder.valueOf(store.getString(DEFAULT_WEAPON_SORT_ORDER));
     }
 
+    /**
+     * Returns the player's sensor families in preference order, most preferred first. A unit deploys using the first
+     * family on this list that it actually carries a sensor for.
+     *
+     * <p>The stored value is tolerated rather than trusted: unknown names left over from an older or newer build are
+     * dropped, duplicates are ignored, and any family the stored list does not mention is appended in
+     * {@link SensorFamily#defaultOrder()} order. The returned list therefore always holds every family exactly
+     * once.</p>
+     *
+     * @return every sensor family, most preferred first
+     */
+    public List<SensorFamily> getSensorPreferenceOrder() {
+        List<SensorFamily> order = new ArrayList<>();
+        for (String familyName : store.getString(SENSOR_PREFERENCE_ORDER).split(",")) {
+            String trimmedName = familyName.trim();
+            if (trimmedName.isEmpty()) {
+                continue;
+            }
+            try {
+                SensorFamily family = SensorFamily.valueOf(trimmedName);
+                if (!order.contains(family)) {
+                    order.add(family);
+                }
+            } catch (IllegalArgumentException ignored) {
+                // A family that no longer exists; the default order below fills the gap
+            }
+        }
+        for (SensorFamily family : SensorFamily.defaultOrder()) {
+            if (!order.contains(family)) {
+                order.add(family);
+            }
+        }
+        return order;
+    }
+
     public String getAsCardFont() {
         return store.getString(AS_CARD_FONT);
     }
@@ -1903,6 +1980,23 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDefaultWeaponSortOrder(final WeaponSortOrder weaponSortOrder) {
         store.setValue(DEFAULT_WEAPON_SORT_ORDER, weaponSortOrder.name());
+    }
+
+    /**
+     * Stores the sensor families in preference order, most preferred first.
+     *
+     * @param sensorPreferenceOrder the families, most preferred first
+     */
+    public void setSensorPreferenceOrder(final List<SensorFamily> sensorPreferenceOrder) {
+        store.setValue(SENSOR_PREFERENCE_ORDER, joinSensorPreference(sensorPreferenceOrder));
+    }
+
+    private static String joinSensorPreference(List<SensorFamily> sensorPreferenceOrder) {
+        StringJoiner joiner = new StringJoiner(",");
+        for (SensorFamily family : sensorPreferenceOrder) {
+            joiner.add(family.name());
+        }
+        return joiner.toString();
     }
 
     public boolean getBoardEdRndStart() {
@@ -2285,6 +2379,15 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(FOV_SPOTTING_MODE, state);
     }
 
+    /** @return whether the objective overlays - control zone outlines and scheme words - are shown */
+    public boolean getShowObjectiveOverlays() {
+        return store.getBoolean(SHOW_OBJECTIVE_OVERLAYS);
+    }
+
+    public void setShowObjectiveOverlays(boolean state) {
+        store.setValue(SHOW_OBJECTIVE_OVERLAYS, state);
+    }
+
     public void setMapZoomIndex(int zoomIndex) {
         store.setValue(MAP_ZOOM_INDEX, zoomIndex);
     }
@@ -2603,6 +2706,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(NAG_FOR_OVERHEAT, b);
     }
 
+    public void setNagForDishonor(boolean b) {
+        store.setValue(NAG_FOR_DISHONOR, b);
+    }
+
     public void setNagForLaunchDoors(boolean b) {
         store.setValue(NAG_FOR_LAUNCH_DOORS, b);
     }
@@ -2699,6 +2806,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setSoundMuteMyTurn(boolean state) {
         store.setValue(SOUND_MUTE_MY_TURN, state);
+    }
+
+    /**
+     * Should we prompt for turn sounds?
+     *
+     * @param state enable or disable prompting
+     */
+    public void setSoundPromptSuppress(boolean state) {
+        store.setValue(SOUND_PROMPT_SUPPRESS, state);
+    }
+
+    /**
+     * Are we prompting?
+     *
+     * @return the value of SOUND_PROMPT
+     */
+    public boolean getSoundPromptSuppress() {
+        return store.getBoolean(SOUND_PROMPT_SUPPRESS);
     }
 
     public void setSoundMuteOthersTurn(boolean state) {

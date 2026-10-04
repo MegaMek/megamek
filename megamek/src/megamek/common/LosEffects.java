@@ -85,6 +85,15 @@ public class LosEffects {
         public boolean targetUnderWater;
         public boolean targetInWater;
         public boolean targetOnLand;
+        /**
+         * The attacker is a hovercraft riding on the water surface. It counts as "in water" for torpedo depth, but
+         * it is above the water for line of sight to a submerged unit (TW p.102).
+         */
+        public boolean attHoverOnWater;
+        /**
+         * The target is a hovercraft riding on the water surface; see {@link #attHoverOnWater}.
+         */
+        public boolean targetHoverOnWater;
         public boolean targetLowAlt = false;
         public boolean underWaterCombat;
         public boolean lowAltitude = false;
@@ -263,7 +272,7 @@ public class LosEffects {
         shotBlockedByWater |= other.shotBlockedByWater;
         targetCover |= other.targetCover;
         attackerCover |= other.attackerCover;
-        if ((null != thruBldg) && !thruBldg.equals(other.thruBldg)) {
+        if ((thruBldg != null) && !thruBldg.equals(other.thruBldg)) {
             thruBldg = null;
         }
     }
@@ -301,7 +310,7 @@ public class LosEffects {
     public int getHeavySmoke() {
         return heavySmoke;
     }
-    
+
     public int getBAPReduceSmoke() { return bapReduceSmoke; }
 
     public int getScreen() {
@@ -553,10 +562,7 @@ public class LosEffects {
             for (final Coords targetPosition : targetPositions) {
                 LosEffects newLos = calculateLOS(game, attacker, target, attackerPosition, targetPosition, boardId,
                       spotting);
-                // is the new one better?
-                if ((bestLOS == null) ||
-                      bestLOS.isBlocked() ||
-                      (newLos.losModifiers(game).getValue() < bestLOS.losModifiers(game).getValue())) {
+                if (isBetterLos(game, bestLOS, newLos)) {
                     bestLOS = newLos;
                 }
             }
@@ -568,6 +574,57 @@ public class LosEffects {
 
         bestLOS.targetLoc = target.getPosition();
         return bestLOS;
+    }
+
+    /**
+     * Calculates LOS from one fixed firing position and height to the best hex of the target. This is for a weapon
+     * that fires from its own spot, such as a weapon on one floor of a building entity. The attacker's position stays
+     * fixed, but a multi-hex target (a grounded DropShip covers seven hexes) is checked at every hex it occupies and
+     * the best line is kept, the same way {@link #calculateLOS(Game, Entity, Targetable, boolean)} does.
+     *
+     * @param game             The current {@link Game}
+     * @param attacker         the attacking entity, which may be {@code null}; the view is then blocked
+     * @param target           the target, which may be {@code null}; the view is then blocked
+     * @param attackerPosition the hex the weapon fires from
+     * @param attackHeight     the height the weapon fires from
+     * @param boardId          the board both positions are on
+     * @param spotting         whether this LOS is for spotting
+     *
+     * @return the best LOS effects from the firing position to any hex of the target
+     */
+    public static LosEffects calculateLOSToBestTargetHex(final Game game, final @Nullable Entity attacker,
+          final @Nullable Targetable target, final @Nullable Coords attackerPosition, final int attackHeight,
+          final int boardId, final boolean spotting) {
+        if (target == null) {
+            return calculateLOS(game, attacker, null, attackerPosition, null, attackHeight, boardId, spotting);
+        }
+        final List<Coords> targetPositions = new ArrayList<>();
+        if (target.getSecondaryPositions().isEmpty()) {
+            targetPositions.add(target.getPosition());
+        } else {
+            targetPositions.addAll(target.getSecondaryPositions().values());
+        }
+
+        LosEffects bestLOS = null;
+        for (final Coords targetPosition : targetPositions) {
+            LosEffects newLos = calculateLOS(game, attacker, target, attackerPosition, targetPosition, attackHeight,
+                  boardId, spotting);
+            if (isBetterLos(game, bestLOS, newLos)) {
+                bestLOS = newLos;
+            }
+        }
+        bestLOS.targetLoc = target.getPosition();
+        return bestLOS;
+    }
+
+    /**
+     * @return {@code true} if the candidate LOS should replace the best one found so far: there is none yet, the best
+     *       one is blocked, or the candidate has a lower modifier
+     */
+    private static boolean isBetterLos(final Game game, final @Nullable LosEffects bestLos,
+          final LosEffects candidateLos) {
+        return (bestLos == null) || bestLos.isBlocked()
+              || (candidateLos.losModifiers(game).getValue() < bestLos.losModifiers(game).getValue());
     }
 
     public static LosEffects calculateLOS(final Game game, final @Nullable Entity attacker,
@@ -725,6 +782,10 @@ public class LosEffects {
         ai.targetUnderWater = targetUnderWater;
         ai.targetInWater = targetInWater;
         ai.targetOnLand = targetOnLand;
+        ai.attHoverOnWater = attackerInWater && attacker.getMovementMode().isHover();
+        ai.targetHoverOnWater = targetInWater
+              && (target instanceof Entity targetUnit)
+              && targetUnit.getMovementMode().isHover();
         ai.underWaterCombat = targetUnderWater || attackerUnderWater;
         // Handle minimum water depth.
         // Applies to Torpedoes.
@@ -831,7 +892,10 @@ public class LosEffects {
             los.targetLoc = ai.targetPos;
             return los;
         }
-        if (Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand))) {
+        if (Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && crossesWaterSurface(ai)) {
+            logger.debug("LOS blocked by the water surface: attacker underwater:{} hover on water:{} | "
+                        + "target underwater:{} hover on water:{}",
+                  ai.attUnderWater, ai.attHoverOnWater, ai.targetUnderWater, ai.targetHoverOnWater);
             LosEffects los = new LosEffects();
             los.blocked = true;
             los.hasLoS = false;
@@ -1129,17 +1193,37 @@ public class LosEffects {
             los.blocked = true;
         }
 
-        if (!Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand))) {
+        if (!Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && crossesWaterSurface(ai)) {
             los.shotBlockedByWater = true;
         }
 
         // Infantry inside a building can only be
         // targeted by units in the same building.
-        if (ai.targetInfantry && targetInBuilding && (null == los.getThruBldg())) {
+        if (ai.targetInfantry && targetInBuilding && (los.getThruBldg() == null)){
             los.infProtected = true;
         }
 
         return los;
+    }
+
+    /**
+     * Returns {@code true} when the line runs between a submerged unit and a unit above the water surface.
+     * <p>
+     * TW p.102: units above the water, such as hovercraft, never have LOS to a submerged unit, even in the same
+     * hex. Core p.62 forbids attacks across the water line in the same way. A hovercraft riding on the water counts
+     * as above it. A surface naval vessel, a WiGE landed on the water (treated as a naval vessel, TW p.55) and a Mek
+     * standing in Depth 1 water stay "in water" and keep their LOS to submerged units (Underwater Line of Sight
+     * Table, TW p.108).
+     * </p>
+     *
+     * @param ai the attack info with its water flags set
+     *
+     * @return {@code true} if the water surface lies between the attacker and the target
+     */
+    static boolean crossesWaterSurface(AttackInfo ai) {
+        boolean attackerAboveWater = ai.attOnLand || ai.attHoverOnWater;
+        boolean targetAboveWater = ai.targetOnLand || ai.targetHoverOnWater;
+        return (attackerAboveWater && ai.targetUnderWater) || (ai.attUnderWater && targetAboveWater);
     }
 
     /**
@@ -1184,7 +1268,7 @@ public class LosEffects {
             los.add(losForCoords(game, ai, in.get(i), los.getThruBldg(), diagramLoS, partialCover));
         }
 
-        if (!Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && ((ai.attOnLand && ai.targetUnderWater) || (ai.attUnderWater && ai.targetOnLand))) {
+        if (!Game.rulesManager.getRulesUnderwater().waterBlocksLOS() && crossesWaterSurface(ai)) {
             los.shotBlockedByWater = true;
         }
 
@@ -1212,9 +1296,9 @@ public class LosEffects {
             // Infantry inside a building can only be
             // targeted by units in the same building.
             if (ai.targetInfantry && targetInBuilding) {
-                if (null == leftLos.getThruBldg()) {
+                if (leftLos.getThruBldg() == null){
                     leftLos.infProtected = true;
-                } else if (null == rightLos.getThruBldg()) {
+                } else if (rightLos.getThruBldg() == null){
                     rightLos.infProtected = true;
                 }
             }
@@ -1439,11 +1523,11 @@ public class LosEffects {
         boolean coveredByDropship = false;
         Entity coveringDropship = null;
 
-        if ((null == los.getThruBldg()) && hex.containsTerrain(Terrains.BLDG_ELEV)) {
+        if ((los.getThruBldg() == null) &&hex.containsTerrain(Terrains.BLDG_ELEV)){
             bldgEl = hex.terrainLevel(Terrains.BLDG_ELEV);
         }
 
-        if ((null == los.getThruBldg()) &&
+        if ((los.getThruBldg() == null) &&
               hex.containsTerrain(Terrains.FUEL_TANK_ELEV) &&
               hex.terrainLevel(Terrains.FUEL_TANK_ELEV) > bldgEl) {
             bldgEl = hex.terrainLevel(Terrains.FUEL_TANK_ELEV);
@@ -1609,7 +1693,7 @@ public class LosEffects {
                           ((terrainEl > ai.attackAbsHeight) && attackerAdjacent) ||
                           ((terrainEl > ai.targetAbsHeight) && targetAdjacent);
                 }
-                
+
                 int smokeModifier = 0;
                 if (affectsLos) {
                     // smoke and woods stack for LOS so check them both
@@ -1631,7 +1715,7 @@ public class LosEffects {
                     }
                     Entity attacker = game.getEntity(ai.attackerId);
                     if (attacker != null && attacker.hasBAP(true) && ai.attackPos.distance(coords) <= attacker.getBAPRange()) {
-                        los.bapReduceSmoke += smokeModifier; 
+                        los.bapReduceSmoke += smokeModifier;
                     }
                     // Check woods/jungle
                     if ((woodsLevel == 1) || (jungleLevel == 1)) {
@@ -1904,9 +1988,9 @@ public class LosEffects {
             // Infantry inside a building can only be
             // targeted by units in the same building.
             if (ai.targetInfantry && targetInBuilding) {
-                if (null == left.getThruBldg()) {
+                if (left.getThruBldg() == null){
                     left.infProtected = true;
-                } else if (null == right.getThruBldg()) {
+                } else if (right.getThruBldg() == null){
                     right.infProtected = true;
                 }
             }

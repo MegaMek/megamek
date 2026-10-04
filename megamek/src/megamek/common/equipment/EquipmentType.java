@@ -37,13 +37,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import megamek.common.RangeType;
+import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
 import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
-import megamek.common.enums.ChargeLevel;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -208,10 +209,8 @@ public class EquipmentType implements ITechnology {
     protected static Hashtable<String, EquipmentType> lookupHash;
     private static Map<String, Set<EquipmentType>> lookupCollisions = new TreeMap<>();
 
-    /**
-     * Keeps track of page numbers for rules references.
-     */
-    protected String rulesRefs = "";
+    /** Structured sourcebook and page references for this equipment type. */
+    protected List<RulesRef> rulesRefs = rulesRefs();
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -262,8 +261,45 @@ public class EquipmentType implements ITechnology {
         return internalName;
     }
 
-    public String getRulesRefs() {
+    public List<RulesRef> getRulesRefs() {
         return rulesRefs;
+    }
+
+    /** Creates one rule reference for use in a multi-source {@link #rulesRefs(RulesRef...)} call. */
+    protected static RulesRef rulesRef(SourceBookCode book, Integer page) {
+        return new RulesRef(Objects.requireNonNull(book, "book"), page);
+    }
+
+    /** Creates one page-less rule reference for use in a multi-source {@link #rulesRefs(RulesRef...)} call. */
+    protected static RulesRef rulesRef(SourceBookCode book) {
+        return rulesRef(book, null);
+    }
+
+    /**
+     * Creates an immutable rule-reference list for one sourcebook. Passing no pages creates one reference with a null
+     * page; passing multiple pages creates one reference per page.
+     */
+    protected static List<RulesRef> rulesRefs(SourceBookCode book, Integer... pages) {
+        Objects.requireNonNull(book, "book");
+        Objects.requireNonNull(pages, "pages");
+        if (pages.length == 0) {
+            return List.of(rulesRef(book));
+        }
+        return Arrays.stream(pages).map(page -> rulesRef(book, page)).toList();
+    }
+
+    /** Creates an immutable rule-reference list, including an empty list when no references are supplied. */
+    protected static List<RulesRef> rulesRefs(RulesRef... references) {
+        return List.of(references);
+    }
+
+    /** Adds references to an existing list, preserving order and removing exact duplicates. */
+    protected static List<RulesRef> rulesRefs(List<RulesRef> existing, RulesRef... additions) {
+        Objects.requireNonNull(existing, "existing");
+        Objects.requireNonNull(additions, "additions");
+        Set<RulesRef> result = new LinkedHashSet<>(existing);
+        result.addAll(Arrays.asList(additions));
+        return List.copyOf(result);
     }
 
     public Map<Integer, Integer> getTechLevels() {
@@ -317,7 +353,7 @@ public class EquipmentType implements ITechnology {
 
     @Override
     public SimpleTechLevel getStaticTechLevel() {
-        if (null != techAdvancement.getStaticTechLevel()) {
+        if (techAdvancement.getStaticTechLevel() != null){
             return techAdvancement.getStaticTechLevel();
         } else {
             return techAdvancement.guessStaticTechLevel(rulesRefs);
@@ -410,7 +446,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public boolean isExplosive(Mounted<?> mounted, boolean ignoreCharge) {
-        if (null == mounted) {
+        if (mounted == null) {
             return explosive;
         }
 
@@ -495,7 +531,7 @@ public class EquipmentType implements ITechnology {
               !mounted.curMode().equals("Charge")) {
             return false;
         }
-        
+
         if ((mounted.getType() instanceof PPCWeapon) && (mounted.hasChargedCapacitor() == 0)) {
             return false;
         }
@@ -838,7 +874,7 @@ public class EquipmentType implements ITechnology {
         if (key == null) {
             return null;
         }
-        if (null == EquipmentType.lookupHash) {
+        if (EquipmentType.lookupHash == null) {
             EquipmentType.initializeTypes();
         }
         String normalizedKey = key.toLowerCase(Locale.ROOT);
@@ -963,7 +999,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static synchronized void initializeTypes() {
-        if (null == EquipmentType.allTypes) {
+        if (EquipmentType.allTypes == null) {
             EquipmentType.allTypes = new Vector<>();
             EquipmentType.lookupHash = new Hashtable<>();
             EquipmentType.lookupCollisions = new TreeMap<>();
@@ -1007,7 +1043,7 @@ public class EquipmentType implements ITechnology {
     }
 
     public static Enumeration<EquipmentType> getAllTypes() {
-        if (null == EquipmentType.allTypes) {
+        if (EquipmentType.allTypes == null) {
             EquipmentType.initializeTypes();
         }
         return EquipmentType.allTypes.elements();
@@ -1024,7 +1060,7 @@ public class EquipmentType implements ITechnology {
     }
 
     protected static void addType(EquipmentType type) {
-        if (null == EquipmentType.allTypes) {
+        if (EquipmentType.allTypes == null) {
             EquipmentType.initializeTypes();
         }
         if (EquipmentType.allTypes.contains(type)) {
@@ -1105,7 +1141,6 @@ public class EquipmentType implements ITechnology {
                 2439,
                 2505)
           .setApproximate(true, false, false)
-          .setIntroLevel(true)
           .setTechRating(TechRating.D)
           .setAvailability(AvailabilityValue.C,
                 AvailabilityValue.C,
@@ -1121,11 +1156,25 @@ public class EquipmentType implements ITechnology {
         if (at == T_STRUCTURE_STANDARD) {
             return TA_STANDARD_STRUCTURE;
         }
+        if (!isKnownStructureType(at)) {
+            // Battle armor and conventional infantry have no internal structure type. Looking "UNKNOWN" up by name
+            // missed the lookup table and fell through to a scan of every equipment type, on every such unit loaded.
+            return TA_NONE;
+        }
         EquipmentType structure = EquipmentType.getStructureFromName(EquipmentType.getStructureTypeName(at, clan));
         if (structure != null) {
             return structure.getTechAdvancement();
         }
         return TA_NONE;
+    }
+
+    /**
+     * @param structureType a structure type index
+     *
+     * @return {@code true} if the index names a structure type this class has a name for
+     */
+    private static boolean isKnownStructureType(int structureType) {
+        return (structureType >= 0) && (structureType < structureNames.length);
     }
 
     /**
@@ -1285,7 +1334,7 @@ public class EquipmentType implements ITechnology {
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final EquipmentType other = (EquipmentType) obj;
@@ -1358,7 +1407,7 @@ public class EquipmentType implements ITechnology {
 
         YamlEncDec.addPropIfNotEmpty(data, "shortName", shortName);
         YamlEncDec.addPropIfNotEmpty(data, "sortingName", sortingName);
-        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs);
+        YamlEncDec.addPropIfNotEmpty(data, "rulesRefs", rulesRefs.stream().map(RulesRef::toYamlData).toList());
 
         addAliases(data);
     }

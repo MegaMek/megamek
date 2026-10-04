@@ -48,6 +48,7 @@ public abstract class RulesPhysical {
      *
      * @param entity the entity attacking
      * @param armLoc the arm location with the shield
+     *
      * @return the damage boost from the shield
      */
     public abstract int getShieldDamageBoost(Entity entity, int armLoc);
@@ -69,9 +70,9 @@ public abstract class RulesPhysical {
     /**
      * What is the to-hit modifier for attacking when there is a shield on the arm.
      *
-     * @param toHit the to-hit data to modify
+     * @param toHit    the to-hit data to modify
      * @param attacker the attacking entity
-     * @param weapon the mounted weapon being used
+     * @param weapon   the mounted weapon being used
      */
     public abstract void getShieldToHitModifier(ToHitData toHit, Entity attacker, Mounted<?> weapon);
 
@@ -79,6 +80,7 @@ public abstract class RulesPhysical {
      * Can retractable blades be used during punch attacks.
      *
      * @param toRetractableBlade true if checking for retractable blade use
+     *
      * @return true if retractable blades can be used
      */
     public abstract boolean retractableBladeArmCheck(boolean toRetractableBlade);
@@ -115,6 +117,7 @@ public abstract class RulesPhysical {
      * Does a shield do anything in a charge?
      *
      * @param attackingEntity the entity performing the charge
+     *
      * @return the hit data from shield charge damage, or null if no shield damage
      */
     @Nullable
@@ -124,7 +127,8 @@ public abstract class RulesPhysical {
      * Do the spikes break?
      *
      * @param entity the entity with spikes
-     * @param loc the location being checked
+     * @param loc    the location being checked
+     *
      * @return a report of whether spikes broke
      */
     public abstract Report checkBreakSpikes(Entity entity, int loc);
@@ -133,6 +137,7 @@ public abstract class RulesPhysical {
      * Can talons increase DFA damage.
      *
      * @param entity the entity to check
+     *
      * @return true if the entity has talons
      */
     public abstract boolean hasTalons(Entity entity);
@@ -154,11 +159,12 @@ public abstract class RulesPhysical {
     /**
      * What is the damage of the charge.
      *
-     * @param entity the attacking entity
-     * @param target the target entity
-     * @param tacOps true if using tactical operations rules
-     * @param mos the margin of success
+     * @param entity     the attacking entity
+     * @param target     the target entity
+     * @param tacOps     true if using tactical operations rules
+     * @param mos        the margin of success
      * @param hexesMoved the number of hexes moved in the charge
+     *
      * @return the charge damage
      */
     public abstract int getChargeDamage(Entity entity, Entity target, boolean tacOps, int mos, int hexesMoved);
@@ -166,10 +172,11 @@ public abstract class RulesPhysical {
     /**
      * How much damage does the charge attacker take.
      *
-     * @param entity the attacking entity
+     * @param entity                the attacking entity
      * @param effectiveTargetWeight the effective weight of the target
-     * @param tacOps true if using tactical operations rules
-     * @param distance the distance traveled in the charge
+     * @param tacOps                true if using tactical operations rules
+     * @param distance              the distance traveled in the charge
+     *
      * @return the damage taken by the attacker
      */
     public abstract int getChargeDamageTakenBy(Entity entity, double effectiveTargetWeight, boolean tacOps,
@@ -178,10 +185,11 @@ public abstract class RulesPhysical {
     /**
      * Missed charges, where does the attacker end up?
      *
-     * @param game the game instance
-     * @param entityId the ID of the charging entity
-     * @param src the source coordinates
+     * @param game      the game instance
+     * @param entityId  the ID of the charging entity
+     * @param src       the source coordinates
      * @param direction the direction of the charge
+     *
      * @return the final coordinates after a missed charge
      */
     public abstract Coords getMissedChargeDisplacement(Game game, int entityId, Coords src, int direction);
@@ -189,8 +197,9 @@ public abstract class RulesPhysical {
     /**
      * Can you club a prone target?
      *
-     * @param targetElevation the elevation of the target
+     * @param targetElevation   the elevation of the target
      * @param attackerElevation the elevation of the attacker
+     *
      * @return true if the target cannot be clubbed while prone
      */
     public abstract boolean cannotClubProne(int targetElevation, int attackerElevation);
@@ -199,8 +208,9 @@ public abstract class RulesPhysical {
      * For Charge/DFA, get the pilot difference modifier.
      *
      * @param attackerPiloting the piloting skill of the attacking pilot
-     * @param targetPiloting the piloting skill of the defending pilot
-     * @param immobile true if one of the entities is immobile
+     * @param targetPiloting   the piloting skill of the defending pilot
+     * @param immobile         true if one of the entities is immobile
+     *
      * @return the pilot difference modifier
      */
     public abstract int getPilotDiffModifier(int attackerPiloting, int targetPiloting, boolean immobile);
@@ -216,21 +226,32 @@ public abstract class RulesPhysical {
      * Get the right table for falls from above.
      *
      * @param affaTarget the entity that is the target of a fall from above
+     *
      * @return the hit data for fall from above
      */
     public abstract HitData getFallFromAboveTable(Entity affaTarget);
 
     /**
      * What kind of rubble can you find a club in?
+     *
      * @return the level of the rubble needed
      */
     public abstract int getClubFindInRubble();
 
     /**
      * Check if the quad can kick
-     * @param leg what leg is kicking
+     *
+     * @param leg    what leg is kicking
      * @param entity the entity that is kicking
+     *
      * @return true if the kick is impossible
      */
     public abstract boolean quadMuleKickImpossible(int leg, Entity entity);
+
+    /**
+     * What is the lance's base to-hit modifier?
+     *
+     * @return
+     */
+    public abstract int getLanceToHitModifier();
 }

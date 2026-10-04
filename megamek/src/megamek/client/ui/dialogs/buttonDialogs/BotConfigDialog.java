@@ -43,10 +43,7 @@ import static megamek.common.units.Terrains.FUEL_TANK;
 import static megamek.common.units.Terrains.FUEL_TANK_CF;
 import static megamek.common.units.Terrains.FUEL_TANK_MAGN;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -280,7 +277,7 @@ public class BotConfigDialog extends AbstractButtonDialog
             JRadioButton radioButton = new JRadioButton(
                   Messages.getString("BotConfigDialog.aiType." + aiType.name()));
             radioButton.setActionCommand(aiType.name());
-            if (null != lockedAIType) {
+            if (lockedAIType != null) {
                 // The AI is chosen when a bot is added or a ghost replaced; a running bot cannot change
                 // kind mid-session. Locked so the dialog tells the truth about the seat instead of
                 // defaulting to Princess.

@@ -79,6 +79,7 @@ class PhasePassSelector {
     private static final PhasePass BOOTLEGGER_STEP = new BootleggerStep();
     private static final PhasePass BRACE_STEP = new BraceStep();
     private static final PhasePass DEFAULT_STEP = new DefaultStep();
+    private static final PhasePass DEPLOY_STEP = new DeployStep();
 
     /**
      * Returns the correct phase pass for  {@link MoveStep} compilation based on the move step type.
@@ -124,6 +125,7 @@ class PhasePassSelector {
             case CONVERT_MODE -> CONVERT_MODE_STEP;
             case BOOTLEGGER -> BOOTLEGGER_STEP;
             case BRACE -> BRACE_STEP;
+            case DEPLOY -> DEPLOY_STEP;
             default -> DEFAULT_STEP;
         };
     }

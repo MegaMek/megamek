@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -53,19 +54,20 @@ public class InfantryLaserRifleScorcherVIBlazerRifle extends InfantryWeapon {
     public InfantryLaserRifleScorcherVIBlazerRifle() {
         super();
 
-        name = "Blazer Rifle (Scorcher VI)";
-        setInternalName(name);
+        name = "Laser Rifle (Scorcher VI Blazer Rifle)";
+        setInternalName("Blazer Rifle (Scorcher VI)");
+        addLookupName(name);
         addLookupName("SCORCHERVI");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1500;
         bv = 1.05;
         tonnage = 0.0075;
-        infantryDamage = 0.53;
+        infantryDamage = 0.525;
         infantryRange = 4;
         shots = 10;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
 
         techAdvancement
               .setTechBase(TechBase.IS)

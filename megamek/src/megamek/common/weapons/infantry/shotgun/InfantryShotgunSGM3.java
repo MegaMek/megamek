@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.shotgun;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -60,9 +61,9 @@ public class InfantryShotgunSGM3 extends InfantryWeapon {
         setInternalName(name);
         addLookupName("SGM-3");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
-        bv = .248;
+        bv = 0.2475;
         tonnage = 0.0029;
-        infantryDamage = 0.25;
+        infantryDamage = 0.2475;
         infantryRange = 1;
         ammoWeight = 0.0029;
         cost = 1000;
@@ -70,7 +71,7 @@ public class InfantryShotgunSGM3 extends InfantryWeapon {
         shots = 12;
         bursts = 4;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #7";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_7);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)

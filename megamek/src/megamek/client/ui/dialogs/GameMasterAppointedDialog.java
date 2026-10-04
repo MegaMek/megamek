@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
 import java.io.Serial;
@@ -69,9 +70,11 @@ public class GameMasterAppointedDialog extends JDialog {
     /** The name the dialog stores its remembered size and position under. */
     private static final String DIALOG_NAME = "GameMasterAppointedDialog";
 
-    /** The size the dialog opens at before the user has resized it; a remembered size wins over it. */
-    private static final int DEFAULT_WIDTH = 420;
-    private static final int DEFAULT_HEIGHT = 200;
+    /** The width the dialog opens at before the user has resized it; the height is measured from the wrapped text. */
+    private static final int DEFAULT_WIDTH = 480;
+
+    /** The empty border around the message, in unscaled pixels, on each side. */
+    private static final int MESSAGE_BORDER = 10;
 
     public GameMasterAppointedDialog(JFrame parent, String message) {
         // an announcement, not a question: the lobby goes on while it is open
@@ -86,7 +89,9 @@ public class GameMasterAppointedDialog extends JDialog {
         messagePane.setForeground(UIManager.getColor("Label.foreground"));
 
         JPanel panMain = new JPanel(new BorderLayout());
-        panMain.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        int messageBorder = UIUtil.scaleForGUI(MESSAGE_BORDER);
+        panMain.setBorder(BorderFactory.createEmptyBorder(messageBorder, messageBorder, messageBorder,
+              messageBorder));
         panMain.add(messagePane, BorderLayout.CENTER);
 
         JButton butOkay = new JButton(Messages.getString("Okay"));
@@ -103,12 +108,43 @@ public class GameMasterAppointedDialog extends JDialog {
               JComponent.WHEN_IN_FOCUSED_WINDOW);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        // sized by hand rather than packed: packing an HTML message lays it out as one long line
-        setSize(UIUtil.scaleForGUI(DEFAULT_WIDTH, DEFAULT_HEIGHT));
-        setMinimumSize(UIUtil.scaleForGUI(300, 150));
+        // Packing an HTML message on its own lays it out as one long line, so the message is given the height its
+        // text actually needs once wrapped to the dialog width. Packing then sizes the window around that, which
+        // keeps the whole message visible however long it is and however the GUI is scaled.
+        messagePane.setPreferredSize(wrappedSize(messagePane));
+        pack();
+        setMinimumSize(getSize());
         // Center on the parent as a first-time default; setPreferences then restores a remembered spot over it.
         setLocationRelativeTo(parent);
         setPreferences();
+        growToFitMessage();
+    }
+
+    /**
+     * Measures how tall the message is once wrapped to the dialog's width. The pane is laid out at that width first,
+     * because an HTML pane only reports the height of wrapped text once it has a width to wrap to.
+     *
+     * @param messagePane The pane holding the message
+     *
+     * @return The size the message needs: the dialog's text width, and the height the wrapped text occupies
+     */
+    private static Dimension wrappedSize(JEditorPane messagePane) {
+        int textWidth = UIUtil.scaleForGUI(DEFAULT_WIDTH - (2 * MESSAGE_BORDER));
+        messagePane.setSize(new Dimension(textWidth, Short.MAX_VALUE));
+        return new Dimension(textWidth, messagePane.getPreferredSize().height);
+    }
+
+    /**
+     * Grows the dialog back to the size the message needs if a remembered size is smaller than that. The dialog used
+     * to open at a fixed height that cut off the end of the message, and that too-small size was remembered; without
+     * this, anyone who had already seen the dialog would keep the clipped size forever.
+     */
+    private void growToFitMessage() {
+        Dimension needed = getMinimumSize();
+        Dimension current = getSize();
+        if ((current.width < needed.width) || (current.height < needed.height)) {
+            setSize(Math.max(current.width, needed.width), Math.max(current.height, needed.height));
+        }
     }
 
     /**

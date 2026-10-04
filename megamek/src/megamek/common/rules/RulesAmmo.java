@@ -40,17 +40,19 @@ import megamek.server.totalWarfare.TWDamageManager;
 public abstract class RulesAmmo {
     /**
      * Return the Armor Piercing modifier for crit checks.
+     *
      * @param inType The ammo type of the weapon
+     *
      * @return the modifier for the crit roll
      */
     public abstract int armorPiercingMod(AmmoType inType);
 
     /**
      * Armor Piercing Ammo attack Modifier.
-     * 
+     *
      * @param ammoType ammo type of the shot
-     * @param toHit to-hit object
-     * @param AP is it armor piercing
+     * @param toHit    to-hit object
+     * @param AP       is it armor piercing
      */
     public abstract void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP);
 
@@ -71,9 +73,10 @@ public abstract class RulesAmmo {
     /**
      * Acid (AX) missiles damage.
      *
-     * @param armor armor value
-     * @param mods modifiers info
+     * @param armor  armor value
+     * @param mods   modifiers info
      * @param damage base damage
+     *
      * @return modified AX missile damage
      */
     public abstract int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage);
@@ -82,8 +85,9 @@ public abstract class RulesAmmo {
      * Semi-Guided missiles need special handling.
      *
      * @param modifierValue base modifier
-     * @param movementMod movement modifier applied
-     * @param terrainMod terrain modifier applied
+     * @param movementMod   movement modifier applied
+     * @param terrainMod    terrain modifier applied
+     *
      * @return adjusted semi-guided modifier
      */
     public abstract int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod);
@@ -99,15 +103,16 @@ public abstract class RulesAmmo {
      * Does the semi-guided impact the number of missiles.
      *
      * @param taggedTarget whether the target is tagged
-     * @param indirect whether the attack is indirect
+     * @param indirect     whether the attack is indirect
+     *
      * @return number of missiles for semi-guided
      */
     public abstract int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect);
 
     /**
-     * This exists to return the to-hit modifier for AP ammo.
-     * It does not check anything else, it just is the modifier.
+     * This exists to return the to-hit modifier for AP ammo. It does not check anything else, it just is the modifier.
      * It calls armorPiercingAttackMod(AmmoTypeEnum, ToHit, AP)
+     *
      * @return
      */
     public int armorPiercingAttackMod() {

@@ -111,8 +111,8 @@ public class CLIATMHandler extends ATMHandler {
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
-                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getRackSize(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
 
@@ -912,7 +912,7 @@ public class CLIATMHandler extends ATMHandler {
                 }
                 // Targeting a building.
                 if (target.getTargetType() == Targetable.TYPE_BUILDING) {
-                    // The building takes the full brunt of the attack.
+                    // The building takes the full brunt of the attack, all its hits as one attack (TW p. 171)
                     nDamage = nDamPerHit * hits;
                     handleBuildingDamage(vPhaseReport, bldg, nDamage,
                           target.getPosition());

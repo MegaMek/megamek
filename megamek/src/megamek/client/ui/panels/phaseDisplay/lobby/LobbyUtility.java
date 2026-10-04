@@ -34,10 +34,7 @@ package megamek.client.ui.panels.phaseDisplay.lobby;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,8 +45,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
 import java.util.stream.Collectors;
-import javax.swing.JFrame;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 
 import megamek.MMConstants;
@@ -359,7 +355,7 @@ public class LobbyUtility {
 
             if (bayNumber != UNSET_BAY) {
                 Bay bay = loader.getBayById(bayNumber);
-                if (null != bay) {
+                if (bay != null) {
                     double loadSize = entities.stream().mapToDouble(bay::spaceForUnit).sum();
                     capacity = bay.getUnused();
                     hasEnoughCargoCapacity = loadSize <= capacity;

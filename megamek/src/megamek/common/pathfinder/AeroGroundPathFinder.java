@@ -239,7 +239,7 @@ public class AeroGroundPathFinder {
      *
      * @return New instance of move path with as much altitude adjustment as possible
      */
-    private MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
+    protected MovePath adjustTowardsDesiredAltitude(MovePath startingPath, int desiredAltitude) {
         MovePath altitudePath = startingPath.clone();
 
         // generate a path that involves making changes that go up or down towards the

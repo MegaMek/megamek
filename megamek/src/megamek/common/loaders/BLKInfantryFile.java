@@ -160,7 +160,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         loadDisposableWeapon(infantry);
 
         // TAG infantry have separate attacks for primary and secondary weapons.
-        if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
+        if (secondaryWeaponType != null && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | ConvInfantry.TAG_TROOPS);
             try {
                 infantry.addEquipment(primaryWeaponType, ConvInfantry.LOC_INFANTRY);
@@ -175,7 +175,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             String kitName = dataFile.getDataAsString("armorKit")[0];
             EquipmentType kit = EquipmentType.get(kitName,
                 infantry.isClan() ? TechBase.CLAN : TechBase.IS);
-            if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
+            if ((kit == null) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
                 throw new EntityLoadingException(kitName + " is not an infantry armor kit");
             }
             infantry.setArmorKit(kit);

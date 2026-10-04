@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -235,7 +235,7 @@ public class SupportTank extends Tank {
             case TRACKED -> (hex.terrainLevel(Terrains.WOODS) > 1)
                   || ((hex.terrainLevel(Terrains.WATER) > 0)
                   && !hex.containsTerrain(Terrains.ICE)
-                  && !hasEnvironmentalSealing())
+                  && !EnvironmentalSealingRules.canOperateFullySubmerged(this))
                   || hex.containsTerrain(Terrains.JUNGLE)
                   || (hex.terrainLevel(Terrains.MAGMA) > 1)
                   || (hex.terrainLevel(Terrains.ROUGH) > 1)
@@ -245,7 +245,7 @@ public class SupportTank extends Tank {
                   || hex.containsTerrain(Terrains.ROUGH)
                   || ((hex.terrainLevel(Terrains.WATER) > 0)
                   && !hex.containsTerrain(Terrains.ICE)
-                  && !hasEnvironmentalSealing())
+                  && !EnvironmentalSealingRules.canOperateFullySubmerged(this))
                   || (hex.containsTerrain(Terrains.RUBBLE) && !rubblePassable)
                   || hex.containsTerrain(Terrains.MAGMA)
                   || hex.containsTerrain(Terrains.JUNGLE)
@@ -260,11 +260,8 @@ public class SupportTank extends Tank {
             case NAVAL, HYDROFOIL -> (hex.terrainLevel(Terrains.WATER) <= 0)
                   || hex.containsTerrain(Terrains.ICE);
             case SUBMARINE -> (hex.terrainLevel(Terrains.WATER) <= 0);
-            case WIGE -> (hex.containsTerrain(Terrains.WOODS) || (hex
-                  .containsTerrain(Terrains.BUILDING)))
-                  && !(currElevation > hex
-                  .maxTerrainFeatureElevation(game.getBoard(testBoardId)
-                        .isLowAltitude()));
+            // Combat and support WiGEs share one rule, including hover restrictions while grounded (TW p.55)
+            case WIGE -> isLocationProhibitedWiGE(hex, currElevation);
             default -> false;
         };
     }

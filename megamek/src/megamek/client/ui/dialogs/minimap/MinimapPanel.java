@@ -66,13 +66,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.imageio.ImageIO;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JDialog;
-import javax.swing.JMenu;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.Client;
@@ -978,7 +972,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
             // In case the flag SHOW SYMBOLS is set, it will draw the units and other stuff
             if (symbolsDisplayMode == SHOW_SYMBOLS) {
-                if (null != game) {
+                if (game != null) {
                     // draw dead units
                     multiUnits.clear();
                     for (Entity e : game.getOutOfGameEntitiesVector()) {
@@ -1046,7 +1040,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
 
     /** Indicates the deployment hexes. */
     private void drawDeploymentZone(Graphics g) {
-        if ((null != client) && (null != game) && game.getPhase().isDeployment() && (bv != null)
+        if ((client != null) && (game != null) && game.getPhase().isDeployment() && (bv != null)
               && (bv.getDeployingEntity() != null) && (dialog != null) && (getLocalPlayer() != null)) {
             GameTurn turn = game.getTurn();
             if ((turn != null) && (turn.playerId() == getLocalPlayer().getId())) {
@@ -1408,7 +1402,7 @@ public final class MinimapPanel extends JPanel implements IPreferenceChangeListe
         // sanity check...
         // cross-board attacks don't get attack arrows (for now, must possibly allow some A2G, O2G, A2A attacks later
         // when target/attacker hexes are not really but effectively on the same board)
-        if ((null == source) || (null == target) || !game.onTheSameBoard(source, target)
+        if ((source == null) || (target == null) || !game.onTheSameBoard(source, target)
               || (target.getBoardId() != boardId)) {
             return;
         }

@@ -40,9 +40,14 @@ import megamek.common.units.Mek;
 
 public abstract class RulesCharts {
     /**
-     * Escalating failures charts.
+     * Escalating failures charts. It is designed so that a count of 0 (no hits) returns 2, an auto-success. This is for
+     * usage by equipment that will activate successfully the first time all the time.
+     * <p>
+     * It is also designed to never go higher than 11 as a target number. Even if the count is higher than 5. Everything
+     * higher than 4 gets the default value of 11. This is also for equipment compatibility.
      *
      * @param count the current c
+     *
      * @return the escalating failure value
      */
     public int escalatingFailure(int count) {
@@ -63,12 +68,13 @@ public abstract class RulesCharts {
      * @return the facing direction for a fall
      */
     public abstract int getFacingForFall();
-    
+
     /**
      * Get location names.
      *
-     * @param loc the location code
+     * @param loc  the location code
      * @param quad whether the unit is quadrupedal
+     *
      * @return the name of the location
      */
     public String getLocationName(int loc, boolean quad) {
@@ -112,15 +118,17 @@ public abstract class RulesCharts {
      * @param roll the dice roll
      * @param side the side being hit
      * @param quad whether the unit is quadrupedal
+     *
      * @return the hit location
      */
     public abstract int getPunchHitLocation(int roll, int side, boolean quad);
-    
+
     /**
      * Mek Punch hit chart.
      *
      * @param roll the dice roll
      * @param side the side being hit
+     *
      * @return the hit location
      */
     public int getPunchHitLocation(int roll, int side) {
@@ -133,6 +141,7 @@ public abstract class RulesCharts {
      * @param roll the dice roll
      * @param side the side being hit
      * @param quad whether the unit is quadrupedal
+     *
      * @return the hit location side
      */
     public int getPunchHitLocationSide(int roll, int side, boolean quad) {

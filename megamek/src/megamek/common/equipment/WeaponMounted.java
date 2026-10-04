@@ -46,6 +46,7 @@ import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.handlers.WeaponHandler;
@@ -85,6 +86,33 @@ public class WeaponMounted extends Mounted<WeaponType> {
      */
     public void setDisposableWeapon(boolean disposableWeapon) {
         this.disposableWeapon = disposableWeapon;
+    }
+
+    /**
+     * Whether this weapon can jam at all, which is what decides whether a gamemaster is offered a Jammed switch
+     * for it. The list is drawn from the attack handlers that set a jam: the autocannon family (standard, light,
+     * improved, ProtoMek, ultra, rotary and hyper-velocity; a standard autocannon jams in rapid-fire mode or on
+     * caseless ammo), the prototype gauss rifle and prototype LB-X autocannon, any ammo-fed weapon with the Ammo
+     * Feed Problems quirk, and every weapon of an Advanced Building (TO:AR p.119). Missiles, lasers and
+     * production gauss rifles have no jam path, so a jam on them would be a state nothing in play can produce.
+     *
+     * @return {@code true} if some rule can jam this weapon
+     */
+    public boolean canJam() {
+        if (getEntity() instanceof AbstractBuildingEntity) {
+            return true;
+        }
+        WeaponType weaponType = getType();
+        boolean isAmmoFed = weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA;
+        if (isAmmoFed && hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS)) {
+            return true;
+        }
+        boolean isPrototype = weaponType.hasFlag(WeaponType.F_PROTOTYPE);
+        return switch (weaponType.getAmmoType()) {
+            case AC, LAC, AC_IMP, PAC, AC_ULTRA, AC_ULTRA_THB, AC_ROTARY, HYPER_VELOCITY -> true;
+            case GAUSS, AC_LBX -> isPrototype;
+            default -> false;
+        };
     }
 
     @Override

@@ -53,7 +53,6 @@ import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.Roll;
-import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Infantry;
@@ -475,6 +474,36 @@ public class ServerHelper {
         }
         boolean isSwitchingOn = miscType.getMode(newMode).getName().equals(Mounted.MODE_ON);
         return isSwitchingOn && !EquipmentActivation.hasEcmAvailableForStealth(entity);
+    }
+
+    /**
+     * Checks whether a requested equipment mode change must be rejected because it would put a second ECM suite into
+     * use. A unit may use only one ECM suite at a time, of any type (TM p.213, CO p.200), and every mode other than
+     * {@code "Off"} counts as using the suite - ECCM and Ghost Targets included. Switching a suite off, or between two
+     * active modes while it is the only suite in use, is always allowed.
+     *
+     * @param entity  the entity whose equipment is being switched
+     * @param mounted the equipment being switched
+     * @param newMode the requested mode index
+     *
+     * @return {@code true} if the mode change would leave the unit using more than one ECM suite next round
+     */
+    public static boolean isSecondEcmSuiteActivation(Entity entity, Mounted<?> mounted, int newMode) {
+        if (!(mounted.getType() instanceof MiscType miscType) || !miscType.hasFlag(MiscType.F_ECM)) {
+            return false;
+        }
+        if ((newMode < 0) || (newMode >= miscType.getModesCount())) {
+            return false;
+        }
+        if (miscType.getMode(newMode).getName().equals(Mounted.MODE_OFF)) {
+            return false;
+        }
+        for (MiscMounted otherSuite : EquipmentActivation.ecmSuitesInUseNextRound(entity)) {
+            if (!otherSuite.equals(mounted)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

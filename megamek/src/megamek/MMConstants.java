@@ -92,6 +92,8 @@ public final class MMConstants extends SuiteConstants {
     public static final String USER_LOADOUTS_DIR = Paths.get("userdata/data/").toString();
     public static final String FACTIONS_DIR = Paths.get("data/universe/factions").toString();
     public static final String COMMANDS_DIR = Paths.get("data/universe/commands").toString();
+    /** Bloodname data, one folder per Clan and one file per Bloodname within it. */
+    public static final String BLOODNAMES_DIR = Paths.get("data/universe/bloodnames").toString();
     // endregion File Paths
 
     // region ClientServer

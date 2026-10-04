@@ -39,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ListResourceBundle;
 import java.util.ResourceBundle;
 
-import megamek.client.ui.Messages;
 import org.junit.jupiter.api.Test;
 
 class SettingsTextProviderTest {
@@ -88,7 +87,8 @@ class SettingsTextProviderTest {
     void megaMekProviderUsesClientMessageFormatting() {
         SettingsTextProvider provider = SettingsTextProvider.megaMek();
 
-        assertEquals(Messages.getString("about.version", "TEST"),
-              provider.getFormattedText("about.version", "TEST"));
+        assertTrue(provider.containsKey("about.version"));
+        assertFalse(provider.containsKey("missing.settings.text"));
+        assertEquals("Version: TEST", provider.getFormattedText("about.version", "TEST"));
     }
 }

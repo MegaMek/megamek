@@ -239,7 +239,7 @@ final class ASMovementConverter {
     private static boolean hasMPReducingShield(Entity entity) {
         return entity.getMisc().stream()
               .map(Mounted::getType)
-              .anyMatch(m -> (m.hasFlag(MiscType.F_CLUB)
+              .anyMatch(m -> (m.hasFlag(MiscType.F_SHIELD)
                     && (m.hasAnyFlag(MiscTypeFlag.S_SHIELD_LARGE, MiscTypeFlag.S_SHIELD_MEDIUM))));
     }
 

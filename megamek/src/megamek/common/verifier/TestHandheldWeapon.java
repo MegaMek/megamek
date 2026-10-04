@@ -195,6 +195,10 @@ public class TestHandheldWeapon extends TestEntity {
 
         Set<Pair<AmmoTypeEnum, Integer>> ammoKinds = new HashSet<>();
         for (var at : hhw.getAmmo()) {
+            // TO:AUE p. 127: one-shot weapons contain their own ammunition, not separate ammo bins.
+            if (at.isOneShotAmmo()) {
+                continue;
+            }
             var kind = Pair.of(at.getType().getAmmoType(), at.getType().getRackSize());
             if (ammoKinds.contains(kind)) {
                 illegal = true;

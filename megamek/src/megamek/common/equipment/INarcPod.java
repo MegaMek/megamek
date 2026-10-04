@@ -79,7 +79,7 @@ public record INarcPod(int team, int type, int location) implements Serializable
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final INarcPod other = (INarcPod) obj;

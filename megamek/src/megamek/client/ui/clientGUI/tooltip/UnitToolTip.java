@@ -1796,6 +1796,35 @@ public final class UnitToolTip {
         return result;
     }
 
+    /**
+     * Lists the unit's Recon Camera spots this turn (TO:AUE p.150): the unit its camera spotted, and the cameras that
+     * spotted it. Only the camera's side is told, as on the map.
+     *
+     * @param game        the game
+     * @param entity      the unit the tooltip is for
+     * @param localPlayer the player viewing the tooltip, or {@code null} when there is none
+     *
+     * @return the camera status text; empty when there is nothing to show
+     */
+    private static String getReconCameraStatus(Game game, Entity entity, @Nullable Player localPlayer) {
+        String result = "";
+        Entity spottedUnit = game.getEntity(entity.getReconCameraSpotTargetId());
+        if ((spottedUnit != null) && ReconCameraRules.isOnCameraSide(entity, localPlayer)) {
+            result += addToTT("CameraSpotting", NOBR, spottedUnit.getDisplayName()) + " ";
+        }
+        // read from the spotted unit, so the line shows even when the camera itself is not visible to this player
+        if (entity.isReconCameraSpottedFor(localPlayer)) {
+            for (String cameraName : entity.getReconCameraSpotterNames()) {
+                result += addToTT("CameraSpotted", NOBR, cameraName) + " ";
+            }
+        }
+        if (result.isEmpty()) {
+            return result;
+        }
+        String attr = String.format("FACE=Dialog COLOR=%s", UIUtil.toColorHexString((GUIP.getPrecautionColor())));
+        return UIUtil.tag("FONT", attr, result);
+    }
+
     private static String getUnitStatus(Game game, Entity entity, boolean isGunEmplacement) {
         String attr;
         String result = "";
@@ -1850,6 +1879,16 @@ public final class UnitToolTip {
         if (entity.isSpotting() && spotTarget != null) {
             String sSpotting = addToTT("Spotting", NOBR, spotTarget.getDisplayName()) + " ";
             result += sSpotting;
+        }
+
+        // Scan readings the unit is carrying home (Objectives series): worth points only once it leaves
+        if (!entity.getBankedScans().isEmpty()) {
+            result += addToTT("ScanReadings", NOBR, entity.getBankedScans().size()) + " ";
+        }
+
+        // A unit the mission wants scanned (Objectives series), so a scout can see what it was sent for
+        if (entity.isDesignatedScanTarget()) {
+            result += addToTT("ScanTarget", NOBR) + " ";
         }
 
         if (entity.hasAnyTypeNarcPodsAttached()) {
@@ -2120,6 +2159,15 @@ public final class UnitToolTip {
         if (!unitStatus.isEmpty()) {
             unitStatus = UIUtil.tag("span", fontSizeAttr, unitStatus);
             col = UIUtil.tag("TD", "", unitStatus);
+            row = UIUtil.tag("TR", "", col);
+            rows += row;
+        }
+
+        // Recon Camera spot this turn, shown only to the camera's side
+        String cameraStatus = getReconCameraStatus(game, entity, localPlayer);
+        if (!cameraStatus.isEmpty()) {
+            cameraStatus = UIUtil.tag("span", fontSizeAttr, cameraStatus);
+            col = UIUtil.tag("TD", "", cameraStatus);
             row = UIUtil.tag("TR", "", col);
             rows += row;
         }

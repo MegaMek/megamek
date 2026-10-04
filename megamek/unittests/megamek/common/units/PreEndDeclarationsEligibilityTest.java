@@ -183,13 +183,13 @@ class PreEndDeclarationsEligibilityTest {
         }
 
         @Test
-        @DisplayName("Infantry combat capability grants eligibility")
-        void infantryCombat_grantsEligibility() {
+        @DisplayName("An infantry action to declare grants eligibility")
+        void infantryAction_grantsEligibility() {
             BipedMek mek = eligibilitySpyAllFalse();
-            doReturn(true).when(mek).canInitiateInfantryVsInfantryCombat();
+            doReturn(true).when(mek).canDeclareInfantryAction();
 
             assertTrue(mek.isEligibleForPreEndDeclarations(),
-                  "A unit that can initiate infantry combat is eligible");
+                  "A unit with an infantry action to declare is eligible");
         }
 
         @Test
@@ -275,13 +275,13 @@ class PreEndDeclarationsEligibilityTest {
         }
 
         @Test
-        @DisplayName("Infantry combat is entity-scoped (keeps its own per-unit turn)")
-        void infantryCombat_isEntityScoped() {
+        @DisplayName("An infantry action is player-wide (collapses to one turn per player)")
+        void infantryAction_isPlayerWide() {
             BipedMek mek = eligibilitySpyAllFalse();
-            doReturn(true).when(mek).canInitiateInfantryVsInfantryCombat();
+            doReturn(true).when(mek).canDeclareInfantryAction();
 
-            assertTrue(mek.hasEntityScopedPreEndDeclaration(),
-                  "Infantry vs infantry combat is declared per unit, so it is entity-scoped");
+            assertFalse(mek.hasEntityScopedPreEndDeclaration(),
+                  "An infantry action is declared once per player per building, not per unit");
         }
 
         @Test
@@ -375,7 +375,7 @@ class PreEndDeclarationsEligibilityTest {
      */
     private BipedMek eligibilitySpyAllFalse() {
         BipedMek mek = spy(new BipedMek());
-        doReturn(false).when(mek).canInitiateInfantryVsInfantryCombat();
+        doReturn(false).when(mek).canDeclareInfantryAction();
         doReturn(false).when(mek).hasNovaCEWS();
         doReturn(false).when(mek).hasVariableRangeTargeting();
         doReturn(false).when(mek).canAnnounceAbandon();

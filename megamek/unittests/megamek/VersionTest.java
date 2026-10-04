@@ -36,14 +36,37 @@ package megamek;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ResourceBundle;
+
+import megamek.codeUtilities.MathUtility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class VersionTest {
     private Version version;
+
+    @Test
+    void defaultVersionReadsPackagedProperties() {
+        ResourceBundle packaged = ResourceBundle.getBundle("Version");
+        Version running = new Version();
+        assertEquals(packagedComponent(packaged.getString("major")), running.getMajor());
+        assertEquals(packagedComponent(packaged.getString("minor")), running.getMinor());
+        assertEquals(packagedComponent(packaged.getString("patch")), running.getPatch());
+        int revision = packaged.containsKey("revision") && !packaged.getString("revision").isBlank()
+              ? packagedComponent(packaged.getString("revision").trim()) : Version.NO_REVISION;
+        assertEquals(revision, running.getRevision());
+    }
+
+    private static int packagedComponent(String value) {
+        assertTrue(value.matches("[0-9]+"), "Malformed packaged version component: " + value);
+        int parsed = MathUtility.parseInt(value, -1);
+        assertNotEquals(-1, parsed, "Nonrepresentable packaged version component: " + value);
+        return parsed;
+    }
 
     @BeforeEach
     void setUp() {
@@ -231,6 +254,24 @@ class VersionTest {
         ordinaryVersion.setRevision(-1);
         assertFalse(ordinaryVersion.hasRevision());
         assertEquals(Version.NO_REVISION, ordinaryVersion.getRevision());
+    }
+
+    @Test
+    void absentOptionalEntryYieldsNothing() {
+        assertNull(Version.normalizeOptionalEntry(null));
+    }
+
+    @Test
+    void blankOptionalEntryYieldsNothing() {
+        // A notes entry left in place but emptied out must read as "no note" rather than as an empty line on the
+        // main menu.
+        assertNull(Version.normalizeOptionalEntry(""));
+        assertNull(Version.normalizeOptionalEntry("   "));
+    }
+
+    @Test
+    void optionalEntryIsTrimmed() {
+        assertEquals("Development build", Version.normalizeOptionalEntry("  Development build  "));
     }
 
     /**

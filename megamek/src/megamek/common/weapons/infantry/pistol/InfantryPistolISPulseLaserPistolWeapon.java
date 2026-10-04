@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,7 +69,7 @@ public class InfantryPistolISPulseLaserPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.0003;
         shots = 15;
         bursts = 3;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setAdvancement(2615, 2620, 2700, DATE_NONE, DATE_NONE)
               .setApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.TH)

@@ -43,6 +43,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -73,17 +74,14 @@ public abstract class MRMWeapon extends MissileWeapon {
     public int getToHitModifier(@Nullable Mounted<?> mounted) {
         return Game.rulesManager.getRulesWeapons().getMRMModifier(toHitModifier);
     }
-    
+
     @Override
     @Nullable
     public AttackHandler getCorrectHandler(ToHitData toHit, WeaponAttackAction waa, Game game, TWGameManager manager) {
         try {
             Mounted<?> mLinker = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId()).getLinkedBy();
-            if ((mLinker != null)
-                  && (mLinker.getType() instanceof MiscType)
-                  && !mLinker.isDestroyed() && !mLinker.isMissing()
-                  && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_APOLLO)
-                && (waa.getTarget(game).getTargetType() == Targetable.TYPE_SATURATION)) {
+            if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_APOLLO)
+                  && (waa.getTarget(game).getTargetType() == Targetable.TYPE_SATURATION)) {
                 return new MRMSaturationHandler(toHit, waa, game, manager);
             }
             return new MRMHandler(toHit, waa, game, manager);

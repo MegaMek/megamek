@@ -161,19 +161,18 @@ public class DNICockpitModTest {
     }
 
     /**
-     * Adds EI cockpit equipment to a mek and sets it to "On" mode. EI Interface has modes ["Off", "Initiate enhanced
-     * imaging"] where index 0 is Off. Since EI Interface uses non-instant mode switching, we need to call newRound to
-     * apply the mode.
+     * Adds EI cockpit equipment to a mek and switches it to its running mode. Since the EI Interface uses non-instant
+     * mode switching, we need to call newRound to apply the mode.
      */
     private void addEiCockpit(Mek mek) {
         try {
             MiscType eiInterface = (MiscType) EquipmentType.get("EIInterface");
             if (eiInterface != null) {
                 mek.addEquipment(eiInterface, Entity.LOC_NONE);
-                // Set to mode 1 ("On") - mode 0 is "Off"
+                // Switch the interface on explicitly rather than relying on the equipment's default mode
                 for (MiscMounted miscMounted : mek.getMisc()) {
                     if (miscMounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                        miscMounted.setMode(1);
+                        miscMounted.setMode(MiscType.MODE_EI_ON);
                         // Mode switch is not instant, so call newRound to apply the pending mode
                         miscMounted.newRound(1);
                         break;

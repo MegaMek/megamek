@@ -3098,6 +3098,18 @@ class FireControlTest {
                     mockWeapon,
                     mockAmmo,
                     mockGame));
+
+        // TW p.114: a WiGE that flew this turn and then landed is still a flak target, matching the real to-hit.
+        when(mockTarget.isAirborne()).thenReturn(false);
+        mockTarget.moved = EntityMovementType.MOVE_VTOL_WALK;
+        assertToHitDataEquals(expectedFlak,
+              testFireControl.guessToHitModifierForWeapon(mockShooter,
+                    mockShooterState,
+                    mockTarget,
+                    mockTargetState,
+                    mockWeapon,
+                    mockAmmo,
+                    mockGame));
     }
 
     @Test

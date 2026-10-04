@@ -216,10 +216,10 @@ public class PathEnumerator {
             // currently only applies to a) conventional aircraft, b) AeroTek units, c) lams
             // in air mode
             if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
-                AeroGroundPathFinder apf = AeroGroundPathFinder.getInstance(getGame());
+                AeroGroundPathFinder groundPathFinder = getOwner().aeroGroundPathFinder(getGame());
                 MovePath startPath = new MovePath(getGame(), mover, wayPoint);
-                apf.run(startPath);
-                paths.addAll(apf.getAllComputedPathsUncategorized());
+                groundPathFinder.run(startPath);
+                paths.addAll(groundPathFinder.getAllComputedPathsUncategorized());
 
                 // Remove illegal paths.
                 Filter<MovePath> filter = new Filter<>() {
@@ -315,6 +315,18 @@ public class PathEnumerator {
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run(new MovePath(game, mover, wayPoint).addStep(MoveStepType.START_JUMP));
                     paths.addAll(spf.getAllComputedPathsUncategorized());
+                }
+
+                // add moves that take off first: a grounded WiGE has only 1 MP on the ground
+                MovePath takeoffPath = new MovePath(game, mover, wayPoint);
+                if (PathDecorator.addWiGETakeoff(takeoffPath)) {
+                    lpf = LongestPathFinder.newInstanceOfLongestPath(maxMove, MoveStepType.FORWARDS, getGame());
+                    lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
+                    lpf.run(takeoffPath);
+                    List<MovePath> takeoffPaths = lpf.getLongestComputedPaths();
+                    logger.debug("{} is a grounded WiGE; added {} takeoff paths", mover.getDisplayName(),
+                          takeoffPaths.size());
+                    paths.addAll(takeoffPaths);
                 }
 
                 // calling .debug is expensive even if we don't actually log anything

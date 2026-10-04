@@ -211,7 +211,7 @@ public class ComputeArc {
         // true
         for (Coords dest : destV) {
             // Sometimes we get non-null destV containing null Coord entries.
-            if (null == dest) {
+            if (dest == null) {
                 return true;
             }
 

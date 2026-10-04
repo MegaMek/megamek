@@ -171,8 +171,11 @@ public class AlphaStrikeHelper {
 
     /** @return True when this AS element automatically gets the SEAL Special Unit Ability. */
     public static boolean hasAutoSeal(ASCardDisplayable element) {
+        // The rewritten SEAL conversion entry (Strategic Operations errata v2.0) grants the ability to the Mek,
+        // aerospace and ProtoMek element types, and to Combat and Support Vehicle submarines. ProtoMeks are named
+        // in the Alpha Strike Commander's Edition list too (p. 85).
         return element.isSubmarine()
-              || element.isType(BM, AF, SC, DS, JS, WS, SS, DA);
+              || element.isType(BM, PM, AF, SC, DS, JS, WS, SS, DA);
         // TODO               || isType(BA) Exoskeleton??
     }
 

@@ -48,6 +48,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -238,21 +239,16 @@ public class ComputeTerrainMods {
 
         // target in water?
         boolean targetInWater = (targetHex != null) && targetHex.containsTerrain(Terrains.WATER);
-        int partialWaterLevel = 1;
-        if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
-            partialWaterLevel = 2;
-        }
-        if ((entityTarget != null)
-              && targetInWater
-              // target in partial water
-              && (targetHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
-              && (targEl == 0)
-              && (entityTarget.height() > 0)) {
+        boolean targetInWaterPartialCover = PartialCover.isInPartialWater(entityTarget, targetHex, targEl);
+        if (targetInWaterPartialCover) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
 
+        // Skips partial cover if using semi-guided direct against a tagged target and not in water partial cover.
+        boolean semiguidedNoWater = semiGuidedDirectVsTaggedTarget && !targetInWaterPartialCover;
+
         // Change hit table for partial cover, accommodate for partial underwater (legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE && !(semiGuidedDirectVsTaggedTarget && !underWater)) {
+        if (los.getTargetCover() != LosEffects.COVER_NONE && !semiguidedNoWater) {
             if (underWater && (targetInWater && (targEl == 0) && (entityTarget != null && entityTarget.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(HIT_PARTIAL_COVER);
@@ -307,7 +303,7 @@ public class ComputeTerrainMods {
                 }
             }
         }
-        
+
         // Special Equipment
 
         // BAP Targeting rule enabled - TO:AR 6th p.97
@@ -341,7 +337,7 @@ public class ComputeTerrainMods {
                 toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
             }
         }
-        
+
         // To-hit table changes with no to-hit modifiers
 
         // Aero's in air-to-air combat can hit above and below
@@ -360,7 +356,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for elevation differences inside building.
-        if ((null != los.getThruBldg()) && (aElev != tElev)) {
+        if ((los.getThruBldg() != null) &&(aElev != tElev)){
 
             // Tanks get hit in a random side.
             if (target instanceof Tank) {
@@ -387,7 +383,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for surface naval vessels hit by underwater attacks
-        if (underWater && targetInWater && (null != entityTarget) && entityTarget.isSurfaceNaval()) {
+        if (underWater && targetInWater && (entityTarget != null) && entityTarget.isSurfaceNaval()) {
             toHit.setHitTable(HIT_UNDERWATER);
         }
 
@@ -418,8 +414,7 @@ public class ComputeTerrainMods {
      * @return {@code true} for artillery (including Arrow IV and artillery cannons), bombs, and fuel-air explosive
      *       munitions
      */
-    // Package-private for unit testing.
-    static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
+    public static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
         boolean isArtillery = weaponType.hasFlag(WeaponType.F_ARTILLERY)
               || (weaponType instanceof ArtilleryCannonWeapon);
         boolean isBomb = weaponType.hasAnyFlag(WeaponType.F_ALT_BOMB, WeaponType.F_DIVE_BOMB,

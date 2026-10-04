@@ -53,8 +53,6 @@ import megamek.common.board.Coords;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.orders.FormationOrder;
-import megamek.common.orders.LanceRole;
-import megamek.common.orders.LanceRoles;
 import megamek.common.orders.OrderEligibility;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
@@ -179,7 +177,7 @@ public class BotOrdersMenuBuilder {
             addOrder(groupMenu, botPlayer, group, "pause", UnitOrderAction.PAUSE);
             addOrder(groupMenu, botPlayer, group, "resume", UnitOrderAction.RESUME);
             addOrder(groupMenu, botPlayer, group, "stop", UnitOrderAction.STOP);
-            addClearOrder(groupMenu, botPlayer, group);
+            addHoldPositionOrder(groupMenu, botPlayer, group);
             groupMenu.addSeparator();
             groupMenu.add(createEdgeMenu(botPlayer, group));
             groupMenu.add(createPriorityMenu(botPlayer, group));
@@ -415,7 +413,7 @@ public class BotOrdersMenuBuilder {
         addOrder(groupMenu, botPlayer, group, "resume", UnitOrderAction.RESUME);
         addOrder(groupMenu, botPlayer, group, "stop", UnitOrderAction.STOP);
         addOrder(groupMenu, botPlayer, group, "removeLast", UnitOrderAction.REMOVE_LAST);
-        addClearOrder(groupMenu, botPlayer, group);
+        addHoldPositionOrder(groupMenu, botPlayer, group);
     }
 
     private void addOrder(JMenu menu, Player botPlayer, OrderGroup group, String key, UnitOrderAction action,
@@ -427,15 +425,16 @@ public class BotOrdersMenuBuilder {
     }
 
     /**
-     * Clear: the units drop their orders. A convoy then holds where it is for new orders rather than heading off by
-     * its exit edge at once, which is what a convoy with no route does (HammerGS, 2026-10-04): it stays paused until it
-     * is given a route, told to Resume, or its role changes.
+     * Hold position: the units drop their route and hold where they are until given a new route or told to Resume
+     * (HammerGS, 2026-10-04). Orders are removed in the Move Order editor; a quick order stops the lance. A convoy with
+     * no route would otherwise head off by its exit edge at once.
      */
-    private void addClearOrder(JMenu menu, Player botPlayer, OrderGroup group) {
-        String title = Messages.getString("BotCommandPanel.Orders.clear");
+    private void addHoldPositionOrder(JMenu menu, Player botPlayer, OrderGroup group) {
+        String title = Messages.getString("BotCommandPanel.Orders.holdPosition");
         JMenuItem item = new JMenuItem(title);
+        item.setToolTipText(Messages.getString("BotCommandPanel.Orders.holdPosition.tooltip"));
         item.addActionListener(event -> {
-            for (String command : clearCommands(group.unitIds())) {
+            for (String command : holdPositionCommands(group.unitIds())) {
                 client.sendChat(command);
             }
             acknowledge(botPlayer, group, title);
@@ -444,21 +443,15 @@ public class BotOrdersMenuBuilder {
     }
 
     /**
-     * @param unitIds the units cleared
+     * @param unitIds the units to hold
      *
-     * @return the commands to send, in order: Clear for each unit, and Pause after it for a unit of a convoy
+     * @return the commands to send, in order: for each unit, Clear its route, then Pause it where it is
      */
-    List<String> clearCommands(List<Integer> unitIds) {
+    static List<String> holdPositionCommands(List<Integer> unitIds) {
         List<String> commands = new ArrayList<>();
         for (int unitId : unitIds) {
             commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.CLEAR));
-            Entity unit = (client.getGame() instanceof Game game) ? game.getEntity(unitId) : null;
-            LanceRole role = (unit == null) ? null : LanceRoles.effectiveRole(unit);
-            if ((role != null) && role.isConvoy()) {
-                LOGGER.info("[BotOrders] {} (ID {}): cleared; a convoy holds for new orders", unit.getDisplayName(),
-                      unitId);
-                commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.PAUSE));
-            }
+            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.PAUSE));
         }
         return commands;
     }

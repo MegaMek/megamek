@@ -329,16 +329,20 @@ final class TownLegPlanner {
         if ((firstStart == null) || (secondStart == null)) {
             return false;
         }
-        double[] a = centre(firstStart);
-        double[] b = centre(firstEnd);
-        double[] c = centre(secondStart);
-        double[] d = centre(secondEnd);
-        double abC = turn(a, b, c);
-        double abD = turn(a, b, d);
-        double cdA = turn(c, d, a);
-        double cdB = turn(c, d, b);
-        return (((abC > 0) && (abD < 0)) || ((abC < 0) && (abD > 0)))
-              && (((cdA > 0) && (cdB < 0)) || ((cdA < 0) && (cdB > 0)));
+        double[] firstFrom = centre(firstStart);
+        double[] firstTo = centre(firstEnd);
+        double[] secondFrom = centre(secondStart);
+        double[] secondTo = centre(secondEnd);
+        // each segment's ends lie on opposite sides of the other segment
+        double secondFromSide = turn(firstFrom, firstTo, secondFrom);
+        double secondToSide = turn(firstFrom, firstTo, secondTo);
+        double firstFromSide = turn(secondFrom, secondTo, firstFrom);
+        double firstToSide = turn(secondFrom, secondTo, firstTo);
+        return isOnOppositeSides(secondFromSide, secondToSide) && isOnOppositeSides(firstFromSide, firstToSide);
+    }
+
+    private static boolean isOnOppositeSides(double oneSide, double otherSide) {
+        return ((oneSide > 0) && (otherSide < 0)) || ((oneSide < 0) && (otherSide > 0));
     }
 
     // the centre of a hex on the map, odd columns half a hex lower

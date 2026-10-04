@@ -37,6 +37,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -211,11 +212,18 @@ public class BotCommandsPanel extends JPanel {
 
         moveOrder.addActionListener(event -> {
             // with one bot and nothing to choose between, the editor opens at once; its Choose units... narrows it
-            List<Player> botPlayers = getBotPlayersUnderYourCommand().stream().filter(this::hasOnBoardUnits).toList();
-            if ((clientGUI != null) && (botPlayers.size() == 1)
-                  && (ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst()).size() == 1)) {
-                openMoveOrder(botPlayers.getFirst(), ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst()).getFirst());
-                return;
+            List<Player> botPlayers = new ArrayList<>();
+            for (Player botPlayer : getBotPlayersUnderYourCommand()) {
+                if (hasOnBoardUnits(botPlayer)) {
+                    botPlayers.add(botPlayer);
+                }
+            }
+            if ((clientGUI != null) && (botPlayers.size() == 1)) {
+                List<BotOrdersMenuBuilder.OrderGroup> lances = ordersMenuBuilder.lanceGroupsFor(botPlayers.getFirst());
+                if (lances.size() == 1) {
+                    openMoveOrder(botPlayers.getFirst(), lances.getFirst());
+                    return;
+                }
             }
             showButtonPopup(moveOrder, this::createMoveOrderPopup);
         });

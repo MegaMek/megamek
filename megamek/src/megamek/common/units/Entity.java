@@ -511,8 +511,8 @@ public abstract class Entity extends TurnOrdered
      */
     private UnitOrders unitOrders = UnitOrders.NONE;
     /**
-     * The role of this unit's lance - a convoy or an escort - or null for none; it outlasts the unit's routes. Null in
-     * a savegame made before lance roles.
+     * The role set on this unit - a convoy or an escort - or {@code null} for none; it outlasts the unit's routes.
+     * {@code null} in a savegame made before lance roles.
      */
     private LanceRole lanceRole;
     public int mpUsed = 0;

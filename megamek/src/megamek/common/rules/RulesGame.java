@@ -163,6 +163,12 @@ public abstract class RulesGame {
         int deploymentRound = entity.getDeployRound();
         int currentRound = entity.getGame().getCurrentRound();
         int startingPos = entity.getStartingPos();
+
+        // If it is a bot and they are towing, no walk on.
+        if (entity.getOwner().isBot() && !entity.getAllTowedUnits().isEmpty()) {
+            return false;
+        }
+
         return (!entity.isDeployed() && deploymentRound >= 0
                 && deploymentRound <= currentRound
                 && restrictDeploymentWidth(entity.getOwner(), startingPos));

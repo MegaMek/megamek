@@ -982,9 +982,14 @@ public class Board implements Serializable {
         if (e == null) {
             return false;
         }
-        int startingWidth = e.getGame().rulesManager.getRulesGame()
+        int startingWidth = e.getStartingWidth();
+        // For Walk On Deployment, we need to restrict the deployment width if it not the deployment phase.
+        if (!(e.getGame().getPhase().isDeployment())) {
+            startingWidth = e.getGame().rulesManager.getRulesGame()
                                                     .getDeploymentWidth(e.getOwner(),
                                                                         e.getStartingPos(), e.getStartingWidth());
+        }
+
         if (e.isDropShip()) {
             startingWidth = e.getStartingWidth();
         }

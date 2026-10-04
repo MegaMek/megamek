@@ -224,6 +224,13 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * @return where ordered units deploy
+     */
+    DeploymentPlanner deployment() {
+        return deployment;
+    }
+
+    /**
      * @return the game's current round
      */
     int currentRound() {

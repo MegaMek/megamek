@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
@@ -51,6 +53,7 @@ import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Entity;
@@ -643,5 +646,93 @@ class DeploymentPlanner {
             return leader.getId();
         }
         return firstDeployable;
+    }
+
+    /**
+     * Where a unit deploys when its orders decide it, else what is left to rank by terrain.
+     *
+     * @param hex        the hex to deploy on, or {@code null} when the orders leave it to the bot
+     * @param candidates the hexes left, the ones its formation fits first
+     */
+    record OrderedDeployment(@Nullable Coords hex, List<Coords> candidates) {}
+
+    /**
+     * The hex a unit on orders deploys on: a formation leader on the hex its formation's first unit down picked for
+     * it, or the free one nearest; a member in its slot beside its leader; an escort at its place round its convoy. A
+     * member first down while its leader has still to deploy picks the leader's hex first, so it can take its slot.
+     *
+     * @param unit        the unit about to deploy
+     * @param candidates  the hexes it may deploy on, reachable and ordered by the bot
+     * @param firstValid  the bot's pick of the first hex of a list the unit may really deploy on, or {@code null}
+     * @param pickAnchor  picks the hex a leader still to deploy will take, as it would on its own turn; given the
+     *                    leader and the unit picking for it
+     *
+     * @return the hex, or none and the candidates its formation fits first
+     */
+    OrderedDeployment orderedDeployment(Entity unit, List<Coords> candidates,
+          BiFunction<Entity, List<Coords>, Coords> firstValid, BiConsumer<Entity, Entity> pickAnchor) {
+        Optional<Coords> anchor = getDeploymentAnchor(unit);
+        if (anchor.isPresent()) {
+            List<Coords> nearestAnchor = new ArrayList<>(candidates);
+            nearestAnchor.sort(Comparator.comparingInt(coords -> coords.distance(anchor.get())));
+            Coords anchorHex = firstValid.apply(unit, nearestAnchor);
+            if (anchorHex != null) {
+                LOGGER.info("[BotOrders] {} (ID {}): deploying at {}, the hex picked for it as leader ({})",
+                      unit.getDisplayName(), unit.getId(), anchorHex.getBoardNum(), anchor.get().getBoardNum());
+                return new OrderedDeployment(anchorHex, candidates);
+            }
+        }
+        Optional<Entity> leaderToPlace = leaderStillToPlace(unit);
+        if (leaderToPlace.isPresent()) {
+            pickAnchor.accept(leaderToPlace.get(), unit);
+        }
+        List<Coords> fitting = preferFormationFit(unit, candidates);
+        if (getDeploymentSlot(unit, fitting).isPresent()) {
+            // the free hex nearest the slot: ranking the hexes by terrain moved members out of the shape
+            // (HammerGS's playtest, 2026-09-26)
+            Coords slotHex = firstValid.apply(unit, preferDeploymentSlot(unit, fitting));
+            if (slotHex != null) {
+                return new OrderedDeployment(slotHex, fitting);
+            }
+        }
+        Optional<Coords> escortPlace = follower.convoyEscorts().getEscortDeploymentPlace(unit);
+        if (escortPlace.isPresent()) {
+            List<Coords> nearestFirst = new ArrayList<>(fitting);
+            nearestFirst.sort(Comparator.comparingInt(coords -> coords.distance(escortPlace.get())));
+            Coords escortHex = firstValid.apply(unit, nearestFirst);
+            if (escortHex != null) {
+                return new OrderedDeployment(escortHex, fitting);
+            }
+        }
+        return new OrderedDeployment(null, fitting);
+    }
+
+    /**
+     * The way a unit faces as it deploys: the facing a player ordered for when it is stopped, else its convoy's way to
+     * its exit edge, else toward the enemy's deployment zone, where the enemy will come from.
+     *
+     * @param unit            the unit deploying
+     * @param hex             the hex it deploys on
+     * @param board           its board
+     * @param enemyZoneCenter the middle of the enemy's deployment zone, or empty to leave that to the bot
+     *
+     * @return the facing 0-5, or {@link UnitOrders#FACING_AUTO} to leave it to the bot
+     */
+    int deploymentFacing(Entity unit, Coords hex, Board board, Optional<Coords> enemyZoneCenter) {
+        int facing = unit.getUnitOrders().getFacingWhenStopped();
+        OptionalInt convoyFacing = ConvoyTracker.exitFacing(unit, hex, board);
+        if (facing != UnitOrders.FACING_AUTO) {
+            LOGGER.info("[Deployment] {} deploys at {} facing {}, as ordered", unit.getDisplayName(),
+                  hex.getBoardNum(), facing);
+        } else if (convoyFacing.isPresent()) {
+            facing = convoyFacing.getAsInt();
+            LOGGER.info("[Deployment] {} deploys at {} facing {}, toward its convoy's exit edge {}",
+                  unit.getDisplayName(), hex.getBoardNum(), facing, LanceRoles.effectiveRole(unit).getExitEdge());
+        } else if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(hex)) {
+            facing = hex.direction(enemyZoneCenter.get());
+            LOGGER.info("[Deployment] {} deploys at {} facing {}, toward the enemy deployment zone around {}",
+                  unit.getDisplayName(), hex.getBoardNum(), facing, enemyZoneCenter.get().getBoardNum());
+        }
+        return facing;
     }
 }

@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -66,6 +67,8 @@ import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.buttonDialogs.PriorityTargetPickerDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
@@ -925,6 +928,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private JPopupMenu createTargetsPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
+            addChoosePriorityTargetsItem(botMenu, botPlayer);
             addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
             addEnemyUnitMenu(botMenu, botPlayer, "TagTargetMenu", this::setTagTarget);
             addStrategicTargetItem(botMenu, botPlayer);
@@ -937,6 +941,36 @@ public class BotCommandsPanel extends JPanel {
             addBotAction(botMenu, botPlayer, "IgnoreTurrets", this::ignoreTurrets);
             addBotAction(botMenu, botPlayer, "ClearIgnoredTargets", this::clearIgnoredTargetsOrder);
         });
+    }
+
+    /**
+     * Adds the item that opens the priority target picker for the bot. The picker starts empty: what it sends adds
+     * targets or changes their priority, and there is no command to take a target off a bot.
+     */
+    private void addChoosePriorityTargetsItem(JMenu botMenu, Player botPlayer) {
+        if (clientGUI == null) {
+            return;
+        }
+        JMenuItem chooseItem = new JMenuItem(Messages.getString("BotCommandPanel.ChoosePriorityTargets.title"));
+        chooseItem.setToolTipText(Messages.getString("BotCommandPanel.ChoosePriorityTargets.tooltip"));
+        chooseItem.addActionListener(evt -> choosePriorityTargets(botPlayer));
+        botMenu.add(chooseItem);
+        botMenu.addSeparator();
+    }
+
+    private void choosePriorityTargets(Player botPlayer) {
+        var picker = new PriorityTargetPickerDialog(clientGUI.getFrame(), clientGUI.getClient().getGame(), botPlayer,
+              Map.of());
+        if (picker.showDialog() != DialogResult.CONFIRMED) {
+            return;
+        }
+        Map<Integer, Integer> pickedTargets = picker.getPickedTargets();
+        for (Map.Entry<Integer, Integer> target : pickedTargets.entrySet()) {
+            sendChatCommand(botPlayer, ChatCommands.PRIORITIZE, target.getKey() + " " + target.getValue());
+        }
+        LOGGER.info("Priority targets sent to {}: {}", botPlayer.getName(), pickedTargets);
+        acknowledgeOrder(botPlayer,
+              Messages.getString("BotCommandPanel.toast.priorityTargets", pickedTargets.size()));
     }
 
     private void setTagTarget(PlayerInGameObject playerInGameObject) {

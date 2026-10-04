@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,30 +35,47 @@ package megamek.client.bot.princess.commands;
 import java.util.List;
 
 import megamek.client.bot.Messages;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.Princess;
+import megamek.logging.MMLogger;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
+import megamek.server.commands.arguments.OptionalIntegerArgument;
 import megamek.server.commands.arguments.UnitArgument;
 
 /**
- * Command to set a priority target unit for the bot.
+ * Command to set a priority target unit for the bot, optionally with how much it is wanted (1 the most, 5 the least).
+ * Without a priority, a new target gets the default and a target already on the list keeps its priority.
  *
  * @author Luana Coppio
  */
 public class PriorityTargetCommand implements ChatCommand {
+    private static final MMLogger LOGGER = MMLogger.create(PriorityTargetCommand.class);
     private static final String UNIT_ID = "unitID";
+    private static final String PRIORITY = "priority";
 
     @Override
     public List<Argument<?>> defineArguments() {
         return List.of(
-              new UnitArgument(UNIT_ID, Messages.getString("Princess.command.priorityTarget.unitID"))
+              new UnitArgument(UNIT_ID, Messages.getString("Princess.command.priorityTarget.unitID")),
+              new OptionalIntegerArgument(PRIORITY, Messages.getString("Princess.command.priorityTarget.priority"),
+                    BehaviorSettings.HIGHEST_TARGET_PRIORITY, BehaviorSettings.LOWEST_TARGET_PRIORITY)
         );
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        UnitArgument unitArg = arguments.get(UNIT_ID, UnitArgument.class);
-        princess.getBehaviorSettings().addPriorityUnit(unitArg.getValue());
-        princess.sendChat(Messages.getString("Princess.command.priorityTarget.success"));
+        int unitId = arguments.get(UNIT_ID, UnitArgument.class).getValue();
+        var priorityArgument = arguments.get(PRIORITY, OptionalIntegerArgument.class).getValue();
+        BehaviorSettings behaviorSettings = princess.getBehaviorSettings();
+        if (priorityArgument.isPresent()) {
+            behaviorSettings.addPriorityUnit(unitId, priorityArgument.get());
+        } else {
+            behaviorSettings.addPriorityUnit(unitId);
+        }
+        int priority = behaviorSettings.getPriorityUnitLevel(unitId);
+        LOGGER.info("{}: unit {} is a priority target at priority {} ({})", princess.getLocalPlayer().getName(),
+              unitId, priority, priorityArgument.isPresent() ? "priority given" : "no priority given");
+        princess.sendChat(Messages.getString("Princess.command.priorityTarget.success", unitId, priority));
     }
 }

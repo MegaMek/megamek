@@ -120,6 +120,7 @@ public class FireControl {
     static final double SUB_COMMANDER_UTILITY = 0.25;
     static final double STRATEGIC_TARGET_UTILITY = 0.5;
     static final double PRIORITY_TARGET_UTILITY = 0.25;
+    static final double PRIORITY_TARGET_STEP_UTILITY = 0.10;
 
     static final String TH_WOODS = "woods";
     static final String TH_SMOKE = "smoke";
@@ -1611,9 +1612,28 @@ public class FireControl {
 
         final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
-            return PRIORITY_TARGET_UTILITY;
+            return priorityTargetUtility(owner.getPriorityUnitLevel(id));
         }
         return 0;
+    }
+
+    /**
+     * The bonus a priority target adds to an attack's score. The default priority gives
+     * {@link #PRIORITY_TARGET_UTILITY}, the value every target had before priorities existed, and each step up or
+     * down adds or removes {@link #PRIORITY_TARGET_STEP_UTILITY}: priority 1 gives 0.45, priority 5 gives 0.05.
+     *
+     * @param priority How much the target is wanted, 1 the most. Anything outside 1 to 5, such as the 0 of a target
+     *                 with no stored priority, counts as the default.
+     *
+     * @return The bonus added to the attack's score multiplier
+     */
+    static double priorityTargetUtility(int priority) {
+        if ((priority < BehaviorSettings.HIGHEST_TARGET_PRIORITY)
+              || (priority > BehaviorSettings.LOWEST_TARGET_PRIORITY)) {
+            return PRIORITY_TARGET_UTILITY;
+        }
+        int stepsAboveDefault = BehaviorSettings.DEFAULT_TARGET_PRIORITY - priority;
+        return PRIORITY_TARGET_UTILITY + (stepsAboveDefault * PRIORITY_TARGET_STEP_UTILITY);
     }
 
     protected double calcCivilianTargetDisutility(final Targetable target) {

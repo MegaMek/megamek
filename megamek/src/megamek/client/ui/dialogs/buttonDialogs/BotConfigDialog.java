@@ -52,8 +52,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -652,7 +655,7 @@ public class BotConfigDialog extends AbstractButtonDialog
                 }
             }
         }
-        targetsListModel.addAll(princessBehavior.getPriorityUnitTargets());
+        addUnitTargets(unitTargetsOf(princessBehavior));
         updateEnabledStates();
     }
 
@@ -788,14 +791,7 @@ public class BotConfigDialog extends AbstractButtonDialog
             }
 
         } else if (e.getSource() == addUnitButton) {
-            var dlg = new BotConfigTargetUnitDialog(getFrame());
-            dlg.setVisible(true);
-            if (dlg.getResult() == DialogResult.CONFIRMED) {
-                dlg.getSelectedIDs()
-                      .stream()
-                      .filter(c -> !targetsListModel.contains(c))
-                      .forEach(targetsListModel::addElement);
-            }
+            chooseUnitTargets();
 
         } else if (e.getSource() == removeTargetButton) {
             for (Object target : targetsList.getSelectedValuesList()) {
@@ -897,6 +893,85 @@ public class BotConfigDialog extends AbstractButtonDialog
         }
     }
 
+    /** A priority target unit in the targets list, with how much it is wanted (1 the most). */
+    private record UnitTarget(int unitId, int priority) {}
+
+    private static Map<Integer, Integer> unitTargetsOf(BehaviorSettings behavior) {
+        Map<Integer, Integer> result = new LinkedHashMap<>();
+        for (int unitId : behavior.getPriorityUnitTargets()) {
+            result.put(unitId, behavior.getPriorityUnitLevel(unitId));
+        }
+        return result;
+    }
+
+    /** @return the unit targets now in the targets list, unit ID to priority */
+    private Map<Integer, Integer> listedUnitTargets() {
+        Map<Integer, Integer> result = new LinkedHashMap<>();
+        for (int i = 0; i < targetsListModel.getSize(); i++) {
+            if (targetsListModel.get(i) instanceof UnitTarget unitTarget) {
+                result.put(unitTarget.unitId(), unitTarget.priority());
+            }
+        }
+        return result;
+    }
+
+    /** Replaces the unit targets in the targets list, most wanted first, then by unit ID. */
+    private void addUnitTargets(Map<Integer, Integer> unitTargets) {
+        for (int i = targetsListModel.getSize() - 1; i >= 0; i--) {
+            if (targetsListModel.get(i) instanceof UnitTarget) {
+                targetsListModel.remove(i);
+            }
+        }
+        List<UnitTarget> sortedTargets = new ArrayList<>();
+        for (Map.Entry<Integer, Integer> entry : unitTargets.entrySet()) {
+            sortedTargets.add(new UnitTarget(entry.getKey(), entry.getValue()));
+        }
+        sortedTargets.sort(Comparator.comparingInt(UnitTarget::priority).thenComparingInt(UnitTarget::unitId));
+        for (UnitTarget unitTarget : sortedTargets) {
+            targetsListModel.addElement(unitTarget);
+        }
+    }
+
+    /**
+     * Opens the target picker on the units of the game. Without a game, such as when the dialog is opened outside a
+     * lobby, unit IDs are typed instead and the new targets get the default priority.
+     */
+    private void chooseUnitTargets() {
+        Map<Integer, Integer> currentTargets = listedUnitTargets();
+        if (client == null) {
+            var unitIdDialog = new BotConfigTargetUnitDialog(getFrame());
+            unitIdDialog.setVisible(true);
+            if (unitIdDialog.getResult() == DialogResult.CONFIRMED) {
+                for (int unitId : unitIdDialog.getSelectedIDs()) {
+                    currentTargets.putIfAbsent(unitId, BehaviorSettings.DEFAULT_TARGET_PRIORITY);
+                }
+                addUnitTargets(currentTargets);
+            }
+            return;
+        }
+        Player botPlayer = findBotPlayer();
+        var picker = new PriorityTargetPickerDialog(getFrame(), client.getGame(), botPlayer, currentTargets);
+        if (picker.showDialog() == DialogResult.CONFIRMED) {
+            Map<Integer, Integer> pickedTargets = picker.getPickedTargets();
+            logger.info("Bot config for {}: {} priority unit target(s) picked: {}", getBotName(),
+                  pickedTargets.size(), pickedTargets);
+            addUnitTargets(pickedTargets);
+        }
+    }
+
+    /** @return the player of the bot being configured, or {@code null} for a bot that does not exist yet */
+    private @Nullable Player findBotPlayer() {
+        if (isNewBot) {
+            return null;
+        }
+        for (Player player : client.getGame().getPlayersList()) {
+            if (player.getName().equals(fixedBotPlayerName)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
     private void savePrincessProperties() {
         BehaviorSettings tempBehavior = new BehaviorSettings();
         try {
@@ -926,8 +1001,8 @@ public class BotConfigDialog extends AbstractButtonDialog
         for (int i = 0; i < targetsListModel.getSize(); i++) {
             if (targetsListModel.get(i) instanceof Coords) {
                 tempBehavior.addStrategicTarget(targetsListModel.get(i).toString());
-            } else {
-                tempBehavior.addPriorityUnit(Integer.toString((int) targetsListModel.get(i)));
+            } else if (targetsListModel.get(i) instanceof UnitTarget unitTarget) {
+                tempBehavior.addPriorityUnit(unitTarget.unitId(), unitTarget.priority());
             }
         }
         princessBehavior = tempBehavior;
@@ -1107,16 +1182,19 @@ public class BotConfigDialog extends AbstractButtonDialog
                     content += Messages.getString("BotConfigDialog.hexListNoMp");
                 }
             } else {
-                int unitID = (int) value;
+                UnitTarget unitTarget = (UnitTarget) value;
+                int unitID = unitTarget.unitId();
                 Optional<Entity> optEntity = Optional.ofNullable(client)
                       .map(Client::getGame)
                       .map(game -> game.getEntity(unitID));
                 if (optEntity.isPresent()) {
                     Entity entity = optEntity.get();
-                    content = Messages.getString("BotConfigDialog.unitListEntry", unitID, entity.getShortNameRaw());
+                    content = Messages.getString("BotConfigDialog.unitListEntryPriority", unitID,
+                          entity.getShortNameRaw(), unitTarget.priority());
                     invalid = false;
                 } else {
-                    content = Messages.getString("BotConfigDialog.unitListEntryNone", unitID);
+                    content = Messages.getString("BotConfigDialog.unitListEntryNonePriority", unitID,
+                          unitTarget.priority());
                 }
             }
             Component comp = super.getListCellRendererComponent(list, content, index, isSelected, cellHasFocus);

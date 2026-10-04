@@ -1071,6 +1071,15 @@ public class Princess extends BotClient {
         return targets;
     }
 
+    /**
+     * @param unitId The ID of a unit.
+     *
+     * @return How much this bot wants the unit as a target, 1 the most, or 0 when it is not a priority target.
+     */
+    public int getPriorityUnitLevel(int unitId) {
+        return getBehaviorSettings().getPriorityUnitLevel(unitId);
+    }
+
     public Targetable getAppropriateTarget(Coords strategicTarget) {
         return getAppropriateTarget(strategicTarget, IGame.DEFAULT_BOARD_ID);
     }

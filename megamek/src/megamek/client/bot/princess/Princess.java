@@ -3541,7 +3541,7 @@ public class Princess extends BotClient {
      * standard "circle", sometimes it's pruned long-range movement paths
      */
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
-        return getMovePathsAndSetNecessaryTargets(mover, forceMoveToContact, false);
+        return getMovePathsAndSetNecessaryTargets(mover, forceMoveToContact, !mover.isDeployed());
     }
 
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover,

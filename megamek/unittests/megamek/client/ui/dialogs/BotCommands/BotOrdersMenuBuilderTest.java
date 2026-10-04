@@ -49,13 +49,11 @@ import javax.swing.JMenuItem;
 
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
-import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
-import megamek.common.orders.LanceRole;
 import megamek.common.units.BipedMek;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -129,12 +127,11 @@ class BotOrdersMenuBuilderTest {
     }
 
     @Test
-    void clearHoldsAConvoyForNewOrders() {
-        // HammerGS, 2026-10-04: a convoy with no route heads off by its exit edge; cleared, it holds for orders
-        units.get(0).setLanceRole(LanceRole.convoy(OffBoardDirection.NORTH));
-
-        assertEquals(List.of("/unitOrder 20 CLEAR", "/unitOrder 20 PAUSE", "/unitOrder 22 CLEAR"),
-              builder.clearCommands(List.of(20, 22)));
+    void holdPositionDropsTheRouteAndHoldsEveryUnit() {
+        // HammerGS, 2026-10-04: orders are removed in the editor; the quick order holds the lance where it is
+        assertEquals(List.of("/unitOrder 20 CLEAR", "/unitOrder 20 PAUSE", "/unitOrder 22 CLEAR",
+              "/unitOrder 22 PAUSE"),
+              BotOrdersMenuBuilder.holdPositionCommands(List.of(20, 22)));
     }
 
     @Test

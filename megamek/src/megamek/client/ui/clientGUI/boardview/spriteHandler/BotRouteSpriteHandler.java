@@ -172,7 +172,7 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
             points.addAll(guide.getUnitOrders().getRoute());
             Set<Coords> marked = new HashSet<>(points);
             for (int index = 1; index < points.size(); index++) {
-                for (Coords hex : Coords.intervening(points.get(index - 1), points.get(index))) {
+                for (Coords hex : stepsBetween(points.get(index - 1), points.get(index))) {
                     if (marked.add(hex)) {
                         dots.add(new TrailDot(hex, guide.getBoardId(), colorIndex));
                     }
@@ -181,6 +181,30 @@ public class BotRouteSpriteHandler extends BoardViewSpriteHandler {
             colorIndex++;
         }
         return dots;
+    }
+
+    /**
+     * The hexes a unit passes going straight from one hex to another, a step at a time toward the target: one hex a
+     * row, with a single jog where the way changes column. Every hex the straight line touches zig-zagged between two
+     * columns where the line ran along their shared edge, and the trail read as two lines of dots side by side
+     * (HammerGS's playtest, 2026-10-04).
+     *
+     * @param from the hex the way starts at
+     * @param to   the hex it ends at
+     *
+     * @return the hexes, both ends included
+     */
+    static List<Coords> stepsBetween(Coords from, Coords to) {
+        List<Coords> steps = new ArrayList<>();
+        Coords position = from;
+        steps.add(position);
+        // each step toward the target brings it one hex nearer; the cap only guards against a loop
+        int stepsLeft = from.distance(to);
+        while (!position.equals(to) && (stepsLeft-- > 0)) {
+            position = position.translated(position.direction(to));
+            steps.add(position);
+        }
+        return steps;
     }
 
     private void renewSprites() {

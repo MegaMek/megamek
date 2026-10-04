@@ -416,7 +416,7 @@ class FormationFollowerTest {
         // the way round leaves two or more hexsides off the flag; the unit turns one hexside toward it, no further
         int facing = princess.getUnitOrdersFollower().orderedFacing(scout, LEADER_HEX);
         int towardFlag = LEADER_HEX.direction(flagNorthEast);
-        assertEquals(1, UnitOrdersFollower.sidesApart(facing, towardFlag), "faced " + facing);
+        assertEquals(1, OrderedFacing.sidesApart(facing, towardFlag), "faced " + facing);
     }
 
     @Test
@@ -1063,7 +1063,7 @@ class FormationFollowerTest {
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
 
         assertEquals(0, follower.twistAllowance(scout, LEADER_HEX.translated(NORTH, 3)));
-        assertEquals(UnitOrdersFollower.twistReach(scout), follower.twistAllowance(scout, NORTH_WAYPOINT));
+        assertEquals(OrderedFacing.twistReach(scout), follower.twistAllowance(scout, NORTH_WAYPOINT));
     }
 
     @Test
@@ -1488,13 +1488,13 @@ class FormationFollowerTest {
         warhammer.setFacing(NORTH);
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
 
-        assertEquals(1, UnitOrdersFollower.twistReach(warhammer));
+        assertEquals(1, OrderedFacing.twistReach(warhammer));
         assertEquals(NORTH_EAST, follower.orderedTwist(warhammer));
 
         // two hexsides off is beyond a torso twist: the legs have to turn
         warhammer.setUnitOrders(warhammer.getUnitOrders().withFacings(UnitOrders.FACING_AUTO, SOUTH_EAST));
         assertEquals(UnitOrders.FACING_AUTO, follower.orderedTwist(warhammer));
-        assertEquals(2, UnitOrdersFollower.sidesApart(NORTH, SOUTH_EAST));
+        assertEquals(2, OrderedFacing.sidesApart(NORTH, SOUTH_EAST));
     }
 
     private BipedMek loneUnit(int unitId, Coords position, UnitOrders orders) {

@@ -485,7 +485,7 @@ final class TownLegPlanner {
         }
         for (int first = 0; first < buildingSides.size(); first++) {
             for (int second = first + 1; second < buildingSides.size(); second++) {
-                if (UnitOrdersFollower.sidesApart(buildingSides.get(first), buildingSides.get(second)) >= 2) {
+                if (OrderedFacing.sidesApart(buildingSides.get(first), buildingSides.get(second)) >= 2) {
                     return true;
                 }
             }

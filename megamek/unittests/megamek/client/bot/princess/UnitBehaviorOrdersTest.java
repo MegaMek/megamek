@@ -305,10 +305,10 @@ class UnitBehaviorOrdersTest {
         Coords threatToTheNorth = new Coords(14, 2);
         Coords threatToTheSouthWest = new Coords(10, 10);
 
-        assertEquals(northEast, UnitOrdersFollower.facingThatStands(northEast, position, null));
-        assertEquals(northEast, UnitOrdersFollower.facingThatStands(northEast, position, threatToTheNorth));
+        assertEquals(northEast, OrderedFacing.facingThatStands(northEast, position, null));
+        assertEquals(northEast, OrderedFacing.facingThatStands(northEast, position, threatToTheNorth));
         assertEquals(UnitOrders.FACING_AUTO,
-              UnitOrdersFollower.facingThatStands(northEast, position, threatToTheSouthWest));
+              OrderedFacing.facingThatStands(northEast, position, threatToTheSouthWest));
     }
 
     @Test

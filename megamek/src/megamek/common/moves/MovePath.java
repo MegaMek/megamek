@@ -1835,8 +1835,7 @@ public class MovePath implements Cloneable,
                 return getEntity().isAirborneVTOLorWIGE();
             }
         }
-        // A WiGE vehicle that jumped is already on the ground where its jump ended (MoveStep), and Land-Air Meks and
-        // glider ProtoMeks keep flying after a jump, so there is no landing to add.
+        // A WiGE that jumped A) has to have been flying and B) cannot land this turn.
         if (isJumping()) {
             return false;
         }
@@ -1869,9 +1868,9 @@ public class MovePath implements Cloneable,
 
     /**
      * Returns whether this path lands a WiGE vehicle in a hex it cannot land in, so that it crashes (TW p.55). That is
-     * the first landing step (Down to the ground), the end of a jump, or else the automatic landing at the end of
-     * movement after moving fewer than 5 hexes. A WiGE may only land in clear, paved or water hexes. Land-Air Meks and
-     * glider ProtoMeks use their own landing rules and are never counted.
+     * the first landing step (Down to the ground), or else the automatic landing at the end of movement after moving
+     * fewer than 5 hexes. A WiGE may only land in clear, paved or water hexes. Land-Air Meks and glider ProtoMeks use
+     * their own landing rules and are never counted.
      *
      * @return {@code true} if the WiGE vehicle crashes when it lands
      */
@@ -1885,8 +1884,7 @@ public class MovePath implements Cloneable,
             }
         }
         Coords landingCoords = getFinalCoords();
-        // A WiGE vehicle has landed at the end of a jump (rules answer, forum topic 68110)
-        if ((landingCoords != null) && (isJumping() || automaticWiGELanding(true))) {
+        if ((landingCoords != null) && automaticWiGELanding(true)) {
             return !wige.canLandIn(getGame().getBoard(getFinalBoardId()).getHex(landingCoords));
         }
         return false;

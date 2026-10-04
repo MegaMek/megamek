@@ -667,7 +667,7 @@ public final class FormationAssembler {
                 continue;
             }
             boolean sharesIdealRole = (candidate.getIdealRole() != UnitRole.UNDETERMINED)
-                  && element.stream().allMatch(unit -> unit.role() == candidate.getIdealRole());
+                  && allHaveRole(element, candidate.getIdealRole());
             int demands = demandCount(candidate);
             if ((best == null)
                   || (sharesIdealRole && !bestSharesIdealRole)
@@ -811,7 +811,7 @@ public final class FormationAssembler {
 
         UnitRole idealRole = (eval.type() != null) ? eval.type().getIdealRole() : UnitRole.UNDETERMINED;
         boolean idealRoleWaived = (idealRole != UnitRole.UNDETERMINED)
-              && members.stream().allMatch(unit -> unit.role() == idealRole);
+              && allHaveRole(members, idealRole);
 
         return new FormationRationale(formationName, eval.type(), organization, members, modalRole,
               modalRoleCount, (slowest == Integer.MAX_VALUE) ? 0 : slowest,
@@ -1086,5 +1086,20 @@ public final class FormationAssembler {
             number++;
         }
         return prefix + " " + number;
+    }
+
+    /**
+     * @param units a formation's units, a handful
+     * @param role  a role
+     *
+     * @return {@code true} if every unit has the role
+     */
+    private static boolean allHaveRole(List<AssemblyUnit> units, UnitRole role) {
+        for (AssemblyUnit unit : units) {
+            if (unit.role() != role) {
+                return false;
+            }
+        }
+        return true;
     }
 }

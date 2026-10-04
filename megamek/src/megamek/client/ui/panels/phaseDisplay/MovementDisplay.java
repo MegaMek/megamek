@@ -3525,7 +3525,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setSearchlightEnabled(isNight &&
                               currentEntity.hasSearchlight() &&
                               !cmd.contains(MoveStepType.SEARCHLIGHT) &&
-                              !(currentEntity.getPosition() == null),
+                              currentEntity.getPosition() != null,
                               currentEntity.isUsingSearchlight());
     }
 

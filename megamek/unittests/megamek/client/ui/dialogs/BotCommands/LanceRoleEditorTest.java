@@ -133,11 +133,17 @@ class LanceRoleEditorTest {
         assertFalse(panel.isEscortChosen());
 
         LanceRole escort = LanceRole.escort(CONVOY_FORCE_ID, EnumSet.of(LanceRole.Position.LEAD,
-                    LanceRole.Position.REAR), LanceRole.Distance.FAR, LanceRole.Movement.BOUNDING,
+                    LanceRole.Position.REAR), LanceRole.Distance.FAR, LanceRole.Movement.IN_STEP,
               LanceRole.Contact.STAY, LanceRole.LeaveToFight.HUNT, LanceRole.WhenConvoyGone.BREAK_OFF);
         panel.setRole(escort);
         assertEquals(escort, panel.getRole());
         assertTrue(panel.isEscortChosen());
+
+        // Bounding is hidden until the bot acts on it: an escort set to bound comes back in step
+        panel.setRole(LanceRole.escort(CONVOY_FORCE_ID, EnumSet.of(LanceRole.Position.LEAD, LanceRole.Position.REAR),
+              LanceRole.Distance.FAR, LanceRole.Movement.BOUNDING, LanceRole.Contact.STAY,
+              LanceRole.LeaveToFight.HUNT, LanceRole.WhenConvoyGone.BREAK_OFF));
+        assertEquals(escort, panel.getRole());
 
         panel.setRole(null);
         assertNull(panel.getRole());

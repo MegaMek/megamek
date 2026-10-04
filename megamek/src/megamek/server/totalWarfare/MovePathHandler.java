@@ -370,10 +370,6 @@ class MovePathHandler extends AbstractTWRuleHandler {
             }
             TWGameManager.datasetLogger.append(getGame(), true);
         }
-        if (entity.getPosition() == null) {
-            logger.error("processMovement: entity {} has null position", entity.getDisplayName());
-            return;
-        }
 
         // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability
         // due to actuator damage since last turn (TO:AR p.20)
@@ -463,7 +459,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Check if the FORWARDS step goes to a lower hex (3+ levels down)
             // Entity must not have moved (target must be adjacent to starting position)
             MoveStep lastStep = md.getLastStep();
-            if (lastStep != null) {
+            if (lastStep != null && entity.getPosition() != null) {
                 Coords targetPos = lastStep.getPosition();
                 boolean entityAtStart = entity.getPosition().distance(targetPos) == 1;
                 if (entityAtStart && ClimbingHelper.isAtEdge(entity, targetPos, getGame())) {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -109,27 +109,39 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
 
     /** Returns a list of entered entity IDs. The list may be empty but not null. */
     public Set<Integer> getSelectedIDs() {
+        return parseUnitIds(unitIDField.getText());
+    }
+
+    /**
+     * Reads unit IDs typed as a comma-separated list, where each entry is either one ID or an inclusive range such as
+     * {@code 3-7}. Spaces around entries and around the dash are ignored. Entries that are not numbers are skipped.
+     *
+     * @param text the text typed by the player
+     *
+     * @return the IDs found; empty but never {@code null}
+     */
+    static Set<Integer> parseUnitIds(String text) {
         Set<Integer> result = new HashSet<>();
-        String[] tokens = unitIDField.getText().split(",");
+        String[] tokens = text.split(",");
         for (String token : tokens) {
             // This allows for Priority targets to be specified with ranges, as well as comma separated
             String[] inclusive = token.split("-");
             if (inclusive.length == 2) {
                 try {
-                    int start = Integer.parseInt(inclusive[0]);
-                    int end = Integer.parseInt(inclusive[0]);
+                    int start = Integer.parseInt(inclusive[0].trim());
+                    int end = Integer.parseInt(inclusive[1].trim());
                     if (start <= end) {
                         for (int i = start; i <= end; i++) {
                             result.add(i);
                         }
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException exception) {
                     // Unit ID could not be parsed
                 }
             } else {
                 try {
-                    result.add(Integer.parseInt(token));
-                } catch (NumberFormatException e) {
+                    result.add(Integer.parseInt(token.trim()));
+                } catch (NumberFormatException exception) {
                     // No unit ID if it cannot be parsed
                 }
             }

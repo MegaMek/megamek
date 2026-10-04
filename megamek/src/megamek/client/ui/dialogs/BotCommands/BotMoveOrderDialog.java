@@ -556,7 +556,10 @@ public class BotMoveOrderDialog extends AbstractButtonDialog {
     /** Shows what the units do at the selected waypoint, in one line under the table. */
     private void loadDetail() {
         int row = waypointTable.getSelectedRow();
-        String text = (row < 0) ? noWaypointText() : waypoints.describe(row);
+        // the table hears of a change after this editor does: just after Clear, or removing the last waypoint, the
+        // selection can still name a row that is gone (HammerGS's playtest, 2026-10-04: IndexOutOfBoundsException)
+        boolean isRowThere = (row >= 0) && (row < waypoints.getRowCount());
+        String text = isRowThere ? waypoints.describe(row) : noWaypointText();
         helpLabel.setText("<html><div style='width:" + UIUtil.scaleForGUI(TABLE_WIDTH - (2 * GAP)) + "px'>"
               + text + "</div></html>");
     }

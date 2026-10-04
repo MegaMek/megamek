@@ -334,7 +334,6 @@ public abstract class PathRanker implements IPathRanker {
 
         boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         boolean needToUnjamRAC = mover.canUnjamRAC();
-        boolean deployMove = startingPathList.getFirst().contains(MoveStepType.DEPLOY);
 
         int walkMP = mover.getWalkMP();
 
@@ -401,7 +400,7 @@ public abstract class PathRanker implements IPathRanker {
         // If we've eliminated all valid paths, let's try to pick out a long range path
         // instead
         if (returnPaths.isEmpty()) {
-            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true, deployMove);
+            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true, !mover.isDeployed());
         }
 
         return returnPaths;

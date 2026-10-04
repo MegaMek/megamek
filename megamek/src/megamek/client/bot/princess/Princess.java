@@ -3232,7 +3232,6 @@ public class Princess extends BotClient {
         entity.setBoardId(board.getBoardId());
         entity.setFacing(decentFacing);
         entity.setSecondaryFacing(decentFacing);
-        entity.setDeployed(true);
         if (entity.isAero()) {
             entity.setAltitude(deployElevation);
         } else {
@@ -3669,6 +3668,13 @@ public class Princess extends BotClient {
                     LOGGER.info("{}: {} pruned {} paths that did not contain a deployment step", getName(),
                                 mover.getDisplayName(), removedPaths);
                 }
+            }
+            if (result.isEmpty()) {
+                MovePath deployOnly = new MovePath(game, mover);
+                deployOnly.addStep(MoveStepType.DEPLOY);
+                result.add(deployOnly);
+                LOGGER.info("{}: {} has no valid paths with a deployment step, so will deploy only", getName(),
+                            mover.getDisplayName());
             }
         }
         return result;

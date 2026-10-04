@@ -33,15 +33,6 @@
  */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
@@ -64,6 +55,15 @@ import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.util.BoardUtilities;
 import megamek.logging.MMLogger;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This class contains logic that calculates and stores a) possible paths that units in play can take, and b) their
@@ -349,6 +349,18 @@ public class PathEnumerator {
                  * getOwner().getLogger().debug(path.toString());
                  * }
                  */
+
+                // TODO: remove after we figure out why it is not doing this right
+                if (!mover.isDeployed()) {
+                    for (MovePath path : paths) {
+                        if (!path.contains(MoveStepType.DEPLOY)) {
+                            logger.debug("{} : {} Non-deployment path: {}",
+                                         mover.getOwner().getName(),
+                                         mover.getDisplayName(),
+                                         path.toString());
+                        }
+                    }
+                }
 
                 // Try climbing over obstacles and onto bridges
                 adjustPathsForBridges(paths);

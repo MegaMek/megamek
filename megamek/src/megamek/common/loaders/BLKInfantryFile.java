@@ -50,6 +50,7 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.InfantryMount;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 
 /**
  * This class loads Infantry BLK files.
@@ -120,6 +121,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
         infantry.setPrimaryWeapon((InfantryWeapon) primaryWeaponType);
+        declareInfernoForWithdrawnLauncher(infantry, primaryName);
 
         EquipmentType secondaryWeaponType = null;
         if (dataFile.exists("Secondary")) {
@@ -130,6 +132,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
                 throw new EntityLoadingException("secondary weapon " + secondName + " is not an infantry weapon");
             }
             infantry.setSecondaryWeapon((InfantryWeapon) secondaryWeaponType);
+            declareInfernoForWithdrawnLauncher(infantry, secondName);
         }
 
         // if there is more than one secondary weapon per squad, then add that to the
@@ -362,6 +365,20 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
                 throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
             }
             infantry.equipDisposableWeapon(disposableWeapon);
+        }
+    }
+
+    /**
+     * A unit file written before the TechManual pp. 350-352 errata may name a withdrawn Inferno SRM launcher. That
+     * name now loads as the plain launcher, and the platoon starts the battle declared as Inferno, which is what the
+     * unit was built to carry. The player can still change the declaration in the lobby.
+     *
+     * @param infantry   the platoon being loaded
+     * @param weaponName the weapon name as written in the unit file
+     */
+    private static void declareInfernoForWithdrawnLauncher(ConvInfantry infantry, String weaponName) {
+        if (WithdrawnInfernoSrmLaunchers.isWithdrawnName(weaponName)) {
+            infantry.setInfernoSrmsDeclared(true);
         }
     }
 }

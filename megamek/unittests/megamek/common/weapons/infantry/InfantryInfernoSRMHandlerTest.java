@@ -60,11 +60,11 @@ import org.junit.jupiter.api.Test;
  * <p>TW p. 143 gives an SRM infantry platoon a number of inferno missiles equal to its Damage Value divided by
  * two, rounded down. Per the TechManual pp. 350-352 errata the platoon declares Inferno or standard munitions before
  * the battle, so the choice lives on the platoon and holds for the whole battle rather than being a firing mode. The
- * incendiary support weapons keep their Damage and Heat modes, which only convert damage to heat.</p>
+ * Inferno SRM launchers themselves are withdrawn. The incendiary support weapons keep their Damage and Heat modes,
+ * which only convert damage to heat.</p>
  */
 class InfantryInfernoSRMHandlerTest {
 
-    private static final String INFERNO_SRM_LAUNCHER = "InfantryStandardSRMInferno";
     private static final String HEAVY_SRM_LAUNCHER = "InfantryHeavySRM";
     private static final String ASSAULT_RIFLE = "InfantryAssaultRifle";
     private static final String INCENDIARY_GRENADE_LAUNCHER = "InfantryAutoGLInferno";
@@ -94,19 +94,6 @@ class InfantryInfernoSRMHandlerTest {
         platoon.setPrimaryWeapon(primary);
         platoon.setSecondaryWeapon(secondary);
         return platoon;
-    }
-
-    @Test
-    @DisplayName("The Inferno SRM launcher has no firing modes, whatever the infantry heat option says")
-    void infernoLauncherHasNoModes() {
-        InfantryWeapon launcher = weapon(INFERNO_SRM_LAUNCHER);
-
-        // The base implementation adds Damage/Heat to flame-based weapons depending on the option. This launcher's
-        // munitions are declared before the battle, so it must not pick up a mode that can be switched in play.
-        launcher.adaptToGameOptions(new GameOptions());
-
-        List<String> modeNames = modeNamesOf(launcher);
-        assertTrue(modeNames.isEmpty(), "The launcher should have no modes; modes are " + modeNames);
     }
 
     @Test
@@ -143,15 +130,6 @@ class InfantryInfernoSRMHandlerTest {
                         "Mode " + index + " is counted, so it must be readable"),
                   "Mode " + index + " should not be null");
         }
-    }
-
-    @Test
-    @DisplayName("A platoon with the Inferno launcher starts declared as Inferno")
-    void infernoLauncherPlatoonDefaultsToInferno() {
-        ConvInfantry platoon = platoon(weapon(ASSAULT_RIFLE), weapon(INFERNO_SRM_LAUNCHER));
-
-        assertTrue(platoon.hasSrmLauncher(), "The Inferno launcher is an SRM launcher");
-        assertTrue(platoon.firesInfernoSrms(), "A launcher named for Inferno munitions should start loaded with them");
     }
 
     @Test

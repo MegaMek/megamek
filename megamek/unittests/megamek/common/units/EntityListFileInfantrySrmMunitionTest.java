@@ -108,9 +108,9 @@ class EntityListFileInfantrySrmMunitionTest {
     }
 
     @Test
-    @DisplayName("an Inferno launcher platoon switched to standard writes Standard, so a load keeps the choice")
+    @DisplayName("an SRM platoon left on standard writes Standard, so a load does not fall back to the unit default")
     void standardDeclarationIsSerialized() throws Exception {
-        ConvInfantry infantry = createInfantry("InfantryStandardSRMInferno");
+        ConvInfantry infantry = createInfantry("InfantryStandardSRM");
         infantry.setInfernoSrmsDeclared(false);
 
         String xml = toMul(infantry);

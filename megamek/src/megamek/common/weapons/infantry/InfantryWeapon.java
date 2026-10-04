@@ -242,8 +242,12 @@ public abstract class InfantryWeapon extends Weapon {
      * @return Whether the weapon has alternate inferno ammo
      */
     public boolean hasInfernoAmmo() {
-        return internalName.endsWith("Inferno")
-              || (EquipmentType.get(internalName + "Inferno") != null);
+        if (internalName.endsWith("Inferno")) {
+            return true;
+        }
+        // A withdrawn Inferno variant's name now resolves to this weapon itself, which is not an Inferno variant
+        EquipmentType inferno = EquipmentType.get(internalName + "Inferno");
+        return (inferno != null) && (inferno != this);
     }
 
     /**

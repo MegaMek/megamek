@@ -1206,8 +1206,8 @@ public class MULParser {
                 inf.setSpecializations(Integer.parseInt(infSpec));
             }
 
-            // Without the attribute, the platoon keeps the default its weapons gave it: Inferno for the legacy
-            // Inferno SRM launcher, standard for every other SRM launcher.
+            // Without the attribute, the platoon keeps the default from its unit file: Inferno when the file names a
+            // withdrawn Inferno SRM launcher, standard otherwise.
             String srmMunition = entityTag.getAttribute(ATTR_SRM_MUNITION);
             if (!srmMunition.isBlank()) {
                 inf.setInfernoSrmsDeclared(srmMunition.equalsIgnoreCase(VALUE_SRM_MUNITION_INFERNO));

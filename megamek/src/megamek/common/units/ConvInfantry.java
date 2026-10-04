@@ -82,6 +82,7 @@ import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 import megamek.logging.MMLogger;
 
 /**
@@ -1399,7 +1400,6 @@ public class ConvInfantry extends Infantry {
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
         primaryName = w.getInternalName();
-        declareInfernoSrmsForInfernoLauncher(w);
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1413,21 +1413,10 @@ public class ConvInfantry extends Infantry {
         } else {
             secondName = w.getInternalName();
         }
-        declareInfernoSrmsForInfernoLauncher(w);
     }
 
     public InfantryWeapon getSecondaryWeapon() {
         return secondaryWeapon;
-    }
-
-    /**
-     * A platoon built with the legacy Inferno SRM launcher was designed to carry Inferno munitions, so it starts
-     * the battle declared that way. The player can still change the declaration before the battle.
-     */
-    private void declareInfernoSrmsForInfernoLauncher(@Nullable InfantryWeapon weapon) {
-        if (isSrmLauncher(weapon) && weapon.hasFlag(WeaponType.F_INFERNO)) {
-            infernoSrms = true;
-        }
     }
 
     private static boolean isSrmLauncher(@Nullable InfantryWeapon weapon) {
@@ -1655,6 +1644,13 @@ public class ConvInfantry extends Infantry {
     @Override
     public void restore() {
         super.restore();
+
+        // A game saved before the Inferno SRM launchers were withdrawn still names one. It loads as the plain
+        // launcher below, and the platoon keeps firing Inferno as it was built to (TechManual pp. 350-352 errata).
+        if (WithdrawnInfernoSrmLaunchers.isWithdrawnName(primaryName)
+              || WithdrawnInfernoSrmLaunchers.isWithdrawnName(secondName)) {
+            infernoSrms = true;
+        }
 
         if (primaryName != null) {
             primaryWeapon = restoreInfantryWeapon(primaryName);

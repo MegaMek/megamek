@@ -75,6 +75,35 @@ class ConvoyEscortFollower {
     // the contact decision last logged for each escort lance, by force id, so a change is logged once
     private final Map<Integer, String> contactsLogged = new HashMap<>();
 
+    /**
+     * @return {@code true} if the hex lies on that edge of the board
+     */
+    private static boolean isOnEdge(Coords hex, OffBoardDirection edge, Board board) {
+        return switch (edge) {
+            case NORTH -> hex.getY() == 0;
+            case SOUTH -> hex.getY() == (board.getHeight() - 1);
+            case WEST -> hex.getX() == 0;
+            case EAST -> hex.getX() == (board.getWidth() - 1);
+            case NONE -> false;
+        };
+    }
+
+    /**
+     * Sets the last waypoint of a convoy's route to leave the board, the rest of the route as it was.
+     */
+    private void markLastWaypointExit(Entity entity, UnitOrders orders) {
+        List<Coords> route = orders.getRoute();
+        List<WaypointOrder> waypointOrders = new ArrayList<>(orders.getWaypointOrders());
+        waypointOrders.set(route.size() - 1, waypointOrders.get(route.size() - 1).withExitBoard(true));
+        entity.setUnitOrders(UnitOrderAction.ROUTE.apply(orders, route, waypointOrders, OffBoardDirection.NONE,
+              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound(), null));
+        owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.ROUTE,
+              UnitOrderCommand.hexesArgument(route, waypointOrders)));
+        LOGGER.info("[BotOrders] CONVOY_EXIT {} (ID {}) round {}: its route ends on the exit edge at {}; it leaves "
+              + "there", entity.getDisplayName(), entity.getId(), currentRound(),
+              route.get(route.size() - 1).getBoardNum());
+    }
+
     /** How many of the exit edge's hexes, nearest first, a convoy tries before it gives up on the edge. */
     private static final int EXIT_HEXES_TRIED = 12;
 
@@ -118,6 +147,13 @@ class ConvoyEscortFollower {
         }
         List<Coords> route = orders.getRoute();
         if (!route.isEmpty() && orders.getWaypointOrder(route.size() - 1).isExitBoard()) {
+            return;
+        }
+        Board board = owner.getGame().getBoard(entity);
+        if (!route.isEmpty() && (board != null) && isOnEdge(route.get(route.size() - 1), role.getExitEdge(), board)) {
+            // the player's route already ends on the exit edge: it leaves there, rather than at a second waypoint on
+            // the same hex (HammerGS's playtest, 2026-10-04: a route to 1701 became 1701, then 1701 again)
+            markLastWaypointExit(entity, orders);
             return;
         }
         Coords from = route.isEmpty() ? entity.getPosition() : route.get(route.size() - 1);

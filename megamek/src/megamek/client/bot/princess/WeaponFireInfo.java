@@ -71,9 +71,13 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.Entity;
 import megamek.common.units.Infantry;
+import megamek.common.units.LargeSupportTank;
 import megamek.common.units.Mek;
+import megamek.common.units.SuperHeavyTank;
+import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
+import megamek.common.units.VTOL;
 import megamek.common.weapons.capitalWeapons.CapitalMissileWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.DamageFalloff;
@@ -248,6 +252,37 @@ public class WeaponFireInfo {
             damageDirection = calcDamageDirection();
         }
         return damageDirection;
+    }
+
+    /**
+     * @return {@code true} for a vehicle that takes hits on the standard vehicle hit table; VTOLs, large support
+     *       vehicles and superheavy tanks roll on tables of their own
+     */
+    private static boolean usesStandardVehicleHitTable(Tank vehicle) {
+        return !(vehicle instanceof VTOL) && !(vehicle instanceof LargeSupportTank)
+              && !(vehicle instanceof SuperHeavyTank);
+    }
+
+    /**
+     * Adds the chance that this weapon destroys a vehicle. A vehicle is destroyed when any of its locations runs out
+     * of internal structure ({@code Tank#getTransferLocation}), so every location the weapon could destroy counts,
+     * weighted by how likely the shot is to land there.
+     */
+    private void addVehicleKillProbability(Tank vehicle) {
+        boolean hasTurret = !vehicle.hasNoTurret();
+        boolean hasDualTurret = hasTurret && !vehicle.hasNoDualTurret();
+        for (int location = Tank.LOC_FRONT; location < vehicle.locations(); location++) {
+            double locationOdds = ProbabilityCalculator.getVehicleHitProbability(getDamageDirection(), location,
+                  hasTurret, hasDualTurret);
+            if ((locationOdds <= 0) || vehicle.isLocationBad(location)) {
+                continue;
+            }
+            int armor = Math.max(0, vehicle.getArmor(location));
+            int internal = Math.max(0, vehicle.getInternal(location));
+            if (getExpectedDamage() > (armor + internal)) {
+                setKillProbability(getKillProbability() + (locationOdds * getProbabilityToHit()));
+            }
+        }
     }
 
     private int calcDamageDirection() {
@@ -1020,8 +1055,11 @@ public class WeaponFireInfo {
                 }
             }
         }
-        // No target Mek found; nothing to do
+        // No target Mek found: a vehicle on the standard hit table has its own kill chance, anything else none
         if (targetMek == null) {
+            if ((potentialTarget instanceof Tank vehicle) && usesStandardVehicleHitTable(vehicle)) {
+                addVehicleKillProbability(vehicle);
+            }
             if (debugEnabled) {
                 logger.debug(msg.toString());
             }

@@ -34,6 +34,7 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -367,5 +368,75 @@ class EscortFollowerTest {
         for (LanceRole.Position position : positions) {
             assertTrue(assigned.containsValue(position), position + " has an escort");
         }
+    }
+
+    private static final int EXTERNAL_FORCE_ID = 9;
+    private static final int ESCORT_REACH = 15;
+
+    private static LanceRole leadEscort(LanceRole.Contact contact, LanceRole.LeaveToFight leave) {
+        return LanceRole.escort(CONVOY_FORCE_ID, EnumSet.of(LanceRole.Position.LEAD), LanceRole.Distance.MEDIUM,
+              LanceRole.Movement.IN_STEP, contact, leave, LanceRole.WhenConvoyGone.FOLLOW);
+    }
+
+    /** An enemy the escorts can see, the given hexes east of the convoy's head. */
+    private Entity enemyEastOfTheHead(int hexes) {
+        Entity enemy = unit(40, EXTERNAL_FORCE_ID, HEAD_HEX.translated(SOUTH_EAST, hexes));
+        doReturn(List.of(enemy)).when(princess).getEnemyEntities();
+        doReturn(ESCORT_REACH).when(princess).getMaxWeaponRange(any(Entity.class));
+        return enemy;
+    }
+
+    @Test
+    void onContactAScreeningEscortGetsBetweenTheThreatAndTheConvoy() {
+        // HammerGS, 2026-10-02: Screen gets between the threat and the convoy
+        convoyHeadingNorth();
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2),
+              leadEscort(LanceRole.Contact.SCREEN, LanceRole.LeaveToFight.BRIEFLY));
+        Entity enemy = enemyEastOfTheHead(8);
+
+        Coords place = princess.getUnitOrdersFollower().getEscortPlace(lead).orElseThrow();
+
+        assertEquals(ConvoyTracker.stepToward(HEAD_HEX, enemy.getPosition(), MEDIUM_DISTANCE), place);
+    }
+
+    @Test
+    void onContactAnEscortSetToStayKeepsItsPlace() {
+        convoyHeadingNorth();
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2),
+              leadEscort(LanceRole.Contact.STAY, LanceRole.LeaveToFight.HUNT));
+        enemyEastOfTheHead(8);
+
+        assertEquals(Optional.of(HEAD_HEX.translated(NORTH, MEDIUM_DISTANCE)),
+              princess.getUnitOrdersFollower().getEscortPlace(lead));
+    }
+
+    @Test
+    void anEscortBreakingOffBrieflyClosesNoMoreThanFourHexes() {
+        convoyHeadingNorth();
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2),
+              leadEscort(LanceRole.Contact.BREAK_AND_FIGHT, LanceRole.LeaveToFight.BRIEFLY));
+        Entity enemy = enemyEastOfTheHead(12);
+        Coords normalPlace = HEAD_HEX.translated(NORTH, MEDIUM_DISTANCE);
+
+        Coords place = princess.getUnitOrdersFollower().getEscortPlace(lead).orElseThrow();
+
+        assertEquals(LanceRole.BRIEF_CHASE_HEXES, normalPlace.distance(place));
+        assertTrue(place.distance(enemy.getPosition()) < normalPlace.distance(enemy.getPosition()));
+    }
+
+    @Test
+    void anEscortSetToHuntLeavesItsPlaceUntilTheThreatIsGone() {
+        convoyHeadingNorth();
+        Entity lead = escort(10, HEAD_HEX.translated(NORTH, 2),
+              leadEscort(LanceRole.Contact.BREAK_AND_FIGHT, LanceRole.LeaveToFight.HUNT));
+        Entity enemy = enemyEastOfTheHead(8);
+
+        assertTrue(princess.getUnitOrdersFollower().getEscortPlace(lead).isEmpty(), "fights as a lance");
+
+        enemy.setPosition(HEAD_HEX.translated(SOUTH_EAST, ESCORT_REACH + 6));
+        game.setTurnIndex(game.getTurnIndex() + 1, bot.getId());
+
+        assertEquals(Optional.of(HEAD_HEX.translated(NORTH, MEDIUM_DISTANCE)),
+              princess.getUnitOrdersFollower().getEscortPlace(lead), "back to its place");
     }
 }

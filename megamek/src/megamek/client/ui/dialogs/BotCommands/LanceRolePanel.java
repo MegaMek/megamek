@@ -487,7 +487,14 @@ public class LanceRolePanel extends JPanel {
         // each hint says what the choice picked on its row means, and changes with it
         distanceHint.setText(hint("distance." + selected(distanceButtons, LanceRole.Distance.MEDIUM).name()));
         contactHint.setText(hint("contact." + ((LanceRole.Contact) contactCombo.getSelectedItem()).name()));
-        leaveHint.setText(hint("leave." + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name()));
+        // how far it leaves to fight matters only when it breaks off to fight
+        boolean isBreakingToFight = contactCombo.getSelectedItem() == LanceRole.Contact.BREAK_AND_FIGHT;
+        for (JToggleButton leaveButton : leaveButtons.values()) {
+            leaveButton.setEnabled(isBreakingToFight);
+        }
+        leaveHint.setText(isBreakingToFight
+              ? hint("leave." + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name())
+              : Messages.getString("BotCommandPanel.Role.hint.leave.onlyBreaking"));
         goneHint.setText(hint("gone." + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name()));
     }
 

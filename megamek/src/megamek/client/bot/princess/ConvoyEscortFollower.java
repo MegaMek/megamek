@@ -72,6 +72,8 @@ class ConvoyEscortFollower {
     private final Map<Integer, EscortPlan> escortPlans = new HashMap<>();
     private final Map<Integer, LanceRole.Position> escortPositionsKept = new HashMap<>();
     private final Set<Integer> convoyGoneLogged = new HashSet<>();
+    // the contact decision last logged for each escort lance, by force id, so a change is logged once
+    private final Map<Integer, String> contactsLogged = new HashMap<>();
 
     /** How many of the exit edge's hexes, nearest first, a convoy tries before it gives up on the edge. */
     private static final int EXIT_HEXES_TRIED = 12;
@@ -235,8 +237,10 @@ class ConvoyEscortFollower {
         Entity head = ConvoyTracker.head(convoy);
         boolean isConvoyStillToMove = follower.convoys().isStillToMove(head);
         List<Entity> escorts = escortsOf(escort, role);
-        String moment = currentRound() + ":" + owner.getGame().getPhase() + ":" + head.getId() + ":"
-              + head.getPosition() + ":" + isConvoyStillToMove + ":" + escorts.size() + ":" + convoy.size();
+        // the turn too: an enemy that moves changes what the escorts do on contact
+        String moment = currentRound() + ":" + owner.getGame().getPhase() + ":" + owner.getGame().getTurnIndex() + ":"
+              + head.getId() + ":" + head.getPosition() + ":" + isConvoyStillToMove + ":" + escorts.size() + ":"
+              + convoy.size();
         EscortPlan known = escortPlans.get(escort.getForceId());
         if ((known != null) && known.moment().equals(moment)) {
             return known;
@@ -280,9 +284,94 @@ class ConvoyEscortFollower {
               currentRound(), owner.getGame().getPhase(), head.getShortName(), headNow.getBoardNum(),
               isConvoyStillToMove ? " (still to move, expected at " + headThen.getBoardNum() + ")" : "", heading,
               convoyWaypoint.map(Coords::getBoardNum).orElse("its exit edge"), distance, detail);
+        Optional<Entity> threat = threatTo(convoy, escorts);
+        if (threat.isPresent()) {
+            onContact(escort.getForceId(), role, threat.get(), headNow, heading, board, escorts, places);
+        } else if (contactsLogged.remove(escort.getForceId()) != null) {
+            LOGGER.info("[BotOrders] ESCORT_CONTACT round {}: escort lance {} - no threat to the convoy now; back to "
+                  + "its places", currentRound(), escort.getForceId());
+        }
         EscortPlan plan = new EscortPlan(moment, places);
         escortPlans.put(escort.getForceId(), plan);
         return plan;
+    }
+
+    /**
+     * The enemy the escorts react to: the nearest known one within the escorts' longest weapon range of any unit of
+     * the convoy.
+     *
+     * @return the enemy, or empty when none is that close
+     */
+    private Optional<Entity> threatTo(List<Entity> convoy, List<Entity> escorts) {
+        int reach = 0;
+        for (Entity unit : escorts) {
+            reach = Math.max(reach, owner.getMaxWeaponRange(unit));
+        }
+        Entity nearest = null;
+        int nearestDistance = Integer.MAX_VALUE;
+        for (Entity enemy : owner.getEnemyEntities()) {
+            if ((enemy.getPosition() == null) || enemy.isDestroyed() || enemy.isDoomed() || enemy.isOffBoard()
+                  || (enemy.getBoardId() != convoy.get(0).getBoardId())) {
+                continue;
+            }
+            for (Entity unit : convoy) {
+                int distance = unit.getPosition().distance(enemy.getPosition());
+                if ((distance <= reach) && (distance < nearestDistance)) {
+                    nearest = enemy;
+                    nearestDistance = distance;
+                }
+            }
+        }
+        return Optional.ofNullable(nearest);
+    }
+
+    /**
+     * What an escort lance does when an enemy comes near its convoy, as its role says (HammerGS, 2026-10-02):
+     * Screen moves its places between the threat and the convoy; Break and fight leaves them to fight - up to
+     * {@link LanceRole#BRIEF_CHASE_HEXES} hexes toward the threat when set to leave Briefly, freely when set to Hunt,
+     * not at all when set to Never; Stay keeps them. With the threat gone the escorts go back to their places.
+     *
+     * @param places each escort's place by unit id, changed here; an escort left without one fights freely
+     */
+    private void onContact(int escortForceId, LanceRole role, Entity threat, Coords convoyHead, int heading,
+          Board board, List<Entity> escorts, Map<Integer, Coords> places) {
+        Coords threatHex = threat.getPosition();
+        String decision;
+        if (role.getContact() == LanceRole.Contact.SCREEN) {
+            Coords screen = ConvoyTracker.clampToBoard(ConvoyTracker.stepToward(convoyHead, threatHex,
+                  escortDistance(role)), board);
+            int order = 0;
+            for (Entity unit : escorts) {
+                if (places.containsKey(unit.getId())) {
+                    places.put(unit.getId(), EscortPlanner.sharedPlace(screen, heading, order++));
+                }
+            }
+            decision = "screening at " + screen.getBoardNum();
+        } else if ((role.getContact() == LanceRole.Contact.BREAK_AND_FIGHT)
+              && (role.getLeaveToFight() == LanceRole.LeaveToFight.HUNT)) {
+            for (Entity unit : escorts) {
+                places.remove(unit.getId());
+            }
+            decision = "breaking off to hunt it";
+        } else if ((role.getContact() == LanceRole.Contact.BREAK_AND_FIGHT)
+              && (role.getLeaveToFight() == LanceRole.LeaveToFight.BRIEFLY)) {
+            for (Map.Entry<Integer, Coords> place : places.entrySet()) {
+                // up to the brief chase toward the threat, never onto its hex
+                int hexesShortOfThreat = Math.max(0, place.getValue().distance(threatHex) - 1);
+                int steps = Math.min(LanceRole.BRIEF_CHASE_HEXES, hexesShortOfThreat);
+                place.setValue(ConvoyTracker.clampToBoard(ConvoyTracker.stepToward(place.getValue(), threatHex,
+                      steps), board));
+            }
+            decision = "closing up to " + LanceRole.BRIEF_CHASE_HEXES + " hexes toward it";
+        } else {
+            decision = "holding its places and firing";
+        }
+        String logged = decision + " " + threat.getId();
+        if (!logged.equals(contactsLogged.put(escortForceId, logged))) {
+            LOGGER.info("[BotOrders] ESCORT_CONTACT round {}: escort lance {} - {} ({} on contact, leave {}) - "
+                        + "threat {} at {}", currentRound(), escortForceId, decision, role.getContact(),
+                  role.getLeaveToFight(), threat.getShortName(), threatHex.getBoardNum());
+        }
     }
 
     /**

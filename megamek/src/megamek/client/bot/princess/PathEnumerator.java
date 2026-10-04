@@ -323,8 +323,7 @@ public class PathEnumerator {
                      * When the movestep is added in createDeploymentAwarePath, it will add the jump step back in,
                      * so the total jump MP used will be correct.
                      */
-                    int maxJumpMP = includeDeploymentStep ? mover.getAnyTypeMaxJumpMP() - 1 : mover.getAnyTypeMaxJumpMP();
-                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(maxJumpMP,
+                    ShortestPathFinder spf = ShortestPathFinder.newInstanceOfOneToAll(mover.getAnyTypeMaxJumpMP(),
                           MoveStepType.FORWARDS, getGame());
                     spf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                     spf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, true));

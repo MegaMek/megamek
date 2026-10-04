@@ -3259,11 +3259,17 @@ public class Princess extends BotClient {
             return deployOnly;
         }
         final RankedPath bestPath = pathRanker.getBestPath(rankedPaths);
-        LOGGER.info("{}: {} chose to {} with a distance of {} and MP used of {}. Deployment Step: {}",
+        if (bestPath == null) {
+            LOGGER.info("{}: {} has no best path, so will deploy only", getName(), entity.getDisplayName());
+            final MovePath deployOnly = new MovePath(game, entity);
+            deployOnly.addStep(MoveStepType.DEPLOY);
+            return deployOnly;
+        }
+        LOGGER.info("{}: {} chose to {} with a hexes moved of {} and MP used of {}. Deployment Step: {}",
                     getName(),
                     entity.getDisplayName(),
                     bestPath.getPath().getLastStepMovementType(),
-                    bestPath.getPath().getDistanceTravelled(),
+                    bestPath.getPath().getHexesMoved(),
                     bestPath.getPath().getMpUsed(),
                     bestPath.getPath().contains(MoveStepType.DEPLOY));
         return (bestPath == null) ? null : bestPath.getPath();

@@ -878,8 +878,8 @@ public class Princess extends BotClient {
               getUnitOrdersFollower().stoppedFacing(entity), entity.getPosition(), closestEnemyPosition);
         int desiredFacing;
         if ((orderedFacing != UnitOrders.FACING_AUTO)
-              && (UnitOrdersFollower.sidesApart(entity.getFacing(), orderedFacing)
-              <= UnitOrdersFollower.twistReach(entity))) {
+              && (OrderedFacing.sidesApart(entity.getFacing(), orderedFacing)
+              <= OrderedFacing.twistReach(entity))) {
             // its torso or turret reaches the ordered facing: it twists that way in the fire phase rather than
             // spending movement to turn, which would count as having moved
             LOGGER.info("[BotOrders] {} (ID {}): holds facing {} and twists to the ordered facing {}",

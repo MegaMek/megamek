@@ -100,7 +100,8 @@ class ConvoyEscortFollower {
         owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.ROUTE,
               UnitOrderCommand.hexesArgument(route, waypointOrders)));
         LOGGER.info("[BotOrders] CONVOY_EXIT {} (ID {}) round {}: its route ends on the exit edge at {}; it leaves "
-              + "there", entity.getDisplayName(), entity.getId(), currentRound(), route.get(route.size() - 1).getBoardNum());
+              + "there", entity.getDisplayName(), entity.getId(), currentRound(),
+              route.get(route.size() - 1).getBoardNum());
     }
 
     /** How many of the exit edge's hexes, nearest first, a convoy tries before it gives up on the edge. */

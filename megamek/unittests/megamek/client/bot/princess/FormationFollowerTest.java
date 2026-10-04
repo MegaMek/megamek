@@ -1240,7 +1240,7 @@ class FormationFollowerTest {
         BipedMek leader = lance.get(0);
         BipedMek second = lance.get(1);
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
-        for (int round = 3; round < 3 + UnitOrdersFollower.MAXIMUM_REFORM_WAIT_ROUNDS; round++) {
+        for (int round = 3; round < 3 + FormationMarch.MAXIMUM_REFORM_WAIT_ROUNDS; round++) {
             game.setCurrentRound(round);
             follower.advanceRoutes();
             assertEquals(2, leader.getUnitOrders().getRoute().size(), "moved on early in round " + round);
@@ -1248,7 +1248,7 @@ class FormationFollowerTest {
             second.setPosition(second.getPosition().translated(NORTH, 1));
         }
 
-        game.setCurrentRound(3 + UnitOrdersFollower.MAXIMUM_REFORM_WAIT_ROUNDS);
+        game.setCurrentRound(3 + FormationMarch.MAXIMUM_REFORM_WAIT_ROUNDS);
         follower.advanceRoutes();
         assertEquals(1, leader.getUnitOrders().getRoute().size());
     }

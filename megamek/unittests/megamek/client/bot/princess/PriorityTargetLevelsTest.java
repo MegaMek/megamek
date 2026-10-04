@@ -34,20 +34,29 @@ package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.StringReader;
+import java.util.List;
 import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import megamek.client.bot.princess.commands.PriorityTargetCommand;
 import megamek.common.Player;
+import megamek.common.enums.GamePhase;
+import megamek.common.game.Game;
 import megamek.common.units.Entity;
 import megamek.common.util.SerializationHelper;
 import megamek.server.commands.arguments.ArgumentsParser;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
@@ -219,6 +228,101 @@ class PriorityTargetLevelsTest {
         assertEquals(0.45, fireControl.calcPriorityUnitTargetUtility(topTarget), TOLERANCE);
         assertEquals(0.25, fireControl.calcPriorityUnitTargetUtility(defaultTarget), TOLERANCE);
         assertEquals(0, fireControl.calcPriorityUnitTargetUtility(otherUnit), TOLERANCE);
+    }
+
+    @Test
+    void anUnarmedPriorityTargetCountsAsTheMostDangerousEnemy() {
+        Entity truck = unit(3);
+        Entity escort = unit(10);
+        FireControl fireControl = fireControlAgainst(Set.of(3), truck, escort);
+        doReturn(1.0).when(fireControl).calcTargetPotentialDamageMultiplier(truck);
+        doReturn(1.85).when(fireControl).calcTargetPotentialDamageMultiplier(escort);
+
+        assertEquals(1.85, fireControl.calcThreatMultiplier(truck), TOLERANCE);
+        assertEquals(1.85, fireControl.calcThreatMultiplier(escort), TOLERANCE);
+    }
+
+    @Test
+    void aTargetThatIsNoPriorityKeepsItsOwnThreat() {
+        Entity truck = unit(3);
+        Entity escort = unit(10);
+        FireControl fireControl = fireControlAgainst(Set.of(), truck, escort);
+        doReturn(1.0).when(fireControl).calcTargetPotentialDamageMultiplier(truck);
+        doReturn(1.85).when(fireControl).calcTargetPotentialDamageMultiplier(escort);
+
+        assertEquals(1.0, fireControl.calcThreatMultiplier(truck), TOLERANCE);
+    }
+
+    @Test
+    void aPriorityTargetPaysNoOverkillCostUntilItIsAlreadyDoomed() {
+        Entity truck = unit(3);
+        Entity otherTruck = unit(4);
+        FireControl fireControl = fireControlAgainst(Set.of(3), truck, otherTruck);
+        doReturn(0.7).when(fireControl).calcDamageAllocationUtility(truck, 36.0);
+        doReturn(0.7).when(fireControl).calcDamageAllocationUtility(otherTruck, 36.0);
+        doReturn(100.0).when(fireControl).calcDamageAllocationUtility(truck, 5.0);
+
+        assertEquals(0, fireControl.calcOverkillFraction(truck, 36.0), TOLERANCE);
+        assertEquals(0.7, fireControl.calcOverkillFraction(otherTruck, 36.0), TOLERANCE, "not a priority target");
+        assertEquals(100, fireControl.calcOverkillFraction(truck, 5.0), TOLERANCE, "already expected destroyed");
+    }
+
+    @Test
+    void aPriorityOneTruckOutscoresTheArmedEscortNextToIt() {
+        // HammerGS's 2026-10-04 playtest, round 7: a Masakari with a truck 11 hexes off and a Phoenix Hawk 5 hexes
+        // off shot the Phoenix Hawk every time, because the escort's threat outweighed the truck's priority bonus.
+        Entity truck = unit(3);
+        Entity escort = unit(10);
+        when(escort.isMilitary()).thenReturn(true);
+        FireControl fireControl = fireControlAgainst(Set.of(3), truck, escort);
+        when(fireControl.owner.getPriorityUnitLevel(3)).thenReturn(1);
+        doReturn(1.0).when(fireControl).calcTargetPotentialDamageMultiplier(truck);
+        doReturn(1.85).when(fireControl).calcTargetPotentialDamageMultiplier(escort);
+        doReturn(0.0).when(fireControl).calcCommandUtility(any());
+        doReturn(0.0).when(fireControl).calcDamageAllocationUtility(any(), anyDouble());
+        FiringPlan truckPlan = plan(truck, 18.0, 0.0, 0.15);
+        FiringPlan escortPlan = plan(escort, 26.0, 0.4, 0.0);
+
+        fireControl.calculateUtility(truckPlan, 99, false);
+        fireControl.calculateUtility(escortPlan, 99, false);
+
+        double truckScore = capturedUtility(truckPlan);
+        double escortScore = capturedUtility(escortPlan);
+        assertEquals(68.4, truckScore, 0.1);
+        assertEquals(55.5, escortScore, 0.1);
+    }
+
+    private static Entity unit(int id) {
+        Entity unit = mock(Entity.class);
+        when(unit.getId()).thenReturn(id);
+        return unit;
+    }
+
+    private static FireControl fireControlAgainst(Set<Integer> priorityTargets, Entity... enemies) {
+        Princess princess = mock(Princess.class);
+        Game game = mock(Game.class);
+        when(game.getRoundCount()).thenReturn(7);
+        when(game.getPhase()).thenReturn(GamePhase.FIRING);
+        when(princess.getGame()).thenReturn(game);
+        when(princess.getPriorityUnitTargets()).thenReturn(priorityTargets);
+        when(princess.getEnemyEntities()).thenReturn(List.of(enemies));
+        return spy(new FireControl(princess));
+    }
+
+    private static FiringPlan plan(Entity target, double expectedDamage, double expectedCriticals,
+          double killProbability) {
+        FiringPlan plan = mock(FiringPlan.class);
+        when(plan.getTarget()).thenReturn(target);
+        when(plan.getExpectedDamage()).thenReturn(expectedDamage);
+        when(plan.getExpectedCriticals()).thenReturn(expectedCriticals);
+        when(plan.getKillProbability()).thenReturn(killProbability);
+        return plan;
+    }
+
+    private static double capturedUtility(FiringPlan plan) {
+        ArgumentCaptor<Double> utility = ArgumentCaptor.forClass(Double.class);
+        verify(plan).setUtility(utility.capture());
+        return utility.getValue();
     }
 
     @Test

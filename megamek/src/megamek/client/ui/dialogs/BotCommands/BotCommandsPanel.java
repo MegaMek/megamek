@@ -494,7 +494,7 @@ public class BotCommandsPanel extends JPanel {
     }
 
     /**
-     * The one-click orders for each bot's units: pause, resume, stop, clear, edges, priority and formation off.
+     * The one-click orders for each bot's units: pause, resume, stop, hold position, edges, priority and formation off.
      */
     private JPopupMenu createQuickOrdersPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> ordersMenuBuilder.populateQuick(botMenu, botPlayer),

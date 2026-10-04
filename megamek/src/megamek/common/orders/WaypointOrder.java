@@ -207,6 +207,16 @@ public final class WaypointOrder implements Serializable {
     }
 
     /**
+     * @param newExitBoard {@code true} for the units to leave the board here, at the end of the route
+     *
+     * @return this waypoint's settings with that, everything else kept
+     */
+    public WaypointOrder withExitBoard(boolean newExitBoard) {
+        return new WaypointOrder(facing, getHoldMode(), holdTurns, formation, newExitBoard, arrivalFormation, navNumber,
+              phaseLine, getRoutePlan(), getRouteStyle());
+    }
+
+    /**
      * @return how the bot plans the way to this waypoint, when it plans it
      */
     public RouteStyle getRouteStyle() {

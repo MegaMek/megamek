@@ -180,7 +180,7 @@ class FormationLegs {
      */
     private int turnsMovement(Entity unit) {
         Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
-        return UnitOrdersFollower.paceMovementPoints(unit, formation.map(FormationOrder::getPace).orElse(FormationPace.WALK));
+        return FormationMarch.paceMovementPoints(unit, formation.map(FormationOrder::getPace).orElse(FormationPace.WALK));
     }
 
     /**
@@ -287,7 +287,7 @@ class FormationLegs {
         }
         FormationPace pace = formation.get().getPace();
         return TownLegPlanner.isSlowest(unit, follower.roster().formationMembers(unit, formation.get().getLeaderId()),
-              member -> UnitOrdersFollower.paceMovementPoints(member, pace));
+              member -> FormationMarch.paceMovementPoints(member, pace));
     }
 
     /**

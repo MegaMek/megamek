@@ -105,6 +105,9 @@ public class UnitOrdersFollower {
     private final Set<Integer> releasedToLeave = new HashSet<>();
     // true while one unit's moves are ranked (see setRanking)
     private boolean isRanking;
+    // the enemy's convoy units, worked out once a turn (see enemyConvoyUnitIds)
+    private final Set<Integer> enemyConvoyUnitIds = new HashSet<>();
+    private String enemyConvoysMoment = "";
     // each lance's role by owner and force, worked out once a turn (see roleOf)
     private final Map<String, LanceRole> lanceRoles = new HashMap<>();
     private String lanceRolesMoment = "";
@@ -451,6 +454,32 @@ public class UnitOrdersFollower {
             lanceRolesMoment = moment;
         }
         return lanceRoles.get(lanceKey(entity));
+    }
+
+    /**
+     * The units of every enemy convoy, which the bot treats as priority targets: worked out once a turn, as firing
+     * plans ask for every attack they weigh (HammerGS, 2026-10-04).
+     *
+     * @return the unit ids
+     */
+    Set<Integer> enemyConvoyUnitIds() {
+        String moment = currentRound() + ":" + owner.getGame().getPhase() + ":" + owner.getGame().getTurnIndex();
+        if (!moment.equals(enemyConvoysMoment)) {
+            Set<Integer> found = new HashSet<>();
+            for (Entity enemy : owner.getEnemyEntities()) {
+                if (isConvoy(enemy)) {
+                    found.add(enemy.getId());
+                    if (!enemyConvoyUnitIds.contains(enemy.getId())) {
+                        LOGGER.info("[BotOrders] PRIORITY_CONVOY round {}: enemy convoy unit {} (ID {}) is a priority "
+                              + "target", currentRound(), enemy.getDisplayName(), enemy.getId());
+                    }
+                }
+            }
+            enemyConvoyUnitIds.clear();
+            enemyConvoyUnitIds.addAll(found);
+            enemyConvoysMoment = moment;
+        }
+        return enemyConvoyUnitIds;
     }
 
     private static String lanceKey(Entity unit) {

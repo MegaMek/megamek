@@ -130,6 +130,19 @@ class MoveOrderEditorTest {
     }
 
     @Test
+    void aFirstWaypointTakesTheFormationSetInTheLobby() {
+        // HammerGS, 2026-10-04: a convoy set to Column in the lobby, given a route in game, should keep its Column
+        WaypointTableModel waypoints = new WaypointTableModel();
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 1, FormationPace.WALK,
+              ContactRule.HOLD, false);
+        waypoints.setRoute(List.of(), List.of(), column);
+
+        waypoints.addWaypoint(FIRST_HEX);
+
+        assertEquals(column, waypoints.getFormation(0));
+    }
+
+    @Test
     void aSingleUnitTravelsOutOfFormation() {
         WaypointTableModel waypoints = new WaypointTableModel();
         waypoints.setCanForm(false);

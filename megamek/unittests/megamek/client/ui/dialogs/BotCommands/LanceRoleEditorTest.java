@@ -101,6 +101,17 @@ class LanceRoleEditorTest {
     }
 
     @Test
+    void aConvoyHeldForOrdersIsReleasedWhenItStopsBeingAConvoy() {
+        // HammerGS, 2026-10-04: Clear holds a convoy paused for new orders; changing its role lets it go
+        Entity held = unit(1, Board.START_W);
+        held.setLanceRole(LanceRole.convoy(OffBoardDirection.EAST));
+        held.setUnitOrders(UnitOrders.NONE.withPaused(true));
+
+        assertEquals(List.of("/unitOrder 1 SET_ROLE role=NONE", "/unitOrder 1 RESUME"),
+              MoveOrderCommands.roleCommands(List.of(held), null));
+    }
+
+    @Test
     void theLanceTakesTheRoleItsUnitsHave() {
         Entity noRole = unit(1, Board.START_S);
         Entity escort = unit(2, Board.START_S);

@@ -215,7 +215,8 @@ final class MoveOrderCommands {
     }
 
     /**
-     * Sets the lance role on each unit that does not have it already, so resending an unchanged order adds nothing.
+     * Sets the lance role on each unit that does not have it already, so resending an unchanged order adds nothing. A
+     * convoy held for orders after Clear is released as it stops being a convoy.
      *
      * @param units the units ordered
      * @param role  the role, or {@code null} for none
@@ -225,9 +226,17 @@ final class MoveOrderCommands {
     static List<String> roleCommands(List<Entity> units, @Nullable LanceRole role) {
         List<String> commands = new ArrayList<>();
         for (Entity unit : units) {
-            if (!Objects.equals(LanceRoles.effectiveRole(unit), role)) {
+            LanceRole current = LanceRoles.effectiveRole(unit);
+            if (!Objects.equals(current, role)) {
                 commands.add(UnitOrderCommand.commandText(unit.getId(), UnitOrderAction.SET_ROLE,
                       UnitOrderCommand.roleArgument(role)));
+                boolean isLeavingConvoy = (current != null) && current.isConvoy()
+                      && ((role == null) || !role.isConvoy());
+                UnitOrders orders = unit.getUnitOrders();
+                if (isLeavingConvoy && orders.isPaused() && !orders.hasRoute()) {
+                    // a convoy cleared holds paused for new orders; no longer a convoy, it is released
+                    commands.add(UnitOrderCommand.commandText(unit.getId(), UnitOrderAction.RESUME));
+                }
             }
         }
         return commands;

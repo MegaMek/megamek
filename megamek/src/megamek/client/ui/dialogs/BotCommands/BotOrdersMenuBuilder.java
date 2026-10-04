@@ -445,13 +445,14 @@ public class BotOrdersMenuBuilder {
     /**
      * @param unitIds the units to hold
      *
-     * @return the commands to send, in order: for each unit, Clear its route, then Pause it where it is
+     * @return the commands to send: Hold position for each unit, which drops its route and keeps its formation
      */
     static List<String> holdPositionCommands(List<Integer> unitIds) {
         List<String> commands = new ArrayList<>();
         for (int unitId : unitIds) {
-            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.CLEAR));
-            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.PAUSE));
+            // not Clear: that also dropped the formation, and a convoy resumed truck by truck (HammerGS's playtest,
+            // 2026-10-04)
+            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.HOLD_POSITION));
         }
         return commands;
     }

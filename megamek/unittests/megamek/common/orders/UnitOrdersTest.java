@@ -155,6 +155,21 @@ class UnitOrdersTest {
     }
 
     @Test
+    void holdPositionDropsTheRouteButKeepsTheFormation() {
+        // HammerGS's playtest, 2026-10-04: held with Clear, a convoy lost its formation and resumed truck by truck
+        FormationOrder column = new FormationOrder(FormationShape.COLUMN, 3, 1, 0, FormationPace.WALK,
+              ContactRule.HOLD);
+        UnitOrders routed = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX)).withFormation(column);
+
+        UnitOrders held = apply(UnitOrderAction.HOLD_POSITION, routed, List.of());
+
+        assertFalse(held.hasRoute());
+        assertTrue(held.isPaused());
+        assertEquals(Optional.of(column), held.getFormation());
+        assertFalse(apply(UnitOrderAction.RESUME, held, List.of()).isPaused());
+    }
+
+    @Test
     void anEdgeOrderReplacesTheRoute() {
         UnitOrders routed = apply(UnitOrderAction.ROUTE, UnitOrders.NONE, List.of(FIRST_HEX));
 

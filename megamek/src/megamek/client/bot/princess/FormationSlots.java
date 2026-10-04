@@ -104,6 +104,9 @@ class FormationSlots {
     /** The round each unit was last found past its place in a column, by unit id, to log it once a round. */
     private final Map<Integer, Integer> heldPastPlaceRounds = new HashMap<>();
 
+    // each unit's slot, kept while one unit's moves are ranked; by unit id
+    private final Map<Integer, Optional<Coords>> slotsWhileRanking = new HashMap<>();
+
     /**
      * @param owner    the bot whose units follow orders
      * @param follower the orders follower this works for
@@ -133,6 +136,25 @@ class FormationSlots {
      * @return the hex to head for, or empty when the unit is not following a formation leader
      */
     public Optional<Coords> getFormationSlot(Entity entity) {
+        if (!follower.isRanking()) {
+            return workOutSlot(entity);
+        }
+        // while one unit's moves are ranked nobody moves: each slot is worked out once, not for every move
+        // not computeIfAbsent: working out one slot can ask for another
+        Optional<Coords> kept = slotsWhileRanking.get(entity.getId());
+        if (kept == null) {
+            kept = workOutSlot(entity);
+            slotsWhileRanking.put(entity.getId(), kept);
+        }
+        return kept;
+    }
+
+    /** Forgets the slots kept while one unit's moves were ranked. */
+    void forgetRankingAnswers() {
+        slotsWhileRanking.clear();
+    }
+
+    private Optional<Coords> workOutSlot(Entity entity) {
         Optional<FormationOrder> formation = follower.activeFormation(entity);
         if (formation.isEmpty() || (entity.getPosition() == null)) {
             return Optional.empty();

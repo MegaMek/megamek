@@ -45,12 +45,14 @@ import megamek.common.OffBoardDirection;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.force.Force;
 import megamek.common.game.GameTurn;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.orders.EdgeOrder;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.NavPoint;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.PhaseLine;
@@ -99,6 +101,11 @@ public class UnitOrdersFollower {
     private final ConvoyTracker convoys;
     // the waypoint each unit last planned its way to, so a leg is planned once
     private final Map<Integer, Coords> legsPlannedTo = new HashMap<>();
+    // true while one unit's moves are ranked (see setRanking)
+    private boolean isRanking;
+    // each lance's role by owner and force, worked out once a turn (see roleOf)
+    private final Map<String, LanceRole> lanceRoles = new HashMap<>();
+    private String lanceRolesMoment = "";
 
     // who was hit, and lances breaking off their route to fight and holding after it
     private final FireReaction fireReaction;
@@ -195,6 +202,25 @@ public class UnitOrdersFollower {
      */
     ConvoyEscortFollower convoyEscorts() {
         return convoyEscorts;
+    }
+
+    /**
+     * Starts or ends the window in which one unit's moves are ranked. Nobody moves while it is open, so the formation
+     * members and slots are worked out once and kept, rather than for every move the path ranker scores.
+     *
+     * @param isRanking {@code true} as the unit's moves are about to be ranked, {@code false} once they are
+     */
+    void setRanking(boolean isRanking) {
+        this.isRanking = isRanking;
+        roster.forgetRankingAnswers();
+        slots.forgetRankingAnswers();
+    }
+
+    /**
+     * @return {@code true} while one unit's moves are being ranked
+     */
+    boolean isRanking() {
+        return isRanking;
     }
 
     /**
@@ -376,9 +402,39 @@ public class UnitOrdersFollower {
     /**
      * @return {@code true} if the unit is in a convoy lance
      */
-    static boolean isConvoy(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+    boolean isConvoy(Entity entity) {
+        LanceRole role = roleOf(entity);
         return (role != null) && role.isConvoy();
+    }
+
+    /**
+     * The role of a unit's lance, as {@link LanceRoles#effectiveRole} gives it, from a table worked out once a turn:
+     * the path ranker asks for every move it scores, and each answer went through every unit in the game.
+     *
+     * @param entity a unit
+     *
+     * @return the role, or {@code null} for none
+     */
+    @Nullable LanceRole roleOf(Entity entity) {
+        if ((entity.getLanceRole() != null) || (entity.getForceId() == Force.NO_FORCE)) {
+            return entity.getLanceRole();
+        }
+        // a turn is one unit's move or deployment: the table holds while that unit's moves are scored
+        String moment = currentRound() + ":" + owner.getGame().getPhase() + ":" + owner.getGame().getTurnIndex();
+        if (!moment.equals(lanceRolesMoment)) {
+            lanceRoles.clear();
+            for (Entity unit : owner.getGame().getEntitiesVector()) {
+                if ((unit.getLanceRole() != null) && (unit.getForceId() != Force.NO_FORCE)) {
+                    lanceRoles.putIfAbsent(lanceKey(unit), unit.getLanceRole());
+                }
+            }
+            lanceRolesMoment = moment;
+        }
+        return lanceRoles.get(lanceKey(entity));
+    }
+
+    private static String lanceKey(Entity unit) {
+        return unit.getOwnerId() + ":" + unit.getForceId();
     }
 
     /**
@@ -626,6 +682,26 @@ public class UnitOrdersFollower {
     }
 
     /**
+     * Plans the ways the bot's units take this movement phase, before any of them moves: a convoy whose route is done
+     * is sent off by its exit edge, and a leg set to be planned gets its turning points. Done only once the units had
+     * moved, round 1 - and the round after any new order - was driven without a plan.
+     */
+    void planRoutes() {
+        for (Entity entity : owner.getEntitiesOwned()) {
+            if ((entity.getPosition() == null) || entity.getUnitOrders().getFightState().isPresent()) {
+                continue;
+            }
+            convoyEscorts.routeConvoyOut(entity);
+            if (entity.getUnitOrders().getNextWaypoint().isEmpty()) {
+                continue;
+            }
+            // a new order is called, and the lance set to assemble, before its planned turning points go on it
+            announceNewRoute(entity);
+            planRouteLeg(entity);
+        }
+    }
+
+    /**
      * Plans the way to the unit's next waypoint when that waypoint is set to be planned: works out the whole way once,
      * and puts the turning points on it on the route as waypoints, so the unit drives straight from one to the next
      * instead of along whatever hill is in front of it (HammerGS, 2026-10-03). Planned once a leg; a new order plans
@@ -640,6 +716,12 @@ public class UnitOrdersFollower {
         if (!orders.hasRoute() || roster.isFormationFollower(entity) || (entity.getPosition() == null)
               || DeploymentPlanner.isFlying(entity)
               || (orders.getWaypointOrder(0).getRoutePlan() != WaypointOrder.RoutePlan.PLAN_LEG)) {
+            return false;
+        }
+        if (orders.isPaused() || orders.isStoppedInRound(currentRound())) {
+            // a new route sent to the server clears the pause: planning waits until the player lets the lance go on
+            LOGGER.debug("[BotOrders] ROUTE_PLAN {} (ID {}) round {}: paused or stopped; the leg is planned once it "
+                  + "moves on", entity.getDisplayName(), entity.getId(), currentRound());
             return false;
         }
         Coords target = orders.getRoute().get(0);

@@ -42,6 +42,8 @@ import megamek.common.Hex;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.pathfinder.BoardEdgePathFinder;
 import megamek.common.pathfinder.MovementType;
@@ -208,7 +210,8 @@ final class WaypointDistanceField {
         // a hovercraft, a boat or an amphibious unit crosses water as it crosses land
         boolean isWading = !isHovercraft && !isAmphibious && (movementType != MovementType.Water);
         // a convoy takes the fastest way: along a road a step costs 1 MP whatever the terrain (HammerGS, 2026-10-02)
-        boolean isOnRoads = (mover.getLanceRole() != null) && mover.getLanceRole().isConvoy();
+        LanceRole role = LanceRoles.effectiveRole(mover);
+        boolean isOnRoads = (role != null) && role.isConvoy();
         Map<Coords, Boolean> roadHexes = new HashMap<>();
 
         PriorityQueue<long[]> frontier = new PriorityQueue<>((first, second) -> Long.compare(first[0], second[0]));
@@ -307,9 +310,13 @@ final class WaypointDistanceField {
         if (climb > mover.getMaxElevationChange()) {
             return UNREACHABLE;
         }
-        boolean isOnRoads = (mover.getLanceRole() != null) && mover.getLanceRole().isConvoy();
-        if (isOnRoads && fromHex.containsTerrain(Terrains.ROAD) && intoHex.containsTerrain(Terrains.ROAD)) {
-            return 1 + climb;
+        // the role last: finding a unit's lance role goes through every unit in the game, and most steps are off
+        // the road
+        if (fromHex.containsTerrain(Terrains.ROAD) && intoHex.containsTerrain(Terrains.ROAD)) {
+            LanceRole role = LanceRoles.effectiveRole(mover);
+            if ((role != null) && role.isConvoy()) {
+                return 1 + climb;
+            }
         }
         return enteringCost(mover, intoHex, isWading) + climb;
     }

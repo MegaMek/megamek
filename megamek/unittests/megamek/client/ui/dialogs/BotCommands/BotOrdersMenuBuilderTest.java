@@ -35,6 +35,7 @@ package megamek.client.ui.dialogs.BotCommands;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -123,6 +124,26 @@ class BotOrdersMenuBuilderTest {
         assertEquals(List.of(20, 21, 22), groups.get(0).unitIds());
         assertEquals("Command Lance (2)", groups.get(1).label());
         assertEquals(List.of(20, 21), groups.get(1).unitIds());
+    }
+
+    @Test
+    void aLanceAPlayerGaveTheBotIsListed() {
+        // the lance was built by a human player and handed to the bot: the force stays the player's in the force
+        // tree, its units are the bot's; the lobby lists it, and the Move Order menu left it out
+        Game game = (Game) client.getGame();
+        Player human = new Player(BOT_CONNECTION + 1, "HammerGS");
+        game.addPlayer(human.getId(), human);
+        int givenLanceId = game.getForces().addTopLevelForce(Force.createToplevelForce("Fire Lance", human), human);
+        game.getForces().removeEntityFromForces(units.get(2));
+        game.getForces().addEntity(units.get(2), givenLanceId);
+
+        List<String> labels = new ArrayList<>();
+        for (BotOrdersMenuBuilder.OrderGroup group : builder.lanceGroupsFor(bot)) {
+            labels.add(group.label());
+        }
+
+        assertTrue(labels.contains("Fire Lance (1)"), String.valueOf(labels));
+        assertTrue(labels.contains("Command Lance (2)"), String.valueOf(labels));
     }
 
     @Test

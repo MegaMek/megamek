@@ -94,6 +94,7 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -1148,7 +1149,7 @@ public class Princess extends BotClient {
             decentFacing = convoyFacing.getAsInt();
             LOGGER.info("[Deployment] {} deploys at {} facing {}, toward its convoy's exit edge {}",
                   deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
-                  deployEntity.getLanceRole().getExitEdge());
+                  LanceRoles.effectiveRole(deployEntity).getExitEdge());
         } else {
             Optional<Coords> enemyZoneCenter = getEnemyDeploymentCenter(board);
             if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(deployCoords)) {
@@ -3404,12 +3405,19 @@ public class Princess extends BotClient {
 
             // each unit in a formation keeps to the formation's pace, up to its own walk or run
             final List<MovePath> pacedPaths = getUnitOrdersFollower().limitToFormationPace(entity, paths);
-            final TreeSet<RankedPath> rankedPaths = getPathRanker(entity).rankPaths(pacedPaths,
-                  getGame(),
-                  getMaxWeaponRange(entity),
-                  fallTolerance,
-                  getEnemyEntities(),
-                  getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
+            // the unit's active waypoint is worked out once for all its moves, not for each one scored
+            getUnitBehaviorTracker().beginRanking(entity, this);
+            final TreeSet<RankedPath> rankedPaths;
+            try {
+                rankedPaths = getPathRanker(entity).rankPaths(pacedPaths,
+                      getGame(),
+                      getMaxWeaponRange(entity),
+                      fallTolerance,
+                      getEnemyEntities(),
+                      getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
+            } finally {
+                getUnitBehaviorTracker().endRanking();
+            }
 
             final long stop_time = java.lang.System.currentTimeMillis();
 
@@ -3742,6 +3750,8 @@ public class Princess extends BotClient {
             initialize();
             checkMorale();
             getUnitBehaviorTracker().clear();
+            // routes are planned before the first unit moves, not only after the phase
+            getUnitOrdersFollower().planRoutes();
             getSwarmContext().assignClusters(getEntitiesOwned());
             getEnemyTracker().updateThreatAssessment(getSwarmContext().getCurrentCenter());
             // reset strategic targets

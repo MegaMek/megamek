@@ -161,6 +161,28 @@ public final class LanceRoles {
     }
 
     /**
+     * The role of a unit's lance: its own, else that of a unit of the same owner in the same lance, so a unit added to
+     * a convoy or escort lance later joins it (HammerGS, 2026-10-03). This looks through every unit in the game; the
+     * bot, which asks for every move it scores, keeps its own table a phase instead.
+     *
+     * @param unit a unit
+     *
+     * @return the role, or {@code null} for none
+     */
+    public static @Nullable LanceRole effectiveRole(Entity unit) {
+        if ((unit.getLanceRole() != null) || (unit.getGame() == null) || (unit.getForceId() == Force.NO_FORCE)) {
+            return unit.getLanceRole();
+        }
+        for (Entity lanceMate : unit.getGame().getEntitiesVector()) {
+            if ((lanceMate != unit) && (lanceMate.getForceId() == unit.getForceId())
+                  && (lanceMate.getLanceRole() != null) && (lanceMate.getOwnerId() == unit.getOwnerId())) {
+                return lanceMate.getLanceRole();
+            }
+        }
+        return null;
+    }
+
+    /**
      * @param units a lance's units
      *
      * @return the role its units share, or the first one found; {@code null} when none has a role

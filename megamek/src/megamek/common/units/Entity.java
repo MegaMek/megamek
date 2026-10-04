@@ -2344,29 +2344,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * The role of this unit's lance - a convoy or an escort. A unit with no role of its own takes the role of the
-     * lance it is in, from a unit of the same owner in it, so a unit added to a convoy or escort lance later joins it
-     * (HammerGS, 2026-10-03).
+     * The role set on this unit itself - a convoy or an escort. A unit with none takes its lance's role; read that
+     * through {@link megamek.common.orders.LanceRoles#effectiveRole(Entity)}.
      *
      * @return the role, or {@code null} for none
      */
     public @Nullable LanceRole getLanceRole() {
-        if ((lanceRole != null) || (game == null) || (forceId == Force.NO_FORCE)) {
-            return lanceRole;
-        }
-        for (Entity lanceMate : game.getEntitiesVector()) {
-            if ((lanceMate != this) && (lanceMate.forceId == forceId) && (lanceMate.lanceRole != null)
-                  && (lanceMate.getOwnerId() == getOwnerId())) {
-                return lanceMate.lanceRole;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @return the role set on this unit itself, not taken from its lance, or {@code null} for none
-     */
-    public @Nullable LanceRole getOwnLanceRole() {
         return lanceRole;
     }
 

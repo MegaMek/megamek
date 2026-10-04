@@ -92,6 +92,9 @@ class FormationRoster {
     /** The unit last seen leading each formation, by the formation's leader id, to call a change of command. */
     private final Map<Integer, Integer> commandingUnitIds = new HashMap<>();
 
+    // each formation's units, kept while one unit's moves are ranked; by leader and owner
+    private final Map<String, List<Entity>> membersWhileRanking = new HashMap<>();
+
     /**
      * @param owner    the bot whose units follow orders
      * @param follower the orders follower this works for
@@ -250,6 +253,25 @@ class FormationRoster {
      *       of its own.
      */
     List<Entity> formationMembers(Entity entity, int leaderId) {
+        if (!follower.isRanking()) {
+            return workOutMembers(entity, leaderId);
+        }
+        // while one unit's moves are ranked nobody moves: each formation is worked out once, not for every move
+        String key = leaderId + ":" + entity.getOwnerId();
+        List<Entity> kept = membersWhileRanking.get(key);
+        if (kept == null) {
+            kept = workOutMembers(entity, leaderId);
+            membersWhileRanking.put(key, kept);
+        }
+        return new ArrayList<>(kept);
+    }
+
+    /** Forgets the formations kept while one unit's moves were ranked. */
+    void forgetRankingAnswers() {
+        membersWhileRanking.clear();
+    }
+
+    private List<Entity> workOutMembers(Entity entity, int leaderId) {
         List<Entity> members = new ArrayList<>();
         for (Entity candidate : owner.getGame().getEntitiesVector()) {
             Optional<FormationOrder> candidateFormation = candidate.getUnitOrders().getFormation();

@@ -60,6 +60,7 @@ import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.CombatPosture;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -95,6 +96,7 @@ import megamek.logging.MMLogger;
  */
 public class BotCommandsPanel extends JPanel {
     private static final MMLogger LOGGER = MMLogger.create(BotCommandsPanel.class);
+    private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
     private final AbstractClient client;
     private final AudioService audioService;
@@ -256,6 +258,9 @@ public class BotCommandsPanel extends JPanel {
      * player can give them a single order (HammerGS, 2026-10-03). Orders are chat commands, which the server handles
      * while paused, so the player sets roles and routes, then presses Continue.
      *
+     * <p>Only in the game window, and only with Start bots-only games paused on in the settings: MekHQ's auto-resolve
+     * watches through the Commander window, where nobody would press Continue.</p>
+     *
      * <p>The pause waits for the initiative report, just before deployment, or the first deployment or movement phase
      * if there is no report. Pausing as the game left the lobby froze it at Receiving Game Data: the server held the
      * clients' replies while the game was still loading.</p>
@@ -272,6 +277,16 @@ public class BotCommandsPanel extends JPanel {
             return;
         }
         isStartPauseDue = false;
+        if (clientGUI == null) {
+            // MekHQ's auto-resolve and the quick game runner watch through the Commander window: nobody is there to
+            // press Continue
+            LOGGER.info("[BotOrders] game starts unpaused: started without the game window, by MekHQ or a runner");
+            return;
+        }
+        if (!GUIP.getBotCommandsPauseAtStart()) {
+            LOGGER.info("[BotOrders] game starts unpaused: Start bots-only games paused is off in the settings");
+            return;
+        }
         if (pauseLatch || !canBePaused()) {
             LOGGER.info("[BotOrders] game starts unpaused: {}", pauseLatch ? "already paused"
                   : "a human player has units in it");

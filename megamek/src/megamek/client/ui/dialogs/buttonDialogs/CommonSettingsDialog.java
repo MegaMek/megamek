@@ -259,6 +259,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private final JCheckBox showUnitId = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId"));
     private final JCheckBox showAutoResolvePanel = new JCheckBox(Messages.getString(
           "CommonSettingsDialog.showAutoResolvePanel"));
+    private final JCheckBox pauseBotGamesAtStart = new JCheckBox(Messages.getString(
+          "CommonSettingsDialog.pauseBotGamesAtStart"));
     private JComboBox<String> favoritePrincessBehaviorSetting;
     private JComboBox<String> displayLocale;
     private final SettingsCheckBox showIPAddressesInChat = createShowIpAddressesInChatCheckBox();
@@ -2836,6 +2838,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             generateNames.setSelected(CLIENT_PREFERENCES.generateNames());
             showUnitId.setSelected(CLIENT_PREFERENCES.getShowUnitId());
             showAutoResolvePanel.setSelected(CLIENT_PREFERENCES.getShowAutoResolvePanel());
+            pauseBotGamesAtStart.setSelected(GUIP.getBotCommandsPauseAtStart());
             //            favoritePrincessBehaviorSetting.setSelectedItem(CLIENT_PREFERENCES.getFavoritePrincessBehaviorSetting());
 
             int index = 0;
@@ -3337,6 +3340,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         CLIENT_PREFERENCES.setGenerateNames(generateNames.isSelected());
         CLIENT_PREFERENCES.setShowUnitId(showUnitId.isSelected());
         CLIENT_PREFERENCES.setShowAutoResolvePanel(showAutoResolvePanel.isSelected());
+        GUIP.setBotCommandsPauseAtStart(pauseBotGamesAtStart.isSelected());
         CLIENT_PREFERENCES.setFavoritePrincessBehaviorSetting(
             (String) favoritePrincessBehaviorSetting.getSelectedItem());
         saveAdvancedSettingsControls();
@@ -3943,6 +3947,12 @@ public class CommonSettingsDialog extends AbstractButtonDialog
             "CommonSettingsDialog.favoritePrincessBehaviorSettingTooltip"));
           comps.add(List.of(createAiDisplayGrid(showAutoResolvePanel, enableExperimentalBotFeatures,
               favoriteBehaviorLabel, favoritePrincessBehaviorSetting)));
+        configureCheckBox(pauseBotGamesAtStart,
+            Messages.getString("CommonSettingsDialog.pauseBotGamesAtStart.tooltip"));
+        SettingsFormPanel botOrdersGrid = new SettingsFormPanel("CommonSettingsBotOrdersGrid",
+              SettingsFormPanel.DEFAULT_LABEL_WIDTH, 0);
+        botOrdersGrid.addCheckBox(pauseBotGamesAtStart);
+        comps.add(List.of(botOrdersGrid));
 
         return createSettingsPanel(comps);
     }

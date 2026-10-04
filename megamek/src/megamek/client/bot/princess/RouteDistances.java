@@ -112,8 +112,7 @@ class RouteDistances {
             distanceFields.clear();
             distanceFieldsRound = currentRound();
         }
-        String key = waypoint.getBoardNum() + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId()
-              + '|' + mover.getMaxElevationChange() + (UnitOrdersFollower.isConvoy(mover) ? "|roads" : "");
+        String key = waypoint.getBoardNum() + '|' + moverKey(mover);
         Map<Coords, Integer> extraCost = new HashMap<>();
         if (isGoingRoundUnitsInPlace) {
             Map<Coords, Integer> frontOfUnitsInPlace = TownLegPlanner.frontOfUnitsInPlace(
@@ -142,6 +141,20 @@ class RouteDistances {
             }
         }
         return field;
+    }
+
+    /**
+     * What a unit's route field depends on, so units that move alike share one: the way it moves, its board, how far
+     * it can climb, its weight - a building that bears a 35-ton Panther brings down a 65-ton Longbow, so their routes
+     * through a town differ - and whether it keeps to the roads as a convoy.
+     *
+     * @param mover the unit
+     *
+     * @return the part of the field's key that comes from the unit
+     */
+    private String moverKey(Entity mover) {
+        return String.valueOf(MovementType.getMovementType(mover)) + '|' + mover.getBoardId() + '|'
+              + mover.getMaxElevationChange() + "|t" + mover.getWeight() + (follower.isConvoy(mover) ? "|roads" : "");
     }
 
     /**
@@ -185,8 +198,7 @@ class RouteDistances {
             distanceFields.clear();
             distanceFieldsRound = currentRound();
         }
-        String key = "edge " + edge + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId() + '|'
-              + mover.getMaxElevationChange() + (UnitOrdersFollower.isConvoy(mover) ? "|roads" : "");
+        String key = "edge " + edge + '|' + moverKey(mover);
         WaypointDistanceField field = distanceFields.get(key);
         if (field == null) {
             field = WaypointDistanceField.buildToEdge(mover, edge);

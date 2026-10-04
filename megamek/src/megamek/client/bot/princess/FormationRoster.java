@@ -48,9 +48,9 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Who is in each formation (HammerGS, 2026-09-27): its units in action in slot order, the acting leader - the commander,
- * then the second-in-command, then the next in line - units out of action or falling behind, which their lance stops
- * waiting for, and the radio calls when that changes. Part of {@link UnitOrdersFollower}.
+ * Who is in each formation (HammerGS, 2026-09-27): its units in action in slot order, the acting leader - the
+ * commander, then the second-in-command, then the next in line - units out of action or falling behind, which their
+ * lance stops waiting for, and the radio calls when that changes. Part of {@link UnitOrdersFollower}.
  */
 class FormationRoster {
 
@@ -101,6 +101,10 @@ class FormationRoster {
         this.follower = follower;
     }
 
+    private int currentRound() {
+        return follower.currentRound();
+    }
+
     /**
      * @param entity a unit of the bot
      *
@@ -142,7 +146,7 @@ class FormationRoster {
         }
         Integer proneSince = proneSinceRounds.get(unit.getId());
         return unit.isProne() && (proneSince != null)
-              && ((follower.currentRound() - proneSince) >= PRONE_ROUNDS_BEFORE_DROPPED);
+              && ((currentRound() - proneSince) >= PRONE_ROUNDS_BEFORE_DROPPED);
     }
 
     /**
@@ -156,7 +160,7 @@ class FormationRoster {
      */
     boolean isFallingBehind(Entity unit) {
         SlotProgress progress = slotProgress.get(unit.getId());
-        return (progress != null) && ((follower.currentRound() - progress.sinceRound()) >= ROUNDS_WITHOUT_PROGRESS);
+        return (progress != null) && ((currentRound() - progress.sinceRound()) >= ROUNDS_WITHOUT_PROGRESS);
     }
 
     private static int placeOf(Entity member) {
@@ -174,7 +178,7 @@ class FormationRoster {
                 continue;
             }
             if (unit.isProne()) {
-                proneSinceRounds.putIfAbsent(unit.getId(), follower.currentRound());
+                proneSinceRounds.putIfAbsent(unit.getId(), currentRound());
             } else {
                 proneSinceRounds.remove(unit.getId());
             }
@@ -192,7 +196,7 @@ class FormationRoster {
         if (outOfActionUnitIds.add(unit.getId())) {
             String hex = unit.getPosition().getBoardNum();
             LOGGER.info("[BotOrders] {} (ID {}) round {}: OUT_OF_ACTION at {} (immobile {}, stuck {}, prone since {}); "
-                        + "the lance moves on without it", unit.getDisplayName(), unit.getId(), follower.currentRound(), hex,
+                        + "the lance moves on without it", unit.getDisplayName(), unit.getId(), currentRound(), hex,
                   unit.isImmobile(), unit.isStuck(), proneSinceRounds.get(unit.getId()));
             owner.getOrdersRadio().report(unit, OrdersRadio.RadioEvent.UNIT_DOWN, unit.getShortName(), hex);
         }
@@ -213,15 +217,15 @@ class FormationRoster {
         if ((progress == null) || !progress.slot().equals(slot.get()) || (cost < progress.bestCost())) {
             // a new slot starts the count again: a leader still moving moves the slot, and a leader held back for
             // this unit holds it still, so a unit truly stuck is still found
-            slotProgress.put(unit.getId(), new SlotProgress(slot.get(), cost, follower.currentRound()));
+            slotProgress.put(unit.getId(), new SlotProgress(slot.get(), cost, currentRound()));
             fallingBehindUnitIds.remove(unit.getId());
             return;
         }
         if (isFallingBehind(unit) && fallingBehindUnitIds.add(unit.getId())) {
             String hex = unit.getPosition().getBoardNum();
-            LOGGER.info("[BotOrders] {} (ID {}) round {}: FALLING_BEHIND at {} - no closer to its slot at {} since round "
-                        + "{}; the lance stops waiting for it", unit.getDisplayName(), unit.getId(), follower.currentRound(), hex,
-                  slot.get().getBoardNum(), progress.sinceRound());
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FALLING_BEHIND at {} - no closer to its slot at {} since "
+                        + "round {}; the lance stops waiting for it", unit.getDisplayName(), unit.getId(),
+                  currentRound(), hex, slot.get().getBoardNum(), progress.sinceRound());
             owner.getOrdersRadio().report(unit, OrdersRadio.RadioEvent.FALLING_BEHIND, unit.getShortName(), hex);
         }
     }
@@ -234,7 +238,7 @@ class FormationRoster {
         Integer previous = commandingUnitIds.put(leaderId, unit.getId());
         if ((previous != null) && (previous != unit.getId())) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: TAKES_COMMAND of the formation led by unit {}",
-                  unit.getDisplayName(), unit.getId(), follower.currentRound(), leaderId);
+                  unit.getDisplayName(), unit.getId(), currentRound(), leaderId);
             owner.getOrdersRadio().report(unit, OrdersRadio.RadioEvent.COMMAND, unit.getShortName());
         }
     }

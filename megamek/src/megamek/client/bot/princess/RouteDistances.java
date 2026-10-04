@@ -66,6 +66,10 @@ class RouteDistances {
         this.follower = follower;
     }
 
+    private int currentRound() {
+        return follower.currentRound();
+    }
+
     /**
      * How far a position is from the unit's next waypoint by the cheapest route the unit can take, in movement
      * points. Units heading for the same waypoint share one {@link WaypointDistanceField}, worked out once a round.
@@ -77,8 +81,9 @@ class RouteDistances {
      * @return the movement points to the waypoint, or {@link WaypointDistanceField#UNREACHABLE}
      */
     int routeCostFrom(Entity mover, Coords waypoint, Coords position) {
-        boolean isTownSpot = follower.isTownSpotOf(mover, waypoint);
-        return routeCost(mover, waypoint, position, isTownSpot, isTownSpot && follower.isSlowestOfLance(mover));
+        boolean isTownSpot = follower.townLegs().isTownSpotOf(mover, waypoint);
+        boolean isSlowest = isTownSpot && follower.townLegs().isSlowestOfLance(mover);
+        return routeCost(mover, waypoint, position, isTownSpot, isSlowest);
     }
 
     /**
@@ -103,15 +108,16 @@ class RouteDistances {
             // a VTOL or fighter flies over the terrain; the straight line stands in
             return null;
         }
-        if (distanceFieldsRound != follower.currentRound()) {
+        if (distanceFieldsRound != currentRound()) {
             distanceFields.clear();
-            distanceFieldsRound = follower.currentRound();
+            distanceFieldsRound = currentRound();
         }
         String key = waypoint.getBoardNum() + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId()
               + '|' + mover.getMaxElevationChange() + (UnitOrdersFollower.isConvoy(mover) ? "|roads" : "");
         Map<Coords, Integer> extraCost = new HashMap<>();
         if (isGoingRoundUnitsInPlace) {
-            Map<Coords, Integer> frontOfUnitsInPlace = TownLegPlanner.frontOfUnitsInPlace(follower.unitsInPlaceBeside(mover));
+            Map<Coords, Integer> frontOfUnitsInPlace = TownLegPlanner.frontOfUnitsInPlace(
+                  follower.townLegs().unitsInPlaceBeside(mover));
             if (!frontOfUnitsInPlace.isEmpty()) {
                 // the field differs with who stands where; keyed so units of one lance share it this round
                 key += "|front " + frontOfUnitsInPlace.keySet();
@@ -120,7 +126,7 @@ class RouteDistances {
         }
         if (isKeepingOutOfStreets) {
             key += "|narrow";
-            for (Map.Entry<Coords, Integer> narrow : follower.narrowHexes(mover).entrySet()) {
+            for (Map.Entry<Coords, Integer> narrow : follower.townLegs().narrowHexes(mover).entrySet()) {
                 extraCost.merge(narrow.getKey(), narrow.getValue(), Integer::sum);
             }
         }
@@ -131,7 +137,7 @@ class RouteDistances {
             if (isKeepingOutOfStreets) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_LANES - one of the lance's slowest; streets cost {} "
                             + "MP a hex more on its way to {}, so it keeps to the open lanes", mover.getDisplayName(),
-                      mover.getId(), follower.currentRound(), TownLegPlanner.NARROW_HEX_COST_FOR_SLOWEST,
+                      mover.getId(), currentRound(), TownLegPlanner.NARROW_HEX_COST_FOR_SLOWEST,
                       waypoint.getBoardNum());
             }
         }
@@ -175,9 +181,9 @@ class RouteDistances {
         if (MovementType.getMovementType(mover) == MovementType.Flyer) {
             return WaypointDistanceField.UNREACHABLE;
         }
-        if (distanceFieldsRound != follower.currentRound()) {
+        if (distanceFieldsRound != currentRound()) {
             distanceFields.clear();
-            distanceFieldsRound = follower.currentRound();
+            distanceFieldsRound = currentRound();
         }
         String key = "edge " + edge + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId() + '|'
               + mover.getMaxElevationChange() + (UnitOrdersFollower.isConvoy(mover) ? "|roads" : "");

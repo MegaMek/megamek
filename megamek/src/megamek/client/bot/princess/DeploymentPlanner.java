@@ -58,8 +58,8 @@ import megamek.logging.MMLogger;
 
 /**
  * Where a bot's units on orders deploy: only in hexes from which they can drive to where their lance is going, beside
- * their lance rather than across a river from it, at their formation slot beside a leader already down or at the
- * anchor the leader will take, and which unit deploys next so leaders go first. Part of {@link UnitOrdersFollower}.
+ * their lance rather than across a river from it, at their formation slot beside a leader already down or at the anchor
+ * the leader will take, and which unit deploys next so leaders go first. Part of {@link UnitOrdersFollower}.
  */
 class DeploymentPlanner {
 
@@ -486,7 +486,8 @@ class DeploymentPlanner {
             // its leader from count
             List<Coords> reachable = new ArrayList<>();
             for (Coords coords : ordered) {
-                if (follower.distances().routeCost(entity, formationHex, coords, false, false) != WaypointDistanceField.UNREACHABLE) {
+                int cost = follower.distances().routeCost(entity, formationHex, coords, false, false);
+                if (cost != WaypointDistanceField.UNREACHABLE) {
                     reachable.add(coords);
                 }
             }

@@ -91,6 +91,10 @@ class ConvoyEscortFollower {
         this.follower = follower;
     }
 
+    private int currentRound() {
+        return follower.currentRound();
+    }
+
     /**
      * Sends a convoy off the board by its exit edge once its route is done: a waypoint on that edge, set to exit, goes
      * on the end of its route - or makes its route, when it has none - so the column drives there in formation and
@@ -103,9 +107,10 @@ class ConvoyEscortFollower {
     void routeConvoyOut(Entity entity) {
         LanceRole role = entity.getLanceRole();
         UnitOrders orders = entity.getUnitOrders();
-        if ((role == null) || !role.isConvoy() || role.isWaitingAtRouteEnd() || follower.isFormationFollower(entity)
-              || entity.isAirborne() || (orders.getEdgeOrder() != EdgeOrder.NONE) || orders.isPaused()
-              || orders.isStoppedInRound(follower.currentRound())) {
+        if ((role == null) || !role.isConvoy() || role.isWaitingAtRouteEnd()
+              || follower.roster().isFormationFollower(entity) || entity.isAirborne()
+              || (orders.getEdgeOrder() != EdgeOrder.NONE) || orders.isPaused()
+              || orders.isStoppedInRound(currentRound())) {
             // paused or stopped, it waits where it is like any lance
             return;
         }
@@ -117,7 +122,7 @@ class ConvoyEscortFollower {
         Optional<Coords> edgeHex = convoyExitHex(entity, from, role.getExitEdge());
         if (edgeHex.isEmpty()) {
             LOGGER.info("[BotOrders] CONVOY_EXIT {} (ID {}) round {}: no hex of the {} edge it can drive to",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound(), role.getExitEdge());
+                  entity.getDisplayName(), entity.getId(), currentRound(), role.getExitEdge());
             return;
         }
         List<Coords> hexes = new ArrayList<>(route);
@@ -134,11 +139,11 @@ class ConvoyEscortFollower {
               .withRoutePlan((exitPlan == WaypointOrder.RoutePlan.TURN_POINT) ? WaypointOrder.RoutePlan.NONE
                     : exitPlan));
         entity.setUnitOrders(UnitOrderAction.ROUTE.apply(orders, hexes, waypointOrders, OffBoardDirection.NONE,
-              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, follower.currentRound(), null));
+              UnitOrders.FACING_AUTO, UnitOrders.FACING_AUTO, null, currentRound(), null));
         owner.sendChat(UnitOrderCommand.commandText(entity.getId(), UnitOrderAction.ROUTE,
               UnitOrderCommand.hexesArgument(hexes, waypointOrders)));
         LOGGER.info("[BotOrders] CONVOY_EXIT {} (ID {}) round {}: {} - then off the {} edge at {}",
-              entity.getDisplayName(), entity.getId(), follower.currentRound(),
+              entity.getDisplayName(), entity.getId(), currentRound(),
               route.isEmpty() ? "no route" : "following its route", role.getExitEdge(),
               edgeHex.get().getBoardNum());
     }
@@ -165,7 +170,8 @@ class ConvoyEscortFollower {
         edgeHexes.sort(Comparator.comparingInt(hex -> hex.distance(from)));
         for (int index = 0; (index < edgeHexes.size()) && (index < EXIT_HEXES_TRIED); index++) {
             Coords hex = edgeHexes.get(index);
-            if (follower.distances().routeCost(entity, hex, entity.getPosition(), false, false) != WaypointDistanceField.UNREACHABLE) {
+            int cost = follower.distances().routeCost(entity, hex, entity.getPosition(), false, false);
+            if (cost != WaypointDistanceField.UNREACHABLE) {
                 return Optional.of(hex);
             }
         }
@@ -183,7 +189,8 @@ class ConvoyEscortFollower {
     boolean isConvoyWaitingForOrders(Entity entity) {
         LanceRole role = entity.getLanceRole();
         return (role != null) && role.isConvoy() && role.isWaitingAtRouteEnd() && !entity.getUnitOrders().hasRoute()
-              && (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE) && !follower.isFormationFollower(entity);
+              && (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE)
+              && !follower.roster().isFormationFollower(entity);
     }
 
     /**
@@ -228,7 +235,7 @@ class ConvoyEscortFollower {
         Entity head = ConvoyTracker.head(convoy);
         boolean isConvoyStillToMove = follower.convoys().isStillToMove(head);
         List<Entity> escorts = escortsOf(escort, role);
-        String moment = follower.currentRound() + ":" + owner.getGame().getPhase() + ":" + head.getId() + ":"
+        String moment = currentRound() + ":" + owner.getGame().getPhase() + ":" + head.getId() + ":"
               + head.getPosition() + ":" + isConvoyStillToMove + ":" + escorts.size() + ":" + convoy.size();
         EscortPlan known = escortPlans.get(escort.getForceId());
         if ((known != null) && known.moment().equals(moment)) {
@@ -268,8 +275,9 @@ class ConvoyEscortFollower {
                 }
             }
         }
-        LOGGER.info("[BotOrders] ESCORT_PLACES round {} {}: convoy head {} at {}{} heading {} toward {}, {} hexes out{}",
-              follower.currentRound(), owner.getGame().getPhase(), head.getShortName(), headNow.getBoardNum(),
+        LOGGER.info("[BotOrders] ESCORT_PLACES round {} {}: convoy head {} at {}{} heading {} toward {}, {} hexes "
+                    + "out{}",
+              currentRound(), owner.getGame().getPhase(), head.getShortName(), headNow.getBoardNum(),
               isConvoyStillToMove ? " (still to move, expected at " + headThen.getBoardNum() + ")" : "", heading,
               convoyWaypoint.map(Coords::getBoardNum).orElse("its exit edge"), distance, detail);
         EscortPlan plan = new EscortPlan(moment, places);
@@ -307,7 +315,8 @@ class ConvoyEscortFollower {
         int deployed = 0;
         for (Entity unit : owner.getGame().getEntitiesVector()) {
             if ((unit.getId() != entity.getId()) && (unit.getForceId() == entity.getForceId())
-                  && (unit.getLanceRole() != null) && unit.getLanceRole().isEscort() && ConvoyTracker.isOnBoardAndAlive(unit)) {
+                  && (unit.getLanceRole() != null) && unit.getLanceRole().isEscort()
+                  && ConvoyTracker.isOnBoardAndAlive(unit)) {
                 deployed++;
             }
         }
@@ -371,7 +380,7 @@ class ConvoyEscortFollower {
     private void logConvoyGone(Entity entity, String what) {
         if (convoyGoneLogged.add(entity.getId())) {
             LOGGER.info("[BotOrders] ESCORT_CONVOY_GONE {} (ID {}) round {}: its convoy is off the board; {}",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound(), what);
+                  entity.getDisplayName(), entity.getId(), currentRound(), what);
         }
     }
 }

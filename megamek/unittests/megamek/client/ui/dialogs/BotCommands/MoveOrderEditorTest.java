@@ -1,0 +1,352 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.ui.dialogs.BotCommands;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import megamek.common.OffBoardDirection;
+import megamek.common.board.Coords;
+import megamek.common.orders.ContactRule;
+import megamek.common.orders.FormationOrder;
+import megamek.common.orders.FormationPace;
+import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.OrderPriority;
+import megamek.common.orders.UnitOrders;
+import megamek.common.orders.WaypointFormation;
+import megamek.common.orders.WaypointOrder;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Tests the Move Order editor's model: the waypoint table as the player edits it, and the commands a finished order
+ * turns into.
+ */
+class MoveOrderEditorTest {
+
+    private static final int NORTH = 0;
+    private static final int NORTH_EAST = 1;
+    private static final Coords FIRST_HEX = Coords.parseHexNumber("1709");
+    private static final Coords SECOND_HEX = Coords.parseHexNumber("1706");
+    private static final Coords LAST_HEX = Coords.parseHexNumber("2204");
+
+    @Test
+    void clickedHexesBecomeWaypointsThatCanBeReorderedAndRemoved() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(LAST_HEX);
+        waypoints.addWaypoint(SECOND_HEX);
+
+        assertEquals(1, waypoints.moveUp(2));
+        assertEquals(List.of(FIRST_HEX, SECOND_HEX, LAST_HEX), waypoints.getHexes());
+        assertEquals(0, waypoints.moveUp(0));
+
+        waypoints.removeWaypoint(0);
+        assertEquals(List.of(SECOND_HEX, LAST_HEX), waypoints.getHexes());
+    }
+
+    @Test
+    void aConvoyLeavingByAnEdgeShowsAndSendsAnExitOnItsLastWaypoint() {
+        // HammerGS, 2026-10-04: the convoy was set to leave by the north edge, but its last waypoint read Hold here
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(LAST_HEX);
+
+        waypoints.setRole(LanceRole.convoy(OffBoardDirection.NORTH));
+
+        assertEquals(WaypointTableModel.Then.EXIT, waypoints.getThen(1));
+        assertEquals(List.of(WaypointTableModel.Then.EXIT), waypoints.thenOptions(1), "no hold is offered");
+        assertTrue(waypoints.getWaypointOrders().get(1).isExitBoard());
+        assertFalse(waypoints.getWaypointOrders().get(0).isExitBoard(), "only the last waypoint exits");
+    }
+
+    @Test
+    void aConvoyThatWaitsAtTheEndOfItsRouteMayHoldThere() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(LAST_HEX);
+
+        waypoints.setRole(LanceRole.convoy(OffBoardDirection.NORTH, true));
+
+        assertEquals(WaypointTableModel.Then.STAY, waypoints.getThen(1));
+        assertFalse(waypoints.getWaypointOrders().get(1).isExitBoard());
+    }
+
+    @Test
+    void droppingTheConvoyRoleGivesTheHoldBack() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(LAST_HEX);
+        waypoints.setRole(LanceRole.convoy(OffBoardDirection.NORTH));
+
+        waypoints.setRole(null);
+
+        assertEquals(WaypointTableModel.Then.STAY, waypoints.getThen(0));
+        assertEquals(List.of(WaypointTableModel.Then.STAY, WaypointTableModel.Then.EXIT), waypoints.thenOptions(0));
+    }
+
+    @Test
+    void theLastWaypointIsTheEndOfTheRouteAndHasNoHold() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointFormation.NONE);
+        waypoints.setFacing(0, NORTH_EAST);
+        waypoints.setHoldTurns(0, 2);
+        waypoints.setFacing(1, NORTH);
+        waypoints.setHoldTurns(1, 3);
+
+        assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_TURNS));
+        // each waypoint is named as a nav point in order: Alpha, Beta
+        assertEquals(List.of(new WaypointOrder(NORTH_EAST, 2, WaypointFormation.NONE).withNavNumber(1),
+              new WaypointOrder(NORTH, 0, WaypointFormation.NONE).withNavNumber(2)), waypoints.getWaypointOrders());
+        // a hold beyond the editor's range is kept to it
+        waypoints.setHoldTurns(0, 99);
+        assertEquals(WaypointTableModel.MAXIMUM_HOLD_TURNS, waypoints.getHoldTurns(0));
+    }
+
+    @Test
+    void theLastWaypointCanLeaveTheBoardAndOthersWaitUntilInPosition() {
+        // HammerGS: the route ends by leaving the board; a stop can wait for the lance rather than a fixed delay
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointFormation.NONE);
+
+        assertEquals(List.of(WaypointTableModel.Then.STAY, WaypointTableModel.Then.EXIT), waypoints.thenOptions(1));
+        waypoints.setThen(1, WaypointTableModel.Then.EXIT);
+        waypoints.setThen(0, WaypointTableModel.Then.ASSEMBLE);
+
+        List<WaypointOrder> orders = waypoints.getWaypointOrders();
+        assertTrue(orders.get(0).isAssemble());
+        assertTrue(orders.get(1).isExitBoard());
+        // an exit on a waypoint that is no longer last is dropped
+        waypoints.addWaypoint(FIRST_HEX);
+        assertFalse(waypoints.getWaypointOrders().get(1).isExitBoard());
+    }
+
+    @Test
+    void aNewWaypointTravelsInTheFormationOfTheOneBefore() {
+        // HammerGS: set the formation per waypoint; row 1 sets it and it carries on until a row changes it
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        assertEquals(WaypointTableModel.DEFAULT_FORMATION, waypoints.getFormation(0));
+
+        waypoints.setValueAt(new WaypointTableModel.ShapeOption(FormationShape.COLUMN), 0,
+              WaypointTableModel.COLUMN_SHAPE);
+        waypoints.addWaypoint(SECOND_HEX);
+        assertEquals(FormationShape.COLUMN, waypoints.getFormation(1).getShape());
+
+        waypoints.setValueAt(new WaypointTableModel.ShapeOption(null), 1, WaypointTableModel.COLUMN_SHAPE);
+        assertTrue(waypoints.getFormation(1).isNone());
+        assertFalse(waypoints.isCellEditable(1, WaypointTableModel.COLUMN_SPACING));
+    }
+
+    @Test
+    void aFirstWaypointTakesTheFormationSetInTheLobby() {
+        // HammerGS, 2026-10-04: a convoy set to Column in the lobby, given a route in game, should keep its Column
+        WaypointTableModel waypoints = new WaypointTableModel();
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 1, FormationPace.WALK,
+              ContactRule.HOLD, false);
+        waypoints.setRoute(List.of(), List.of(), column);
+
+        waypoints.addWaypoint(FIRST_HEX);
+
+        assertEquals(column, waypoints.getFormation(0));
+    }
+
+    @Test
+    void aSingleUnitTravelsOutOfFormation() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setCanForm(false);
+        waypoints.addWaypoint(FIRST_HEX);
+
+        assertTrue(waypoints.getFormation(0).isNone());
+        assertFalse(waypoints.isCellEditable(0, WaypointTableModel.COLUMN_SHAPE));
+    }
+
+    @Test
+    void aMoveOrderSendsEachUnitItsSlotThenTheRouteWithEachLegsFormation() {
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 2, FormationPace.RUN,
+              ContactRule.BREAK, true);
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 3, FormationPace.WALK,
+              ContactRule.HOLD, true);
+
+        List<String> commands = MoveOrderCommands.commands(List.of(20, 21), 21, false, List.of(FIRST_HEX, SECOND_HEX),
+              List.of(new WaypointOrder(UnitOrders.FACING_AUTO, 0, column), new WaypointOrder(NORTH_EAST, 2, wedge)),
+              OrderPriority.NORMAL);
+
+        String route = " ROUTE hexes=1709/F:COLUMN:2:RUN:BREAK:T-1706/NE/2/F:WEDGE:3:WALK:HOLD:T priority=NORMAL";
+        assertEquals(List.of(
+              "/unitOrder 20 FORMATION shape=COLUMN leader=21 spacing=2 slot=1 pace=RUN contact=BREAK together=true",
+              "/unitOrder 20" + route,
+              "/unitOrder 21 FORMATION shape=COLUMN leader=21 spacing=2 slot=0 pace=RUN contact=BREAK together=true",
+              "/unitOrder 21" + route), commands);
+    }
+
+    @Test
+    void aRouteWithNoFormationLeavesTheFormationAndOnlySetsThePriorityWhenEmpty() {
+        List<String> commands = MoveOrderCommands.commands(List.of(20), 20, true, List.of(), List.of(),
+              OrderPriority.IMPERATIVE);
+
+        assertEquals(List.of("/unitOrder 20 FORMATION_OFF", "/unitOrder 20 PRIORITY priority=IMPERATIVE"), commands);
+        assertEquals(UnitOrders.FACING_AUTO, new WaypointTableModel.FacingOption(UnitOrders.FACING_AUTO).facing());
+    }
+
+    @Test
+    void aLoneUnitKeepsItsExitAndWaitWhenTheFormationIsTakenOff() {
+        // a single unit travels out of formation, but still leaves the board at the end of its route
+        WaypointOrder waitThere = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.ASSEMBLE, 4,
+              WaypointTableModel.DEFAULT_FORMATION, false);
+        WaypointOrder leave = new WaypointOrder(UnitOrders.FACING_AUTO, WaypointOrder.HoldMode.PASS, 0,
+              WaypointTableModel.DEFAULT_FORMATION, true);
+
+        List<String> commands = MoveOrderCommands.commands(List.of(20), 20, false, List.of(FIRST_HEX, SECOND_HEX),
+              List.of(waitThere, leave), OrderPriority.NORMAL);
+
+        assertEquals(List.of("/unitOrder 20 ROUTE hexes=1709/U4-1706/EXIT priority=NORMAL"), commands);
+    }
+
+    @Test
+    void aJoiningUnitTakesThePlaceAfterTheLastAndTheLeadersRoute() {
+        // HammerGS: attach a unit to a formation - next free slot, same route
+        UnitOrders leaderOrders = UnitOrders.NONE.withRoute(List.of(FIRST_HEX, SECOND_HEX),
+                    List.of(new WaypointOrder(NORTH_EAST, 2), WaypointOrder.PASS_THROUGH))
+              .withPriority(OrderPriority.IMPERATIVE)
+              .withFormation(new FormationOrder(FormationShape.WEDGE, 21, 3, 0, FormationPace.RUN, ContactRule.HOLD,
+                    true));
+
+        List<String> commands = MoveOrderCommands.joinCommands(25, leaderOrders, 21, 3);
+
+        assertEquals(List.of(
+              "/unitOrder 25 FORMATION shape=WEDGE leader=21 spacing=3 slot=4 pace=RUN contact=HOLD together=true",
+              "/unitOrder 25 ROUTE hexes=1709/NE/2-1706 priority=IMPERATIVE"), commands);
+        assertTrue(MoveOrderCommands.joinCommands(25, UnitOrders.NONE, 21, 3).isEmpty());
+    }
+
+    @Test
+    void followingAPlayersUnitClearsTheOrdersAndFormsUpOnIt() {
+        List<String> commands = MoveOrderCommands.followCommands(List.of(20, 22), 30);
+
+        assertEquals(List.of("/unitOrder 20 CLEAR",
+              "/unitOrder 20 FORMATION shape=WEDGE leader=30 spacing=1 slot=1 pace=WALK contact=TURN_AND_FIRE together=true",
+              "/unitOrder 22 CLEAR",
+              "/unitOrder 22 FORMATION shape=WEDGE leader=30 spacing=1 slot=2 pace=WALK contact=TURN_AND_FIRE together=true"),
+              commands);
+    }
+
+    @Test
+    void aWaypointSetToChangeShapeThereKeepsTheShapeBeforeOnTheWay() {
+        // HammerGS: free move to the waypoint, form a Column there, then go on in Column
+        WaypointFormation wedge = new WaypointFormation(FormationShape.WEDGE, 1, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        WaypointFormation column = new WaypointFormation(FormationShape.COLUMN, 1, FormationPace.WALK,
+              ContactRule.BREAK, true);
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), wedge);
+        waypoints.setFormation(0, column);
+        waypoints.setChange(0, WaypointTableModel.Change.AT_WAYPOINT);
+
+        WaypointOrder first = waypoints.getWaypointOrders().get(0);
+        assertEquals(wedge, first.getFormation());
+        assertEquals(column, first.getArrivalFormation());
+        assertTrue(waypoints.describe(0).contains("keeps its shape on the way here, forms the Column here"),
+              waypoints.describe(0));
+
+        // sent and loaded back, the row shows the shape it changes to, set to change at the waypoint
+        WaypointTableModel reloaded = new WaypointTableModel();
+        reloaded.setRoute(waypoints.getHexes(), waypoints.getWaypointOrders(), wedge);
+        assertEquals(column, reloaded.getFormation(0));
+        assertEquals(WaypointTableModel.Change.AT_WAYPOINT, reloaded.getChange(0));
+    }
+
+    @Test
+    void theLineUnderTheTableSaysWhatTheUnitsDoAtTheSelectedWaypoint() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointTableModel.DEFAULT_FORMATION);
+        waypoints.setHoldTurns(0, 2);
+
+        assertEquals("Waypoint 1 - hex 1706: The lance takes the Wedge on the way here. Hold 2: it waits 2 turns here,"
+              + " firing at anything in range but not chasing it, then moves on.", waypoints.describe(0));
+        assertTrue(waypoints.describe(1).endsWith("holds this hex until given new orders, and comes back to it after a"
+              + " fight."), waypoints.describe(1));
+    }
+
+    @Test
+    void aPhaseLineIsKeptWhenAnOrderIsLoadedAndSentAgain() {
+        // editing a route must not drop a phase line set on one of its waypoints
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX),
+              List.of(WaypointOrder.PASS_THROUGH.withPhaseLine("Bravo"), WaypointOrder.PASS_THROUGH),
+              WaypointFormation.NONE);
+
+        assertEquals("Bravo", waypoints.getWaypointOrders().get(0).getPhaseLine());
+        assertEquals(List.of("Bravo"), waypoints.phaseLinesInUse());
+        assertEquals("PL Bravo", waypoints.getValueAt(0, WaypointTableModel.COLUMN_PHASE_LINE).toString());
+
+        waypoints.setPhaseLine(0, null);
+        assertEquals(null, waypoints.getWaypointOrders().get(0).getPhaseLine());
+    }
+
+    @Test
+    void theFirstLancePicksTheNewPhaseLineStraightFromTheList() {
+        // HammerGS's playtest: on the first lance's order there was no phase line to pick, only a separate prompt
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.setRoute(List.of(SECOND_HEX, LAST_HEX), List.of(), WaypointFormation.NONE);
+
+        waypoints.setValueAt(new WaypointTableModel.PhaseLineOption("Alfa", true), 0,
+              WaypointTableModel.COLUMN_PHASE_LINE);
+        assertEquals("Alfa", waypoints.getPhaseLine(0));
+
+        // a name typed in, with or without the PL in front
+        waypoints.setValueAt("PL Hill 312", 1, WaypointTableModel.COLUMN_PHASE_LINE);
+        assertEquals("Hill 312", waypoints.getPhaseLine(1));
+        assertEquals("PL Alfa (new)", new WaypointTableModel.PhaseLineOption("Alfa", true).toString());
+        assertEquals("Alfa", WaypointTableModel.PhaseLineOption.typed("PL Alfa (new)").name());
+    }
+
+    @Test
+    void aDraggedWaypointMovesAndKeepsItsSettings() {
+        WaypointTableModel waypoints = new WaypointTableModel();
+        waypoints.addWaypoint(FIRST_HEX);
+        waypoints.addWaypoint(SECOND_HEX, true);
+        waypoints.setFacing(1, NORTH_EAST);
+
+        int row = waypoints.rowAt(SECOND_HEX);
+        waypoints.moveWaypoint(row, LAST_HEX);
+
+        assertEquals(1, row);
+        assertEquals(List.of(FIRST_HEX, LAST_HEX), waypoints.getHexes());
+        assertEquals(NORTH_EAST, waypoints.getWaypointOrders().get(1).getFacing());
+        assertFalse(waypoints.isPlanned(1), "a planned turning point moved by hand is the player's own");
+        assertEquals(-1, waypoints.rowAt(SECOND_HEX));
+    }
+}

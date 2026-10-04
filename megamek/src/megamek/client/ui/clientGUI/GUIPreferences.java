@@ -476,6 +476,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
     public static final String BOT_COMMANDS_ENABLED = "BotCommandsEnabled";
+    public static final String BOT_COMMANDS_PAUSE_AT_START = "BotCommandsPauseAtStart";
     public static final String BOT_COMMANDS_LOCATION = "BotCommandsLocation";
     public static final String BOT_COMMANDS_POS_X = "BotCommandsPosX";
     public static final String BOT_COMMANDS_POS_Y = "BotCommandsPosY";
@@ -729,6 +730,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_ENABLED, true);
+        store.setDefault(BOT_COMMANDS_PAUSE_AT_START, true);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -3499,6 +3501,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getBotCommandsEnabled() {
         return getBoolean(BOT_COMMANDS_ENABLED);
+    }
+
+    /**
+     * @return {@code true} if a game only bots have units in, watched by a player, starts paused so the player can
+     *       give the bots orders first
+     */
+    public boolean getBotCommandsPauseAtStart() {
+        return getBoolean(BOT_COMMANDS_PAUSE_AT_START);
+    }
+
+    /**
+     * @param state {@code true} to start a watched bots-only game paused
+     */
+    public void setBotCommandsPauseAtStart(boolean state) {
+        store.setValue(BOT_COMMANDS_PAUSE_AT_START, state);
     }
 
     /**

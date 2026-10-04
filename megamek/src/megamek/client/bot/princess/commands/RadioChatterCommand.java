@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,53 +33,31 @@
 package megamek.client.bot.princess.commands;
 
 import java.util.List;
-import java.util.Optional;
 
 import megamek.client.bot.Messages;
+import megamek.client.bot.princess.OrdersRadio.RadioSetting;
 import megamek.client.bot.princess.Princess;
-import megamek.common.units.Entity;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
-import megamek.server.commands.arguments.BooleanArgument;
-import megamek.server.commands.arguments.UnitArgument;
+import megamek.server.commands.arguments.EnumArgument;
 
 /**
- * Command to clear all waypoints from this bot.
- *
- * @author Luana Coppio
+ * Sets how the bot reports on its units' orders: AUTO (the default) works the radio voice out from the bot's name and
+ * units, OFF gives plain replies, and INNER_SPHERE, CLAN or COMSTAR fix the voice.
  */
-public class ClearWaypointsCommand implements ChatCommand {
-    private static final String UNIT_ID = "unitID";
+public class RadioChatterCommand implements ChatCommand {
+    private static final String VOICE = "voice";
 
     @Override
     public List<Argument<?>> defineArguments() {
-        return List.of(
-              new UnitArgument(UNIT_ID, Messages.getString("Princess.command.clearWaypoints.unitId")),
-              quietArgument()
-        );
+        return List.of(new EnumArgument<>(VOICE, Messages.getString("Princess.command.radioChatter.voice"),
+              RadioSetting.class, RadioSetting.AUTO));
     }
 
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        UnitArgument unitArgument = arguments.get(UNIT_ID, UnitArgument.class);
-        BooleanArgument quietArgument = arguments.get(QUIET, BooleanArgument.class);
-
-        Optional<Entity> unitOpt = princess.getEntitiesOwned().stream()
-              .filter(entity -> entity.getId() == unitArgument.getValue())
-              .findFirst();
-
-        if (unitOpt.isEmpty()) {
-            if (!quietArgument.getValue()) {
-                princess.sendChat(Messages.getString("Princess.command.clearWaypoints.unitNotFound",
-                      unitArgument.getValue()));
-            }
-            return;
-        }
-
-        princess.getUnitBehaviorTracker().clearWaypoints(unitOpt.get(), princess);
-        if (!quietArgument.getValue()) {
-            princess.sendChat(Messages.getString("Princess.command.clearWaypoints.success",
-                  unitOpt.get().getDisplayName()));
-        }
+        RadioSetting setting = arguments.getEnum(VOICE, RadioSetting.class);
+        princess.getOrdersRadio().setRadioSetting(setting);
+        princess.sendChat(Messages.getString("Princess.command.radioChatter.set", setting.name()));
     }
 }

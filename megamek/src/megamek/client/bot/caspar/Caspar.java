@@ -36,6 +36,7 @@ import java.util.List;
 
 import megamek.client.bot.AIType;
 import megamek.client.bot.princess.AerospaceFireControl;
+import megamek.client.bot.princess.AerospaceGroundOrder;
 import megamek.client.bot.princess.AerospacePathRanker;
 import megamek.client.bot.princess.FireControl.FireControlType;
 import megamek.client.bot.princess.FormationGeometry;
@@ -49,13 +50,12 @@ import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
-import megamek.client.bot.princess.AerospaceGroundOrder;
 import megamek.common.moves.MovePath;
-import megamek.common.units.Dropship;
-import megamek.common.units.IAero;
 import megamek.common.pathfinder.AeroGroundDoctrinePathFinder;
 import megamek.common.pathfinder.AeroGroundPathFinder;
+import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
+import megamek.common.units.IAero;
 import megamek.logging.MMLogger;
 
 /**
@@ -375,6 +375,12 @@ public class Caspar extends Princess {
                 return false;
             }
         }
+        return true;
+    }
+
+    @Override
+    protected boolean facesEnemyZoneAtDeployment() {
+        // CASPAR divergence: face where the enemy will come from rather than whichever enemy deployed first
         return true;
     }
 

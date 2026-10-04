@@ -233,6 +233,25 @@ class BotRouteSpriteHandlerTest {
     }
 
     @Test
+    void aRouteAlongTheEdgeBetweenTwoColumnsReadsAsOneLine() {
+        // HammerGS's playtest, 2026-10-04: a convoy at 0222 heading for 0103 drew two columns of dots side by side
+        Coords from = Coords.parseHexNumber("0222");
+        Coords to = Coords.parseHexNumber("0103");
+
+        List<Coords> steps = BotRouteSpriteHandler.stepsBetween(from, to);
+
+        assertEquals(from.distance(to) + 1, steps.size(), "one hex a step: " + steps);
+        int columnChanges = 0;
+        for (int index = 1; index < steps.size(); index++) {
+            assertEquals(1, steps.get(index - 1).distance(steps.get(index)), "steps are neighbours: " + steps);
+            if (steps.get(index - 1).getX() != steps.get(index).getX()) {
+                columnChanges++;
+            }
+        }
+        assertEquals(1, columnChanges, "one jog from column 02 to column 01: " + steps);
+    }
+
+    @Test
     void aPlannedTurnIsADotAndALeadersFlagCarriesItsLancesName() {
         int lanceId = game.getForces().addTopLevelForce(Force.createToplevelForce("Convoy", ourBot), ourBot);
         WaypointOrder turn = WaypointOrder.PASS_THROUGH.withRoutePlan(WaypointOrder.RoutePlan.TURN_POINT);

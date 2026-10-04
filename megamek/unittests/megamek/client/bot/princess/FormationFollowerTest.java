@@ -70,6 +70,7 @@ import megamek.common.orders.FightState;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
+import megamek.common.orders.LanceRole;
 import megamek.common.orders.UnitOrderAction;
 import megamek.common.orders.UnitOrders;
 import megamek.common.orders.WaypointFormation;
@@ -724,6 +725,54 @@ class FormationFollowerTest {
               List.of(walkThree, jumpFive, runSeven)));
         assertEquals(List.of(walkThree), princess.getUnitOrdersFollower().limitToFormationPace(longbow,
               List.of(walkThree, jumpFive, runSeven)));
+    }
+
+    @Test
+    void aFormationWithNoRouteIsNotPaced() {
+        // HammerGS, 2026-10-04: a lobby formation with no route shapes the lance where it deploys, then it fights
+        BipedMek grasshopper = member(20, LEADER_HEX, 0, 5);
+        BipedMek longbow = member(21, new Coords(16, 25), 1, 3);
+        FormationOrder wedge = longbow.getUnitOrders().getFormation().orElseThrow();
+        grasshopper.setUnitOrders(UnitOrders.NONE.withFormation(grasshopper.getUnitOrders().getFormation()
+              .orElseThrow()));
+        longbow.setUnitOrders(UnitOrders.NONE.withFormation(wedge));
+        List<MovePath> moves = List.of(moveUsing(3), moveUsing(5), moveUsing(7));
+
+        assertEquals(moves, princess.getUnitOrdersFollower().limitToFormationPace(longbow, moves));
+    }
+
+    @Test
+    void underAttackEachUnitHasItsFullMovement() {
+        // HammerGS, 2026-10-04: under attack they have their full movement but try to stay in formation
+        member(20, LEADER_HEX, 0, 5);
+        BipedMek longbow = member(21, new Coords(16, 25), 1, 3);
+        longbow.setPosition(princess.getUnitOrdersFollower().getFormationSlot(longbow).orElseThrow());
+        BipedMek enemy = new BipedMek();
+        enemy.setId(90);
+        enemy.setPosition(longbow.getPosition().translated(NORTH, 6));
+        enemies.add(enemy);
+        doReturn(9).when(princess).getMaxWeaponRange(any(Entity.class));
+        List<MovePath> moves = List.of(moveUsing(3), moveUsing(5), moveUsing(7));
+
+        assertEquals(moves, princess.getUnitOrdersFollower().limitToFormationPace(longbow, moves));
+        assertTrue(princess.getUnitOrdersFollower().getFormationSlot(longbow).isPresent(), "its place still pulls it");
+    }
+
+    @Test
+    void anEnemyConvoyIsAPriorityTarget() {
+        // HammerGS, 2026-10-04: attackers go for the convoy over its escorts, without anyone setting it
+        BipedMek truck = new BipedMek();
+        truck.setId(91);
+        truck.setLanceRole(LanceRole.convoy(OffBoardDirection.SOUTH));
+        BipedMek escort = new BipedMek();
+        escort.setId(92);
+        escort.setLanceRole(LanceRole.defaultEscort(7));
+        enemies.add(truck);
+        enemies.add(escort);
+
+        assertTrue(princess.getPriorityUnitTargets().contains(91));
+        assertFalse(princess.getPriorityUnitTargets().contains(92));
+        assertFalse(princess.getBehaviorSettings().getPriorityUnitTargets().contains(91), "the settings stay as set");
     }
 
     @Test

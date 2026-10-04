@@ -1061,8 +1061,14 @@ public class Princess extends BotClient {
 
     }
 
+    /**
+     * @return the units the bot most wants to destroy: those set in its behavior, and every unit of an enemy convoy,
+     *       which the bot goes for over its escorts (HammerGS, 2026-10-04)
+     */
     public Set<Integer> getPriorityUnitTargets() {
-        return getBehaviorSettings().getPriorityUnitTargets();
+        Set<Integer> targets = getBehaviorSettings().getPriorityUnitTargets();
+        targets.addAll(getUnitOrdersFollower().enemyConvoyUnitIds());
+        return targets;
     }
 
     public Targetable getAppropriateTarget(Coords strategicTarget) {

@@ -306,8 +306,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
-        // Do the deployment first, if using Walk-on-deployment. avoids future issues
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+        // Do the deployment first, avoids future issues
+        // Since the step DEPLOY is only used by WoD, just process if it has it.
+        if (md.contains(MoveStepType.DEPLOY)) {
             DeploymentServerHelper deploymentProcess = new DeploymentServerHelper(gameManager);
             // We don't set done in a walk on deployment
             boolean setDone = false;
@@ -368,6 +369,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.updateVisibilityIndicator(null);
             }
             TWGameManager.datasetLogger.append(getGame(), true);
+        }
+        if (entity.getPosition() == null) {
+            logger.error("processMovement: entity {} has null position", entity.getDisplayName());
+            return;
         }
 
         // TacOps Climbing: check if a climbing/dangling entity lost its climbing ability

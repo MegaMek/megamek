@@ -678,8 +678,6 @@ public class MoveStep implements Serializable {
                 switch (entity.getMovementMode()) {
                     // WiGE ends the jump at 1 elevation
                     case WIGE -> setElevation(ceiling + 1);
-                    // Hover ends the jump above the water
-                    case HOVER -> setElevation(ceiling);
                     default -> setElevation(subDepth);
                 }
             }
@@ -3677,6 +3675,12 @@ public class MoveStep implements Serializable {
         // If you want to flee, and you can flee, flee.
         if ((type == MoveStepType.FLEE) && entity.canFlee(dest)) {
             return true;
+        }
+
+        // TO:AUE p.162: a vehicle may not jump into terrain its motive type forbids. The return below skips the
+        // prohibited-terrain check further down, so run it here for a jumping vehicle.
+        if (isJumping() && (entity instanceof Tank) && entity.isLocationProhibited(dest, boardId, elevation)) {
+            terrainInvalid = true;
         }
 
         // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!

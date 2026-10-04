@@ -55,6 +55,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.options.IGameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 import megamek.common.util.YamlEncDec;
@@ -315,8 +316,10 @@ public abstract class InfantryWeapon extends Weapon {
                       .booleanOption(OptionsConstants.ADVANCED_COMBAT_DISPOSABLE_INFANTRY_WEAPONS)) {
                     return new InfantryDisposableWeaponHandler(toHit, waa, game, manager);
                 }
-                // True Inferno munitions deliver inferno missiles rather than damage or heat (TW p. 143).
-                if ((mounted != null) && mounted.hasModes() && mounted.curMode().equals(Weapon.MODE_INFERNO)) {
+                // An SRM platoon that declared Inferno munitions before the battle delivers inferno missiles
+                // rather than damage or heat (TW p. 143).
+                if ((entity instanceof ConvInfantry infantry) && infantry.firesInfernoSrms()
+                      && isSrmLauncherMount(mounted)) {
                     return new InfantryInfernoSRMHandler(toHit, waa, game, manager);
                 }
                 if (((mounted != null) && ((mounted.hasModes() && mounted.curMode().isHeat())
@@ -337,6 +340,21 @@ public abstract class InfantryWeapon extends Weapon {
             LOGGER.warn("Get Correct Handler - Attach Handler Received Null Entity.");
         }
         return null;
+    }
+
+    /**
+     * @return {@code true} if the mount fires the platoon's SRM launchers, either as its own weapon or as the other
+     *       half of a combined primary and secondary weapon mount
+     */
+    static boolean isSrmLauncherMount(@Nullable Mounted<?> mounted) {
+        if (mounted == null) {
+            return false;
+        }
+        if (mounted.getType().hasFlag(WeaponType.F_SRM)) {
+            return true;
+        }
+        return (mounted instanceof InfantryWeaponMounted infantryMount)
+              && infantryMount.getOtherWeapon().hasFlag(WeaponType.F_SRM);
     }
 
     @Override

@@ -171,6 +171,13 @@ public class ConvInfantry extends Infantry {
     private int consecutiveFirefightTurns = 0;
 
     /**
+     * Whether the platoon's SRM launchers carry Inferno munitions for this battle. Declared before the battle and
+     * locked for its duration (TW p. 143; TechManual pp. 350-352 errata). Only meaningful when
+     * {@link #hasSrmLauncher()} is true.
+     */
+    private boolean infernoSrms = false;
+
+    /**
      * For mechanized VTOL infantry, stores whether the platoon are microlite troops, which need to enter a hex every
      * turn to remain in flight.
      */
@@ -1392,6 +1399,7 @@ public class ConvInfantry extends Infantry {
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
         primaryName = w.getInternalName();
+        declareInfernoSrmsForInfernoLauncher(w);
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1405,10 +1413,58 @@ public class ConvInfantry extends Infantry {
         } else {
             secondName = w.getInternalName();
         }
+        declareInfernoSrmsForInfernoLauncher(w);
     }
 
     public InfantryWeapon getSecondaryWeapon() {
         return secondaryWeapon;
+    }
+
+    /**
+     * A platoon built with the legacy Inferno SRM launcher was designed to carry Inferno munitions, so it starts
+     * the battle declared that way. The player can still change the declaration before the battle.
+     */
+    private void declareInfernoSrmsForInfernoLauncher(@Nullable InfantryWeapon weapon) {
+        if (isSrmLauncher(weapon) && weapon.hasFlag(WeaponType.F_INFERNO)) {
+            infernoSrms = true;
+        }
+    }
+
+    private static boolean isSrmLauncher(@Nullable InfantryWeapon weapon) {
+        return (weapon != null) && weapon.hasFlag(WeaponType.F_SRM);
+    }
+
+    /**
+     * @return {@code true} if the platoon's primary or secondary weapon is an SRM launcher, which may be loaded with
+     *       standard or Inferno munitions before the battle
+     */
+    public boolean hasSrmLauncher() {
+        return isSrmLauncher(primaryWeapon) || isSrmLauncher(secondaryWeapon);
+    }
+
+    /**
+     * @return {@code true} if the platoon has an SRM launcher and declared Inferno munitions for this battle
+     */
+    public boolean firesInfernoSrms() {
+        return infernoSrms && hasSrmLauncher();
+    }
+
+    /**
+     * @return the declared SRM munition, {@code true} for Inferno, regardless of whether the platoon has an SRM
+     *       launcher
+     */
+    public boolean isInfernoSrmsDeclared() {
+        return infernoSrms;
+    }
+
+    /**
+     * Declares whether the platoon's SRM launchers carry Inferno munitions. This is a pre-battle choice made in the
+     * lobby; there is no way to change it during play.
+     *
+     * @param inferno {@code true} for Inferno munitions, {@code false} for standard SRMs
+     */
+    public void setInfernoSrmsDeclared(boolean inferno) {
+        infernoSrms = inferno;
     }
 
     /**

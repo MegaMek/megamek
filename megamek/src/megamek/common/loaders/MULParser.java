@@ -298,6 +298,9 @@ public class MULParser {
     public static final String ATTR_SNEAK_CAMO = "sneakCamo";
     public static final String ATTR_SNEAK_IR = "sneakIR";
     public static final String ATTR_SNEAK_ECM = "sneakECM";
+    public static final String ATTR_SRM_MUNITION = "srmMunition";
+    public static final String VALUE_SRM_MUNITION_STANDARD = "Standard";
+    public static final String VALUE_SRM_MUNITION_INFERNO = "Inferno";
     public static final String ATTR_INF_SPEC = "infantrySpecializations";
     public static final String ATTR_DISPOSABLE_WEAPON = "disposableWeapon";
     public static final String ATTR_DISPOSABLE_WEAPON_FIRED = "disposableWeaponFired";
@@ -1201,6 +1204,13 @@ public class MULParser {
             String infSpec = entityTag.getAttribute(ATTR_INF_SPEC);
             if (!infSpec.isBlank()) {
                 inf.setSpecializations(Integer.parseInt(infSpec));
+            }
+
+            // Without the attribute, the platoon keeps the default its weapons gave it: Inferno for the legacy
+            // Inferno SRM launcher, standard for every other SRM launcher.
+            String srmMunition = entityTag.getAttribute(ATTR_SRM_MUNITION);
+            if (!srmMunition.isBlank()) {
+                inf.setInfernoSrmsDeclared(srmMunition.equalsIgnoreCase(VALUE_SRM_MUNITION_INFERNO));
             }
 
             // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): the design's weapons are re-derived from the

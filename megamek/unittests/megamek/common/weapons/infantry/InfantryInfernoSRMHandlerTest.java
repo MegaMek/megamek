@@ -34,17 +34,19 @@
 package megamek.common.weapons.infantry;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.InfantryWeaponMounted;
+import megamek.common.equipment.Mounted;
 import megamek.common.options.GameOptions;
 import megamek.common.units.ConvInfantry;
 import megamek.common.weapons.Weapon;
@@ -53,23 +55,27 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Covers the Inferno firing mode on the conventional infantry SRM launcher.
+ * Covers Inferno munitions on conventional infantry SRM launchers.
  *
  * <p>TW p. 143 gives an SRM infantry platoon a number of inferno missiles equal to its Damage Value divided by
- * two, rounded down. The launcher therefore offers Inferno and Damage as alternative modes, where the incendiary
- * support weapons offer Damage and Heat.</p>
+ * two, rounded down. Per the TechManual pp. 350-352 errata the platoon declares Inferno or standard munitions before
+ * the battle, so the choice lives on the platoon and holds for the whole battle rather than being a firing mode. The
+ * incendiary support weapons keep their Damage and Heat modes, which only convert damage to heat.</p>
  */
 class InfantryInfernoSRMHandlerTest {
 
     private static final String INFERNO_SRM_LAUNCHER = "InfantryStandardSRMInferno";
+    private static final String HEAVY_SRM_LAUNCHER = "InfantryHeavySRM";
+    private static final String ASSAULT_RIFLE = "InfantryAssaultRifle";
+    private static final String INCENDIARY_GRENADE_LAUNCHER = "InfantryAutoGLInferno";
 
     @BeforeAll
     static void initializeEquipment() {
         EquipmentType.initializeTypes();
     }
 
-    private static java.util.List<String> modeNamesOf(EquipmentType equipment) {
-        java.util.List<String> modeNames = new java.util.ArrayList<>();
+    private static List<String> modeNamesOf(EquipmentType equipment) {
+        List<String> modeNames = new ArrayList<>();
         Enumeration<EquipmentMode> modes = equipment.getModes();
         while (modes.hasMoreElements()) {
             modeNames.add(modes.nextElement().getName());
@@ -77,38 +83,43 @@ class InfantryInfernoSRMHandlerTest {
         return modeNames;
     }
 
+    private static InfantryWeapon weapon(String internalName) {
+        EquipmentType equipment = EquipmentType.get(internalName);
+        assertInstanceOf(InfantryWeapon.class, equipment, internalName + " should be a registered infantry weapon");
+        return (InfantryWeapon) equipment;
+    }
+
+    private static ConvInfantry platoon(InfantryWeapon primary, InfantryWeapon secondary) {
+        ConvInfantry platoon = new ConvInfantry();
+        platoon.setPrimaryWeapon(primary);
+        platoon.setSecondaryWeapon(secondary);
+        return platoon;
+    }
+
     @Test
-    @DisplayName("The Inferno SRM launcher offers Inferno and Damage, not Heat")
-    void infernoLauncherOffersInfernoAndDamage() {
-        EquipmentType launcher = EquipmentType.get(INFERNO_SRM_LAUNCHER);
-        assertNotNull(launcher, "The Inferno SRM launcher should be registered");
+    @DisplayName("The Inferno SRM launcher has no firing modes, whatever the infantry heat option says")
+    void infernoLauncherHasNoModes() {
+        InfantryWeapon launcher = weapon(INFERNO_SRM_LAUNCHER);
 
-        java.util.List<String> modeNames = modeNamesOf(launcher);
+        // The base implementation adds Damage/Heat to flame-based weapons depending on the option. This launcher's
+        // munitions are declared before the battle, so it must not pick up a mode that can be switched in play.
+        launcher.adaptToGameOptions(new GameOptions());
 
-        assertTrue(modeNames.contains(Weapon.MODE_INFERNO),
-              "True Inferno munitions must offer an Inferno mode; modes are " + modeNames);
-        assertTrue(modeNames.contains(Weapon.MODE_FLAMER_DAMAGE),
-              "The platoon must still be able to fire ordinary SRM damage; modes are " + modeNames);
-        assertEquals(2, modeNames.size(), "Only Inferno and Damage apply here; modes are " + modeNames);
+        List<String> modeNames = modeNamesOf(launcher);
+        assertTrue(modeNames.isEmpty(), "The launcher should have no modes; modes are " + modeNames);
     }
 
     @Test
     @DisplayName("An incendiary weapon still offers Damage and Heat")
     void incendiaryWeaponKeepsDamageAndHeat() {
-        EquipmentType incendiary = EquipmentType.get("InfantryAutoGLInferno");
-        assertNotNull(incendiary, "The incendiary auto grenade launcher should be registered");
-        assertInstanceOf(InfantryWeapon.class, incendiary);
+        InfantryWeapon incendiary = weapon(INCENDIARY_GRENADE_LAUNCHER);
 
-        // Incendiary weapons carry no modes until a game hands them its options, unlike the Inferno launcher,
-        // which sets its own in the constructor.
-        ((InfantryWeapon) incendiary).adaptToGameOptions(new GameOptions());
+        // Incendiary weapons carry no modes until a game hands them its options.
+        incendiary.adaptToGameOptions(new GameOptions());
 
-        java.util.List<String> modeNames = modeNamesOf(incendiary);
-
-        assertTrue(modeNames.contains(Weapon.MODE_FLAMER_HEAT),
+        List<String> modeNames = modeNamesOf(incendiary);
+        assertTrue(modeNames.contains(Weapon.MODE_FLAMER_DAMAGE) && modeNames.contains(Weapon.MODE_FLAMER_HEAT),
               "Incendiary weapons convert damage to heat; modes are " + modeNames);
-        assertFalse(modeNames.contains(Weapon.MODE_INFERNO),
-              "Incendiary weapons carry no Inferno munitions; modes are " + modeNames);
     }
 
     @Test
@@ -118,16 +129,14 @@ class InfantryInfernoSRMHandlerTest {
         // own type does not have. Counting with getModesCount() and then reading from the type walks off the end
         // of the type's list, which crashed the right-click Modes menu on any platoon whose primary weapon has no
         // modes of its own.
-        InfantryWeapon primaryWithoutModes = (InfantryWeapon) EquipmentType.get("InfantryAssaultRifle");
-        InfantryWeapon secondaryWithModes = (InfantryWeapon) EquipmentType.get(INFERNO_SRM_LAUNCHER);
-        assertNotNull(primaryWithoutModes, "The assault rifle should be registered");
-        assertNotNull(secondaryWithModes, "The Inferno SRM launcher should be registered");
+        InfantryWeapon secondaryWithModes = weapon(INCENDIARY_GRENADE_LAUNCHER);
+        secondaryWithModes.adaptToGameOptions(new GameOptions());
 
         ConvInfantry platoon = new ConvInfantry();
-        InfantryWeaponMounted mount = new InfantryWeaponMounted(platoon, primaryWithoutModes, secondaryWithModes);
+        InfantryWeaponMounted mount = new InfantryWeaponMounted(platoon, weapon(ASSAULT_RIFLE), secondaryWithModes);
 
         assertTrue(mount.getModesCount() > 0,
-              "The mount should pick up the launcher's modes even though its own type has none");
+              "The mount should pick up the grenade launcher's modes even though its own type has none");
         for (int position = 0; position < mount.getModesCount(); position++) {
             final int index = position;
             assertNotNull(assertDoesNotThrow(() -> mount.getMode(index),
@@ -137,18 +146,49 @@ class InfantryInfernoSRMHandlerTest {
     }
 
     @Test
-    @DisplayName("The Inferno launcher keeps its modes whatever the infantry heat option says")
-    void infernoLauncherIgnoresTheInfantryHeatOption() {
-        EquipmentType launcher = EquipmentType.get(INFERNO_SRM_LAUNCHER);
-        assertInstanceOf(InfantryWeapon.class, launcher);
+    @DisplayName("A platoon with the Inferno launcher starts declared as Inferno")
+    void infernoLauncherPlatoonDefaultsToInferno() {
+        ConvInfantry platoon = platoon(weapon(ASSAULT_RIFLE), weapon(INFERNO_SRM_LAUNCHER));
 
-        // The base implementation strips or adds Damage/Heat here depending on the option. This weapon must not
-        // move, because its modes are about munitions rather than about converting damage to heat.
-        ((InfantryWeapon) launcher).adaptToGameOptions(null);
+        assertTrue(platoon.hasSrmLauncher(), "The Inferno launcher is an SRM launcher");
+        assertTrue(platoon.firesInfernoSrms(), "A launcher named for Inferno munitions should start loaded with them");
+    }
 
-        java.util.List<String> modeNames = modeNamesOf(launcher);
-        assertTrue(modeNames.contains(Weapon.MODE_INFERNO) && modeNames.contains(Weapon.MODE_FLAMER_DAMAGE),
-              "The Inferno/Damage pair must survive adaptToGameOptions(); modes are " + modeNames);
-        assertEquals(2, modeNames.size(), "No Heat mode should have been added; modes are " + modeNames);
+    @Test
+    @DisplayName("A platoon with an ordinary SRM launcher starts on standard and can declare Inferno")
+    void ordinarySrmPlatoonDefaultsToStandard() {
+        ConvInfantry platoon = platoon(weapon(ASSAULT_RIFLE), weapon(HEAVY_SRM_LAUNCHER));
+
+        assertTrue(platoon.hasSrmLauncher(), "The heavy SRM launcher is an SRM launcher");
+        assertFalse(platoon.firesInfernoSrms(), "An ordinary SRM platoon should start with standard munitions");
+
+        platoon.setInfernoSrmsDeclared(true);
+        assertTrue(platoon.firesInfernoSrms(), "Declaring Inferno before the battle should load Inferno munitions");
+    }
+
+    @Test
+    @DisplayName("A platoon without an SRM launcher never fires Inferno, even if declared")
+    void platoonWithoutSrmNeverFiresInferno() {
+        ConvInfantry platoon = platoon(weapon(ASSAULT_RIFLE), null);
+        platoon.setInfernoSrmsDeclared(true);
+
+        assertFalse(platoon.hasSrmLauncher(), "An assault rifle is not an SRM launcher");
+        assertFalse(platoon.firesInfernoSrms(), "Only SRM launchers carry Inferno munitions");
+    }
+
+    @Test
+    @DisplayName("The platoon's weapon mount counts as an SRM launcher when either of its weapons is one")
+    void combinedMountWithSrmIsAnSrmLauncherMount() {
+        ConvInfantry platoon = new ConvInfantry();
+        Mounted<?> rifleWithSrm = new InfantryWeaponMounted(platoon, weapon(ASSAULT_RIFLE),
+              weapon(HEAVY_SRM_LAUNCHER));
+        Mounted<?> srmWithRifle = new InfantryWeaponMounted(platoon, weapon(HEAVY_SRM_LAUNCHER),
+              weapon(ASSAULT_RIFLE));
+        Mounted<?> rifleOnly = Mounted.createMounted(platoon, weapon(ASSAULT_RIFLE));
+
+        assertTrue(InfantryWeapon.isSrmLauncherMount(rifleWithSrm), "SRM launcher as the other weapon");
+        assertTrue(InfantryWeapon.isSrmLauncherMount(srmWithRifle), "SRM launcher as the range weapon");
+        assertFalse(InfantryWeapon.isSrmLauncherMount(rifleOnly), "No SRM launcher on the mount");
+        assertFalse(InfantryWeapon.isSrmLauncherMount(null), "No mount at all");
     }
 }

@@ -439,6 +439,37 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aHeavyUnitDoesNotTakeALightUnitsRouteThroughABuilding() {
+        // the only way to the waypoint is through a CF 40 building: it bears a 20-ton unit, not an 85-ton one. Both
+        // move alike in every other way, so they shared one route field, and the heavy unit took the light one's
+        Coords building = NORTH_WAYPOINT.translated(SOUTH, 1);
+        for (int direction = 0; direction < 6; direction++) {
+            Coords around = NORTH_WAYPOINT.translated(direction);
+            if (!around.equals(building)) {
+                board.getHex(around).setLevel(CLIFF_LEVEL);
+                board.getHex(around).addTerrain(new Terrain(Terrains.IMPASSABLE, 1));
+            }
+        }
+        board.getHex(building).addTerrain(new Terrain(Terrains.BUILDING, 1));
+        board.getHex(building).addTerrain(new Terrain(Terrains.BLDG_CF, 40));
+        board.getHex(building).addTerrain(new Terrain(Terrains.BLDG_ELEV, 1));
+        Hex[] hexes = new Hex[WIDTH * HEIGHT];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = board.getHex(index % WIDTH, index / WIDTH);
+        }
+        board.newData(WIDTH, HEIGHT, hexes, null);
+        BipedMek light = loneUnit(30, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        light.setWeight(20.0);
+        BipedMek heavy = loneUnit(31, LEADER_HEX, UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        heavy.setWeight(85.0);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        game.setPhase(GamePhase.MOVEMENT);
+
+        assertTrue(follower.hasWalkingRoute(light));
+        assertFalse(follower.hasWalkingRoute(heavy), "the building would come down under it");
+    }
+
+    @Test
     void aLanceAtAPhaseLineHoldsUntilEveryLanceOnItIsIn() {
         // HammerGS: lances of different speeds arrive in step - the fast one holds at the phase line for the slow one
         // (2026-10-02)

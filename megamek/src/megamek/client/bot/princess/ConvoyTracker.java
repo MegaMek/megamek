@@ -46,6 +46,7 @@ import megamek.common.board.Coords;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.orders.FormationOrder;
 import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.units.Entity;
 
 /**
@@ -247,7 +248,7 @@ final class ConvoyTracker {
      * @return the facing toward its convoy's exit edge, or empty for a unit that is not in a convoy
      */
     static OptionalInt exitFacing(Entity unit, Coords position, Board board) {
-        LanceRole role = unit.getLanceRole();
+        LanceRole role = LanceRoles.effectiveRole(unit);
         if ((role == null) || !role.isConvoy()) {
             return OptionalInt.empty();
         }
@@ -279,9 +280,9 @@ final class ConvoyTracker {
             int removal = unit.getRemovalCondition();
             boolean hasLeft = (removal == IEntityRemovalConditions.REMOVE_IN_RETREAT)
                   || (removal == IEntityRemovalConditions.REMOVE_PUSHED);
-            if ((unit.getForceId() == convoyForceId) && hasLeft && (unit.getLanceRole() != null)
-                  && unit.getLanceRole().isConvoy()) {
-                return Optional.of(unit.getLanceRole().getExitEdge());
+            LanceRole role = hasLeft ? LanceRoles.effectiveRole(unit) : null;
+            if ((unit.getForceId() == convoyForceId) && (role != null) && role.isConvoy()) {
+                return Optional.of(role.getExitEdge());
             }
         }
         return Optional.empty();

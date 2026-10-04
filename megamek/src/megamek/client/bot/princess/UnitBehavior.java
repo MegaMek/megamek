@@ -68,6 +68,9 @@ public class UnitBehavior {
     }
 
     private final Map<Integer, BehaviorType> entityBehaviors = new HashMap<>();
+    // the active waypoint of the unit whose moves are being ranked, worked out once for all of them
+    private final OrderSnapshot rankingSnapshot = new OrderSnapshot();
+    private Princess rankedBy;
 
     /**
      * Worker function that calculates a unit's desired behavior.
@@ -107,7 +110,7 @@ public class UnitBehavior {
                   && !owner.getUnitOrdersFollower().canReach(entity, getWaypointForEntity(entity).get())) {
                 owner.getUnitOrdersFollower().dropUnreachableWaypoint(entity);
             }
-            boolean isConvoy = (entity.getLanceRole() != null) && entity.getLanceRole().isConvoy();
+            boolean isConvoy = owner.getUnitOrdersFollower().isConvoy(entity);
             if (owner.getUnitOrdersFollower().isAtRouteEnd(entity) && !isConvoy
                   && owner.getUnitOrdersFollower().isEnemyInRange(entity)) {
                 // holding the end of its route, with an enemy in range: fight, then the route end pulls it back
@@ -221,6 +224,37 @@ public class UnitBehavior {
      * @return the unit's current waypoint when it is following its route, otherwise empty
      */
     public Optional<Coords> getActiveWaypoint(Entity entity, Princess owner) {
+        if (rankingSnapshot.holds(entity)) {
+            return rankingSnapshot.activeWaypoint();
+        }
+        return workOutActiveWaypoint(entity, owner);
+    }
+
+    /**
+     * Works out a unit's active waypoint once before its moves are ranked, and answers with it until
+     * {@link #endRanking()}: the path ranker asks for it four or five times for every move it scores.
+     *
+     * @param entity the unit about to have its moves ranked
+     * @param owner  the bot that owns the unit
+     */
+    public void beginRanking(Entity entity, Princess owner) {
+        rankingSnapshot.clear();
+        owner.getUnitOrdersFollower().setRanking(false);
+        rankingSnapshot.take(entity, workOutActiveWaypoint(entity, owner));
+        owner.getUnitOrdersFollower().setRanking(true);
+        rankedBy = owner;
+    }
+
+    /** Ends the waypoint snapshot {@link #beginRanking} took, once the unit's moves are ranked. */
+    public void endRanking() {
+        rankingSnapshot.clear();
+        if (rankedBy != null) {
+            rankedBy.getUnitOrdersFollower().setRanking(false);
+            rankedBy = null;
+        }
+    }
+
+    private Optional<Coords> workOutActiveWaypoint(Entity entity, Princess owner) {
         if (entity.getForcedWithdrawalOrder() == ForcedWithdrawalOrder.WITHDRAW) {
             return Optional.empty();
         }

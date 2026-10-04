@@ -173,6 +173,37 @@ class RoutePlannerTest {
     }
 
     @Test
+    void aLegIsPlannedBeforeTheFirstMove() {
+        // planned only after movement, a lance given its order before round 1 drove round 1 with no plan
+        Tank truck = truck();
+        WaypointOrder planned = WaypointOrder.PASS_THROUGH.withRoutePlan(WaypointOrder.RoutePlan.PLAN_LEG);
+        truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(TARGET), List.of(planned)));
+
+        princess.getUnitOrdersFollower().planRoutes();
+
+        assertTrue(truck.getUnitOrders().getRoute().size() > 1, "turning points before the first move");
+        assertTrue(truck.getUnitOrders().getWaypointOrder(0).isPlannedTurn());
+    }
+
+    @Test
+    void aPausedLanceIsNotPlannedOutOfItsPause() {
+        // a planned leg is sent as a new route, and a new route clears a pause: planning a paused truck let it drive on
+        Tank truck = truck();
+        WaypointOrder planned = WaypointOrder.PASS_THROUGH.withRoutePlan(WaypointOrder.RoutePlan.PLAN_LEG);
+        truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(TARGET), List.of(planned)).withPaused(true));
+
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertTrue(truck.getUnitOrders().isPaused());
+        assertEquals(List.of(TARGET), truck.getUnitOrders().getRoute());
+
+        truck.setUnitOrders(truck.getUnitOrders().withPaused(false));
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertTrue(truck.getUnitOrders().getRoute().size() > 1, "planned once it moves on");
+    }
+
+    @Test
     void aLegNotSetToBePlannedIsLeftAlone() {
         Tank truck = truck();
         truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(TARGET)));

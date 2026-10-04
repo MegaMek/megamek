@@ -44,6 +44,7 @@ import megamek.common.orders.FormationOrder;
 import megamek.common.orders.FormationPace;
 import megamek.common.orders.FormationShape;
 import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.RouteStyle;
 import megamek.common.orders.UnitOrderAction;
@@ -224,7 +225,7 @@ final class MoveOrderCommands {
     static List<String> roleCommands(List<Entity> units, @Nullable LanceRole role) {
         List<String> commands = new ArrayList<>();
         for (Entity unit : units) {
-            if (!Objects.equals(unit.getLanceRole(), role)) {
+            if (!Objects.equals(LanceRoles.effectiveRole(unit), role)) {
                 commands.add(UnitOrderCommand.commandText(unit.getId(), UnitOrderAction.SET_ROLE,
                       UnitOrderCommand.roleArgument(role)));
             }

@@ -214,9 +214,9 @@ class LanceRoleEditorTest {
         LanceRole convoy = LanceRole.convoy(OffBoardDirection.NORTH);
         lances.supply().get(0).setLanceRole(convoy);
 
-        assertEquals(convoy, lances.supply().get(1).getLanceRole());
-        assertNull(lances.supply().get(1).getOwnLanceRole());
-        assertNull(lances.fire().get(0).getLanceRole(), "another lance does not take it");
+        assertEquals(convoy, LanceRoles.effectiveRole(lances.supply().get(1)));
+        assertNull(lances.supply().get(1).getLanceRole());
+        assertNull(LanceRoles.effectiveRole(lances.fire().get(0)), "another lance does not take it");
     }
 
     @Test

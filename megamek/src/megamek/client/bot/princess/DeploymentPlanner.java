@@ -123,7 +123,7 @@ class DeploymentPlanner {
 
     private Optional<DeploymentGoal> deploymentGoal(Entity unit) {
         Entity guide = unit;
-        LanceRole role = unit.getLanceRole();
+        LanceRole role = follower.roleOf(unit);
         if ((role != null) && role.isEscort()) {
             guide = follower.convoys().lead(role.getConvoyForceId()).orElse(unit);
         } else if (unit.getUnitOrders().getFormation().isPresent()) {
@@ -138,7 +138,7 @@ class DeploymentPlanner {
             CardinalEdge edge = UnitOrdersFollower.toCardinalEdge(guide.getUnitOrders().getEdge());
             return Optional.of(new DeploymentGoal(null, edge, "the " + edge + " edge"));
         }
-        LanceRole guideRole = guide.getLanceRole();
+        LanceRole guideRole = follower.roleOf(guide);
         if ((guideRole != null) && guideRole.isConvoy()) {
             CardinalEdge edge = UnitOrdersFollower.toCardinalEdge(guideRole.getExitEdge());
             return Optional.of(new DeploymentGoal(null, edge, "the convoy's " + edge + " exit edge"));

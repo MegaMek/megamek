@@ -405,7 +405,7 @@ class FormationMarch {
      */
     void exitWithFormation(Entity entity, Coords lastWaypoint) {
         // a convoy's exit hex sits on its exit edge, but a corner is as near another; it leaves by its own
-        OffBoardDirection edge = UnitOrdersFollower.isConvoy(entity) ? entity.getLanceRole().getExitEdge()
+        OffBoardDirection edge = follower.isConvoy(entity) ? follower.roleOf(entity).getExitEdge()
               : nearestEdge(entity, lastWaypoint);
         List<Entity> leaving = new ArrayList<>(List.of(entity));
         Optional<FormationOrder> formation = follower.activeFormation(entity);

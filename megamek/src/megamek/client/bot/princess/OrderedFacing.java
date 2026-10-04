@@ -146,11 +146,12 @@ class OrderedFacing {
             if (isInRearArc(orderedFacing, position, threat)) {
                 // never the rear arc into the line of fire (HammerGS, 2026-09-27): a threat squarely behind the route
                 // facing turns the unit as the bot would; one off to a side leaves the route facing as it is
-                LOGGER.info("[BotOrders] {} (ID {}): the threat at {} would be behind facing {}; turning to it",
+                // asked for every move scored: trace only
+                LOGGER.trace("[BotOrders] {} (ID {}): the threat at {} would be behind facing {}; turning to it",
                       entity.getDisplayName(), entity.getId(), threat.getBoardNum(), orderedFacing);
                 return UnitOrders.FACING_AUTO;
             }
-            LOGGER.debug("[BotOrders] {} (ID {}): keeps the route facing {} on its way", entity.getDisplayName(),
+            LOGGER.trace("[BotOrders] {} (ID {}): keeps the route facing {} on its way", entity.getDisplayName(),
                   entity.getId(), orderedFacing);
             return orderedFacing;
         }

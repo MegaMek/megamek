@@ -153,7 +153,7 @@ class FireReaction {
                   leader.getUnitOrders().getFormation().get().getLeaderId());
             boolean isHit = isLanceHit(leader);
             boolean isBreakAndFight = formation.isPresent() && (formation.get().getContactRule() == ContactRule.BREAK);
-            if (fightState.isEmpty() && isBreakAndFight && isHit && UnitOrdersFollower.isConvoy(leader)) {
+            if (fightState.isEmpty() && isBreakAndFight && isHit && follower.isConvoy(leader)) {
                 // a convoy pushes on whatever its legs are set to: guarding it is its escorts' job (HammerGS,
                 // 2026-10-02)
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: CONVOY_PUSHES_ON - the convoy was hit; a convoy never "

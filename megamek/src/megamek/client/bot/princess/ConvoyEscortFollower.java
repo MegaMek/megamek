@@ -105,7 +105,7 @@ class ConvoyEscortFollower {
      * @param entity a unit of the bot
      */
     void routeConvoyOut(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+        LanceRole role = follower.roleOf(entity);
         UnitOrders orders = entity.getUnitOrders();
         if ((role == null) || !role.isConvoy() || role.isWaitingAtRouteEnd()
               || follower.roster().isFormationFollower(entity) || entity.isAirborne()
@@ -187,7 +187,7 @@ class ConvoyEscortFollower {
      * @return {@code true} if the unit is a convoy waiting for orders
      */
     boolean isConvoyWaitingForOrders(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+        LanceRole role = follower.roleOf(entity);
         return (role != null) && role.isConvoy() && role.isWaitingAtRouteEnd() && !entity.getUnitOrders().hasRoute()
               && (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE)
               && !follower.roster().isFormationFollower(entity);
@@ -205,7 +205,7 @@ class ConvoyEscortFollower {
      * @return the place, or empty for a unit that is not escorting a convoy on the board
      */
     public Optional<Coords> getEscortPlace(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+        LanceRole role = follower.roleOf(entity);
         if ((role == null) || !role.isEscort() || (entity.getPosition() == null)) {
             return Optional.empty();
         }
@@ -301,7 +301,7 @@ class ConvoyEscortFollower {
      * @return the place, or empty for a unit that is not an escort, or whose convoy has not deployed yet
      */
     public Optional<Coords> getEscortDeploymentPlace(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+        LanceRole role = follower.roleOf(entity);
         if ((role == null) || !role.isEscort()) {
             return Optional.empty();
         }
@@ -315,7 +315,7 @@ class ConvoyEscortFollower {
         int deployed = 0;
         for (Entity unit : owner.getGame().getEntitiesVector()) {
             if ((unit.getId() != entity.getId()) && (unit.getForceId() == entity.getForceId())
-                  && (unit.getLanceRole() != null) && unit.getLanceRole().isEscort()
+                  && (follower.roleOf(unit) != null) && follower.roleOf(unit).isEscort()
                   && ConvoyTracker.isOnBoardAndAlive(unit)) {
                 deployed++;
             }
@@ -333,7 +333,7 @@ class ConvoyEscortFollower {
     private List<Entity> escortsOf(Entity escort, LanceRole role) {
         List<Entity> escorts = new ArrayList<>();
         for (Entity unit : owner.getGame().getEntitiesVector()) {
-            LanceRole unitRole = unit.getLanceRole();
+            LanceRole unitRole = follower.roleOf(unit);
             if ((unit.getForceId() == escort.getForceId()) && (unitRole != null) && unitRole.isEscort()
                   && (unitRole.getConvoyForceId() == role.getConvoyForceId()) && ConvoyTracker.isOnBoardAndAlive(unit)
                   && (unit.getBoardId() == escort.getBoardId())) {
@@ -353,7 +353,7 @@ class ConvoyEscortFollower {
      *       unit not escorting a convoy on the board
      */
     OptionalInt escortFacing(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+        LanceRole role = follower.roleOf(entity);
         if ((role == null) || !role.isEscort() || !isEscorting(entity)) {
             return OptionalInt.empty();
         }
@@ -368,7 +368,7 @@ class ConvoyEscortFollower {
      * @return the edge an escort set to Follow leaves by: its convoy's, once the convoy has left the board by it
      */
     Optional<OffBoardDirection> escortExitEdge(Entity entity) {
-        LanceRole role = entity.getLanceRole();
+        LanceRole role = follower.roleOf(entity);
         if ((role == null) || !role.isEscort() || (role.getWhenConvoyGone() != LanceRole.WhenConvoyGone.FOLLOW)
               || (entity.getPosition() == null) || !follower.convoys().unitsOnBoard(role.getConvoyForceId(),
               entity.getBoardId()).isEmpty()) {

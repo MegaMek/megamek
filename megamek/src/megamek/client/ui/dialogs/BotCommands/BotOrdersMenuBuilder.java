@@ -33,6 +33,7 @@
 package megamek.client.ui.dialogs.BotCommands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -234,16 +235,17 @@ public class BotOrdersMenuBuilder {
         }
         groups.add(new OrderGroup(Messages.getString("BotCommandPanel.Orders.allUnits", units.size()),
               idsOf(units)));
+        // a lance goes by the units in it, as in the lobby: one the player built and gave to the bot still belongs to
+        // the player in the force tree, but its units are the bot's, and it was missing from this menu
+        Map<Integer, List<Integer>> unitIdsByLance = new HashMap<>();
+        for (Entity unit : units) {
+            Force lance = game.getForces().getForce(unit);
+            if (lance != null) {
+                unitIdsByLance.computeIfAbsent(lance.getId(), lanceId -> new ArrayList<>()).add(unit.getId());
+            }
+        }
         for (Force force : game.getForces().getAllForces()) {
-            if (force.getOwnerId() != botPlayer.getId()) {
-                continue;
-            }
-            List<Integer> lanceUnitIds = new ArrayList<>();
-            for (Entity unit : units) {
-                if (force.containsEntity(unit.getId())) {
-                    lanceUnitIds.add(unit.getId());
-                }
-            }
+            List<Integer> lanceUnitIds = unitIdsByLance.getOrDefault(force.getId(), List.of());
             if (!lanceUnitIds.isEmpty() && (lanceUnitIds.size() < units.size())) {
                 groups.add(new OrderGroup(Messages.getString("BotCommandPanel.Orders.lance", force.getName(),
                       lanceUnitIds.size()), lanceUnitIds));

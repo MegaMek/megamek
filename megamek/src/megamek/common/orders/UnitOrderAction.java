@@ -91,7 +91,12 @@ public enum UnitOrderAction {
     /** The lance's fight is over: it holds where it is, keeping its route, until the Resume order. */
     FIGHT_OVER,
     /** Sets or clears the lance's role, a convoy or an escort; the orders themselves are left as they are. */
-    SET_ROLE;
+    SET_ROLE,
+    /**
+     * Drops the route and holds the unit where it is until given a new route or the Resume order. Its formation,
+     * facings and priority stay, so a lance held this way still moves as one afterwards (HammerGS, 2026-10-04).
+     */
+    HOLD_POSITION;
 
     /**
      * Returns the orders after this action.
@@ -194,6 +199,7 @@ public enum UnitOrderAction {
             }
             case FORMATION_OFF -> current.withFormation(null);
             case SET_ROLE -> current;
+            case HOLD_POSITION -> current.withRoute(List.of()).withPaused(true);
             case BREAK_TO_FIGHT -> current.withFightState(FightState.FIGHTING);
             case FIGHT_OVER -> current.withFightState(FightState.AWAITING_ORDERS);
         };

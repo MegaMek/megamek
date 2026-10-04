@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,6 +43,6 @@ import megamek.server.commands.arguments.Arguments;
 public class ClearAllWaypointsCommand implements ChatCommand {
     @Override
     public void execute(Princess princess, Arguments arguments) {
-        princess.getUnitBehaviorTracker().clearWaypoints();
+        princess.getUnitBehaviorTracker().clearWaypoints(princess);
     }
 }

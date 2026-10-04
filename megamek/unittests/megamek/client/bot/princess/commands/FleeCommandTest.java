@@ -44,6 +44,7 @@ import static org.mockito.Mockito.when;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.Princess;
+import megamek.client.bot.princess.UnitOrdersFollower;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.ArgumentsParser;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,6 +62,7 @@ class FleeCommandTest {
     private FleeCommand fleeCommand;
     private Princess mockPrincess;
     private BehaviorSettings behaviorSettings;
+    private UnitOrdersFollower followerMock;
 
     @BeforeEach
     void beforeEach() {
@@ -68,6 +70,8 @@ class FleeCommandTest {
         behaviorSettings = new BehaviorSettings();
         mockPrincess = mock(Princess.class);
         when(mockPrincess.getBehaviorSettings()).thenReturn(behaviorSettings);
+        followerMock = mock(UnitOrdersFollower.class);
+        when(mockPrincess.getUnitOrdersFollower()).thenReturn(followerMock);
     }
 
     private Arguments parseArguments(String edgeArgument) {
@@ -84,6 +88,8 @@ class FleeCommandTest {
               "Flee order must enable auto-flee or units will not retreat");
         verify(mockPrincess).setFallBack(eq(true), anyString());
         verify(mockPrincess).setFleeBoard(eq(true), anyString());
+        // every unit carries the flee as an Exit-by-edge order, replacing its route
+        verify(followerMock).orderAllToExit(CardinalEdge.NORTH);
     }
 
     @Test
@@ -118,5 +124,6 @@ class FleeCommandTest {
         assertFalse(behaviorSettings.shouldAutoFlee(), "Canceling a flee order must disable auto-flee");
         verify(mockPrincess).setFallBack(eq(false), anyString());
         verify(mockPrincess).setFleeBoard(eq(false), anyString());
+        verify(followerMock).cancelExitOrders();
     }
 }

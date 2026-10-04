@@ -48,9 +48,9 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Each formation's leg to its leader's next flag, worked out once when the leg starts (HammerGS, 2026-10-01): which unit
- * takes which place at the flag, by least travel then fewest crossings, and whether the way runs through a town. On a
- * town leg the lance breaks formation, each unit takes its own street to its place, held together by a leash of
+ * Each formation's leg to its leader's next flag, worked out once when the leg starts (HammerGS, 2026-10-01): which
+ * unit takes which place at the flag, by least travel then fewest crossings, and whether the way runs through a town.
+ * On a town leg the lance breaks formation, each unit takes its own street to its place, held together by a leash of
  * weapon range, the slowest keeping to the open lanes and units waiting their turn at a narrow door. Part of
  * {@link UnitOrdersFollower}.
  */
@@ -97,6 +97,10 @@ class FormationLegs {
         this.follower = follower;
     }
 
+    private int currentRound() {
+        return follower.currentRound();
+    }
+
     /**
      * Works out a formation's leg to its leader's next flag once, when the leg starts or the lance changes: whether the
      * way runs through a town and, if so, which unit takes which place at the flag. A Column is already single file
@@ -111,14 +115,14 @@ class FormationLegs {
         }
         FormationLeg cached = formationLegs.get(formationId);
         if ((cached != null) && cached.anchor().equals(anchor) && cached.memberIds().equals(memberIds)) {
-            if (cached.round() != follower.currentRound()) {
+            if (cached.round() != currentRound()) {
                 return repairStillComing(cached, members, formationId);
             }
             return cached;
         }
         Map<Integer, Coords> spots = pairPlaces(members, anchor, heading, formation);
         Map<Integer, Integer> places = placeNumbers(spots, members, anchor, heading, formation);
-        FormationLeg leg = new FormationLeg(anchor, memberIds, false, spots, places, follower.currentRound());
+        FormationLeg leg = new FormationLeg(anchor, memberIds, false, spots, places, currentRound());
         Board board = owner.getGame().getBoard(leader);
         if ((board != null) && (formation.getShape() != FormationShape.COLUMN)) {
             int mostTownHexes = 0;
@@ -130,15 +134,15 @@ class FormationLegs {
                 }
             }
             if (mostTownHexes >= TownLegPlanner.TOWN_HEXES) {
-                leg = new FormationLeg(anchor, memberIds, true, spots, places, follower.currentRound());
+                leg = new FormationLeg(anchor, memberIds, true, spots, places, currentRound());
             }
             LOGGER.info("[BotOrders] {} (ID {}) round {}: {} to {} - {} hex(es) in or beside buildings on the way "
-                        + "(a town leg from {}){}", leader.getDisplayName(), leader.getId(), follower.currentRound(),
+                        + "(a town leg from {}){}", leader.getDisplayName(), leader.getId(), currentRound(),
                   leg.isTown() ? "TOWN_LEG" : "OPEN_LEG", anchor.getBoardNum(), mostTownHexes,
                   TownLegPlanner.TOWN_HEXES, "; places " + describeSpots(leg.spots()));
         } else {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: COLUMN_LEG to {}; places {}", leader.getDisplayName(),
-                  leader.getId(), follower.currentRound(), anchor.getBoardNum(), describeSpots(leg.spots()));
+                  leader.getId(), currentRound(), anchor.getBoardNum(), describeSpots(leg.spots()));
         }
         formationLegs.put(formationId, leg);
         return leg;
@@ -153,7 +157,7 @@ class FormationLegs {
         for (int place = 1; place < members.size(); place++) {
             Coords ideal = FormationPlanner.idealSlot(anchor, heading, formation.getShape(), formation.getSpacing(),
                   place);
-            Coords settled = (board == null) ? null : follower.settle(members.get(place), board, anchor, ideal);
+            Coords settled = (board == null) ? null : follower.slots().settle(members.get(place), board, anchor, ideal);
             slots.add((settled == null) ? ideal : settled);
         }
         return slots;
@@ -180,7 +184,8 @@ class FormationLegs {
      */
     private int turnsMovement(Entity unit) {
         Optional<FormationOrder> formation = unit.getUnitOrders().getFormation();
-        return FormationMarch.paceMovementPoints(unit, formation.map(FormationOrder::getPace).orElse(FormationPace.WALK));
+        FormationPace pace = formation.map(FormationOrder::getPace).orElse(FormationPace.WALK);
+        return FormationMarch.paceMovementPoints(unit, pace);
     }
 
     /**
@@ -258,12 +263,12 @@ class FormationLegs {
                       ? ("the last in by turn " + lastArrivalAfter + " instead of " + lastArrivalNow)
                       : ("the last in by the same turn, " + (costNow - costAfter) + " MP less in all");
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PLACES - the units still coming change places, "
-                            + "{}: {}", members.get(0).getDisplayName(), members.get(0).getId(), follower.currentRound(), gain,
+                            + "{}: {}", members.get(0).getDisplayName(), members.get(0).getId(), currentRound(), gain,
                       describeSpots(pairing));
             }
         }
         FormationLeg repaired = new FormationLeg(leg.anchor(), leg.memberIds(), leg.isTown(), spots, places,
-              follower.currentRound());
+              currentRound());
         formationLegs.put(formationId, repaired);
         return repaired;
     }
@@ -298,9 +303,9 @@ class FormationLegs {
         if (board == null) {
             return Map.of();
         }
-        if (narrowHexesRound != follower.currentRound()) {
+        if (narrowHexesRound != currentRound()) {
             narrowHexesByBoard.clear();
-            narrowHexesRound = follower.currentRound();
+            narrowHexesRound = currentRound();
         }
         return narrowHexesByBoard.computeIfAbsent(unit.getBoardId(), ignored -> TownLegPlanner.narrowHexes(board));
     }
@@ -428,7 +433,8 @@ class FormationLegs {
             if ((spot == null) || (position == null) || position.equals(spot)) {
                 continue;
             }
-            List<Coords> way = TownLegPlanner.wayTo(board, position, spot, hex -> follower.distances().routeCostFrom(member, spot, hex));
+            List<Coords> way = TownLegPlanner.wayTo(board, position, spot,
+                  hex -> follower.distances().routeCostFrom(member, spot, hex));
             Coords door = TownLegPlanner.doorOn(board, way);
             if (door != null) {
                 doors.put(member.getId(), door);
@@ -454,14 +460,15 @@ class FormationLegs {
         if (ahead.isEmpty()) {
             if (stepsToDoor.values().size() > 1) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_DOOR - first through the door at {}",
-                      entity.getDisplayName(), entity.getId(), follower.currentRound(), ownDoor.getBoardNum());
+                      entity.getDisplayName(), entity.getId(), currentRound(), ownDoor.getBoardNum());
             }
             return paths;
         }
         List<MovePath> kept = TownLegPlanner.keepPlaceInStack(paths, ownDoor, ahead.size());
-        LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_DOOR - number {} in the stack for the door at {}, behind {}; "
-                    + "{} of {} moves kept", entity.getDisplayName(), entity.getId(), follower.currentRound(), ahead.size() + 1,
-              ownDoor.getBoardNum(), ahead.get(ahead.size() - 1).getShortName(), kept.size(), paths.size());
+        LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_DOOR - number {} in the stack for the door at {}, behind "
+                    + "{}; {} of {} moves kept", entity.getDisplayName(), entity.getId(), currentRound(),
+              ahead.size() + 1, ownDoor.getBoardNum(), ahead.get(ahead.size() - 1).getShortName(), kept.size(),
+              paths.size());
         return kept;
     }
 
@@ -478,7 +485,7 @@ class FormationLegs {
         int leash = TownLegPlanner.leash(entity);
         List<MovePath> kept = TownLegPlanner.keepWithinReach(entity, paths, friends, leash);
         LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_LEASH - within {} hexes of a friend, {} of {} moves kept",
-              entity.getDisplayName(), entity.getId(), follower.currentRound(), leash, kept.size(), paths.size());
+              entity.getDisplayName(), entity.getId(), currentRound(), leash, kept.size(), paths.size());
         return kept;
     }
 }

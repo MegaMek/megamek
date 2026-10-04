@@ -45,8 +45,8 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Which way a unit on orders faces (HammerGS, 2026-09-27): the facing a player set on a waypoint or for the route,
- * the way along the route toward the next flag, an escort facing its convoy's way, how far a torso twist or turret may
+ * Which way a unit on orders faces (HammerGS, 2026-09-27): the facing a player set on a waypoint or for the route, the
+ * way along the route toward the next flag, an escort facing its convoy's way, how far a torso twist or turret may
  * cover the rest, and when the facing gives way to a threat behind. Part of {@link UnitOrdersFollower}.
  */
 class OrderedFacing {
@@ -86,7 +86,7 @@ class OrderedFacing {
         if (facing == UnitOrders.FACING_AUTO) {
             // an escort faces the way its convoy is going, toward the convoy's next waypoint, as the convoy itself
             // does (HammerGS, 2026-10-03)
-            OptionalInt escortFacing = follower.escortFacing(entity);
+            OptionalInt escortFacing = follower.convoyEscorts().escortFacing(entity);
             if (escortFacing.isPresent()) {
                 return escortFacing.getAsInt();
             }
@@ -136,7 +136,8 @@ class OrderedFacing {
      */
     public int facingThatStandsFor(Entity entity, int orderedFacing, Coords position, @Nullable Coords threat) {
         // an escort keeping its place round a moving convoy is on its way too
-        boolean isOnItsWay = (entity.getUnitOrders().hasRoute() && !follower.isAtRouteEnd(entity)) || follower.isEscorting(entity);
+        boolean isOnItsWay = (entity.getUnitOrders().hasRoute() && !follower.isAtRouteEnd(entity))
+              || follower.convoyEscorts().isEscorting(entity);
         if (isOnItsWay && (orderedFacing != UnitOrders.FACING_AUTO) && isTurningToFire(entity)) {
             // Turn and fire: hit last turn, the unit turns to bring its attackers into its front arc
             return facingThatStands(orderedFacing, position, threat);
@@ -228,7 +229,7 @@ class OrderedFacing {
     int twistAllowance(Entity entity, Coords finalHex) {
         UnitOrders orders = entity.getUnitOrders();
         List<Coords> route = orders.getRoute();
-        if (follower.isEscorting(entity)) {
+        if (follower.convoyEscorts().isEscorting(entity)) {
             // an escort moves with its convoy and faces the convoy's way with its legs, as the convoy does
             return 0;
         }
@@ -263,7 +264,8 @@ class OrderedFacing {
         if (entity.getPosition() == null) {
             return UnitOrders.FACING_AUTO;
         }
-        int ordered = follower.isHolding(entity) ? follower.stoppedFacing(entity) : playerOrderedFacing(entity, entity.getPosition());
+        int ordered = follower.isHolding(entity) ? follower.stoppedFacing(entity)
+              : playerOrderedFacing(entity, entity.getPosition());
         boolean canReach = (ordered != UnitOrders.FACING_AUTO) && (ordered != entity.getSecondaryFacing())
               && entity.canChangeSecondaryFacing() && entity.isValidSecondaryFacing(ordered);
         return canReach ? ordered : UnitOrders.FACING_AUTO;
@@ -275,16 +277,16 @@ class OrderedFacing {
      *       move ends on it; {@link UnitOrders#FACING_AUTO} when there is none
      */
     private int facingAlongRoute(Entity entity, Coords finalHex) {
-        Optional<Coords> townSpot = follower.townSpotOf(entity);
+        Optional<Coords> townSpot = follower.townLegs().townSpotOf(entity);
         if (townSpot.isPresent() && !townSpot.get().equals(finalHex)) {
             // through a town each unit faces the way its own street goes, not the formation's heading
             return wayOnToward(entity, finalHex, townSpot.get());
         }
-        int formationFacing = follower.formationFacing(entity);
+        int formationFacing = follower.slots().formationFacing(entity);
         if (formationFacing != UnitOrders.FACING_AUTO) {
             return formationFacing;
         }
-        Entity routeOwner = follower.formationLeaderOf(entity).orElse(entity);
+        Entity routeOwner = follower.roster().formationLeaderOf(entity).orElse(entity);
         List<Coords> route = routeOwner.getUnitOrders().getRoute();
         if (route.isEmpty()) {
             return UnitOrders.FACING_AUTO;

@@ -69,7 +69,9 @@ class FormationSlots {
     /** The hexes of a leader's walk a Column remembers, enough for a long column at wide spacing. */
     private static final int MAXIMUM_TRAIL_LENGTH = 48;
 
-    /** The longest move filled in hex by hex; anything longer, such as a unit set down elsewhere, restarts the trail. */
+    /**
+     * The longest move filled in hex by hex; anything longer, such as a unit set down elsewhere, restarts the trail.
+     */
     private static final int MAXIMUM_TRAIL_GAP = 20;
 
     /** The least extra movement a slot may cost over the unit's column place before the unit folds into the column. */
@@ -109,6 +111,10 @@ class FormationSlots {
     FormationSlots(Princess owner, UnitOrdersFollower follower) {
         this.owner = owner;
         this.follower = follower;
+    }
+
+    private int currentRound() {
+        return follower.currentRound();
     }
 
     /**
@@ -180,7 +186,7 @@ class FormationSlots {
         }
         if ((cached != null) && (cached.slotIndex() != slotIndex)) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: moves from place {} to place {} of {} in the formation",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound(), cached.slotIndex(), slotIndex,
+                  entity.getDisplayName(), entity.getId(), currentRound(), cached.slotIndex(), slotIndex,
                   members.size());
         }
         Coords slot = chooseSlot(entity, anchor, heading, formation.get(), slotIndex);
@@ -212,7 +218,7 @@ class FormationSlots {
         Coords moving = (board == null) ? null : settle(entity, board, leaderPosition, ideal);
         Coords chosen = (moving == null) ? slot : moving;
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_BEHIND - {} slot {} at {} beside {}, which is still "
-                    + "on its way to {}", entity.getDisplayName(), entity.getId(), follower.currentRound(), formation.getShape(),
+                    + "on its way to {}", entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(),
               slotIndex, chosen.getBoardNum(), leader.getDisplayName(), flag.getBoardNum());
         movingSlotChoices.put(entity.getId(), new SlotChoice(leaderPosition, heading, slotIndex, 0, chosen));
         return chosen;
@@ -278,11 +284,11 @@ class FormationSlots {
               || (fromHere >= fromPlace)) {
             return place;
         }
-        Integer lastLogged = heldPastPlaceRounds.put(entity.getId(), follower.currentRound());
-        if ((lastLogged == null) || (lastLogged != follower.currentRound())) {
-            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_HOLD - already past its column place at {}; holding "
-                        + "at {} for the column to come up", entity.getDisplayName(), entity.getId(), follower.currentRound(),
-                  place.getBoardNum(), position.getBoardNum());
+        Integer lastLogged = heldPastPlaceRounds.put(entity.getId(), currentRound());
+        if ((lastLogged == null) || (lastLogged != currentRound())) {
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_HOLD - already past its column place at {}; "
+                        + "holding at {} for the column to come up", entity.getDisplayName(), entity.getId(),
+                  currentRound(), place.getBoardNum(), position.getBoardNum());
         }
         return position;
     }
@@ -324,7 +330,7 @@ class FormationSlots {
         Coords settled = settle(entity, board, leader.getPosition(), ideal);
         if (settled != null) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_TRAIL - column place {} at {}, {} hex(es) behind "
-                        + "{} along its path", entity.getDisplayName(), entity.getId(), follower.currentRound(), slotIndex,
+                        + "{} along its path", entity.getDisplayName(), entity.getId(), currentRound(), slotIndex,
                   settled.getBoardNum(), hexesBack, leader.getDisplayName());
             movingSlotChoices.put(entity.getId(), new SlotChoice(leader.getPosition(), TRAIL_HEADING, slotIndex, 0,
                   settled));
@@ -414,12 +420,12 @@ class FormationSlots {
               FormationShape.COLUMN, formation.getSpacing(), slotIndex));
         if ((settled != null) && !isFarHarderThan(entity, settled, columnSlot)) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_SLOT - {} slot {} at {} (around {}, facing {})",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound(), formation.getShape(), slotIndex,
+                  entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
                   settled.getBoardNum(), anchor.getBoardNum(), heading);
             return settled;
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FOLD - {} slot {} blocked, folding to column at {}",
-              entity.getDisplayName(), entity.getId(), follower.currentRound(), formation.getShape(), slotIndex,
+              entity.getDisplayName(), entity.getId(), currentRound(), formation.getShape(), slotIndex,
               (columnSlot == null) ? anchor.getBoardNum() : columnSlot.getBoardNum());
         owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.FOLD, follower.navLabel(entity, anchor));
         return (columnSlot == null) ? anchor : columnSlot;
@@ -446,8 +452,8 @@ class FormationSlots {
         int margin = Math.max(MINIMUM_FOLD_MARGIN_MP, entity.getWalkMP());
         boolean isFarHarder = (toSlot == WaypointDistanceField.UNREACHABLE) || (toSlot > toColumn + margin);
         if (isFarHarder) {
-            LOGGER.info("[BotOrders] {} (ID {}) round {}: slot {} costs {} MP to reach, its column place {} only {} MP; "
-                        + "folding", entity.getDisplayName(), entity.getId(), follower.currentRound(), slot.getBoardNum(),
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: slot {} costs {} MP to reach, its column place {} only {} "
+                        + "MP; folding", entity.getDisplayName(), entity.getId(), currentRound(), slot.getBoardNum(),
                   (toSlot == WaypointDistanceField.UNREACHABLE) ? "unreachable" : String.valueOf(toSlot),
                   columnSlot.getBoardNum(), toColumn);
         }

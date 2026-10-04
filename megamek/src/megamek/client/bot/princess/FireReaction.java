@@ -75,13 +75,17 @@ class FireReaction {
         this.follower = follower;
     }
 
+    private int currentRound() {
+        return follower.currentRound();
+    }
+
     /**
      * Snapshots every one of the bot's units' armor and structure the first time it is asked in a round, keeping the
-     * round before, so {@link #wasHitLastTurn} can tell who was hit in between - by any enemy fire, artillery and unseen
-     * shooters included.
+     * round before, so {@link #wasHitLastTurn} can tell who was hit in between - by any enemy fire, artillery and
+     * unseen shooters included.
      */
     private void recordHealth() {
-        if (healthRound == follower.currentRound()) {
+        if (healthRound == currentRound()) {
             return;
         }
         healthLastRound.clear();
@@ -90,7 +94,7 @@ class FireReaction {
         for (Entity unit : owner.getEntitiesOwned()) {
             healthThisRound.put(unit.getId(), unit.getTotalArmor() + unit.getTotalInternal());
         }
-        healthRound = follower.currentRound();
+        healthRound = currentRound();
     }
 
     /**
@@ -116,7 +120,7 @@ class FireReaction {
         if (formation.isEmpty()) {
             return wasHitLastTurn(leader);
         }
-        for (Entity member : follower.formationMembers(leader, formation.get().getLeaderId())) {
+        for (Entity member : follower.roster().formationMembers(leader, formation.get().getLeaderId())) {
             if (wasHitLastTurn(member)) {
                 return true;
             }
@@ -145,7 +149,7 @@ class FireReaction {
             }
             Optional<FormationOrder> formation = follower.activeFormation(leader);
             Optional<FightState> fightState = leader.getUnitOrders().getFightState();
-            List<Entity> members = follower.formationMembers(leader,
+            List<Entity> members = follower.roster().formationMembers(leader,
                   leader.getUnitOrders().getFormation().get().getLeaderId());
             boolean isHit = isLanceHit(leader);
             boolean isBreakAndFight = formation.isPresent() && (formation.get().getContactRule() == ContactRule.BREAK);
@@ -153,12 +157,12 @@ class FireReaction {
                 // a convoy pushes on whatever its legs are set to: guarding it is its escorts' job (HammerGS,
                 // 2026-10-02)
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: CONVOY_PUSHES_ON - the convoy was hit; a convoy never "
-                      + "breaks off to fight", leader.getDisplayName(), leader.getId(), follower.currentRound());
+                      + "breaks off to fight", leader.getDisplayName(), leader.getId(), currentRound());
                 continue;
             }
             if (fightState.isEmpty() && isBreakAndFight && isHit) {
-                LOGGER.info("[BotOrders] {} (ID {}) round {}: UNDER_FIRE - the lance was hit; breaking off the route to "
-                      + "fight", leader.getDisplayName(), leader.getId(), follower.currentRound());
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: UNDER_FIRE - the lance was hit; breaking off the route "
+                      + "to fight", leader.getDisplayName(), leader.getId(), currentRound());
                 for (Entity member : members) {
                     follower.change(member, UnitOrderAction.BREAK_TO_FIGHT);
                 }
@@ -166,7 +170,7 @@ class FireReaction {
                       follower.navLabel(leader, leader.getUnitOrders().getRoute().get(0)));
             } else if ((fightState.orElse(null) == FightState.FIGHTING) && !isHit) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: FIGHT_OVER - no hits for a turn; holding for the Resume "
-                      + "order", leader.getDisplayName(), leader.getId(), follower.currentRound());
+                      + "order", leader.getDisplayName(), leader.getId(), currentRound());
                 for (Entity member : members) {
                     follower.change(member, UnitOrderAction.FIGHT_OVER);
                     awaitingResume.add(member.getId());
@@ -175,7 +179,7 @@ class FireReaction {
                       leader.getPosition().getBoardNum());
             } else if (fightState.isPresent()) {
                 LOGGER.debug("[BotOrders] {} (ID {}) round {}: lance {}", leader.getDisplayName(), leader.getId(),
-                      follower.currentRound(), fightState.get());
+                      currentRound(), fightState.get());
             }
         }
     }
@@ -198,9 +202,10 @@ class FireReaction {
      */
     private void skipWaypointsFoughtPast(Entity entity) {
         List<Coords> route = entity.getUnitOrders().getRoute();
-        while ((route.size() > 1) && (entity.getPosition().distance(route.get(1)) < route.get(0).distance(route.get(1)))) {
+        while ((route.size() > 1)
+              && (entity.getPosition().distance(route.get(1)) < route.get(0).distance(route.get(1)))) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: resuming past {} - already beyond it after the fight",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound(), route.get(0).getBoardNum());
+                  entity.getDisplayName(), entity.getId(), currentRound(), route.get(0).getBoardNum());
             follower.change(entity, UnitOrderAction.SKIP);
             route = entity.getUnitOrders().getRoute();
         }

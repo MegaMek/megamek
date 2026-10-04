@@ -38,7 +38,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.Set;
 
 import megamek.client.bot.Messages;
@@ -137,16 +136,16 @@ public class UnitOrdersFollower {
     UnitOrdersFollower(Princess owner) {
         this.owner = owner;
         this.convoys = new ConvoyTracker(owner);
-        this.march = new FormationMarch(owner, this);
-        this.slots = new FormationSlots(owner, this);
-        this.townLegs = new FormationLegs(owner, this);
-        this.roster = new FormationRoster(owner, this);
-        this.phaseLines = new PhaseLineCoordinator(owner, this);
-        this.deployment = new DeploymentPlanner(owner, this);
-        this.convoyEscorts = new ConvoyEscortFollower(owner, this);
-        this.distances = new RouteDistances(owner, this);
-        this.facings = new OrderedFacing(owner, this);
         this.fireReaction = new FireReaction(owner, this);
+        this.facings = new OrderedFacing(owner, this);
+        this.distances = new RouteDistances(owner, this);
+        this.convoyEscorts = new ConvoyEscortFollower(owner, this);
+        this.deployment = new DeploymentPlanner(owner, this);
+        this.phaseLines = new PhaseLineCoordinator(owner, this);
+        this.roster = new FormationRoster(owner, this);
+        this.townLegs = new FormationLegs(owner, this);
+        this.slots = new FormationSlots(owner, this);
+        this.march = new FormationMarch(owner, this);
     }
 
     /**
@@ -191,6 +190,16 @@ public class UnitOrdersFollower {
         return slots;
     }
 
+    /**
+     * @return convoys leaving by their edge, and escorts round them
+     */
+    ConvoyEscortFollower convoyEscorts() {
+        return convoyEscorts;
+    }
+
+    /**
+     * @return the game's current round
+     */
     int currentRound() {
         return owner.getGame().getCurrentRound();
     }
@@ -452,7 +461,8 @@ public class UnitOrdersFollower {
      */
     public boolean isOrderedToExit(Entity entity) {
         return (entity.getUnitOrders().getEdgeOrder() == EdgeOrder.EXIT_BY)
-              || ((entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE) && convoyEscorts.escortExitEdge(entity).isPresent());
+              || ((entity.getUnitOrders().getEdgeOrder() == EdgeOrder.NONE)
+              && convoyEscorts.escortExitEdge(entity).isPresent());
     }
 
     /**
@@ -627,7 +637,8 @@ public class UnitOrdersFollower {
      */
     private boolean planRouteLeg(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
-        if (!orders.hasRoute() || roster.isFormationFollower(entity) || (entity.getPosition() == null) || DeploymentPlanner.isFlying(entity)
+        if (!orders.hasRoute() || roster.isFormationFollower(entity) || (entity.getPosition() == null)
+              || DeploymentPlanner.isFlying(entity)
               || (orders.getWaypointOrder(0).getRoutePlan() != WaypointOrder.RoutePlan.PLAN_LEG)) {
             return false;
         }
@@ -969,12 +980,6 @@ public class UnitOrdersFollower {
         return distances.routeCostFrom(mover, waypoint, position);
     }
 
-    /**
-     * See {@code ConvoyEscortFollower.escortFacing}.
-     */
-    OptionalInt escortFacing(Entity entity) {
-        return convoyEscorts.escortFacing(entity);
-    }
 
     /**
      * See {@code ConvoyEscortFollower.getEscortDeploymentPlace}.
@@ -990,12 +995,6 @@ public class UnitOrdersFollower {
         return convoyEscorts.getEscortPlace(entity);
     }
 
-    /**
-     * See {@code ConvoyEscortFollower.isEscorting}.
-     */
-    public boolean isEscorting(Entity entity) {
-        return convoyEscorts.isEscorting(entity);
-    }
 
     /**
      * See {@code DeploymentPlanner.chooseUnitToDeploy}.
@@ -1067,19 +1066,7 @@ public class UnitOrdersFollower {
         return phaseLines.stillComingToPhaseLine(entity, phaseLine);
     }
 
-    /**
-     * See {@code FormationRoster.formationLeaderOf}.
-     */
-    Optional<Entity> formationLeaderOf(Entity entity) {
-        return roster.formationLeaderOf(entity);
-    }
 
-    /**
-     * See {@code FormationRoster.formationMembers}.
-     */
-    List<Entity> formationMembers(Entity entity, int leaderId) {
-        return roster.formationMembers(entity, leaderId);
-    }
 
     /**
      * See {@code FormationRoster.isFallingBehind}.
@@ -1095,12 +1082,6 @@ public class UnitOrdersFollower {
         return roster.isFollowingPlayerUnit(entity);
     }
 
-    /**
-     * See {@code FormationRoster.isFormationFollower}.
-     */
-    boolean isFormationFollower(Entity entity) {
-        return roster.isFormationFollower(entity);
-    }
 
     /**
      * See {@code FormationRoster.isOutOfAction}.
@@ -1116,26 +1097,8 @@ public class UnitOrdersFollower {
         return townLegs.isOnTownLeg(entity);
     }
 
-    /**
-     * See {@code FormationLegs.isSlowestOfLance}.
-     */
-    boolean isSlowestOfLance(Entity unit) {
-        return townLegs.isSlowestOfLance(unit);
-    }
 
-    /**
-     * See {@code FormationLegs.isTownSpotOf}.
-     */
-    boolean isTownSpotOf(Entity entity, Coords hex) {
-        return townLegs.isTownSpotOf(entity, hex);
-    }
 
-    /**
-     * See {@code FormationLegs.narrowHexes}.
-     */
-    Map<Coords, Integer> narrowHexes(Entity unit) {
-        return townLegs.narrowHexes(unit);
-    }
 
     /**
      * See {@code FormationLegs.townCoverDiscount}.
@@ -1144,26 +1107,8 @@ public class UnitOrdersFollower {
         return townLegs.townCoverDiscount(entity, finalHex);
     }
 
-    /**
-     * See {@code FormationLegs.townSpotOf}.
-     */
-    Optional<Coords> townSpotOf(Entity entity) {
-        return townLegs.townSpotOf(entity);
-    }
 
-    /**
-     * See {@code FormationLegs.unitsInPlaceBeside}.
-     */
-    List<Entity> unitsInPlaceBeside(Entity entity) {
-        return townLegs.unitsInPlaceBeside(entity);
-    }
 
-    /**
-     * See {@code FormationSlots.formationFacing}.
-     */
-    int formationFacing(Entity entity) {
-        return slots.formationFacing(entity);
-    }
 
     /**
      * See {@code FormationSlots.getFormationSlot}.
@@ -1172,12 +1117,6 @@ public class UnitOrdersFollower {
         return slots.getFormationSlot(entity);
     }
 
-    /**
-     * See {@code FormationSlots.settle}.
-     */
-    @Nullable Coords settle(Entity entity, Board board, Coords leaderPosition, Coords ideal) {
-        return slots.settle(entity, board, leaderPosition, ideal);
-    }
 
     /**
      * See {@code FormationMarch.estimatedAssemblyTurns}.

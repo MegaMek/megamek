@@ -59,8 +59,8 @@ import megamek.logging.MMLogger;
 /**
  * How a formation moves as one (HammerGS, 2026-09-27 to 2026-10-01): assembling at its first waypoint, its leader
  * waiting at a flag until the lance has formed up, holds and assembly points, every unit kept to the formation's pace
- * and the last unit kept in reach, no move that brings a building down, and the lance leaving the board together at
- * the end of its route. Part of {@link UnitOrdersFollower}.
+ * and the last unit kept in reach, no move that brings a building down, and the lance leaving the board together at the
+ * end of its route. Part of {@link UnitOrdersFollower}.
  */
 class FormationMarch {
 
@@ -100,7 +100,9 @@ class FormationMarch {
      */
     private final Set<Integer> assembledFormations = new HashSet<>();
 
-    /** The most rounds a lance assembling at its first waypoint waits for its last unit; a stuck unit drops out sooner. */
+    /**
+     * The most rounds a lance assembling at its first waypoint waits for its last unit; a stuck unit drops out sooner.
+     */
     static final int MAXIMUM_ASSEMBLY_WAIT_ROUNDS = 12;
 
     /**
@@ -110,6 +112,10 @@ class FormationMarch {
     FormationMarch(Princess owner, UnitOrdersFollower follower) {
         this.owner = owner;
         this.follower = follower;
+    }
+
+    private int currentRound() {
+        return follower.currentRound();
     }
 
     /**
@@ -152,13 +158,13 @@ class FormationMarch {
             if (reasonToStop == null) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PASS at {} - same shape on the next leg and "
                             + "the lance is together; not stopping to re-form", leader.getDisplayName(),
-                      leader.getId(), follower.currentRound(), waypoint.getBoardNum());
+                      leader.getId(), currentRound(), waypoint.getBoardNum());
                 reformWaits.remove(leader.getId());
                 return false;
             }
             if (!reformWaits.containsKey(leader.getId())) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_STOP at {} - {}; forming up before moving on",
-                      leader.getDisplayName(), leader.getId(), follower.currentRound(), waypoint.getBoardNum(), reasonToStop);
+                      leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), reasonToStop);
             }
         }
         List<Entity> members = follower.roster().formationMembers(leader, formation.get().getLeaderId());
@@ -171,33 +177,33 @@ class FormationMarch {
         int outOfPlace = countOutOfPlace(members);
         ReformWait wait = reformWaits.get(leader.getId());
         if ((wait == null) || !wait.waypoint().equals(waypoint)) {
-            wait = new ReformWait(waypoint, follower.currentRound(), assemblyWaitRounds(leader, waypoint,
+            wait = new ReformWait(waypoint, currentRound(), assemblyWaitRounds(leader, waypoint,
                   isAssembling ? MAXIMUM_ASSEMBLY_WAIT_ROUNDS : MAXIMUM_REFORM_WAIT_ROUNDS));
         }
-        int roundsWaited = follower.currentRound() - wait.sinceRound();
+        int roundsWaited = currentRound() - wait.sinceRound();
         if (outOfPlace == 0) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_FORMED at {} - moving on together{}",
-                  leader.getDisplayName(), leader.getId(), follower.currentRound(), waypoint.getBoardNum(),
+                  leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(),
                   isAssembling ? "; assembled, now marching" : "");
             reformWaits.remove(leader.getId());
             noteAssembled(formation.get().getLeaderId());
             if (route.size() > 1) {
                 // at the end of the route the exit call says it all
-                owner.getOrdersRadio().report(leader, OrdersRadio.RadioEvent.FORMED, follower.navLabel(leader, waypoint),
-                      follower.navLabel(leader, route.get(1)));
+                owner.getOrdersRadio().report(leader, OrdersRadio.RadioEvent.FORMED,
+                      follower.navLabel(leader, waypoint), follower.navLabel(leader, route.get(1)));
             }
             return false;
         }
         if (roundsWaited >= wait.maxRounds()) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT_OVER at {} - {} unit(s) still out of place "
-                        + "after {} round(s); moving on", leader.getDisplayName(), leader.getId(), follower.currentRound(),
+                        + "after {} round(s); moving on", leader.getDisplayName(), leader.getId(), currentRound(),
                   waypoint.getBoardNum(), outOfPlace, roundsWaited);
             reformWaits.remove(leader.getId());
             noteAssembled(formation.get().getLeaderId());
             return false;
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_WAIT at {} - {} of {} unit(s) still forming up",
-              leader.getDisplayName(), leader.getId(), follower.currentRound(), waypoint.getBoardNum(), outOfPlace,
+              leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), outOfPlace,
               members.size() - 1);
         reformWaits.put(leader.getId(), wait);
         return true;
@@ -322,7 +328,8 @@ class FormationMarch {
         int longest = 0;
         for (Entity member : members.subList(Math.min(1, members.size()), members.size())) {
             Optional<Coords> slot = follower.slots().getFormationSlot(member);
-            if (slot.isEmpty() || member.getPosition().equals(slot.get()) || follower.roster().isFallingBehind(member)) {
+            if (slot.isEmpty() || member.getPosition().equals(slot.get())
+                  || follower.roster().isFallingBehind(member)) {
                 continue;
             }
             int cost = follower.distances().routeCostFrom(member, slot.get(), member.getPosition());
@@ -332,7 +339,7 @@ class FormationMarch {
             int perTurn = Math.max(1, paceMovementPoints(member, formation.get().getPace()));
             int turns = (cost + perTurn - 1) / perTurn;
             LOGGER.info("[BotOrders] {} (ID {}) round {}: ASSEMBLY_ESTIMATE - {} is {} MP from its slot at {}, {} MP a "
-                        + "turn: {} turn(s)", leader.getDisplayName(), leader.getId(), follower.currentRound(),
+                        + "turn: {} turn(s)", leader.getDisplayName(), leader.getId(), currentRound(),
                   member.getDisplayName(), cost, slot.get().getBoardNum(), perTurn, turns);
             longest = Math.max(longest, turns);
         }
@@ -346,7 +353,7 @@ class FormationMarch {
     private int assemblyWaitRounds(Entity leader, Coords waypoint, int cap) {
         int rounds = Math.clamp(estimatedAssemblyTurns(leader) + 1, 1, Math.max(1, cap));
         LOGGER.info("[BotOrders] {} (ID {}) round {}: waits at {} up to {} round(s) for the formation (at most {})",
-              leader.getDisplayName(), leader.getId(), follower.currentRound(), waypoint.getBoardNum(), rounds, cap);
+              leader.getDisplayName(), leader.getId(), currentRound(), waypoint.getBoardNum(), rounds, cap);
         return rounds;
     }
 
@@ -357,7 +364,7 @@ class FormationMarch {
     private boolean isAssemblyWaitOver(Entity entity, Coords waypoint) {
         ReformWait wait = assemblyWaits.get(entity.getId());
         return (wait != null) && wait.waypoint().equals(waypoint)
-              && (follower.currentRound() - wait.sinceRound() >= wait.maxRounds());
+              && (currentRound() - wait.sinceRound() >= wait.maxRounds());
     }
 
     /**
@@ -410,7 +417,7 @@ class FormationMarch {
         }
         for (Entity unit : leaving) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: end of route at {} - leaving by the {} edge",
-                  unit.getDisplayName(), unit.getId(), follower.currentRound(), lastWaypoint.getBoardNum(), edge);
+                  unit.getDisplayName(), unit.getId(), currentRound(), lastWaypoint.getBoardNum(), edge);
             follower.orderExit(unit, edge);
         }
         owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.EXITING, edge.name().toLowerCase(Locale.ROOT));
@@ -450,35 +457,36 @@ class FormationMarch {
         if (orders.getHoldSinceRound() == UnitOrders.NO_ROUND) {
             if (entity.getPosition().equals(waypoint) && isAssemble && isFormationAssembled(entity)) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: reached {} with the formation assembled; moving on",
-                      entity.getDisplayName(), entity.getId(), follower.currentRound(), waypoint.getBoardNum());
+                      entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum());
                 follower.change(entity, UnitOrderAction.REACHED);
             } else if (entity.getPosition().equals(waypoint)) {
                 if (isAssemble) {
                     // wait until the last unit should have arrived, by its path and speed, never past the turns set
-                    assemblyWaits.put(entity.getId(), new ReformWait(waypoint, follower.currentRound(),
+                    assemblyWaits.put(entity.getId(), new ReformWait(waypoint, currentRound(),
                           assemblyWaitRounds(entity, waypoint, holdTurns)));
                 }
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: reached {} and holds {} turn(s), through round {}",
-                      entity.getDisplayName(), entity.getId(), follower.currentRound(), waypoint.getBoardNum(), holdTurns,
-                      follower.currentRound() + holdTurns);
+                      entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(), holdTurns,
+                      currentRound() + holdTurns);
                 follower.change(entity, UnitOrderAction.HOLD_STARTED);
-                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.HOLDING, follower.navLabel(entity, waypoint));
+                owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.HOLDING,
+                      follower.navLabel(entity, waypoint));
             }
             return;
         }
-        if (orders.isHoldDone(follower.currentRound())) {
+        if (orders.isHoldDone(currentRound())) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: held {} turn(s) at {}; moving on", entity.getDisplayName(),
-                  entity.getId(), follower.currentRound(), holdTurns, waypoint.getBoardNum());
+                  entity.getId(), currentRound(), holdTurns, waypoint.getBoardNum());
             follower.change(entity, UnitOrderAction.REACHED);
         } else if (isAssemble && isAssemblyWaitOver(entity, waypoint)) {
             LOGGER.info("[BotOrders] {} (ID {}) round {}: the formation should have assembled at {} by now; moving on",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound(), waypoint.getBoardNum());
+                  entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum());
             assemblyWaits.remove(entity.getId());
             follower.change(entity, UnitOrderAction.REACHED);
         } else if (isAssemble && isFormationAssembled(entity)) {
             assemblyWaits.remove(entity.getId());
             LOGGER.info("[BotOrders] {} (ID {}) round {}: formation assembled at {}; moving on before the {} turn(s) "
-                  + "were up", entity.getDisplayName(), entity.getId(), follower.currentRound(), waypoint.getBoardNum(),
+                  + "were up", entity.getDisplayName(), entity.getId(), currentRound(), waypoint.getBoardNum(),
                   holdTurns);
             follower.change(entity, UnitOrderAction.REACHED);
         }
@@ -512,7 +520,7 @@ class FormationMarch {
         Entity leader = members.get(0);
         if (FireReaction.isBrokenToFight(leader)) {
             LOGGER.debug("[BotOrders] {} (ID {}) round {}: the lance is fighting - not paced",
-                  entity.getDisplayName(), entity.getId(), follower.currentRound());
+                  entity.getDisplayName(), entity.getId(), currentRound());
             return paths;
         }
         int paceLimit = paceMovementPoints(entity, formation.get().getPace());
@@ -524,7 +532,7 @@ class FormationMarch {
             // 2026-10-01); one in its place, or nearly, keeps to the walk
             paceLimit = Math.max(entity.getRunMP(), entity.getJumpMP());
             LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_CATCH_UP - more than a turn's walk from its place; "
-                        + "may run or jump, up to {} MP", entity.getDisplayName(), entity.getId(), follower.currentRound(),
+                        + "may run or jump, up to {} MP", entity.getDisplayName(), entity.getId(), currentRound(),
                   paceLimit);
         }
         if (isHeldToSlowest) {
@@ -542,12 +550,13 @@ class FormationMarch {
             }
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - {} up to {} {} MP, {} of {} moves kept",
-              entity.getDisplayName(), entity.getId(), follower.currentRound(), formation.get().getPace(),
+              entity.getDisplayName(), entity.getId(), currentRound(), formation.get().getPace(),
               isHeldToSlowest ? "the slowest unit's" : "its own", paceLimit, pacedPaths.size(), paths.size());
         List<MovePath> keptPaths = pacedPaths.isEmpty() ? paths : pacedPaths;
         keptPaths = withoutBuildingCollapses(entity, keptPaths);
         if (isTownLeg) {
-            return follower.townLegs().keepFriendsInReach(entity, members, follower.townLegs().stackAtDoor(entity, members, keptPaths));
+            List<MovePath> atDoor = follower.townLegs().stackAtDoor(entity, members, keptPaths);
+            return follower.townLegs().keepFriendsInReach(entity, members, atDoor);
         }
         return isHeldToSlowest ? keepLastUnitInReach(entity, keptPaths, paceLimit) : keptPaths;
     }
@@ -575,7 +584,7 @@ class FormationMarch {
             return paths;
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: BUILDING_AVOIDED - {} of {} moves would bring a building down "
-                    + "under it; dropped", entity.getDisplayName(), entity.getId(), follower.currentRound(),
+                    + "under it; dropped", entity.getDisplayName(), entity.getId(), currentRound(),
               paths.size() - safePaths.size(), paths.size());
         return safePaths;
     }
@@ -642,7 +651,7 @@ class FormationMarch {
         }
         LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_MARCH - the last unit needs {} turn(s) to its slot at "
                     + "{}; keeping {} turn(s) out{}, {} of {} moves kept", leader.getDisplayName(), leader.getId(),
-              follower.currentRound(), lastUnitTurns, waypoint.get().getBoardNum(), turnsToKeep,
+              currentRound(), lastUnitTurns, waypoint.get().getBoardNum(), turnsToKeep,
               isHeldInPlace ? ", holding in place" : "", kept.size(), paths.size());
         return kept;
     }

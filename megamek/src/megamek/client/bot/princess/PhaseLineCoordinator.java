@@ -46,9 +46,9 @@ import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**
- * Phase lines (HammerGS, 2026-10-02): a lance that reaches a waypoint on a phase line holds there until every
- * friendly lance with a waypoint on the same line is in, then all move on together; the radio calls the hold, reminds
- * the player whom it waits for, and calls the release. Part of {@link UnitOrdersFollower}.
+ * Phase lines (HammerGS, 2026-10-02): a lance that reaches a waypoint on a phase line holds there until every friendly
+ * lance with a waypoint on the same line is in, then all move on together; the radio calls the hold, reminds the player
+ * whom it waits for, and calls the release. Part of {@link UnitOrdersFollower}.
  */
 class PhaseLineCoordinator {
 
@@ -81,6 +81,10 @@ class PhaseLineCoordinator {
         this.follower = follower;
     }
 
+    private int currentRound() {
+        return follower.currentRound();
+    }
+
     /**
      * Whether a unit holds at its phase line: its next waypoint, part-way along its route, is on a phase line, it has
      * reached it, and some other friendly lance with a waypoint on the same line has not yet reached its own. A
@@ -93,7 +97,8 @@ class PhaseLineCoordinator {
      */
     boolean isWaitingAtPhaseLine(Entity entity) {
         UnitOrders orders = entity.getUnitOrders();
-        if ((orders.getRoute().size() < 2) || (entity.getPosition() == null) || follower.isFormationFollower(entity)) {
+        if ((orders.getRoute().size() < 2) || (entity.getPosition() == null)
+              || follower.roster().isFormationFollower(entity)) {
             return false;
         }
         String phaseLine = orders.getWaypointOrder(0).getPhaseLine();
@@ -105,7 +110,7 @@ class PhaseLineCoordinator {
         if (stillComing.isEmpty()) {
             if (phaseLineHolds.remove(entity.getId()) != null) {
                 LOGGER.info("[BotOrders] {} (ID {}) round {}: PHASE_LINE_CLEAR - every lance is in at {}; moving on",
-                      entity.getDisplayName(), entity.getId(), follower.currentRound(), label);
+                      entity.getDisplayName(), entity.getId(), currentRound(), label);
                 owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_CLEAR, label);
             }
             return false;
@@ -116,14 +121,14 @@ class PhaseLineCoordinator {
         }
         PhaseLineHold hold = phaseLineHolds.get(entity.getId());
         if ((hold == null) || !PhaseLine.isSame(hold.phaseLine(), phaseLine)) {
-            hold = new PhaseLineHold(phaseLine, follower.currentRound(), -1);
+            hold = new PhaseLineHold(phaseLine, currentRound(), -1);
             owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_HOLD, label,
                   orders.getRoute().get(0).getBoardNum());
         }
-        if (hold.loggedRound() != follower.currentRound()) {
-            int roundsHeld = follower.currentRound() - hold.sinceRound();
+        if (hold.loggedRound() != currentRound()) {
+            int roundsHeld = currentRound() - hold.sinceRound();
             LOGGER.info("[BotOrders] {} (ID {}) round {}: PHASE_LINE_WAIT at {} ({}) - waiting for {}, {} round(s) "
-                        + "so far", entity.getDisplayName(), entity.getId(), follower.currentRound(), label,
+                        + "so far", entity.getDisplayName(), entity.getId(), currentRound(), label,
                   orders.getRoute().get(0).getBoardNum(), waitingFor, roundsHeld);
             if ((roundsHeld > 0) && ((roundsHeld % PHASE_LINE_REMINDER_ROUNDS) == 0)) {
                 // the lance waits as long as it takes (HammerGS, 2026-10-02); the player hears whom for, and can
@@ -131,7 +136,7 @@ class PhaseLineCoordinator {
                 owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.PHASE_LINE_STILL_HOLDING, label,
                       waitingFor.toString(), String.valueOf(roundsHeld));
             }
-            hold = new PhaseLineHold(phaseLine, hold.sinceRound(), follower.currentRound());
+            hold = new PhaseLineHold(phaseLine, hold.sinceRound(), currentRound());
         }
         phaseLineHolds.put(entity.getId(), hold);
         return true;
@@ -165,7 +170,8 @@ class PhaseLineCoordinator {
             // withdraw rather than follow its route
             if ((other.getId() == entity.getId()) || (other.getPosition() == null) || other.isDestroyed()
                   || other.isDoomed() || other.isOffBoard() || (other.getOwner() == null)
-                  || other.getOwner().isEnemyOf(entity.getOwner()) || isLedByAnother(other) || follower.isOutOfAction(other)) {
+                  || other.getOwner().isEnemyOf(entity.getOwner()) || isLedByAnother(other)
+                  || follower.isOutOfAction(other)) {
                 continue;
             }
             List<Coords> route = other.getUnitOrders().getRoute();

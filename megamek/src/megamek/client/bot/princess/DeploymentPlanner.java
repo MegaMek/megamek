@@ -460,10 +460,10 @@ class DeploymentPlanner {
             return Optional.empty();
         }
         int heading = deploymentHeading(leader, leaderPosition, deploymentFacingTarget(board), board);
-        FormationShape shape = fittingDeploymentShape(formation.get(), leaderPosition, heading,
-              new HashSet<>(legalHexes), memberSlots(leader.getId())).orElse(formation.get().getShape());
-        return Optional.of(FormationPlanner.idealSlot(leaderPosition, heading, shape, formation.get().getSpacing(),
-              formation.get().getSlot()));
+        DeploymentFit fit = fittingDeployment(formation.get(), leaderPosition, heading, new HashSet<>(legalHexes),
+              memberSlots(leader.getId())).orElse(new DeploymentFit(formation.get().getShape(), heading));
+        return Optional.of(FormationPlanner.idealSlot(leaderPosition, fit.heading(), fit.shape(),
+              formation.get().getSpacing(), formation.get().getSlot()));
     }
 
     /**
@@ -528,11 +528,16 @@ class DeploymentPlanner {
         }
         Set<Coords> legalHexes = new HashSet<>(possibleDeployCoords);
         Coords facingTarget = deploymentFacingTarget(board);
+        Map<Coords, DeploymentFit> fits = new HashMap<>();
+        for (Coords candidate : possibleDeployCoords) {
+            fittingDeployment(formation.get(), candidate, deploymentHeading(entity, candidate, facingTarget, board),
+                  legalHexes, slots).ifPresent(fit -> fits.put(candidate, fit));
+        }
         for (FormationShape shape : List.of(formation.get().getShape(), FormationShape.LINE)) {
             List<Coords> fitting = new ArrayList<>();
             for (Coords candidate : possibleDeployCoords) {
-                if (fits(shape, formation.get(), candidate, deploymentHeading(entity, candidate, facingTarget,
-                      board), legalHexes, slots)) {
+                DeploymentFit fit = fits.get(candidate);
+                if ((fit != null) && (fit.shape() == shape)) {
                     fitting.add(candidate);
                 }
             }
@@ -580,15 +585,34 @@ class DeploymentPlanner {
     }
 
     /**
-     * @return the formation's own shape if every member's slot around the leader hex is a legal deployment hex, else
-     *       a Line if that fits, else empty
+     * The shape and the line a formation deploys in.
+     *
+     * @param shape   the formation's own shape, or a Line where it fits no way
+     * @param heading the way the shape is laid out, 0-5; the units still face as they are told
      */
-    private static Optional<FormationShape> fittingDeploymentShape(FormationOrder formation, Coords leaderPosition,
+    private record DeploymentFit(FormationShape shape, int heading) {}
+
+    /** Turns from the wanted heading, nearest first, that a shape is tried at. */
+    private static final int[] TURNS_NEAREST_FIRST = { 0, 1, -1, 2, -2, 3 };
+
+    /**
+     * How a formation deploys round its leader so that every member's slot is a legal deployment hex: in its own shape
+     * along the wanted heading; else in its own shape turned, the nearest turn first, so a Column set in the lobby
+     * deploys as a column along a zone too shallow for it to face the enemy (HammerGS, 2026-10-04: a convoy's Column
+     * deployed in a line abreast); else a Line along the wanted heading.
+     *
+     * @return the fit, or empty when neither fits
+     */
+    private static Optional<DeploymentFit> fittingDeployment(FormationOrder formation, Coords leaderPosition,
           int heading, Set<Coords> legalHexes, List<Integer> slots) {
-        for (FormationShape shape : List.of(formation.getShape(), FormationShape.LINE)) {
-            if (fits(shape, formation, leaderPosition, heading, legalHexes, slots)) {
-                return Optional.of(shape);
+        for (int turn : TURNS_NEAREST_FIRST) {
+            int tried = (heading + turn + 6) % 6;
+            if (fits(formation.getShape(), formation, leaderPosition, tried, legalHexes, slots)) {
+                return Optional.of(new DeploymentFit(formation.getShape(), tried));
             }
+        }
+        if (fits(FormationShape.LINE, formation, leaderPosition, heading, legalHexes, slots)) {
+            return Optional.of(new DeploymentFit(FormationShape.LINE, heading));
         }
         return Optional.empty();
     }

@@ -1017,6 +1017,35 @@ class FormationFollowerTest {
         }
     }
 
+    @Test
+    void aColumnDeploysAsAColumnInAZoneTooShallowForItToFaceTheEnemy() {
+        // HammerGS, 2026-10-04: a convoy set to Column in the lobby deployed in a line abreast along the edge
+        List<Coords> zone = new ArrayList<>();
+        for (int x = 0; x < WIDTH; x++) {
+            zone.add(new Coords(x, HEIGHT - 2));
+            zone.add(new Coords(x, HEIGHT - 1));
+        }
+        List<BipedMek> lance = new ArrayList<>();
+        for (int slot = 0; slot < 4; slot++) {
+            BipedMek mek = member(20 + slot, null, slot, 4);
+            mek.setDeployed(false);
+            mek.setUnitOrders(UnitOrders.NONE.withFormation(
+                  new FormationOrder(FormationShape.COLUMN, 20, 1, slot, FormationPace.WALK, ContactRule.HOLD)));
+            lance.add(mek);
+        }
+        BipedMek leader = lance.get(0);
+        leader.setPosition(princess.getUnitOrdersFollower().preferFormationFit(leader, zone).get(0));
+        leader.setDeployed(true);
+
+        Coords second = princess.getUnitOrdersFollower().getDeploymentSlot(lance.get(1), zone).orElseThrow();
+        int along = leader.getPosition().direction(second);
+        for (int place = 1; place < lance.size(); place++) {
+            Coords slot = princess.getUnitOrdersFollower().getDeploymentSlot(lance.get(place), zone).orElseThrow();
+            assertTrue(zone.contains(slot), "slot " + slot.getBoardNum() + " is outside the zone");
+            assertEquals(leader.getPosition().translated(along, place), slot, "one straight column");
+        }
+    }
+
     private static FormationOrder keptTogether(int slot) {
         return new FormationOrder(FormationShape.WEDGE, 20, 2, slot, FormationPace.WALK, ContactRule.BREAK, true);
     }

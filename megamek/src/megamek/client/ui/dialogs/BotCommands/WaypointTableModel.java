@@ -296,7 +296,9 @@ class WaypointTableModel extends AbstractTableModel {
         if (!canForm) {
             formation = WaypointFormation.NONE;
         } else if (rows.isEmpty()) {
-            formation = DEFAULT_FORMATION;
+            // the first waypoint takes the formation set on the units, as in the lobby; a Wedge where none is
+            // (HammerGS, 2026-10-04: a Column convoy given a route in game got a Wedge)
+            formation = unitsFormation.isNone() ? DEFAULT_FORMATION : unitsFormation;
         } else {
             formation = rows.get(rows.size() - 1).formation;
         }

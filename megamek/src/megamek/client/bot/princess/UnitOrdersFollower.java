@@ -101,6 +101,8 @@ public class UnitOrdersFollower {
     private final ConvoyTracker convoys;
     // the waypoint each unit last planned its way to, so a leg is planned once
     private final Map<Integer, Coords> legsPlannedTo = new HashMap<>();
+    // units out of formation because they are leaving the board, so it is logged once
+    private final Set<Integer> releasedToLeave = new HashSet<>();
     // true while one unit's moves are ranked (see setRanking)
     private boolean isRanking;
     // each lance's role by owner and force, worked out once a turn (see roleOf)
@@ -344,7 +346,7 @@ public class UnitOrdersFollower {
 
     /**
      * The formation a unit travels in on its current leg: the one set on its formation leader's next waypoint, else
-     * its own formation order. A leg set to travel out of formation has none.
+     * its own formation order. A leg set to travel out of formation has none, nor has a unit leaving the board.
      *
      * @param entity a unit of the bot
      *
@@ -355,6 +357,17 @@ public class UnitOrdersFollower {
         if (base.isEmpty()) {
             return base;
         }
+        Optional<CardinalEdge> leavingBy = getOrderedEdge(entity);
+        if (leavingBy.isPresent()) {
+            // leaving the board comes first: a unit on its way off waits for nobody's pace or place, and an escort
+            // following its convoy off is no longer escorting (HammerGS, 2026-10-04)
+            if (releasedToLeave.add(entity.getId())) {
+                LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_RELEASED - leaving by the {} edge, out of "
+                      + "formation", entity.getDisplayName(), entity.getId(), currentRound(), leavingBy.get());
+            }
+            return Optional.empty();
+        }
+        releasedToLeave.remove(entity.getId());
         // the leader's route sets the leg; the unit's own route stands in step for it once the leader is gone
         Entity leader = owner.getGame().getEntity(base.get().getLeaderId());
         boolean isLeaderRouted = (leader != null) && !leader.isDestroyed() && leader.getUnitOrders().hasRoute();

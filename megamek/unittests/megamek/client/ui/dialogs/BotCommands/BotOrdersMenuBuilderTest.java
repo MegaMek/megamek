@@ -129,8 +129,7 @@ class BotOrdersMenuBuilderTest {
     @Test
     void holdPositionDropsTheRouteAndHoldsEveryUnit() {
         // HammerGS, 2026-10-04: orders are removed in the editor; the quick order holds the lance where it is
-        assertEquals(List.of("/unitOrder 20 CLEAR", "/unitOrder 20 PAUSE", "/unitOrder 22 CLEAR",
-              "/unitOrder 22 PAUSE"),
+        assertEquals(List.of("/unitOrder 20 HOLD_POSITION", "/unitOrder 22 HOLD_POSITION"),
               BotOrdersMenuBuilder.holdPositionCommands(List.of(20, 22)));
     }
 

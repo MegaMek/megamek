@@ -135,7 +135,7 @@ gh() {
     return 90
   fi
   case "$4" in
-    installation/repositories\\?per_page=100)
+    installation/repositories\?per_page=100)
       if [[ "$CHECK_REPOSITORIES" == "FAIL" ]]; then return 22; fi
       echo "$CHECK_REPOSITORIES"
       ;;
@@ -153,7 +153,7 @@ gh() {
             summary = Path(directory) / "summary.txt"
             environment = dict(os.environ, CHECK_REPOSITORIES=repositories,
                                CHECK_DENIED=denied, GITHUB_STEP_SUMMARY=str(summary))
-            result = subprocess.run([self.bash, "-c", stub + self.script], env=environment,
+            result = subprocess.run([self.bash], input=stub + self.script, env=environment,
                                     capture_output=True, text=True, timeout=10)
             report = summary.read_text() if summary.exists() else ""
         return result, report
@@ -163,7 +163,7 @@ gh() {
                                     ("12345", "true")):
             with self.subTest(app_id=app_id, key_present=key_present):
                 result = subprocess.run(
-                    [self.bash, "-c", self.configuration],
+                    [self.bash], input=self.configuration,
                     env=dict(os.environ, APP_ID=app_id, APP_KEY_PRESENT=key_present),
                     capture_output=True, text=True, timeout=10)
                 expected = 0 if app_id and key_present == "true" else 1

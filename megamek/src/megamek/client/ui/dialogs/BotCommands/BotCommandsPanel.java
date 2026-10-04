@@ -269,9 +269,9 @@ public class BotCommandsPanel extends JPanel {
      * <p>Only in the game window, and only with Start bots-only games paused on in the settings: MekHQ's auto-resolve
      * watches through the Commander window, where nobody would press Continue.</p>
      *
-     * <p>The pause waits for the initiative report, just before deployment, or the first deployment or movement phase
-     * if there is no report. Pausing as the game left the lobby froze it at Receiving Game Data: the server held the
-     * clients' replies while the game was still loading.</p>
+     * <p>The pause comes once the bots have deployed, so their units are on the board to give orders to (HammerGS,
+     * 2026-10-04): at the first round's initiative report, before any unit moves. Pausing as the game left the lobby
+     * froze it at Receiving Game Data: the server held the clients' replies while the game was still loading.</p>
      */
     private void pauseAtStartWhenWatching(GamePhaseChangeEvent event) {
         GamePhase newPhase = event.getNewPhase();
@@ -279,9 +279,14 @@ public class BotCommandsPanel extends JPanel {
             isStartPauseDue = true;
             return;
         }
-        boolean isFirstPlayablePhase = newPhase.isInitiativeReport() || (newPhase == GamePhase.DEPLOYMENT)
-              || (newPhase == GamePhase.MOVEMENT);
-        if (!isStartPauseDue || !isFirstPlayablePhase) {
+        if (!isStartPauseDue) {
+            return;
+        }
+        int round = client.getGame().getCurrentRound();
+        if (!isAfterDeployment(newPhase, round)) {
+            if (newPhase.isInitiativeReport() || (newPhase == GamePhase.DEPLOYMENT)) {
+                LOGGER.info("[BotOrders] start pause waits in {} (round {}): the bots deploy first", newPhase, round);
+            }
             return;
         }
         isStartPauseDue = false;
@@ -303,6 +308,18 @@ public class BotCommandsPanel extends JPanel {
         LOGGER.info("[BotOrders] game paused at its start, in {}: only bots have units, so orders can be given first",
               newPhase);
         pauseUnpause();
+    }
+
+    /**
+     * @param phase the phase the game is entering
+     * @param round the game's round
+     *
+     * @return {@code true} for the first moment after the opening deployment and before any unit moves: an initiative
+     *       report of round 1 or later, or a movement phase where a game has no report; the deployment happens in round
+     *       0
+     */
+    static boolean isAfterDeployment(GamePhase phase, int round) {
+        return (round >= 1) && (phase.isInitiativeReport() || (phase == GamePhase.MOVEMENT));
     }
 
     /**

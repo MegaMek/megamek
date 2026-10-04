@@ -131,4 +131,14 @@ class BotCommandsPanelStaticsTest {
     }
 
     // endregion
+
+    @Test
+    void theStartPauseComesOnceTheBotsHaveDeployed() {
+        // HammerGS, 2026-10-04: units deploy, then the game pauses so their move orders can be set
+        assertFalse(BotCommandsPanel.isAfterDeployment(GamePhase.INITIATIVE_REPORT, 0), "round 0 is before deploying");
+        assertFalse(BotCommandsPanel.isAfterDeployment(GamePhase.DEPLOYMENT, 0));
+        assertTrue(BotCommandsPanel.isAfterDeployment(GamePhase.INITIATIVE_REPORT, 1), "before any unit moves");
+        assertTrue(BotCommandsPanel.isAfterDeployment(GamePhase.MOVEMENT, 1), "a game with no initiative report");
+        assertFalse(BotCommandsPanel.isAfterDeployment(GamePhase.FIRING, 1));
+    }
 }

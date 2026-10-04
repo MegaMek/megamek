@@ -47,11 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -1011,11 +1007,21 @@ public abstract class BotClient extends Client {
         WeaponAttackAction test_attack;
         List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
 
+        int maxX = 0;
+        int maxY = 0;
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
         for (int x = 0; x <= board.getWidth(); x++) {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
+                if (board.isLegalDeployment(c, deployed_ent)) {
+                    if (c.getX() > maxX) {
+                        maxX = c.getX();
+                    }
+                    if (c.getY() > maxY) {
+                        maxY = c.getY();
+                    }
+                }
                 if (board.isLegalDeployment(c, deployed_ent) &&
                       !deployed_ent.isLocationProhibited(c,
                             ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE()) ?
@@ -1026,6 +1032,13 @@ public abstract class BotClient extends Client {
                 }
             }
         }
+
+        LOGGER.info("{}: {} valid deployment hexes for {}. The max X is {} and the max Y is {}",
+                    getName(),
+                    validCoords.size(),
+                    deployed_ent.getDisplayName(),
+                    maxX,
+                    maxY);
 
         // Randomize hexes to prevent clumping at the upper-left corner on
         // very flat maps

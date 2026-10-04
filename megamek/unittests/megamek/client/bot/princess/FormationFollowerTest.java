@@ -244,6 +244,25 @@ class FormationFollowerTest {
     }
 
     @Test
+    void aUnitLeavingTheBoardIsOutOfFormation() {
+        // HammerGS, 2026-10-04: at the exit point the priority is leaving the map. The trucks of a column that reached
+        // its exit were held two rounds at the edge to the formation's pace and places
+        member(20, LEADER_HEX, 0, 3);
+        BipedMek second = member(21, new Coords(16, 25), 1, 4);
+        UnitOrdersFollower follower = princess.getUnitOrdersFollower();
+        MovePath walkFour = moveUsing(4);
+        MovePath runSix = moveUsing(6);
+        assertTrue(follower.getFormationSlot(second).isPresent(), "in formation before the exit order");
+
+        second.setUnitOrders(second.getUnitOrders().withEdgeOrder(EdgeOrder.EXIT_BY, OffBoardDirection.NORTH));
+
+        assertTrue(follower.activeFormation(second).isEmpty());
+        assertTrue(follower.getFormationSlot(second).isEmpty());
+        assertEquals(List.of(walkFour, runSix), follower.limitToFormationPace(second, List.of(walkFour, runSix)),
+              "no formation pace on its way off");
+    }
+
+    @Test
     void callingOffAFleeKeepsTheLanceInFormation() {
         // cancelling a flee ends the exit order only; the unit's formation, facings and priority stay
         BipedMek leader = member(20, LEADER_HEX, 0, 3);

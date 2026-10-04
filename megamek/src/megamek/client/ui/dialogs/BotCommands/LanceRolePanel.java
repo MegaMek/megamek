@@ -112,7 +112,6 @@ public class LanceRolePanel extends JPanel {
           LanceRole.WhenConvoyGone.class);
     private final JLabel escortSummary = new JLabel();
     private final JLabel distanceHint = new JLabel();
-    private final JLabel movementHint = new JLabel();
     private final JLabel contactHint = new JLabel();
     private final JLabel leaveHint = new JLabel();
     private final JLabel goneHint = new JLabel();
@@ -233,9 +232,8 @@ public class LanceRolePanel extends JPanel {
         addFormRow(form, constraints, "BotCommandPanel.Role.escort.distance",
               segmentedRow(distanceButtons, List.of(LanceRole.Distance.values()), "BotCommandPanel.Role.distance."),
               distanceHint);
-        addFormRow(form, constraints, "BotCommandPanel.Role.escort.movement",
-              segmentedRow(movementButtons, List.of(LanceRole.Movement.values()), "BotCommandPanel.Role.movement."),
-              movementHint);
+        // escorts keep in step with their convoy; Bounding is hidden until the bot acts on it (HammerGS, 2026-10-03)
+        segmentedRow(movementButtons, List.of(LanceRole.Movement.IN_STEP), "BotCommandPanel.Role.movement.");
         contactCombo.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -345,7 +343,8 @@ public class LanceRolePanel extends JPanel {
             entry.getValue().setSelected(escort.getPositions().contains(entry.getKey()));
         }
         distanceButtons.get(escort.getDistance()).setSelected(true);
-        movementButtons.get(escort.getMovement()).setSelected(true);
+        movementButtons.getOrDefault(escort.getMovement(), movementButtons.get(LanceRole.Movement.IN_STEP))
+              .setSelected(true);
         contactCombo.setSelectedItem(escort.getContact());
         leaveButtons.get(escort.getLeaveToFight()).setSelected(true);
         goneButtons.get(escort.getWhenConvoyGone()).setSelected(true);
@@ -487,7 +486,6 @@ public class LanceRolePanel extends JPanel {
         escortSummary.setText(html(escortSummaryText(), TEXT_WIDTH));
         // each hint says what the choice picked on its row means, and changes with it
         distanceHint.setText(hint("distance." + selected(distanceButtons, LanceRole.Distance.MEDIUM).name()));
-        movementHint.setText(hint("movement." + selected(movementButtons, LanceRole.Movement.IN_STEP).name()));
         contactHint.setText(hint("contact." + ((LanceRole.Contact) contactCombo.getSelectedItem()).name()));
         leaveHint.setText(hint("leave." + selected(leaveButtons, LanceRole.LeaveToFight.BRIEFLY).name()));
         goneHint.setText(hint("gone." + selected(goneButtons, LanceRole.WhenConvoyGone.FOLLOW).name()));

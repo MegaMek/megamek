@@ -94,7 +94,6 @@ import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.InvalidPacketDataException;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
-import megamek.common.orders.LanceRoles;
 import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.AeroGroundPathFinder;
 import megamek.common.pathfinder.BoardClusterTracker;
@@ -1139,26 +1138,9 @@ public class Princess extends BotClient {
         Board board = game.getBoard(deployEntity);
 
         // first coordinate that it is legal to put this unit on now find some sort of reasonable facing: the one a
-        // player ordered for when it is stopped, else toward the enemy's deployment zone, where the enemy will come from
-        int decentFacing = deployEntity.getUnitOrders().getFacingWhenStopped();
-        OptionalInt convoyFacing = ConvoyTracker.exitFacing(deployEntity, deployCoords, board);
-        if (decentFacing != UnitOrders.FACING_AUTO) {
-            LOGGER.info("[Deployment] {} deploys at {} facing {}, as ordered", deployEntity.getDisplayName(),
-                  deployCoords.getBoardNum(), decentFacing);
-        } else if (convoyFacing.isPresent()) {
-            decentFacing = convoyFacing.getAsInt();
-            LOGGER.info("[Deployment] {} deploys at {} facing {}, toward its convoy's exit edge {}",
-                  deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
-                  LanceRoles.effectiveRole(deployEntity).getExitEdge());
-        } else {
-            Optional<Coords> enemyZoneCenter = getEnemyDeploymentCenter(board);
-            if (enemyZoneCenter.isPresent() && !enemyZoneCenter.get().equals(deployCoords)) {
-                decentFacing = deployCoords.direction(enemyZoneCenter.get());
-                LOGGER.info("[Deployment] {} deploys at {} facing {}, toward the enemy deployment zone around {}",
-                      deployEntity.getDisplayName(), deployCoords.getBoardNum(), decentFacing,
-                      enemyZoneCenter.get().getBoardNum());
-            }
-        }
+        // player ordered for when it is stopped, or its convoy's way, else toward the enemy's deployment zone
+        int decentFacing = getUnitOrdersFollower().deployment().deploymentFacing(deployEntity, deployCoords, board,
+              getEnemyDeploymentCenter(board));
 
         // with no enemy zone to face, face the last deployed enemy
         if (decentFacing == UnitOrders.FACING_AUTO) {
@@ -1481,47 +1463,15 @@ public class Princess extends BotClient {
         // them back untouched, so each unit deploys on terrain alone; subclasses may reorder to keep a force together.
         possibleDeployCoords = prioritizeDeploymentCoords(deployedUnit, possibleDeployCoords);
 
-        // a formation leader deploys on the hex its formation's first unit down picked for it, or the free one nearest
-        Optional<Coords> anchor = getUnitOrdersFollower().getDeploymentAnchor(deployedUnit);
-        if (anchor.isPresent()) {
-            List<Coords> nearestAnchor = new ArrayList<>(possibleDeployCoords);
-            nearestAnchor.sort(Comparator.comparingInt(coords -> coords.distance(anchor.get())));
-            Coords anchorHex = super.getFirstValidCoords(deployedUnit, nearestAnchor);
-            if (anchorHex != null) {
-                LOGGER.info("[BotOrders] {} (ID {}): deploying at {}, the hex picked for it as leader ({})",
-                      deployedUnit.getDisplayName(), deployedUnit.getId(), anchorHex.getBoardNum(),
-                      anchor.get().getBoardNum());
-                return anchorHex;
-            }
+        // where its orders decide it: a leader's anchor, a formation slot, an escort's place. Done here rather than in
+        // prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
+        DeploymentPlanner.OrderedDeployment ordered = getUnitOrdersFollower().deployment().orderedDeployment(
+              deployedUnit, possibleDeployCoords, (unit, hexes) -> super.getFirstValidCoords(unit, hexes),
+              this::chooseDeploymentAnchor);
+        if (ordered.hex() != null) {
+            return ordered.hex();
         }
-        // a member first down while its leader has still to deploy picks the leader's hex, so it can take its slot
-        Optional<Entity> leaderToPlace = getUnitOrdersFollower().leaderStillToPlace(deployedUnit);
-        if (leaderToPlace.isPresent()) {
-            chooseDeploymentAnchor(leaderToPlace.get(), deployedUnit);
-        }
-        // A formation leader deploys where its formation fits, and a member in its slot beside it. Done here rather
-        // than in prioritizeDeploymentCoords, whose CASPAR override does not call super, so both bots do it.
-        possibleDeployCoords = getUnitOrdersFollower().preferFormationFit(deployedUnit, possibleDeployCoords);
-        if (getUnitOrdersFollower().getDeploymentSlot(deployedUnit, possibleDeployCoords).isPresent()) {
-            // the free hex nearest the slot: ranking the hexes by terrain moved members out of the shape
-            // (HammerGS's playtest, 2026-09-26)
-            Coords slotHex = super.getFirstValidCoords(deployedUnit,
-                  getUnitOrdersFollower().preferDeploymentSlot(deployedUnit, possibleDeployCoords));
-            if (slotHex != null) {
-                return slotHex;
-            }
-        }
-
-        // an escort deploys at its place round a convoy already on the board
-        Optional<Coords> escortPlace = getUnitOrdersFollower().getEscortDeploymentPlace(deployedUnit);
-        if (escortPlace.isPresent()) {
-            List<Coords> nearestFirst = new ArrayList<>(possibleDeployCoords);
-            nearestFirst.sort(Comparator.comparingInt(coords -> coords.distance(escortPlace.get())));
-            Coords escortHex = super.getFirstValidCoords(deployedUnit, nearestFirst);
-            if (escortHex != null) {
-                return escortHex;
-            }
-        }
+        possibleDeployCoords = ordered.candidates();
 
         // Sample LIMIT number of valid starting hexes, check accessibility and hazards within RADIUS
         int LIMIT = 20;

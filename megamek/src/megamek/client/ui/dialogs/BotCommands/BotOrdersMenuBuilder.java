@@ -53,6 +53,8 @@ import megamek.common.board.Coords;
 import megamek.common.force.Force;
 import megamek.common.game.Game;
 import megamek.common.orders.FormationOrder;
+import megamek.common.orders.LanceRole;
+import megamek.common.orders.LanceRoles;
 import megamek.common.orders.OrderEligibility;
 import megamek.common.orders.OrderPriority;
 import megamek.common.orders.UnitOrderAction;
@@ -177,7 +179,7 @@ public class BotOrdersMenuBuilder {
             addOrder(groupMenu, botPlayer, group, "pause", UnitOrderAction.PAUSE);
             addOrder(groupMenu, botPlayer, group, "resume", UnitOrderAction.RESUME);
             addOrder(groupMenu, botPlayer, group, "stop", UnitOrderAction.STOP);
-            addOrder(groupMenu, botPlayer, group, "clear", UnitOrderAction.CLEAR);
+            addClearOrder(groupMenu, botPlayer, group);
             groupMenu.addSeparator();
             groupMenu.add(createEdgeMenu(botPlayer, group));
             groupMenu.add(createPriorityMenu(botPlayer, group));
@@ -413,7 +415,7 @@ public class BotOrdersMenuBuilder {
         addOrder(groupMenu, botPlayer, group, "resume", UnitOrderAction.RESUME);
         addOrder(groupMenu, botPlayer, group, "stop", UnitOrderAction.STOP);
         addOrder(groupMenu, botPlayer, group, "removeLast", UnitOrderAction.REMOVE_LAST);
-        addOrder(groupMenu, botPlayer, group, "clear", UnitOrderAction.CLEAR);
+        addClearOrder(groupMenu, botPlayer, group);
     }
 
     private void addOrder(JMenu menu, Player botPlayer, OrderGroup group, String key, UnitOrderAction action,
@@ -422,6 +424,43 @@ public class BotOrdersMenuBuilder {
         item.addActionListener(event -> sendToGroup(botPlayer, group, Messages.getString("BotCommandPanel.Orders." + key),
               action, namedArguments));
         menu.add(item);
+    }
+
+    /**
+     * Clear: the units drop their orders. A convoy then holds where it is for new orders rather than heading off by
+     * its exit edge at once, which is what a convoy with no route does (HammerGS, 2026-10-04): it stays paused until it
+     * is given a route, told to Resume, or its role changes.
+     */
+    private void addClearOrder(JMenu menu, Player botPlayer, OrderGroup group) {
+        String title = Messages.getString("BotCommandPanel.Orders.clear");
+        JMenuItem item = new JMenuItem(title);
+        item.addActionListener(event -> {
+            for (String command : clearCommands(group.unitIds())) {
+                client.sendChat(command);
+            }
+            acknowledge(botPlayer, group, title);
+        });
+        menu.add(item);
+    }
+
+    /**
+     * @param unitIds the units cleared
+     *
+     * @return the commands to send, in order: Clear for each unit, and Pause after it for a unit of a convoy
+     */
+    List<String> clearCommands(List<Integer> unitIds) {
+        List<String> commands = new ArrayList<>();
+        for (int unitId : unitIds) {
+            commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.CLEAR));
+            Entity unit = (client.getGame() instanceof Game game) ? game.getEntity(unitId) : null;
+            LanceRole role = (unit == null) ? null : LanceRoles.effectiveRole(unit);
+            if ((role != null) && role.isConvoy()) {
+                LOGGER.info("[BotOrders] {} (ID {}): cleared; a convoy holds for new orders", unit.getDisplayName(),
+                      unitId);
+                commands.add(UnitOrderCommand.commandText(unitId, UnitOrderAction.PAUSE));
+            }
+        }
+        return commands;
     }
 
     private void addPickedHexOrder(JMenu menu, Player botPlayer, OrderGroup group, String key,

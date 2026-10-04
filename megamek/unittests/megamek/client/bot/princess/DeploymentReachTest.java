@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -41,6 +42,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import megamek.client.bot.caspar.Caspar;
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
@@ -118,6 +120,31 @@ class DeploymentReachTest {
         truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(FIRST_WAYPOINT)).withFormation(
               new FormationOrder(FormationShape.COLUMN, LEADER_ID, 1, slot, FormationPace.RUN, ContactRule.HOLD)));
         return truck;
+    }
+
+    @Test
+    void onlyCasparDeploysFacingTheEnemyZone() {
+        // HammerGS, 2026-10-03: the bot's own judgement goes to CASPAR first; Princess deploys as she always has
+        assertFalse(princess.facesEnemyZoneAtDeployment());
+        Princess caspar = new Caspar("CASPAR", "localhost", 0);
+        assertTrue(caspar.facesEnemyZoneAtDeployment());
+    }
+
+    @Test
+    void anOrderedFacingWinsOverTheEnemyZone() {
+        Tank truck = truck(LEADER_ID, 0);
+        Coords hex = new Coords(10, 18);
+        Coords enemyZone = new Coords(10, 2);
+        DeploymentPlanner deployment = princess.getUnitOrdersFollower().deployment();
+
+        assertEquals(UnitOrders.FACING_AUTO, deployment.deploymentFacing(truck, hex, game.getBoard(), Optional.empty()),
+              "with no zone to face, the bot's own rule decides");
+        assertEquals(hex.direction(enemyZone), deployment.deploymentFacing(truck, hex, game.getBoard(),
+              Optional.of(enemyZone)));
+
+        int southEast = 2;
+        truck.setUnitOrders(truck.getUnitOrders().withFacings(UnitOrders.FACING_AUTO, southEast));
+        assertEquals(southEast, deployment.deploymentFacing(truck, hex, game.getBoard(), Optional.of(enemyZone)));
     }
 
     @Test

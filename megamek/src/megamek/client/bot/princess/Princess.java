@@ -1139,8 +1139,10 @@ public class Princess extends BotClient {
 
         // first coordinate that it is legal to put this unit on now find some sort of reasonable facing: the one a
         // player ordered for when it is stopped, or its convoy's way, else toward the enemy's deployment zone
+        Optional<Coords> enemyZoneCenter = facesEnemyZoneAtDeployment() ? getEnemyDeploymentCenter(board)
+              : Optional.empty();
         int decentFacing = getUnitOrdersFollower().deployment().deploymentFacing(deployEntity, deployCoords, board,
-              getEnemyDeploymentCenter(board));
+              enemyZoneCenter);
 
         // with no enemy zone to face, face the last deployed enemy
         if (decentFacing == UnitOrders.FACING_AUTO) {
@@ -1391,6 +1393,17 @@ public class Princess extends BotClient {
      */
     protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         return possibleDeployCoords;
+    }
+
+    /**
+     * Whether a unit with no ordered facing deploys facing the middle of the enemy's deployment zone, where the enemy
+     * will come from. Princess faces the nearest deployed enemy, as she always has; CASPAR faces the zone. The bot's
+     * own judgement goes to CASPAR first, to be measured against an unchanged Princess (HammerGS, 2026-10-03).
+     *
+     * @return {@code true} to face the enemy's deployment zone
+     */
+    protected boolean facesEnemyZoneAtDeployment() {
+        return false;
     }
 
     /**

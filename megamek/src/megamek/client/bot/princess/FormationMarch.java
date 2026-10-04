@@ -523,6 +523,22 @@ class FormationMarch {
                   entity.getDisplayName(), entity.getId(), currentRound());
             return paths;
         }
+        if (!leader.getUnitOrders().hasRoute() && !follower.roster().isFollowingPlayerUnit(entity)) {
+            // a formation set with no route shapes the lance where it deploys; it is not held to a pace to go nowhere
+            // (HammerGS, 2026-10-04)
+            LOGGER.debug("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - no route; not paced",
+                  entity.getDisplayName(), entity.getId(), currentRound());
+            return paths;
+        }
+        boolean isLanceHit = follower.fireReaction().isLanceHit(leader);
+        if (isLanceHit || follower.isEnemyInRange(entity)) {
+            // under attack each unit has its full movement; its place still pulls it, so it tries to keep formation
+            // (HammerGS, 2026-10-04)
+            LOGGER.info("[BotOrders] {} (ID {}) round {}: FORMATION_PACE - under attack ({}); full movement, still "
+                        + "making for its place", entity.getDisplayName(), entity.getId(), currentRound(),
+                  isLanceHit ? "the lance was hit last turn" : "an enemy is in range");
+            return withoutBuildingCollapses(entity, paths);
+        }
         int paceLimit = paceMovementPoints(entity, formation.get().getPace());
         boolean isTownLeg = follower.townLegs().isOnTownLeg(entity);
         boolean isHeldToSlowest = formation.get().isKeepTogether() && (leader.getId() == entity.getId())

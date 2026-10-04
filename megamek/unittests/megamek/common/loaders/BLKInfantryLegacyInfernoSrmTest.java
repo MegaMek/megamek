@@ -58,6 +58,10 @@ class BLKInfantryLegacyInfernoSrmTest {
     }
 
     private static ConvInfantry load(String primaryWeapon, @Nullable String secondaryWeapon) throws Exception {
+        return (ConvInfantry) new BLKInfantryFile(block(primaryWeapon, secondaryWeapon)).getEntity();
+    }
+
+    private static BuildingBlock block(String primaryWeapon, @Nullable String secondaryWeapon) {
         BuildingBlock block = new BuildingBlock();
         block.writeBlockData("UnitType", "Infantry");
         block.writeBlockData("Name", "Test SRM Platoon");
@@ -72,7 +76,7 @@ class BLKInfantryLegacyInfernoSrmTest {
             block.writeBlockData("secondn", 1);
             block.writeBlockData("Secondary", secondaryWeapon);
         }
-        return (ConvInfantry) new BLKInfantryFile(block).getEntity();
+        return block;
     }
 
     @Test
@@ -102,5 +106,51 @@ class BLKInfantryLegacyInfernoSrmTest {
 
         assertTrue(platoon.hasSrmLauncher(), "The heavy SRM launcher is an SRM launcher");
         assertFalse(platoon.firesInfernoSrms(), "An ordinary SRM platoon should start on Standard");
+    }
+
+    @Test
+    @DisplayName("an srmMunition block declares Inferno for a plain launcher")
+    void srmMunitionBlockDeclaresInferno() throws Exception {
+        BuildingBlock block = block("Needler Rifle", "InfantryStandardSRM");
+        block.writeBlockData(BLKInfantryFile.SRM_MUNITION, BLKInfantryFile.SRM_MUNITION_INFERNO);
+
+        ConvInfantry platoon = (ConvInfantry) new BLKInfantryFile(block).getEntity();
+
+        assertTrue(platoon.firesInfernoSrms(), "The unit file declares Inferno munitions");
+    }
+
+    @Test
+    @DisplayName("an srmMunition block of Standard overrides a withdrawn launcher's Inferno default")
+    void srmMunitionBlockOverridesWithdrawnDefault() throws Exception {
+        BuildingBlock block = block("Needler Rifle", "InfantryStandardSRMInferno");
+        block.writeBlockData(BLKInfantryFile.SRM_MUNITION, "Standard");
+
+        ConvInfantry platoon = (ConvInfantry) new BLKInfantryFile(block).getEntity();
+
+        assertFalse(platoon.firesInfernoSrms(), "The unit file's own declaration wins over the old weapon name");
+    }
+
+    @Test
+    @DisplayName("re-saving a unit built with the withdrawn launcher keeps it on Inferno")
+    void resavedWithdrawnLauncherUnitStaysInferno() throws Exception {
+        ConvInfantry original = load("Needler Rifle", "InfantryStandardSRMInferno");
+
+        // As MegaMekLab does when the unit is opened and saved again
+        BuildingBlock written = BLKFile.getBlock(original);
+        assertEquals("InfantryStandardSRM", written.getDataAsString("Secondary")[0],
+              "The re-saved file should name the plain launcher");
+        assertEquals(BLKInfantryFile.SRM_MUNITION_INFERNO, written.getDataAsString(BLKInfantryFile.SRM_MUNITION)[0],
+              "The re-saved file should carry the Inferno declaration");
+
+        ConvInfantry reloaded = (ConvInfantry) new BLKInfantryFile(written).getEntity();
+        assertTrue(reloaded.firesInfernoSrms(), "The re-saved unit should still start on Inferno");
+    }
+
+    @Test
+    @DisplayName("a Standard SRM platoon writes no srmMunition block")
+    void standardPlatoonWritesNoSrmMunition() throws Exception {
+        BuildingBlock written = BLKFile.getBlock(load("InfantryAssaultRifle", "InfantryHeavySRM"));
+
+        assertFalse(written.exists(BLKInfantryFile.SRM_MUNITION), "Standard is the default and is not written");
     }
 }

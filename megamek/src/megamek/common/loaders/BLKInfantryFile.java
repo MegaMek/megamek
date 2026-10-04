@@ -60,6 +60,11 @@ import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
  */
 public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
+    /** Unit file block holding a conventional infantry platoon's SRM munition declaration. */
+    public static final String SRM_MUNITION = "srmMunition";
+    /** {@link #SRM_MUNITION} value for a platoon that carries Inferno SRMs; anything else means standard. */
+    public static final String SRM_MUNITION_INFERNO = "Inferno";
+
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
     }
@@ -161,6 +166,7 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         }
 
         loadDisposableWeapon(infantry);
+        loadSrmMunition(infantry);
 
         // TAG infantry have separate attacks for primary and secondary weapons.
         if (secondaryWeaponType != null && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
@@ -365,6 +371,19 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
                 throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
             }
             infantry.equipDisposableWeapon(disposableWeapon);
+        }
+    }
+
+    /**
+     * Loads the platoon's pre-battle SRM munition declaration (TW p. 143), if the unit file sets one. It overrides the
+     * default from a withdrawn Inferno launcher name, so a unit file can also start such a platoon on Standard.
+     *
+     * @param infantry the platoon being loaded
+     */
+    private void loadSrmMunition(ConvInfantry infantry) {
+        if (dataFile.exists(SRM_MUNITION)) {
+            String srmMunition = dataFile.getDataAsString(SRM_MUNITION)[0].trim();
+            infantry.setInfernoSrmsDeclared(srmMunition.equalsIgnoreCase(SRM_MUNITION_INFERNO));
         }
     }
 

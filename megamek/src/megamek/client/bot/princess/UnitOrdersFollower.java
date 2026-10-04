@@ -134,8 +134,6 @@ public class UnitOrdersFollower {
 
     private final Princess owner;
     private final Set<Integer> arrivedUnitIds = new HashSet<>();
-    private final Map<String, WaypointDistanceField> distanceFields = new HashMap<>();
-    private int distanceFieldsRound = -1;
     private final Map<Integer, SlotChoice> slotChoices = new HashMap<>();
     // slots laid out around a leader still on its way, never ahead of it; kept like slotChoices
     private final Map<Integer, SlotChoice> movingSlotChoices = new HashMap<>();
@@ -268,12 +266,16 @@ public class UnitOrdersFollower {
     // which way an ordered unit faces, and when an ordered facing gives way to a threat
     private final OrderedFacing facings;
 
+    // how far a hex is from a waypoint or edge by the real route, the route fields shared a round
+    private final RouteDistances distances;
+
     /**
      * @param owner the bot whose units follow orders
      */
     UnitOrdersFollower(Princess owner) {
         this.owner = owner;
         this.convoys = new ConvoyTracker(owner);
+        this.distances = new RouteDistances(owner, this);
         this.facings = new OrderedFacing(owner, this);
         this.fireReaction = new FireReaction(owner, this);
     }
@@ -553,7 +555,7 @@ public class UnitOrdersFollower {
         edgeHexes.sort(Comparator.comparingInt(hex -> hex.distance(from)));
         for (int index = 0; (index < edgeHexes.size()) && (index < EXIT_HEXES_TRIED); index++) {
             Coords hex = edgeHexes.get(index);
-            if (routeCost(entity, hex, entity.getPosition(), false, false) != WaypointDistanceField.UNREACHABLE) {
+            if (distances.routeCost(entity, hex, entity.getPosition(), false, false) != WaypointDistanceField.UNREACHABLE) {
                 return Optional.of(hex);
             }
         }
@@ -687,129 +689,6 @@ public class UnitOrdersFollower {
             case WEST -> CardinalEdge.WEST;
             case NONE -> CardinalEdge.NONE;
         };
-    }
-
-    /**
-     * How far a position is from the unit's next waypoint by the cheapest route the unit can take, in movement
-     * points. Units heading for the same waypoint share one {@link WaypointDistanceField}, worked out once a round.
-     *
-     * @param mover    the unit
-     * @param waypoint the waypoint
-     * @param position the position to measure from
-     *
-     * @return the movement points to the waypoint, or {@link WaypointDistanceField#UNREACHABLE}
-     */
-    int routeCostFrom(Entity mover, Coords waypoint, Coords position) {
-        boolean isTownSpot = isTownSpotOf(mover, waypoint);
-        return routeCost(mover, waypoint, position, isTownSpot, isTownSpot && isSlowestOfLance(mover));
-    }
-
-    /**
-     * @param isGoingRoundUnitsInPlace {@code true} to make the hexes in front of units already in their places cost
-     *                                 more, for a unit making for its own place on a town leg
-     * @param isKeepingOutOfStreets    {@code true} to make narrow streets cost more, for one of a lance's slowest
-     *                                 units on a town leg
-     */
-    private int routeCost(Entity mover, Coords waypoint, Coords position, boolean isGoingRoundUnitsInPlace,
-          boolean isKeepingOutOfStreets) {
-        WaypointDistanceField field = routeField(mover, waypoint, isGoingRoundUnitsInPlace, isKeepingOutOfStreets);
-        return (field == null) ? WaypointDistanceField.UNREACHABLE : field.costFrom(position);
-    }
-
-    /**
-     * @return the unit's route field to the waypoint, worked out once a round for each way of moving; {@code null} for
-     *       a unit that flies over the terrain
-     */
-    private @Nullable WaypointDistanceField routeField(Entity mover, Coords waypoint,
-          boolean isGoingRoundUnitsInPlace, boolean isKeepingOutOfStreets) {
-        if (MovementType.getMovementType(mover) == MovementType.Flyer) {
-            // a VTOL or fighter flies over the terrain; the straight line stands in
-            return null;
-        }
-        if (distanceFieldsRound != currentRound()) {
-            distanceFields.clear();
-            distanceFieldsRound = currentRound();
-        }
-        String key = waypoint.getBoardNum() + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId()
-              + '|' + mover.getMaxElevationChange() + (isConvoy(mover) ? "|roads" : "");
-        Map<Coords, Integer> extraCost = new HashMap<>();
-        if (isGoingRoundUnitsInPlace) {
-            Map<Coords, Integer> frontOfUnitsInPlace = TownLegPlanner.frontOfUnitsInPlace(unitsInPlaceBeside(mover));
-            if (!frontOfUnitsInPlace.isEmpty()) {
-                // the field differs with who stands where; keyed so units of one lance share it this round
-                key += "|front " + frontOfUnitsInPlace.keySet();
-                extraCost.putAll(frontOfUnitsInPlace);
-            }
-        }
-        if (isKeepingOutOfStreets) {
-            key += "|narrow";
-            for (Map.Entry<Coords, Integer> narrow : narrowHexes(mover).entrySet()) {
-                extraCost.merge(narrow.getKey(), narrow.getValue(), Integer::sum);
-            }
-        }
-        WaypointDistanceField field = distanceFields.get(key);
-        if (field == null) {
-            field = WaypointDistanceField.build(mover, waypoint, extraCost);
-            distanceFields.put(key, field);
-            if (isKeepingOutOfStreets) {
-                LOGGER.info("[BotOrders] {} (ID {}) round {}: TOWN_LANES - one of the lance's slowest; streets cost {} "
-                            + "MP a hex more on its way to {}, so it keeps to the open lanes", mover.getDisplayName(),
-                      mover.getId(), currentRound(), TownLegPlanner.NARROW_HEX_COST_FOR_SLOWEST,
-                      waypoint.getBoardNum());
-            }
-        }
-        return field;
-    }
-
-    /**
-     * Whether a unit following a player's orders can get where it is going on foot, without bringing anything down:
-     * the route field reaches it from where the unit stands. Clearing a way through buildings is for when it cannot
-     * (HammerGS, 2026-10-01: "the bulldozer plan should be a last resort when no walk path exists").
-     *
-     * @param mover a unit of the bot
-     *
-     * @return {@code true} if the unit has a route or edge order and a way on foot to it
-     */
-    boolean hasWalkingRoute(Entity mover) {
-        Coords position = mover.getPosition();
-        if (position == null) {
-            return false;
-        }
-        Optional<Coords> destination = owner.getUnitBehaviorTracker().getActiveWaypoint(mover, owner);
-        if (destination.isPresent()) {
-            return routeCostFrom(mover, destination.get(), position) != WaypointDistanceField.UNREACHABLE;
-        }
-        Optional<CardinalEdge> edge = getOrderedEdge(mover);
-        return edge.isPresent() && (edgeCostFrom(mover, edge.get(), position) != WaypointDistanceField.UNREACHABLE);
-    }
-
-    /**
-     * How far a position is from a board edge by the cheapest route the unit can take, in movement points, for a unit
-     * leaving by or withdrawing to that edge. Units moving the same way share one field a round.
-     *
-     * @param mover    the unit
-     * @param edge     the edge
-     * @param position the position to measure from
-     *
-     * @return the movement points to the nearest hex of the edge the unit can stand on, or
-     *       {@link WaypointDistanceField#UNREACHABLE}
-     */
-    int edgeCostFrom(Entity mover, CardinalEdge edge, Coords position) {
-        if (MovementType.getMovementType(mover) == MovementType.Flyer) {
-            return WaypointDistanceField.UNREACHABLE;
-        }
-        if (distanceFieldsRound != currentRound()) {
-            distanceFields.clear();
-            distanceFieldsRound = currentRound();
-        }
-        String key = "edge " + edge + '|' + MovementType.getMovementType(mover) + '|' + mover.getBoardId() + '|'
-              + mover.getMaxElevationChange() + (isConvoy(mover) ? "|roads" : "");
-        WaypointDistanceField field = distanceFields.get(key);
-        if (field == null) {
-            field = WaypointDistanceField.buildToEdge(mover, edge);
-            distanceFields.put(key, field);
-        }
-        return field.costFrom(position);
     }
 
     /**
@@ -1156,7 +1035,7 @@ public class UnitOrdersFollower {
         if ((board != null) && (route.size() > 1) && (formation.getShape() != FormationShape.COLUMN)) {
             Coords nextFlag = route.get(1);
             int townHexes = TownLegPlanner.hexesBesideBuildings(board, flag, nextFlag,
-                  hex -> routeCostFrom(leader, nextFlag, hex));
+                  hex -> distances.routeCostFrom(leader, nextFlag, hex));
             if (townHexes >= TownLegPlanner.TOWN_HEXES) {
                 return "the next leg runs through a town (" + townHexes + " hexes in or beside buildings)";
             }
@@ -1169,7 +1048,7 @@ public class UnitOrdersFollower {
             if (slot.isEmpty() || (member.getPosition() == null)) {
                 continue;
             }
-            int cost = routeCostFrom(member, slot.get(), member.getPosition());
+            int cost = distances.routeCostFrom(member, slot.get(), member.getPosition());
             int turnsMove = Math.max(1, paceMovementPoints(member, formation.getPace()));
             if ((cost != WaypointDistanceField.UNREACHABLE) && (cost > turnsMove)) {
                 return member.getShortName() + " is " + cost + " MP from its place at " + slot.get().getBoardNum();
@@ -1186,7 +1065,7 @@ public class UnitOrdersFollower {
         if (slot.isEmpty() || (entity.getPosition() == null) || entity.getPosition().equals(slot.get())) {
             return false;
         }
-        int cost = routeCostFrom(entity, slot.get(), entity.getPosition());
+        int cost = distances.routeCostFrom(entity, slot.get(), entity.getPosition());
         if (cost == WaypointDistanceField.UNREACHABLE) {
             cost = entity.getPosition().distance(slot.get());
         }
@@ -1360,7 +1239,7 @@ public class UnitOrdersFollower {
             if (slot.isEmpty() || member.getPosition().equals(slot.get()) || isFallingBehind(member)) {
                 continue;
             }
-            int cost = routeCostFrom(member, slot.get(), member.getPosition());
+            int cost = distances.routeCostFrom(member, slot.get(), member.getPosition());
             if (cost == WaypointDistanceField.UNREACHABLE) {
                 continue;
             }
@@ -1687,8 +1566,8 @@ public class UnitOrdersFollower {
         if (position.equals(place)) {
             return place;
         }
-        int fromHere = routeCost(entity, flag, position, false, false);
-        int fromPlace = routeCost(entity, flag, place, false, false);
+        int fromHere = distances.routeCost(entity, flag, position, false, false);
+        int fromPlace = distances.routeCost(entity, flag, place, false, false);
         if ((fromHere == WaypointDistanceField.UNREACHABLE) || (fromPlace == WaypointDistanceField.UNREACHABLE)
               || (fromHere >= fromPlace)) {
             return place;
@@ -1853,8 +1732,8 @@ public class UnitOrdersFollower {
         if ((columnSlot == null) || slot.equals(columnSlot) || (entity.getPosition() == null)) {
             return false;
         }
-        int toSlot = routeCostFrom(entity, slot, entity.getPosition());
-        int toColumn = routeCostFrom(entity, columnSlot, entity.getPosition());
+        int toSlot = distances.routeCostFrom(entity, slot, entity.getPosition());
+        int toColumn = distances.routeCostFrom(entity, columnSlot, entity.getPosition());
         if (toColumn == WaypointDistanceField.UNREACHABLE) {
             return false;
         }
@@ -1948,7 +1827,7 @@ public class UnitOrdersFollower {
                 Coords position = member.getPosition();
                 if (position != null) {
                     mostTownHexes = Math.max(mostTownHexes, TownLegPlanner.hexesBesideBuildings(board, position,
-                          anchor, hex -> routeCostFrom(member, anchor, hex)));
+                          anchor, hex -> distances.routeCostFrom(member, anchor, hex)));
                 }
             }
             if (mostTownHexes >= TownLegPlanner.TOWN_HEXES) {
@@ -2095,7 +1974,7 @@ public class UnitOrdersFollower {
      *       cannot reach counts as far off
      */
     private int pairingCost(Entity unit, Coords spot) {
-        int cost = routeCost(unit, spot, unit.getPosition(), false, isSlowestOfLance(unit));
+        int cost = distances.routeCost(unit, spot, unit.getPosition(), false, isSlowestOfLance(unit));
         return (cost == WaypointDistanceField.UNREACHABLE) ? UNREACHABLE_PLACE_COST : cost;
     }
 
@@ -2105,7 +1984,7 @@ public class UnitOrdersFollower {
     /**
      * @return {@code true} if the unit is one of its lance's slowest at the lance's pace, with a faster unit in it
      */
-    private boolean isSlowestOfLance(Entity unit) {
+    boolean isSlowestOfLance(Entity unit) {
         Optional<FormationOrder> formation = activeFormation(unit);
         if (formation.isEmpty()) {
             return false;
@@ -2118,7 +1997,7 @@ public class UnitOrdersFollower {
     /**
      * @return the narrow hexes of the unit's board, worked out once a round since buildings can come down
      */
-    private Map<Coords, Integer> narrowHexes(Entity unit) {
+    Map<Coords, Integer> narrowHexes(Entity unit) {
         Board board = owner.getGame().getBoard(unit);
         if (board == null) {
             return Map.of();
@@ -2186,7 +2065,7 @@ public class UnitOrdersFollower {
               .get(entity.getId()));
     }
 
-    private boolean isTownSpotOf(Entity entity, Coords hex) {
+    boolean isTownSpotOf(Entity entity, Coords hex) {
         // the path ranker asks this for every move it weighs: rule most hexes out before looking at the lance
         Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
         if (formation.isEmpty()) {
@@ -2211,7 +2090,7 @@ public class UnitOrdersFollower {
     /**
      * @return the other units of the unit's lance standing in their places on a town leg
      */
-    private List<Entity> unitsInPlaceBeside(Entity entity) {
+    List<Entity> unitsInPlaceBeside(Entity entity) {
         List<Entity> inPlace = new ArrayList<>();
         Optional<FormationOrder> formation = entity.getUnitOrders().getFormation();
         if (formation.isEmpty()) {
@@ -2253,7 +2132,7 @@ public class UnitOrdersFollower {
             if ((spot == null) || (position == null) || position.equals(spot)) {
                 continue;
             }
-            List<Coords> way = TownLegPlanner.wayTo(board, position, spot, hex -> routeCostFrom(member, spot, hex));
+            List<Coords> way = TownLegPlanner.wayTo(board, position, spot, hex -> distances.routeCostFrom(member, spot, hex));
             Coords door = TownLegPlanner.doorOn(board, way);
             if (door != null) {
                 doors.put(member.getId(), door);
@@ -2386,7 +2265,7 @@ public class UnitOrdersFollower {
             fallingBehindUnitIds.remove(unit.getId());
             return;
         }
-        int cost = routeCostFrom(unit, slot.get(), unit.getPosition());
+        int cost = distances.routeCostFrom(unit, slot.get(), unit.getPosition());
         if (cost == WaypointDistanceField.UNREACHABLE) {
             cost = unit.getPosition().distance(slot.get());
         }
@@ -2707,8 +2586,8 @@ public class UnitOrdersFollower {
     }
 
     private int deploymentCost(Entity mover, DeploymentGoal goal, Coords hex) {
-        return (goal.hex() != null) ? routeCost(mover, goal.hex(), hex, false, false)
-              : edgeCostFrom(mover, goal.edge(), hex);
+        return (goal.hex() != null) ? distances.routeCost(mover, goal.hex(), hex, false, false)
+              : distances.edgeCostFrom(mover, goal.edge(), hex);
     }
 
     private static boolean isFlying(Entity unit) {
@@ -3167,7 +3046,7 @@ public class UnitOrdersFollower {
             // its leader from count
             List<Coords> reachable = new ArrayList<>();
             for (Coords coords : ordered) {
-                if (routeCost(entity, formationHex, coords, false, false) != WaypointDistanceField.UNREACHABLE) {
+                if (distances.routeCost(entity, formationHex, coords, false, false) != WaypointDistanceField.UNREACHABLE) {
                     reachable.add(coords);
                 }
             }
@@ -3519,7 +3398,7 @@ public class UnitOrdersFollower {
      *       movement points a turn; by the straight line where no route is known
      */
     private int turnsToWaypoint(Entity unit, Coords waypoint, Coords position, int movementPointsPerTurn) {
-        int cost = routeCostFrom(unit, waypoint, position);
+        int cost = distances.routeCostFrom(unit, waypoint, position);
         if (cost == WaypointDistanceField.UNREACHABLE) {
             cost = position.distance(waypoint);
         }
@@ -3572,32 +3451,6 @@ public class UnitOrdersFollower {
               entity.getId(), waypoint.get().getBoardNum());
         owner.getOrdersRadio().report(entity, OrdersRadio.RadioEvent.UNREACHABLE, navLabel(entity, waypoint.get()));
         change(entity, UnitOrderAction.SKIP);
-    }
-
-    /**
-     * Whether the unit can get to a hex at all. The bot's quick reachability check, {@link
-     * megamek.common.pathfinder.BoardClusterTracker}, can say no for a hex the unit can in fact walk to - for example
-     * from a hex its cluster does not join well - so a hex only counts as unreachable when the route distance map
-     * agrees that no way there exists.
-     *
-     * @param entity   the unit
-     * @param waypoint the hex
-     *
-     * @return {@code true} if the unit can reach the hex, or its position is unknown so it cannot be judged
-     */
-    boolean canReach(Entity entity, Coords waypoint) {
-        if (entity.getPosition() == null) {
-            return true;
-        }
-        if (!owner.getClusterTracker().getDestinationCoords(entity, waypoint, true).isEmpty()) {
-            return true;
-        }
-        boolean hasRoute = routeCostFrom(entity, waypoint, entity.getPosition()) != WaypointDistanceField.UNREACHABLE;
-        if (hasRoute) {
-            LOGGER.info("[BotOrders] {} (ID {}): reachability check refused {} but a route exists; keeping it",
-                  entity.getDisplayName(), entity.getId(), waypoint.getBoardNum());
-        }
-        return hasRoute;
     }
 
     /**
@@ -3667,5 +3520,33 @@ public class UnitOrdersFollower {
      */
     int twistAllowance(Entity entity, Coords finalHex) {
         return facings.twistAllowance(entity, finalHex);
+    }
+
+    /**
+     * See {@code RouteDistances.canReach}.
+     */
+    boolean canReach(Entity entity, Coords waypoint) {
+        return distances.canReach(entity, waypoint);
+    }
+
+    /**
+     * See {@code RouteDistances.edgeCostFrom}.
+     */
+    int edgeCostFrom(Entity mover, CardinalEdge edge, Coords position) {
+        return distances.edgeCostFrom(mover, edge, position);
+    }
+
+    /**
+     * See {@code RouteDistances.hasWalkingRoute}.
+     */
+    boolean hasWalkingRoute(Entity mover) {
+        return distances.hasWalkingRoute(mover);
+    }
+
+    /**
+     * See {@code RouteDistances.routeCostFrom}.
+     */
+    int routeCostFrom(Entity mover, Coords waypoint, Coords position) {
+        return distances.routeCostFrom(mover, waypoint, position);
     }
 }

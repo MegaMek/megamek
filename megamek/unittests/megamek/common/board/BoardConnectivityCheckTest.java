@@ -1,0 +1,187 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.common.board;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import megamek.common.GameBoardTestCase;
+import org.junit.jupiter.api.Test;
+
+class BoardConnectivityCheckTest extends GameBoardTestCase {
+
+    static {
+        initializeBoard("ROADS_JOIN", """
+              size 1 3
+              hex 0101 0 "road:1" ""
+              hex 0102 0 "road:1" ""
+              hex 0103 0 "pavement:1" ""
+              end""");
+        initializeBoard("ROAD_INTO_NOTHING", """
+              size 1 2
+              hex 0101 0 "road:1:8" ""
+              hex 0102 0 "rough:1" ""
+              end""");
+        initializeBoard("ROAD_ONE_WAY", """
+              size 1 2
+              hex 0101 0 "road:1:8" ""
+              hex 0102 0 "road:1:8" ""
+              end""");
+        initializeBoard("BRIDGE_TWO_ABOVE_ROAD", """
+              size 1 3
+              hex 0101 0 "road:1" ""
+              hex 0102 0 "water:1;bridge:1:9;bridge_cf:100;bridge_elev:2" ""
+              hex 0103 0 "road:1" ""
+              end""");
+        initializeBoard("BRIDGE_INTO_ROUGH", """
+              size 1 3
+              hex 0101 0 "road:1" ""
+              hex 0102 0 "water:1;bridge:1:9;bridge_cf:100;bridge_elev:0" ""
+              hex 0103 0 "rough:1" ""
+              end""");
+        initializeBoard("BRIDGE_FLOATING_OVER_ROUGH", """
+              size 1 3
+              hex 0101 0 "road:1" ""
+              hex 0102 0 "water:1;bridge:1:9;bridge_cf:100;bridge_elev:2" ""
+              hex 0103 0 "rough:1" ""
+              end""");
+        initializeBoard("ROAD_ONTO_HIGH_BRIDGE", """
+              size 1 3
+              hex 0101 0 "road:1:8" ""
+              hex 0102 0 "water:1;bridge:1;bridge_cf:100;bridge_elev:2" ""
+              hex 0103 0 "" ""
+              end""");
+        initializeBoard("ROAD_UNDER_OVERPASS", """
+              size 1 3
+              hex 0101 0 "road:1" ""
+              hex 0102 0 "road:1;bridge:1;bridge_cf:100;bridge_elev:3" ""
+              hex 0103 0 "road:1" ""
+              end""");
+        initializeBoard("HIGH_ROAD_ONTO_BRIDGE_OVER_ROAD", """
+              size 1 2
+              hex 0101 3 "road:1:8" ""
+              hex 0102 0 "road:1;bridge:1;bridge_cf:100;bridge_elev:3" ""
+              end""");
+        initializeBoard("BRIDGE_ONE_ABOVE_ROAD", """
+              size 1 3
+              hex 0101 0 "road:1" ""
+              hex 0102 0 "water:1;bridge:1:9;bridge_cf:100;bridge_elev:1" ""
+              hex 0103 0 "road:1" ""
+              end""");
+    }
+
+    private List<String> problemsOn(String boardName) {
+        setBoard(boardName);
+        return BoardConnectivityCheck.findProblems(getGame().getBoard());
+    }
+
+    @Test
+    void roadsThatJoinUpHaveNoProblems() {
+        assertTrue(problemsOn("ROADS_JOIN").isEmpty());
+    }
+
+    @Test
+    void roadExitIntoHexWithoutRoadIsReported() {
+        List<String> problems = problemsOn("ROAD_INTO_NOTHING");
+
+        assertEquals(1, problems.size());
+        assertTrue(problems.get(0).contains("0101"), problems.get(0));
+    }
+
+    @Test
+    void roadExitWithNoExitBackIsReported() {
+        List<String> problems = problemsOn("ROAD_ONE_WAY");
+
+        assertEquals(1, problems.size(), "Only 0101's exit south lacks a match; 0102's exit runs off the board");
+        assertTrue(problems.get(0).contains("no exit back"), problems.get(0));
+    }
+
+    @Test
+    void bridgeDeckTwoLevelsAboveItsRoadIsReportedAtBothEnds() {
+        assertEquals(2, problemsOn("BRIDGE_TWO_ABOVE_ROAD").size());
+    }
+
+    @Test
+    void bridgeEndingOnGroundWithoutARoadIsOnlyANote() {
+        assertTrue(problemsOn("BRIDGE_INTO_ROUGH").isEmpty(), "The deck meets the rough at the same level");
+
+        List<String> notes = BoardConnectivityCheck.findNotes(getGame().getBoard());
+        assertEquals(1, notes.size(), String.join("; ", notes));
+        assertTrue(notes.get(0).contains("TO:AR p.115"), notes.get(0));
+    }
+
+    @Test
+    void floatingBridgeEndIsReported() {
+        List<String> problems = problemsOn("BRIDGE_FLOATING_OVER_ROUGH");
+
+        assertEquals(2, problems.size(), "Both ends are two levels off: the road end and the floating rough end");
+        assertTrue(problems.get(1).contains("floating") || problems.get(0).contains("floating"),
+              String.join("; ", problems));
+    }
+
+    @Test
+    void roadRunningOntoBridgeAtTheWrongHeightIsReported() {
+        List<String> problems = problemsOn("ROAD_ONTO_HIGH_BRIDGE");
+
+        assertEquals(1, problems.size(), String.join("; ", problems));
+        assertTrue(problems.get(0).contains("onto the bridge at 0102"), problems.get(0));
+        assertTrue(problems.get(0).contains("out of reach"), problems.get(0));
+    }
+
+    @Test
+    void roadUnderAnOverpassIsNotAJoin() {
+        assertTrue(problemsOn("ROAD_UNDER_OVERPASS").isEmpty(), "The road runs under the bridge, not onto it");
+    }
+
+    @Test
+    void roadMeetingTheDeckAboveAGroundRoadIsAJoinNotAnOverpass() {
+        assertTrue(problemsOn("HIGH_ROAD_ONTO_BRIDGE_OVER_ROAD").isEmpty(),
+              "The level 3 road meets the level 3 deck; the road below is not its neighbour");
+    }
+
+    @Test
+    void bridgeDeckOneLevelAboveItsRoadIsOnlyACosmeticStep() {
+        assertTrue(problemsOn("BRIDGE_ONE_ABOVE_ROAD").isEmpty(), "A ground vehicle can climb one level");
+        assertEquals(2, BoardConnectivityCheck.findNotes(getGame().getBoard()).size(),
+              "Both ends are drawn with a step in the isometric view");
+    }
+
+    @Test
+    void bridgeDeckTwoLevelsAboveItsRoadIsNotListedAsANote() {
+        setBoard("BRIDGE_TWO_ABOVE_ROAD");
+
+        assertTrue(BoardConnectivityCheck.findNotes(getGame().getBoard()).isEmpty());
+    }
+}

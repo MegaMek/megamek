@@ -102,7 +102,7 @@ class BoardConnectivityCheckTest extends GameBoardTestCase {
               end""");
     }
 
-    private List<String> problemsOn(String boardName) {
+    private List<BoardIssue> problemsOn(String boardName) {
         setBoard(boardName);
         return BoardConnectivityCheck.findProblems(getGame().getBoard());
     }
@@ -114,18 +114,20 @@ class BoardConnectivityCheckTest extends GameBoardTestCase {
 
     @Test
     void roadExitIntoHexWithoutRoadIsReported() {
-        List<String> problems = problemsOn("ROAD_INTO_NOTHING");
+        List<BoardIssue> problems = problemsOn("ROAD_INTO_NOTHING");
 
         assertEquals(1, problems.size());
-        assertTrue(problems.get(0).contains("0101"), problems.get(0));
+        assertTrue(problems.get(0).message().contains("0101"), problems.get(0).message());
+        assertEquals(new Coords(0, 0), problems.get(0).coords(), "The problem points the editor at hex 0101");
+        assertTrue(problems.get(0).fix().contains("Remove this road's S exit"), problems.get(0).fix());
     }
 
     @Test
     void roadExitWithNoExitBackIsReported() {
-        List<String> problems = problemsOn("ROAD_ONE_WAY");
+        List<BoardIssue> problems = problemsOn("ROAD_ONE_WAY");
 
         assertEquals(1, problems.size(), "Only 0101's exit south lacks a match; 0102's exit runs off the board");
-        assertTrue(problems.get(0).contains("no exit back"), problems.get(0));
+        assertTrue(problems.get(0).message().contains("no exit back"), problems.get(0).message());
     }
 
     @Test
@@ -137,27 +139,27 @@ class BoardConnectivityCheckTest extends GameBoardTestCase {
     void bridgeEndingOnGroundWithoutARoadIsOnlyANote() {
         assertTrue(problemsOn("BRIDGE_INTO_ROUGH").isEmpty(), "The deck meets the rough at the same level");
 
-        List<String> notes = BoardConnectivityCheck.findNotes(getGame().getBoard());
-        assertEquals(1, notes.size(), String.join("; ", notes));
-        assertTrue(notes.get(0).contains("TO:AR p.115"), notes.get(0));
+        List<BoardIssue> notes = BoardConnectivityCheck.findNotes(getGame().getBoard());
+        assertEquals(1, notes.size(), notes.toString());
+        assertTrue(notes.get(0).message().contains("TO:AR p.115"), notes.get(0).message());
     }
 
     @Test
     void floatingBridgeEndIsReported() {
-        List<String> problems = problemsOn("BRIDGE_FLOATING_OVER_ROUGH");
+        List<BoardIssue> problems = problemsOn("BRIDGE_FLOATING_OVER_ROUGH");
 
         assertEquals(2, problems.size(), "Both ends are two levels off: the road end and the floating rough end");
-        assertTrue(problems.get(1).contains("floating") || problems.get(0).contains("floating"),
-              String.join("; ", problems));
+        assertTrue(problems.get(1).message().contains("floating") || problems.get(0).message().contains("floating"),
+              problems.toString());
     }
 
     @Test
     void roadRunningOntoBridgeAtTheWrongHeightIsReported() {
-        List<String> problems = problemsOn("ROAD_ONTO_HIGH_BRIDGE");
+        List<BoardIssue> problems = problemsOn("ROAD_ONTO_HIGH_BRIDGE");
 
-        assertEquals(1, problems.size(), String.join("; ", problems));
-        assertTrue(problems.get(0).contains("onto the bridge at 0102"), problems.get(0));
-        assertTrue(problems.get(0).contains("out of reach"), problems.get(0));
+        assertEquals(1, problems.size(), problems.toString());
+        assertTrue(problems.get(0).message().contains("onto the bridge at 0102"), problems.get(0).message());
+        assertTrue(problems.get(0).message().contains("out of reach"), problems.get(0).message());
     }
 
     @Test
@@ -169,6 +171,16 @@ class BoardConnectivityCheckTest extends GameBoardTestCase {
     void roadMeetingTheDeckAboveAGroundRoadIsAJoinNotAnOverpass() {
         assertTrue(problemsOn("HIGH_ROAD_ONTO_BRIDGE_OVER_ROAD").isEmpty(),
               "The level 3 road meets the level 3 deck; the road below is not its neighbour");
+    }
+
+    @Test
+    void issuesAtAHexListOnlyThatHex() {
+        setBoard("BRIDGE_TWO_ABOVE_ROAD");
+
+        assertEquals(2, BoardConnectivityCheck.findIssuesAt(getGame().getBoard(), new Coords(0, 1)).size(),
+              "The bridge hex reports both of its ends");
+        assertTrue(BoardConnectivityCheck.findIssuesAt(getGame().getBoard(), new Coords(0, 0)).isEmpty(),
+              "The road hex is not where the bridge problem is reported");
     }
 
     @Test

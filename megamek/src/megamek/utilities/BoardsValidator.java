@@ -45,6 +45,7 @@ import java.util.List;
 import megamek.common.Configuration;
 import megamek.common.board.Board;
 import megamek.common.board.BoardConnectivityCheck;
+import megamek.common.board.BoardIssue;
 import megamek.logging.MMLogger;
 
 /**
@@ -157,12 +158,12 @@ public class BoardsValidator {
         }
     }
 
-    private void reportConnectivityProblems(File boardFile, List<String> problems) {
+    private void reportConnectivityProblems(File boardFile, List<BoardIssue> problems) {
         if (problems.isEmpty()) {
             return;
         }
         numBoardConnectivityProblems++;
-        String problemList = String.join(System.lineSeparator(), problems);
+        String problemList = joinMessages(problems);
         if (isStrict) {
             numBoardErrors++;
             LOGGER.error("Roads or bridges do not join up on board: {}{}{}", boardFile, System.lineSeparator(),
@@ -177,15 +178,23 @@ public class BoardsValidator {
      * Lists bridge ends that play correctly but are worth a look: one level off their road, or on solid ground with no
      * road. They are never errors, even with --strict.
      */
-    private void reportNotes(File boardFile, List<String> notes) {
+    private void reportNotes(File boardFile, List<BoardIssue> notes) {
         if (notes.isEmpty()) {
             return;
         }
         numBoardsWithNotes++;
         if (isVerbose) {
             LOGGER.info("Note: bridge ends worth a look on board: {}{}{}", boardFile, System.lineSeparator(),
-                  String.join(System.lineSeparator(), notes));
+                  joinMessages(notes));
         }
+    }
+
+    private static String joinMessages(List<BoardIssue> issues) {
+        List<String> messages = new ArrayList<>();
+        for (BoardIssue issue : issues) {
+            messages.add(issue.message() + ". Fix: " + issue.fix());
+        }
+        return String.join(System.lineSeparator(), messages);
     }
 
     /**

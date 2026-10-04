@@ -69,10 +69,10 @@ public final class BoardConnectivityCheck {
     /**
      * @param board the loaded board to check
      *
-     * @return one line per problem found, naming the hex and direction; empty when roads and bridges all join up
+     * @return one issue per problem found, naming the hex and direction; empty when roads and bridges all join up
      */
-    public static List<String> findProblems(Board board) {
-        List<String> problems = new ArrayList<>();
+    public static List<BoardIssue> findProblems(Board board) {
+        List<BoardIssue> problems = new ArrayList<>();
         scan(board, problems, new ArrayList<>());
         return problems;
     }
@@ -80,33 +80,56 @@ public final class BoardConnectivityCheck {
     /**
      * @param board the loaded board to check
      *
-     * @return one line per bridge end that plays correctly but looks wrong or bends the rules: a deck exactly one level
+     * @return one issue per bridge end that plays correctly but looks wrong or bends the rules: a deck exactly one level
      *       off its road, or an end on solid ground with no road
      */
-    public static List<String> findNotes(Board board) {
-        List<String> notes = new ArrayList<>();
+    public static List<BoardIssue> findNotes(Board board) {
+        List<BoardIssue> notes = new ArrayList<>();
         scan(board, new ArrayList<>(), notes);
         return notes;
     }
 
-    private static void scan(Board board, List<String> problems, List<String> notes) {
+    /**
+     * Checks a single hex, for a tooltip. Issues are reported at the road or bridge hex whose exit causes them.
+     *
+     * @param board  the loaded board
+     * @param coords the hex to check
+     *
+     * @return the problems and then the notes for that hex; empty if it has none or is off the board
+     */
+    public static List<BoardIssue> findIssuesAt(Board board, Coords coords) {
+        List<BoardIssue> problems = new ArrayList<>();
+        List<BoardIssue> notes = new ArrayList<>();
+        Hex hex = board.getHex(coords);
+        if (hex != null) {
+            checkHex(board, hex, coords.getX(), coords.getY(), problems, notes);
+        }
+        problems.addAll(notes);
+        return problems;
+    }
+
+    private static void scan(Board board, List<BoardIssue> problems, List<BoardIssue> notes) {
         for (int x = 0; x < board.getWidth(); x++) {
             for (int y = 0; y < board.getHeight(); y++) {
                 Hex hex = board.getHex(x, y);
-                if (hex == null) {
-                    continue;
-                }
-                if (hex.containsTerrain(Terrains.ROAD)) {
-                    checkRoadExits(board, hex, x, y, problems);
-                }
-                if (hex.containsTerrain(Terrains.BRIDGE)) {
-                    checkBridgeEnds(board, hex, x, y, problems, notes);
+                if (hex != null) {
+                    checkHex(board, hex, x, y, problems, notes);
                 }
             }
         }
     }
 
-    private static void checkRoadExits(Board board, Hex hex, int x, int y, List<String> problems) {
+    private static void checkHex(Board board, Hex hex, int x, int y, List<BoardIssue> problems,
+          List<BoardIssue> notes) {
+        if (hex.containsTerrain(Terrains.ROAD)) {
+            checkRoadExits(board, hex, x, y, problems);
+        }
+        if (hex.containsTerrain(Terrains.BRIDGE)) {
+            checkBridgeEnds(board, hex, x, y, problems, notes);
+        }
+    }
+
+    private static void checkRoadExits(Board board, Hex hex, int x, int y, List<BoardIssue> problems) {
         for (int direction = 0; direction < 6; direction++) {
             if (!hex.containsTerrainExit(Terrains.ROAD, direction)) {
                 continue;
@@ -116,18 +139,25 @@ public final class BoardConnectivityCheck {
                 // A road may run off the edge of the board
                 continue;
             }
+            String here = hexName(x, y);
+            String there = neighbourName(x, y, direction);
+            String side = DIRECTION_NAMES[direction];
             int directionBack = (direction + 3) % 6;
             if (neighbour.containsTerrain(Terrains.BRIDGE) && !joinsGroundRoad(hex, neighbour)) {
                 checkRoadOntoBridge(hex, neighbour, directionBack, x, y, direction, problems);
             } else if (neighbour.containsTerrain(Terrains.ROAD)) {
                 // Includes a road that runs on under an overpass
                 if (!neighbour.containsTerrainExit(Terrains.ROAD, directionBack)) {
-                    problems.add(String.format("Road at %s exits %s, but the road at %s has no exit back",
-                          hexName(x, y), DIRECTION_NAMES[direction], neighbourName(x, y, direction)));
+                    problems.add(new BoardIssue(new Coords(x, y),
+                          String.format("Road at %s exits %s, but the road at %s has no exit back", here, side, there),
+                          String.format("Add the road exit at %s that points back to %s, or remove this road's %s "
+                                + "exit", there, here, side)));
                 }
             } else if (!continuesRoad(neighbour)) {
-                problems.add(String.format("Road at %s exits %s into %s, which has no road, pavement, bridge or "
-                      + "building", hexName(x, y), DIRECTION_NAMES[direction], neighbourName(x, y, direction)));
+                problems.add(new BoardIssue(new Coords(x, y),
+                      String.format("Road at %s exits %s into %s, which has no road, pavement, bridge or building", here,
+                            side, there),
+                      String.format("Remove this road's %s exit, or continue the road into %s", side, there)));
             }
         }
     }
@@ -153,21 +183,25 @@ public final class BoardConnectivityCheck {
      * that meets a bridge at a reachable height is fine, whichever side carries the exit.
      */
     private static void checkRoadOntoBridge(Hex road, Hex bridge, int directionBack, int x, int y, int direction,
-          List<String> problems) {
+          List<BoardIssue> problems) {
         if (bridge.containsTerrainExit(Terrains.BRIDGE, directionBack)) {
             return;
         }
         int deckLevel = bridge.getLevel() + bridge.terrainLevel(Terrains.BRIDGE_ELEV);
         int roadLevel = roadSurfaceLevel(road);
         if (Math.abs(deckLevel - roadLevel) > MAX_BRIDGE_END_STEP) {
-            problems.add(String.format("Road at %s exits %s onto the bridge at %s, but its deck at level %d is out of "
-                  + "reach of the road at level %d", hexName(x, y), DIRECTION_NAMES[direction],
-                  neighbourName(x, y, direction), deckLevel, roadLevel));
+            String there = neighbourName(x, y, direction);
+            problems.add(new BoardIssue(new Coords(x, y),
+                  String.format("Road at %s exits %s onto the bridge at %s, but its deck at level %d is out of reach of "
+                        + "the road at level %d", hexName(x, y), DIRECTION_NAMES[direction], there, deckLevel,
+                        roadLevel),
+                  String.format("Bring the deck within one level of the road: change the bridge elevation at %s, or "
+                        + "the level of this hex", there)));
         }
     }
 
-    private static void checkBridgeEnds(Board board, Hex hex, int x, int y, List<String> problems,
-          List<String> notes) {
+    private static void checkBridgeEnds(Board board, Hex hex, int x, int y, List<BoardIssue> problems,
+          List<BoardIssue> notes) {
         int deckLevel = hex.getLevel() + hex.terrainLevel(Terrains.BRIDGE_ELEV);
         for (int direction = 0; direction < 6; direction++) {
             if (!hex.containsTerrainExit(Terrains.BRIDGE, direction)) {
@@ -178,26 +212,36 @@ public final class BoardConnectivityCheck {
                 // The bridge runs off the edge of the board, or its span continues
                 continue;
             }
+            String here = hexName(x, y);
+            String there = neighbourName(x, y, direction);
+            int groundLevel = roadSurfaceLevel(neighbour);
+            int heightDifference = Math.abs(deckLevel - groundLevel);
             if (!neighbour.containsAnyTerrainOf(Terrains.ROAD, Terrains.PAVEMENT)) {
-                int groundLevel = roadSurfaceLevel(neighbour);
-                if (Math.abs(deckLevel - groundLevel) > MAX_BRIDGE_END_STEP) {
-                    problems.add(String.format("Bridge at %s exits %s into %s and is left floating: its deck is at "
-                          + "level %d and the ground there at level %d", hexName(x, y), DIRECTION_NAMES[direction],
-                          neighbourName(x, y, direction), deckLevel, groundLevel));
+                if (heightDifference > MAX_BRIDGE_END_STEP) {
+                    problems.add(new BoardIssue(new Coords(x, y),
+                          String.format("Bridge at %s exits %s into %s and is left floating: its deck is at level %d "
+                                + "and the ground there at level %d", here, DIRECTION_NAMES[direction], there,
+                                deckLevel, groundLevel),
+                          String.format("Add a road hex at %s level with the deck, or change this bridge's elevation",
+                                there)));
                 } else {
-                    notes.add(String.format("Bridge at %s ends on %s without a road hex (TO:AR p.115)", hexName(x, y),
-                          neighbourName(x, y, direction)));
+                    notes.add(new BoardIssue(new Coords(x, y),
+                          String.format("Bridge at %s ends on %s without a road hex (TO:AR p.115)", here, there),
+                          String.format("Add a road to %s", there)));
                 }
                 continue;
             }
-            int roadLevel = roadSurfaceLevel(neighbour);
-            int heightDifference = Math.abs(deckLevel - roadLevel);
             String description = String.format("Bridge at %s has its deck at level %d, but the road it meets at %s is"
-                  + " at level %d", hexName(x, y), deckLevel, neighbourName(x, y, direction), roadLevel);
+                  + " at level %d", here, deckLevel, there, groundLevel);
             if (heightDifference > MAX_BRIDGE_END_STEP) {
-                problems.add(description);
+                problems.add(new BoardIssue(new Coords(x, y), description,
+                      String.format("Change this bridge's elevation so its deck is within one level of the road at %s, "
+                            + "or raise or lower that road hex (a bridge may change height by one level per hex, "
+                            + "TO:AR p.115)", there)));
             } else if (heightDifference == MAX_BRIDGE_END_STEP) {
-                notes.add(description + " (a one-level step)");
+                notes.add(new BoardIssue(new Coords(x, y), description + " (a one-level step)",
+                      "This plays correctly. To remove the step, set the bridge elevation so the deck matches the "
+                            + "road"));
             }
         }
     }

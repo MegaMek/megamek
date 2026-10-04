@@ -135,6 +135,19 @@ class ConvoyBehaviourTest {
     }
 
     @Test
+    void aRouteEndingOnTheExitEdgeLeavesThereWithoutASecondWaypoint() {
+        // HammerGS's playtest, 2026-10-04: a route to 1701 on the north edge became 1701, then 1701 again
+        Tank truck = truck(3, EntityMovementMode.WHEELED, true);
+        Coords onTheEdge = new Coords(WAYPOINT.getX(), 0);
+        truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(WAYPOINT, onTheEdge)));
+
+        princess.getUnitOrdersFollower().advanceRoutes();
+
+        assertEquals(List.of(WAYPOINT, onTheEdge), truck.getUnitOrders().getRoute());
+        assertTrue(truck.getUnitOrders().getWaypointOrder(1).isExitBoard());
+    }
+
+    @Test
     void aConvoyFollowsItsRouteThenLeaves() {
         Tank truck = truck(3, EntityMovementMode.WHEELED, true);
         truck.setUnitOrders(UnitOrders.NONE.withRoute(List.of(WAYPOINT)));

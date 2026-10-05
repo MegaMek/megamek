@@ -55,12 +55,13 @@ class GitHubWrites:
         if result.get("ref") != f"refs/tags/{tag}" or result.get("object", {}).get("sha") != sha:
             raise UnsafeInventory("tag creation response mismatch")
 
-    def release(self, repo, tag, sha):
+    def release(self, repo, tag, sha, *, name, body):
         result = api(["--method", "POST", f"repos/MegaMek/{repo}/releases",
                       "-f", f"tag_name={tag}", "-f", f"target_commitish={sha}",
                       "-F", "draft=false", "-F", "prerelease=false",
-                      "-f", f"name={tag}"])
+                      "-f", f"name={name}", "-f", f"body={body}"])
         if (result.get("tag_name") != tag or result.get("draft") is not False
+                or result.get("name") != name or result.get("body") != body
                 or type(result.get("id")) is not int or result["id"] <= 0):
             raise UnsafeInventory("release creation response mismatch")
         return result["id"]
@@ -76,6 +77,47 @@ class GitHubWrites:
                 or result.get("name") != name or result.get("state") != "uploaded"):
             raise UnsafeInventory("upload response mismatch")
         return result["id"]
+
+
+def release_presentation(record, product=None):
+    channel = record["membership"].capitalize()
+    version = record["version"]
+    suite_name = f"{channel} game suite {version}"
+    name = suite_name if product in (None, "MegaMek") else (
+        f"{product} {record['products'][product]['version']} - {suite_name}")
+    record_url = (f"https://github.com/MegaMek/megamek/releases/download/"
+                  f"{record['tag']}/suite-record-{version}.json")
+    lines = [
+        f"**Channel: {channel}**",
+        "",
+        f"**Game suite: {version}**",
+        "",
+        f"The [complete suite record]({record_url}) is the authority for channel membership "
+        "and exact product downloads.",
+        "This suite is complete only when that record is available. It is uploaded last, "
+        "after all product archives have been verified.",
+        "",
+        "## Included products",
+        "",
+        "| Product | Version | Download | Frozen source |",
+        "| --- | --- | --- | --- |",
+    ]
+    for included, item in record["products"].items():
+        url = (f"{item['repository']}/releases/download/{item['tag']}/"
+               f"{item['asset']['name']}")
+        source = f"{item['repository']}/commit/{item['commit']}"
+        lines.append(f"| {included} | {item['version']} | [Download]({url}) | "
+                     f"[`{item['commit'][:12]}`]({source}) |")
+    data = record["mmData"]
+    lines += [
+        "",
+        f"Frozen mm-data: [`{data['commit'][:12]}`]({data['repository']}/commit/{data['commit']}).",
+        "",
+        "Product archives may be reused by later suites, including other channels. "
+        "Use each suite's complete record, not an archive's original release title, "
+        "to determine membership.",
+    ]
+    return {"name": name, "body": "\n".join(lines) + "\n"}
 
 
 def ref_commit(repo, tag, getter):
@@ -213,7 +255,8 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
             writes.tag(repo, item["tag"], item["commit"])
             if ref_commit(repo, item["tag"], getter) != item["commit"]:
                 raise UnsafeInventory("created tag mismatch")
-            item["releaseId"] = writes.release(repo, item["tag"], item["commit"])
+            item["releaseId"] = writes.release(
+                repo, item["tag"], item["commit"], **release_presentation(provisional, product))
             item["asset"]["assetId"] = writes.upload(repo, item["releaseId"], paths[product])
             current = release_details(getter)
             exact_asset(item, current[repo], repo, fetch, directory, getter)
@@ -236,7 +279,9 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
             writes.tag("megamek", "v" + version, inventory["commits"]["megamek"])
             if ref_commit("megamek", "v" + version, getter) != inventory["commits"]["megamek"]:
                 raise UnsafeInventory("suite host tag mismatch")
-            mm_id = writes.release("megamek", "v" + version, inventory["commits"]["megamek"])
+            mm_id = writes.release(
+                "megamek", "v" + version, inventory["commits"]["megamek"],
+                **release_presentation(provisional))
             hosts = release_details(getter)["megamek"]
             if len([r for r in hosts if r.get("id") == mm_id and
                     r.get("tag_name") == "v" + version and r.get("draft") is False]) != 1:

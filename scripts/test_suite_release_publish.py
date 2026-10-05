@@ -62,10 +62,11 @@ class TransactionTests(unittest.TestCase):
         self.events.append(("tag", repo))
         self.tags[repo][tag] = sha
 
-    def release(self, repo, tag, sha):
+    def release(self, repo, tag, sha, *, name, body):
         self.events.append(("release", repo))
         ident = 100 + len(self.events)
-        self.releases[repo].append(dict(id=ident, tag_name=tag, draft=False, assets=[]))
+        self.releases[repo].append(dict(id=ident, tag_name=tag, draft=False,
+                                       prerelease=False, name=name, body=body, assets=[]))
         return ident
 
     def upload(self, repo, release_id, path):
@@ -122,17 +123,55 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual(self.events[-1],
                          ("upload", "megamek", f"suite-record-{record['version']}.json"))
 
+    def select_membership(self, membership):
+        self.inventory["membership"] = membership
+        version = plan(self.inventory)["versionCandidate"]
+        for product in REPOS:
+            path = self.root / f"{product}-{version}.tar.gz"
+            path.write_bytes(product.encode())
+            self.archives[product] = path
+
+    def assert_release_presentation(self, record, repo, tag):
+        release = next(r for r in self.releases[repo] if r["tag_name"] == tag)
+        channel = record["membership"].capitalize()
+        suite = f"{channel} game suite {record['version']}"
+        product = next(p for p, r in REPOS.items() if r == repo)
+        self.assertEqual(release["name"], suite if repo == "megamek" else
+                         f"{product} {record['products'][product]['version']} - {suite}")
+        self.assertFalse(release["draft"])
+        self.assertFalse(release["prerelease"])
+        self.assertIn(f"**Channel: {channel}**", release["body"])
+        self.assertIn(f"**Game suite: {record['version']}**", release["body"])
+        self.assertIn(f"https://github.com/MegaMek/megamek/releases/download/{record['tag']}/"
+                      f"suite-record-{record['version']}.json", release["body"])
+        self.assertIn("complete only when that record is available", release["body"])
+        self.assertIn("uploaded last", release["body"])
+        self.assertIn("including other channels", release["body"])
+        for included, item in record["products"].items():
+            self.assertIn(f"| {included} | {item['version']} |", release["body"])
+            self.assertIn(f"{item['repository']}/releases/download/{item['tag']}/"
+                          f"{item['asset']['name']}", release["body"])
+            self.assertIn(f"{item['repository']}/commit/{item['commit']}", release["body"])
+        data = record["mmData"]
+        self.assertIn(f"{data['repository']}/commit/{data['commit']}", release["body"])
+
+    def test_release_presentation_for_all_channels(self):
+        for membership in ("weekly", "development", "milestone"):
+            with self.subTest(membership=membership):
+                self.setUp()
+                self.select_membership(membership)
+                self.commits.update({repo: "f" * 40 for repo in SOURCES})
+                record = self.execute()
+                for repo in REPOS.values():
+                    self.assert_release_presentation(record, repo, record["tag"])
+                self.assert_frozen_record(record)
+
     def test_all_channels_publish_frozen_sources_when_main_advances(self):
         for membership in ("weekly", "development", "milestone"):
             for source in SOURCES:
                 with self.subTest(membership=membership, source=source):
                     self.setUp()
-                    self.inventory["membership"] = membership
-                    version = plan(self.inventory)["versionCandidate"]
-                    for product in REPOS:
-                        path = self.root / f"{product}-{version}.tar.gz"
-                        path.write_bytes(product.encode())
-                        self.archives[product] = path
+                    self.select_membership(membership)
                     self.commits[source] = "f" * 40
                     record = self.execute()
                     self.assertEqual(record["membership"], membership)
@@ -245,6 +284,7 @@ class TransactionTests(unittest.TestCase):
 
     def test_reuse_megamek_product_and_separate_record_host(self):
         previous = self.prepare_reuse()
+        prior_releases = copy.deepcopy(self.releases)
         record = publish.publish(self.inventory, self.archives, getter=self.get,
                                  fetch=self.fetch, writes=self,
                                  attest=lambda r, p: self.events.append(("attest",)),
@@ -264,25 +304,40 @@ class TransactionTests(unittest.TestCase):
         host = next(r for r in self.releases["megamek"] if r["tag_name"] == "v0.51.02")
         self.assertNotEqual(host["id"], record["products"]["MegaMek"]["releaseId"])
         self.assertEqual(json.loads(self.blobs["megamek", host["assets"][0]["id"]]), record)
+        self.assert_release_presentation(record, "megamek", record["tag"])
+        self.assert_release_presentation(record, "mekhq", record["products"]["MekHQ"]["tag"])
+        for repo in REPOS.values():
+            for release in prior_releases[repo]:
+                self.assertEqual(next(r for r in self.releases[repo] if r["id"] == release["id"]),
+                                 release)
 
-    def test_milestone_record_only_reuses_three_assets(self):
-        prior = self.execute()
-        self.inventory["previous"] = copy.deepcopy(prior)
-        self.inventory["floor"] = prior["version"]
-        self.inventory["membership"] = "milestone"
-        self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
-        self.inventory["releases"] = {
-            repo: [r["tag_name"] for r in entries]
-            for repo, entries in self.releases.items()}
-        self.events.clear()
-        record = publish.publish(self.inventory, self.archives, getter=self.get,
-                                 fetch=self.fetch, writes=self,
-                                 attest=lambda r, p: self.events.append(("attest",)),
-                                 validate=lambda p: self.events.append(("validate",)))
-        self.assertEqual(record["version"], "0.52.00")
-        self.assertEqual(record["products"], prior["products"])
-        self.assertEqual([e for e in self.events if e[0] == "upload"],
-                         [("upload", "megamek", "suite-record-0.52.00.json")])
+    def test_promoted_record_only_reuses_three_assets(self):
+        for membership, version in (("milestone", "0.52.00"), ("development", "0.51.02")):
+            with self.subTest(membership=membership):
+                self.setUp()
+                prior = self.execute()
+                prior_releases = copy.deepcopy(self.releases)
+                self.inventory["previous"] = copy.deepcopy(prior)
+                self.inventory["floor"] = prior["version"]
+                self.inventory["membership"] = membership
+                self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
+                self.inventory["releases"] = {
+                    repo: [r["tag_name"] for r in entries]
+                    for repo, entries in self.releases.items()}
+                self.events.clear()
+                record = publish.publish(self.inventory, self.archives, getter=self.get,
+                                         fetch=self.fetch, writes=self,
+                                         attest=lambda r, p: self.events.append(("attest",)),
+                                         validate=lambda p: self.events.append(("validate",)))
+                self.assertEqual(record["version"], version)
+                self.assertEqual(record["products"], prior["products"])
+                self.assertEqual([e for e in self.events if e[0] == "upload"],
+                                 [("upload", "megamek", f"suite-record-{version}.json")])
+                self.assert_release_presentation(record, "megamek", record["tag"])
+                for repo in REPOS.values():
+                    for release in prior_releases[repo]:
+                        self.assertEqual(next(r for r in self.releases[repo]
+                                              if r["id"] == release["id"]), release)
 
     def test_late_page_two_collision_blocks_product_and_suite_host(self):
         for host in (False, True):
@@ -330,6 +385,8 @@ class BindingTests(unittest.TestCase):
             calls.append((args, kwargs))
             return subprocess.CompletedProcess(args, 0, json.dumps(response[0]).encode())
         sha = "a" * 40
+        name = "MekHQ 0.51.01 - Weekly game suite 0.51.01"
+        body = "**Channel: Weekly**\n\n**Game suite: 0.51.01**\n"
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory) / "MekHQ-0.51.01.tar.gz"
             archive.write_bytes(b"archive")
@@ -342,12 +399,16 @@ class BindingTests(unittest.TestCase):
                 self.assertEqual(calls[-1][0], ["gh", "api", "--method", "POST",
                                  "repos/MegaMek/mekhq/git/refs", "-f",
                                  "ref=refs/tags/v0.51.01", "-f", f"sha={sha}"])
-                response[0] = {"id": 10, "tag_name": "v0.51.01", "draft": False}
-                self.assertEqual(writes.release("mekhq", "v0.51.01", sha), 10)
+                release_response = {"id": 10, "tag_name": "v0.51.01", "draft": False,
+                                    "name": name, "body": body}
+                response[0] = release_response
+                self.assertEqual(writes.release("mekhq", "v0.51.01", sha,
+                                                name=name, body=body), 10)
                 self.assertEqual(calls[-1][0], ["gh", "api", "--method", "POST",
                                  "repos/MegaMek/mekhq/releases", "-f", "tag_name=v0.51.01",
                                  "-f", f"target_commitish={sha}", "-F", "draft=false",
-                                 "-F", "prerelease=false", "-f", "name=v0.51.01"])
+                                 "-F", "prerelease=false", "-f", f"name={name}",
+                                 "-f", f"body={body}"])
                 response[0] = {"id": 11, "name": archive.name, "state": "uploaded"}
                 self.assertEqual(writes.upload("mekhq", 10, archive), 11)
                 self.assertEqual(calls[-1][0], ["gh", "api", "--method", "POST",
@@ -357,8 +418,15 @@ class BindingTests(unittest.TestCase):
                                  "--input", str(archive)])
                 for operation, bad in ((lambda: writes.tag("mekhq", "v0.51.01", sha),
                                          {"ref": "refs/tags/other", "object": {"sha": sha}}),
-                                        (lambda: writes.release("mekhq", "v0.51.01", sha),
-                                         {"id": True, "tag_name": "v0.51.01", "draft": False}),
+                                        (lambda: writes.release("mekhq", "v0.51.01", sha,
+                                                               name=name, body=body),
+                                         dict(release_response, id=True)),
+                                        (lambda: writes.release("mekhq", "v0.51.01", sha,
+                                                               name=name, body=body),
+                                         dict(release_response, name="v0.51.01")),
+                                        (lambda: writes.release("mekhq", "v0.51.01", sha,
+                                                               name=name, body=body),
+                                         dict(release_response, body=None)),
                                         (lambda: writes.upload("mekhq", 10, archive),
                                          {"id": 11, "name": archive.name, "state": "pending"})):
                     response[0] = bad

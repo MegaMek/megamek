@@ -90,6 +90,25 @@ Missing tasks, incomplete official commits, changed release tag targets,
 unavailable dependencies, and changed release inventories are blockers, not reasons to switch to
 an unreviewed worktree or fall back to a previous record.
 
+### GitHub release presentation and channel identity
+
+New MegaMek releases hosting a complete record are titled, for example,
+`Weekly game suite 0.51.01`. New Lab/HQ product releases include the product
+version and publishing suite, for example,
+`MekHQ 0.51.01 - Weekly game suite 0.51.01`. Descriptions identify the channel,
+link the exact complete record and each product archive, and list frozen sources.
+These labels apply to Weekly, Development and Milestone. The GitHub
+`prerelease=false` setting is unchanged; GitHub badges and version numbers do
+not determine channel membership.
+
+The record's `membership` is authoritative for the launcher and website.
+The suite is complete only when its record is available; descriptions are
+created before upload and do not imply successful completion. A record-only
+suite host lists the actual reused product versions, which can differ from the
+suite version. Reused product releases retain their original titles and
+descriptions even if their archives appear in a later suite or another channel.
+Existing published releases are not relabeled by this change.
+
 ## Diagnosing failed dry runs
 
 Pinned Gradle failures identify the product and requested task. Subprocess

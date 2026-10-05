@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
@@ -79,6 +81,7 @@ public class PathEnumerator {
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
     private final Map<Integer, Set<CoordFacingCombo>> unitPotentialLocations = new ConcurrentHashMap<>();
     private final Map<Integer, CoordFacingCombo> lastKnownLocations = new ConcurrentHashMap<>();
+    private final Map<Integer, ReentrantLock> pathLocks = new ConcurrentHashMap<>();
 
     private AtomicBoolean mapHasBridges = null;
     private final Object BRIDGE_LOCK = new Object();
@@ -90,6 +93,13 @@ public class PathEnumerator {
 
     private Princess getOwner() {
         return owner;
+    }
+
+    public Lock getPathLock(Entity entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("Entity cannot be null.");
+        }
+        return pathLocks.computeIfAbsent(entity.getId(), ignored -> new ReentrantLock());
     }
 
     void clear() {
@@ -165,26 +175,32 @@ public class PathEnumerator {
     }
 
     public synchronized void recalculateMovesFor(final Entity mover, final boolean includeDeploymentStep) {
-        int retryCount = 0;
-        boolean success = false;
+        final Lock entityLock = getPathLock(mover);
+        entityLock.lock();
+        try {
+            int retryCount = 0;
+            boolean success = false;
 
-        while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
-            success = recalculateMovesForWorker(mover, includeDeploymentStep);
+            while ((retryCount < BotClient.BOT_TURN_RETRY_COUNT) && !success) {
+                success = recalculateMovesForWorker(mover, includeDeploymentStep);
 
-            if (!success) {
-                // if we fail, take a nap for 500-1500 milliseconds, then try again
-                // as it may be due to some kind of thread-related issue
-                // limit number of retries so we're not endlessly spinning
-                // if we can't recover from the error
-                retryCount++;
-                try {
-                    Thread.sleep(Compute.randomInt(1000) + 500);
-                } catch (InterruptedException e) {
-                    logger.error(e, "recalculateMovesFor");
-                } catch (Exception e) {
-                    logger.error(e, "Unexpected (non-interrupt) exception!");
+                if (!success) {
+                    // if we fail, take a nap for 500-1500 milliseconds, then try again
+                    // as it may be due to some kind of thread-related issue
+                    // limit number of retries so we're not endlessly spinning
+                    // if we can't recover from the error
+                    retryCount++;
+                    try {
+                        Thread.sleep(Compute.randomInt(1000) + 500);
+                    } catch (InterruptedException e) {
+                        logger.error(e, "recalculateMovesFor");
+                    } catch (Exception e) {
+                        logger.error(e, "Unexpected (non-interrupt) exception!");
+                    }
                 }
             }
+        } finally {
+            entityLock.unlock();
         }
     }
 

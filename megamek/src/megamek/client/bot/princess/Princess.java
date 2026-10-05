@@ -38,6 +38,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 
 import megamek.client.bot.BotClient;
@@ -3554,116 +3555,122 @@ public class Princess extends BotClient {
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover,
           boolean forceMoveToContact,
           boolean includeDeploymentStep) {
-        // if the mover can't move, then there's nothing for us to do here, let's cut out.
-        if (mover.isImmobile()) {
-            return Collections.emptyList();
-        }
+        final Lock entityLock = getPrecognition().getPathEnumerator().getPathLock(mover);
+        entityLock.lock();
+        try {
+            // if the mover can't move, then there's nothing for us to do here, let's cut out.
+            if (mover.isImmobile()) {
+                return Collections.emptyList();
+            }
 
-        if (includeDeploymentStep) {
-            getPrecognition().getPathEnumerator().recalculateMovesFor(mover, true);
-        }
+            if (includeDeploymentStep) {
+                getPrecognition().getPathEnumerator().recalculateMovesFor(mover, true);
+            }
 
-        BehaviorType behavior = forceMoveToContact ?
-              BehaviorType.MoveToContact :
-              getUnitBehaviorTracker().getBehaviorType(mover, this);
-        // during the movement phase, it is technically necessary to clear this data between each unit
-        // as the state of the board may have changed due to crashes etc.
-        // generating movable clusters is a relatively cheap operation, so it's not a big deal
-        getClusterTracker().clearMovableAreas();
-        getClusterTracker().updateMovableAreas(mover);
+            BehaviorType behavior = forceMoveToContact ?
+                  BehaviorType.MoveToContact :
+                  getUnitBehaviorTracker().getBehaviorType(mover, this);
+            // during the movement phase, it is technically necessary to clear this data between each unit
+            // as the state of the board may have changed due to crashes etc.
+            // generating movable clusters is a relatively cheap operation, so it's not a big deal
+            getClusterTracker().clearMovableAreas();
+            getClusterTracker().updateMovableAreas(mover);
 
-        List<MovePath> result;
-        // basic idea:
-        // if we're "in battle", just use the standard set of move paths
-        // if we're trying to get somewhere
-        //  - sort all long range paths by "mp cost" (actual MP + how long it'll take to do terrain leveling)
-        //  - set the first terrain/building as 'strategic target' if the shortest path requires terrain leveling
-        //  - if the first strategic target is in LOS at the pruned end of the shortest path,
-        //      then we actually return the paths for "engaged" behavior
-        //  - if we're unable to get where we're going, use standard set of move paths
-        switch (behavior) {
-            case Engaged:
-                result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
-                break;
-            case MoveToDestination:
-            case MoveToContact:
-            case ForcedWithdrawal:
-            default: {
-                List<BulldozerMovePath> bulldozerPaths = getPrecognition().getPathEnumerator()
-                      .getLongRangePaths()
-                      .get(mover.getId());
-
-                // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit,
-                // so just have it mill around in place as usual. Also set the behavior to "no path to destination"
-                // so it doesn't hump the walls due to "self preservation mods"
-                if ((bulldozerPaths == null) || bulldozerPaths.isEmpty()) {
-                    if (!mover.isAirborne()) {
-                        getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
-                    }
+            List<MovePath> result;
+            // basic idea:
+            // if we're "in battle", just use the standard set of move paths
+            // if we're trying to get somewhere
+            //  - sort all long range paths by "mp cost" (actual MP + how long it'll take to do terrain leveling)
+            //  - set the first terrain/building as 'strategic target' if the shortest path requires terrain leveling
+            //  - if the first strategic target is in LOS at the pruned end of the shortest path,
+            //      then we actually return the paths for "engaged" behavior
+            //  - if we're unable to get where we're going, use standard set of move paths
+            switch (behavior) {
+                case Engaged:
                     result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
                     break;
-                }
+                case MoveToDestination:
+                case MoveToContact:
+                case ForcedWithdrawal:
+                default: {
+                    List<BulldozerMovePath> bulldozerPaths = getPrecognition().getPathEnumerator()
+                          .getLongRangePaths()
+                          .get(mover.getId());
 
-                bulldozerPaths.sort(new MPCostComparator());
-
-                // if the quickest route needs some terrain adjustments, let's get working on that
-                Targetable levelingTarget = null;
-
-                if (bulldozerPaths.getFirst().needsLeveling()) {
-                    levelingTarget = getAppropriateTarget(bulldozerPaths.getFirst().getCoordsToLevel().getFirst(),
-                          mover.getBoardId());
-                    getFireControlState().addAdditionalTarget(levelingTarget);
-                    sendChat("Hex " +
-                          levelingTarget.getPosition().toFriendlyString() +
-                          " impedes route to destination, targeting for clearing.", Level.INFO);
-                }
-
-                // if any of the long range paths, pruned, are within LOS of leveling coordinates, then we're actually
-                // just going to go back to the standard unit paths
-                List<MovePath> prunedPaths = new ArrayList<>();
-                for (BulldozerMovePath movePath : bulldozerPaths) {
-                    BulldozerMovePath prunedPath = movePath.clone();
-                    prunedPath.clipToPossible();
-
-                    if (levelingTarget != null) {
-                        LosEffects los = LosEffects.calculateLOS(game,
-                              mover,
-                              levelingTarget,
-                              prunedPath.getFinalCoords(),
-                              levelingTarget.getPosition(),
-                              mover.getBoardId(),
-                              false);
-
-                        // break out of this loop, we can get to the thing we're trying to level this turn, so let's
-                        // use normal movement routines to move into optimal position to blow it up
-                        // Also set the behavior to "engaged"
-                        // so it doesn't hump walls due to "self-preservation mods"
-                        if (los.canSee()) {
-                            // if we've explicitly forced 'move to contact' behavior, don't flip back to 'engaged'
-                            if (!forceMoveToContact) {
-                                getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
-                            }
-
-                            result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
-                            break;
+                    // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit,
+                    // so just have it mill around in place as usual. Also set the behavior to "no path to destination"
+                    // so it doesn't hump the walls due to "self preservation mods"
+                    if ((bulldozerPaths == null) || bulldozerPaths.isEmpty()) {
+                        if (!mover.isAirborne()) {
+                            getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.NoPathToDestination);
                         }
+                        result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                        break;
                     }
 
-                    // add the pruned path to the list of paths we'll be returning
-                    prunedPaths.add(prunedPath);
+                    bulldozerPaths.sort(new MPCostComparator());
 
-                    // also return some paths that go a little slower than max speed
-                    // in case the faster path would force an unwanted PSR or MASC check
-                    prunedPaths.addAll(PathDecorator.decoratePath(prunedPath));
-                    // Return some of the already-computed unit paths as well.
-                    prunedPaths.addAll(getPrecognition().getPathEnumerator()
-                          .getSimilarUnitPaths(mover.getId(), prunedPath));
+                    // if the quickest route needs some terrain adjustments, let's get working on that
+                    Targetable levelingTarget = null;
+
+                    if (bulldozerPaths.getFirst().needsLeveling()) {
+                        levelingTarget = getAppropriateTarget(bulldozerPaths.getFirst().getCoordsToLevel().getFirst(),
+                              mover.getBoardId());
+                        getFireControlState().addAdditionalTarget(levelingTarget);
+                        sendChat("Hex " +
+                              levelingTarget.getPosition().toFriendlyString() +
+                              " impedes route to destination, targeting for clearing.", Level.INFO);
+                    }
+
+                    // if any of the long range paths, pruned, are within LOS of leveling coordinates, then we're actually
+                    // just going to go back to the standard unit paths
+                    List<MovePath> prunedPaths = new ArrayList<>();
+                    for (BulldozerMovePath movePath : bulldozerPaths) {
+                        BulldozerMovePath prunedPath = movePath.clone();
+                        prunedPath.clipToPossible();
+
+                        if (levelingTarget != null) {
+                            LosEffects los = LosEffects.calculateLOS(game,
+                                  mover,
+                                  levelingTarget,
+                                  prunedPath.getFinalCoords(),
+                                  levelingTarget.getPosition(),
+                                  mover.getBoardId(),
+                                  false);
+
+                            // break out of this loop, we can get to the thing we're trying to level this turn, so let's
+                            // use normal movement routines to move into optimal position to blow it up
+                            // Also set the behavior to "engaged"
+                            // so it doesn't hump walls due to "self-preservation mods"
+                            if (los.canSee()) {
+                                // if we've explicitly forced 'move to contact' behavior, don't flip back to 'engaged'
+                                if (!forceMoveToContact) {
+                                    getUnitBehaviorTracker().overrideBehaviorType(mover, BehaviorType.Engaged);
+                                }
+
+                                result = getPrecognition().getPathEnumerator().getUnitPaths().get(mover.getId());
+                                break;
+                            }
+                        }
+
+                        // add the pruned path to the list of paths we'll be returning
+                        prunedPaths.add(prunedPath);
+
+                        // also return some paths that go a little slower than max speed
+                        // in case the faster path would force an unwanted PSR or MASC check
+                        prunedPaths.addAll(PathDecorator.decoratePath(prunedPath));
+                        // Return some of the already-computed unit paths as well.
+                        prunedPaths.addAll(getPrecognition().getPathEnumerator()
+                              .getSimilarUnitPaths(mover.getId(), prunedPath));
+                    }
+                    result = prunedPaths;
+                    break;
                 }
-                result = prunedPaths;
-                break;
             }
+            return result;
+        } finally {
+            entityLock.unlock();
         }
-        return result;
     }
 
     private void checkForDishonoredEnemies() {

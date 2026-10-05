@@ -3656,27 +3656,6 @@ public class Princess extends BotClient {
                 break;
             }
         }
-        if (includeDeploymentStep) {
-            for (MovePath path : result) {
-                int removedPaths = 0;
-                // If there is no deployment step, prune the path.
-                if (!path.contains(MoveStepType.DEPLOY)) {
-                    result.remove(path);
-                    removedPaths++;
-                }
-                if (removedPaths > 0) {
-                    LOGGER.info("{}: {} pruned {} paths that did not contain a deployment step", getName(),
-                                mover.getDisplayName(), removedPaths);
-                }
-            }
-            if (result.isEmpty()) {
-                MovePath deployOnly = new MovePath(game, mover);
-                deployOnly.addStep(MoveStepType.DEPLOY);
-                result.add(deployOnly);
-                LOGGER.info("{}: {} has no valid paths with a deployment step, so will deploy only", getName(),
-                            mover.getDisplayName());
-            }
-        }
         return result;
     }
 

@@ -47,7 +47,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
 
 import megamek.client.AbstractClient;
 import megamek.client.Client;
@@ -1014,14 +1018,6 @@ public abstract class BotClient extends Client {
         for (int x = 0; x <= board.getWidth(); x++) {
             for (int y = 0; y <= board.getHeight(); y++) {
                 Coords c = new Coords(x, y);
-                if (board.isLegalDeployment(c, deployed_ent)) {
-                    if (c.getX() > maxX) {
-                        maxX = c.getX();
-                    }
-                    if (c.getY() > maxY) {
-                        maxY = c.getY();
-                    }
-                }
                 if (board.isLegalDeployment(c, deployed_ent) &&
                       !deployed_ent.isLocationProhibited(c,
                             ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE()) ?

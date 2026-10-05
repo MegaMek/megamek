@@ -164,7 +164,8 @@ class BLKDropshipFileTest {
 
     @Test
     void quartersKeepTheirOwnBayNumbers() throws Exception {
-        // the unit file leaves both quarters' numbers unset; the loader numbers them after the three BA bays
+        // the unit file leaves both quarters' numbers unset, so they take the lowest free numbers (2 and 3) and the
+        // two later BA bays that asked for 2 and 3 move to 4 and 5; every bay still ends up with its own number
         Dropship dropship = loadDropshipFromString(newFormatDSWithMixedBA);
 
         Set<Integer> bayNumbers = new HashSet<>();

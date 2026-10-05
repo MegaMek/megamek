@@ -99,6 +99,7 @@ public class EquipChoicePanel extends JPanel {
     private BaManipulatorChoice panBaManipulators;
     private final ArrayList<RapidFireMGChoice> m_vMGs = new ArrayList<>();
     private VRTChoice panVRT;
+    private InfantrySrmMunitionChoice panInfantrySrmMunitions;
     private final ArrayList<MineChoice> m_vMines = new ArrayList<>();
     private final JCheckBox chAutoEject = new JCheckBox(Messages.getString("CustomMekDialog.labAutoEject"));
     private final JCheckBox chCondEjectAmmo = new JCheckBox(Messages.getString(
@@ -259,6 +260,11 @@ public class EquipChoicePanel extends JPanel {
             if (clientgui != null) {
                 setupWeaponAmmoChoice(gbc);
             }
+        }
+
+        // An SRM platoon declares standard or Inferno munitions before the battle (TW p. 143)
+        if ((entity instanceof ConvInfantry convInfantry) && convInfantry.hasSrmLauncher()) {
+            setupInfantrySrmMunitions(convInfantry, gbc);
         }
 
         if (entity.isBomber()) {
@@ -826,6 +832,17 @@ public class EquipChoicePanel extends JPanel {
         panVRT = new VRTChoice(entity, this, gbc);
     }
 
+    /**
+     * Sets up the munition declaration for a conventional infantry platoon's SRM launchers. It gets its own Carried
+     * Munitions heading unless the platoon already has one for its field gun ammo.
+     */
+    private void setupInfantrySrmMunitions(ConvInfantry convInfantry, GBC2 gbc) {
+        if (!shouldSetupMunitions(convInfantry)) {
+            add(new SectionTitleLabel(Messages.getString("CustomMekDialog.MunitionsPanelTitle")), gbc.fullLine());
+        }
+        panInfantrySrmMunitions = new InfantrySrmMunitionChoice(convInfantry, this, gbc);
+    }
+
     private void setupMines(GBC2 gbc) {
         String minesTitle = Messages.getString("CustomMekDialog.mineSection");
         JComponent title = new SectionTitleLabel(minesTitle);
@@ -877,6 +894,9 @@ public class EquipChoicePanel extends JPanel {
     private void disableMunitionEditing() {
         for (MunitionChoice mVMunition : m_vMunitions) {
             mVMunition.setEnabled(false);
+        }
+        if (panInfantrySrmMunitions != null) {
+            panInfantrySrmMunitions.setEnabled(false);
         }
     }
 
@@ -952,6 +972,9 @@ public class EquipChoicePanel extends JPanel {
         }
         if (smallSvMunitionsChoice != null) {
             smallSvMunitionsChoice.apply();
+        }
+        if (panInfantrySrmMunitions != null) {
+            panInfantrySrmMunitions.applyChoice();
         }
         if (bayMunitionsChoicePanel != null) {
             bayMunitionsChoicePanel.apply();

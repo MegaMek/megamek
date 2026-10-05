@@ -12,7 +12,7 @@ from pathlib import Path
 
 from suite_release_plan import (
     REPOS, UnsafeInventory, check_product_assets, discovered_inventory,
-    download_asset, freeze_and_inventory, gh_get, parse_json, plan, release_details,
+    download_asset, gh_get, parse_json, plan, release_details, release_inventory,
 )
 from suite_pinned_build import build
 from suite_pinned_build import clean, stage
@@ -71,9 +71,9 @@ def verify_noop(inventory, paths, *, getter=gh_get, fetch=download_asset):
     previous = inventory["previous"]
     if not plan(inventory)["weeklyNoopCandidate"] or previous is None:
         raise UnsafeInventory("not a verified Weekly no-op candidate")
-    fresh = freeze_and_inventory(inventory["membership"], inventory["floor"], getter)
-    if any(fresh[key] != inventory[key] for key in ("commits", "tags", "releases")):
-        raise UnsafeInventory("remote inventory moved after build")
+    fresh = release_inventory(getter)
+    if any(fresh[key] != inventory[key] for key in ("tags", "releases")):
+        raise UnsafeInventory("remote release inventory moved after build")
     details = release_details(getter)
     from suite_release_plan import complete_record
     if complete_record(details["megamek"], fetch) != previous:

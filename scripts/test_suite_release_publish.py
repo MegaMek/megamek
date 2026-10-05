@@ -9,8 +9,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import suite_release_coordinator as coordinator
 import suite_release_publish as publish
-from suite_release_plan import REPOS, SOURCES, UnsafeInventory
+from suite_release_plan import REPOS, SOURCES, UnsafeInventory, plan
 
 
 class TransactionTests(unittest.TestCase):
@@ -25,6 +26,7 @@ class TransactionTests(unittest.TestCase):
                               releases={r: [] for r in REPOS.values()})
         self.archives = {}
         self.events = []
+        self.reads = []
         self.tags = {r: {} for r in REPOS.values()}
         self.releases = {r: [] for r in REPOS.values()}
         self.blobs = {}
@@ -34,6 +36,7 @@ class TransactionTests(unittest.TestCase):
             self.archives[product] = path
 
     def get(self, endpoint):
+        self.reads.append(endpoint)
         parts = endpoint.split("/")
         repo = parts[2]
         if endpoint.endswith("/commits/main"):
@@ -94,23 +97,115 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual(json.loads(self.blobs["megamek", self.releases["megamek"][0]
                                      ["assets"][-1]["id"]]), record)
 
-    def test_collision_and_movement_have_no_writes(self):
-        for kind in ("tag", "release", "main"):
+    def test_tag_and_release_movement_have_no_writes(self):
+        for kind in ("tag", "release"):
             with self.subTest(kind=kind):
                 self.tags = {r: {} for r in REPOS.values()}
                 self.releases = {r: [] for r in REPOS.values()}
                 self.events.clear()
                 if kind == "tag":
                     self.tags["mekhq"]["v0.51.01"] = self.commits["mekhq"]
-                elif kind == "release":
+                else:
                     self.releases["mekhq"].append(dict(id=5, tag_name="v0.51.01",
                                                        draft=True, assets=[]))
-                else:
-                    self.commits["mm-data"] = "f" * 40
                 with self.assertRaises(UnsafeInventory):
                     self.execute()
                 self.assertFalse(any(e[0] in ("tag", "release", "upload") for e in self.events))
-                self.commits["mm-data"] = self.inventory["commits"]["mm-data"]
+
+    def assert_frozen_record(self, record):
+        for product, repo in REPOS.items():
+            self.assertEqual(record["products"][product]["commit"], self.inventory["commits"][repo])
+            self.assertEqual(self.tags[repo][record["products"][product]["tag"]],
+                             self.inventory["commits"][repo])
+        self.assertEqual(record["mmData"]["commit"], self.inventory["commits"]["mm-data"])
+        self.assertFalse(any(endpoint.endswith("/commits/main") for endpoint in self.reads))
+        self.assertEqual(self.events[-1],
+                         ("upload", "megamek", f"suite-record-{record['version']}.json"))
+
+    def test_all_channels_publish_frozen_sources_when_main_advances(self):
+        for membership in ("weekly", "development", "milestone"):
+            for source in SOURCES:
+                with self.subTest(membership=membership, source=source):
+                    self.setUp()
+                    self.inventory["membership"] = membership
+                    version = plan(self.inventory)["versionCandidate"]
+                    for product in REPOS:
+                        path = self.root / f"{product}-{version}.tar.gz"
+                        path.write_bytes(product.encode())
+                        self.archives[product] = path
+                    self.commits[source] = "f" * 40
+                    record = self.execute()
+                    self.assertEqual(record["membership"], membership)
+                    self.assert_frozen_record(record)
+
+    def test_main_advancing_during_publication_keeps_frozen_record(self):
+        for phase in ("first_tag", "last_product_upload"):
+            with self.subTest(phase=phase):
+                self.setUp()
+                original_tag = self.tag
+                original_upload = self.upload
+
+                def advance():
+                    self.commits.update({repo: "f" * 40 for repo in SOURCES})
+
+                def tag(repo, name, sha):
+                    original_tag(repo, name, sha)
+                    if phase == "first_tag":
+                        advance()
+
+                def upload(repo, release_id, path):
+                    result = original_upload(repo, release_id, path)
+                    if phase == "last_product_upload" and Path(path).name.startswith("MekHQ-"):
+                        advance()
+                    return result
+
+                with patch.object(self, "tag", side_effect=tag), patch.object(
+                        self, "upload", side_effect=upload):
+                    record = self.execute()
+                self.assert_frozen_record(record)
+
+    def prepare_noop(self):
+        previous = self.execute()
+        self.inventory["previous"] = copy.deepcopy(previous)
+        self.inventory["floor"] = previous["version"]
+        self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
+        self.inventory["releases"] = {
+            repo: [entry["tag_name"] for entry in entries]
+            for repo, entries in self.releases.items()}
+        self.commits.update({repo: "f" * 40 for repo in SOURCES})
+        self.events.clear()
+        self.reads.clear()
+        return previous
+
+    def test_weekly_noop_uses_prepared_snapshot_after_main_advances(self):
+        previous = self.prepare_noop()
+        self.assertEqual(coordinator.verify_noop(
+            self.inventory, self.archives, getter=self.get, fetch=self.fetch), previous)
+        self.assertFalse(self.events)
+        self.assertFalse(any(endpoint.endswith("/commits/main") for endpoint in self.reads))
+
+    def test_weekly_noop_still_rejects_release_and_archive_changes(self):
+        for kind in ("tag", "record", "asset", "local"):
+            with self.subTest(kind=kind):
+                self.setUp()
+                previous = self.prepare_noop()
+                if kind == "tag":
+                    self.tags["megamek"][previous["tag"]] = "f" * 40
+                elif kind == "record":
+                    previous["membership"] = "development"
+                    asset = self.releases["megamek"][0]["assets"][-1]
+                    data = json.dumps(previous).encode()
+                    self.blobs["megamek", asset["id"]] = data
+                    asset["size"] = len(data)
+                elif kind == "asset":
+                    asset = previous["products"]["MekHQ"]["asset"]
+                    self.blobs["mekhq", asset["assetId"]] = b"changed"
+                else:
+                    self.archives["MekHQ"].write_bytes(b"changed")
+                with self.assertRaises(UnsafeInventory):
+                    coordinator.verify_noop(
+                        self.inventory, self.archives, getter=self.get, fetch=self.fetch)
+                self.assertFalse(self.events)
 
     def test_missing_checks_or_failed_build_never_write(self):
         with self.assertRaises(UnsafeInventory):

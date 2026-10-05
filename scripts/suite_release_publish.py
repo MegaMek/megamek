@@ -15,8 +15,8 @@ from pathlib import Path
 
 from suite_release_plan import (
     REPOS, SOURCES, UnsafeInventory, canonical, check_product_assets, complete_record,
-    download_asset, failure_detail, freeze_and_inventory,
-    gh_get, plan, release_details, validate_previous, valid_sha,
+    download_asset, failure_detail,
+    gh_get, plan, release_details, release_inventory, validate_previous, valid_sha,
 )
 
 from suite_archive_attestation import attest_archives
@@ -182,10 +182,9 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
     }
     validate_previous(provisional)
     attest(provisional, paths)
-    # Re-read all four main heads, every tag and published release after build.
-    fresh = freeze_and_inventory(inventory["membership"], inventory["floor"], getter)
-    if any(fresh[key] != inventory[key] for key in ("commits", "tags", "releases")):
-        raise UnsafeInventory("remote inventory moved after build; no writes")
+    fresh = release_inventory(getter)
+    if any(fresh[key] != inventory[key] for key in ("tags", "releases")):
+        raise UnsafeInventory("remote release inventory moved after build; no writes")
     details = release_details(getter)
     remote_previous = complete_record(details["megamek"], fetch, allow_missing=bootstrap)
     if remote_previous != previous:
@@ -208,10 +207,6 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
         for product in changed:
             repo = REPOS[product]
             item = provisional["products"][product]
-            # A movement between preflight and POST must not be silently adopted.
-            if any(getter(f"repos/MegaMek/{source}/commits/main").get("sha")
-                   != inventory["commits"][source] for source in SOURCES):
-                raise UnsafeInventory("main moved during publication; manual recovery required")
             require_tag_absent(repo, item["tag"], getter)
             if any(r.get("tag_name") == item["tag"] for r in release_details(getter)[repo]):
                 raise UnsafeInventory("publication collision; manual recovery required")
@@ -226,9 +221,6 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
         current = release_details(getter)
         for p, repo in REPOS.items():
             exact_asset(provisional["products"][p], current[repo], repo, fetch, directory, getter)
-        if any(getter(f"repos/MegaMek/{repo}/commits/main").get("sha") != inventory["commits"][repo]
-               for repo in SOURCES):
-            raise UnsafeInventory("main moved before record publication")
         validate_previous(provisional)
         record_path = directory / f"suite-record-{version}.json"
         record_path.write_text(json.dumps(provisional, indent=2) + "\n", encoding="utf-8")

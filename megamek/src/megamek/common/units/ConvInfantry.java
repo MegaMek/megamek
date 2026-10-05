@@ -82,6 +82,7 @@ import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 import megamek.logging.MMLogger;
 
 /**
@@ -169,6 +170,13 @@ public class ConvInfantry extends Infantry {
     private Coords lastFirefightCoords = null;
     private int lastFirefightRound = -1;
     private int consecutiveFirefightTurns = 0;
+
+    /**
+     * Whether the platoon's SRM launchers carry Inferno munitions for this battle. Declared before the battle and
+     * locked for its duration (TW p. 143; TechManual pp. 350-352 errata). Only meaningful when
+     * {@link #hasSrmLauncher()} is true.
+     */
+    private boolean infernoSrms = false;
 
     /**
      * For mechanized VTOL infantry, stores whether the platoon are microlite troops, which need to enter a hex every
@@ -1411,6 +1419,43 @@ public class ConvInfantry extends Infantry {
         return secondaryWeapon;
     }
 
+    private static boolean isSrmLauncher(@Nullable InfantryWeapon weapon) {
+        return (weapon != null) && weapon.hasFlag(WeaponType.F_SRM);
+    }
+
+    /**
+     * @return {@code true} if the platoon's primary or secondary weapon is an SRM launcher, which may be loaded with
+     *       standard or Inferno munitions before the battle
+     */
+    public boolean hasSrmLauncher() {
+        return isSrmLauncher(primaryWeapon) || isSrmLauncher(secondaryWeapon);
+    }
+
+    /**
+     * @return {@code true} if the platoon has an SRM launcher and declared Inferno munitions for this battle
+     */
+    public boolean firesInfernoSrms() {
+        return infernoSrms && hasSrmLauncher();
+    }
+
+    /**
+     * @return the declared SRM munition, {@code true} for Inferno, regardless of whether the platoon has an SRM
+     *       launcher
+     */
+    public boolean isInfernoSrmsDeclared() {
+        return infernoSrms;
+    }
+
+    /**
+     * Declares whether the platoon's SRM launchers carry Inferno munitions. This is a pre-battle choice made in the
+     * lobby; there is no way to change it during play.
+     *
+     * @param inferno {@code true} for Inferno munitions, {@code false} for standard SRMs
+     */
+    public void setInfernoSrmsDeclared(boolean inferno) {
+        infernoSrms = inferno;
+    }
+
     /**
      * Sets the platoon's one-shot Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing). All troopers carry the
      * same Disposable Weapon. This only records the weapon type; the corresponding fireable {@link
@@ -1599,6 +1644,13 @@ public class ConvInfantry extends Infantry {
     @Override
     public void restore() {
         super.restore();
+
+        // A game saved before the Inferno SRM launchers were withdrawn still names one. It loads as the plain
+        // launcher below, and the platoon keeps firing Inferno as it was built to (TechManual pp. 350-352 errata).
+        if (WithdrawnInfernoSrmLaunchers.isWithdrawnName(primaryName)
+              || WithdrawnInfernoSrmLaunchers.isWithdrawnName(secondName)) {
+            infernoSrms = true;
+        }
 
         if (primaryName != null) {
             primaryWeapon = restoreInfantryWeapon(primaryName);

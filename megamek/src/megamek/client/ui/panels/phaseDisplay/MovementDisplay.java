@@ -690,7 +690,6 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 BoardLocation location = new BoardLocation(coords, game.getBoard().getBoardId(), false);
                 clientgui.centerOnHex(location);
             }
-
         }
 
         initializeStatusBarText(selectedEntity);
@@ -3526,7 +3525,10 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 .getPlanetaryConditions()
                 .getLight()
                 .isDuskOrFullMoonOrMoonlessOrPitchBack();
-        setSearchlightEnabled(isNight && currentEntity.hasSearchlight() && !cmd.contains(MoveStepType.SEARCHLIGHT),
+        setSearchlightEnabled(isNight &&
+                              currentEntity.hasSearchlight() &&
+                              !cmd.contains(MoveStepType.SEARCHLIGHT) &&
+                              currentEntity.getPosition() != null,
                               currentEntity.isUsingSearchlight());
     }
 

@@ -1179,6 +1179,10 @@ public class BLKFile {
                 if (infantry.getDisposableWeapon() != null){
                     blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
                 }
+                // Standard is the default, so only an Inferno declaration needs writing (TW p. 143)
+                if (infantry.firesInfernoSrms()) {
+                    blk.writeBlockData(BLKInfantryFile.SRM_MUNITION, BLKInfantryFile.SRM_MUNITION_INFERNO);
+                }
                 if (infantry.getCustomArmorName() != null) {
                     blk.writeBlockData("armor_name", infantry.getCustomArmorName());
                 }

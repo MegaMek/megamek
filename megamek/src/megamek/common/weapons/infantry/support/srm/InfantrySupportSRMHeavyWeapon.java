@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,6 +67,12 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
         addLookupName(name);
         addLookupName("Infantry Heavy SRM Launcher");
         addLookupName("SRM Launcher (Hvy, One-Shot)");
+        // The TechManual pp. 350-352 errata deletes the Inferno launcher rows: an SRM platoon declares Inferno
+        // munitions before the battle instead. The withdrawn Inferno launcher's names load as this launcher, and a
+        // unit that names one starts the battle declared as Inferno.
+        for (String withdrawnName : WithdrawnInfernoSrmLaunchers.HEAVY_LAUNCHER_NAMES) {
+            addLookupName(withdrawnName);
+        }
         sortingName = "SRM Launcher D";
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;

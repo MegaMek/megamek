@@ -111,6 +111,17 @@ class VehicleKillChanceTest {
     }
 
     @Test
+    void aHitThatWouldDestroyTheTruckCountsEvenWhenTheExpectedDamageIsLess() {
+        // HammerGS's playtest: one 15-point ER PPC hit destroyed a Sherpa side of about 8 armor and 5 structure. At 72%
+        // to hit the expected damage is 10.8, less than 13 - which used to read as no chance of a kill at all.
+        Tank truck = vehicle(Tank.class, 8, 5, false);
+        WeaponFireInfo shot = shotAt(truck, 15, FACING_NORTH);
+
+        double hitChance = Compute.oddsAbove(TO_HIT) / 100;
+        assertEquals(hitChance, shot.getKillProbability(), DELTA);
+    }
+
+    @Test
     void aTurretTooToughToDestroyIsLeftOut() {
         Tank tank = vehicle(Tank.class, 8, 5, true);
         when(tank.getArmor(Tank.LOC_TURRET)).thenReturn(40);

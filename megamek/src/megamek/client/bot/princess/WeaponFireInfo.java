@@ -266,7 +266,7 @@ public class WeaponFireInfo {
     /**
      * Adds the chance that this weapon destroys a vehicle. A vehicle is destroyed when any of its locations runs out
      * of internal structure ({@code Tank#getTransferLocation}), so every location the weapon could destroy counts,
-     * weighted by how likely the shot is to land there.
+     * weighted by how likely the shot is to land there, times the chance to hit.
      */
     private void addVehicleKillProbability(Tank vehicle) {
         boolean hasTurret = !vehicle.hasNoTurret();
@@ -279,7 +279,8 @@ public class WeaponFireInfo {
             }
             int armor = Math.max(0, vehicle.getArmor(location));
             int internal = Math.max(0, vehicle.getInternal(location));
-            if (getExpectedDamage() > (armor + internal)) {
+            // would a hit destroy it: the damage if it hits, with the chance to hit counted once, below
+            if (getDamageOnHit() >= (armor + internal)) {
                 setKillProbability(getKillProbability() + (locationOdds * getProbabilityToHit()));
             }
         }
@@ -1096,8 +1097,10 @@ public class WeaponFireInfo {
             final int targetArmor = Math.max(0, targetMek.getArmor(hitLocation, (3 == getDamageDirection())));
             final int targetInternals = Math.max(0, targetMek.getInternal(hitLocation));
 
-            // If the location could be destroyed outright...
-            if (getExpectedDamage() > ((targetArmor + targetInternals))) {
+            // If a hit could destroy the location outright... The damage if it hits, not the expected damage: the
+            // chance to hit is multiplied in below, and counting it here as well made a sure kill on a hit look like
+            // none (issue #9178).
+            if (getDamageOnHit() >= (targetArmor + targetInternals)) {
                 setExpectedCriticals(getExpectedCriticals() + (hitLocationProbability * getProbabilityToHit()));
                 if (Mek.LOC_CENTER_TORSO == hitLocation) {
                     setKillProbability(getKillProbability() + (hitLocationProbability * getProbabilityToHit()));
@@ -1106,7 +1109,7 @@ public class WeaponFireInfo {
                 }
 
                 // If the armor can be breached, but the location not destroyed...
-            } else if (getExpectedDamage() > (targetArmor)) {
+            } else if (getDamageOnHit() > targetArmor) {
                 setExpectedCriticals(getExpectedCriticals() +
                       (hitLocationProbability * getProbabilityToHit() *
                             expectedCriticalHitCount));

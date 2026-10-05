@@ -3274,7 +3274,7 @@ public class Princess extends BotClient {
                     bestPath.getPath().getHexesMoved(),
                     bestPath.getPath().getMpUsed(),
                     bestPath.getPath().contains(MoveStepType.DEPLOY));
-        return (bestPath == null) ? null : bestPath.getPath();
+        return bestPath.getPath();
     }
 
     private static boolean hasJumpDeclaration(@Nullable MovePath path) {

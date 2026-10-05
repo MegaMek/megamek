@@ -93,9 +93,9 @@ an unreviewed worktree or fall back to a previous record.
 ### GitHub release presentation and channel identity
 
 New MegaMek releases hosting a complete record are titled, for example,
-`Weekly game suite 0.51.01`. New Lab/HQ product releases include the product
+`Weekly suite 0.51.01`. New Lab/HQ product releases include the product
 version and publishing suite, for example,
-`MekHQ 0.51.01 - Weekly game suite 0.51.01`. Descriptions identify the channel,
+`MekHQ 0.51.01 - Weekly suite 0.51.01`. Descriptions identify the channel,
 link the exact complete record and each product archive, and list frozen sources.
 These labels apply to Weekly, Development and Milestone. The GitHub
 `prerelease=false` setting is unchanged; GitHub badges and version numbers do

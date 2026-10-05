@@ -82,7 +82,7 @@ class GitHubWrites:
 def release_presentation(record, product=None):
     channel = record["membership"].capitalize()
     version = record["version"]
-    suite_name = f"{channel} game suite {version}"
+    suite_name = f"{channel} suite {version}"
     name = suite_name if product in (None, "MegaMek") else (
         f"{product} {record['products'][product]['version']} - {suite_name}")
     record_url = (f"https://github.com/MegaMek/megamek/releases/download/"
@@ -90,7 +90,7 @@ def release_presentation(record, product=None):
     lines = [
         f"**Channel: {channel}**",
         "",
-        f"**Game suite: {version}**",
+        f"**Suite: {version}**",
         "",
         f"The [complete suite record]({record_url}) is the authority for channel membership "
         "and exact product downloads.",

@@ -134,14 +134,16 @@ class TransactionTests(unittest.TestCase):
     def assert_release_presentation(self, record, repo, tag):
         release = next(r for r in self.releases[repo] if r["tag_name"] == tag)
         channel = record["membership"].capitalize()
-        suite = f"{channel} game suite {record['version']}"
+        suite = f"{channel} suite {record['version']}"
         product = next(p for p, r in REPOS.items() if r == repo)
         self.assertEqual(release["name"], suite if repo == "megamek" else
                          f"{product} {record['products'][product]['version']} - {suite}")
         self.assertFalse(release["draft"])
         self.assertFalse(release["prerelease"])
         self.assertIn(f"**Channel: {channel}**", release["body"])
-        self.assertIn(f"**Game suite: {record['version']}**", release["body"])
+        self.assertIn(f"**Suite: {record['version']}**", release["body"])
+        self.assertNotRegex(release["name"], r"(?i)\bgames?\b")
+        self.assertNotRegex(release["body"], r"(?i)\bgames?\b")
         self.assertIn(f"https://github.com/MegaMek/megamek/releases/download/{record['tag']}/"
                       f"suite-record-{record['version']}.json", release["body"])
         self.assertIn("complete only when that record is available", release["body"])
@@ -385,8 +387,8 @@ class BindingTests(unittest.TestCase):
             calls.append((args, kwargs))
             return subprocess.CompletedProcess(args, 0, json.dumps(response[0]).encode())
         sha = "a" * 40
-        name = "MekHQ 0.51.01 - Weekly game suite 0.51.01"
-        body = "**Channel: Weekly**\n\n**Game suite: 0.51.01**\n"
+        name = "MekHQ 0.51.01 - Weekly suite 0.51.01"
+        body = "**Channel: Weekly**\n\n**Suite: 0.51.01**\n"
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory) / "MekHQ-0.51.01.tar.gz"
             archive.write_bytes(b"archive")

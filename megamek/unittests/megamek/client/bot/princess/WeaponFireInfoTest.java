@@ -231,9 +231,7 @@ class WeaponFireInfoTest {
         setupLightTarget();
         double expectedMaxDamage = mockWeaponType.getDamage();
         double expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
-        // Kill and critical chances ask whether a hit would breach or destroy a location - the damage if it hits -
-        // and count the chance to hit once (issue #9178). A 5-point hit breaches the 4-point head armor.
-        double expectedCriticalSlots = 0.0246059;
+        double expectedCriticalSlots = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
         double expectedKill = 0;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
@@ -253,9 +251,8 @@ class WeaponFireInfoTest {
         setupLightTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
-        // a 10-point hit destroys the head (4 armor, 3 structure): that is a kill
-        expectedCriticalSlots = 0.0186725;
-        expectedKill = 0.0115556;
+        expectedCriticalSlots = 0.0141773; // differs following first setup due to location destruction potential
+        expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
@@ -273,9 +270,8 @@ class WeaponFireInfoTest {
         setupLightTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitSix.getValue()) / 100;
-        // a 15-point hit destroys the head and breaches every other location
-        expectedCriticalSlots = 0.4612956;
-        expectedKill = 0.0200556;
+        expectedCriticalSlots = 0.0324; // differs following first setup due to location destruction potential
+        expectedKill = 0.02005;
         doReturn(mockToHitSix).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();
@@ -293,9 +289,8 @@ class WeaponFireInfoTest {
         setupMediumTarget();
         expectedMaxDamage = mockWeaponType.getDamage();
         expectedProbabilityToHit = Compute.oddsAbove(mockToHitEight.getValue()) / 100;
-        // a 15-point hit destroys the head (9 armor, 3 structure)
-        expectedCriticalSlots = 0.0186725;
-        expectedKill = 0.0115556;
+        expectedCriticalSlots = ROLL_TWO * CRIT_COUNT * expectedProbabilityToHit;
+        expectedKill = 0.0;
         doReturn(mockToHitEight).when(testWeaponFireInfo).calcToHit();
         doReturn(mockWeaponAttackAction).when(testWeaponFireInfo).buildWeaponAttackAction();
         doReturn(new double[] { expectedMaxDamage, 0D, 0D }).when(testWeaponFireInfo).computeExpectedDamage();

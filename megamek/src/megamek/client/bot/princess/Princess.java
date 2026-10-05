@@ -3238,7 +3238,13 @@ public class Princess extends BotClient {
             entity.setElevation(deployElevation);
         }
 
+        // A movement-phase deployment can be re-evaluated after the bot has already chosen a valid deployment
+        // hex/position, and the cached path set can still reflect a non-deploy movement enumeration. Force a fresh
+        // deployment-aware recalculation for this unit before ranking so the DEPLOY step is not silently dropped.
         getPrecognition().ensureUpToDate();
+        getPrecognition().getPathEnumerator().getUnitPaths().remove(entity.getId());
+        getPrecognition().getPathEnumerator().getLongRangePaths().remove(entity.getId());
+        getPrecognition().getPathEnumerator().recalculateMovesFor(entity, true);
         final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false, true);
         if ((paths == null) || paths.isEmpty()) {
             final MovePath deployOnly = new MovePath(game, entity);

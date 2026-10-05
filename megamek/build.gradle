@@ -915,10 +915,19 @@ tasks.register('boardsCopyrightUpdater', JavaExec) {
 
 tasks.register('boardsValidator', JavaExec) {
     dependsOn jar
-    description = 'Validates all boards'
+    description = 'Validates all boards, including roads and bridges that do not join up. -Pstrict counts those as ' +
+            'errors; -Pboards=a.board,b.board checks only the listed files.'
     group = 'boards'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'megamek.utilities.BoardsValidator'
+    // Print the results to the console as well as logs/megamek.log
+    environment 'mm.profile', 'dev'
+    if (project.hasProperty('strict')) {
+        args '--strict'
+    }
+    if (project.hasProperty('boards')) {
+        args project.property('boards').toString().split(',')
+    }
 }
 
 tasks.register('filteredUnitListTool', JavaExec) {

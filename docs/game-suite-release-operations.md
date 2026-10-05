@@ -31,6 +31,26 @@ has only Contents read. The App token is minted only *after* all build work
 and is requested for the three named repositories with Contents write.
 Never put the private key in files, command output, or a workflow input.
 
+## Check App access without publishing
+
+After this workflow is merged to official main, run **Game suite App access check (manual)**
+from the Actions tab on `main` and approve its `suite-release-live` environment request.
+This check works while `SUITE_RELEASES_ENABLED` remains `false`; it does not enable releases,
+build games, or publish tags, releases, assets, or a suite record.
+
+The check uses the stored App ID and private key to request the same three-repository,
+Contents-write token as the publisher. Successful token issuance confirms the requested
+permission is granted; only GET requests then verify the token's exact repository scope and
+read each repository's `main` ref. The action revokes its temporary token during job cleanup.
+The key and token are never printed or uploaded.
+
+A passing run verifies the configured credentials and current access, not an actual release
+write, tag rules, archive validity, or future access. It does not replace a successful coordinator
+dry run or authorization of the first live publication. If authentication or a GET fails, fix
+the reported configuration/access problem before enabling live releases.
+
+## Bootstrap and publication
+
 Use `bootstrap=true` and an explicitly reviewed canonical
 `bootstrap_floor` (for example `0.51.00`) **only** for the first record.
 Existing records reject bootstrap; absent records reject normal operation.

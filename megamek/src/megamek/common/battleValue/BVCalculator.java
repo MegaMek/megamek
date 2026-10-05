@@ -370,7 +370,7 @@ public abstract class BVCalculator {
                 }
 
                 double armorMultiplier = armorMultiplier(location);
-                double torsoMountedCockpit = addTorsoMountedCockpit();
+                double torsoMountedCockpit = (entity instanceof Mek && location == Mek.LOC_CENTER_TORSO) ? addTorsoMountedCockpit() : 0;
 
                 // Front and Rear Armor
                 int locationArmor = Math.max(0, entity.getArmor(location));

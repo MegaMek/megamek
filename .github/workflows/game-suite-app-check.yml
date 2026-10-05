@@ -1,0 +1,52 @@
+name: Game suite App access check (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: game-suite-release-global
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: suite-release-live
+    steps:
+      - name: Check App configuration
+        env:
+          APP_ID: ${{ vars.SUITE_RELEASE_APP_ID }}
+          APP_KEY_PRESENT: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY != '' }}
+        run: |
+          if [[ -z "$APP_ID" || "$APP_KEY_PRESENT" != "true" ]]; then
+            echo "::error::Missing suite release App configuration"
+            exit 1
+          fi
+      - name: Mint the release-scoped App token
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek,megameklab,mekhq
+          permission-contents: write
+      - name: Verify repository scope and read access
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          set -euo pipefail
+          repositories=$(gh api --method GET 'installation/repositories?per_page=100' \
+            --jq '[.repositories[].full_name] | sort | join(",")')
+          if [[ "$repositories" != "MegaMek/megamek,MegaMek/megameklab,MegaMek/mekhq" ]]; then
+            echo "::error::App token repository scope does not match the three suite repositories"
+            exit 1
+          fi
+          for repo in megamek megameklab mekhq; do
+            gh api --method GET "repos/MegaMek/$repo/git/ref/heads/main" --silent
+          done
+          echo "App authentication and repository access verified. No releases were published."
+          echo "Verified release App credentials and access to all three suite repositories. No repository writes or game builds were performed." >> "$GITHUB_STEP_SUMMARY"

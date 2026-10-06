@@ -109,6 +109,18 @@ suite version. Reused product releases retain their original titles and
 descriptions even if their archives appear in a later suite or another channel.
 Existing published releases are not relabeled by this change.
 
+### Recovering from a non-portable published archive
+
+The first Weekly `0.51.01` contains case-only generated startup-script aliases
+such as `bin/MegaMek` and `bin/megamek`. The launcher correctly refuses these
+archives rather than choosing which file to overwrite.
+Do not replace the published assets or change their record hashes.
+Merge the shared packaging/verifier fix, then prepare a new Weekly with
+`bootstrap=false` and no bootstrap floor. The MegaMek source change rebuilds
+all three products. Historical bytes are attested read-only with their pinned
+contract; the new archives must pass portable-path validation before publication.
+Retry installation only after the corrected complete record is published.
+
 ## Diagnosing failed dry runs
 
 Pinned Gradle failures identify the product and requested task. Subprocess

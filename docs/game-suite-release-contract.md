@@ -88,6 +88,21 @@ their own source/data identity, runtime version and packaged JAR bytes must
 match the consuming archive. The shared regression suite is
 `megamek/gradle/test_suite_archive_verifier.py`.
 
+Suite builds generate only the canonical `MegaMek`, `MegaMekLab` and `MekHQ`
+startup scripts, not case-only aliases from Gradle's default generator.
+The shared adapter clears stale generated scripts before regenerating the
+canonical scripts. Ordinary non-suite builds are unchanged.
+The archive namespace must also be portable: paths and implicit parents are
+checked for case/NFC aliases, file/directory conflicts, Windows device names,
+trailing dots/spaces, colons and reserved launcher state. These checks apply
+before payload parsing in both producer and external verification.
+
+Read-only attestation of a previously published record uses that record's
+pinned verifier contract, while retaining bounded parsing, hashes, identities
+and dependency-closure checks. This lets a corrected suite supersede historical
+non-portable archives without modifying their bytes. Newly built or reused
+archives proposed for publication must satisfy the current portable-path checks.
+
 **Merge prerequisite:** land MegaMek's shared `gradle/` verifier, adapter
 and data rules before merging Lab or HQ changes that reference sibling
 `../megamek/gradle/`. Keep all three suite adapters together when releasing;

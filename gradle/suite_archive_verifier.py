@@ -17,6 +17,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import unicodedata
 import zipfile
 
 PRODUCTS = ("MegaMek", "MegaMekLab", "MekHQ")
@@ -115,7 +116,33 @@ def _pax(payload):
     return result
 
 
-def scan(archive, product, version, *, keep_jars=False, capture=()):
+def _portable_path(path, directory, paths):
+    require(len(path.encode("utf-16-le")) // 2 <= 512, "non-portable archive path length")
+    parts = path.split("/")
+    for part in parts:
+        require(":" not in part and not part.endswith((".", " "))
+                and not re.fullmatch(r"(?i)(con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?",
+                                     part, flags=re.ASCII),
+                f"non-portable archive path: {path}")
+        require(part.lower() != ".mm-launcher", f"reserved archive path: {path}")
+    key = unicodedata.normalize("NFC", path).lower()
+    prior = paths.get(key)
+    require(prior is None or (prior[0] == path and prior[1] and directory and not prior[2]),
+            f"duplicate/case/normalization archive path: {prior[0] if prior else path} and {path}")
+    for depth in range(1, len(parts)):
+        parent = "/".join(parts[:depth])
+        parent_key = unicodedata.normalize("NFC", parent).lower()
+        parent_prior = paths.get(parent_key)
+        require(parent_prior is None or (parent_prior[0] == parent and parent_prior[1]),
+                f"archive parent collision: {parent_prior[0] if parent_prior else parent} and {path}")
+        if parent_prior is None:
+            require(len(paths) < MAX_ENTRIES, "excessive archive namespace")
+            paths[parent_key] = (parent, True, False)
+    require(key in paths or len(paths) < MAX_ENTRIES, "excessive archive namespace")
+    paths[key] = (path, directory, True)
+
+
+def scan(archive, product, version, *, keep_jars=False, capture=(), portable=True):
     """Stream a bounded tar. Return identity, file digests, and optional temporary jars.
 
     The caller owns the returned TemporaryDirectory and must close it.
@@ -126,6 +153,7 @@ def scan(archive, product, version, *, keep_jars=False, capture=()):
             f"missing or incorrectly named archive: {archive}")
     tmp = tempfile.TemporaryDirectory(prefix="suite-verifier-")
     files, jars, seen = {}, {}, set()
+    paths = {}
     properties = None
     total = extensions = extension_bytes = metadata_total = 0
     pending = {}
@@ -191,6 +219,8 @@ def scan(archive, product, version, *, keep_jars=False, capture=()):
                 require(path not in seen and len(seen) < MAX_ENTRIES,
                         "duplicate or excessive tar entries")
                 seen.add(path)
+                if portable:
+                    _portable_path(path, kind == b"5", paths)
                 pending = {}
                 extensions = extension_bytes = 0
                 if kind == b"5":

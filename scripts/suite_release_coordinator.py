@@ -46,7 +46,8 @@ def prepare(membership, bootstrap, floor, sources, state,
         commits["mm-data"] = record["mmData"]["commit"]
         with tempfile.TemporaryDirectory(prefix="suite-prior-verifiers-") as temp:
             worktrees = stage(sources, commits, Path(temp), subprocess.run)
-            attest_archives(record, paths, worktrees=worktrees)
+            # Historical bytes use their pinned verifier contract, not a new installation contract.
+            attest_archives(record, paths, worktrees=worktrees, portable=False)
             for repo in commits:
                 clean(Path(temp) / repo, commits[repo], subprocess.run)
 

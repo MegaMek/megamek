@@ -36,6 +36,7 @@ package megamek.common.weapons.bombs.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -59,7 +60,7 @@ public class ISLAAMissileWeapon extends ThunderboltWeapon {
         super();
 
         this.name = "Light Air-to-Air (LAA) Missiles";
-        this.setInternalName(BombTypeEnum.LAA.getWeaponName());
+        this.setInternalName("IS " + BombTypeEnum.LAA.getWeaponName());
         this.heat = 0;
         this.damage = 6;
         this.rackSize = 1;
@@ -84,10 +85,8 @@ public class ISLAAMissileWeapon extends ThunderboltWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.LAA_MISSILE;
         this.capital = false;
         this.missileArmor = 6;
-        rulesRefs = "171, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 171);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)

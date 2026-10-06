@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,7 +34,9 @@
 
 package megamek.common.loaders;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.enums.ProstheticEnhancementType;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.InfantryWeaponMounted;
@@ -48,6 +50,7 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.InfantryMount;
 import megamek.common.util.BuildingBlock;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 
 /**
  * This class loads Infantry BLK files.
@@ -56,6 +59,11 @@ import megamek.common.weapons.infantry.InfantryWeapon;
  * @since April 6, 2002, 2:06 AM
  */
 public class BLKInfantryFile extends BLKFile implements IMekLoader {
+
+    /** Unit file block holding a conventional infantry platoon's SRM munition declaration. */
+    public static final String SRM_MUNITION = "srmMunition";
+    /** {@link #SRM_MUNITION} value for a platoon that carries Inferno SRMs; anything else means standard. */
+    public static final String SRM_MUNITION_INFERNO = "Inferno";
 
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
@@ -112,20 +120,24 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find primary weapon.");
         }
         String primaryName = dataFile.getDataAsString("Primary")[0];
-        EquipmentType primaryWeaponType = EquipmentType.get(primaryName);
+          EquipmentType primaryWeaponType = EquipmentType.get(primaryName,
+              infantry.isClan() ? TechBase.CLAN : TechBase.IS);
         if (!(primaryWeaponType instanceof InfantryWeapon)) {
             throw new EntityLoadingException("primary weapon is not an infantry weapon");
         }
         infantry.setPrimaryWeapon((InfantryWeapon) primaryWeaponType);
+        declareInfernoForWithdrawnLauncher(infantry, primaryName);
 
         EquipmentType secondaryWeaponType = null;
         if (dataFile.exists("Secondary")) {
             String secondName = dataFile.getDataAsString("Secondary")[0];
-            secondaryWeaponType = EquipmentType.get(secondName);
+            secondaryWeaponType = EquipmentType.get(secondName,
+                infantry.isClan() ? TechBase.CLAN : TechBase.IS);
             if (!(secondaryWeaponType instanceof InfantryWeapon)) {
                 throw new EntityLoadingException("secondary weapon " + secondName + " is not an infantry weapon");
             }
             infantry.setSecondaryWeapon((InfantryWeapon) secondaryWeaponType);
+            declareInfernoForWithdrawnLauncher(infantry, secondName);
         }
 
         // if there is more than one secondary weapon per squad, then add that to the
@@ -154,9 +166,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         }
 
         loadDisposableWeapon(infantry);
+        loadSrmMunition(infantry);
 
         // TAG infantry have separate attacks for primary and secondary weapons.
-        if (null != secondaryWeaponType && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
+        if (secondaryWeaponType != null && secondaryWeaponType.hasFlag(WeaponType.F_TAG)) {
             infantry.setSpecializations(infantry.getSpecializations() | ConvInfantry.TAG_TROOPS);
             try {
                 infantry.addEquipment(primaryWeaponType, ConvInfantry.LOC_INFANTRY);
@@ -169,15 +182,24 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
         // LOC_INFANTRY equipment
         if (dataFile.exists("armorKit")) {
             String kitName = dataFile.getDataAsString("armorKit")[0];
-            EquipmentType kit = EquipmentType.get(kitName);
-            if ((null == kit) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
+            EquipmentType kit = EquipmentType.get(kitName,
+                infantry.isClan() ? TechBase.CLAN : TechBase.IS);
+            if ((kit == null) || !(kit.hasFlag(MiscType.F_ARMOR_KIT))) {
                 throw new EntityLoadingException(kitName + " is not an infantry armor kit");
             }
             infantry.setArmorKit(kit);
         }
 
-        if (dataFile.exists("dest")) {
-            infantry.setDEST(true);
+        if (dataFile.exists("armor_name")) {
+            infantry.setCustomArmorName(dataFile.getDataAsString("armor_name")[0]);
+        }
+
+        if (dataFile.exists("armordivisor")) {
+            try {
+                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
+            } catch (NumberFormatException ex) {
+                throw new EntityLoadingException("Could not read armor divisor");
+            }
         }
 
         if (dataFile.exists("encumberingarmor")) {
@@ -186,6 +208,10 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("spacesuit")) {
             infantry.setSpaceSuit(true);
+        }
+
+        if (dataFile.exists("dest")) {
+            infantry.setDEST(true);
         }
 
         if (dataFile.exists("sneakcamo")) {
@@ -198,14 +224,6 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
 
         if (dataFile.exists("sneakecm")) {
             infantry.setSneakECM(true);
-        }
-
-        if (dataFile.exists("armordivisor")) {
-            try {
-                infantry.setCustomArmorDamageDivisor(Double.parseDouble(dataFile.getDataAsString("armordivisor")[0]));
-            } catch (NumberFormatException ex) {
-                throw new EntityLoadingException("Could not read armor divisor");
-            }
         }
 
         loadEquipment(infantry, "Field Guns", ConvInfantry.LOC_FIELD_GUNS);
@@ -233,7 +251,8 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
             int[] amSkill = dataFile.getDataAsInt("antimek");
             if (amSkill[0] != 8) {
                 try {
-                    infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR), ConvInfantry.LOC_INFANTRY);
+                      infantry.addEquipment(EquipmentType.get(EquipmentTypeLookup.ANTI_MEK_GEAR,
+                          infantry.isClan() ? TechBase.CLAN : TechBase.IS), ConvInfantry.LOC_INFANTRY);
                 } catch (LocationFullException ex) {
                     throw new EntityLoadingException(ex.getMessage());
                 }
@@ -332,21 +351,53 @@ public class BLKInfantryFile extends BLKFile implements IMekLoader {
      *
      * @param infantry the platoon being loaded
      *
-     * @throws EntityLoadingException if the named weapon is missing, not an infantry weapon, or not a Disposable
-     *                                Weapon
+     * @throws EntityLoadingException if the tech level is not Advanced or greater, the named weapon is missing, not an
+     * infantry weapon, or not a Disposable Weapon
      */
     private void loadDisposableWeapon(ConvInfantry infantry) throws EntityLoadingException {
-        if (!dataFile.exists("disposableWeapon")) {
-            return;
+        if (dataFile.exists("disposableWeapon")) {
+            SimpleTechLevel techLevel = SimpleTechLevel.convertCompoundToSimple(infantry.getTechLevel());
+            if (techLevel.ordinal() < SimpleTechLevel.ADVANCED.ordinal()) {
+                throw new EntityLoadingException("Disposable Weapon requires Advanced or greater Tech Level (found: "
+                      + techLevel + ")");
+            }
+            String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
+            EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName,
+              infantry.isClan() ? TechBase.CLAN : TechBase.IS);
+            if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+            }
+            if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
+                throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+            }
+            infantry.equipDisposableWeapon(disposableWeapon);
         }
-        String disposableWeaponName = dataFile.getDataAsString("disposableWeapon")[0];
-        EquipmentType disposableWeaponType = EquipmentType.get(disposableWeaponName);
-        if (!(disposableWeaponType instanceof InfantryWeapon disposableWeapon)) {
-            throw new EntityLoadingException(disposableWeaponName + " is not an infantry weapon");
+    }
+
+    /**
+     * Loads the platoon's pre-battle SRM munition declaration (TW p. 143), if the unit file sets one. It overrides the
+     * default from a withdrawn Inferno launcher name, so a unit file can also start such a platoon on Standard.
+     *
+     * @param infantry the platoon being loaded
+     */
+    private void loadSrmMunition(ConvInfantry infantry) {
+        if (dataFile.exists(SRM_MUNITION)) {
+            String srmMunition = dataFile.getDataAsString(SRM_MUNITION)[0].trim();
+            infantry.setInfernoSrmsDeclared(srmMunition.equalsIgnoreCase(SRM_MUNITION_INFERNO));
         }
-        if (!disposableWeapon.hasFlag(WeaponType.F_INF_DISPOSABLE)) {
-            throw new EntityLoadingException(disposableWeaponName + " is not a Disposable Weapon");
+    }
+
+    /**
+     * A unit file written before the TechManual pp. 350-352 errata may name a withdrawn Inferno SRM launcher. That
+     * name now loads as the plain launcher, and the platoon starts the battle declared as Inferno, which is what the
+     * unit was built to carry. The player can still change the declaration in the lobby.
+     *
+     * @param infantry   the platoon being loaded
+     * @param weaponName the weapon name as written in the unit file
+     */
+    private static void declareInfernoForWithdrawnLauncher(ConvInfantry infantry, String weaponName) {
+        if (WithdrawnInfernoSrmLaunchers.isWithdrawnName(weaponName)) {
+            infantry.setInfernoSrmsDeclared(true);
         }
-        infantry.equipDisposableWeapon(disposableWeapon);
     }
 }

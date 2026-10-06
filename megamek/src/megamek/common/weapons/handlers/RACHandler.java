@@ -78,50 +78,33 @@ public class RACHandler extends UltraWeaponHandler {
             return false;
         }
         boolean jams = false;
-        switch (howManyShots) {
-            case 6:
-                if (roll.getIntValue() <= 4) {
-                    jams = true;
-                }
-                break;
-            case 5:
-            case 4:
-                if (roll.getIntValue() <= 3) {
-                    jams = true;
-                }
-                break;
-            case 3:
-            case 2:
-                if (roll.getIntValue() <= 2) {
-                    jams = true;
-                }
-                break;
-            default:
-                break;
+        int jamThreshold = racJamThreshold(howManyShots);
+        if ((jamThreshold > 0) && (roll.getIntValue() <= jamThreshold)) {
+            // Edge may reroll the jam check; if Edge wasn't used the jam stands, otherwise the reroll decides
+            // (the weapon still jams if the reroll is at or below the same jam threshold).
+            int edgeReroll = rerollJamCheckWithEdge(attackingEntity, subjectId, vPhaseReport);
+            jams = acStillJams(edgeReroll, jamThreshold);
         }
 
-        // PLAYTEST3 Caseless ammo support for RAC
         // Will potentially explode when rolling a 2. Can still jam if not blowing up.
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()
-                && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
-                Roll diceRoll = Compute.rollD6(2);
+        if ((roll.getIntValue() <= 2) && !attackingEntity.isConventionalInfantry()
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_CASELESS)) {
+            Roll diceRoll = Compute.rollD6(2);
 
-                Report r = new Report(3164);
-                r.subject = subjectId;
-                r.add(diceRoll);
+            Report r = new Report(3164);
+            r.subject = subjectId;
+            r.add(diceRoll);
 
-                if (diceRoll.getIntValue() >= 8) {
-                    // Round explodes destroying weapon
-                    weapon.setDestroyed(true);
-                    r.choose(false);
-                } else {
-                    // Just a jam
-                    jams = true;
-                    r.choose(true);
-                }
-                vPhaseReport.addElement(r);
+            if (diceRoll.getIntValue() >= 8) {
+                // Round explodes destroying weapon
+                weapon.setDestroyed(true);
+                r.choose(false);
+            } else {
+                // Just a jam
+                jams = true;
+                r.choose(true);
             }
+            vPhaseReport.addElement(r);
         }
         if (jams) {
             Report r = new Report(3160);
@@ -130,8 +113,26 @@ public class RACHandler extends UltraWeaponHandler {
             vPhaseReport.addElement(r);
             weapon.setJammed(true);
         }
-        
+
         return false;
+    }
+
+    /**
+     * The Rotary AC jam threshold for a given number of shots fired this attack: the weapon jams on a to-hit roll at or
+     * below this value. A threshold of 0 means the current fire mode cannot jam.
+     *
+     * @param howManyShots the number of shots fired
+     *
+     * @return the jam threshold (4 at 6 shots, 3 at 4-5 shots, 2 at 2-3 shots, otherwise 0)
+     */
+    // package-private static for testing
+    static int racJamThreshold(int howManyShots) {
+        return switch (howManyShots) {
+            case 6 -> 4;
+            case 5, 4 -> 3;
+            case 3, 2 -> 2;
+            default -> 0;
+        };
     }
 
     /*

@@ -28,18 +28,13 @@ ${formatBasicDataRow("Armor Factor" + armorType, armorFactor, armorMass)}
      ${formatArmorRow("Wings", armorValues.RWG)}<#if patchworkByLoc??> ${patchworkByLoc.RWG}</#if>
      ${formatArmorRow("Aft", armorValues.AFT)}<#if patchworkByLoc??> ${patchworkByLoc.AFT}</#if>
 
-<#if isOmni>
-Fixed Equipment
-	<#if fixedTonnage gt 0>
-${formatBasicDataRow("Location", "Fixed", "Tonnage")}
+<#if isOmni && fixedTonnage gt 0>
+${formatBasicDataRow("Fixed Equipment", "Location", "Tonnage")}
 	<#list fixedEquipment as row>
 		<#if row.equipment != "None">
-${formatBasicDataRow(row.location, row.equipment, row.tonnage)}
+${formatBasicDataRow(row.equipment, row.location, row.tonnage)}
 		</#if>
 	</#list>
-	<#else>
-None
-	</#if>
 </#if>
 
 Weapons

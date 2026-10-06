@@ -63,6 +63,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
@@ -294,6 +295,9 @@ public class ProtoMek extends Entity {
             }
         }
 
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        mp = Math.max(0, mp - getImpMpReduction());
+
         return Math.max(mp, 0);
     }
 
@@ -417,9 +421,10 @@ public class ProtoMek extends Entity {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
         if (interfaceCockpit) {
-            ctl.addComponent(TA_INTERFACE_COCKPIT);
+            techLevel.addComponent(TA_INTERFACE_COCKPIT,
+                  Messages.getString("CompositeTechLevel.component.interfaceCockpit"));
         }
     }
 
@@ -482,6 +487,9 @@ public class ProtoMek extends Entity {
                 default:
             }
         }
+
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        jump = Math.max(0, jump - getImpMpReduction());
 
         return mpCalculationSetting.ignoreGravity() ? jump : Math.min(applyGravityEffectsOnMP(jump), jump);
     }
@@ -654,12 +662,9 @@ public class ProtoMek extends Entity {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && aimingMode.isImmobile()) {
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
-
         }
 
         roll = Compute.d6(2);
@@ -883,7 +888,7 @@ public class ProtoMek extends Entity {
         // Only activate when neural interface rules are enabled; lock mode to prevent UI toggle
         if ((mounted.getType() instanceof MiscType) &&
               mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-            mounted.setMode(isNeuralInterfaceEnabled() ? 1 : 0);
+            mounted.setModeImmediately(isNeuralInterfaceEnabled() ? MiscType.MODE_EI_ON : Mounted.MODE_OFF);
             mounted.setModeSwitchable(false);
         }
     }
@@ -1010,7 +1015,7 @@ public class ProtoMek extends Entity {
     @Override
     public void setCrew(Crew p) {
         super.setCrew(p);
-        if (null != p) {
+        if (p != null) {
             getCrew().setPiloting(5, 0);
         }
     }
@@ -1040,9 +1045,9 @@ public class ProtoMek extends Entity {
         super.setGameOptions();
         // Update EI Interface equipment mode based on neural interface game option
         boolean eiEnabled = isNeuralInterfaceEnabled();
-        for (Mounted<?> m : getEquipment()) {
-            if ((m.getType() instanceof MiscType) && m.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
-                m.setMode(eiEnabled ? 1 : 0);
+        for (Mounted<?> eiInterface : getEquipment()) {
+            if ((eiInterface.getType() instanceof MiscType) && eiInterface.getType().hasFlag(MiscType.F_EI_INTERFACE)) {
+                eiInterface.setModeImmediately(eiEnabled ? MiscType.MODE_EI_ON : Mounted.MODE_OFF);
                 break;
             }
         }
@@ -1483,5 +1488,10 @@ public class ProtoMek extends Entity {
     @Override
     public int getRecoveryTime() {
         return 20;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,7 +47,6 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;
@@ -78,7 +77,7 @@ public class SBFFormationSprite extends Sprite {
         this.owner = owner;
         List<SBFFormation> formationsInHex = game.getActiveFormationsAt(formation.getPosition());
         formationCountInHex = formationsInHex.size();
-        positionInHex = MathUtility.clamp(formationsInHex.indexOf(formation), 0, 3);
+        positionInHex = Math.clamp(formationsInHex.indexOf(formation), 0, 3);
         getBounds();
     }
 

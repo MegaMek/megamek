@@ -1,0 +1,164 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+#Saved from version 0.51.01 on 2026-07-12
+<UUID>
+019f583e-a1e0-785d-a983-829ca2dd427c
+</UUID>
+
+<UnitType>
+BattleArmor
+</UnitType>
+
+<Name>
+Elemental Battle Armor
+</Name>
+
+<Model>
+[Laser](Sqd5)
+</Model>
+
+<mul id:>
+8497
+</mul id:>
+
+<year>
+2868
+</year>
+
+<type>
+Clan Level 2
+</type>
+
+<role>
+Ambusher
+</role>
+
+<motion_type>
+Jump
+</motion_type>
+
+<cruiseMP>
+1
+</cruiseMP>
+
+<armor_type>
+28
+</armor_type>
+
+<armor_tech>
+2
+</armor_tech>
+
+<Point Equipment>
+CLBASmall Laser:RA
+CLBASRM2:Body
+BA-SRM2 Ammo:Body:Shots2#
+BAAPMount:LA
+InfantryAssaultRifle:APM:LA
+BABattleClaw:LA
+</Point Equipment>
+
+<Trooper 1 Equipment>
+</Trooper 1 Equipment>
+
+<Trooper 2 Equipment>
+</Trooper 2 Equipment>
+
+<Trooper 3 Equipment>
+</Trooper 3 Equipment>
+
+<Trooper 4 Equipment>
+</Trooper 4 Equipment>
+
+<Trooper 5 Equipment>
+</Trooper 5 Equipment>
+
+<slotless_equipment>
+BAJumpJet
+</slotless_equipment>
+
+<capabilities>
+<p>The Elemental suit carries 250 kilograms of armor, sufficient to withstand multiple hits from BattleMech-scale weapons. Each trooper carries a detachable short-range missile pack holding four missiles across two volleys, which can be jettisoned after use to improve mobility. The suit's modular weapon mount accommodates a range of armament options including energy weapons, flamers, and ballistic weapons, while a secondary anti-personnel mount handles lighter threats. A battle claw on one arm generates enough force to tear through BattleMech armor plating or grip an OmniMech's transport handholds. Integral jump jets propel the suit up to ninety meters per leap, compensating for a modest ground speed of just under eleven kilometers per hour. The suit's heads-up display condenses a full 360-degree sensor picture into a 160-degree view, with mode switching controlled by eye tracking and voice commands. The design's primary weakness lies in its slow overland speed between jumps, leaving troopers exposed during repositioning across open terrain.</p>
+</capabilities>
+
+<overview>
+<p>The gold standard of Clan armored infantry, the Elemental battle armor was developed by Clan Wolf and first deployed in 2868. Adapted from pressurized diving suits built by Clan Goliath Scorpion, the Elemental was the first purpose-built battle armor to see widespread military use. Designed for the Clans' genetically bred Elemental warriors, the one-ton medium suit combines heavy protection, jump mobility, and modular weaponry into a general-purpose package that has remained in frontline service for over two centuries. Produced across dozens of Clan facilities, the suit's adaptable design has spawned numerous specialized configurations while the base platform continues to anchor Clan infantry doctrine.</p>
+</overview>
+
+<deployment>
+<p>The small laser has served as a standard Elemental weapon option since the suit's earliest deployments. Clan Points carrying the laser configuration excel in sustained engagements where ammunition conservation matters, as the energy weapon draws directly from the suit's power supply. This makes laser-equipped Points particularly effective during extended campaigns or deep raids where resupply is uncertain. Many Clan garrison formations default to the laser for routine patrol and security duties.</p>
+</deployment>
+
+<history>
+<p>The origins of modern battle armor trace back to pressurized diving suits developed by Clan Goliath Scorpion on the resource-rich world of Dagda. These Water Elemental Mining Suits featured myomer musculature, self-contained life support, and atmospherically sealed bodies designed for extreme underwater conditions. Clan Wolf recognized the military potential of these suits and directed their merchant caste to acquire several through trade rather than combat.</p><p>Wolf scientists began weaponizing the diving suits, adding armor plating, weapons, and small jump jets. While the Wolves experimented with specialist designs tailored to specific environments, they ultimately settled on a general-purpose configuration suited to most battlefield conditions. Those early specialist prototypes would later inspire the Gnome, Salamander, Sylph, and Undine designs.</p><p>The Wolves first deployed their new battle armor in 2868, winning a Trial of Possession against a Star of Clan Nova Cat light troops. Later that year, the Wolves entered a series of Trials with Clan Hell's Horses. The Horses had been breeding genetically enhanced conventional infantry, the precursors to the modern Elemental phenotype. When the Trials concluded, both Clans had gained what the other possessed: the Horses won battle armor technology, and the Wolves obtained the knowledge to breed their own Elementals. Almost immediately, each Clan combined their new acquisition with their existing strengths, creating the tradition of matching Elemental troops with battle armor. Within a short period, armored Elemental deployments spread across every Clan.</p><p>The suit remained largely unchanged for nearly two centuries, a reflection of its sound fundamental design. Clan Snow Raven developed a variant early in this period optimized for boarding actions and zero-gravity combat. The standard configuration served as the backbone of Clan infantry forces throughout the Golden Century and the Political Century that followed.</p><p>The appearance of battle-armored Elementals during the Clan Invasion of the Inner Sphere in 3050 struck genuine terror into the MechWarriors who first faced them. Swarms of armored infantry bouncing across the battlefield, shrugging off direct weapons fire, and literally tearing apart BattleMechs led many Inner Sphere soldiers to believe they were fighting aliens. Victor Steiner-Davion coined the nickname "Toads," which persists among Spheroids to this day. Clan Wolf fielded a specialized reconnaissance configuration during the Invasion, optimized for extended operations behind enemy lines. The Inner Sphere scrambled to reverse-engineer captured suits, eventually producing the inferior but serviceable Inner Sphere Standard.</p><p>As decades passed and new battle armor designs proliferated across both Clan and Inner Sphere forces, the Elemental suit remained the gold standard of Clan armored infantry. Clan Jade Falcon engineers developed a heat-hardened configuration during the Jihad, while production expanded to Occupation Zone facilities as Clans established manufacturing on conquered territory.</p><p>Clan Hell's Horses, with their long tradition of combined-arms doctrine and infantry excellence, pursued the most ambitious evolution of the Elemental concept. Their engineers developed a prototype that traded the suit's characteristic jump capability for dramatically increased ground speed. The experimental design showed promise but suffered from weight penalties that limited its weaponry and prevented effective anti-BattleMech attacks. A refined production model entered service from the Csesztreg Industriplex Gamma, addressing many of the prototype's shortcomings while retaining the speed-focused approach. Shortly after, the Horses introduced a third-generation design from the same facility, returning to the original suit's jump-capable profile while incorporating advanced armor and sensor-defeating technology. These successive generations ensured the Elemental lineage remained at the forefront of Clan infantry technology well into the ilClan era.</p>
+</history>
+
+<manufacturer>
+Albion Armor Works Delta|BA Facility Alpha|Bergan Industries BA Annex|Beta Plant 2W|Brim Battle Armor Plant III|Clan Diamond Shark IndustriPlex-C|Elemental Facility 4|Facility C-BA-32|Hades Industrial Complex|Hector MechWorks Facility Beta|Hoard Theta|Huntress Production Facility Gamma|Industrial Complex Raven Alpha|Industriplex Theta|Ironhold Beta Complex|Kindraa Payne-Beyl-Grant Main Production Facility|Manufacturing Plant DSF-33|New Kent Armorworks|Olivetti Weaponry|Swedenborg Heavy Industries|Trellshire Heavy Industries|W-7 Facilities|W-7 Facilities|WC Aux Site #2|WC Site 2|WC Site OZ-2
+</manufacturer>
+
+<primaryFactory>
+Albion (Junction City)|Bearclaw|Alshain|Tamaron|Brim|Itabaiana|York|Sheridan|Dagda (Riva)|Hector|Hoard|Huntress (Myers)|Lum|Niles|Ironhold|Shadow|Strato Domingo|New Kent (Celebes)|Sudeten|Kirchbach|Twycross|Tranquil|Weingarten|Strana Mechty (Wolf Enclave)|Arc-Royal|Tamar
+</primaryFactory>
+
+<systemManufacturers>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemManufacturers>
+
+<systemModels>
+CHASSIS:Unknown
+ENGINE:Unknown
+ARMOR:Unknown
+JUMP_JET:Unknown
+COMMUNICATIONS:Unknown
+TARGETING:Unknown
+</systemModels>
+
+<source>
+TR:3058U
+</source>
+
+<published>
+RSFP:Wave 1
+</published>
+
+<chassis>
+biped
+</chassis>
+
+<jumpingMP>
+3
+</jumpingMP>
+
+<armor>
+10
+</armor>
+
+<Trooper Count>
+5
+</Trooper Count>
+
+<weightclass>
+2
+</weightclass>
+

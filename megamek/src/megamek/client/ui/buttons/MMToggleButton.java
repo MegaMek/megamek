@@ -32,23 +32,29 @@
  */
 package megamek.client.ui.buttons;
 
+import java.awt.Color;
 import javax.swing.JToggleButton;
 
 import megamek.MMConstants;
 import megamek.client.ui.util.FlatLafStyleBuilder;
+import megamek.client.ui.util.UIUtil;
 
 /**
- * A JToggleButton that shows a check mark and cross mark to make its selection status clearer.
+ * A JToggleButton that shows a check mark and cross mark to make its selection status clearer. The marks take
+ * their colors from {@link UIUtil}, so they stay readable in both UI themes - a deep green on the light theme
+ * instead of a pale one that washes out on a light background.
  *
  * @author Simon (Juliez)
  */
 public class MMToggleButton extends JToggleButton {
 
-    private static final String CHECK = "#90FF90>\u2713 "; // Checkmark
-    private static final String CROSS = "#FF9090>\u2717 "; // X
+    private static final String CHECK_MARK = ">\u2713 "; // Checkmark
+    private static final String CROSS_MARK = ">\u2717 "; // X
     private static final String INTRO = "<HTML><NOBR><FONT COLOR=";
     private static final String CLOSE = "</FONT>";
-    private static final int MARK_LENGTH = CHECK.length() + INTRO.length() + CLOSE.length();
+    /** The color part is a fixed-length #RRGGBB value, so the marked prefix always has the same length. */
+    private static final int MARK_LENGTH = "#RRGGBB".length() + CHECK_MARK.length()
+          + INTRO.length() + CLOSE.length();
 
     public MMToggleButton(String text) {
         super();
@@ -73,11 +79,16 @@ public class MMToggleButton extends JToggleButton {
             text = text.substring(MARK_LENGTH);
         }
         if (isSelected()) {
-            text = INTRO + CHECK + CLOSE + text;
+            text = INTRO + colorHex(UIUtil.uiGreen()) + CHECK_MARK + CLOSE + text;
         } else {
-            text = INTRO + CROSS + CLOSE + text;
+            text = INTRO + colorHex(UIUtil.uiLightRed()) + CROSS_MARK + CLOSE + text;
         }
         super.setText(text);
+    }
+
+    /** The color as the fixed-length {@code #RRGGBB} form the marked prefix is built and stripped with. */
+    private static String colorHex(Color color) {
+        return String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     @Override

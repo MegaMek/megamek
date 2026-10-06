@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -76,7 +77,7 @@ public class InfantryPistolMydronAutoPistolWeapon extends InfantryWeapon {
         ammoCost = 4;
         shots = 20;
         bursts = 4;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2607, 2612, 2700, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2607, 2612, 2700, DATE_NONE, DATE_NONE)

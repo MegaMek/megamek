@@ -96,6 +96,34 @@ class UnitStateTest {
         assertEquals(10, state.get(UnitState.Field.X));
         assertEquals(20, state.get(UnitState.Field.Y));
         assertEquals(true, state.get(UnitState.Field.DONE));
+        assertEquals("ACTIVE", state.get(UnitState.Field.REMOVAL));
+    }
+
+    /**
+     * A destroyed unit's snapshot must say why it left the game. DESTROYED alone cannot: a unit that
+     * fled reads as not-destroyed, and a killed unit only carries the flag briefly before it moves to
+     * the graveyard - which is how a round-1 shoot-down vanished from a live game's log entirely.
+     */
+    @Test
+    void removalConditionIsCarriedForGraveyardUnits() {
+        Entity mockEntity = Mockito.mock(Entity.class);
+        Game mockGame = Mockito.mock(Game.class);
+        Player mockPlayer = Mockito.mock(Player.class);
+
+        Mockito.when(mockGame.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        Mockito.when(mockEntity.getOwner()).thenReturn(mockPlayer);
+        Mockito.when(mockEntity.getRole()).thenReturn(megamek.common.units.UnitRole.SCOUT);
+        Mockito.when(mockEntity.isDestroyed()).thenReturn(true);
+        Mockito.when(mockEntity.getRemovalCondition())
+              .thenReturn(megamek.common.interfaces.IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+        Mockito.when(mockEntity.getWeaponListWithHHW()).thenReturn(new ArrayList<>());
+        Mockito.when(mockEntity.getWeaponList()).thenReturn(new ArrayList<>());
+
+        UnitState state = UnitState.fromEntity(mockEntity, mockGame);
+
+        assertEquals("SALVAGEABLE", state.get(UnitState.Field.REMOVAL));
+        assertEquals(true, state.get(UnitState.Field.DESTROYED));
+        assertEquals(-1, state.get(UnitState.Field.X), "a graveyard unit has no position");
     }
 
     @Test

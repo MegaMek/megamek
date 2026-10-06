@@ -1,0 +1,188 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+generator:MegaMek Suite 0.50.12 on 2026-02-26
+chassis:Barghest
+model:BGS-1T
+mul id:252
+
+Config:Quad
+techbase:Inner Sphere
+era:3058
+source:TR:3060
+published:RS:3060u
+rules level:2
+role:Sniper
+
+quirk:directional_torso_mount_360:LT RT
+
+mass:70
+engine:350 XL Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:10 IS Double
+walk mp:5
+jump mp:0
+
+armor:Standard(Inner Sphere)
+FLL armor:27
+FRL armor:27
+LT armor:21
+RT armor:21
+CT armor:30
+HD armor:9
+RLL armor:26
+RRL armor:26
+RTL armor:6
+RTR armor:6
+RTC armor:9
+
+Weapons:3
+ER Large Laser, Left Torso
+ER Large Laser, Left Torso
+LB 20-X AC, Center Torso
+
+Front Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Front Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+ISERLargeLaser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+ISLBXAC20
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+ISLBXAC20
+ISLBXAC20
+
+Head:
+Life Support
+Sensors
+Cockpit
+-Empty-
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Rear Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+IS LB 20-X AC Ammo
+IS LB 20-X Cluster Ammo
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+# Fluff Date: 2026-02-10 14:00:04
+overview:<p>The Barghest was born from the personal ambition of Archon Katrina Steiner-Davion, who in the late 3050s directed TharHes Industries of Tharkad to create a new quadrupedal BattleMech designed to inspire dread on the battlefield, much as the venerable Atlas and Banshee had done for centuries. TharHes engineers drew heavily upon their experience with the Bushwacker, repositioning its forward-slung legs into a true quad configuration and increasing the chassis mass to seventy tons. Though TharHes executives initially resisted the quad layout due to the configuration's long-maligned reputation, the simultaneous appearance of new four-legged designs from the Draconis Combine and Free Worlds League convinced them of the concept's renewed viability.</p><p>Named after savage wolf-like creatures of Terran mythology, the Barghest entered full production in 3058 and quickly became one of the most recognizable quad designs in the Lyran arsenal, serving as a heavy fire support platform across multiple theaters of operation.</p>
+capabilities:<p>Built around an Earthwerk BGS Quad chassis, the Barghest mounts a Magna 350 XL engine that propels the seventy-ton design to a respectable eighty-six kilometers per hour, impressive speed for a heavy 'Mech, though the extralight engine's vulnerability to side torso hits remains a persistent concern. Thirteen tons of Durallex Heavy armor provide solid protection against most threats, though the design's low-slung profile and quad stability partially compensate for the armor not reaching maximum coverage.</p><p>The primary configuration pairs two BlazeFire Sweetshot Extended Range Large Lasers with a devastating Defiance Disintegrator LB 20-X Autocannon, giving the Barghest a potent combination of long-range accuracy and close-range lethality. The LB-X's ability to fire cluster munitions provides tactical flexibility against lighter targets, while standard slugs can breach heavy armor at medium range. Ten double heat sinks manage the thermal load adequately under normal engagement conditions.</p><p>The design's simplicity is both strength and weakness. With only two energy weapons to fall back on should the autocannon run dry or jam, the Barghest becomes significantly less threatening at close range. However, the quad chassis provides exceptional stability for its weapons platform role, and the design's imposing, predatory silhouette achieves the Archon's original goal of psychological intimidation.</p>
+deployment:<p>The original production model introduced in 3058, this configuration established the Barghest as a formidable heavy fire support platform. The pairing of twin Extended Range Large Lasers with the powerful LB 20-X Autocannon gives the design excellent reach and devastating close-range firepower. Four tons of autocannon ammunition (split between the rear legs for survivability) provide reasonable endurance, though prolonged engagements can exhaust the supply. The XL engine grants speed unusual for a seventy-ton design, but leaves the Barghest vulnerable to flanking attacks that penetrate its side torsos. First deployed with the Alliance Jaegers, this configuration remains the most widely encountered variant in Lyran service.</p>
+history:<p>The Barghest entered service in 3058, with the first production models assigned to the five newly christened Alliance Jaegers, the Bolan, Skye, Donegal, Coventry, and Alarion Jaegers. These elite regiments, each drawing recruits exclusively from their namesake province, were intended to foster Lyran national pride under the Archon's political reforms. The Barghest's fearsome appearance made it an ideal symbol for these prestigious units.</p><p>Production continued at TharHes Industries on Tharkad through the FedCom Civil War, with TharHes developing several variant configurations to address different tactical needs. The BGS-2T and BGS-3T offered alternative weapons fits for commanders who preferred different engagement doctrines, while the core production line maintained steady output for Lyran Alliance forces.</p><p>The Jihad inflicted severe damage on TharHes's Tharkad facilities. Despite the destruction, the Barghest production line proved resilient enough to continue operating when other lines fell silent, and by the war's end it was one of the few 'Mech lines still running at the plant. During this period, TharHes's research annex on nearby Gibbs produced an experimental variant mounting an Improved Heavy Gauss Rifle in a revolutionary turret configuration, which eventually led to the production BGS-4T model entering service in 3083.</p><p>The design suffered another blow when Clan Wolf attacked Tharkad in 3142, destroying TharHes's BattleMech production lines entirely and leaving the factory capable of producing only battle armor at a fraction of its prior capacity. Though existing Barghests continue to serve throughout Lyran forces, new production has effectively ceased, making the remaining chassis increasingly valuable to their operators.</p>
+manufacturer:TharHes Industries
+primaryfactory:Tharkad
+systemmanufacturer:CHASSIS:Earthwerk
+systemmode:CHASSIS:BGS Quad
+systemmanufacturer:ENGINE:Magna
+systemmode:ENGINE:350 XL
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Heavy
+systemmanufacturer:COMMUNICATIONS:TharHes
+systemmode:COMMUNICATIONS:Euterpe HM-14
+systemmanufacturer:TARGETING:TharHes
+systemmode:TARGETING:Ares-8a

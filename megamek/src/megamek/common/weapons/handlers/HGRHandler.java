@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -73,10 +73,8 @@ public class HGRHandler extends GRHandler {
             return true;
         }
 
-        if ((attackingEntity.mpUsed > 0) && (attackingEntity instanceof Mek) && attackingEntity.canFall()
-              // Only check up to assault class, superheavies do not roll.
-              && attackingEntity.getWeightClass() <= EntityWeightClass.WEIGHT_ASSAULT) {
-            // Modifier is weight-based.
+        if (Game.rulesManager.getRulesWeapons().canHGRTriggerPSR(attackingEntity.mpUsed,
+              attackingEntity.getWeightClass()) && attackingEntity instanceof Mek && attackingEntity.canFall()) {
             PilotingRollData psr = getPilotingRollData();
             game.addPSR(psr);
         }

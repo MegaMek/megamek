@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -84,7 +84,9 @@ public class ProtoMekClampMount extends BattleArmorHandles {
     @Override
     public int getCargoMpReduction(Entity carrier) {
         double protoWeight = 0.0;
-        if (carriedUnit != Entity.NONE) {
+        // Same transient state as issue #8638: no game reference means the carried unit cannot be
+        // resolved, so its weight cannot penalize the carrier's MP.
+        if ((carriedUnit != Entity.NONE) && (game != null)) {
             Entity carriedEntity = game.getEntity(carriedUnit);
             if (carriedEntity != null) {
                 protoWeight = carriedEntity.getWeight();

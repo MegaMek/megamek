@@ -36,6 +36,7 @@ package megamek.common.weapons.bombs.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -58,8 +59,8 @@ public class ISAAAMissileWeapon extends ThunderboltWeapon {
     public ISAAAMissileWeapon() {
         super();
 
-        this.name = "AAA Missile";
-        this.setInternalName(BombTypeEnum.AAA.getWeaponName());
+        this.name = BombTypeEnum.AAA.getWeaponName();
+        this.setInternalName("IS " + BombTypeEnum.AAA.getWeaponName());
         this.heat = 0;
         this.damage = 20;
         this.rackSize = 1;
@@ -85,10 +86,8 @@ public class ISAAAMissileWeapon extends ThunderboltWeapon {
         this.capital = false;
         this.missileArmor = 20;
         cost = 9000;
-        this.rulesRefs = "169, TO:AUE";
+        this.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 169);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(3069, 3072, DATE_NONE, DATE_NONE, DATE_NONE)

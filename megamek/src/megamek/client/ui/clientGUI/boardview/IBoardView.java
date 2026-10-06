@@ -48,8 +48,8 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.IDisplayable;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardViewTooltipProvider;
-import megamek.common.board.Coords;
 import megamek.common.Player;
+import megamek.common.board.Coords;
 
 public interface IBoardView {
 
@@ -69,6 +69,11 @@ public interface IBoardView {
      * Zooms in the board (shows less of it at bigger size), if the maximum zoom has not been reached already.
      */
     void zoomIn();
+
+    /**
+     * Resets the zoom level of the board
+     */
+    void zoomReset();
 
     /**
      * Toggles between two Zoom levels.

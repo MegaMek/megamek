@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class InfantryPistolSunbeamLaserPistolWeapon extends InfantryWeapon {
         infantryRange = 1;
         ammoWeight = 0.0003;
         shots = 7;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3015, 3020, 3050, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.FW)
               .setProductionFactions(Faction.FW).setTechRating(TechRating.D)

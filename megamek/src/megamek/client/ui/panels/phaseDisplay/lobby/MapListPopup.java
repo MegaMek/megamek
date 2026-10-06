@@ -38,6 +38,7 @@ import java.util.List;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import megamek.client.ui.Messages;
 import megamek.client.ui.util.ScalingPopup;
 import megamek.client.ui.util.UIUtil;
 
@@ -129,6 +130,8 @@ class MapListPopup {
             for (int i = 0; i < numB; i++) {
                 menu.add(menuItem("Board " + (i + 1), MLP_BOARD + ":" + i + ":" + boards.get(rnd), true, listener));
             }
+        } else {
+            menu.setToolTipText(Messages.getString("ChatLounge.MapListPopup.selectTwoOrMoreHint"));
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;
@@ -147,6 +150,8 @@ class MapListPopup {
                 menu.add(menuItem("Board " + (i + 1), MLP_SURPRISE + ":" + i + ":"
                       + String.join("\n", boards), true, listener));
             }
+        } else {
+            menu.setToolTipText(Messages.getString("ChatLounge.MapListPopup.selectTwoOrMoreHint"));
         }
         menu.setEnabled(enabled && (menu.getItemCount() > 0));
         return menu;

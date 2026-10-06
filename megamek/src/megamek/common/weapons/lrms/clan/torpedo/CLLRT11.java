@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -53,8 +54,8 @@ public class CLLRT11 extends LRTWeapon {
         super();
 
         this.name = "LRT 11";
-        this.setInternalName("CLLRTorpedo11");
         this.setInternalName("CLLRT11");
+        this.addLookupName("CLLRTorpedo11");
         this.heat = 0;
         this.rackSize = 11;
         this.minimumRange = WEAPON_NA;
@@ -69,12 +70,15 @@ public class CLLRT11 extends LRTWeapon {
         // But LRM Tech Base and Avail Ratings.
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
-        rulesRefs = "231, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 231),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         flags = flags.or(F_NO_FIRES).andNot(F_AERO_WEAPON).andNot(F_BA_WEAPON)
               .andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(3055, 3060, 3061, DATE_NONE, DATE_NONE)

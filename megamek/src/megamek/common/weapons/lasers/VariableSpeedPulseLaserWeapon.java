@@ -41,6 +41,7 @@ import java.io.Serial;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
+import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.weapons.handlers.AttackHandler;
@@ -54,12 +55,28 @@ public class VariableSpeedPulseLaserWeapon extends LaserWeapon {
 
     @Serial
     private static final long serialVersionUID = -731162221147163665L;
+    private static final int[] TO_HIT_MODIFIERS_BY_RANGE = { -3, -2, -1 };
 
     public VariableSpeedPulseLaserWeapon() {
         super();
         flags = flags.or(F_PULSE).or(F_VSP).andNot(F_PROTO_WEAPON);
         atClass = CLASS_PULSE_LASER;
         infDamageClass = WEAPON_DIRECT_FIRE;
+        toHitModifier = TO_HIT_MODIFIERS_BY_RANGE[0];
+    }
+
+    @Override
+    public int getToHitModifierAtRange(@Nullable Mounted<?> mounted, int range) {
+        return switch (range) {
+            case RANGE_SHORT -> TO_HIT_MODIFIERS_BY_RANGE[0];
+            case RANGE_MED -> TO_HIT_MODIFIERS_BY_RANGE[1];
+            default -> TO_HIT_MODIFIERS_BY_RANGE[2];
+        };
+    }
+
+    @Override
+    public boolean hasHitModifiersByRange() {
+        return true;
     }
 
     @Override

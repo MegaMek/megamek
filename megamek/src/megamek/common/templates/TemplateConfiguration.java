@@ -46,7 +46,7 @@ public final class TemplateConfiguration {
     private static Configuration configuration = null;
 
     public static Configuration getInstance() {
-        if (null == configuration) {
+        if (configuration == null) {
             configuration = createConfiguration();
         }
         return configuration;

@@ -1,0 +1,119 @@
+name: Game suite release (manual guarded)
+
+on:
+  workflow_dispatch:
+    inputs:
+      membership:
+        description: Release membership
+        required: true
+        type: choice
+        options: [weekly, milestone, development]
+        default: weekly
+      dry_run:
+        description: Build and verify without publication
+        type: boolean
+        required: true
+        default: true
+      bootstrap:
+        description: First complete record only; requires canonical bootstrap floor
+        type: boolean
+        required: true
+        default: false
+      bootstrap_floor:
+        description: Canonical floor for first record only (e.g. 0.51.00)
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: game-suite-release-global
+  cancel-in-progress: false
+
+jobs:
+  suite:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    environment: ${{ inputs.dry_run && 'suite-release-dry-run' || 'suite-release-live' }}
+    steps:
+      - name: Gate live operation before checkout
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+          ENABLED: ${{ vars.SUITE_RELEASES_ENABLED }}
+          APP_ID: ${{ vars.SUITE_RELEASE_APP_ID }}
+          APP_KEY_PRESENT: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY != '' }}
+        run: |
+          if [[ "$DRY_RUN" != "true" && "$ENABLED" != "true" ]]; then
+            echo "::error::Live suite releases disabled (SUITE_RELEASES_ENABLED must be true)"
+            exit 1
+          fi
+          if [[ "$DRY_RUN" != "true" && ( -z "$APP_ID" || "$APP_KEY_PRESENT" != "true" ) ]]; then
+            echo "::error::Missing suite release App configuration"
+            exit 1
+          fi
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+      - uses: gradle/actions/setup-gradle@v6
+      - name: Verify tooling and clone four official sources with full history
+        run: |
+          gh --version
+          git --version
+          mkdir sources
+          for repo in megamek megameklab mekhq mm-data; do
+            git clone "https://github.com/MegaMek/$repo.git" "sources/$repo"
+          done
+      - name: Read-only preflight, retain prior bytes, and build frozen sources
+        id: prepare
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MEMBERSHIP: ${{ inputs.membership }}
+          BOOTSTRAP: ${{ inputs.bootstrap }}
+          BOOTSTRAP_FLOOR: ${{ inputs.bootstrap_floor }}
+        run: |
+          args=(--membership "$MEMBERSHIP" --sources sources --state suite-state)
+          if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap --bootstrap-floor "$BOOTSTRAP_FLOOR"); fi
+          if [[ "$BOOTSTRAP" != "true" && -n "$BOOTSTRAP_FLOOR" ]]; then
+            echo "::error::Bootstrap floor requires bootstrap=true"
+            exit 1
+          fi
+          python3 scripts/suite_release_coordinator.py prepare "${args[@]}"
+          echo "noop=$(python3 -c 'import json; d=json.load(open("suite-state/inventory.json")); from sys import path; path.insert(0,"scripts"); from suite_release_plan import plan; print("true" if plan(d)["weeklyNoopCandidate"] else "false")')" >> "$GITHUB_OUTPUT"
+      - name: Complete dry-run or verified Weekly no-op without write token
+        if: ${{ inputs.dry_run || steps.prepare.outputs.noop == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BOOTSTRAP: ${{ inputs.bootstrap }}
+        run: |
+          args=(--sources sources --state suite-state)
+          if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap); fi
+          if [[ "${{ inputs.dry_run }}" != "true" ]]; then args+=(--publish); fi
+          python3 scripts/suite_release_coordinator.py finish "${args[@]}"
+      - name: Mint narrowly scoped App token after successful builds
+        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        id: app
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.SUITE_RELEASE_APP_ID }}
+          private-key: ${{ secrets.SUITE_RELEASE_APP_PRIVATE_KEY }}
+          owner: MegaMek
+          repositories: megamek,megameklab,mekhq
+          permission-contents: write
+      - name: Recheck remote inventory and publish once, record last
+        if: ${{ !inputs.dry_run && steps.prepare.outputs.noop == 'false' }}
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          BOOTSTRAP: ${{ inputs.bootstrap }}
+        run: |
+          args=(--sources sources --state suite-state --publish)
+          if [[ "$BOOTSTRAP" == "true" ]]; then args+=(--bootstrap); fi
+          python3 scripts/suite_release_coordinator.py finish "${args[@]}"

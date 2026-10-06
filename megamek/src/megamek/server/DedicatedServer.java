@@ -92,7 +92,7 @@ public class DedicatedServer {
         }
 
         File gameFile = resolver.getSaveGameFile();
-        if (null != gameFile) {
+        if (gameFile != null) {
             server.loadGame(gameFile);
         }
     }

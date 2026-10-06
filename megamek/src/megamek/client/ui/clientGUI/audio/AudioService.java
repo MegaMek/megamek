@@ -38,5 +38,7 @@ public interface AudioService {
 
     void playSound(SoundType id);
 
+    void playSoundNoMute(SoundType id);
+
     void setVolume();
 }

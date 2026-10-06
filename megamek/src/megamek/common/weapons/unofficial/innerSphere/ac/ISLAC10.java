@@ -40,6 +40,8 @@ package megamek.common.weapons.unofficial.innerSphere.ac;
 
 import java.io.Serial;
 
+import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -69,10 +71,9 @@ public class ISLAC10 extends LACWeapon {
         bv = 74;
         cost = 225000;
         explosionDamage = damage;
-        rulesRefs = "Unofficial";
+        rulesRefs = rulesRefs(SourceBookCode.UNOFFICIAL);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(true)
+              .setStaticTechLevel(SimpleTechLevel.UNOFFICIAL)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.C)
               .setISAdvancement(3062, 3068, 3070, DATE_NONE, DATE_NONE)

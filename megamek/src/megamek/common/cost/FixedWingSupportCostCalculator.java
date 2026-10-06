@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,14 +33,18 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.Engine;
-import megamek.common.units.EntityWeightClass;
-import megamek.common.units.FixedWingSupport;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
-import megamek.common.equipment.ArmorType;
+import megamek.common.units.EntityWeightClass;
+import megamek.common.units.FixedWingSupport;
 import megamek.common.verifier.SupportVeeStructure;
 
 public class FixedWingSupportCostCalculator {
@@ -127,6 +131,7 @@ public class FixedWingSupportCostCalculator {
         costs[i++] = 20000 * paWeight;
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
 
+        int equipmentIndex = i;
         costs[i++] = CostCalculator.getWeaponsAndEquipmentCost(fixedWingSupport, ignoreAmmo);
 
         double cost = 0; // calculate the total
@@ -143,9 +148,27 @@ public class FixedWingSupportCostCalculator {
         cost *= fixedWingSupport.getPriceMultiplier();
         costs[i] = -fixedWingSupport.getPriceMultiplier();
 
-        String[] systemNames = { "Chassis", "Engine", "Armor", "Final Structural Cost", "Power Amplifiers",
-                                 "Heat Sinks", "Equipment", "Omni Multiplier", "Tonnage Multiplier" };
-        CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo, systemNames, 6, cost, costs);
-        return Math.round(cost);
+        ArrayList<String> systemNames = new ArrayList<>();
+        systemNames.add("Chassis");
+        systemNames.add("Engine");
+        if (fixedWingSupport.hasPatchworkArmor()) {
+            for (int location = 0; location < fixedWingSupport.locations(); location++) {
+                systemNames.add("Armor (" + fixedWingSupport.getLocationAbbr(location) + ")");
+            }
+        } else {
+            systemNames.add("Armor");
+        }
+        systemNames.add("Final Structural Cost");
+        systemNames.add("Power Amplifiers");
+        systemNames.add("Heat Sinks");
+        systemNames.add("Equipment");
+        systemNames.add("Omni Multiplier");
+        systemNames.add("Tonnage Multiplier");
+        double roundedCost = BigDecimal.valueOf(cost)
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
+        CostCalculator.fillInReport(costReport, fixedWingSupport, ignoreAmmo,
+              systemNames.toArray(new String[0]), equipmentIndex, structCostIdx, roundedCost, costs);
+        return roundedCost;
     }
 }

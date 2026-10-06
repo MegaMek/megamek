@@ -33,6 +33,7 @@
 package megamek.common.loaders;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -75,6 +76,21 @@ class BLKInfantryDisposableWeaponTest {
         return block;
     }
 
+    private static BuildingBlock invalidTechLevelInfantryBlock() {
+        BuildingBlock block = new BuildingBlock();
+        block.writeBlockData("UnitType", "Infantry");
+        block.writeBlockData("Name", "Test Disposable Platoon");
+        block.writeBlockData("Model", "");
+        block.writeBlockData("year", 3145);
+        block.writeBlockData("type", "IS Level 2");
+        block.writeBlockData("motion_type", "Leg");
+        block.writeBlockData("squad_size", 7);
+        block.writeBlockData("squadn", 4);
+        block.writeBlockData("Primary", PRIMARY_WEAPON);
+        block.writeBlockData("disposableWeapon", DISPOSABLE_WEAPON);
+        return block;
+    }
+
     @Test
     @DisplayName("a disposableWeapon block loads a marked, fireable disposable mount")
     void loadsDisposableWeaponMount() throws Exception {
@@ -100,7 +116,7 @@ class BLKInfantryDisposableWeaponTest {
     void noDisposableWeaponByDefault() throws Exception {
         ConvInfantry infantry = (ConvInfantry) new BLKInfantryFile(baseInfantryBlock()).getEntity();
 
-        assertTrue(!infantry.hasDisposableWeapon(), "Platoon should not carry a Disposable Weapon by default");
+        assertFalse(infantry.hasDisposableWeapon(), "Platoon should not carry a Disposable Weapon by default");
         assertTrue(infantry.getWeaponList().stream().noneMatch(WeaponMounted::isDisposableWeapon),
               "No mounted weapon should be marked disposable");
     }
@@ -128,5 +144,13 @@ class BLKInfantryDisposableWeaponTest {
         assertTrue(written.exists("disposableWeapon"), "Written BLK should contain a disposableWeapon block");
         assertEquals(DISPOSABLE_WEAPON, written.getDataAsString("disposableWeapon")[0],
               "Written disposable weapon should match the original");
+    }
+
+    @Test
+    @DisplayName("a disposableWeapon block in a less than Advanced Tech Level unit is rejected")
+    void invalidTechLevelFails() {
+        BuildingBlock block = invalidTechLevelInfantryBlock();
+        assertThrows(EntityLoadingException.class, () -> new BLKInfantryFile(block).getEntity(),
+              "Loading a disposable weapon in a less than Advanced Tech Level unit should fail");
     }
 }

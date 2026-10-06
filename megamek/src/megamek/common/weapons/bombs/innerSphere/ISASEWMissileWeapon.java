@@ -38,6 +38,7 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.annotations.Nullable;
@@ -69,7 +70,7 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
         super();
 
         this.name = "Anti-Ship Electronic Warfare (ASEW) Missiles";
-        this.setInternalName(BombTypeEnum.ASEW.getWeaponName());
+        this.setInternalName("IS " + BombTypeEnum.ASEW.getWeaponName());
         this.heat = 0;
         this.damage = 0;
         this.rackSize = 1;
@@ -95,10 +96,8 @@ public class ISASEWMissileWeapon extends ThunderboltWeapon {
         this.ammoType = AmmoType.AmmoTypeEnum.ASEW_MISSILE;
         this.capital = false;
         this.missileArmor = 30;
-        rulesRefs = "170, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 170);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(3067, 3073, DATE_NONE, DATE_NONE, DATE_NONE)

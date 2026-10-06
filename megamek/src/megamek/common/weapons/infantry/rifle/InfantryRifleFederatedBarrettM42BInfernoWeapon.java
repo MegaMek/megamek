@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -54,8 +55,9 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
     public InfantryRifleFederatedBarrettM42BInfernoWeapon() {
         super();
 
-        name = "Rifle (Federated-Barrett M42B) (Inferno Grenades)";
+        name = "Rifle (Federated-Barrett M42B) (Incendiary Grenades)";
         setInternalName("InfantryFederatedBarrettM42BInferno");
+        addLookupName("Rifle (Federated-Barrett M42B) (Inferno Grenades)");
         addLookupName(name);
         addLookupName("Federated Barrett M42B Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
@@ -69,7 +71,7 @@ public class InfantryRifleFederatedBarrettM42BInfernoWeapon extends InfantryWeap
         ammoCost = 12;
         shots = 50;
         bursts = 5;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3060, 3064, 3095, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FS)

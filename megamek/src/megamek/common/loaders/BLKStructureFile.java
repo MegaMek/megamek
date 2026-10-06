@@ -34,6 +34,7 @@
 package megamek.common.loaders;
 
 import megamek.common.board.CubeCoords;
+import megamek.common.compute.Compute;
 import megamek.common.enums.BasementType;
 import megamek.common.enums.BuildingType;
 import megamek.common.equipment.Engine;
@@ -41,8 +42,11 @@ import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.util.BuildingBlock;
+import megamek.logging.MMLogger;
 
 public class BLKStructureFile extends BLKFile implements IMekLoader {
+    private static final MMLogger LOGGER = MMLogger.create(BLKStructureFile.class);
+
     public BLKStructureFile(BuildingBlock block) {
         dataFile = block;
     }
@@ -103,6 +107,10 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
         }
         be.setYear(dataFile.getDataAsInt("year")[0]);
 
+        if (dataFile.exists("crew")) {
+            be.setCrewCount(dataFile.getDataAsInt("crew")[0]);
+        }
+
 
         be.refreshLocations();
         be.refreshAdditionalLocations();
@@ -127,8 +135,24 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
 
         // Reset our armor type & tech level now that we have all our locations set up
         be.recalculateTechAdvancement();
+        sizeCrewToHeadCount(be);
 
 
         return be;
+    }
+
+    /**
+     * Gives the building's crew object the head-count the building actually has, so anything that counts or
+     * removes people, an infantry action inside the building for one, works on the real crew rather than the single
+     * commander slot the crew type provides.
+     */
+    private static void sizeCrewToHeadCount(AbstractBuildingEntity building) {
+        int headCount = Compute.getFullCrewSize(building);
+        building.getCrew().setSize(headCount);
+        building.getCrew().setCurrentSize(headCount);
+        LOGGER.debug("[BuildingCrew] {}: crew {} ({}), {} bay personnel, crew object sized to {}",
+              building.getShortName(), building.getNCrew(),
+              building.hasExplicitCrewCount() ? "from the unit file" : "Advanced Building Minimum Crew Table",
+              building.getBayPersonnel(), headCount);
     }
 }

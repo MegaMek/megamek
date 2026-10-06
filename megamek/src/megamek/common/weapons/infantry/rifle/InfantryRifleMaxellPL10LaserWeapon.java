@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.rifle;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class InfantryRifleMaxellPL10LaserWeapon extends InfantryWeapon {
         infantryRange = 2;
         ammoWeight = 0.0003;
         shots = 3;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3057, 3059, 3075, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.LC)

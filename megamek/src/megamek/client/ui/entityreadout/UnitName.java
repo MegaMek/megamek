@@ -42,7 +42,7 @@ import megamek.client.ui.util.UIUtil;
  */
 record UnitName(String unitName, boolean notCanon) implements ViewElement {
 
-    private static final String NOT_CANON_MARKER = "(Non-canon)";
+    private static final String NOT_CANON_MARKER = "(Non-Canon)";
 
     UnitName(String unitName) {
         this(unitName, false);

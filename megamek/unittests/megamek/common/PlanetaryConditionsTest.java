@@ -34,6 +34,7 @@ package megamek.common;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -92,7 +93,10 @@ class PlanetaryConditionsTest {
         when(mockGame.getPlanetaryConditions()).thenReturn(planetaryConditions);
         Entity mockEntity = mock(Infantry.class);
         when(mockEntity.doomedInVacuum()).thenReturn(true);
-        assertEquals("vacuum", planetaryConditions.whyDoomed(mockEntity, mockGame));
+        // The reason now names which of the three causes it is, and comes from the message bundle, so the exact
+        // wording is translatable and not worth pinning here. EnvironmentalSealingRulesTest covers the three apart.
+        assertNotNull(planetaryConditions.whyDoomed(mockEntity, mockGame),
+              "a unit doomed in vacuum must be given a reason");
         reset(mockEntity, mockGame);
 
         // Trace atmosphere - Entity not doomed in vacuum/trace atmosphere
@@ -468,14 +472,14 @@ class PlanetaryConditionsTest {
                     // Assert
                     // Should be rolled once
                     compute.verify(Compute::d6, times(1));
-                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                    assertEquals(Wind.STRONG_GALE, planetaryConditions.getWind());
                 }
             }
 
             @Test
             void testShiftingWindStrengthIncreaseTowardsLimit() {
                 // Arrange
-                planetaryConditions.setWindMax(Wind.STORM);
+                planetaryConditions.setWindMax(Wind.STRONG_GALE);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(6);
 
@@ -485,14 +489,14 @@ class PlanetaryConditionsTest {
                     // Assert
                     // Should be rolled once
                     compute.verify(Compute::d6, times(1));
-                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                    assertEquals(Wind.STRONG_GALE, planetaryConditions.getWind());
                 }
             }
 
             @Test
             void testShiftingWindStrengthIncreasePastLimit() {
                 // Arrange
-                planetaryConditions.setWindMax(Wind.STORM);
+                planetaryConditions.setWindMax(Wind.STRONG_GALE);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(6);
 
@@ -502,9 +506,9 @@ class PlanetaryConditionsTest {
                     planetaryConditions.determineWind();
 
                     // Assert
-                    // Should be rolled twice, but still just a storm
+                    // Should be rolled twice, but still just a strong gale
                     compute.verify(Compute::d6, times(2));
-                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                    assertEquals(Wind.STRONG_GALE, planetaryConditions.getWind());
                 }
             }
         }

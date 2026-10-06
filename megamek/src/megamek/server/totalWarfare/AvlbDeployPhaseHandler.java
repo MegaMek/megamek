@@ -50,9 +50,8 @@ import megamek.logging.MMLogger;
  * Resolves the END-phase placement of bridges declared by Bridge-Layer (AVLB) equipment, TM p.242 / TW. A unit declares
  * a deployment during the Pre-End declarations phase; it must then remain stationary, and this handler places the
  * folding bridge in the hex directly in front of the unit at the end of the following turn. Extracted from
- * {@link TWGameManager} so that
- * large class does not also carry the bridgelayer rules; {@link TWGameManager#checkDeployBridges()} delegates here once
- * per END phase.
+ * {@link TWGameManager} so that large class does not also carry the bridgelayer rules;
+ * {@link TWGameManager#checkDeployBridges()} delegates here once per END phase.
  *
  * @author Claude Code (Opus 4.8)
  */
@@ -125,7 +124,7 @@ class AvlbDeployPhaseHandler extends AbstractTWRuleHandler {
         // Sync the unit so all clients show the in-progress (partial bridge) indicator on the target hex.
         gameManager.entityUpdate(entity.getId());
         LOGGER.info("[AVLB] {} declares a bridge deployment (bridge at location {}): target {}, exits bitmask {}; the "
-              + "bridge is placed at the end of the next turn if the unit stays stationary", entity.getShortName(),
+                    + "bridge is placed at the end of the next turn if the unit stays stationary", entity.getShortName(),
               bridgeLayer.getLocation(), target, exits);
         Report report = new Report(4291);
         report.subject = entity.getId();

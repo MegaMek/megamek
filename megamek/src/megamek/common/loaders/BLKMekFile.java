@@ -300,7 +300,7 @@ public class BLKMekFile extends BLKFile implements IMekLoader {
                     continue;
                 }
 
-                EquipmentType etype = EquipmentType.get(critName);
+                EquipmentType etype = getEquipmentType(mek, critName);
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + critName);

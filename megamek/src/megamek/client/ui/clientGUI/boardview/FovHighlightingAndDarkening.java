@@ -32,9 +32,7 @@
  */
 package megamek.client.ui.clientGUI.boardview;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -191,7 +189,7 @@ public class FovHighlightingAndDarkening {
                 boardView.drawHexBorder(boardGraph, p, selected_color, pad, lw);
             } else if (dist <= max_dist) {
                 LosEffects los = getCachedLosEffects(viewerPosition, c, boardView.getBoardId());
-                if (null != boardView.getSelectedEntity()) {
+                if (boardView.getSelectedEntity() != null){
                     if (los == null) {
                         los = LosEffects.calculateLOS(boardView.game, boardView.getSelectedEntity(), null);
                     }

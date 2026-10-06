@@ -36,6 +36,7 @@ package megamek.common.weapons.missiles.innerSphere.thunderbolt;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.weapons.missiles.thunderbolt.Thunderbolt20Weapon;
 
 /**
@@ -49,6 +50,11 @@ public class ISThunderbolt20 extends Thunderbolt20Weapon {
         super();
         name = "Thunderbolt 20";
         setInternalName(name);
+        rulesRefs = rulesRefs(
+              rulesRefs,
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187)
+        );
         addLookupName("IS Thunderbolt-20");
         addLookupName("ISThunderbolt20");
         addLookupName("ISTBolt20");

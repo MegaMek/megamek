@@ -36,6 +36,7 @@ package megamek.common.weapons.lrms.clan.torpedo;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -52,10 +53,10 @@ public class CLLRT15 extends LRTWeapon {
     public CLLRT15() {
         super();
         this.name = "LRT 15";
-        this.setInternalName("CLLRTorpedo15");
+        this.setInternalName("CLLRT15");
+        this.addLookupName("CLLRTorpedo15");
         this.addLookupName("Clan LRT-15");
         this.addLookupName("Clan LRT 15");
-        this.setInternalName("CLLRT15");
         this.heat = 5;
         this.rackSize = 15;
         this.minimumRange = WEAPON_NA;
@@ -67,10 +68,13 @@ public class CLLRT15 extends LRTWeapon {
         this.criticalSlots = 2;
         this.bv = 164;
         this.cost = 175000;
-        rulesRefs = "230, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 230),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187),
+              rulesRef(SourceBookCode.TW, 138)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.D, AvailabilityValue.C, AvailabilityValue.C)
               .setClanAdvancement(2820, 2824, 2825, DATE_NONE, DATE_NONE)

@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -74,7 +75,7 @@ public class InfantryPistolAutoPistolWeapon extends InfantryWeapon {
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
         infantryDamage = 0.21;
         infantryRange = 0;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2010-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2010-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.srm;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -66,18 +67,24 @@ public class InfantrySupportSRMHeavyWeapon extends InfantryWeapon {
         addLookupName(name);
         addLookupName("Infantry Heavy SRM Launcher");
         addLookupName("SRM Launcher (Hvy, One-Shot)");
+        // The TechManual pp. 350-352 errata deletes the Inferno launcher rows: an SRM platoon declares Inferno
+        // munitions before the battle instead. The withdrawn Inferno launcher's names load as this launcher, and a
+        // unit that names one starts the battle declared as Inferno.
+        for (String withdrawnName : WithdrawnInfernoSrmLaunchers.HEAVY_LAUNCHER_NAMES) {
+            addLookupName(withdrawnName);
+        }
         sortingName = "SRM Launcher D";
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 3000;
         bv = 2.91;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT);
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_MISSILE).or(F_INF_ENCUMBER).or(F_INF_SUPPORT).or(F_SRM);
         infantryDamage = 0.57;
         infantryRange = 2;
         ammoWeight = 0.018;
         ammoCost = 500;
         shots = 1;
         tonnage = .020;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2366, 2370, 2400, DATE_NONE, DATE_NONE)

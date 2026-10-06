@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,6 +33,8 @@
 
 package megamek.common.cost;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -183,6 +185,7 @@ public class CombatVehicleCostCalculator {
         costs[i++] = 2000 * Math.max(0, sinks - freeHeatSinks);
         costs[i++] = turretWeight * 5000;
 
+        int equipmentIndex = i;
         costs[i++] = CostCalculator.getWeaponsAndEquipmentCost(tank, ignoreAmmo) + tank.getExtraCrewSeats() * 100L;
 
         if (!tank.isSupportVehicle()) {
@@ -255,7 +258,8 @@ public class CombatVehicleCostCalculator {
                   || tank.hasWorkingMisc(MiscType.F_ENVIRONMENTAL_SEALING)) {
                 cost *= 1.25;
                 costs[i++] = -1.25;
-
+            } else {
+                costs[i++] = 0;
             }
             if (tank.hasWorkingMisc(MiscType.F_OFF_ROAD)) {
                 cost *= 1.2;
@@ -265,8 +269,12 @@ public class CombatVehicleCostCalculator {
 
         ArrayList<String> left = getLeft(tank);
         String[] systemNames = left.toArray(new String[0]);
-        CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, 7, cost, costs);
-        return Math.round(cost);
+        double roundedCost = BigDecimal.valueOf(cost)
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
+          CostCalculator.fillInReport(costReport, tank, ignoreAmmo, systemNames, equipmentIndex, structCostIdx,
+              roundedCost, costs);
+        return roundedCost;
     }
 
     private static ArrayList<String> getLeft(Tank tank) {
@@ -275,7 +283,13 @@ public class CombatVehicleCostCalculator {
             left.add("Chassis");
         }
         left.add("Engine");
-        left.add("Armor");
+        if (tank.hasPatchworkArmor()) {
+            for (int location = 0; location < tank.locations(); location++) {
+                left.add("Armor (" + tank.getLocationAbbr(location) + ")");
+            }
+        } else {
+            left.add("Armor");
+        }
         if (tank.isSupportVehicle()) {
             left.add("Final Structural Cost");
         } else {
@@ -292,8 +306,7 @@ public class CombatVehicleCostCalculator {
         left.add("Omni Multiplier");
         left.add("Tonnage Multiplier");
         if (!tank.isSupportVehicle()) {
-
-            left.add("Flotation Hull/Environmental Sealing multiplier");
+            left.add("Flotation Hull/Environmental Sealing Multiplier");
             left.add("Off-Road Multiplier");
         }
         return left;

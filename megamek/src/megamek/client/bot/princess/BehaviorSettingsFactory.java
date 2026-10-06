@@ -301,7 +301,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NONE} <br> Forced Withdrawal:
      * False <br> Go Home: False <br> Auto Flee: False <br> Fall Shame: 2 <br> Hyper Aggression: 10 <br> Self
-     * Preservation: 2 <br> Herd Mentality: 5 <br> Bravery: 9 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
+     * Preservation: 2 <br> Mutual Support: 5 <br> Bravery: 9 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -319,13 +319,13 @@ public class BehaviorSettingsFactory {
             berserkBehavior.setFallShameIndex(2);
             berserkBehavior.setHyperAggressionIndex(10);
             berserkBehavior.setSelfPreservationIndex(2);
-            berserkBehavior.setHerdMentalityIndex(5);
+            berserkBehavior.setMutualSupportIndex(5);
             berserkBehavior.setBraveryIndex(9);
             berserkBehavior.setAntiCrowding(0);
             berserkBehavior.setFavorHigherTMM(0);
             berserkBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
             berserkBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
-            berserkBehavior.setExclusiveHerding(false);
+            berserkBehavior.setExclusiveMutualSupport(false);
             return berserkBehavior;
         } catch (Exception e) {
             logger.error(e, "Berserker Behavior Exception");
@@ -336,7 +336,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
      * Withdrawal: True <br> Go Home: False <br> Auto Flee: False <br> Fall Shame: 8 <br> Hyper Aggression: 1 <br> Self
-     * Preservation: 10 <br> Herd Mentality: 8 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
+     * Preservation: 10 <br> Mutual Support: 8 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     public final BehaviorSettings COWARDLY_BEHAVIOR = buildCowardlyBehavior();
@@ -353,13 +353,13 @@ public class BehaviorSettingsFactory {
             cowardlyBehavior.setFallShameIndex(8);
             cowardlyBehavior.setHyperAggressionIndex(1);
             cowardlyBehavior.setSelfPreservationIndex(10);
-            cowardlyBehavior.setHerdMentalityIndex(8);
+            cowardlyBehavior.setMutualSupportIndex(8);
             cowardlyBehavior.setBraveryIndex(2);
             cowardlyBehavior.setAntiCrowding(0);
             cowardlyBehavior.setFavorHigherTMM(0);
             cowardlyBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
             cowardlyBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
-            cowardlyBehavior.setExclusiveHerding(false);
+            cowardlyBehavior.setExclusiveMutualSupport(false);
             return cowardlyBehavior;
         } catch (Exception e) {
             logger.error(e, "Cowardly Behavior Exception");
@@ -370,7 +370,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
      * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 7 <br> Hyper Aggression: 3 <br> Self
-     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
+     * Preservation: 10 <br> Mutual Support: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -388,13 +388,13 @@ public class BehaviorSettingsFactory {
             escapeBehavior.setFallShameIndex(7);
             escapeBehavior.setHyperAggressionIndex(3);
             escapeBehavior.setSelfPreservationIndex(10);
-            escapeBehavior.setHerdMentalityIndex(5);
+            escapeBehavior.setMutualSupportIndex(5);
             escapeBehavior.setBraveryIndex(2);
             escapeBehavior.setAntiCrowding(0);
             escapeBehavior.setFavorHigherTMM(0);
             escapeBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
             escapeBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
-            escapeBehavior.setExclusiveHerding(false);
+            escapeBehavior.setExclusiveMutualSupport(false);
             return escapeBehavior;
         } catch (Exception e) {
             logger.error(e, "Escape Behavior Exception");
@@ -405,7 +405,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
      * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 7 <br> Hyper Aggression: 3 <br> Self
-     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
+     * Preservation: 10 <br> Mutual Support: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -423,13 +423,13 @@ public class BehaviorSettingsFactory {
             ruthlessBehavior.setFallShameIndex(6);
             ruthlessBehavior.setHyperAggressionIndex(9);
             ruthlessBehavior.setSelfPreservationIndex(10);
-            ruthlessBehavior.setHerdMentalityIndex(1);
+            ruthlessBehavior.setMutualSupportIndex(1);
             ruthlessBehavior.setBraveryIndex(7);
             ruthlessBehavior.setAntiCrowding(10);
             ruthlessBehavior.setFavorHigherTMM(8);
             ruthlessBehavior.setNumberOfEnemiesToConsiderFacing(2);
             ruthlessBehavior.setAllowFacingTolerance(0);
-            ruthlessBehavior.setExclusiveHerding(true);
+            ruthlessBehavior.setExclusiveMutualSupport(true);
             return ruthlessBehavior;
         } catch (Exception e) {
             logger.error(e, "Ruthless Behavior Exception");
@@ -440,7 +440,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
      * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 7 <br> Hyper Aggression: 3 <br> Self
-     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
+     * Preservation: 10 <br> Mutual Support: 5 <br> Bravery: 2 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None
      */
     // Used by MekHQ
@@ -458,14 +458,14 @@ public class BehaviorSettingsFactory {
             pirateBehavior.setFallShameIndex(3);
             pirateBehavior.setHyperAggressionIndex(10);
             pirateBehavior.setSelfPreservationIndex(6);
-            pirateBehavior.setHerdMentalityIndex(9);
+            pirateBehavior.setMutualSupportIndex(9);
             pirateBehavior.setBraveryIndex(10);
             pirateBehavior.setAntiCrowding(5);
             pirateBehavior.setFavorHigherTMM(5);
             pirateBehavior.setIAmAPirate(true);
             pirateBehavior.setNumberOfEnemiesToConsiderFacing(1);
             pirateBehavior.setAllowFacingTolerance(2);
-            pirateBehavior.setExclusiveHerding(true);
+            pirateBehavior.setExclusiveMutualSupport(true);
             return pirateBehavior;
         } catch (Exception e) {
             logger.error(e, "Pirate Behavior Exception");
@@ -476,7 +476,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
      * Withdrawal: True <br> Go Home: True <br> Auto Flee: True <br> Fall Shame: 6 <br> Hyper Aggression: 3 <br> Self
-     * Preservation: 10 <br> Herd Mentality: 5 <br> Bravery: 2 <br> Anti-Crowding: 5 <br> Favor Higher TMM: 10 <br>
+     * Preservation: 10 <br> Mutual Support: 5 <br> Bravery: 2 <br> Anti-Crowding: 5 <br> Favor Higher TMM: 10 <br>
      * Ignore Damage Output: True <br> Strategic Targets: None
      */
     // Used by MekHQ
@@ -493,13 +493,13 @@ public class BehaviorSettingsFactory {
             convoyBehavior.setIgnoreDamageOutput(true);
             convoyBehavior.setForcedWithdrawal(true);
             convoyBehavior.setAutoFlee(true);
-            convoyBehavior.setExclusiveHerding(true);
+            convoyBehavior.setExclusiveMutualSupport(true);
 
             convoyBehavior.setFallShameIndex(6);
             convoyBehavior.setHyperAggressionIndex(3);
             convoyBehavior.setBraveryIndex(2);
             convoyBehavior.setSelfPreservationIndex(10);
-            convoyBehavior.setHerdMentalityIndex(5);
+            convoyBehavior.setMutualSupportIndex(5);
             convoyBehavior.setAntiCrowding(5);
             convoyBehavior.setFavorHigherTMM(10);
             convoyBehavior.setNumberOfEnemiesToConsiderFacing(0);
@@ -519,7 +519,7 @@ public class BehaviorSettingsFactory {
     /**
      * Destination Edge: {@link CardinalEdge#NONE} <br> Retreat Edge: {@link CardinalEdge#NEAREST} <br> Forced
      * Withdrawal: True <br> Go Home: False <br> Auto Flee: False <br> Fall Shame: 5 <br> Hyper Aggression: 5 <br> Self
-     * Preservation: 5 <br> Herd Mentality: 5 <br> Bravery: 5 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
+     * Preservation: 5 <br> Mutual Support: 5 <br> Bravery: 5 <br> Anti-Crowding: 0 <br> Favor Higher TMM: 0 <br>
      * Strategic Targets: None <br>
      */
     public final BehaviorSettings DEFAULT_BEHAVIOR = buildDefaultBehavior();
@@ -536,13 +536,13 @@ public class BehaviorSettingsFactory {
             defaultBehavior.setFallShameIndex(5);
             defaultBehavior.setHyperAggressionIndex(5);
             defaultBehavior.setSelfPreservationIndex(5);
-            defaultBehavior.setHerdMentalityIndex(5);
+            defaultBehavior.setMutualSupportIndex(5);
             defaultBehavior.setBraveryIndex(5);
             defaultBehavior.setAntiCrowding(0);
             defaultBehavior.setFavorHigherTMM(0);
             defaultBehavior.setNumberOfEnemiesToConsiderFacing(BehaviorSettings.DEFAULT_NUMBER_OF_ENEMIES_TO_CONSIDER_FACING);
             defaultBehavior.setAllowFacingTolerance(BehaviorSettings.DEFAULT_ALLOW_FACING_TOLERANCE);
-            defaultBehavior.setExclusiveHerding(false);
+            defaultBehavior.setExclusiveMutualSupport(false);
             return defaultBehavior;
         } catch (Exception e) {
             logger.error(e, "Default Behavior Exception");

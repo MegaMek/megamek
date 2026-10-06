@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2013-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.Vector;
 
 import megamek.client.Client;
+import megamek.client.bot.AIType;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.Princess;
@@ -104,8 +105,8 @@ class AddBotUtilTest {
         doCallRealMethod().when(mockPrincess).getBehaviorSettings();
 
         testAddBotUtil = spy(new AddBotUtil());
-        doReturn(mockPrincess).when(testAddBotUtil).makeNewPrincessClient(
-              any(Player.class), anyString(), anyInt());
+        doReturn(mockPrincess).when(testAddBotUtil).makeNewBotClient(
+              any(AIType.class), any(Player.class), anyString(), anyInt());
     }
 
     @Test

@@ -44,8 +44,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
- * Tests the cached {@link Entity#getBoardLocation()} override: it must reuse one instance while the position and
- * board id are unchanged, and rebuild correctly when the entity moves.
+ * Tests the cached {@link Entity#getBoardLocation()} override: it must reuse one instance while the position and board
+ * id are unchanged, and rebuild correctly when the entity moves.
  */
 class EntityBoardLocationTest {
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -76,12 +77,21 @@ public class FactionRecord {
     private boolean minor;
     private boolean clan;
     private boolean periphery;
+    private boolean subunit;
     private String name;
     private final TreeMap<Integer, String> altNames;
+    private final TreeMap<Integer, String> aliases;
     private final ArrayList<DateRange> yearsActive;
     private final ArrayList<String> ratingLevels;
     private final HashMap<Integer, Integer> pctSalvage;
     private final HashMap<TechCategory, HashMap<Integer, ArrayList<Integer>>> pctTech;
+    /**
+     * Partly-filled tech percentage lists already reported, so the warning in
+     * {@link #getPctTech(TechCategory, int, int)} is emitted once per category and era rather than on
+     * every lookup. Concurrent because era data is read on the RAT Generator's populator thread while
+     * the UI may be querying the same record.
+     */
+    private final Set<String> reportedPartialPctTechLists = ConcurrentHashMap.newKeySet();
     private final HashMap<Integer, HashMap<String, Integer>> salvage;
     /*
      * FM:Updates gives percentage values for omni, Clan, and SL tech. Later manuals
@@ -111,6 +121,8 @@ public class FactionRecord {
     public static final String IS_GENERAL_KEY = "IS";
     public static final String CL_GENERAL_KEY = "CLAN";
     public static final String PER_GENERAL_KEY = "PERIPHERY";
+    /** The catch-all availability key, used when a unit is equally available to everyone. */
+    public static final String GENERAL_KEY = "General";
 
     public FactionRecord() {
         this("Periphery", "Periphery");
@@ -126,6 +138,7 @@ public class FactionRecord {
         minor = clan = periphery = false;
         ratingLevels = new ArrayList<>();
         altNames = new TreeMap<>();
+        aliases = new TreeMap<>();
         yearsActive = new ArrayList<>();
         pctSalvage = new HashMap<>();
         pctTech = new HashMap<>();
@@ -142,6 +155,7 @@ public class FactionRecord {
         setMinor(faction2.isMinorPower());
         setClan(faction2.isClan());
         setPeriphery(faction2.isPeriphery());
+        setSubunit(faction2.isSubunit());
         setParentFactions(String.join(",", faction2.getFallBackFactions()));
         setRatings(String.join(",", faction2.getRatingLevels()));
         List<String> dateRanges = new ArrayList<>(faction2.getYearsActive().stream().map(DateRange::toString).toList());
@@ -159,6 +173,7 @@ public class FactionRecord {
                 setName(entry.getKey(), entry.getValue());
             }
         }
+        faction2.getAliases().forEach(this::addAlias);
     }
 
     @Override
@@ -192,6 +207,23 @@ public class FactionRecord {
         this.clan = clan;
     }
 
+    /**
+     * Returns whether this record is a subordinate formation declared inside another command's file, such as an
+     * individual regiment of the St. Ives Lancers, rather than a command in its own right.
+     *
+     * <p>Subunits are fully generatable, but callers that offer a choice of whole commands should leave them out -
+     * otherwise a single faction's sub-faction list grows by every regiment of every command it owns.</p>
+     *
+     * @return {@code true} if this record came from another command's subunit declaration
+     */
+    public boolean isSubunit() {
+        return subunit;
+    }
+
+    public void setSubunit(boolean subunit) {
+        this.subunit = subunit;
+    }
+
     public boolean isPeriphery() {
         return periphery;
     }
@@ -202,6 +234,53 @@ public class FactionRecord {
 
     public TreeMap<Integer, String> getAltNames() {
         return altNames;
+    }
+
+    public TreeMap<Integer, String> getAliases() {
+        return new TreeMap<>(aliases);
+    }
+
+    /**
+     * Adds a historical faction-code alias effective from the given year. See {@link #getAliases()}.
+     *
+     * @param year      the year the alias code became active
+     * @param aliasCode the retired faction code that resolves to this faction
+     */
+    public void addAlias(int year, String aliasCode) {
+        aliases.put(year, aliasCode);
+    }
+
+    /**
+     * Returns the faction codes under which this faction's unit availability may be recorded, for the given year,
+     * ordered so the era-active code (per the {@link #getAliases() alias} date map) is tried first, then this
+     * faction's own key, then any remaining historical alias codes.
+     *
+     * <p>For a faction with no aliases this is simply a single-element list of {@link #getKey() the key}, so
+     * availability resolution is unchanged. For a consolidated rename lineage (for example Clan Goliath Scorpion,
+     * aliased to {@code CEI} from 3080 and {@code SE} from 3141) generating in 3100 this yields
+     * {@code [CEI, CGS, SE]} - so the era-appropriate {@code CEI} availability is preferred while units still listed
+     * only under the legacy {@code CGS} code remain reachable.</p>
+     *
+     * @param year the game year the availability is being resolved for
+     *
+     * @return the ordered, de-duplicated lineage codes to try. Never {@code null} or empty.
+     */
+    public List<String> getLineageCodesForYear(int year) {
+        if (aliases.isEmpty()) {
+            return List.of(key);
+        }
+        List<String> lineageCodes = new ArrayList<>();
+        Map.Entry<Integer, String> activeAlias = aliases.floorEntry(year);
+        lineageCodes.add((activeAlias != null) ? activeAlias.getValue() : key);
+        if (!lineageCodes.contains(key)) {
+            lineageCodes.add(key);
+        }
+        for (String aliasCode : aliases.values()) {
+            if (!lineageCodes.contains(aliasCode)) {
+                lineageCodes.add(aliasCode);
+            }
+        }
+        return lineageCodes;
     }
 
     /**
@@ -288,6 +367,24 @@ public class FactionRecord {
     }
 
     /**
+     * Whether the faction is active in the given year or becomes active in some later year. Used to offer a unit
+     * factions that do not exist yet at its introduction date but will field it later, such as the Republic of the
+     * Sphere for a unit built before 3081.
+     *
+     * @param year the earliest year of interest
+     *
+     * @return {@code true} if the faction is active at or after that year
+     */
+    public boolean isActiveInOrAfterYear(int year) {
+        for (DateRange dateRange : yearsActive) {
+            if ((dateRange.end == null) || (dateRange.end >= year)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Sets one or more ranges of years the faction is active.
      *
      * @param formattedRange The range of years the faction is active, as YYYY-YYYY. The start or end year can be
@@ -359,13 +456,128 @@ public class FactionRecord {
         salvage.get(era).remove(faction);
     }
 
-    public Integer getPctTech(TechCategory category, int era, int rating) {
-        if (!pctTech.containsKey(category) || !pctTech.get(category).containsKey(era)
-              || pctTech.get(category).get(era).isEmpty()
-              || pctTech.get(category).get(era).size() <= rating) {
+    /**
+     * The tech percentage this faction declares for one equipment rating, consulting only this faction.
+     *
+     * <p>Era files index these lists worst rating first - index 0 is F, index 4 is A. Two shapes are read
+     * as shorthand rather than as a positional list:</p>
+     * <ul>
+     *     <li>A faction declaring a single <em>rating level</em> is a subcommand locked to one rating within
+     *         its parent's system, so the caller's rating is a position in the parent's larger system.
+     *         {@link #pctTechIndex(int)} reads position 0 for it.</li>
+     *     <li>A faction declaring a single <em>percentage</em> means "this is our profile" rather than "this
+     *         is our profile at rating F only", so that lone value answers for every rating. Read
+     *         positionally it answered only for F and the faction silently inherited its parent's numbers
+     *         for every better rating - and because the rulesets default most commands to rating A, an
+     *         authored one-value profile almost never applied.</li>
+     * </ul>
+     *
+     * <p>A list longer than one but still shorter than the rating being asked for is neither: it is
+     * ambiguous, since there is no way to tell which of the missing ratings the author meant to leave to
+     * the parent. Those defer to the parent factions and are reported once so the data can be corrected.</p>
+     *
+     * @param category which of the tech categories to look up
+     * @param era      the year of the era table to read
+     * @param rating   equipment rating index, typically F (0) to A (4)
+     *
+     * @return the percentage (0 - 100), or {@code null} if this faction declares nothing usable for that
+     *       rating, in which case the caller should fall back to the parent factions
+     */
+    public @Nullable Integer getPctTech(TechCategory category, int era, int rating) {
+        List<Integer> declaredPercentages = declaredPctTechList(category, era);
+        if (declaredPercentages == null) {
             return null;
         }
-        return pctTech.get(category).get(era).get(rating);
+        int percentageIndex = pctTechIndex(rating);
+        if (percentageIndex < 0) {
+            // A caller passing -1 means no rating adjustment applies. A faction with a real rating system
+            // has no single value to answer with, so this reads as absent rather than as position 0.
+            return null;
+        }
+        if (percentageIndex < declaredPercentages.size()) {
+            return declaredPercentages.get(percentageIndex);
+        }
+        // A lone declared value describes the faction as a whole, so it answers for every rating.
+        if (declaredPercentages.size() == 1) {
+            return declaredPercentages.getFirst();
+        }
+        reportPartialPctTechList(category, era, declaredPercentages.size(), rating);
+        return null;
+    }
+
+    /**
+     * The tech percentage exactly as the era file declares it, with neither shorthand above applied.
+     *
+     * <p>This is what an editor should show: {@link #getPctTech(TechCategory, int, int)} would report the
+     * same number against all five ratings for a faction whose file holds one, making a one-value entry
+     * look like a five-value one and inviting an edit that writes back five.</p>
+     *
+     * @param category which of the tech categories to look up
+     * @param era      the year of the era table to read
+     * @param rating   equipment rating index, typically F (0) to A (4)
+     *
+     * @return the declared percentage (0 - 100), or {@code null} if the era file declares no value at that
+     *       position
+     */
+    public @Nullable Integer getDeclaredPctTech(TechCategory category, int era, int rating) {
+        List<Integer> declaredPercentages = declaredPctTechList(category, era);
+        if ((declaredPercentages == null) || (rating < 0) || (rating >= declaredPercentages.size())) {
+            return null;
+        }
+        return declaredPercentages.get(rating);
+    }
+
+    /**
+     * @return the declared percentages for this category and era, or {@code null} when the era file declares
+     *       none at all
+     */
+    private @Nullable List<Integer> declaredPctTechList(TechCategory category, int era) {
+        HashMap<Integer, ArrayList<Integer>> percentagesByEra = pctTech.get(category);
+        if (percentagesByEra == null) {
+            return null;
+        }
+        ArrayList<Integer> declaredPercentages = percentagesByEra.get(era);
+        if ((declaredPercentages == null) || declaredPercentages.isEmpty()) {
+            return null;
+        }
+        return declaredPercentages;
+    }
+
+    /**
+     * Reports a list that declares some ratings but not the one asked for, once per category and era. Left
+     * to the parent factions rather than guessed at, because the author's intent for the missing ratings
+     * cannot be recovered from the file.
+     */
+    private void reportPartialPctTechList(TechCategory category, int era, int declaredCount, int rating) {
+        if (reportedPartialPctTechLists.add(category + "/" + era)) {
+            logger.warn("Faction {} declares {} {} percentages for era {} but rating {} was requested;"
+                        + " falling back to the parent faction. A single value would apply to every"
+                        + " rating - list all {} to differentiate them.",
+                  key, declaredCount, category, era, rating, ratingLevels.size());
+        }
+    }
+
+    /**
+     * Translates an equipment rating into a position within this faction's C/SL/O percentage lists.
+     *
+     * <p>Those lists hold one value per rating level the faction itself declares, so the position is
+     * normally the rating itself. A faction that declares exactly one rating level is the documented
+     * special case: it is a subcommand locked to that one rating within its parent's system, and the
+     * caller's rating is a position in the <em>parent's</em> larger system rather than in this faction's
+     * single-entry lists. Indexing the lists with it would miss every time and silently hand the lookup off
+     * to the parent faction, discarding the subcommand's own declared percentages.</p>
+     *
+     * <p>That one declared value is the faction's percentage whatever rating is asked about, so the
+     * single-level case deliberately also covers the {@code -1} a caller passes to mean "this faction
+     * applies no rating adjustments". Returning nothing for {@code -1} instead would send the lookup to the
+     * parent faction, which is the very substitution this translation exists to prevent.</p>
+     *
+     * @param rating equipment rating as supplied by the caller
+     *
+     * @return the index to read from this faction's percentage lists
+     */
+    private int pctTechIndex(int rating) {
+        return (ratingLevels.size() == 1) ? 0 : rating;
     }
 
     /**
@@ -424,9 +636,15 @@ public class FactionRecord {
     /**
      * Sets the target percentage for a tech category.
      *
+     * <p>The list runs from the <em>lowest</em> unit rating to the highest - index 0 is F and index 4
+     * is A - matching the order of {@code ratingLevels}. A list of one value describes the faction as
+     * a whole and applies to every rating; see {@link #getPctTech(TechCategory, int, int)}. A list
+     * that declares some ratings but not all is reported and left to the parent factions.</p>
+     *
      * @param category    The category (Clan, SL/advanced IS, Omni)
      * @param era         The year for which to set the tech percentage
-     * @param percentages A comma-separated list of percentages from the highest unit rating to the lowest.
+     * @param percentages A comma-separated list of percentages, lowest unit rating first, or
+     *                    {@code null} to declare none
      */
     public void setPctTech(TechCategory category, int era, String percentages) {
         if (!pctTech.containsKey(category)) {

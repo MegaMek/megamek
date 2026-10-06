@@ -47,10 +47,12 @@ import megamek.SuiteConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.VirtualRealityPilotingPod;
 import megamek.common.cost.MekCostCalculator;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;
@@ -62,6 +64,7 @@ import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import megamek.common.interfaces.ILocationExposureStatus;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.loaders.MtfFile;
@@ -77,10 +80,16 @@ import megamek.logging.MMLogger;
 /**
  * You know what Meks are, silly.
  */
-public abstract class Mek extends Entity {
+public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, ActiveHeatSinkController {
     @Serial
     private static final long serialVersionUID = -1929593228891136561L;
     private static final MMLogger LOGGER = MMLogger.create(Mek.class);
+
+    /** A MekWarrior can always eject while alive and aboard. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave();
+    }
 
     private static final class FrankenMekLocationSourceSnapshot implements Serializable {
         @Serial
@@ -267,10 +276,6 @@ public abstract class Mek extends Entity {
     // for Harjel II/III
     private final boolean[] armorDamagedThisTurn;
 
-    private int sinksOn = -1;
-
-    private int sinksOnNextRound = -1;
-
     private boolean autoEject = true;
 
     private boolean condEjectAmmo = true;
@@ -324,8 +329,8 @@ public abstract class Mek extends Entity {
     public static final String FRANKEN_MEK_STRUCTURE_HYBRID = "Hybrid";
 
     private static final TechAdvancement TA_FRANKENMEK = new TechAdvancement(TechBase.ALL)
-        .setAdvancement(ITechnology.DATE_PS)
-        .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
+          .setAdvancement(ITechnology.DATE_PS)
+          .setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL);
 
     private boolean frankenMek = false;
 
@@ -594,7 +599,7 @@ public abstract class Mek extends Entity {
         boolean needsNewSourceSnapshots = (frankenMekLocationSources == null)
               || (frankenMekLocationSources.length != locations);
         if (frankenMekStructureInitialized && !needsNewTonnage && !needsNewStructureType
-            && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
+              && !needsNewStructureTechLevel && !needsNewSourceSnapshots) {
             return;
         }
 
@@ -788,7 +793,7 @@ public abstract class Mek extends Entity {
     public EquipmentType getFrankenMekStructureEquipment(int location) {
         String structureName = EquipmentType.getStructureTypeName(getFrankenMekStructureType(location),
               TechConstants.isClan(getFrankenMekStructureTechLevel(location)));
-        return EquipmentType.get(structureName);
+        return EquipmentType.getStructureFromName(structureName);
     }
 
     /**
@@ -984,7 +989,8 @@ public abstract class Mek extends Entity {
 
     public String getFrankenMekStructureDisplayName() {
         if (!isFrankenMek()) {
-            return EquipmentType.getStructureTypeName(getStructureType(), TechConstants.isClan(getStructureTechLevel()));
+            return EquipmentType.getStructureTypeName(getStructureType(),
+                  TechConstants.isClan(getStructureTechLevel()));
         }
         if (hasHybridFrankenMekStructure()) {
             return FRANKEN_MEK_STRUCTURE_HYBRID;
@@ -1027,9 +1033,9 @@ public abstract class Mek extends Entity {
               && (frankenMekStructureType[firstLeg] == frankenMekStructureType[otherLeg])
               && (frankenMekStructureTechLevel[firstLeg] == frankenMekStructureTechLevel[otherLeg])
               && sanitizeFrankenMekSourceValue(firstLegSource.getDisplayName()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
+              sanitizeFrankenMekSourceValue(otherLegSource.getDisplayName()))
               && sanitizeFrankenMekSourceValue(firstLegSource.getType()).equals(
-                    sanitizeFrankenMekSourceValue(otherLegSource.getType()));
+              sanitizeFrankenMekSourceValue(otherLegSource.getType()));
     }
 
     private static String sanitizeFrankenMekSourceValue(String value) {
@@ -1251,9 +1257,6 @@ public abstract class Mek extends Entity {
 
         setSecondaryFacing(getFacing());
 
-        // set heat sinks
-        sinksOn = sinksOnNextRound;
-
         // update cockpit status
         cockpitStatus = cockpitStatusNextRound;
 
@@ -1266,11 +1269,99 @@ public abstract class Mek extends Entity {
 
         grappledThisRound = false;
 
+        // Continue any fieldwork in progress (a Mek with a backhoe/equivalent may fortify like a vehicle,
+        // Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The stage machine lives in Fortifiable.
+        advanceFortifyRound();
+
         // clear HarJel "took damage this turn" flags
         for (int loc = 0; loc < locations(); ++loc) {
             setArmorDamagedThisTurn(loc, false);
         }
     } // End public void newRound()
+
+    // --- Fieldworks / fortify: a Mek with a backhoe (or equivalent) may build a fortified hex like a vehicle
+    // (Vehicles and Fieldworks, TO:AUE p.153, Corrected Sixth Printing). The multi-turn stage machine lives in
+    // Fortifiable.
+
+    private int dugIn = DUG_IN_NONE;
+
+    /**
+     * Tracks damage taken between turns while fortifying, so an interrupting attack extends the effort by one turn
+     * (TO:AUE p.153, Corrected Sixth Printing). Server-side runtime state; dug-in progress itself is not persisted.
+     */
+    private transient FortifyState fortifyState = new FortifyState();
+
+    @Override
+    public int getDugIn() {
+        return dugIn;
+    }
+
+    @Override
+    public void setDugIn(int stage) {
+        dugIn = stage;
+    }
+
+    @Override
+    public FortifyState getFortifyState() {
+        // Runtime-only state (transient, not persisted): recreate it lazily so it is never null on a
+        // deserialized entity (the field initializer does not run during deserialization).
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
+    }
+
+    // --- Rubble clearing: a Mek with a backhoe may clear rubble like a vehicle (TacOps; backhoe clearing is the
+    // unofficial rule). The multi-turn state machine lives in RubbleClearer.
+
+    private Coords rubbleClearTarget = null;
+    private int rubbleClearTurnsCompleted = 0;
+    private int rubbleClearTurnsRequired = 0;
+
+    /**
+     * @return {@code true} if this Mek has a working backhoe ({@code F_CLUB} / {@code S_BACKHOE}), used for fieldworks
+     *       and the unofficial backhoe rubble-clearing rule
+     */
+    @Override
+    public boolean hasWorkingBackhoe() {
+        return hasWorkingMisc(MiscType.F_CLUB, MiscTypeFlag.S_BACKHOE);
+    }
+
+    @Override
+    @Nullable
+    public Coords getRubbleClearTarget() {
+        return rubbleClearTarget;
+    }
+
+    @Override
+    public void setRubbleClearTarget(@Nullable Coords target) {
+        rubbleClearTarget = target;
+    }
+
+    @Override
+    public int getRubbleClearTurnsCompleted() {
+        return rubbleClearTurnsCompleted;
+    }
+
+    @Override
+    public void setRubbleClearTurnsCompleted(int turns) {
+        rubbleClearTurnsCompleted = turns;
+    }
+
+    @Override
+    public int getRubbleClearTurnsRequired() {
+        return rubbleClearTurnsRequired;
+    }
+
+    @Override
+    public void setRubbleClearTurnsRequired(int turns) {
+        rubbleClearTurnsRequired = turns;
+    }
+
+    @Override
+    public int currentFortifyHealthSignature() {
+        return getTotalArmor() + getTotalInternal();
+    }
 
     /**
      * Returns true if the location in question is a torso location
@@ -1682,11 +1773,11 @@ public abstract class Mek extends Entity {
                 MPBoosters armed = getArmedMPBoosters();
 
                 str += (mpBoosters.hasMASC() ? " MASC:" + getMASCTurns()
-                                               + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
+                      + (armed.hasMASC() ? "(" + getMASCTarget() + "+)" : "(NA)") : "")
                       + (mpBoosters.hasSupercharger() ? " Supercharger:" + getSuperchargerTurns()
-                                                        + (armed.hasSupercharger() ?
-                                                           "(" + getSuperchargerTarget() + "+)" :
-                                                           "(NA)") : "");
+                      + (armed.hasSupercharger() ?
+                      "(" + getSuperchargerTarget() + "+)" :
+                      "(NA)") : "");
             }
             return str;
         }
@@ -1778,10 +1869,11 @@ public abstract class Mek extends Entity {
         }
 
         if (!mpCalculationSetting.ignoreGravity()) {
-            return Math.max(applyGravityEffectsOnMP(mp), 0);
+            mp = applyGravityEffectsOnMP(mp);
         }
 
-        return Math.max(mp, 0);
+        // Improved Magnetic Pulse (iATM IMP) missile movement reduction (IO IMP rules)
+        return Math.max(0, mp - getImpMpReduction());
     }
 
     /**
@@ -1995,9 +2087,9 @@ public abstract class Mek extends Entity {
 
         /*
          CO:213
-         Jump jet performance depends on the weight class of the FrankenMech. 
+         Jump jet performance depends on the weight class of the FrankenMech.
          Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
-         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance 
+         Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance
          as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
         */
         int centerTorsoTonnage = getFrankenMekStructureTonnage(Mek.LOC_CENTER_TORSO);
@@ -2023,9 +2115,9 @@ public abstract class Mek extends Entity {
             movement += locationJumpJetTonnage / centerTorsoJumpJetTonnage;
         }
 
-        // A FrankenMek might have more jump jets than the standard limitation 
-        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets) 
-        // so, we clamp it to that limitation. 
+        // A FrankenMek might have more jump jets than the standard limitation
+        // (TM:51, Max Jump = Maximum Walking MP for Standard Jump Jets; Max Jump = Maximum Running MP for Improved Jump Jets)
+        // so, we clamp it to that limitation.
         return Math.min((int) Math.floor(movement), getJumpJetMovementCap());
     }
 
@@ -2266,28 +2358,22 @@ public abstract class Mek extends Entity {
 
     public int getHeatCapacity(boolean includePartialWing, boolean includeRadicalHeatSink) {
         int capacity = 0;
-        int activeCount = getActiveSinks();
         boolean isDoubleHeatSink = false;
 
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()) {
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            // A heat sink the player has switched off dissipates nothing until it is switched back on
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()) {
                 continue;
             }
-            if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
-                activeCount--;
-            } else if ((activeCount > 0)
-                  && mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                activeCount--;
-                capacity += 2;
-                isDoubleHeatSink = true;
-            } else if (mounted.getType().hasFlag(
-                  MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)) {
                 capacity += 2;
                 isDoubleHeatSink = true;
             } else if (includePartialWing
-                  && mounted.getType().hasFlag(MiscType.F_PARTIAL_WING)
+                  && miscType.hasFlag(MiscType.F_PARTIAL_WING)
                   && // unless all crits are destroyed, we get the bonus
                   ((getGoodCriticalSlots(CriticalSlot.TYPE_EQUIPMENT,
                         getEquipmentNum(mounted), Mek.LOC_RIGHT_TORSO) > 0)
@@ -2344,16 +2430,17 @@ public abstract class Mek extends Entity {
 
         // okay, count leg sinks
         int sinksUnderwater = 0;
-        for (Mounted<?> mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached()
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if ((miscType == null) || mounted.isDestroyed() || mounted.isBreached() || mounted.isModeTurnedOff()
                   || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
-            if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
+            if (miscType.hasFlag(MiscType.F_HEAT_SINK)) {
                 sinksUnderwater++;
-            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
-                  || mounted.getType().hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
-                  || mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+            } else if (miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)
+                  || miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE)
+                  || miscType.hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                 sinksUnderwater += 2;
             }
         }
@@ -2413,7 +2500,7 @@ public abstract class Mek extends Entity {
         if (hasQuirk(OptionsConstants.QUIRK_NEG_NO_TWIST)) {
             return false;
         }
-        return !(isProne() || isBracing() || getAlreadyTwisted());
+        return !(isProne() || isBracing() || getAlreadyTwisted() || isCharging() || isMakingDfa());
     }
 
     /**
@@ -2561,6 +2648,11 @@ public abstract class Mek extends Entity {
         if (mounted.getType().hasFlag(WeaponType.F_VGL)) {
             return Compute.firingArcFromVGLFacing(mounted.getFacing());
         }
+        // Directional Torso Mount (BMM p.83): front/rear (2-point) or full 360 (quad 3-point)
+        OptionalInt directionalTorsoMountArc = getDirectionalTorsoMountArc(mounted);
+        if (directionalTorsoMountArc.isPresent()) {
+            return directionalTorsoMountArc.getAsInt();
+        }
         // rear mounted?
         if (mounted.isRearMounted()) {
             return Compute.ARC_REAR;
@@ -2573,6 +2665,27 @@ public abstract class Mek extends Entity {
             case LOC_LEFT_ARM -> getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFT_ARM;
             default -> Compute.ARC_360;
         };
+    }
+
+    /**
+     * Computes the firing arc for a weapon in a Directional Torso Mount (BMM p.83).
+     * <p>
+     * The mount behaves like a turret: it always fires into a forward arc, but that arc is measured against the unit's
+     * (secondary) facing plus the mount's facing offset (see {@code ComputeArc.getFacing} and
+     * {@link Mounted#getDirectionalMountFacing()}). The 2-point version restricts the offset to forward or rear; the
+     * 3-point quad turret may rotate to any of the six facings. The mount therefore returns {@code ARC_FORWARD} and the
+     * direction is conveyed entirely by the offset, exactly as Mek turret-mounted weapons work.
+     *
+     * @param mounted the weapon being checked
+     *
+     * @return {@code ARC_FORWARD} if this weapon is in a Directional Torso Mount, otherwise an empty
+     *       {@link OptionalInt}
+     */
+    protected OptionalInt getDirectionalTorsoMountArc(Mounted<?> mounted) {
+        if (mounted.hasDirectionalTorsoMount()) {
+            return OptionalInt.of(Compute.ARC_FORWARD);
+        }
+        return OptionalInt.empty();
     }
 
     /**
@@ -2676,14 +2789,11 @@ public abstract class Mek extends Entity {
         int roll;
 
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
         boolean toAdvHitLoc =
               gameOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_ADVANCED_MEK_HIT_LOCATIONS);
 
@@ -2701,14 +2811,6 @@ public abstract class Mek extends Entity {
                 }
             } catch (Throwable t) {
                 LOGGER.error("", t);
-            }
-
-            if (playtestLocations && !toAdvHitLoc
-                  && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                  && roll != 2 // clarified on forum, TACs don't go to the CT in this case
-                // https://battletech.com/playtest-battletech/feedback-discussion/topic/through-armor-critical-hits-on-side-arc/
-            ) {
-                return getPlaytestSideLocation(table, side, cover);
             }
 
             if (side == ToHitData.SIDE_FRONT) {
@@ -2861,69 +2963,12 @@ public abstract class Mek extends Entity {
                 LOGGER.error("", t);
             }
 
-            if (side == ToHitData.SIDE_FRONT) {
-                // front punch hits
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            }
-            if (side == ToHitData.SIDE_LEFT) {
-                // left side punch hits
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                    case 5:
-                        return new HitData(Mek.LOC_LEFT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
-            }
-            if (side == ToHitData.SIDE_RIGHT) {
-                // right side punch hits
-                switch (roll) {
-                    case 1:
-                    case 2:
-                        return new HitData(Mek.LOC_RIGHT_TORSO);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO);
-                    case 4:
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD);
-                }
+            if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT) {
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, side));
             }
             if (side == ToHitData.SIDE_REAR) {
-                // rear punch hits
-                switch (roll) {
-                    case 1:
-                        return new HitData(Mek.LOC_LEFT_ARM, true);
-                    case 2:
-                        return new HitData(Mek.LOC_LEFT_TORSO, true);
-                    case 3:
-                        return new HitData(Mek.LOC_CENTER_TORSO, true);
-                    case 4:
-                        return new HitData(Mek.LOC_RIGHT_TORSO, true);
-                    case 5:
-                        return new HitData(Mek.LOC_RIGHT_ARM, true);
-                    case 6:
-                        return new HitData(Mek.LOC_HEAD, true);
-                }
+                return new HitData(Game.rulesManager.getRulesCharts().getPunchHitLocation(roll, ToHitData.SIDE_REAR),
+                      true);
             }
         }
         if (table == ToHitData.HIT_KICK) {
@@ -3076,20 +3121,6 @@ public abstract class Mek extends Entity {
         return null;
     }
 
-    public HitData getPlaytestSideLocation(int table, int side, int cover) {
-        var isLeft = side == ToHitData.SIDE_LEFT;
-
-        var hitData = innerRollHitLocation(table, ToHitData.SIDE_FRONT, LOC_NONE, AimingMode.NONE, cover);
-        hitData.setLocation(switch (hitData.getLocation()) {
-            case LOC_LEFT_ARM, LOC_RIGHT_ARM -> isLeft ? LOC_LEFT_ARM : LOC_RIGHT_ARM;
-            case LOC_LEFT_LEG, LOC_RIGHT_LEG -> isLeft ? LOC_LEFT_LEG : LOC_RIGHT_LEG;
-            case LOC_LEFT_TORSO, LOC_RIGHT_TORSO -> isLeft ? LOC_LEFT_TORSO : LOC_RIGHT_TORSO;
-            default -> hitData.getLocation();
-        });
-
-        return hitData;
-    }
-
     /**
      * Called when a thru-armor-crit is rolled. Checks the game options and either returns no critical hit, rolls a
      * floating crit, or returns a TAC in the specified location.
@@ -3135,7 +3166,7 @@ public abstract class Mek extends Entity {
                   hit.getSpecCrit(), hit.isFromFront(),
                   hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_HEAD -> {
-                if (getCockpitType() == COCKPIT_TORSO_MOUNTED) {
+                if (hasTorsoMountedCockpit()) {
                     yield new HitData(LOC_NONE);
                 }
                 yield new HitData(LOC_DESTROYED);
@@ -3920,29 +3951,33 @@ public abstract class Mek extends Entity {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         // Meks with non-fusion engines are experimental
         if (hasEngine() && !isIndustrial() && !getEngine().isFusion()) {
-            ctl.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL));
+            techLevel.addComponent(new TechAdvancement().setStaticTechLevel(SimpleTechLevel.EXPERIMENTAL),
+                  Messages.getString("CompositeTechLevel.component.nonFusionEngineBattleMek"));
         }
         if (isFrankenMek()) {
-            ctl.addComponent(TA_FRANKENMEK);
+            techLevel.addComponent(TA_FRANKENMEK, Messages.getString("CompositeTechLevel.component.frankenMek"));
         }
         if (getGyroTechAdvancement() != null) {
-            ctl.addComponent(getGyroTechAdvancement());
+            techLevel.addComponent(getGyroTechAdvancement(), getGyroTypeString());
         }
         if (getCockpitTechAdvancement() != null) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
         if (isIndustrial() && hasAdvancedFireControl()) {
-            ctl.addComponent(getIndustrialAdvFireConTA());
+            techLevel.addComponent(getIndustrialAdvFireConTA(),
+                  Messages.getString("CompositeTechLevel.component.advancedFireControl"));
         }
         if (hasFullHeadEject()) {
-            ctl.addComponent(getFullHeadEjectAdvancement());
+            techLevel.addComponent(getFullHeadEjectAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.fullHeadEjection"));
         }
         if (hasRiscHeatSinkOverrideKit()) {
-            ctl.addComponent(getRiscHeatSinkOverrideKitAdvancement());
+            techLevel.addComponent(getRiscHeatSinkOverrideKitAdvancement(),
+                  Messages.getString("CompositeTechLevel.component.riscHeatSinkOverrideKit"));
         }
     }
 
@@ -4078,43 +4113,24 @@ public abstract class Mek extends Entity {
         if (this.isFrankenMek()) {
             if (this.hasMismatchedTonnageFrankenMekLegs()) {
                 roll.addModifier(2, "Mismatched Legs with different tonnages");
-            } else
-            if (this.hasMismatchedFrankenMekLegs()) {
+            } else if (this.hasMismatchedFrankenMekLegs()) {
                 roll.addModifier(1, "Mismatched Legs from different Meks");
             }
         }
 
         // gyro hit?
-        if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-              Mek.LOC_CENTER_TORSO) > 0) {
+        int gyroHits = getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
+              Mek.LOC_CENTER_TORSO);
+        if (gyroHits > 0) {
+            String gyroMessage = "";
             if (getGyroType() == Mek.GYRO_HEAVY_DUTY) {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 2) {
-                        roll.addModifier(2, "HD Gyro damaged twice");
-                    } else if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 3) {
-                        roll.addModifier(3, "HD Gyro damaged thrice");
-                    }
-                } else {
-                    if (getBadCriticalSlots(CriticalSlot.TYPE_SYSTEM, Mek.SYSTEM_GYRO,
-                          Mek.LOC_CENTER_TORSO) == 1) {
-                        roll.addModifier(1, "HD Gyro damaged once");
-                    } else {
-                        roll.addModifier(3, "HD Gyro damaged twice");
-                    }
-                }
+                // HD Gyro
+                gyroMessage = Messages.getString("PilotingRoll.Gyro.HDGyro");
             } else {
-                if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                    roll.addModifier(2, "Gyro damaged");
-                } else {
-                    roll.addModifier(3, "Gyro damaged");
-                }
+                gyroMessage = Messages.getString("PilotingRoll.Gyro.Gyro");
             }
-
+            gyroMessage += " " + String.valueOf(gyroHits) + " " + Messages.getString("PilotingRoll.Gyro.Damaged");
+            roll.addModifier(Game.rulesManager.getRulesPSR().getGyroModifier(gyroHits, getGyroType()), gyroMessage);
         }
 
         // EI bonus?
@@ -4159,6 +4175,9 @@ public abstract class Mek extends Entity {
                 roll.addModifier(4,
                       "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
+        } else if (hasVirtualRealityPilotingPod()) {
+            // IO:AE p.63: the pod's own piloting bonus, or the penalty while hostile interference disrupts it
+            VirtualRealityPilotingPod.addPilotingModifier(this, roll);
         } else if (getCockpitType() == Mek.COCKPIT_DUAL) {
             // Dedicated pilot bonus is lost if pilot makes any attacks. Penalty for gunner
             // acting as pilot.
@@ -4195,7 +4214,10 @@ public abstract class Mek extends Entity {
 
     @Override
     public int getMaxElevationChange() {
-        return (movementMode.isTracked() || movementMode.isWiGE()) ? 1 : 2;
+        return (movementMode.isTracked() || movementMode.isWiGE() || Game.rulesManager.getRulesMovement()
+              .reduceMaxElevation(this))
+              ? 1
+              : 2;
     }
 
     @Override
@@ -4556,27 +4578,103 @@ public abstract class Mek extends Entity {
         return hasLaserHeatSinks == HAS_TRUE;
     }
 
+    /**
+     * Bulk control for heat sink activation: switches individual heat sink mounts On or Off so that the given number of
+     * sinks remains active. Like all activation/deactivation, the change is declared now and takes effect in the End
+     * Phase (the mounts' pending modes apply at the round rollover). Prototype double heat sinks and Freezers are not
+     * part of this counter (matching {@link #getNumberOfSinks()}); they can be switched individually via their
+     * equipment mode. The value arrives from a client packet, so out-of-range requests are clamped (mirroring
+     * {@link Aero#setActiveSinksNextRound(int)}): a negative count deactivates every sink, a count above the number of
+     * operable sinks activates every sink.
+     *
+     * @param sinks the number of heat sinks that should be active next round
+     */
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound = sinks;
+        int remainingActive = Math.max(0, sinks);
+        for (MiscMounted mounted : getMisc()) {
+            if (!isCountedHeatSink(mounted) || mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
+            }
+            if (remainingActive > 0) {
+                mounted.setMode(Mounted.MODE_ON);
+                remainingActive--;
+            } else {
+                mounted.setMode(Mounted.MODE_OFF);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that are currently switched on (prototype double heat sinks and
+     *       Freezers excluded, matching {@link #getNumberOfSinks()})
+     */
     public int getActiveSinks() {
-        if (sinksOn < 0) {
-            sinksOn = getNumberOfSinks();
-            sinksOnNextRound = sinksOn;
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOff()) {
+                activeSinks++;
+            }
         }
-        return sinksOn;
+        return activeSinks;
     }
 
+    /** Switches every heat sink mount (including prototype double heat sinks and Freezers) back on. */
     public void resetSinks() {
-        sinksOn = getNumberOfSinks();
+        for (MiscMounted mounted : getMisc()) {
+            MiscType miscType = mounted.getType();
+            if (miscType == null) {
+                continue;
+            }
+            boolean isPrototypeSink = miscType.hasFlag(MiscType.F_IS_DOUBLE_HEAT_SINK_PROTOTYPE);
+            if (isCountedHeatSink(mounted) || isPrototypeSink) {
+                mounted.setMode(Mounted.MODE_ON);
+            }
+        }
     }
 
+    /**
+     * @return the number of operable heat sinks that will be switched on next round, taking pending mode changes into
+     *       account (prototype double heat sinks and Freezers excluded)
+     */
     public int getActiveSinksNextRound() {
-        if (sinksOnNextRound < 0) {
-            return getActiveSinks();
+        int activeSinks = 0;
+        for (MiscMounted mounted : getMisc()) {
+            if (isCountedHeatSink(mounted) && !mounted.isDestroyed() && !mounted.isBreached()
+                  && !mounted.isModeTurnedOffNextRound()) {
+                activeSinks++;
+            }
         }
-        return sinksOnNextRound;
+        return activeSinks;
+    }
+
+    /**
+     * @param mounted the equipment to check
+     *
+     * @return {@code true} if the mount is a heat sink counted by the classic active-sinks counter (single, double,
+     *       compact or laser heat sinks; prototype double heat sinks and Freezers are excluded, matching
+     *       {@link #getNumberOfSinks()})
+     */
+    private static boolean isCountedHeatSink(MiscMounted mounted) {
+        MiscType miscType = mounted.getType();
+        return (miscType != null)
+              && (miscType.hasFlag(MiscType.F_HEAT_SINK) || miscType.hasFlag(MiscType.F_DOUBLE_HEAT_SINK));
+    }
+
+    /**
+     * @return {@code true} if the cockpit sits in the center torso: either a torso-mounted cockpit (TO:AR p.112) or a
+     *       Virtual Reality Piloting Pod (IO:AE p.63), which is built on one and shares its head-hit protection,
+     *       heat vulnerability and lack of an ejection seat
+     */
+    public boolean hasTorsoMountedCockpit() {
+        return (getCockpitType() == COCKPIT_TORSO_MOUNTED) || (getCockpitType() == COCKPIT_VRRP);
+    }
+
+    /**
+     * @return {@code true} if the cockpit is a Virtual Reality Piloting Pod (IO:AE p.63)
+     */
+    public boolean hasVirtualRealityPilotingPod() {
+        return getCockpitType() == COCKPIT_VRRP;
     }
 
     /**
@@ -4584,7 +4682,7 @@ public abstract class Mek extends Entity {
      */
     public boolean hasEjectSeat() {
         // Ejection Seat
-        boolean result = getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED
+        boolean result = !hasTorsoMountedCockpit()
               && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
         // torso mounted cockpits don't have an ejection seat
         if (isIndustrial()) {
@@ -5009,11 +5107,21 @@ public abstract class Mek extends Entity {
     @Override
     public boolean isLocationDeadly(Coords c, int boardId) {
         return isIndustrial()
-              && hasEngine()
-              && getEngine().isICE()
-              && !hasEnvironmentalSealing()
+              && !EnvironmentalSealingRules.canOperateFullySubmerged(this)
               && game.hasBoardLocation(c, boardId)
               && game.getHex(c, boardId).terrainLevel(Terrains.WATER) >= 2;
+    }
+
+    /**
+     * BattleMeks are sealed as part of their basic construction, which is why they may not install Environmental
+     * Sealing (TM p.216). IndustrialMeks are the exception: without the sealing, and without an engine that runs
+     * with no air to breathe, the crew does not survive an airless world.
+     *
+     * @return {@code true} when this Mek will not survive vacuum conditions
+     */
+    @Override
+    public boolean doomedInVacuum() {
+        return !EnvironmentalSealingRules.canOperateInVacuum(this);
     }
 
     /**
@@ -5024,6 +5132,10 @@ public abstract class Mek extends Entity {
         StringBuilder sb = new StringBuilder();
         String newLine = "\n";
 
+        sb.append(MtfFile.UUID).append(getUnitFileUUID()).append(newLine);
+        if (getRefitFromUUID() != null) {
+            sb.append(MtfFile.REFIT_FROM_UUID).append(getRefitFromUUID()).append(newLine);
+        }
         sb.append(MtfFile.GENERATOR).append(SuiteConstants.PROJECT_NAME)
               .append(" ").append(SuiteConstants.VERSION).append(" on ").append(LocalDate.now()).append(newLine);
 
@@ -5085,6 +5197,14 @@ public abstract class Mek extends Entity {
         sb.append(newLine);
         if (hasRole()) {
             sb.append(MtfFile.ROLE).append(getRole().toString());
+            sb.append(newLine);
+        }
+        for (ForceGeneratorAvailability availability : getForceGeneratorAvailability()) {
+            sb.append(MtfFile.AVAILABILITY).append(availability.toFileFormat());
+            sb.append(newLine);
+        }
+        if (!getMissionRoles().isBlank()) {
+            sb.append(MtfFile.MISSION_ROLES).append(getMissionRoles());
             sb.append(newLine);
         }
         if (techFaction != null && techFaction != Faction.NONE) {
@@ -5948,15 +6068,15 @@ public abstract class Mek extends Entity {
 
     public int shieldAbsorptionDamage(int damage, int location, boolean rear) {
         int damageAbsorption = damage;
-        if (hasActiveShield(location, rear)) {
+        if (hasRaisedShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_CENTER_TORSO:
                 case Mek.LOC_HEAD:
-                    if (hasActiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
-                    if (hasActiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
@@ -5964,13 +6084,13 @@ public abstract class Mek extends Entity {
                 case Mek.LOC_LEFT_ARM:
                 case Mek.LOC_LEFT_TORSO:
                 case Mek.LOC_LEFT_LEG:
-                    if (hasActiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
                     break;
                 default:
-                    if (hasActiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasRaisedShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
@@ -5978,18 +6098,18 @@ public abstract class Mek extends Entity {
             }
         }
 
-        if (hasPassiveShield(location, rear)) {
+        if (hasLoweredShield(location, rear)) {
             switch (location) {
                 case Mek.LOC_LEFT_ARM:
                 case Mek.LOC_LEFT_TORSO:
-                    if (hasPassiveShield(Mek.LOC_LEFT_ARM)) {
+                    if (hasLoweredShield(Mek.LOC_LEFT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_LEFT_ARM,
                               damageAbsorption);
                     }
                     break;
                 case Mek.LOC_RIGHT_ARM:
                 case Mek.LOC_RIGHT_TORSO:
-                    if (hasPassiveShield(Mek.LOC_RIGHT_ARM)) {
+                    if (hasLoweredShield(Mek.LOC_RIGHT_ARM)) {
                         damageAbsorption = getAbsorptionRate(Mek.LOC_RIGHT_ARM,
                               damageAbsorption);
                     }
@@ -6047,7 +6167,7 @@ public abstract class Mek extends Entity {
             }
 
             Mounted<?> m = cs.getMount();
-            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().isShield()) {
+            if ((m instanceof MiscMounted) && ((MiscMounted) m).getType().hasFlag(MiscType.F_SHIELD)) {
                 rate -= ((MiscMounted) m).getDamageAbsorption(this, m.getLocation());
                 ((MiscMounted) m).takeDamage(1);
                 return Math.max(0, rate);
@@ -6147,12 +6267,10 @@ public abstract class Mek extends Entity {
         super.destroyLocation(loc, blownOff);
         // if it's a leg, the entity falls
         if (game != null && locationIsLeg(loc) && canFall()) {
-            if (gameOptions().booleanOption(OptionsConstants.PLAYTEST_2)) {
-                game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 4, "leg destroyed"));
-            } else {
-                game.addPSR(new PilotingRollData(getId(),
-                      TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
-            }
+            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL,
+                  Game.rulesManager.getRulesPSR().getLegDestroyedModifier(),
+                  "leg "
+                        + "destroyed"));
         }
     }
 
@@ -6346,8 +6464,7 @@ public abstract class Mek extends Entity {
 
     public boolean hasArmoredCockpit() {
 
-        int location = getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED ? Mek.LOC_CENTER_TORSO
-              : Mek.LOC_HEAD;
+        int location = hasTorsoMountedCockpit() ? Mek.LOC_CENTER_TORSO : Mek.LOC_HEAD;
 
         for (int slot = 0; slot < getNumberOfCriticalSlots(location); slot++) {
             CriticalSlot cs = getCritical(location, slot);
@@ -6863,14 +6980,8 @@ public abstract class Mek extends Entity {
         // as being immobilized as well, which makes sense because the 'Mek
         // certainly isn't leaving that hex under its own power anymore.
 
-        int hitsToDestroyGyro = (gyroType == GYRO_HEAVY_DUTY) ? 3 : 2;
+        int hitsToDestroyGyro = Game.rulesManager.getRulesEquipment().hitsToDestroyGyro(gyroType);
 
-        // PLAYTEST3 heavy duty gyro is now 4
-        if (game != null
-              && gameOptions().booleanOption(OptionsConstants.PLAYTEST_3)
-              && gyroType == GYRO_HEAVY_DUTY) {
-            hitsToDestroyGyro = 4;
-        }
         return getGyroHits() >= hitsToDestroyGyro;
     }
 
@@ -7039,7 +7150,7 @@ public abstract class Mek extends Entity {
 
     @Override
     public boolean isEjectionPossible() {
-        return (getCockpitType() != Mek.COCKPIT_TORSO_MOUNTED)
+        return !hasTorsoMountedCockpit()
               && getCrew().isActive() && !hasQuirk(OptionsConstants.QUIRK_NEG_NO_EJECT);
     }
 
@@ -7109,6 +7220,8 @@ public abstract class Mek extends Entity {
             bUsedCoolantSystem = true;
             vDesc.addElement(Report.subjectReport(2365, getId()).addDesc(this).add(coolantSystem.getName()));
             int requiredRoll = EMERGENCY_COOLANT_SYSTEM_FAILURE[nCoolantSystemLevel];
+            // Edge may reroll a failed RISC coolant system check once (part of the shared RISC Edge trigger).
+            diceRoll = rerollRiscCoolantWithEdge(this, requiredRoll, diceRoll, vDesc);
             Report r = Report.subjectReport(2370, getId()).indent().add(requiredRoll).add(diceRoll);
 
             if (diceRoll.getIntValue() < requiredRoll) {
@@ -7156,6 +7269,37 @@ public abstract class Mek extends Entity {
             return bFailure;
         }
         return false;
+    }
+
+    /**
+     * Applies Edge to a RISC Emergency Coolant System failure check: if the initial roll failed and the crew has the
+     * RISC Edge trigger enabled with Edge remaining, spends one Edge point and rerolls the check once. This rolls the
+     * coolant system into the same Edge trigger as the RISC laser malfunctions.
+     *
+     * @param entity       the Mek making the check
+     * @param requiredRoll the target number the roll must meet to succeed
+     * @param initialRoll  the roll that was made
+     * @param reportVector the report vector to append the Edge-use report to
+     *
+     * @return the roll to use - the reroll if Edge was spent, otherwise the original roll
+     */
+    // package-private static for testing
+    static Roll rerollRiscCoolantWithEdge(Entity entity, int requiredRoll, Roll initialRoll,
+          Vector<Report> reportVector) {
+        boolean isFailedCheck = initialRoll.getIntValue() < requiredRoll;
+        boolean shouldUseEdge = entity.shouldUseEdge(OptionsConstants.EDGE_WHEN_RISC_FAIL);
+
+        if (isFailedCheck && shouldUseEdge) {
+            entity.getCrew().decreaseEdge();
+
+            reportVector.addElement(Report.subjectReport(3168, entity.getId())
+                  .indent()
+                  .add(entity.getCrew().getOptions().intOption(OptionsConstants.EDGE)));
+
+            return Compute.rollD6(2);
+        }
+
+        return initialRoll;
     }
 
     public boolean hasDamagedCoolantSystem() {
@@ -7290,6 +7434,11 @@ public abstract class Mek extends Entity {
         return game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLES_CAN_EJECT);
     }
 
+    @Override
+    public boolean canAnnounceAbandon() {
+        return canAbandon();
+    }
+
     /**
      * Returns true if this Mek has been abandoned - the crew has exited but the Mek itself is not destroyed. This is
      * different from ejection which destroys the cockpit.
@@ -7302,5 +7451,10 @@ public abstract class Mek extends Entity {
             return false;
         }
         return getCrew().isEjected() && !isDestroyed();
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

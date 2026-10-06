@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,60 +45,56 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.Vector;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
 import megamek.MMConstants;
-import megamek.client.bot.princess.Princess;
+import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
 import megamek.client.generator.skillGenerators.ModifiedTotalWarfareSkillGenerator;
+import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.PilotToolTip;
 import megamek.client.ui.tileset.TilesetManager;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Hex;
+import megamek.common.IndustrialElevator;
+import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
-import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.actions.AttackAction;
-import megamek.common.actions.ClubAttackAction;
-import megamek.common.actions.DodgeAction;
-import megamek.common.actions.EntityAction;
-import megamek.common.actions.FlipArmsAction;
-import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.*;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
+import megamek.common.board.BuildingEditSpec;
 import megamek.common.board.Coords;
+import megamek.common.board.HexEditSpec;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.Flare;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.event.GameCFREvent;
+import megamek.common.event.GamePollEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.event.GameToastEvent;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.event.board.GameBoardChangeEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.force.Force;
 import megamek.common.force.Forces;
+import megamek.common.game.BotHonorReport;
+import megamek.common.game.ForcedWithdrawalReports;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
@@ -115,6 +111,7 @@ import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.turns.UnloadStrandedTurn;
 import megamek.common.units.Crew;
+import megamek.common.units.DamageEditSpec;
 import megamek.common.units.DemolitionCharge;
 import megamek.common.units.Entity;
 import megamek.common.units.EntitySelector;
@@ -125,6 +122,7 @@ import megamek.common.util.C3Util;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.SerializationHelper;
 import megamek.common.util.StringUtil;
+import megamek.common.voting.Poll;
 import megamek.logging.MMLogger;
 import megamek.server.SmokeCloud;
 
@@ -146,15 +144,38 @@ public class Client extends AbstractClient {
 
     // FIXME: Should ideally be located elsewhere; the client should handle data, not gfx or UI-related stuff:
     private TilesetManager tilesetManager;
+    /** Set once the tile set has failed to build, so it is not attempted again on every call. */
+    private boolean tilesetLoadFailed;
 
     public Client(String name, String host, int port) {
         super(name, host, port);
         setSkillGenerator(new ModifiedTotalWarfareSkillGenerator());
-        try {
-            tilesetManager = new TilesetManager(game);
-        } catch (IOException e) {
-            LOGGER.error(e, "Unknown Exception");
+    }
+
+    /**
+     * The tile set, built on first use rather than with the client.
+     *
+     * <p>Building one parses the whole hex tile set into thousands of template hexes and their terrain, which a
+     * client that never draws anything has no use for. Every client used to pay that at construction: headless runners,
+     * and every bot, since {@code BotClient} is a {@code Client} too. A batch playing many games in one process paid it
+     * once per client per game and kept the result alive, which is tens of megabytes a game retained for images nobody
+     * would ever ask for.</p>
+     *
+     * @return the tile set manager, or {@code null} if it cannot be built
+     */
+    private @Nullable TilesetManager tilesetManager() {
+        if ((tilesetManager == null) && !tilesetLoadFailed) {
+            try {
+                tilesetManager = new TilesetManager(game);
+            } catch (IOException exception) {
+                // Remember the failure. Building this used to be attempted once, in the constructor; retrying on
+                // every call would repeat expensive work and flood the log wherever the tile set is missing or
+                // corrupt, which is exactly where the client is least able to afford it.
+                tilesetLoadFailed = true;
+                LOGGER.error(exception, "Could not load the tile set; continuing without unit images");
+            }
         }
+        return tilesetManager;
     }
 
     @Override
@@ -249,7 +270,11 @@ public class Client extends AbstractClient {
         super.changePhase(phase);
         switch (phase) {
             case LOUNGE:
-                tilesetManager.reset();
+                if (tilesetManager != null) {
+                    tilesetManager.reset();
+                }
+                // Unit IDs restart in the next game, so last game's withdrawing units would tag the wrong units
+                game.getForcedWithdrawalReports().clear();
             case DEPLOYMENT:
             case TARGETING:
             case MOVEMENT:
@@ -396,6 +421,14 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Asks the server to build the game board from the current map settings and broadcast it to all clients while still
+     * in the lobby, so that all players can see the battlefield that will actually be played.
+     */
+    public void sendLobbyBoardGenerationRequest() {
+        send(new Packet(PacketCommand.LOBBY_GENERATE_BOARD));
+    }
+
+    /**
      * Sends a "reroll initiative" message to the server.
      */
     public void sendRerollInitiativeRequest() {
@@ -480,6 +513,11 @@ public class Client extends AbstractClient {
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
+        LOGGER.debug("Sending update for {} (id {}): heat {}, destroyed {}",
+              entity.getDisplayName(),
+              entity.getId(),
+              entity.heat,
+              entity.isDestroyed());
         send(new Packet(PacketCommand.ENTITY_UPDATE, entity));
     }
 
@@ -488,6 +526,38 @@ public class Client extends AbstractClient {
      */
     public void sendUpdateEntity(Collection<Entity> entities) {
         send(new Packet(PacketCommand.ENTITY_MULTI_UPDATE, entities));
+    }
+
+    /**
+     * Sends a gamemaster's damage editor edits for the server to apply to its own copy of the unit. Unlike
+     * {@link #sendUpdateEntity(Entity)} this carries only the edited values, so the server's unit keeps every piece of
+     * state the editor does not touch.
+     */
+    public void sendDamageEdit(DamageEditSpec spec) {
+        LOGGER.debug("Sending damage edits for unit id {}", spec.entityId);
+        send(new Packet(PacketCommand.ENTITY_DAMAGE_EDIT, spec));
+    }
+
+    /**
+     * Sends a gamemaster's edit of one or more hexes. The server accepts it only from a Game Master and checks every
+     * hex before changing any of them, so a refusal comes back as server chat rather than a partly applied edit.
+     *
+     * @param spec The hexes to change and the terrain they should end up holding
+     */
+    public void sendHexEdit(HexEditSpec spec) {
+        LOGGER.debug("Sending a hex edit for {} hex(es)", spec.getCoords().size());
+        send(new Packet(PacketCommand.HEX_EDIT, spec));
+    }
+
+    /**
+     * Sends a gamemaster's edit of the building in one hex. The server accepts it only from a Game Master and decides
+     * from the hex whether it is putting a building there, changing the one that is there, or taking it away.
+     *
+     * @param spec What should be standing in the hex when the edit is done
+     */
+    public void sendBuildingEdit(BuildingEditSpec spec) {
+        LOGGER.debug("Sending a building edit for hex {}", spec.getCoords().getBoardNum());
+        send(new Packet(PacketCommand.BUILDING_EDIT, spec));
     }
 
     /**
@@ -531,6 +601,17 @@ public class Client extends AbstractClient {
      */
     public void sendTowEntity(int id, int tractorId) {
         send(new Packet(PacketCommand.ENTITY_TOW, id, tractorId));
+    }
+
+    /**
+     * Sends a "build train" packet, connecting a tractor and several trailers in one operation. The server validates
+     * the whole chain and applies it in full or not at all, so a rejected request leaves every unit unattached.
+     *
+     * @param tractorId  the powered tractor that will head the train
+     * @param trailerIds the trailers to hitch behind it, ordered front to back
+     */
+    public void sendBuildTrain(int tractorId, List<Integer> trailerIds) {
+        send(new Packet(PacketCommand.ENTITY_BUILD_TRAIN, tractorId, new ArrayList<>(trailerIds)));
     }
 
     public void sendExplodeBuilding(DemolitionCharge charge) {
@@ -678,20 +759,47 @@ public class Client extends AbstractClient {
         Entity entity = game.getEntity(packet.getIntValue(0));
 
         if (entity != null) { // we may not have this entity due to double-blind
+            // Capture the observable state; the isVisibleToEnemy/isDetectedByEnemy getters are not plain field
+            // reads (without double-blind they always report true), so compare them before and after applying
+            // the packet rather than against the raw packet values
+            boolean oldEverSeenByEnemy = entity.isEverSeenByEnemy();
+            boolean oldVisibleToEnemy = entity.isVisibleToEnemy();
+            boolean oldDetectedByEnemy = entity.isDetectedByEnemy();
+            Vector<Player> oldWhoCanSee = entity.getWhoCanSee();
+            Vector<Player> oldWhoCanDetect = entity.getWhoCanDetect();
+
             entity.setEverSeenByEnemy(packet.getBooleanValue(1));
             entity.setVisibleToEnemy(packet.getBooleanValue(2));
             entity.setDetectedByEnemy(packet.getBooleanValue(3));
             entity.setWhoCanSee(packet.getPlayerVector(4));
             entity.setWhoCanDetect(packet.getPlayerVector(5));
 
-            // this next call is only needed sometimes, but we'll just call it everytime
-            game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            // The server also sends indicators that carry no change; only notify listeners when the visibility
+            // state in fact changed, as each change event makes the UI redo entity sprites and images
+            boolean changed = (entity.isEverSeenByEnemy() != oldEverSeenByEnemy)
+                  || (entity.isVisibleToEnemy() != oldVisibleToEnemy)
+                  || (entity.isDetectedByEnemy() != oldDetectedByEnemy)
+                  || !Objects.equals(entity.getWhoCanSee(), oldWhoCanSee)
+                  || !Objects.equals(entity.getWhoCanDetect(), oldWhoCanDetect);
+
+            if (changed) {
+                game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            }
         }
     }
 
     protected void receiveUpdateGroundObjects(Packet packet) throws InvalidPacketDataException {
         game.setGroundObjects(packet.getCoordsWithGroundObjectListMap(0));
         game.processGameEvent(new GameBoardChangeEvent(this));
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void receiveUpdateIndustrialElevators(Packet packet) {
+        Object data = packet.getObject(0);
+        if (data instanceof Collection) {
+            Collection<IndustrialElevator> elevators = (Collection<IndustrialElevator>) data;
+            game.setIndustrialElevators(elevators);
+        }
     }
 
     protected void receiveDeployMinefields(Packet packet) throws InvalidPacketDataException {
@@ -799,7 +907,24 @@ public class Client extends AbstractClient {
                 if (!isCharge) {
                     game.addAction(entityAction);
                 } else {
-                    game.addCharge((AttackAction) entityAction);
+                    // This should work for Charge, DFA, and RAM attacks.
+                    if (entityAction instanceof DisplacementAttackAction) {
+                        Entity chargingUnit = game.getEntity(entityAction.getEntityId());
+                        if (chargingUnit != null) {
+                            chargingUnit.setDisplacementAttack((DisplacementAttackAction) entityAction);
+                        }
+                        game.addDisplacementAttack((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof RamAttackAction) {
+                        Entity rammingUnit = game.getEntity(entityAction.getEntityId());
+                        if (rammingUnit != null) {
+                            rammingUnit.setRamming(true);
+                        }
+                        game.addRam((AttackAction) entityAction);
+                    }
+                    if (entityAction instanceof TeleMissileAttackAction) {
+                        game.addTeleMissileAttack((AttackAction) entityAction);
+                    }
                 }
             }
         }
@@ -928,12 +1053,13 @@ public class Client extends AbstractClient {
      * Gets the current mek image
      */
     private Image getTargetImage(Entity e) {
-        if (tilesetManager == null) {
+        TilesetManager tileset = tilesetManager();
+        if (tileset == null) {
             return null;
         } else if (e.isDestroyed()) {
-            return tilesetManager.wreckMarkerFor(e, -1);
+            return tileset.wreckMarkerFor(e, -1);
         } else {
-            return tilesetManager.imageFor(e);
+            return tileset.imageFor(e);
         }
     }
 
@@ -979,6 +1105,19 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Turns one unit's automatic ejection on or off after the lobby has closed. The lobby's unit configuration is the
+     * only other way to reach this setting, and it cannot be opened once play has begun, so without this a player who
+     * is warned at deployment that ejecting will kill their crews has no way to act on it.
+     *
+     * @param entityId     the unit whose setting is changing
+     * @param shouldEject  {@code true} to eject the crew automatically, {@code false} to ride it out
+     */
+    public void sendEjectionSettingChange(int entityId, boolean shouldEject) {
+        LOGGER.debug("Sending automatic ejection setting {} for unit id {}", shouldEject, entityId);
+        send(new Packet(PacketCommand.ENTITY_EJECTION_SETTING_CHANGE, entityId, shouldEject));
+    }
+
+    /**
      * Sends a unit abandonment announcement to the server. For Meks (TacOps:AR p.165): Must be prone and shutdown. For
      * Vehicles (TacOps): Can be abandoned anytime. The abandonment will execute during the End Phase of the following
      * turn.
@@ -997,17 +1136,39 @@ public class Client extends AbstractClient {
         send(new Packet(PacketCommand.SPECIAL_HEX_DISPLAY_DELETE, c, boardId, shd));
     }
 
+    /**
+     * Hook invoked when the server greets this client, allowing a bot client to push its behavior settings to the
+     * server. Non-bot clients have no settings to send, so this default implementation does nothing; bot clients
+     * override it.
+     */
+    protected void sendBotSettingsToServer() {
+    }
+
     @Override
     protected boolean handleGameSpecificPacket(Packet packet) {
         try {
             switch (packet.command()) {
                 case SERVER_GREETING:
-                    if (this instanceof Princess) {
-                        ((Princess) this).sendPrincessSettings();
-                    }
+                    sendBotSettingsToServer();
                     break;
                 case PRINCESS_SETTINGS:
                     game.setBotSettings(packet.getStringWIthBehaviorSettingsMap(0));
+                    // Which AI each bot was rides along, so a loaded game restores the same kind of bot.
+                    if (packet.getObject(1) instanceof Map<?, ?> typesByName) {
+                        Map<String, AIType> botTypes = new HashMap<>();
+                        for (Map.Entry<?, ?> entry : typesByName.entrySet()) {
+                            if ((entry.getKey() instanceof String botName)
+                                  && (entry.getValue() instanceof AIType aiType)) {
+                                botTypes.put(botName, aiType);
+                            }
+                        }
+                        game.setBotTypes(botTypes);
+                    }
+                    break;
+                case PRINCESS_DISHONORED:
+                    // A bot reported (via the server) which players it now considers dishonored; remember it so the
+                    // dishonor warning can be suppressed once a bot already holds a grudge.
+                    receivePrincessDishonored(packet);
                     break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
@@ -1053,6 +1214,9 @@ public class Client extends AbstractClient {
                     break;
                 case UPDATE_GROUND_OBJECTS:
                     receiveUpdateGroundObjects(packet);
+                    break;
+                case UPDATE_INDUSTRIAL_ELEVATORS:
+                    receiveUpdateIndustrialElevators(packet);
                     break;
                 case ADD_SMOKE_CLOUD:
                     SmokeCloud cloud = packet.getSmokeCloud(0);
@@ -1164,6 +1328,11 @@ public class Client extends AbstractClient {
                     }
 
                     break;
+                case GAME_MASTER_POLL:
+                    if (packet.getObject(0) instanceof Poll poll) {
+                        game.processGameEvent(new GamePollEvent(this, poll));
+                    }
+                    break;
                 case SENDING_MAP_SETTINGS:
                     MapSettings mapSettings = packet.getMapSettings(0);
 
@@ -1200,6 +1369,13 @@ public class Client extends AbstractClient {
                 case SENDING_ARTILLERY_ATTACKS:
                     Vector<ArtilleryAttackAction> artilleryAttackActions = packet.getArtilleryAttackAction(0);
                     game.setArtilleryVector(artilleryAttackActions);
+                    // Redacted enemy rounds (landing time only; target/munition withheld by the server) for the
+                    // Rounds-in-Air window; this list never feeds the board, so it cannot leak the enemy aim point.
+                    game.setEnemyArtilleryInbound(packet.getEnemyArtilleryInbound(1));
+                    // Fire a board-change event so views tracking in-flight artillery (e.g. the Rounds in the Air
+                    // window) refresh now. This packet arrives AFTER the phase-change event, so a phase-change-only
+                    // refresh would always be one phase stale - notably for off-board counter-battery rounds.
+                    game.processGameEvent(new GameBoardChangeEvent(this));
                     break;
                 case SENDING_FLARES:
                     Vector<Flare> flareVector = packet.getFlareVector(0);
@@ -1214,6 +1390,7 @@ public class Client extends AbstractClient {
                         try {
                             if (!sDir.mkdir()) {
                                 LOGGER.error("Failed to create savegames directory.");
+                                fireSaveCompleted(null);
                                 return true;
                             }
                         } catch (Exception ex) {
@@ -1234,6 +1411,10 @@ public class Client extends AbstractClient {
                         LOGGER.error(ex, "Unable to save file {}", sFinalFile);
                     }
                     setAwaitingSave(false);
+                    // Report the file only if it actually made it to disk; a failed or partial write must not be
+                    // handed to a waiting caller as though it succeeded.
+                    File savedFile = new File(localFile);
+                    fireSaveCompleted(savedFile.isFile() ? savedFile : null);
                     break;
                 case LOAD_SAVEGAME:
                     String loadFile = packet.getStringValue(0);
@@ -1263,6 +1444,7 @@ public class Client extends AbstractClient {
                         switch (cfrType) {
                             case CFR_DOMINO_EFFECT:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
+                                cfrEvt.setDirection(packet.getIntValue(2));
                                 break;
                             case CFR_AMS_ASSIGN:
                                 cfrEvt.setEntityId(packet.getIntValue(1));
@@ -1304,6 +1486,76 @@ public class Client extends AbstractClient {
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;
+        }
+    }
+
+    /**
+     * Receives a bot's honor report and records it: which players it considers dishonored, and which of its units are
+     * withdrawing under Forced Withdrawal. The first time an enemy bot marks the local player dishonored, shows the
+     * player a toast so they know the bot's units will no longer show theirs mercy.
+     *
+     * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
+     * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
+     * disabled that nag, or who was dishonored by a bot command such as blood-feud, is still told here.</p>
+     *
+     * @param packet the received {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} packet
+     */
+    protected void receivePrincessDishonored(Packet packet) throws InvalidPacketDataException {
+        int botPlayerId = packet.getIntValue(0);
+        if (!(packet.getObject(1) instanceof BotHonorReport report)) {
+            throw new InvalidPacketDataException("BotHonorReport", packet.getObject(1), 1);
+        }
+        recordForcedWithdrawal(botPlayerId, report);
+        List<Integer> dishonoredPlayerIds = report.dishonoredPlayerIds();
+        Player localPlayer = getLocalPlayer();
+
+        if (localPlayer == null) {
+            game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+            return;
+        }
+
+        int localPlayerId = localPlayer.getId();
+        boolean wasDishonored = game.isPlayerDishonoredBy(botPlayerId, localPlayerId);
+        game.setDishonoredPlayers(botPlayerId, dishonoredPlayerIds);
+
+        if (!wasDishonored
+              && (botPlayerId != localPlayerId)
+              && game.isPlayerDishonoredBy(botPlayerId, localPlayerId)) {
+            Player bot = game.getPlayer(botPlayerId);
+            String botName = (bot != null) ? bot.getName() : Messages.getString("HonorNag.unknownBot");
+            game.fireGameEvent(new GameToastEvent(this, GameToastEvent.Level.GAMEMASTER,
+                  Messages.getString("HonorNag.dishonoredToast", botName), Entity.NONE));
+        }
+    }
+
+    /**
+     * Stores a bot's Forced Withdrawal state and redraws every unit of that bot whose WITHDRAWING tag appeared or went
+     * away, so the board shows the change without waiting for the unit's next update.
+     *
+     * @param botPlayerId the reporting bot's player ID
+     * @param report      what the bot reported
+     */
+    private void recordForcedWithdrawal(int botPlayerId, BotHonorReport report) {
+        ForcedWithdrawalReports withdrawalReports = game.getForcedWithdrawalReports();
+        List<Entity> botUnits = new ArrayList<>();
+        Set<Integer> withdrawingBefore = new HashSet<>();
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.getOwnerId() == botPlayerId) {
+                botUnits.add(entity);
+                if (withdrawalReports.isWithdrawing(entity)) {
+                    withdrawingBefore.add(entity.getId());
+                }
+            }
+        }
+
+        withdrawalReports.record(botPlayerId, report);
+        LOGGER.debug("[HonorNag] Bot player {} reports forced withdrawal {}, withdrawing units {}", botPlayerId,
+              report.followsForcedWithdrawal(), report.withdrawingUnitIds());
+
+        for (Entity entity : botUnits) {
+            if (withdrawalReports.isWithdrawing(entity) != withdrawingBefore.contains(entity.getId())) {
+                game.processGameEvent(new GameEntityChangeEvent(this, entity));
+            }
         }
     }
 
@@ -1474,6 +1726,13 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Send charge-change data to the server
+     */
+    public void sendChargeLevelChange(int nEntity, int nEquip, int nChargeLevel) {
+        send(new Packet(PacketCommand.ENTITY_CHARGE_CHANGE, nEntity, nEquip, nChargeLevel));
+    }
+
+    /**
      * Declares that the given unit is deploying one of its Bridge-Layer (AVLB) bridges (TM p.242 / TW). The server
      * validates eligibility and computes the target hex (directly in front, along the unit's facing); the bridge is
      * placed at the end of the following turn if the unit stays stationary.
@@ -1486,6 +1745,58 @@ public class Client extends AbstractClient {
     }
 
     /**
+     * Sends a unit's order to scan a hex or unit in the End Phase (Objectives series, scanning). Sent as soon as the
+     * player gives it, in the pre-End declarations phase; a later order from the same unit replaces it.
+     *
+     * @param order the scan order
+     */
+    public void sendScanOrder(ScanAction order) {
+        send(new Packet(PacketCommand.ENTITY_SCAN_ORDER, order));
+    }
+
+    /**
+     * Withdraws the scan a unit ordered this turn, so it scans nothing when the End Phase resolves (Objectives
+     * series). Ordering a different target replaces an order; this clears it outright.
+     *
+     * @param entityId the unit whose order is withdrawn
+     */
+    public void sendScanWithdraw(int entityId) {
+        LOGGER.debug("Withdrawing the scan order for unit {}", entityId);
+        send(new Packet(PacketCommand.ENTITY_SCAN_WITHDRAW, entityId));
+    }
+
+    /**
+     * Sends a game master's marking of a unit as one the mission wants scanned (Objectives series).
+     *
+     * @param entityId   the unit
+     * @param designated {@code true} to ask for it to be scanned, {@code false} to drop the request
+     */
+    public void sendScanDesignation(int entityId, boolean designated) {
+        LOGGER.debug("Sending a scan designation for unit {}: {}", entityId, designated);
+        send(new Packet(PacketCommand.SCAN_DESIGNATION, entityId, designated));
+    }
+
+    /**
+     * Sends a game master's edit of the objective at a hex, at any time in the game (Objectives series).
+     *
+     * @param coords the hex
+     * @param marker the objective to put there, or {@code null} to remove the one that is there
+     */
+    public void sendObjectiveEdit(Coords coords, @Nullable ObjectiveMarker marker) {
+        LOGGER.debug("Sending a game master objective edit for hex {}", coords.getBoardNum());
+        send(new Packet(PacketCommand.OBJECTIVE_EDIT, coords, marker));
+    }
+
+    /**
+     * Sends the local player's declaration for an infantry action in a building (TO:AR pp. 169 to 172).
+     *
+     * @param declaration what the player commits or withdraws
+     */
+    public void sendInfantryActionDeclaration(InfantryActionDeclaration declaration) {
+        send(new Packet(PacketCommand.INFANTRY_ACTION_DECLARATION, declaration));
+    }
+
+    /**
      * Send mount-facing-change data to the server
      */
     public void sendMountFacingChange(int nEntity, int nEquip, int nFacing) {
@@ -1493,10 +1804,14 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send called shot change data to the server
+     * Send called shot change data to the server.
+     *
+     * @param entityId     the id of the entity whose weapon is changing
+     * @param equipmentNum the equipment number of the weapon
+     * @param calledShot   the new called shot, one of the {@link megamek.common.CalledShot} CALLED_ constants
      */
-    public void sendCalledShotChange(int nEntity, int nEquip) {
-        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, nEntity, nEquip));
+    public void sendCalledShotChange(int entityId, int equipmentNum, int calledShot) {
+        send(new Packet(PacketCommand.ENTITY_CALLED_SHOT_CHANGE, entityId, equipmentNum, calledShot));
     }
 
     /**
@@ -1508,10 +1823,17 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Send mode-change data to the server
+     * Send ammo-change data to the server.
+     *
+     * @param entityId      the unit that owns the weapon being reloaded
+     * @param weaponId      the equipment number of the weapon on that unit
+     * @param ammoId        the equipment number of the ammo bin on the carrying unit
+     * @param ammoCarrierId the unit that owns the ammo bin. This is the same as entityId unless the bin belongs to a
+     *                      directly connected trailer sharing ammo with this unit.
+     * @param reason        the report message id explaining the change, or 0 for no report
      */
-    public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo, int reason) {
-        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, nEntity, nWeapon, nAmmo, reason));
+    public void sendAmmoChange(int entityId, int weaponId, int ammoId, int ammoCarrierId, int reason) {
+        send(new Packet(PacketCommand.ENTITY_AMMO_CHANGE, entityId, weaponId, ammoId, ammoCarrierId, reason));
     }
 
     /**

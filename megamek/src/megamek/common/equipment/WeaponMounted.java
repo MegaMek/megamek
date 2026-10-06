@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,7 +44,9 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.Entity;
 import megamek.common.weapons.gaussRifles.GaussWeapon;
 import megamek.common.weapons.handlers.WeaponHandler;
@@ -86,6 +88,33 @@ public class WeaponMounted extends Mounted<WeaponType> {
         this.disposableWeapon = disposableWeapon;
     }
 
+    /**
+     * Whether this weapon can jam at all, which is what decides whether a gamemaster is offered a Jammed switch
+     * for it. The list is drawn from the attack handlers that set a jam: the autocannon family (standard, light,
+     * improved, ProtoMek, ultra, rotary and hyper-velocity; a standard autocannon jams in rapid-fire mode or on
+     * caseless ammo), the prototype gauss rifle and prototype LB-X autocannon, any ammo-fed weapon with the Ammo
+     * Feed Problems quirk, and every weapon of an Advanced Building (TO:AR p.119). Missiles, lasers and
+     * production gauss rifles have no jam path, so a jam on them would be a state nothing in play can produce.
+     *
+     * @return {@code true} if some rule can jam this weapon
+     */
+    public boolean canJam() {
+        if (getEntity() instanceof AbstractBuildingEntity) {
+            return true;
+        }
+        WeaponType weaponType = getType();
+        boolean isAmmoFed = weaponType.getAmmoType() != AmmoType.AmmoTypeEnum.NA;
+        if (isAmmoFed && hasQuirk(OptionsConstants.QUIRK_WEAPON_NEG_AMMO_FEED_PROBLEMS)) {
+            return true;
+        }
+        boolean isPrototype = weaponType.hasFlag(WeaponType.F_PROTOTYPE);
+        return switch (weaponType.getAmmoType()) {
+            case AC, LAC, AC_IMP, PAC, AC_ULTRA, AC_ULTRA_THB, AC_ROTARY, HYPER_VELOCITY -> true;
+            case GAUSS, AC_LBX -> isPrototype;
+            default -> false;
+        };
+    }
+
     @Override
     public int getExplosionDamage() {
         // TacOps Gauss Weapon rule p. 102
@@ -107,24 +136,7 @@ public class WeaponMounted extends Mounted<WeaponType> {
             return getType().getRackSize() * damagePerShot;
         }
 
-        if (getType().hasFlag(WeaponType.F_PPC) && (hasChargedCapacitor() != 0)) {
-            if (isFired()) {
-                if (hasChargedCapacitor() == 2) {
-                    return 15;
-                }
-                return 0;
-            }
-            if (hasChargedCapacitor() == 2) {
-                return 30;
-            }
-            return 15;
-        }
-
-        if ((getType().getAmmoType() == AmmoType.AmmoTypeEnum.MPOD) && isFired()) {
-            return 0;
-        }
-
-        return getType().getExplosionDamage();
+        return Game.rulesManager.getRulesExplosions().equipmentDamage(this, getType());
     }
 
     @Override

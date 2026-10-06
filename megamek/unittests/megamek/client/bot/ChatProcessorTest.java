@@ -357,10 +357,10 @@ class ChatProcessorTest {
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
         assertEquals(5, mockPrincess.getBehaviorSettings().getHyperAggressionIndex());
 
-        // Test the 'herding' command.
+        // Test the 'mutual support' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-              + ChatCommands.HERDING.getAbbreviation() + " : -";
+              + ChatCommands.MUTUAL_SUPPORT.getAbbreviation() + " : -";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -369,12 +369,12 @@ class ChatProcessorTest {
         doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        assertEquals(4, mockPrincess.getBehaviorSettings().getHerdMentalityIndex());
+        assertEquals(4, mockPrincess.getBehaviorSettings().getMutualSupportIndex());
 
-        // Test the 'herding' command with no arguments.
+        // Test the 'mutual support' command with no arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-              + ChatCommands.HERDING.getAbbreviation();
+              + ChatCommands.MUTUAL_SUPPORT.getAbbreviation();
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -383,12 +383,12 @@ class ChatProcessorTest {
         doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        assertEquals(5, mockPrincess.getBehaviorSettings().getHerdMentalityIndex());
+        assertEquals(5, mockPrincess.getBehaviorSettings().getMutualSupportIndex());
 
-        // Test the 'herding' command with invalid arguments.
+        // Test the 'mutual support' command with invalid arguments.
         mockChatEvent = mock(GamePlayerChatEvent.class);
         chatMessage = mockHumanPlayerDave.getName() + ": " + mockBotPlayerVGer.getName() + ": "
-              + ChatCommands.HERDING.getAbbreviation() + " : -a";
+              + ChatCommands.MUTUAL_SUPPORT.getAbbreviation() + " : -a";
         when(mockChatEvent.getMessage()).thenReturn(chatMessage);
         when(mockChatEvent.getPlayer()).thenReturn(mockHumanPlayerDave);
         mockPrincess = spy(new Princess(mockBotPlayerVGer.getName(), "test", 1));
@@ -397,7 +397,7 @@ class ChatProcessorTest {
         doReturn(mockBotPlayerVGer).when(mockPrincess).getLocalPlayer();
         doNothing().when(mockPrincess).sendChat(ArgumentMatchers.anyString());
         testChatProcessor.additionalPrincessCommands(mockChatEvent, mockPrincess);
-        assertEquals(4, mockPrincess.getBehaviorSettings().getHerdMentalityIndex());
+        assertEquals(4, mockPrincess.getBehaviorSettings().getMutualSupportIndex());
 
         // Test the 'brave' command.
         mockChatEvent = mock(GamePlayerChatEvent.class);

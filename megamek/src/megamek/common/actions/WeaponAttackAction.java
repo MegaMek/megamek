@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,6 +46,7 @@ import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.actions.compute.ComputeAeroAttackerToHitMods;
 import megamek.common.actions.compute.ComputeAttackerToHitMods;
@@ -53,6 +54,7 @@ import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
 import megamek.common.actions.compute.ComputeTargetToHitMods;
 import megamek.common.actions.compute.ComputeTerrainMods;
 import megamek.common.actions.compute.ComputeToHit;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
@@ -60,6 +62,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -190,9 +193,25 @@ public class WeaponAttackAction extends AbstractAttackAction {
         bombPayloads.put("internal", new BombLoadout(other.bombPayloads.get("internal")));
         bombPayloads.put("external", new BombLoadout(other.bombPayloads.get("external")));
     }
-
     public int getWeaponId() {
         return weaponId;
+    }
+
+    /**
+     * Returns the weapon this attack fires, looked up on the unit that owns it. A handheld weapon is its own unit, so
+     * a shot from one carried by a Mek belongs to the handheld weapon; its weapon number means nothing on the Mek.
+     *
+     * @param game The current {@link Game}
+     *
+     * @return the firing weapon, or {@code null} if the firing unit cannot be found
+     */
+    public @Nullable Mounted<?> getWeapon(Game game) {
+        Entity weaponEntity = getEntity(game);
+        if (weaponEntity == null) {
+            LOGGER.warn("Unit {} firing weapon {} not found", getEntityId(), getWeaponId());
+            return null;
+        }
+        return weaponEntity.getEquipment(getWeaponId());
     }
 
     public int getAmmoId() {
@@ -773,19 +792,20 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return false;
         }
 
-        // the idea here is that we're in a building that provides partial cover
-        // if the unit involved is tall (at least 2 levels, e.g. mek or superheavy
-        // vehicle)
-        // and its height above the hex ceiling (i.e. building roof) is 1
-        // the height determination takes being prone into account
-        return targetHex.containsTerrain(Terrains.BUILDING) &&
+        // A standing Mek in a Level 1 building, or one level below the roof of a taller one, has its upper half
+        // above the roof and receives partial cover (TW p.171). Its top sits at roof level; a Mek lower in the
+        // building is fully inside and gets none. Only Meks receive partial cover, and prone (height 0) is not standing.
+        // Core p.66 and p.136 ("Level 1 Buildings") grant the same cover, but only for a Level 1 building: the
+        // "one level below the roof" half of the rule is TW p.171 only.
+        return PartialCover.canReceive(targetEntity) &&
+              targetHex.containsTerrain(Terrains.BUILDING) &&
               (targetEntity.getHeight() > 0) &&
-              (targetEntity.relHeight() == 1);
+              (targetEntity.relHeight() == targetHex.terrainLevel(Terrains.BLDG_ELEV));
     }
 
     @Override
     public String toAccessibilityDescription(Client client) {
-        if (null == client || null == getTarget(client.getGame())) {
+        if (client == null || getTarget(client.getGame()) == null) {
             LOGGER.warn("Unable to construct WAA displayable string due to null reference");
             return "Attacking Null Target with id " + getTargetId() + " using Weapon with id " + weaponId;
         }

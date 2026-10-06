@@ -35,6 +35,7 @@ package megamek.server.commands;
 
 import megamek.common.Player;
 import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 import megamek.server.Server;
 import megamek.server.totalWarfare.TWGameManager;
 
@@ -44,6 +45,8 @@ import megamek.server.totalWarfare.TWGameManager;
  * @author Jay Lawson (Taharqa)
  */
 public class TraitorCommand extends ServerCommand {
+
+    private static final MMLogger LOGGER = MMLogger.create(TraitorCommand.class);
 
     private final TWGameManager gameManager;
 
@@ -68,17 +71,19 @@ public class TraitorCommand extends ServerCommand {
             Entity ent = gameManager.getGame().getEntity(eid);
             int pid = Integer.parseInt(args[2]);
             Player player = server.getGame().getPlayer(pid);
-            if (null == ent) {
+            if (ent == null) {
                 server.sendServerChat(connId, "No such entity.");
             } else if (ent.getOwner().getId() != connId) {
                 server.sendServerChat(connId, "You must own an entity to make it switch sides.");
-            } else if (null == player) {
+            } else if (player == null) {
                 server.sendServerChat(connId, "No such player.");
             } else if (player.getTeam() == Player.TEAM_UNASSIGNED) {
                 server.sendServerChat(connId, "Player must be assigned a team.");
             } else if (pid == connId) {
                 server.sendServerChat(connId, "You can't switch to the same side.");
             } else {
+                LOGGER.info("[Traitor] /traitor set traitorId {} ({}) on {} (unit id {}); resolves at END phase",
+                      pid, player.getName(), ent.getDisplayName(), ent.getId());
                 server.sendServerChat(connId,
                       ent.getDisplayName()
                             + " will switch to "

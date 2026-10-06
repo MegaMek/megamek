@@ -33,6 +33,10 @@
 
 package megamek.server.totalWarfare;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
@@ -113,6 +117,28 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                       gameManager.getGame().getRoundCount(),
                       MegaMek.getMemoryUsed());
                 break;
+            case VICTORY_SETUP:
+                gameManager.checkForObservers();
+                gameManager.transmitAllPlayerUpdates();
+                gameManager.resetActivePlayersDone();
+                gameManager.setIneligible(phase);
+
+                if (gameManager.getGame().getBoard().isGround()) {
+                    List<GameTurn> victorySetupTurns = new ArrayList<>();
+                    for (Player player : gameManager.getGame().getPlayersList()) {
+                        // a game master with no units of their own is an observer, but still authors the mission
+                        boolean canPlaceObjectives = (!player.isObserver() || player.isGameMaster())
+                              && !player.isGhost();
+                        if (canPlaceObjectives) {
+                            victorySetupTurns.add(new GameTurn(player.getId()));
+                        }
+                    }
+                    gameManager.getGame().setTurnVector(victorySetupTurns);
+                }
+
+                gameManager.getGame().resetTurnIndex();
+                gameManager.sendCurrentTurns();
+                break;
             case DEPLOY_MINEFIELDS:
                 gameManager.checkForObservers();
                 gameManager.transmitAllPlayerUpdates();
@@ -179,10 +205,44 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.transmitAllPlayerUpdates();
                 gameManager.resetActivePlayersDone();
                 gameManager.setIneligible(phase);
+                // A player makes their player-wide declarations (Nova, Variable Targeting, abandonment, minesweeper,
+                // demolition charge detonation) once for all their units, so collapse those to one turn per player
+                // before building the turn order.
+                if (phase.isPreEndDeclarations()) {
+                    collapsePreEndPlayerWideTurns();
+                }
                 gameManager.determineTurnOrder(phase);
+                InfantryActionTurnOrder.logUnitsHeldInPlace(gameManager.getGame(), phase);
+                if (phase.isPreEndDeclarations()) {
+                    // The book asks the attacker first and the defender answers; initiative alone may not. The
+                    // clients already hold the initiative order from determineTurnOrder, so a change is sent again
+                    // or they would wait on the wrong player.
+                    boolean reordered = InfantryActionTurnOrder.putAttackersFirst(gameManager.getGame());
+                    if (reordered) {
+                        gameManager.sendTurnList();
+                    }
+                }
+                if (phase.isDeployment()) {
+                    // "my units never got a deployment turn" has several causes that look identical on the map, and
+                    // none of them say anything; this is what tells them apart
+                    DeploymentDiagnostics.logWhoCanDeploy(gameManager.getGame());
+                }
+                // Guard the eligibility scan behind the level check so it only runs when [PreEnd] tracing is enabled.
+                if (phase.isPreEndDeclarations() && LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("[PreEnd] turn order built: {} turn(s); eligible units: [{}]",
+                          gameManager.getGame().getTurnsList().size(),
+                          gameManager.getGame().getEntitiesVector().stream()
+                                .filter(Entity::isEligibleForPreEndDeclarations)
+                                .map(entity -> entity.getShortName() + " (p" + entity.getOwnerId() + ")")
+                                .collect(Collectors.joining(", ")));
+                }
                 gameManager.entityAllUpdate();
                 gameManager.clearReports();
                 gameManager.doTryUnstuck();
+                if (phase.isMovement()) {
+                    // remind teams with a homing round landing next round to put a TAG on the target
+                    gameManager.remindHomingArtilleryInbound();
+                }
                 break;
             case END:
                 gameManager.resetEntityPhase(phase);
@@ -198,11 +258,14 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.addReport(gameManager.resolveInternalBombHits());
                 gameManager.checkLayExplosives();
                 gameManager.checkBuildBridges();
+                gameManager.checkClearRubble();
+                gameManager.checkCraneOperations();
                 gameManager.checkDeployBridges();
                 gameManager.resolveInfantryActions();
                 gameManager.resolveHarJelRepairs();
                 gameManager.resolveEmergencyCoolantSystem();
                 gameManager.checkForSuffocation();
+                gameManager.checkTaintedAtmosphereEffects();
                 gameManager.getGame().getPlanetaryConditions().determineWind();
                 gameManager.send(gameManager.getPacketHelper().createPlanetaryConditionsPacket());
 
@@ -324,6 +387,28 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Collapses redundant pre-end declaration turns. A player makes their player-wide declarations (Nova networks,
+     * Variable Range Targeting, crew abandonment, minesweeper activation, demolition charge detonation) once for all
+     * their units through a single dialog, so they only need one turn for them - not one per qualifying unit.
+     * Infantry-vs-infantry combat is declared per unit and keeps its own turns. This keeps one selectable
+     * player-wide-only unit per player as the declarations representative and marks the rest done, so
+     * {@link TWGameManager#determineTurnOrder} generates a single declarations turn per player. Must run after
+     * {@link TWGameManager#setIneligible} and before {@link TWGameManager#determineTurnOrder}.
+     */
+    private void collapsePreEndPlayerWideTurns() {
+        Set<Integer> representativeChosen = new HashSet<>();
+        for (Entity entity : gameManager.getGame().getEntitiesVector()) {
+            if (!entity.isSelectableThisTurn() || entity.hasEntityScopedPreEndDeclaration()) {
+                continue;
+            }
+            // Selectable only for player-wide declarations: keep the first per player, collapse the rest to one turn.
+            if (!representativeChosen.add(entity.getOwnerId())) {
+                entity.setDone(true);
+            }
         }
     }
 }

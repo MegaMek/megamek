@@ -54,7 +54,7 @@
 	<b>Battle Value:</b> ${battleValue}<br/>
 	<b>Introduction Year:</b> ${year}<br/>
 	<b>Cost:</b> ${cost} C-bills<br/>
-	<b>Notes:</b> ${notes}<br/>
+	<b>Notes:</b> ${notes?replace("\n", "<br/>")?no_esc}<br/>
 	</p>
 
 	<p>

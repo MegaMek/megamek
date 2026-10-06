@@ -38,6 +38,7 @@ import java.util.Collection;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.Aero;
@@ -118,6 +119,8 @@ public interface EntityReadout {
           boolean ignorePilotBV) {
 
         return switch (entity) {
+            case BattlefieldSupportAsset asset ->
+                  new BattlefieldSupportAssetReadout(asset, showDetail, useAlternateCost, ignorePilotBV);
             case BattleArmor battleArmor ->
                   new BattleArmorReadout(battleArmor, showDetail, useAlternateCost, ignorePilotBV);
             case ConvInfantry infantry -> new InfantryReadout(infantry, showDetail, useAlternateCost, ignorePilotBV);

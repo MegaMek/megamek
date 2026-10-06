@@ -1,0 +1,359 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.client.ratgenerator;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import megamek.common.units.UnitType;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Unit tests for the deterministic core of {@link FormationBudgetAllocator}: converting percentages to whole nodes,
+ * ordering formations by rarity, and claiming nodes that can actually take them.
+ *
+ * <p>Exercised without a ruleset or a generated force, in the same way {@link WeightBudgetAllocatorTest} tests the
+ * weight budget's arithmetic rather than a whole force. Whether the achieved distribution really lands near the
+ * requested one is a question for a generated force, not for a unit test.</p>
+ */
+class FormationBudgetAllocatorTest {
+
+    private static FormationMix mixOf(Object... namesAndPercents) {
+        Map<String, Integer> percentages = new LinkedHashMap<>();
+        for (int index = 0; index < namesAndPercents.length; index += 2) {
+            percentages.put((String) namesAndPercents[index], (Integer) namesAndPercents[index + 1]);
+        }
+        return new FormationMix(percentages);
+    }
+
+    /** A node offering the named formations, each at weight 1. */
+    private static ForceDescriptor node(String... formationNames) {
+        ForceDescriptor descriptor = new ForceDescriptor();
+        descriptor.setUnitType(UnitType.MEK);
+        Map<String, Integer> offered = new LinkedHashMap<>();
+        for (String formationName : formationNames) {
+            offered.put(formationName, 1);
+        }
+        descriptor.setEligibleFormations(offered);
+        return descriptor;
+    }
+
+    private static long claimedFor(Map<ForceDescriptor, String> claimed, String formationName) {
+        return claimed.values().stream().filter(formationName::equals).count();
+    }
+
+    // ===== integerQuotas =====
+
+    @Test
+    void aRequestThatFitsIsPassedThroughUnchanged() {
+        // The player types lances, so a request the force can hold needs no adjustment at all.
+        Map<String, Integer> quotas = FormationBudgetAllocator.integerQuotas(mixOf("Battle", 4, "Fire", 4), 8);
+
+        assertEquals(4, quotas.get("Battle"));
+        assertEquals(4, quotas.get("Fire"));
+    }
+
+    @Test
+    void aPartialRequestLeavesTheRestToTheRuleset() {
+        // Counts are a floor, not a partition: five of twelve lances are claimed and the other seven stay as rolled.
+        Map<String, Integer> quotas = FormationBudgetAllocator.integerQuotas(mixOf("Battle", 3, "Fire", 2), 12);
+
+        assertEquals(5, quotas.values().stream().mapToInt(Integer::intValue).sum());
+    }
+
+    @Test
+    void askingForMoreLancesThanExistIsScaledBackToTheForce() {
+        // Thirty Recon and ten Fire cannot both be had from twenty lances; the ratio survives, the total fits.
+        Map<String, Integer> quotas = FormationBudgetAllocator.integerQuotas(mixOf("Recon", 30, "Fire", 10), 20);
+
+        assertEquals(20, quotas.values().stream().mapToInt(Integer::intValue).sum(),
+              "the trimmed request must use the whole force rather than losing a lance to rounding");
+        assertEquals(15, quotas.get("Recon"));
+        assertEquals(5, quotas.get("Fire"));
+    }
+
+    @Test
+    void anEvenOverSubscriptionStaysEven() {
+        Map<String, Integer> quotas = FormationBudgetAllocator.integerQuotas(mixOf("Battle", 8, "Fire", 8), 10);
+
+        assertTrue(quotas.values().stream().mapToInt(Integer::intValue).sum() <= 10,
+              "quotas must not exceed the ten lances on offer");
+        assertEquals(quotas.get("Battle"), quotas.get("Fire"), "an even over-subscription stays even");
+    }
+
+    /** A formation asked for so faintly that scaling leaves it nothing is dropped rather than requested as zero. */
+    @Test
+    void formationsScalingToNothingAreDropped() {
+        Map<String, Integer> quotas = FormationBudgetAllocator.integerQuotas(mixOf("Battle", 99, "Fire", 1), 4);
+
+        assertNull(quotas.get("Fire"), "one lance in a hundred scaled onto four lances leaves nothing");
+        assertEquals(4, quotas.get("Battle"));
+    }
+
+
+    // ===== rarestFirst =====
+
+    @Test
+    void rarestFormationIsOrderedFirst() {
+        List<ForceDescriptor> tweakable = List.of(
+              node("Battle", "Fire"), node("Battle", "Recon"), node("Battle", "Fire", "Hunter"));
+
+        List<String> ordered = FormationBudgetAllocator.rarestFirst(tweakable, List.of("Battle", "Hunter"));
+
+        assertEquals("Hunter", ordered.getFirst(),
+              "Hunter fits one node and Battle three, so Hunter must choose first");
+    }
+
+    // ===== assignFormation =====
+
+    @Test
+    void onlyNodesOfferingTheFormationAreClaimed() {
+        ForceDescriptor offersIt = node("Battle", "Fire");
+        ForceDescriptor doesNot = node("Recon", "Pursuit");
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+
+        int placed = FormationBudgetAllocator.assignFormation(List.of(offersIt, doesNot), claimed, "Battle", 2);
+
+        assertEquals(1, placed, "only one node can take a Battle formation");
+        assertEquals("Battle", claimed.get(offersIt));
+        assertNull(claimed.get(doesNot), "a node whose rule never offered Battle must not be given one");
+    }
+
+    @Test
+    void mostConstrainedNodeIsClaimedFirst() {
+        // The two-option node is hard to use for anything else; the five-option node can still serve later
+        // requests, so spending it first would strand the narrow one.
+        ForceDescriptor narrow = node("Battle", "Fire");
+        ForceDescriptor wide = node("Battle", "Fire", "Recon", "Pursuit", "Hunter");
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+
+        FormationBudgetAllocator.assignFormation(List.of(wide, narrow), claimed, "Battle", 1);
+
+        assertEquals("Battle", claimed.get(narrow));
+        assertNull(claimed.get(wide), "the flexible node should be left for a later request");
+    }
+
+    @Test
+    void anAlreadyClaimedNodeIsNotClaimedTwice() {
+        ForceDescriptor shared = node("Battle", "Fire");
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+
+        FormationBudgetAllocator.assignFormation(List.of(shared), claimed, "Battle", 1);
+        int firePlaced = FormationBudgetAllocator.assignFormation(List.of(shared), claimed, "Fire", 1);
+
+        assertEquals(0, firePlaced, "the only node was already spent on Battle");
+        assertEquals("Battle", claimed.get(shared));
+    }
+
+    @Test
+    void quotaLargerThanTheEligibleNodesStopsAtWhatExists() {
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+
+        int placed = FormationBudgetAllocator.assignFormation(
+              List.of(node("Battle"), node("Battle", "Fire")), claimed, "Battle", 5);
+
+        assertEquals(2, placed);
+        assertEquals(2, claimedFor(claimed, "Battle"));
+    }
+
+    // ===== allocate =====
+
+    @Test
+    void emptyMixLeavesTheForceUntouched() {
+        // The regression guarantee: no mix means the allocator does nothing and reports nothing.
+        ForceDescriptor lance = node("Battle", "Fire");
+        ForceDescriptor root = new ForceDescriptor();
+        root.setUnitType(UnitType.MEK);
+        ArrayList<ForceDescriptor> subForces = new ArrayList<>();
+        subForces.add(lance);
+        root.setSubForces(subForces);
+
+        assertNull(FormationBudgetAllocator.allocate(root));
+        assertNull(lance.getFormation());
+    }
+
+    @Test
+    void nullRootIsHandled() {
+        assertNull(FormationBudgetAllocator.allocate(null));
+    }
+
+    @Test
+    void unsupportableRequestIsReportedRatherThanSilentlyDropped() {
+        ForceDescriptor lance = node("Battle", "Fire");
+        ForceDescriptor root = new ForceDescriptor();
+        root.setUnitType(UnitType.MEK);
+        ArrayList<ForceDescriptor> subForces = new ArrayList<>();
+        subForces.add(lance);
+        root.setSubForces(subForces);
+        root.setFormationMix(mixOf("Hunter", 50));
+
+        FormationMixReport report = FormationBudgetAllocator.allocate(root);
+
+        assertEquals(1, report.warnings().size(),
+              "a formation this force never offers must be reported, not silently ignored");
+        assertTrue(report.warnings().getFirst().contains("Hunter"));
+        assertEquals(0, report.totalAssigned());
+    }
+
+    /**
+     * With restrictions on, a formation can only be placed where it was offered. This is the rule the ceiling
+     * describes, and the reason a request beyond the ceiling cannot be filled.
+     */
+    @Test
+    void withRestrictionsOnOnlyOfferedLancesArePlaced() {
+        List<ForceDescriptor> lances = new ArrayList<>();
+        lances.add(node("Battle", "Recon"));
+        lances.add(node("Battle", "Fire"));
+        lances.add(node("Battle", "Fire"));
+
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+        int placed = FormationBudgetAllocator.assignFormation(lances, claimed, "Recon", 3, false);
+
+        assertEquals(1, placed, "only the one lance offered Recon may take it");
+    }
+
+    /** With restrictions off, any lance can take it - which is what makes an all-Recon force possible. */
+    @Test
+    void withRestrictionsOffAnyLanceCanBePlaced() {
+        List<ForceDescriptor> lances = new ArrayList<>();
+        lances.add(node("Battle", "Recon"));
+        lances.add(node("Battle", "Fire"));
+        lances.add(node("Battle", "Fire"));
+
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+        int placed = FormationBudgetAllocator.assignFormation(lances, claimed, "Recon", 3, true);
+
+        assertEquals(3, placed, "with restrictions off every lance may take it");
+    }
+
+    /**
+     * An override should depart from the ruleset only as far as it has to, so the lances that were already offered
+     * the formation are used before ones being overridden onto it.
+     */
+    @Test
+    void anOverrideUsesTheOfferedLancesFirst() {
+        ForceDescriptor notOffered = node("Battle", "Fire");
+        ForceDescriptor offered = node("Battle", "Recon");
+        List<ForceDescriptor> lances = new ArrayList<>(List.of(notOffered, offered));
+
+        Map<ForceDescriptor, String> claimed = new HashMap<>();
+        FormationBudgetAllocator.assignFormation(lances, claimed, "Recon", 1, true);
+
+        assertEquals("Recon", claimed.get(offered),
+              "the lance the ruleset already offered Recon must be used before one being overridden");
+        assertNull(claimed.get(notOffered));
+    }
+
+    // ===== the request is a target, not a floor =====
+
+    /** A root holding the given lances, each already rolled into the named formation. */
+    private static ForceDescriptor forceOf(List<ForceDescriptor> lances) {
+        ForceDescriptor root = new ForceDescriptor();
+        root.setUnitType(UnitType.MEK);
+        lances.forEach(root::addSubForce);
+        return root;
+    }
+
+    private static ForceDescriptor lanceRolledInto(String rolled, String... offered) {
+        ForceDescriptor lance = node(offered);
+        lance.setFormationType(FormationType.getFormationType(rolled));
+        return lance;
+    }
+
+    private static long lancesHolding(ForceDescriptor root, String formationName) {
+        return root.getSubForces()
+              .stream()
+              .filter(lance -> (lance.getFormation() != null)
+                    && formationName.equals(lance.getFormation().getName()))
+              .count();
+    }
+
+    /**
+     * The number the player types is the number they get. Lances the ruleset already rolled into the formation
+     * count towards the request rather than adding to it, so asking for two Recon out of a force that rolled four
+     * delivers two.
+     */
+    @Test
+    void aRequestIsATargetRatherThanAFloor() {
+        ForceDescriptor root = forceOf(List.of(
+              lanceRolledInto("Recon", "Recon", "Battle"),
+              lanceRolledInto("Recon", "Recon", "Battle"),
+              lanceRolledInto("Recon", "Recon", "Battle"),
+              lanceRolledInto("Recon", "Recon", "Battle"),
+              lanceRolledInto("Battle", "Recon", "Battle")));
+        root.setFormationMix(mixOf("Recon", 2));
+
+        FormationBudgetAllocator.allocate(root);
+
+        assertEquals(2, lancesHolding(root, "Recon"),
+              "four lances rolled Recon and two were asked for, so two must be moved off it");
+    }
+
+    /** The other direction: a request above what the roll produced moves lances onto the formation. */
+    @Test
+    void aRequestAboveTheRollMovesLancesOntoTheFormation() {
+        ForceDescriptor root = forceOf(List.of(
+              lanceRolledInto("Recon", "Recon", "Battle"),
+              lanceRolledInto("Battle", "Recon", "Battle"),
+              lanceRolledInto("Battle", "Recon", "Battle"),
+              lanceRolledInto("Battle", "Recon", "Battle")));
+        root.setFormationMix(mixOf("Recon", 3));
+
+        FormationBudgetAllocator.allocate(root);
+
+        assertEquals(3, lancesHolding(root, "Recon"));
+    }
+
+    /** A formation the player did not name is left entirely alone, however many lances rolled it. */
+    @Test
+    void formationsTheRequestDoesNotNameAreLeftAlone() {
+        ForceDescriptor root = forceOf(List.of(
+              lanceRolledInto("Fire", "Fire", "Battle"),
+              lanceRolledInto("Fire", "Fire", "Battle"),
+              lanceRolledInto("Battle", "Recon", "Battle"),
+              lanceRolledInto("Battle", "Recon", "Battle")));
+        root.setFormationMix(mixOf("Recon", 1));
+
+        FormationBudgetAllocator.allocate(root);
+
+        assertEquals(2, lancesHolding(root, "Fire"), "Fire was not asked for, so it must not be disturbed");
+        assertEquals(1, lancesHolding(root, "Recon"));
+    }
+}

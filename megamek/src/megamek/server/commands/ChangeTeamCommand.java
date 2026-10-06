@@ -75,7 +75,7 @@ public class ChangeTeamCommand extends GamemasterServerCommand {
         int teamID = ((TeamArgument) args.get(TEAM_ID)).getValue();
 
         Player player = server.getGame().getPlayer(playerID);
-        if (null == player) {
+        if (player == null) {
             server.sendServerChat(connId, Messages.getString("Gamemaster.cmd.changeTeam.playerNotFound"));
             return;
         }

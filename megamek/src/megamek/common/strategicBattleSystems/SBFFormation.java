@@ -480,7 +480,7 @@ public class SBFFormation implements ASSpecialAbilityCollector, BattleForceSUAFo
         if (this == obj) {
             return true;
         }
-        if ((null == obj) || (getClass() != obj.getClass())) {
+        if ((obj == null) || (getClass() != obj.getClass())) {
             return false;
         }
         final SBFFormation other = (SBFFormation) obj;

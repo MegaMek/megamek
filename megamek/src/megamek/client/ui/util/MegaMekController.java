@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
  * Copyright (c) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,6 +40,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -50,6 +51,7 @@ import megamek.client.ui.boardeditor.BoardEditorPanel;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.IClientGUI;
 import megamek.client.ui.clientGUI.MegaMekGUI;
+import megamek.logging.MMLogger;
 
 /**
  * This class implements a KeyEventDispatcher, which handles all generated KeyEvents. If the KeyEvent corresponds to a
@@ -69,6 +71,12 @@ import megamek.client.ui.clientGUI.MegaMekGUI;
  * @author arlith
  */
 public class MegaMekController implements KeyEventDispatcher {
+
+    /**
+     * Dedicated diagnostic logger for keybind dispatch, silent unless enabled in log4j2.xml. It is a feature logger
+     * rather than a class logger so that tracing keybinds does not pull in unrelated UI debug output.
+     */
+    private static final MMLogger KEY_BIND_LOGGER = MMLogger.create("megamek.feature.KeyBinds");
 
     /**
      * This is an interface for a parameter-less method without a return value. It is used for the methods that are
@@ -124,6 +132,10 @@ public class MegaMekController implements KeyEventDispatcher {
         if (((clientGUI != null) && clientGUI.shouldIgnoreHotKeys())
               || ((boardEditor != null) && boardEditor.shouldIgnoreHotKeys())
               || ignoreKeyPresses) {
+            if (shouldLogKeyBind(evt)) {
+                KEY_BIND_LOGGER.debug("[KeyBind] {} ignored: a dialog is open or key presses are suppressed",
+                      describeKeyEvent(evt));
+            }
             return false;
         }
 
@@ -134,15 +146,29 @@ public class MegaMekController implements KeyEventDispatcher {
         // current action is invalid, do not consume this event.
         boolean consumed = false;
 
-        for (var kcb : KeyCommandBind.getBindByKey(keyCode, modifiers)) {
+        List<KeyCommandBind> matchingBinds = KeyCommandBind.getBindByKey(keyCode, modifiers);
+        if (shouldLogKeyBind(evt)) {
+            KEY_BIND_LOGGER.debug("[KeyBind] {} matches {}", describeKeyEvent(evt),
+                  matchingBinds.isEmpty() ? "no bind" : matchingBinds);
+        }
+
+        for (var kcb : matchingBinds) {
             // Do nothing when there is no bind for this key or no action for the bind
             if (!keyCmdSet.contains(kcb) || (cmdActionMap.get(kcb.cmd) == null)) {
+                if (shouldLogKeyBind(evt)) {
+                    KEY_BIND_LOGGER.debug("[KeyBind] {} skipped: {}", kcb,
+                          keyCmdSet.contains(kcb) ? "no action is registered for it" : "the bind is not registered");
+                }
                 continue;
             }
 
             for (var action : cmdActionMap.get(kcb.cmd)) {
                 // If the action is null or shouldn't be performed, skip it
                 if ((action == null) || !action.shouldReceiveAction()) {
+                    if (shouldLogKeyBind(evt)) {
+                        KEY_BIND_LOGGER.debug("[KeyBind] {} skipped: {}", kcb,
+                              (action == null) ? "the action is null" : "its receiver declined to act");
+                    }
                     continue;
                 }
                 // If we perform at least one action, this event is consumed
@@ -171,6 +197,31 @@ public class MegaMekController implements KeyEventDispatcher {
         }
         // If we had a binding, this event should be considered consumed
         return consumed;
+    }
+
+    /**
+     * Returns whether the keybind diagnostics should record this event. Key releases are skipped so that each keystroke
+     * produces one line rather than two.
+     *
+     * @param event the key event being dispatched
+     *
+     * @return {@code true} when the diagnostics are enabled and this is a key press
+     */
+    private static boolean shouldLogKeyBind(KeyEvent event) {
+        return KEY_BIND_LOGGER.isDebugEnabled() && (event.getID() == KeyEvent.KEY_PRESSED);
+    }
+
+    /**
+     * Renders a key event as "Alt+Up" style text for the keybind diagnostics.
+     *
+     * @param event the key event being dispatched
+     *
+     * @return the modifier and key text, joined with a plus sign when there is a modifier
+     */
+    private static String describeKeyEvent(KeyEvent event) {
+        String modifierText = KeyEvent.getModifiersExText(event.getModifiersEx());
+        String keyText = KeyEvent.getKeyText(event.getKeyCode());
+        return modifierText.isEmpty() ? keyText : modifierText + "+" + keyText;
     }
 
     public synchronized void registerKeyCommandBind(KeyCommandBind kcb) {

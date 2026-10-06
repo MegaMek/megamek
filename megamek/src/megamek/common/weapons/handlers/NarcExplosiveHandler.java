@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -103,7 +103,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             vPhaseReport.add(r);
             Roll diceRoll = Compute.rollD6(1);
 
-            if (diceRoll.getIntValue() <= 3) {
+            if (Game.rulesManager.getRulesEquipment().checkAMSSingleMissile(diceRoll.getIntValue())) {
                 r = new Report(3240);
                 r.subject = subjectId;
                 r.add("pod");
@@ -146,8 +146,8 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  WeaponType.WEAPON_DIRECT_FIRE,
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(WeaponType.WEAPON_DIRECT_FIRE),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
             toReturn = Math.ceil(toReturn);

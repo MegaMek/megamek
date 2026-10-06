@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.grenadeLauncher;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -60,8 +61,9 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
     public InfantrySupportGrenadeLauncherAutoInfernoWeapon() {
         super();
 
-        name = "Grenade Launcher (Auto) - Inferno";
+        name = "Grenade Launcher (Auto) - Incendiary";
         setInternalName("InfantryAutoGLInferno");
+        addLookupName("Grenade Launcher (Auto) - Inferno");
         addLookupName(name);
         addLookupName("Infantry Inferno Auto Grenade Launcher");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
@@ -76,7 +78,7 @@ public class InfantrySupportGrenadeLauncherAutoInfernoWeapon extends InfantryWea
         ammoCost = 160;
         shots = 20;
         bursts = 4;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(2100, 2100, 2100, DATE_NONE, DATE_NONE)

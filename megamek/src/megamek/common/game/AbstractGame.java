@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -233,6 +233,15 @@ public abstract class AbstractGame implements IGame {
     @Override
     public Map<Integer, Board> getBoards() {
         return Collections.unmodifiableMap(gameBoards);
+    }
+
+    @Override
+    @Nullable
+    public Board getBoard(int boardId) {
+        // Direct map lookup. The IGame default routes through getBoards(), which allocates an unmodifiable-map
+        // wrapper on every call; this method is called very heavily in the to-hit/LOS/ECM inner loops. Uses the
+        // gameBoards field directly (no new serialized state) so a deserialized game cannot get a null view.
+        return gameBoards.get(boardId);
     }
 
     public Set<Integer> getBoardIds() {

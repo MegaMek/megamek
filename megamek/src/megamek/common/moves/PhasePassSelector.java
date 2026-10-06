@@ -57,6 +57,8 @@ class PhasePassSelector {
     private static final PhasePass START_JUMP_STEP = new StartJumpStep();
     private static final PhasePass UP_STEP = new UpStep();
     private static final PhasePass DOWN_STEP = new DownStep();
+    private static final PhasePass ELEVATOR_ASCEND_STEP = new ElevatorAscendStep();
+    private static final PhasePass ELEVATOR_DESCEND_STEP = new ElevatorDescendStep();
     private static final PhasePass HULL_DOWN_STEP = new HullDownStep();
     private static final PhasePass CLIMB_MODE_STEP = new ClimbModeStep();
     private static final PhasePass SHAKE_OFF_SWARMERS_STEP = new ShakeOffSwarmersStep();
@@ -77,6 +79,7 @@ class PhasePassSelector {
     private static final PhasePass BOOTLEGGER_STEP = new BootleggerStep();
     private static final PhasePass BRACE_STEP = new BraceStep();
     private static final PhasePass DEFAULT_STEP = new DefaultStep();
+    private static final PhasePass DEPLOY_STEP = new DeployStep();
 
     /**
      * Returns the correct phase pass for  {@link MoveStep} compilation based on the move step type.
@@ -101,6 +104,8 @@ class PhasePassSelector {
             case START_JUMP -> START_JUMP_STEP;
             case UP -> UP_STEP;
             case DOWN -> DOWN_STEP;
+            case ELEVATOR_ASCEND -> ELEVATOR_ASCEND_STEP;
+            case ELEVATOR_DESCEND -> ELEVATOR_DESCEND_STEP;
             case HULL_DOWN -> HULL_DOWN_STEP;
             case CLIMB_MODE_ON, CLIMB_MODE_OFF -> CLIMB_MODE_STEP;
             case SHAKE_OFF_SWARMERS -> SHAKE_OFF_SWARMERS_STEP;
@@ -120,6 +125,7 @@ class PhasePassSelector {
             case CONVERT_MODE -> CONVERT_MODE_STEP;
             case BOOTLEGGER -> BOOTLEGGER_STEP;
             case BRACE -> BRACE_STEP;
+            case DEPLOY -> DEPLOY_STEP;
             default -> DEFAULT_STEP;
         };
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2022-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,9 @@
  */
 
 package megamek.common.cost;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.bays.BattleArmorBay;
@@ -158,14 +161,15 @@ public class JumpShipCostCalculator {
         }
 
         costs[costIdx] = -jumpShip.getPriceMultiplier(); // Negative indicates multiplier
-        cost = Math.round(cost * jumpShip.getPriceMultiplier());
-
+        double roundedCost = BigDecimal.valueOf(cost * jumpShip.getPriceMultiplier())
+              .setScale(2, RoundingMode.UP)
+              .doubleValue();
         String[] systemNames = { "Bridge", "Computer", "Life Support", "Sensors", "FCS", "Gunnery Control Systems",
                                  "Structural Integrity", "Engine", "Engine Control Unit",
                                  "KF Drive", "KF Drive Support System", "Attitude Thrusters", "Docking Collars",
                                  "Fuel Tanks", "Armor", "Heat Sinks", "Life Boats/Escape Pods", "Grav Decks",
                                  "Bays", "Quarters", "HPG", "Weapons/Equipment", "Weight Multiplier" };
-        CostCalculator.fillInReport(costReport, jumpShip, ignoreAmmo, systemNames, 20, cost, costs);
-        return cost;
+        CostCalculator.fillInReport(costReport, jumpShip, ignoreAmmo, systemNames, 20, roundedCost, costs);
+        return roundedCost;
     }
 }

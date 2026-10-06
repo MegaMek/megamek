@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -75,7 +76,7 @@ public class InfantryPistolMauserAutoPistolWeapon extends InfantryWeapon {
         ammoWeight = 0.00011;
         ammoCost = 3;
         shots = 8;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(2490, 2495, 2550, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false).setPrototypeFactions(Faction.LC)
               .setProductionFactions(Faction.LC).setTechRating(TechRating.C)

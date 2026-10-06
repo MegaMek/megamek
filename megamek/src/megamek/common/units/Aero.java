@@ -70,11 +70,17 @@ import megamek.logging.MMLogger;
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
-public abstract class Aero extends Entity implements IAero, IBomber {
+public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatSinkController {
     private static final MMLogger LOGGER = MMLogger.create(Aero.class);
 
     @Serial
     private static final long serialVersionUID = 7196307097459255187L;
+
+    /** An aerospace crew can only abandon on the ground; the server's abandonEntity has no airborne path. */
+    @Override
+    public boolean canEjectCrew() {
+        return crewCanLeave() && !isAirborne();
+    }
 
     // locations
     public static final int LOC_NOSE = 0;
@@ -201,6 +207,15 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     private int heatSinksOriginal;
     private int heatSinks;
     private int heatType = HEAT_SINGLE;
+
+    /**
+     * Aerospace heat sinks are a bare count with no individual equipment mounts, so heat sink activation
+     * (activation/deactivation rules) is tracked as a count of deactivated sinks rather than per-mount modes. The
+     * counts default to 0 (all operational heat sinks active) so that save games from before this field existed load
+     * with every sink active - a field absent from an old save deserializes as 0.
+     */
+    private int inactiveSinks = 0;
+    private int inactiveSinksNextRound = 0;
 
     // Track how many heat sinks are pod-mounted for OmniFighters; these are included in the total. This is provided
     // for campaign use; MM does not distribute damage between fixed and pod-mounted.
@@ -411,10 +426,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
         if (isFighter() && (getCockpitTechAdvancement() != null)) {
-            ctl.addComponent(getCockpitTechAdvancement());
+            techLevel.addComponent(getCockpitTechAdvancement(), getCockpitTypeString());
         }
     }
 
@@ -469,7 +484,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
             mp = Math.max(0, mp - getCargoMpReduction(this));
         }
 
-        if ((null != game) && !mpCalculationSetting.ignoreWeather()) {
+        if ((game != null) && !mpCalculationSetting.ignoreWeather()) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -493,6 +508,10 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         if (getPartialRepairs().booleanOption("aero_engine_crit")) {
             mp--;
         }
+
+        // Improved Magnetic Pulse (iATM IMP) missile Safe Thrust reduction (IO IMP rules). Zero for
+        // large craft, which never accumulate IMP hits, so they are unaffected as the rules require.
+        mp = Math.max(0, mp - getImpMpReduction());
 
         if (!mpCalculationSetting.ignoreGrounded() && !isAirborne()) {
             mp = isSpheroid() ? 0 : mp / 2;
@@ -791,7 +810,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -801,7 +820,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -1142,6 +1161,9 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
         // update velocity
         setCurrentVelocity(getNextVelocity());
+
+        // apply the pending heat sink activation change (declared any time, takes effect in the End Phase)
+        inactiveSinks = inactiveSinksNextRound;
 
         // if using variable damage thresholds then auto set them
         if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
@@ -1644,11 +1666,27 @@ public abstract class Aero extends Entity implements IAero, IBomber {
 
     @Override
     public int getHeatCapacity(boolean includeRadicalHeatSink) {
-        int capacity = (getHeatSinks() * (getHeatType() + 1));
+        int capacity = (getActiveSinks() * (getHeatType() + 1));
         if (includeRadicalHeatSink && hasWorkingMisc(MiscType.F_RADICAL_HEATSINK)) {
-            capacity += (int) Math.ceil(getHeatSinks() * 0.4);
+            capacity += (int) Math.ceil(getActiveSinks() * 0.4);
         }
         return capacity;
+    }
+
+    @Override
+    public int getActiveSinks() {
+        return Math.max(0, getHeatSinks() - inactiveSinks);
+    }
+
+    @Override
+    public int getActiveSinksNextRound() {
+        return Math.max(0, getHeatSinks() - inactiveSinksNextRound);
+    }
+
+    @Override
+    public void setActiveSinksNextRound(int sinks) {
+        int operationalSinks = getHeatSinks();
+        inactiveSinksNextRound = operationalSinks - Math.max(0, Math.min(sinks, operationalSinks));
     }
 
     @Override
@@ -1695,7 +1733,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public int getThresh(int loc) {
         if (isCapitalFighter()) {
-            if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+            if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
                 if (gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_VARIABLE_DAMAGE_THRESH)) {
                     return (int) Math.round(getCapArmor() / 40.0) + 1;
                 } else {
@@ -2105,8 +2143,8 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         super.setArmorType(armType);
         if ((armType == EquipmentType.T_ARMOR_STEALTH_VEHICLE) && addMount) {
             try {
-                this.addEquipment(EquipmentType.get(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STEALTH_VEHICLE,
-                      false)), LOC_AFT);
+                this.addEquipment(EquipmentType.getArmorFromName(EquipmentType.getArmorTypeName(
+                    EquipmentType.T_ARMOR_STEALTH_VEHICLE, false)), LOC_AFT);
             } catch (LocationFullException e) {
                 // this should never happen
             }
@@ -2659,12 +2697,12 @@ public abstract class Aero extends Entity implements IAero, IBomber {
     @Override
     public boolean canSpot() {
         // per a recent ruling on the official forums, aero units can't spot
-        // for indirect LRM fire, unless they have a recon cam, an infrared or
-        // hyperspace imager, or a high-res imager and it's not night
+        // for indirect LRM fire, unless they have an infrared or hyperspectral
+        // imager, or a high-res imager and it's not night. A Recon Camera spots
+        // through its own roll instead (ReconCameraRules, TO:AUE p.150)
         boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
               game.getPlanetaryConditions().getLight().isDayOrDusk();
         return !isAirborne() ||
-              hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
               hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
               hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
               hiresLighted;
@@ -2693,7 +2731,7 @@ public abstract class Aero extends Entity implements IAero, IBomber {
         // Move on to actual damage...
         int damage = getCap0Armor() - getCapArmor();
         // Fix for #587. Only multiply if Aero Sanity is off
-        if ((null != game) && !gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && !gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             damage *= 10;
         }
         damage -= dealt; // We already dealt a bunch of damage, move on.

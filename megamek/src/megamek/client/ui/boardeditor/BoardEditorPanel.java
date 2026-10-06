@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -68,6 +70,7 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.boardeditor.BoardValidationDialog.ReportLine;
 import megamek.client.ui.clientGUI.BoardFileFilter;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommonMenuBar;
@@ -80,6 +83,7 @@ import megamek.client.ui.clientGUI.boardview.overlay.TraceOverlay;
 import megamek.client.ui.clientGUI.boardview.toolTip.BoardEditorTooltip;
 import megamek.client.ui.dialogs.ConfirmDialog;
 import megamek.client.ui.dialogs.ExitsDialog;
+import megamek.client.ui.dialogs.IndustrialElevatorDialog;
 import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.dialogs.MMDialogs.MMConfirmDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
@@ -97,7 +101,10 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
 import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
+import megamek.common.board.BoardConnectivityCheck;
+import megamek.common.board.BoardIssue;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
@@ -108,6 +115,7 @@ import megamek.common.util.BoardUtilities;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
+import megamek.utilities.BoardClassifier;
 import megamek.utilities.BoardsTagger;
 
 // TODO: center map
@@ -127,6 +135,7 @@ public class BoardEditorPanel extends JPanel
     private static final int BASE_TERRAINBUTTON_ICON_WIDTH = 70;
     private static final int BASE_ARROWBUTTON_ICON_WIDTH = 25;
     private static final String CMD_EDIT_DEPLOYMENT_ZONES = "CMD_EDIT_DEPLOYMENT_ZONES";
+    private static final String CMD_EDIT_INDUSTRIAL_ELEVATOR = "CMD_EDIT_INDUSTRIAL_ELEVATOR";
 
     // Components
     private final JFrame frame = new JFrame();
@@ -148,6 +157,8 @@ public class BoardEditorPanel extends JPanel
     // The active hex "brush"
     private HexCanvas canHex;
     Hex curHex = new Hex();
+    private BoardValidationDialog validationDialog;
+    private static final Pattern HEX_ERROR_HEADER = Pattern.compile("Errors in hex (\\d+):");
 
     // Easy terrain access buttons
     private final List<ScalingIconButton> terrainButtons = new ArrayList<>();
@@ -183,6 +194,7 @@ public class BoardEditorPanel extends JPanel
     private EditorTextField texTerrExits;
     private ScalingIconButton butTerrExits;
     private JCheckBox cheRoadsAutoExit;
+    private JCheckBox cheArena;
     private final JButton copyButton = new JButton(Messages.getString("BoardEditor.copyButton"));
     private final JButton pasteButton = new JButton(Messages.getString("BoardEditor.pasteButton"));
     private ScalingIconButton butExitUp, butExitDown;
@@ -885,14 +897,31 @@ public class BoardEditorPanel extends JPanel
                 // if we've selected DEPLOYMENT ZONE, disable the "exits" buttons and make the "exits" popup point to
                 // a multi-select list that lets the user choose which deployment zones will be flagged here
                 // otherwise, re-enable all the buttons and reset the "exits" popup to its normal behavior
-                if (((TerrainHelper) Objects.requireNonNull(choTerrainType.getSelectedItem())).terrainType() ==
-                      Terrains.DEPLOYMENT_ZONE) {
+                int selectedTerrainType = ((TerrainHelper) Objects.requireNonNull(
+                      choTerrainType.getSelectedItem())).terrainType();
+                if (selectedTerrainType == Terrains.DEPLOYMENT_ZONE) {
                     butExitUp.setEnabled(false);
                     butExitDown.setEnabled(false);
                     texTerrExits.setEnabled(false);
                     cheTerrExitSpecified.setEnabled(false);
                     cheTerrExitSpecified.setText("Zones");// Messages.getString("BoardEditor.deploymentZoneIDs"));
                     butTerrExits.setActionCommand(CMD_EDIT_DEPLOYMENT_ZONES);
+                } else if (selectedTerrainType == Terrains.INDUSTRIAL_ELEVATOR) {
+                    // Industrial elevator uses exits to encode shaft top and capacity
+                    // Auto-enable since elevator always needs configuration
+                    butExitUp.setEnabled(false);
+                    butExitDown.setEnabled(false);
+                    texTerrExits.setEnabled(false);
+                    cheTerrExitSpecified.setEnabled(false); // Disable - always on for elevators
+                    cheTerrExitSpecified.setSelected(true); // Auto-select
+                    cheTerrExitSpecified.setText(Messages.getString("BoardEditor.elevatorProperties"));
+                    butTerrExits.setActionCommand(CMD_EDIT_INDUSTRIAL_ELEVATOR);
+                    // Allow negative terrain levels for basement elevator shafts
+                    texTerrainLevel.setMinValue(-100);
+                    // Set default exits value if not already set (shaft top 0, capacity 100 tons)
+                    if (texTerrExits.getNumber() == 0) {
+                        texTerrExits.setNumber(10); // (0 << 8) | 10 = capacity 100 tons
+                    }
                 } else {
                     butExitUp.setEnabled(true);
                     butExitDown.setEnabled(true);
@@ -900,6 +929,8 @@ public class BoardEditorPanel extends JPanel
                     cheTerrExitSpecified.setEnabled(true);
                     cheTerrExitSpecified.setText(Messages.getString("BoardEditor.cheTerrExitSpecified"));
                     butTerrExits.setActionCommand("");
+                    // Reset terrain level minimum to default for other terrain types
+                    texTerrainLevel.setMinValue(0);
                 }
             }
         });
@@ -946,6 +977,12 @@ public class BoardEditorPanel extends JPanel
         cheRoadsAutoExit.addItemListener(this);
         cheRoadsAutoExit.setSelected(true);
 
+        // Arena tag (marks a Solaris-style arena board)
+        cheArena = new JCheckBox(Messages.getString("BoardEditor.cheArena"));
+        cheArena.setToolTipText(Messages.getString("BoardEditor.cheArena.tooltip"));
+        cheArena.addItemListener(this);
+        cheArena.setSelected(false);
+
         // Theme
         JPanel panTheme = new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 4));
         choTheme = new JComboBox<>();
@@ -979,6 +1016,7 @@ public class BoardEditorPanel extends JPanel
         // The board settings panel (Auto exit roads to pavement)
         panelBoardSettings.setBorder(new TitledBorder("Board Settings"));
         panelBoardSettings.add(cheRoadsAutoExit);
+        panelBoardSettings.add(cheArena);
 
         // Board Buttons (Save, Load...)
         JButton butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew"));
@@ -1545,6 +1583,7 @@ public class BoardEditorPanel extends JPanel
                 board.addTag(tag);
             }
             cheRoadsAutoExit.setSelected(board.getRoadsAutoExit());
+            cheArena.setSelected(board.getTags().contains(BoardClassifier.ARENA_TAG));
             mapSettings.setBoardSize(board.getWidth(), board.getHeight());
             curBoardFile = file;
             RecentBoardList.addBoard(curBoardFile);
@@ -1726,6 +1765,18 @@ public class BoardEditorPanel extends JPanel
             board.setRoadsAutoExit(cheRoadsAutoExit.isSelected());
             bv.updateBoard();
             repaintWorkingHex();
+        } else if (ie.getSource().equals(cheArena)) {
+            // Add or remove the Arena tag. Guard against no-op events fired during board load.
+            boolean isArena = board.getTags().contains(BoardClassifier.ARENA_TAG);
+            if (cheArena.isSelected() != isArena) {
+                if (cheArena.isSelected()) {
+                    board.addTag(BoardClassifier.ARENA_TAG);
+                } else {
+                    board.removeTag(BoardClassifier.ARENA_TAG);
+                }
+                hasChanges = true;
+                setFrameTitle();
+            }
         }
     }
 
@@ -1804,6 +1855,8 @@ public class BoardEditorPanel extends JPanel
         savedUndoStackSize = 0;
         canReturnToSaved = true;
         resetUndo();
+        // Sync the Arena checkbox to the (possibly fresh) board's tags
+        cheArena.setSelected(board.getTags().contains(BoardClassifier.ARENA_TAG));
         hasChanges = false;
         // When a board was loaded, we have a file, otherwise not
         butSourceFile.setEnabled(curBoardFile != null);
@@ -1814,38 +1867,91 @@ public class BoardEditorPanel extends JPanel
 
     /**
      * Performs board validation. When showPositiveResult is true, the result of the validation will be shown in a
-     * dialog. Otherwise, only a negative result (the board has errors) will be shown.
+     * dialog. Otherwise, only a negative result (the board has errors) will be shown. Roads and bridges that do not
+     * join up count as errors here, as with the strict board validator; bridge notes are listed but are not errors.
      */
     private void validateBoard(boolean showPositiveResult) {
-        List<String> errors = new ArrayList<>();
-        board.isValid(errors);
-        if ((!errors.isEmpty()) || showPositiveResult) {
-            showBoardValidationReport(errors);
+        List<String> hexErrors = new ArrayList<>();
+        board.isValid(hexErrors);
+        List<BoardIssue> problems = BoardConnectivityCheck.findProblems(board);
+        List<BoardIssue> notes = BoardConnectivityCheck.findNotes(board);
+        boolean hasErrors = !hexErrors.isEmpty() || !problems.isEmpty();
+        if (hasErrors || showPositiveResult) {
+            showBoardValidationReport(hexErrors, problems, notes);
         }
     }
 
     /**
-     * Shows a board validation report dialog, reporting either the contents of errBuff or that the board has no
-     * errors.
+     * Shows the validation result. Errors and notes go in a report the editor stays usable beside, where clicking a
+     * line takes the editor to its hex; a board with neither gets a plain confirmation.
      */
-    private void showBoardValidationReport(List<String> errors) {
-        ignoreHotKeys = true;
-        if ((errors != null) && !errors.isEmpty()) {
-            String title = Messages.getString("BoardEditor.invalidBoard.title");
-            String msg = Messages.getString("BoardEditor.invalidBoard.report");
-            msg += String.join("\n", errors);
-            JTextArea textArea = new JTextArea(msg);
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            textArea.setLineWrap(true);
-            textArea.setWrapStyleWord(true);
-            scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight() / 2));
-            JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
-        } else {
+    private void showBoardValidationReport(List<String> hexErrors, List<BoardIssue> problems, List<BoardIssue> notes) {
+        if (validationDialog != null) {
+            validationDialog.dispose();
+            validationDialog = null;
+        }
+        boolean hasErrors = !hexErrors.isEmpty() || !problems.isEmpty();
+        if (!hasErrors && notes.isEmpty()) {
+            ignoreHotKeys = true;
             String title = Messages.getString("BoardEditor.validBoard.title");
             String msg = Messages.getString("BoardEditor.validBoard.report");
             JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.INFORMATION_MESSAGE);
+            ignoreHotKeys = false;
+            return;
         }
-        ignoreHotKeys = false;
+
+        List<ReportLine> lines = new ArrayList<>();
+        // The per-hex errors come as a "Errors in hex 0101:" line followed by that hex's errors
+        Coords currentHex = null;
+        for (String error : hexErrors) {
+            Coords headerHex = hexFromErrorHeader(error);
+            if (headerHex != null) {
+                currentHex = headerHex;
+            }
+            lines.add(new ReportLine(error, currentHex, null));
+        }
+        for (BoardIssue problem : problems) {
+            lines.add(new ReportLine(problem.message(), problem.coords(), problem.fix()));
+        }
+        if (!notes.isEmpty()) {
+            lines.add(new ReportLine("", null, null));
+            lines.add(new ReportLine(Messages.getString("BoardEditor.validation.notesHeading"), null, null));
+            for (BoardIssue note : notes) {
+                lines.add(new ReportLine(note.message(), note.coords(), note.fix()));
+            }
+        }
+        String heading = Messages.getString(hasErrors ? "BoardEditor.validation.problemsHeading"
+              : "BoardEditor.validBoardWithNotes.report");
+        validationDialog = new BoardValidationDialog(frame, heading, lines, this::goToHex);
+        validationDialog.setVisible(true);
+    }
+
+    /**
+     * @return the hex named by a "Errors in hex 0101:" line, or {@code null} for any other line. A board number
+     *       with an odd number of digits cannot be split into column and row, so it gives {@code null} too.
+     */
+    private static @Nullable Coords hexFromErrorHeader(String line) {
+        Matcher matcher = HEX_ERROR_HEADER.matcher(line);
+        if (!matcher.matches()) {
+            return null;
+        }
+        String digits = matcher.group(1);
+        if ((digits.length() % 2) != 0) {
+            return null;
+        }
+        int half = digits.length() / 2;
+        return new Coords(Integer.parseInt(digits.substring(0, half)) - 1,
+              Integer.parseInt(digits.substring(half)) - 1);
+    }
+
+    /** Centres the map on a hex and selects it, as if the user had clicked it. */
+    private void goToHex(Coords coords) {
+        if (!board.contains(coords)) {
+            return;
+        }
+        bv.centerOnHex(coords);
+        bv.cursor(coords);
+        setCurrentHex(board.getHex(coords));
     }
 
     //
@@ -1952,6 +2058,14 @@ public class BoardEditorPanel extends JPanel
                 dlg.setVisible(true);
                 exitsVal = Board.IntListAsExits(dlg.getSelectedItems());
                 texTerrExits.setNumber(exitsVal);
+            } else if (ae.getActionCommand().equals(CMD_EDIT_INDUSTRIAL_ELEVATOR)) {
+                IndustrialElevatorDialog elevatorDialog = new IndustrialElevatorDialog(frame);
+                exitsVal = texTerrExits.getNumber();
+                elevatorDialog.setExits(exitsVal);
+                if (elevatorDialog.showDialog()) {
+                    exitsVal = elevatorDialog.getExits();
+                    texTerrExits.setNumber(exitsVal);
+                }
             } else {
                 ExitsDialog ed = new ExitsDialog(frame);
                 exitsVal = texTerrExits.getNumber();

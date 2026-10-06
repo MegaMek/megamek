@@ -34,13 +34,23 @@
  */
 package megamek.client.ui.dialogs.iconChooser;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
@@ -48,6 +58,9 @@ import javax.swing.JSlider;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
 import megamek.client.ui.buttons.DialogButton;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.battlefieldSupport.OverlayStyle;
+import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.common.units.Entity;
 import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
@@ -65,8 +78,17 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
     private JSlider rotationSlider;
     private JSlider scaleSlider;
     private final Camouflage originalCamo;
-    private Entity entity;
-    private EntityImagePanel entityImage;
+    private final List<Entity> previewEntities = new ArrayList<>();
+    private final List<EntityImagePanel> previewPanels = new ArrayList<>();
+    private JPanel previewContainer;
+
+    // Battlefield Support Asset marker-overlay controls, shown only when a displayed unit is an asset.
+    private JPanel overlayPanel;
+    private JButton overlayColorButton;
+    private JComboBox<StripeDirection> stripeDirectionCombo;
+    private JComboBox<OverlayStyle> styleCombo;
+    private boolean assetOverlayMode = false;
+    private Color overlayColor = Camouflage.DEFAULT_ASSET_OVERLAY_COLOR;
     //endregion Variable Declarations
 
     //region Constructors
@@ -79,6 +101,15 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         super(frame, "CamoChooserDialog", "CamoChoiceDialog.select_camo_pattern",
               new CamoChooserPanel(frame, camouflage, canHaveIndividualCamouflage), true);
         originalCamo = (Camouflage) camouflage;
+
+        // Ensure the dialog is wide/tall enough to show the (asset) camo controls without scrolling, even if a smaller
+        // size was remembered from a previous session before those controls existed.
+        Dimension minimumSize = new Dimension(900, 760);
+        setMinimumSize(minimumSize);
+        if ((getWidth() < minimumSize.width) || (getHeight() < minimumSize.height)) {
+            setSize(Math.max(getWidth(), minimumSize.width), Math.max(getHeight(), minimumSize.height));
+            setLocationRelativeTo(frame);
+        }
     }
     //endregion Constructors
 
@@ -87,8 +118,42 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         return useDefault;
     }
 
+    /** Sets a single unit to preview in the dialog. See {@link #setDisplayedEntities(List)}. */
     public void setDisplayedEntity(Entity entity) {
-        this.entity = entity;
+        setDisplayedEntities((entity == null) ? List.of() : List.of(entity));
+    }
+
+    /**
+     * Sets the units to preview in the dialog. Up to two are shown; when the selection mixes assets and non-assets, one
+     * of each is chosen so both looks are visible, otherwise the first two are used. The asset marker-overlay controls
+     * are revealed when any displayed unit is a Battlefield Support Asset.
+     *
+     * @param entities the candidate units to preview (may be empty)
+     */
+    public void setDisplayedEntities(List<Entity> entities) {
+        previewEntities.clear();
+        previewEntities.addAll(choosePreviewEntities(entities));
+        assetOverlayMode = previewEntities.stream().anyMatch(e -> e instanceof BattlefieldSupportAsset);
+        if (overlayPanel != null) {
+            overlayPanel.setVisible(assetOverlayMode);
+        }
+        rebuildPreviewPanels();
+        updatePreview();
+    }
+
+    /** @return up to two units to preview: one asset + one non-asset when the list has both, else the first two. */
+    private static List<Entity> choosePreviewEntities(List<Entity> entities) {
+        Entity asset = entities.stream().filter(e -> e instanceof BattlefieldSupportAsset).findFirst().orElse(null);
+        Entity nonAsset = entities.stream().filter(e -> !(e instanceof BattlefieldSupportAsset)).findFirst()
+              .orElse(null);
+        List<Entity> chosen = new ArrayList<>();
+        if ((asset != null) && (nonAsset != null)) {
+            chosen.add(asset);
+            chosen.add(nonAsset);
+        } else {
+            entities.stream().limit(2).forEach(chosen::add);
+        }
+        return chosen;
     }
 
     public void setUseDefault(final boolean useDefault) {
@@ -122,7 +187,7 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         scaleSlider.setLabelTable(labelTable);
         scaleSlider.addChangeListener(e -> updatePreview());
 
-        entityImage = new EntityImagePanel(null, null);
+        previewContainer = new JPanel();
 
         JPanel rotationPanel = new JPanel();
         rotationPanel.add(Box.createHorizontalStrut(20));
@@ -134,10 +199,21 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         scalePanel.add(new JLabel(Messages.getString("CamoChoiceDialog.scale") + ":"));
         scalePanel.add(scaleSlider);
 
+        overlayPanel = createOverlayPanel();
+
+        // The preview(s) and the rotation/scale sliders sit on one row; the (wider set of) asset marker controls get
+        // their own row below so they don't force the dialog to scroll horizontally.
+        JPanel topRow = new JPanel();
+        topRow.add(previewContainer);
+        topRow.add(rotationPanel);
+        topRow.add(scalePanel);
+        topRow.setAlignmentX(Component.CENTER_ALIGNMENT);
+        overlayPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
         JPanel modifierPanel = new JPanel();
-        modifierPanel.add(entityImage);
-        modifierPanel.add(rotationPanel);
-        modifierPanel.add(scalePanel);
+        modifierPanel.setLayout(new BoxLayout(modifierPanel, BoxLayout.PAGE_AXIS));
+        modifierPanel.add(topRow);
+        modifierPanel.add(overlayPanel);
 
         JScrollPane modifierScrollPane = new JScrollPane(modifierPanel,
               JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -189,6 +265,11 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         }
         result.setScale(scaleSlider.getValue());
         result.setRotationAngle(rotationSlider.getValue());
+        // The asset marker overlay rides on the camo, so a unit that uses this camo (individually or via the player)
+        // shares the overlay. Non-asset units simply ignore it.
+        result.setOverlayColor(overlayColor);
+        result.setOverlayDirection((StripeDirection) stripeDirectionCombo.getSelectedItem());
+        result.setOverlayStyle((OverlayStyle) styleCombo.getSelectedItem());
         return result;
     }
 
@@ -197,6 +278,10 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         if ((originalCamo != null) && b) {
             rotationSlider.setValue(originalCamo.getRotationAngle());
             scaleSlider.setValue(originalCamo.getScale());
+            overlayColor = originalCamo.getOverlayColor();
+            overlayColorButton.setBackground(overlayColor);
+            stripeDirectionCombo.setSelectedItem(originalCamo.getOverlayDirection());
+            styleCombo.setSelectedItem(originalCamo.getOverlayStyle());
         }
         if (b) {
             getChooser().getImageList().addListSelectionListener(e -> updatePreview());
@@ -204,9 +289,85 @@ public class CamoChooserDialog extends AbstractIconChooserDialog {
         super.setVisible(b);
     }
 
+    /** Rebuilds the preview panels to match the chosen preview entities (at most two). */
+    private void rebuildPreviewPanels() {
+        if (previewContainer == null) {
+            return;
+        }
+        previewContainer.removeAll();
+        previewPanels.clear();
+        for (Entity ignored : previewEntities) {
+            EntityImagePanel panel = new EntityImagePanel(null, null);
+            previewPanels.add(panel);
+            previewContainer.add(panel);
+        }
+        previewContainer.revalidate();
+        previewContainer.repaint();
+    }
+
     private void updatePreview() {
-        if (getSelectedItem() != null) {
-            entityImage.updateDisplayedEntity(entity, getSelectedItem());
+        Camouflage camo = getSelectedItem();
+        if (camo == null) {
+            return;
+        }
+        for (int i = 0; i < previewEntities.size() && i < previewPanels.size(); i++) {
+            previewPanels.get(i).updateDisplayedEntity(previewEntities.get(i), camo);
+        }
+    }
+
+    /** Builds the (initially hidden) Battlefield Support Asset marker-overlay controls: color, direction and style. */
+    private JPanel createOverlayPanel() {
+        JPanel panel = new JPanel();
+        panel.add(Box.createHorizontalStrut(20));
+        panel.add(new JLabel(Messages.getString("CamoChoiceDialog.overlayLabel") + ":"));
+
+        styleCombo = new JComboBox<>(OverlayStyle.values());
+        styleCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                  boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof OverlayStyle style) {
+                    setText(Messages.getString("CamoChoiceDialog.overlayStyle." + style.name()));
+                }
+                return this;
+            }
+        });
+        styleCombo.setToolTipText(Messages.getString("CamoChoiceDialog.overlayStyle.tooltip"));
+        styleCombo.addActionListener(e -> updatePreview());
+        panel.add(styleCombo);
+
+        stripeDirectionCombo = new JComboBox<>(StripeDirection.values());
+        stripeDirectionCombo.setRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                  boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (value instanceof StripeDirection direction) {
+                    setText(Messages.getString("CamoChoiceDialog.overlayDirection." + direction.name()));
+                }
+                return this;
+            }
+        });
+        stripeDirectionCombo.addActionListener(e -> updatePreview());
+        panel.add(stripeDirectionCombo);
+
+        overlayColorButton = new JButton(Messages.getString("CamoChoiceDialog.overlayColor"));
+        overlayColorButton.setOpaque(true);
+        overlayColorButton.setBackground(overlayColor);
+        overlayColorButton.addActionListener(e -> chooseOverlayColor());
+        panel.add(overlayColorButton);
+
+        panel.setVisible(false);
+        return panel;
+    }
+
+    private void chooseOverlayColor() {
+        Color chosen = JColorChooser.showDialog(this, Messages.getString("CamoChoiceDialog.overlayColor"), overlayColor);
+        if (chosen != null) {
+            overlayColor = chosen;
+            overlayColorButton.setBackground(chosen);
+            updatePreview();
         }
     }
 }

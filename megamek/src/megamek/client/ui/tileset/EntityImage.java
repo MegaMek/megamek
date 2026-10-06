@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2002-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,13 +33,11 @@
  */
 package megamek.client.ui.tileset;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -58,14 +56,16 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
+import megamek.common.annotations.Nullable;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.battlefieldSupport.StripeDirection;
+import megamek.common.equipment.GunEmplacement;
+import megamek.common.icons.Camouflage;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.equipment.GunEmplacement;
 import megamek.common.units.Infantry;
 import megamek.common.units.Tank;
 import megamek.common.units.VTOL;
-import megamek.common.annotations.Nullable;
-import megamek.common.icons.Camouflage;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;
@@ -117,11 +117,18 @@ public class EntityImage {
 
     private static final GUIPreferences GUIP = GUIPreferences.getInstance();
 
-    private static final GraphicsConfiguration GRAPHICS_CONFIGURATION = GraphicsEnvironment
-          .getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-
     /** Facing-dependent camo overlays (add shadows and highlighting) */
     private static final int[][] pOverlays = new int[6][IMG_SIZE];
+
+    // Battlefield Support Asset marker-stripe overlay tuning.
+    /** The repeat period in pixels (colored stripe + gap) of the repeating marker pattern. */
+    private static final int STRIPE_PERIOD = 23;
+    /** The colored portion of each period in pixels; the remainder is the gap (7 on / 16 off = thin, well-spaced). */
+    private static final int STRIPE_ON = 7;
+    /** Half-width in pixels of the single band (non-repeating) marker. */
+    private static final int BAND_HALF_WIDTH = 5;
+    /** How strongly the marker color is blended over the unit (0-255). */
+    private static final int STRIPE_ALPHA = 200;
 
     static {
         try {
@@ -149,6 +156,11 @@ public class EntityImage {
 
     /** The base (unit) image used for this icon. */
     protected Image base;
+    /**
+     * The unmodified tileset image this icon was created from. Unlike {@link #base}, this is never replaced by a
+     * processed (camouflaged/composited) image, so it can serve as a stable identity for image caching.
+     */
+    private final Image tilesetBase;
     /** The wreck base image used for this icon. */
     private Image wreck;
     /** The damage decal image used for this icon. */
@@ -158,6 +170,8 @@ public class EntityImage {
     /** A smaller icon used for the unit overview. */
     protected Image icon;
     private Camouflage camouflage;
+    /** True when the unit is a Battlefield Support Asset, which gets a marker-stripe overlay (from its camo). */
+    private boolean isAsset;
     protected Image[] facings = new Image[6];
     private final Image[] wreckFacings = new Image[6];
     /** The damage level, from none to crippled. */
@@ -223,6 +237,7 @@ public class EntityImage {
     public EntityImage(Image base, Image wreck, Camouflage camouflage, Component comp, Entity entity, int secondaryPos,
           boolean preview, boolean withShadows) {
         this.base = base;
+        this.tilesetBase = base;
         setCamouflage(camouflage);
         this.wreck = wreck;
         this.withShadows = withShadows;
@@ -241,13 +256,14 @@ public class EntityImage {
         smoke = getSmokeImage(entity, secondaryPos);
         unitHeight = entity.height();
         unitElevation = entity.getElevation();
+        isAsset = entity instanceof BattlefieldSupportAsset;
     }
 
     /**
      * Worker function that calculates the entity's damage level for the purposes of displaying damage to avoid
      * particularly dumb-looking situations
      */
-    private int calculateDamageLevel(Entity entity) {
+    public static int calculateDamageLevel(Entity entity) {
         // gun emplacements don't show up as crippled when destroyed, which leads to
         // them looking pristine
         if ((entity.isBuildingEntityOrGunEmplacement()) && entity.isDestroyed()) {
@@ -291,6 +307,11 @@ public class EntityImage {
         return dmgLevel;
     }
 
+    /** @return whether this processed image was created for a Battlefield Support Asset. */
+    public boolean isAssetImage() {
+        return isAsset;
+    }
+
     /** Creates images applying damage decals, rotating and scaling. */
     public void loadFacings() {
         if (base == null) {
@@ -300,6 +321,11 @@ public class EntityImage {
         for (int i = 0; i < 6; i++) {
             // Apply the player/unit camouflage
             Image fImage = applyColor(base, i);
+
+            // Assets get a marker-stripe overlay so they stand out on the board
+            if (shouldApplyOverlay()) {
+                fImage = applyAssetStripeOverlay(fImage);
+            }
 
             // Add damage scars and smoke/fire; not to Infantry
             if (!isInfantry && GUIP.getShowDamageDecal()) {
@@ -321,6 +347,9 @@ public class EntityImage {
 
         // Apply the player/unit camouflage
         base = applyColor(base, 0);
+        if (shouldApplyOverlay()) {
+            base = applyAssetStripeOverlay(base);
+        }
 
         // Save a small icon (without damage decals) for the unit overview
         icon = ImageUtil.getScaledImage(base, 56, 48);
@@ -378,6 +407,14 @@ public class EntityImage {
         return base;
     }
 
+    /**
+     * @return The unmodified tileset image this icon was created from. Stable across {@link #loadFacings()}, unlike
+     *       {@link #getBase()}, and therefore usable as a cache identity.
+     */
+    public @Nullable Image getTilesetBase() {
+        return tilesetBase;
+    }
+
     public Image getIcon() {
         return icon;
     }
@@ -388,6 +425,9 @@ public class EntityImage {
         }
 
         base = applyColor(getBase(), 0);
+        if (shouldApplyOverlay()) {
+            base = applyAssetStripeOverlay(getBase());
+        }
 
         // Add damage scars and smoke/fire; not to Infantry
         if (showDamage && !isInfantry && GUIP.getShowDamageDecal()) {
@@ -472,6 +512,94 @@ public class EntityImage {
         ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMek, 0, IMG_WIDTH);
         Image result = Toolkit.getDefaultToolkit().createImage(producer);
         return ImageUtil.createAcceleratedImage(result);
+    }
+
+    /** @return whether this unit should have the asset marker overlay drawn (an asset with a non-NONE overlay style). */
+    private boolean shouldApplyOverlay() {
+        return isAsset && (getCamouflage() != null) && getCamouflage().getOverlayStyle().isVisible();
+    }
+
+    /**
+     * Blends the asset marker-stripe (a diagonal band or hazard-tape pattern) onto the given already-camouflaged image,
+     * but only over the unit's own (opaque) pixels so the stripe appears painted on the unit rather than across the hex.
+     * The color, direction and style come from the (resolved) camouflage.
+     *
+     * @param image the camouflaged unit image
+     *
+     * @return a new image with the marker overlay, or the original image if it or the overlay settings are unusable
+     */
+    private Image applyAssetStripeOverlay(Image image) {
+        Camouflage camo = getCamouflage();
+        if ((image == null) || (camo == null) || !camo.getOverlayStyle().isVisible()) {
+            return image;
+        }
+        Color markerColor = camo.getOverlayColor();
+        StripeDirection direction = camo.getOverlayDirection();
+        boolean repeating = camo.getOverlayStyle().isRepeating();
+        if ((markerColor == null) || (direction == null)) {
+            return image;
+        }
+        int[] pixels = new int[IMG_SIZE];
+        try {
+            grabImagePixels(image, pixels);
+        } catch (Exception ex) {
+            logger.error(ex, "Failed to grab pixels for the asset stripe overlay.");
+            return image;
+        }
+        int markerRed = markerColor.getRed();
+        int markerGreen = markerColor.getGreen();
+        int markerBlue = markerColor.getBlue();
+        for (int i = 0; i < IMG_SIZE; i++) {
+            int pixel = pixels[i];
+            int alpha = (pixel >> 24) & 0xff;
+            // Only paint on the unit itself, not the transparent hex background.
+            if (alpha == 0) {
+                continue;
+            }
+            int y = i / IMG_WIDTH;
+            int x = i - y * IMG_WIDTH;
+            if (!isOnStripe(x, y, direction, repeating)) {
+                continue;
+            }
+            int red = (pixel >> 16) & 0xff;
+            int green = (pixel >> 8) & 0xff;
+            int blue = pixel & 0xff;
+            red = (red * (255 - STRIPE_ALPHA) + markerRed * STRIPE_ALPHA) / 255;
+            green = (green * (255 - STRIPE_ALPHA) + markerGreen * STRIPE_ALPHA) / 255;
+            blue = (blue * (255 - STRIPE_ALPHA) + markerBlue * STRIPE_ALPHA) / 255;
+            pixels[i] = (alpha << 24) | (red << 16) | (green << 8) | blue;
+        }
+        ImageProducer producer = new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pixels, 0, IMG_WIDTH);
+        Image result = Toolkit.getDefaultToolkit().createImage(producer);
+        return ImageUtil.createAcceleratedImage(result);
+    }
+
+    /**
+     * @param x         pixel x within the 84x72 sprite
+     * @param y         pixel y within the 84x72 sprite
+     * @param direction the stripe direction
+     * @param repeating {@code true} for the repeating hazard pattern, {@code false} for a single band
+     *
+     * @return {@code true} if the pixel falls on the marker stripe
+     */
+    private boolean isOnStripe(int x, int y, StripeDirection direction, boolean repeating) {
+        int value = switch (direction) {
+            case DIAGONAL -> x + y;
+            case ANTI_DIAGONAL -> x - y + IMG_HEIGHT;
+            case HORIZONTAL -> y;
+            case VERTICAL -> x;
+        };
+        if (repeating) {
+            // Repeating thin stripes with wider gaps (the caution-tape look).
+            return Math.floorMod(value, STRIPE_PERIOD) < STRIPE_ON;
+        }
+        // A single band through the middle of the value range.
+        int extent = switch (direction) {
+            case DIAGONAL, ANTI_DIAGONAL -> IMG_WIDTH + IMG_HEIGHT;
+            case HORIZONTAL -> IMG_HEIGHT;
+            case VERTICAL -> IMG_WIDTH;
+        };
+        return Math.abs(value - extent / 2) < BAND_HALF_WIDTH;
     }
 
     /**
@@ -747,16 +875,15 @@ public class EntityImage {
         ConvolveOp op = new ConvolveOp(ImageUtil.getGaussKernel(2 * radius + 1, sigma), ConvolveOp.EDGE_NO_OP, null);
 
         // blurring requires a slightly bigger image
-        BufferedImage temp = GRAPHICS_CONFIGURATION.createCompatibleImage(
-              IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2, Transparency.TRANSLUCENT);
+        BufferedImage temp = ImageUtil.createAcceleratedImage(
+              IMG_WIDTH + radius * 2, IMG_HEIGHT + radius * 2);
         Graphics g = temp.getGraphics();
         g.drawImage(blackedOut, radius, radius, null);
         g.dispose();
         BufferedImage shadow = op.filter(temp, null);
 
         // reduce back to the correct image size
-        BufferedImage result = GRAPHICS_CONFIGURATION.createCompatibleImage(IMG_WIDTH, IMG_HEIGHT,
-              Transparency.TRANSLUCENT);
+        BufferedImage result = ImageUtil.createAcceleratedImage(IMG_WIDTH, IMG_HEIGHT);
         Graphics gResult = result.getGraphics();
         int xOffset = 0;
         if (unitElevation == 0) {

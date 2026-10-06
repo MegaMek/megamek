@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2009-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,6 +82,19 @@ public class CalledShot implements Serializable {
 
     public int getCall() {
         return current;
+    }
+
+    /**
+     * Sets the called shot directly to the given location instead of stepping to it one call at a time. Values outside
+     * the range of the CALLED_ constants are ignored, so a malformed packet cannot leave the called shot in an unknown
+     * state.
+     *
+     * @param calledShot one of the CALLED_ constants, e.g. {@link #CALLED_HIGH}
+     */
+    public void setCall(int calledShot) {
+        if ((calledShot >= CALLED_NONE) && (calledShot < CALLED_NUM)) {
+            current = calledShot;
+        }
     }
 
     public @Nullable String isValid(Targetable target) {

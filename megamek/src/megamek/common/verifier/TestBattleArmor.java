@@ -463,9 +463,7 @@ public class TestBattleArmor extends TestEntity {
     }
 
     public double getWeightChassis() {
-        if (ba.isClan()
-              && !((ba.getWeightClass() > EntityWeightClass.WEIGHT_ULTRA_LIGHT)
-              && (ba.isClanExoWithoutHarjel()))) {
+        if (ba.isClan() && !ba.isClanExoWithoutHarJel()) {
             return CHASSIS_WEIGHT_CLAN[ba.getWeightClass()];
         } else {
             return CHASSIS_WEIGHT_IS[ba.getWeightClass()];

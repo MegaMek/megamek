@@ -109,7 +109,12 @@ public class EntityImagePanel extends JPanel {
         }
 
         final Image base = MMStaticDirectoryManager.getMekTileset().imageFor(entity);
-        getImageLabel().setIcon(new ImageIcon(EntityImage.createLobbyIcon(base, (Camouflage) camouflage, entity)
-              .loadPreviewImage(false)));
+        if (base == null) {
+            getImageLabel().setIcon(null);
+            return;
+        }
+        final Image preview = EntityImage.createLobbyIcon(base, (Camouflage) camouflage, entity)
+              .loadPreviewImage(false);
+        getImageLabel().setIcon((preview == null) ? null : new ImageIcon(preview));
     }
 }

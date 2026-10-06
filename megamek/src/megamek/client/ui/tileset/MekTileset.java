@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Objects;
 
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.units.*;
@@ -211,6 +212,10 @@ public class MekTileset {
             entry = default_light;
         }
 
+        if (entry == null) {
+            return null;
+        }
+
         if (entry.getImage() == null) {
             entry.loadImage();
         }
@@ -240,7 +245,9 @@ public class MekTileset {
     }
 
     public MekEntry genericFor(Entity entity, int secondaryPos) {
-        if (entity instanceof BattleArmor) {
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            return assetGenericFor(asset);
+        } else if (entity instanceof BattleArmor) {
             return default_ba;
         } else if (entity instanceof Infantry) {
             return default_inf;
@@ -348,6 +355,27 @@ public class MekTileset {
         return default_unknown;
     }
 
+    /**
+     * Returns the generic sprite entry for a Battlefield Support Asset based on its asset type (and, for vehicles, its
+     * movement mode). This is the fallback used when no chassis/exact sprite is resolved for the asset's linked base
+     * unit, so an asset always yields a sensible top-down icon of the right kind (tank, hover, VTOL, infantry, battle
+     * armor, gun emplacement).
+     */
+    private MekEntry assetGenericFor(BattlefieldSupportAsset asset) {
+        return switch (asset.getAssetType()) {
+            case CONV_INFANTRY -> default_inf;
+            case BATTLE_ARMOR -> default_ba;
+            case EMPLACEMENT -> default_gun_emplacement;
+            case VEHICLE -> switch (asset.getMovementMode()) {
+                case HOVER -> default_hover;
+                case VTOL -> default_vtol;
+                case WIGE -> default_wige;
+                case WHEELED -> default_wheeled;
+                default -> default_tracked;
+            };
+        };
+    }
+
     public void loadFromFile(String filename) throws IOException {
         LOGGER.info("Loading unit icons from {}", filename);
         try (Reader r = new BufferedReader(new FileReader(new MegaMekFile(dir, filename).getFile(),
@@ -365,9 +393,11 @@ public class MekTileset {
                             LOGGER.error("... failed: {}.", e.getMessage(), e);
                         }
                     } else if (tokens.getFirst().equals(CHASSIS_KEY)) {
-                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
+                        chassis.put(tokens.get(1).toUpperCase(Locale.ROOT),
+                              new MekEntry(tokens.get(2), tokens.size() == 4 ? tokens.get(3) : null));
                     } else {
-                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT), new MekEntry(tokens.get(2)));
+                        exact.put(tokens.get(1).toUpperCase(Locale.ROOT),
+                              new MekEntry(tokens.get(2), tokens.size() == 4 ? tokens.get(3) : null));
                     }
                 } else {
                     LOGGER.warn("Malformed line in {}: {}", filename, tokens.toString());
@@ -441,10 +471,16 @@ public class MekTileset {
      */
     public class MekEntry {
         private final String imageFile;
+        private final String modelFile;
         private Image image;
 
         public MekEntry(String imageFile) {
+            this(imageFile, null);
+        }
+
+        public MekEntry(String imageFile, String modelFile) {
             this.imageFile = imageFile;
+            this.modelFile = modelFile;
             image = null;
         }
 
@@ -462,6 +498,10 @@ public class MekTileset {
 
         public String getImageFile() {
             return imageFile;
+        }
+
+        public String getModelFile() {
+            return modelFile;
         }
 
     }

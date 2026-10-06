@@ -98,7 +98,7 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
                   && entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                         .getCover(),
                   ComputeSideTable.sideTable(attackingEntity, entityTarget, weapon.getCalledShot().getCall()))) {
-                // Weapon strikes Partial Cover.            
+                // Weapon strikes Partial Cover.
                 handlePartialCoverHit(entityTarget, vPhaseReport, hit, bldg, hits,
                       nCluster, bldgAbsorbs);
                 return;
@@ -139,6 +139,27 @@ public class InfantryHeatWeaponHandler extends InfantryWeaponHandler {
             }
             vPhaseReport.addElement(report);
         } else {
+            // Only heat-tracking targets can be hurt by the heat itself. Against anything else - vehicles,
+            // infantry, ProtoMeks - the attack falls back to ordinary damage, so say why rather than leaving the
+            // player to wonder where the heat went. True Inferno effects are an SRM-only rule and are declared
+            // before the battle; the F-tag support weapons are incendiary, not Inferno (TM pp. 350-352 errata).
+            // Only on the first cluster: this method runs once per damage grouping, and the reason applies to the
+            // whole attack rather than to each grouping.
+            if (firstHit) {
+                // super.handleEntityDamage() opens with Report.addNewline(vPhaseReport) on the salvo path,
+                // and bSalvo is always true for this handler. That call breaks the LAST report in the vector,
+                // so inserting the explanation first would hand it the line break meant for the line above it
+                // and glue the two together. Give the preceding line its break here, and the explanation then
+                // takes the one super adds.
+                Report.addNewline(vPhaseReport);
+
+                Report noHeatReport = new Report(3407);
+                noHeatReport.subject = subjectId;
+                noHeatReport.indent(2);
+                noHeatReport.addDesc(entityTarget);
+                vPhaseReport.addElement(noHeatReport);
+            }
+
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
         }
     }

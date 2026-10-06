@@ -49,9 +49,37 @@ public class TWBoardTransformer {
         // Utility class
     }
 
+    /**
+     * Builds the final game board from the given map settings without modifying them: surprise board picks are
+     * resolved on an internal copy, so the caller's settings are left untouched. Use this for previews and
+     * simulations where the settings must remain as the player configured them.
+     *
+     * @param sourceMapSettings    the map settings to build the board from; not modified
+     * @param planetaryConditions  the planetary conditions whose weather is baked into the board's terrain
+     * @param options              the game options (bridge CF, random basements) applied to the board
+     *
+     * @return the assembled game board
+     */
     public static Board instantiateBoard(MapSettings sourceMapSettings, PlanetaryConditions planetaryConditions,
           IGameOptions options) {
         var mapSettings = MapSettings.getInstance(sourceMapSettings);
+        return instantiateBoardResolvingSettings(mapSettings, planetaryConditions, options);
+    }
+
+    /**
+     * Builds the final game board from the given map settings, resolving surprise board picks <i>into</i> the
+     * given settings: any {@code [SURPRISE]} selection is replaced with the concrete board name that was chosen.
+     * The server uses this at game start so that the settings it keeps (and later logs and saves) record the
+     * board that was actually played.
+     *
+     * @param mapSettings          the map settings to build the board from; surprise picks are resolved in place
+     * @param planetaryConditions  the planetary conditions whose weather is baked into the board's terrain
+     * @param options              the game options (bridge CF, random basements) applied to the board
+     *
+     * @return the assembled game board
+     */
+    public static Board instantiateBoardResolvingSettings(MapSettings mapSettings,
+          PlanetaryConditions planetaryConditions, IGameOptions options) {
         Board newBoard = setupBoardFromMapSettings(mapSettings);
         setupOptions(options, newBoard);
         setupPlanetaryConditions(planetaryConditions, newBoard);

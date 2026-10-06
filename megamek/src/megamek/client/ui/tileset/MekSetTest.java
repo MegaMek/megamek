@@ -70,7 +70,7 @@ public class MekSetTest {
     }
 
     static boolean isValidContentLine(List<String> tokens) {
-        return (tokens.size() == 3) && (tokens.getFirst().equals(MekTileset.CHASSIS_KEY) || tokens.getFirst()
+        return (tokens.size() == 3 || tokens.size() == 4) && (tokens.getFirst().equals(MekTileset.CHASSIS_KEY) || tokens.getFirst()
               .equals(MekTileset.MODEL_KEY));
     }
 

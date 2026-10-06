@@ -44,7 +44,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -61,7 +63,9 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
+import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IOption;
 import megamek.common.options.Option;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -112,6 +116,9 @@ class ComputeTest {
         when(mockTrueBoolOpt.booleanValue()).thenReturn(true);
         when(mockFalseBoolOpt.booleanValue()).thenReturn(false);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockTrueBoolOpt);
+        IOption mockRulesSystemOption = mock (IOption.class);
+        when(mockRulesSystemOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockRulesSystemOption);
         when(mockGameOptions.intOption(OptionsConstants.ALLOWED_YEAR)).thenReturn(3151);
 
         team1.addPlayer(player1);
@@ -711,6 +718,37 @@ class ComputeTest {
               "Right leg-mounted weapon should be impossible to fire when prone");
     }
 
+    @Test
+    @DisplayName("scatter stays on the straight-line path for a negative margin")
+    void scatterStaysOnStraightLineForNegativeMargin() {
+        // Regression for issues 7695 and 8227. On a miss, toHit.getMoS() is negative, and the old
+        // code passed it straight into Coords.translated(). That truncates toward zero on the four
+        // diagonal directions (e.g. -5 / 2 == -2 instead of the floored -3), so the shot landed one
+        // hex off the straight-line scatter path. scatter() now uses the magnitude, so every result
+        // must sit exactly |margin| hexes away on one of the six straight-line directions.
+        for (int startX : new int[] { 6, 7 }) { // even and odd column parity behave differently
+            Coords target = new Coords(startX, 9);
+            for (int distance : new int[] { 1, 3, 5, 6 }) {
+                Set<Coords> straightLineHexes = new HashSet<>();
+                for (int direction = 0; direction < 6; direction++) {
+                    Coords landing = target.translated(direction, distance);
+                    assertEquals(distance, target.distance(landing),
+                          "a straight-line hex must be exactly " + distance + " hexes from the target");
+                    straightLineHexes.add(landing);
+                }
+
+                for (int trial = 0; trial < 300; trial++) {
+                    Coords scattered = Compute.scatter(target, -distance);
+                    assertTrue(straightLineHexes.contains(scattered),
+                          "scatter(-" + distance + ") from " + target.getBoardNum()
+                                + " drifted off the straight line to " + scattered.getBoardNum());
+                    assertEquals(distance, target.distance(scattered),
+                          "a scattered hex must be exactly " + distance + " hexes from the target");
+                }
+            }
+        }
+    }
+
     /**
      * Tests for
      * {@link Compute#getRangeMods(Game, megamek.common.units.Entity, WeaponMounted, AmmoMounted,
@@ -938,6 +976,30 @@ class ComputeTest {
     }
 
     @Test
+    void testDirectBlowInfantryMOSCannotShiftPastEndOfTable() {
+        // A heavy flamer is already 6D6, the second-to-last row of the Non-Conventional Damage against Infantry
+        // table. A direct blow that shifts it two rows would run off the end of the table; the shift must stop at
+        // 7D6 rather than falling through to the weapon's base damage.
+        double originalDamage = 4.0;
+        int weaponType = WeaponType.WEAPON_BURST_6D6;
+        Vector<Report> reports = new Vector<>();
+        int newDamage = directBlowInfantryDamage(
+              originalDamage,
+              3,
+              weaponType,
+              false,
+              false,
+              1,
+              reports,
+              1
+        );
+        assertTrue((newDamage >= 7) && (newDamage <= 42),
+              "A 6D6 burst shifted past the end of the table must roll 7D6 (7-42), not fall back to the weapon's "
+                    + "base damage of 4; got " + newDamage);
+        assertEquals(1, reports.size(), "Report size");
+    }
+
+    @Test
     void testDirectBlowInfantryMOS3BurstInBuilding() {
         // Burst Weapon in the building attacking infantry also in the building.
         // 1D6 -> 4D6 -> 4D6 / 2
@@ -956,7 +1018,7 @@ class ComputeTest {
         );
         assertTrue(newDamage >= 2.0 && newDamage <= 12.0, "10 -> 4D6 / 2.0, rounded up: " + newDamage);
         assertEquals(1, reports.size(), "Report size");
-        assertTrue(reports.getFirst().text().contains("in building"));
+        assertTrue(reports.getFirst().text().contains("inside the building"), "the report says why the damage halved");
     }
 
     /**
@@ -1029,5 +1091,80 @@ class ComputeTest {
 
             assertFalse(Compute.isInBuilding(getGame(), mek));
         }
+    }
+
+    @Test
+    void groundMoverRevealsAHiddenUnitAsItPasses() {
+        // TW p.260: the shot follows from being revealed by enemy movement, and the target may continue its move
+        // afterwards, which is only possible part way through a move. Walking past used to reveal nothing.
+        Entity groundMover = mock(Entity.class);
+        when(groundMover.isAirborne()).thenReturn(false);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 0, false),
+              "moving into the hidden unit's own hex reveals it");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(groundMover, 1, false),
+              "moving adjacent reveals it, whether or not the mover stops there");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(groundMover, 2, false),
+              "two hexes away is out of reach");
+    }
+
+    @Test
+    void airborneMoverRevealsOnlyWhatItFliesOverWithoutAProbe() {
+        Entity flyer = mock(Entity.class);
+        when(flyer.isAirborne()).thenReturn(true);
+        when(flyer.getBAPRange()).thenReturn(0);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0, false), "it reveals what it overflies");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 1, false),
+              "without an Active Probe an adjacent hex is not revealed");
+    }
+
+    @Test
+    void airborneMoverWithAProbeRevealsAnAdjacentHex() {
+        Entity flyerWithProbe = mock(Entity.class);
+        when(flyerWithProbe.isAirborne()).thenReturn(true);
+        when(flyerWithProbe.getBAPRange()).thenReturn(4);
+
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 1, false),
+              "an Active Probe extends the reveal to an adjacent hex");
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyerWithProbe, 0, false),
+              "with a probe the reveal is the adjacent hex, not the overflown one");
+    }
+
+    @Test
+    void vtolOrWiGEFlyingOverAHiddenUnitDoesNotRevealIt() {
+        // TW errata v12.0, p.260 (Airborne Units): non-aerospace airborne units moving over hexes do not reveal
+        // hidden units in them. Passing next to one, or ending the move over or next to it, still does.
+        Entity flyer = mock(Entity.class);
+        when(flyer.isAirborne()).thenReturn(false);
+
+        assertFalse(Compute.revealsHiddenUnitForPointblankShot(flyer, 0, true),
+              "flying over the hidden unit's hex does not reveal it");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 1, true),
+              "passing next to the hidden unit still reveals it, as for a ground unit");
+        assertTrue(Compute.revealsHiddenUnitForPointblankShot(flyer, 0, false),
+              "ending the move over the hidden unit reveals it");
+    }
+
+    @Test
+    void onlyAVTOLOrWiGEInFlightAndNotStoppingIsAnOverflight() {
+        MoveStep flyingStep = mock(MoveStep.class);
+        when(flyingStep.getClearance()).thenReturn(2);
+        MoveStep groundStep = mock(MoveStep.class);
+        when(groundStep.getClearance()).thenReturn(0);
+
+        Entity vtol = mock(Entity.class);
+        when(vtol.getMovementMode()).thenReturn(EntityMovementMode.VTOL);
+        Entity wige = mock(Entity.class);
+        when(wige.getMovementMode()).thenReturn(EntityMovementMode.WIGE);
+        Entity tank = mock(Entity.class);
+        when(tank.getMovementMode()).thenReturn(EntityMovementMode.TRACKED);
+
+        assertTrue(Compute.isNonAerospaceOverflight(vtol, flyingStep, false), "a VTOL in flight flies over the hex");
+        assertTrue(Compute.isNonAerospaceOverflight(wige, flyingStep, false), "a WiGE in flight flies over the hex");
+        assertFalse(Compute.isNonAerospaceOverflight(wige, flyingStep, true),
+              "the hex where the move ends is not flown over");
+        assertFalse(Compute.isNonAerospaceOverflight(wige, groundStep, false), "a WiGE on the ground is not flying");
+        assertFalse(Compute.isNonAerospaceOverflight(tank, flyingStep, false), "a ground vehicle never flies over");
     }
 }

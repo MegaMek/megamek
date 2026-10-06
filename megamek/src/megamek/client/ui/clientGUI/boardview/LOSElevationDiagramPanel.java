@@ -2261,9 +2261,6 @@ class LOSElevationDiagramPanel extends JPanel {
     }
 
     /**
-     * Draws the LOS line from attacker to target.
-     */
-    /**
      * Draws zigzag "break" indicators at the top and/or bottom edges when the elevation range has been capped. This is
      * a standard engineering diagram convention indicating that the axis has been truncated. A small label shows the
      * actual extreme elevation beyond the visible range.

@@ -369,8 +369,9 @@ public class SBFReportPanel extends JPanel implements ActionListener, HyperlinkL
             //            String text = currentClient.receiveReport(currentClient.getGame().getReports(round));
         }
 
-        // add the new current phase tab
-        tabs.add(Messages.getString("MiniReportDisplay.Phase"), loadHtmlScrollPane(currentClient.phaseReport));
+        // add the new current phase tab, labeled with its round and phase name (e.g. "Round 2 - Firing Report")
+        tabs.add(Messages.getString("MiniReportDisplay.livePhaseTab", String.valueOf(numRounds), phase.localizedName()),
+              loadHtmlScrollPane(currentClient.phaseReport));
 
         tabs.setSelectedIndex(tabs.getTabCount() - 1);
         tabs.setMinimumSize(new Dimension(0, 0));

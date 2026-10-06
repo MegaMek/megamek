@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,9 +70,13 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
         WeaponMounted laser = weaponAttackAction.getEntity(game).getWeapon(weaponAttackAction.getWeaponId());
 
         if ((roll.getIntValue() == 2) && laser.curMode().getName().startsWith("Pulse")) {
-            vPhaseReport.addAll(gameManager.explodeEquipment(laser.getEntity(),
-                  laser.getLocation(),
-                  laser.getLinkedBy()));
+            // The RISC Laser Pulse Module explodes on a 2. Edge may reroll the malfunction check.
+            int edgeReroll = rerollRiscMalfunctionWithEdge(attackingEntity, subjectId, vPhaseReport);
+            if (riscStillMalfunctions(edgeReroll, 2)) {
+                vPhaseReport.addAll(gameManager.explodeEquipment(laser.getEntity(),
+                      laser.getLocation(),
+                      laser.getLinkedBy()));
+            }
         }
         return false;
     }
@@ -113,8 +117,8 @@ public class PulseLaserWeaponHandler extends EnergyWeaponHandler {
 
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(toReturn,
-                  bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
         } else if (bDirect) {

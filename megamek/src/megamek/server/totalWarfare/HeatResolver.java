@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -49,20 +49,15 @@ import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
-import megamek.common.units.Aero;
-import megamek.common.units.ConvFighter;
-import megamek.common.units.Dropship;
-import megamek.common.units.Entity;
-import megamek.common.units.FighterSquadron;
-import megamek.common.units.Jumpship;
-import megamek.common.units.Mek;
-import megamek.common.units.Terrains;
+import megamek.common.rules.HeatShutdownTargets;
+import megamek.common.rules.RulesHeat;
+import megamek.common.units.*;
 import megamek.logging.MMLogger;
-import megamek.server.ServerHelper;
 
 class HeatResolver extends AbstractTWRuleHandler {
 
@@ -70,6 +65,49 @@ class HeatResolver extends AbstractTWRuleHandler {
 
     HeatResolver(TWGameManager gameManager) {
         super(gameManager);
+    }
+
+    /**
+     * Adds movement-phase heat to every in-game unit based on how it moved this turn, itemizing the source for the heat
+     * breakdown display.
+     */
+    void addMovementHeat() {
+        for (Entity entity : getGame().inGameTWEntities()) {
+            if (entity.hasDamagedRHS()) {
+                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.damagedRadicalHeatSink"));
+            }
+
+            if ((entity.getMovementMode() == EntityMovementMode.BIPED_SWIM) ||
+                  (entity.getMovementMode() == EntityMovementMode.QUAD_SWIM)) {
+                // UMU heat
+                entity.changeHeatBuildup(1, Messages.getString("HeatBreakdown.movementUMU"));
+                continue;
+            }
+
+            // build up heat from movement
+            if (entity.moved == EntityMovementType.MOVE_NONE) {
+                entity.changeHeatBuildup(entity.getStandingHeat(),
+                      Messages.getString("HeatBreakdown.movementStanding"));
+            } else if ((entity.moved == EntityMovementType.MOVE_WALK) ||
+                  (entity.moved == EntityMovementType.MOVE_VTOL_WALK) ||
+                  (entity.moved == EntityMovementType.MOVE_CAREFUL_STAND)) {
+                entity.changeHeatBuildup(entity.getWalkHeat(),
+                      Messages.getString("HeatBreakdown.movementWalking"));
+            } else if ((entity.moved == EntityMovementType.MOVE_RUN) ||
+                  (entity.moved == EntityMovementType.MOVE_VTOL_RUN) ||
+                  (entity.moved == EntityMovementType.MOVE_SKID)) {
+                entity.changeHeatBuildup(entity.getRunHeat(),
+                      Messages.getString("HeatBreakdown.movementRunning"));
+            } else if ((entity.moved == EntityMovementType.MOVE_JUMP)
+                  && !entity.isJumpingWithMechanicalBoosters()) {
+                entity.changeHeatBuildup(entity.getJumpHeat(entity.delta_distance),
+                      Messages.getString("HeatBreakdown.movementJumping"));
+            } else if ((entity.moved == EntityMovementType.MOVE_SPRINT) ||
+                  (entity.moved == EntityMovementType.MOVE_VTOL_SPRINT)) {
+                entity.changeHeatBuildup(entity.getSprintHeat(),
+                      Messages.getString("HeatBreakdown.movementSprinting"));
+            }
+        }
     }
 
     /**
@@ -147,7 +185,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 // Increment consecutive RHS uses for this activation attempt (success or failure),
                 // then look up the target number based on the updated count.
                 entity.setConsecutiveRHSUses(entity.getConsecutiveRHSUses() + 1);
-                int targetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
+                int targetNumber =
+                      Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses());
                 boolean rhsFailure = diceRoll.getIntValue() < targetNumber;
 
                 report = new Report(5541);
@@ -160,8 +199,8 @@ class HeatResolver extends AbstractTWRuleHandler {
 
                 // Show RHS stress level and next activation TN (only if RHS didn't fail)
                 if (!rhsFailure) {
-                    int nextTargetNumber = ServerHelper.radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses()
-                          + 1);
+                    int nextTargetNumber =
+                          Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(entity.getConsecutiveRHSUses() + 1);
                     report = new Report(5547);
                     report.indent(2);
                     report.subject = entity.getId();
@@ -200,7 +239,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                 int decrement = entity.hasRHSWentUp() ? 2 : 1;
                 int reducedStress = Math.max(0, currentStress - decrement);
                 // If activated next turn, stress will increment from reduced level
-                int nextActivationTN = ServerHelper.radicalHeatSinkSuccessTarget(reducedStress + 1);
+                int nextActivationTN =
+                      Game.rulesManager.getRulesEquipment().radicalHeatSinkSuccessTarget(reducedStress + 1);
                 report = new Report(5548);
                 report.indent();
                 report.subject = entity.getId();
@@ -602,23 +642,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                             report.addDesc(entity);
                         } else {
                             // roll for startup
-                            int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                            if (mtHeat) {
-                                startup -= 5;
-                                switch (entity.getCrew().getPiloting()) {
-                                    case 0:
-                                    case 1:
-                                        startup -= 2;
-                                        break;
-                                    case 2:
-                                    case 3:
-                                        startup -= 1;
-                                        break;
-                                    case 6:
-                                    case 7:
-                                        startup += 1;
-                                }
-                            }
+                            // always the plain Avoid number; the Avoiding Shutdown rule covers only avoiding one
+                            int startup = HeatShutdownTargets.restart(entity.heat, hotDogMod).getValue();
                             Roll diceRoll = Compute.rollD6(2);
                             report = new Report(5050);
                             report.subject = entity.getId();
@@ -689,27 +714,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                         addReport(report);
                         // No shutdown - TCP automatically avoids
                     } else {
-                        int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                        TargetRoll target;
-                        if (mtHeat) {
-                            shutdown -= 5;
-                            target = new TargetRoll(shutdown, "Base TacOps shutdown TN");
-                            switch (entity.getCrew().getPiloting()) {
-                                case 0:
-                                case 1:
-                                    target.addModifier(-2, "Piloting skill");
-                                    break;
-                                case 2:
-                                case 3:
-                                    target.addModifier(-1, "Piloting skill");
-                                    break;
-                                case 6:
-                                case 7:
-                                    target.addModifier(+1, "Piloting skill");
-                            }
-                        } else {
-                            target = new TargetRoll(shutdown, "Base shutdown TN");
-                        }
+                        TargetRoll target = shutdownAvoidanceTarget(entity, hotDogMod);
                         if (mek.hasRiscHeatSinkOverrideKit()) {
                             target.addModifier(-2, "RISC Heat Sink Override Kit");
                         }
@@ -840,7 +845,7 @@ class HeatResolver extends AbstractTWRuleHandler {
             // heat effects: mekwarrior damage
             // N.B. The pilot may already be dead.
             int lifeSupportCritCount;
-            boolean torsoMountedCockpit = mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED;
+            boolean torsoMountedCockpit = mek.hasTorsoMountedCockpit();
             if (torsoMountedCockpit) {
                 lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
@@ -848,6 +853,12 @@ class HeatResolver extends AbstractTWRuleHandler {
                 lifeSupportCritCount += entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
                       Mek.LOC_LEFT_TORSO);
+                if (mek.hasVirtualRealityPilotingPod()) {
+                    // IO:AE p.63: the pod's third life support slot sits in the center torso
+                    lifeSupportCritCount += entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
+                          Mek.SYSTEM_LIFE_SUPPORT,
+                          Mek.LOC_CENTER_TORSO);
+                }
             } else {
                 lifeSupportCritCount = entity.getHitCriticalSlots(CriticalSlot.TYPE_SYSTEM,
                       Mek.SYSTEM_LIFE_SUPPORT,
@@ -861,44 +872,26 @@ class HeatResolver extends AbstractTWRuleHandler {
                 damageHeat += 5;
             }
             if ((lifeSupportCritCount > 0) &&
-                  ((damageHeat >= 15) || (torsoMountedCockpit && (damageHeat > 0))) &&
                   !entity.getCrew().isDead() &&
                   !entity.getCrew().isDoomed() &&
                   !entity.getCrew().isEjected()) {
                 int heatLimitDesc = 1;
                 int damageToCrew = 0;
-                if ((damageHeat >= 47) && mtHeat) {
-                    // mekwarrior takes 5 damage
-                    heatLimitDesc = 47;
-                    damageToCrew = 5;
-                } else if ((damageHeat >= 39) && mtHeat) {
-                    // mekwarrior takes 4 damage
-                    heatLimitDesc = 39;
-                    damageToCrew = 4;
-                } else if ((damageHeat >= 32) && mtHeat) {
-                    // mekwarrior takes 3 damage
-                    heatLimitDesc = 32;
-                    damageToCrew = 3;
-                } else if (damageHeat >= 25) {
-                    // mekwarrior takes 2 damage
-                    heatLimitDesc = 25;
-                    damageToCrew = 2;
-                } else if (damageHeat >= 15) {
-                    // mekwarrior takes 1 damage
-                    heatLimitDesc = 15;
-                    damageToCrew = 1;
+
+                RulesHeat.LifeSupportHeat lifeSupportHeat =
+                      Game.rulesManager.getRulesHeat().checkLifeSupportHeat(damageHeat,
+                      torsoMountedCockpit, mtHeat, entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT));
+                if (lifeSupportHeat != null) {
+                    heatLimitDesc = lifeSupportHeat.heatLevel();
+                    damageToCrew = lifeSupportHeat.damageAmount();
+                    report = new Report(5070);
+                    report.subject = entity.getId();
+                    report.addDesc(entity);
+                    report.add(heatLimitDesc);
+                    report.add(damageToCrew);
+                    addReport(report);
+                    addReport(gameManager.damageCrew(entity, damageToCrew));
                 }
-                if ((mek.getCockpitType() == Mek.COCKPIT_TORSO_MOUNTED) &&
-                      !entity.hasAbility(OptionsConstants.MD_PAIN_SHUNT)) {
-                    damageToCrew += 1;
-                }
-                report = new Report(5070);
-                report.subject = entity.getId();
-                report.addDesc(entity);
-                report.add(heatLimitDesc);
-                report.add(damageToCrew);
-                addReport(report);
-                addReport(gameManager.damageCrew(entity, damageToCrew));
             } else if (mtHeat &&
                   (entity.heat >= 32) &&
                   !entity.getCrew().isDead() &&
@@ -1199,24 +1192,8 @@ class HeatResolver extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                     } else {
                         // roll for startup
-                        int startup = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                        if (mtHeat) {
-                            startup -= 5;
-                            switch (entity.getCrew().getPiloting()) {
-                                case 0:
-                                case 1:
-                                    startup -= 2;
-                                    break;
-                                case 2:
-                                case 3:
-                                    startup -= 1;
-                                    break;
-                                case 6:
-                                case 7:
-                                    startup += 1;
-                                    break;
-                            }
-                        }
+                        // always the plain Avoid number; the Avoiding Shutdown rule covers only avoiding one
+                        int startup = HeatShutdownTargets.restart(entity.heat, hotDogMod).getValue();
                         Roll diceRoll = entity.getCrew().rollPilotingSkill();
                         report = new Report(5050);
                         report.subject = entity.getId();
@@ -1288,24 +1265,7 @@ class HeatResolver extends AbstractTWRuleHandler {
                     vPhaseReport.add(report);
                     // No shutdown - TCP automatically avoids
                 } else {
-                    int shutdown = (4 + (((entity.heat - 14) / 4) * 2)) - hotDogMod;
-                    if (mtHeat) {
-                        shutdown -= 5;
-                        switch (entity.getCrew().getPiloting()) {
-                            case 0:
-                            case 1:
-                                shutdown -= 2;
-                                break;
-                            case 2:
-                            case 3:
-                                shutdown -= 1;
-                                break;
-                            case 6:
-                            case 7:
-                                shutdown += 1;
-                                break;
-                        }
-                    }
+                    int shutdown = shutdownAvoidanceTarget(entity, hotDogMod).getValue();
                     Roll diceRoll = Compute.rollD6(2);
                     report = new Report(5060);
                     report.subject = entity.getId();
@@ -1435,6 +1395,27 @@ class HeatResolver extends AbstractTWRuleHandler {
                 vPhaseReport.add(report);
             }
         }
+    }
+
+    /**
+     * Returns the target number for a unit to avoid a heat shutdown under the rules in play. The ruleset in play
+     * decides whether the Avoiding Shutdown rule (TO:AR p.102) applies; both play it when its game option is on.
+     *
+     * @param entity         the unit rolling to avoid shutdown, at 14 heat or more
+     * @param hotDogModifier how much the Hot Dog ability lowers the roll, or 0 without it
+     *
+     * @return the target number, with each modifier named. Package-visible for testing.
+     */
+    TargetRoll shutdownAvoidanceTarget(Entity entity, int hotDogModifier) {
+        boolean isAvoidingShutdownOptionOn = getGame().getOptions()
+              .booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN);
+        boolean usesAvoidingShutdown = Game.rulesManager.getRulesHeat().usesAvoidingShutdown(isAvoidingShutdownOptionOn);
+        TargetRoll target = HeatShutdownTargets.shutdownAvoidance(entity.heat, entity.getCrew().getPiloting(),
+              hotDogModifier, usesAvoidingShutdown);
+        LOGGER.debug("[HeatShutdown] {} at heat {}: avoid on {} ({}); Avoiding Shutdown option {}, in play {}",
+              entity.getDisplayName(), entity.heat, target.getValue(), target.getDesc(), isAvoidingShutdownOptionOn,
+              usesAvoidingShutdown);
+        return target;
     }
 
     /**

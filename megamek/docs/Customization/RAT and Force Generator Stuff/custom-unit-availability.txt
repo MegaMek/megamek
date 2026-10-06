@@ -1,0 +1,382 @@
+Custom Unit Availability
+Getting your own units to show up in the Force Generator
+
+
+Description
+
+The RAT Generator and Force Generator only pick units they have availability data for. That data
+lives in the era files in data/forcegenerator (2398.xml through 3160.xml). Those files ship with
+MegaMek and get overwritten every time you update, so editing them is not a good place to put your
+own work.
+
+Instead, a unit can carry its own availability inside its own unit file. Add one line to your .mtf
+or .blk and the Force Generator will start rolling your unit for the factions you name, and an
+update will not wipe it. You can do this on your own custom units, or on canon units to change how
+they generate (see "Overriding canon units" near the end).
+
+This only affects units you have written availability into. Every other unit behaves exactly as
+before.
+
+There are two ways to set availability: the Availability tab in MegaMekLab, or by editing the file
+by hand. The tab is the easy way and is covered first. Both write the same lines to the same file,
+so you can use whichever you like and switch between them.
+
+
+The MegaMekLab Availability tab
+
+MegaMekLab has an Availability tab in the unit editor, next to Quirks. It is shown by default; if
+you do not use it you can hide it under Options → General, "Show the Force Generator Availability
+tab". A change to that setting takes effect on the next unit you open.
+
+Do this tab last. Build the unit and set its introduction year on the first tab first, because the
+tab uses that year to decide which factions to offer.
+
+The order that works:
+
+1. Click "+ Add factions..." A dialog opens. It lists the factions that exist in the unit's
+   introduction year, which is a short list, not all four hundred. Type in the filter box to narrow
+   it. Tick the factions you want and click Add.
+
+   - "Show minor factions" adds the smaller states to the list.
+   - "Show factions from later eras" adds factions that do not exist yet at the unit's intro year
+     but appear later, such as the Republic of the Sphere. Use this with a year range so the unit
+     only reaches them once they exist.
+   - The "Groups" box at the top holds the four umbrella keys (Everybody, All Inner Sphere, All
+     Clans, All Periphery). Ticking one reaches every faction in that group at once.
+
+2. Select a faction row and set how common the unit is with the slider. It runs 0 to 10 and says
+   the number in words (rare, uncommon, common, and so on). Below it the tab names a few canon
+   designs that are about as common at that number, so you have something real to compare against.
+
+3. Set the years if you want to. "From" and "To" limit the faction to a range of years. Tick
+   "never stops" to leave the end open. Leaving "From" at the unit's intro year means "from when the
+   unit first exists".
+
+   To give one faction a different availability early and late, add the SAME faction again and give
+   the second row a different year range. For example, the Federated Suns common from 3050 to 3060,
+   then rare from 3061 on: two rows, both Federated Suns, different ranges and numbers.
+
+4. Tick any Mission roles that apply. Only the roles that make sense for this unit type are shown.
+
+Two shortcuts:
+
+- "Copy numbers from a unit..." fills the table from a canon design you pick. Start from something
+  whose commonness you already know, then adjust.
+- The red text at the top warns you about problems: a faction that does not exist in the unit's
+  year, a year range that does not line up with the game's eras, and so on.
+
+If the unit is a canon unit, the tab warns you in red that your numbers will REPLACE the canon
+availability for the factions you list. See "Overriding canon units" below.
+
+The tab writes the same file lines described in the rest of this document, so read on if you want to
+know exactly what it produces or you would rather edit the file by hand.
+
+
+Quick start (editing the file by hand)
+
+1. Put your custom unit in your user directory. Set that directory in MegaMek under
+   Client Settings → User Files Directory. This is the same folder MegaMek already uses to find
+   your custom units in the unit selector.
+
+2. Open the unit file in a text editor and add one line:
+
+       availability:LA:6
+
+   That says the Lyran Commonwealth fields this unit, at a fairly common rate.
+
+3. In MegaMek, choose File → Units → Rebuild Unit Cache. You must do this, or MegaMek will keep
+   using the old copy of your unit and ignore the new line.
+
+4. Open File → Units → Reinforce from Unit Generator…, go to the RAT Generator tab, pick the
+   Lyran Commonwealth and a year, and hit Generate. Your unit should be in the table.
+
+If you edit an availability line while MegaMek is running, rebuild the cache AND restart MegaMek.
+The Force Generator reads its data once at startup.
+
+
+The availability number
+
+The number after the faction code says how common the unit is. It runs from 0 to 10:
+
+       0   none
+       2   rare
+       4   uncommon
+       6   typical
+       8   common
+       10  ubiquitous
+
+Every 2 points doubles how often the unit shows up. A unit at 8 appears twice as often as one at 6,
+and four times as often as one at 4.
+
+If you have no idea what to use, use 6. That is the value the canon data uses when the source books
+give no hint either way.
+
+A good way to pick a number is to look at a unit you already know. Open a canon era file such as
+data/forcegenerator/3050.xml, find a design of similar rarity, and copy its number.
+
+
+Finding faction codes
+
+The faction code is NOT the faction's name. Look in the data/universe/factions folder. Each faction
+has its own .yml file, and the code you want is the value of the "key:" line inside it.
+
+For example, data/universe/factions/LA.yml contains:
+
+       key: LA
+       name: Lyran Commonwealth
+
+So the code for the Lyran Commonwealth is LA.
+
+Some codes you may want:
+
+       LA     Lyran Commonwealth        FS     Federated Suns
+       DC     Draconis Combine          CC     Capellan Confederation
+       FWL    Free Worlds League        MERC   Mercenary
+       CJF    Clan Jade Falcon          CDS    Clan Sea Fox
+       CWE    Wolf Empire               CWIE   Clan Wolf-in-Exile
+
+Watch out for factions that come and go. Clan Wolf (CW) does not exist in 3150 — by then it has
+become the Wolf Empire (CWE) and Clan Wolf-in-Exile (CWIE). If you use a code for a faction that is
+not around in the year you are generating, your unit simply will not appear.
+
+If you get the code wrong, MegaMek writes a line to megamek.log:
+
+       [UnitAvailability] Unit X declares availability for unknown faction 'Y'. Check
+       the faction code against data/universe/factions. The entry is ignored.
+
+Check the log first if your unit does not show up.
+
+
+Covering lots of factions at once
+
+Four codes cover whole groups, so you do not have to list forty factions by hand:
+
+       IS          every Inner Sphere faction
+       CLAN        every Clan
+       Periphery   every Periphery faction
+       General     everybody
+
+A faction that you do not name directly falls back to its parent, and eventually to one of these.
+So "availability:IS:4" makes your unit available to the Draconis Combine even though you never
+mentioned the Combine.
+
+You can mix them. If you name a faction directly, that value wins over the group value:
+
+       availability:CLAN:5,CWE:7,CWIE:6
+
+That means: every Clan can field this at 5, but the Wolf Empire fields it at 7 and Wolf-in-Exile at
+6.
+
+
+Several factions
+
+Separate them with commas. There is no limit:
+
+       availability:FS:5,LA:3
+
+
+Year ranges
+
+By default the unit is available from its introduction year (the "era:" line in the file) onward,
+and never stops. If you want to control that, put a year range in front of the codes:
+
+       availability:3067-3085 FS:7,LA:6
+
+The unit is only available between those years. You can leave the end open:
+
+       availability:3067- FS:7
+
+You can leave the start open too. This runs from the unit's introduction year through 3068:
+
+       availability:-3068 FS:2
+
+You can separate the range from the codes with a space or a colon, whichever reads better to you.
+These two lines mean the same thing:
+
+       availability:3067-3085 FS:7,LA:6
+       availability:3067-3085:FS:7,LA:6
+
+You can use more than one availability line to change the numbers over time:
+
+       availability:3049-3066 FS:4
+       availability:3067-3085 FS:7
+
+That is a unit that was uncommon, then became common after 3067.
+
+Line your ranges up with the game's eras. The Force Generator works in eras, not single years, so a
+change in the middle of an era is spread across it instead of happening on the exact year. If you
+want a clean change, end one range the year before an era begins and start the next range on the
+era's first year. The MegaMekLab Availability tab warns you when a range does not line up.
+
+
+More than one variant of the same design
+
+If you build several variants that share a chassis name, each file carries its own line. The
+Force Generator handles the rest.
+
+       Grimjack GRM-1A.mtf     availability:FS:5
+       Grimjack GRM-2A.mtf     availability:FS:3
+       Grimjack GRM-3C.mtf     availability:FS:1
+
+Grimjacks as a whole show up at 5, the highest number you gave. Adding more variants does NOT make
+the design more common — the variants split the same share between them. When a Grimjack does come
+up, it is a 1A about 57% of the time, a 2A 29%, and a 3C 14%.
+
+So to make one variant rarer than another, just give it a lower number.
+
+Each variant is only offered to the factions it names. If only the GRM-1A lists LA, then a Lyran
+Grimjack is always a GRM-1A.
+
+
+Custom variants of an existing design
+
+This is the most common case: you have built a new variant of a canon Mek, say a Rakshasa MDG-3D.
+Your file sets the availability for YOUR variant only. The canon variants are left alone.
+
+Two rules apply:
+
+  1. If the faction already fields that chassis, your number cannot change how common the chassis
+     is. Canon says the Federated Suns field the Rakshasa at 3, and it stays at 3 no matter what you
+     write. Your variant simply joins the pool of Rakshasas the Fed Suns can get.
+
+  2. If the faction does NOT field that chassis, your line opens it up. Canon never gives the
+     Rakshasa to the Draconis Combine. Writing "availability:IS:4" in your MDG-3D means the Combine
+     can now field Rakshasas — and the only one they can get is your MDG-3D, because the canon
+     variants are not available to them.
+
+You cannot use this to make a canon design more common than canon says it is. You can only add your
+own variant to the mix, and hand it to factions that did not have the design before.
+
+
+Overriding canon units
+
+You can put an availability line on a canon unit and change how it generates. The line replaces the
+canon numbers for the factions you list. Factions you do not list keep their canon values.
+
+For example, if you add this to the canon Archer ARC-2R:
+
+       availability:FS:8
+
+then the Federated Suns field Archers as "common" instead of whatever canon says, while every other
+faction keeps its canon rating. The new number wins even if it is lower than canon.
+
+MegaMek writes a line to megamek.log each time, so you can see it happened:
+
+       [UnitAvailability] Canon unit Archer ARC-2R is overridden by the availability in its own unit
+       file. The values in the file replace the canon data for the factions it names.
+
+Two things to keep in mind:
+
+  - This changes canon for everyone who installs the file. If you share a unit pack that edits canon
+    units, it changes how canon forces generate in their game too. That is why every override is
+    logged.
+
+  - A unit counts as canon if its name matches the official unit list, no matter which folder the
+    file sits in.
+
+If you want a new design rather than a changed canon one, give it a NEW model name. Archer ARC-9X,
+not Archer ARC-2R. Then it is your own variant and the custom-variant rules in the previous section
+apply, so it cannot change how common the canon Archer is for factions that already field it.
+
+
+Mission roles
+
+The Force Generator can build forces around a role, such as a fire support lance. If you want your
+unit considered for those, add a mission roles line:
+
+       missionroles:fire_support,urban
+
+This is NOT the same as the "role:" line already in your unit file. That one (Sniper, Brawler,
+Juggernaut, and so on) is used by the Princess bot to decide how to fight. The missionroles line is
+used only by the Force Generator to decide what to build. You can have both.
+
+If you leave the line out, MegaMek works out some roles from the unit itself, which is usually good
+enough.
+
+Valid values:
+
+       recon             fire_support      sr_fire_support   spotter
+       command           urban             cavalry           raider
+       inf_support       anti_aircraft     anti_infantry     anti_mek
+       artillery         missile_artillery mixed_artillery   incendiary
+       ew_support        specops           engineer          minesweeper
+       minelayer         apc               cargo             support
+       civilian          training          assault           bomber
+       escort            interceptor       ground_support    marine
+       mountaineer       xct               paratrooper       field_gun
+       mek_carrier       asf_carrier       vee_carrier       infantry_carrier
+       ba_carrier        protomek_carrier  troop_carrier     tug
+       pocket_warship    corvette          destroyer         frigate
+       cruiser           battleship        omni              mechanized_ba
+       mag_clamp
+
+
+Vehicles and other .blk units
+
+Combat vehicles, aerospace fighters, battle armor, and everything else use .blk files instead of
+.mtf. The same information goes in as blocks. Put one availability entry per line:
+
+       <availability>
+       FS:5,LA:3
+       3067-3085 FS:7,LA:6
+       </availability>
+
+       <missionroles>
+       fire_support,urban
+       </missionroles>
+
+
+A complete example
+
+A custom Mek, introduced in 3049, fielded by the Fed Suns and less often by the Lyrans, that
+becomes more common after the Clan Invasion, and is good at fire support:
+
+       chassis:Grimjack
+       model:GRM-1A
+       Config:Biped
+       techbase:Inner Sphere
+       era:3049
+       rules level:2
+       role:Sniper
+       availability:3049-3066 FS:5,LA:3
+       availability:3067- FS:7,LA:5
+       missionroles:fire_support
+
+
+If your unit does not show up
+
+Work through these in order:
+
+  1. Is your unit in your user directory, and is that directory set in Client Settings?
+     If the unit does not appear in the normal unit selector, MegaMek cannot see it at all.
+
+  2. Did you rebuild the unit cache after editing the file?
+     File → Units → Rebuild Unit Cache. This catches most problems.
+
+  3. Did you restart MegaMek after editing the file?
+     The Force Generator loads its data once, at startup.
+
+  4. Check megamek.log for a bad faction code. Every message from this feature is tagged
+     [UnitAvailability], so search for that.
+
+  5. Is it a canon unit? Availability on a canon unit REPLACES canon only for the factions you list.
+     If a faction still uses its canon number, check that you actually listed it. See "Overriding
+     canon units" above.
+
+  6. Is the faction you are generating for actually around in that year?
+     A unit set to CW will never appear in 3150, because Clan Wolf does not exist then.
+
+  7. Is the year inside your availability range?
+
+  8. Is the number too low? An availability of 1 or 2 is genuinely rare. Try setting it to 10
+     temporarily. If it shows up then, the setup is fine and you just have a rare unit.
+
+     One catch: if your unit is a variant of a canon design, and you are generating for a faction
+     that ALREADY fields that design, raising the number will not make the design itself any more
+     common — it only makes your variant more likely among that design's variants.
+
+
+See also
+
+       rat-generator.txt       how the RAT Generator works, and what the availability codes mean
+       force-generator.txt     how the formation generator builds whole units of forces

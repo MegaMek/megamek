@@ -37,6 +37,7 @@ public enum LabelDisplayStyle {
     FULL("Chassis and model"),
     ABBREV("Abbreviated chassis and model / Meks only model"),
     NICKNAME("Pilot or unit nickname  / chassis"),
+    NICKNAME_AND_ABBREVIATED("Pilot or unit nickname and abbreviated model / chassis"),
     CHASSIS("Chassis only"),
     ONLY_NICKNAME("Only pilot or unit nickname"),
     ONLY_STATUS("No labels");
@@ -52,7 +53,8 @@ public enum LabelDisplayStyle {
             case FULL -> ABBREV;
             case ABBREV -> CHASSIS;
             case CHASSIS -> NICKNAME;
-            case NICKNAME -> ONLY_NICKNAME;
+            case NICKNAME -> NICKNAME_AND_ABBREVIATED;
+            case NICKNAME_AND_ABBREVIATED -> ONLY_NICKNAME;
             case ONLY_NICKNAME -> ONLY_STATUS;
             default -> FULL;
         };

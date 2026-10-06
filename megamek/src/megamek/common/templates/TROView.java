@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -59,6 +59,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -95,7 +96,9 @@ public class TROView {
 
     public static TROView createView(Entity entity, ViewFormatting formatting) {
         TROView view;
-        if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
+        if (entity instanceof BattlefieldSupportAsset asset) {
+            view = new BattlefieldSupportAssetTROView(asset);
+        } else if (entity.hasETypeFlag(Entity.ETYPE_MEK)) {
             view = new MekTROView((Mek) entity);
         } else if (entity.hasETypeFlag(Entity.ETYPE_PROTOMEK)) {
             view = new ProtoMekTROView((ProtoMek) entity);
@@ -117,7 +120,7 @@ public class TROView {
         } else {
             view = new TROView();
         }
-        if (null != view.getTemplateFileName(formatting == ViewFormatting.HTML)) {
+        if (view.getTemplateFileName(formatting == ViewFormatting.HTML) != null) {
             try {
                 view.template = TemplateConfiguration.getInstance()
                       .getTemplate("tro/" + view.getTemplateFileName(formatting == ViewFormatting.HTML));
@@ -153,7 +156,7 @@ public class TROView {
      */
     @Nullable
     public String processTemplate() {
-        if (null != template) {
+        if (template != null) {
             model.put("includeFluff", includeFluff);
             try (final ByteArrayOutputStream os = new ByteArrayOutputStream();
                   final Writer out = new OutputStreamWriter(os)) {
@@ -174,7 +177,10 @@ public class TROView {
         model.put("techBase", formatTechBase(entity));
         model.put("tonnage", NumberFormat.getInstance().format(entity.getWeight()));
         model.put("battleValue", NumberFormat.getInstance().format(entity.calculateBattleValue()));
-        model.put("cost", NumberFormat.getInstance().format(entity.getCost(false)));
+        NumberFormat costFormatter = NumberFormat.getInstance();
+        costFormatter.setMinimumFractionDigits(2);
+        costFormatter.setMaximumFractionDigits(2);
+        model.put("cost", costFormatter.format(entity.getCost(false)));
 
         final StringJoiner quirksList = getQuirksList(entity);
         if (quirksList.length() > 0) {
@@ -398,7 +404,7 @@ public class TROView {
                     }
                 }
             }
-            if (null == val) {
+            if (val == null) {
                 val = String.valueOf(provider.apply(entity, locs[0]));
             }
             for (final int loc : locs) {
@@ -427,7 +433,7 @@ public class TROView {
                     }
                 }
             }
-            if (null == val) {
+            if (val == null) {
                 val = formatArmorType(entity.getArmorType(locs[0]), true);
             }
             for (final int loc : locs) {
@@ -566,7 +572,7 @@ public class TROView {
             final Map<String, Double> fixedWeight = new HashMap<>();
             for (int slot = 0; slot < entity.getNumberOfCriticalSlots(loc); slot++) {
                 final CriticalSlot crit = entity.getCritical(loc, slot);
-                if (null == crit) {
+                if (crit == null) {
                     remaining++;
                 } else if ((crit.getType() == CriticalSlot.TYPE_SYSTEM)
                       && showFixedSystem(entity, crit.getIndex(), loc)) {
@@ -644,7 +650,7 @@ public class TROView {
                 continue;
             }
             final BayData bayData = BayData.getBayType(bay);
-            if (null != bayData) {
+            if (bayData != null) {
                 final Map<String, Object> bayRow = new HashMap<>();
                 bayRow.put("name", bayData.getDisplayName());
                 if (bayData.isCargoBay()) {

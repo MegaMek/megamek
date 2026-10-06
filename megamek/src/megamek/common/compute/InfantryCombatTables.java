@@ -132,7 +132,7 @@ public class InfantryCombatTables {
         // Ratio: 1 to 1 (even match)
         Map<Integer, InfantryCombatResult> ratio1to1 = new HashMap<>();
         ratio1to1.put(2, InfantryCombatResult.repulsed(75, 25));    // 75%/25% (R)
-        ratio1to1.put(3, InfantryCombatResult.casualties(70, 30));  // 70%/30%
+        ratio1to1.put(3, InfantryCombatResult.repulsed(70, 30));    // 70%/30% (R)
         ratio1to1.put(4, InfantryCombatResult.casualties(65, 35));  // 65%/35%
         ratio1to1.put(5, InfantryCombatResult.casualties(60, 40));  // 60%/40%
         ratio1to1.put(6, InfantryCombatResult.casualties(55, 45));  // 55%/45%
@@ -257,6 +257,28 @@ public class InfantryCombatTables {
         } else {
             return "1:3<";
         }
+    }
+
+    /**
+     * The highest casualty percentage printed for one side in an odds column, ignoring E results. Used when a
+     * withdrawing attacker turns an E result into a P result (TO:AR p. 172), because the table prints no percentage
+     * for an eliminated side.
+     *
+     * @param ratio        the odds column, as returned by {@link #calculateRatio(int, int)}
+     * @param attackerSide {@code true} for the attacker's percentages, {@code false} for the defender's
+     *
+     * @return the highest percentage below 100 in that column for that side, or {@code 0} if none is printed
+     */
+    public static int highestListedPercent(String ratio, boolean attackerSide) {
+        Map<Integer, InfantryCombatResult> ratioRow = ACTION_TABLE.getOrDefault(ratio, ACTION_TABLE.get("1:1"));
+        int highest = 0;
+        for (InfantryCombatResult result : ratioRow.values()) {
+            int percent = attackerSide ? result.getAttackerCasualtiesPercent() : result.getDefenderCasualtiesPercent();
+            if ((percent < 100) && (percent > highest)) {
+                highest = percent;
+            }
+        }
+        return highest;
     }
 
     /**

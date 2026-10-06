@@ -60,7 +60,8 @@ import org.junit.jupiter.api.Test;
  * prompted these tests: declaring the disposable first did not block a following standard weapon attack (only the
  * reverse order was gated).
  *
- * @see ComputeToHitIsImpossible#disposableWeaponGateReason(Game, megamek.common.units.Entity, WeaponMounted, WeaponType)
+ * @see ComputeToHitIsImpossible#disposableWeaponGateReason(Game, megamek.common.units.Entity, WeaponMounted,
+ *       WeaponType)
  */
 class ComputeToHitIsImpossibleTest {
 

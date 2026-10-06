@@ -34,6 +34,7 @@
 
 package megamek.client.ui.widget.mapset;
 
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.client.ui.widget.BackGroundDrawer;
@@ -49,4 +50,17 @@ public interface DisplayMapSet {
     Vector<BackGroundDrawer> getBackgroundDrawers();
 
     void setEntity(Entity e);
+
+    /**
+     * Stripes the given locations to show that they have taken a critical hit. The locations are colored by how
+     * damaged they are, so a critical hit is striped over that color rather than replacing it, and both can be
+     * read at once. Called after {@link #setEntity}, which is what applies the damage colors.
+     * <p>
+     * Unit types whose diagram has no per-location areas do nothing, so a caller can offer this for every unit.
+     * </p>
+     *
+     * @param criticalLocations the locations that have taken a critical hit
+     */
+    default void setCriticalLocations(Set<Integer> criticalLocations) {
+    }
 }

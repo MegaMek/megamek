@@ -36,6 +36,7 @@ package megamek.common.weapons.other.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,10 +75,8 @@ public class ISAPDS extends AmmoWeapon {
         setModes(new String[] { "On", "Off" });
         setInstantModeSwitch(false);
         cost = 200000;
-        rulesRefs = "85, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 85);
         techAdvancement.setTechBase(TechBase.IS)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E)
               .setISAdvancement(3134, 3137, DATE_NONE, DATE_NONE, DATE_NONE)

@@ -36,6 +36,7 @@ package megamek.common.weapons.mgs.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,10 +75,13 @@ public class CLLightMG extends MGWeapon {
         shortAV = 1;
         maxRange = RANGE_SHORT;
         atClass = CLASS_AC;
-        rulesRefs = "228, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 228),
+              rulesRef(SourceBookCode.BMM, 102),
+              rulesRef(SourceBookCode.CORE, 185),
+              rulesRef(SourceBookCode.TW, 304)
+        );
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.C)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.C, AvailabilityValue.B)
               .setClanAdvancement(3055, 3060, 3070, DATE_NONE, DATE_NONE)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -89,6 +89,7 @@ public class ProneTargetPhysicalAttackTest {
     private Mek mockTarget;
     private Hex mockAttackerHex;
     private Hex mockTargetHex;
+    private Light mockLight;
     private Crew mockCrew;
     private Player mockPlayer;
     private Coords attackerCoords;
@@ -103,7 +104,7 @@ public class ProneTargetPhysicalAttackTest {
         // Mock planetary conditions (for nightModifiers)
         mockConditions = mock(PlanetaryConditions.class);
         when(mockConditions.getLight()).thenReturn(Light.DAY);
-
+        
         // Mock game
         mockGame = mock(Game.class);
         when(mockGame.getOptions()).thenReturn(mockOptions);
@@ -142,7 +143,7 @@ public class ProneTargetPhysicalAttackTest {
         when(mockAttacker.hasWorkingSystem(anyInt(), anyInt())).thenReturn(true);
         when(mockAttacker.hasSystem(anyInt(), anyInt())).thenReturn(true);
         when(mockAttacker.weaponFiredFrom(anyInt())).thenReturn(false);
-        when(mockAttacker.hasActiveShield(anyInt())).thenReturn(false);
+        when(mockAttacker.hasRaisedShield(anyInt())).thenReturn(false);
         when(mockAttacker.getGrappled()).thenReturn(Entity.NONE);
         when(mockAttacker.getGrappleSide()).thenReturn(Entity.GRAPPLE_BOTH);
         when(mockAttacker.relHeight()).thenReturn(2);
@@ -188,6 +189,7 @@ public class ProneTargetPhysicalAttackTest {
         when(mockGame.getEntity(1)).thenReturn(mockAttacker);
         when(mockGame.getEntity(2)).thenReturn(mockTarget);
         when(mockGame.onTheSameBoard(mockAttacker, mockTarget)).thenReturn(true);
+        when(mockGame.getPlanetaryConditions()).thenReturn(mockConditions);
     }
 
     /**

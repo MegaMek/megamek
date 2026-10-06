@@ -36,6 +36,7 @@ package megamek.common.weapons.capitalWeapons.naval;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -71,10 +72,8 @@ public class NPPCWeaponHeavy extends NPPCWeapon {
         longAV = 15;
         extAV = 15;
         maxRange = RANGE_EXT;
-        rulesRefs = "146, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 146);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.E)
               .setISAdvancement(2350, 2356, DATE_NONE, 2950, 3052)

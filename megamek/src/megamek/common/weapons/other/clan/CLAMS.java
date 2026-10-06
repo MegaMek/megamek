@@ -37,6 +37,7 @@ package megamek.common.weapons.other.clan;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -81,7 +82,12 @@ public class CLAMS extends AmmoWeapon {
         setInstantModeSwitch(false);
         cost = 100000;
         atClass = CLASS_AMS;
-        rulesRefs = "204, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 204),
+              rulesRef(SourceBookCode.BMM, 118),
+              rulesRef(SourceBookCode.CORE, 206),
+              rulesRef(SourceBookCode.TW, 129)
+        );
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(2824, 2831, 2835, DATE_NONE, DATE_NONE)

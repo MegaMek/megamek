@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,8 @@
  */
 package megamek.utilities.xml;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
@@ -49,18 +51,27 @@ import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 
 import megamek.common.annotations.Nullable;
+import megamek.logging.MMLogger;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public class MMXMLUtility {
     // region Variable Declarations
+    private static final MMLogger LOGGER = MMLogger.create(MMXMLUtility.class);
+
     private static DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY;
     private static SAXParserFactory SAX_PARSER_FACTORY;
+
+    private static final String JAXP_MAX_GENERAL_ENTITY_SIZE = "jdk.xml.maxGeneralEntitySizeLimit";
+    private static final String JAXP_TOTAL_ENTITY_SIZE = "jdk.xml.totalEntitySizeLimit";
+    private static final String FEATURE_DISALLOW_DOCTYPE = "http://apache.org/xml/features/disallow-doctype-decl";
 
     private static final String[] INDENTS = new String[] { "", "\t", "\t\t", "\t\t\t", "\t\t\t\t", "\t\t\t\t\t",
                                                            "\t\t\t\t\t\t" };
@@ -73,7 +84,7 @@ public class MMXMLUtility {
      */
     public static DocumentBuilder newSafeDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DOCUMENT_BUILDER_FACTORY;
-        if (null == dbf) {
+        if (dbf == null) {
             // At worst, we may do this twice if multiple threads
             // hit this method. It is Ok to have more than one
             // instance of the builder factory, as long as it is
@@ -559,4 +570,113 @@ public class MMXMLUtility {
         return StringEscapeUtils.unescapeXml(string);
     }
     // endregion XML Parsing
+
+    /**
+     * Parses an XML {@link Document} from {@code inputStream}, automatically retrying with a doubled JAXP entity size
+     * limit if Java 24+'s tightened default limit is exceeded.
+     *
+     * @param inputStream the input stream to read from; it is read fully but not closed by this method
+     *
+     * @return the parsed {@link Document}
+     *
+     * @throws IOException                  if the stream cannot be read
+     * @throws ParserConfigurationException if a suitable XML parser cannot be configured
+     * @throws SAXException                 if the XML is malformed or the limit cannot be raised further
+     */
+    public static Document parseDocument(InputStream inputStream)
+          throws IOException, ParserConfigurationException, SAXException {
+        byte[] documentBytes = inputStream.readAllBytes();
+        int initialEntitySizeLimit = readCurrentEntitySizeLimit();
+        int entitySizeLimit = initialEntitySizeLimit;
+
+        while (true) {
+            try {
+                DocumentBuilder documentBuilder = buildDocumentBuilderWithLimit(entitySizeLimit);
+                Document document = documentBuilder.parse(new ByteArrayInputStream(documentBytes));
+                if (LOGGER.isInfoEnabled()) {
+                    int nodeCount = document.getElementsByTagName("*").getLength();
+                    LOGGER.info("Parsed XML document ({} nodes){}", nodeCount,
+                          entitySizeLimit == initialEntitySizeLimit ? "" : " after raising JAXP entity size limit from "
+                                + initialEntitySizeLimit + " to " + entitySizeLimit + " characters");
+                }
+                return document;
+            } catch (SAXParseException parseException) {
+                // JAXP00010003 = maxGeneralEntitySizeLimit (single entity too large)
+                // JAXP00010004 = totalEntitySizeLimit (accumulated entity size exceeded)
+                // Both have been observed on Java 25 with large save files.
+                String exceptionMessage = parseException.getMessage();
+                boolean isKnownEntitySizeLimit = exceptionMessage != null
+                      && (exceptionMessage.contains("JAXP00010003") || exceptionMessage.contains("JAXP00010004"));
+                if (!isKnownEntitySizeLimit) {
+                    throw parseException;
+                }
+
+                // In JAXP a limit of 0 or less means "unlimited", so doubling it can't help
+                if (entitySizeLimit <= 0) {
+                    throw parseException;
+                }
+                if (entitySizeLimit > Integer.MAX_VALUE / 2) {
+                    LOGGER.error(
+                          "XML document exceeds JAXP entity size limits even at maximum ({} characters); giving up",
+                          entitySizeLimit);
+                    throw parseException;
+                }
+                int nextEntitySizeLimit = entitySizeLimit * 2;
+                LOGGER.warn("XML parse hit JAXP entity size limit ({} characters); retrying with limit={} characters",
+                      entitySizeLimit,
+                      nextEntitySizeLimit);
+                entitySizeLimit = nextEntitySizeLimit;
+            }
+        }
+    }
+
+    /**
+     * @return the JVM's current JAXP total entity size limit, or the Java 25 default if it cannot be read
+     */
+    private static int readCurrentEntitySizeLimit() {
+        final int defaultEntitySizeLimit = 100_000;
+        try {
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            Object limitAttribute = documentBuilderFactory.getAttribute(JAXP_TOTAL_ENTITY_SIZE);
+            if (limitAttribute instanceof Integer integerLimit) {
+                return integerLimit;
+            }
+            if (limitAttribute instanceof String stringLimit && !stringLimit.isBlank()) {
+                return Integer.parseInt(stringLimit.trim());
+            }
+        } catch (IllegalArgumentException ignored) {
+            // Attribute unsupported or unparsable; fall back to the default below
+        }
+        return defaultEntitySizeLimit;
+    }
+
+    /**
+     * Builds an XXE-safe {@link DocumentBuilder} with the given JAXP entity size limits applied.
+     *
+     * @param entitySizeLimit the maximum general and total entity size, in characters
+     *
+     * @return the configured {@link DocumentBuilder}
+     *
+     * @throws ParserConfigurationException if a suitable XML parser cannot be configured
+     */
+    private static DocumentBuilder buildDocumentBuilderWithLimit(int entitySizeLimit)
+          throws ParserConfigurationException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setXIncludeAware(false);
+        documentBuilderFactory.setExpandEntityReferences(false);
+        documentBuilderFactory.setFeature(FEATURE_DISALLOW_DOCTYPE, true);
+        try {
+            documentBuilderFactory.setAttribute(JAXP_MAX_GENERAL_ENTITY_SIZE, entitySizeLimit);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            LOGGER.warn("XML processor does not support maxGeneralEntitySizeLimit; limit not applied",
+                  illegalArgumentException);
+        }
+        try {
+            documentBuilderFactory.setAttribute(JAXP_TOTAL_ENTITY_SIZE, entitySizeLimit);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            LOGGER.warn("XML processor does not support totalEntitySizeLimit; limit not applied",
+                  illegalArgumentException);
+        }
+        return documentBuilderFactory.newDocumentBuilder();
+    }
 }

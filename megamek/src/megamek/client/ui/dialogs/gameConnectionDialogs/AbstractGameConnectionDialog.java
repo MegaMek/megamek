@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,8 +31,6 @@
  * affiliated with Microsoft.
  */
 package megamek.client.ui.dialogs.gameConnectionDialogs;
-
-import static megamek.codeUtilities.MathUtility.clamp;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -253,7 +251,7 @@ public abstract class AbstractGameConnectionDialog extends ClientDialog implemen
         // reached from the Okay button or pressing Enter in the text fields
         setPlayerName(getPlayerNameFromUI());
         int port = MathUtility.parseInt(getPortField().getText(), MMConstants.DEFAULT_PORT);
-        setPort(clamp(port, MMConstants.MIN_PORT, MMConstants.MAX_PORT));
+        setPort(Math.clamp(port, MMConstants.MIN_PORT, MMConstants.MAX_PORT));
         setConfirmed(true);
         getClientPreferences().setLastPlayerName(getPlayerName());
         getClientPreferences().setLastConnectPort(getPort());

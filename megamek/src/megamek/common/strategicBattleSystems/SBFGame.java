@@ -57,6 +57,7 @@ import megamek.common.event.UnitChangedGameEvent;
 import megamek.common.event.entity.GameEntityChangeEvent;
 import megamek.common.game.AbstractGame;
 import megamek.common.game.InGameObject;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.interfaces.ClientOnly;
 import megamek.common.interfaces.PlanetaryConditionsUsing;
 import megamek.common.interfaces.ReportEntry;
@@ -214,7 +215,7 @@ public final class SBFGame extends AbstractGame implements PlanetaryConditionsUs
             for (Team newTeam : initTeams) {
                 for (Team oldTeam : teams) {
                     if (newTeam.equals(oldTeam)) {
-                        newTeam.setInitiative(oldTeam.getInitiative());
+                        newTeam.setInitiative(new InitiativeRoll(oldTeam.getInitiative()));
                     }
                 }
             }

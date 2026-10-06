@@ -50,9 +50,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests for {@link BridgeLayerState}: the carried-bridge Construction Factors per Bridge-Layer variant
- * (TechManual Bridge-Layer table), the board bridge terrain type each variant deploys, and the deploy lifecycle
- * state machine.
+ * Unit tests for {@link BridgeLayerState}: the carried-bridge Construction Factors per Bridge-Layer variant (TechManual
+ * Bridge-Layer table), the board bridge terrain type each variant deploys, and the deploy lifecycle state machine.
  *
  * @author Claude Code (Opus 4.8)
  */

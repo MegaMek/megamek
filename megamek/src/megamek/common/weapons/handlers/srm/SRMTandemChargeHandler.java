@@ -45,6 +45,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeSideTable;
+import megamek.common.enums.HitDamageType;
 import megamek.common.equipment.IArmorState;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -67,7 +68,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
           throws EntityLoadingException {
         super(t, w, g, m);
         sSalvoType = " tandem charge missile(s) ";
-        generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
+        generalDamageType = HitDamageType.DAMAGE_ARMOR_PIERCING_MISSILE;
     }
 
     @Override
@@ -173,8 +174,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         if (target.isConventionalInfantry()) {
             double toReturn = Compute.directBlowInfantryDamage(
-                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getRackSize(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, attackingEntity.getId(), calcDmgPerHitReport);
 

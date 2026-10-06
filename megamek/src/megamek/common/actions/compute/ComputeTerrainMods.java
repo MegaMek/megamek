@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,9 +42,13 @@ import static megamek.common.ToHitData.SIDE_RANDOM;
 import static megamek.common.ToHitData.SIDE_REAR;
 import static megamek.common.ToHitData.SIDE_RIGHT;
 
+import java.util.List;
+
 import megamek.client.ui.Messages;
+import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
+import megamek.common.PartialCover;
 import megamek.common.ToHitData;
 import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
@@ -102,6 +106,25 @@ public class ComputeTerrainMods {
           int eiPilotStatus, WeaponType weaponType, WeaponMounted weapon, int weaponId, AmmoType ammoType,
           AmmoMounted ammo, boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
           boolean isPointBlankShot, boolean underWater) {
+        return compileTerrainAndLosToHitMods(game, attacker, target, targetType, aElev, tElev, targEl, distance, los,
+              toHit, losMods, eiPilotStatus, weaponType, weapon, weaponId, ammoType, ammo, isAttackerInfantry,
+              inSameBuilding, isIndirect, isPointBlankShot, underWater, null);
+    }
+
+    /**
+     * Same as {@link #compileTerrainAndLosToHitMods(Game, Entity, Targetable, int, int, int, int, int, LosEffects,
+     * ToHitData, ToHitData, int, WeaponType, WeaponMounted, int, AmmoType, AmmoMounted, boolean, boolean, boolean,
+     * boolean, boolean)}, but accepts a precomputed list of ECM information for all game entities, which the C3
+     * spotter search inside the range-modifier calculation needs. Callers that evaluate many attacks in a row should
+     * compute that list once and pass it in.
+     *
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     */
+    public static ToHitData compileTerrainAndLosToHitMods(Game game, Entity attacker, Targetable target, int targetType,
+          int aElev, int tElev, int targEl, int distance, LosEffects los, ToHitData toHit, ToHitData losMods,
+          int eiPilotStatus, WeaponType weaponType, WeaponMounted weapon, int weaponId, AmmoType ammoType,
+          AmmoMounted ammo, boolean isAttackerInfantry, boolean inSameBuilding, boolean isIndirect,
+          boolean isPointBlankShot, boolean underWater, @Nullable List<ECMInfo> allECMInfo) {
 
         if (attacker == null || target == null) {
             // Can't handle these attacks without a valid attacker and target
@@ -125,7 +148,7 @@ public class ComputeTerrainMods {
 
         if (((los.getThruBldg() == null) || !los.getTargetPosition().equals(attacker.getPosition())) &&
               ((weaponType != null) && !isBombAttack && !isADA) && (weaponId > WeaponType.WEAPON_NA)) {
-            toHit.append(Compute.getRangeMods(game, attacker, weapon, ammo, target));
+            toHit.append(Compute.getRangeMods(game, attacker, weapon, ammo, target, allECMInfo));
         }
 
         // add in LOS mods that we've been keeping
@@ -143,6 +166,13 @@ public class ComputeTerrainMods {
               && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
               && Compute.isTargetTagged(target, game);
 
+        boolean semiGuidedDirectVsTaggedTarget = (!isIndirect
+              && (ammoType != null)
+              && ammoType.getMunitionType().contains(AmmoType.Munitions.M_SEMIGUIDED)
+              && Compute.isTargetTagged(target, game) &&
+              Game.rulesManager.getRulesAmmo().semiGuidedIgnoresCover());
+
+
         // TW p.111
         boolean indirectMortarWithoutSpotter = (weaponType != null)
               && weaponType.hasFlag(WeaponType.F_MORTAR_TYPE_INDIRECT)
@@ -151,11 +181,25 @@ public class ComputeTerrainMods {
 
         // Base terrain calculations, not applicable when delivering minefields or bombs
         // also not applicable in pointblank shots from hidden units
-        if ((targetType != Targetable.TYPE_MINEFIELD_DELIVER)
+        ToHitData terrainModifier = Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding,
+              underWater);
+
+        if (targetType != Targetable.TYPE_MINEFIELD_DELIVER
+              && targetType != Targetable.TYPE_SATURATION
               && !isPointBlankShot
               && !semiGuidedIndirectVsTaggedTarget
               && !indirectMortarWithoutSpotter) {
-            toHit.append(Compute.getTargetTerrainModifier(game, target, eiPilotStatus, inSameBuilding, underWater));
+            toHit.append(terrainModifier);
+        }
+
+        // Does Semi-guided direct reduce the terrain modifier
+        if (semiGuidedDirectVsTaggedTarget) {
+            int terrainMod = terrainModifier.getValue() + losMods.getValue();
+            int semiGuidedTerrain =
+                  Game.rulesManager.getRulesAmmo().getSemiGuidedAdjustment(terrainMod, false, true);
+            if (semiGuidedTerrain > 0) {
+                toHit.append(new ToHitData(-semiGuidedTerrain, Messages.getString("WeaponAttackAction.SemiGuidedTag")));
+            }
         }
 
         // Target's hex
@@ -195,21 +239,16 @@ public class ComputeTerrainMods {
 
         // target in water?
         boolean targetInWater = (targetHex != null) && targetHex.containsTerrain(Terrains.WATER);
-        int partialWaterLevel = 1;
-        if ((entityTarget instanceof Mek) && entityTarget.isSuperHeavy()) {
-            partialWaterLevel = 2;
-        }
-        if ((entityTarget != null)
-              && targetInWater
-              // target in partial water
-              && (targetHex.terrainLevel(Terrains.WATER) == partialWaterLevel)
-              && (targEl == 0)
-              && (entityTarget.height() > 0)) {
+        boolean targetInWaterPartialCover = PartialCover.isInPartialWater(entityTarget, targetHex, targEl);
+        if (targetInWaterPartialCover) {
             los.setTargetCover(los.getTargetCover() | LosEffects.COVER_HORIZONTAL);
         }
 
+        // Skips partial cover if using semi-guided direct against a tagged target and not in water partial cover.
+        boolean semiguidedNoWater = semiGuidedDirectVsTaggedTarget && !targetInWaterPartialCover;
+
         // Change hit table for partial cover, accommodate for partial underwater (legs)
-        if (los.getTargetCover() != LosEffects.COVER_NONE) {
+        if (los.getTargetCover() != LosEffects.COVER_NONE && !semiguidedNoWater) {
             if (underWater && (targetInWater && (targEl == 0) && (entityTarget != null && entityTarget.height() > 0))) {
                 // weapon underwater, target in partial water
                 toHit.setHitTable(HIT_PARTIAL_COVER);
@@ -279,16 +318,23 @@ public class ComputeTerrainMods {
                   && targetHex.hasVegetation()
                   && !game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_WOODS_COVER);
             if (los.canSee() && (targetWoodsAffectModifier || los.thruWoods())) {
-                if (bapInRange(game, attacker, entityTarget)) {
+                if (bapInRange(game, attacker, entityTarget, allECMInfo)) {
                     toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoods"));
                 } else {
                     boolean bapInRangeUsingC3 = game.getC3NetworkMembers(attacker).stream()
                           .filter(c3Member -> !attacker.equals(c3Member))
-                          .anyMatch(c3Member -> bapInRange(game, c3Member, entityTarget));
+                          .anyMatch(c3Member -> bapInRange(game, c3Member, entityTarget, allECMInfo));
                     if (bapInRangeUsingC3) {
                         toHit.addModifier(-1, Messages.getString("WeaponAttackAction.BAPInWoodsC3"));
                     }
                 }
+            }
+        }
+        // Reduces smoke modifiers for Active Probes if the rules support it.
+        if (attacker.hasBAP(true) && (los.getLightSmoke() + los.getHeavySmoke() > 0) && los.canSee()) {
+            int smokeReduction = Game.rulesManager.getRulesTarget().getBAPSmokeReduction(los);
+            if (smokeReduction > 0) {
+                toHit.addModifier(-smokeReduction, Messages.getString("WeaponAttackAction.BAPSmokeReduction"));
             }
         }
 
@@ -310,7 +356,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for elevation differences inside building.
-        if ((null != los.getThruBldg()) && (aElev != tElev)) {
+        if ((los.getThruBldg() != null) &&(aElev != tElev)){
 
             // Tanks get hit in a random side.
             if (target instanceof Tank) {
@@ -337,7 +383,7 @@ public class ComputeTerrainMods {
         }
 
         // Change hit table for surface naval vessels hit by underwater attacks
-        if (underWater && targetInWater && (null != entityTarget) && entityTarget.isSurfaceNaval()) {
+        if (underWater && targetInWater && (entityTarget != null) && entityTarget.isSurfaceNaval()) {
             toHit.setHitTable(HIT_UNDERWATER);
         }
 
@@ -345,13 +391,16 @@ public class ComputeTerrainMods {
     }
 
     /**
+     * @param allECMInfo Precomputed ECM information for all game entities, or {@code null} to compute it on demand
+     *
      * @return True when the attacker has an active BAP and is not affected by ECM and the target is in range.
      */
-    private static boolean bapInRange(Game game, Entity attacker, Entity target) {
+    private static boolean bapInRange(Game game, Entity attacker, Entity target,
+          @Nullable List<ECMInfo> allECMInfo) {
         return attacker.hasBAP()
               && (target != null) && !target.isOffBoard() && (target.getPosition() != null)
               && (attacker.getBAPRange() >= Compute.effectiveDistance(game, attacker, target))
-              && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition());
+              && !ComputeECM.isAffectedByECM(attacker, attacker.getPosition(), target.getPosition(), allECMInfo);
     }
 
     /**
@@ -365,8 +414,7 @@ public class ComputeTerrainMods {
      * @return {@code true} for artillery (including Arrow IV and artillery cannons), bombs, and fuel-air explosive
      *       munitions
      */
-    // Package-private for unit testing.
-    static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
+    public static boolean isAreaEffectAgainstInfantry(WeaponType weaponType, @Nullable AmmoType ammoType) {
         boolean isArtillery = weaponType.hasFlag(WeaponType.F_ARTILLERY)
               || (weaponType instanceof ArtilleryCannonWeapon);
         boolean isBomb = weaponType.hasAnyFlag(WeaponType.F_ALT_BOMB, WeaponType.F_DIVE_BOMB,

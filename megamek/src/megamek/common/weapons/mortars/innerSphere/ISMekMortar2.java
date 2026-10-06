@@ -36,6 +36,7 @@ package megamek.common.weapons.mortars.innerSphere;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -68,10 +69,8 @@ public class ISMekMortar2 extends MekMortarWeapon {
         criticalSlots = 2;
         tonnage = 5;
         cost = 15000;
-        rulesRefs = "136, TO:AUE";
+        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 136);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.D, AvailabilityValue.F, AvailabilityValue.F, AvailabilityValue.E)
               .setISAdvancement(2526, 2531, 3052, 2819, 3043)

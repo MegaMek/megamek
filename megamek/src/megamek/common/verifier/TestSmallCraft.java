@@ -66,6 +66,8 @@ import megamek.common.util.StringUtil;
  */
 public class TestSmallCraft extends TestAero {
 
+    public static final double MINIMUM_CREW_AND_QUARTERS_THRESHOLD_TONS = 25.0;
+
     // Indices used to specify firing arcs with aliases for AeroDyne and spheroid
     public static final int ARC_NOSE = SmallCraft.LOC_NOSE;
     public static final int ARC_LEFT_WING = SmallCraft.LOC_LEFT_WING;
@@ -103,7 +105,7 @@ public class TestSmallCraft extends TestAero {
      * @return The total number of armor points allowed to the vessel
      */
     public static int maxArmorPoints(SmallCraft vessel) {
-        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon();
+        double pointsPerTon = ArmorType.forEntity(vessel).getPointsPerTon(vessel);
         int baseArmor = (int) (pointsPerTon * maxArmorWeight(vessel) + getSIBonusArmorPoints(vessel));
         if (vessel.isPrimitive()) {
             return (int) (baseArmor * 0.66);
@@ -320,6 +322,25 @@ public class TestSmallCraft extends TestAero {
         return crew;
     }
 
+    /**
+     * Returns the number of required officers of the SmallCraft from minimum base crew and gunners.
+     * @param smallCraft The SmallCraft
+     * @return The number of required officers
+     */
+    public static int requiredOfficers(SmallCraft smallCraft) {
+        return (int) Math.ceil((minimumBaseCrew(smallCraft) + requiredGunners(smallCraft)) / 5.0);
+    }
+
+    /**
+     * Emergency-scale Small Craft do not use the standard vessel crew and quarters requirements.
+     *
+     * @param smallCraft the Small Craft to check
+     * @return {@code true} when standard minimum crew and quarters requirements apply
+     */
+    public static boolean requiresMinimumCrewAndQuarters(SmallCraft smallCraft) {
+        return smallCraft.getWeight() > MINIMUM_CREW_AND_QUARTERS_THRESHOLD_TONS;
+    }
+
     public TestSmallCraft(SmallCraft sc, TestEntityOption option, String fs) {
         super(sc, option, fs);
 
@@ -508,7 +529,7 @@ public class TestSmallCraft extends TestAero {
     }
 
     /**
-     * Checks that the heatsink type is a legal value.
+     * Checks that the heat sink type is a legal value.
      *
      * @param buff A buffer that collects messages about validation failures
      *
@@ -517,7 +538,7 @@ public class TestSmallCraft extends TestAero {
     @Override
     public boolean correctHeatSinks(StringBuffer buff) {
         if ((smallCraft.getHeatType() != Aero.HEAT_SINGLE) && (smallCraft.getHeatType() != Aero.HEAT_DOUBLE)) {
-            buff.append("Invalid heatsink type!  Valid types are ")
+            buff.append("Invalid heat sink type!  Valid types are ")
                   .append(Aero.HEAT_SINGLE)
                   .append(" and ")
                   .append(Aero.HEAT_DOUBLE)
@@ -616,8 +637,13 @@ public class TestSmallCraft extends TestAero {
                         needed *= 6;
                     }
                     if (!ammoTypeCount.containsKey(at) || ammoTypeCount.get(at) < needed) {
-                        buff.append("%s (%s) does not have the minimum amount of ammo for each weapon\n"
-                              .formatted(bay.getName(), bay.getEntity().getLocationAbbr(bay.getLocation())));
+                        buff.append(("%s (%s) %s has <b>%s</b>/%s minimum ammo required\n").formatted(
+                              bay.getName(),
+                              bay.getEntity().getLocationAbbr(bay.getLocation()),
+                              at.getName(),
+                              ammoTypeCount.getOrDefault(at, 0),
+                              needed
+                        ));
                         illegal = true;
                         break;
                     }
@@ -747,25 +773,30 @@ public class TestSmallCraft extends TestAero {
      * @return true if the crew data is valid.
      */
     public boolean correctCrew(StringBuffer buffer) {
+        if (!requiresMinimumCrewAndQuarters(smallCraft)) {
+            return true;
+        }
+
         boolean illegal = false;
-        int crewSize = getSmallCraft().getNCrew() - getSmallCraft().getBayPersonnel();
-        int reqCrew = minimumBaseCrew(getSmallCraft()) + requiredGunners(getSmallCraft());
+        int crewSize = smallCraft.getNCrew() - smallCraft.getBayPersonnel();
+        int reqCrew = minimumBaseCrew(smallCraft) + requiredGunners(smallCraft);
+        int reqOfficers = requiredOfficers(smallCraft);
         if (crewSize < reqCrew) {
             buffer.append("Requires ").append(reqCrew).append(" crew and only has ").append(crewSize).append("\n");
             illegal = true;
         }
 
-        if (getSmallCraft().getNOfficers() * 5 < reqCrew) {
-            buffer.append("Requires at least ").append((int) Math.ceil(reqCrew / 5.0)).append(" officers\n");
+        if (smallCraft.getNOfficers() < reqOfficers) {
+            buffer.append("Requires at least ").append(reqOfficers).append(" officers\n");
             illegal = true;
         }
-        crewSize += getSmallCraft().getNPassenger();
-        crewSize += getSmallCraft().getNMarines();
-        crewSize += getSmallCraft().getNBattleArmor();
+        crewSize += smallCraft.getNPassenger();
+        crewSize += smallCraft.getNMarines();
+        crewSize += smallCraft.getNBattleArmor();
         int quarters = 0;
-        for (Bay bay : getSmallCraft().getTransportBays()) {
+        for (Bay bay : smallCraft.getTransportBays()) {
             Quarters q = Quarters.getQuartersForBay(bay);
-            if (null != q) {
+            if (q != null) {
                 quarters += (int) bay.getCapacity();
             }
         }
@@ -861,7 +892,7 @@ public class TestSmallCraft extends TestAero {
             }
         }
 
-        double[] extra = extraSlotCost(getSmallCraft());
+        double[] extra = extraSlotCost(smallCraft);
         for (int i = 0; i < extra.length; i++) {
             if (extra[i] > 0) {
                 if (i < getEntity().locations()) {

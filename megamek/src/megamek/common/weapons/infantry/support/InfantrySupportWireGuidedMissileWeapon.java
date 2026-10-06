@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.support;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -69,7 +70,7 @@ public class InfantrySupportWireGuidedMissileWeapon extends InfantryWeapon {
         ammoWeight = 0.022;
         ammoCost = 2500;
         shots = 1;
-        rulesRefs = "195, AToW-C";
+        rulesRefs = rulesRefs(SourceBookCode.ATOW_COMPANION, 195);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(DATE_PS, DATE_PS, DATE_PS, DATE_NONE, DATE_NONE)

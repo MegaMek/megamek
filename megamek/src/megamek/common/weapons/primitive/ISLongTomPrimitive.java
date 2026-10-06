@@ -37,6 +37,7 @@ package megamek.common.weapons.primitive;
 import java.io.Serial;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -72,7 +73,7 @@ public class ISLongTomPrimitive extends ArtilleryWeapon {
         criticalSlots = 30;
         bv = 368;
         cost = 450000;
-        rulesRefs = "112, IO:AE";
+        rulesRefs = rulesRefs(SourceBookCode.IO_AE, 112);
         flags = flags.or(F_PROTOTYPE);
         techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

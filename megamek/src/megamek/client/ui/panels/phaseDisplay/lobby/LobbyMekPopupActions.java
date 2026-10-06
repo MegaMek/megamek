@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2021-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,8 +43,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import megamek.MMConstants;
@@ -107,6 +106,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_C3DISCONNECT:
             case LMP_C3_FORM_C3:
             case LMP_C3_FORM_NHC3:
+            case LMP_C3_MANAGER:
             case LMP_SWAP:
             case LMP_DAMAGE:
             case LMP_BV:
@@ -132,12 +132,14 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
             case LMP_UNLOAD_ALL:
             case LMP_DETACH_TRAILER:
             case LMP_DETACH_FROM_TRACTOR:
+            case LMP_CONNECT_TRAIN:
             case LMP_DEPLOY:
             case LMP_ASSIGN:
             case LMP_HEAT:
             case LMP_HIDDEN:
             case LMP_STAND:
             case LMP_PRIORITY_TARGET:
+            case LMP_SCAN_TARGET:
                 if (!entities.isEmpty()) {
                     multiEntityAction(command, entities, info);
                 }
@@ -317,6 +319,10 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                     lobby.sendUpdate(updateCandidates);
                     break;
 
+                case LMP_CONNECT_TRAIN:
+                    lobby.lobbyActions.connectTrain(entities);
+                    break;
+
                 case LMP_DETACH_FROM_TRACTOR:
                     updateCandidates = new HashSet<>();
                     lobby.detachFromTractors(entities, updateCandidates);
@@ -335,6 +341,9 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
 
                 case LMP_HIDDEN:
                     lobby.lobbyActions.applyHidden(entities, info.equals(LMP_HIDE));
+                    break;
+                case LMP_SCAN_TARGET:
+                    lobby.lobbyActions.applyScanTarget(entities, info.equals(LMP_SCAN_WANTED));
                     break;
 
                 case LMP_STAND:
@@ -400,6 +409,10 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 case LMP_C3_FORM_NHC3:
                     master = Integer.parseInt(info);
                     lobby.lobbyActions.c3JoinNh(entities, master, true);
+                    break;
+
+                case LMP_C3_MANAGER:
+                    new C3NetworkManagerDialog(lobby, entities).setVisible(true);
                     break;
 
                 case LMP_UNLOAD_ALL_FROM_BAY:
@@ -483,7 +496,7 @@ public record LobbyMekPopupActions(ChatLounge lobby) implements ActionListener {
                 break;
             case LMP_APPLY_CONFIG:
                 munitionTree = loadLoadout();
-                if (null != munitionTree) {
+                if (munitionTree != null) {
                     // Apply existing loadout to selected entities.
                     // Use the unlimited availability map (all munitions allowed in any amount)
                     resetBombChoices(clientGUI, lobby.game(), entityArrayList);

@@ -32,11 +32,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.text.MessageFormat;
 
 import megamek.client.ui.Messages;
@@ -44,9 +40,9 @@ import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.EntityWreckHelper;
 import megamek.common.board.Coords;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.Entity;
 import megamek.common.units.Terrains;
-import megamek.common.preference.PreferenceManager;
 import megamek.common.util.ImageUtil;
 
 /**
@@ -118,7 +114,7 @@ public abstract class AbstractWreckSprite extends Sprite {
 
         if (displayDestroyedDecal) {
             Image destroyed = bv.getTileManager().bottomLayerWreckMarkerFor(entity, 0);
-            if (null != destroyed) {
+            if (destroyed != null) {
                 graph.drawImage(destroyed, 0, 0, this);
             }
         }
@@ -128,7 +124,7 @@ public abstract class AbstractWreckSprite extends Sprite {
 
         if (drawFuelLeak) {
             Image fuelLeak = bv.getTileManager().bottomLayerFuelLeakMarkerFor(entity);
-            if (null != fuelLeak) {
+            if (fuelLeak != null) {
                 graph.drawImage(fuelLeak, 0, 0, this);
             }
         }
@@ -138,7 +134,7 @@ public abstract class AbstractWreckSprite extends Sprite {
 
         if (drawMotiveWreckage) {
             Image motiveWreckage = bv.getTileManager().bottomLayerMotiveMarkerFor(entity);
-            if (null != motiveWreckage) {
+            if (motiveWreckage != null) {
                 graph.drawImage(motiveWreckage, 0, 0, this);
             }
         }
@@ -157,7 +153,7 @@ public abstract class AbstractWreckSprite extends Sprite {
                   bv.getTileManager().imageFor(entity, secondaryPos);
         }
 
-        if (null != wreck) {
+        if (wreck != null) {
             graph.drawImage(wreck, 0, 0, this);
         }
 

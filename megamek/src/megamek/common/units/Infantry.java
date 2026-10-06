@@ -34,7 +34,9 @@
 
 package megamek.common.units;
 
+import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.Hex;
@@ -43,6 +45,7 @@ import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
@@ -65,6 +68,10 @@ import megamek.logging.MMLogger;
 public abstract class Infantry extends Entity {
 
     private static final MMLogger LOGGER = MMLogger.create(Infantry.class);
+
+    /** The phases in which a unit committed to an infantry action takes no turn, while the option is on. */
+    private static final Set<GamePhase> PHASES_SAT_OUT_BY_COMMITTED_UNITS = EnumSet.of(GamePhase.MOVEMENT,
+          GamePhase.TARGETING, GamePhase.OFFBOARD, GamePhase.FIRING, GamePhase.PHYSICAL);
 
     protected int squadCount = 1;
     protected int squadSize = 1;
@@ -95,7 +102,18 @@ public abstract class Infantry extends Entity {
      * one turn (TO:AR p.106 / TO:AUE p.153). Server-side runtime state; not written to save files (dug-in progress is
      * itself not persisted).
      */
-    private final FortifyState fortifyState = new FortifyState();
+    private transient FortifyState fortifyState = new FortifyState();
+
+    /**
+     * @return the fortify damage tracker, recreated lazily so it is never {@code null} on a deserialized platoon (the field is
+     *       transient runtime state, so its initializer does not run during deserialization).
+     */
+    private FortifyState fortifyState() {
+        if (fortifyState == null) {
+            fortifyState = new FortifyState();
+        }
+        return fortifyState;
+    }
 
     /**
      * Number of idle turns (no movement, no fire) the unit must spend "hitting the deck" before it may convert to "dug
@@ -349,7 +367,7 @@ public abstract class Infantry extends Entity {
     @Override
     public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         // EI bonus for anti-Mek attacks per IO p.69
-        // "All Piloting Skill rolls required for the EI-equipped unit receives a -1 target number modifier.
+        // "All Physical attack rolls required for the EI-equipped unit receives a -1 target number modifier.
         // This includes checks made for physical attacks, as well as anti-Mek attacks by EI-equipped battle armor."
         if (hasActiveEiCockpit()) {
             prd.addModifier(-1, "Enhanced Imaging");
@@ -443,9 +461,41 @@ public abstract class Infantry extends Entity {
             return false;
         } else if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             return false;
+        } else if (isHeldInPlaceByInfantryAction(phase)) {
+            return false;
         } else {
             return super.isEligibleFor(phase);
         }
+    }
+
+    /**
+     * Whether an infantry vs. infantry action (TO:AR p. 169) keeps this unit from taking a turn in the given phase.
+     * The book gives a committed unit one way out of the fight, a withdrawal with a last roll at half damage, and
+     * the End Phase roll never asks where the combatants stand; a unit free to walk out in the Movement Phase would
+     * skip that roll and go on fighting from across the map. So a committed unit takes no movement, targeting,
+     * off-board, weapon attack or physical attack turn. It still declares in the Pre-End Declarations phase, which is
+     * how it withdraws.
+     *
+     * <p>An interpretation, so it sits behind a game option, on by default.</p>
+     *
+     * @param phase the phase being asked about
+     *
+     * @return {@code true} if this unit is committed to an action and the phase is one it sits out
+     */
+    public boolean isHeldInPlaceByInfantryAction(GamePhase phase) {
+        boolean isCommitted = getInfantryCombatTargetId() != Entity.NONE;
+        if (!isCommitted) {
+            return false;
+        }
+        boolean isPhaseSatOut = PHASES_SAT_OUT_BY_COMMITTED_UNITS.contains(phase);
+        boolean isRuleInEffect = gameOptions().booleanOption(
+              OptionsConstants.ADVANCED_COMBAT_INFANTRY_ACTION_COMMITTED_UNITS_HOLD);
+        boolean isHeld = isPhaseSatOut && isRuleInEffect;
+        if (isHeld) {
+            LOGGER.trace("[InfantryAction] {} takes no {} turn: committed to the action in building {}",
+                  getShortName(), phase, getInfantryCombatTargetId());
+        }
+        return isHeld;
     }
 
     @Override
@@ -463,7 +513,7 @@ public abstract class Infantry extends Entity {
         if ((dugIn != DUG_IN_COMPLETE) && (dugIn != DUG_IN_NONE)) {
             // Damage taken during a digging-in / fortifying turn extends the effort by one turn (TO:AR p.106 /
             // TO:AUE p.153): hold the progress counter this round instead of advancing it.
-            if (fortifyState.checkpointWasDamaged(currentFortifyHealthSignature())) {
+            if (fortifyState().checkpointWasDamaged(currentFortifyHealthSignature())) {
                 LOGGER.debug("[Fortify] {}: damaged while fortifying - effort extended by 1 turn (dug-in stage {})",
                       getShortName(), dugIn);
             } else {
@@ -512,7 +562,7 @@ public abstract class Infantry extends Entity {
         } else {
             setDugIn(DUG_IN_WORKING);
         }
-        fortifyState.begin(currentFortifyHealthSignature());
+        fortifyState().begin(currentFortifyHealthSignature());
     }
 
     /**
@@ -521,7 +571,7 @@ public abstract class Infantry extends Entity {
      */
     public void beginFortify() {
         setDugIn(DUG_IN_FORTIFYING1);
-        fortifyState.begin(currentFortifyHealthSignature());
+        fortifyState().begin(currentFortifyHealthSignature());
     }
 
     /**
@@ -538,7 +588,7 @@ public abstract class Infantry extends Entity {
      *       progress counter was held rather than advanced). TO:AR p.106 / TO:AUE p.153.
      */
     public boolean isFortifyExtendedThisRound() {
-        return fortifyState.wasExtendedAtLastCheckpoint();
+        return fortifyState().wasExtendedAtLastCheckpoint();
     }
 
     /**
@@ -615,7 +665,7 @@ public abstract class Infantry extends Entity {
     public void clearGroundPostures() {
         setDugIn(DUG_IN_NONE);
         setHitTheDeck(false);
-        fortifyState.reset();
+        fortifyState().reset();
     }
 
     /**
@@ -830,6 +880,14 @@ public abstract class Infantry extends Entity {
     }
 
     @Override
+    public boolean canDeclareInfantryAction() {
+        if ((game == null) || !game.hasBoardLocationOf(this)) {
+            return false;
+        }
+        return InfantryActionStrengths.hasStake(game, this);
+    }
+
+    @Override
     public boolean canReinforceInfantryVsInfantry() {
         if (!game.hasBoardLocationOf(this)) {
             return false; // not on board?
@@ -872,5 +930,10 @@ public abstract class Infantry extends Entity {
      */
     public boolean canExitVTOLWithGliderWings() {
         return false;
+    }
+
+    @Override
+    public boolean isChassisFamiliarityEligible() {
+        return true;
     }
 }

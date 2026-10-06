@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,11 +33,7 @@
 
 package megamek.common.ui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.*;
 import java.io.File;
 import java.io.Serial;
 import java.util.ArrayList;
@@ -1351,14 +1347,14 @@ public class RATGeneratorEditor extends JFrame {
             }
             int rating = (row - 1) % factionRec.getRatingLevels().size();
             return switch ((row - 1) / factionRec.getRatingLevels().size()) {
-                case CAT_OMNI_PCT -> factionRec.getPctTech(TechCategory.OMNI, era, rating);
-                case CAT_CLAN_PCT -> factionRec.getPctTech(TechCategory.CLAN, era, rating);
-                case CAT_SL_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED, era, rating);
-                case CAT_OMNI_AERO_PCT -> factionRec.getPctTech(TechCategory.OMNI_AERO, era, rating);
-                case CAT_CLAN_AERO_PCT -> factionRec.getPctTech(TechCategory.CLAN_AERO, era, rating);
-                case CAT_SL_AERO_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
-                case CAT_CLAN_VEE_PCT -> factionRec.getPctTech(TechCategory.CLAN_VEE, era, rating);
-                case CAT_SL_VEE_PCT -> factionRec.getPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
+                case CAT_OMNI_PCT -> factionRec.getDeclaredPctTech(TechCategory.OMNI, era, rating);
+                case CAT_CLAN_PCT -> factionRec.getDeclaredPctTech(TechCategory.CLAN, era, rating);
+                case CAT_SL_PCT -> factionRec.getDeclaredPctTech(TechCategory.IS_ADVANCED, era, rating);
+                case CAT_OMNI_AERO_PCT -> factionRec.getDeclaredPctTech(TechCategory.OMNI_AERO, era, rating);
+                case CAT_CLAN_AERO_PCT -> factionRec.getDeclaredPctTech(TechCategory.CLAN_AERO, era, rating);
+                case CAT_SL_AERO_PCT -> factionRec.getDeclaredPctTech(TechCategory.IS_ADVANCED_AERO, era, rating);
+                case CAT_CLAN_VEE_PCT -> factionRec.getDeclaredPctTech(TechCategory.CLAN_VEE, era, rating);
+                case CAT_SL_VEE_PCT -> factionRec.getDeclaredPctTech(TechCategory.IS_ADVANCED_VEE, era, rating);
                 default -> "?";
             };
         }
@@ -1388,7 +1384,7 @@ public class RATGeneratorEditor extends JFrame {
                 } else {
                     factionRec.setWeightDistribution(era, unitType, null);
                 }
-            } else if (null != value) {
+            } else if (value != null) {
                 int rating = (row - 1) % factionRec.getRatingLevels().size();
                 switch ((row - 1) / factionRec.getRatingLevels().size()) {
                     case CAT_OMNI_PCT:

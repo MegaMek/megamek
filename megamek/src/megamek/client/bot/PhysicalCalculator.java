@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -51,7 +51,6 @@ import megamek.common.compute.Compute;
 import megamek.common.equipment.INarcPod;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.BuildingTarget;
 import megamek.common.units.EjectedCrew;
@@ -89,7 +88,7 @@ public final class PhysicalCalculator {
         double r_dmg;
         double final_dmg;
         int best_brush = PhysicalOption.NONE;
-        boolean aptPiloting = entity.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean aptPiloting = entity.isUseNaturalAptitudePiloting();
 
         // If the attacker is a Mek
 
@@ -330,8 +329,8 @@ public final class PhysicalCalculator {
         int bestType = PhysicalOption.NONE;
         MiscMounted bestClub = null;
         boolean targetConvInfantry = false;
-        boolean fromAptPiloting = from.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
-        boolean toAptPiloting = to.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean fromAptPiloting = from.isUseNaturalAptitudePiloting();
+        boolean toAptPiloting = to.isUseNaturalAptitudePiloting();
 
         // Infantry and tanks can't conduct any of these attacks
         if ((from instanceof Infantry) || (from instanceof Tank)) {
@@ -345,11 +344,19 @@ public final class PhysicalCalculator {
         // Find arc the attack comes in
         target_arc = getThreatHitArc(to.getPosition(), to.getFacing(), from.getPosition());
 
+        // Absolute levels: Entity#getElevation() alone is relative to the hex floor, so two Meks standing on
+        // ground both report 0 even when one is on a hill - the hex level must be added or the elevation-based
+        // hit-table selection below never fires on sloped terrain.
+        Hex attackerHex = game.getHexOf(from);
+        Hex targetHex = game.getHexOf(to);
+        int attackerLevel = from.getElevation() + ((attackerHex == null) ? 0 : attackerHex.getLevel());
+        int targetLevel = to.getElevation() + ((targetHex == null) ? 0 : targetHex.getLevel());
+
         // Check for punches If the target is a Mek, must determine if punch lands on the punch, kick, or full table
         if (to instanceof Mek) {
             if (!to.isProne()) {
                 location_table = ToHitData.HIT_PUNCH;
-                if (to.getElevation() == (from.getElevation() + 1)) {
+                if (targetLevel == (attackerLevel + 1)) {
                     location_table = ToHitData.HIT_KICK;
                 }
             } else {
@@ -399,7 +406,7 @@ public final class PhysicalCalculator {
         if (to instanceof Mek) {
             location_table = ToHitData.HIT_KICK;
             if (!to.isProne()) {
-                if (to.getElevation() == (from.getElevation() - 1)) {
+                if (targetLevel == (attackerLevel - 1)) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
             } else {
@@ -425,10 +432,10 @@ public final class PhysicalCalculator {
             // punch, or kick table
             if (to instanceof Mek) {
                 location_table = ToHitData.HIT_NORMAL;
-                if ((to.getElevation() == (from.getElevation() - 1)) && !to.isProne()) {
+                if ((targetLevel == (attackerLevel - 1)) && !to.isProne()) {
                     location_table = ToHitData.HIT_PUNCH;
                 }
-                if ((to.getElevation() == (from.getElevation() + 1)) && !to.isProne()) {
+                if ((targetLevel == (attackerLevel + 1)) && !to.isProne()) {
                     location_table = ToHitData.HIT_KICK;
                 }
             } else {
@@ -551,7 +558,7 @@ public final class PhysicalCalculator {
         double dmg = odds;
         dmg *= 1.0 -
               (Compute.oddsAbove(ent.getBasePilotingRoll().getValue(),
-                    ent.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING)) / 100.0);
+                    ent.isUseNaturalAptitudePiloting()) / 100.0);
         dmg *= ent.getWeight() * 0.1;
         return dmg;
     }
@@ -581,11 +588,11 @@ public final class PhysicalCalculator {
 
         // Calculate collateral damage, due to possible target fall
         if (to instanceof Mek) {
-            boolean toAptPiloting = to.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+            boolean toAptPiloting = to.isUseNaturalAptitudePiloting();
             coll_damage = calculateFallingDamage(Compute.oddsAbove(odds.getValue(), toAptPiloting) / 100.0, to);
         }
 
-        boolean fromAptPiloting = from.hasAbility(OptionsConstants.PILOT_APTITUDE_PILOTING);
+        boolean fromAptPiloting = from.isUseNaturalAptitudePiloting();
         damage = KickAttackAction.getDamageFor(from, action, targetConvInfantry);
         dmg = (Compute.oddsAbove(odds.getValue(), fromAptPiloting) / 100.0) * damage;
         // Adjust damage for targets armor

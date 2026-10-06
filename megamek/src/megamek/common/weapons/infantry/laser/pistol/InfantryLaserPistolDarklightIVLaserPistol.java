@@ -37,6 +37,7 @@ package megamek.common.weapons.infantry.laser.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -53,19 +54,20 @@ public class InfantryLaserPistolDarklightIVLaserPistol extends InfantryWeapon {
     public InfantryLaserPistolDarklightIVLaserPistol() {
         super();
 
-        name = "Laser Pistol (Darklight IV)";
-        setInternalName(name);
+        name = "Laser Pistol (Darklight IV Laser Pistol)";
+        setInternalName("Laser Pistol (Darklight IV)");
+        addLookupName(name);
         addLookupName("DARKLIGHTIV");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1200;
         bv = 0.021;
         tonnage = 0.0012;
-        infantryDamage = 0.07;
+        infantryDamage = 0.021;
         infantryRange = 1;
         shots = 1;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_LASER).or(F_ENERGY);
-        rulesRefs = "Shrapnel #9";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_9);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)

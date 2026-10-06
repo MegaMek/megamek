@@ -351,7 +351,7 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
                     }
                 }
 
-                EquipmentType etype = EquipmentType.get(equipName);
+                EquipmentType etype = getEquipmentType(a, equipName);
 
                 if (etype == null) {
                     // try w/ prefix
@@ -411,7 +411,7 @@ public class BLKWarshipFile extends BLKFile implements IMekLoader {
                     }
                     // ammo should also get loaded into the bay
                     if (newMount.getType() instanceof AmmoType) {
-                        if (null != bayMount) {
+                        if (bayMount != null) {
                             bayMount.addAmmoToBay(a.getEquipmentNum(newMount));
                         } else {
                             // If we get to ammo when we're not working on a bay we treat it as failed

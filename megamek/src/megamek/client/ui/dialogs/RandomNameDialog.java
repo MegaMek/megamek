@@ -33,8 +33,7 @@
  */
 package megamek.client.ui.dialogs;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -51,8 +50,8 @@ import megamek.client.generator.RandomNameGenerator;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CloseAction;
-import megamek.common.units.Entity;
 import megamek.common.enums.Gender;
+import megamek.common.units.Entity;
 
 /**
  * The random names dialog allows the player to randomly assign names to pilots based on faction and gender.
@@ -107,7 +106,7 @@ public class RandomNameDialog extends JDialog implements ActionListener {
     private void updateFactions() {
         //Fill the combobox with choices
         Set<String> factions = RandomNameGenerator.getInstance().getFactions();
-        if (null == factions) {
+        if (factions == null) {
             return;
         }
         comboFaction.removeAllItems();

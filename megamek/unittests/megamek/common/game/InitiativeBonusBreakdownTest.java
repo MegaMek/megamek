@@ -89,6 +89,23 @@ class InitiativeBonusBreakdownTest {
     }
 
     @Test
+    void gamemasterModifierShowsUnderItsOwnNameAndFollowsStacking() {
+        // crew=1, gamemaster=4: as positives only the highest applies, and the report names the gamemaster
+        var breakdown = new InitiativeBonusBreakdown(0, 0, null, 0, 0, 0, 0, 0, 1, 4);
+
+        assertEquals(4, breakdown.total());
+        assertEquals(5, breakdown.rawTotal());
+        assertTrue(breakdown.toBreakdownString().contains("GM Modifier"));
+    }
+
+    @Test
+    void negativeGamemasterModifierStacksLikeAnyMalus() {
+        // crew=1 (positive, applies), gamemaster=-2 (malus, stacks)
+        var breakdown = new InitiativeBonusBreakdown(0, 0, null, 0, 0, 0, 0, 0, 1, -2);
+        assertEquals(-1, breakdown.total());
+    }
+
+    @Test
     void rawTotalReturnsSumOfAllComponents() {
         // Should sum all regardless of stacking rules
         var breakdown = new InitiativeBonusBreakdown(2, 1, null, 3, 0, 2, -1, 0, 0);

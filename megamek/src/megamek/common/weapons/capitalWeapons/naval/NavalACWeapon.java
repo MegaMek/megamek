@@ -59,7 +59,7 @@ public abstract class NavalACWeapon extends AmmoWeapon {
         super();
         ammoType = AmmoType.AmmoTypeEnum.NAC;
         atClass = CLASS_CAPITAL_AC;
-        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON);
+        flags = flags.or(F_DIRECT_FIRE).or(F_BALLISTIC).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON).or(F_AC);
         capital = true;
     }
 

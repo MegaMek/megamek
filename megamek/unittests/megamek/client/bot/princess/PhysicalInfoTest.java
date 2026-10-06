@@ -47,6 +47,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.board.Coords;
+import megamek.common.equipment.MiscMounted;
 import megamek.common.game.Game;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
@@ -74,9 +75,12 @@ class PhysicalInfoTest {
         ToHitData mockToHit = mock(ToHitData.class);
         when(mockFireControl.guessToHitModifierPhysical(any(Entity.class), any(EntityState.class),
               any(Targetable.class), any(EntityState.class), any(PhysicalAttackType.class),
-              any(Game.class)))
+              nullable(MiscMounted.class), any(Game.class)))
               .thenReturn(mockToHit);
         when(mockToHit.getValue()).thenReturn(7);
+        // The hit-location distribution follows the table carried by the hit data (resolved by elevation in
+        // production); punches here resolve on the punch table.
+        when(mockToHit.getHitTable()).thenReturn(ToHitData.HIT_PUNCH);
 
         Entity mockShooter = mock(BipedMek.class);
         when(mockShooter.getId()).thenReturn(1);
@@ -121,7 +125,8 @@ class PhysicalInfoTest {
         assertEquals(0.0, testPhysicalInfo.getKillProbability(), TOLERANCE);
         assertEquals(5.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
-        // Test a vanilla kick.
+        // Test a vanilla kick (kick table: no head, so no expected pilot hits).
+        when(mockToHit.getHitTable()).thenReturn(ToHitData.HIT_KICK);
         testPhysicalInfo.setShooter(mockShooter);
         testPhysicalInfo.setAttackType(kick);
         testPhysicalInfo.initDamage(kick, mockShooterState, mockTargetState, true, mockGame);
@@ -129,9 +134,20 @@ class PhysicalInfoTest {
         assertEquals(10.0, testPhysicalInfo.getMaxDamage(), TOLERANCE);
         assertEquals(0.0099, testPhysicalInfo.getExpectedCriticals(), TOLERANCE);
         assertEquals(0.0, testPhysicalInfo.getKillProbability(), TOLERANCE);
+        assertEquals(0.0, testPhysicalInfo.getExpectedPilotHits(), TOLERANCE);
         assertEquals(10.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
 
+        // A kick resolved on the punch table (kicker one level above) puts the head in play: same raw
+        // damage, but now the pilot is expected to take hits.
+        when(mockToHit.getHitTable()).thenReturn(ToHitData.HIT_PUNCH);
+        testPhysicalInfo.setShooter(mockShooter);
+        testPhysicalInfo.setAttackType(kick);
+        testPhysicalInfo.initDamage(kick, mockShooterState, mockTargetState, true, mockGame);
+        assertEquals(10.0, testPhysicalInfo.getExpectedDamageOnHit(), TOLERANCE);
+        assertEquals(0.583 / 6.0, testPhysicalInfo.getExpectedPilotHits(), TOLERANCE);
+
         // Make the puncher heavier.
+        when(mockToHit.getHitTable()).thenReturn(ToHitData.HIT_PUNCH);
         when(mockShooter.getWeight()).thenReturn(100.0);
         testPhysicalInfo.setShooter(mockShooter);
         testPhysicalInfo.setAttackType(punch);

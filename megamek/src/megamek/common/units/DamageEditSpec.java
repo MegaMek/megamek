@@ -1,0 +1,277 @@
+/*
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
+ *
+ * This file is part of MegaMek.
+ *
+ * MegaMek is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License (GPL),
+ * version 3 or (at your option) any later version,
+ * as published by the Free Software Foundation.
+ *
+ * MegaMek is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty
+ * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * A copy of the GPL should have been included with this project;
+ * if not, see <https://www.gnu.org/licenses/>.
+ *
+ * NOTICE: The MegaMek organization is a non-profit group of volunteers
+ * creating free software for the BattleTech community.
+ *
+ * MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+ * of The Topps Company, Inc. All Rights Reserved.
+ *
+ * Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+ * InMediaRes Productions, LLC.
+ *
+ * MechWarrior Copyright Microsoft Corporation. MegaMek was created under
+ * Microsoft's "Game Content Usage Rules"
+ * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+ * affiliated with Microsoft.
+ */
+package megamek.common.units;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * The damage editor's edits as plain values, detached from the dialog that collected them. The dialog builds one of
+ * these from its controls and either applies it to its local unit (in the lobby, or outside a game as in MekHQ) or
+ * sends it to the server, which applies it to its own authoritative copy of the unit. Sending the values instead of
+ * the edited unit keeps the server's copy authoritative: a full unit sent back from a client carries whatever stale
+ * state the client held, which has to be guarded against field by field.
+ * <p>
+ * A field is {@code null} when the dialog had nothing to edit for it, mirroring the dialog's controls: a unit
+ * without rear armor has no rear armor values, and only a gamemaster's in-game editor has skill modifier values.
+ * The maps are always present and empty when there is nothing in them.
+ * </p>
+ * <p>
+ * This class only travels inside packets and is never written to a save, so it stays a plain {@link Serializable}
+ * class with no XStream concerns.
+ * </p>
+ */
+public class DamageEditSpec implements Serializable {
+
+    private static final long serialVersionUID = 5218757312851293668L;
+
+    /** Where a QuadVee's conversion gear sits in its leg's actuator values, after the hip to foot actuators. */
+    public static final int CONVERSION_GEAR_INDEX = Mek.ACTUATOR_FOOT - Mek.ACTUATOR_HIP + 1;
+
+    /** The unit these edits apply to. */
+    public int entityId;
+
+    /* per-location structure and armor; a null element means that location was not edited */
+    public Integer[] internal;
+    public Integer[] armor;
+    public Integer[] rearArmor;
+
+    /** Hits taken by each crew member; the entry of a missing crew member stays null. */
+    public Integer[] crewHits;
+    /** The unit's current heat, for the unit types that track it. */
+    public Integer heat;
+
+    /* the unit's conditions: what state it is in, rather than how it was built */
+    public Boolean shutdown;
+    public Boolean prone;
+    public Boolean hullDown;
+    public Boolean hidden;
+    public Boolean stealth;
+    public Boolean dugIn;
+    /** The fuel left in an aero. */
+    public Integer fuel;
+
+    /** The shots left in each ammo bin, by its equipment number. Only a gamemaster edits these. */
+    public final Map<Integer, Integer> ammoShots = new HashMap<>();
+
+    /** The crit hits on each piece of equipment, by its equipment number. */
+    public final Map<Integer, Integer> equipmentHits = new HashMap<>();
+
+    /** Burst fire on each machine gun, by its equipment number; only carried by a gamemaster's in-game edit. */
+    public final Map<Integer, Boolean> mgBurst = new HashMap<>();
+    /** Hot-loading on each ammo bin, by its equipment number; only carried by a gamemaster's in-game edit. */
+    public final Map<Integer, Boolean> hotLoadedAmmo = new HashMap<>();
+
+    /**
+     * The chosen mode of each piece of equipment with modes, by its equipment number as the internal (non-localized)
+     * mode name; only carried by a gamemaster's in-game edit. The gamemaster's mode change takes effect at once,
+     * without the End Phase wait of a player's declared switch, and a mode matching the equipment's current mode is
+     * left alone so that a player's pending switch on untouched equipment survives the edit.
+     */
+    public final Map<Integer, String> equipmentMode = new HashMap<>();
+
+    /**
+     * Whether each chargeable weapon (a bombast laser or a PPC capacitor) holds a full charge, by its equipment
+     * number; only carried by a gamemaster's in-game edit.
+     */
+    public final Map<Integer, Boolean> equipmentCharged = new HashMap<>();
+
+    /*
+     * The weapon and location states a gamemaster can set or clear outright, as opposed to the damage that
+     * produces them in play. Only a gamemaster's editor carries these; everything else leaves them empty or
+     * {@code null}.
+     *
+     * Deliberately not carried: the turn bookkeeping on a mount. "Used this round" is what stops a weapon firing
+     * twice in one turn and is reset by the phase machinery; "AMS used" marks an anti-missile system that has
+     * already fired this round; the TSEMP downtime turn is the every-other-round rest a standard TSEMP takes. A
+     * gamemaster editing those mid-turn would fight the phase machinery for the same flag, and the next round reset
+     * wipes the edit anyway, so the editor shows none of them.
+     */
+
+    /**
+     * Whether each weapon is jammed, by its equipment number. Applies to every unit type, an Advanced Building's
+     * weapons included (TO:AR p. 119), but only to weapons some rule can jam ({@code WeaponMounted#canJam()});
+     * a jam named for any other weapon is refused. A jam set here bites at once, without the phase turnover a
+     * jam in play waits for; a jam cleared here is cleared entirely.
+     */
+    public final Map<Integer, Boolean> weaponJammed = new HashMap<>();
+
+    /**
+     * Whether each one-shot weapon has been fired, by its equipment number. Clearing it reloads the launcher.
+     * Only one-shot weapons carry a lasting fired state; a TSEMP's fired flag is round bookkeeping and is refused.
+     */
+    public final Map<Integer, Boolean> weaponFired = new HashMap<>();
+
+    /**
+     * Whether each weapon's Directional Torso Mount is locked in its current arc, by its equipment number (BMM
+     * p.83). Refused for a weapon that is not in such a mount.
+     */
+    public final Map<Integer, Boolean> directionalMountLocked = new HashMap<>();
+
+    /**
+     * Whether each of a Mek's locations is hull-breached (TW p.122); a {@code null} element means that location
+     * was not edited, and the whole array is {@code null} for any unit that is not a Mek. Breaching a location
+     * marks every piece of equipment and every critical slot in it breached, and clearing the breach restores
+     * them; the editor only marks the state, so a breached center torso or head does not destroy the unit here
+     * the way it does in play.
+     */
+    public Boolean[] locationBreached;
+
+    /**
+     * Whether each of a Mek's limbs (arms and legs) is blown off; a {@code null} element means that limb was not
+     * edited, and the whole array is {@code null} for any unit that is not a Mek. Blowing a limb off runs the same
+     * destruction a "limb blown off" critical does, missing marks and the leg-loss piloting roll included.
+     * Clearing it brings the limb back with its structure and armor: at the values the edit carries, or in full
+     * when the edit still shows the zero a gone limb reads as.
+     */
+    public Boolean[] locationBlownOff;
+
+    /*
+     * The Advanced Building critical results a gamemaster can set or take back (TO:AR p. 119). These are only
+     * carried for a building; every other unit type leaves them empty or {@code null}.
+     */
+
+    /**
+     * Turns the building's gunners remain stunned, or {@code null} when the unit has no such state. Zero means the
+     * gunners can act.
+     */
+    public Integer buildingStunnedTurns;
+
+    /**
+     * Whether the gunners of each of the building's hexes are dead, keyed by one entity location in that hex.
+     * Gunners are killed a hex at a time, so any location of the hex stands for the whole hex.
+     */
+    public final Map<Integer, Boolean> buildingGunnersKilled = new HashMap<>();
+
+    /** Whether each of the building's turreted weapons is locked to the forward arc, by its equipment number. */
+    public final Map<Integer, Boolean> buildingTurretLocked = new HashMap<>();
+
+    /**
+     * Whether the building's power is switched off at the mains, or {@code null} when the unit has no such switch.
+     * A structure switched off shuts down however healthy its generators are.
+     */
+    public Boolean buildingPowerSwitchedOff;
+
+    /*
+     * the gamemaster's temporary skill modifiers, each with a duration of its own (rounds, ignored while its
+     * permanent flag is on). Gunnery and piloting travel together; the initiative trio is present only where the
+     * editor offered its row, which is a game using individual initiative.
+     */
+    public Integer gunneryModifier;
+    public Integer gunneryRounds;
+    public boolean gunneryPermanent;
+    public Integer pilotingModifier;
+    public Integer pilotingRounds;
+    public boolean pilotingPermanent;
+    public Integer initiativeModifier;
+    public Integer initiativeRounds;
+    public boolean initiativePermanent;
+    /**
+     * The gamemaster's change to the unit's target movement modifier for the rest of the round, or {@code null}
+     * where the editor offered no such control. Zero clears it. See {@code Entity#setGamemasterTargetModifier}.
+     */
+    public Integer targetModifier;
+
+    /*
+     * The unit's ejection settings, the same ones the lobby's Configure dialog sets, so a gamemaster can override
+     * them in play. Each is {@code null} where the editor offered no box: a unit without an ejection system has
+     * none, and the conditional triggers only exist under the conditional ejection option. Only a gamemaster's
+     * in-game edit carries them. The first is the master switch as the unit stores it: {@code true} ejects.
+     */
+    public Boolean autoEject;
+    public Boolean conditionalEjectOnAmmoExplosion;
+    public Boolean conditionalEjectOnEngineExplosion;
+    public Boolean conditionalEjectOnCenterTorsoDestroyed;
+    public Boolean conditionalEjectOnHeadshot;
+    public Boolean conditionalEjectOnFuelExplosion;
+    public Boolean conditionalEjectOnStructuralIntegrityDestroyed;
+
+    /* Mek system crit hits */
+    public Integer centerEngineHits;
+    public Integer leftEngineHits;
+    public Integer rightEngineHits;
+    public Integer gyroHits;
+    public Integer sensorHits;
+    public Integer lifeSupportHits;
+    public Integer cockpitHits;
+    /** A land-air Mek's avionics crit hits, by location. */
+    public final Map<Integer, Integer> lamAvionicsHits = new HashMap<>();
+    /** A land-air Mek's landing gear crit hits, by location. */
+    public final Map<Integer, Integer> lamLandingGearHits = new HashMap<>();
+    /**
+     * Actuator crit hits by limb and actuator, in the damage editor's layout: the first index counts limbs from
+     * {@link Mek#LOC_RIGHT_ARM}, the second counts actuators from the shoulder (arms) or hip (legs and quads),
+     * with a QuadVee's conversion gear after the foot.
+     */
+    public Integer[][] actuatorHits;
+
+    /* Tank system crit hits; the engine and sensor fields above are shared the way the dialog's controls are */
+    public Integer engineHits;
+    public Integer turretLockHits;
+    public Integer motiveHits;
+    /** Per-location stabilizer crit hits; a null element means that location has no stabilizer to edit. */
+    public Integer[] stabilizerHits;
+    /** A VTOL's flight stabilizer crit hits. */
+    public Integer flightStabilizerHits;
+
+    /* Aero system crit hits */
+    public Integer avionicsHits;
+    public Integer fcsHits;
+    public Integer cicHits;
+    public Integer gearHits;
+    public Integer leftThrusterHits;
+    public Integer rightThrusterHits;
+    public Integer kfBoomHits;
+    public Integer dockCollarHits;
+    public Integer gravDeckHits;
+    /** The undamaged capacity left in each transport bay, in the order the unit lists its bays. */
+    public Double[] bayCapacityRemaining;
+    /** Crit hits on each transport bay's doors, in the same order as {@link #bayCapacityRemaining}. */
+    public Integer[] bayDoorHits;
+    /** How many of a Jumpship's docking collars are still working. */
+    public Integer workingDockingCollars;
+    /** A Jumpship's K-F drive integrity. */
+    public Integer kfIntegrity;
+    public Integer chargingSystemHits;
+    public Integer driveCoilHits;
+    public Integer driveControllerHits;
+    public Integer fieldInitiatorHits;
+    public Integer heliumTankHits;
+    public Integer lfBatteryHits;
+    /** A Jumpship's jump sail integrity. */
+    public Integer sailIntegrity;
+
+    /** A ProtoMek's per-location system crit hits. */
+    public Integer[] protoHits;
+}

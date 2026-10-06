@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import megamek.common.Messages;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.ProstheticEnhancementType;
@@ -55,6 +56,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.logging.MMLogger;
@@ -122,6 +124,9 @@ public class InfantryWeaponHandler extends WeaponHandler {
             troopersHit = ((Infantry) attackingEntity).getShootingStrength();
         } else if (!(attackingEntity instanceof Infantry)) {
             troopersHit = 1;
+        } else if (allShotsHit()) {
+            // Every shot hits a building at point-blank range or adjacent (TW p. 171), so every trooper hits
+            troopersHit = ((Infantry) attackingEntity).getShootingStrength();
         } else {
             troopersHit = Compute.missilesHit(((Infantry) attackingEntity)
                   .getShootingStrength(), nHitMod);
@@ -232,24 +237,31 @@ public class InfantryWeaponHandler extends WeaponHandler {
         int tailDamageDealt = (int) Math.round(tailBonusDamage * troopersHit);
 
         // beast-mounted infantry get range 0 bonus damage per platoon
+        int mountBurstDamageDealt = 0;
         if ((attackingEntity instanceof ConvInfantry infantry) && (nRange == 0)) {
             InfantryMount mount = infantry.getMount();
             if (mount != null) {
                 if (!target.isConventionalInfantry()) {
                     damageDealt += mount.vehicleDamage();
                 } else if (mount.getBurstDamageDice() > 0) {
-                    damageDealt += Compute.d6(mount.getBurstDamageDice());
+                    mountBurstDamageDealt = Compute.d6(mount.getBurstDamageDice());
+                    damageDealt += mountBurstDamageDealt;
                 }
             }
         }
 
-        // conventional infantry weapons with high damage get treated as if they have
-        // the infantry burst mod
-        if (target instanceof ConvInfantry infantry &&
-              (weaponType.hasFlag(WeaponType.F_INF_BURST) ||
-                    (attackingEntity.isConventionalInfantry()
-                          && infantry.primaryWeaponDamageCapped()))) {
-            damageDealt += Compute.d6();
+        // A Heavy Burst weapon adds 1D6 damage against conventional infantry. A platoon whose primary weapon is
+        // over the damage cap gains that feature outright (TM p. 152), so the cap has to be read off the ATTACKING
+        // platoon; reading it off the target made the bonus depend on what the victim happened to be carrying.
+        int heavyBurstDamageDealt = 0;
+        // Kept as instanceof, not isConventionalInfantry(): CombatVehicleEscapePod is a ConvInfantry subclass that
+        // answers false, so switching would silently drop the bonus against escape pods.
+        if ((target instanceof ConvInfantry)
+              && (weaponType.hasFlag(WeaponType.F_INF_BURST)
+                    || ((attackingEntity instanceof ConvInfantry attackingInfantry)
+                          && attackingInfantry.primaryWeaponDamageCapped()))) {
+            heavyBurstDamageDealt = Compute.d6();
+            damageDealt += heavyBurstDamageDealt;
         }
         if ((target instanceof Infantry) && ((Infantry) target).isMechanized()) {
             damageDealt /= 2;
@@ -261,6 +273,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
             damageType = DamageType.NONPENETRATING;
         }
+        // A non-penetrating attack does nothing to an armored target, so there is no damage figure to report
+        boolean stoppedByArmor = isStoppedByArmor(target);
         Report r = new Report(3325);
         r.subject = subjectId;
         if (attackingEntity instanceof Infantry) {
@@ -270,8 +284,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
             r.add("");
             r.add("");
         }
-        r.add(toHit.getTableDesc() + ", causing " + damageDealt
-              + " damage.");
+        if (stoppedByArmor) {
+            r.add(toHit.getTableDesc() + ".");
+        } else {
+            r.add(toHit.getTableDesc() + ", causing " + damageDealt
+                  + " damage.");
+        }
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
@@ -281,11 +299,13 @@ public class InfantryWeaponHandler extends WeaponHandler {
               - tsmDamageDealt
               - prostheticDamageDealt
               - extraneousDamageDealt
-              - tailDamageDealt;
-        boolean hasTsm = tsmDamageDealt > 0;
-        boolean hasProsthetic = prostheticDamageDealt > 0;
-        boolean hasExtraneous = extraneousDamageDealt > 0;
-        boolean hasTail = tailDamageDealt > 0;
+              - tailDamageDealt
+              - heavyBurstDamageDealt
+              - mountBurstDamageDealt;
+        boolean hasTsm = !stoppedByArmor && (tsmDamageDealt > 0);
+        boolean hasProsthetic = !stoppedByArmor && (prostheticDamageDealt > 0);
+        boolean hasExtraneous = !stoppedByArmor && (extraneousDamageDealt > 0);
+        boolean hasTail = !stoppedByArmor && (tailDamageDealt > 0);
 
         if (hasTsm || hasProsthetic || hasExtraneous || hasTail) {
             // Build combined enhancement names for reporting
@@ -338,6 +358,23 @@ public class InfantryWeaponHandler extends WeaponHandler {
             }
         }
 
+        // The burst dice are rolled, not derived from the weapon, so without a line of their own the player has
+        // no way to tell a high roll from a hard-hitting platoon.
+        if (heavyBurstDamageDealt > 0) {
+            Report heavyBurstReport = new Report(3422);
+            heavyBurstReport.subject = subjectId;
+            heavyBurstReport.indent(2);
+            heavyBurstReport.add(heavyBurstDamageDealt);
+            vPhaseReport.addElement(heavyBurstReport);
+        }
+        if (mountBurstDamageDealt > 0) {
+            Report mountBurstReport = new Report(3423);
+            mountBurstReport.subject = subjectId;
+            mountBurstReport.indent(2);
+            mountBurstReport.add(mountBurstDamageDealt);
+            vPhaseReport.addElement(mountBurstReport);
+        }
+
         if (target.isConventionalInfantry()) {
             // this is a little strange, but I can't just do this in calcDamagePerHit
             // because
@@ -347,6 +384,38 @@ public class InfantryWeaponHandler extends WeaponHandler {
             return 1;
         }
         return damageDealt;
+    }
+
+    /**
+     * Reports a non-penetrating attack on an armored target once, rather than once for every damage grouping. Such an
+     * attack does no damage to anything but a conventional infantry platoon, which is where
+     * {@link megamek.server.totalWarfare.TWDamageManager} applies it.
+     */
+    @Override
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
+        if (isStoppedByArmor(entityTarget)) {
+            if (firstHit) {
+                Report report = new Report(6051);
+                report.subject = entityTarget.getId();
+                report.indent(2);
+                vPhaseReport.addElement(report);
+            }
+            return;
+        }
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+    }
+
+    /**
+     * @param attackTarget the target of this attack
+     *
+     * @return {@code true} if this is a non-penetrating attack on a unit that is not a conventional infantry platoon,
+     *       so it does no damage
+     */
+    protected boolean isStoppedByArmor(@Nullable Targetable attackTarget) {
+        return (damageType == DamageType.NONPENETRATING)
+              && (attackTarget instanceof Entity)
+              && !(attackTarget instanceof ConvInfantry);
     }
 
     // we need to figure out AV damage to aerospace for AA weapons

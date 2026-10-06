@@ -34,18 +34,13 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import megamek.client.generator.RandomUnitGenerator;
-import megamek.client.ui.Messages;
-import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.loaders.MekSummary;
-
-import javax.swing.Box;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.JTree;
+import java.awt.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -53,12 +48,11 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
+
+import megamek.client.generator.RandomUnitGenerator;
+import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
+import megamek.common.loaders.MekSummary;
 
 class RandomArmyRatTab extends JPanel implements RandomArmyTab, TreeSelectionListener {
 
@@ -123,12 +117,15 @@ class RandomArmyRatTab extends JPanel implements RandomArmyTab, TreeSelectionLis
         if (node != null && node.isLeaf()) {
             String ratName = (String) node.getUserObject();
             rug.setChosenRAT(ratName);
+            // updateRATs() has always restored this selection on reopening, but nothing ever saved
+            // it, so the table reset to none every time.
+            GUIP.setRATSelectedRAT(Arrays.toString(ratTree.getSelectionPath().getPath()));
         }
     }
 
     private void updateRATs() {
         Iterator<String> rats = rug.getRatList();
-        if (null == rats) {
+        if (rats == null) {
             return;
         }
 

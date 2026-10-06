@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.heavy;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -77,7 +78,7 @@ public class InfantrySupportHeavyGrenadeLauncherWeapon extends InfantryWeapon {
         shots = 20;
         bursts = 4;
         tonnage = .018;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.IS).setISAdvancement(3049, 3050, 3057, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setPrototypeFactions(Faction.FS, Faction.LC)

@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.support.mortar;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -63,15 +64,16 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
     public InfantrySupportMortarLightInfernoWeapon() {
         super();
 
-        name = "Mortar (Light) - Inferno";
+        name = "Mortar (Light) - Incendiary";
         setInternalName(EquipmentTypeLookup.INFANTRY_MORTAR_LIGHT_INFERNO);
+        addLookupName("Mortar (Light) - Inferno");
         addLookupName(name);
         addLookupName("Infantry Light Mortar Inferno");
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         cost = 1400;
         bv = 0.79;
         tonnage = .050;
-        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT);
+        flags = flags.or(F_INFERNO).or(F_BALLISTIC).or(F_INF_SUPPORT).or(F_MORTAR_TYPE_INDIRECT).or(F_INDIRECT_FIRE);
         String[] modeStrings = { "Damage", "Heat" };
         setModes(modeStrings);
         infantryDamage = 0.26;
@@ -80,7 +82,7 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
         ammoWeight = 0.002;
         ammoCost = 24;
         shots = 1;
-        rulesRefs = " 273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
               .setISApproximate(false, false, false, false, false)
               .setClanAdvancement(1950, 1950, 1950, DATE_NONE, DATE_NONE)
@@ -101,14 +103,6 @@ public class InfantrySupportMortarLightInfernoWeapon extends InfantryWeapon {
             removeMode(MODE_MISSILE_INDIRECT);
             removeMode(MODE_INDIRECT_HEAT);
         }
-    }
-
-    @Override
-    public boolean hasIndirectFire() {
-        // TO:AUE - conventional infantry whose Light/Heavy Mortar defines their final range value may
-        // use indirect fire like Mek Mortars. The F_MORTAR_TYPE_INDIRECT flag is only consulted on the
-        // platoon's range-defining weapon, so this capability applies only when the mortar sets the range.
-        return true;
     }
 
     @Override

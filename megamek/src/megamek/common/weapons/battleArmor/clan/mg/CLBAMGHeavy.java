@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan.mg;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -56,9 +57,7 @@ public class CLBAMGHeavy extends BAMGWeapon {
         name = "Machine Gun (Heavy)";
         setInternalName("CLBAHeavyMG");
         addLookupName("Clan BA Heavy Machine Gun");
-        addLookupName("ISBAHeavyMachineGun");
-        addLookupName("IS BA Heavy Machine Gun");
-        addLookupName("ISBAHeavyMG");
+        addLookupName("CLBAHeavyMachineGun");
         sortingName = "MG D";
         heat = 0;
         damage = 3;
@@ -72,10 +71,8 @@ public class CLBAMGHeavy extends BAMGWeapon {
         criticalSlots = 1;
         bv = 6;
         cost = 7500;
-        rulesRefs = "258, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.ALL)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B)
               .setISAdvancement(DATE_NONE, DATE_NONE, 3068, DATE_NONE, DATE_NONE)

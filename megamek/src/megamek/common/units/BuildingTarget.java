@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -111,7 +111,9 @@ public class BuildingTarget implements Targetable {
             throw new IllegalArgumentException("No building at %s.".formatted(getBoardLocation()));
         }
 
-        name = "Hex %s of %s".formatted(position.getBoardNum(), bldg.toString());
+        // An Advanced Building is an Entity whose toString() is a debug form; use its unit name instead
+        String buildingName = (bldg instanceof Entity buildingEntity) ? buildingEntity.getShortName() : bldg.toString();
+        name = "Hex %s of %s".formatted(position.getBoardNum(), buildingName);
         if (boardId > 0) {
             name += " (Board #%d - %s)".formatted(boardId, board.getBoardName());
         }

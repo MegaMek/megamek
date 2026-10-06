@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,7 +41,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.*;
+import megamek.common.CriticalSlot;
+import megamek.common.Hex;
+import megamek.common.HitData;
+import megamek.common.MPCalculationSetting;
+import megamek.common.OffBoardDirection;
+import megamek.common.SimpleTechLevel;
+import megamek.common.TechAdvancement;
+import megamek.common.TechConstants;
+import megamek.common.ToHitData;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
@@ -421,7 +429,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             return 0;
         }
         int j = getJumpMP();
-        if (null != game) {
+        if (game != null) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             if (weatherMod != 0) {
@@ -450,7 +458,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             return 0;
         }
         int j = getJumpMP();
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             j = Math.max(j + weatherMod, 0);
@@ -835,8 +843,14 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
      * @return The control roll that must be passed to land safely.
      */
     public PilotingRollData checkAirMekLanding() {
-        // Base piloting skill
-        PilotingRollData roll = new PilotingRollData(getId(), getCrew().getPiloting(), "Base piloting skill");
+        // Base piloting skill, with any gamemaster modifier shown as a line of its own
+        int gamemasterModifier = getCrew().appliedPilotingModifier();
+        PilotingRollData roll = new PilotingRollData(getId(),
+              getCrew().getPiloting() - gamemasterModifier,
+              "Base piloting skill");
+        if (gamemasterModifier != 0) {
+            roll.addModifier(gamemasterModifier, "GM Modifier");
+        }
 
         if ((hasAbility(OptionsConstants.PILOT_WIND_WALKER)) && PilotSPAHelper.isWindWalkerValid(this)) {
             roll.addModifier(-1, "Wind Walker SPA");
@@ -1600,12 +1614,6 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
             }
         }
 
-        boolean playtestLocations = gameOptions().booleanOption(OptionsConstants.PLAYTEST_1);
-
-        if (playtestLocations && (side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)) {
-            return getPlaytestSideLocation(table, side, LosEffects.COVER_NONE);
-        }
-
         if (side == ToHitData.SIDE_FRONT) {
             // normal front hits
             switch (roll) {
@@ -1911,7 +1919,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void autoSetCapArmor() {
         double divisor = 10.0;
-        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             divisor = 1.0;
         }
         capitalArmor_orig = (int) Math.round(getTotalOArmor() / divisor);
@@ -1921,7 +1929,7 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
     @Override
     public void autoSetFatalThresh() {
         int baseThresh = 2;
-        if ((null != game) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
+        if ((game != null) && gameOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)) {
             baseThresh = 20;
         }
         fatalThresh = Math.max(baseThresh, (int) Math.ceil(capitalArmor / 4.0));
@@ -2186,8 +2194,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
                   game.getPlanetaryConditions().getLight().isDayOrDusk();
+            // a Recon Camera spots through its own roll instead (ReconCameraRules, TO:AUE p.150)
             return !isAirborne() ||
-                  hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
                   hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
                   hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
                   hiresLighted;

@@ -115,8 +115,6 @@ class ComputeECMTest {
         Entity archer = getEntityForUnitTesting("Archer ARC-2R", false);
         assertNotNull(archer, "Archer ARC-2R not found");
 
-        MiscType.initializeTypes();
-
         // Test no ECM Info
         ECMInfo ecmInfo = archer.getECMInfo();
         assertNull(ecmInfo);
@@ -257,8 +255,6 @@ class ComputeECMTest {
 
         Entity archer = getEntityForUnitTesting("Archer ARC-2R", false);
         assertNotNull(archer, "Archer ARC-2R not found");
-
-        MiscType.initializeTypes();
 
         // Add a Guardian ECM Suite (base ground range of 6 hexes)
         EquipmentType eType = EquipmentType.get("ISGuardianECMSuite");

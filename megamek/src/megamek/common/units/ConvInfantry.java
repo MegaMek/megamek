@@ -39,6 +39,7 @@ import static java.util.stream.Collectors.toList;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
@@ -81,6 +82,7 @@ import megamek.common.planetaryConditions.Wind;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.verifier.TestInfantry;
 import megamek.common.weapons.infantry.InfantryWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 import megamek.logging.MMLogger;
 
 /**
@@ -131,6 +133,11 @@ public class ConvInfantry extends Infantry {
     private String secondName;
     private int secondaryWeaponsPerSquad = 0;
 
+    // Number of rounds this platoon's energy weapons are rendered inoperative by an Improved Magnetic
+    // Pulse (iATM IMP) missile hit (IO IMP rules). Set to 2 on hit so the effect lasts through the End
+    // Phase of the following turn.
+    private int impEnergyWeaponsDisabledRounds = 0;
+
     // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): a one-shot weapon carried by every trooper, used for
     // a single once-per-scenario attack instead of the platoon's standard weapon attack. Unlike primary/secondary, the
     // disposable weapon IS added to the equipment array as a separate, fireable WeaponMounted. disposableWeapon is
@@ -143,6 +150,7 @@ public class ConvInfantry extends Infantry {
     private InfantryMount mount = null;
 
     // Armor
+    private String customArmorName = null;
     private double customArmorDamageDivisor = 1.0;
     private boolean encumbering = false;
     private boolean spaceSuit = false;
@@ -162,6 +170,13 @@ public class ConvInfantry extends Infantry {
     private Coords lastFirefightCoords = null;
     private int lastFirefightRound = -1;
     private int consecutiveFirefightTurns = 0;
+
+    /**
+     * Whether the platoon's SRM launchers carry Inferno munitions for this battle. Declared before the battle and
+     * locked for its duration (TW p. 143; TechManual pp. 350-352 errata). Only meaningful when
+     * {@link #hasSrmLauncher()} is true.
+     */
+    private boolean infernoSrms = false;
 
     /**
      * For mechanized VTOL infantry, stores whether the platoon are microlite troops, which need to enter a hex every
@@ -211,6 +226,11 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
+    public boolean isMechanized() {
+        return isMounted() ? false : super.isMechanized();
+    }
+
+    @Override
     public String[] getLocationAbbreviations() {
         return LOCATION_ABBREVIATIONS;
     }
@@ -231,26 +251,26 @@ public class ConvInfantry extends Infantry {
     }
 
     @Override
-    protected void addSystemTechAdvancement(CompositeTechLevel ctl) {
-        super.addSystemTechAdvancement(ctl);
-        ctl.addComponent(getMotiveTechAdvancement());
+    protected void addSystemTechAdvancement(CompositeTechLevel techLevel) {
+        super.addSystemTechAdvancement(techLevel);
+        techLevel.addComponent(getMotiveTechAdvancement(), getMovementModeAsString());
         if (hasSpecialization(COMBAT_ENGINEERS)) {
-            ctl.addComponent(getCombatEngineerTA());
+            techLevel.addComponent(getCombatEngineerTA(), getSpecializationName(COMBAT_ENGINEERS));
         }
         if (hasSpecialization(MARINES)) {
-            ctl.addComponent(getMarineTA());
+            techLevel.addComponent(getMarineTA(), getSpecializationName(MARINES));
         }
         if (hasSpecialization(MOUNTAIN_TROOPS)) {
-            ctl.addComponent(getMountainTA());
+            techLevel.addComponent(getMountainTA(), getSpecializationName(MOUNTAIN_TROOPS));
         }
         if (hasSpecialization(PARATROOPS)) {
-            ctl.addComponent(getParatrooperTA());
+            techLevel.addComponent(getParatrooperTA(), getSpecializationName(PARATROOPS));
         }
         if (hasSpecialization(PARAMEDICS)) {
-            ctl.addComponent(getParamedicTA());
+            techLevel.addComponent(getParamedicTA(), getSpecializationName(PARAMEDICS));
         }
         if (hasSpecialization(TAG_TROOPS)) {
-            ctl.addComponent(getTAGTroopsTA());
+            techLevel.addComponent(getTAGTroopsTA(), getSpecializationName(TAG_TROOPS));
         }
     }
 
@@ -261,7 +281,7 @@ public class ConvInfantry extends Infantry {
      * @return True when this infantry carries anti-mek gear
      */
     public boolean hasAntiMekGear() {
-        return hasWorkingMisc(EquipmentTypeLookup.ANTI_MEK_GEAR);
+        return hasWorkingMisc(MiscType.F_ANTI_MEK_GEAR);
     }
 
     @Override
@@ -357,6 +377,50 @@ public class ConvInfantry extends Infantry {
 
     public boolean isXCT() {
         return hasSpecialization(XCT);
+    }
+
+    /**
+     * Whether this platoon is Xenoplanetary Condition-Trained for a tainted atmosphere, TO:AUE p.162. That needs both
+     * the XCT specialization and an armor kit rated for tainted air: an Environment Suit (Light, Hostile or Marine) or
+     * a Spacesuit of any kind. Troops outfitted for one hazardous environment cannot be deployed in another, so the
+     * armor kit has to be checked as well as the specialization.
+     *
+     * @return {@code true} if this platoon may operate in a tainted atmosphere
+     */
+    public boolean isXCTForTaintedAtmosphere() {
+        return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TAINTED_ATMOSPHERE);
+    }
+
+    /**
+     * Whether this platoon wears a MekWarrior Combat Suit (TO:AUE p.129). On its own that only means the armor kit
+     * is fitted; what it protects against is decided by the optional rule.
+     *
+     * @return {@code true} if the platoon's armor kit is a combat suit
+     */
+    public boolean hasCombatSuit() {
+        return hasArmorKitFlag(MiscTypeFlag.S_COMBAT_SUIT);
+    }
+
+    /**
+     * Whether this platoon is Xenoplanetary Condition-Trained for a toxic atmosphere, TO:AUE p.162. That needs both the
+     * XCT specialization and an armor kit rated for toxic air: an Environment Suit (Hostile or Marine) or a Spacesuit
+     * of any kind. A Light Environment Suit is enough for tainted air but not for toxic air, which is why this is a
+     * separate check from {@link #isXCTForTaintedAtmosphere()}.
+     *
+     * @return {@code true} if this platoon may operate in a toxic atmosphere
+     */
+    public boolean isXCTForToxicAtmosphere() {
+        return isXCT() && hasArmorKitFlag(MiscTypeFlag.S_TOXIC_ATMOSPHERE);
+    }
+
+    /**
+     * @param flag the armor kit flag to look for
+     *
+     * @return {@code true} if this platoon wears an armor kit carrying the given flag
+     */
+    private boolean hasArmorKitFlag(MiscTypeFlag flag) {
+        EquipmentType armorKit = getArmorKit();
+        return (armorKit != null) && armorKit.hasFlag(flag);
     }
 
     @Override
@@ -1023,6 +1087,9 @@ public class ConvInfantry extends Infantry {
             logger.debug("[BuildBridge] {} newRound (round {}): {} of {} dismantle turns banked",
                   getShortName(), roundNumber, bridgeDismantleTurns, bridgeDismantleRequiredTurns);
         }
+        if (impEnergyWeaponsDisabledRounds > 0) {
+            impEnergyWeaponsDisabledRounds--;
+        }
         super.newRound(roundNumber);
     }
 
@@ -1066,21 +1133,22 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1)
                   && !hasAbility(OptionsConstants.MD_TSM_IMPLANT)
                   && !hasAbility(OptionsConstants.MD_DERMAL_ARMOR)
-                  && (null != secondaryWeapon)
+                  && !hasNonEncumberingSecondaryWeaponSpecialization()
+                && (secondaryWeapon != null)
                   && secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)
                   && !getMovementMode().isTracked()
                   && !getMovementMode().isJumpInfantry()) {
                 mp = Math.max(mp - 1, 0);
             }
             // PL-MASC IntOps p.84
-            if ((null != getCrew())
+            if ((getCrew() != null)
                   && hasAbility(OptionsConstants.MD_PL_MASC)
                   && getMovementMode().isLegInfantry()
                   && isConventionalInfantry()) {
                 mp += 1;
             }
 
-            if ((null != getCrew())
+            if ((getCrew() != null)
                   && hasAbility(OptionsConstants.INFANTRY_FOOT_CAV)
                   && getMovementMode().isJumpOrLegInfantry()) {
                 mp += 1;
@@ -1091,7 +1159,7 @@ public class ConvInfantry extends Infantry {
             }
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             int weatherMod = conditions.getMovementMods(this);
             mp = Math.max(mp + weatherMod, 0);
@@ -1139,6 +1207,11 @@ public class ConvInfantry extends Infantry {
 
     @Override
     public boolean doomedInExtremeTemp() {
+        // An armored cooling suit handles heat, which is what it is built for, but not cold.
+        if ((game != null) && CrewArmorKitRules.protectsAgainstTemperature(this,
+              game.getPlanetaryConditions().getTemperature())) {
+            return false;
+        }
         // If there is no game object, count any temperature protection.
         if (getArmorKit() != null) {
             if (getArmorKit().hasFlag(MiscTypeFlag.S_XCT_VACUUM)) {
@@ -1217,6 +1290,15 @@ public class ConvInfantry extends Infantry {
         }
     }
 
+    /**
+     * Checks if infantry has armor kit or custom armor (does not include Myomer Implants)
+     * @return true if infantry has armor kit or custom armor, false otherwise
+     */
+    public boolean hasArmor() {
+        return getArmorKit() != null || getCustomArmorName() != null || getCustomArmorDamageDivisor() != 1.0 ||
+              isArmorEncumbering() || hasSpaceSuit() || hasDEST() || hasSneakCamo() || hasSneakIR() || hasSneakECM();
+    }
+
     public double calcDamageDivisor() {
         double divisor;
         EquipmentType armorKit = getArmorKit();
@@ -1227,7 +1309,7 @@ public class ConvInfantry extends Infantry {
             divisor = getCustomArmorDamageDivisor();
         }
         // TSM implant reduces divisor to 0.5 if no other armor is worn
-        if ((armorKit == null) && (divisor == 1.0) && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
+        if (!hasArmor() && hasAbility(OptionsConstants.MD_TSM_IMPLANT)) {
             divisor = 0.5;
         }
         // Dermal camo armor provides divisor of 1.0 (prevents 0.5 from TSM alone)
@@ -1243,6 +1325,23 @@ public class ConvInfantry extends Infantry {
             divisor *= mount.damageDivisor();
         }
         return divisor;
+    }
+
+    /**
+     * Gets the custom armor name
+     * @return The custom armor name
+     */
+    @Nullable
+    public String getCustomArmorName() {
+        return customArmorName;
+    }
+
+    /**
+     * Sets the custom armor name. Cleans blank names to null.
+     * @param customArmorName Custom armor name
+     */
+    public void setCustomArmorName(@Nullable String customArmorName) {
+        this.customArmorName = (customArmorName == null || customArmorName.isBlank()) ? null : customArmorName;
     }
 
     /**
@@ -1300,7 +1399,7 @@ public class ConvInfantry extends Infantry {
 
     public void setPrimaryWeapon(InfantryWeapon w) {
         primaryWeapon = w;
-        primaryName = w.getName();
+        primaryName = w.getInternalName();
     }
 
     public InfantryWeapon getPrimaryWeapon() {
@@ -1309,15 +1408,52 @@ public class ConvInfantry extends Infantry {
 
     public void setSecondaryWeapon(InfantryWeapon w) {
         secondaryWeapon = w;
-        if (null == w) {
+        if (w == null) {
             secondName = null;
         } else {
-            secondName = w.getName();
+            secondName = w.getInternalName();
         }
     }
 
     public InfantryWeapon getSecondaryWeapon() {
         return secondaryWeapon;
+    }
+
+    private static boolean isSrmLauncher(@Nullable InfantryWeapon weapon) {
+        return (weapon != null) && weapon.hasFlag(WeaponType.F_SRM);
+    }
+
+    /**
+     * @return {@code true} if the platoon's primary or secondary weapon is an SRM launcher, which may be loaded with
+     *       standard or Inferno munitions before the battle
+     */
+    public boolean hasSrmLauncher() {
+        return isSrmLauncher(primaryWeapon) || isSrmLauncher(secondaryWeapon);
+    }
+
+    /**
+     * @return {@code true} if the platoon has an SRM launcher and declared Inferno munitions for this battle
+     */
+    public boolean firesInfernoSrms() {
+        return infernoSrms && hasSrmLauncher();
+    }
+
+    /**
+     * @return the declared SRM munition, {@code true} for Inferno, regardless of whether the platoon has an SRM
+     *       launcher
+     */
+    public boolean isInfernoSrmsDeclared() {
+        return infernoSrms;
+    }
+
+    /**
+     * Declares whether the platoon's SRM launchers carry Inferno munitions. This is a pre-battle choice made in the
+     * lobby; there is no way to change it during play.
+     *
+     * @param inferno {@code true} for Inferno munitions, {@code false} for standard SRMs
+     */
+    public void setInfernoSrmsDeclared(boolean inferno) {
+        infernoSrms = inferno;
     }
 
     /**
@@ -1392,19 +1528,66 @@ public class ConvInfantry extends Infantry {
         return secondaryWeaponsPerSquad;
     }
 
+    private boolean hasNonEncumberingSecondaryWeaponSpecialization() {
+        return hasSpecialization(TAG_TROOPS);
+    }
+
     public double getDamagePerTrooper() {
-        if (null == primaryWeapon) {
+        if (primaryWeapon == null) {
             return 0;
         }
+
+        // Improved Magnetic Pulse missiles render energy weapons inoperative for a turn (IO IMP rules).
+        boolean energyDisabled = impEnergyWeaponsDisabledRounds > 0;
 
         // per 09/2021 errata, primary infantry weapon damage caps out at 0.6
         double adjustedDamage = Math.min(MMConstants.INFANTRY_PRIMARY_WEAPON_DAMAGE_CAP,
               primaryWeapon.getInfantryDamage());
+        if (energyDisabled && primaryWeapon.hasFlag(WeaponType.F_ENERGY)) {
+            adjustedDamage = 0;
+        }
         double damage = adjustedDamage * (squadSize - secondaryWeaponsPerSquad);
-        if (null != secondaryWeapon) {
+        if ((secondaryWeapon != null)
+              && !(energyDisabled && secondaryWeapon.hasFlag(WeaponType.F_ENERGY))) {
             damage += secondaryWeapon.getInfantryDamage() * secondaryWeaponsPerSquad;
         }
         return damage / squadSize;
+    }
+
+    /**
+     * Records an Improved Magnetic Pulse (iATM IMP) missile hit on this platoon (IO IMP rules). If the platoon uses
+     * energy weapons, they are rendered inoperative through the End Phase of the following turn. Other weapon types are
+     * unaffected.
+     */
+    public void applyImpEnergyWeaponDisable() {
+        // 2 rounds so the effect lasts through the End Phase of the turn after the attack.
+        impEnergyWeaponsDisabledRounds = 2;
+    }
+
+    /**
+     * @return {@code true} while this platoon's energy weapons are rendered inoperative by an Improved Magnetic Pulse
+     *       missile hit (IO IMP rules).
+     */
+    public boolean isEnergyWeaponsDisabled() {
+        return impEnergyWeaponsDisabledRounds > 0;
+    }
+
+    /**
+     * @return {@code true} if this platoon is equipped with cybernetic enhancements of any kind (IO p.84 prosthetic
+     *       enhancements). Improved Magnetic Pulse missiles deal double damage to such units.
+     */
+    public boolean isCyberneticallyEnhanced() {
+        return hasProstheticEnhancement();
+    }
+
+    /**
+     * @return {@code true} if this platoon's primary or secondary weapon is an energy weapon. Improved Magnetic Pulse
+     *       missiles
+     *       render such weapons inoperative through the End Phase of the following turn.
+     */
+    public boolean isUsingEnergyWeapons() {
+        return ((primaryWeapon != null) && primaryWeapon.hasFlag(WeaponType.F_ENERGY))
+              || ((secondaryWeapon != null) && secondaryWeapon.hasFlag(WeaponType.F_ENERGY));
     }
 
     public boolean primaryWeaponDamageCapped() {
@@ -1418,44 +1601,77 @@ public class ConvInfantry extends Infantry {
     public String getArmorDesc() {
         StringBuilder sArmor = new StringBuilder();
         sArmor.append(calcDamageDivisor());
+
         if (isArmorEncumbering()) {
             sArmor.append("E");
         }
 
-        if (hasSpaceSuit()) {
-            sArmor.append(" (Spacesuit) ");
-        }
-
-        if (hasDEST()) {
-            sArmor.append(" (DEST) ");
-        }
-
-        if (hasSneakCamo() || (getCrew() != null && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
-            sArmor.append(" (Camo) ");
-        }
-
-        if (hasSneakIR()) {
-            sArmor.append(" (IR) ");
-        }
-
-        if (hasSneakECM()) {
-            sArmor.append(" (ECM) ");
+        if (!getArmorSpecials().isBlank()) {
+            sArmor.append(" ").append(getArmorSpecials());
         }
 
         return sArmor.toString();
+    }
+
+    public String getArmorSpecials() {
+        StringJoiner armorSpecials = new StringJoiner("/", "(", ")");
+        armorSpecials.setEmptyValue("");
+
+        if (hasSpaceSuit()) {
+            armorSpecials.add("Spacesuit");
+        }
+
+        if (hasDEST()) {
+            armorSpecials.add("DEST");
+        } else {
+            // Dermal Camouflage Armor is not active if wearing any other Armor
+            if (hasSneakCamo() || (!hasArmor() && getCrew() != null && hasAbility(OptionsConstants.MD_DERMAL_CAMO_ARMOR))) {
+                armorSpecials.add("Camo");
+            }
+
+            if (hasSneakIR()) {
+                armorSpecials.add("IR");
+            }
+
+            if (hasSneakECM()) {
+                armorSpecials.add("ECM");
+            }
+        }
+
+        return armorSpecials.toString();
     }
 
     @Override
     public void restore() {
         super.restore();
 
-        if (null != primaryName) {
-            primaryWeapon = (InfantryWeapon) EquipmentType.get(primaryName);
+        // A game saved before the Inferno SRM launchers were withdrawn still names one. It loads as the plain
+        // launcher below, and the platoon keeps firing Inferno as it was built to (TechManual pp. 350-352 errata).
+        if (WithdrawnInfernoSrmLaunchers.isWithdrawnName(primaryName)
+              || WithdrawnInfernoSrmLaunchers.isWithdrawnName(secondName)) {
+            infernoSrms = true;
         }
 
-        if (null != secondName) {
-            secondaryWeapon = (InfantryWeapon) EquipmentType.get(secondName);
+        if (primaryName != null) {
+            primaryWeapon = restoreInfantryWeapon(primaryName);
+            if (primaryWeapon != null) {
+                primaryName = primaryWeapon.getInternalName();
+            }
         }
+
+        if (secondName != null) {
+            secondaryWeapon = restoreInfantryWeapon(secondName);
+            if (secondaryWeapon != null) {
+                secondName = secondaryWeapon.getInternalName();
+            }
+        }
+    }
+
+    private static @Nullable InfantryWeapon restoreInfantryWeapon(String weaponName) {
+        if (EquipmentType.get(weaponName) instanceof InfantryWeapon infantryWeapon) {
+            return infantryWeapon;
+        }
+        return null;
     }
 
     @Override
@@ -1534,8 +1750,9 @@ public class ConvInfantry extends Infantry {
             if ((getSecondaryWeaponsPerSquad() > 1) &&
                   !hasAbility(OptionsConstants.MD_TSM_IMPLANT) &&
                   !hasAbility(OptionsConstants.MD_DERMAL_ARMOR) &&
+                  !hasNonEncumberingSecondaryWeaponSpecialization() &&
                   !getMovementMode().isSubmarine() &&
-                  (null != secondaryWeapon) &&
+                (secondaryWeapon != null) &&
                   secondaryWeapon.hasFlag(WeaponType.F_INF_SUPPORT)) {
                 mp = Math.max(mp - 1, 0);
             } else if (movementMode.isVTOL() && getSecondaryWeaponsPerSquad() > 0) {
@@ -1547,7 +1764,7 @@ public class ConvInfantry extends Infantry {
             mp = applyGravityEffectsOnMP(mp);
         }
 
-        if (!mpCalculationSetting.ignoreWeather() && (null != game)) {
+        if (!mpCalculationSetting.ignoreWeather() && (game != null)) {
             PlanetaryConditions conditions = game.getPlanetaryConditions();
             if (conditions.getWind().isStrongerThan(Wind.MOD_GALE)) {
                 return 0;
@@ -1595,10 +1812,10 @@ public class ConvInfantry extends Infantry {
     @Override
     public double getAlternateCost() {
         double cost = 0;
-        if (null != primaryWeapon) {
+        if (primaryWeapon != null) {
             cost += primaryWeapon.getCost(this, false, -1) * (squadSize - secondaryWeaponsPerSquad);
         }
-        if (null != secondaryWeapon) {
+        if (secondaryWeapon != null) {
             cost += secondaryWeapon.getCost(this, false, -1) * secondaryWeaponsPerSquad;
         }
         cost = cost / squadSize;
@@ -1708,7 +1925,8 @@ public class ConvInfantry extends Infantry {
             return true;
         }
 
-        if (currElevation < 0) {
+        // Below the surface means under water, unless the hex has a basement that deep (TW p. 179)
+        if ((currElevation < 0) && !hex.isBasementLevel(currElevation)) {
             if (mount == null) {
                 if (!getMovementMode().isUMUInfantry() && !getMovementMode().isSubmarine()) {
                     return true;
@@ -1726,9 +1944,13 @@ public class ConvInfantry extends Infantry {
                       !getMovementMode().isUMUInfantry() &&
                       !getMovementMode().isSubmarine() &&
                       !getMovementMode().isVTOL();
-            } else {
-                return hex.terrainLevel(Terrains.WATER) > mount.maxWaterDepth();
             }
+            // A flying mount above the surface is not in the water; only a beast at or below the
+            // surface is bound by its maximum water depth (TW p.54 VTOL movement, TO:AUE p.106)
+            if (currElevation > 0) {
+                return false;
+            }
+            return hex.terrainLevel(Terrains.WATER) > mount.maxWaterDepth();
         }
         return false;
     }

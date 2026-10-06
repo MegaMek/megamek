@@ -41,6 +41,7 @@ import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.TextMarkerSprite;
+import megamek.client.ui.panels.phaseDisplay.PointblankShotDisplay;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.RangeType;
@@ -50,6 +51,7 @@ import megamek.common.board.BoardHelper;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponMounted;
@@ -62,7 +64,6 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
-import megamek.common.units.Tank;
 import megamek.common.units.Targetable;
 import megamek.common.units.Terrains;
 import megamek.common.weapons.infantry.InfantryWeapon;
@@ -368,30 +369,34 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
         }
     }
 
+    /**
+     * Whether the player is currently aiming a weapon, so the field of fire should follow the real firing arc
+     * including torso twist and any turret or directional-mount rotation (issues #1040, #6518).
+     *
+     * <p>Asking the display rather than only the phase, because a hidden unit's point-blank shot is aimed during
+     * the enemy's movement phase (TW p.260). Testing the phase alone drew that arc from the hull facing and ignored
+     * the turret entirely, so rotating the turret changed the ranges shown not at all.</p>
+     *
+     * @return {@code true} if a weapon is being aimed right now
+     */
+    private boolean isPlayerAiming() {
+        return game.getPhase().isFiring()
+              || game.getPhase().isTargeting()
+              || game.getPhase().isOffboard()
+              || (clientGUI.getCurrentPanel() instanceof PointblankShotDisplay);
+    }
+
     private void updateFacing(WeaponMounted weapon, int assumedFacing) {
         if (firingEntity == null) {
             return;
         }
-        facing = firingEntity.getFacing();
-        if (game.getPhase().isFiring()) {
-            if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
-                facing = firingEntity.getSecondaryFacing();
-            }
-            // If this is mek with turrets, check to see if the weapon is on a turret.
-            if ((firingEntity instanceof Mek) && (weapon.isMekTurretMounted())) {
-                // facing is currently adjusted for mek torso twist and facing, adjust for
-                // turret facing.
-                facing = (weapon.getFacing() + facing) % 6;
-            }
-            // If this is a tank with dual turrets, check to see if the weapon is a second
-            // turret.
-            if ((firingEntity instanceof Tank) && (weapon.getLocation() == ((Tank) firingEntity).getLocTurret2())) {
-                facing = ((Tank) firingEntity).getDualTurretFacing();
-            }
-        } else if (game.getPhase().isTargeting() || game.getPhase().isOffboard()) {
-            if (firingEntity.isSecondaryArcWeapon(firingEntity.getEquipmentNum(weapon))) {
-                facing = firingEntity.getSecondaryFacing();
-            }
+        // In the aiming phases (firing and targeting/TAG/offboard) the effective facing includes torso twist and any
+        // turret or directional-mount rotation, so the field of fire matches the real firing arc (issues #1040, #6518).
+        // Other phases (e.g. the movement field-of-fire preview) use the base facing.
+        if (isPlayerAiming()) {
+            facing = TurretFacing.weaponFacing(firingEntity, firingEntity.getEquipmentNum(weapon));
+        } else {
+            facing = firingEntity.getFacing();
         }
         facing = (assumedFacing + facing - firingEntity.getFacing() + 6) % 6;
     }

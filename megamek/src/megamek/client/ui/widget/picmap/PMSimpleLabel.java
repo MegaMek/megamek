@@ -59,6 +59,13 @@ public class PMSimpleLabel implements PMLabel {
 
     boolean visible = true;
 
+    /** The ring drawn around an outlined label, and whether this label has one. */
+    private static final Color OUTLINE_COLOR = Color.white;
+    protected boolean outlined = false;
+
+    /** The factor the text is enlarged by, so it is drawn at that size rather than magnified and left blocky. */
+    protected double drawScale = 1.0;
+
     /*
      * Create the label with the specified string, font and color
      */
@@ -118,11 +125,56 @@ public class PMSimpleLabel implements PMLabel {
         }
         Font font = g.getFont();
         Color temp = g.getColor();
-        g.setColor(color);
         g.setFont(fm.getFont());
-        g.drawString(string, x, y);
+        drawOutlinedString(g, string, x, y);
         g.setColor(temp);
         g.setFont(font);
+    }
+
+    /**
+     * Draws the label, ringed with a contrasting outline when it is outlined. A label over a location striped for a
+     * critical hit would otherwise have to compete with the stripes drawn underneath it.
+     * <p>
+     * When the label is enlarged, its position and font are scaled here and it is drawn at that size, so its text
+     * renders crisply rather than being magnified through the component's transform and left blocky.
+     * </p>
+     */
+    protected void drawOutlinedString(Graphics g, String text, int atX, int atY) {
+        int drawX = atX;
+        int drawY = atY;
+        Font previousFont = null;
+        if (drawScale != 1.0) {
+            drawX = (int) Math.round(atX * drawScale);
+            drawY = (int) Math.round(atY * drawScale);
+            Font baseFont = fm.getFont();
+            previousFont = g.getFont();
+            g.setFont(baseFont.deriveFont((float) (baseFont.getSize2D() * drawScale)));
+        }
+        if (outlined) {
+            g.setColor(OUTLINE_COLOR);
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if ((dx != 0) || (dy != 0)) {
+                        g.drawString(text, drawX + dx, drawY + dy);
+                    }
+                }
+            }
+        }
+        g.setColor(color);
+        g.drawString(text, drawX, drawY);
+        if (previousFont != null) {
+            g.setFont(previousFont);
+        }
+    }
+
+    /** Rings the label with a contrasting outline, for when what is drawn under it would drown it out. */
+    public void setOutlined(boolean outlined) {
+        this.outlined = outlined;
+    }
+
+    @Override
+    public void setDrawScale(double scale) {
+        drawScale = scale;
     }
 
     @Override

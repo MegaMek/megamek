@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,7 +75,7 @@ public class InfantryPistolHoldOutNeedlerPistolWeapon extends InfantryWeapon {
         infantryRange = 0;
         ammoWeight = 0.00003;
         shots = 5;
-        rulesRefs = "273, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 273);
         techAdvancement.setTechBase(TechBase.ALL).setISAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)
               .setISApproximate(true, false, false, false, false)
               .setClanAdvancement(2510, 2515, 2570, DATE_NONE, DATE_NONE)

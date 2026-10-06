@@ -40,6 +40,7 @@ package megamek.common.weapons.infantry.smg;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -54,6 +55,11 @@ public class InfantrySMGJinseYanjingsheAPRounds extends InfantryWeapon {
 
     public InfantrySMGJinseYanjingsheAPRounds() {
         super();
+        // This weapon and its other ammunition load are separate weapon types rather than one weapon with a
+        // mode. The loads have different Battle Values, and Battle Value is worked out from the weapon type
+        // before a battle starts, so a load that could be switched mid-game would leave the platoon's Battle
+        // Value undefined. Keeping them separate also matches how a platoon is built: the load is chosen when
+        // the unit is created, in the same way Inferno munitions are declared before the fight.
 
         name = "SMG (Jinse Yanjingshe (AP Rounds))";
         setInternalName(name);
@@ -68,8 +74,8 @@ public class InfantrySMGJinseYanjingsheAPRounds extends InfantryWeapon {
         ammoCost = 180;
         shots = 30;
         bursts = 5;
-        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #5";
+        flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC).or(F_INF_BURST);
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_5);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)

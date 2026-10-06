@@ -36,9 +36,9 @@ package megamek.common.weapons.handlers;
 
 import java.io.Serial;
 
-import megamek.common.HitData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.enums.HitDamageType;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.server.totalWarfare.TWGameManager;
@@ -51,6 +51,6 @@ public class ReengineeredLaserWeaponHandler extends EnergyWeaponHandler {
           TWGameManager m) throws EntityLoadingException {
         super(toHit, waa, g, m);
         // so that reflective armor doesn't halve the damage
-        generalDamageType = HitData.DAMAGE_IGNORES_DMG_REDUCTION;
+        generalDamageType = HitDamageType.DAMAGE_IGNORES_DMG_REDUCTION;
     }
 }

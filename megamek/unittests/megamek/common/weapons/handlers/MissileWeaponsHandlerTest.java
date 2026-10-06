@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,7 +64,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Unit tests for MissileWeaponHandler.
  * <p>
- * Test to verify that with Playtest 3, AMS can engage twice.
+ * Test to verify that AMS can engage twice.
  *
  * @since 2025-12-14
  */
@@ -105,9 +105,8 @@ public class MissileWeaponsHandlerTest {
         gameManager = new TWGameManager();
         game = gameManager.getGame();
 
-        // Set Playtest3 option to True to be able to test AMS shooting twice
-        game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(true);
-
+        game.initializeRulesManager(OptionsConstants.RULES_CORE);
+        
         // Instantiate the players
         aPlayer = new Player(0, "Attacker");
         dPlayer = new Player(1, "Defender");
@@ -169,10 +168,10 @@ public class MissileWeaponsHandlerTest {
     }
 
     /**
-     * Test for AMS with playtest three
+     * Test for AMS
      */
     @Test
-    void testAMSWorksForPlaytestThree() throws EntityLoadingException {
+    void testAMSWorksForCoreRules() throws EntityLoadingException {
 
         // Create the meks and set their positions
         attacker = createAttackerEntity();
@@ -206,14 +205,14 @@ public class MissileWeaponsHandlerTest {
         assertEquals(-4, AMSmod, "AMS did not engage");
         // End first AMS test
 
-        // Setup second AMS test shot. Will pass with Playtest 3, and fail without
+        // Setup second AMS test shot. Will pass with core, and fail without
         weaponAttack = new WeaponAttackAction(attacker.getId(), target.getId(), attacker.getEquipmentNum(lrmTwo));
         weaponAttack.addCounterEquipment(amsMount);
 
         handler = new MissileWeaponHandler(toHit, weaponAttack, game, gameManager);
         AMSmod = handler.getAMSHitsMod(reports);
 
-        // second call should return -4. If 0 is returned, the playtest did not work or is not enabled.
+        // second call should return -4. If 0 is returned, the core did not work
         assertEquals(-4, AMSmod, "AMS did not engage a 2nd time");
 
         // Setup 3rd AMS test. This should always return 0 (no AMS) if multiAMS is not enabled.
@@ -225,7 +224,5 @@ public class MissileWeaponsHandlerTest {
 
         // This should return 0, showing we did not engage.
         assertEquals(0, AMSmod, "AMS triggered when it shouldn't have");
-
-        // End testing of AMS for playtest3
     }
 }

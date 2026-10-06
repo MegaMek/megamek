@@ -35,13 +35,10 @@
 
 package megamek.client.ui.widget.mapset;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
+import java.awt.*;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.swing.JComponent;
+import javax.swing.*;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
@@ -290,6 +287,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.empInterference",
                   en.getEMPInterferenceRounds()));
         }
+        if (en.getMagneticPulseRounds() > 0) {
+            statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.magneticPulse",
+                  en.getMagneticPulseRounds()));
+        }
+        if (en.getImpToHitModifier() > 0) {
+            statusBuilder.append(", ").append(Messages.getString("GeneralInfoMapSet.improvedMagneticPulse",
+                  en.getImpToHitModifier()));
+        }
         statusR.setString(statusBuilder.toString());
         if (en.getOwner() != null) {
             playerR.setString(en.getOwner().getName());
@@ -342,12 +347,12 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         quirksAndPartReps.clear();
 
-        if ((null != en.getGame())
+        if ((en.getGame() != null)
               && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)) {
             addOptionsToList(en.getQuirks(), quirksAndPartReps);
         }
 
-        if ((null != en.getGame())
+        if ((en.getGame() != null)
               && en.getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_STRATOPS_PARTIAL_REPAIRS)) {
             // skip a line for readability
             quirksAndPartReps.addString("");

@@ -37,6 +37,7 @@ package megamek.common.comparators;
 
 import java.util.Comparator;
 
+import megamek.common.RangeType;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 
@@ -60,35 +61,49 @@ public class WeaponComparatorRange implements Comparator<WeaponMounted> {
     }
 
     @Override
-    public int compare(WeaponMounted lhs, WeaponMounted rhs) {
-        WeaponType leftWeaponType = lhs.getType();
-        WeaponType rightWeaponType = rhs.getType();
+    public int compare(WeaponMounted firstWeapon,
+                       WeaponMounted secondWeapon) {
+        WeaponType firstWeaponType = firstWeapon.getType();
+        WeaponType secondWeaponType = secondWeapon.getType();
 
         // If types are equal, pick front facing first
-        if (leftWeaponType == rightWeaponType) {
-            if (lhs.isRearMounted()) {
+        if (firstWeaponType == secondWeaponType) {
+            if (firstWeapon.isRearMounted()) {
                 return -1 * ascending;
-            } else if (rhs.isRearMounted()) {
+            } else if (secondWeapon.isRearMounted()) {
                 return ascending;
             } else {
                 return 0;
             }
         }
-        int[] ranges1 = leftWeaponType.getRanges(lhs);
-        int[] ranges2 = rightWeaponType.getRanges(rhs);
-        // Start by comparing the short range brackets (*not* the minimum
-        // ranges at index 0), then work outwards from there as needed.
-        for (int r = 1; r < ranges1.length; r++) {
-            if (ranges1[r] < ranges2[r]) {
-                return -1 * ascending;
-            } else if (ranges1[r] > ranges2[r]) {
-                return ascending;
-            }
-        }
-        // If we get here, all ranges are equals, arbitrate with heat
-        if (leftWeaponType.getHeat() > rightWeaponType.getHeat()) {
+        int[] firstWeaponRanges = firstWeaponType.getRanges(firstWeapon);
+        int[] secondWeaponRanges = secondWeaponType.getRanges(secondWeapon);
+
+        // Test the long range values
+        if (firstWeaponRanges[RangeType.RANGE_LONG] < secondWeaponRanges[RangeType.RANGE_LONG]) {
+            return -1 * ascending;
+        } else if (firstWeaponRanges[RangeType.RANGE_LONG] > secondWeaponRanges[RangeType.RANGE_LONG]) {
             return ascending;
-        } else if (leftWeaponType.getHeat() < rightWeaponType.getHeat()) {
+        }
+
+        // Fall down to medium range test
+        if (firstWeaponRanges[RangeType.RANGE_MEDIUM] < secondWeaponRanges[RangeType.RANGE_MEDIUM]) {
+            return -1 * ascending;
+        } else if (firstWeaponRanges[RangeType.RANGE_MEDIUM] > secondWeaponRanges[RangeType.RANGE_MEDIUM]) {
+            return ascending;
+        }
+
+        // Now we compare short
+        if (firstWeaponRanges[RangeType.RANGE_SHORT] < secondWeaponRanges[RangeType.RANGE_SHORT]) {
+            return -1 * ascending;
+        } else if (firstWeaponRanges[RangeType.RANGE_SHORT] > secondWeaponRanges[RangeType.RANGE_SHORT]) {
+            return ascending;
+        }
+
+        // If we get here, all ranges are equals, arbitrate with heat
+        if (firstWeaponType.getHeat() > secondWeaponType.getHeat()) {
+            return ascending;
+        } else if (firstWeaponType.getHeat() < secondWeaponType.getHeat()) {
             return -1 * ascending;
         } else {
             return 0;

@@ -36,6 +36,7 @@ package megamek.common.weapons.infantry.pistol;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -60,7 +61,7 @@ public class InfantryPistolDreamelDerringer extends InfantryWeapon {
         ammoType = AmmoType.AmmoTypeEnum.INFANTRY;
         bv = 0.042;
         tonnage = 0.0002;
-        infantryDamage = 0.14;
+        infantryDamage = 0.042;
         infantryRange = 0;
         ammoWeight = 0.000001;
         cost = 60;
@@ -68,7 +69,7 @@ public class InfantryPistolDreamelDerringer extends InfantryWeapon {
         shots = 2;
         bursts = 1;
         flags = flags.or(F_NO_FIRES).or(F_DIRECT_FIRE).or(F_BALLISTIC);
-        rulesRefs = "Shrapnel #3";
+        rulesRefs = rulesRefs(SourceBookCode.SHRAPNEL_3);
         techAdvancement
               .setTechBase(TechBase.IS)
               .setTechRating(TechRating.C)

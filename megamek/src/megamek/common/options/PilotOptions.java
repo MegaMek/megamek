@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2003 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,7 +68,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.PILOT_MANEUVERING_ACE, false);
         addOption(adv, OptionsConstants.PILOT_MELEE_MASTER, false);
         addOption(adv, OptionsConstants.PILOT_MELEE_SPECIALIST, false);
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_PILOTING, false);
         addOption(adv, OptionsConstants.PILOT_SHAKY_STICK, false);
         addOption(adv, OptionsConstants.PILOT_TM_FOREST_RANGER, false);
         addOption(adv, OptionsConstants.PILOT_TM_FROGMAN, false);
@@ -87,7 +86,6 @@ public class PilotOptions extends AbstractOptions {
         addOption(adv, OptionsConstants.GUNNERY_GOLDEN_GOOSE, false);
         addOption(adv, OptionsConstants.GUNNERY_SPECIALIST, new Vector<>());
         addOption(adv, OptionsConstants.GUNNERY_MULTI_TASKER, false);
-        addOption(adv, OptionsConstants.PILOT_APTITUDE_GUNNERY, false);
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY, false);
         addOption(adv, OptionsConstants.GUNNERY_OBLIQUE_ATTACKER, false);
         addOption(adv, OptionsConstants.GUNNERY_RANGE_MASTER, new Vector<>());
@@ -144,6 +142,8 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_KO, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_EXPLOSION, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_MASC_FAILS, true);
+        // off by default: a scan is cheap to repeat, so Edge is the player's call, not the default
+        addOption(edge, OptionsConstants.EDGE_WHEN_SCAN_FAILS, false);
         //Aero Triggers
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_ALT_LOSS, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_EXPLOSION, true);
@@ -151,6 +151,19 @@ public class PilotOptions extends AbstractOptions {
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_LUCKY_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_NUKE_CRIT, true);
         addOption(edge, OptionsConstants.EDGE_WHEN_AERO_UNIT_CARGO_LOST, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AERO_CATASTROPHIC, true);
+        // Vehicle Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_TANK_MOTIVE_CRIT, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_TANK_DESTROYED, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_TANK_TURRET_BLOWN_OFF, true);
+        // Infantry Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_ZIPLINE, true);
+        // General Triggers
+        addOption(edge, OptionsConstants.EDGE_WHEN_EJECT_FAILS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_BREACH, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_AC_JAMS_OR_MALFUNCTIONS, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_RISC_FAIL, true);
+        addOption(edge, OptionsConstants.EDGE_WHEN_FIRE, true);
 
         // Enhanced Imaging (Clan technology, IO p.69)
         IBasicOptionGroup ei = addGroup("ei", EI_ADVANTAGES);

@@ -40,10 +40,10 @@ import java.util.Map;
 
 import megamek.client.bot.princess.EntityState;
 import megamek.client.bot.princess.FiringPlanCalculationParameters;
-import megamek.common.units.Entity;
-import megamek.common.units.Targetable;
 import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.units.Entity;
+import megamek.common.units.Targetable;
 import megamek.logging.MMLogger;
 
 public class Builder {
@@ -61,7 +61,7 @@ public class Builder {
      * The unit doing the shooting.
      */
     public Builder setShooter(final Entity value) {
-        if (null == value) {
+        if (value == null) {
             throw new NullPointerException("Must have a shooter.");
         }
         shooter = value;
@@ -80,7 +80,7 @@ public class Builder {
      * The unit being shot at.
      */
     public Builder setTarget(final Targetable value) {
-        if (null == value) {
+        if (value == null) {
             throw new NullPointerException("Must have a target.");
         }
         target = value;
@@ -121,7 +121,7 @@ public class Builder {
      * Are we guessing or not? Defaults to {@link FiringPlanCalculationParameters.FiringPlanCalculationType#GUESS}
      */
     public Builder setCalculationType(final FiringPlanCalculationParameters.FiringPlanCalculationType value) {
-        if (null == value) {
+        if (value == null) {
             throw new NullPointerException("Must have a calculation type.");
         }
         calculationType = value;

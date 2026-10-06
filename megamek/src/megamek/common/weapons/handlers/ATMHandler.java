@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -48,6 +48,7 @@ import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -88,8 +89,8 @@ public class ATMHandler extends MissileWeaponHandler {
         }
         if (target.isConventionalInfantry()) {
             toReturn = Compute.directBlowInfantryDamage(
-                  weaponType.getRackSize(), bDirect ? toHit.getMoS() / 3 : 0,
-                  weaponType.getInfantryDamageClass(),
+                  weaponType.getRackSize(), getInfantryDamageClassShift(),
+                  resolveInfantryDamageClass(weaponType.getInfantryDamageClass()),
                   ((Infantry) target).isMechanized(),
                   toHit.getThruBldg() != null, weaponEntity.getId(), calcDmgPerHitReport);
             toReturn = applyGlancingBlowModifier(toReturn, true);
@@ -119,14 +120,9 @@ public class ATMHandler extends MissileWeaponHandler {
         return hits;
     }
 
-    // PLAYTEST3 ATMs now cluster in 6s
     @Override
     protected int calculateNumCluster() {
-        if (game.getOptions().booleanOption(OptionsConstants.PLAYTEST_3)) {
-            return 6;
-        } else {
-            return 5;
-        }
+        return Game.rulesManager.getRulesWeapons().getATMClusterSize();
     }
 
     /**
@@ -215,10 +211,7 @@ public class ATMHandler extends MissileWeaponHandler {
         // if the attacker is affected by ECM or the target is protected by ECM
         // then act as if affected.
 
-        if (((mLinker != null) && (mLinker.getType() instanceof MiscType)
-              && !mLinker.isDestroyed() && !mLinker.isMissing()
-              && !mLinker.isBreached() && mLinker.getType().hasFlag(
-              MiscType.F_ARTEMIS))
+        if (EquipmentActivation.isGuidanceActive(mLinker, MiscType.F_ARTEMIS)
               && (ammoType.getMunitionType().contains(AmmoType.Munitions.M_ARTEMIS_CAPABLE))) {
             if (bECMAffected) {
                 // ECM prevents bonus

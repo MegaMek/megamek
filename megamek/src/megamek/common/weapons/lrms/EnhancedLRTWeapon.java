@@ -34,6 +34,7 @@
 package megamek.common.weapons.lrms;
 
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -50,7 +51,11 @@ public abstract class EnhancedLRTWeapon extends LRTWeapon {
         waterExtremeRange = 28;
         maxRange = RANGE_LONG;
         ammoType = AmmoType.AmmoTypeEnum.NLRM_TORPEDO;
-        rulesRefs = "138, TO:AUE";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TO_AUE, 138),
+              rulesRef(SourceBookCode.BMM, 104),
+              rulesRef(SourceBookCode.CORE, 187)
+        );
         //Tech Progression taken from NLRMs
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)

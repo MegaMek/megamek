@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan.laser;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -74,10 +75,8 @@ public class CLBALaserSmall extends LaserWeapon {
         bv = 9;
         cost = 11250;
         atClass = CLASS_POINT_DEFENSE;
-        rulesRefs = "258, TM";
+        rulesRefs = rulesRefs(SourceBookCode.TM, 258);
         techAdvancement.setTechBase(TechBase.CLAN)
-              .setIntroLevel(false)
-              .setUnofficial(false)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.C, AvailabilityValue.B, AvailabilityValue.B)
               .setClanAdvancement(2865, 2868, 2870, DATE_NONE, DATE_NONE)

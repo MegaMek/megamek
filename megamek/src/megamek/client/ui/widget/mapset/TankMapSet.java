@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Edward Cullen (eddy@obsessedcomputers.co.uk)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -40,13 +40,14 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Image;
 import java.awt.Polygon;
+import java.util.Set;
 import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.client.ui.dialogs.unitDisplay.UnitDisplayPanel;
+import megamek.client.ui.widget.picmap.LocationSelectListener;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.client.ui.widget.UnitDisplaySkinSpecification;
@@ -73,7 +74,7 @@ public class TankMapSet implements DisplayMapSet {
     private final Vector<BackGroundDrawer> bgDrawers = new Vector<>();
     private final PMAreasGroup content = new PMAreasGroup();
 
-    private final UnitDisplayPanel unitDisplayPanel;
+    private final LocationSelectListener locationSelectListener;
 
     private static final int INT_STR_OFFSET = 6;
     // Polygons for all areas
@@ -132,8 +133,8 @@ public class TankMapSet implements DisplayMapSet {
     private static final Font FONT_VALUE = new Font(MMConstants.FONT_SANS_SERIF, Font.PLAIN,
           GUIP.getUnitDisplayMekArmorLargeFontSize());
 
-    public TankMapSet(JComponent c, UnitDisplayPanel unitDisplayPanel) {
-        this.unitDisplayPanel = unitDisplayPanel;
+    public TankMapSet(JComponent c, LocationSelectListener locationSelectListener) {
+        this.locationSelectListener = locationSelectListener;
         jComponent = c;
         setAreas();
         setLabels();
@@ -197,16 +198,16 @@ public class TankMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[Tank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor, unitDisplayPanel, Tank.LOC_FRONT);
-        areas[Tank.LOC_RIGHT] = new PMSimplePolygonArea(rightArmor, unitDisplayPanel, Tank.LOC_RIGHT);
-        areas[Tank.LOC_LEFT] = new PMSimplePolygonArea(leftArmor, unitDisplayPanel, Tank.LOC_LEFT);
-        areas[Tank.LOC_REAR] = new PMSimplePolygonArea(rearArmor, unitDisplayPanel, Tank.LOC_REAR);
-        areas[Tank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor, unitDisplayPanel, Tank.LOC_TURRET);
-        areas[Tank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(frontIS, unitDisplayPanel, Tank.LOC_FRONT);
-        areas[Tank.LOC_RIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightIS, unitDisplayPanel, Tank.LOC_FRONT);
-        areas[Tank.LOC_LEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftIS, unitDisplayPanel, Tank.LOC_LEFT);
-        areas[Tank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS, unitDisplayPanel, Tank.LOC_REAR);
-        areas[Tank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(turretIS, unitDisplayPanel, Tank.LOC_TURRET);
+        areas[Tank.LOC_FRONT] = new PMSimplePolygonArea(frontArmor, locationSelectListener, Tank.LOC_FRONT);
+        areas[Tank.LOC_RIGHT] = new PMSimplePolygonArea(rightArmor, locationSelectListener, Tank.LOC_RIGHT);
+        areas[Tank.LOC_LEFT] = new PMSimplePolygonArea(leftArmor, locationSelectListener, Tank.LOC_LEFT);
+        areas[Tank.LOC_REAR] = new PMSimplePolygonArea(rearArmor, locationSelectListener, Tank.LOC_REAR);
+        areas[Tank.LOC_TURRET] = new PMSimplePolygonArea(turretArmor, locationSelectListener, Tank.LOC_TURRET);
+        areas[Tank.LOC_FRONT + INT_STR_OFFSET] = new PMSimplePolygonArea(frontIS, locationSelectListener, Tank.LOC_FRONT);
+        areas[Tank.LOC_RIGHT + INT_STR_OFFSET] = new PMSimplePolygonArea(rightIS, locationSelectListener, Tank.LOC_FRONT);
+        areas[Tank.LOC_LEFT + INT_STR_OFFSET] = new PMSimplePolygonArea(leftIS, locationSelectListener, Tank.LOC_LEFT);
+        areas[Tank.LOC_REAR + INT_STR_OFFSET] = new PMSimplePolygonArea(rearIS, locationSelectListener, Tank.LOC_REAR);
+        areas[Tank.LOC_TURRET + INT_STR_OFFSET] = new PMSimplePolygonArea(turretIS, locationSelectListener, Tank.LOC_TURRET);
     }
 
     private void setLabels() {
@@ -335,4 +336,30 @@ public class TankMapSet implements DisplayMapSet {
         areas[Tank.LOC_TURRET + INT_STR_OFFSET].translate(8, 29);
     }
 
+
+    @Override
+    public void setCriticalLocations(Set<Integer> criticalLocations) {
+        // setEntity is what colors the areas by damage, and it runs again on every redraw, so the stripes are
+        // cleared and reapplied here rather than left to accumulate.
+        for (PMSimplePolygonArea area : areas) {
+            if (area != null) {
+                area.setCriticalHatch(false);
+            }
+        }
+        for (PMValueLabel label : vLabels) {
+            if (label != null) {
+                label.setOutlined(false);
+            }
+        }
+        for (int location : criticalLocations) {
+            int area = location;
+            if ((area >= 0) && (area < areas.length) && (areas[area] != null)) {
+                areas[area].setCriticalHatch(true);
+            }
+            // the value sits on top of the stripes, so it is outlined to stay readable
+            if ((area >= 0) && (area < vLabels.length) && (vLabels[area] != null)) {
+                vLabels[area].setOutlined(true);
+            }
+        }
+    }
 }

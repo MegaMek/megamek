@@ -33,6 +33,7 @@
 
 package megamek.common.templates;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,7 +90,8 @@ public class SmallCraftDropshipTROView extends AeroTROView {
         final TestSmallCraft testAero = new TestSmallCraft(aero, verifier.aeroOption, null);
 
         setModelData("typeDesc", formatVesselType());
-        setModelData("massDesc", aero.getWeight());
+        setModelData("massDesc", NumberFormat.getInstance().format(aero.getWeight())
+              + Messages.getString(aero.getWeight() == 1.0 ? "TROView.ton" : "TROView.tons"));
         setModelData("fuelMass", aero.getFuelTonnage());
         setModelData("fuelPoints", aero.getFuel());
         setModelData("safeThrust", aero.getWalkMP());
@@ -109,7 +111,6 @@ public class SmallCraftDropshipTROView extends AeroTROView {
     }
 
     private void addFluff() {
-        addEntityFluff(aero);
         addEntityFluff(aero);
         final Map<String, String> dimensions = new HashMap<>();
         if (!aero.getFluff().getLength().isEmpty()) {

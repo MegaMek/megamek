@@ -1,0 +1,202 @@
+# MegaMek Data (C) 2025-2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+
+generator:MegaMek Suite 0.50.12 on 2026-02-26
+chassis:Atlas
+model:AS7-D
+mul id:140
+
+Config:Biped
+techbase:Inner Sphere
+era:2755
+source:TR:3039,TR:SW
+published:RSFP:Wave 2,RS:Gothic,RSFP:HRR
+rules level:1
+role:Juggernaut
+
+quirk:battle_fists_la
+quirk:battle_fists_ra
+quirk:distracting
+quirk:command_mech
+quirk:imp_com
+
+mass:100
+engine:300 Fusion Engine
+structure:IS Standard
+myomer:Standard
+
+heat sinks:20 Single
+walk mp:3
+jump mp:0
+
+armor:Standard(Inner Sphere)
+LA armor:34
+RA armor:34
+LT armor:32
+RT armor:32
+CT armor:47
+HD armor:9
+LL armor:41
+RL armor:41
+RTL armor:10
+RTR armor:10
+RTC armor:14
+
+Weapons:7
+Medium Laser, Left Arm
+Medium Laser, Right Arm
+LRM 20, Left Torso
+SRM 6, Left Torso
+AC/20, Right Torso
+Medium Laser, Center Torso
+Medium Laser, Center Torso
+
+Left Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Arm:
+Shoulder
+Upper Arm Actuator
+Lower Arm Actuator
+Hand Actuator
+Heat Sink
+Medium Laser
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Torso:
+Heat Sink
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+LRM 20
+SRM 6
+SRM 6
+IS Ammo LRM-20
+IS Ammo LRM-20
+IS Ammo SRM-6
+-Empty-
+
+Right Torso:
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+Autocannon/20
+IS Ammo AC/20
+IS Ammo AC/20
+
+Center Torso:
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Gyro
+Gyro
+Gyro
+Gyro
+Fusion Engine
+Fusion Engine
+Fusion Engine
+Medium Laser (R)
+Medium Laser (R)
+
+Head:
+Life Support
+Sensors
+Cockpit
+Heat Sink
+Sensors
+Life Support
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Left Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+Right Leg:
+Hip
+Upper Leg Actuator
+Lower Leg Actuator
+Foot Actuator
+Heat Sink
+Heat Sink
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+-Empty-
+
+# Fluff Date: 2026-02-28 17:47:08
+overview:<p>First deployed in 2755, the Atlas was commissioned by General Aleksandr Kerensky as the ultimate expression of assault 'Mech doctrine. He demanded "a 'Mech as powerful as imaginable, as impenetrable as possible, and as foreboding as conceivable, so that fear itself will be our ally." Built by the Hegemony's premier manufacturers, the hundred-ton Atlas was intended to give the Regular Army a decisive advantage over the growing House Lord armies. Despite the upheaval that followed and the abandonment of the Inner Sphere by General Kerensky and most of the SLDF, the Atlas served its purpose and has endured as the most recognized and feared assault 'Mech in existence.</p>
+
+capabilities:<p>The first impression any spectator gets of the Atlas is its ferocious appearance. Although there are taller 'Mechs on the field, none of them have the sheer presence of the Atlas.</p><p>As an assault 'Mech, the Atlas has few peers. The largest long-range missile launcher available sits in the left torso, giving the Atlas a powerful long-range punch. As the 'Mech closes it can bring a bevy of deadly weapons to bear, the most fearsome of which is the massive Defiance 'Mech Hunter Autocannon in the right torso with enough ammunition to decimate a company of 'Mechs. The cannon is backed by a six-tube short-range missile system and two pairs of medium lasers covering all sides of the 'Mech. Twenty heat sinks give the Atlas the freedom to use this firepower, and most MechWarriors are fearful of this 'Mech for very deserved reasons.</p><p>Very few if any BattleMechs carry more armor than the Atlas, and a complete set of actuators (including hands) give the 'Mech frightful physical combat capabilities. There are myths among MechWarriors of the Atlas actually picking up lighter 'Mechs and breaking them like toys.</p><p>If the Atlas has any weakness it would be its slow speed. Although other assault 'Mechs are as slow, the fact that an Atlas is easily escaped is the hope most MechWarriors have when they face such a machine.</p>
+
+deployment:<p>As the original production model, this variant has been the backbone of Atlas deployments since its introduction. Nearly every Atlas built during the Star League era remained in the Inner Sphere when Kerensky departed, and production continued at Hesperus II, Al Na'ir, and Quentin to supply the Successor States. The design spread in limited numbers to every major military, where it served most often as a command vehicle for senior officers or as the anchor of heavy and assault lances. Most militaries were loath to tamper with the design for the simple reason that it seemed nearly perfect in its role already, and the D model continues to be fielded by front-line and militia units across the Inner Sphere centuries after its introduction.</p>
+
+history:<p>The Atlas was born of necessity. Between 2751 and 2761, the Cameron Edicts passed by the High Council permitted the five House Lords to double the size of their personal armies. The Regular Army needed a weapon that could maintain its supremacy over these swelling forces. General Aleksandr Kerensky himself laid down the specifications, demanding "a 'Mech as powerful as possible, as impenetrable as possible, and as ugly and foreboding as conceivable, so that fear itself will be our ally." Designers took this mandate to heart, spending an entire year perfecting the skull-shaped head that would earn the Atlas its enduring nickname: the "Death's Head."</p><p>The Atlas saw its baptism of fire against Stefan the Usurper during the liberation of Terra. In the final battles to secure Earth's major spaceports, the Atlas was instrumental in establishing beachheads that allowed SLDF troops to land safely. General Kerensky's second-in-command, General Aaron DeChavilier, directed the assault on the Usurper's last stronghold, the Imperial City. DeChavilier continually exposed his Atlas to enemy fire, marching forward as if laser bolts, missiles, and cannon shells were nothing more than the annoying buzz of flies. When DeChavilier's Atlas pushed over the concrete outer wall surrounding the Imperial Palace, Kerensky headed for the gates in his Orion. It was a scene that would be immortalized in countless holovids and paintings, forever linking the Atlas to the liberation of humanity's homeworld.</p><p>When Kerensky departed on his Exodus, he wanted all Atlases to accompany him. More than two-thirds of Atlas pilots, however, refused to join, perhaps believing they could better their fortunes by remaining in the Inner Sphere. The remaining Atlases and those still rolling off assembly lines on Hesperus II, Al Na'ir, and Quentin continued to inspire terror wherever they walked. As the Succession Wars ravaged the Inner Sphere, the Atlas spread to every major military in limited numbers. Most militaries were loath to tamper with the design for the simple reason that it seemed nearly perfect in its role already, and attempted modifications generally failed since engineers had to make too many concessions to keep the 'Mech functioning.</p><p>The Atlas cemented its legend during some of the most key moments in Inner Sphere history. On Mallory's World in 3013, First Prince Ian Davion of the Federated Suns held a vital pass against Yorinaga Kurita and the Second Sword of Light while his men made their escape. Although the Kell Hounds and other units pushed forward to support him, Prince Davion fell in battle before help could arrive. A warrior first and a leader second, his sacrifice from the cockpit of an Atlas became one of the most celebrated last stands in military history. Two decades later, the sight of Hanse Davion's Atlases and Victors standing in formation for honors after actions against House Kurita reminded the Inner Sphere that the 'Mech remained the gold standard of assault warfare.</p><p>The technological renaissance of the 3040s and 3050s breathed new life into the venerable design. The Draconis Combine debuted the AS7-K variant, transforming the Atlas from a short-ranged brawler into a long-range bombardier. Improved ballistic and energy weapons replaced the original close-quarters armament, extending the 'Mech's reach considerably. Despite being an ancient design, the Atlas' reputation on the battlefield remained unquestioned, and even state-of-the-art machines gave it a wide berth. This was, after all, the flagship of all BattleMechs, and there was still no projected date for it to be replaced.</p><p>The Jihad tested the Atlas as never before. On Al Na'ir in early 3069, a lance of corporate-owned Atlases held off wave after wave of Word of Blake troops while defending a dome settlement for several days, eventually succumbing only when penetrating torso hits crippled their powerplants. The Word of Blake's capture of Hesperus II in 3070 temporarily halted Defiance Industries' production lines, a crisis that spurred development of new Atlas variants at secondary facilities. When Hesperus was finally liberated, these newer models entered full production alongside the original.</p><p>Through all of this, the Atlas has transcended its role as a mere weapon of war to become a cultural icon. It appears on more recruiting posters, more propaganda films, and in the boxes of more children's toys than any other BattleMech. More than a dozen variants have appeared over the centuries, each one building on a legacy that stretches back to the final days of the Star League. Whether defending a beleaguered colony or leading an assault on a fortified position, the sight of the Death's Head advancing across the battlefield continues to inspire allies and strike fear into enemies, just as General Kerensky intended nearly three centuries ago.</p>
+
+manufacturer:Yori 'Mech Works|HildCo Interplanetary|Witten Industries|Defiance Industries|Independence Weaponry
+
+primaryfactory:Al Na'ir|Carver V / Liberty|Hesperus II|Hesperus II|Quentin
+
+systemmanufacturer:CHASSIS:Foundation
+systemmode:CHASSIS:Type 10X
+systemmanufacturer:ENGINE:Vlar
+systemmode:ENGINE:300
+systemmanufacturer:ARMOR:Durallex
+systemmode:ARMOR:Special Heavy
+systemmanufacturer:COMMUNICATIONS:Angst
+systemmode:COMMUNICATIONS:Discom
+systemmanufacturer:TARGETING:Angst
+systemmode:TARGETING:Accuracy

@@ -32,7 +32,6 @@
  */
 package megamek.client.ui.dialogs.BotCommands;
 
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -70,10 +69,17 @@ public class BotCommandsDialog extends JDialog {
         this.clientGUI = clientGUI;
         this.setTitle(Messages.getString("ClientGUI.BotCommand"));
 
-        this.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());
-        this.setSize(new Dimension(600, 120));
-        this.setMinimumSize(new Dimension(600, 120));
+        this.setSize(UIUtil.scaleForGUI(770, 130));
+        this.setMinimumSize(UIUtil.scaleForGUI(770, 130));
         this.setResizable(true);
+
+        // Center on the game window when there is no saved position yet (sentinel -1,-1); otherwise restore the
+        // player's last spot. Using -1 rather than 0 keeps a legitimately saved top-left (0,0) placement restorable.
+        if ((GUIP.getBotCommandsPosX() == -1) && (GUIP.getBotCommandsPosY() == -1)) {
+            this.setLocationRelativeTo(frame);
+        } else {
+            this.setLocation(GUIP.getBotCommandsPosX(), GUIP.getBotCommandsPosY());
+        }
 
         UIUtil.updateWindowBounds(this);
 

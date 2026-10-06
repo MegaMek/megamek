@@ -1,0 +1,33 @@
+# MegaMek Data (C) 2026 by The MegaMek Team is licensed under CC BY-NC-SA 4.0.
+# To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/
+#
+# NOTICE: The MegaMek organization is a non-profit group of volunteers
+# creating free software for the BattleTech community.
+#
+# MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks
+# of The Topps Company, Inc. All Rights Reserved.
+#
+# Catalyst Game Labs and the Catalyst Game Labs logo are trademarks of
+# InMediaRes Productions, LLC.
+#
+# MechWarrior Copyright Microsoft Corporation. MegaMek Data was created under
+# Microsoft's "Game Content Usage Rules"
+# <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
+# affiliated with Microsoft.
+key: SUC
+name: Successor Test Faction
+# Stands in for Clan Goliath Scorpion, whose era parameter blocks from 3082 on are still written under the
+# retired codes CEI and SE. RET has no faction file of its own, so an era block keyed RET has to resolve
+# here. No other test uses this faction, so its era parameters can be asserted exactly.
+aliases:
+  3050: RET
+yearsActive:
+  - start: 2807
+tags:
+  - CLAN
+ratingLevels:
+  - F
+  - D
+  - C
+  - B
+  - A

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,13 +33,24 @@
 
 package megamek.common.util;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.RecordComponent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import megamek.common.Player;
+import megamek.common.RulesRef;
+import megamek.common.SourceBookCode;
 import megamek.common.TargetRollModifier;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -49,6 +60,7 @@ import megamek.common.equipment.Mounted;
 import megamek.common.equipment.NarcPod;
 import megamek.common.equipment.Sensor;
 import megamek.common.equipment.Transporter;
+import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.interfaces.ITechnology;
@@ -57,16 +69,26 @@ import megamek.common.options.AbstractOptions;
 import megamek.common.rolls.Roll;
 import megamek.common.units.BTObject;
 import megamek.common.units.Crew;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
+import megamek.common.units.HeatBreakdown;
 import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
+import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyWeapon;
+import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightWeapon;
+import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
+import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryCondition;
+import megamek.server.victory.VictoryPointTracker;
 
 /**
  * Class that off-loads serialization related code from Server.java
  */
 public class SerializationHelper {
+    private static final MMLogger LOGGER = MMLogger.create(SerializationHelper.class);
 
     private SerializationHelper() {
     }
@@ -108,6 +130,26 @@ public class SerializationHelper {
      */
     public static XStream getLoadSaveGameXStream() {
         XStream xStream = getSaveGameXStream();
+
+        // Mek heat sink activation used to be a pair of counter fields; it is now tracked per mount via
+        // equipment modes (activation/deactivation rules), and the fields no longer exist. Save games written
+        // before that change still contain the elements, and this XStream setup rejects unknown elements, so
+        // they are explicitly omitted to keep those saves loading.
+        xStream.omitField(Mek.class, "sinksOn");
+        xStream.omitField(Mek.class, "sinksOnNextRound");
+
+        // The conventional infantry Inferno SRM launchers were withdrawn by the TechManual pp. 350-352 errata. A
+        // platoon serializes its weapons inline, so older saves still name the deleted classes. Read them as the
+        // plain launchers; ConvInfantry.restore() then swaps in the registered weapon and keeps the platoon on
+        // Inferno munitions.
+        xStream.alias(WithdrawnInfernoSrmLaunchers.STANDARD_LAUNCHER_CLASS, InfantrySupportSRMStandardWeapon.class);
+        xStream.alias(WithdrawnInfernoSrmLaunchers.LIGHT_LAUNCHER_CLASS, InfantrySupportSRMLightWeapon.class);
+        xStream.alias(WithdrawnInfernoSrmLaunchers.HEAVY_LAUNCHER_CLASS, InfantrySupportSRMHeavyWeapon.class);
+        xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
+        xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
+
+        xStream.registerLocalConverter(Game.class, "pilotingRolls", new CollectionConverter(xStream.getMapper(),
+              ArrayList.class));
 
         xStream.registerConverter(new Converter() {
             @Override
@@ -370,6 +412,7 @@ public class SerializationHelper {
                 int constant = 0;
                 int compensation = 0;
                 int crew = 0;
+                int gamemaster = 0;
 
                 while (reader.hasMoreChildren()) {
                     reader.moveDown();
@@ -384,6 +427,7 @@ public class SerializationHelper {
                             case "constant" -> constant = Integer.parseInt(reader.getValue());
                             case "compensation" -> compensation = Integer.parseInt(reader.getValue());
                             case "crew" -> crew = Integer.parseInt(reader.getValue());
+                            case "gamemaster" -> gamemaster = Integer.parseInt(reader.getValue());
                         }
                         reader.moveUp();
                     } catch (NumberFormatException e) {
@@ -392,7 +436,7 @@ public class SerializationHelper {
                     }
                 }
                 return new InitiativeBonusBreakdown(hq, quirk, quirkName, console, crewCommand,
-                      tcp, constant, compensation, crew);
+                      tcp, constant, compensation, crew, gamemaster);
             }
 
             @Override
@@ -447,6 +491,323 @@ public class SerializationHelper {
             }
         });
 
+        // Necessary because XStream 1.4.x cannot deserialize records natively. VictoryPointAward is the
+        // award log entry of the VictoryPointTracker stored in the game's victory context, so without this
+        // converter a save made after any victory points were scored fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == VictoryPointTracker.VictoryPointAward.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int gameRound = 0;
+                VictoryPointTracker.Recipient recipient = null;
+                int recipientId = -1;
+                int points = 0;
+                String reason = "";
+                try {
+                    while (reader.hasMoreChildren()) {
+                        reader.moveDown();
+                        switch (reader.getNodeName()) {
+                            case "gameRound":
+                                gameRound = Integer.parseInt(reader.getValue());
+                                break;
+                            case "recipient":
+                                recipient = VictoryPointTracker.Recipient.valueOf(reader.getValue());
+                                break;
+                            case "recipientId":
+                                recipientId = Integer.parseInt(reader.getValue());
+                                break;
+                            case "points":
+                                points = Integer.parseInt(reader.getValue());
+                                break;
+                            case "reason":
+                                reason = reader.getValue();
+                                break;
+                            default:
+                                // Unknown node, or <hash>
+                                break;
+                        }
+                        reader.moveUp();
+                    }
+                } catch (IllegalArgumentException exception) {
+                    return null;
+                }
+                if (recipient != null) {
+                    return new VictoryPointTracker.VictoryPointAward(gameRound, recipient, recipientId, points,
+                          reason);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. ScanRecord is the after-action scan
+        // log of the VictoryPointTracker, so without this converter a save made after any unit scanned anything
+        // fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == VictoryPointTracker.ScanRecord.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                return readScanRecord(reader);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. HeatContribution is stored in
+        // Entity.heatBreakdown, so without this converter any save game containing heat-breakdown data fails to
+        // load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class cls) {
+                return (cls == HeatBreakdown.HeatContribution.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                int count = 0;
+                int totalHeat = 0;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "count" -> count = Integer.parseInt(reader.getValue());
+                            case "totalHeat" -> totalHeat = Integer.parseInt(reader.getValue());
+                        }
+                    } catch (NumberFormatException e) {
+                        // Keep the default for this field on a malformed value; never return null, because a
+                        // null contribution stored in HeatBreakdown.buildup would NPE in buildupTooltip().
+                    }
+                    reader.moveUp();
+                }
+                return new HeatBreakdown.HeatContribution(count, totalHeat);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // Necessary because XStream 1.4.x cannot deserialize records natively. RulesRef is the sourcebook
+        // reference held by every EquipmentType, and an ejected crew serializes its infantry weapon (and so that
+        // weapon's whole EquipmentType) inline, so without this converter any save taken after a crew ejects
+        // fails to load.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return (type == RulesRef.class);
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                SourceBookCode book = null;
+                Integer page = null;
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    try {
+                        switch (reader.getNodeName()) {
+                            case "book" -> book = SourceBookCode.valueOf(reader.getValue());
+                            case "page" -> page = Integer.parseInt(reader.getValue());
+                        }
+                    } catch (IllegalArgumentException exception) {
+                        // Keep the default for this field on a value this version no longer recognizes.
+                    }
+                    reader.moveUp();
+                }
+                // Never return null and never let the record's own validation throw: a null entry in
+                // EquipmentType.rulesRefs would NPE in TechAdvancement.guessStaticTechLevel, and the compact
+                // constructor rejects a non-positive page.
+                if (book == null) {
+                    book = SourceBookCode.UNOFFICIAL;
+                }
+                if ((page != null) && (page < 1)) {
+                    page = null;
+                }
+                return new RulesRef(book, page);
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here
+            }
+        });
+
+        // XStream 1.4.x can write a record but cannot read one back: it rebuilds objects by writing straight to
+        // their fields, which the JVM forbids on a record. Every record reaching a save game therefore needs a
+        // converter, and forgetting one does not fail the build - it produces a save that will not load, with the
+        // players present and none of their units (issue #8924). This fallback rebuilds any record through its
+        // canonical constructor so that cannot happen again. It is registered at the lowest priority, so every
+        // specific converter above still wins; those exist to supply safe defaults this one cannot know about.
+        xStream.registerConverter(new Converter() {
+            @Override
+            public boolean canConvert(Class type) {
+                return (type != null) && type.isRecord();
+            }
+
+            @Override
+            public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+                Class<?> recordType = context.getRequiredType();
+                RecordComponent[] components = recordType.getRecordComponents();
+
+                Map<String, Object> readValues = new HashMap<>();
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    Class<?> componentType = componentType(components, reader.getNodeName());
+                    if (componentType != null) {
+                        readValues.put(reader.getNodeName(), context.convertAnother(null, componentType));
+                    }
+                    reader.moveUp();
+                }
+
+                // A component the save does not carry keeps its type's default, so a save written before that
+                // component existed still loads.
+                Object[] arguments = new Object[components.length];
+                Class<?>[] parameterTypes = new Class<?>[components.length];
+                for (int index = 0; index < components.length; index++) {
+                    parameterTypes[index] = components[index].getType();
+                    arguments[index] = readValues.containsKey(components[index].getName())
+                          ? readValues.get(components[index].getName())
+                          : defaultValue(parameterTypes[index]);
+                }
+
+                try {
+                    Constructor<?> canonicalConstructor = recordType.getDeclaredConstructor(parameterTypes);
+                    canonicalConstructor.setAccessible(true);
+                    return canonicalConstructor.newInstance(arguments);
+                } catch (Exception exception) {
+                    // A record may reject its own values, as RulesRef does for a page below 1. Dropping the one
+                    // record keeps the rest of the save loadable; a record that cannot tolerate being dropped
+                    // gets its own converter, which is what the specific ones above are for.
+                    LOGGER.warn(exception, "Could not rebuild record {} from the save game; dropping it.",
+                          recordType.getSimpleName());
+                    return null;
+                }
+            }
+
+            @Override
+            public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+                // Unused here; records are written correctly by reflection.
+            }
+
+            private Class<?> componentType(RecordComponent[] components, String name) {
+                for (RecordComponent component : components) {
+                    if (component.getName().equals(name)) {
+                        return component.getType();
+                    }
+                }
+                return null;
+            }
+
+            private Object defaultValue(Class<?> type) {
+                if (!type.isPrimitive()) {
+                    return null;
+                }
+                return switch (type.getName()) {
+                    case "boolean" -> false;
+                    case "byte" -> (byte) 0;
+                    case "short" -> (short) 0;
+                    case "int" -> 0;
+                    case "long" -> 0L;
+                    case "float" -> 0.0f;
+                    case "double" -> 0.0d;
+                    case "char" -> (char) 0;
+                    default -> null;
+                };
+            }
+        }, XStream.PRIORITY_VERY_LOW);
+
         return xStream;
+    }
+
+    /**
+     * Rebuilds one scan record from the fields a save wrote for it. Kept out of the converter above, where it
+     * was a forty-line read loop inside an anonymous class.
+     *
+     * <p>The numbers are read with {@link Integer#parseInt} rather than the project's
+     * {@code MathUtility.parseInt}, and that is deliberate rather than something left to tidy up.
+     * {@code MathUtility.parseInt} catches the failure, logs a warning and returns a default, which here
+     * would keep a record carrying a zero where the save held something else, and would warn once for every
+     * bad field. A malformed value has to throw, so the catch below drops the whole record rather than
+     * restoring a quietly wrong one.</p>
+     *
+     * @param reader the reader positioned on the saved record
+     *
+     * @return the record, or {@code null} when the saved fields cannot be read as one
+     */
+    private static @Nullable VictoryPointTracker.ScanRecord readScanRecord(HierarchicalStreamReader reader) {
+            int gameRound = 0;
+            int scannerId = Entity.NONE;
+            String scannerName = "";
+            int scannerOwnerId = Player.PLAYER_NONE;
+            VictoryPointTracker.ScanOutcome outcome = null;
+            String targetName = "";
+            String targetBoardNum = "";
+            int targetUnitId = Entity.NONE;
+            boolean wasObjective = false;
+            int victoryPointsAwarded = 0;
+            try {
+                while (reader.hasMoreChildren()) {
+                    reader.moveDown();
+                    switch (reader.getNodeName()) {
+                        case "gameRound":
+                            gameRound = Integer.parseInt(reader.getValue());
+                            break;
+                        case "scannerId":
+                            scannerId = Integer.parseInt(reader.getValue());
+                            break;
+                        case "scannerName":
+                            scannerName = reader.getValue();
+                            break;
+                        case "scannerOwnerId":
+                            scannerOwnerId = Integer.parseInt(reader.getValue());
+                            break;
+                        case "outcome":
+                            outcome = VictoryPointTracker.ScanOutcome.valueOf(reader.getValue());
+                            break;
+                        case "targetName":
+                            targetName = reader.getValue();
+                            break;
+                        case "targetBoardNum":
+                            targetBoardNum = reader.getValue();
+                            break;
+                        case "targetUnitId":
+                            targetUnitId = Integer.parseInt(reader.getValue());
+                            break;
+                        case "wasObjective":
+                            wasObjective = Boolean.parseBoolean(reader.getValue());
+                            break;
+                        case "victoryPointsAwarded":
+                            victoryPointsAwarded = Integer.parseInt(reader.getValue());
+                            break;
+                        default:
+                            // Unknown node, or <hash>
+                            break;
+                    }
+                    reader.moveUp();
+                }
+            } catch (IllegalArgumentException exception) {
+                return null;
+            }
+            if (outcome == null) {
+                return null;
+            }
+            return new VictoryPointTracker.ScanRecord(gameRound, scannerId, scannerName, scannerOwnerId,
+                  outcome, targetName, targetBoardNum, targetUnitId, wasObjective, victoryPointsAwarded);
     }
 }

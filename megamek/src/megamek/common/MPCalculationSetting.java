@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -46,7 +46,7 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
       boolean ignoreChainDrape, boolean ignoreMASC, boolean ignoreMyomerBooster, boolean ignoreDWP,
       boolean ignoreBurden, boolean ignoreCargo, boolean ignoreWeather, boolean singleMASC,
       boolean ignoreSubmergedJumpJets, boolean ignoreGrounded, boolean ignoreOptionalRules, boolean ignoreConversion,
-      boolean forceTSM) {
+      boolean forceTSM, boolean ignoreShield) {
 
     /**
      * The standard in-game setting, taking into account every circumstance except submerged jump jets (in this setting,
@@ -81,6 +81,17 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
           .noHeat()
           .noModularArmor()
           .noChainDrape()
+          .build();
+
+    /**
+     * A setting for checking the MP not including heat or equipment
+     */
+    public static final MPCalculationSetting NO_HEAT_OR_EQUIPMENT = new Builder().noHeat()
+          .noModularArmor()
+          .noChainDrape()
+          .noShield()
+          .noCargo()
+          .noWeather()
           .build();
 
     /**
@@ -140,11 +151,13 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
         private boolean ignoreOptionalRules = false;
         private boolean ignoreConversion = false;
         private boolean forceTSM = false;
+        private boolean ignoreShield = false;
 
         MPCalculationSetting build() {
             return new MPCalculationSetting(ignoreGravity, ignoreHeat, ignoreModularArmor, ignoreChainDrape, ignoreMASC,
                   ignoreMyomerBooster, ignoreBADWP, ignoreBABurden, ignoreCargo, ignoreWeather, singleMASC,
-                  ignoreSubmergedJumpJets, ignoreGrounded, ignoreOptionalRules, ignoreConversion, forceTSM);
+                  ignoreSubmergedJumpJets, ignoreGrounded, ignoreOptionalRules, ignoreConversion, forceTSM,
+                  ignoreShield);
         }
 
         /** Disregards the effects of the current heat of the unit. */
@@ -259,6 +272,11 @@ public record MPCalculationSetting(boolean ignoreGravity, boolean ignoreHeat, bo
          */
         private Builder forceTSM() {
             forceTSM = true;
+            return this;
+        }
+
+        private Builder noShield() {
+            ignoreShield = true;
             return this;
         }
     }

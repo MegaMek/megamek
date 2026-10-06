@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,8 +45,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import megamek.client.ui.Messages;
 import megamek.common.GameBoardTestCase;
+import megamek.common.LosEffects;
 import megamek.common.Player;
+import megamek.common.TargetRollModifier;
 import megamek.common.Team;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -123,6 +126,20 @@ public class ComputeToHitTest extends GameBoardTestCase {
           hex 0305 0 "" ""
           end""";
 
+      private static final String BOARD_10_BY_01_FLAT_DATA = """
+              size 10 1
+              hex 0101 0 "" ""
+              hex 0201 0 "" ""
+              hex 0301 0 "" ""
+              hex 0401 0 "" ""
+              hex 0501 0 "" ""
+              hex 0601 0 "" ""
+              hex 0701 0 "" ""
+              hex 0801 0 "" ""
+              hex 0901 0 "" ""
+              hex 1001 0 "" ""
+              end""";
+
     private static TWGameManager mockGameManager;
     private static GameOptions mockGameOptions;
     private static Team team1;
@@ -135,6 +152,7 @@ public class ComputeToHitTest extends GameBoardTestCase {
     static {
         initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
         initializeBoard("03_BY_05_FLAT", BOARD_03_BY_05_FLAT_DATA);
+            initializeBoard("10_BY_01_FLAT", BOARD_10_BY_01_FLAT_DATA);
     }
 
     Mek createMek(String chassis, String model, String crewName) {
@@ -269,11 +287,59 @@ public class ComputeToHitTest extends GameBoardTestCase {
 
         IOption mockOption = mock(IOption.class);
         when(mockOption.booleanValue()).thenReturn(false);
+        when(mockOption.stringValue()).thenReturn(OptionsConstants.RULES_CORE);
         when(mockGameOptions.getOption(anyString())).thenReturn(mockOption);
+        when(mockGameOptions.getOption(OptionsConstants.RULES_SYSTEM)).thenReturn(mockOption);
 
         game.addPlayer(0, player1);
         game.addPlayer(1, player2);
+        game.initializeRulesManager(OptionsConstants.RULES_CORE);
     }
+
+      @Test
+      @DisplayName("Medium VSP Laser applies its range-specific to-hit modifier")
+      void mediumVspLaserAppliesRangeSpecificToHitModifier() throws LocationFullException {
+            setBoard("10_BY_01_FLAT");
+
+            Mek attacker = createMek("Attacker", "ATK-1", "Alice");
+            attacker.setOwnerId(player1.getId());
+            attacker.setId(1);
+            attacker.setPosition(new Coords(0, 0));
+            when(attacker.getCrew().isActive()).thenReturn(true);
+            when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+            WeaponType vspLaserType = (WeaponType) EquipmentType.get("ISMediumVSPLaser");
+            WeaponMounted vspLaser = (WeaponMounted) attacker.addEquipment(vspLaserType, Mek.LOC_CENTER_TORSO);
+
+            Mek target = createMek("Target", "TGT-1", "Bob");
+            target.setOwnerId(player2.getId());
+            target.setId(2);
+            when(target.getCrew().isActive()).thenReturn(true);
+
+            game.addEntity(attacker);
+            game.addEntity(target);
+
+            int[][] rangeAndModifier = { { 2, -3 }, { 5, -2 }, { 9, -1 } };
+            String weaponModifierDescription = Messages.getString("WeaponAttackAction.WeaponMod");
+            for (int[] testCase : rangeAndModifier) {
+                  int range = testCase[0];
+                  int expectedModifier = testCase[1];
+                  target.setPosition(new Coords(range, 0));
+                  int targetDirection = attacker.getPosition().direction(target.getPosition());
+                  attacker.setFacing(targetDirection);
+                  attacker.setSecondaryFacing(targetDirection);
+
+                  ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                          vspLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                          false, false, null, null, false, false, null, false,
+                          WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+                  assertTrue(result.getModifiers().stream().anyMatch(modifier ->
+                                    (modifier.value() == expectedModifier)
+                                            && weaponModifierDescription.equals(modifier.description())),
+                          () -> "Expected Medium VSP Laser modifier " + expectedModifier + " at range " + range
+                                    + ", but modifiers were " + result.getModifiers());
+            }
+      }
 
     @Nested
     @DisplayName(value = "toHitCalc Tests - BuildingEntity")
@@ -337,6 +403,33 @@ public class ComputeToHitTest extends GameBoardTestCase {
                             + modifiers.stream().map(m -> "[" + m.value() + ": " + m.description() + "]")
                             .collect(java.util.stream.Collectors.joining(", ")));
                 assertTrue(result.cannotSucceed(), "Shot should NOT succeed when LOS is blocked");
+            }
+
+            @Test
+            @DisplayName("A ground-floor weapon in the center hex does not fire from another hex of the building")
+            void centerWeaponDoesNotBorrowAnotherBuildingHex() throws LocationFullException {
+                // Issue #8348 guard: a building fires each weapon from its own hex and floor. The building also
+                // covers 0105, which has a clear view of 0101; the center hex 0205 does not. The weapon at the
+                // center on floor 0 must stay blocked rather than borrow the 0105 view.
+                mediumLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, 0);
+                mediumLaser.setFacing(0);
+                targetEntity.setPosition(new Coords(0, 0));
+                int boardId = attacker.getBoardId();
+
+                LosEffects fromCenter = LosEffects.calculateLOS(game, attacker, target, new Coords(1, 4),
+                      targetEntity.getPosition(), 0, boardId, false);
+                LosEffects fromOtherHex = LosEffects.calculateLOS(game, attacker, target, new Coords(0, 4),
+                      targetEntity.getPosition(), 0, boardId, false);
+                assertFalse(fromCenter.canSee(), "Test setup: the center hex 0205 should not see 0101");
+                assertTrue(fromOtherHex.canSee(), "Test setup: the building hex 0105 should see 0101");
+
+                ToHitData result = ComputeToHit.toHitCalc(game, attacker.getId(), target,
+                      mediumLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                      false, false, null, null, false, false, null, false,
+                      WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+                assertTrue(result.cannotSucceed(),
+                      "The center weapon must fire from its own hex and stay blocked. Result: " + result.getDesc());
             }
 
             @Test
@@ -757,6 +850,246 @@ public class ComputeToHitTest extends GameBoardTestCase {
                             .collect(java.util.stream.Collectors.joining(", ")));
                 assertFalse(result.cannotSucceed(), "Shot SHOULD succeed after building destroyed");
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("toHitCalc Tests - Overhead Arms quirk")
+    class OverheadArmsTests {
+
+        private static final String BOARD_01_BY_04_WOODS_DATA = """
+              size 1 4
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "woods:1;foliage_elev:2" ""
+              hex 0104 0 "" ""
+              end""";
+
+        private Mek attacker;
+        private Mek targetEntity;
+        private WeaponMounted armLaser;
+
+        private void buildScenario(String boardName, Coords attackerPos, Coords targetPos, boolean overheadArms)
+              throws LocationFullException {
+            setBoard(boardName);
+
+            attacker = createMek("Attacker", "ATK-1", "Alice");
+            when(attacker.getCrew().isActive()).thenReturn(true);
+            when(attacker.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+            attacker.setOwnerId(player1.getId());
+            attacker.setId(1);
+            attacker.setPosition(attackerPos);
+            attacker.setFacing(0);
+            armLaser = (WeaponMounted) attacker.addEquipment(mediumLaserType, Mek.LOC_RIGHT_ARM);
+            if (overheadArms) {
+                attacker.getQuirks().getOption(OptionsConstants.QUIRK_POS_OVERHEAD_ARMS).setValue(true);
+                when(mockGameOptions.booleanOption(OptionsConstants.ADVANCED_STRATOPS_QUIRKS)).thenReturn(true);
+            }
+
+            targetEntity = createMek("Target", "TGT-2", "Bob");
+            targetEntity.setOwnerId(player2.getId());
+            targetEntity.setId(2);
+            targetEntity.setPosition(targetPos);
+
+            game.addEntity(attacker);
+            game.addEntity(targetEntity);
+        }
+
+        private ToHitData computeToHit() {
+            return ComputeToHit.toHitCalc(game, attacker.getId(), targetEntity,
+                  armLaser.getEquipmentNum(), Entity.LOC_NONE, AimingMode.NONE,
+                  false, false, null, null, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+        }
+
+        private boolean hasWoodsModifier(ToHitData toHitData) {
+            return toHitData.getModifiers()
+                  .stream()
+                  .anyMatch(modifier -> modifier.description().contains("light woods"));
+        }
+
+        private String describe(ToHitData toHitData) {
+            return toHitData.getModifiers().stream()
+                  .map(modifier -> "[" + modifier.value() + ": " + modifier.description() + "]")
+                  .collect(java.util.stream.Collectors.joining(", "));
+        }
+
+        @Test
+        @DisplayName("Without the quirk, an arm weapon takes the intervening light-woods modifier")
+        void armWeaponTakesWoodsModifierWithoutQuirk() throws LocationFullException {
+            initializeBoard("01_BY_04_WOODS", BOARD_01_BY_04_WOODS_DATA);
+            // Attacker at 0104, light woods at 0103 (adjacent to the attacker), target at 0101.
+            buildScenario("01_BY_04_WOODS", new Coords(0, 3), new Coords(0, 0), false);
+
+            ToHitData result = computeToHit();
+
+            assertNotNull(result, "ToHitData should not be null");
+            assertTrue(hasWoodsModifier(result),
+                  "A normal arm shot should be modified by the intervening light woods. Modifiers: "
+                        + describe(result));
+        }
+
+        @Test
+        @DisplayName("With the quirk, the standing Mek's arm weapon ignores the intervening light woods")
+        void armWeaponIgnoresWoodsWithQuirk() throws LocationFullException {
+            initializeBoard("01_BY_04_WOODS", BOARD_01_BY_04_WOODS_DATA);
+            buildScenario("01_BY_04_WOODS", new Coords(0, 3), new Coords(0, 0), true);
+
+            ToHitData result = computeToHit();
+
+            assertNotNull(result, "ToHitData should not be null");
+            assertFalse(hasWoodsModifier(result),
+                  "Overhead Arms should let the arm weapon ignore the intervening light woods. Modifiers: "
+                        + describe(result));
+            assertFalse(result.cannotSucceed(), "The shot should still be possible");
+        }
+
+        @Test
+        @DisplayName("The quirk cannot create line of sight over a tall hill")
+        void quirkDoesNotUnblockHill() throws LocationFullException {
+            initializeBoard("03_BY_05_CENTER_HILLS", BOARD_03_BY_05_CENTER_HILLS_DATA);
+            // Attacker at 0205 (level 0), target at 0201; the LOS passes through 0203 (elevation 4).
+            buildScenario("03_BY_05_CENTER_HILLS", new Coords(1, 4), new Coords(1, 0), true);
+
+            ToHitData result = computeToHit();
+
+            assertNotNull(result, "ToHitData should not be null");
+            boolean blockedByTerrain = result.getModifiers().stream()
+                  .anyMatch(modifier -> TARGET_IMPOSSIBLE == modifier.value()
+                        && LOS_BLOCKED_BY_TERRAIN.equals(modifier.description()));
+            assertTrue(blockedByTerrain,
+                  "Overhead Arms must not create LOS over a level-4 hill. Modifiers: " + describe(result));
+            assertTrue(result.cannotSucceed(), "Shot should remain impossible");
+        }
+    }
+
+    /**
+     * Issue #8348: a grounded DropShip covers seven hexes, and a shot may be traced to or from any of them. The board
+     * is a single column with a level 5 hill at 0104. The DropShip is an aerodyne, 4 levels tall, with its center at
+     * 0105; facing north, it also covers 0104, and its other hexes are off the board. The hill is higher than both
+     * units, so it blocks the line from the Mek at 0101 to the center hex, but the DropShip hex on the hill is in clear
+     * view.
+     */
+    @Nested
+    @DisplayName(value = "toHitCalc Tests - Grounded DropShip")
+    class GroundedDropShipTests {
+
+        private static final String BOARD_01_BY_05_HILL_DATA = """
+              size 1 5
+              hex 0101 0 "" ""
+              hex 0102 0 "" ""
+              hex 0103 0 "" ""
+              hex 0104 5 "" ""
+              hex 0105 0 "" ""
+              end""";
+
+        private Mek mek;
+        private Dropship dropShip;
+        private WeaponMounted mekLaser;
+        private WeaponMounted dropShipLaser;
+
+        @BeforeEach
+        void beforeEach() throws LocationFullException {
+            initializeBoard("01_BY_05_HILL", BOARD_01_BY_05_HILL_DATA);
+            setBoard("01_BY_05_HILL");
+
+            mek = createMek("Attacker", "ATK-1", "Alice");
+            when(mek.getCrew().isActive()).thenReturn(true);
+            when(mek.getCrew().getCrewType()).thenReturn(CrewType.SINGLE);
+            mek.setOwnerId(player1.getId());
+            mek.setId(1);
+            mek.setPosition(new Coords(0, 0));
+            mek.setFacing(3);
+            mekLaser = (WeaponMounted) mek.addEquipment(mediumLaserType, Mek.LOC_CENTER_TORSO);
+
+            dropShip = new Dropship();
+            dropShip.setGame(game);
+            dropShip.setChassis("Target");
+            dropShip.setModel("TGT-2");
+            // Aerodyne, like the Leopard in the issue: 4 levels tall when grounded (a spheroid is 9)
+            dropShip.setSpheroid(false);
+            Crew dropShipCrew = mock(Crew.class);
+            when(dropShipCrew.getName(anyInt())).thenCallRealMethod();
+            when(dropShipCrew.getNames()).thenReturn(new String[] { "Bob" });
+            when(dropShipCrew.getOptions()).thenReturn(new PilotOptions());
+            when(dropShipCrew.isActive()).thenReturn(true);
+            when(dropShipCrew.getCrewType()).thenReturn(CrewType.VESSEL);
+            dropShip.setCrew(dropShipCrew);
+            dropShip.setOwnerId(player2.getId());
+            dropShip.setId(2);
+            dropShip.setAltitude(0);
+            dropShip.setFacing(0);
+            dropShip.setPosition(new Coords(0, 4));
+            dropShipLaser = (WeaponMounted) dropShip.addEquipment(mediumLaserType, Aero.LOC_NOSE);
+
+            game.addEntity(mek);
+            game.addEntity(dropShip);
+        }
+
+        private ToHitData toHit(Entity attacker, Targetable target, WeaponMounted weapon) {
+            return ComputeToHit.toHitCalc(game, attacker.getId(), target, weapon.getEquipmentNum(), Entity.LOC_NONE,
+                  AimingMode.NONE, false, false, null, null, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+        }
+
+        private boolean isBlockedByTerrain(ToHitData toHitData) {
+            for (TargetRollModifier modifier : toHitData.getModifiers()) {
+                if ((modifier.value() == TARGET_IMPOSSIBLE) && LOS_BLOCKED_BY_TERRAIN.equals(modifier.description())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Test
+        @DisplayName("The hill really does block the line to the DropShip's center hex")
+        void centerHexIsBlocked() {
+            LosEffects centerLos = LosEffects.calculateLOS(game, mek, dropShip, mek.getPosition(),
+                  dropShip.getPosition(), mek.getBoardId(), false);
+
+            assertFalse(centerLos.canSee(),
+                  "The level 5 hill is higher than both units, so it should block the line to the center hex 0105");
+        }
+
+        @Test
+        @DisplayName("A Mek can fire at a grounded DropShip through a hex other than its center")
+        void mekCanTargetDropShipThroughOuterHex() {
+            ToHitData result = toHit(mek, dropShip, mekLaser);
+
+            assertFalse(isBlockedByTerrain(result),
+                  "The DropShip hex at 0104 is in clear view, so LOS must not be blocked. Result: "
+                        + result.getDesc());
+        }
+
+        @Test
+        @DisplayName("A grounded DropShip can fire from a hex other than its center")
+        void dropShipCanFireFromOuterHex() {
+            ToHitData result = toHit(dropShip, mek, dropShipLaser);
+
+            assertFalse(isBlockedByTerrain(result),
+                  "The DropShip hex at 0104 has a clear view of the Mek, so LOS must not be blocked. Result: "
+                        + result.getDesc());
+        }
+
+        @Test
+        @DisplayName("A swarm attack whose previous target has left the game fails instead of crashing")
+        void swarmAttackWithMissingPreviousTargetFails() {
+            // The swarm's previous target lookup returns null once that unit has left the game
+            ToHitData result = ComputeToHit.toHitCalc(game, mek.getId(), dropShip, mekLaser.getEquipmentNum(),
+                  Entity.LOC_NONE, AimingMode.NONE, false, true, null, dropShip, false, false, null, false,
+                  WeaponAttackAction.UNASSIGNED, WeaponAttackAction.UNASSIGNED);
+
+            assertEquals(TargetRoll.AUTOMATIC_FAIL, result.getValue(),
+                  "A missing previous swarm target should give an automatic fail. Result: " + result.getDesc());
+        }
+
+        @Test
+        @DisplayName("A weapon with a fixed firing hex still sees every hex of a grounded DropShip")
+        void fixedFiringPositionChecksEveryTargetHex() {
+            LosEffects los = LosEffects.calculateLOSToBestTargetHex(game, mek, dropShip, mek.getPosition(),
+                  mek.getHeight(), mek.getBoardId(), false);
+
+            assertTrue(los.canSee(), "The DropShip hex at 0104 is in clear view from 0101");
         }
     }
 }

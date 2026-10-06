@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2010 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2006-2022-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2006-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,14 +44,18 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
     private static final long serialVersionUID = 1031947858009941399L;
 
     @Override
-    public final boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        Entity carriedBA = game.getEntity(carriedUnit);
-        if (carriedBA == null) {
+    public final boolean isWeaponBlockedAt(int location, boolean isRear) {
+        if (game == null) {
+            return false;
+        }
+
+        Entity carriedBattleArmor = game.getEntity(carriedUnit);
+        if (carriedBattleArmor == null) {
             return false;
         } else {
             int troopLocation1 = BattleArmor.LOC_SQUAD;
             int troopLocation2 = BattleArmor.LOC_SQUAD;
-            troopLocation2 = switch (loc) {
+            troopLocation2 = switch (location) {
                 case Tank.LOC_REAR -> {
                     troopLocation1 = BattleArmor.LOC_TROOPER_5;
                     yield BattleArmor.LOC_TROOPER_6;
@@ -66,8 +70,9 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
                 }
                 default -> troopLocation2;
             };
-            return ((carriedBA.locations() > troopLocation1) && (carriedBA.getInternal(troopLocation1) > 0))
-                  || ((carriedBA.locations() > troopLocation2) && (carriedBA.getInternal(troopLocation2) > 0));
+            boolean firstTrooperActive = hasActiveTrooper(carriedBattleArmor, troopLocation1);
+            boolean secondTrooperActive = hasActiveTrooper(carriedBattleArmor, troopLocation2);
+            return firstTrooperActive || secondTrooperActive;
         }
     }
 }

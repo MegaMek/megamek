@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2012 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2012-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2012-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -53,6 +53,7 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponType;
+import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 
@@ -78,6 +79,11 @@ public class SuperHeavyTank extends Tank {
     private static final String[] LOCATION_ABBREVIATIONS = { "BD", "FR", "FRRS", "FRLS", "RRRS", "RRLS", "RR", "TU",
                                                              "FT" };
 
+    // On a dual-turret tank the turret locations are the rear turret (RT) and the front turret (FT), so the
+    // abbreviations say which is which (a bare "TU" next to "FT" does not).
+    private static final String[] LOCATION_ABBREVIATIONS_DUAL_TURRET = { "BD", "FR", "FRRS", "FRLS", "RRRS", "RRLS",
+                                                                         "RR", "RT", "FT" };
+
     private static final String[] LOCATION_NAMES = { "Body", "Front", "Front Right", "Front Left", "Rear Right",
                                                      "Rear Left", "Rear", "Turret" };
 
@@ -87,6 +93,9 @@ public class SuperHeavyTank extends Tank {
 
     @Override
     public String[] getLocationAbbreviations() {
+        if (!hasNoDualTurret()) {
+            return LOCATION_ABBREVIATIONS_DUAL_TURRET;
+        }
         return LOCATION_ABBREVIATIONS;
     }
 
@@ -160,11 +169,8 @@ public class SuperHeavyTank extends Tank {
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE) && !aimingMode.isNone()) {
-            int roll = Compute.d6(2);
-
-            if ((5 < roll) && (roll < 9)) {
-                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
-                      true);
+            if (Game.rulesManager.getRulesTarget().checkAimedLocation()) {
+                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
                 bHitAimed = true;
             }
         }

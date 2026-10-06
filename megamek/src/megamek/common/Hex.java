@@ -49,6 +49,7 @@ import java.util.stream.Collectors;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
+import megamek.common.equipment.Minefield;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -392,6 +393,21 @@ public class Hex implements Serializable {
      */
     public int depth() {
         return depth(false);
+    }
+
+    /**
+     * Whether an elevation below the hex surface lies within this hex's building basement rather than under water,
+     * so that a unit there is standing on a basement level (TW p. 179), not swimming.
+     *
+     * @param elevation the elevation relative to the hex surface, negative for below it
+     *
+     * @return {@code true} when the hex has a building whose basement reaches that far down
+     */
+    public boolean isBasementLevel(int elevation) {
+        if ((elevation >= 0) || !containsTerrain(Terrains.BUILDING)) {
+            return false;
+        }
+        return -elevation <= BasementType.getType(terrainLevel(Terrains.BLDG_BASEMENT_TYPE)).getDepth();
     }
 
     public int depth(boolean hidden) {
@@ -787,6 +803,20 @@ public class Hex implements Serializable {
             }
         }
         return true;
+    }
+
+    /** Determine whether a minefield of the given type can be placed here.
+     * @param minefieldType one of the constants from the Minefield class
+     */
+    public boolean canPlaceMinefield(int minefieldType) {
+    	switch (minefieldType) {
+    	case Minefield.TYPE_TRIPWIRE:
+    		return !containsAnyTerrainOf(Terrains.INVALID_TRIPWIRE_TERRAIN);
+    	case Minefield.TYPE_PITFALL:
+    		return !containsAnyTerrainOf(Terrains.INVALID_PITFALL_TERRAIN);
+    	}
+
+    	return true;
     }
 
     /**

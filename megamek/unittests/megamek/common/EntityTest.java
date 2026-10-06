@@ -36,6 +36,7 @@ package megamek.common;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.spy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 import java.util.stream.Stream;
 
@@ -82,6 +84,59 @@ class EntityTest {
     @BeforeAll
     static void beforeAll() {
         EquipmentType.initializeTypes();
+    }
+
+    @Test
+    void unitFileUUIDIsVersion7() {
+        Entity entity = new BipedMek();
+        UUID uuid = UUID.fromString(entity.getUnitFileUUID());
+
+        assertEquals(7, uuid.version());
+        assertEquals(2, uuid.variant());
+    }
+
+    @Test
+    void regenerateUnitFileUUIDCreatesNewVersion7UUID() {
+        Entity entity = new BipedMek();
+        String originalUUID = entity.getUnitFileUUID();
+
+        entity.regenerateUnitFileUUID();
+
+        UUID regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(originalUUID, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+    }
+
+    @Test
+    void setUnitFileUUIDRegeneratesInvalidUUID() {
+        Entity entity = new BipedMek();
+        String originalUUID = entity.getUnitFileUUID();
+
+        entity.setUnitFileUUID(UUID.randomUUID().toString());
+
+        UUID regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(originalUUID, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+
+        String UUIDBeforeMalformedValue = entity.getUnitFileUUID();
+        entity.setUnitFileUUID("not-a-uuid");
+
+        regeneratedUUID = UUID.fromString(entity.getUnitFileUUID());
+        assertNotEquals(UUIDBeforeMalformedValue, entity.getUnitFileUUID());
+        assertEquals(7, regeneratedUUID.version());
+        assertEquals(2, regeneratedUUID.variant());
+    }
+
+    @Test
+    void setUnitFileUUIDCanonicalizesValidUUID() {
+        Entity entity = new BipedMek();
+        String unitFileUUID = entity.getUnitFileUUID();
+
+        entity.setUnitFileUUID("  " + unitFileUUID.toUpperCase() + "  ");
+
+        assertEquals(unitFileUUID, entity.getUnitFileUUID());
     }
 
     @Test
@@ -431,9 +486,8 @@ class EntityTest {
             Player player2 = new Player(2, "ECM side");
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -441,9 +495,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Master());
             assertEquals(mek, tank.getC3Top());
 
-            // Actual test: if AECM affects Boosted connection, slave entity returns self as "top" of network.
+            // Actual test: if AECM affects Boosted connection, still returns the mek
             setUpECMEntity(game, player2, vtol, new Coords(2, 2), true);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         @Test
@@ -461,8 +515,6 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 
@@ -470,9 +522,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Master());
             assertEquals(mek, tank.getC3Top());
 
-            // Actual test: if ECM affects C3 connection, slave entity returns self as "top" of network.
+            // Actual test: if ECM affects C3 connection, slave entity returns master still
             setUpECMEntity(game, player2, vtol, new Coords(2, 2), false);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         @Test
@@ -490,8 +542,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -519,8 +570,6 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 
@@ -528,9 +577,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Master());
             assertEquals(mek, tank.getC3Top());
 
-            // Actual test: if AECM affects C3 connection, slave entity returns self as "top" of network.
+            // Actual test: if AECM affects C3 connection, slave entity still returns the master.
             setUpECMEntity(game, player2, vtol, new Coords(2, 2), true);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         @Test
@@ -548,8 +597,7 @@ class EntityTest {
             game.addPlayer(player1.getId(), player1);
             game.addPlayer(player2.getId(), player2);
 
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Set up initial C3 link
             setUpC3Link(game, player1, mek, new Coords(1, 1), tank, new Coords(3, 3), true);
 
@@ -558,9 +606,9 @@ class EntityTest {
             assertEquals(mek, tank.getC3Top());
 
             // Actual test: if AECM affects Boosted connection, even only at one end,
-            // slave entity returns self as "top" of network.
+            // slave entity returns mek still, as it still works under ecm
             setUpECMEntity(game, player2, vtol, new Coords(3, 9), true);
-            assertEquals(tank, tank.getC3Top());
+            assertEquals(mek, tank.getC3Top());
         }
 
         /**
@@ -584,9 +632,8 @@ class EntityTest {
             Game game = setUpGame();
             Player player = new Player(1, "C3 side");
             game.addPlayer(player.getId(), player);
-
-            game.getOptions().getOption(OptionsConstants.PLAYTEST_3).setValue(false);
-
+            
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
             // Standard (non-boosted) C3 link, master at (1,1), slave at (3,3).
             setUpC3Link(game, player, mek, new Coords(1, 1), tank, new Coords(3, 3), false);
 
@@ -604,9 +651,9 @@ class EntityTest {
                 ecm.when(() -> ComputeECM.isAffectedByECM(eq(mek), eq(mek.getPosition()), eq(mek.getPosition())))
                       .thenReturn(true);
 
-                // Pre-fix this threw IllegalStateException; post-fix the master is treated as unreachable and the
-                // slave returns itself as the effective top of network (same handling as a slave-side jammed line).
-                assertEquals(tank, tank.getC3Top());
+                // Pre-fix this threw IllegalStateException; post-fix the master is treated as under ECM, but still 
+                // reachable
+                assertEquals(mek, tank.getC3Top());
             }
         }
 

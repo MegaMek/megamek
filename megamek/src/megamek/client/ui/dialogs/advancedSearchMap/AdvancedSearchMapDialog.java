@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -41,6 +41,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -145,11 +146,12 @@ public class AdvancedSearchMapDialog extends AbstractButtonDialog {
 
         JPanel tagsTitlePanel = createTitleWithCheckBox(boardTagsAllCheckBox,
               Messages.getString("AdvancedSearchMapDialog.filterBoardTags"));
-        List<String> tags = Arrays.stream(BoardsTagger.Tags.values())
+        List<String> tags = new ArrayList<>(Arrays.stream(BoardsTagger.Tags.values())
               .map(BoardsTagger.Tags::getName)
-              .distinct()
-              .sorted()
-              .toList();
+              .toList());
+        // Include manual (non-auto) tags found on boards, e.g. "Arena", so they are filterable too
+        tags.addAll(bc.getBoardsByManualTag().keySet());
+        tags = tags.stream().distinct().sorted().toList();
         filterPanel.add(createFilterList(listBoardTags, tags, tagsTitlePanel, true));
 
         JPanel pathsTitlePanel = createTitle(Messages.getString("AdvancedSearchMapDialog.filterBoardPaths"));

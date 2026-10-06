@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2002-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2002-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -91,7 +91,7 @@ public class FindClubAction extends AbstractEntityAction {
         // The hex must contain woods or rubble from a medium, heavy, or hardened building, or a blown off limb
         if ((hex.terrainLevel(Terrains.WOODS) < 1)
               && (hex.terrainLevel(Terrains.JUNGLE) < 1)
-              && (hex.terrainLevel(Terrains.RUBBLE) < BuildingType.MEDIUM.getTypeValue())
+              && (hex.terrainLevel(Terrains.RUBBLE) < Game.rulesManager.getRulesPhysical().getClubFindInRubble())
               && (hex.terrainLevel(Terrains.ARMS) < 1)
               && (hex.terrainLevel(Terrains.LEGS) < 1)) {
             return false;

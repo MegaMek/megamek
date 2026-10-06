@@ -40,17 +40,11 @@ import static megamek.common.options.OptionsConstants.ATOW_COMBAT_PARALYSIS;
 import static megamek.common.options.OptionsConstants.ATOW_COMBAT_SENSE;
 
 import java.io.Serial;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Vector;
+import java.util.*;
 
 import megamek.common.Player;
 import megamek.common.Team;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InitiativeBonusBreakdown;
 import megamek.common.game.InitiativeRoll;
@@ -404,6 +398,21 @@ public abstract class TurnOrdered implements ITurnOrdered {
     public static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
           List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
           Map<Team, Integer> initiativeAptitude) {
+        rollInitAndResolveTies(initiativeCandidates, rerollRequests, bInitCompBonus, initiativeAptitude, 0);
+    }
+
+    /**
+     * Backstop that guarantees the tie-break recursion terminates. Genuine ties break within a handful of re-rolls, so
+     * this bound is never approached in practice; it only guards against a degenerate case where candidates compare
+     * equal every pass (e.g. if they were to share the same {@link InitiativeRoll} instance), which would otherwise
+     * recurse until a {@link StackOverflowError}. Kept well below the stack limit while far above any legitimate tie
+     * streak.
+     */
+    private static final int MAX_TIE_BREAK_DEPTH = 100;
+
+    private static void rollInitAndResolveTies(List<? extends ITurnOrdered> initiativeCandidates,
+          List<? extends ITurnOrdered> rerollRequests, boolean bInitCompBonus,
+          Map<Team, Integer> initiativeAptitude, int tieBreakDepth) {
         // Cache the team-level breakdown per player.
         Map<Player, InitiativeBonusBreakdown> playerBreakdownCache = new HashMap<>();
 
@@ -460,7 +469,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                                   0
                             );
                         });
-                        // Inject the per-entity crew bonus (the only component that varies per unit).
+                        // Inject the per-entity components, the only ones that vary per unit: the crew's own
+                        // bonus and any temporary gamemaster initiative modifier, each under its own name in the
+                        // report. As a positive bonus the gamemaster modifier competes with the other bonuses
+                        // under the normal stacking rule rather than stacking on them; maluses always stack.
                         breakdown = new InitiativeBonusBreakdown(
                               base.hq(),
                               base.quirk(),
@@ -470,7 +482,8 @@ public abstract class TurnOrdered implements ITurnOrdered {
                               base.tcp(),
                               base.constant(),
                               base.compensation(),
-                              entity.getCrew().getInitBonus()
+                              entity.getCrew().getInitBonus(),
+                              entity.getCrew().getSkillModifiers().getInitiativeDelta()
                         );
 
                         if (entity.hasAbility(ATOW_COMBAT_SENSE)) {
@@ -498,23 +511,38 @@ public abstract class TurnOrdered implements ITurnOrdered {
 
         // check for ties
         Vector<ITurnOrdered> ties = new Vector<>();
+        // A tie group is resolved by the single recursive call below, so once an item has been folded into a group we
+        // must not process it again as its own group. Skipping handled items keeps this pass linear: without it, every
+        // member of an unresolvable tie would spawn its own recursion, turning a would-be stack overflow into an
+        // exponential blow-up.
+        Set<ITurnOrdered> alreadyResolved = new HashSet<>();
         for (ITurnOrdered item : initiativeCandidates) {
             // Observers don't have initiative, and were already set to -1
             if (((item instanceof Player) && ((Player) item).isObserver()) ||
                   ((item instanceof Team) && ((Team) item).isObserverTeam())) {
                 continue;
             }
+            if (alreadyResolved.contains(item)) {
+                continue;
+            }
             ties.removeAllElements();
             ties.addElement(item);
             for (ITurnOrdered other : initiativeCandidates) {
-                if ((!Objects.equals(item, other)) && item.getInitiative().equals(other.getInitiative())) {
+                // The identity check guards against two distinct candidates sharing the same InitiativeRoll instance:
+                // that would make equals() trivially true forever and the tie-break below would never resolve.
+                if ((!Objects.equals(item, other)) && (item.getInitiative() != other.getInitiative()) &&
+                      item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
             }
 
             if (ties.size() > 1) {
-                // Initiative compensation is retained here, as it should persist in the reroll, like all other bonuses
-                rollInitAndResolveTies(ties, null, bInitCompBonus, initiativeAptitude);
+                alreadyResolved.addAll(ties);
+                if (tieBreakDepth < MAX_TIE_BREAK_DEPTH) {
+                    // Initiative compensation is retained here, as it should persist in the reroll, like all other
+                    // bonuses
+                    rollInitAndResolveTies(ties, null, bInitCompBonus, initiativeAptitude, tieBreakDepth + 1);
+                }
             }
         }
     }
@@ -658,14 +686,11 @@ public abstract class TurnOrdered implements ITurnOrdered {
                 if (num_normal_turns[index] == 0) {
                     continue;
                 }
+                
+                // Number to move. Changes based on front-loaded initiative
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_normal_turns, index,
+                            min, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_normal_turns[index]) / (double) min);
-                } else {
-                    ntm = num_normal_turns[index] / min;
-                }
                 for (int j = 0; j < ntm; j++) {
                     turns.addNormal(order[index]);
                     num_normal_turns[index]--;
@@ -696,13 +721,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                         continue;
                     }
 
-                    // If you have less than twice the lowest,
-                    // move 1. Otherwise, move more.
-                    if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                        ntm = (int) Math.ceil(((double) num_even_turns[index]) / (double) min);
-                    } else {
-                        ntm = num_even_turns[index] / min;
-                    }
+                    // Return the number of units per init turn
+                    ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_even_turns, index,
+                          min, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                    
                     for (int j = 0; j < ntm; j++) {
                         turns.addEven(order[index]);
                         num_even_turns[index]--;
@@ -723,13 +745,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_space_station_turns[index]) / (double) minSS);
-                } else {
-                    ntm = num_space_station_turns[index] / minSS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_space_station_turns, index,
+                      minSS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+
                 for (int j = 0; j < ntm; j++) {
                     turns.addSpaceStation(order[index]);
                     num_space_station_turns[index]--;
@@ -751,13 +770,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_jumpship_turns[index]) / (double) minJS);
-                } else {
-                    ntm = num_jumpship_turns[index] / minJS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_jumpship_turns, index,
+                      minJS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addJumpship(order[index]);
                     num_jumpship_turns[index]--;
@@ -779,13 +795,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_warship_turns[index]) / (double) minWS);
-                } else {
-                    ntm = num_warship_turns[index] / minWS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_warship_turns, index,
+                      minWS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addWarship(order[index]);
                     num_warship_turns[index]--;
@@ -807,13 +820,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_dropship_turns[index]) / (double) minDS);
-                } else {
-                    ntm = num_dropship_turns[index] / minDS;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_dropship_turns, index,
+                      minDS, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addDropship(order[index]);
                     num_dropship_turns[index]--;
@@ -835,13 +845,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_small_craft_turns[index]) / (double) minSC);
-                } else {
-                    ntm = num_small_craft_turns[index] / minSC;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_small_craft_turns, index,
+                      minSC, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addSmallCraft(order[index]);
                     num_small_craft_turns[index]--;
@@ -863,13 +870,10 @@ public abstract class TurnOrdered implements ITurnOrdered {
                     continue;
                 }
 
-                // If you have less than twice the lowest,
-                // move 1. Otherwise, move more.
-                if (game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE)) {
-                    ntm = (int) Math.ceil(((double) num_telemissile_turns[index]) / (double) minTM);
-                } else {
-                    ntm = num_telemissile_turns[index] / minTM;
-                }
+                // Return the number of units per init turn
+                ntm = Game.rulesManager.getRulesGame().getInitiativeOrder(num_telemissile_turns, index,
+                      minTM, game.getOptions().booleanOption(OptionsConstants.INIT_FRONT_LOAD_INITIATIVE));
+                
                 for (int j = 0; j < ntm; j++) {
                     turns.addTelemissile(order[index]);
                     num_telemissile_turns[index]--;

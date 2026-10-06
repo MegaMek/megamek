@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2014-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,11 +43,8 @@ import java.awt.geom.Point2D;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.compute.Compute;
-import megamek.common.units.CrewType;
-import megamek.common.units.EntityMovementType;
+import megamek.common.compute.DefensiveMovementModifier;
 import megamek.common.Facing;
-import megamek.common.units.VTOL;
 import megamek.common.moves.MovePath;
 
 /**
@@ -76,19 +73,9 @@ public class MovementModifierEnvelopeSprite extends HexSprite {
 
         facing = Facing.valueOfInt(movePath.getFinalFacing());
 
-        int movementModifier = Compute.getTargetMovementModifier(movePath.getHexesMoved(),
-              movePath.isJumping(),
-              movePath.getEntity() instanceof VTOL
-                    || (movePath.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_WALK)
-                    || (movePath.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_RUN)
-                    || (movePath.getLastStepMovementType() == EntityMovementType.MOVE_VTOL_SPRINT),
-              boardView.game).getValue();
-        //Add evasion bonus for 'Mek with dual cockpit
-        if (movePath.getEntity().getCrew().getCrewType().equals(CrewType.DUAL)
-              && movePath.getEntity().getCrew().hasDedicatedPilot()
-              && !movePath.isJumping() && movePath.getHexesMoved() > 0) {
-            movementModifier++;
-        }
+        // One shared computation with the bot's position evaluation, so the overlay and the bot
+        // can never value destinations differently.
+        int movementModifier = DefensiveMovementModifier.forPath(movePath, boardView.game);
         float hue = 0.7f - 0.15f * movementModifier;
         color = new Color(Color.HSBtoRGB(hue, 1, 1));
         String modifier = String.format("%+d", movementModifier);

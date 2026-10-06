@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -144,6 +144,7 @@ public class HexTarget implements Targetable {
         final String typeString = switch (type) {
             case Targetable.TYPE_FLARE_DELIVER -> Messages.getString("HexTarget.DeliverFlare");
             case Targetable.TYPE_MINEFIELD_DELIVER -> Messages.getString("HexTarget.DeliverMinefield");
+            case Targetable.TYPE_SATURATION -> Messages.getString("HexTarget.DeliverSaturation");
             case Targetable.TYPE_HEX_BOMB, Targetable.TYPE_HEX_AERO_BOMB -> Messages.getString("HexTarget.Bomb");
             case Targetable.TYPE_HEX_CLEAR -> Messages.getString("HexTarget.Clear");
             case Targetable.TYPE_HEX_IGNITE -> Messages.getString("HexTarget.Ignite");

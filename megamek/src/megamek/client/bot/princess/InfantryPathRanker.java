@@ -117,15 +117,15 @@ public class InfantryPathRanker extends BasicPathRanker {
         var aggressionMod = calculateAggressionMod(movingUnit, pathCopy, game);
 
         // The further I am from my teammates, the lower this path
-        // ranks (weighted by Herd Mentality).
-        var herdingMod = calculateHerdingMod(friendsCoords, pathCopy);
+        // ranks (weighted by Mutual Support).
+        var mutualSupportMod = calculateMutualSupportMod(friendsCoords, pathCopy);
 
         // If I need to flee the board, I want to get closer to my home edge.
         var selfPreservationMod = calculateSelfPreservationMod(movingUnit, pathCopy, game);
 
         double utility = braveryMod;
         utility -= aggressionMod;
-        utility -= herdingMod;
+        utility -= mutualSupportMod;
         utility -= selfPreservationMod;
 
         formula.append("Calculation: {braveryMod [")
@@ -144,18 +144,18 @@ public class InfantryPathRanker extends BasicPathRanker {
               .append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game))
               .append(" * ")
               .append(getOwner().getBehaviorSettings().getHyperAggressionValue())
-              .append("] - herdingMod [")
-              .append(herdingMod)
+              .append("] - mutualSupportMod [")
+              .append(mutualSupportMod)
               .append(" = ")
               .append(distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game))
               .append(" * ")
-              .append(getOwner().getBehaviorSettings().getHerdMentalityValue())
+              .append(getOwner().getBehaviorSettings().getMutualSupportValue())
               .append("] + selfPreservationMod [")
               .append(selfPreservationMod)
               .append("]}");
 
         logger.trace(
-              "Calculation: {braveryMod [{}] = (({} * {}) - {})] - aggressionMod [{}] = {} * {}] - herdingMod [{}] = {} * {}] + selfPreservationMod [{}]}",
+              "Calculation: {braveryMod [{}] = (({} * {}) - {})] - aggressionMod [{}] = {} * {}] - mutualSupportMod [{}] = {} * {}] + selfPreservationMod [{}]}",
               LOG_DECIMAL.format(braveryMod),
               LOG_DECIMAL.format(maximumDamageDone),
               LOG_DECIMAL.format(braveryValue),
@@ -163,9 +163,9 @@ public class InfantryPathRanker extends BasicPathRanker {
               aggressionMod,
               distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game),
               getOwner().getBehaviorSettings().getHyperAggressionValue(),
-              herdingMod,
+              mutualSupportMod,
               distanceToClosestEnemy(movingUnit, path.getFinalCoords(), game),
-              getOwner().getBehaviorSettings().getHerdMentalityValue(),
+              getOwner().getBehaviorSettings().getMutualSupportValue(),
               selfPreservationMod);
 
         RankedPath rankedPath = new RankedPath(utility, pathCopy, formula.toString());

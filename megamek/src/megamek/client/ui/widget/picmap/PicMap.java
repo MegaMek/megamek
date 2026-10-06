@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2004 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,9 +38,11 @@ import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.event.ComponentEvent;
 import java.awt.event.MouseEvent;
@@ -70,7 +72,7 @@ public abstract class PicMap extends JComponent {
     @Serial
     private static final long serialVersionUID = -1718106533001806675L;
     // Vector of Background Drawers
-    private final Vector<BackGroundDrawer> bgDrawers = new Vector<>();
+    private final Vector<BackGroundDrawer> backgroundDrawers = new Vector<>();
     // Group of other areas which does not implement PMHotArea or PMLAbel
     private final PMAreasGroup otherAreas = new PMAreasGroup();
     // Hot areas
@@ -82,7 +84,7 @@ public abstract class PicMap extends JComponent {
     // Root group of hot areas (required for general operations)
     private final PMAreasGroup rootGroup = new PMAreasGroup();
     // Offscreen image
-    private Image offScr;
+    private Image offScreenImage;
     // Margins
     private int topMargin = 0;
     private int leftMargin = 0;
@@ -98,6 +100,10 @@ public abstract class PicMap extends JComponent {
 
     // Is background opaque
     private boolean bgIsOpaque = true;
+
+    // Factor the drawn content is enlarged by. Areas and labels are laid out in fixed coordinates, so this scales
+    // them at draw time, and mouse coordinates are scaled back when looking up the area under the pointer.
+    private double displayScale = 1.0;
 
     /**
      * creates PicMap engine. If no areas, labels or Background-drawers added this is just transparent layer over
@@ -123,20 +129,20 @@ public abstract class PicMap extends JComponent {
      * the topmost layer. All objects implementing PMHotArea will be placed in the middle layer. All others are going to
      * bottom layer. Within same layer objects are drawing by order they added to components.
      */
-    public void addElement(PMElement e) {
-        switch (e) {
-            case PMLabel ignored -> labels.addArea(e);
+    public void addElement(PMElement element) {
+        switch (element) {
+            case PMLabel ignored -> labels.addArea(element);
             case PMHotArea ignored -> {
-                hotAreas.addArea(e);
+                hotAreas.addArea(element);
                 areasCount++;
             }
-            case PMAreasGroup ag -> {
-                Enumeration<PMElement> iter = ag.elements();
-                while (iter.hasMoreElements()) {
-                    addElement(iter.nextElement());
+            case PMAreasGroup group -> {
+                Enumeration<PMElement> groupElements = group.elements();
+                while (groupElements.hasMoreElements()) {
+                    addElement(groupElements.nextElement());
                 }
             }
-            case null, default -> otherAreas.addArea(e);
+            case null, default -> otherAreas.addArea(element);
         }
 
     }
@@ -145,15 +151,15 @@ public abstract class PicMap extends JComponent {
      * Removes element from PicMap component.
      */
 
-    public void removeElement(PMElement e) {
-        if (e instanceof PMLabel) {
-            labels.removeArea(e);
-        } else if (e instanceof PMHotArea) {
-            if (hotAreas.removeArea(e)) {
+    public void removeElement(PMElement element) {
+        if (element instanceof PMLabel) {
+            labels.removeArea(element);
+        } else if (element instanceof PMHotArea) {
+            if (hotAreas.removeArea(element)) {
                 areasCount--;
             }
         } else {
-            otherAreas.removeArea(e);
+            otherAreas.removeArea(element);
         }
 
     }
@@ -166,7 +172,7 @@ public abstract class PicMap extends JComponent {
         otherAreas.removeAll();
         hotAreas.removeAll();
         labels.removeAll();
-        bgDrawers.removeAllElements();
+        backgroundDrawers.removeAllElements();
         areasCount = 0;
         activeHotArea = null;
     }
@@ -174,23 +180,23 @@ public abstract class PicMap extends JComponent {
     /**
      * Adds background drawer to the stage. Background drawers are drawn in order they added to the component.
      */
-    public void addBgDrawer(BackGroundDrawer bd) {
-        bgDrawers.addElement(bd);
+    public void addBgDrawer(BackGroundDrawer drawer) {
+        backgroundDrawers.addElement(drawer);
     }
 
     /**
      * Sets margins in pixels around Content of component. Does not affect Background Drawers.
      *
-     * @param l Left margin
-     * @param t Top margin
-     * @param r Right margin
-     * @param b Bottom margin
+     * @param left   Left margin
+     * @param top    Top margin
+     * @param right  Right margin
+     * @param bottom Bottom margin
      */
-    public void setContentMargins(int l, int t, int r, int b) {
-        leftMargin = Math.max(l, 0);
-        topMargin = Math.max(t, 0);
-        rightMargin = Math.max(r, 0);
-        bottomMargin = Math.max(b, 0);
+    public void setContentMargins(int left, int top, int right, int bottom) {
+        leftMargin = Math.max(left, 0);
+        topMargin = Math.max(top, 0);
+        rightMargin = Math.max(right, 0);
+        bottomMargin = Math.max(bottom, 0);
         Rectangle rect = rootGroup.getBounds();
         rootGroup.translate(leftMargin - rect.x, topMargin - rect.y);
     }
@@ -216,54 +222,116 @@ public abstract class PicMap extends JComponent {
      */
     public void update() {
         if (bgIsOpaque) {
-            int w = Math.max(getSize().width, minWidth);
-            int h = Math.max(getSize().height, minHeight);
-            offScr = createImage(w, h);
-            if (offScr == null) {
+            int width = Math.max(getSize().width, minWidth);
+            int height = Math.max(getSize().height, minHeight);
+            offScreenImage = createImage(width, height);
+            if (offScreenImage == null) {
                 return;
             }
-            Graphics g = offScr.getGraphics();
-            drawInto(g);
+            Graphics offScreenGraphics = offScreenImage.getGraphics();
+            drawInto(offScreenGraphics);
             repaint();
-            g.dispose();
+            offScreenGraphics.dispose();
         } else {
             repaint();
         }
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(Graphics graphics) {
         if (bgIsOpaque) {
             // If we want to use buffering Component will be with opaque
             // background
-            g.drawImage(offScr, 0, 0, null);
+            graphics.drawImage(offScreenImage, 0, 0, null);
         } else {
             // Directly drawing to the place (use buffering in container)
             // Makes background of PicMap transparent
-            drawInto(g);
+            drawInto(graphics);
         }
     }
 
-    private void drawInto(Graphics g) {
-        int w = Math.max(getSize().width, minWidth);
-        int h = Math.max(getSize().height, minHeight);
-        // Background painting
-        Enumeration<BackGroundDrawer> iter = bgDrawers.elements();
-        while (iter.hasMoreElements()) {
-            BackGroundDrawer bgd = iter.nextElement();
-            bgd.drawInto(g, w, h);
+    /**
+     * Sets how much the drawn content is enlarged by. The areas and labels keep their own fixed coordinates; only
+     * drawing and mouse lookups are scaled, so a scaled component still reports the right area under the pointer.
+     *
+     * @param scale the factor to enlarge the content by; 1.0 draws it at its natural size
+     */
+    public void setDisplayScale(double scale) {
+        displayScale = Math.max(0.1, scale);
+        onResize();
+        update();
+    }
+
+    /** @return the factor the drawn content is currently enlarged by; 1.0 is its natural size */
+    public double getDisplayScale() {
+        return displayScale;
+    }
+
+    private void drawInto(Graphics graphics) {
+        int width = Math.max(getSize().width, minWidth);
+        int height = Math.max(getSize().height, minHeight);
+
+        // Everything is laid out in the content's own coordinates, including the background images that frame the
+        // diagram, so it is all drawn through one scaled graphics context and stays aligned.
+        Graphics2D contentGraphics = (Graphics2D) graphics.create();
+        contentGraphics.scale(displayScale, displayScale);
+        // a component not yet laid out can be smaller than one scaled pixel, and a zero size cannot be drawn into
+        int contentWidth = Math.max(1, (int) (width / displayScale));
+        int contentHeight = Math.max(1, (int) (height / displayScale));
+
+        if (displayScale != 1.0) {
+            // The frames around the diagram are bitmaps, and its outlines and text are drawn shapes, so enlarging
+            // any of them without smoothing leaves them jagged. Unscaled drawing is left exactly as it was.
+            contentGraphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                  RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+            contentGraphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                  RenderingHints.VALUE_ANTIALIAS_ON);
+            contentGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         }
-        Shape oldClip = g.getClip();
-        g.setClip(new Rectangle(leftMargin, topMargin, w - leftMargin
-              - rightMargin, h - topMargin - bottomMargin));
+
+        // Background painting
+        Enumeration<BackGroundDrawer> drawerElements = backgroundDrawers.elements();
+        while (drawerElements.hasMoreElements()) {
+            BackGroundDrawer drawer = drawerElements.nextElement();
+            drawer.drawInto(contentGraphics, contentWidth, contentHeight);
+        }
+
+        Shape oldClip = contentGraphics.getClip();
+        contentGraphics.setClip(new Rectangle(leftMargin, topMargin, contentWidth - leftMargin
+              - rightMargin, contentHeight - topMargin - bottomMargin));
 
         // Hot areas painting
-        hotAreas.drawInto(g);
+        hotAreas.drawInto(contentGraphics);
         if (activeHotArea != null) {
-            activeHotArea.drawInto(g);
+            activeHotArea.drawInto(contentGraphics);
         }
-        labels.drawInto(g);
-        g.setClip(oldClip);
+        contentGraphics.setClip(oldClip);
+        contentGraphics.dispose();
+
+        // Labels are drawn last and at native resolution: each is positioned and sized by the scale rather than
+        // magnified through the content transform, so its text stays crisp when the diagram is enlarged.
+        drawLabels(graphics, width, height);
+    }
+
+    private void drawLabels(Graphics graphics, int width, int height) {
+        Graphics2D labelGraphics = (Graphics2D) graphics.create();
+        if (displayScale != 1.0) {
+            labelGraphics.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                  RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        }
+        labelGraphics.setClip(new Rectangle((int) (leftMargin * displayScale), (int) (topMargin * displayScale),
+              width - (int) ((leftMargin + rightMargin) * displayScale),
+              height - (int) ((topMargin + bottomMargin) * displayScale)));
+        Enumeration<PMElement> labelElements = labels.elements();
+        while (labelElements.hasMoreElements()) {
+            PMElement element = labelElements.nextElement();
+            if (element instanceof PMLabel label) {
+                label.setDrawScale(displayScale);
+            }
+            element.drawInto(labelGraphics);
+        }
+        labelGraphics.dispose();
     }
 
     @Override
@@ -273,34 +341,42 @@ public abstract class PicMap extends JComponent {
 
     @Override
     public Dimension getMinimumSize() {
-        Rectangle r = rootGroup.getBounds();
-        if (r != null) {
-            return new Dimension(r.x + r.width + rightMargin, r.y + r.height
-                  + bottomMargin);
+        Rectangle contentBounds = rootGroup.getBounds();
+        if (contentBounds != null) {
+            return new Dimension((int) ((contentBounds.x + contentBounds.width + rightMargin) * displayScale),
+                  (int) ((contentBounds.y + contentBounds.height + bottomMargin) * displayScale));
         }
         return new Dimension(minWidth, minHeight);
+    }
+
+    /** Returns the size available to the content, in the unscaled coordinates the content is laid out in. */
+    protected Dimension getContentSize() {
+        return new Dimension((int) (getSize().width / displayScale), (int) (getSize().height / displayScale));
     }
 
     /**
      * Returns Hot Area under coordinates (x, y)
      */
     public PMHotArea getAreaUnder(int x, int y) {
+        // The areas keep their unscaled coordinates, so scale the pointer back into them.
+        int contentX = (int) (x / displayScale);
+        int contentY = (int) (y / displayScale);
         // Have to check all elements of hotAreas vector
         // from end to start. Compare against zero works faster.
         for (int i = (areasCount - 1); i >= 0; i--) {
-            PMHotArea ha = (PMHotArea) hotAreas.elementAt(i);
-            if ((ha != null) && intersects(ha.getAreaShape(), x, y)) {
-                return ha;
+            PMHotArea hotArea = (PMHotArea) hotAreas.elementAt(i);
+            if ((hotArea != null) && intersects(hotArea.getAreaShape(), contentX, contentY)) {
+                return hotArea;
             }
         }
         return null;
     }
 
-    private boolean intersects(Shape sh, int x, int y) {
-        if (sh instanceof Rectangle r) {
-            return r.contains(x, y);
-        } else if (sh instanceof Polygon p) {
-            return p.contains(x, y);
+    private boolean intersects(Shape shape, int x, int y) {
+        if (shape instanceof Rectangle rectangle) {
+            return rectangle.contains(x, y);
+        } else if (shape instanceof Polygon polygon) {
+            return polygon.contains(x, y);
         }
         return false;
     }
@@ -312,27 +388,27 @@ public abstract class PicMap extends JComponent {
      * required only for Java1.1. Under Java 1.3 and up offscreen will be transparent by default.
      */
     @Deprecated(since = "0.51.0", forRemoval = true)
-    public void setBackgroundOpaque(boolean v) {
-        bgIsOpaque = v;
+    public void setBackgroundOpaque(boolean opaque) {
+        bgIsOpaque = opaque;
     }
 
     @Override
-    protected void processMouseEvent(MouseEvent e) {
-        PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-        switch (e.getID()) {
+    protected void processMouseEvent(MouseEvent event) {
+        PMHotArea hotArea = getAreaUnder(event.getX(), event.getY());
+        switch (event.getID()) {
             case MouseEvent.MOUSE_CLICKED:
-                if (ha != null) {
-                    ha.onMouseClick(e);
+                if (hotArea != null) {
+                    hotArea.onMouseClick(event);
                 }
                 break;
             case MouseEvent.MOUSE_PRESSED:
-                if (ha != null) {
-                    ha.onMouseDown(e);
+                if (hotArea != null) {
+                    hotArea.onMouseDown(event);
                 }
                 break;
             case MouseEvent.MOUSE_RELEASED:
-                if (ha != null) {
-                    ha.onMouseUp(e);
+                if (hotArea != null) {
+                    hotArea.onMouseUp(event);
                 }
                 break;
         }
@@ -340,18 +416,18 @@ public abstract class PicMap extends JComponent {
     }
 
     @Override
-    protected void processMouseMotionEvent(MouseEvent e) {
-        if (e.getID() == MouseEvent.MOUSE_MOVED) {
-            PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-            if ((ha == null && activeHotArea != null)
-                  || (ha != null && !ha.equals(activeHotArea))) {
+    protected void processMouseMotionEvent(MouseEvent event) {
+        if (event.getID() == MouseEvent.MOUSE_MOVED) {
+            PMHotArea hotArea = getAreaUnder(event.getX(), event.getY());
+            if ((hotArea == null && activeHotArea != null)
+                  || (hotArea != null && !hotArea.equals(activeHotArea))) {
                 if (activeHotArea != null) {
-                    activeHotArea.onMouseExit(e);
+                    activeHotArea.onMouseExit(event);
                 }
-                activeHotArea = ha;
-                if (ha != null) {
-                    ha.onMouseOver(e);
-                    setCursor(ha.getCursor());
+                activeHotArea = hotArea;
+                if (hotArea != null) {
+                    hotArea.onMouseOver(event);
+                    setCursor(hotArea.getCursor());
                 } else {
                     setCursor(Cursor.getDefaultCursor());
                 }
@@ -361,8 +437,8 @@ public abstract class PicMap extends JComponent {
     }
 
     @Override
-    protected void processComponentEvent(ComponentEvent e) {
-        if (e.getID() == ComponentEvent.COMPONENT_RESIZED) {
+    protected void processComponentEvent(ComponentEvent event) {
+        if (event.getID() == ComponentEvent.COMPONENT_RESIZED) {
             onResize();
             update();
         }

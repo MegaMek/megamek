@@ -70,10 +70,11 @@ import megamek.common.annotations.Nullable;
  * avoid repetition.
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
-@JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "capital", "capitalChanges", "yearsActive", "successor",
-                     "tags", "color", "logo", "background", "camos", "camosChanges", "nameGenerator", "eraMods",
+@JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
+                     "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
-                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders" })
+                     "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
+                     "aresConventionsSignatory", "subunits" })
 public class Faction2 {
     private static final int UNKNOWN = -1;
     private static final String DEFAULT_RANK_SYSTEM_INNER_SPHERE = "SLDF";
@@ -83,6 +84,7 @@ public class Faction2 {
     private String name;
     private final Set<String> sucsCodes = new LinkedHashSet<>();
     private final NavigableMap<Integer, String> nameChanges = new TreeMap<>();
+    private final NavigableMap<Integer, String> aliases = new TreeMap<>();
     private String capital;
     private final NavigableMap<Integer, String> capitalChanges = new TreeMap<>();
     private final ArrayList<FactionRecord.DateRange> yearsActive = new ArrayList<>();
@@ -90,7 +92,9 @@ public class Faction2 {
     private final Set<FactionTag> tags = new HashSet<>();
     private final Color color = Color.LIGHT_GRAY;
     private String logo;
+    private final NavigableMap<Integer, String> logoChanges = new TreeMap<>();
     private String background;
+    private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
     @JsonProperty("camos")
     private String camosFolder;
@@ -107,9 +111,100 @@ public class Faction2 {
     private int formationGrouping = UNKNOWN;
     private String rankSystem = null;
     private List<FactionLeaderData> factionLeaders = new ArrayList<>();
+    private final NavigableMap<Integer, Boolean> usesMercenaries = new TreeMap<>();
+    private final NavigableMap<Integer, Boolean> aresConventionsSignatory = new TreeMap<>();
+    private final Map<String, Faction2> subunits = new LinkedHashMap<>();
+
+    /**
+     * The key of the faction that declared this one as a subunit, or {@code null} when this faction has a file of its
+     * own. Derived at load time from the file structure rather than read from YAML, so it is never written back out.
+     */
+    @JsonIgnore
+    private String parentCommand;
 
     public List<String> getRatingLevels() {
         return ratingLevels;
+    }
+
+    /**
+     * Returns the subordinate formations declared inside this faction's own file, keyed by the short identifier used
+     * in the YAML file rather than by their full key. A command such as the St. Ives Lancers declares its regiments
+     * here instead of each regiment needing a separate file:
+     *
+     * <pre>
+     * key: CC.SIL
+     * name: St. Ives Lancers
+     * subunits:
+     *   1st:
+     *     name: 1st St. Ives Lancers
+     * </pre>
+     *
+     * <p>Subunits are a file-organisation convenience only. At load time {@link SubunitRegistrar} registers each one
+     * as a full faction in its own right under the composed key {@code CC.SIL.1st}, so everything that consumes
+     * factions - the lobby, RAT generation, MekHQ - sees a flat list and needs no knowledge of the nesting.</p>
+     *
+     * @return The subunits declared in this faction's file, in declaration order. Never {@code null}.
+     */
+    public Map<String, Faction2> getSubunits() {
+        return subunits;
+    }
+
+    /**
+     * Returns the key of the command that declared this faction as one of its {@link #getSubunits() subunits}, if any.
+     *
+     * <p>This is set only for factions that came from inside another faction's file, such as the 1st St. Ives Lancers
+     * declared inside {@code CC.SIL}. A command written in its own file returns {@code null} even when it falls back
+     * to another command, because falling back is not the same as being declared inside it.</p>
+     *
+     * @return The declaring command's key, or {@code null} when this faction has its own file
+     */
+    @JsonIgnore
+    public @Nullable String getParentCommand() {
+        return parentCommand;
+    }
+
+    /**
+     * Returns whether this faction was declared inside another faction's file rather than having a file of its own.
+     *
+     * <p>Useful where only whole commands should be offered rather than their individual regiments - the Force
+     * Generator's sub-faction list, for example, shows the St. Ives Lancers but not their seven regiments.</p>
+     *
+     * @return {@code true} if this faction is a subunit of another
+     */
+    @JsonIgnore
+    public boolean isSubunit() {
+        return parentCommand != null;
+    }
+
+    /**
+     * Records the command that declared this faction as a subunit. Package-private because it is derived from the
+     * file structure at load time by {@link SubunitRegistrar}, never read from YAML.
+     *
+     * @param parentCommand The declaring command's key
+     */
+    void setParentCommand(String parentCommand) {
+        this.parentCommand = parentCommand;
+    }
+
+    /**
+     * Sets this faction's key. Package-private because a key normally comes from the YAML file; it is assigned after
+     * loading only for {@link #getSubunits() subunits}, whose key is composed from their parent's key and their
+     * identifier within it.
+     *
+     * @param key The full faction key, such as {@code CC.SIL.1st}
+     */
+    void setKey(String key) {
+        this.key = key;
+    }
+
+    /**
+     * Sets the personnel name generator. Package-private because it is normally read from the YAML file; it is
+     * assigned after loading only when a subunit inherits its parent's generator.
+     *
+     * @param nameGenerator The name generator to use, such as {@code Clan}
+     */
+    void setNameGenerator(@Nullable String nameGenerator) {
+        this.nameGenerator = nameGenerator;
     }
 
     public String getKey() {
@@ -152,8 +247,45 @@ public class Faction2 {
         return background;
     }
 
+    /**
+     * Returns the faction's background image path for the given year, honoring any era-based
+     * {@link #getBackgroundChanges() background changes}. Falls back to the base {@link #getBackground() background}
+     * when no change applies for the year.
+     *
+     * @param year the game year to resolve the background for
+     *
+     * @return the era-appropriate background image path, or the base background when none applies
+     */
+    public String getBackground(int year) {
+        final Map.Entry<Integer, String> backgroundByYear = backgroundChanges.floorEntry(year);
+        return (backgroundByYear == null) ? background : backgroundByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getBackgroundChanges() {
+        return backgroundChanges;
+    }
+
     public String getLogo() {
         return logo;
+    }
+
+    /**
+     * Returns the faction's logo image path for the given year, honoring any era-based
+     * {@link #getLogoChanges() logo changes}. Falls back to the base {@link #getLogo() logo} when no change applies
+     * for the year. Used to keep a consolidated rename lineage (for example Clan Goliath Scorpion becoming the
+     * Escorpion Imperio in 3080) visually era-correct after its faction files are merged into one.
+     *
+     * @param year the game year to resolve the logo for
+     *
+     * @return the era-appropriate logo image path, or the base logo when none applies
+     */
+    public String getLogo(int year) {
+        final Map.Entry<Integer, String> logoByYear = logoChanges.floorEntry(year);
+        return (logoByYear == null) ? logo : logoByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getLogoChanges() {
+        return logoChanges;
     }
 
     public int[] getEraMods() {
@@ -263,8 +395,34 @@ public class Faction2 {
         return nameChanges;
     }
 
+    /**
+     * Returns the historical faction-code aliases for this faction, keyed by the year each alias became active.
+     * When a faction is the consolidation of an earlier faction that was renamed (for example Clan Goliath Scorpion
+     * becoming the Escorpion Imperio in 3080), the retired faction code is kept here as an alias of the surviving
+     * key, so that saved games, planetary ownership and RAT availability tables that still reference the old code
+     * continue to resolve to this faction.
+     *
+     * <p>Aliases are for <em>rename lineages</em> only - a single entity renamed over time, with disjoint date
+     * ranges. They must not be used for a merger of two distinct factions (for example Clan Snow Raven and the
+     * Outworlds Alliance both becoming the Raven Alliance); those relationships belong in
+     * {@link #getFallBackFactions()} instead.</p>
+     *
+     * @return The alias codes keyed by the year each became active, in ascending year order. Never {@code null}.
+     */
+    public NavigableMap<Integer, String> getAliases() {
+        return aliases;
+    }
+
     public NavigableMap<Integer, String> getCapitalChanges() {
         return capitalChanges;
+    }
+
+    public NavigableMap<Integer, Boolean> getUsesMercenaries() {
+        return usesMercenaries;
+    }
+
+    public NavigableMap<Integer, Boolean> getAresConventionsSignatory() {
+        return aresConventionsSignatory;
     }
 
     public Set<String> getFallBackFactions() {
@@ -410,6 +568,11 @@ public class Faction2 {
         return is(FactionTag.MINOR);
     }
 
+    @JsonIgnore
+    public boolean isMilitia() {
+        return is(FactionTag.MILITIA);
+    }
+
     public boolean is(FactionTag tag) {
         return tags.contains(tag);
     }
@@ -548,6 +711,24 @@ public class Faction2 {
      */
     public boolean isAggregate() {
         return tags.contains(FactionTag.AGGREGATE);
+    }
+
+    public Boolean isUsesMercenaries(int year) {
+        final Map.Entry<Integer, Boolean> isUseMercenaries = usesMercenaries.floorEntry(year);
+        return isUseMercenaries == null || isUseMercenaries.getValue();
+    }
+
+    /**
+     * Whether this faction was a signatory of the Ares Conventions - and thus observed their restrictions on targeting
+     * population centers - in the given year. Defaults to {@code false} for years with no recorded signatory status.
+     *
+     * @param year the year to check
+     *
+     * @return {@code true} if the faction observed the Ares Conventions in that year
+     */
+    public boolean isAresConventionsSignatory(int year) {
+        final Map.Entry<Integer, Boolean> signatory = aresConventionsSignatory.floorEntry(year);
+        return (signatory != null) && signatory.getValue();
     }
 
     @Override

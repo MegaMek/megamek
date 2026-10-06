@@ -63,6 +63,7 @@ public abstract class ATMWeapon extends MissileWeapon {
         super();
         ammoType = AmmoType.AmmoTypeEnum.ATM;
         atClass = CLASS_ATM;
+        flags = flags.or(F_ATM);
     }
 
     /*

@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2002-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2003-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2003-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -82,7 +82,12 @@ public class BattleArmorHandles implements Transporter {
 
     @Override
     public final List<Entity> getLoadedUnits() {
+        // The game reference is transient and unset until setGame() is called (e.g. while the server
+        // verifies a newly added unit, issue #8638) - without it the carried unit ID cannot be resolved.
         List<Entity> units = new ArrayList<>(1);
+        if ((game == null) || (carriedUnit == Entity.NONE)) {
+            return units;
+        }
         Entity entity = game.getEntity(carriedUnit);
         if (entity != null) {
             units.add(entity);
@@ -92,6 +97,10 @@ public class BattleArmorHandles implements Transporter {
 
     @Override
     public final boolean unload(Entity unit) {
+        if (game == null) {
+            return false;
+        }
+
         // Are we carrying the unit?
         Entity trooper = game.getEntity(carriedUnit);
         if ((trooper == null) || !trooper.equals(unit)) {
@@ -120,25 +129,46 @@ public class BattleArmorHandles implements Transporter {
     }
 
     @Override
-    public boolean isWeaponBlockedAt(int loc, boolean isRear) {
-        Entity carriedBA = game.getEntity(carriedUnit);
-        if (carriedBA == null) {
+    public boolean isWeaponBlockedAt(int location, boolean isRear) {
+        if (game == null) {
+            return false;
+        }
+
+        Entity carriedBattleArmor = game.getEntity(carriedUnit);
+        if (carriedBattleArmor == null) {
             return false;
         } else {
             int trooperLocation = BattleArmor.LOC_SQUAD;
-            trooperLocation = switch (loc) {
+            trooperLocation = switch (location) {
                 case Mek.LOC_CENTER_TORSO -> isRear ? BattleArmor.LOC_TROOPER_5 : BattleArmor.LOC_TROOPER_6;
                 case Mek.LOC_LEFT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_4 : BattleArmor.LOC_TROOPER_2;
                 case Mek.LOC_RIGHT_TORSO -> isRear ? BattleArmor.LOC_TROOPER_3 : BattleArmor.LOC_TROOPER_1;
                 default -> trooperLocation;
             };
-            return (carriedBA.locations() > trooperLocation) && (carriedBA.getInternal(trooperLocation) > 0);
+            return hasActiveTrooper(carriedBattleArmor, trooperLocation);
         }
     }
 
+    /**
+     * @param carriedBattleArmor the battle armor unit carried by these handles
+     * @param trooperLocation    the trooper location to check
+     *
+     * @return {@code true} if the carried battle armor has the given trooper location and that trooper still has
+     *       internal structure remaining
+     */
+    protected static boolean hasActiveTrooper(Entity carriedBattleArmor, int trooperLocation) {
+        return (carriedBattleArmor.locations() > trooperLocation)
+              && (carriedBattleArmor.getInternal(trooperLocation) > 0);
+    }
+
     @Override
-    public final @Nullable Entity getExteriorUnitAt(int loc, boolean isRear) {
-        return isWeaponBlockedAt(loc, isRear) ? game.getEntity(carriedUnit) : null;
+    public final @Nullable Entity getExteriorUnitAt(int location, boolean isRear) {
+        // Guard game directly rather than relying on isWeaponBlockedAt() - subclass overrides
+        // (e.g. ProtoMekClampMount) can return true without ever reading the game field.
+        if (game == null) {
+            return null;
+        }
+        return isWeaponBlockedAt(location, isRear) ? game.getEntity(carriedUnit) : null;
     }
 
     @Override

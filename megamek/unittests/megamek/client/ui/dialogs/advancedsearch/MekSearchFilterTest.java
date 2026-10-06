@@ -33,10 +33,16 @@
 
 package megamek.client.ui.dialogs.advancedsearch;
 
+import static megamek.common.SourceBookCode.CORE;
+import static megamek.common.SourceBookCode.IO_AE;
+import static megamek.common.SourceBookCode.SHRAPNEL_1;
+import static megamek.common.SourceBookCode.TW;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Set;
 
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
@@ -160,5 +166,35 @@ class MekSearchFilterTest {
         mek.setPublished("Record Sheets: 3050 Upgrade");
 
         assertFalse(MekSearchFilter.matchesSourceFilter(mek, "Interstellar Operations, Tactical Operations"));
+    }
+
+    @Test
+    void rulesRefsMatchWhenSelectedBooksCoverAnyCompleteBucket() {
+        var buckets = List.of(List.of(CORE), List.of(TW, IO_AE));
+
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(CORE)));
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(TW, IO_AE)));
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(TW, IO_AE, SHRAPNEL_1)));
+        assertFalse(MekSearchFilter.matchesRulesRefs(buckets, Set.of(TW)));
+    }
+
+    @Test
+    void rulesRefsIgnoreBaseBooksWhenOnlyNonBaseBooksAreSelected() {
+        var buckets = List.of(List.of(CORE), List.of(TW, IO_AE), List.of(TW, SHRAPNEL_1, IO_AE));
+
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(IO_AE)));
+        assertTrue(MekSearchFilter.matchesRulesRefs(buckets, Set.of(SHRAPNEL_1, IO_AE)));
+        assertFalse(MekSearchFilter.matchesRulesRefs(buckets, Set.of(SHRAPNEL_1)));
+    }
+
+    @Test
+    void nonBaseOnlySelectionDoesNotMatchBaseOnlyBuckets() {
+        assertFalse(MekSearchFilter.matchesRulesRefs(List.of(List.of(CORE), List.of(TW)), Set.of(SHRAPNEL_1)));
+    }
+
+    @Test
+    void emptyRulesRefSelectionDoesNotFilterUnits() {
+        assertTrue(MekSearchFilter.matchesRulesRefs(List.of(), Set.of()));
+        assertFalse(MekSearchFilter.matchesRulesRefs(List.of(), Set.of(CORE)));
     }
 }

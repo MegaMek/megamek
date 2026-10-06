@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,6 +35,7 @@ package megamek.common.weapons.handlers;
 
 import static megamek.common.weapons.ArtilleryHandlerHelper.clearMines;
 import static megamek.common.weapons.ArtilleryHandlerHelper.findSpotter;
+import static megamek.common.weapons.ArtilleryHandlerHelper.firingPlayerName;
 import static megamek.common.weapons.ArtilleryHandlerHelper.isForwardObserver;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
-import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.ScatterMethod;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -155,7 +156,7 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             report = new Report(3203).subject(subjectId).add(numWeaponsHit).add(target.getPosition().getBoardNum());
             reports.addElement(report);
             String message = "Orbital Bombardment by %s hit here on round %d (this hex is now an auto-hit)"
-                  .formatted(owner().getName(), game.getRoundCount());
+                  .formatted(firingPlayerName(game, attackAction), game.getRoundCount());
 
             board.addSpecialHexDisplay(target.getPosition(),
                   new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT, game.getRoundCount(), owner(), message));
@@ -166,16 +167,18 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
             // We're only going to display one missed shot hex on the board, at the intended target
             // Any drifted shots will be indicated at their end points
             String message = "Orbital Bombardment by %s missed here on round %d"
-                  .formatted(owner().getName(), game.getRoundCount());
+                  .formatted(firingPlayerName(game, attackAction), game.getRoundCount());
             board.addSpecialHexDisplay(target.getPosition(),
                   SpecialHexDisplay.createArtyMiss(owner(), game.getRoundCount(), message));
 
             while (numWeaponsHit > 0) {
                 // Scatter individual weapons (not sure where this is applicable)
                 // Scatter distance, see SO:AA, p.91; I decided to have Oblique Artilleryman (CO, p.78) not apply to
-                // Capital Laser Weapons as they are not "artillery pieces"
-                int scatterDistance = 2 * Math.abs(toHit.getMoS());
-                Coords scatteredPosition = Compute.scatterDirectArty(target.getPosition(), scatterDistance);
+                // Capital Laser Weapons as they are not "artillery pieces".
+                int standardDistance = 2 * Math.abs(toHit.getMoS());
+                Coords scatteredPosition = ScatterMethod.forGame(game)
+                      .omnidirectional(target.getPosition(), standardDistance, toHit.getMoS(), 0)
+                      .landing();
                 if (board.contains(scatteredPosition)) {
                     actualHits.add(scatteredPosition);
                     // misses and scatters to another hex
@@ -229,7 +232,14 @@ public class CapitalLaserBayOrbitalBombardmentHandler extends BayWeaponHandler {
         reports.addElement(report);
         Report.addNewline(reports);
 
+        // The incoming marker is meant for the firing player's team only. A null owner makes
+        // SpecialHexDisplay.isObscured() report the marker as visible to everyone, which would show the aim hex to the
+        // whole game under double-blind, so it is not drawn when the firer cannot be resolved - a team that has left
+        // the game has nobody left to warn.
         Player owner = game.getPlayer(aaa.getPlayerId());
+        if (owner == null) {
+            return;
+        }
         int landingRound = game.getRoundCount() + aaa.getTurnsTilHit();
         String message = "Orbital Bombardment incoming, landing this round, fired by " + owner.getName();
         SpecialHexDisplay incomingMarker = SpecialHexDisplay.createIncomingFire(owner, landingRound, message);

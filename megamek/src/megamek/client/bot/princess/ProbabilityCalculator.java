@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,6 +32,8 @@
  * affiliated with Microsoft.
  */
 package megamek.client.bot.princess;
+
+import megamek.common.ToHitData;
 
 /**
  * This class stores all the calculations of probabilities given the rule set
@@ -104,6 +106,27 @@ public class ProbabilityCalculator {
         }
         // assume attackedFromFacing==4
         return hitProbabilitiesKickLeftSide[hit_location];
+    }
+
+    /**
+     * Returns the probability that {@code hitLocation} (from class Mek) is hit for an attack resolved on the
+     * given hit-location table, from facing {@code attackedFromFacing} (0 = forward). Dispatches to the punch,
+     * kick, or full-body (weapons fire) table, so callers that resolve the table by relative elevation - see
+     * {@link PhysicalHitTable} - do not need to pick the array family themselves.
+     *
+     * @param hitTable           one of {@link ToHitData#HIT_PUNCH}, {@link ToHitData#HIT_KICK}, or any other
+     *                           value for the full-body table
+     * @param attackedFromFacing the facing the attack comes from, 0 defined as forward
+     * @param hitLocation        the Mek hit location index
+     *
+     * @return the probability of hitting that location on that table
+     */
+    static double getHitProbability(int hitTable, int attackedFromFacing, int hitLocation) {
+        return switch (hitTable) {
+            case ToHitData.HIT_PUNCH -> getHitProbability_Punch(attackedFromFacing, hitLocation);
+            case ToHitData.HIT_KICK -> getHitProbability_Kick(attackedFromFacing, hitLocation);
+            default -> getHitProbability(attackedFromFacing, hitLocation);
+        };
     }
 
     /**

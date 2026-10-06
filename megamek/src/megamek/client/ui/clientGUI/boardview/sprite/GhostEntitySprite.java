@@ -32,9 +32,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.sprite;
 
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.ImageObserver;
 
 import megamek.MMConstants;
@@ -57,7 +55,9 @@ public class GhostEntitySprite extends Sprite {
         modelRect = new Rectangle(47, 55, bv.getPanel().getFontMetrics(font).stringWidth(
               shortName) + 1, bv.getPanel().getFontMetrics(font).getAscent());
         Rectangle tempBounds = new Rectangle(bv.getHexSize()).union(modelRect);
-        tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
+        if (entity.getPosition() != null) {
+            tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
+        }
 
         bounds = tempBounds;
         image = null;
@@ -78,7 +78,9 @@ public class GhostEntitySprite extends Sprite {
     @Override
     public Rectangle getBounds() {
         Rectangle tempBounds = new Rectangle(bv.getHexSize()).union(modelRect);
-        tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
+        if (entity.getPosition() != null) {
+            tempBounds.setLocation(bv.getHexLocation(entity.getPosition()));
+        }
         bounds = tempBounds;
 
         return bounds;

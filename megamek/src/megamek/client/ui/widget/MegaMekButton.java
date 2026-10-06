@@ -91,6 +91,11 @@ public class MegaMekButton extends JButton implements MouseListener {
      * displayed.
      */
     boolean isPressed = false;
+    /**
+     * Whether this button is showing a mode it switched on, so it stays lit while that mode lasts rather than only
+     * while the pointer is over it. Off unless a display asks for it with {@link #setActive(boolean)}.
+     */
+    private boolean isActive = false;
 
     /**
      * Keeps track of whether the mouse cursor is currently over this button. Used to adjust the font of the button
@@ -307,7 +312,7 @@ public class MegaMekButton extends JButton implements MouseListener {
             textLabel.setFont(specificFont);
         }
         if (this.isEnabled()) {
-            if (isMousedOver || hasFocus()) {
+            if (isMousedOver || hasFocus() || isActive) {
                 Font font = textLabel.getFont();
                 if (shouldBold) {
                     // same font but bold
@@ -333,6 +338,19 @@ public class MegaMekButton extends JButton implements MouseListener {
     @Deprecated(since = "0.51.0", forRemoval = true)
     public boolean isIconsLoaded() {
         return iconsLoaded;
+    }
+
+    /**
+     * Shows or clears the lit look that says this button has switched a mode on, for example while a display is
+     * waiting for the player to click a target. The button keeps this look whether or not it holds focus.
+     *
+     * @param active {@code true} to light the button, {@code false} to return it to normal
+     */
+    public void setActive(boolean active) {
+        if (isActive != active) {
+            isActive = active;
+            repaint();
+        }
     }
 
     @Override

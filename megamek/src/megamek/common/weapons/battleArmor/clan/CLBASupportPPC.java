@@ -36,6 +36,7 @@ package megamek.common.weapons.battleArmor.clan;
 
 import java.io.Serial;
 
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
@@ -71,7 +72,10 @@ public class CLBASupportPPC extends PPCWeapon {
         flags = flags.or(F_BA_WEAPON).andNot(F_MEK_WEAPON).andNot(F_TANK_WEAPON)
               .andNot(F_AERO_WEAPON).andNot(F_PROTO_WEAPON);
         cost = 14000;
-        rulesRefs = "267, TM";
+        rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 267),
+              rulesRef(SourceBookCode.TW, 305)
+        );
         techAdvancement.setTechBase(TechBase.CLAN).setTechRating(TechRating.D)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.D, AvailabilityValue.C)
               .setClanAdvancement(DATE_NONE, DATE_NONE, 2950, DATE_NONE, DATE_NONE);

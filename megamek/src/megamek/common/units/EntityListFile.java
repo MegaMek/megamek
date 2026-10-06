@@ -46,8 +46,10 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPOutputStream;
 
 import megamek.MMConstants;
@@ -56,6 +58,8 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
+import megamek.common.battlefieldSupport.BattlefieldSupportAssetYaml;
 import megamek.common.bays.Bay;
 import megamek.common.equipment.*;
 import megamek.common.equipment.AmmoType.Munitions;
@@ -172,6 +176,14 @@ public class EntityListFile {
                 output.append("\" " + MULParser.ATTR_RFMG + "=\"true");
             }
 
+            if (mount.isAutocannonHit()) {
+                output.append("\" " + MULParser.ATTR_AUTOCANNON_HIT + "=\"true");
+            }
+
+            if (mount.isDirectionalMountLocked()) {
+                output.append("\" " + MULParser.ATTR_DIRECTIONAL_MOUNT_LOCKED + "=\"true");
+            }
+
             if (mount.countQuirks() > 0) {
                 output.append("\" " + MULParser.ATTR_QUIRKS + "=\"").append(mount.getQuirkList("::"));
             }
@@ -239,6 +251,8 @@ public class EntityListFile {
         StringBuilder output = new StringBuilder();
         StringBuilder thisLoc = new StringBuilder();
         boolean isDestroyed = false;
+
+        Set<Mounted<?>> flaggedMountsWritten = new HashSet<>();
 
         // Walk through the locations for the entity,
         // and only record damage and ammo.
@@ -333,7 +347,7 @@ public class EntityListFile {
                 CriticalSlot slot = entity.getCritical(loc, loop);
 
                 // Did we get a slot?
-                if (null == slot) {
+                if (slot == null) {
 
                     // Nope. Record missing actuators on Biped Meks.
                     if (isMek &&
@@ -400,7 +414,7 @@ public class EntityListFile {
                     }
 
                     // record any quirks
-                    else if ((null != mount) && (mount.countQuirks() > 0)) {
+                    else if ((mount != null) && (mount.countQuirks() > 0)) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,
                               slot.isHit(),
@@ -508,7 +522,7 @@ public class EntityListFile {
                     }
 
                     // Record trooper missing equipment on BattleArmor
-                    else if (null != mount && mount.isAnyMissingTroopers()) {
+                    else if (mount != null && mount.isAnyMissingTroopers()) {
                         thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
                               mount,
                               slot.isHit(),
@@ -517,6 +531,21 @@ public class EntityListFile {
                               slot.isMissing(),
                               slotHasDepletedArmor(slot),
                               indentLvl + 1));
+                        haveSlot = true;
+                    } else if ((mount != null) &&
+                          !mount.isHit() &&
+                          !mount.isDestroyed() &&
+                          (mount.isAutocannonHit() || mount.isDirectionalMountLocked()) &&
+                          !flaggedMountsWritten.contains(mount)) {
+                        thisLoc.append(EntityListFile.formatSlot(String.valueOf(loop + 1),
+                              mount,
+                              slot.isHit(),
+                              slot.isDestroyed(),
+                              slot.isRepairable(),
+                              slot.isMissing(),
+                              slotHasDepletedArmor(slot),
+                              indentLvl + 1));
+                        flaggedMountsWritten.add(mount);
                         haveSlot = true;
                     }
 
@@ -774,7 +803,28 @@ public class EntityListFile {
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, Client client, Player localPlayer) throws IOException {
-        if (null == client.getGame() || !client.playerExists(localPlayer.getId())) {
+        saveTo(file, client, localPlayer, false);
+    }
+
+    /**
+     * Save the entities from the game of client to the given file, as {@link #saveTo(File, Client, Player)} does, but
+     * optionally treating the local player's whole team as "the player".
+     *
+     * <p>When {@code teamAsLiving} is {@code true}, every unit belonging to a player on the local player's team - not
+     * only the units the local player owns directly - is written to the survivors and retreated sections instead of the
+     * allies section. PACAR hands the player's units off to an "@AI" bot on the player's own team, so after the game
+     * the human player owns nothing and the force can only be recovered by team. See issue #8890.</p>
+     *
+     * @param file         - The current contents of the file will be discarded and all
+     *                     <code>Entity</code>s in the list will be written to the file.
+     * @param client       - a <code>Client</code> containing the <code>Game</code>s to be used
+     * @param localPlayer  - What player should we treat as "the" player?
+     * @param teamAsLiving - when {@code true}, the local player's whole team counts as the player's own units
+     *
+     * @throws IOException is thrown on any error.
+     */
+    public static void saveTo(File file, Client client, Player localPlayer, boolean teamAsLiving) throws IOException {
+        if (client.getGame() == null || !client.playerExists(localPlayer.getId())) {
             return;
         }
 
@@ -795,7 +845,7 @@ public class EntityListFile {
         // Sort entities into player's, enemies, and allies and add to survivors,
         // salvage, and allies.
         for (Entity entity : client.getGame().inGameTWEntities()) {
-            if (entity.getOwner().getId() == localPlayer.getId()) {
+            if (countsAsPlayerOwn(entity.getOwner(), localPlayer, teamAsLiving)) {
                 living.add(entity);
             } else if (entity.getOwner().isEnemyOf(localPlayer)) {
                 if (!entity.canEscape()) {
@@ -811,7 +861,7 @@ public class EntityListFile {
         // sections
         for (Enumeration<Entity> iter = client.getGame().getRetreatedEntities(); iter.hasMoreElements(); ) {
             Entity ent = iter.nextElement();
-            if (ent.getOwner().getId() == localPlayer.getId()) {
+            if (countsAsPlayerOwn(ent.getOwner(), localPlayer, teamAsLiving)) {
                 living.add(ent);
             } else if (!ent.getOwner().isEnemyOf(localPlayer)) {
                 allied.add(ent);
@@ -826,7 +876,7 @@ public class EntityListFile {
             Entity entity = graveyard.nextElement();
             if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
+                if (killer != null && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), MULParser.VALUE_NONE);
@@ -841,7 +891,7 @@ public class EntityListFile {
             Entity entity = devastation.nextElement();
             if (entity.getOwner().isEnemyOf(localPlayer)) {
                 Entity killer = client.getGame().getEntityFromAllSources(entity.getKillerId());
-                if (null != killer && !killer.getExternalIdAsString().equals("-1")) {
+                if (killer != null && !killer.getExternalIdAsString().equals("-1")) {
                     kills.put(entity.getDisplayName(), killer.getExternalIdAsString());
                 } else {
                     kills.put(entity.getDisplayName(), MULParser.VALUE_NONE);
@@ -896,6 +946,20 @@ public class EntityListFile {
         output.write("</" + MULParser.ELE_RECORD + ">\n");
         output.flush();
         output.close();
+    }
+
+    /**
+     * @param owner        the owner of a unit being classified
+     * @param localPlayer  the player treated as "the" player
+     * @param teamAsLiving when {@code true}, any owner on the local player's team counts, not only the local player
+     *
+     * @return {@code true} if the unit should be written as one of the player's own (survivors/retreated)
+     */
+    static boolean countsAsPlayerOwn(Player owner, Player localPlayer, boolean teamAsLiving) {
+        if (owner.getId() == localPlayer.getId()) {
+            return true;
+        }
+        return teamAsLiving && (owner.getTeam() == localPlayer.getTeam());
     }
 
     private static void writeKills(Writer output, Hashtable<String, String> kills) throws IOException {
@@ -988,6 +1052,15 @@ public class EntityListFile {
                     output.write(entity.getC3UUIDAsString());
                 }
             }
+            // C3 Emergency Master state (TO:AUE p.110) survives mid-scenario saves
+            if (entity.isC3EmergencyMasterActive()) {
+                output.write("\" " + MULParser.ATTR_C3EM_ACTIVE + "=\"");
+                output.write("true");
+            }
+            if (entity.getC3EmergencyMasterOperatingTurns() > 0) {
+                output.write("\" " + MULParser.ATTR_C3EM_TURNS + "=\"");
+                output.write(String.valueOf(entity.getC3EmergencyMasterOperatingTurns()));
+            }
             if (!entity.getCamouflage().hasDefaultCategory()) {
                 output.write("\" " + MULParser.ATTR_CAMO_CATEGORY + "=\"");
                 output.write(entity.getCamouflage().getCategory());
@@ -1002,6 +1075,14 @@ public class EntityListFile {
                 output.write("\" " + MULParser.ATTR_CAMO_SCALE + "=\"");
                 output.write(Integer.toString(entity.getCamouflage().getScale()));
             }
+            if (!entity.getCamouflage().hasDefaultOverlay()) {
+                output.write("\" " + MULParser.ATTR_CAMO_OVERLAY_STYLE + "=\"");
+                output.write(entity.getCamouflage().getOverlayStyle().name());
+                output.write("\" " + MULParser.ATTR_CAMO_OVERLAY_DIRECTION + "=\"");
+                output.write(entity.getCamouflage().getOverlayDirection().name());
+                output.write("\" " + MULParser.ATTR_CAMO_OVERLAY_COLOR + "=\"");
+                output.write(String.format("%06X", entity.getCamouflage().getOverlayColor().getRGB() & 0xFFFFFF));
+            }
 
             if ((entity instanceof MekWarrior) &&
                   !((MekWarrior) entity).getPickedUpByExternalIdAsString().equals("-1")) {
@@ -1011,6 +1092,10 @@ public class EntityListFile {
 
             // Save some values for conventional infantry
             if (entity instanceof ConvInfantry infantry) {
+                if (infantry.getCustomArmorName() != null) {
+                    output.write("\" " + MULParser.ATTR_ARMOR_NAME + "=\"");
+                    output.write(MMXMLUtility.escape(infantry.getCustomArmorName()));
+                }
                 if (infantry.getCustomArmorDamageDivisor() != 1) {
                     output.write("\" " + MULParser.ATTR_ARMOR_DIVISOR + "=\"");
                     output.write(infantry.getCustomArmorDamageDivisor() + "");
@@ -1037,6 +1122,14 @@ public class EntityListFile {
                     output.write("\" " + MULParser.ATTR_INF_SPEC + "=\"");
                     output.write(infantry.getSpecializations() + "");
                 }
+                // Inferno or standard SRM munitions are declared before the battle (TW p. 143), so the choice is
+                // not part of the design and must be saved with the unit.
+                if (infantry.hasSrmLauncher()) {
+                    output.write("\" " + MULParser.ATTR_SRM_MUNITION + "=\"");
+                    output.write(infantry.isInfernoSrmsDeclared()
+                          ? MULParser.VALUE_SRM_MUNITION_INFERNO
+                          : MULParser.VALUE_SRM_MUNITION_STANDARD);
+                }
                 // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): not part of the cached design, so
                 // persist it (and whether the platoon has fired it this scenario) so it round-trips through MUL/save
                 // games and to MekHQ.
@@ -1050,6 +1143,24 @@ public class EntityListFile {
                         output.write("\" " + MULParser.ATTR_DISPOSABLE_WEAPON_FIRED + "=\"1");
                     }
                 }
+            }
+            // Write the unit-file UUID for every unit that has one: it is the primary lookup on load, with the
+            // chassis/model name kept for backwards-compatibility and human-readability. For a Battlefield Support
+            // Asset this is essential (an asset shares its name with its base unit); for other units it pins the exact
+            // saved unit file.
+            if (!StringUtility.isNullOrBlank(entity.getUnitFileUUID())) {
+                output.write("\" " + MULParser.ATTR_UNIT_FILE_UUID + "=\"");
+                output.write(entity.getUnitFileUUID());
+            }
+            if (entity instanceof BattlefieldSupportAsset) {
+                output.write("\" " + MULParser.ATTR_ENTITY_FORM + "=\"");
+                output.write(MULParser.VALUE_BATTLEFIELD_SUPPORT_ASSET);
+            }
+            // A Battlefield Support Asset also persists its current Destroy Check when damage has lowered it.
+            if ((entity instanceof BattlefieldSupportAsset asset)
+                  && (asset.getDestroyCheck() != asset.getODestroyCheck())) {
+                output.write("\" " + MULParser.ATTR_DESTROY_CHECK + "=\"");
+                output.write(String.valueOf(asset.getDestroyCheck()));
             }
             output.write("\">\n");
 
@@ -1264,16 +1375,21 @@ public class EntityListFile {
             }
 
             if (entity instanceof BattleArmor ba) {
-                for (Mounted<?> m : entity.getEquipment()) {
-                    if (m.getType().hasFlag(MiscType.F_BA_MEA)) {
+                for (Mounted<?> mounted : entity.getEquipment()) {
+                    // Only MiscType equipment carries the BA MEA / AP-mount flags; guarding on the type avoids
+                    // calling WeaponType/AmmoType.hasFlag with a MiscType flag, which logs a warning per call.
+                    if (!(mounted.getType() instanceof MiscType miscType)) {
+                        continue;
+                    }
+                    if (miscType.hasFlag(MiscType.F_BA_MEA)) {
                         Mounted<?> manipulator = null;
-                        if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
+                        if (mounted.getBaMountLoc() == BattleArmor.MOUNT_LOC_LEFT_ARM) {
                             manipulator = ba.getLeftManipulator();
-                        } else if (m.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
+                        } else if (mounted.getBaMountLoc() == BattleArmor.MOUNT_LOC_RIGHT_ARM) {
                             manipulator = ba.getRightManipulator();
                         }
                         output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_MEA + ' ');
-                        output.write(MULParser.ATTR_BA_MEA_MOUNT_LOC + "=\"" + m.getBaMountLoc() + "\" ");
+                        output.write(MULParser.ATTR_BA_MEA_MOUNT_LOC + "=\"" + mounted.getBaMountLoc() + "\" ");
                         if (manipulator != null) {
                             output.write(MULParser.ATTR_BA_MEA_TYPE_NAME +
                                   "=\"" +
@@ -1281,14 +1397,14 @@ public class EntityListFile {
                                   "\" ");
                         }
                         output.write("/>\n");
-                    } else if (m.getType().hasFlag(MiscType.F_AP_MOUNT)) {
-                        int mountIdx = entity.getEquipmentNum(m);
+                    } else if (miscType.hasFlag(MiscType.F_AP_MOUNT)) {
+                        int mountIndex = entity.getEquipmentNum(mounted);
                         EquipmentType apType = null;
-                        if (m.getLinked() != null) {
-                            apType = m.getLinked().getType();
+                        if (mounted.getLinked() != null) {
+                            apType = mounted.getLinked().getType();
                         }
                         output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_BA_APM + ' ');
-                        output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIdx + "\" ");
+                        output.write(MULParser.ATTR_BA_APM_MOUNT_NUM + "=\"" + mountIndex + "\" ");
                         if (apType != null) {
                             output.write(MULParser.ATTR_BA_APM_TYPE_NAME + "=\"" + apType.getInternalName() + "\" ");
                         }
@@ -1299,7 +1415,7 @@ public class EntityListFile {
 
             // Add the locations of this entity (if any are needed).
             String loc = EntityListFile.getLocString(entity, indentLvl + 1);
-            if (null != loc) {
+            if (loc != null) {
                 output.write(loc);
             }
 
@@ -1344,6 +1460,24 @@ public class EntityListFile {
                 }
                 logger.debug("[EntityListFile] Saved {} NC3 links for entity {}", linkCount, entity.getId());
                 output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_NC3 + ">\n");
+            }
+
+            // Record the trailers this entity tows, front to back. Only the tractor records the train: order fixes
+            // the hitch chain and therefore where each trailer sits, and each trailer's own tractor and hitch are
+            // rebuilt from this list when the units are added to a game.
+            if (!entity.getAllTowedUnits().isEmpty()) {
+                output.write(indentStr(indentLvl + 1) + '<' + MULParser.ELE_TOWED_UNITS + ">\n");
+                for (int towedId : entity.getAllTowedUnits()) {
+                    output.write(indentStr(indentLvl + 2) +
+                          '<' +
+                          MULParser.ELE_TOWED_UNIT +
+                          ' ' +
+                          MULParser.ATTR_ID +
+                          "=\"" +
+                          towedId +
+                          "\"/>\n");
+                }
+                output.write(indentStr(indentLvl + 1) + "</" + MULParser.ELE_TOWED_UNITS + ">\n");
             }
 
             // Record if this entity is transported by another
@@ -1499,17 +1633,22 @@ public class EntityListFile {
                 output.write("\"/>\n");
             }
 
-            // Write out the mtf/blk file for the unit
+            // Write out the mtf/blk/bfs file for the unit
             String data = null;
             if (embedUnits && !entity.isCanon()) {
                 if (entity instanceof Mek mek) {
                     data = mek.getMtf();
+                } else if (entity instanceof BattlefieldSupportAsset asset) {
+                    try {
+                        data = BattlefieldSupportAssetYaml.toYaml(asset.toAssetData());
+                    } catch (IOException e) {
+                        logger.error(e, "Error writing asset: {}", entity);
+                    }
                 } else {
                     try {
                         data = String.join("\n", BLKFile.getBlock(entity).getAllDataAsString());
                     } catch (EntitySavingException e) {
-                        logger.error("Error writing unit: {}", entity);
-                        logger.error(e);
+                        logger.error(e, "Error writing unit: {}", entity);
                     }
                 }
             }
@@ -1517,7 +1656,9 @@ public class EntityListFile {
             if (data != null) {
                 String fileName = (entity.getChassis() + ' ' + entity.getModel()).trim();
                 fileName = fileName.replaceAll("[/\\\\<>:\"|?*]", "_");
-                fileName = fileName + ((entity instanceof Mek) ? ".mtf" : ".blk");
+                fileName = fileName + (
+                      (entity instanceof Mek) ? ".mtf"
+                            : (entity instanceof BattlefieldSupportAsset) ? ".bfs" : ".blk");
 
 
                 output.write(indentStr(indentLvl + 1) +
@@ -1558,8 +1699,15 @@ public class EntityListFile {
         output.write(crew.getNickname(pos).replace("\"", "&quot;"));
         output.write("\" " + MULParser.ATTR_GENDER + "=\"" + crew.getGender(pos).name());
         output.write("\" " + MULParser.ATTR_CLAN_PILOT + "=\"" + crew.isClanPilot(pos));
+        String armorKitName = crew.getArmorKitName(pos);
+        output.write("\" " + MULParser.ATTR_ARMOR_KIT + "=\"" + ((armorKitName == null) ? "" : armorKitName));
+        String sidearmName = crew.getSidearmName(pos);
+        output.write("\" " + MULParser.ATTR_SIDEARM + "=\"" + ((sidearmName == null) ? "" : sidearmName));
+        if (crew.hasSmallArms(pos)) {
+            output.write("\" " + MULParser.ATTR_SMALL_ARMS + "=\"" + crew.getSmallArms(pos));
+        }
 
-        if ((null != entity.getGame()) &&
+        if ((entity.getGame() != null) &&
               entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY)) {
             output.write("\" " + MULParser.ATTR_GUNNERY_L + "=\"");
             output.write(String.valueOf(crew.getGunneryL(pos)));
@@ -1576,14 +1724,22 @@ public class EntityListFile {
         if (crew instanceof LAMPilot) {
             writeLAMAeroAttributes(output,
                   (LAMPilot) crew,
-                  (null != entity.getGame()) &&
+                                   (entity.getGame() != null) &&
                         entity.gameOptions().booleanOption(OptionsConstants.RPG_RPG_GUNNERY));
         }
-        if ((null != entity.getGame()) &&
+        if ((entity.getGame() != null) &&
               entity.gameOptions().booleanOption(OptionsConstants.RPG_ARTILLERY_SKILL)) {
             output.write("\" " + MULParser.ATTR_ARTILLERY + "=\"");
             output.write(String.valueOf(crew.getArtillery(pos)));
         }
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_GUNNERY,
+              crew.isHasNaturalAptitudeGunnery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_ARTILLERY,
+              crew.isHasNaturalAptitudeArtillery(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_PILOTING,
+              crew.isHasNaturalAptitudePiloting(pos));
+        writeNaturalAptitudeAttribute(output, MULParser.ATTR_NATURAL_APTITUDE_SMALL_ARMS,
+              crew.isHasNaturalAptitudeSmallArms(pos));
 
         if (crew.getToughness(0) != 0) {
             output.write("\" " + MULParser.ATTR_TOUGH + "=\"");
@@ -1637,6 +1793,24 @@ public class EntityListFile {
         }
         output.write("\" " + MULParser.ATTR_PILOTING_AERO + "=\"");
         output.write(String.valueOf(crew.getPilotingAero()));
+        // Always written for LAMs, so the parser can tell 'no Aero aptitude' apart from an older file
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_GUNNERY_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudeGunneryAero()));
+        output.write("\" " + MULParser.ATTR_NATURAL_APTITUDE_PILOTING_AERO + "=\"");
+        output.write(String.valueOf(crew.isHasNaturalAptitudePilotingAero()));
+    }
+
+    /**
+     * Writes a Natural Aptitude flag, but only if it's set, to keep files free of noise for the vast majority of crews.
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static void writeNaturalAptitudeAttribute(Writer output, String attribute, boolean hasNaturalAptitude)
+          throws IOException {
+        if (hasNaturalAptitude) {
+            output.write("\" " + attribute + "=\"true");
+        }
     }
 
     /**
@@ -1699,7 +1873,7 @@ public class EntityListFile {
             } else {
                 output.write("\" " + MULParser.ATTR_AUTO_EJECT + "=\"false");
             }
-            if ((null != entity.getGame()) &&
+            if ((entity.getGame() != null) &&
                   (entity.gameOptions().booleanOption(OptionsConstants.RPG_CONDITIONAL_EJECTION))) {
                 if (((Mek) entity).isCondEjectAmmo()) {
                     output.write("\" " + MULParser.ATTR_COND_EJECT_AMMO + "=\"true");

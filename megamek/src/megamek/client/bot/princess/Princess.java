@@ -3248,20 +3248,14 @@ public class Princess extends BotClient {
         getPrecognition().getPathEnumerator().getUnitPaths().remove(entity.getId());
         getPrecognition().getPathEnumerator().getLongRangePaths().remove(entity.getId());
         getPrecognition().getPathEnumerator().recalculateMovesFor(entity, true);
-        List<MovePath> paths = keepDeploymentPaths(getMovePathsAndSetNecessaryTargets(entity, false, true));
+        // Every path built above starts with a DEPLOY step; the filter is a safety net, because a path without one
+        // reaches the server as a skipped turn
+        final List<MovePath> paths = keepDeploymentPaths(getMovePathsAndSetNecessaryTargets(entity, false, true));
         if (paths.isEmpty()) {
-            // Move-to-contact uses long-range paths, which are built without a DEPLOY step. Fall back to the
-            // unit's standard paths, which the enumerator built with one.
-            LOGGER.info("[WalkOnDeploy] {}: {} had no deploying paths for behavior {}; using its standard paths",
+            LOGGER.warn("[WalkOnDeploy] {}: {} has no deploying paths for behavior {}, so will deploy only",
                   getName(),
                   entity.getDisplayName(),
                   getUnitBehaviorTracker().getBehaviorType(entity, this));
-            paths = keepDeploymentPaths(getPrecognition().getPathEnumerator().getUnitPaths().get(entity.getId()));
-        }
-        if (paths.isEmpty()) {
-            LOGGER.warn("[WalkOnDeploy] {}: {} has no deploying paths, so will deploy only",
-                  getName(),
-                  entity.getDisplayName());
             final MovePath deployOnly = new MovePath(game, entity);
             deployOnly.addStep(MoveStepType.DEPLOY);
             return deployOnly;

@@ -3211,7 +3211,9 @@ public class Princess extends BotClient {
     }
 
     private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
-        if ((entity == null) || entity.isDeployed() || (entity.getPosition() != null)) {
+        // Only isDeployed() decides this. The position below is set on the bot's local copy before the path is
+        // sent, so after a rejected attempt the unit is still undeployed but already has a position.
+        if ((entity == null) || entity.isDeployed()) {
             return null;
         }
 
@@ -3246,24 +3248,33 @@ public class Princess extends BotClient {
         getPrecognition().getPathEnumerator().getUnitPaths().remove(entity.getId());
         getPrecognition().getPathEnumerator().getLongRangePaths().remove(entity.getId());
         getPrecognition().getPathEnumerator().recalculateMovesFor(entity, true);
-        final List<MovePath> paths = getMovePathsAndSetNecessaryTargets(entity, false, true);
-        if ((paths == null) || paths.isEmpty()) {
+        // Every path built above starts with a DEPLOY step; the filter is a safety net, because a path without one
+        // reaches the server as a skipped turn
+        final List<MovePath> paths = keepDeploymentPaths(getMovePathsAndSetNecessaryTargets(entity, false, true));
+        if (paths.isEmpty()) {
+            LOGGER.warn("[WalkOnDeploy] {}: {} has no deploying paths for behavior {}, so will deploy only",
+                  getName(),
+                  entity.getDisplayName(),
+                  getUnitBehaviorTracker().getBehaviorType(entity, this));
             final MovePath deployOnly = new MovePath(game, entity);
             deployOnly.addStep(MoveStepType.DEPLOY);
             return deployOnly;
-
         }
 
         final IPathRanker pathRanker = getPathRanker(entity);
         pathRanker.initUnitTurn(entity, getGame());
         final double fallTolerance = getBehaviorSettings().getFallShameIndex() / 20d + 0.50d;
-        final TreeSet<RankedPath> rankedPaths = pathRanker.rankPaths(paths,
+        // The ranker can swap in a fresh path set (move-to-contact re-rank), so filter its output as well
+        final TreeSet<RankedPath> rankedPaths = keepDeployingRankedPaths(pathRanker.rankPaths(paths,
               getGame(),
               getMaxWeaponRange(entity),
               fallTolerance,
               getEnemyEntities(),
-              getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities());
+              getBehaviorSettings().isExclusiveMutualSupport() ? getEntitiesOwned() : getFriendEntities()));
         if (rankedPaths.isEmpty()) {
+            LOGGER.warn("[WalkOnDeploy] {}: {} has no ranked deploying paths, so will deploy only",
+                  getName(),
+                  entity.getDisplayName());
             final MovePath deployOnly = new MovePath(game, entity);
             deployOnly.addStep(MoveStepType.DEPLOY);
             return deployOnly;
@@ -3283,6 +3294,45 @@ public class Princess extends BotClient {
                     bestPath.getPath().getMpUsed(),
                     bestPath.getPath().contains(MoveStepType.DEPLOY));
         return bestPath.getPath();
+    }
+
+    /**
+     * Keeps only the paths that deploy the unit. An undeployed unit's path must contain a {@code DEPLOY} step, or the
+     * server treats it as a skipped turn and the unit stays off the board.
+     *
+     * @param paths candidate paths; may be {@code null}
+     *
+     * @return the paths that contain a {@code DEPLOY} step; empty, never {@code null}
+     */
+    static List<MovePath> keepDeploymentPaths(@Nullable List<MovePath> paths) {
+        final List<MovePath> deploymentPaths = new ArrayList<>();
+        if (paths == null) {
+            return deploymentPaths;
+        }
+        for (MovePath path : paths) {
+            if (path.contains(MoveStepType.DEPLOY)) {
+                deploymentPaths.add(path);
+            }
+        }
+        return deploymentPaths;
+    }
+
+    /**
+     * Keeps only the ranked paths that deploy the unit. The result uses the same ordering as the input, so the best
+     * path stays first.
+     *
+     * @param rankedPaths ranked candidate paths
+     *
+     * @return the ranked paths that contain a {@code DEPLOY} step
+     */
+    static TreeSet<RankedPath> keepDeployingRankedPaths(TreeSet<RankedPath> rankedPaths) {
+        final TreeSet<RankedPath> deployingPaths = new TreeSet<>(rankedPaths.comparator());
+        for (RankedPath rankedPath : rankedPaths) {
+            if (rankedPath.getPath().contains(MoveStepType.DEPLOY)) {
+                deployingPaths.add(rankedPath);
+            }
+        }
+        return deployingPaths;
     }
 
     private static boolean hasJumpDeclaration(@Nullable MovePath path) {

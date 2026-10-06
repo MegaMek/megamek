@@ -303,7 +303,7 @@ public class PathEnumerator {
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
 
                 // generate long-range paths appropriate to the bot's current state
-                updateLongRangePaths(mover);
+                updateLongRangePaths(mover, includeDeploymentStep);
                 // this handles situations where a unit is high up in the air, but is not an
                 // aircraft
                 // such as an ejected pilot or a unit hot dropping from a DropShip, as these
@@ -381,7 +381,7 @@ public class PathEnumerator {
                 paths = new ArrayList<>(filter.doFilter(paths));
 
                 // generate long-range paths appropriate to the bot's current state
-                updateLongRangePaths(mover);
+                updateLongRangePaths(mover, includeDeploymentStep);
             }
 
             // Update our locations and add the computed paths.
@@ -421,7 +421,7 @@ public class PathEnumerator {
     /**
      * Worker function that updates the long-range path collection for a particular entity
      */
-    private void updateLongRangePaths(final Entity mover) {
+    private void updateLongRangePaths(final Entity mover, final boolean includeDeploymentStep) {
         // don't bother doing this if the entity can't move anyway
         // or if it's not one of mine
         // or if I've already moved it
@@ -488,14 +488,16 @@ public class PathEnumerator {
         }
 
         // calculate a ground-bound long range path
-        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations, owner.getClusterTracker());
+        BulldozerMovePath bmp = dpf.findPathToCoords(mover, destinations, false, includeDeploymentStep,
+              owner.getClusterTracker());
 
         if (bmp != null) {
             getLongRangePaths().get(mover.getId()).add(bmp);
         }
 
         // calculate a jumping long range path
-        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true, owner.getClusterTracker());
+        BulldozerMovePath jmp = dpf.findPathToCoords(mover, destinations, true, includeDeploymentStep,
+              owner.getClusterTracker());
         if (jmp != null) {
             getLongRangePaths().get(mover.getId()).add(jmp);
         }

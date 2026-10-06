@@ -50,9 +50,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -148,6 +150,37 @@ class PrincessTest {
 
         // Test a null ticks argument.
         assertEquals(0, Princess.calculateAdjustment(null));
+    }
+
+    private static MovePath mockPath(boolean deploys) {
+        MovePath path = mock(MovePath.class);
+        when(path.contains(MoveStepType.DEPLOY)).thenReturn(deploys);
+        return path;
+    }
+
+    @Test
+    void testKeepDeploymentPathsDropsPathsWithoutDeployStep() {
+        // A move-to-contact long-range path has no DEPLOY step; the server would treat it as a skipped turn
+        MovePath longRangePath = mockPath(false);
+        MovePath deployingPath = mockPath(true);
+
+        assertEquals(List.of(deployingPath), Princess.keepDeploymentPaths(List.of(longRangePath, deployingPath)));
+        assertTrue(Princess.keepDeploymentPaths(List.of(longRangePath)).isEmpty());
+        assertTrue(Princess.keepDeploymentPaths(null).isEmpty());
+    }
+
+    @Test
+    void testKeepDeployingRankedPathsKeepsBestDeployingPathFirst() {
+        RankedPath bestButNoDeploy = new RankedPath(40.0, mockPath(false), "long range");
+        RankedPath secondDeploying = new RankedPath(30.0, mockPath(true), "deploy and walk");
+        RankedPath thirdDeploying = new RankedPath(20.0, mockPath(true), "deploy only");
+        TreeSet<RankedPath> rankedPaths = new TreeSet<>(Collections.reverseOrder());
+        rankedPaths.addAll(List.of(bestButNoDeploy, secondDeploying, thirdDeploying));
+
+        TreeSet<RankedPath> deployingPaths = Princess.keepDeployingRankedPaths(rankedPaths);
+
+        assertEquals(2, deployingPaths.size());
+        assertEquals(secondDeploying, deployingPaths.first());
     }
 
     @Test

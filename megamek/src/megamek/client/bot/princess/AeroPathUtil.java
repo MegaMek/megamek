@@ -175,7 +175,8 @@ public class AeroPathUtil {
 
         // sanity check: if we've already done something else with the path other than deploy, there's no acceleration to be done
         int pathLength = startingPath.length();
-        boolean deployment = startingPath.getLastStep().equals(MoveStepType.DEPLOY) && pathLength == 1;
+        boolean deployment = (pathLength > 0) ? startingPath.getLastStep().equals(MoveStepType.DEPLOY)
+                                                && pathLength == 1 : false;
         if (pathLength == 0 && !deployment) {
             return paths;
         }

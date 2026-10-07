@@ -3250,7 +3250,7 @@ public class Princess extends BotClient {
         getPrecognition().getPathEnumerator().recalculateMovesFor(entity, true);
         // Every path built above starts with a DEPLOY step; the filter is a safety net, because a path without one
         // reaches the server as a skipped turn
-        final List<MovePath> paths = keepDeploymentPaths(getMovePathsAndSetNecessaryTargets(entity, false, true));
+        final List<MovePath> paths = keepDeploymentPaths(getMovePathsAndSetNecessaryTargets(entity, false));
         if (paths.isEmpty()) {
             LOGGER.warn("[WalkOnDeploy] {}: {} has no deploying paths for behavior {}, so will deploy only",
                   getName(),
@@ -3599,12 +3599,6 @@ public class Princess extends BotClient {
      * standard "circle", sometimes it's pruned long-range movement paths
      */
     public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover, boolean forceMoveToContact) {
-        return getMovePathsAndSetNecessaryTargets(mover, forceMoveToContact, !mover.isDeployed());
-    }
-
-    public List<MovePath> getMovePathsAndSetNecessaryTargets(Entity mover,
-          boolean forceMoveToContact,
-          boolean includeDeploymentStep) {
         final Lock entityLock = getPrecognition().getPathEnumerator().getPathLock(mover);
         entityLock.lock();
         try {
@@ -3613,10 +3607,8 @@ public class Princess extends BotClient {
                 return Collections.emptyList();
             }
 
-            if (includeDeploymentStep) {
-                getPrecognition().getPathEnumerator().recalculateMovesFor(mover, true);
-            }
-
+            // No recalculation here: a walk-on unit's paths were just rebuilt with the DEPLOY step by
+            // calculateDeploymentPathForMovementPhase, and rebuilding them again doubled its planning time.
             BehaviorType behavior = forceMoveToContact ?
                   BehaviorType.MoveToContact :
                   getUnitBehaviorTracker().getBehaviorType(mover, this);

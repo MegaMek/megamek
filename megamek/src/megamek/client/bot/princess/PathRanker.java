@@ -60,7 +60,6 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -233,11 +232,6 @@ public abstract class PathRanker implements IPathRanker {
             if (noDamageButCanDoDamage
                   && (behaviorTracker.getBehaviorType(mover, getOwner()) == BehaviorType.Engaged)) {
                 behaviorTracker.overrideBehaviorType(mover, BehaviorType.MoveToContact);
-                // If there is a deployment in the path, make sure the new paths have deployment
-                if (movePaths.getFirst().contains(MoveStepType.DEPLOY)) {
-                    return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true, true),
-                                     game, maxRange, fallTolerance, enemies, friends);
-                }
                 return rankPaths(getOwner().getMovePathsAndSetNecessaryTargets(mover, true),
                       game, maxRange, fallTolerance, enemies, friends);
             }
@@ -334,7 +328,6 @@ public abstract class PathRanker implements IPathRanker {
 
         boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         boolean needToUnjamRAC = mover.canUnjamRAC();
-
         int walkMP = mover.getWalkMP();
 
         for (MovePath path : startingPathList) {
@@ -400,7 +393,7 @@ public abstract class PathRanker implements IPathRanker {
         // If we've eliminated all valid paths, let's try to pick out a long range path
         // instead
         if (returnPaths.isEmpty()) {
-            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true, !mover.isDeployed());
+            return getOwner().getMovePathsAndSetNecessaryTargets(mover, true);
         }
 
         return returnPaths;

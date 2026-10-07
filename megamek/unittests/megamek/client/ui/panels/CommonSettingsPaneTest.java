@@ -52,6 +52,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.tree.TreePath;
 
 import megamek.client.ui.Messages;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.settings.CollapsibleSectionPanel;
 import megamek.client.ui.settings.SettingsBadge;
 import megamek.client.ui.settings.SettingsCheckBox;
@@ -59,9 +60,25 @@ import megamek.client.ui.settings.SettingsNavigationPanel;
 import megamek.client.ui.settings.SettingsPagePanel;
 import megamek.client.ui.settings.SettingsTextProvider;
 import megamek.client.ui.util.UIUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class CommonSettingsPaneTest {
+    private boolean originalExpansionPreference;
+
+    @BeforeEach
+    void setExpansionPreference() {
+        originalExpansionPreference = GUIPreferences.getInstance().getExpandOptionSections();
+        GUIPreferences.getInstance().setExpandOptionSections(true);
+    }
+
+    @AfterEach
+    void restoreExpansionPreference() {
+        GUIPreferences.getInstance().setExpandOptionSections(originalExpansionPreference);
+    }
 
     @Test
     void searchIndexesNestedLabelsAndTooltips() throws Exception {
@@ -95,8 +112,10 @@ class CommonSettingsPaneTest {
         runOnEdt(() -> assertEquals("Main", selectedTreeLabel(pane.get())));
     }
 
-    @Test
-    void nestedPageUsesCollapsedSectionsAndStandardSize() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void nestedPageFollowsExpansionPreferenceAndStandardSize(boolean expanded) throws Exception {
+        GUIPreferences.getInstance().setExpandOptionSections(expanded);
         runOnEdt(() -> {
             JCheckBox detailed = new JCheckBox("Detailed option");
             detailed.setToolTipText("Contextual details");
@@ -110,8 +129,8 @@ class CommonSettingsPaneTest {
 
             List<CollapsibleSectionPanel> sections = findSections(pane);
             assertEquals(2, sections.size());
-            assertFalse(sections.get(0).isExpanded());
-            assertFalse(sections.get(1).isExpanded());
+            assertEquals(expanded, sections.get(0).isExpanded());
+            assertEquals(expanded, sections.get(1).isExpanded());
             assertTrue(findComponent(pane, SettingsPagePanel.class).shouldShowDetailsPanel());
             assertEquals("Display", sectionAccessibleName(sections.get(0)));
             SettingsBadge advancedBadge = CommonSettingsPane.legendEntries().stream()
@@ -127,6 +146,7 @@ class CommonSettingsPaneTest {
 
     @Test
     void usesStandardWidthForBehaviorPageAndPaneFloor() throws Exception {
+        GUIPreferences.getInstance().setExpandOptionSections(false);
         runOnEdt(() -> {
             CommonSettingsPane behaviorPane = new CommonSettingsPane(List.of(
                   new CommonSettingsPane.OptionPage("main.behavior", List.of("Main", "Behavior"),
@@ -134,6 +154,7 @@ class CommonSettingsPaneTest {
                               "behavior", "Behavior", "Behavior settings", new JPanel(), false)))));
             SettingsPagePanel behaviorPage = findComponent(behaviorPane, SettingsPagePanel.class);
             CollapsibleSectionPanel behaviorSection = findSections(behaviorPage).getFirst();
+            assertTrue(behaviorSection.isExpanded());
             int standardSectionWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_SECTION_STACK_WIDTH);
             int standardPageWidth = UIUtil.scaleForGUI(SettingsPagePanel.DEFAULT_MAXIMUM_PAGE_WIDTH);
             int standardPaneWidth = UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH)

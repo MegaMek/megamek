@@ -79,6 +79,7 @@ import javax.swing.tree.TreePath;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.DialogOptionListener;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.settings.CollapsibleSectionPanel;
 import megamek.client.ui.settings.SettingsHelpPanel;
 import megamek.client.ui.settings.SettingsNavigationPanel;
@@ -90,9 +91,26 @@ import megamek.common.options.GameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;
 import megamek.common.options.OptionsConstants;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class GameOptionsPaneTest {
+    private boolean originalExpansionPreference;
+
+    @BeforeEach
+    void setExpansionPreference() {
+        originalExpansionPreference = GUIPreferences.getInstance().getExpandOptionSections();
+        GUIPreferences.getInstance().setExpandOptionSections(true);
+    }
+
+    @AfterEach
+    void restoreExpansionPreference() {
+        GUIPreferences.getInstance().setExpandOptionSections(originalExpansionPreference);
+    }
+
     private static final String IMPORTANT_SYMBOL = Character.toString(0xE002);
     private static final String ADVANCED_SYMBOL = Character.toString(0xE8B8);
     private static final String UNOFFICIAL_SYMBOL = Character.toString(0xEA4B);
@@ -380,8 +398,10 @@ class GameOptionsPaneTest {
         });
     }
 
-    @Test
-    void matchSetupUsesClassifiedCollapsedSectionsAndStandardSize() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void matchSetupFollowsExpansionPreferenceAndStandardSize(boolean expanded) throws Exception {
+        GUIPreferences.getInstance().setExpandOptionSections(expanded);
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel deployment = component(
@@ -391,8 +411,8 @@ class GameOptionsPaneTest {
 
             List<CollapsibleSectionPanel> sections = findSections(pane);
             assertEquals(2, sections.size());
-            assertFalse(sections.get(0).isExpanded());
-            assertFalse(sections.get(1).isExpanded());
+            assertEquals(expanded, sections.get(0).isExpanded());
+            assertEquals(expanded, sections.get(1).isExpanded());
             assertEquals(4, GameOptionsPane.legendEntries().size());
             assertEquals("Tooltip contains important information.",
                   GameOptionsPane.legendEntries().getFirst().description());
@@ -758,8 +778,10 @@ class GameOptionsPaneTest {
         }
     }
 
-    @Test
-    void searchExpandsOnlySectionContainingMatchingOption() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void searchExpandsMatchingSectionAndRestoresOriginalDefault(boolean expanded) throws Exception {
+        GUIPreferences.getInstance().setExpandOptionSections(expanded);
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             DialogOptionComponentYPanel deployment = component(
@@ -776,8 +798,8 @@ class GameOptionsPaneTest {
             assertFalse(lobby.isVisible());
 
             pane.setFilterText("");
-            assertFalse(sections.get(0).isExpanded());
-            assertFalse(sections.get(1).isExpanded());
+            assertEquals(expanded, sections.get(0).isExpanded());
+            assertEquals(expanded, sections.get(1).isExpanded());
             assertTrue(deployment.isVisible());
             assertTrue(lobby.isVisible());
         });
@@ -923,6 +945,7 @@ class GameOptionsPaneTest {
 
     @Test
     void gameOptionsLandingPageOwnsRulesSystemAndIsSelectedFirst() throws Exception {
+        GUIPreferences.getInstance().setExpandOptionSections(false);
         runOnEdt(() -> {
             GameOptions options = new GameOptions();
             List<GameOptionsPane.OptionGroup> groups = allOptionGroups(options);

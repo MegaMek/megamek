@@ -743,6 +743,7 @@ public class ForceDescriptor {
                         }
                         if (Compute.d6(2) >=
                               target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
+                            Set<String> chassisBeforeAttempt = new HashSet<>(sub.getChassis());
                             sub.getChassis().clear();
                             sub.getChassis().add(model);
                             int oldWt = sub.getWeightClass();
@@ -757,6 +758,10 @@ public class ForceDescriptor {
                                 break;
                             } else {
                                 sub.setWeightClass(oldWt);
+                                // Put the slot back as it was. Left pinned to the partner's chassis, a slot that
+                                // then fails every other pick becomes a chassis-only element: it loads whatever
+                                // that chassis name resolves to, or nothing, which shows as a blank entry.
+                                restoreChassis(sub, chassisBeforeAttempt);
                             }
                         }
                     } else {
@@ -804,6 +809,7 @@ public class ForceDescriptor {
                         }
                     }
                     if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
+                        Set<String> chassisBeforeAttempt = new HashSet<>(sub.getChassis());
                         sub.getChassis().add(baseModel.getChassis());
                         sub.setWeightClass(-1);
                         unit = sub.generate();
@@ -813,6 +819,9 @@ public class ForceDescriptor {
                                 weights.remove(sub.getWeightClass());
                             }
                             foundUnit = true;
+                        } else {
+                            // As above: a failed attempt must not leave the slot pinned to the base model's chassis.
+                            restoreChassis(sub, chassisBeforeAttempt);
                         }
                     } else if (ut == UnitType.TANK && Compute.d6(2) >= target - 6) {
                         if (useWeights) {
@@ -854,6 +863,17 @@ public class ForceDescriptor {
                 baseModel = null;
             }
         }
+    }
+
+    /**
+     * Puts a slot's chassis pins back as they were before an attempt that failed.
+     *
+     * @param slot                 the slot the attempt was made for
+     * @param chassisBeforeAttempt the slot's chassis pins before the attempt
+     */
+    private static void restoreChassis(ForceDescriptor slot, Set<String> chassisBeforeAttempt) {
+        slot.getChassis().clear();
+        slot.getChassis().addAll(chassisBeforeAttempt);
     }
 
     /**

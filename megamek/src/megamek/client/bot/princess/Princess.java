@@ -3644,8 +3644,7 @@ public class Princess extends BotClient {
                 case ForcedWithdrawal:
                 default: {
                     List<BulldozerMovePath> bulldozerPaths = getPrecognition().getPathEnumerator()
-                          .getLongRangePaths()
-                          .get(mover.getId());
+                          .getLongRangePathsFor(mover);
 
                     // for whatever reason (most likely it's wheeled), there are no long-range paths for this unit,
                     // so just have it mill around in place as usual. Also set the behavior to "no path to destination"

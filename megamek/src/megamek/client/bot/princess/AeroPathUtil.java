@@ -33,6 +33,11 @@
 
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import megamek.client.commands.ClientCommand;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
@@ -43,11 +48,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.IAero;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Helper class that contains functionality relating mostly to aero unit paths.

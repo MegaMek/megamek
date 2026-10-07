@@ -201,6 +201,39 @@ class SuiteArchiveTests(unittest.TestCase):
                 self.write(product, files)
                 self.check(product, external=True)
 
+    def test_portable_raw_name_limit_counts_utf16_and_directory_slash(self):
+        prefix = "docs/" + "segment/" * 50
+        for product in verifier.PRODUCTS:
+            root = f"{product}-{VERSIONS[product]}/"
+            for archive_format in (tarfile.PAX_FORMAT, tarfile.GNU_FORMAT):
+                for directory in (False, True):
+                    suffix = "/" if directory else ""
+                    for character in ("a", "\U0001f600"):
+                        character_units = len(character.encode("utf-16-le")) // 2
+                        for units in (512, 513):
+                            with self.subTest(product=product, format=archive_format,
+                                              directory=directory, character=character, units=units):
+                                remaining = units - len((root + prefix + suffix).encode("utf-16-le")) // 2
+                                count, remainder = divmod(remaining, character_units)
+                                name = prefix + character * count + "a" * remainder + suffix
+                                self.assertEqual(units, len((root + name).encode("utf-16-le")) // 2)
+                                files = self.entries(product)
+                                files[name] = None if directory else b"portable boundary"
+                                archive = self.write(product, files, format=archive_format)
+                                if units == 512:
+                                    self.check(product, external=True)
+                                else:
+                                    with self.assertRaisesRegex(verifier.VerificationError,
+                                                                "non-portable archive path length"):
+                                        self.check(product, external=True)
+                                    properties, _, _, temporary = verifier.scan(
+                                        archive, product, VERSIONS[product], portable=False)
+                                    try:
+                                        self.assertEqual(VERSIONS[product], properties["version"])
+                                    finally:
+                                        temporary.cleanup()
+            self.write(product)
+
     def test_suite_scripts_replace_stale_default_aliases_for_all_products(self):
         root = self.base / "scripts-build"
         (root / "gradle").mkdir(parents=True)

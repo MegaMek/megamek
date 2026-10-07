@@ -95,7 +95,9 @@ canonical scripts. Ordinary non-suite builds are unchanged.
 The archive namespace must also be portable: paths and implicit parents are
 checked for case/NFC aliases, file/directory conflicts, Windows device names,
 trailing dots/spaces, colons and reserved launcher state. These checks apply
-before payload parsing in both producer and external verification.
+before payload parsing in both producer and external verification. The
+512 UTF-16-code-unit limit applies to the decoded raw entry name, including
+a directory's trailing slash, before normalization, matching the launcher.
 
 Read-only attestation of a previously published record uses that record's
 pinned verifier contract, while retaining bounded parsing, hashes, identities

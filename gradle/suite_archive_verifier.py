@@ -116,8 +116,8 @@ def _pax(payload):
     return result
 
 
-def _portable_path(path, directory, paths):
-    require(len(path.encode("utf-16-le")) // 2 <= 512, "non-portable archive path length")
+def _portable_path(path, directory, paths, *, raw_name_length):
+    require(raw_name_length <= 512, "non-portable archive path length")
     parts = path.split("/")
     for part in parts:
         require(":" not in part and not part.endswith((".", " "))
@@ -215,12 +215,14 @@ def scan(archive, product, version, *, keep_jars=False, capture=(), portable=Tru
                     name = header[:100].split(b"\0", 1)[0]
                     if prefix:
                         name = prefix + b"/" + name
-                path = _path(name.decode("utf-8"), root, kind == b"5")
+                raw_name = name.decode("utf-8")
+                path = _path(raw_name, root, kind == b"5")
                 require(path not in seen and len(seen) < MAX_ENTRIES,
                         "duplicate or excessive tar entries")
                 seen.add(path)
                 if portable:
-                    _portable_path(path, kind == b"5", paths)
+                    _portable_path(path, kind == b"5", paths,
+                                   raw_name_length=len(raw_name.encode("utf-16-le")) // 2)
                 pending = {}
                 extensions = extension_bytes = 0
                 if kind == b"5":

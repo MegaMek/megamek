@@ -173,8 +173,10 @@ public class AeroPathUtil {
           int upperBound) {
         Collection<MovePath> paths = new ArrayList<>();
 
-        // sanity check: if we've already done something else with the path, there's no acceleration to be done
-        if (startingPath.length() > 0) {
+        // sanity check: if we've already done something else with the path other than deploy, there's no acceleration to be done
+        int pathLength = startingPath.length();
+        boolean deployment = startingPath.getLastStep().equals(MoveStepType.DEPLOY) && pathLength == 1;
+        if (pathLength == 0 && !deployment) {
             return paths;
         }
 

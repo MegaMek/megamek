@@ -56,9 +56,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.Facing;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
@@ -82,6 +84,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
@@ -156,6 +159,34 @@ class PrincessTest {
         MovePath path = mock(MovePath.class);
         when(path.contains(MoveStepType.DEPLOY)).thenReturn(deploys);
         return path;
+    }
+
+    @Test
+    void testGetMovePathsDoesNotRebuildPathsForUndeployedUnit() {
+        // The walk-on code rebuilds the unit's paths with the DEPLOY step just before asking for them; rebuilding them
+        // again here doubled every walk-on unit's planning time
+        when(mockPrincess.getMovePathsAndSetNecessaryTargets(any(Entity.class), anyBoolean())).thenCallRealMethod();
+
+        Precognition precognition = mock(Precognition.class);
+        PathEnumerator pathEnumerator = mock(PathEnumerator.class);
+        UnitBehavior behaviorTracker = mock(UnitBehavior.class);
+        when(mockPrincess.getPrecognition()).thenReturn(precognition);
+        when(precognition.getPathEnumerator()).thenReturn(pathEnumerator);
+        when(mockPrincess.getUnitBehaviorTracker()).thenReturn(behaviorTracker);
+        when(mockPrincess.getClusterTracker()).thenReturn(mock(BoardClusterTracker.class));
+
+        Entity undeployed = mock(Entity.class);
+        when(undeployed.getId()).thenReturn(7);
+        when(undeployed.isDeployed()).thenReturn(false);
+        when(undeployed.isImmobile()).thenReturn(false);
+        when(pathEnumerator.getPathLock(undeployed)).thenReturn(new ReentrantLock());
+        when(behaviorTracker.getBehaviorType(undeployed, mockPrincess)).thenReturn(BehaviorType.Engaged);
+        List<MovePath> cachedPaths = List.of(mockPath(true));
+        when(pathEnumerator.getUnitPaths()).thenReturn(Map.of(7, cachedPaths));
+
+        assertEquals(cachedPaths, mockPrincess.getMovePathsAndSetNecessaryTargets(undeployed, false));
+        verify(pathEnumerator, never()).recalculateMovesFor(any(Entity.class), anyBoolean());
+        verify(pathEnumerator, never()).recalculateMovesFor(any(Entity.class));
     }
 
     @Test

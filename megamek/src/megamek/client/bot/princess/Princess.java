@@ -3016,7 +3016,7 @@ public class Princess extends BotClient {
     boolean mustFleeBoard(final Entity entity) {
         if (!isFallingBack(entity)) {
             return false;
-        } else if (!entity.canFlee(entity.getPosition())) {
+        } else if (!entity.canFlee(entity.getPosition()) || entity.getPosition() == null) {
             return false;
         } else if (0 < getPathRanker(entity).distanceToHomeEdge(entity.getPosition(), entity.getBoardId(),
               getHomeEdge(entity), getGame())) {
@@ -4194,6 +4194,9 @@ public class Princess extends BotClient {
         // ordered the bot to flee toward an edge, which every unit follows, crippled or not (issue #9038)
         if (getForcedWithdrawalTracker().isWithdrawing(entity) && !UnitBehavior.isFleeOrdered(this)) {
             if (getBehaviorSettings().getRetreatEdge() == CardinalEdge.NEAREST) {
+                if (entity.getPosition() == null) {
+                    return CardinalEdge.NONE;
+                }
                 return BoardUtilities.getClosestEdge(entity);
             } else {
                 return getBehaviorSettings().getRetreatEdge();

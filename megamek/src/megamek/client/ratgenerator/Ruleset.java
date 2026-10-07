@@ -280,6 +280,12 @@ public class Ruleset {
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
 
+        if (fd.getInfantryClass() != null) {
+            logger.info("[ForceGen][InfantryClass] processRoot: faction={} unitType={} infantryClass={} options={}",
+                  fd.getFaction(), fd.getUnitType(), fd.getInfantryClass(), fd.getFlags());
+        }
+        // Before the tree is built, so every node copies the pinned beast from its parent
+        BeastMountSelector.pinBeast(fd);
         buildForceTree(fd, l, PROGRESS_BUILD_TREE);
         // Capture the weight class the ruleset ROLLED for this force (the value that drove the
         // <weightTarget> selection) before recalcWeightClass() below overwrites it with the

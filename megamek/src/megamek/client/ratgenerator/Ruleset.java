@@ -551,6 +551,28 @@ public class Ruleset {
         return result;
     }
 
+    /**
+     * Returns every rating better than the given one in this ruleset's rating system, closest first. The counterpart
+     * of {@link #getRatingsAtOrWorseThan(String)} for the rare pick that may step up when nothing at or below the
+     * force's rating fits, such as a strict infantry class.
+     *
+     * @param rating the force's own equipment rating
+     *
+     * @return the better ratings, closest first; empty when the rating is the best or not part of this system
+     */
+    public List<String> getRatingsBetterThan(String rating) {
+        List<String> result = new ArrayList<>();
+        int ratingIndex = ratingSystem.indexOf(rating);
+        if (ratingIndex < 0) {
+            return result;
+        }
+        // RatingSystem values are ordered worst-to-best, so better ratings are higher indices.
+        for (int i = ratingIndex + 1; i < ratingSystem.vals.length; i++) {
+            result.add(ratingSystem.vals[i]);
+        }
+        return result;
+    }
+
     public Integer getDefaultUnitType(ForceDescriptor fd) {
         String def = defaults.getUnitType(fd);
         if (def != null) {

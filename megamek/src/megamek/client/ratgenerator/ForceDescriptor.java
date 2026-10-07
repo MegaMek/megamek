@@ -1136,10 +1136,17 @@ public class ForceDescriptor {
         // A rating-C force may field C/D/F equipment when nothing matches at its own rating,
         // but never the A/B grades reserved for better-equipped commands.
         List<String> failureTrace = new ArrayList<>();
-        for (String ratGenRating : ratingFallbackList()) {
-            ModelRecord modelRecord = generateAtRating(ratGenRating, failureTrace);
-            if (modelRecord != null) {
-                return modelRecord;
+        if (isInfantryClassApplied()) {
+            ModelRecord classedUnit = generateForInfantryClass(failureTrace);
+            if (classedUnit != null) {
+                return classedUnit;
+            }
+        } else {
+            for (String ratGenRating : ratingFallbackList()) {
+                ModelRecord modelRecord = generateAtRating(ratGenRating, failureTrace, true);
+                if (modelRecord != null) {
+                    return modelRecord;
+                }
             }
         }
 
@@ -1170,7 +1177,7 @@ public class ForceDescriptor {
      * Renders a unit type for diagnostic messages without unboxing a {@code null}.
      *
      * <p>{@link #unitType} is a nullable {@link Integer} - a subforce can spawn child nodes without
-     * propagating a unit type (see {@link #generateAtRating(String, List)}) - while
+     * propagating a unit type (see {@link #generateAtRating(String, List, boolean)}) - while
      * {@link UnitType#getTypeDisplayableName(int)} takes a primitive. Passing the field straight through
      * throws a {@link NullPointerException} on unboxing, and because logger arguments are evaluated
      * eagerly it throws even when {@code DEBUG} is disabled.</p>
@@ -1191,7 +1198,7 @@ public class ForceDescriptor {
      * every leaf of the force tree, so a per-attempt loop floods the log and violates the project rule
      * against logging inside loops.</p>
      *
-     * @param failureTrace the attempt descriptions gathered by {@link #generateAtRating(String, List)}; may
+     * @param failureTrace the attempt descriptions gathered by {@link #generateAtRating(String, List, boolean)}; may
      *                     be empty when {@code DEBUG} is disabled, in which case nothing is appended
      *
      * @return a newline-prefixed block of indented attempt lines, or the empty string when there are none
@@ -1256,6 +1263,43 @@ public class ForceDescriptor {
     }
 
     /**
+     * Picks a unit for a slot held to an infantry class, preferring the faction's own units at any rating over other
+     * factions' salvage.
+     *
+     * <p>A faction's own platoons of a class can be rated: FS jump infantry in 3067 exists only at ratings A to C. The
+     * ordinary ladder never steps up a rating, and salvage draws from other factions' tables, so a D-rated FS jump
+     * battalion filled up with Clan and Kurita platoons and left the rest of its slots empty. Here the faction's own
+     * table is tried at the force's rating and every worse one, then at every better one, and only then is salvage
+     * allowed.</p>
+     *
+     * @param failureTrace collects one line per attempt for the failure log
+     *
+     * @return the unit, or {@code null} if neither the faction nor its salvage has one of the class
+     */
+    private @Nullable ModelRecord generateForInfantryClass(List<String> failureTrace) {
+        List<String> ownRatingsFirst = new ArrayList<>(ratingFallbackList());
+        Ruleset ruleset = Ruleset.findRuleset(this);
+        if (ruleset != null) {
+            ownRatingsFirst.addAll(ruleset.getRatingsBetterThan(ratGeneratorRating()));
+        }
+        for (String ratGenRating : ownRatingsFirst) {
+            ModelRecord ownUnit = generateAtRating(ratGenRating, failureTrace, false);
+            if (ownUnit != null) {
+                return ownUnit;
+            }
+        }
+        for (String ratGenRating : ratingFallbackList()) {
+            ModelRecord salvagedUnit = generateAtRating(ratGenRating, failureTrace, true);
+            if (salvagedUnit != null) {
+                LOGGER.debug("[ForceGen][InfantryClass] {} {}: none of the faction's own at any rating; salvaged {}",
+                      faction, infantryClass, salvagedUnit.getKey());
+                return salvagedUnit;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Builds the equipment-rating fallback ladder for {@link #generate()}: the force's own resolved rating followed by
      * each progressively worse rating in the faction's rating system. Generation tries each in order and stops at the
      * first that yields a unit, so worse ratings act only as a safety net - the force never fields equipment better
@@ -1278,8 +1322,14 @@ public class ForceDescriptor {
      * tries the next closest weight class, then ignores mission role, then the next weight class, then ignores motive
      * types, then the remaining weight classes. Returns {@code null} if no unit could be generated at the given
      * rating.
+     *
+     * @param ratGenRating the equipment rating to draw at
+     * @param failureTrace collects one line per attempt for the failure log
+     * @param allowSalvage {@code false} to draw an infantry-class pick from the faction's own table only; ordinary
+     *                     picks always allow salvage
      */
-    private @Nullable ModelRecord generateAtRating(String ratGenRating, List<String> failureTrace) {
+    private @Nullable ModelRecord generateAtRating(String ratGenRating, List<String> failureTrace,
+          boolean allowSalvage) {
         final int[][] alternateWeights = { { 1, 2, 3, 4, 5 }, // UL
                                            { 2, 0, 3, 4, 5 }, // L
                                            { 3, 1, 4, 0, 5 }, // M
@@ -1329,7 +1379,9 @@ public class ForceDescriptor {
                     mekSummary = table.generateUnit(unit -> workingCopy.getChassis().contains(unit.getChassis())
                           && workingCopy.acceptsForInfantryClass(unit));
                 } else if (workingCopy.isInfantryClassApplied()) {
-                    mekSummary = table.generateUnit(workingCopy::acceptsForInfantryClass);
+                    mekSummary = allowSalvage
+                          ? table.generateUnit(workingCopy::acceptsForInfantryClass)
+                          : table.generateUnitWithoutSalvage(workingCopy::acceptsForInfantryClass);
                 } else {
                     mekSummary = table.generateUnit();
                 }

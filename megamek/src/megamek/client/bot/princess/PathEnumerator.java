@@ -50,6 +50,7 @@ import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
@@ -78,6 +79,8 @@ public class PathEnumerator {
     private final Game game;
     private final Map<Integer, List<MovePath>> unitPaths = new ConcurrentHashMap<>();
     private final Map<Integer, List<BulldozerMovePath>> longRangePaths = new ConcurrentHashMap<>();
+    // Units whose long-range paths are due to be built, and whether those paths need the DEPLOY step
+    private final Map<Integer, Boolean> pendingLongRangePaths = new ConcurrentHashMap<>();
     private final Map<Integer, ConvexBoardArea> unitMovableAreas = new ConcurrentHashMap<>();
     private final Map<Integer, Set<CoordFacingCombo>> unitPotentialLocations = new ConcurrentHashMap<>();
     private final Map<Integer, CoordFacingCombo> lastKnownLocations = new ConcurrentHashMap<>();
@@ -107,6 +110,7 @@ public class PathEnumerator {
         getUnitPotentialLocations().clear();
         getLastKnownLocations().clear();
         getLongRangePaths().clear();
+        pendingLongRangePaths.clear();
     }
 
     Coords getLastKnownCoords(Integer entityId) {
@@ -222,6 +226,7 @@ public class PathEnumerator {
             // Clear out any already calculated paths.
             getUnitPaths().remove(mover.getId());
             getLongRangePaths().remove(mover.getId());
+            pendingLongRangePaths.remove(mover.getId());
 
             // if the entity does not exist in the game for any reason, let's cut out safely
             // otherwise, we'll run into problems calculating paths
@@ -302,8 +307,8 @@ public class PathEnumerator {
                 ipf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(ipf.getAllComputedPathsUncategorized());
 
-                // generate long-range paths appropriate to the bot's current state
-                updateLongRangePaths(mover, includeDeploymentStep);
+                // long-range paths are built on first use; see getLongRangePathsFor
+                pendingLongRangePaths.put(mover.getId(), includeDeploymentStep);
                 // this handles situations where a unit is high up in the air, but is not an
                 // aircraft
                 // such as an ejected pilot or a unit hot dropping from a DropShip, as these
@@ -380,8 +385,8 @@ public class PathEnumerator {
                 };
                 paths = new ArrayList<>(filter.doFilter(paths));
 
-                // generate long-range paths appropriate to the bot's current state
-                updateLongRangePaths(mover, includeDeploymentStep);
+                // long-range paths are built on first use; see getLongRangePathsFor
+                pendingLongRangePaths.put(mover.getId(), includeDeploymentStep);
             }
 
             // Update our locations and add the computed paths.
@@ -597,6 +602,31 @@ public class PathEnumerator {
 
     protected Map<Integer, List<BulldozerMovePath>> getLongRangePaths() {
         return longRangePaths;
+    }
+
+    /**
+     * Returns a unit's long-range paths, building them first if its last recalculation left them pending. Only a unit
+     * moving to contact, to a destination or off the board reads them, so building them on every recalculation spent
+     * most of the bot's background time on paths that were never used.
+     *
+     * @param mover the unit about to move
+     *
+     * @return the unit's long-range paths, or {@code null} if it has none
+     */
+    public @Nullable List<BulldozerMovePath> getLongRangePathsFor(final Entity mover) {
+        // Only the unit's own lock, never the enumerator's monitor: callers already hold this lock, and
+        // recalculateMovesFor takes the monitor before it, so taking both here could deadlock
+        final Lock entityLock = getPathLock(mover);
+        entityLock.lock();
+        try {
+            final Boolean includeDeploymentStep = pendingLongRangePaths.remove(mover.getId());
+            if (includeDeploymentStep != null) {
+                updateLongRangePaths(mover, includeDeploymentStep);
+            }
+            return getLongRangePaths().get(mover.getId());
+        } finally {
+            entityLock.unlock();
+        }
     }
 
     protected Map<Integer, List<MovePath>> getUnitPaths() {

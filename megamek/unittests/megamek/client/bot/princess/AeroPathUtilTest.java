@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2000-2011 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -33,12 +33,15 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;
 import megamek.utils.MockGenerators;
 import org.junit.jupiter.api.Test;
@@ -109,6 +112,40 @@ class AeroPathUtilTest {
 
         boolean result = AeroPathUtil.willCrash(mockPath);
         assertFalse(result);
+    }
+
+    /**
+     * A path of the given length, flying at velocity 3, whose last step (if any) is of the given type.
+     */
+    private static MovePath pathAtVelocityThree(int length, MoveStepType lastStepType) {
+        MovePath path = mock(MovePath.class);
+        when(path.length()).thenReturn(length);
+        when(path.getFinalVelocity()).thenReturn(3);
+        when(path.clone()).thenReturn(mock(MovePath.class));
+        if (length > 0) {
+            MoveStep lastStep = mock(MoveStep.class);
+            when(lastStep.getType()).thenReturn(lastStepType);
+            when(path.getLastStep()).thenReturn(lastStep);
+        }
+        return path;
+    }
+
+    @Test
+    void generateValidAccelerationsKeepsVelocityForAnEmptyPath() {
+        // A deployed aircraft starts each turn with an empty path; with no velocity choices it gets no paths at all
+        assertEquals(1, AeroPathUtil.generateValidAccelerations(pathAtVelocityThree(0, null), 3, 3).size());
+    }
+
+    @Test
+    void generateValidAccelerationsKeepsVelocityForAWalkOnDeployment() {
+        assertEquals(1,
+              AeroPathUtil.generateValidAccelerations(pathAtVelocityThree(1, MoveStepType.DEPLOY), 3, 3).size());
+    }
+
+    @Test
+    void generateValidAccelerationsOffersNothingOnceThePathHasMoved() {
+        assertTrue(AeroPathUtil.generateValidAccelerations(pathAtVelocityThree(1, MoveStepType.FORWARDS), 3, 3)
+              .isEmpty());
     }
 
 }

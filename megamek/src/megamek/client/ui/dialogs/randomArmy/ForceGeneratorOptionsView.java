@@ -1197,7 +1197,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /**
      * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
      * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
-     * columns.
+     * columns. Conventional infantry has no weight class (the engine reports every platoon as Light), so its row
+     * shows a dash in the weight columns and only its count in Total, rather than filling the Light column.
      * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
      * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
      *
@@ -1213,13 +1214,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         ArrayList<Entity> entities = new ArrayList<>();
         force.addAllEntities(entities);
-        // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only).
+        // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only). Column
+        // NO_WEIGHT_COLUMN holds units that have no weight class.
         Map<Integer, int[][]> counts = new TreeMap<>();
         for (Entity entity : entities) {
             int unitType = entity.getUnitType();
             int weightClass = entity.getWeightClass();
             int column;
-            if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
+            if (hasNoWeightClass(unitType)) {
+                column = NO_WEIGHT_COLUMN;
+            } else if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
                 column = 0;
             } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM) {
                 column = 1;
@@ -1228,7 +1232,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } else {
                 column = 3;
             }
-            int[][] row = counts.computeIfAbsent(unitType, k -> new int[4][2]);
+            int[][] row = counts.computeIfAbsent(unitType, unitTypeKey -> new int[NO_WEIGHT_COLUMN + 1][2]);
             row[column][0]++;
             if (entity instanceof BattleArmor ba) {
                 row[column][1] += ba.getShootingStrength();
@@ -1241,18 +1245,26 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
         // Column totals count units (squads for Battle Armor) so the bottom row adds up across types.
         int[] columnTotals = new int[4];
+        int grandTotal = 0;
         for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
             int[][] row = entry.getValue();
             boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
-            int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
-            int typeTroopers = row[0][1] + row[1][1] + row[2][1] + row[3][1];
+            int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0] + row[NO_WEIGHT_COLUMN][0];
+            int typeTroopers = row[0][1] + row[1][1] + row[2][1] + row[3][1] + row[NO_WEIGHT_COLUMN][1];
             for (int column = 0; column < 4; column++) {
                 columnTotals[column] += row[column][0];
             }
+            grandTotal += typeTotal;
             // The Total column is always the plain count, even when the weight cells show percentages: the
             // percentages say how the type is spread, the total says how many there are.
             String rowTotal = formatSummaryCell(new int[] { typeTotal, typeTroopers }, isBA);
-            if (asPercent) {
+            if (hasNoWeightClass(entry.getKey())) {
+                summaryModel.addRow(new Object[] {
+                      UnitType.getTypeDisplayableName(entry.getKey()),
+                      NO_WEIGHT_CELL, NO_WEIGHT_CELL, NO_WEIGHT_CELL, NO_WEIGHT_CELL,
+                      rowTotal
+                });
+            } else if (asPercent) {
                 summaryModel.addRow(new Object[] {
                       UnitType.getTypeDisplayableName(entry.getKey()),
                       formatSummaryPercent(row[0][0], typeTotal),
@@ -1279,13 +1291,28 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   String.valueOf(columnTotals[1]),
                   String.valueOf(columnTotals[2]),
                   String.valueOf(columnTotals[3]),
-                  String.valueOf(columnTotals[0] + columnTotals[1] + columnTotals[2] + columnTotals[3])
+                  // Every unit, including those with no weight class, so the corner still matches the rows above
+                  String.valueOf(grandTotal)
             });
         }
     }
 
+    /**
+     * Conventional infantry has no weight class: the engine reports every platoon as Light whatever it carries, so
+     * counting it under Light would make a Heavy infantry force look as if it ignored its weight.
+     */
+    private static boolean hasNoWeightClass(int unitType) {
+        return unitType == UnitType.INFANTRY;
+    }
+
     /** Echelon level at or above which the composition summary switches from counts to percentages. */
     private static final int LARGE_ECHELON_PERCENT_THRESHOLD = 7;
+
+    /** Summary column, after the four weight columns, for units that have no weight class. Never displayed. */
+    private static final int NO_WEIGHT_COLUMN = 4;
+
+    /** Shown in the weight columns of a unit type that has no weight class. */
+    private static final String NO_WEIGHT_CELL = "-";
 
     /**
      * Formats a summary-table cell as a whole-number percentage of the unit type's total, e.g. "43%". An empty bucket
@@ -1426,7 +1453,40 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         refreshFormations();
         refreshFighterComplementEnabled();
+        refreshWeightClassEnabled();
         cbUnitType.addActionListener(this);
+    }
+
+    /**
+     * Greys out Target Weight for unit types whose units are never picked by weight class. VTOLs and conventional
+     * fighters draw from one table whatever the weight says, so offering Heavy or Assault only promises something the
+     * roll ignores. The selection goes back to Random so a greyed-out "Assault" is not left showing; a ruleset that
+     * varies a formation by weight still rolls one itself.
+     */
+    private void refreshWeightClassEnabled() {
+        if (cbWeightClass == null) {
+            return;
+        }
+        boolean weightPicksUnits = !ignoresWeightClass(forceDesc.getUnitType());
+        cbWeightClass.setEnabled(weightPicksUnits);
+        cbWeightClass.setToolTipText(Messages.getString(weightPicksUnits
+              ? "ForceGeneratorDialog.weight.tooltip"
+              : "ForceGeneratorDialog.weight.ignored.tooltip"));
+        if (!weightPicksUnits && (cbWeightClass.getSelectedItem() != null)) {
+            // Index 0 is the Random entry. Fires the weight listener, which clears the descriptor's weight too.
+            cbWeightClass.setSelectedIndex(0);
+        }
+        if (!weightPicksUnits) {
+            logger.debug("[ForceGen][Weight] Target Weight greyed out: unit type {} is not picked by weight class",
+                  unitTypeLabel(forceDesc.getUnitType()));
+        }
+    }
+
+    private static boolean ignoresWeightClass(@Nullable Integer unitType) {
+        if (unitType == null) {
+            return false;
+        }
+        return (unitType == UnitType.VTOL) || (unitType == UnitType.CONV_FIGHTER);
     }
 
     /**
@@ -1712,6 +1772,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
             refreshFighterComplementEnabled();
+            refreshWeightClassEnabled();
         } else if (ev.getSource() == cbFormation) {
             String echelon = (String) cbFormation.getSelectedItem();
             if (echelon != null) {

@@ -264,6 +264,9 @@ public class Ruleset {
         // keeps what the ruleset rolled for it. A no-op for an empty mix.
         FormationMixReport formationAssignment = FormationBudgetAllocator.allocate(fd);
         fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
+        // A slot the unit tables could not fill would otherwise get a commander below and show as a pilot with
+        // nothing to crew (and as an empty force in MekHQ).
+        fd.removeNodesWithoutUnits();
         // Count what survived rather than what was asked for: a formation can be assigned legally and still fail its
         // own requirements once units are drawn, at which point it reverts to an ordinary lance.
         fd.setFormationMixReport(FormationBudgetAllocator.tallyAchieved(fd, formationAssignment));

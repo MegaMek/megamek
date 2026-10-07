@@ -2481,6 +2481,41 @@ public class ForceDescriptor {
         attached.forEach(ForceDescriptor::clearGeneratedUnits);
     }
 
+    /**
+     * Removes every node under this one that ended up holding no unit, along with any formation left empty by that.
+     *
+     * <p>A leaf the unit tables could not fill still gets a commander later, so without this the finished force
+     * shows a named pilot with nothing to crew - and MekHQ turns that node into an empty force. Run after
+     * {@link #generateUnits(Ruleset.ProgressListener, double)} and before commanders are assigned. This node itself
+     * is never removed; a caller holding an empty root still sees the failure in the log.</p>
+     *
+     * @return how many nodes were removed
+     */
+    public int removeNodesWithoutUnits() {
+        int removed = removeNodesWithoutUnits(subForces) + removeNodesWithoutUnits(attached);
+        if (removed > 0) {
+            LOGGER.warn("[ForceGen] Removed {} node(s) with no unit under '{}' (unitType={} faction={} year={})",
+                  removed, name, describeUnitType(unitType), faction, year);
+        }
+        return removed;
+    }
+
+    private static int removeNodesWithoutUnits(List<ForceDescriptor> children) {
+        int removed = 0;
+        Iterator<ForceDescriptor> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            ForceDescriptor child = iterator.next();
+            removed += removeNodesWithoutUnits(child.subForces) + removeNodesWithoutUnits(child.attached);
+            if (!child.element && child.subForces.isEmpty() && child.attached.isEmpty()) {
+                LOGGER.debug("[ForceGen] Removing node with no unit: unitType={} echelon={} name='{}'",
+                      describeUnitType(child.unitType), child.echelon, child.name);
+                iterator.remove();
+                removed++;
+            }
+        }
+        return removed;
+    }
+
     public void setFormationType(FormationType ft) {
         formationType = ft;
     }

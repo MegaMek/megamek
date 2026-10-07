@@ -160,6 +160,11 @@ public class ForceDescriptor {
     // What the mix actually achieved, set on the root by the allocator. Null when no mix was applied.
     private FormationMixReport formationMixReport;
     private String generationRule;
+    // The generate rule of the <subforces> block that created this node, set only by that block. Kept apart from
+    // generationRule, which a node also takes from its own children's block when its parent's block declared none:
+    // reading that one, a Clan Star mistook its Points' "model" rule for its own and shared one model across all its
+    // Points, so a Point's two units could each hold two different models and come out mismatched.
+    private String blockGenerationRule;
     private boolean topLevel;
     private boolean element;
     private int positionIndex;
@@ -316,8 +321,8 @@ public class ForceDescriptor {
                 // so a node holding several of them honours each in turn. A node with one block yields
                 // one group and behaves exactly as it did when the rule was read off the node itself.
                 Map<String, List<ForceDescriptor>> byBlockRule = subForces.stream()
-                                                                          .filter(sub -> sub.getGenerationRule() != null)
-                      .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
+                                                                          .filter(sub -> sub.getBlockGenerationRule() != null)
+                      .collect(Collectors.groupingBy(ForceDescriptor::getBlockGenerationRule));
                 if (!byBlockRule.isEmpty()) {
                     byBlockRule.forEach(this::generateByRule);
                 } else if (generationRule != null) {
@@ -947,7 +952,7 @@ public class ForceDescriptor {
         Map<String, List<ForceDescriptor>> sharedUnitBlocks = new LinkedHashMap<>();
         List<ForceDescriptor> formationMembers = new ArrayList<>();
         for (ForceDescriptor sub : subs) {
-            String rule = sub.getGenerationRule();
+            String rule = sub.getBlockGenerationRule();
             // A block declaring no rule leaves its children with a null one, and an immutable Set
             // throws rather than answering contains(null), so the null case is settled first.
             boolean sharesOneUnit = (rule != null) && SHARED_UNIT_RULES.contains(rule);
@@ -1002,6 +1007,16 @@ public class ForceDescriptor {
      */
     private void shareOneUnitAcross(String rule, List<ForceDescriptor> members) {
         boolean shareChassis = rule.equals("chassis");
+        // A pick already made for this node - by a formation one level up, say - reaches the members when each one
+        // copies its parent's models and chassis, which happens after this. Picking another unit here would leave
+        // every member holding two, and each would then draw one of them at random: a Clan aerospace Point came out
+        // as two different fighters. The pick this node already carries is the shared unit.
+        boolean isAlreadyPicked = shareChassis ? !chassis.isEmpty() : !models.isEmpty();
+        if (isAlreadyPicked) {
+            LOGGER.debug("[ForceGen][GenRule] '{}': already carries a {} pick, which its {} child(ren) will share",
+                  parseName(), rule, members.size());
+            return;
+        }
         // Only the members without a pick are given one. Testing that they all lack one would let a
         // partly-picked block through and add a second model to those that already had theirs, which
         // an ancestor had set deliberately.
@@ -2570,6 +2585,24 @@ public class ForceDescriptor {
 
     public void setGenerationRule(String rule) {
         generationRule = rule;
+    }
+
+    /**
+     * @return the generate rule of the {@code <subforces>} block that created this node, or {@code null} when that
+     *       block declared none
+     */
+    public @Nullable String getBlockGenerationRule() {
+        return blockGenerationRule;
+    }
+
+    /**
+     * Records the generate rule of the {@code <subforces>} block that created this node. Only that block, or a copy
+     * of one of its children, should set it.
+     *
+     * @param rule the block's rule, or {@code null} when it declared none
+     */
+    public void setBlockGenerationRule(@Nullable String rule) {
+        blockGenerationRule = rule;
     }
 
     public Set<MissionRole> getRoles() {

@@ -1215,6 +1215,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         added.setName(template.getName());
         added.setEligibleFormations(template.getEligibleFormations());
         added.setGenerationRule(template.getGenerationRule());
+        added.setBlockGenerationRule(template.getBlockGenerationRule());
         added.setFormationType(formationType);
         // As many unit slots as its sibling holds, so a lance comes out a lance and a Clan star a star.
         for (int slot = 0; slot < template.getSubForces().size(); slot++) {

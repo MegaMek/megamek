@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -203,6 +203,7 @@ public class SubForcesNode extends RulesetNode {
         }
         for (ForceDescriptor sub : subs) {
             sub.setGenerationRule(rule);
+            sub.setBlockGenerationRule(rule);
         }
         LOGGER.debug("[ForceGen][GenRule] block of {} child(ren) under '{}' generates by '{}'",
               subs.size(), forceDescriptor.getName(), rule);

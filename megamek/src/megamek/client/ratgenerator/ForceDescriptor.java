@@ -2535,6 +2535,25 @@ public class ForceDescriptor {
         return removed;
     }
 
+    /**
+     * Whether this force holds any unit of its own, not counting attached support. A force the unit tables could not
+     * fill has none: every slot was removed, leaving at most the support attached to it, such as a regiment's artillery
+     * company with no regiment behind it.
+     *
+     * @return {@code true} when this node or any node under it, outside its attachments, holds a unit
+     */
+    public boolean hasLineUnits() {
+        if (element) {
+            return true;
+        }
+        for (ForceDescriptor subForce : subForces) {
+            if (subForce.hasLineUnits()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static int removeNodesWithoutUnits(List<ForceDescriptor> children) {
         int removed = 0;
         Iterator<ForceDescriptor> iterator = children.iterator();

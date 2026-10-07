@@ -2257,6 +2257,18 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 // roll's dropdown changes rewrite an already-generated (and possibly accumulated) root.
                 // Keep the generated force independent.
                 ForceDescriptor generated = get();
+                if (!generated.hasLineUnits()) {
+                    // Every slot came up empty, so there is nothing to show but, at most, the support attached to
+                    // it. Say so rather than presenting a blank force.
+                    logger.info("[ForceGen] no units could be generated for faction={} year={} unitType={} echelon={};"
+                                + " insufficient data, no force produced", fd.getFaction(), fd.getYear(),
+                          fd.getUnitType(), fd.getEchelon());
+                    JOptionPane.showMessageDialog(ForceGeneratorOptionsView.this,
+                          Messages.getString("ForceGeneratorDialog.insufficientData.text"),
+                          Messages.getString("ForceGeneratorDialog.insufficientData.title"),
+                          JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 logger.info("[ForceGen] generated root id={} name='{}' unitType={} echelon={} weight={} subForces={}",
                       System.identityHashCode(generated), generated.getName(), generated.getUnitType(),
                       generated.getEchelon(), generated.getWeightClass(),

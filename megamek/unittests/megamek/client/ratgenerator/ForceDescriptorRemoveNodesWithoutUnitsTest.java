@@ -33,7 +33,9 @@
 package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Field;
 
@@ -97,6 +99,26 @@ class ForceDescriptorRemoveNodesWithoutUnitsTest {
         ForceDescriptor root = new ForceDescriptor();
 
         assertEquals(0, root.removeNodesWithoutUnits());
+    }
+
+    @Test
+    void aForceWithOnlyAttachedSupportHasNoLineUnits() throws Exception {
+        // A Beast regiment with no beast data: every line slot removed, the artillery attachment left
+        ForceDescriptor regiment = new ForceDescriptor();
+        ForceDescriptor artillery = regiment.createChild(0);
+        markHasUnit(artillery);
+        regiment.addAttached(artillery);
+
+        assertFalse(regiment.hasLineUnits());
+    }
+
+    @Test
+    void aForceWithAUnitInItsLineHasLineUnits() throws Exception {
+        ForceDescriptor company = new ForceDescriptor();
+        ForceDescriptor platoon = addChild(addChild(company));
+        markHasUnit(platoon);
+
+        assertTrue(company.hasLineUnits());
     }
 
     private static ForceDescriptor addChild(ForceDescriptor parent) {

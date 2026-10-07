@@ -244,7 +244,7 @@ public class PathEnumerator {
             // Aero movement on atmospheric ground maps
             // currently only applies to a) conventional aircraft, b) AeroTek units, c) lams
             // in air mode
-            if (mover.isAirborneAeroOnGroundMap() && !((IAero) mover).isSpheroid()) {
+            if (mover.isAirborneAeroOnGroundMap(includeDeploymentStep) && !((IAero) mover).isSpheroid()) {
                 AeroGroundPathFinder groundPathFinder = getOwner().aeroGroundPathFinder(getGame());
                 MovePath startPath = createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false);
                 groundPathFinder.run(startPath);

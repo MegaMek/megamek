@@ -41,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
@@ -159,6 +160,11 @@ public class Ruleset {
             return rulesets.get(faction);
         }
         FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
+        Ruleset canonicalRuleset = findCanonicalRuleset(faction, fRec, rulesets);
+        if (canonicalRuleset != null) {
+            logger.debug("findRuleset({}): alias of {}", faction, canonicalRuleset.getFaction());
+            return canonicalRuleset;
+        }
         /*
          * First check all parents without recursion. If none is found, do
          * a recursive check on all parents.
@@ -183,6 +189,33 @@ public class Ruleset {
         // to prevent barfing.
         logger.warn("findRuleset({}): no match in any parent - returning empty default ruleset", faction);
         return new Ruleset();
+    }
+
+    /**
+     * The ruleset of the faction a key is an alias of, when it has one.
+     *
+     * <p>A faction renamed across eras keeps its old keys as aliases: the Escorpion Imperio ({@code CEI}) and the
+     * Scorpion Empire ({@code SE}) are both Clan Goliath Scorpion ({@code CGS}). Looking up an alias returns the
+     * faction it stands for, so the lookup has to try that faction's own ruleset before its parents. Without this
+     * the Scorpion Empire skipped the Goliath Scorpion ruleset, which models its mixed Trinaries and Clusters, and
+     * fell through to the generic Clan one.</p>
+     *
+     * @param faction          the key that was asked for
+     * @param resolvedFaction  the faction record that key resolves to, or {@code null} when it resolves to none
+     * @param rulesetsByFaction the loaded rulesets, by faction key
+     *
+     * @return the resolved faction's ruleset, or {@code null} when the key is not an alias or that faction has none
+     */
+    static @Nullable Ruleset findCanonicalRuleset(String faction, @Nullable FactionRecord resolvedFaction,
+          Map<String, Ruleset> rulesetsByFaction) {
+        if (resolvedFaction == null) {
+            return null;
+        }
+        String canonicalKey = resolvedFaction.getKey();
+        if ((canonicalKey == null) || canonicalKey.equals(faction)) {
+            return null;
+        }
+        return rulesetsByFaction.get(canonicalKey);
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)

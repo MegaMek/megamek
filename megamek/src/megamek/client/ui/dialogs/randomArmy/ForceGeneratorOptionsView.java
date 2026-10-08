@@ -1726,10 +1726,11 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     } while (fn == null && rs != null);
                     String formName = (fn != null) ? fn.getEchelonName() : formation;
                     if (formation.endsWith("+")) {
-                        formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
+                        // A pattern rather than a prefix, so each language sets its own spacing and word order.
+                        formName = Messages.getString("ForceGeneratorDialog.reinforced", formName);
                     }
                     if (formation.endsWith("-")) {
-                        formName = Messages.getString("ForceGeneratorDialog.understrength") + formName;
+                        formName = Messages.getString("ForceGeneratorDialog.understrength", formName);
                     }
                     formationDisplayNames.put(formation, formName);
                     offeredSizes.add(formName + " (" + formation + ")");

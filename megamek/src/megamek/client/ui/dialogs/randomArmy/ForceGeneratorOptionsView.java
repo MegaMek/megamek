@@ -1706,6 +1706,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbFormation.addActionListener(this);
     }
 
+    /**
+     * The rating the picker and the force should both take. The ruleset's default is used when it is offered;
+     * otherwise the first offered rating, because the combo cannot show a rating it does not list and the force would
+     * be generated at a rating the player never saw. Example: Clan Wolf defaults to Front Line, but its infantry is
+     * offered only Garrison and Solahma, so Garrison is used.
+     *
+     * @param offeredRatings the rating codes in the picker, in order
+     * @param defaultRating  the ruleset's default rating, or {@code null}
+     *
+     * @return the rating to select, or {@code null} when nothing is offered and there is no default
+     */
+    static @Nullable String ratingToSelect(List<String> offeredRatings, @Nullable String defaultRating) {
+        if (offeredRatings.isEmpty() || offeredRatings.contains(defaultRating)) {
+            return defaultRating;
+        }
+        return offeredRatings.getFirst();
+    }
+
     private void refreshRatings() {
         logger.debug("refreshRatings: fdFaction={}, echelon={}",
               forceDesc.getFaction(), forceDesc.getEchelon());
@@ -1749,6 +1767,15 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.warn("Ruleset for {} offers ratings but declares no default; selecting {}",
                   forceDesc.getFaction(), rating);
         }
+        List<String> offeredRatings = new ArrayList<>();
+        for (int index = 0; index < cbRating.getItemCount(); index++) {
+            offeredRatings.add(cbRating.getItemAt(index));
+        }
+        String defaultRating = rating;
+        rating = ratingToSelect(offeredRatings, defaultRating);
+        logger.info("[ForceGen][Rating] faction={} unitType={} offers {} default={} using={}",
+              forceDesc.getFaction(), unitTypeLabel(forceDesc.getUnitType()), offeredRatings, defaultRating,
+              rating);
         if (rating != null) {
             cbRating.setSelectedItem(rating);
             forceDesc.setRating(rating);

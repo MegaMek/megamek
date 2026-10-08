@@ -67,6 +67,13 @@ class FidelisMenuTest {
     }
 
     @Test
+    void aCombinedArmsRequestStaysCombinedArms() {
+        // The defaults run before the rule lookup. A default unit type turned a blank request into Meks, so a Battle
+        // Group or Century came out as Clan Mek Trinaries.
+        assertNull(fidelis.getDefaultUnitType(request(null, 3150, ECHELON_TRINARY)));
+    }
+
+    @Test
     void theBattleGroupIsCombinedArmsOnly() {
         ForceNode combinedArms = fidelis.findForceNode(request(null, 3150, ECHELON_TRINARY));
         assertNotNull(combinedArms);

@@ -107,6 +107,7 @@ import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Terrains;
+import megamek.common.units.TrainLayout;
 import megamek.common.units.VTOL;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
@@ -1000,6 +1001,21 @@ public abstract class BotClient extends Client {
         return null;
     }
 
+    /**
+     * A tractor's whole train has to land in its deployment zone, so a hex only counts when at least one facing lets
+     * every trailer fit. A unit that tows nothing always fits.
+     *
+     * @param entity  the unit being deployed
+     * @param coords  the candidate hex for it
+     * @param boardId the board being deployed to
+     *
+     * @return {@code true} if the unit and any train it tows fit with it in this hex
+     */
+    private boolean trainFitsAt(Entity entity, Coords coords, int boardId) {
+        return entity.getAllTowedUnits().isEmpty()
+              || TrainLayout.hasLegalDeploymentFacing(game, entity, coords, boardId);
+    }
+
     protected List<Coords> getStartingCoordsArray(Entity deployed_ent) {
         int highest_elev, lowest_elev, weapon_count;
         double av_range, ideal_elev;
@@ -1021,7 +1037,8 @@ public abstract class BotClient extends Client {
                             ((deployed_ent.isAirborne() || deployed_ent.getMovementMode().isHoverVTOLOrWiGE()) ?
                                   deployed_ent.getElevation() :
                                   0)) &&
-                      !deployed_ent.isLocationDeadly(c)) {
+                      !deployed_ent.isLocationDeadly(c) &&
+                      trainFitsAt(deployed_ent, c, board.getBoardId())) {
                     validCoords.add(new RankedCoords(c, 0));
                 }
             }

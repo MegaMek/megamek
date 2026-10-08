@@ -217,6 +217,7 @@ class PrincessTest {
     @Test
     void testGetEntityToMovePrefersUndeployedUnitDuringMovementPhase() {
         when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
 
         Game game = mock(Game.class);
         GameOptions options = mock(GameOptions.class);
@@ -250,6 +251,7 @@ class PrincessTest {
     @Test
     void testGetEntityToMoveUsesDeploymentOrderForUndeployedUnits() {
         when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
 
         Game game = mock(Game.class);
         GameTurn turn = mock(GameTurn.class);
@@ -279,6 +281,102 @@ class PrincessTest {
         when(game.getEntity(2)).thenReturn(secondUndeployed);
 
         assertEquals(secondUndeployed, mockPrincess.getEntityToMove());
+    }
+
+    private static Entity mockUndeployedUnit(String name) {
+        Entity unit = mock(Entity.class);
+        when(unit.isDone()).thenReturn(false);
+        when(unit.isOffBoard()).thenReturn(false);
+        when(unit.isDeployed()).thenReturn(false);
+        when(unit.getPosition()).thenReturn(null);
+        when(unit.shouldDeploy(anyInt())).thenReturn(true);
+        when(unit.getDisplayName()).thenReturn(name);
+        return unit;
+    }
+
+    @Test
+    void testGetEntityToDeployGivesTheTurnToAUnitThatCannotWalkOn() {
+        // Under walk-on deployment a bot's tractor is the reason the deployment turn exists. A recovery vehicle that
+        // could walk on took it instead, and the tractor never deployed
+        when(mockPrincess.getEntityToDeploy(any(GameTurn.class))).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity recoveryVehicle = mockUndeployedUnit("Heavy BattleMek Recovery Vehicle");
+        Entity tractor = mockUndeployedUnit("Land Train (Tractor)");
+        when(game.inGameTWEntities()).thenReturn(List.of(recoveryVehicle, tractor));
+        when(mockPrincess.canWalkOnThisRound(recoveryVehicle)).thenReturn(true);
+        when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
+
+        assertEquals(tractor, mockPrincess.getEntityToDeploy(turn));
+    }
+
+    @Test
+    void testGetEntityToDeployFallsBackToAWalkOnUnit() {
+        when(mockPrincess.getEntityToDeploy(any(GameTurn.class))).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity recoveryVehicle = mockUndeployedUnit("Heavy BattleMek Recovery Vehicle");
+        when(game.inGameTWEntities()).thenReturn(List.of(recoveryVehicle));
+        when(mockPrincess.canWalkOnThisRound(recoveryVehicle)).thenReturn(true);
+
+        assertEquals(recoveryVehicle, mockPrincess.getEntityToDeploy(turn));
+    }
+
+    @Test
+    void testGetEntityToMoveDoesNotWalkOnATractor() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity tractor = mockUndeployedUnit("Land Train (Tractor)");
+        Entity mek = mockUndeployedUnit("Rifleman RFL-3N");
+        when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
+        when(mockPrincess.canWalkOnThisRound(mek)).thenReturn(true);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(tractor, mek));
+
+        assertEquals(mek, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveSkipsAnUndeployedUnitThatIsNotDeployingThisRound() {
+        // The regular move picker must not choose a unit that cannot walk on: the server would still accept its path
+        // if it carries a DEPLOY step, and walk on a tractor or a unit due in a later round
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity deployed = mock(Entity.class);
+        when(deployed.isDone()).thenReturn(false);
+        when(deployed.isOffBoard()).thenReturn(false);
+        when(deployed.isDeployed()).thenReturn(true);
+        when(deployed.getPosition()).thenReturn(new Coords(2, 2));
+        when(deployed.getDisplayName()).thenReturn("Deployed");
+        // Listed last, so with equal move indexes the old picker chose it
+        Entity tractor = mockUndeployedUnit("Land Train (Tractor)");
+        when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed, tractor));
+
+        assertEquals(deployed, mockPrincess.getEntityToMove());
     }
 
     @Test

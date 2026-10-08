@@ -1087,9 +1087,12 @@ public class Princess extends BotClient {
 
     @Override
     protected void calculateDeployment() {
-        // get the first unit
-        final int entityNum = game.getFirstDeployableEntityNum(game.getTurnForPlayer(localPlayerNumber));
-        final Entity deployEntity = getEntity(entityNum);
+        final Entity deployEntity = getEntityToDeploy(game.getTurnForPlayer(localPlayerNumber));
+        if (deployEntity == null) {
+            LOGGER.warn("{}: no unit can take this deployment turn", getName());
+            return;
+        }
+        final int entityNum = deployEntity.getId();
         sendChat("deploying unit " + deployEntity.getChassis(), Level.INFO);
 
         final Coords deployCoords = getDeploymentCoords(deployEntity, entityNum, true, "deployment");
@@ -1108,6 +1111,53 @@ public class Princess extends BotClient {
         }
         LOGGER.info("{} : {} deploying to {}", getName(), deployEntity.getChassis(), deployCoords);
         deploy(entityNum, deployCoords, board.getBoardId(), decentFacing, deployElevation, new Vector<>(), false);
+    }
+
+    /**
+     * Picks the unit to place on a deployment-phase turn. Under walk-on deployment the server only counts a turn for a
+     * unit that cannot walk on, such as a bot's tractor towing trailers, but the turn itself accepts any undeployed
+     * unit. Spending it on a unit that could have walked on left the tractor with no turn, so it never deployed.
+     *
+     * @param turn the bot's current turn; may be {@code null}
+     *
+     * @return the unit to deploy, or {@code null} if no unit can take this turn
+     */
+    @Nullable
+    Entity getEntityToDeploy(@Nullable GameTurn turn) {
+        if (turn == null) {
+            return null;
+        }
+        final Game currentGame = getGame();
+        Entity firstWalkOnUnit = null;
+        for (Entity entity : currentGame.inGameTWEntities()) {
+            if (!turn.isValidEntity(entity, currentGame) || !entity.shouldDeploy(currentGame.getRoundCount())) {
+                continue;
+            }
+            if (!canWalkOnThisRound(entity)) {
+                LOGGER.info("[WalkOnDeploy] {}: {} cannot walk on, so it takes this deployment turn",
+                      getName(),
+                      entity.getDisplayName());
+                return entity;
+            }
+            if (firstWalkOnUnit == null) {
+                firstWalkOnUnit = entity;
+            }
+        }
+        if (firstWalkOnUnit != null) {
+            LOGGER.info("[WalkOnDeploy] {}: every unit left for this deployment turn could walk on; deploying {} now",
+                  getName(),
+                  firstWalkOnUnit.getDisplayName());
+        }
+        return firstWalkOnUnit;
+    }
+
+    /**
+     * @param entity the unit to check
+     *
+     * @return {@code true} if the unit may enter the board during this round's movement phase
+     */
+    boolean canWalkOnThisRound(Entity entity) {
+        return Game.rulesManager.getRulesGame().canWalkOnThisRound(entity);
     }
 
     private @Nullable Coords getDeploymentCoords(final Entity entity,
@@ -2801,7 +2851,10 @@ public class Princess extends BotClient {
                 final int deployEntityNum = currentGame.getFirstDeployableEntityNum(turn);
                 if (deployEntityNum != Entity.NONE) {
                     final Entity deployEntity = currentGame.getEntity(deployEntityNum);
-                    if ((deployEntity != null) && !deployEntity.isDone() && !deployEntity.isOffBoard()) {
+                    // A unit that cannot walk on (a tractor towing trailers) deploys in the deployment phase; the
+                    // server rejects it here, which wasted the movement turn
+                    if ((deployEntity != null) && !deployEntity.isDone() && !deployEntity.isOffBoard()
+                          && canWalkOnThisRound(deployEntity)) {
                         LOGGER.info("Choosing {} to deploy during the movement phase.", deployEntity.getDisplayName());
                         return deployEntity;
                     }
@@ -2812,7 +2865,7 @@ public class Princess extends BotClient {
                 if (entity.isDone() || entity.isOffBoard()) {
                     continue;
                 }
-                if ((entity.getPosition() == null) || !entity.isDeployed()) {
+                if (((entity.getPosition() == null) || !entity.isDeployed()) && canWalkOnThisRound(entity)) {
                     LOGGER.info("Choosing {} to deploy during the movement phase.", entity.getDisplayName());
                     return entity;
                 }
@@ -2837,6 +2890,13 @@ public class Princess extends BotClient {
                   (entity.isUnloadedThisTurn() ||
                    !Objects.requireNonNull(currentGame.getTurn()).isValidEntity(entity, currentGame)))) {
                 msg.append("cannot be moved.");
+                continue;
+            }
+
+            // An undeployed unit that may not walk on this round (a tractor towing trailers, or one due in a later
+            // round) has no move to make; the server would still accept a path carrying a DEPLOY step
+            if (!entity.isDeployed() && !canWalkOnThisRound(entity)) {
+                msg.append("is not deploying this round.");
                 continue;
             }
 
@@ -3251,53 +3311,34 @@ public class Princess extends BotClient {
         }
     }
 
-    private boolean checkTowDeployment(Entity entity) {
-        for (int towed : entity.getAllTowedUnits()) {
-            Entity trailer = entity.getGame().getEntity(towed);
-            if (trailer == null) {
-                continue;
-            }
-            if (!game.getBoard(trailer.getBoardId()).isLegalDeployment(trailer.getPosition(), trailer)) {
-                return false;
+    /**
+     * Turns to try when fitting a walk-on train, nearest the wanted facing first: straight on, one step either way,
+     * two steps either way, then about face.
+     */
+    private static final int[] TRAIN_FACING_TURNS = { 0, 1, -1, 2, -2, 3 };
+
+    /**
+     * Finds a facing that lets the whole train fit its tractor's walk-on zone, trying the wanted facing first and then
+     * turning away from it one step at a time. Each train hex is checked against the tractor's zone, as the server
+     * does; a trailer's own zone does not matter.
+     *
+     * @param tractor       the tractor at the head of the train
+     * @param tractorHex    the hex the tractor would walk on to
+     * @param boardId       the board being deployed to
+     * @param wantedFacing  the facing Princess would like the tractor to have
+     *
+     * @return the nearest facing that fits, or {@code null} if none does
+     */
+    private @Nullable Integer findLegalTrainFacing(Entity tractor, Coords tractorHex, int boardId, int wantedFacing) {
+        for (int turn : TRAIN_FACING_TURNS) {
+            int facing = FireControl.correctFacing(wantedFacing + turn);
+            if (TrainLayout.firstIllegalDeploymentHex(getGame(), tractor, tractorHex, boardId, facing) == null) {
+                return facing;
             }
         }
-        return true;
+        return null;
     }
 
-    private boolean checkTowFacing(Entity entity, int originalFacing) {
-        if (entity.getAllTowedUnits().isEmpty()) {
-            return true;
-        }
-
-        boolean goodFacing = checkTowDeployment(entity);
-
-        if (goodFacing) {
-            return true;
-        }
-        // Try one left
-        entity.setFacing(originalFacing + 1);
-        entity.setSecondaryFacing(originalFacing + 1);
-        deployTrain(entity);
-        boolean result = checkTowDeployment(entity);
-        if (result) {
-            // We have a good facing
-            return true;
-        }
-        // Try one right
-        entity.setFacing(originalFacing - 1);
-        entity.setSecondaryFacing(originalFacing - 1);
-        deployTrain(entity);
-        result = checkTowDeployment(entity);
-        if (result) {
-            // We have a good facing
-            return true;
-        }
-        // Reset to original facing, it didn't work
-        entity.setFacing(originalFacing);
-        entity.setSecondaryFacing(originalFacing);
-        deployTrain(entity);
-        return false;
-    }
     private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
         // Only isDeployed() decides this. The position below is set on the bot's local copy before the path is
         // sent, so after a rejected attempt the unit is still undeployed but already has a position.
@@ -3328,16 +3369,27 @@ public class Princess extends BotClient {
         } else {
             entity.setElevation(deployElevation);
         }
-        // Deploy the train if there is one, before we calculate movement.
+        // Deploy the train if there is one, before we calculate movement. The whole train has to fit the tractor's
+        // walk-on zone, so turn it until it does, starting from the facing Princess wants.
         if (!entity.getAllTowedUnits().isEmpty()) {
-            deployTrain(entity);
-            boolean result = checkTowFacing(entity, entity.getFacing());
-            if (!result) {
-                LOGGER.warn("{}: {} has no valid facing for towed units, so will not deploy",
+            final Integer trainFacing = findLegalTrainFacing(entity, deployCoords, board.getBoardId(), decentFacing);
+            if (trainFacing == null) {
+                LOGGER.warn("[WalkOnDeploy] {}: {} cannot fit its train at {} in any facing, so will not deploy",
                       getName(),
-                      entity.getDisplayName());
+                      entity.getDisplayName(),
+                      deployCoords);
                 return null;
             }
+            LOGGER.info("[WalkOnDeploy] {}: {} walks on a {}-hex train at {} facing {} (wanted {})",
+                  getName(),
+                  entity.getDisplayName(),
+                  TrainLayout.trainLengthInHexes(getGame(), entity),
+                  deployCoords,
+                  trainFacing,
+                  decentFacing);
+            entity.setFacing(trainFacing);
+            entity.setSecondaryFacing(trainFacing);
+            deployTrain(entity);
         }
 
         // A movement-phase deployment can be re-evaluated after the bot has already chosen a valid deployment

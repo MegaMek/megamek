@@ -1107,10 +1107,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     /**
      * One line describing a generated force for the log: what was asked for, what weight was rolled, and what each
-     * direct sub-force holds. Lets a tester read the outcome of a roll without opening the tree.
+     * direct sub-force holds, by unit type and by unit name. Lets a tester read the outcome of a roll without opening
+     * the tree.
      *
      * <p>Example: {@code CJF 3150 FL Battle Armor 'Battle Armor Trinary' weight asked=Random rolled=Heavy; 3
-     * sub-force(s): [Nova (Heavy): Battle Armor=5, Mek=5] ...; totals Battle Armor=15, Mek=5}</p>
+     * sub-force(s): [Nova (Heavy): Battle Armor=5, Mek=5 - Elemental Battle Armor [Laser](Sqd5)=5, Timber Wolf
+     * Prime=5] ...; totals Battle Armor=15, Mek=5}</p>
      *
      * @param generated            the generated root
      * @param requestedWeightClass the weight class on the panel when Generate was pressed, or {@code null} for Random
@@ -1129,12 +1131,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         Map<String, Integer> totals = new TreeMap<>();
         for (ForceDescriptor subForce : subForces) {
             Map<String, Integer> counts = new TreeMap<>();
-            countUnitsByType(subForce, counts);
+            Map<String, Integer> unitNames = new TreeMap<>();
+            countUnits(subForce, counts, unitNames);
             line.append(" [").append(subForce.parseName()).append(" (")
                   .append((subForce.getWeightClass() == null) ? "no weight"
                         : EntityWeightClass.getClassName(subForce.getWeightClass()))
-                  .append("): ").append(formatCounts(counts))
-                  .append(']');
+                  .append("): ").append(formatCounts(counts));
+            if (!unitNames.isEmpty()) {
+                line.append(" - ").append(formatCounts(unitNames));
+            }
+            line.append(']');
             for (Map.Entry<String, Integer> count : counts.entrySet()) {
                 totals.merge(count.getKey(), count.getValue(), Integer::sum);
             }
@@ -1143,15 +1149,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         return line.toString();
     }
 
-    private static void countUnitsByType(ForceDescriptor node, Map<String, Integer> counts) {
+    private static void countUnits(ForceDescriptor node, Map<String, Integer> counts,
+          Map<String, Integer> unitNames) {
         if (node.isElement() && node.getSubForces().isEmpty()) {
             counts.merge(unitTypeLabel(node.getUnitType()), 1, Integer::sum);
+            String unitName = node.getModelName();
+            if ((unitName != null) && !unitName.isBlank()) {
+                unitNames.merge(unitName, 1, Integer::sum);
+            }
         }
         for (ForceDescriptor subForce : node.getSubForces()) {
-            countUnitsByType(subForce, counts);
+            countUnits(subForce, counts, unitNames);
         }
         for (ForceDescriptor attached : node.getAttached()) {
-            countUnitsByType(attached, counts);
+            countUnits(attached, counts, unitNames);
         }
     }
 

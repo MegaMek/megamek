@@ -41,8 +41,8 @@ import megamek.common.units.UnitType;
 import org.junit.jupiter.api.Test;
 
 /**
- * The [ForceGen][Result] log line names each sub-force and counts its units by type, so a tester can read a roll's
- * outcome from the log.
+ * The [ForceGen][Result] log line names each sub-force and counts its units by type and by name, so a tester can read
+ * a roll's outcome from the log.
  */
 class ForceGeneratorResultLogTest {
 
@@ -61,8 +61,11 @@ class ForceGeneratorResultLogTest {
             nova.addSubForce(unit(UnitType.BATTLE_ARMOR));
         }
         ForceDescriptor strider = formation("Strider 1", UnitType.BATTLE_ARMOR);
-        for (int point = 0; point < 5; point++) {
-            strider.addSubForce(unit(UnitType.BATTLE_ARMOR));
+        for (int point = 0; point < 3; point++) {
+            strider.addSubForce(namedUnit(UnitType.BATTLE_ARMOR, "Elemental Battle Armor [Laser](Sqd5)"));
+        }
+        for (int point = 0; point < 2; point++) {
+            strider.addSubForce(namedUnit(UnitType.BATTLE_ARMOR, "Gnome Battle Armor (Sqd5)"));
         }
         trinary.addSubForce(nova);
         trinary.addSubForce(strider);
@@ -72,7 +75,8 @@ class ForceGeneratorResultLogTest {
         assertTrue(line.contains("weight asked=Random rolled=Heavy"), line);
         assertTrue(line.contains("2 sub-force(s)"), line);
         assertTrue(line.contains("[Nova (Heavy): Battle Armor=5, Mek=5]"), line);
-        assertTrue(line.contains("[Strider 1 (no weight): Battle Armor=5]"), line);
+        assertTrue(line.contains("[Strider 1 (no weight): Battle Armor=5 - Elemental Battle Armor [Laser](Sqd5)=3,"
+              + " Gnome Battle Armor (Sqd5)=2]"), line);
         assertTrue(line.contains("totals Battle Armor=10, Mek=5"), line);
     }
 
@@ -97,6 +101,12 @@ class ForceGeneratorResultLogTest {
     private static ForceDescriptor unit(int unitType) {
         ForceDescriptor unit = formation("unit", unitType);
         unit.setElement(true);
+        return unit;
+    }
+
+    private static ForceDescriptor namedUnit(int unitType, String modelName) {
+        ForceDescriptor unit = unit(unitType);
+        unit.getModels().add(modelName);
         return unit;
     }
 }

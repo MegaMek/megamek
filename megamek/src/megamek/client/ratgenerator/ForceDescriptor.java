@@ -347,22 +347,6 @@ public class ForceDescriptor {
     }
 
     /**
-     * Sorts out all sub force nodes eligible for the <code>FormationType</code> and attempts to generate a formation
-     * based on their parameters. If the formation is successfully generated, it is distributed to the sub forces in the
-     * order provided. For leaf node, the unit is set. For non-final nodes, the unit is added to either the model or
-     * chassis list depending on the provided grouping rule. Any sub forces that are not eligible for the formation are
-     * then generated.
-     *
-     * @param subs      The sub forces to generate unit for. These need not be direct children of
-     *                  <code>this</code>.
-     * @param chassis   If true, any non-final sub force node will have the generated unit added to the chassis list
-     *                  instead of the model list.
-     * @param numGroups The number of groups to pass on to formation generation; used to override standard grouping
-     *                  constraints (e.g. matched pairs in fighter squadrons).
-     *
-     * @return Whether the formation was successfully generated.
-     */
-    /**
      * Whether every unit a formation picked is allowed by the infantry class of the slot it would fill.
      *
      * @param slots  the formation's slots, in the order the picks are assigned
@@ -380,6 +364,22 @@ public class ForceDescriptor {
         return true;
     }
 
+    /**
+     * Sorts out all sub force nodes eligible for the <code>FormationType</code> and attempts to generate a formation
+     * based on their parameters. If the formation is successfully generated, it is distributed to the sub forces in the
+     * order provided. For leaf node, the unit is set. For non-final nodes, the unit is added to either the model or
+     * chassis list depending on the provided grouping rule. Any sub forces that are not eligible for the formation are
+     * then generated.
+     *
+     * @param subs      The sub forces to generate unit for. These need not be direct children of
+     *                  <code>this</code>.
+     * @param chassis   If true, any non-final sub force node will have the generated unit added to the chassis list
+     *                  instead of the model list.
+     * @param numGroups The number of groups to pass on to formation generation; used to override standard grouping
+     *                  constraints (e.g. matched pairs in fighter squadrons).
+     *
+     * @return Whether the formation was successfully generated.
+     */
     private boolean generateAndAssignFormation(List<ForceDescriptor> subs, boolean chassis, int numGroups) {
         Map<Boolean, List<ForceDescriptor>> eligibleSubs = subs.stream()
                                                                .collect(Collectors.groupingBy(fd -> fd.getUnitType() != null &&

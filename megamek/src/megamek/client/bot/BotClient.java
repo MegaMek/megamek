@@ -1011,8 +1011,6 @@ public abstract class BotClient extends Client {
         WeaponAttackAction test_attack;
         List<ECMInfo> allECMInfo = ComputeECM.computeAllEntitiesECMInfo(game.getEntitiesVector());
 
-        int maxX = 0;
-        int maxY = 0;
         // Create array of hexes in the deployment zone that can be deployed to
         // Check for prohibited terrain, stacking limits
         for (int x = 0; x <= board.getWidth(); x++) {
@@ -1029,12 +1027,10 @@ public abstract class BotClient extends Client {
             }
         }
 
-        LOGGER.info("{}: {} valid deployment hexes for {}. The max X is {} and the max Y is {}",
+        LOGGER.info("{}: {} valid deployment hexes for {}.",
                     getName(),
                     validCoords.size(),
-                    deployed_ent.getDisplayName(),
-                    maxX,
-                    maxY);
+              deployed_ent.getDisplayName());
 
         // Randomize hexes to prevent clumping at the upper-left corner on
         // very flat maps

@@ -3210,6 +3210,94 @@ public class Princess extends BotClient {
         return getGame().getOptions().booleanOption(name);
     }
 
+    /**
+     * This deploys trailers behind a tractor, if any are attached. It is called when a tractor is deployed for
+     * walk-on-deployment
+     *
+     * @param tractor Entity pulling
+     */
+    private void deployTrain(Entity tractor) {
+        if (tractor.getAllTowedUnits().isEmpty()) {
+            return;
+        }
+
+        int trailerCount = tractor.getAllTowedUnits().size();
+        List<Coords> trainPath = TrainLayout.deploymentPath(tractor.getPosition(),
+              tractor.getFacing(),
+              trailerCount);
+        List<Integer> trainFacings = new ArrayList<>();
+        for (int step = 0; step < trainPath.size(); step++) {
+            trainFacings.add(tractor.getFacing());
+        }
+
+        List<TrainLayout.TrainPlacement> placements = TrainLayout.computeLayout(
+              tractor.getGame(),
+              tractor,
+              tractor.getPosition(),
+              tractor.getFacing(),
+              trainPath,
+              trainFacings);
+
+        TrainLayout.applyLayout(tractor.getGame(), placements);
+
+        for (TrainLayout.TrainPlacement placement : placements) {
+            Entity trailer = tractor.getGame().getEntity(placement.entityId());
+            if (trailer == null) {
+                continue;
+            }
+            trailer.setBoardId(tractor.getBoardId());
+            trailer.setElevation(tractor.getElevation());
+            trailer.setSecondaryFacing(trailer.getFacing());
+        }
+    }
+
+    private boolean checkTowDeployment(Entity entity) {
+        for (int towed : entity.getAllTowedUnits()) {
+            Entity trailer = entity.getGame().getEntity(towed);
+            if (trailer == null) {
+                continue;
+            }
+            if (!game.getBoard(trailer.getBoardId()).isLegalDeployment(trailer.getPosition(), trailer)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean checkTowFacing(Entity entity, int originalFacing) {
+        if (entity.getAllTowedUnits().isEmpty()) {
+            return true;
+        }
+
+        boolean goodFacing = checkTowDeployment(entity);
+
+        if (goodFacing) {
+            return true;
+        }
+        // Try one left
+        entity.setFacing(entity.getFacing() + 1);
+        entity.setSecondaryFacing(entity.getFacing() + 1);
+        deployTrain(entity);
+        boolean result = checkTowDeployment(entity);
+        if (result) {
+            // We have a good facing
+            return true;
+        }
+        // Try one right
+        entity.setFacing(originalFacing - 1);
+        entity.setSecondaryFacing(originalFacing - 1);
+        deployTrain(entity);
+        result = checkTowDeployment(entity);
+        if (result) {
+            // We have a good facing
+            return true;
+        }
+        // Reset to original facing, it didn't work
+        entity.setFacing(originalFacing);
+        entity.setSecondaryFacing(originalFacing);
+        deployTrain(entity);
+        return false;
+    }
     private @Nullable MovePath calculateDeploymentPathForMovementPhase(final Entity entity) {
         // Only isDeployed() decides this. The position below is set on the bot's local copy before the path is
         // sent, so after a rejected attempt the unit is still undeployed but already has a position.
@@ -3239,6 +3327,17 @@ public class Princess extends BotClient {
             entity.setAltitude(deployElevation);
         } else {
             entity.setElevation(deployElevation);
+        }
+        // Deploy the train if there is one, before we calculate movement.
+        if (!entity.getAllTowedUnits().isEmpty()) {
+            deployTrain(entity);
+            boolean result = checkTowFacing(entity, entity.getFacing());
+            if (!result) {
+                LOGGER.warn("{}: {} has no valid facing for towed units, so will not deploy",
+                      getName(),
+                      entity.getDisplayName());
+                return null;
+            }
         }
 
         // A movement-phase deployment can be re-evaluated after the bot has already chosen a valid deployment

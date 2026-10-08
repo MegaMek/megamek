@@ -41,9 +41,9 @@ import java.util.HashMap;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.api.io.TempDir;
 
 /**
  * A Clan battle armor or infantry Trinary with Target Weight on Random has to come out as three Stars. Clan Wolf,

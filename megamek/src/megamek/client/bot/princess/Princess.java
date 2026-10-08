@@ -5141,19 +5141,16 @@ public class Princess extends BotClient {
      * Get a list of all hot spots (positions of high activity) for opposing units
      */
     public List<Coords> getEnemyHotSpots() {
-        List<Coords> accumulatedHotSpots = new ArrayList<>();
+        // A linked set drops duplicates without rescanning the list, and keeps the first-seen order
+        Set<Coords> accumulatedHotSpots = new LinkedHashSet<>();
         for (HeatMap curMap : getMemory().getEnemyHeatMaps()) {
             List<Coords> mapHotSpots = curMap.getHotSpots();
             if (mapHotSpots != null) {
-                for (Coords curPosition : mapHotSpots) {
-                    if (!accumulatedHotSpots.contains(curPosition)) {
-                        accumulatedHotSpots.add(curPosition);
-                    }
-                }
+                accumulatedHotSpots.addAll(mapHotSpots);
             }
         }
 
-        return accumulatedHotSpots;
+        return new ArrayList<>(accumulatedHotSpots);
     }
 
     /**

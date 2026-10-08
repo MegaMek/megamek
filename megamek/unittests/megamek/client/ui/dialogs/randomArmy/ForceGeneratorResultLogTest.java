@@ -72,7 +72,7 @@ class ForceGeneratorResultLogTest {
 
         String line = describeGeneratedForce(trinary, null);
 
-        assertTrue(line.contains("weight asked=Random rolled=Heavy"), line);
+        assertTrue(line.contains("weight asked=Random by units=Heavy"), line);
         assertTrue(line.contains("2 sub-force(s)"), line);
         assertTrue(line.contains("[Nova (Heavy): Battle Armor=5, Mek=5]"), line);
         assertTrue(line.contains("[Strider 1 (no weight): Battle Armor=5 - Elemental Battle Armor [Laser](Sqd5)=3,"
@@ -89,6 +89,21 @@ class ForceGeneratorResultLogTest {
 
         assertTrue(line.contains("weight asked=Assault"), line);
         assertTrue(line.contains("no units"), line);
+    }
+
+    @Test
+    void infantryReportsNoWeight() {
+        ForceDescriptor trinary = formation("Trinary Infantry", UnitType.INFANTRY);
+        trinary.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
+        ForceDescriptor star = formation("Alpha Infantry Star", UnitType.INFANTRY);
+        star.setWeightClass(EntityWeightClass.WEIGHT_MEDIUM);
+        star.addSubForce(namedUnit(UnitType.INFANTRY, "Clan Foot Point (Rifle Light)"));
+        trinary.addSubForce(star);
+
+        String line = describeGeneratedForce(trinary, null);
+
+        assertTrue(line.contains("by units=n/a"), line);
+        assertTrue(line.contains("[Alpha Infantry Star (n/a): Infantry=1"), line);
     }
 
     private static ForceDescriptor formation(String name, int unitType) {

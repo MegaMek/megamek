@@ -1106,11 +1106,12 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * One line describing a generated force for the log: what was asked for, what weight was rolled, and what each
+     * One line describing a generated force for the log: what was asked for, the weight its units average out to (the
+     * generator recalculates each formation's weight from its units, so this is not the roll), and what each
      * direct sub-force holds, by unit type and by unit name. Lets a tester read the outcome of a roll without opening
      * the tree.
      *
-     * <p>Example: {@code CJF 3150 FL Battle Armor 'Battle Armor Trinary' weight asked=Random rolled=Heavy; 3
+     * <p>Example: {@code CJF 3150 FL Battle Armor 'Battle Armor Trinary' weight asked=Random by units=Heavy; 3
      * sub-force(s): [Nova (Heavy): Battle Armor=5, Mek=5 - Elemental Battle Armor [Laser](Sqd5)=5, Timber Wolf
      * Prime=5] ...; totals Battle Armor=15, Mek=5}</p>
      *
@@ -1124,8 +1125,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         line.append(generated.getFaction()).append(' ').append(generated.getYear()).append(' ')
               .append(generated.getRating()).append(' ').append(unitTypeLabel(generated.getUnitType()))
               .append(" '").append(generated.parseName()).append("' weight asked=")
-              .append(weightClassLabel(requestedWeightClass)).append(" rolled=")
-              .append(weightClassLabel(generated.getWeightClass()));
+              .append(weightClassLabel(requestedWeightClass)).append(" by units=")
+              .append(formationWeightLabel(generated));
         List<ForceDescriptor> subForces = generated.getSubForces();
         line.append("; ").append(subForces.size()).append(" sub-force(s):");
         Map<String, Integer> totals = new TreeMap<>();
@@ -1134,9 +1135,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Map<String, Integer> unitNames = new TreeMap<>();
             countUnits(subForce, counts, unitNames);
             line.append(" [").append(subForce.parseName()).append(" (")
-                  .append((subForce.getWeightClass() == null) ? "no weight"
-                        : EntityWeightClass.getClassName(subForce.getWeightClass()))
-                  .append("): ").append(formatCounts(counts));
+                  .append(formationWeightLabel(subForce)).append("): ").append(formatCounts(counts));
             if (!unitNames.isEmpty()) {
                 line.append(" - ").append(formatCounts(unitNames));
             }
@@ -1178,6 +1177,20 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             formatted.append(count.getKey()).append('=').append(count.getValue());
         }
         return formatted.toString();
+    }
+
+    /**
+     * A formation's weight for the log. Conventional infantry has no weight class (its platoons differ by how they
+     * move, not by weight), so every platoon counts as Medium when the weight is recalculated; "n/a" says so instead of
+     * reporting that default as if it meant something.
+     */
+    private static String formationWeightLabel(ForceDescriptor formation) {
+        Integer unitType = formation.getUnitType();
+        if ((unitType != null) && (unitType == UnitType.INFANTRY)) {
+            return "n/a";
+        }
+        return (formation.getWeightClass() == null) ? "no weight"
+              : EntityWeightClass.getClassName(formation.getWeightClass());
     }
 
     private static String weightClassLabel(@Nullable Integer weightClass) {

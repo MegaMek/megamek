@@ -3275,8 +3275,8 @@ public class Princess extends BotClient {
             return true;
         }
         // Try one left
-        entity.setFacing(entity.getFacing() + 1);
-        entity.setSecondaryFacing(entity.getFacing() + 1);
+        entity.setFacing(originalFacing + 1);
+        entity.setSecondaryFacing(originalFacing + 1);
         deployTrain(entity);
         boolean result = checkTowDeployment(entity);
         if (result) {

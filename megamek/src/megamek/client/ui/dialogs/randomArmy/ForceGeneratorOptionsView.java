@@ -1105,6 +1105,74 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
               : UnitType.getTypeDisplayableName(unitType);
     }
 
+    /**
+     * One line describing a generated force for the log: what was asked for, what weight was rolled, and what each
+     * direct sub-force holds. Lets a tester read the outcome of a roll without opening the tree.
+     *
+     * <p>Example: {@code CJF 3150 FL Battle Armor 'Battle Armor Trinary' weight asked=Random rolled=Heavy; 3
+     * sub-force(s): [Nova (Heavy): Battle Armor=5, Mek=5] ...; totals Battle Armor=15, Mek=5}</p>
+     *
+     * @param generated            the generated root
+     * @param requestedWeightClass the weight class on the panel when Generate was pressed, or {@code null} for Random
+     *
+     * @return the summary line
+     */
+    static String describeGeneratedForce(ForceDescriptor generated, @Nullable Integer requestedWeightClass) {
+        StringBuilder line = new StringBuilder();
+        line.append(generated.getFaction()).append(' ').append(generated.getYear()).append(' ')
+              .append(generated.getRating()).append(' ').append(unitTypeLabel(generated.getUnitType()))
+              .append(" '").append(generated.parseName()).append("' weight asked=")
+              .append(weightClassLabel(requestedWeightClass)).append(" rolled=")
+              .append(weightClassLabel(generated.getWeightClass()));
+        List<ForceDescriptor> subForces = generated.getSubForces();
+        line.append("; ").append(subForces.size()).append(" sub-force(s):");
+        Map<String, Integer> totals = new TreeMap<>();
+        for (ForceDescriptor subForce : subForces) {
+            Map<String, Integer> counts = new TreeMap<>();
+            countUnitsByType(subForce, counts);
+            line.append(" [").append(subForce.parseName()).append(" (")
+                  .append((subForce.getWeightClass() == null) ? "no weight"
+                        : EntityWeightClass.getClassName(subForce.getWeightClass()))
+                  .append("): ").append(formatCounts(counts))
+                  .append(']');
+            for (Map.Entry<String, Integer> count : counts.entrySet()) {
+                totals.merge(count.getKey(), count.getValue(), Integer::sum);
+            }
+        }
+        line.append("; totals ").append(formatCounts(totals));
+        return line.toString();
+    }
+
+    private static void countUnitsByType(ForceDescriptor node, Map<String, Integer> counts) {
+        if (node.isElement() && node.getSubForces().isEmpty()) {
+            counts.merge(unitTypeLabel(node.getUnitType()), 1, Integer::sum);
+        }
+        for (ForceDescriptor subForce : node.getSubForces()) {
+            countUnitsByType(subForce, counts);
+        }
+        for (ForceDescriptor attached : node.getAttached()) {
+            countUnitsByType(attached, counts);
+        }
+    }
+
+    private static String formatCounts(Map<String, Integer> counts) {
+        if (counts.isEmpty()) {
+            return "no units";
+        }
+        StringBuilder formatted = new StringBuilder();
+        for (Map.Entry<String, Integer> count : counts.entrySet()) {
+            if (!formatted.isEmpty()) {
+                formatted.append(", ");
+            }
+            formatted.append(count.getKey()).append('=').append(count.getValue());
+        }
+        return formatted.toString();
+    }
+
+    private static String weightClassLabel(@Nullable Integer weightClass) {
+        return (weightClass == null) ? "Random" : EntityWeightClass.getClassName(weightClass);
+    }
+
     private void generateForce() {
         // Logged here rather than in buildForceDescriptor, which a host also calls to read the panel without
         // rolling; this line means a roll is actually starting.
@@ -1568,6 +1636,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             ValueNode n = tocNode.findEchelons(forceDesc);
             if (n != null) {
                 formationDisplayNames.clear();
+                List<String> offeredSizes = new ArrayList<>();
                 for (String formation : n.getContent().split(",")) {
                     Ruleset rs = ruleset;
                     ForceNode fn;
@@ -1591,11 +1660,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                         formName = Messages.getString("ForceGeneratorDialog.understrength") + formName;
                     }
                     formationDisplayNames.put(formation, formName);
+                    offeredSizes.add(formName + " (" + formation + ")");
                     cbFormation.addItem(formation);
                     if (currentFormation != null && currentFormation.equals(formation)) {
                         hasCurrent = true;
                     }
                 }
+                // The sizes as the player sees them, so a missing, duplicated or unnamed size shows in the log.
+                logger.info("[ForceGen][Sizes] faction={} year={} unitType={} offers {}", forceDesc.getFaction(),
+                      forceDesc.getYear(), unitTypeLabel((Integer) cbUnitType.getSelectedItem()),
+                      offeredSizes);
             }
         } else {
             logger.warn("No echelon node found.");
@@ -2223,6 +2297,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private class GenerateTask extends SwingWorker<ForceDescriptor, Double> implements ProgressListener {
         private final ForceDescriptor fd;
+        // Generation rolls a weight class into the descriptor, so the one the player asked for is kept for the log.
+        private final Integer requestedWeightClass;
 
         private final Object progressLock = new Object();
         private double progress = 0;
@@ -2230,6 +2306,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         GenerateTask(ForceDescriptor fd) {
             this.fd = fd;
+            requestedWeightClass = fd.getWeightClass();
         }
 
         @Override
@@ -2273,6 +2350,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                       System.identityHashCode(generated), generated.getName(), generated.getUnitType(),
                       generated.getEchelon(), generated.getWeightClass(),
                       generated.getSubForces() == null ? 0 : generated.getSubForces().size());
+                logger.info("[ForceGen][Result] {}", describeGeneratedForce(generated, requestedWeightClass));
                 updateSummaryTable(generated);
                 forceGenerated = true;
                 refreshInlineFormationMixEditor();

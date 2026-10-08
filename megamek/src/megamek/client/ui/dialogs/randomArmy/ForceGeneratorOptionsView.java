@@ -50,6 +50,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -1497,6 +1498,47 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.addActionListener(this);
     }
 
+    /**
+     * The unit types the menu should offer: those the faction's unit tables can fill, plus the blank combined-arms
+     * entry, which draws on every type. Example: Clan Wolf in 3150 has no ProtoMeks in its tables, so ProtoMek is left
+     * out rather than offered and then generated as an empty formation.
+     *
+     * <p>When no type has any units at all, the tables are not loaded yet rather than empty, so the menu is kept as the
+     * ruleset lists it.</p>
+     *
+     * @param offeredTypes the unit types the ruleset lists, in menu order; {@code null} is combined arms
+     * @param hasUnits     whether the faction's tables hold any units of a type in the current year
+     *
+     * @return the unit types to offer, in the same order
+     */
+    static List<Integer> unitTypesWithUnits(List<Integer> offeredTypes, Predicate<Integer> hasUnits) {
+        List<Integer> stocked = new ArrayList<>();
+        boolean anyStocked = false;
+        for (Integer unitType : offeredTypes) {
+            if (unitType == null) {
+                stocked.add(null);
+            } else if (hasUnits.test(unitType)) {
+                stocked.add(unitType);
+                anyStocked = true;
+            }
+        }
+        return anyStocked ? stocked : offeredTypes;
+    }
+
+    /**
+     * Whether the selected faction's unit tables hold any units of a type in the current year, regardless of rating.
+     * Answers {@code true} when that cannot be known yet, so a type is never hidden for want of loaded data.
+     */
+    private boolean factionHasUnitsOfType(int unitType) {
+        FactionRecord factionRecord = RATGenerator.getInstance().getFaction(forceDesc.getFaction());
+        if ((factionRecord == null) || !RATGenerator.getInstance().isInitialized()) {
+            return true;
+        }
+        UnitTable table = UnitTable.findTable(factionRecord, unitType, forceDesc.getYear(), null, new ArrayList<>(),
+              ModelRecord.NETWORK_NONE, new ArrayList<>(), new ArrayList<>(), 0);
+        return table.getNumEntries() > 0;
+    }
+
     private void refreshUnitTypes() {
         logger.debug("refreshUnitTypes: fdFaction={}", forceDesc.getFaction());
         cbUnitType.removeActionListener(this);
@@ -1510,18 +1552,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (tocNode != null) {
             ValueNode n = tocNode.findUnitTypes(forceDesc);
             if (n != null) {
+                List<Integer> offeredTypes = new ArrayList<>();
                 for (String unitType : n.getContent().split(",")) {
-                    if (unitType.equals("null")) {
-                        cbUnitType.addItem(null);
-                        if (currentType == null) {
-                            hasCurrent = true;
-                        }
-                    } else {
-                        int unitTypeCode = AbstractUnitRecord.parseUnitType(unitType);
-                        cbUnitType.addItem(unitTypeCode);
-                        if ((currentType != null) && (currentType == unitTypeCode)) {
-                            hasCurrent = true;
-                        }
+                    offeredTypes.add(unitType.equals("null") ? null : AbstractUnitRecord.parseUnitType(unitType));
+                }
+                List<Integer> stockedTypes = unitTypesWithUnits(offeredTypes, this::factionHasUnitsOfType);
+                List<String> leftOut = new ArrayList<>();
+                for (Integer unitType : offeredTypes) {
+                    if (!stockedTypes.contains(unitType)) {
+                        leftOut.add(unitTypeLabel(unitType));
+                    }
+                }
+                logger.info("[ForceGen][UnitTypes] faction={} year={} offers {}; left out, no units in the tables: {}",
+                      forceDesc.getFaction(), forceDesc.getYear(), stockedTypes.size(),
+                      leftOut.isEmpty() ? "none" : leftOut);
+                for (Integer unitType : stockedTypes) {
+                    cbUnitType.addItem(unitType);
+                    if (Objects.equals(currentType, unitType)) {
+                        hasCurrent = true;
                     }
                 }
             } else {

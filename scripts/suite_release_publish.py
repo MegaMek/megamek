@@ -15,8 +15,8 @@ from pathlib import Path
 
 from suite_release_plan import (
     REPOS, SOURCES, UnsafeInventory, canonical, check_product_assets, complete_record,
-    download_asset, failure_detail, freeze_and_inventory,
-    gh_get, plan, release_details, validate_previous, valid_sha,
+    download_asset, failure_detail,
+    gh_get, plan, release_details, release_inventory, validate_previous, valid_sha,
 )
 
 from suite_archive_attestation import attest_archives
@@ -55,12 +55,13 @@ class GitHubWrites:
         if result.get("ref") != f"refs/tags/{tag}" or result.get("object", {}).get("sha") != sha:
             raise UnsafeInventory("tag creation response mismatch")
 
-    def release(self, repo, tag, sha):
+    def release(self, repo, tag, sha, *, name, body):
         result = api(["--method", "POST", f"repos/MegaMek/{repo}/releases",
                       "-f", f"tag_name={tag}", "-f", f"target_commitish={sha}",
                       "-F", "draft=false", "-F", "prerelease=false",
-                      "-f", f"name={tag}"])
+                      "-f", f"name={name}", "-f", f"body={body}"])
         if (result.get("tag_name") != tag or result.get("draft") is not False
+                or result.get("name") != name or result.get("body") != body
                 or type(result.get("id")) is not int or result["id"] <= 0):
             raise UnsafeInventory("release creation response mismatch")
         return result["id"]
@@ -76,6 +77,47 @@ class GitHubWrites:
                 or result.get("name") != name or result.get("state") != "uploaded"):
             raise UnsafeInventory("upload response mismatch")
         return result["id"]
+
+
+def release_presentation(record, product=None):
+    channel = record["membership"].capitalize()
+    version = record["version"]
+    suite_name = f"{channel} suite {version}"
+    name = suite_name if product in (None, "MegaMek") else (
+        f"{product} {record['products'][product]['version']} - {suite_name}")
+    record_url = (f"https://github.com/MegaMek/megamek/releases/download/"
+                  f"{record['tag']}/suite-record-{version}.json")
+    lines = [
+        f"**Channel: {channel}**",
+        "",
+        f"**Suite: {version}**",
+        "",
+        f"The [complete suite record]({record_url}) is the authority for channel membership "
+        "and exact product downloads.",
+        "This suite is complete only when that record is available. It is uploaded last, "
+        "after all product archives have been verified.",
+        "",
+        "## Included products",
+        "",
+        "| Product | Version | Download | Frozen source |",
+        "| --- | --- | --- | --- |",
+    ]
+    for included, item in record["products"].items():
+        url = (f"{item['repository']}/releases/download/{item['tag']}/"
+               f"{item['asset']['name']}")
+        source = f"{item['repository']}/commit/{item['commit']}"
+        lines.append(f"| {included} | {item['version']} | [Download]({url}) | "
+                     f"[`{item['commit'][:12]}`]({source}) |")
+    data = record["mmData"]
+    lines += [
+        "",
+        f"Frozen mm-data: [`{data['commit'][:12]}`]({data['repository']}/commit/{data['commit']}).",
+        "",
+        "Product archives may be reused by later suites, including other channels. "
+        "Use each suite's complete record, not an archive's original release title, "
+        "to determine membership.",
+    ]
+    return {"name": name, "body": "\n".join(lines) + "\n"}
 
 
 def ref_commit(repo, tag, getter):
@@ -182,10 +224,9 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
     }
     validate_previous(provisional)
     attest(provisional, paths)
-    # Re-read all four main heads, every tag and published release after build.
-    fresh = freeze_and_inventory(inventory["membership"], inventory["floor"], getter)
-    if any(fresh[key] != inventory[key] for key in ("commits", "tags", "releases")):
-        raise UnsafeInventory("remote inventory moved after build; no writes")
+    fresh = release_inventory(getter)
+    if any(fresh[key] != inventory[key] for key in ("tags", "releases")):
+        raise UnsafeInventory("remote release inventory moved after build; no writes")
     details = release_details(getter)
     remote_previous = complete_record(details["megamek"], fetch, allow_missing=bootstrap)
     if remote_previous != previous:
@@ -208,17 +249,14 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
         for product in changed:
             repo = REPOS[product]
             item = provisional["products"][product]
-            # A movement between preflight and POST must not be silently adopted.
-            if any(getter(f"repos/MegaMek/{source}/commits/main").get("sha")
-                   != inventory["commits"][source] for source in SOURCES):
-                raise UnsafeInventory("main moved during publication; manual recovery required")
             require_tag_absent(repo, item["tag"], getter)
             if any(r.get("tag_name") == item["tag"] for r in release_details(getter)[repo]):
                 raise UnsafeInventory("publication collision; manual recovery required")
             writes.tag(repo, item["tag"], item["commit"])
             if ref_commit(repo, item["tag"], getter) != item["commit"]:
                 raise UnsafeInventory("created tag mismatch")
-            item["releaseId"] = writes.release(repo, item["tag"], item["commit"])
+            item["releaseId"] = writes.release(
+                repo, item["tag"], item["commit"], **release_presentation(provisional, product))
             item["asset"]["assetId"] = writes.upload(repo, item["releaseId"], paths[product])
             current = release_details(getter)
             exact_asset(item, current[repo], repo, fetch, directory, getter)
@@ -226,9 +264,6 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
         current = release_details(getter)
         for p, repo in REPOS.items():
             exact_asset(provisional["products"][p], current[repo], repo, fetch, directory, getter)
-        if any(getter(f"repos/MegaMek/{repo}/commits/main").get("sha") != inventory["commits"][repo]
-               for repo in SOURCES):
-            raise UnsafeInventory("main moved before record publication")
         validate_previous(provisional)
         record_path = directory / f"suite-record-{version}.json"
         record_path.write_text(json.dumps(provisional, indent=2) + "\n", encoding="utf-8")
@@ -244,7 +279,9 @@ def publish(inventory, archives, *, getter=gh_get, fetch=download_asset,
             writes.tag("megamek", "v" + version, inventory["commits"]["megamek"])
             if ref_commit("megamek", "v" + version, getter) != inventory["commits"]["megamek"]:
                 raise UnsafeInventory("suite host tag mismatch")
-            mm_id = writes.release("megamek", "v" + version, inventory["commits"]["megamek"])
+            mm_id = writes.release(
+                "megamek", "v" + version, inventory["commits"]["megamek"],
+                **release_presentation(provisional))
             hosts = release_details(getter)["megamek"]
             if len([r for r in hosts if r.get("id") == mm_id and
                     r.get("tag_name") == "v" + version and r.get("draft") is False]) != 1:

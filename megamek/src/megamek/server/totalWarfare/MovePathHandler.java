@@ -306,8 +306,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
-        // Do the deployment first, if using Walk-on-deployment. avoids future issues
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+        // Do the deployment first, avoids future issues
+        // Since the step DEPLOY is only used by WoD, just process if it has it.
+        if (md.contains(MoveStepType.DEPLOY)) {
             DeploymentServerHelper deploymentProcess = new DeploymentServerHelper(gameManager);
             // We don't set done in a walk on deployment
             boolean setDone = false;
@@ -458,7 +459,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Check if the FORWARDS step goes to a lower hex (3+ levels down)
             // Entity must not have moved (target must be adjacent to starting position)
             MoveStep lastStep = md.getLastStep();
-            if (lastStep != null) {
+            if (lastStep != null && entity.getPosition() != null) {
                 Coords targetPos = lastStep.getPosition();
                 boolean entityAtStart = entity.getPosition().distance(targetPos) == 1;
                 if (entityAtStart && ClimbingHelper.isAtEdge(entity, targetPos, getGame())) {

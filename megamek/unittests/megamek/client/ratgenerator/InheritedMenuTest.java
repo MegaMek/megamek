@@ -32,6 +32,7 @@
  */
 package megamek.client.ratgenerator;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 
+import megamek.common.units.UnitType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,6 +54,8 @@ import org.junit.jupiter.api.io.TempDir;
  * offered Calderon no unit types or sizes (MegaMek/mekhq#10376 item 8). The ComStar Explorer Corps had the same gap.
  */
 class InheritedMenuTest {
+
+    private static final int ECHELON_LANCE = 3;
 
     @TempDir
     Path temporaryDirectory;
@@ -91,6 +95,26 @@ class InheritedMenuTest {
         request.setFaction("CDP");
         request.setYear(3085);
         assertNotNull(menus.findUnitTypes(request), "Calderon should be offered the Taurian unit types");
+    }
+
+    @Test
+    void calderonFormationsTakeTheirNameFromTheTaurianRules() throws Exception {
+        Ruleset calderon = ShippedRulesetLoader.load("CDP.xml", "CDP", "TC",
+              Files.createDirectories(temporaryDirectory.resolve("CDP")));
+        Ruleset taurian = ShippedRulesetLoader.load("TC.xml", "TC", Files.createDirectories(temporaryDirectory.resolve(
+              "TC")));
+        HashMap<String, Ruleset> isolated = new HashMap<>();
+        isolated.put("CDP", calderon);
+        isolated.put("TC", taurian);
+        rulesetTable.set(null, isolated);
+
+        ForceDescriptor lance = new ForceDescriptor();
+        lance.setFaction("CDP");
+        lance.setYear(3085);
+        lance.setUnitType(UnitType.TANK);
+        lance.setEchelon(ECHELON_LANCE);
+
+        assertEquals("Lance", lance.parseName(), "a Calderon Lance came out with a blank name");
     }
 
     @Test

@@ -1451,9 +1451,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
-        List<FactionRecord> activePoliticalFactions = RATGenerator.getInstance().getFactionList().stream()
-              .filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
-              .sorted(Comparator.comparing(fr -> fr.getName(currentYear))).toList();
+        List<FactionRecord> activePoliticalFactions = new ArrayList<>();
+        List<String> withoutMenus = new ArrayList<>();
+        for (FactionRecord factionRecord : RATGenerator.getInstance().getFactionList()) {
+            if (factionRecord.getKey().contains(".") || !factionRecord.isActiveInYear(currentYear)) {
+                continue;
+            }
+            // A faction whose rules offer no unit types could only ever show empty menus, so it is left out until
+            // someone gives it rules (the Malthus Confederation and Vesper Marches have no published organization).
+            TOCNode menus = Ruleset.findTOCNode(Ruleset.findRuleset(factionRecord.getKey()));
+            if ((menus != null) && menus.offersUnitTypes(factionRecord.getKey(), currentYear)) {
+                activePoliticalFactions.add(factionRecord);
+            } else {
+                withoutMenus.add(factionRecord.getKey());
+            }
+        }
+        activePoliticalFactions.sort(Comparator.comparing(fr -> fr.getName(currentYear)));
+        logger.info("[ForceGen][Factions] year={} lists {}; left out, no menus: {}", currentYear,
+              activePoliticalFactions.size(), withoutMenus.isEmpty() ? "none" : withoutMenus);
         ((DefaultComboBoxModel<FactionRecord>) cbFaction.getModel()).addAll(activePoliticalFactions);
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||

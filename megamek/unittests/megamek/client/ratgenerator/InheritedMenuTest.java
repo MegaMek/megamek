@@ -33,6 +33,7 @@
 package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -115,6 +116,20 @@ class InheritedMenuTest {
         lance.setEchelon(ECHELON_LANCE);
 
         assertEquals("Lance", lance.parseName(), "a Calderon Lance came out with a blank name");
+    }
+
+    @Test
+    void aFactionWithNoMenusIsNotOffered() throws Exception {
+        // Malthus Confederation and Vesper Marches have no parents, so they get an empty ruleset; the Force Generator
+        // leaves them out of its faction list rather than showing empty menus.
+        rulesetTable.set(null, new HashMap<String, Ruleset>());
+        Ruleset calderonAlone = ShippedRulesetLoader.load("CDP.xml", "CDP", "NO_SUCH_PARENT",
+              Files.createDirectories(temporaryDirectory.resolve("CDP")));
+        Ruleset taurian = ShippedRulesetLoader.load("TC.xml", "TC", Files.createDirectories(temporaryDirectory.resolve(
+              "TC")));
+
+        assertFalse(calderonAlone.getTOCNode().offersUnitTypes("CDP", 3151), "an empty menu offers nothing");
+        assertTrue(taurian.getTOCNode().offersUnitTypes("TC", 3151));
     }
 
     @Test

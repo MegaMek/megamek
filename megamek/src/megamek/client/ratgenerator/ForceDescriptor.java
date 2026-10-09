@@ -160,6 +160,11 @@ public class ForceDescriptor {
     // What the mix actually achieved, set on the root by the allocator. Null when no mix was applied.
     private FormationMixReport formationMixReport;
     private String generationRule;
+    // The generate rule of the <subforces> block that created this node, set only by that block. Kept apart from
+    // generationRule, which a node also takes from its own children's block when its parent's block declared none:
+    // reading that one, a Clan Star mistook its Points' "model" rule for its own and shared one model across all its
+    // Points, so a Point's two units could each hold two different models and come out mismatched.
+    private String blockGenerationRule;
     private boolean topLevel;
     private boolean element;
     private int positionIndex;
@@ -316,8 +321,8 @@ public class ForceDescriptor {
                 // so a node holding several of them honours each in turn. A node with one block yields
                 // one group and behaves exactly as it did when the rule was read off the node itself.
                 Map<String, List<ForceDescriptor>> byBlockRule = subForces.stream()
-                                                                          .filter(sub -> sub.getGenerationRule() != null)
-                      .collect(Collectors.groupingBy(ForceDescriptor::getGenerationRule));
+                                                                          .filter(sub -> sub.getBlockGenerationRule() != null)
+                      .collect(Collectors.groupingBy(ForceDescriptor::getBlockGenerationRule));
                 if (!byBlockRule.isEmpty()) {
                     byBlockRule.forEach(this::generateByRule);
                 } else if (generationRule != null) {
@@ -738,6 +743,7 @@ public class ForceDescriptor {
                         }
                         if (Compute.d6(2) >=
                               target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
+                            Set<String> chassisBeforeAttempt = new HashSet<>(sub.getChassis());
                             sub.getChassis().clear();
                             sub.getChassis().add(model);
                             int oldWt = sub.getWeightClass();
@@ -752,6 +758,10 @@ public class ForceDescriptor {
                                 break;
                             } else {
                                 sub.setWeightClass(oldWt);
+                                // Put the slot back as it was. Left pinned to the partner's chassis, a slot that
+                                // then fails every other pick becomes a chassis-only element: it loads whatever
+                                // that chassis name resolves to, or nothing, which shows as a blank entry.
+                                restoreChassis(sub, chassisBeforeAttempt);
                             }
                         }
                     } else {
@@ -799,6 +809,7 @@ public class ForceDescriptor {
                         }
                     }
                     if (Compute.d6(2) >= target - ((av == null) ? 0 : av.adjustForRating(ratingLevel, totalLevels))) {
+                        Set<String> chassisBeforeAttempt = new HashSet<>(sub.getChassis());
                         sub.getChassis().add(baseModel.getChassis());
                         sub.setWeightClass(-1);
                         unit = sub.generate();
@@ -808,6 +819,9 @@ public class ForceDescriptor {
                                 weights.remove(sub.getWeightClass());
                             }
                             foundUnit = true;
+                        } else {
+                            // As above: a failed attempt must not leave the slot pinned to the base model's chassis.
+                            restoreChassis(sub, chassisBeforeAttempt);
                         }
                     } else if (ut == UnitType.TANK && Compute.d6(2) >= target - 6) {
                         if (useWeights) {
@@ -849,6 +863,17 @@ public class ForceDescriptor {
                 baseModel = null;
             }
         }
+    }
+
+    /**
+     * Puts a slot's chassis pins back as they were before an attempt that failed.
+     *
+     * @param slot                 the slot the attempt was made for
+     * @param chassisBeforeAttempt the slot's chassis pins before the attempt
+     */
+    private static void restoreChassis(ForceDescriptor slot, Set<String> chassisBeforeAttempt) {
+        slot.getChassis().clear();
+        slot.getChassis().addAll(chassisBeforeAttempt);
     }
 
     /**
@@ -947,7 +972,7 @@ public class ForceDescriptor {
         Map<String, List<ForceDescriptor>> sharedUnitBlocks = new LinkedHashMap<>();
         List<ForceDescriptor> formationMembers = new ArrayList<>();
         for (ForceDescriptor sub : subs) {
-            String rule = sub.getGenerationRule();
+            String rule = sub.getBlockGenerationRule();
             // A block declaring no rule leaves its children with a null one, and an immutable Set
             // throws rather than answering contains(null), so the null case is settled first.
             boolean sharesOneUnit = (rule != null) && SHARED_UNIT_RULES.contains(rule);
@@ -1002,6 +1027,16 @@ public class ForceDescriptor {
      */
     private void shareOneUnitAcross(String rule, List<ForceDescriptor> members) {
         boolean shareChassis = rule.equals("chassis");
+        // A pick already made for this node - by a formation one level up, say - reaches the members when each one
+        // copies its parent's models and chassis, which happens after this. Picking another unit here would leave
+        // every member holding two, and each would then draw one of them at random: a Clan aerospace Point came out
+        // as two different fighters. The pick this node already carries is the shared unit.
+        boolean isAlreadyPicked = shareChassis ? !chassis.isEmpty() : !models.isEmpty();
+        if (isAlreadyPicked) {
+            LOGGER.debug("[ForceGen][GenRule] '{}': already carries a {} pick, which its {} child(ren) will share",
+                  parseName(), rule, members.size());
+            return;
+        }
         // Only the members without a pick are given one. Testing that they all lack one would let a
         // partly-picked block through and add a second model to those that already had theirs, which
         // an ancestor had set deliberately.
@@ -2161,7 +2196,9 @@ public class ForceDescriptor {
     public String parseName() {
         String retVal = name;
         if (name == null) {
-            String echelonName = Ruleset.findRuleset(this).getEschelonName(this);
+            // Walk the parent chain: a faction that borrows its parent's rules (the Calderon Protectorate uses the
+            // Taurian ones) has no echelon names of its own, and its formations came out with blank names.
+            String echelonName = findEschelonName();
             if (echelonName == null) {
                 return "";
             }
@@ -2481,6 +2518,60 @@ public class ForceDescriptor {
         attached.forEach(ForceDescriptor::clearGeneratedUnits);
     }
 
+    /**
+     * Removes every node under this one that ended up holding no unit, along with any formation left empty by that.
+     *
+     * <p>A leaf the unit tables could not fill still gets a commander later, so without this the finished force
+     * shows a named pilot with nothing to crew - and MekHQ turns that node into an empty force. Run after
+     * {@link #generateUnits(Ruleset.ProgressListener, double)} and before commanders are assigned. This node itself
+     * is never removed; a caller holding an empty root still sees the failure in the log.</p>
+     *
+     * @return how many nodes were removed
+     */
+    public int removeNodesWithoutUnits() {
+        int removed = removeNodesWithoutUnits(subForces) + removeNodesWithoutUnits(attached);
+        if (removed > 0) {
+            LOGGER.warn("[ForceGen] Removed {} node(s) with no unit under '{}' (unitType={} faction={} year={})",
+                  removed, name, describeUnitType(unitType), faction, year);
+        }
+        return removed;
+    }
+
+    /**
+     * Whether this force holds any unit of its own, not counting attached support. A force the unit tables could not
+     * fill has none: every slot was removed, leaving at most the support attached to it, such as a regiment's artillery
+     * company with no regiment behind it.
+     *
+     * @return {@code true} when this node or any node under it, outside its attachments, holds a unit
+     */
+    public boolean hasLineUnits() {
+        if (element) {
+            return true;
+        }
+        for (ForceDescriptor subForce : subForces) {
+            if (subForce.hasLineUnits()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int removeNodesWithoutUnits(List<ForceDescriptor> children) {
+        int removed = 0;
+        Iterator<ForceDescriptor> iterator = children.iterator();
+        while (iterator.hasNext()) {
+            ForceDescriptor child = iterator.next();
+            removed += removeNodesWithoutUnits(child.subForces) + removeNodesWithoutUnits(child.attached);
+            if (!child.element && child.subForces.isEmpty() && child.attached.isEmpty()) {
+                LOGGER.debug("[ForceGen] Removing node with no unit: unitType={} echelon={} name='{}'",
+                      describeUnitType(child.unitType), child.echelon, child.name);
+                iterator.remove();
+                removed++;
+            }
+        }
+        return removed;
+    }
+
     public void setFormationType(FormationType ft) {
         formationType = ft;
     }
@@ -2535,6 +2626,24 @@ public class ForceDescriptor {
 
     public void setGenerationRule(String rule) {
         generationRule = rule;
+    }
+
+    /**
+     * @return the generate rule of the {@code <subforces>} block that created this node, or {@code null} when that
+     *       block declared none
+     */
+    public @Nullable String getBlockGenerationRule() {
+        return blockGenerationRule;
+    }
+
+    /**
+     * Records the generate rule of the {@code <subforces>} block that created this node. Only that block, or a copy
+     * of one of its children, should set it.
+     *
+     * @param rule the block's rule, or {@code null} when it declared none
+     */
+    public void setBlockGenerationRule(@Nullable String rule) {
+        blockGenerationRule = rule;
     }
 
     public Set<MissionRole> getRoles() {

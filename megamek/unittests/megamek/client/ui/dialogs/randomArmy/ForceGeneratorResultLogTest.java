@@ -36,6 +36,7 @@ import static megamek.client.ui.dialogs.randomArmy.ForceGeneratorOptionsView.des
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.client.ratgenerator.ForceDescriptor;
+import megamek.client.ratgenerator.InfantryClass;
 import megamek.common.units.EntityWeightClass;
 import megamek.common.units.UnitType;
 import org.junit.jupiter.api.Test;
@@ -104,6 +105,22 @@ class ForceGeneratorResultLogTest {
 
         assertTrue(line.contains("by units=n/a"), line);
         assertTrue(line.contains("[Alpha Infantry Star (n/a): Infantry=1"), line);
+    }
+
+    @Test
+    void infantryReportsItsPlatoonsClasses() {
+        ForceDescriptor company = formation("Company", UnitType.INFANTRY);
+        ForceDescriptor platoons = formation("1st Platoon", UnitType.INFANTRY);
+        platoons.addSubForce(namedUnit(UnitType.INFANTRY, "Foot Platoon (Rifle)"));
+        platoons.addSubForce(namedUnit(UnitType.INFANTRY, "Foot Platoon (Laser)"));
+        platoons.addSubForce(namedUnit(UnitType.INFANTRY, "Motorized Platoon (Rifle)"));
+        company.addSubForce(platoons);
+
+        String line = describeGeneratedForce(company, null,
+              platoon -> platoon.getModelName().startsWith("Foot") ? InfantryClass.LIGHT : InfantryClass.MOTORIZED);
+
+        assertTrue(line.contains("[1st Platoon (Light (Foot)=2, Motorized=1)"), line);
+        assertTrue(line.contains("by units=Light (Foot)=2, Motorized=1"), line);
     }
 
     private static ForceDescriptor formation(String name, int unitType) {

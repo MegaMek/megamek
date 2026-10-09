@@ -40,6 +40,7 @@ import megamek.common.rules.RulesAmmo;
 import megamek.server.totalWarfare.TWDamageManager;
 
 public class TWRulesAmmo extends RulesAmmo {
+
     /**
      * Return the modifier for armor piercing based on size.
      *
@@ -69,11 +70,13 @@ public class TWRulesAmmo extends RulesAmmo {
      * Armor Piercing attack modifiers.
      *
      * @param ammoType the type of ammunition
-     * @param toHit the to-hit data to modify
-     * @param AP true if armor piercing is in effect
+     * @param toHit    the to-hit data to modify
+     * @param AP       true if armor piercing is in effect
      */
     @Override
-    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType, ToHitData toHit, boolean AP) {
+    public void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType,
+                                       ToHitData toHit,
+                                       boolean AP) {
         switch (ammoType) {
             case AmmoType.AmmoTypeEnum.AC:
             case AmmoType.AmmoTypeEnum.LAC:
@@ -91,7 +94,8 @@ public class TWRulesAmmo extends RulesAmmo {
      * @param toHit the to-hit data
      */
     @Override
-    public void narcHomingTarget(ToHitData toHit) {}
+    public void narcHomingTarget(ToHitData toHit) {
+    }
 
     /**
      * Acid (AX) missiles are -2 on the cluster roll.
@@ -106,13 +110,15 @@ public class TWRulesAmmo extends RulesAmmo {
     /**
      * They only ignore damage reduction, no bonus.
      *
-     * @param armor the armor value
-     * @param mods the modifications info
+     * @param armor  the armor value
+     * @param mods   the modifications info
      * @param damage the damage amount
      * @return the adjusted damage for AX missiles
      */
     @Override
-    public int getAXMissileDamage(int armor, TWDamageManager.ModsInfo mods, int damage) {
+    public int getAXMissileDamage(int armor,
+                                  TWDamageManager.ModsInfo mods,
+                                  int damage) {
         return damage;
     }
 
@@ -120,12 +126,14 @@ public class TWRulesAmmo extends RulesAmmo {
      * Semi-guided can eliminate movement modifiers.
      *
      * @param modifierValue the modifier value
-     * @param movementMod true if this is a movement modifier
-     * @param terrainMod true if this is a terrain modifier
+     * @param movementMod   true if this is a movement modifier
+     * @param terrainMod    true if this is a terrain modifier
      * @return the adjusted modifier for semi-guided ammunition
      */
     @Override
-    public int getSemiGuidedAdjustment(int modifierValue, boolean movementMod, boolean terrainMod) {
+    public int getSemiGuidedAdjustment(int modifierValue,
+                                       boolean movementMod,
+                                       boolean terrainMod) {
         // Semi guided eliminates movement modifier
         if (movementMod) {
             return modifierValue;
@@ -147,11 +155,59 @@ public class TWRulesAmmo extends RulesAmmo {
      * Semi-guided does not modify number of missiles.
      *
      * @param taggedTarget true if the target is tagged
-     * @param indirect true if the attack is indirect
+     * @param indirect     true if the attack is indirect
      * @return the modification to the number of missiles for semi-guided
      */
     @Override
-    public int getSemiGuidedNMissiles(boolean taggedTarget, boolean indirect) {
+    public int getSemiGuidedNMissiles(boolean taggedTarget,
+                                      boolean indirect) {
         return 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     * This sets values which only exist in TW. It calls the super to check for common ones
+     *
+     * @param munition AmmoType of the item being considered
+     * @return the BV for the munition.
+     */
+    @Override
+    public double getAmmoBVAdjusted(final AmmoType munition) {
+        if (munition == null) {
+            return 0;
+        }
+        // If there is no base munition, no need to check this
+        if (munition.getBaseAmmo() == null) {
+            return munition.getBaseBV();
+        }
+        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_CASELESS))) {
+            return munition.getBaseAmmo().getBaseBV() * 2.0;
+        }
+        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD))) {
+            return munition.getBaseAmmo().getBaseBV() * 2;
+        }
+
+        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))) {
+            // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
+            return munition.getBaseAmmo().getRackSize() * munition.getShots() / 5.0 * 4;
+        }
+
+        return super.getAmmoBVAdjusted(munition);
     }
 }

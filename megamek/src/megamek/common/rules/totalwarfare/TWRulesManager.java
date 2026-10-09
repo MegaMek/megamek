@@ -34,8 +34,6 @@ package megamek.common.rules.totalwarfare;
  */
 
 import megamek.common.rules.*;
-import megamek.common.rules.RulesManager;
-import megamek.common.rules.RulesTarget;
 import megamek.common.rules.core.CoreRulesScanning;
 
 public class TWRulesManager implements RulesManager {

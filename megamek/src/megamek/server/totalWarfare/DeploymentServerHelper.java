@@ -38,7 +38,6 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -377,16 +376,12 @@ public class DeploymentServerHelper {
         if (tractor.getAllTowedUnits().isEmpty()) {
             return true;
         }
-        Game game = gameManager.getGame();
-
-        Board board = game.getBoard(boardId);
-        for (Coords trainHex : TrainLayout.deploymentFootprint(game, tractor, coords, facing)) {
-            if (!game.hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex,
-                                                                                      tractor)) {
-                LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
-                            + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
-                return false;
-            }
+        Coords illegalHex = TrainLayout.firstIllegalDeploymentHex(gameManager.getGame(), tractor, coords, boardId,
+              facing);
+        if (illegalHex != null) {
+            LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
+                        + "deployment hex", tractor.getDisplayName(), coords, facing, illegalHex);
+            return false;
         }
         return true;
     }

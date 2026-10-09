@@ -43,6 +43,7 @@ import java.util.TreeSet;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
@@ -169,7 +170,7 @@ public class UtilityPathRanker extends BasicPathRanker {
 
         double braveryMod = getBraveryMod(successProbability, damageEstimate, expectedDamageTaken);
 
-        var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap();
+        var isNotAirborne = !path.getEntity().isAirborneAeroOnGroundMap(path.contains(MoveStepType.DEPLOY));
         // the only critters not subject to aggression and mutual support mods are
         // airborne aeros on ground maps, as they move incredibly fast
         // The further I am from a target, the lower this path ranks

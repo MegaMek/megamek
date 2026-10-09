@@ -89,9 +89,30 @@ final class ShippedRulesetLoader {
      * @return the parsed ruleset
      */
     static Ruleset load(String fileName, String factionKey, Path temporaryDirectory) throws Exception {
+        return load(fileName, factionKey, null, temporaryDirectory);
+    }
+
+    /**
+     * Parses a copy of a shipped ruleset, naming its parent ruleset explicitly. A rule that borrows its parent's
+     * sub-forces ({@code <asParent />}) looks the parent up by this key, so a test that installs both rulesets can
+     * exercise it.
+     *
+     * @param fileName           the shipped ruleset file, e.g. {@code CW.xml}
+     * @param factionKey         the faction key declared in that file
+     * @param parentKey          the parent ruleset's faction key, or {@code null} to take it from the key
+     * @param temporaryDirectory where to write the isolated copy
+     *
+     * @return the parsed ruleset
+     */
+    static Ruleset load(String fileName, String factionKey, String parentKey, Path temporaryDirectory)
+          throws Exception {
         String rulesetText = Files.readString(new File(factionRulesDir(), fileName).toPath(), StandardCharsets.UTF_8);
-        String isolatedText = rulesetText.replaceFirst("faction=\"" + factionKey + "\"",
-              "faction=\"" + factionKey + ".isolatedTest\"");
+        String isolatedFaction = "faction=\"" + factionKey + ".isolatedTest\"";
+        if (parentKey != null) {
+            rulesetText = rulesetText.replaceFirst(" parent=\"[^\"]*\"", "");
+            isolatedFaction += " parent=\"" + parentKey + "\"";
+        }
+        String isolatedText = rulesetText.replaceFirst("faction=\"" + factionKey + "\"", isolatedFaction);
         Path isolatedFile = temporaryDirectory.resolve(fileName);
         Files.writeString(isolatedFile, isolatedText, StandardCharsets.UTF_8);
 

@@ -2286,7 +2286,9 @@ public class ForceDescriptor {
     public String parseName() {
         String retVal = name;
         if (name == null) {
-            String echelonName = Ruleset.findRuleset(this).getEschelonName(this);
+            // Walk the parent chain: a faction that borrows its parent's rules (the Calderon Protectorate uses the
+            // Taurian ones) has no echelon names of its own, and its formations came out with blank names.
+            String echelonName = findEschelonName();
             if (echelonName == null) {
                 return "";
             }

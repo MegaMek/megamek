@@ -428,17 +428,10 @@ def discovered_inventory(membership, getter=gh_get, fetch=download_asset,
     return inventory
 
 
-def freeze_and_inventory(membership, floor, getter=gh_get):
-    """Read-only input collection. Previous is null until separately attested."""
-    commits = {}
+def release_inventory(getter=gh_get):
+    """Read tags and published releases without replacing frozen source commits."""
     tags = {}
     releases = {}
-    for repo in SOURCES:
-        head = getter(f"repos/MegaMek/{repo}/commits/main")
-        sha = head.get("sha") if isinstance(head, dict) else None
-        if not valid_sha(sha):
-            raise UnsafeInventory(f"invalid main HEAD for {repo}")
-        commits[repo] = sha
     for repo in REPOS.values():
         tags[repo] = []
         releases[repo] = []
@@ -459,7 +452,19 @@ def freeze_and_inventory(membership, floor, getter=gh_get):
                 if len(entries) < 100:
                     break
                 page += 1
-    return {"commits": commits, "tags": tags, "releases": releases, "previous": None,
+    return {"tags": tags, "releases": releases}
+
+
+def freeze_and_inventory(membership, floor, getter=gh_get):
+    """Capture main once; previous is null until separately attested."""
+    commits = {}
+    for repo in SOURCES:
+        head = getter(f"repos/MegaMek/{repo}/commits/main")
+        sha = head.get("sha") if isinstance(head, dict) else None
+        if not valid_sha(sha):
+            raise UnsafeInventory(f"invalid main HEAD for {repo}")
+        commits[repo] = sha
+    return {"commits": commits, **release_inventory(getter), "previous": None,
             "membership": membership, "floor": floor}
 
 

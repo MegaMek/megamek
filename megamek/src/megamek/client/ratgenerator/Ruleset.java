@@ -593,6 +593,28 @@ public class Ruleset {
         return toc;
     }
 
+    /**
+     * The table of contents the Force Generator menus come from: this ruleset's own, or the nearest parent's when this
+     * one has none. A ruleset file with no {@code <toc>} still gets an empty one, so an empty table counts as none.
+     * Without that, the Calderon Protectorate (whose file only names the Taurian Concordat as its parent) offered no
+     * unit types or sizes at all.
+     *
+     * @param ruleset the ruleset to start from, or {@code null}
+     *
+     * @return the table of contents, or {@code null} when no ruleset in the chain has one
+     */
+    public static @Nullable TOCNode findTOCNode(@Nullable Ruleset ruleset) {
+        Ruleset current = ruleset;
+        while (current != null) {
+            TOCNode toc = current.getTOCNode();
+            if ((toc != null) && !toc.isEmpty()) {
+                return toc;
+            }
+            current = (current.getParent() == null) ? null : findRuleset(current.getParent());
+        }
+        return null;
+    }
+
     public ForceNode findForceNode(ForceDescriptor fd) {
         for (ForceNode n : forceNodes) {
             if (n.getEchelon().equals(fd.getEchelon()) && n.matches(fd)) {

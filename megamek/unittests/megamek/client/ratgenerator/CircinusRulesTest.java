@@ -140,6 +140,33 @@ class CircinusRulesTest {
         assertEquals(UnitType.AEROSPACE_FIGHTER, wings.getSubForces().get(0).getUnitType());
         assertEquals(UnitType.CONV_FIGHTER, wings.getSubForces().get(1).getUnitType(),
               "half the Wings fly conventional fighters");
+        // A rule line that fails to load is only logged, so build each half and the Cavalry and count them.
+        for (ForceDescriptor half : wings.getSubForces()) {
+            ForceNode halfRule = houseGuard.findForceNode(half);
+            assertNotNull(halfRule, "no rule for " + half.getName());
+            halfRule.apply(half);
+            assertEquals(9, half.getSubForces().size(), half.getName() + " should be nine fighters");
+        }
+        ForceDescriptor cavalry = guard.getSubForces().get(4);
+        ForceNode cavalryRule = houseGuard.findForceNode(cavalry);
+        assertNotNull(cavalryRule, "no rule for the McIntyre Armored Cavalry");
+        cavalryRule.apply(cavalry);
+        assertEquals(4, cavalry.getSubForces().size(), "two tank companies and two hovercraft lances");
+
+        // The Militia is mechanized infantry: its companies must never roll over to battle armor.
+        for (int roll = 0; roll < 50; roll++) {
+            ForceDescriptor militiaCompany = new ForceDescriptor();
+            militiaCompany.setFaction("CIR.MHG");
+            militiaCompany.setYear(3065);
+            militiaCompany.setUnitType(UnitType.INFANTRY);
+            militiaCompany.setEchelon(ECHELON_COMPANY);
+            militiaCompany.setName("McIntyre Militia Company");
+            ForceNode militiaRule = houseGuard.findForceNode(militiaCompany);
+            assertNotNull(militiaRule, "no rule for a McIntyre Militia company");
+            militiaRule.apply(militiaCompany);
+            assertEquals(UnitType.INFANTRY, militiaCompany.getUnitType(), "a Militia company became battle armor");
+            assertEquals(3, militiaCompany.getSubForces().size());
+        }
 
         assertNull(houseGuard.findForceNode(mekCompany("CIR.MHG")),
               "the House Guard keeps support out of its companies, so it uses the plain IS company");

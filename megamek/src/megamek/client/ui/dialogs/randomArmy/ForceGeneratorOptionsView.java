@@ -1141,12 +1141,28 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
      * @return the summary line
      */
     static String describeGeneratedForce(ForceDescriptor generated, @Nullable Integer requestedWeightClass) {
+        return describeGeneratedForce(generated, requestedWeightClass,
+              platoon -> (platoon.getEntity() == null) ? null : infantryClassOf(platoon.getEntity()));
+    }
+
+    /**
+     * As {@link #describeGeneratedForce(ForceDescriptor, Integer)}, reading each infantry platoon's class through
+     * {@code classOf}. The game reads it from the generated unit; a test can supply its own.
+     *
+     * @param generated            the generated root
+     * @param requestedWeightClass the weight class asked for, or {@code null} for Random
+     * @param classOf              the infantry class of a generated platoon, or {@code null} when it has none
+     *
+     * @return the summary line
+     */
+    static String describeGeneratedForce(ForceDescriptor generated, @Nullable Integer requestedWeightClass,
+          Function<ForceDescriptor, InfantryClass> classOf) {
         StringBuilder line = new StringBuilder();
         line.append(generated.getFaction()).append(' ').append(generated.getYear()).append(' ')
               .append(generated.getRating()).append(' ').append(unitTypeLabel(generated.getUnitType()))
               .append(" '").append(generated.parseName()).append("' weight asked=")
               .append(weightClassLabel(requestedWeightClass)).append(" by units=")
-              .append(formationWeightLabel(generated));
+              .append(formationWeightLabel(generated, classOf));
         List<ForceDescriptor> subForces = generated.getSubForces();
         line.append("; ").append(subForces.size()).append(" sub-force(s):");
         Map<String, Integer> totals = new TreeMap<>();
@@ -1155,7 +1171,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             Map<String, Integer> unitNames = new TreeMap<>();
             countUnits(subForce, counts, unitNames);
             line.append(" [").append(subForce.parseName()).append(" (")
-                  .append(formationWeightLabel(subForce)).append("): ").append(formatCounts(counts));
+                  .append(formationWeightLabel(subForce, classOf)).append("): ").append(formatCounts(counts));
             if (!unitNames.isEmpty()) {
                 line.append(" - ").append(formatCounts(unitNames));
             }
@@ -1200,17 +1216,35 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     /**
-     * A formation's weight for the log. Conventional infantry has no weight class (its platoons differ by how they
-     * move, not by weight), so every platoon counts as Medium when the weight is recalculated; "n/a" says so instead of
-     * reporting that default as if it meant something.
+     * A formation's weight for the log. Conventional infantry has no weight class: its platoons differ by how they move,
+     * so an infantry formation reports its platoons' classes instead, for example "Light (Foot)=3, Motorized=2". It says
+     * "n/a" when no platoon's class is known.
      */
-    private static String formationWeightLabel(ForceDescriptor formation) {
+    private static String formationWeightLabel(ForceDescriptor formation, Function<ForceDescriptor, InfantryClass> classOf) {
         Integer unitType = formation.getUnitType();
         if ((unitType != null) && (unitType == UnitType.INFANTRY)) {
-            return "n/a";
+            Map<String, Integer> classes = new TreeMap<>();
+            countInfantryClasses(formation, classes, classOf);
+            return classes.isEmpty() ? "n/a" : formatCounts(classes);
         }
         return (formation.getWeightClass() == null) ? "no weight"
               : EntityWeightClass.getClassName(formation.getWeightClass());
+    }
+
+    private static void countInfantryClasses(ForceDescriptor node, Map<String, Integer> classes,
+          Function<ForceDescriptor, InfantryClass> classOf) {
+        if (node.isElement() && node.getSubForces().isEmpty()) {
+            InfantryClass infantryClass = classOf.apply(node);
+            if (infantryClass != null) {
+                classes.merge(infantryClass.getDisplayName(), 1, Integer::sum);
+            }
+        }
+        for (ForceDescriptor subForce : node.getSubForces()) {
+            countInfantryClasses(subForce, classes, classOf);
+        }
+        for (ForceDescriptor attached : node.getAttached()) {
+            countInfantryClasses(attached, classes, classOf);
+        }
     }
 
     private static String weightClassLabel(@Nullable Integer weightClass) {

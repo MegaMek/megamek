@@ -3868,10 +3868,12 @@ public class Compute {
                 } else if (attacker.isCapitalFighter()) {
                     double av = 0;
                     double threat = 1;
-                    // Capital weapons have a different range scale
                     if (wt.isCapital()) {
                         // Capital missiles should have higher priority than standard missiles
                         threat = 12;
+                    }
+                    // Range scale can differ from damage scale, e.g. bomb missiles use capital brackets
+                    if (wt.usesCapitalRangeBrackets()) {
                         if (rangeToTarget > 50) {
                             av = 0;
                         } else if (rangeToTarget > 40) {

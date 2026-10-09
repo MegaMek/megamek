@@ -42,7 +42,7 @@ class AttestationTests(unittest.TestCase):
             megamekVersion=self.props["MegaMek"]["version"],
             megameklabVersion=self.props["MegaMekLab"]["version"])
 
-    def write(self, product, entries=None):
+    def write(self, product, entries=None, *, extra=()):
         path = self.paths[product]
         root = path.name.removesuffix(".tar.gz")
         payload = ("\n".join(f"{key}={value}" for key, value in
@@ -54,6 +54,7 @@ class AttestationTests(unittest.TestCase):
                 for place in (("lib/",) if product == "MegaMekLab" and
                               jar == "MegaMek.jar" else ("", "lib/")):
                     entries.append((root + "/" + place + jar, jar.encode()))
+        entries = [*entries, *((root + "/" + name, data) for name, data in extra)]
         with tarfile.open(path, "w:gz") as archive:
             for name, data in entries:
                 info = tarfile.TarInfo(name)
@@ -64,15 +65,28 @@ class AttestationTests(unittest.TestCase):
         for product in release.REPOS:
             self.write(product)
 
-    def run_fake(self):
+    def run_fake(self, *, portable=True):
         calls = []
 
         def fake(command, **kwargs):
             calls.append((command, kwargs))
             return subprocess.CompletedProcess(command, 0)
 
-        attestation.attest_archives(self.record, self.paths, fake, self.worktrees)
+        attestation.attest_archives(
+            self.record, self.paths, fake, self.worktrees, portable=portable)
         return calls
+
+    def test_historical_read_only_contract_does_not_disable_identity_checks(self):
+        self.write_all()
+        aliases = (("bin/MegaMek", b"legacy"), ("bin/megamek", b"legacy"))
+        self.write("MekHQ", extra=aliases)
+        with self.assertRaisesRegex(release.UnsafeInventory, "case/normalization"):
+            self.run_fake()
+        self.assertEqual(len(self.run_fake(portable=False)), 3)
+        self.props["MekHQ"]["mmDataCommit"] = "0" * 40
+        self.write("MekHQ", extra=aliases)
+        with self.assertRaisesRegex(release.UnsafeInventory, "identity differs"):
+            self.run_fake(portable=False)
 
     def test_external_commands_use_downloaded_bytes_and_per_product_pins(self):
         # The old MegaMek archive does not claim the current Lab/HQ source commits.

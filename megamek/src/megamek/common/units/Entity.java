@@ -36,9 +36,10 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -3278,6 +3279,20 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isAirborneAeroOnGroundMap() {
         return isAero() && isAirborne() && (game != null) && game.isOnGroundMap(this);
+    }
+
+    /**
+     * Alternate convenience function to support doing a check for airborne aero on a ground map that is not
+     * yet deployed. So just check the aero, game, and board location.
+     *
+     * @param includeDeploymentStep Only true during walk on deployment
+     * @return True if this is an airborne aircraft on a ground map.
+     */
+    public boolean isAirborneAeroOnGroundMap(boolean includeDeploymentStep) {
+        if (!includeDeploymentStep) {
+            return isAirborneAeroOnGroundMap();
+        }
+        return isAero() && (game != null) && game.isOnGroundMap(this.getBoardLocation());
     }
 
     /**

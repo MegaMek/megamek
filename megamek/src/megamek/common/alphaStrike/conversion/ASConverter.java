@@ -113,7 +113,7 @@ public final class ASConverter {
         element.setModel(entity.getModel());
         element.setChassis(entity.getFullChassis());
         element.setMulId(entity.getMulId());
-        element.setRole(entity.getRole());
+        element.setRole(entity.getRoleOverride());
         element.setFluff(entity.getFluff());
         element.setId(entity.getId());
 
@@ -129,7 +129,7 @@ public final class ASConverter {
         conversionReport.addLine("Chassis:", element.getChassis(), "");
         conversionReport.addLine("Model:", element.getModel(), "");
         conversionReport.addLine("MUL ID:", Integer.toString(element.getMulId()), "");
-        conversionReport.addLine("Unit Role:", element.getRole().toString(), "");
+        conversionReport.addLine("Unit Role:", element.getRoleOverride().toString(), "");
 
         // Type
         element.setType(ASUnitType.getUnitType(entity));

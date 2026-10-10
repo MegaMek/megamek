@@ -217,6 +217,8 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     private JComboBox<String> unitStartChar;
     private JSpinner maxPathfinderTime;
     private final JCheckBox getFocus = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus"));
+    private final JCheckBox expandOptionSections = new JCheckBox(
+          Messages.getString("CommonSettingsDialog.expandOptionSections"));
     private JSlider guiScale;
     private ColourSelectorButton csbWarningColor;
     private ColourSelectorButton csbCautionColor;
@@ -2546,6 +2548,11 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         row.add(createGuiScaleControl());
         comps.add(row);
 
+        configureCheckBox(expandOptionSections,
+              Messages.getString("CommonSettingsDialog.expandOptionSections.tooltip"));
+        expandOptionSections.setSelected(GUIP.getExpandOptionSections());
+        comps.add(List.of(expandOptionSections));
+
         addLineSpacer(comps);
 
         JLabel userDirLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
@@ -2759,6 +2766,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
     public void setVisible(boolean visible) {
         // Initialize the dialog when it's being shown
         if (visible) {
+            expandOptionSections.setSelected(GUIP.getExpandOptionSections());
             guiScale.setValue((int) (GUIP.getGUIScale() * 10));
             autoEndFiring.setSelected(GUIP.getAutoEndFiring());
             autoDeclareSearchlight.setSelected(GUIP.getAutoDeclareSearchlight());
@@ -3294,6 +3302,7 @@ public class CommonSettingsDialog extends AbstractButtonDialog
         GUIP.setTooltipDistSuppression((int) tooltipDistSuppression.getValue());
 
         GUIP.setValue(GUIPreferences.GUI_SCALE, (float) (guiScale.getValue()) / 10);
+        GUIP.setExpandOptionSections(expandOptionSections.isSelected());
 
         Object unitSelected = unitStartChar.getSelectedItem();
         if (unitSelected instanceof String unitStart) {

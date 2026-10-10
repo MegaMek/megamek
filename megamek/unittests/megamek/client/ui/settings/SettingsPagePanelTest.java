@@ -48,18 +48,36 @@ import java.util.List;
 import java.util.ListResourceBundle;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.RowFilter;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.RowFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class SettingsPagePanelTest {
+    private boolean originalExpansionPreference;
+
+    @BeforeEach
+    void setExpansionPreference() {
+        originalExpansionPreference = GUIPreferences.getInstance().getExpandOptionSections();
+        GUIPreferences.getInstance().setExpandOptionSections(true);
+    }
+
+    @AfterEach
+    void restoreExpansionPreference() {
+        GUIPreferences.getInstance().setExpandOptionSections(originalExpansionPreference);
+    }
+
     private static final SettingsTextProvider TEXT = SettingsTextProvider.fromResourceBundle(new ListResourceBundle() {
         @Override
         protected Object[][] getContents() {
@@ -72,6 +90,48 @@ class SettingsPagePanelTest {
             };
         }
     });
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void multipleSectionsFollowClientPreference(boolean expanded) {
+        GUIPreferences.getInstance().setExpandOptionSections(expanded);
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .literalSection("Alpha", null, new JPanel())
+              .literalSection("Beta", null, new JPanel())
+              .build();
+
+        assertEquals(List.of(expanded, expanded), page.getSectionExpansionState());
+    }
+
+    @Test
+    void singleSectionStartsExpandedEvenWithCollapsedOverrideAndOtherContent() {
+        GUIPreferences.getInstance().setExpandOptionSections(false);
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .sectionsExpandedByDefault(false)
+              .component(new JLabel("Intro"))
+              .literalSection("Only section", null, new JPanel())
+              .component(new JLabel("Footer"))
+              .build();
+
+        assertEquals(List.of(true), page.getSectionExpansionState());
+        page.collapseAllSections();
+        assertEquals(List.of(false), page.getSectionExpansionState());
+    }
+
+    @Test
+    void explicitExpandedDefaultOverridesClientPreferenceWhenReset() {
+        GUIPreferences.getInstance().setExpandOptionSections(false);
+        SettingsPagePanel page = SettingsPagePanel.builder("Test", TEXT, "header", null)
+              .sectionsExpandedByDefault(true)
+              .literalSection("Alpha", null, new JPanel())
+              .literalSection("Beta", null, new JPanel())
+              .build();
+
+        assertEquals(List.of(true, true), page.getSectionExpansionState());
+        page.collapseAllSections();
+        page.resetSectionExpansionToDefault();
+        assertEquals(List.of(true, true), page.getSectionExpansionState());
+    }
 
     @Test
     void sectionSearchTextConcatenatesLiteralTitlesAndSummaries() {

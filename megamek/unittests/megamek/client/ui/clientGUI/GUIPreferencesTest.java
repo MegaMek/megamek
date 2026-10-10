@@ -35,16 +35,57 @@ package megamek.client.ui.clientGUI;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 import megamek.client.ui.util.PlayerColour;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStore;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
 
 class GUIPreferencesTest {
 
     private static final String LEGACY_BROWN_RGB = "152 129 107";
     private static final String CORRECTED_BROWN_RGB = "120 100 80";
     private static final String DEFAULT_BROWN_RGB = "153 130 108";
+
+    @Test
+    void optionSectionsDefaultToExpandedWhenPreferenceIsMissing() {
+        PreferenceStore store = new PreferenceStore();
+        withPreferenceStore(store, () -> {
+            GUIPreferences preferences = new GUIPreferences();
+
+            assertTrue(preferences.getExpandOptionSections());
+            assertTrue(store.getDefaultBoolean(GUIPreferences.EXPAND_OPTION_SECTIONS));
+            preferences.setExpandOptionSections(false);
+            assertFalse(store.getBoolean(GUIPreferences.EXPAND_OPTION_SECTIONS));
+        });
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = { true, false })
+    void preservesSavedOptionSectionPreference(boolean expanded) {
+        PreferenceStore store = new PreferenceStore();
+        store.putValue(GUIPreferences.EXPAND_OPTION_SECTIONS, Boolean.toString(expanded));
+
+        withPreferenceStore(store, () ->
+              assertEquals(expanded, new GUIPreferences().getExpandOptionSections()));
+    }
+
+    private static void withPreferenceStore(PreferenceStore store, Runnable assertions) {
+        GUIPreferences.getInstance();
+        PreferenceManager manager = mock(PreferenceManager.class);
+        when(manager.getPreferenceStore("GUIPreferences", GUIPreferences.class.getName(),
+              "megamek.client.ui.swing.GUIPreferences")).thenReturn(store);
+        try (MockedStatic<PreferenceManager> managerStatic = mockStatic(PreferenceManager.class)) {
+            managerStatic.when(PreferenceManager::getInstance).thenReturn(manager);
+            assertions.run();
+        }
+    }
 
     @Test
     void migratesExplicitLegacyBrownValueWhenCorrectedValueIsAbsent() {

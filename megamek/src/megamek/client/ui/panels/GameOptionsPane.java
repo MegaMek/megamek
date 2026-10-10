@@ -481,7 +481,6 @@ public class GameOptionsPane extends JPanel {
                   "GameOptionsDialog.title", icon)
                   .header(new SettingsHeaderPanel(pageSeed.definition().id(), pageTitle, icon))
                   .showDetailsPanel(!directPage)
-                  .sectionsExpandedByDefault(sectionRows.size() == 1)
                   .standardContentWidth();
             if (directPage) {
                 builder.intro("GameOptionsDialog.page.landing.intro")

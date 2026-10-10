@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2019-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -64,6 +64,17 @@ public final class EjectionSeatCargoBay extends StandardSeatCargoBay {
     public EjectionSeatCargoBay(double space) {
         super(space);
         weight = space * 0.1;
+    }
+
+    /**
+     * Create the given number of ejection seats, with the bay number they were given in the unit file.
+     *
+     * @param space     The number of seats.
+     * @param bayNumber The bay's number, which identifies it among the unit's bays.
+     */
+    public EjectionSeatCargoBay(double space, int bayNumber) {
+        this(space);
+        this.bayNumber = bayNumber;
     }
 
     @Override

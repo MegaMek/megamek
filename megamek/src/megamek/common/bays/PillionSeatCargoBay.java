@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -60,6 +60,17 @@ public final class PillionSeatCargoBay extends StandardSeatCargoBay {
     public PillionSeatCargoBay(double space) {
         super(space);
         weight = space * 0.025;
+    }
+
+    /**
+     * Create the given number of pillion seats, with the bay number they were given in the unit file.
+     *
+     * @param space     The number of seats.
+     * @param bayNumber The bay's number, which identifies it among the unit's bays.
+     */
+    public PillionSeatCargoBay(double space, int bayNumber) {
+        this(space);
+        this.bayNumber = bayNumber;
     }
 
     @Override

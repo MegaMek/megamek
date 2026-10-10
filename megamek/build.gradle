@@ -255,7 +255,8 @@ dependencies {
 
     implementation 'org.freemarker:freemarker:2.3.35'
 
-    implementation 'org.commonmark:commonmark:0.28.0'
+    implementation 'org.commonmark:commonmark:0.30.0'
+    implementation 'org.jsoup:jsoup:1.23.2'
 
     implementation 'com.squareup:gifencoder:0.10.1'
 

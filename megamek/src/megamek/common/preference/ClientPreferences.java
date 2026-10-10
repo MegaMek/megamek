@@ -116,6 +116,10 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String SHOW_AUTO_RESOLVE_PANEL = "ShowAutoResolvePanel";
     public static final String FAVORITE_PRINCESS_BEHAVIOR_SETTING = "FavoritePrincessBehaviorSetting";
     public static final String LAST_SCENARIO = "LastScenario";
+    // The organization doctrine the lobby's Assemble Force feature builds under, stored as the name of
+    // a megamek.client.formation.Organization value ("AUTO", "CLAN", ...). A string because common
+    // code cannot see the client-side enum.
+    public static final String FORCE_ORGANIZATION = "ForceOrganization";
 
     /**
      * A user-specified directory, typically outside the MM directory, where content may be loaded from.
@@ -171,6 +175,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(USE_CASPAR, false);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");
+        store.setDefault(FORCE_ORGANIZATION, "AUTO");
 
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
@@ -321,6 +326,18 @@ public class ClientPreferences extends PreferenceStoreProxy {
     /** @return whether the Force Generator should write its diagnostic CSV tuning files. */
     public boolean getForceGeneratorDiagnostics() {
         return store.getBoolean(FORCE_GENERATOR_DIAGNOSTICS);
+    }
+
+    /**
+     * @return the name of the {@code megamek.client.formation.Organization} value the lobby's Assemble
+     *       Force feature builds under ("AUTO" by default); the client resolves the string to the enum
+     */
+    public String getForceOrganization() {
+        return store.getString(FORCE_ORGANIZATION);
+    }
+
+    public void setForceOrganization(String organizationName) {
+        store.setValue(FORCE_ORGANIZATION, organizationName);
     }
 
     public void setDefaultAutoEjectDisabled(boolean state) {

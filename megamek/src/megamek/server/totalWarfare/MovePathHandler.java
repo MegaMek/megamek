@@ -1786,6 +1786,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.getMainPhaseReport()
                            .addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier, false, -1, true));
                 Report.addNewline(gameManager.getMainPhaseReport());
+                if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    // TO:AUE p.162: the jump ends one elevation above the terrain, still airborne
+                    logger.info("WiGE jump ends: entity={}, hex={}, elevation={}, airborne={}",
+                          entity.getDisplayName(), curPos, entity.getElevation(), entity.isAirborneVTOLorWIGE());
+                }
             }
 
             // Jump exhaust can set a flammable atmosphere alight at both ends of the jump (TO:AR p.54).

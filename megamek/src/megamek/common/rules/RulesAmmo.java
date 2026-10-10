@@ -153,77 +153,81 @@ public abstract class RulesAmmo {
             return munition.getBaseBV();
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.THUMPER_CANNON)) &&
+        AmmoType.AmmoTypeEnum ammoTypeEnum = munition.getAmmoType();
+        AmmoType baseAmmoType = munition.getBaseAmmo();
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SNIPER) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.THUMPER) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.THUMPER_CANNON)) &&
             munition.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
-            return munition.getBaseAmmo().getBaseBV() * 1.4;
+            return baseAmmoType.getBaseBV() * 1.4;
         }
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_SWARM_I))) {
-            return munition.getBaseAmmo().getBaseBV() * 1.2;
+            return baseAmmoType.getBaseBV() * 1.2;
         }
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_ARAD))) {
-            return munition.getBaseAmmo().getBaseBV() * 1.3;
+            return baseAmmoType.getBaseBV() * 1.3;
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
             ((munition.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) ||
              (munition.getMunitionType().contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER)))) {
-            return munition.getBaseAmmo().getBaseBV() * 1.5;
+            return baseAmmoType.getBaseBV() * 1.5;
         }
 
         if (munition.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
             // TO:AR, p.152 and TO:AUE, pp.197,198
-            int rackSize = munition.getBaseAmmo().getRackSize();
-            if (munition.getAmmoType() == AmmoType.AmmoTypeEnum.ARROW_IV) {
+            int rackSize = baseAmmoType.getRackSize();
+            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.ARROW_IV) {
                 rackSize = munition.isClan() ? 30 : 20;
             }
             return rackSize * munition.getShots() / 5.0 * 4;
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))) {
             // TO:AUE, pp.185,197,198
-            return munition.getBaseAmmo().getRackSize() * munition.getShots() / 5.0 * 6;
+            return baseAmmoType.getRackSize() * munition.getShots() / 5.0 * 6;
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))) {
             // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
-            return Math.ceil(munition.getBaseAmmo().getRackSize() / 2.0) * 7 * munition.getShots() / 5.0 * 4;
+            return Math.ceil(baseAmmoType.getRackSize() / 2.0) * 7 * munition.getShots() / 5.0 * 4;
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
-            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO))) {
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO) ||
+             munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
             // TO:AUE, pp.185,197,198
-            return munition.getBaseAmmo().getRackSize() * munition.getShots();
+            return baseAmmoType.getRackSize() * munition.getShots();
         }
 
         if (munition.getMunitionType().contains(AmmoType.Munitions.M_VIBRABOMB_IV)) {
@@ -231,45 +235,76 @@ public abstract class RulesAmmo {
             return 20 * munition.getShots();
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
             ((munition.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)))) {
-            return munition.getBaseAmmo().getBaseBV() * 2.0;
+            return baseAmmoType.getBaseBV() * 2.0;
         }
 
         if (munition.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {
             double bv = 0;
-            if (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) {
-                if (munition.getBaseAmmo().getRackSize() == 3) {
+            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) {
+                if (baseAmmoType.getRackSize() == 3) {
                     bv = 6;
-                } else if (munition.getBaseAmmo().getRackSize() == 5) {
-                    bv = munition.getBaseAmmo().hasFlag(AmmoType.F_MML_LRM) ? 9 : 8;
-                } else if (munition.getBaseAmmo().getRackSize() == 7) {
-                    bv = munition.getBaseAmmo().hasFlag(AmmoType.F_MML_LRM) ? 12 : 11;
-                } else if (munition.getBaseAmmo().getRackSize() == 9) {
-                    bv = munition.getBaseAmmo().hasFlag(AmmoType.F_MML_LRM) ? 17 : 15;
+                } else if (baseAmmoType.getRackSize() == 5) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 9 : 8;
+                } else if (baseAmmoType.getRackSize() == 7) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 12 : 11;
+                } else if (baseAmmoType.getRackSize() == 9) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 17 : 15;
                 }
             } else {
-                if (munition.getBaseAmmo().getRackSize() == 2) {
+                if (baseAmmoType.getRackSize() == 2) {
                     bv = 4;
-                } else if (munition.getBaseAmmo().getRackSize() == 4) {
+                } else if (baseAmmoType.getRackSize() == 4) {
                     bv = 7;
-                } else if (munition.getBaseAmmo().getRackSize() == 5) {
+                } else if (baseAmmoType.getRackSize() == 5) {
                     bv = 9;
-                } else if (munition.getBaseAmmo().getRackSize() == 6) {
+                } else if (baseAmmoType.getRackSize() == 6) {
                     bv = 10;
-                } else if (munition.getBaseAmmo().getRackSize() == 10) {
+                } else if (baseAmmoType.getRackSize() == 10) {
                     bv = 17;
-                } else if (munition.getBaseAmmo().getRackSize() == 15) {
+                } else if (baseAmmoType.getRackSize() == 15) {
                     bv = 26;
-                } else if (munition.getBaseAmmo().getRackSize() == 20) {
+                } else if (baseAmmoType.getRackSize() == 20) {
                     bv = 35;
                 }
             }
             return bv;
         }
-        return munition.getBaseAmmo().getBaseBV();
+
+        if (munition.getMunitionType().contains(AmmoType.Munitions.M_LISTEN_KILL)) {
+            double bv = 0;
+            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) {
+                if (baseAmmoType.getRackSize() == 3) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 9 : 4;
+                } else if (baseAmmoType.getRackSize() == 5) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 15 : 7;
+                } else if (baseAmmoType.getRackSize() == 7) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 21 : 10;
+                } else if (baseAmmoType.getRackSize() == 9) {
+                    bv = baseAmmoType.hasFlag(AmmoType.F_MML_LRM) ? 27 : 13;
+                }
+            } else {
+                if (baseAmmoType.getRackSize() == 2) {
+                    bv = 6;
+                } else if (baseAmmoType.getRackSize() == 4) {
+                    bv = 12;
+                } else if (baseAmmoType.getRackSize() == 6) {
+                    bv = 18;
+                } else if (baseAmmoType.getRackSize() == 5) {
+                    bv = 7;
+                } else if (baseAmmoType.getRackSize() == 10) {
+                    bv = 14;
+                } else if (baseAmmoType.getRackSize() == 15) {
+                    bv = 21;
+                } else if (baseAmmoType.getRackSize() == 20) {
+                    bv = 28;
+                }
+            }
+        }
+        return baseAmmoType.getBaseBV();
     }
 }

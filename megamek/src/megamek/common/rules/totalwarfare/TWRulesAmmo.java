@@ -180,32 +180,45 @@ public class TWRulesAmmo extends RulesAmmo {
         if (munition.getBaseAmmo() == null) {
             return munition.getBaseBV();
         }
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.AC) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LAC) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.PAC) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.AC_ROTARY)) &&
+
+        AmmoType.AmmoTypeEnum ammoTypeEnum = munition.getAmmoType();
+        AmmoType baseAmmoType = munition.getBaseAmmo();
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.AC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LAC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.PAC) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.AC_ROTARY)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_CASELESS))) {
-            return munition.getBaseAmmo().getBaseBV() * 2.0;
+            return baseAmmoType.getBaseBV() * 2.0;
         }
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_AX_HEAD))) {
-            return munition.getBaseAmmo().getBaseBV() * 2;
+            return baseAmmoType.getBaseBV() * 2;
         }
 
-        if (((munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.MML) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.NLRM) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_10) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_15) ||
-             (munition.getAmmoType() == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_10) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_15) ||
+             (ammoTypeEnum == AmmoType.AmmoTypeEnum.TBOLT_20)) &&
             (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER))) {
             // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
-            return munition.getBaseAmmo().getRackSize() * munition.getShots() / 5.0 * 4;
+            return baseAmmoType.getRackSize() * munition.getShots() / 5.0 * 4;
+        }
+
+        if (munition.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
+            // TO:AR, p.152 and TO:AUE, pp.197,198
+            int rackSize = baseAmmoType.getRackSize();
+            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.ARROW_IV) {
+                rackSize = munition.isClan() ? 30 : 20;
+            }
+            return rackSize * munition.getShots() / 5.0 * 4;
         }
 
         return super.getAmmoBVAdjusted(munition);

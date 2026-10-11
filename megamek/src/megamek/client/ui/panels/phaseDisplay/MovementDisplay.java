@@ -39,15 +39,15 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import static megamek.common.equipment.MiscType.F_CHAFF_POD;
 import static megamek.common.options.OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_ZIPLINES;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.stream.Stream;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
@@ -2931,6 +2931,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
                                                     coords.getBoardNum());
                     clientgui.addToast(ToastLevel.ERROR, msg, currentlySelectedEntity);
                 }
+                computeMovementEnvelope(currentlySelectedEntity);
                 clientgui.boardViews().forEach(bv -> ((BoardView) bv).redrawEntity(currentlySelectedEntity));
                 clientgui.updateFiringArc(currentlySelectedEntity);
                 clientgui.showSensorRanges(currentlySelectedEntity);
@@ -6975,6 +6976,9 @@ public class MovementDisplay extends ActionPhaseDisplay {
      * @param suggestion The suggested Entity to use to compute the movement envelope.
      */
     public void computeMovementEnvelope(Entity suggestion) {
+        if (!suggestion.isDeployed()) {
+            return;
+        }
         if (suggestion.isAero()) {
             computeAeroMovementEnvelope(suggestion);
         } else {
@@ -7026,12 +7030,28 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         MovePath movePath = new MovePath(game, entity);
+        // If we are using WoD, clone the deployment step and possible jump steps.
+        if (cmd.contains(MoveStepType.DEPLOY)) {
+            if (cmd.getStep(0).getType() == MoveStepType.START_JUMP) {
+                movePath.addStep(cmd.getStep(0));
+                if (jumpSubGear == GEAR_SUB_MEK_BOOSTERS) {
+                    movePath.addStep(cmd.getStep(1));
+                    movePath.addStep(cmd.getStep(2));
+                } else {
+                    movePath.addStep(cmd.getStep(1));
+                }
+            } else {
+                movePath.addStep(cmd.getStep(0));
+            }
+        }
 
         MoveStepType stepType = (movementGear == GEAR_BACKUP) ? MoveStepType.BACKWARDS : MoveStepType.FORWARDS;
         if (movementGear == GEAR_JUMP || movementGear == GEAR_DFA) {
-            movePath.addStep(MoveStepType.START_JUMP);
-            if (jumpSubGear == GEAR_SUB_MEK_BOOSTERS) {
-                movePath.addStep(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+            if (!movePath.contains(MoveStepType.START_JUMP)) {
+                movePath.addStep(MoveStepType.START_JUMP);
+                if (jumpSubGear == GEAR_SUB_MEK_BOOSTERS) {
+                    movePath.addStep(MoveStepType.JUMP_MEK_MECHANICAL_BOOSTER);
+                }
             }
         }
 

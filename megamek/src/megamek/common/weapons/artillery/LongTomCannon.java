@@ -81,7 +81,8 @@ public class LongTomCannon extends ArtilleryCannonWeapon {
         medAV = 20;
         longAV = 20;
         maxRange = RANGE_LONG;
-        rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 97);
+        rulesRefs = rulesRefs(rulesRef(SourceBookCode.TO_AUE, 97),
+              rulesRef(SourceBookCode.CORE, 182));
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)

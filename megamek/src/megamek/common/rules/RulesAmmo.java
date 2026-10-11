@@ -304,6 +304,7 @@ public abstract class RulesAmmo {
                     bv = 28;
                 }
             }
+            return bv;
         }
         return baseAmmoType.getBaseBV();
     }

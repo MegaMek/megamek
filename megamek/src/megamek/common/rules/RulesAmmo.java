@@ -193,15 +193,6 @@ public abstract class RulesAmmo {
             return baseAmmoType.getBaseBV() * 1.5;
         }
 
-        if (munition.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
-            // TO:AR, p.152 and TO:AUE, pp.197,198
-            int rackSize = baseAmmoType.getRackSize();
-            if (ammoTypeEnum == AmmoType.AmmoTypeEnum.ARROW_IV) {
-                rackSize = munition.isClan() ? 30 : 20;
-            }
-            return rackSize * munition.getShots() / 5.0 * 4;
-        }
-
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||

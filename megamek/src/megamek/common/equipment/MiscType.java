@@ -8998,6 +8998,11 @@ public class MiscType extends EquipmentType {
         String[] modes = { S_HARJEL_II_1F1R, S_HARJEL_II_2F0R, S_HARJEL_II_0F2R };
         misc.setModes(modes);
         misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 82);
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.IO_AE, 82),
+              rulesRef(SourceBookCode.CORE, 208)
+        );
+
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
@@ -9026,7 +9031,11 @@ public class MiscType extends EquipmentType {
         String[] modes = { S_HARJEL_III_2F2R, S_HARJEL_III_4F0R, S_HARJEL_III_3F1R, S_HARJEL_III_1F3R,
                            S_HARJEL_III_0F4R };
         misc.setModes(modes);
-        misc.rulesRefs = rulesRefs(SourceBookCode.IO_AE, 82);
+        misc.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.IO_AE, 82),
+              rulesRef(SourceBookCode.CORE, 208)
+        );
+
         // Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         misc.techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)

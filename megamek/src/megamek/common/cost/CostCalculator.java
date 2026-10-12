@@ -116,10 +116,10 @@ public class CostCalculator {
         NumberFormat costFormatter = NumberFormat.getInstance();
         costFormatter.setMinimumFractionDigits(2);
         costFormatter.setMaximumFractionDigits(2);
-
-        Map<String, Integer> weaponsNumberMap = new HashMap<>();
+        Map<String, Double> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
         for (Mounted<?> mounted : entity.getEquipment()) {
+            double num = 1.0;
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
                   && (!(((AmmoType) mounted.getType()).getAmmoType() == AmmoType.AmmoTypeEnum.COOLANT_POD))) {
                 continue;
@@ -131,6 +131,12 @@ public class CostCalculator {
             if ((mounted.getType() instanceof MiscType)
                   && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;
+            }
+            // BA Myomer Booster is spreadable and counted as one third of a whole
+            if (entity.isBattleArmor()
+                  && (mounted.getType() instanceof MiscType)
+                  && mounted.getType().hasFlag(MiscType.F_MASC)) {
+                num = 1.0 / 3;
             }
             // EI Interface is built-in for ProtoMeks and doesn't add cost (IO:AE p.69)
             if (entity.isProtoMek() && (mounted.getType() instanceof MiscType)
@@ -146,13 +152,12 @@ public class CostCalculator {
 
             cost += itemCost;
             if (itemCost > 0) {
-                weaponsNumberMap.merge(mounted.getName(), 1, Integer::sum);
+                weaponsNumberMap.merge(mounted.getName(), num, Double::sum);
                 weaponsCostMap.merge(mounted.getName(), itemCost, Long::sum);
             }
-
         }
         for (String weapon : weaponsNumberMap.keySet()) {
-            costReport.addLine(weaponsNumberMap.get(weapon) + " " + weapon, "",
+            costReport.addLine((int) Math.ceil(weaponsNumberMap.get(weapon)) + " " + weapon, "",
                   costFormatter.format(weaponsCostMap.get(weapon)));
         }
 
@@ -262,8 +267,7 @@ public class CostCalculator {
     public static void addNoReportNote(@Nullable CalculationReport costReport, @Nullable Entity entity) {
         if (costReport != null) {
             if (entity != null) {
-                costReport.addHeader("Cost Calculation for");
-                costReport.addHeader(entity.getChassis() + " " + entity.getModel());
+                costReport.addHeader("Cost Calculation for " + entity.getChassis() + " " + entity.getModel());
                 costReport.addLine("There is currently no report available for units of this type.");
             } else {
                 costReport.addLine("Could not access the unit.");

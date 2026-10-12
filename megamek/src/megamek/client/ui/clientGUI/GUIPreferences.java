@@ -161,6 +161,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
     public static final String DOCK_ON_LEFT = "DockOnLeft";
+    public static final String EXPAND_OPTION_SECTIONS = "ExpandOptionSections";
     public static final String DOCK_MULTIPLE_ON_Y_AXIS = "DockMultipleOnYAxis";
     public static final String USE_CAMO_OVERLAY = "UseCamoOverlay";
 
@@ -691,6 +692,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BUTTONS_PER_ROW, 12);
 
         setDefault(DOCK_ON_LEFT, true);
+        store.setDefault(EXPAND_OPTION_SECTIONS, true);
         setDefault(DOCK_MULTIPLE_ON_Y_AXIS, true);
         setDefault(USE_CAMO_OVERLAY, true);
 
@@ -3485,6 +3487,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(DOCK_ON_LEFT);
     }
 
+    public boolean getExpandOptionSections() {
+        return getBoolean(EXPAND_OPTION_SECTIONS);
+    }
+
     public boolean getDockMultipleOnYAxis() {
         return getBoolean(DOCK_MULTIPLE_ON_Y_AXIS);
     }
@@ -3792,6 +3798,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDockOnLeft(Boolean state) {
         store.setValue(DOCK_ON_LEFT, state);
+    }
+
+    public void setExpandOptionSections(boolean expanded) {
+        store.setValue(EXPAND_OPTION_SECTIONS, expanded);
     }
 
     public void setDockMultipleOnYAxis(Boolean state) {

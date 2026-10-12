@@ -154,6 +154,8 @@ class CommonSettingsDialogTest {
         JComboBox<String> localeControl = new JComboBox<>(new String[] { "English", "Deutsch" });
         JLabel scaleLabel = new JLabel(Messages.getString("CommonSettingsDialog.guiScale"));
         JSlider scaleControl = CommonSettingsDialog.createGuiScaleSlider();
+        JCheckBox expandOptionSections = new JCheckBox(
+              Messages.getString("CommonSettingsDialog.expandOptionSections"));
         JLabel userFilesLabel = new JLabel(Messages.getString("CommonSettingsDialog.userDir"));
         JTextField userFilesField = new JTextField("C:/Users/test/MegaMek", 20);
         JPanel userFilesControl = CommonSettingsDialog.applicationPathControl(
@@ -171,7 +173,7 @@ class CommonSettingsDialogTest {
         List<Integer> naturalLabelWidths = labels.stream().map(label -> label.getPreferredSize().width).toList();
 
         JPanel localeSection = settingsGroup(List.of(row(localeLabel, localeControl)));
-        JPanel scaleSection = settingsGroup(List.of(row(scaleLabel, scaleControl)));
+        JPanel scaleSection = settingsGroup(List.of(row(scaleLabel, scaleControl), row(expandOptionSections)));
         JPanel userFilesSection = settingsGroup(List.of(row(userFilesLabel, userFilesControl)));
         JPanel mmlSection = settingsGroup(List.of(row(mmlLabel, mmlControl)));
         JPanel themeSection = settingsGroup(List.of(
@@ -191,6 +193,9 @@ class CommonSettingsDialogTest {
             assertAlignedBalancedRows(laidOutPane, rows);
             assertComponentWithinParent(userFilesField);
             assertComponentWithinParent(mmlField);
+            assertComponentWithinParent(expandOptionSections);
+            assertTrue(expandOptionSections.getWidth() > 0);
+            assertTrue(expandOptionSections.getY() >= scaleControl.getY() + scaleControl.getHeight());
         });
     }
 

@@ -1215,6 +1215,7 @@ public class ForceGeneratorViewUi implements ActionListener {
         added.setName(template.getName());
         added.setEligibleFormations(template.getEligibleFormations());
         added.setGenerationRule(template.getGenerationRule());
+        added.setBlockGenerationRule(template.getBlockGenerationRule());
         added.setFormationType(formationType);
         // As many unit slots as its sibling holds, so a lance comes out a lance and a Clan star a star.
         for (int slot = 0; slot < template.getSubForces().size(); slot++) {
@@ -1227,6 +1228,18 @@ public class ForceGeneratorViewUi implements ActionListener {
               parent.parseName(), template.getSubForces().size());
 
         added.generateUnits(null, 0);
+        if (!added.hasLineUnits()) {
+            // The unit tables had nothing for any of its slots. Take it back out rather than leave a formation of
+            // named commanders with no units under the parent.
+            parent.getSubForces().remove(added);
+            parent.assignPositions();
+            logger.info("[AddFormation] {} under '{}': no units could be generated; formation not added",
+                  formationType.getName(), parent.parseName());
+            showInsufficientData();
+            refreshTreeAfterEdit();
+            return;
+        }
+        removeSlotsWithoutUnits(added);
         added.assignCommanders();
         added.loadEntities(null, 0);
         warnIfFormationWasDropped(added, formationType);
@@ -1269,14 +1282,55 @@ public class ForceGeneratorViewUi implements ActionListener {
         logger.info("[ForceGen][ChangeFormation] '{}' {} -> {}", formation.parseName(),
               (formation.getFormation() == null) ? "(none)" : formation.getFormation().getName(),
               formationType.getName());
+        FormationType previousType = formation.getFormation();
         formation.setFormationType(formationType);
         formation.clearGeneratedUnits();
         formation.generateUnits(null, 0);
+        if (!formation.hasLineUnits()) {
+            // Nothing could be drawn for the new type, and its old units are already gone. Draw it again as it was
+            // rather than leave an empty formation.
+            logger.info("[ForceGen][ChangeFormation] '{}': no units could be generated as {}; rebuilding as {}",
+                  formation.parseName(), formationType.getName(),
+                  (previousType == null) ? "(none)" : previousType.getName());
+            formation.setFormationType(previousType);
+            formation.clearGeneratedUnits();
+            formation.generateUnits(null, 0);
+            removeSlotsWithoutUnits(formation);
+            formation.assignCommanders();
+            formation.loadEntities(null, 0);
+            showInsufficientData();
+            refreshTreeAfterEdit();
+            return;
+        }
+        removeSlotsWithoutUnits(formation);
         formation.assignCommanders();
         formation.loadEntities(null, 0);
         warnIfFormationWasDropped(formation, formationType);
 
         refreshTreeAfterEdit();
+    }
+
+    /**
+     * Removes the slots of an edited formation that the unit tables could not fill, before commanders are assigned,
+     * as generating a whole force does. Without this a slot left empty kept a named commander with no unit, which
+     * MekHQ's preview showed as a pilot with nothing to crew.
+     *
+     * @param formation the formation just drawn
+     */
+    private static void removeSlotsWithoutUnits(ForceDescriptor formation) {
+        int removed = formation.removeNodesWithoutUnits();
+        if (removed > 0) {
+            logger.info("[ForceGen][EditFormation] '{}': removed {} slot(s) the unit tables could not fill",
+                  formation.parseName(), removed);
+        }
+    }
+
+    /** Tells the player that nothing fitting could be generated. */
+    private void showInsufficientData() {
+        JOptionPane.showMessageDialog(parentFrame,
+              Messages.getString("ForceGeneratorDialog.insufficientData.text"),
+              Messages.getString("ForceGeneratorDialog.insufficientData.title"),
+              JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**

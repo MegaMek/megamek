@@ -67,6 +67,21 @@ class CoordinatorTests(unittest.TestCase):
             coordinator.finish(self.state, self.root, False, True, publisher=publisher)
         self.assertEqual(len(self.calls), 1)
 
+    def test_previous_attestation_uses_its_pinned_read_only_contract(self):
+        paths = {product: self.root / product for product in REPOS}
+        worktrees = {product: self.root / repo for product, repo in REPOS.items()}
+        def discover(membership, **kwargs):
+            kwargs["attest"](self.record, paths)
+            return self.inventory
+        with (patch.object(coordinator, "stage", return_value=worktrees),
+              patch.object(coordinator, "attest_archives") as attest,
+              patch.object(coordinator, "clean") as clean):
+            coordinator.prepare("milestone", False, None, self.root, self.state,
+                                discover=discover, builder=self.builder)
+            attest.assert_called_once_with(
+                self.record, paths, worktrees=worktrees, portable=False)
+            self.assertEqual(clean.call_count, 4)
+
     def test_weekly_noop_does_not_call_publisher(self):
         self.inventory["membership"] = "weekly"
         self.inventory["previous"]["membership"] = "weekly"

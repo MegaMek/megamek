@@ -11,10 +11,10 @@ import suite_archive_verifier as shared
 
 ROOT = Path(__file__).resolve().parents[1].parent
 WORKTREES = {name: ROOT / repo for name, repo in REPOS.items()}
-def archive_identity(path, product, version):
+def archive_identity(path, product, version, *, portable=True):
     """Use the canonical bounded scanner before invoking the Gradle adapter."""
     try:
-        props, files, _, lease = shared.scan(path, product, version)
+        props, files, _, lease = shared.scan(path, product, version, portable=portable)
         lease.cleanup()
         jars = {name: bytes.fromhex(digest[0]) for name, digest in files.items()
                 if name in {jar for product_name in ("MegaMek", "MegaMekLab", "MekHQ")
@@ -24,7 +24,7 @@ def archive_identity(path, product, version):
         raise UnsafeInventory(f"unreadable {product} archive: {error}") from error
 
 
-def attest_archives(record, paths, runner=subprocess.run, worktrees=WORKTREES):
+def attest_archives(record, paths, runner=subprocess.run, worktrees=WORKTREES, *, portable=True):
     """Verify record closure and invoke each external verifier on retained asset bytes.
 
     worktrees must contain the approved verifier code and pinned mm-data checkout.
@@ -41,7 +41,8 @@ def attest_archives(record, paths, runner=subprocess.run, worktrees=WORKTREES):
         path = Path(paths[product])
         if path.name != item["asset"]["name"] or not path.is_file():
             raise UnsafeInventory(f"wrong {product} archive path")
-        props, jars[product] = archive_identity(path, product, item["version"])
+        props, jars[product] = archive_identity(
+            path, product, item["version"], portable=portable)
         own = {"MegaMek": "megamekCommit", "MegaMekLab": "megameklabCommit",
                "MekHQ": "mekhqCommit"}[product]
         if (props["schemaVersion"] != "1" or props["product"] != product

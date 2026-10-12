@@ -39,8 +39,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import megamek.common.board.Coords;
 import megamek.common.annotations.Nullable;
+import megamek.common.board.Board;
+import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.logging.MMLogger;
 
@@ -259,5 +260,61 @@ public final class TrainLayout {
             footprint.add(placement.position());
         }
         return footprint;
+    }
+
+    /**
+     * How many hexes a train covers when laid out in a straight line: the tractor's hex plus the hexes its trailers
+     * take behind it. Two trailers share a hex, and the first shares the tractor's, so a tractor with four trailers
+     * covers three hexes.
+     *
+     * @param game    the game holding the towed units
+     * @param tractor the powered tractor at the head of the train
+     *
+     * @return the train's length in hexes; 1 for a unit that tows nothing
+     */
+    public static int trainLengthInHexes(Game game, Entity tractor) {
+        // The footprint only translates coordinates, so any hex and facing give the same count
+        return deploymentFootprint(game, tractor, new Coords(0, 0), 0).size();
+    }
+
+    /**
+     * Finds the first hex of a train's footprint that is not a legal deployment hex for its tractor. The whole train
+     * has to land in the tractor's deployment zone, so every hex is checked against the tractor, never against a
+     * trailer's own zone.
+     *
+     * @param game       the game holding the train
+     * @param tractor    the powered tractor at the head of the train
+     * @param tractorHex the hex the tractor would occupy
+     * @param boardId    the board being deployed to
+     * @param facing     the facing the tractor would have
+     *
+     * @return the first hex that does not fit, or {@code null} if the whole train fits
+     */
+    public static @Nullable Coords firstIllegalDeploymentHex(Game game, Entity tractor, Coords tractorHex,
+          int boardId, int facing) {
+        Board board = game.getBoard(boardId);
+        for (Coords trainHex : deploymentFootprint(game, tractor, tractorHex, facing)) {
+            if (!game.hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex, tractor)) {
+                return trainHex;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param game       the game holding the train
+     * @param tractor    the powered tractor at the head of the train
+     * @param tractorHex the hex the tractor would occupy
+     * @param boardId    the board being deployed to
+     *
+     * @return {@code true} if at least one facing lets the whole train fit with its tractor in this hex
+     */
+    public static boolean hasLegalDeploymentFacing(Game game, Entity tractor, Coords tractorHex, int boardId) {
+        for (int facing = 0; facing < 6; facing++) {
+            if (firstIllegalDeploymentHex(game, tractor, tractorHex, boardId, facing) == null) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -1138,6 +1138,13 @@ public class BasicPathRanker extends PathRanker {
      */
     private Coords rankingPassClusterAnchor;
 
+    /**
+     * The number of enemy hot-spots for the current ranking pass, computed on first use per pass and reset in
+     * {@link #rankPaths(List, Game, int, double, List, List)}; {@code -1} until then. Building the hot-spot list rates
+     * and sorts every recorded position, and every candidate path asked for it twice.
+     */
+    private int rankingPassEnemyHotSpotCount = -1;
+
     @Override
     public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange, double fallTolerance,
           List<Entity> enemies, List<Entity> friends) {
@@ -1148,7 +1155,18 @@ public class BasicPathRanker extends PathRanker {
         rankingPassBattleValueCache.clear();
         rankingPassClusterAnchor = highestBvClusterPosition(enemies);
         rankingPassSpotterPriority = null;
+        rankingPassEnemyHotSpotCount = -1;
         return super.rankPaths(movePaths, game, maxRange, fallTolerance, enemies, friends);
+    }
+
+    /**
+     * @return the number of enemy hot-spots, computed once per ranking pass
+     */
+    int getRankingPassEnemyHotSpotCount() {
+        if (rankingPassEnemyHotSpotCount < 0) {
+            rankingPassEnemyHotSpotCount = getOwner().getEnemyHotSpots().size();
+        }
+        return rankingPassEnemyHotSpotCount;
     }
 
     /**
@@ -2010,7 +2028,7 @@ public class BasicPathRanker extends PathRanker {
         // A holding artillery tube does not chase movement TMM - staying put is the point - so skip the reward.
         double movementMod = holdingArtilleryInPlace ? 0.0
               : calculateMovementMod(pathCopy, game, enemies, movementModFormula);
-        scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
+        scores.put("enemyHotSpotCount", (double) getRankingPassEnemyHotSpotCount());
         scores.put("selfPreservationValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
@@ -2378,7 +2396,7 @@ public class BasicPathRanker extends PathRanker {
      */
     protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
         var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
-        boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
+        boolean noEnemiesInSight = enemies.isEmpty() && (getRankingPassEnemyHotSpotCount() == 0);
         boolean disabledFavorHigherTMM = favorHigherTMM == 0;
         if (noEnemiesInSight || !disabledFavorHigherTMM) {
             var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(),

@@ -41,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
@@ -159,6 +160,11 @@ public class Ruleset {
             return rulesets.get(faction);
         }
         FactionRecord fRec = RATGenerator.getInstance().getFaction(faction);
+        Ruleset canonicalRuleset = findCanonicalRuleset(faction, fRec, rulesets);
+        if (canonicalRuleset != null) {
+            logger.debug("findRuleset({}): alias of {}", faction, canonicalRuleset.getFaction());
+            return canonicalRuleset;
+        }
         /*
          * First check all parents without recursion. If none is found, do
          * a recursive check on all parents.
@@ -183,6 +189,33 @@ public class Ruleset {
         // to prevent barfing.
         logger.warn("findRuleset({}): no match in any parent - returning empty default ruleset", faction);
         return new Ruleset();
+    }
+
+    /**
+     * The ruleset of the faction a key is an alias of, when it has one.
+     *
+     * <p>A faction renamed across eras keeps its old keys as aliases: the Escorpion Imperio ({@code CEI}) and the
+     * Scorpion Empire ({@code SE}) are both Clan Goliath Scorpion ({@code CGS}). Looking up an alias returns the
+     * faction it stands for, so the lookup has to try that faction's own ruleset before its parents. Without this
+     * the Scorpion Empire skipped the Goliath Scorpion ruleset, which models its mixed Trinaries and Clusters, and
+     * fell through to the generic Clan one.</p>
+     *
+     * @param faction          the key that was asked for
+     * @param resolvedFaction  the faction record that key resolves to, or {@code null} when it resolves to none
+     * @param rulesetsByFaction the loaded rulesets, by faction key
+     *
+     * @return the resolved faction's ruleset, or {@code null} when the key is not an alias or that faction has none
+     */
+    static @Nullable Ruleset findCanonicalRuleset(String faction, @Nullable FactionRecord resolvedFaction,
+          Map<String, Ruleset> rulesetsByFaction) {
+        if (resolvedFaction == null) {
+            return null;
+        }
+        String canonicalKey = resolvedFaction.getKey();
+        if ((canonicalKey == null) || canonicalKey.equals(faction)) {
+            return null;
+        }
+        return rulesetsByFaction.get(canonicalKey);
     }
 
     @Deprecated(since = "0.51.0", forRemoval = true)
@@ -264,6 +297,9 @@ public class Ruleset {
         // keeps what the ruleset rolled for it. A no-op for an empty mix.
         FormationMixReport formationAssignment = FormationBudgetAllocator.allocate(fd);
         fd.generateUnits(l, PROGRESS_GENERATE_UNITS);
+        // A slot the unit tables could not fill would otherwise get a commander below and show as a pilot with
+        // nothing to crew (and as an empty force in MekHQ).
+        fd.removeNodesWithoutUnits();
         // Count what survived rather than what was asked for: a formation can be assigned legally and still fail its
         // own requirements once units are drawn, at which point it reverts to an ordinary lance.
         fd.setFormationMixReport(FormationBudgetAllocator.tallyAchieved(fd, formationAssignment));
@@ -527,6 +563,28 @@ public class Ruleset {
 
     public TOCNode getTOCNode() {
         return toc;
+    }
+
+    /**
+     * The table of contents the Force Generator menus come from: this ruleset's own, or the nearest parent's when this
+     * one has none. A ruleset file with no {@code <toc>} still gets an empty one, so an empty table counts as none.
+     * Without that, the Calderon Protectorate (whose file only names the Taurian Concordat as its parent) offered no
+     * unit types or sizes at all.
+     *
+     * @param ruleset the ruleset to start from, or {@code null}
+     *
+     * @return the table of contents, or {@code null} when no ruleset in the chain has one
+     */
+    public static @Nullable TOCNode findTOCNode(@Nullable Ruleset ruleset) {
+        Ruleset current = ruleset;
+        while (current != null) {
+            TOCNode toc = current.getTOCNode();
+            if ((toc != null) && !toc.isEmpty()) {
+                return toc;
+            }
+            current = (current.getParent() == null) ? null : findRuleset(current.getParent());
+        }
+        return null;
     }
 
     public ForceNode findForceNode(ForceDescriptor fd) {

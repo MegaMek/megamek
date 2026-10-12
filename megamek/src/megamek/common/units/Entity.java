@@ -17409,7 +17409,7 @@ public abstract class Entity extends TurnOrdered
             int range;
 
             if (isAirborne()) {
-                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                int rangeMultiplier = type.usesCapitalRangeBrackets() ? 2 : 1;
                 rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;

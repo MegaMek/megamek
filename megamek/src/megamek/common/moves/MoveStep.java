@@ -680,8 +680,6 @@ public class MoveStep implements Serializable {
                     // terrain it comes down on. Land-Air Meks and glider ProtoMeks also move as WiGEs but follow
                     // their own rules.
                     case WIGE -> setElevation(isWiGEVehicle(entity) ? subDepth + 1 : ceiling + 1);
-                    // Hover ends the jump above the water
-                    case HOVER -> setElevation(ceiling);
                     default -> setElevation(subDepth);
                 }
             }
@@ -3704,10 +3702,15 @@ public class MoveStep implements Serializable {
             return true;
         }
 
-        // TO:AUE p.162: a vehicle may not jump into terrain its motive type forbids. The early return below skips
-        // the prohibited-terrain check further down, so run it here for a jumping WiGE vehicle.
-        if (isJumping() && isWiGEVehicle(entity) && entity.isLocationProhibited(dest, boardId, elevation)) {
-            terrainInvalid = true;
+        // TO:AUE p.162: a vehicle may not jump into terrain its motive type forbids. The return below skips the
+        // prohibited-terrain check further down, so run it here for a jumping vehicle. As there, a vehicle landing on a
+        // bridge deck is on the bridge, not in the terrain below it (TO:AR p.115).
+        if (isJumping() && (entity instanceof Tank)) {
+            boolean isInProhibitedTerrain = entity.isLocationProhibited(dest, boardId, elevation);
+            boolean isOnBridge = isOnBridgeDeck(destHex, elevation);
+            if (isInProhibitedTerrain && !isOnBridge) {
+                terrainInvalid = true;
+            }
         }
 
         // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!

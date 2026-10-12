@@ -943,6 +943,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
         setJumpEnabled(!isAero &&
               !selectedUnit.isImmobileForJump() &&
               !selectedUnit.isProne() &&
+              !MoveStep.isGroundedWiGEVehicle(selectedUnit) &&
               (hasJumpMP() &&
                     (!selectedUnit.isConventionalInfantry() ||
                           selectedUnit.getMovementMode().isJumpInfantry()) &&
@@ -2420,6 +2421,8 @@ public class MovementDisplay extends ActionPhaseDisplay {
             String body = Messages.getString("MovementDisplay.ConfirmWiGECrashLanding",
                   currentlySelectedEntity.getShortName());
             if (checkNagForDoomedMove(title, body)) {
+                // Declining the crash throws away the plotted move so the player starts the move again
+                clear();
                 return true;
             }
             warnedOfCrashLanding = true;

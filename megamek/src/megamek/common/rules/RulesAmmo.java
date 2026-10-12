@@ -46,6 +46,7 @@ public abstract class RulesAmmo {
      * Return the Armor Piercing modifier for crit checks.
      *
      * @param inType The ammo type of the weapon
+     *
      * @return the modifier for the crit roll
      */
     public abstract int armorPiercingMod(AmmoType inType);
@@ -68,8 +69,8 @@ public abstract class RulesAmmo {
      * @param AP       is it armor piercing
      */
     public abstract void armorPiercingAttackMod(AmmoType.AmmoTypeEnum ammoType,
-                                                ToHitData toHit,
-                                                boolean AP);
+          ToHitData toHit,
+          boolean AP);
 
     /**
      * Does NARC affect the target number.
@@ -91,11 +92,12 @@ public abstract class RulesAmmo {
      * @param armor  armor value
      * @param mods   modifiers info
      * @param damage base damage
+     *
      * @return modified AX missile damage
      */
     public abstract int getAXMissileDamage(int armor,
-                                           TWDamageManager.ModsInfo mods,
-                                           int damage);
+          TWDamageManager.ModsInfo mods,
+          int damage);
 
     /**
      * Semi-Guided missiles need special handling.
@@ -103,11 +105,12 @@ public abstract class RulesAmmo {
      * @param modifierValue base modifier
      * @param movementMod   movement modifier applied
      * @param terrainMod    terrain modifier applied
+     *
      * @return adjusted semi-guided modifier
      */
     public abstract int getSemiGuidedAdjustment(int modifierValue,
-                                                boolean movementMod,
-                                                boolean terrainMod);
+          boolean movementMod,
+          boolean terrainMod);
 
     /**
      * Does semi-guided ignore cover for a tagged entity.
@@ -121,10 +124,11 @@ public abstract class RulesAmmo {
      *
      * @param taggedTarget whether the target is tagged
      * @param indirect     whether the attack is indirect
+     *
      * @return number of missiles for semi-guided
      */
     public abstract int getSemiGuidedNMissiles(boolean taggedTarget,
-                                               boolean indirect);
+          boolean indirect);
 
     /**
      * This exists to return the to-hit modifier for AP ammo. It does not check anything else, it just is the modifier.
@@ -142,6 +146,7 @@ public abstract class RulesAmmo {
      * This is called when alternate ammos need their BV checked. It is called by the child classes as well
      *
      * @param munition AmmoType of the item being considered
+     *
      * @return the BV that should be used (default is the base BV)
      */
     public double getAmmoBVAdjusted(final AmmoType munition) {
@@ -157,66 +162,66 @@ public abstract class RulesAmmo {
         AmmoType baseAmmoType = munition.getBaseAmmo();
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SNIPER) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.THUMPER) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.THUMPER_CANNON)) &&
-            munition.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LONG_TOM_CANNON) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SNIPER) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SNIPER_CANNON) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.THUMPER) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.THUMPER_CANNON)) &&
+              munition.getMunitionType().contains(AmmoType.Munitions.M_FAE)) {
             return baseAmmoType.getBaseBV() * 1.4;
         }
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
-            (munition.getMunitionType().contains(AmmoType.Munitions.M_SWARM_I))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+              (munition.getMunitionType().contains(AmmoType.Munitions.M_SWARM_I))) {
             return baseAmmoType.getBaseBV() * 1.2;
         }
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
-            (munition.getMunitionType().contains(AmmoType.Munitions.M_ARAD))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+              (munition.getMunitionType().contains(AmmoType.Munitions.M_ARAD))) {
             return baseAmmoType.getBaseBV() * 1.3;
         }
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
-            ((munition.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) ||
-             (munition.getMunitionType().contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER)))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+              ((munition.getMunitionType().contains(AmmoType.Munitions.M_HEAT_SEEKING)) ||
+                    (munition.getMunitionType().contains(AmmoType.Munitions.M_FOLLOW_THE_LEADER)))) {
             return baseAmmoType.getBaseBV() * 1.5;
         }
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
-            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+              (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_ACTIVE))) {
             // TO:AUE, pp.185,197,198
             return baseAmmoType.getRackSize() * munition.getShots() / 5.0 * 6;
         }
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
-            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+              (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_AUGMENTED))) {
             // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
             return Math.ceil(baseAmmoType.getRackSize() / 2.0) * 7 * munition.getShots() / 5.0 * 4;
         }
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
-            (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO) ||
-             munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM_IMP) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.NLRM)) &&
+              (munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_INFERNO) ||
+                    munition.getMunitionType().contains(AmmoType.Munitions.M_THUNDER_VIBRABOMB))) {
             // TO:AUE, pp.185,197,198
             return baseAmmoType.getRackSize() * munition.getShots();
         }
@@ -227,11 +232,18 @@ public abstract class RulesAmmo {
         }
 
         if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.MML) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
-             (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
-            ((munition.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)))) {
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LRM) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.SRM_IMP)) &&
+              ((munition.getMunitionType().contains(AmmoType.Munitions.M_TANDEM_CHARGE)))) {
             return baseAmmoType.getBaseBV() * 2.0;
+        }
+
+        if (((ammoTypeEnum == AmmoType.AmmoTypeEnum.AC) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.LAC) ||
+              (ammoTypeEnum == AmmoType.AmmoTypeEnum.PAC)) &&
+              munition.getMunitionType().contains(AmmoType.Munitions.M_TRACER)) {
+            return baseAmmoType.getBaseBV() * 1.25;
         }
 
         if (munition.getMunitionType().contains(AmmoType.Munitions.M_DEAD_FIRE)) {

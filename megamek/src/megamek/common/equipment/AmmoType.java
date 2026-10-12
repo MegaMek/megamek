@@ -54,6 +54,8 @@ import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesAmmo;
+import megamek.common.rules.core.CoreRulesAmmo;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.ArrayUtils;
@@ -16617,7 +16619,6 @@ public class AmmoType extends EquipmentType {
                     cost *= 1.5;
                 } else if (munition.getMunitionType().contains(Munitions.M_TRACER)) {
                     cost *= 1.5;
-                    bv *= 1.25;
                 } else if (munition.getMunitionType().contains(Munitions.M_INCENDIARY_AC)) {
                     cost *= 2;
                 } else if (munition.getMunitionType().contains(Munitions.M_PRECISION)) {
@@ -16634,7 +16635,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_AX_HEAD))) {
                 cost *= 0.5;
-                bv *= 2;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16688,7 +16688,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_SWARM_I))) {
                 cost *= 3;
-                bv *= 1.2;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16732,8 +16731,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER_ACTIVE))) {
                 cost *= 3;
-                // TO:AUE, pp.185,197,198
-                bv = base.rackSize * munition.shots / 5.0 * 6;
             }
 
             if (munition.getMunitionType().contains(Munitions.M_HOMING)) {
@@ -16869,6 +16866,10 @@ public class AmmoType extends EquipmentType {
             // Check for the right BV modifier based on rules
             if (Game.rulesManager != null) {
                 bv = Game.rulesManager.getRulesAmmo().getAmmoBVAdjusted(munition);
+            } else {
+                // Fallback in case there is no rulesManager, make a core RulesAmmo
+                RulesAmmo rulesAmmo = new CoreRulesAmmo();
+                bv = rulesAmmo.getAmmoBVAdjusted(munition);
             }
 
             // Account for floating point imprecision

@@ -4976,12 +4976,14 @@ public abstract class Entity extends TurnOrdered
                                 boolean rearMounted,
                                 int nAmmo)
             throws LocationFullException {
-        if ((mounted instanceof AmmoMounted) && (nAmmo > 1)) {
+        if ((mounted instanceof AmmoMounted ammoMounted) && (nAmmo > 1)) {
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoMounted) mounted).getType().getShots()) * mounted.getTonnage();
-            ((AmmoMounted) mounted).setAmmoCapacity(tonnage);
+            // Large craft round the mass of their ammunition up to the nearest ton, whatever the number of rounds
+            int shotsPerTon = ammoMounted.getType().getShots();
+            double tonnage = Math.ceil((double) nAmmo / shotsPerTon) * mounted.getTonnage();
+            ammoMounted.setAmmoCapacity(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -17409,7 +17411,7 @@ public abstract class Entity extends TurnOrdered
             int range;
 
             if (isAirborne()) {
-                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                int rangeMultiplier = type.usesCapitalRangeBrackets() ? 2 : 1;
                 rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;

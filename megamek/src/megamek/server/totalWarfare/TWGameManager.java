@@ -116,6 +116,7 @@ import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesPSR;
+import megamek.common.rules.core.CoreRulesManager;
 import megamek.common.rules.totalwarfare.TWRulesUnderwater;
 import megamek.common.turns.CounterGrappleTurn;
 import megamek.common.turns.PrephaseTurn;
@@ -295,6 +296,7 @@ public class TWGameManager extends AbstractGameManager {
         EquipmentType.initializeTypes();
         game.getOptions().initialize();
         game.getOptions().loadOptions();
+        initializeRules();
 
         game.setPhase(GamePhase.LOUNGE);
         MapSettings mapSettings = game.getMapSettings();
@@ -317,6 +319,19 @@ public class TWGameManager extends AbstractGameManager {
     public TWGameManager(@Nullable TWDamageManager damageManager) {
         this();
         setDamageManager(damageManager);
+    }
+
+    private void initializeRules() {
+        IOption rules_system = null;
+        rules_system = game.getOptions().getOption(OptionsConstants.RULES_SYSTEM);
+
+        String loadedOption = (game.rulesManager instanceof CoreRulesManager) ?
+                              OptionsConstants.RULES_CORE : OptionsConstants.RULES_TW;
+        if (rules_system == null) {
+            game.initializeRulesManager(OptionsConstants.RULES_CORE);
+        } else if (!rules_system.stringValue().equals(loadedOption)) {
+            game.initializeRulesManager(rules_system.stringValue());
+        }
     }
 
     public void setDamageManager(TWDamageManager damageManager) {

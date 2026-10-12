@@ -3678,9 +3678,14 @@ public class MoveStep implements Serializable {
         }
 
         // TO:AUE p.162: a vehicle may not jump into terrain its motive type forbids. The return below skips the
-        // prohibited-terrain check further down, so run it here for a jumping vehicle.
-        if (isJumping() && (entity instanceof Tank) && entity.isLocationProhibited(dest, boardId, elevation)) {
-            terrainInvalid = true;
+        // prohibited-terrain check further down, so run it here for a jumping vehicle. As there, a vehicle landing on a
+        // bridge deck is on the bridge, not in the terrain below it (TO:AR p.115).
+        if (isJumping() && (entity instanceof Tank)) {
+            boolean isInProhibitedTerrain = entity.isLocationProhibited(dest, boardId, elevation);
+            boolean isOnBridge = isOnBridgeDeck(destHex, elevation);
+            if (isInProhibitedTerrain && !isOnBridge) {
+                terrainInvalid = true;
+            }
         }
 
         // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!

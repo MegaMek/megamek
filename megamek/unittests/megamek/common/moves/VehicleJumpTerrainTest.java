@@ -64,6 +64,11 @@ public class VehicleJumpTerrainTest extends GameBoardTestCase {
               hex 0101 0 "" ""
               hex 0102 0 "woods:1;foliage_elev:2" ""
               end""");
+        initializeBoard("VEHICLE_JUMP_BRIDGE", """
+              size 1 2
+              hex 0101 0 "" ""
+              hex 0102 0 "water:2;bridge:1;bridge_cf:100;bridge_elev:1" ""
+              end""");
     }
 
     private MovePath jumpOneHex(String board, EntityMovementMode mode) {
@@ -100,5 +105,13 @@ public class VehicleJumpTerrainTest extends GameBoardTestCase {
 
         assertTrue(movePath.isMoveLegal(), "Tracked vehicles may enter light woods");
         assertEquals(0, movePath.getFinalElevation());
+    }
+
+    @Test
+    void trackedVehicleCanJumpOntoBridgeOverDeepWater() {
+        MovePath movePath = jumpOneHex("VEHICLE_JUMP_BRIDGE", EntityMovementMode.TRACKED);
+
+        assertTrue(movePath.isMoveLegal(), "On the bridge deck, the deep water below does not apply (TO:AR p.115)");
+        assertEquals(1, movePath.getFinalElevation(), "Lands on the bridge deck");
     }
 }

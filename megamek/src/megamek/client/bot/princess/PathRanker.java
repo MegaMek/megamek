@@ -60,6 +60,7 @@ import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
@@ -326,7 +327,6 @@ public abstract class PathRanker implements IPathRanker {
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
         boolean inRange = maxRange >= startingTargetDistance;
 
-        boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         boolean needToUnjamRAC = mover.canUnjamRAC();
         int walkMP = mover.getWalkMP();
 
@@ -335,6 +335,9 @@ public abstract class PathRanker implements IPathRanker {
             if ((path == null) || !path.isMoveLegal()) {
                 continue;
             }
+
+            // If there is deployment steps, we validate this differently
+            boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap(path.contains(MoveStepType.DEPLOY));
 
             logger.trace("Validating path {}", path);
             // if we are an aero unit on the ground map, we want to discard paths that keep

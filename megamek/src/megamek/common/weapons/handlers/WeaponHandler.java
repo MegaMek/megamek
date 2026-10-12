@@ -225,7 +225,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             WeaponAttackAction prevAttack = attackHandler.getWeaponAttackAction();
             if (prevAttack.getEntityId() == entity.getId()) {
                 WeaponMounted prevWeapon = (WeaponMounted) entity.getEquipment(prevAttack.getWeaponId());
-                if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                     totalHeat += prevWeapon.getHeatByBay();
                 } else {
                     boolean rearMount = prevWeapon.isRearMounted();

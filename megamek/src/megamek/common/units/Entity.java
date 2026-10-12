@@ -36,9 +36,10 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.Image;
+import java.awt.*;
 import java.io.Serial;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -3281,6 +3282,20 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
+     * Alternate convenience function to support doing a check for airborne aero on a ground map that is not
+     * yet deployed. So just check the aero, game, and board location.
+     *
+     * @param includeDeploymentStep Only true during walk on deployment
+     * @return True if this is an airborne aircraft on a ground map.
+     */
+    public boolean isAirborneAeroOnGroundMap(boolean includeDeploymentStep) {
+        if (!includeDeploymentStep) {
+            return isAirborneAeroOnGroundMap();
+        }
+        return isAero() && (game != null) && game.isOnGroundMap(this.getBoardLocation());
+    }
+
+    /**
      * Convenience method to determine whether this entity should be treated as a landed aero on a ground map.
      *
      * @return True if this is an aero landed on a ground map.
@@ -4961,12 +4976,14 @@ public abstract class Entity extends TurnOrdered
                                 boolean rearMounted,
                                 int nAmmo)
             throws LocationFullException {
-        if ((mounted instanceof AmmoMounted) && (nAmmo > 1)) {
+        if ((mounted instanceof AmmoMounted ammoMounted) && (nAmmo > 1)) {
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoMounted) mounted).getType().getShots()) * mounted.getTonnage();
-            ((AmmoMounted) mounted).setAmmoCapacity(tonnage);
+            // Large craft round the mass of their ammunition up to the nearest ton, whatever the number of rounds
+            int shotsPerTon = ammoMounted.getType().getShots();
+            double tonnage = Math.ceil((double) nAmmo / shotsPerTon) * mounted.getTonnage();
+            ammoMounted.setAmmoCapacity(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -17394,7 +17411,7 @@ public abstract class Entity extends TurnOrdered
             int range;
 
             if (isAirborne()) {
-                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                int rangeMultiplier = type.usesCapitalRangeBrackets() ? 2 : 1;
                 rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;

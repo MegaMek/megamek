@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.doReturn;
@@ -49,13 +50,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import megamek.client.bot.princess.PathRanker.PathRankerType;
+import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.common.Facing;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
@@ -79,6 +84,7 @@ import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.units.*;
@@ -147,6 +153,256 @@ class PrincessTest {
 
         // Test a null ticks argument.
         assertEquals(0, Princess.calculateAdjustment(null));
+    }
+
+    private static MovePath mockPath(boolean deploys) {
+        MovePath path = mock(MovePath.class);
+        when(path.contains(MoveStepType.DEPLOY)).thenReturn(deploys);
+        return path;
+    }
+
+    @Test
+    void testGetMovePathsDoesNotRebuildPathsForUndeployedUnit() {
+        // The walk-on code rebuilds the unit's paths with the DEPLOY step just before asking for them; rebuilding them
+        // again here doubled every walk-on unit's planning time
+        when(mockPrincess.getMovePathsAndSetNecessaryTargets(any(Entity.class), anyBoolean())).thenCallRealMethod();
+
+        Precognition precognition = mock(Precognition.class);
+        PathEnumerator pathEnumerator = mock(PathEnumerator.class);
+        UnitBehavior behaviorTracker = mock(UnitBehavior.class);
+        when(mockPrincess.getPrecognition()).thenReturn(precognition);
+        when(precognition.getPathEnumerator()).thenReturn(pathEnumerator);
+        when(mockPrincess.getUnitBehaviorTracker()).thenReturn(behaviorTracker);
+        when(mockPrincess.getClusterTracker()).thenReturn(mock(BoardClusterTracker.class));
+
+        Entity undeployed = mock(Entity.class);
+        when(undeployed.getId()).thenReturn(7);
+        when(undeployed.isDeployed()).thenReturn(false);
+        when(undeployed.isImmobile()).thenReturn(false);
+        when(pathEnumerator.getPathLock(undeployed)).thenReturn(new ReentrantLock());
+        when(behaviorTracker.getBehaviorType(undeployed, mockPrincess)).thenReturn(BehaviorType.Engaged);
+        List<MovePath> cachedPaths = List.of(mockPath(true));
+        when(pathEnumerator.getUnitPaths()).thenReturn(Map.of(7, cachedPaths));
+
+        assertEquals(cachedPaths, mockPrincess.getMovePathsAndSetNecessaryTargets(undeployed, false));
+        verify(pathEnumerator, never()).recalculateMovesFor(any(Entity.class), anyBoolean());
+        verify(pathEnumerator, never()).recalculateMovesFor(any(Entity.class));
+    }
+
+    @Test
+    void testKeepDeploymentPathsDropsPathsWithoutDeployStep() {
+        // A move-to-contact long-range path has no DEPLOY step; the server would treat it as a skipped turn
+        MovePath longRangePath = mockPath(false);
+        MovePath deployingPath = mockPath(true);
+
+        assertEquals(List.of(deployingPath), Princess.keepDeploymentPaths(List.of(longRangePath, deployingPath)));
+        assertTrue(Princess.keepDeploymentPaths(List.of(longRangePath)).isEmpty());
+        assertTrue(Princess.keepDeploymentPaths(null).isEmpty());
+    }
+
+    @Test
+    void testKeepDeployingRankedPathsKeepsBestDeployingPathFirst() {
+        RankedPath bestButNoDeploy = new RankedPath(40.0, mockPath(false), "long range");
+        RankedPath secondDeploying = new RankedPath(30.0, mockPath(true), "deploy and walk");
+        RankedPath thirdDeploying = new RankedPath(20.0, mockPath(true), "deploy only");
+        TreeSet<RankedPath> rankedPaths = new TreeSet<>(Collections.reverseOrder());
+        rankedPaths.addAll(List.of(bestButNoDeploy, secondDeploying, thirdDeploying));
+
+        TreeSet<RankedPath> deployingPaths = Princess.keepDeployingRankedPaths(rankedPaths);
+
+        assertEquals(2, deployingPaths.size());
+        assertEquals(secondDeploying, deployingPaths.first());
+    }
+
+    @Test
+    void testGetEntityToMovePrefersUndeployedUnitDuringMovementPhase() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity deployed = mock(Entity.class);
+        when(deployed.isDone()).thenReturn(false);
+        when(deployed.isOffBoard()).thenReturn(false);
+        when(deployed.isDeployed()).thenReturn(true);
+        when(deployed.getPosition()).thenReturn(new Coords(2, 2));
+        when(deployed.getDisplayName()).thenReturn("Deployed");
+
+        Entity undeployed = mock(Entity.class);
+        when(undeployed.isDone()).thenReturn(false);
+        when(undeployed.isOffBoard()).thenReturn(false);
+        when(undeployed.isDeployed()).thenReturn(false);
+        when(undeployed.getPosition()).thenReturn(null);
+        when(undeployed.getDisplayName()).thenReturn("Undeployed");
+
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed, undeployed));
+
+        assertEquals(undeployed, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveUsesDeploymentOrderForUndeployedUnits() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        when(mockPrincess.canWalkOnThisRound(any(Entity.class))).thenReturn(true);
+
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getTurnForPlayer(anyInt())).thenReturn(turn);
+        when(game.getFirstDeployableEntityNum(turn)).thenReturn(2);
+        when(game.getEntity(2)).thenReturn(null);
+
+        Entity firstUndeployed = mock(Entity.class);
+        when(firstUndeployed.isDone()).thenReturn(false);
+        when(firstUndeployed.isOffBoard()).thenReturn(false);
+        when(firstUndeployed.isDeployed()).thenReturn(false);
+        when(firstUndeployed.getPosition()).thenReturn(null);
+        when(firstUndeployed.getDisplayName()).thenReturn("First");
+
+        Entity secondUndeployed = mock(Entity.class);
+        when(secondUndeployed.isDone()).thenReturn(false);
+        when(secondUndeployed.isOffBoard()).thenReturn(false);
+        when(secondUndeployed.isDeployed()).thenReturn(false);
+        when(secondUndeployed.getPosition()).thenReturn(null);
+        when(secondUndeployed.getDisplayName()).thenReturn("Second");
+
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(firstUndeployed, secondUndeployed));
+        when(game.getEntity(2)).thenReturn(secondUndeployed);
+
+        assertEquals(secondUndeployed, mockPrincess.getEntityToMove());
+    }
+
+    private static Entity mockUndeployedUnit(String name) {
+        Entity unit = mock(Entity.class);
+        when(unit.isDone()).thenReturn(false);
+        when(unit.isOffBoard()).thenReturn(false);
+        when(unit.isDeployed()).thenReturn(false);
+        when(unit.getPosition()).thenReturn(null);
+        when(unit.shouldDeploy(anyInt())).thenReturn(true);
+        when(unit.getDisplayName()).thenReturn(name);
+        return unit;
+    }
+
+    @Test
+    void testGetEntityToDeployGivesTheTurnToAUnitThatCannotWalkOn() {
+        // Under walk-on deployment a bot's tractor is the reason the deployment turn exists. A recovery vehicle that
+        // could walk on took it instead, and the tractor never deployed
+        when(mockPrincess.getEntityToDeploy(any(GameTurn.class))).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity recoveryVehicle = mockUndeployedUnit("Heavy BattleMek Recovery Vehicle");
+        Entity tractor = mockUndeployedUnit("Land Train (Tractor)");
+        when(game.inGameTWEntities()).thenReturn(List.of(recoveryVehicle, tractor));
+        when(mockPrincess.canWalkOnThisRound(recoveryVehicle)).thenReturn(true);
+        when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
+
+        assertEquals(tractor, mockPrincess.getEntityToDeploy(turn));
+    }
+
+    @Test
+    void testGetEntityToDeployFallsBackToAWalkOnUnit() {
+        when(mockPrincess.getEntityToDeploy(any(GameTurn.class))).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+
+        Entity recoveryVehicle = mockUndeployedUnit("Heavy BattleMek Recovery Vehicle");
+        when(game.inGameTWEntities()).thenReturn(List.of(recoveryVehicle));
+        when(mockPrincess.canWalkOnThisRound(recoveryVehicle)).thenReturn(true);
+
+        assertEquals(recoveryVehicle, mockPrincess.getEntityToDeploy(turn));
+    }
+
+    @Test
+    void testGetEntityToMoveDoesNotWalkOnATractor() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity tractor = mockUndeployedUnit("Land Train (Tractor)");
+        Entity mek = mockUndeployedUnit("Rifleman RFL-3N");
+        when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
+        when(mockPrincess.canWalkOnThisRound(mek)).thenReturn(true);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(tractor, mek));
+
+        assertEquals(mek, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveSkipsAnUndeployedUnitThatIsNotDeployingThisRound() {
+        // The regular move picker must not choose a unit that cannot walk on: the server would still accept its path
+        // if it carries a DEPLOY step, and walk on a tractor or a unit due in a later round
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity deployed = mock(Entity.class);
+        when(deployed.isDone()).thenReturn(false);
+        when(deployed.isOffBoard()).thenReturn(false);
+        when(deployed.isDeployed()).thenReturn(true);
+        when(deployed.getPosition()).thenReturn(new Coords(2, 2));
+        when(deployed.getDisplayName()).thenReturn("Deployed");
+        // Listed last, so with equal move indexes the old picker chose it
+        Entity tractor = mockUndeployedUnit("Land Train (Tractor)");
+        when(mockPrincess.canWalkOnThisRound(tractor)).thenReturn(false);
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed, tractor));
+
+        assertEquals(deployed, mockPrincess.getEntityToMove());
+    }
+
+    @Test
+    void testGetEntityToMoveEvaluatesAlreadyDeployedUnits() {
+        when(mockPrincess.getEntityToMove()).thenCallRealMethod();
+
+        Game game = mock(Game.class);
+        GameOptions options = mock(GameOptions.class);
+        GameTurn turn = mock(GameTurn.class);
+        when(mockPrincess.getGame()).thenReturn(game);
+        when(game.getPhase()).thenReturn(GamePhase.MOVEMENT);
+        when(game.getOptions()).thenReturn(options);
+        when(game.getTurn()).thenReturn(turn);
+        when(turn.isValidEntity(any(Entity.class), eq(game))).thenReturn(true);
+        when(options.booleanOption(anyString())).thenReturn(false);
+
+        Entity deployed = mock(Entity.class);
+        when(deployed.isDone()).thenReturn(false);
+        when(deployed.isOffBoard()).thenReturn(false);
+        when(deployed.isDeployed()).thenReturn(true);
+        when(deployed.getPosition()).thenReturn(new Coords(2, 2));
+        when(deployed.getDisplayName()).thenReturn("Deployed");
+
+        when(mockPrincess.getEntitiesOwned()).thenReturn(List.of(deployed));
+
+        assertEquals(deployed, mockPrincess.getEntityToMove());
     }
 
     @Test
@@ -292,6 +548,7 @@ class PrincessTest {
         when(mockMek.getRunMP()).thenReturn(6);
         when(mockMek.isOffBoard()).thenReturn(false);
         when(mockMek.getPosition()).thenReturn(mockCoords);
+        when(mockMek.isDeployed()).thenReturn(true);
         when(mockMek.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockMek), any(StringBuilder.class))).thenReturn(1.111);
 
@@ -299,6 +556,7 @@ class PrincessTest {
         when(mockBA.getRunMP()).thenReturn(3);
         when(mockBA.isOffBoard()).thenReturn(false);
         when(mockBA.getPosition()).thenReturn(mockCoords);
+        when(mockBA.isDeployed()).thenReturn(true);
         when(mockBA.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockBA), any(StringBuilder.class))).thenReturn(6.666);
 
@@ -306,6 +564,7 @@ class PrincessTest {
         when(mockTank.getRunMP()).thenReturn(6);
         when(mockTank.isOffBoard()).thenReturn(false);
         when(mockTank.getPosition()).thenReturn(mockCoords);
+        when(mockTank.isDeployed()).thenReturn(true);
         when(mockTank.isSelectableThisTurn()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockTank), any(StringBuilder.class))).thenReturn(2.5);
 
@@ -313,18 +572,21 @@ class PrincessTest {
         when(mockEjectedMekwarrior.getRunMP()).thenReturn(1);
         when(mockEjectedMekwarrior.isOffBoard()).thenReturn(false);
         when(mockEjectedMekwarrior.getPosition()).thenReturn(mockCoords);
+        when(mockEjectedMekwarrior.isDeployed()).thenReturn(true);
         when(mockEjectedMekwarrior.isSelectableThisTurn()).thenReturn(true);
 
         Entity mockImmobileMek = mock(BipedMek.class);
         when(mockImmobileMek.getRunMP()).thenReturn(0);
         when(mockImmobileMek.isOffBoard()).thenReturn(false);
         when(mockImmobileMek.getPosition()).thenReturn(mockCoords);
+        when(mockImmobileMek.isDeployed()).thenReturn(true);
         when(mockImmobileMek.isSelectableThisTurn()).thenReturn(true);
         when(mockImmobileMek.isImmobile()).thenReturn(true);
 
         Entity mockOffBoardArty = mock(Tank.class);
         when(mockOffBoardArty.getRunMP()).thenReturn(6);
         when(mockOffBoardArty.getPosition()).thenReturn(mockCoords);
+        when(mockOffBoardArty.isDeployed()).thenReturn(true);
         when(mockOffBoardArty.isSelectableThisTurn()).thenReturn(true);
         when(mockOffBoardArty.isOffBoard()).thenReturn(true);
         when(mockPrincess.calculateMoveIndex(eq(mockOffBoardArty), any(StringBuilder.class))).thenReturn(10.0);

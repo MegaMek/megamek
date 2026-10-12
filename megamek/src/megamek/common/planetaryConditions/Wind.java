@@ -80,6 +80,7 @@ public enum Wind {
         return switch (this) {
             case TORNADO_F4 -> TORNADO_F1_TO_F3;
             case TORNADO_F1_TO_F3 -> STORM;
+            case STORM -> STRONG_GALE;
             case STRONG_GALE -> MOD_GALE;
             case MOD_GALE -> LIGHT_GALE;
             default -> CALM;
@@ -90,8 +91,9 @@ public enum Wind {
         return switch (this) {
             case CALM -> LIGHT_GALE;
             case LIGHT_GALE -> MOD_GALE;
-            case MOD_GALE -> STORM;
-            case STRONG_GALE -> TORNADO_F1_TO_F3;
+            case MOD_GALE -> STRONG_GALE;
+            case STRONG_GALE -> STORM;
+            case STORM -> TORNADO_F1_TO_F3;
             default -> TORNADO_F4;
         };
     }

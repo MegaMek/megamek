@@ -31,6 +31,26 @@ has only Contents read. The App token is minted only *after* all build work
 and is requested for the three named repositories with Contents write.
 Never put the private key in files, command output, or a workflow input.
 
+## Check App access without publishing
+
+After this workflow is merged to official main, run **Game suite App access check (manual)**
+from the Actions tab on `main` and approve its `suite-release-live` environment request.
+This check works while `SUITE_RELEASES_ENABLED` remains `false`; it does not enable releases,
+build games, or publish tags, releases, assets, or a suite record.
+
+The check uses the stored App ID and private key to request the same three-repository,
+Contents-write token as the publisher. Successful token issuance confirms the requested
+permission is granted; only GET requests then verify the token's exact repository scope and
+read each repository's `main` ref. The action revokes its temporary token during job cleanup.
+The key and token are never printed or uploaded.
+
+A passing run verifies the configured credentials and current access, not an actual release
+write, tag rules, archive validity, or future access. It does not replace a successful coordinator
+dry run or authorization of the first live publication. If authentication or a GET fails, fix
+the reported configuration/access problem before enabling live releases.
+
+## Bootstrap and publication
+
 Use `bootstrap=true` and an explicitly reviewed canonical
 `bootstrap_floor` (for example `0.51.00`) **only** for the first record.
 Existing records reject bootstrap; absent records reject normal operation.
@@ -39,15 +59,22 @@ releases and assets for a prior incomplete attempt. Do not overwrite/delete
 partial artifacts or automatically retry a failed write.
 
 The workflow clones full history of four public official repositories into
-`sources/{megamek,megameklab,mekhq,mm-data}`; pinned staging creates a
-clean sibling checkout at each frozen SHA. The preparation phase streams and
+`sources/{megamek,megameklab,mekhq,mm-data}`. After environment approval,
+preparation captures each repository's `main` commit once; pinned staging creates
+a clean sibling checkout at each frozen SHA. This snapshot is the source authority
+for Weekly, Milestone, and Development, including verified Weekly no-ops. Later
+merges to `main` do not change the snapshot or block publication, even during
+uploads. A change arriving after capture is considered by a later run; cancel
+the current run if it must include that change.
+
+The preparation phase streams and
 attests every prior archive (including companion jars and external Gradle
 verifiers), retains these bytes, saves `suite-state/inventory.json`, builds
 and verifies changed products without publishing, and saves `build_result.json`.
 `seal.json` binds those files and the resulting archives. No publishing token
 exists during preparation. A dry run ends with an explicit `DRY_RUN_ONLY`
 or `DRY_RUN_VERIFIED_WEEKLY_NOOP` result. The live phase independently
-rechecks remote heads, versions, releases, tags, record and archive bytes
+rechecks version allocation, releases, tags, record and archive bytes
 before any write; uploads the single complete record **last** and confirms
 its bytes. No write has an automatic retry. A failure after a tag/release
 write requires manual reconciliation of all affected repositories and the
@@ -59,9 +86,40 @@ repository-configured dependency resolution (including downloads on a fresh
 runner); no pre-primed dependency cache is required. The sources remain pinned
 to the frozen Git commits. Dependency resolution failures stop the run rather
 than switching source commits or publishing unverified bytes.
-Missing tasks, incomplete official commits, mutable refs, unavailable
-dependencies, and changed inventories are blockers, not reasons to switch to
+Missing tasks, incomplete official commits, changed release tag targets,
+unavailable dependencies, and changed release inventories are blockers, not reasons to switch to
 an unreviewed worktree or fall back to a previous record.
+
+### GitHub release presentation and channel identity
+
+New MegaMek releases hosting a complete record are titled, for example,
+`Weekly suite 0.51.01`. New Lab/HQ product releases include the product
+version and publishing suite, for example,
+`MekHQ 0.51.01 - Weekly suite 0.51.01`. Descriptions identify the channel,
+link the exact complete record and each product archive, and list frozen sources.
+These labels apply to Weekly, Development and Milestone. The GitHub
+`prerelease=false` setting is unchanged; GitHub badges and version numbers do
+not determine channel membership.
+
+The record's `membership` is authoritative for the launcher and website.
+The suite is complete only when its record is available; descriptions are
+created before upload and do not imply successful completion. A record-only
+suite host lists the actual reused product versions, which can differ from the
+suite version. Reused product releases retain their original titles and
+descriptions even if their archives appear in a later suite or another channel.
+Existing published releases are not relabeled by this change.
+
+### Recovering from a non-portable published archive
+
+The first Weekly `0.51.01` contains case-only generated startup-script aliases
+such as `bin/MegaMek` and `bin/megamek`. The launcher correctly refuses these
+archives rather than choosing which file to overwrite.
+Do not replace the published assets or change their record hashes.
+Merge the shared packaging/verifier fix, then prepare a new Weekly with
+`bootstrap=false` and no bootstrap floor. The MegaMek source change rebuilds
+all three products. Historical bytes are attested read-only with their pinned
+contract; the new archives must pass portable-path validation before publication.
+Retry installation only after the corrected complete record is published.
 
 ## Diagnosing failed dry runs
 

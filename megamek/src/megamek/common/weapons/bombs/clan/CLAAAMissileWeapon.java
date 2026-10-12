@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,13 +43,13 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
-import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
+import megamek.common.weapons.bombs.CapitalRangeBombMissileWeapon;
 
 /**
  * @author Jay Lawson
  * @author Dave Nawton
  */
-public class CLAAAMissileWeapon extends ThunderboltWeapon {
+public class CLAAAMissileWeapon extends CapitalRangeBombMissileWeapon {
 
     /**
      *

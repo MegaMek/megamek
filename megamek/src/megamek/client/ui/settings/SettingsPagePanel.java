@@ -55,6 +55,7 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 
@@ -79,6 +80,7 @@ public class SettingsPagePanel extends JPanel {
     private final String pageSearchText;
     private final String structuralSearchText;
     private final List<SearchableSection> searchableSections;
+    private final Boolean sectionsExpandedByDefault;
     private final Map<Component, CollapsibleSectionPanel> sectionsByContent = new IdentityHashMap<>();
     private final int maximumPageWidth;
 
@@ -87,6 +89,7 @@ public class SettingsPagePanel extends JPanel {
         setName("pnl" + builder.name + "Page");
         showDetailsPanel = builder.showDetailsPanel;
         maximumPageWidth = builder.maximumPageWidth;
+        sectionsExpandedByDefault = builder.sectionsExpandedByDefault;
 
         pageBody = new JPanel(new BorderLayout());
         pageBody.setName("pnl" + builder.name + "PageBody");
@@ -118,6 +121,7 @@ public class SettingsPagePanel extends JPanel {
             }
         }
         searchableSections = List.copyOf(searchable);
+        resetSectionExpansionToDefault();
         bodySearchText = allBodyText.toString().trim();
         StringBuilder allPageText = new StringBuilder();
         appendSearchText(allPageText, headerSearchText(builder));
@@ -199,6 +203,15 @@ public class SettingsPagePanel extends JPanel {
 
     public void collapseAllSections() {
         setExpanded(false, sectionPanels());
+    }
+
+    /** Restores the client default, except for single-section pages and explicit page overrides. */
+    public void resetSectionExpansionToDefault() {
+        boolean expanded = searchableSections.size() == 1
+              || (sectionsExpandedByDefault == null
+                    ? GUIPreferences.getInstance().getExpandOptionSections()
+                    : sectionsExpandedByDefault);
+        setExpanded(expanded, sectionPanels());
     }
 
     /** Sets the visibility of the section containing the given content component. */
@@ -363,7 +376,6 @@ public class SettingsPagePanel extends JPanel {
         }
         CollapsibleSectionPanel section = new CollapsibleSectionPanel(title, definition.content);
         section.setSummary(sectionSummary(builder.textProvider, definition));
-        section.setExpanded(builder.sectionsExpandedByDefault);
         if (definition.content instanceof SectionHeaderControlProvider provider) {
             section.setTrailingComponent(provider.getSectionHeaderControl());
             section.setTitleMuted(!provider.isSectionEnabled());
@@ -527,7 +539,7 @@ public class SettingsPagePanel extends JPanel {
         private String introTextKey;
         private JComponent introComponent;
         private String quoteTextKey;
-        private boolean sectionsExpandedByDefault;
+        private Boolean sectionsExpandedByDefault;
         private boolean showDetailsPanel = true;
         private boolean standardContentWidth;
         private int maximumPageWidth = DEFAULT_MAXIMUM_PAGE_WIDTH;
@@ -593,6 +605,7 @@ public class SettingsPagePanel extends JPanel {
             return this;
         }
 
+        /** Overrides the client default for multi-section pages; a single section always starts expanded. */
         public Builder sectionsExpandedByDefault(boolean expanded) {
             sectionsExpandedByDefault = expanded;
             return this;

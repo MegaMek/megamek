@@ -472,14 +472,14 @@ class PlanetaryConditionsTest {
                     // Assert
                     // Should be rolled once
                     compute.verify(Compute::d6, times(1));
-                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                    assertEquals(Wind.STRONG_GALE, planetaryConditions.getWind());
                 }
             }
 
             @Test
             void testShiftingWindStrengthIncreaseTowardsLimit() {
                 // Arrange
-                planetaryConditions.setWindMax(Wind.STORM);
+                planetaryConditions.setWindMax(Wind.STRONG_GALE);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(6);
 
@@ -489,14 +489,14 @@ class PlanetaryConditionsTest {
                     // Assert
                     // Should be rolled once
                     compute.verify(Compute::d6, times(1));
-                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                    assertEquals(Wind.STRONG_GALE, planetaryConditions.getWind());
                 }
             }
 
             @Test
             void testShiftingWindStrengthIncreasePastLimit() {
                 // Arrange
-                planetaryConditions.setWindMax(Wind.STORM);
+                planetaryConditions.setWindMax(Wind.STRONG_GALE);
                 try (MockedStatic<Compute> compute = mockStatic(Compute.class)) {
                     compute.when(Compute::d6).thenReturn(6);
 
@@ -506,9 +506,9 @@ class PlanetaryConditionsTest {
                     planetaryConditions.determineWind();
 
                     // Assert
-                    // Should be rolled twice, but still just a storm
+                    // Should be rolled twice, but still just a strong gale
                     compute.verify(Compute::d6, times(2));
-                    assertEquals(Wind.STORM, planetaryConditions.getWind());
+                    assertEquals(Wind.STRONG_GALE, planetaryConditions.getWind());
                 }
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -386,6 +386,26 @@ public class UnitTable {
                 return ms;
             }
         }
+        return drawFromOwnTable(filter);
+    }
+
+    /**
+     * Selects a unit from the faction's own entries that pass the filter, never from another faction's salvage.
+     *
+     * <p>For a pick that must be of one kind, such as an infantry class, where the faction's own table may hold
+     * none at this rating: salvage would then be the only source that matches, and the force would fill up with
+     * other factions' units instead of trying the faction's own at another rating.</p>
+     *
+     * @param filter the function that determines which units are permitted; if {@code null}, no filter is applied
+     *
+     * @return the selected unit, or {@code null} if none of the faction's own units pass the filter
+     */
+    public @Nullable MekSummary generateUnitWithoutSalvage(@Nullable UnitFilter filter) {
+        return drawFromOwnTable(filter);
+    }
+
+    private @Nullable MekSummary drawFromOwnTable(@Nullable UnitFilter filter) {
+        int roll;
         List<TableEntry> useUnitList = unitTable;
         int unitMapSize = unitTotal;
         if (filter != null) {

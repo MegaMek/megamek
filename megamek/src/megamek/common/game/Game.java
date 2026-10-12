@@ -360,6 +360,7 @@ public final class Game extends AbstractGame implements Serializable,
         } else if (system.equals(OptionsConstants.RULES_CORE)) {
             rulesManager = new CoreRulesManager();
         }
+        rulesManager.getRulesAmmo().updateAmmoBVs();
     }
 
     /**

@@ -280,6 +280,12 @@ public class Ruleset {
         // save the setting so it can be restored after assigning names
         String rngFaction = RandomNameGenerator.getInstance().getChosenFaction();
 
+        if (fd.getInfantryClass() != null) {
+            logger.info("[ForceGen][InfantryClass] processRoot: faction={} unitType={} infantryClass={} options={}",
+                  fd.getFaction(), fd.getUnitType(), fd.getInfantryClass(), fd.getFlags());
+        }
+        // Before the tree is built, so every node copies the pinned beast from its parent
+        BeastMountSelector.pinBeast(fd);
         buildForceTree(fd, l, PROGRESS_BUILD_TREE);
         // Capture the weight class the ruleset ROLLED for this force (the value that drove the
         // <weightTarget> selection) before recalcWeightClass() below overwrites it with the
@@ -540,6 +546,28 @@ public class Ruleset {
         }
         // RatingSystem values are ordered worst-to-best, so worse ratings are lower indices.
         for (int i = idx; i >= 0; i--) {
+            result.add(ratingSystem.vals[i]);
+        }
+        return result;
+    }
+
+    /**
+     * Returns every rating better than the given one in this ruleset's rating system, closest first. The counterpart
+     * of {@link #getRatingsAtOrWorseThan(String)} for the rare pick that may step up when nothing at or below the
+     * force's rating fits, such as a strict infantry class.
+     *
+     * @param rating the force's own equipment rating
+     *
+     * @return the better ratings, closest first; empty when the rating is the best or not part of this system
+     */
+    public List<String> getRatingsBetterThan(String rating) {
+        List<String> result = new ArrayList<>();
+        int ratingIndex = ratingSystem.indexOf(rating);
+        if (ratingIndex < 0) {
+            return result;
+        }
+        // RatingSystem values are ordered worst-to-best, so better ratings are higher indices.
+        for (int i = ratingIndex + 1; i < ratingSystem.vals.length; i++) {
             result.add(ratingSystem.vals[i]);
         }
         return result;

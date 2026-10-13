@@ -442,7 +442,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
     /**
      * Sends the flares to the players after an attack phase. An illumination round lights from the turn it arrives
      * (TO:AR p.152), so its flare must reach the players now, for this turn's to-hit numbers and the board, not only
-     * in the End phase. It goes after the phase's attacks, so the 3D board shows it once the round has burst.
+     * in the End phase.
      */
     private void sendFlares() {
         LOGGER.debug("[Illumination] sending {} flares after the {} phase", gameManager.getGame().getFlares().size(),

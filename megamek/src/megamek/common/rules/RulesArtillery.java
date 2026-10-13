@@ -49,6 +49,8 @@ public abstract class RulesArtillery {
 
     /**
      * Whether an illumination round's flare lights in the turn it arrives, rather than from the End phase of that turn.
+     *
+     * @return {@code true} if the flare lights as soon as the round arrives
      */
     public abstract boolean illuminationLitOnArrival();
 
@@ -57,6 +59,8 @@ public abstract class RulesArtillery {
      *
      * @param wind             the wind strength
      * @param smokeDriftInCalm whether the Smoke Drift option treats a calm as a light breeze
+     *
+     * @return the hexes the flare moves, {@code 0} when it stays put
      */
     public abstract int flareDrift(Wind wind, boolean smokeDriftInCalm);
 }

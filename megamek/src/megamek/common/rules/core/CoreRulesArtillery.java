@@ -39,13 +39,19 @@ import megamek.common.rules.RulesArtillery;
 
 public class CoreRulesArtillery extends RulesArtillery {
 
-    /** A flare lights from the End phase of the turn it arrives, as MegaMek has always played it. */
+    /**
+     * The Core Rules have no illumination rounds, so MegaMek keeps its long-standing play: a flare lights from the End
+     * phase of the turn it arrives.
+     */
     @Override
     public boolean illuminationLitOnArrival() {
         return false;
     }
 
-    /** A flare drifts one hex less than the wind strength, but at least one in any wind, as MegaMek always has. */
+    /**
+     * The Core Rules have no illumination rounds, so MegaMek keeps its long-standing drift: one hex less than the wind
+     * strength, but at least one in any wind.
+     */
     @Override
     public int flareDrift(Wind wind, boolean smokeDriftInCalm) {
         return (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal();

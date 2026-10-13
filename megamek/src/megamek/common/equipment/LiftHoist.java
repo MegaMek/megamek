@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -123,7 +123,9 @@ public class LiftHoist extends ExternalCargo {
     }
 
     private Mounted<?> getMounted() {
-        Entity entity = game.getEntity(entityId);
+        // Prefer the game's copy of the entity, but fall back on our own reference when no game has been set yet
+        // (e.g. MekHQ building a unit from a freshly loaded entity)
+        Entity entity = (game != null) ? game.getEntity(entityId) : this.entity;
         if (entity == null) {
             return null;
         }

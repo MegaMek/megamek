@@ -72,6 +72,23 @@ class FlareRulesTest {
         assertEquals(IlluminationLevel.NONE, level(0, centre), "Not on the other board");
     }
 
+    /**
+     * The flare lights in the turn it arrives (its Firing phase comes before the End phase that ages it) and in each of
+     * the four turns after: five turns, then it is gone.
+     */
+    @Test
+    void aFlareLightsFromTheTurnItArrivesForFiveTurns() {
+        Coords centre = new Coords(8, 8);
+        gameManager.deliverArtilleryFlare(centre, 0, 3);
+        assertEquals(IlluminationLevel.FLARE, level(0, centre), "Lit in the turn it arrives");
+        for (int turn = 2; turn <= 5; turn++) {
+            game.ageFlares();
+            assertEquals(IlluminationLevel.FLARE, level(0, centre), "Still lit in turn " + turn);
+        }
+        game.ageFlares();
+        assertEquals(IlluminationLevel.NONE, level(0, centre), "Gone after its fifth turn");
+    }
+
     private IlluminationLevel level(int boardId, Coords coords) {
         return IlluminationLevel.determineIlluminationLevel(game, boardId, coords);
     }

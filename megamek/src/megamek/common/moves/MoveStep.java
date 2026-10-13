@@ -3446,8 +3446,8 @@ public class MoveStep implements Serializable {
                 boolean isOnIceSurface = destHex.containsTerrain(Terrains.ICE)
                                          && (nDestEl == destHex.getLevel());
                 if (inWaterColumn && !isOnIceSurface && (waterDepth > 0) && !isAmphibious) {
-                    // "To be considered underwater, a unit must be completely submerged... 'Mechs must be in at
-                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a Mek
+                    // "To be considered underwater, a unit must be completely submerged... 'Meks must be in at
+                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a 'Mek
                     // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
                     // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
                     boolean isFullySubmerged = (entity instanceof Mek)

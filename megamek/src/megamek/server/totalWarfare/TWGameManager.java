@@ -7060,11 +7060,24 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Creates an artillery flare of the given radius above the target
+     * Creates an artillery flare of the given radius above the target, on the first board.
+     *
+     * @deprecated a flare lights only its own board; use {@link #deliverArtilleryFlare(Coords, int, int)}
      */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void deliverArtilleryFlare(Coords coords, int radius) {
-        Flare flare = new Flare(coords, 0, 5, radius, Flare.F_DRIFTING);
+        deliverArtilleryFlare(coords, 0, radius);
+    }
+
+    /**
+     * Creates an artillery flare of the given radius above the target, on the board it was fired at, drifting with the
+     * wind. It lights from the turn it arrives and lasts five turns, that one included (TO:AR p.152). The Core Rules
+     * have no illumination rounds yet, so this Total Warfare rule applies under both.
+     */
+    public void deliverArtilleryFlare(Coords coords, int boardId, int radius) {
+        Flare flare = new Flare(coords, boardId, 5, radius, Flare.F_IGNITED | Flare.F_DRIFTING);
         game.addFlare(flare);
+        LOGGER.debug("[Illumination] flare of radius {} over {} on board {}", radius, coords, boardId);
     }
 
     public void deliverMortarFlare(Coords coords, int boardId, int duration) {

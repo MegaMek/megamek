@@ -48,6 +48,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
 
     /** Feature logger for the objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
+    private static final MMLogger LOGGER = MMLogger.create(TWPhaseEndManager.class);
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
@@ -222,6 +223,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.sendGroundObjectUpdate();
                 // For bomb markers
                 gameManager.sendSpecialHexDisplayPackets();
+                sendFlares();
                 break;
             case FIRING_REPORT:
                 gameManager.changePhase(GamePhase.PHYSICAL);
@@ -287,6 +289,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.sendSpecialHexDisplayPackets();
                 gameManager.getGame().getPlayersList()
                       .forEach(player -> gameManager.send(player.getId(), gameManager.createArtilleryPacket(player)));
+                sendFlares();
                 break;
             case OFFBOARD:
                 // write Offboard Attack Phase header
@@ -319,6 +322,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.PRE_FIRING);
                 }
+                sendFlares();
                 break;
             case OFFBOARD_REPORT:
                 gameManager.sendSpecialHexDisplayPackets();
@@ -433,5 +437,16 @@ record TWPhaseEndManager(TWGameManager gameManager) {
         } else {
             gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
         }
+    }
+
+    /**
+     * Sends the flares to the players after an attack phase. An illumination round lights from the turn it arrives
+     * (TO:AR p.152), so its flare must reach the players now, for this turn's to-hit numbers and the board, not only
+     * in the End phase. It goes after the phase's attacks, so the 3D board shows it once the round has burst.
+     */
+    private void sendFlares() {
+        LOGGER.debug("[Illumination] sending {} flares after the {} phase", gameManager.getGame().getFlares().size(),
+              gameManager.getGame().getPhase());
+        gameManager.send(gameManager.createFlarePacket());
     }
 }

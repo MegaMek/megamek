@@ -40,6 +40,7 @@ import java.util.Map;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.annotations.Nullable;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.bays.StandardSeatCargoBay;
 import megamek.common.equipment.AmmoType;
@@ -118,6 +119,27 @@ public class CostCalculator {
         costFormatter.setMaximumFractionDigits(2);
         Map<String, Double> weaponsNumberMap = new HashMap<>();
         Map<String, Long> weaponsCostMap = new HashMap<>();
+
+        if (entity.isBattleArmor() && ((BattleArmor) entity).getTurretCapacity() > 0) {
+            int turretSize = ((BattleArmor) entity).getTurretCapacity();
+            long itemCost = 2500L * turretSize;
+            String turretName = "Modular Turret Mount";
+
+            if (((BattleArmor) entity).hasModularTurretMount()) {
+                turretName = "Configurable Turret Mount";
+                itemCost += 2500;
+            }
+
+            if (turretSize == 1) {
+                turretName += " (" + turretSize + " Slot)";
+            } else {
+                turretName += " (" + turretSize + " Slots)";
+            }
+
+            weaponsNumberMap.merge(turretName, 1.0, Double::sum);
+            weaponsCostMap.merge(turretName, itemCost, Long::sum);
+        }
+
         for (Mounted<?> mounted : entity.getEquipment()) {
             double num = 1.0;
             if (ignoreAmmo && (mounted.getType() instanceof AmmoType)
@@ -132,11 +154,11 @@ public class CostCalculator {
                   && mounted.getType().hasFlag(MiscType.F_BA_MANIPULATOR)) {
                 continue;
             }
-            // BA Myomer Booster is spreadable and counted as one third of a whole
+            // BA Myomer Booster is spreadable and must be counted partially
             if (entity.isBattleArmor()
                   && (mounted.getType() instanceof MiscType)
                   && mounted.getType().hasFlag(MiscType.F_MASC)) {
-                num = 1.0 / 3;
+                num = 1.0 / mounted.getNumCriticalSlots();
             }
             // EI Interface is built-in for ProtoMeks and doesn't add cost (IO:AE p.69)
             if (entity.isProtoMek() && (mounted.getType() instanceof MiscType)

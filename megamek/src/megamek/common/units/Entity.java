@@ -36,10 +36,9 @@ package megamek.common.units;
 
 import static megamek.common.bays.Bay.UNSET_BAY;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -7000,7 +6999,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MekWarriors, vehicle
      * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
      * Computer.
      *
@@ -7016,7 +7015,7 @@ public abstract class Entity extends TurnOrdered
         if (!hasTCP || !hasVdni) {
             return false;
         }
-        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        // Only MekWarriors, vehicle commanders, and fighter pilots qualify
         // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
         return isMek() || isCombatVehicle() || isFighter();
     }

@@ -1318,6 +1318,40 @@ public class ClientGUI extends AbstractClientGUI
                   getForceDisplayPanel().getWidth(),
                   getForceDisplayPanel().getHeight());
         }
+        if (getMekSelectorDialog() != null) {
+            getMekSelectorDialog().setBounds(0,
+                                             0,
+                                             getMekSelectorDialog().getWidth(),
+                                             getMekSelectorDialog().getHeight());
+        }
+        if (getBotCommandsDialog() != null) {
+            getBotCommandsDialog().setBounds(0, 0, getBotCommandsPanel().getWidth(), getBotCommandsPanel().getHeight());
+        }
+        if (getRoundsInAirDialog() != null) {
+            getRoundsInAirDialog().setBounds(0,
+                                             0,
+                                             getRoundsInAirDialog().getWidth(),
+                                             getRoundsInAirDialog().getHeight());
+        }
+        if (getGameOptionsDialog() != null) {
+            getGameOptionsDialog().setBounds(0,
+                                             0,
+                                             getGameOptionsDialog().getWidth(),
+                                             getGameOptionsDialog().getHeight());
+        }
+        if (getNetworkInformationDialog() != null) {
+            getNetworkInformationDialog().setBounds(0,
+                                                    0,
+                                                    getNetworkInformationDialog().getWidth(),
+                                                    getNetworkInformationDialog().getHeight());
+        }
+
+        if (getMekSelectorDialog() != null) {
+            getMekSelectorDialog().setBounds(0,
+                                             0,
+                                             getMekSelectorDialog().getWidth(),
+                                             getMekSelectorDialog().getHeight());
+        }
         if (getMiniReportDisplayDialog() != null) {
             getMiniReportDisplayDialog().setBounds(0,
                   0,
@@ -1344,6 +1378,12 @@ public class ClientGUI extends AbstractClientGUI
                   0,
                   getBotCommandsDialog().getWidth(),
                   getBotCommandsDialog().getHeight());
+        }
+        if (getRandomArmyDialog() != null) {
+            getRandomArmyDialog().setBounds(0, 0, getRandomArmyDialog().getWidth(), getRandomArmyDialog().getHeight());
+        }
+        if (getRandomNameDialog() != null) {
+            getRandomNameDialog().setBounds(0, 0, getRandomNameDialog().getWidth(), getRandomNameDialog().getHeight());
         }
     }
 

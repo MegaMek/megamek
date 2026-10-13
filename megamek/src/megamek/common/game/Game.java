@@ -99,7 +99,6 @@ import megamek.common.options.IGameOptions;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.PlanetaryConditions;
-import megamek.common.planetaryConditions.Wind;
 import megamek.common.planetaryConditions.WindDirection;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rules.RulesManager;
@@ -3500,11 +3499,11 @@ public final class Game extends AbstractGame implements Serializable,
             if (flare.isIgnited()) {
                 flare.turnsToBurn--;
                 if (flare.isDrifting()) {
-                    Wind wind = planetaryConditions.getWind();
-                    if (!planetaryConditions.getWind().isCalm()) {
+                    int drift = rulesManager.getRulesArtillery().flareDrift(planetaryConditions.getWind(),
+                          getOptions().booleanOption(OptionsConstants.BASE_BREEZE));
+                    if (drift > 0) {
                         WindDirection dir = planetaryConditions.getWindDirection();
-                        flare.position = flare.position.translated(dir.ordinal(),
-                                                                   (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal());
+                        flare.position = flare.position.translated(dir.ordinal(), drift);
                         if (getBoard().contains(flare.position)) {
                             r = new Report(5236);
                             r.add(flare.position.getBoardNum());

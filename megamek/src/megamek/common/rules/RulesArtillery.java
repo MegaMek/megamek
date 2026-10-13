@@ -34,6 +34,8 @@ package megamek.common.rules;
  */
 
 
+import megamek.common.planetaryConditions.Wind;
+
 public abstract class RulesArtillery {
 
     /**
@@ -44,4 +46,17 @@ public abstract class RulesArtillery {
      * @return base Artillery attack mod
      */
     public abstract int computeArtilleryBaseMod(int distance, boolean direct, boolean flak);
+
+    /**
+     * Whether an illumination round's flare lights in the turn it arrives, rather than from the End phase of that turn.
+     */
+    public abstract boolean illuminationLitOnArrival();
+
+    /**
+     * How many hexes a drifting illumination flare moves downwind each turn.
+     *
+     * @param wind             the wind strength
+     * @param smokeDriftInCalm whether the Smoke Drift option treats a calm as a light breeze
+     */
+    public abstract int flareDrift(Wind wind, boolean smokeDriftInCalm);
 }

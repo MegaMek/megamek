@@ -34,14 +34,27 @@ package megamek.common.rules.core;
  */
 
 
+import megamek.common.planetaryConditions.Wind;
 import megamek.common.rules.RulesArtillery;
 
 public class CoreRulesArtillery extends RulesArtillery {
 
+    /** A flare lights from the End phase of the turn it arrives, as MegaMek has always played it. */
+    @Override
+    public boolean illuminationLitOnArrival() {
+        return false;
+    }
+
+    /** A flare drifts one hex less than the wind strength, but at least one in any wind, as MegaMek always has. */
+    @Override
+    public int flareDrift(Wind wind, boolean smokeDriftInCalm) {
+        return (wind.ordinal() > 1) ? (wind.ordinal() - 1) : wind.ordinal();
+    }
+
     /**
      * {@inheritDoc}
      * Core p. 63, 68-69, etc.
-     * 
+     *
      */
     @Override
     public int computeArtilleryBaseMod(int distance, boolean direct, boolean flak) {

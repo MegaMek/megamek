@@ -40,25 +40,39 @@ import megamek.common.Hex;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.IlluminationLevel;
+import megamek.common.planetaryConditions.Wind;
+import megamek.common.planetaryConditions.WindDirection;
+import megamek.common.rules.RulesManager;
 import megamek.server.totalWarfare.TWGameManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Illumination rounds (TO:AR p.152): an artillery flare lights the hexes within its radius on its own board, from the
- * turn it arrives, for five turns, drifting as smoke does.
+ * Illumination rounds: an artillery flare lights the hexes within its radius on its own board. Under Total Warfare
+ * (TO:AR p.152) it lights from the turn it arrives, for five turns, drifting as smoke does; the Core Rules keep the
+ * play MegaMek always had.
  */
 class FlareRulesTest {
     private TWGameManager gameManager;
     private Game game;
+    private RulesManager originalRules;
 
     @BeforeEach
     void setUp() {
+        originalRules = Game.rulesManager;
         gameManager = new TWGameManager();
         game = gameManager.getGame();
+        game.initializeRulesManager(OptionsConstants.RULES_TW);
         game.setBoard(0, board());
         game.setBoard(1, board());
+    }
+
+    @AfterEach
+    void restoreRules() {
+        Game.rulesManager = originalRules;
     }
 
     /** A flare fired at the second board lights that board, within its radius, and not the first. */
@@ -77,7 +91,7 @@ class FlareRulesTest {
      * the four turns after: five turns, then it is gone.
      */
     @Test
-    void aFlareLightsFromTheTurnItArrivesForFiveTurns() {
+    void underTotalWarfareAFlareLightsFromTheTurnItArrivesForFiveTurns() {
         Coords centre = new Coords(8, 8);
         gameManager.deliverArtilleryFlare(centre, 0, 3);
         assertEquals(IlluminationLevel.FLARE, level(0, centre), "Lit in the turn it arrives");
@@ -87,6 +101,48 @@ class FlareRulesTest {
         }
         game.ageFlares();
         assertEquals(IlluminationLevel.NONE, level(0, centre), "Gone after its fifth turn");
+    }
+
+    /**
+     * Under Total Warfare it drifts as smoke does, one hex a turn in any wind, plus one for each strength above Storm
+     * (TO:AR p.152).
+     */
+    @Test
+    void underTotalWarfareAFlareDriftsAsSmokeDoesPlusOneHexForEachStrengthAboveStorm() {
+        var rules = Game.rulesManager.getRulesArtillery();
+        assertEquals(0, rules.flareDrift(Wind.CALM, false));
+        assertEquals(1, rules.flareDrift(Wind.CALM, true), "The Smoke Drift option treats a calm as a light breeze");
+        assertEquals(1, rules.flareDrift(Wind.LIGHT_GALE, false));
+        assertEquals(1, rules.flareDrift(Wind.MOD_GALE, false));
+        assertEquals(1, rules.flareDrift(Wind.STRONG_GALE, false), "It drifted 2 here before");
+        assertEquals(1, rules.flareDrift(Wind.STORM, false), "and 3 here");
+        assertEquals(2, rules.flareDrift(Wind.TORNADO_F1_TO_F3, false));
+        assertEquals(3, rules.flareDrift(Wind.TORNADO_F4, false));
+    }
+
+    /** The Core Rules keep the play MegaMek always had: lit from the End phase, and the old drift. */
+    @Test
+    void underTheCoreRulesAFlareKeepsItsOldPlay() {
+        game.initializeRulesManager(OptionsConstants.RULES_CORE);
+        Coords centre = new Coords(8, 8);
+        gameManager.deliverArtilleryFlare(centre, 0, 3);
+        assertEquals(IlluminationLevel.NONE, level(0, centre), "Not lit until the End phase");
+        game.ageFlares();
+        assertEquals(IlluminationLevel.FLARE, level(0, centre));
+        var rules = Game.rulesManager.getRulesArtillery();
+        assertEquals(2, rules.flareDrift(Wind.STRONG_GALE, false));
+        assertEquals(3, rules.flareDrift(Wind.STORM, false));
+    }
+
+    /** Under Total Warfare, in a storm the flare moves one hex downwind at the end of each turn. */
+    @Test
+    void underTotalWarfareInAStormTheFlareMovesOneHexDownwindEachTurn() {
+        game.getPlanetaryConditions().setWind(Wind.STORM);
+        game.getPlanetaryConditions().setWindDirection(WindDirection.SOUTH);
+        Coords centre = new Coords(8, 4);
+        gameManager.deliverArtilleryFlare(centre, 0, 1);
+        game.ageFlares();
+        assertEquals(centre.translated(WindDirection.SOUTH.ordinal(), 1), game.getFlares().getFirst().position);
     }
 
     private IlluminationLevel level(int boardId, Coords coords) {

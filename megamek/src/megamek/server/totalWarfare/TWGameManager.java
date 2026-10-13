@@ -7070,11 +7070,14 @@ public class TWGameManager extends AbstractGameManager {
     }
 
     /**
-     * Creates an artillery flare of the given radius above the target, on the board it was fired at. It lights from
-     * the turn it arrives and lasts five turns, that one included (TO:AR p.152), drifting with the wind.
+     * Creates an artillery flare of the given radius above the target, on the board it was fired at, drifting with the
+     * wind. Under Total Warfare it lights from the turn it arrives and lasts five turns, that one included (TO:AR
+     * p.152); under the Core Rules it lights from that turn's End phase.
      */
     public void deliverArtilleryFlare(Coords coords, int boardId, int radius) {
-        Flare flare = new Flare(coords, boardId, 5, radius, Flare.F_IGNITED | Flare.F_DRIFTING);
+        int flags = Game.rulesManager.getRulesArtillery().illuminationLitOnArrival()
+              ? Flare.F_IGNITED | Flare.F_DRIFTING : Flare.F_DRIFTING;
+        Flare flare = new Flare(coords, boardId, 5, radius, flags);
         game.addFlare(flare);
         LOGGER.debug("[Illumination] flare of radius {} over {} on board {}", radius, coords, boardId);
     }

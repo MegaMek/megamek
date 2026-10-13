@@ -34,9 +34,28 @@ package megamek.common.rules.totalwarfare;
  */
 
 
+import megamek.common.planetaryConditions.Wind;
 import megamek.common.rules.RulesArtillery;
 
 public class TWRulesArtillery extends RulesArtillery {
+
+    /** TO:AR p.152: the illumination begins in the turn the round arrives and lasts five turns. */
+    @Override
+    public boolean illuminationLitOnArrival() {
+        return true;
+    }
+
+    /**
+     * TO:AR p.152: an illumination round drifts as smoke does (TO:AR p.45), one hex in any wind, or in a calm when the
+     * Smoke Drift option treats it as a light breeze, plus one more for each wind strength above Storm.
+     */
+    @Override
+    public int flareDrift(Wind wind, boolean smokeDriftInCalm) {
+        if (wind.isCalm()) {
+            return smokeDriftInCalm ? 1 : 0;
+        }
+        return 1 + Math.max(0, wind.ordinal() - Wind.STORM.ordinal());
+    }
 
     /**
      * Determine correct base mods for artillery fire

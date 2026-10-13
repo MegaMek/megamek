@@ -3499,7 +3499,7 @@ public final class Game extends AbstractGame implements Serializable,
             if (flare.isIgnited()) {
                 flare.turnsToBurn--;
                 if (flare.isDrifting()) {
-                    int drift = rulesManager.getRulesArtillery().flareDrift(planetaryConditions.getWind(),
+                    int drift = Flare.driftHexes(planetaryConditions.getWind(),
                           getOptions().booleanOption(OptionsConstants.BASE_BREEZE));
                     if (drift > 0) {
                         WindDirection windDirection = planetaryConditions.getWindDirection();

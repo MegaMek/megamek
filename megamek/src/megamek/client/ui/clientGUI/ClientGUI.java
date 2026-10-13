@@ -1319,10 +1319,11 @@ public class ClientGUI extends AbstractClientGUI
                   getForceDisplayPanel().getHeight());
         }
         if (getMekSelectorDialog() != null) {
-            getMekSelectorDialog().setBounds(0,
-                                             0,
-                                             getMekSelectorDialog().getWidth(),
-                                             getMekSelectorDialog().getHeight());
+            // This one reads the GUIP every time it goes visible, so need to set those directly.
+            GUIP.setMekSelectorSizeHeight(getMekSelectorDialog().getHeight());
+            GUIP.setMekSelectorSizeWidth(getMekSelectorDialog().getWidth());
+            GUIP.setMekSelectorPosX(0);
+            GUIP.setMekSelectorPosY(0);
         }
         if (getBotCommandsDialog() != null) {
             getBotCommandsDialog().setBounds(0, 0, getBotCommandsPanel().getWidth(), getBotCommandsPanel().getHeight());
@@ -1344,13 +1345,6 @@ public class ClientGUI extends AbstractClientGUI
                                                     0,
                                                     getNetworkInformationDialog().getWidth(),
                                                     getNetworkInformationDialog().getHeight());
-        }
-
-        if (getMekSelectorDialog() != null) {
-            getMekSelectorDialog().setBounds(0,
-                                             0,
-                                             getMekSelectorDialog().getWidth(),
-                                             getMekSelectorDialog().getHeight());
         }
         if (getMiniReportDisplayDialog() != null) {
             getMiniReportDisplayDialog().setBounds(0,

@@ -132,11 +132,32 @@ class FlareRulesTest {
         assertEquals(centre.translated(WindDirection.SOUTH.ordinal(), 1), game.getFlares().getFirst().position);
     }
 
+    /**
+     * A flare on the second board that drifts off it is gone, even where the first, larger board would still reach;
+     * one that stays over its own board keeps burning.
+     */
+    @Test
+    void aFlareThatDriftsOffItsOwnBoardIsGone() {
+        game.setBoard(1, board(8, 8));
+        game.getPlanetaryConditions().setWind(Wind.STORM);
+        // A north wind blows from the north, carrying the flares south toward the small board's edge
+        game.getPlanetaryConditions().setWindDirection(WindDirection.NORTH);
+        gameManager.deliverArtilleryFlare(new Coords(4, 7), 1, 1);
+        gameManager.deliverArtilleryFlare(new Coords(4, 2), 1, 1);
+        game.ageFlares();
+        assertEquals(1, game.getFlares().size(), "Only the flare still over its own board");
+        assertEquals(new Coords(4, 3), game.getFlares().getFirst().position);
+    }
+
     private IlluminationLevel level(int boardId, Coords coords) {
         return IlluminationLevel.determineIlluminationLevel(game, boardId, coords);
     }
 
     private static Board board() {
-        return new Board(16, 17, Stream.generate(Hex::new).limit(16 * 17).toArray(Hex[]::new));
+        return board(16, 17);
+    }
+
+    private static Board board(int width, int height) {
+        return new Board(width, height, Stream.generate(Hex::new).limit((long) width * height).toArray(Hex[]::new));
     }
 }

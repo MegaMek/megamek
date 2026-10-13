@@ -33,12 +33,14 @@
 
 package megamek.common.cost;
 
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
+import megamek.common.Messages;
 import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
@@ -123,18 +125,14 @@ public class CostCalculator {
         if (entity.isBattleArmor() && ((BattleArmor) entity).getTurretCapacity() > 0) {
             int turretSize = ((BattleArmor) entity).getTurretCapacity();
             long itemCost = 2500L * turretSize;
-            String turretName = "Modular Turret Mount";
+            String turretName = Messages.getString("CostCalculator.ModularTurretMount");
 
             if (((BattleArmor) entity).hasModularTurretMount()) {
-                turretName = "Configurable Turret Mount";
+                turretName = Messages.getString("CostCalculator.ConfigurableTurretMount");
                 itemCost += 2500;
             }
 
-            if (turretSize == 1) {
-                turretName += " (" + turretSize + " Slot)";
-            } else {
-                turretName += " (" + turretSize + " Slots)";
-            }
+            turretName += " " + MessageFormat.format(Messages.getString("CostCalculator.Slots"), turretSize);
 
             weaponsNumberMap.merge(turretName, 1.0, Double::sum);
             weaponsCostMap.merge(turretName, itemCost, Long::sum);
@@ -188,7 +186,7 @@ public class CostCalculator {
             long itemCost = 50000;
             cost += count * itemCost;
             for (int i = 0; i < count; i++) {
-                costReport.addLine("CASE", "", costFormatter.format(itemCost));
+                costReport.addLine(Messages.getString("CostCalculator.Case"), "", costFormatter.format(itemCost));
             }
         }
         // Large craft have a separate section for bays
@@ -207,15 +205,16 @@ public class CostCalculator {
             }
             if (seatCost > 0) {
                 cost += seatCost;
-                costReport.addLine("Seating", "", costFormatter.format(seatCost));
+                costReport.addLine(Messages.getString("CostCalculator.Seating"), "", costFormatter.format(seatCost));
             }
             if (quartersCost > 0) {
                 cost += quartersCost;
-                costReport.addLine("Quarters", "", costFormatter.format(quartersCost));
+                costReport.addLine(Messages.getString("CostCalculator.Quarters"), "",
+                      costFormatter.format(quartersCost));
             }
             if (bayCost > 0) {
                 cost += bayCost;
-                costReport.addLine("Bays", "", costFormatter.format(bayCost));
+                costReport.addLine(Messages.getString("CostCalculator.Bays"), "", costFormatter.format(bayCost));
             }
         }
         return cost;
@@ -253,18 +252,21 @@ public class CostCalculator {
         costFormatter.setMaximumFractionDigits(2);
         NumberFormat multiplierFormatter = NumberFormat.getInstance();
         multiplierFormatter.setMaximumFractionDigits(10);
-        costReport.addHeader("Cost Calculation for " + entity.getChassis() + " " + entity.getModel());
+        costReport.addHeader(MessageFormat.format(
+              Messages.getString("CostCalculator.CostCalculatorHeader"),
+              entity.getChassis(),
+              entity.getModel()));
         for (int l = 0; l < systemNames.length; l++) {
             if (l == equipIndex) {
                 CostCalculator.getWeaponsAndEquipmentCost(entity, costReport, ignoreAmmo);
                 if ((entity instanceof Tank tank) && (tank.getExtraCrewSeats() > 0)) {
-                    costReport.addLine("Extra Crew Seats", "",
+                    costReport.addLine(Messages.getString("CostCalculator.ExtraCrewSeats"), "",
                           costFormatter.format(tank.getExtraCrewSeats() * 100L));
                 }
             } else {
                 String result = costFormatter.format(costs[l]);
                 if (costs[l] == 0) {
-                    result = "N/A";
+                    result = Messages.getString("CostCalculator.Na");
                 } else if (costs[l] < 0) {
                     result = "x " + multiplierFormatter.format(-costs[l]);
                 }
@@ -275,7 +277,7 @@ public class CostCalculator {
                 }
             }
         }
-        costReport.addResultLine("Total Cost (C-bills)", "", costFormatter.format(cost));
+        costReport.addResultLine(Messages.getString("CostCalculator.TotalCost"), "", costFormatter.format(cost));
     }
 
 
@@ -289,10 +291,13 @@ public class CostCalculator {
     public static void addNoReportNote(@Nullable CalculationReport costReport, @Nullable Entity entity) {
         if (costReport != null) {
             if (entity != null) {
-                costReport.addHeader("Cost Calculation for " + entity.getChassis() + " " + entity.getModel());
-                costReport.addLine("There is currently no report available for units of this type.");
+                costReport.addHeader(MessageFormat.format(
+                      Messages.getString("CostCalculator.CostCalculatorHeader"),
+                      entity.getChassis(),
+                      entity.getModel()));
+                costReport.addLine(Messages.getString("CostCalculator.NoReport"));
             } else {
-                costReport.addLine("Could not access the unit.");
+                costReport.addLine(Messages.getString("CostCalculator.NoAccess"));
             }
         }
     }

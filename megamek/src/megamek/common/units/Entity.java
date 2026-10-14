@@ -1711,12 +1711,7 @@ public abstract class Entity extends TurnOrdered
      */
     private void addEquipmentTechAdvancement(CompositeTechLevel techLevel) {
         for (Mounted<?> mounted : getEquipment()) {
-            // ProtoMek EI is built-in per IO:AE p.69 -- only count toward tech level
-            // in Full Tracking mode (Off and Pilot Only = Standard tech)
-            if (isProtoMek()
-                && (mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
-                && !isNeuralInterfaceFullTracking()) {
+            if (isIgnoredForTechLevel(mounted)) {
                 continue;
             }
 
@@ -1726,6 +1721,25 @@ public abstract class Entity extends TurnOrdered
                                        Messages.getString("CompositeTechLevel.component.armoredComponent"));
             }
         }
+    }
+
+    /**
+     * Whether a mounted item is left out of this unit's tech level. Both the unit's composite tech level and the unit
+     * validator ask this, so the two cannot disagree about the same item.
+     *
+     * <p>A ProtoMek's EI Interface is built in (IO:AE p.69) and only counts in Full Tracking mode, where the unit
+     * becomes Experimental. Under Off and Pilot Abilities Only, and with no game attached, it is left out and the
+     * ProtoMek keeps the tech level its other equipment gives it.</p>
+     *
+     * @param mounted the mounted item to check
+     *
+     * @return {@code true} if the item does not count toward this unit's tech level
+     */
+    public boolean isIgnoredForTechLevel(Mounted<?> mounted) {
+        return isProtoMek()
+              && (mounted.getType() instanceof MiscType)
+              && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+              && !isNeuralInterfaceFullTracking();
     }
 
     /**

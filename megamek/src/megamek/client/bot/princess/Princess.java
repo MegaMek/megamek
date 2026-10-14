@@ -897,7 +897,8 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Finds the position of the deployed enemy unit closest to the given unit.
+     * Finds the position of the deployed enemy unit closest to the given unit. Ejected crews are skipped unless they
+     * are priority targets, so a unit holding position faces the fight rather than a pilot (#9194).
      *
      * @param entity The unit looking for enemies
      *
@@ -906,9 +907,13 @@ public class Princess extends BotClient {
     private @Nullable Coords findClosestEnemyPosition(final Entity entity) {
         Coords closestPosition = null;
         int closestDistance = Integer.MAX_VALUE;
+        Set<Integer> priorityTargets = getBehaviorSettings().getPriorityUnitTargets();
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(entity); enemies.hasNext(); ) {
             Entity enemy = enemies.next();
             if ((enemy.getPosition() == null) || enemy.isOffBoard() || !enemy.isDeployed()) {
+                continue;
+            }
+            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
                 continue;
             }
             int distance = entity.getPosition().distance(enemy.getPosition());

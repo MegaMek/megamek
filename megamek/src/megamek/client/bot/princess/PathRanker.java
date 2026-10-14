@@ -66,6 +66,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.EjectedCrew;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
@@ -451,6 +452,15 @@ public abstract class PathRanker implements IPathRanker {
                   && getOwner().getHonorUtil().isEnemyBroken(enemy.getId(), enemy.getOwnerId(),
                   getOwner().getForcedWithdrawal()))
                   || ignoredTargets.contains(enemy.getId())) {
+                continue;
+            }
+
+            // Skip ejected crews unless ordered to hunt them. They are no threat and fire control already scores them
+            // as poor targets, so letting one count as the closest enemy pulls whole lances away from the fight to
+            // surround it (#9194).
+            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
+                logger.trace("findClosestEnemy: skipping ejected crew {} for {}", enemy.getDisplayName(),
+                      me.getDisplayName());
                 continue;
             }
 

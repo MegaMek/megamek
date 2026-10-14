@@ -40,10 +40,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
@@ -123,6 +125,7 @@ public class MULParser {
     public static final String ELE_SAIL = "sail";
     public static final String ELE_AERO_CRIT = "acriticals";
     public static final String ELE_DROP_CRIT = "dcriticals";
+    public static final String ELE_JUMPSHIP_CRIT = "jcriticals";
     public static final String ELE_TANK_CRIT = "tcriticals";
     public static final String ELE_STABILIZER = "stabilizer";
     public static final String ELE_BREACH = "breached";
@@ -273,6 +276,14 @@ public class MULParser {
     public static final String ATTR_GEAR = "gear";
     public static final String ATTR_DOCKING_COLLAR = "dockingcollar";
     public static final String ATTR_KF_BOOM = "kfboom";
+    public static final String ATTR_KF_HELIUM_TANK = "kfHeliumTank";
+    public static final String ATTR_KF_DRIVE_COIL = "kfDriveCoil";
+    public static final String ATTR_KF_FIELD_INITIATOR = "kfFieldInitiator";
+    public static final String ATTR_KF_CHARGING_SYSTEM = "kfChargingSystem";
+    public static final String ATTR_KF_DRIVE_CONTROLLER = "kfDriveController";
+    public static final String ATTR_LF_BATTERY = "lfBattery";
+    public static final String ATTR_DAMAGED_GRAV_DECKS = "damagedGravDecks";
+    public static final String ATTR_DAMAGED_DOCKING_COLLARS = "damagedDockingCollars";
     public static final String ATTR_WEAPONS_BAY_INDEX = "weaponsBayIndex";
     public static final String ATTR_DAMAGE = "damage";
     public static final String ATTR_PENALTY = "penalty";
@@ -781,6 +792,8 @@ public class MULParser {
                     parseAeroCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_DROP_CRIT)) {
                     parseDropCrit(currEle, entity);
+                } else if (nodeName.equalsIgnoreCase(ELE_JUMPSHIP_CRIT)) {
+                    parseJumpshipCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_TANK_CRIT)) {
                     parseTankCrit(currEle, entity);
                 } else if (nodeName.equalsIgnoreCase(ELE_BOMBS)) {
@@ -2688,6 +2701,70 @@ public class MULParser {
         if (!kfBoom.isBlank()) {
             d.setDamageKFBoom(true);
         }
+    }
+
+    /**
+     * Restores the damage a JumpShip, WarShip or space station carries beyond its integrity values: K-F drive
+     * component and L-F battery hits, and damaged grav decks and docking collars.
+     */
+    private void parseJumpshipCrit(Element jumpshipCritTag, Entity entity) {
+        if (!(entity instanceof Jumpship jumpship)) {
+            warning.append("Found JumpShip damage for ").append(entity.getShortName())
+                  .append(", which is not a JumpShip.\n");
+            return;
+        }
+        if (isHitListed(jumpshipCritTag, ATTR_KF_HELIUM_TANK)) {
+            jumpship.setKFHeliumTankHit(true);
+        }
+        if (isHitListed(jumpshipCritTag, ATTR_KF_DRIVE_COIL)) {
+            jumpship.setKFDriveCoilHit(true);
+        }
+        if (isHitListed(jumpshipCritTag, ATTR_KF_FIELD_INITIATOR)) {
+            jumpship.setKFFieldInitiatorHit(true);
+        }
+        if (isHitListed(jumpshipCritTag, ATTR_KF_CHARGING_SYSTEM)) {
+            jumpship.setKFChargingSystemHit(true);
+        }
+        if (isHitListed(jumpshipCritTag, ATTR_KF_DRIVE_CONTROLLER)) {
+            jumpship.setKFDriveControllerHit(true);
+        }
+        if (isHitListed(jumpshipCritTag, ATTR_LF_BATTERY)) {
+            jumpship.setLFBatteryHit(true);
+        }
+        for (int deckIndex : parseNumberList(jumpshipCritTag.getAttribute(ATTR_DAMAGED_GRAV_DECKS))) {
+            jumpship.setGravDeckDamageFlag(deckIndex, 1);
+        }
+        for (int collarNumber : parseNumberList(jumpshipCritTag.getAttribute(ATTR_DAMAGED_DOCKING_COLLARS))) {
+            DockingCollar collar = jumpship.getCollarById(collarNumber);
+            if (collar == null) {
+                warning.append("No docking collar ").append(collarNumber).append(" on ")
+                      .append(entity.getShortName()).append(".\n");
+            } else {
+                collar.setDamaged(true);
+            }
+        }
+    }
+
+    private static boolean isHitListed(Element critTag, String attribute) {
+        return !critTag.getAttribute(attribute).isBlank();
+    }
+
+    /**
+     * @return the numbers in a comma-separated list; any entry that is not a number is skipped with a warning
+     */
+    private List<Integer> parseNumberList(String numbers) {
+        List<Integer> parsedNumbers = new ArrayList<>();
+        if (numbers.isBlank()) {
+            return parsedNumbers;
+        }
+        for (String number : numbers.split(",")) {
+            try {
+                parsedNumbers.add(Integer.parseInt(number.trim()));
+            } catch (NumberFormatException exception) {
+                warning.append("Skipped \"").append(number).append("\" in a list of numbers.\n");
+            }
+        }
+        return parsedNumbers;
     }
 
     /**

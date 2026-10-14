@@ -48,6 +48,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.GZIPOutputStream;
@@ -1372,6 +1373,11 @@ public class EntityListFile {
                     output.write(EntityListFile.getDropshipCritString(d));
                 }
 
+                // jumpship, warship and space station crits
+                if (a instanceof Jumpship jumpship) {
+                    output.write(EntityListFile.getJumpshipCritString(jumpship));
+                }
+
             }
 
             if (entity instanceof BattleArmor ba) {
@@ -1985,6 +1991,66 @@ public class EntityListFile {
     }
 
     // Dropship crits
+    /**
+     * Writes the damage a JumpShip, WarShip or space station carries beyond its integrity values: hits on the K-F drive
+     * components and the L-F battery, and which grav decks and docking collars are damaged.
+     *
+     * @return the element, or an empty string when none of these is damaged
+     */
+    private static String getJumpshipCritString(Jumpship jumpship) {
+        StringBuilder critValues = new StringBuilder();
+        appendHitAttribute(critValues, MULParser.ATTR_KF_HELIUM_TANK, jumpship.getKFHeliumTankHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_DRIVE_COIL, jumpship.getKFDriveCoilHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_FIELD_INITIATOR, jumpship.getKFFieldInitiatorHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_CHARGING_SYSTEM, jumpship.getKFChargingSystemHit());
+        appendHitAttribute(critValues, MULParser.ATTR_KF_DRIVE_CONTROLLER, jumpship.getKFDriveControllerHit());
+        appendHitAttribute(critValues, MULParser.ATTR_LF_BATTERY, jumpship.getLFBatteryHit());
+        appendListAttribute(critValues, MULParser.ATTR_DAMAGED_GRAV_DECKS, listDamagedGravDecks(jumpship));
+        appendListAttribute(critValues, MULParser.ATTR_DAMAGED_DOCKING_COLLARS, listDamagedDockingCollars(jumpship));
+        if (critValues.isEmpty()) {
+            return "";
+        }
+        return "      <" + MULParser.ELE_JUMPSHIP_CRIT + critValues + "/>\n";
+    }
+
+    private static void appendHitAttribute(StringBuilder critValues, String attribute, boolean isHit) {
+        if (isHit) {
+            critValues.append(' ').append(attribute).append("=\"").append(MULParser.VALUE_NONE).append('"');
+        }
+    }
+
+    private static void appendListAttribute(StringBuilder critValues, String attribute, List<String> values) {
+        if (!values.isEmpty()) {
+            critValues.append(' ').append(attribute).append("=\"").append(String.join(",", values)).append('"');
+        }
+    }
+
+    /**
+     * @return the index of each damaged grav deck, as {@link Jumpship#getGravDeckDamageFlag(int)} numbers them
+     */
+    private static List<String> listDamagedGravDecks(Jumpship jumpship) {
+        List<String> damagedDecks = new ArrayList<>();
+        for (int deckIndex = 0; deckIndex < jumpship.getGravDecks().size(); deckIndex++) {
+            if (jumpship.getGravDeckDamageFlag(deckIndex) == 1) {
+                damagedDecks.add(String.valueOf(deckIndex));
+            }
+        }
+        return damagedDecks;
+    }
+
+    /**
+     * @return the collar number of each damaged docking collar
+     */
+    private static List<String> listDamagedDockingCollars(Jumpship jumpship) {
+        List<String> damagedCollars = new ArrayList<>();
+        for (DockingCollar collar : jumpship.getDockingCollars()) {
+            if (collar.isDamaged()) {
+                damagedCollars.add(String.valueOf(collar.getCollarNumber()));
+            }
+        }
+        return damagedCollars;
+    }
+
     private static String getDropshipCritString(Dropship a) {
         String retVal = "      <" + MULParser.ELE_DROP_CRIT;
         String critVal = "";

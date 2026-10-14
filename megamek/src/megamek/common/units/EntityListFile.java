@@ -1993,11 +1993,14 @@ public class EntityListFile {
     // Dropship crits
     /**
      * Writes the damage a JumpShip, WarShip or space station carries beyond its integrity values: hits on the K-F drive
-     * components and the L-F battery, and which grav decks and docking collars are damaged.
+     * components and the L-F battery, and which grav decks and docking collars are damaged. MekHQ writes its saves with
+     * its own entity writer and calls this so both keep the same damage.
+     *
+     * @param jumpship the JumpShip, WarShip or space station
      *
      * @return the element, or an empty string when none of these is damaged
      */
-    private static String getJumpshipCritString(Jumpship jumpship) {
+    public static String getJumpshipCritString(Jumpship jumpship) {
         StringBuilder critValues = new StringBuilder();
         appendHitAttribute(critValues, MULParser.ATTR_KF_HELIUM_TANK, jumpship.getKFHeliumTankHit());
         appendHitAttribute(critValues, MULParser.ATTR_KF_DRIVE_COIL, jumpship.getKFDriveCoilHit());
@@ -2051,15 +2054,23 @@ public class EntityListFile {
         return damagedCollars;
     }
 
-    private static String getDropshipCritString(Dropship a) {
+    /**
+     * Writes a DropShip's docking collar and K-F boom damage. MekHQ writes its saves with its own entity writer and
+     * calls this so both keep the same damage.
+     *
+     * @param dropship the DropShip
+     *
+     * @return the element, or an empty string when neither is damaged
+     */
+    public static String getDropshipCritString(Dropship dropship) {
         String retVal = "      <" + MULParser.ELE_DROP_CRIT;
         String critVal = "";
 
         // crits
-        if (a.isDockCollarDamaged()) {
+        if (dropship.isDockCollarDamaged()) {
             critVal = critVal + ' ' + MULParser.ATTR_DOCKING_COLLAR + "=\"" + MULParser.VALUE_NONE + '"';
         }
-        if (a.isKFBoomDamaged()) {
+        if (dropship.isKFBoomDamaged()) {
             critVal = critVal + ' ' + MULParser.ATTR_KF_BOOM + "=\"" + MULParser.VALUE_NONE + '"';
         }
 

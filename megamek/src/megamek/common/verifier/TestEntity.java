@@ -1254,6 +1254,10 @@ public abstract class TestEntity implements TestEntityOption {
 
         int eTLYear = getEntity().getTechLevelYear();
         for (Mounted<?> mounted : getEntity().getEquipment()) {
+            // Skip anything the unit's own tech level leaves out, such as a ProtoMek's built-in EI outside Full Tracking
+            if (getEntity().isIgnoredForTechLevel(mounted)) {
+                continue;
+            }
             EquipmentType nextE = mounted.getType();
             int eqRulesLevel = getEntity().isMixedTech()
                   ? nextE.findMinimumRulesLevel().ordinal()

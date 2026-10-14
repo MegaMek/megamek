@@ -67,7 +67,6 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
-import megamek.common.equipment.ArmorType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.moves.Key;
@@ -1575,6 +1574,95 @@ class BasicPathRankerTest {
 
         assertEquals(nearbyEnemy, testRanker.findClosestEnemy(me, position, mockGame, false, 1),
               "A minDistance of 1 must exclude the same-hex enemy by its raw distance");
+    }
+
+    /**
+     * Builds an ejected MekWarrior that has not moved yet, as in the issue #9194 save.
+     */
+    private Entity createEjectedPilot(int id, Coords position) {
+        final Entity pilot = mock(MekWarrior.class);
+        when(pilot.getId()).thenReturn(id);
+        when(pilot.getPosition()).thenReturn(position);
+        when(pilot.isSelectableThisTurn()).thenReturn(true);
+        when(pilot.isImmobile()).thenReturn(false);
+        when(pilot.getWalkMP()).thenReturn(1);
+        return pilot;
+    }
+
+    @Test
+    void testFindClosestEnemySkipsEjectedCrewForPrincessAndCaspar() {
+        // Issue #9194: an ejected pilot 2 hexes away (adjusted distance 3) beat an unmoved Mek 13 hexes away
+        // (adjusted distance 18) as the closest enemy, so 19 bot units converged on the pilot. The pilot must be
+        // skipped by Princess's ranker and by CASPAR's MutualSupportPathRanker, which inherits the same search.
+        final Coords position = new Coords(0, 0);
+        final Entity pilot = createEjectedPilot(76, new Coords(0, 2));
+
+        final Entity enemyMek = mock(BipedMek.class);
+        when(enemyMek.getId()).thenReturn(34);
+        when(enemyMek.getPosition()).thenReturn(new Coords(0, 13));
+        when(enemyMek.isSelectableThisTurn()).thenReturn(true);
+        when(enemyMek.isImmobile()).thenReturn(false);
+        when(enemyMek.getWalkMP()).thenReturn(5);
+
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        doReturn(List.of(pilot, enemyMek)).when(mockPrincess).getEnemyEntities();
+
+        final List<BasicPathRanker> rankers = List.of(new BasicPathRanker(mockPrincess),
+              new MutualSupportPathRanker(mockPrincess));
+        for (BasicPathRanker ranker : rankers) {
+            String rankerName = ranker.getClass().getSimpleName();
+            assertEquals(enemyMek, ranker.findClosestEnemy(me, position, mockGame, false),
+                  rankerName + " must not treat an ejected pilot as the closest enemy");
+            assertEquals(13, ranker.distanceToClosestEnemy(me, position, mockGame), TOLERANCE,
+                  rankerName + " must measure aggression distance to the Mek, not the pilot");
+        }
+    }
+
+    @Test
+    void testFindClosestEnemyFallsBackToEjectedCrewWhenNothingElseIsLeft() {
+        // A force reduced to ejected pilots has not lost (battlefield control counts them), so with no other enemy
+        // the nearest pilot is still the closest enemy and the bot keeps advancing instead of stalling.
+        final Coords position = new Coords(0, 0);
+        final Entity nearPilot = createEjectedPilot(76, new Coords(0, 2));
+        final Entity farPilot = createEjectedPilot(77, new Coords(0, 9));
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        doReturn(List.of(farPilot, nearPilot)).when(mockPrincess).getEnemyEntities();
+
+        final List<BasicPathRanker> rankers = List.of(new BasicPathRanker(mockPrincess),
+              new MutualSupportPathRanker(mockPrincess));
+        for (BasicPathRanker ranker : rankers) {
+            String rankerName = ranker.getClass().getSimpleName();
+            assertEquals(nearPilot, ranker.findClosestEnemy(me, position, mockGame, false),
+                  rankerName + " must fall back to the nearest ejected pilot when no other enemy is left");
+            assertEquals(2, ranker.distanceToClosestEnemy(me, position, mockGame), TOLERANCE,
+                  rankerName + " must keep an aggression distance when only pilots are left");
+        }
+    }
+
+    @Test
+    void testFindClosestEnemyKeepsEjectedCrewThatIsPriorityTarget() {
+        // A player who names the pilot as a priority target has asked the bot to hunt it.
+        final Coords position = new Coords(0, 0);
+        final Entity pilot = createEjectedPilot(76, new Coords(0, 2));
+
+        final Entity enemyMek = mock(BipedMek.class);
+        when(enemyMek.getId()).thenReturn(34);
+        when(enemyMek.getPosition()).thenReturn(new Coords(0, 13));
+        when(enemyMek.isSelectableThisTurn()).thenReturn(false);
+        when(enemyMek.isImmobile()).thenReturn(false);
+
+        final Entity me = mock(BipedMek.class);
+        final Game mockGame = mock(Game.class);
+        when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
+        when(mockPrincess.getBehaviorSettings().getPriorityUnitTargets()).thenReturn(Set.of(76));
+        final BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
+        doReturn(List.of(pilot, enemyMek)).when(mockPrincess).getEnemyEntities();
+
+        assertEquals(pilot, testRanker.findClosestEnemy(me, position, mockGame, false));
     }
 
     @Test

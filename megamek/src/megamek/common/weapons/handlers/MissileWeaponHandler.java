@@ -894,9 +894,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 // or not
                 hits = calcHits(vPhaseReport);
             } else if (!bMissed && numWeaponsHit == 1) {
-                boolean aeroSanity = game.getOptions()
-                      .booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY);
-                if (!aeroSanity && !attackingEntity.isCapitalFighter() && (nCluster > 1)) {
+                if (appliesAttackValueInGroups(nCluster)) {
                     // No cluster roll is made here: the attack value is applied in 5-point groups,
                     // so report the attack value in place of a missile count
                     r = new Report(3391);

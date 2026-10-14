@@ -27688,7 +27688,7 @@ public class TWGameManager extends AbstractGameManager {
                                       (lastUnitNum == (char) entity.getUnitNumber());
                             }
                         });
-                        if (lastUnit.next() != null) {
+                        if (lastUnit.hasNext()) {
                             Entity lastUnitMember = lastUnit.next();
                             lastUnitMember.setUnitNumber(deletedUnitNum);
                             entityUpdate(lastUnitMember.getId());

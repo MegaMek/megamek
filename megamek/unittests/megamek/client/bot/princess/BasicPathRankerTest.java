@@ -1621,17 +1621,26 @@ class BasicPathRankerTest {
     }
 
     @Test
-    void testFindClosestEnemyWithOnlyEjectedCrewFindsNone() {
-        // With only a pilot left there is no enemy to close with: the same result as an empty board.
+    void testFindClosestEnemyFallsBackToEjectedCrewWhenNothingElseIsLeft() {
+        // A force reduced to ejected pilots has not lost (battlefield control counts them), so with no other enemy
+        // the nearest pilot is still the closest enemy and the bot keeps advancing instead of stalling.
         final Coords position = new Coords(0, 0);
+        final Entity nearPilot = createEjectedPilot(76, new Coords(0, 2));
+        final Entity farPilot = createEjectedPilot(77, new Coords(0, 9));
         final Entity me = mock(BipedMek.class);
         final Game mockGame = mock(Game.class);
         when(mockGame.onTheSameBoard(any(Targetable.class), any(Targetable.class))).thenCallRealMethod();
-        final BasicPathRanker testRanker = new BasicPathRanker(mockPrincess);
-        doReturn(List.of(createEjectedPilot(76, new Coords(0, 2)))).when(mockPrincess).getEnemyEntities();
+        doReturn(List.of(farPilot, nearPilot)).when(mockPrincess).getEnemyEntities();
 
-        assertNull(testRanker.findClosestEnemy(me, position, mockGame, false));
-        assertEquals(-1, testRanker.distanceToClosestEnemy(me, position, mockGame), TOLERANCE);
+        final List<BasicPathRanker> rankers = List.of(new BasicPathRanker(mockPrincess),
+              new MutualSupportPathRanker(mockPrincess));
+        for (BasicPathRanker ranker : rankers) {
+            String rankerName = ranker.getClass().getSimpleName();
+            assertEquals(nearPilot, ranker.findClosestEnemy(me, position, mockGame, false),
+                  rankerName + " must fall back to the nearest ejected pilot when no other enemy is left");
+            assertEquals(2, ranker.distanceToClosestEnemy(me, position, mockGame), TOLERANCE,
+                  rankerName + " must keep an aggression distance when only pilots are left");
+        }
     }
 
     @Test

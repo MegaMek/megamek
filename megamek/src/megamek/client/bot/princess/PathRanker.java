@@ -436,6 +436,8 @@ public abstract class PathRanker implements IPathRanker {
           boolean includeStrategicTargets, int minDistance) {
         int range = Integer.MAX_VALUE;
         Targetable closest = null;
+        int crewRange = Integer.MAX_VALUE;
+        Entity closestCrew = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
         var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
@@ -455,15 +457,6 @@ public abstract class PathRanker implements IPathRanker {
                 continue;
             }
 
-            // Skip ejected crews unless ordered to hunt them. They are no threat and fire control already scores them
-            // as poor targets, so letting one count as the closest enemy pulls whole lances away from the fight to
-            // surround it (#9194).
-            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
-                logger.trace("findClosestEnemy: skipping ejected crew {} for {}", enemy.getDisplayName(),
-                      me.getDisplayName());
-                continue;
-            }
-
             // If a unit has not moved, assume it will move away from me.
             int unmovedDistanceModifier = 0;
             if (enemy.isSelectableThisTurn() && !enemy.isImmobile()) {
@@ -477,7 +470,23 @@ public abstract class PathRanker implements IPathRanker {
             // allowance.
             int distance = position.distance(enemy.getPosition());
             int adjustedDistance = distance + unmovedDistanceModifier;
-            if ((adjustedDistance < range) && (distance >= minDistance)) {
+            if (distance < minDistance) {
+                continue;
+            }
+
+            // Ejected crews are a fallback only, unless ordered to hunt them. They are no threat and fire control
+            // already scores them as poor targets, so letting one count as the closest enemy pulls whole lances away
+            // from the fight to surround it (#9194). But a force reduced to ejected crews has not lost, so with no
+            // other enemy left the nearest crew is still returned, and the bot keeps advancing.
+            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
+                if (adjustedDistance < crewRange) {
+                    crewRange = adjustedDistance;
+                    closestCrew = enemy;
+                }
+                continue;
+            }
+
+            if (adjustedDistance < range) {
                 range = adjustedDistance;
                 closest = enemy;
             }
@@ -494,6 +503,11 @@ public abstract class PathRanker implements IPathRanker {
             }
         }
 
+        if ((closest == null) && (closestCrew != null)) {
+            logger.trace("findClosestEnemy: only ejected crews left, using {} for {}", closestCrew.getDisplayName(),
+                  me.getDisplayName());
+            return closestCrew;
+        }
         return closest;
     }
 

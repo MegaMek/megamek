@@ -490,19 +490,25 @@ public class BasicPathRanker extends PathRanker {
 
     /**
      * The positions of the given units that are deployed on the given board; the rest have no say. Ejected crews
-     * are left out too: a pilot is not part of either force's line, and one ejecting beside the bot's force would
-     * otherwise read as the enemy suddenly closing in (#9194).
+     * are left out too while any other unit is there: a pilot is not part of either force's line, and one ejecting
+     * beside the bot's force would otherwise read as the enemy suddenly closing in (#9194). A side reduced to
+     * ejected crews has not lost, so their positions are used when they are all that is left.
      */
     static List<Coords> deployedPositions(List<Entity> units, int boardId) {
         List<Coords> positions = new ArrayList<>(units.size());
+        List<Coords> crewPositions = new ArrayList<>();
         for (Entity unit : units) {
             Coords position = unit.getPosition();
-            if ((position != null) && unit.isDeployed() && (unit.getBoardId() == boardId)
-                  && !(unit instanceof EjectedCrew)) {
+            if ((position == null) || !unit.isDeployed() || (unit.getBoardId() != boardId)) {
+                continue;
+            }
+            if (unit instanceof EjectedCrew) {
+                crewPositions.add(position);
+            } else {
                 positions.add(position);
             }
         }
-        return positions;
+        return positions.isEmpty() ? crewPositions : positions;
     }
 
     /**

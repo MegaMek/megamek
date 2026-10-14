@@ -897,8 +897,9 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Finds the position of the deployed enemy unit closest to the given unit. Ejected crews are skipped unless they
-     * are priority targets, so a unit holding position faces the fight rather than a pilot (#9194).
+     * Finds the position of the deployed enemy unit closest to the given unit. Ejected crews that are not priority
+     * targets count only when no other enemy is deployed, so a unit holding position faces the fight rather than a
+     * pilot (#9194).
      *
      * @param entity The unit looking for enemies
      *
@@ -907,22 +908,26 @@ public class Princess extends BotClient {
     private @Nullable Coords findClosestEnemyPosition(final Entity entity) {
         Coords closestPosition = null;
         int closestDistance = Integer.MAX_VALUE;
+        Coords closestCrewPosition = null;
+        int closestCrewDistance = Integer.MAX_VALUE;
         Set<Integer> priorityTargets = getBehaviorSettings().getPriorityUnitTargets();
         for (Iterator<Entity> enemies = game.getAllEnemyEntities(entity); enemies.hasNext(); ) {
             Entity enemy = enemies.next();
             if ((enemy.getPosition() == null) || enemy.isOffBoard() || !enemy.isDeployed()) {
                 continue;
             }
-            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
-                continue;
-            }
             int distance = entity.getPosition().distance(enemy.getPosition());
-            if (distance < closestDistance) {
+            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
+                if (distance < closestCrewDistance) {
+                    closestCrewDistance = distance;
+                    closestCrewPosition = enemy.getPosition();
+                }
+            } else if (distance < closestDistance) {
                 closestDistance = distance;
                 closestPosition = enemy.getPosition();
             }
         }
-        return closestPosition;
+        return (closestPosition == null) ? closestCrewPosition : closestPosition;
     }
 
     @Override

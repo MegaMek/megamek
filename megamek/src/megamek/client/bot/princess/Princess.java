@@ -1088,11 +1088,35 @@ public class Princess extends BotClient {
 
     @Override
     protected void initTargeting() {
-        // Reset incoming guided weapon lists for each friendly unit.
-        // Reset planned TAG expected utility map
+        resetTagEstimateCaches(GamePhase.TARGETING);
+        getArtilleryTargetingControl().initializeForTargetingPhase();
+    }
+
+    /**
+     * Clears the per-phase TAG estimates: the incoming guided weapon lists and the planned TAG utility per target.
+     * Both are filled while ranking moves and planning fire, from positions that only hold for the current phase.
+     *
+     * @param phase the phase about to start, for the log line
+     */
+    private void resetTagEstimateCaches(GamePhase phase) {
+        LOGGER.debug("[TagEstimates] Clearing {} guided weapon lists and {} planned TAG utilities before the {} phase",
+              incomingGuidablesMap.size(), teamTagTargetsMap.size(), phase);
         incomingGuidablesMap.clear();
         teamTagTargetsMap.clear();
-        getArtilleryTargetingControl().initializeForTargetingPhase();
+    }
+
+    /**
+     * @param phase the phase about to start
+     *
+     * @return {@code true} if the TAG estimates must be cleared before this phase. The Targeting phase clears them in
+     *       {@link #initTargeting()}, but the server skips that phase in any round where no unit has artillery, so
+     *       Movement and Firing, which run every round, clear them too, and so does Offboard, where TAG fires.
+     */
+    static boolean isTagEstimateResetPhase(GamePhase phase) {
+        return switch (phase) {
+            case MOVEMENT, OFFBOARD, FIRING -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -4219,7 +4243,7 @@ public class Princess extends BotClient {
      * not yet fired but _could_ are added as well. 2. Each attacker-target location pair's expected homing/indirect
      * fire damage is cached for later re-use. 3. During the Indirect phase, when TAG attacks are announced, relevant
      * units can use this info to decide whether they want to TAG or reserve their activation for actual attacks. 4. All
-     * info is cleared at the start of the next turn.
+     * info is cleared at the start of each Targeting, Movement, Offboard and Firing phase.
      */
     public List<WeaponMounted> computeGuidedWeapons(Entity entityToFire, Coords location) {
         // Key cached entries to firing entity _and_ coordinates, as each shooter may have different targets and weapons
@@ -4283,6 +4307,10 @@ public class Princess extends BotClient {
 
     @Override
     public void changePhase(GamePhase phase) {
+        // Before the phase's own setup runs, so nothing it computes is built on last phase's estimates.
+        if (isTagEstimateResetPhase(phase)) {
+            resetTagEstimateCaches(phase);
+        }
         super.changePhase(phase);
         if (phase.isLounge()) {
             getForcedWithdrawalTracker().forgetWithdrawingUnits();

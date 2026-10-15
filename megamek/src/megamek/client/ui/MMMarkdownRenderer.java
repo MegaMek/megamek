@@ -35,7 +35,7 @@ package megamek.client.ui;
 
 import java.util.Set;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import org.commonmark.node.Block;
 import org.commonmark.node.BlockQuote;
 import org.commonmark.node.Heading;

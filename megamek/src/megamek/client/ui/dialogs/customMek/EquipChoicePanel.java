@@ -33,7 +33,10 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -43,10 +46,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
@@ -57,7 +69,6 @@ import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.AmmoTypeFlag;

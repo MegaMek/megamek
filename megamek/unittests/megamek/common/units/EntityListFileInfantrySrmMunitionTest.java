@@ -39,8 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.StringWriter;
 import java.util.ArrayList;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.game.Game;
 import megamek.common.loaders.MULParser;

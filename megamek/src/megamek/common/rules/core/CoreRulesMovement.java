@@ -34,7 +34,9 @@ package megamek.common.rules.core;
  */
 
 
-import megamek.common.annotations.Nullable;
+import java.util.ArrayList;
+
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -46,8 +48,6 @@ import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
-
-import java.util.ArrayList;
 
 public class CoreRulesMovement extends RulesMovement {
     /**

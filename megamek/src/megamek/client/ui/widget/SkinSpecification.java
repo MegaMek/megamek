@@ -38,8 +38,8 @@ package megamek.client.ui.widget;
 import java.awt.Color;
 import java.util.ArrayList;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 
 /**
  * A class that contains state information that specifies a skin.

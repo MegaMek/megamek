@@ -56,11 +56,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.ImageCache;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardType;
 import megamek.common.board.Coords;

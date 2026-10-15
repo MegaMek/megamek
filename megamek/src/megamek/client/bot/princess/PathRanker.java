@@ -51,12 +51,12 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

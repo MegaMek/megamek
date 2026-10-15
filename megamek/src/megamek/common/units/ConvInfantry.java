@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CompositeTechLevel;
@@ -52,7 +53,6 @@ import megamek.common.Messages;
 import megamek.common.RangeType;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.cost.InfantryCostCalculator;

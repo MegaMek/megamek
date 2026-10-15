@@ -42,9 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
@@ -57,15 +57,6 @@ import megamek.common.units.Entity;
 import megamek.common.units.LandAirMek;
 import megamek.common.units.Mek;
 import megamek.common.units.QuadMek;
-import megamek.common.weapons.autoCannons.HVACWeapon;
-import megamek.common.weapons.gaussRifles.GaussWeapon;
-import megamek.common.weapons.lasers.clan.large.CLImprovedHeavyLaserLarge;
-import megamek.common.weapons.lasers.clan.medium.CLImprovedHeavyLaserMedium;
-import megamek.common.weapons.lasers.clan.small.CLImprovedHeavyLaserSmall;
-import megamek.common.weapons.lasers.innerSphere.ISRISCHyperLaser;
-import megamek.common.weapons.other.TSEMPWeapon;
-import megamek.common.weapons.other.innerSphere.ISMekTaser;
-import megamek.common.weapons.ppc.PPCWeapon;
 
 public class MekBVCalculator extends HeatTrackingBVCalculator {
 

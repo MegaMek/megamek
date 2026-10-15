@@ -38,10 +38,10 @@ import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.bays.StandardSeatCargoBay;

@@ -34,9 +34,9 @@ package megamek.common.actions;
 
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.HexTarget;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;

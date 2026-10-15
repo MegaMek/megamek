@@ -44,13 +44,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;

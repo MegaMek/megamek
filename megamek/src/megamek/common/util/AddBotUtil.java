@@ -34,13 +34,14 @@
 
 package megamek.common.util;
 
-import java.awt.*;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.swing.*;
+import javax.swing.JFrame;
 
+import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.AIType;
@@ -51,7 +52,6 @@ import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 
 /**

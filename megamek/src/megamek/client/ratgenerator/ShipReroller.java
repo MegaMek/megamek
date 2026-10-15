@@ -37,7 +37,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.units.EntityMovementMode;

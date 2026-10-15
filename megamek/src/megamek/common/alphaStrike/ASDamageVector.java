@@ -40,7 +40,7 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.annotation.Nonnull;
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Represents an AlphaStrike damage value combination of between 1 and 4 damage values which typically correspond to

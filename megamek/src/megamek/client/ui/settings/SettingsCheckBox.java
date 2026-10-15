@@ -39,7 +39,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.swing.JCheckBox;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /** A localized, consistently styled checkbox for settings forms. */
 public class SettingsCheckBox extends JCheckBox implements SettingsHelpProvider {

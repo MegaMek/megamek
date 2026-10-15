@@ -41,12 +41,12 @@ import java.util.ResourceBundle;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.client.ui.buttons.MMButton;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.abstractPanels.abstractIconChooserPanel;
-import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 
 /**

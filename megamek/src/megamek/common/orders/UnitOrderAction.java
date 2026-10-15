@@ -34,8 +34,8 @@ package megamek.common.orders;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.OffBoardDirection;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 
 /**

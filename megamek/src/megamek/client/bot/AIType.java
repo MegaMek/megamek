@@ -32,7 +32,7 @@
  */
 package megamek.client.bot;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Identifies which bot AI implementation to construct. Used by {@link BotFactory} as the single selection point for

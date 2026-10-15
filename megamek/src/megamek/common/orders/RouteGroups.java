@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
 import megamek.common.units.Entity;
 

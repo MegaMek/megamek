@@ -43,13 +43,13 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.containers.MunitionTree;
 import megamek.common.enums.AvailabilityValue;

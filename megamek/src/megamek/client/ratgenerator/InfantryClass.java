@@ -34,8 +34,8 @@ package megamek.client.ratgenerator;
 
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;

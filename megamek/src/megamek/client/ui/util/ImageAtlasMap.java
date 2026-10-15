@@ -39,8 +39,8 @@ import java.nio.file.Path;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import org.apache.commons.io.FilenameUtils;
 

@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import javax.xml.namespace.QName;
 
+import jakarta.annotation.Nullable;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
@@ -52,7 +53,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.NeuralInterfaceMode;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;

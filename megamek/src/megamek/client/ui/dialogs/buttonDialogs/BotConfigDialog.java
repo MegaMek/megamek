@@ -43,7 +43,10 @@ import static megamek.common.units.Terrains.FUEL_TANK;
 import static megamek.common.units.Terrains.FUEL_TANK_CF;
 import static megamek.common.units.Terrains.FUEL_TANK_MAGN;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -65,6 +68,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.bot.AIType;
 import megamek.client.bot.BotClient;
@@ -86,7 +90,6 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.*;
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.internationalization.I18n;

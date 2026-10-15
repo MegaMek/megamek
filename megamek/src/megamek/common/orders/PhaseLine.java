@@ -37,8 +37,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.internationalization.I18n;
 import megamek.common.units.Entity;
 

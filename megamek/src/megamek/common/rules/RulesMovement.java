@@ -34,13 +34,13 @@ package megamek.common.rules;
  */
 
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
-import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EntityMovementType;
 import megamek.common.units.Mek;
 

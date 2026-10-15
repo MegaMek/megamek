@@ -35,7 +35,7 @@ package megamek.common.util.weightedMaps;
 
 import java.io.Serial;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.compute.Compute;
 
 /**

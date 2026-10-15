@@ -34,8 +34,8 @@ package megamek.client.ui.tileset;
 
 import java.io.File;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.fileUtils.AbstractDirectory;
 import megamek.common.util.fileUtils.DirectoryItems;

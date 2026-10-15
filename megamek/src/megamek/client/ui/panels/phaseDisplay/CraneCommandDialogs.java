@@ -37,9 +37,9 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 import megamek.common.units.SmallCraft;
 

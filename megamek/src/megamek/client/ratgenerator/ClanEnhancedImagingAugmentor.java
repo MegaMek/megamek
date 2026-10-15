@@ -34,7 +34,7 @@ package megamek.client.ratgenerator;
 
 import java.util.List;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.enums.AugmentedUnitType;
 import megamek.common.enums.NeuralInterfaceMode;
 import megamek.common.options.IGameOptions;

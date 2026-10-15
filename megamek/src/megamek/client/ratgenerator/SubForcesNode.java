@@ -35,8 +35,8 @@ package megamek.client.ratgenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

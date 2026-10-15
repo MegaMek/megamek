@@ -48,20 +48,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLayer;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JViewport;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.Scrollable;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.text.html.HTML;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.ui.FastJScrollPane;
 import org.apache.commons.text.StringEscapeUtils;
 

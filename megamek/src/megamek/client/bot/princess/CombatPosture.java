@@ -32,8 +32,8 @@
  */
 package megamek.client.bot.princess;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 
 /**
  * Whether the bot's force is attacking or defending.

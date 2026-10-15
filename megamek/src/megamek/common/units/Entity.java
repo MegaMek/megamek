@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.Base64Image;
@@ -57,7 +58,6 @@ import megamek.client.ui.util.ViewFormatting;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.*;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;

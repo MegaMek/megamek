@@ -32,78 +32,102 @@
  */
 package megamek.client.bot.princess;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
+import megamek.common.units.Entity;
+import megamek.logging.MMLogger;
 
 /**
  * Works out where the enemy will come from: the middle of the enemy's deployment zones on a board. A bot faces the
  * units it deploys that way and lays its formations out facing it.
  *
- * <p>The answer is worked out once a round for each board, since it scans every hex of the board and the deployment
- * zones do not change while units deploy.</p>
+ * <p>Each zone's middle comes from the zone's shape rather than from looking at the board hex by hex: the middle of
+ * its edge or corner for a zone along the board edge, the middle of its rectangle for a zone set by corners, and the
+ * average of its hexes for a zone drawn on the map.</p>
  */
-class EnemyDeploymentZone {
+final class EnemyDeploymentZone {
 
-    private final Map<Integer, Optional<Coords>> centersByBoard = new HashMap<>();
-    private int centersRound = -1;
+    private static final MMLogger LOGGER = MMLogger.create(EnemyDeploymentZone.class);
+
+    private EnemyDeploymentZone() {}
 
     /**
      * @param game        the game
      * @param board       the board the bot is deploying on
      * @param localPlayer the bot's player
      *
-     * @return the average of every hex an enemy player with units may deploy in, or empty when there is none
+     * @return the average of the middles of the zones the enemy players with units deploy in, or empty when there is
+     *       none
      */
-    Optional<Coords> center(Game game, @Nullable Board board, @Nullable Player localPlayer) {
+    static Optional<Coords> center(Game game, @Nullable Board board, @Nullable Player localPlayer) {
         if ((board == null) || (localPlayer == null)) {
-            return Optional.empty();
-        }
-        if (centersRound != game.getCurrentRound()) {
-            centersByBoard.clear();
-            centersRound = game.getCurrentRound();
-        }
-        return centersByBoard.computeIfAbsent(board.getBoardId(), boardId -> scan(game, board, localPlayer));
-    }
-
-    private static Optional<Coords> scan(Game game, Board board, Player localPlayer) {
-        List<Player> enemies = new ArrayList<>();
-        for (Player player : game.getPlayersList()) {
-            if (player.isEnemyOf(localPlayer) && !player.isObserver()
-                  && !game.getPlayerEntities(player, false).isEmpty()) {
-                enemies.add(player);
-            }
-        }
-        if (enemies.isEmpty()) {
             return Optional.empty();
         }
         long totalX = 0;
         long totalY = 0;
-        int zoneHexes = 0;
-        for (int x = 0; x < board.getWidth(); x++) {
-            for (int y = 0; y < board.getHeight(); y++) {
-                Coords hex = new Coords(x, y);
-                for (Player enemy : enemies) {
-                    if (board.isLegalDeployment(hex, enemy)) {
-                        totalX += x;
-                        totalY += y;
-                        zoneHexes++;
-                        break;
-                    }
-                }
+        int zones = 0;
+        for (Player player : game.getPlayersList()) {
+            boolean isEnemyWithUnits = player.isEnemyOf(localPlayer) && !player.isObserver()
+                  && !game.getPlayerEntities(player, false).isEmpty();
+            if (!isEnemyWithUnits) {
+                continue;
+            }
+            Optional<Coords> zoneCenter = zoneCenter(board, player);
+            if (zoneCenter.isPresent()) {
+                totalX += zoneCenter.get().getX();
+                totalY += zoneCenter.get().getY();
+                zones++;
             }
         }
-        if (zoneHexes == 0) {
+        if (zones == 0) {
+            LOGGER.debug("[BotOrders] enemy deployment center for {}: no enemy player with units has a zone on board "
+                  + "{}", localPlayer.getName(), board.getBoardId());
             return Optional.empty();
         }
-        return Optional.of(new Coords((int) (totalX / zoneHexes), (int) (totalY / zoneHexes)));
+        Coords center = new Coords((int) (totalX / zones), (int) (totalY / zones));
+        LOGGER.debug("[BotOrders] enemy deployment center for {}: {} from {} zone(s)", localPlayer.getName(),
+              center.getBoardNum(), zones);
+        return Optional.of(center);
+    }
+
+    /**
+     * @return the middle of the zone the player deploys in, or empty for a drawn zone with no hexes on this board
+     */
+    private static Optional<Coords> zoneCenter(Board board, Player player) {
+        int zone = player.getStartingPos();
+        if (zone >= Board.NUM_ZONES) {
+            return drawnZoneCenter(board.getCustomDeploymentZone(Board.decodeCustomDeploymentZoneID(zone)));
+        }
+        if (zone == Board.START_ANY) {
+            int west = sideOrDefault(player.getStartingAnyNWx(), 0);
+            int north = sideOrDefault(player.getStartingAnyNWy(), 0);
+            int east = sideOrDefault(player.getStartingAnySEx(), board.getWidth() - 1);
+            int south = sideOrDefault(player.getStartingAnySEy(), board.getHeight() - 1);
+            return Optional.of(new Coords((west + east) / 2, (north + south) / 2));
+        }
+        return Optional.of(board.getDeploymentCenter(zone));
+    }
+
+    private static int sideOrDefault(int side, int boardSide) {
+        return (side == Entity.STARTING_ANY_NONE) ? boardSide : side;
+    }
+
+    private static Optional<Coords> drawnZoneCenter(Set<Coords> hexes) {
+        if (hexes.isEmpty()) {
+            return Optional.empty();
+        }
+        long totalX = 0;
+        long totalY = 0;
+        for (Coords hex : hexes) {
+            totalX += hex.getX();
+            totalY += hex.getY();
+        }
+        return Optional.of(new Coords((int) (totalX / hexes.size()), (int) (totalY / hexes.size())));
     }
 }

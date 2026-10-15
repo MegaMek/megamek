@@ -75,6 +75,7 @@ import megamek.common.moves.MoveStep;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
+import megamek.common.orders.UnitOrders;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.planetaryConditions.Weather;
 import megamek.common.rolls.PilotingRollData;
@@ -143,6 +144,15 @@ class BasicPathRankerTest {
         when(mockPrincess.getFireControl(FireControlType.Basic)).thenReturn(mockFireControl);
         when(mockPrincess.getFireControl(any(Entity.class))).thenReturn(mockFireControl);
         when(mockPrincess.getHomeEdge(any(Entity.class))).thenReturn(CardinalEdge.NORTH);
+        // units in these tests have no player orders
+        UnitOrdersFollower noOrdersFollower = mock(UnitOrdersFollower.class);
+        when(noOrdersFollower.orderedFacing(any(Entity.class), any(Coords.class))).thenReturn(UnitOrders.FACING_AUTO);
+        when(noOrdersFollower.routeWeight(any(Entity.class))).thenReturn(1.0);
+        when(noOrdersFollower.damageWeight(any(Entity.class))).thenReturn(1.0);
+        when(noOrdersFollower.orderedFacing(any(Entity.class), any())).thenReturn(UnitOrders.FACING_AUTO);
+        when(noOrdersFollower.facingThatStandsFor(any(Entity.class), anyInt(), any(), any()))
+              .thenReturn(UnitOrders.FACING_AUTO);
+        when(mockPrincess.getUnitOrdersFollower()).thenReturn(noOrdersFollower);
         when(mockPrincess.getHonorUtil()).thenReturn(mockHonorUtil);
         when(mockPrincess.getFireControlState()).thenReturn(mockFireControlState);
         when(mockPrincess.getPathRankerState()).thenReturn(mockPathRankerState);

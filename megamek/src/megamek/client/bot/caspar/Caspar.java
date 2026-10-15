@@ -379,6 +379,12 @@ public class Caspar extends Princess {
     }
 
     @Override
+    protected boolean facesEnemyZoneAtDeployment() {
+        // CASPAR divergence: face where the enemy will come from rather than whichever enemy deployed first
+        return true;
+    }
+
+    @Override
     protected List<Coords> prioritizeDeploymentCoords(Entity deployedUnit, List<Coords> possibleDeployCoords) {
         // CASPAR divergence: deploy as a formation rather than scattering across the whole zone.
         int formationRadius = FormationGeometry.formationRadius(getEntitiesOwned(), mutualSupportMultiplier());

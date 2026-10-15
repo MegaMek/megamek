@@ -35,6 +35,7 @@ package megamek.client.bot.princess;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -57,6 +58,7 @@ import megamek.common.game.Game;
 import megamek.common.loaders.MekFileParser;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.Entity;
@@ -225,5 +227,69 @@ class DirectArtilleryToHitGuessTest {
         assertFalse(LosEffects.calculateLOS(game, laserMek, target).canSee());
 
         assertEquals(TargetRoll.IMPOSSIBLE, botGuess(game, laserMek, target, laser).getValue());
+    }
+
+    private static double threatTo(Game game, Entity shooter, Entity target) {
+        Princess princess = princessFor(game);
+        FireControl fireControl = new FireControl(princess);
+        when(princess.getFireControl(any(Entity.class))).thenReturn(fireControl);
+        BasicPathRanker ranker = new BasicPathRanker(princess);
+        return ranker.calculateDamagePotential(shooter, new EntityState(shooter), new MovePath(game, target),
+              new EntityState(target), shooter.getPosition().distance(target.getPosition()), game);
+    }
+
+    private static FiringPlan thumperPlan(Game game, Entity thumper, Entity target) {
+        Princess princess = princessFor(game);
+        FireControl fireControl = new FireControl(princess);
+        when(princess.getFireControl(any(Entity.class))).thenReturn(fireControl);
+        return fireControl.guessFullFiringPlan(thumper, new EntityState(thumper), target, new EntityState(target),
+              game);
+    }
+
+    @Test
+    void pathRankerCountsAVisibleGunAsAThreat() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+
+        assertTrue(threatTo(game, units[0], units[1]) > 0, "a Thumper in the open must count as a threat");
+    }
+
+    @Test
+    void pathRankerCountsAHiddenGunAsAThreat() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+        smokeBetween(game);
+
+        assertTrue(threatTo(game, units[0], units[1]) > 0,
+              "a Thumper behind smoke can still shell the target, so it must count as a threat");
+    }
+
+    @Test
+    void pathRankerStillIgnoresAHiddenUnitWithoutArtillery() {
+        Game game = game();
+        Entity laserMek = place(game, LASER_MEK, SHOOTER_ID, 2, new Coords(5, 8), 3);
+        Entity target = place(game, TARGET, TARGET_ID, 1, new Coords(5, 13), 0);
+        smokeBetween(game);
+
+        assertEquals(0, threatTo(game, laserMek, target), 0.0001,
+              "a laser cannot fire through the smoke, so it is no threat");
+    }
+
+    @Test
+    void anArtilleryShotWithNoFriendInTheBlastExpectsNoFriendlyDamage() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+
+        assertEquals(0, thumperPlan(game, units[0], units[1]).getExpectedFriendlyDamage(), 0.0001);
+    }
+
+    @Test
+    void anArtilleryShotNextToAFriendExpectsFriendlyDamage() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+        place(game, LASER_MEK, 3, 2, TARGET_AT_TWELVE_HEXES.translated(0), 0);
+
+        assertTrue(thumperPlan(game, units[0], units[1]).getExpectedFriendlyDamage() > 0,
+              "the Thumper's own Wasp stands next to the target, inside the blast");
     }
 }

@@ -120,6 +120,23 @@ final class DirectArtilleryToHitGuess {
     }
 
     /**
+     * Whether a unit carries a working artillery weapon, which the engine lets fire in the firing phase at a target
+     * it cannot see.
+     *
+     * @param shooter the unit to check
+     *
+     * @return {@code true} if any of its artillery weapons can fire
+     */
+    static boolean canFireWithoutLineOfSight(Entity shooter) {
+        for (WeaponMounted weapon : shooter.getWeaponList()) {
+            if (weapon.getType().hasFlag(WeaponType.F_ARTILLERY) && weapon.canFire()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Estimates the to-hit number of a direct artillery shot.
      *
      * @param game                     the current game

@@ -609,11 +609,13 @@ public class WeaponFireInfo {
                     }
                 }
 
-                return new double[] {
-                      damage,
-                      (artillery) ? damage * 4 : 0D,
-                      (artillery) ? damage * 8 : 0D
-                };
+                if (!artillery) {
+                    return new double[] { damage, 0D, 0D };
+                }
+                // An artillery shell also lands on the hexes around the target; count the friendly units and
+                // buildings it would catch there rather than assuming a fixed multiple of the damage.
+                double[] collateralDamage = computeArtilleryCollateralDamage();
+                return new double[] { damage, collateralDamage[1], collateralDamage[2] };
             }
         }
 
@@ -834,52 +836,91 @@ public class WeaponFireInfo {
                       game, false
                 );
 
-                // now we go through all affected hexes and add up the damage done
-                // Entries for blast shape are: (absolute level: Coords) : damage
-                // e.g. the center of an HE bomb to level 4 of a building on a level 2 hex at (1,3) is:
-                //   `(6: (1, 3)): 10`
-                List<Entity> hitVictims = new ArrayList<>();
-                for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
-                    Coords coords = entry.getValue();
-                    Hex hex = game.getBoard().getHex(coords);
-                    // Currently, bombs off board are not supported.
-                    if (hex == null) {
-                        continue;
-                    }
-                    // Record collateral damage to buildings
-                    if (hex.getTerrain(Terrains.BLDG_ELEV) != null && hex.ceiling() >= entry.getKey()) {
-                        // Only approximate building damage here.
-                        // Blast damage to buildings is cumulative.
-                        buildingDamage += blastShape.get(entry) * 2;
-                    }
-                    // Record damage to enemy and friendly units
-                    // Entities can only be hit once per hex they occupy; blastShape assures we record
-                    // highest damage first.
-                    for (final Entity currentVictim : game.getEntitiesVector(coords)) {
-                        // Skip airborne, already-blasted, and hidden entities in calcs
-                        if (currentVictim.isAirborne()
-                              || hitVictims.contains(currentVictim)
-                              || currentVictim.isHidden()) {
-                            continue;
-                        }
-
-                        int floor = currentVictim.getElevation() + hex.getLevel();
-                        int ceil = currentVictim.relHeight() + hex.getLevel();
-                        if (!(floor <= entry.getKey() && entry.getKey() <= ceil)) {
-                            continue;
-                        }
-                        hitVictims.add(currentVictim);
-                        // Infantry take at least double damage from AE, if not 4x or 8x.
-                        if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
-                            damage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
-                        } else { // we prefer not to blow up friendlies if we can help it
-                            friendlyDamage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
-                        }
-                    }
-                }
+                double[] bombDamage = computeBlastDamage(shooter, blastShape);
+                damage += bombDamage[0];
+                friendlyDamage += bombDamage[1];
+                buildingDamage += bombDamage[2];
             }
         }
 
+        return new double[] { damage, friendlyDamage, buildingDamage };
+    }
+
+    /**
+     * Estimates what an artillery shell aimed at the target would do to everything in its blast, using the blast of
+     * the ammo the weapon would fire.
+     *
+     * @return The expected damage to enemies, to friendly units and to buildings, in that order; all zero when the
+     *       weapon has no ammo or the target has no hex.
+     */
+    private double[] computeArtilleryCollateralDamage() {
+        AmmoMounted ammo = (preferredAmmo != null) ? preferredAmmo : weapon.getLinkedAmmo();
+        Coords center = target.getPosition();
+        if ((ammo == null) || (center == null)) {
+            return ZERO_DAMAGE;
+        }
+        Hex centerHex = game.getBoard(target).getHex(center);
+        if (centerHex == null) {
+            return ZERO_DAMAGE;
+        }
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo.getType(), center,
+              centerHex.getLevel(), true, false, false, game, false);
+        return computeBlastDamage(getShooter(), blastShape);
+    }
+
+    /**
+     * Adds up the damage a blast does to enemy units, friendly units and buildings.
+     *
+     * @param shooter    The unit making the attack; units on its team count as friendly.
+     * @param blastShape The blast: (absolute level, hex) to damage, highest damage first.
+     *
+     * @return The expected damage to enemies, to friendly units and to buildings, in that order.
+     */
+    private double[] computeBlastDamage(final Entity shooter,
+          final Map<Map.Entry<Integer, Coords>, Integer> blastShape) {
+        double damage = 0D, friendlyDamage = 0D, buildingDamage = 0D;
+        // Entries for blast shape are: (absolute level: Coords) : damage
+        // e.g. the center of an HE bomb to level 4 of a building on a level 2 hex at (1,3) is:
+        //   `(6: (1, 3)): 10`
+        List<Entity> hitVictims = new ArrayList<>();
+        for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
+            Coords coords = entry.getValue();
+            Hex hex = game.getBoard().getHex(coords);
+            // Currently, bombs off board are not supported.
+            if (hex == null) {
+                continue;
+            }
+            // Record collateral damage to buildings
+            if (hex.getTerrain(Terrains.BLDG_ELEV) != null && hex.ceiling() >= entry.getKey()) {
+                // Only approximate building damage here.
+                // Blast damage to buildings is cumulative.
+                buildingDamage += blastShape.get(entry) * 2;
+            }
+            // Record damage to enemy and friendly units
+            // Entities can only be hit once per hex they occupy; blastShape assures we record
+            // highest damage first.
+            for (final Entity currentVictim : game.getEntitiesVector(coords)) {
+                // Skip airborne, already-blasted, and hidden entities in calcs
+                if (currentVictim.isAirborne()
+                      || hitVictims.contains(currentVictim)
+                      || currentVictim.isHidden()) {
+                    continue;
+                }
+
+                int floor = currentVictim.getElevation() + hex.getLevel();
+                int ceil = currentVictim.relHeight() + hex.getLevel();
+                if (!(floor <= entry.getKey() && entry.getKey() <= ceil)) {
+                    continue;
+                }
+                hitVictims.add(currentVictim);
+                // Infantry take at least double damage from AE, if not 4x or 8x.
+                if (currentVictim.getOwner().getTeam() != shooter.getOwner().getTeam()) {
+                    damage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
+                } else { // we prefer not to blow up friendlies if we can help it
+                    friendlyDamage += (currentVictim.isInfantry() ? 2 : 1) * blastShape.get(entry);
+                }
+            }
+        }
         return new double[] { damage, friendlyDamage, buildingDamage };
     }
 

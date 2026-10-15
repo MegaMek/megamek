@@ -34,10 +34,11 @@ package megamek.client.generator.skillGenerators;
 
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
+import megamek.common.enums.SkillLevel;
 import megamek.common.units.ConvInfantry;
+import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.LAMPilot;
-import megamek.common.enums.SkillLevel;
 
 public abstract class AbstractSkillGenerator {
     //region Variable Declarations
@@ -166,7 +167,9 @@ public abstract class AbstractSkillGenerator {
     /**
      * This cleans up the return value before the final return, and by doing so to handling two specific use cases. The
      * first is handling Infantry Anti-'Mek skill generation properly by directly tying it into entity being Anti-'Mek
-     * trained. The second is the force close option, which forces piloting to be gunnery plus one
+     * trained. The second is the force close option, which forces piloting to be gunnery plus one. Finally, every skill
+     * is clamped between 0 and {@link Crew#MAX_SKILL}, as modifiers (such as the Clan 'Mek bonus applied to a Legendary
+     * crew) can otherwise push a skill out of the range that crews can be saved and loaded with.
      *
      * @param entity the entity the skill is being generated for
      * @param skills the skill array to cleanup before the final return
@@ -174,13 +177,17 @@ public abstract class AbstractSkillGenerator {
      * @return the modified skill array
      */
     protected int[] cleanReturn(final Entity entity, final int... skills) {
+        for (int index = 0; index < skills.length; index++) {
+            skills[index] = Math.clamp(skills[index], 0, Crew.MAX_SKILL);
+        }
+
         // For conventional infantry, piloting doubles as anti-mek skill, and this is set
         // based on whether the unit has anti-mek training, which gets set in the BLK file.
         // We therefore check if they are anti-mek trained before setting
         if (entity instanceof ConvInfantry convInfantry && !convInfantry.hasAntiMekGear()) {
             skills[1] = ConvInfantry.ANTI_MEK_SKILL_NO_GEAR;
         } else if (isForceClose()) {
-            skills[1] = skills[0] + 1;
+            skills[1] = Math.min(skills[0] + 1, Crew.MAX_SKILL);
         }
 
         return skills;

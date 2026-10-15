@@ -755,6 +755,11 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
+                // ProtoMeks fire BattleMek missile ammo but only the munitions Total Warfare lists for them
+                if (entity.isProtoMek() && !AmmoType.isAllowedForBattleArmorAndProtoMeks(atCheck)) {
+                    continue;
+                }
+
                 // Battle Armor ammo can't be selected at all. All other ammo types need to match on rack size and tech.
                 if (bTechMatch &&
                       (atCheck.getRackSize() == at.getRackSize()) &&

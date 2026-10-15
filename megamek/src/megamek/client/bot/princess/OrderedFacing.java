@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;

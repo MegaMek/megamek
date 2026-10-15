@@ -35,8 +35,8 @@ package megamek.client.bot.princess;
 import java.util.Optional;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;

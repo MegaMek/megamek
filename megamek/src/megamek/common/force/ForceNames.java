@@ -38,7 +38,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.internationalization.I18n;
 import megamek.common.units.Entity;
 

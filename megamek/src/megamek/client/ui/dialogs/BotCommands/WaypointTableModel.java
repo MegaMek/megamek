@@ -464,12 +464,9 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     /**
-     * @param index a row
+     * @param row   a row
+     * @param order the row's order
      *
-     * @return one line on what the units do at that waypoint, for under the table: how they take its formation and
-     *       what they do there, e.g. "Waypoint 2 - hex 1617: The lance takes the Wedge on the way here. Hold 2: ..."
-     */
-    /**
      * @return the order, marked as a turning point the bot planned when the row is one
      */
     private static WaypointOrder planned(Row row, WaypointOrder order) {
@@ -505,12 +502,20 @@ class WaypointTableModel extends AbstractTableModel {
     }
 
     /**
+     * @param index a row
+     *
      * @return {@code true} if the row is a turning point the bot planned
      */
     boolean isPlanned(int index) {
         return rows.get(index).isPlanned;
     }
 
+    /**
+     * @param index a row
+     *
+     * @return one line on what the units do at that waypoint, for under the table: how they take its formation and
+     *       what they do there, e.g. "Waypoint 2 - hex 1617: The lance takes the Wedge on the way here. Hold 2: ..."
+     */
     String describe(int index) {
         Row row = rows.get(index);
         StringBuilder text = new StringBuilder(Messages.getString("BotCommandPanel.MoveOrder.help.selected",

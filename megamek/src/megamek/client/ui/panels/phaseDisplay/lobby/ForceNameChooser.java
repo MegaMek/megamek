@@ -37,9 +37,9 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.force.ForceNames;
 import megamek.common.game.Game;
 

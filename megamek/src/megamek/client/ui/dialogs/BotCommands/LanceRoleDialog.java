@@ -38,10 +38,10 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.JFrame;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.common.OffBoardDirection;
-import megamek.common.annotations.Nullable;
 import megamek.common.orders.LanceRole;
 import megamek.common.orders.LanceRoles;
 

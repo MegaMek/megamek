@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -52,7 +53,6 @@ import megamek.client.ui.util.PlayerColour;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.board.Board;
 import megamek.common.force.Force;

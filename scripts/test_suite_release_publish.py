@@ -9,8 +9,9 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+import suite_release_coordinator as coordinator
 import suite_release_publish as publish
-from suite_release_plan import REPOS, SOURCES, UnsafeInventory
+from suite_release_plan import REPOS, SOURCES, UnsafeInventory, plan
 
 
 class TransactionTests(unittest.TestCase):
@@ -25,6 +26,7 @@ class TransactionTests(unittest.TestCase):
                               releases={r: [] for r in REPOS.values()})
         self.archives = {}
         self.events = []
+        self.reads = []
         self.tags = {r: {} for r in REPOS.values()}
         self.releases = {r: [] for r in REPOS.values()}
         self.blobs = {}
@@ -34,6 +36,7 @@ class TransactionTests(unittest.TestCase):
             self.archives[product] = path
 
     def get(self, endpoint):
+        self.reads.append(endpoint)
         parts = endpoint.split("/")
         repo = parts[2]
         if endpoint.endswith("/commits/main"):
@@ -59,10 +62,11 @@ class TransactionTests(unittest.TestCase):
         self.events.append(("tag", repo))
         self.tags[repo][tag] = sha
 
-    def release(self, repo, tag, sha):
+    def release(self, repo, tag, sha, *, name, body):
         self.events.append(("release", repo))
         ident = 100 + len(self.events)
-        self.releases[repo].append(dict(id=ident, tag_name=tag, draft=False, assets=[]))
+        self.releases[repo].append(dict(id=ident, tag_name=tag, draft=False,
+                                       prerelease=False, name=name, body=body, assets=[]))
         return ident
 
     def upload(self, repo, release_id, path):
@@ -94,23 +98,155 @@ class TransactionTests(unittest.TestCase):
         self.assertEqual(json.loads(self.blobs["megamek", self.releases["megamek"][0]
                                      ["assets"][-1]["id"]]), record)
 
-    def test_collision_and_movement_have_no_writes(self):
-        for kind in ("tag", "release", "main"):
+    def test_tag_and_release_movement_have_no_writes(self):
+        for kind in ("tag", "release"):
             with self.subTest(kind=kind):
                 self.tags = {r: {} for r in REPOS.values()}
                 self.releases = {r: [] for r in REPOS.values()}
                 self.events.clear()
                 if kind == "tag":
                     self.tags["mekhq"]["v0.51.01"] = self.commits["mekhq"]
-                elif kind == "release":
+                else:
                     self.releases["mekhq"].append(dict(id=5, tag_name="v0.51.01",
                                                        draft=True, assets=[]))
-                else:
-                    self.commits["mm-data"] = "f" * 40
                 with self.assertRaises(UnsafeInventory):
                     self.execute()
                 self.assertFalse(any(e[0] in ("tag", "release", "upload") for e in self.events))
-                self.commits["mm-data"] = self.inventory["commits"]["mm-data"]
+
+    def assert_frozen_record(self, record):
+        for product, repo in REPOS.items():
+            self.assertEqual(record["products"][product]["commit"], self.inventory["commits"][repo])
+            self.assertEqual(self.tags[repo][record["products"][product]["tag"]],
+                             self.inventory["commits"][repo])
+        self.assertEqual(record["mmData"]["commit"], self.inventory["commits"]["mm-data"])
+        self.assertFalse(any(endpoint.endswith("/commits/main") for endpoint in self.reads))
+        self.assertEqual(self.events[-1],
+                         ("upload", "megamek", f"suite-record-{record['version']}.json"))
+
+    def select_membership(self, membership):
+        self.inventory["membership"] = membership
+        version = plan(self.inventory)["versionCandidate"]
+        for product in REPOS:
+            path = self.root / f"{product}-{version}.tar.gz"
+            path.write_bytes(product.encode())
+            self.archives[product] = path
+
+    def assert_release_presentation(self, record, repo, tag):
+        release = next(r for r in self.releases[repo] if r["tag_name"] == tag)
+        channel = record["membership"].capitalize()
+        suite = f"{channel} suite {record['version']}"
+        product = next(p for p, r in REPOS.items() if r == repo)
+        self.assertEqual(release["name"], suite if repo == "megamek" else
+                         f"{product} {record['products'][product]['version']} - {suite}")
+        self.assertFalse(release["draft"])
+        self.assertFalse(release["prerelease"])
+        self.assertIn(f"**Channel: {channel}**", release["body"])
+        self.assertIn(f"**Suite: {record['version']}**", release["body"])
+        self.assertNotRegex(release["name"], r"(?i)\bgames?\b")
+        self.assertNotRegex(release["body"], r"(?i)\bgames?\b")
+        self.assertIn(f"https://github.com/MegaMek/megamek/releases/download/{record['tag']}/"
+                      f"suite-record-{record['version']}.json", release["body"])
+        self.assertIn("complete only when that record is available", release["body"])
+        self.assertIn("uploaded last", release["body"])
+        self.assertIn("including other channels", release["body"])
+        for included, item in record["products"].items():
+            self.assertIn(f"| {included} | {item['version']} |", release["body"])
+            self.assertIn(f"{item['repository']}/releases/download/{item['tag']}/"
+                          f"{item['asset']['name']}", release["body"])
+            self.assertIn(f"{item['repository']}/commit/{item['commit']}", release["body"])
+        data = record["mmData"]
+        self.assertIn(f"{data['repository']}/commit/{data['commit']}", release["body"])
+
+    def test_release_presentation_for_all_channels(self):
+        for membership in ("weekly", "development", "milestone"):
+            with self.subTest(membership=membership):
+                self.setUp()
+                self.select_membership(membership)
+                self.commits.update({repo: "f" * 40 for repo in SOURCES})
+                record = self.execute()
+                for repo in REPOS.values():
+                    self.assert_release_presentation(record, repo, record["tag"])
+                self.assert_frozen_record(record)
+
+    def test_all_channels_publish_frozen_sources_when_main_advances(self):
+        for membership in ("weekly", "development", "milestone"):
+            for source in SOURCES:
+                with self.subTest(membership=membership, source=source):
+                    self.setUp()
+                    self.select_membership(membership)
+                    self.commits[source] = "f" * 40
+                    record = self.execute()
+                    self.assertEqual(record["membership"], membership)
+                    self.assert_frozen_record(record)
+
+    def test_main_advancing_during_publication_keeps_frozen_record(self):
+        for phase in ("first_tag", "last_product_upload"):
+            with self.subTest(phase=phase):
+                self.setUp()
+                original_tag = self.tag
+                original_upload = self.upload
+
+                def advance():
+                    self.commits.update({repo: "f" * 40 for repo in SOURCES})
+
+                def tag(repo, name, sha):
+                    original_tag(repo, name, sha)
+                    if phase == "first_tag":
+                        advance()
+
+                def upload(repo, release_id, path):
+                    result = original_upload(repo, release_id, path)
+                    if phase == "last_product_upload" and Path(path).name.startswith("MekHQ-"):
+                        advance()
+                    return result
+
+                with patch.object(self, "tag", side_effect=tag), patch.object(
+                        self, "upload", side_effect=upload):
+                    record = self.execute()
+                self.assert_frozen_record(record)
+
+    def prepare_noop(self):
+        previous = self.execute()
+        self.inventory["previous"] = copy.deepcopy(previous)
+        self.inventory["floor"] = previous["version"]
+        self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
+        self.inventory["releases"] = {
+            repo: [entry["tag_name"] for entry in entries]
+            for repo, entries in self.releases.items()}
+        self.commits.update({repo: "f" * 40 for repo in SOURCES})
+        self.events.clear()
+        self.reads.clear()
+        return previous
+
+    def test_weekly_noop_uses_prepared_snapshot_after_main_advances(self):
+        previous = self.prepare_noop()
+        self.assertEqual(coordinator.verify_noop(
+            self.inventory, self.archives, getter=self.get, fetch=self.fetch), previous)
+        self.assertFalse(self.events)
+        self.assertFalse(any(endpoint.endswith("/commits/main") for endpoint in self.reads))
+
+    def test_weekly_noop_still_rejects_release_and_archive_changes(self):
+        for kind in ("tag", "record", "asset", "local"):
+            with self.subTest(kind=kind):
+                self.setUp()
+                previous = self.prepare_noop()
+                if kind == "tag":
+                    self.tags["megamek"][previous["tag"]] = "f" * 40
+                elif kind == "record":
+                    previous["membership"] = "development"
+                    asset = self.releases["megamek"][0]["assets"][-1]
+                    data = json.dumps(previous).encode()
+                    self.blobs["megamek", asset["id"]] = data
+                    asset["size"] = len(data)
+                elif kind == "asset":
+                    asset = previous["products"]["MekHQ"]["asset"]
+                    self.blobs["mekhq", asset["assetId"]] = b"changed"
+                else:
+                    self.archives["MekHQ"].write_bytes(b"changed")
+                with self.assertRaises(UnsafeInventory):
+                    coordinator.verify_noop(
+                        self.inventory, self.archives, getter=self.get, fetch=self.fetch)
+                self.assertFalse(self.events)
 
     def test_missing_checks_or_failed_build_never_write(self):
         with self.assertRaises(UnsafeInventory):
@@ -150,6 +286,7 @@ class TransactionTests(unittest.TestCase):
 
     def test_reuse_megamek_product_and_separate_record_host(self):
         previous = self.prepare_reuse()
+        prior_releases = copy.deepcopy(self.releases)
         record = publish.publish(self.inventory, self.archives, getter=self.get,
                                  fetch=self.fetch, writes=self,
                                  attest=lambda r, p: self.events.append(("attest",)),
@@ -169,25 +306,40 @@ class TransactionTests(unittest.TestCase):
         host = next(r for r in self.releases["megamek"] if r["tag_name"] == "v0.51.02")
         self.assertNotEqual(host["id"], record["products"]["MegaMek"]["releaseId"])
         self.assertEqual(json.loads(self.blobs["megamek", host["assets"][0]["id"]]), record)
+        self.assert_release_presentation(record, "megamek", record["tag"])
+        self.assert_release_presentation(record, "mekhq", record["products"]["MekHQ"]["tag"])
+        for repo in REPOS.values():
+            for release in prior_releases[repo]:
+                self.assertEqual(next(r for r in self.releases[repo] if r["id"] == release["id"]),
+                                 release)
 
-    def test_milestone_record_only_reuses_three_assets(self):
-        prior = self.execute()
-        self.inventory["previous"] = copy.deepcopy(prior)
-        self.inventory["floor"] = prior["version"]
-        self.inventory["membership"] = "milestone"
-        self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
-        self.inventory["releases"] = {
-            repo: [r["tag_name"] for r in entries]
-            for repo, entries in self.releases.items()}
-        self.events.clear()
-        record = publish.publish(self.inventory, self.archives, getter=self.get,
-                                 fetch=self.fetch, writes=self,
-                                 attest=lambda r, p: self.events.append(("attest",)),
-                                 validate=lambda p: self.events.append(("validate",)))
-        self.assertEqual(record["version"], "0.52.00")
-        self.assertEqual(record["products"], prior["products"])
-        self.assertEqual([e for e in self.events if e[0] == "upload"],
-                         [("upload", "megamek", "suite-record-0.52.00.json")])
+    def test_promoted_record_only_reuses_three_assets(self):
+        for membership, version in (("milestone", "0.52.00"), ("development", "0.51.02")):
+            with self.subTest(membership=membership):
+                self.setUp()
+                prior = self.execute()
+                prior_releases = copy.deepcopy(self.releases)
+                self.inventory["previous"] = copy.deepcopy(prior)
+                self.inventory["floor"] = prior["version"]
+                self.inventory["membership"] = membership
+                self.inventory["tags"] = {repo: list(tags) for repo, tags in self.tags.items()}
+                self.inventory["releases"] = {
+                    repo: [r["tag_name"] for r in entries]
+                    for repo, entries in self.releases.items()}
+                self.events.clear()
+                record = publish.publish(self.inventory, self.archives, getter=self.get,
+                                         fetch=self.fetch, writes=self,
+                                         attest=lambda r, p: self.events.append(("attest",)),
+                                         validate=lambda p: self.events.append(("validate",)))
+                self.assertEqual(record["version"], version)
+                self.assertEqual(record["products"], prior["products"])
+                self.assertEqual([e for e in self.events if e[0] == "upload"],
+                                 [("upload", "megamek", f"suite-record-{version}.json")])
+                self.assert_release_presentation(record, "megamek", record["tag"])
+                for repo in REPOS.values():
+                    for release in prior_releases[repo]:
+                        self.assertEqual(next(r for r in self.releases[repo]
+                                              if r["id"] == release["id"]), release)
 
     def test_late_page_two_collision_blocks_product_and_suite_host(self):
         for host in (False, True):
@@ -235,6 +387,8 @@ class BindingTests(unittest.TestCase):
             calls.append((args, kwargs))
             return subprocess.CompletedProcess(args, 0, json.dumps(response[0]).encode())
         sha = "a" * 40
+        name = "MekHQ 0.51.01 - Weekly suite 0.51.01"
+        body = "**Channel: Weekly**\n\n**Suite: 0.51.01**\n"
         with tempfile.TemporaryDirectory() as directory:
             archive = Path(directory) / "MekHQ-0.51.01.tar.gz"
             archive.write_bytes(b"archive")
@@ -247,12 +401,16 @@ class BindingTests(unittest.TestCase):
                 self.assertEqual(calls[-1][0], ["gh", "api", "--method", "POST",
                                  "repos/MegaMek/mekhq/git/refs", "-f",
                                  "ref=refs/tags/v0.51.01", "-f", f"sha={sha}"])
-                response[0] = {"id": 10, "tag_name": "v0.51.01", "draft": False}
-                self.assertEqual(writes.release("mekhq", "v0.51.01", sha), 10)
+                release_response = {"id": 10, "tag_name": "v0.51.01", "draft": False,
+                                    "name": name, "body": body}
+                response[0] = release_response
+                self.assertEqual(writes.release("mekhq", "v0.51.01", sha,
+                                                name=name, body=body), 10)
                 self.assertEqual(calls[-1][0], ["gh", "api", "--method", "POST",
                                  "repos/MegaMek/mekhq/releases", "-f", "tag_name=v0.51.01",
                                  "-f", f"target_commitish={sha}", "-F", "draft=false",
-                                 "-F", "prerelease=false", "-f", "name=v0.51.01"])
+                                 "-F", "prerelease=false", "-f", f"name={name}",
+                                 "-f", f"body={body}"])
                 response[0] = {"id": 11, "name": archive.name, "state": "uploaded"}
                 self.assertEqual(writes.upload("mekhq", 10, archive), 11)
                 self.assertEqual(calls[-1][0], ["gh", "api", "--method", "POST",
@@ -262,8 +420,15 @@ class BindingTests(unittest.TestCase):
                                  "--input", str(archive)])
                 for operation, bad in ((lambda: writes.tag("mekhq", "v0.51.01", sha),
                                          {"ref": "refs/tags/other", "object": {"sha": sha}}),
-                                        (lambda: writes.release("mekhq", "v0.51.01", sha),
-                                         {"id": True, "tag_name": "v0.51.01", "draft": False}),
+                                        (lambda: writes.release("mekhq", "v0.51.01", sha,
+                                                               name=name, body=body),
+                                         dict(release_response, id=True)),
+                                        (lambda: writes.release("mekhq", "v0.51.01", sha,
+                                                               name=name, body=body),
+                                         dict(release_response, name="v0.51.01")),
+                                        (lambda: writes.release("mekhq", "v0.51.01", sha,
+                                                               name=name, body=body),
+                                         dict(release_response, body=None)),
                                         (lambda: writes.upload("mekhq", 10, archive),
                                          {"id": 11, "name": archive.name, "state": "pending"})):
                     response[0] = bad

@@ -33,6 +33,7 @@
 package megamek.client.ui.settings;
 
 import java.awt.*;
+import java.awt.event.HierarchyEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import javax.swing.*;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
@@ -64,6 +66,7 @@ public class SettingsPane extends JPanel {
     private boolean searchIndexInProgress;
     private boolean searchIndexComplete;
     private int searchIndexGeneration;
+    private boolean sectionsExpandedByDefault = GUIPreferences.getInstance().getExpandOptionSections();
 
     public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
             SettingsNavigationText navigationText) {
@@ -88,6 +91,11 @@ public class SettingsPane extends JPanel {
         splitPane.setResizeWeight(0.0);
         splitPane.setDividerLocation(UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH));
         add(splitPane, BorderLayout.CENTER);
+        addHierarchyListener(event -> {
+            if ((event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                refreshSectionExpansionDefaults();
+            }
+        });
         navigationPanel.selectRoute(initialRoute);
     }
 
@@ -160,12 +168,33 @@ public class SettingsPane extends JPanel {
         contentHost.refreshHelpBindings();
     }
 
+    /** Applies a changed client default to cached pages without disturbing unchanged manual expansion choices. */
+    public void refreshSectionExpansionDefaults() {
+        boolean expanded = GUIPreferences.getInstance().getExpandOptionSections();
+        if (expanded == sectionsExpandedByDefault) {
+            return;
+        }
+        sectionsExpandedByDefault = expanded;
+        for (Component page : pageCache.values()) {
+            SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
+            if (pagePanel != null) {
+                pagePanel.resetSectionExpansionToDefault();
+            }
+        }
+        expansionStateBeforeFilter.clear();
+        Component currentPage = pageCache.get(currentRoute.getId());
+        if (currentPage != null) {
+            applyFilterExpansion(currentRoute, currentPage, navigationPanel.getActiveFilter());
+        }
+    }
+
     private void selectedNavigationTarget(SettingsRoute route) {
         showRoute(route);
         contentHost.resetScrollPosition();
     }
 
     private boolean showRoute(SettingsRoute route) {
+        refreshSectionExpansionDefaults();
         SettingsRoute effectiveRoute = defaultPageRoute(route);
         Component page = getPage(effectiveRoute);
         if (page == null) {

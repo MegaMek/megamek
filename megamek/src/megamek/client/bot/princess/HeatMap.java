@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -34,6 +34,7 @@ package megamek.client.bot.princess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -306,39 +307,38 @@ public class HeatMap {
      *
      * @return list of positions, or null if team activity tracker is empty
      */
-    public List<Coords> getHotSpots() {
+    public @Nullable List<Coords> getHotSpots() {
 
         // If there are no hot-spots, return null
-        if (teamActivity.isEmpty() || teamActivity.values().stream().allMatch(w -> w == MIN_WEIGHT)) {
+        if (!hasActivity()) {
             return null;
         }
 
-        // Sort the weighted positions by descending hot-spot value
+        // Rate each active position once, then sort by descending rating. The sort is stable, so positions with the
+        // same rating keep their map order, as the old repeated pick-the-highest loop did.
+        Map<Coords, Integer> ratings = new HashMap<>();
         List<Coords> rankedPositions = new ArrayList<>();
-        List<Coords> workingPositions = teamActivity.
-              keySet().
-              stream().
-              filter(p -> teamActivity.get(p) > MIN_WEIGHT).
-              collect(Collectors.toList());
-        List<Integer> workingWeights = workingPositions.
-              stream().
-              map(this::getHotSpotRating).
-              collect(Collectors.
-                    toList());
-        while (!workingPositions.isEmpty()) {
-            OptionalInt maxRating = workingWeights.stream().mapToInt(w -> w).max();
-
-            for (int i = 0; i < workingPositions.size(); i++) {
-                if (workingWeights.get(i) == maxRating.getAsInt()) {
-                    rankedPositions.add(workingPositions.get(i));
-                }
+        for (Map.Entry<Coords, Integer> activity : teamActivity.entrySet()) {
+            if (activity.getValue() > MIN_WEIGHT) {
+                rankedPositions.add(activity.getKey());
+                ratings.put(activity.getKey(), getHotSpotRating(activity.getKey()));
             }
-
-            workingPositions.removeIf(rankedPositions::contains);
-            workingWeights.removeIf(w -> w == maxRating.getAsInt());
         }
+        rankedPositions.sort(Comparator.comparingInt((Coords position) -> ratings.get(position)).reversed());
 
         return rankedPositions;
+    }
+
+    /**
+     * @return {@code true} if any tracked position has a weight other than the minimum
+     */
+    private boolean hasActivity() {
+        for (int weight : teamActivity.values()) {
+            if (weight != MIN_WEIGHT) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

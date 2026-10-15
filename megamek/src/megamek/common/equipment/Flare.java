@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,6 +38,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import megamek.common.board.Coords;
+import megamek.common.planetaryConditions.Wind;
 
 /**
  * This class represents parachute flares deployed by illumination artillery or mek mortars.
@@ -65,6 +66,24 @@ public class Flare implements Serializable {
 
     public int getBoardId() {
         return boardId;
+    }
+
+    /**
+     * How many hexes a drifting illumination flare moves downwind each turn. An illumination round drifts as smoke
+     * does (TO:AR p.152, Drift p.45): one hex in any wind, or in a calm when the Smoke Drift option treats it as a light
+     * breeze, plus one more for each wind strength above Storm. The Core Rules have no illumination rounds yet, so this
+     * Total Warfare rule applies under both.
+     *
+     * @param wind             the wind strength
+     * @param smokeDriftInCalm whether the Smoke Drift option treats a calm as a light breeze
+     *
+     * @return the hexes the flare moves, {@code 0} when it stays put
+     */
+    public static int driftHexes(Wind wind, boolean smokeDriftInCalm) {
+        if (wind.isCalm()) {
+            return smokeDriftInCalm ? 1 : 0;
+        }
+        return 1 + Math.max(0, wind.ordinal() - Wind.STORM.ordinal());
     }
 
     public boolean illuminates(Coords c) {

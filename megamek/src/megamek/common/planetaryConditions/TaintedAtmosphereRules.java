@@ -181,9 +181,9 @@ public final class TaintedAtmosphereRules {
      * Only a toxic caustic or radiological atmosphere goes this far.
      * <p>
      * This bars vehicles only. Extending it to IndustrialMeks would be a house rule: the same table entry deals with
-     * Meks separately, and does so by leaving them on the field - "cockpit armor breaches in Meks instantly kill
-     * vehicle crews and MechWarriors". An IndustrialMek without the sealing may therefore be fielded in toxic air,
-     * and dies to a cockpit breach like any other Mek rather than being turned away at deployment.
+     * 'Meks separately, and does so by leaving them on the field - "cockpit armor breaches in 'Meks instantly kill
+     * vehicle crews and MekWarriors". An IndustrialMek without the sealing may therefore be fielded in toxic air,
+     * and dies to a cockpit breach like any other 'Mek rather than being turned away at deployment.
      *
      * @param atmosphericTaint the air being fought in
      *

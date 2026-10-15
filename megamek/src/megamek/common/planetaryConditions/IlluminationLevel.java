@@ -35,9 +35,9 @@ package megamek.common.planetaryConditions;
 
 import java.util.Objects;
 
+import megamek.common.Hex;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
-import megamek.common.Hex;
 import megamek.common.units.Terrains;
 
 public enum IlluminationLevel {
@@ -91,7 +91,7 @@ public enum IlluminationLevel {
         }
 
         // Flares happen first, because they totally negate nighttime penalties
-        if (game.getFlares().stream().anyMatch(flare -> flare.illuminates(coords))) {
+        if (game.getFlares().stream().anyMatch(flare -> flare.illuminates(coords, boardId))) {
             return IlluminationLevel.FLARE;
         }
 

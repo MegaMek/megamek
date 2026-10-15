@@ -39,6 +39,7 @@ import java.util.Locale;
 
 import megamek.common.Player;
 import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.I18n;
 import megamek.common.units.Entity;
 
 /**
@@ -52,10 +53,8 @@ import megamek.common.units.Entity;
  */
 public final class PhaseLine {
 
-    /** The ICAO spelling alphabet, the order new phase lines are named in. */
-    public static final List<String> ICAO_NAMES = List.of("Alfa", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot",
-          "Golf", "Hotel", "India", "Juliett", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo",
-          "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu");
+    /** The ICAO spelling alphabet, the order new phase lines are named in, from the resource bundle. */
+    public static final List<String> ICAO_NAMES = List.of(I18n.getText("PhaseLine.names").split(","));
 
     /** The longest name a phase line may have. */
     public static final int MAXIMUM_NAME_LENGTH = 24;
@@ -69,7 +68,7 @@ public final class PhaseLine {
     /**
      * @param namesInUse the phase lines already named
      *
-     * @return the first ICAO name not in use, ignoring case; after Zulu, Zulu and a number
+     * @return the first ICAO name not in use, ignoring case; after the last, the last and a number ({@code Zulu 2})
      */
     public static String nextName(Collection<String> namesInUse) {
         for (String name : ICAO_NAMES) {
@@ -77,11 +76,16 @@ public final class PhaseLine {
                 return name;
             }
         }
+        String lastName = ICAO_NAMES.getLast();
         int number = 2;
-        while (containsIgnoringCase(namesInUse, "Zulu " + number)) {
+        while (containsIgnoringCase(namesInUse, numberedName(lastName, number))) {
             number++;
         }
-        return "Zulu " + number;
+        return numberedName(lastName, number);
+    }
+
+    private static String numberedName(String name, int number) {
+        return I18n.getFormattedText("PhaseLine.numberedName", name, number);
     }
 
     private static boolean containsIgnoringCase(Collection<String> names, String name) {
@@ -126,7 +130,7 @@ public final class PhaseLine {
      * @return the name as it is shown and called, e.g. {@code PL Bravo}
      */
     public static String display(String name) {
-        return "PL " + name;
+        return I18n.getFormattedText("PhaseLine.display", name);
     }
 
     /**

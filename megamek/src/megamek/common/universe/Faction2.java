@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
@@ -103,6 +104,9 @@ public class Faction2 {
     private String nameGenerator;
     private int[] eraMods;
     private final List<String> ratingLevels = new ArrayList<>();
+    // The order is the lookup order, so Jackson must not replace this with its default HashSet. It did, and the Raven
+    // Alliance (CSR, OA, CLAN.IS) resolved to the Outworlds Alliance's rules ahead of Clan Snow Raven's.
+    @JsonDeserialize(as = LinkedHashSet.class)
     private final Set<String> fallBackFactions = new LinkedHashSet<>();
     private final HonorRating preInvasionHonorRating = HonorRating.NONE;
     private final HonorRating postInvasionHonorRating = HonorRating.NONE;

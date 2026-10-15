@@ -131,11 +131,11 @@ public class EnergyWeaponHandler extends WeaponHandler {
         // Apply Gothic Dazzle Mode damage reduction
         if (weapon.curMode().getName().contains("Dazzle")) {
             // TODO: Check if target is Abomination when that system is implemented
-            // For now, assume all targets are BattleMechs (not Abominations)
+            // For now, assume all targets are BattleMeks (not Abominations)
             boolean isAbomination = false; // Stub for future implementation
 
             if (!isAbomination) {
-                // Half damage vs BattleMechs (rounded down, min 1)
+                // Half damage vs BattleMeks (rounded down, min 1)
                 toReturn = Math.max(1, toReturn / 2);
             }
             // Full damage vs Abominations (no change to toReturn)

@@ -69,6 +69,7 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.SupportTank;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
+import megamek.common.units.TrainLayout;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;
 
@@ -982,30 +983,32 @@ public class Board implements Serializable {
         if (e == null) {
             return false;
         }
-        int startingWidth = e.getGame().rulesManager.getRulesGame()
+        int startingWidth = e.getStartingWidth();
+        // For Walk On Deployment, we need to restrict the deployment width if it not the deployment phase.
+        if (!(e.getGame().getPhase().isDeployment())) {
+            startingWidth = e.getGame().rulesManager.getRulesGame()
                                                     .getDeploymentWidth(e.getOwner(),
                                                                         e.getStartingPos(), e.getStartingWidth());
+        }
+
+        // A walk-on train enters tractor first, its trailers following it in from the edge, so it may start as many
+        // hexes deep as it is long; a one-hex strip cannot hold a straight train of three hexes or more. This applies
+        // in the deployment phase too, so the train's walk-on area can be shown there.
+        if (!e.getAllTowedUnits().isEmpty() && e.getGame().rulesManager.getRulesGame().canWalkOnThisRound(e)) {
+            int trainLength = TrainLayout.trainLengthInHexes(e.getGame(), e);
+            // Large support vehicles take up their entire hex, so their first trailer cannot share it
+            if ((e instanceof SupportTank) && (e.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT)) {
+                trainLength++;
+            }
+            int walkOnWidth = e.getGame().rulesManager.getRulesGame()
+                                    .getDeploymentWidth(e.getOwner(), e.getStartingPos(), e.getStartingWidth());
+            startingWidth = Math.max(walkOnWidth, trainLength);
+        }
+
         if (e.isDropShip()) {
             startingWidth = e.getStartingWidth();
         }
 
-        int towedSize = e.getAllTowedUnits().size();
-        boolean largeSupportVee = e instanceof SupportTank && e.getWeightClass() == EntityWeightClass.WEIGHT_LARGE_SUPPORT;
-        // Vehicles fit 2/hex. Deployment width of 1 can do 2 hexes / 4 vehicles
-        if (largeSupportVee) {
-            // Large support vehicles take up their entire hex, so are the equivalent of 2 units
-            towedSize++;
-        }
-        if (towedSize > 3 && e.getGame().rulesManager.getRulesGame().canWalkOnThisRound(e)) {
-            /**
-             * Towed size of 3 = 4 units, 2 hexes.
-             * towedsize + 1 is the first hex
-             * divide by 2 is the total number
-             * always round up (no partial hexes)
-             */
-            startingWidth = (int) (Math.ceil((towedSize + 1) / 2));
-
-        }
         return isLegalDeployment(c,
                                  e.getStartingPos(),
                                  startingWidth,

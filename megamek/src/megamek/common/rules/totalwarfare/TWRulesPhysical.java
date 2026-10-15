@@ -348,9 +348,10 @@ public class TWRulesPhysical extends RulesPhysical {
         }
     }
 
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 3 LINES
     /**
-     * Can you club a prone target? Prone 'Mechs can only be clubbed if they are one level higher than the attacker See
-     * BMM 7th Printing, Physical Attacks and Prone 'Mechs
+     * Can you club a prone target? Prone 'Meks can only be clubbed if they are one level higher than the attacker See
+     * BMM 7th Printing, Physical Attacks and Prone 'Meks
      *
      * @param targetElevation   the elevation of the target
      * @param attackerElevation the elevation of the attacker

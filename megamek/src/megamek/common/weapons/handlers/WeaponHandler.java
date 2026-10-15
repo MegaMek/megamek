@@ -225,7 +225,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             WeaponAttackAction prevAttack = attackHandler.getWeaponAttackAction();
             if (prevAttack.getEntityId() == entity.getId()) {
                 WeaponMounted prevWeapon = (WeaponMounted) entity.getEquipment(prevAttack.getWeaponId());
-                if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
+                if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_HEAT_BY_BAY)) {
                     totalHeat += prevWeapon.getHeatByBay();
                 } else {
                     boolean rearMount = prevWeapon.isRearMounted();
@@ -1128,7 +1128,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int hits = calcHits(vPhaseReport);
             if ((target.isAirborne() && !weaponAttackAction.isGroundToAir(game))
                   || game.isOnSpaceMap(target)
-                  || attackingEntity.usesWeaponBays()) {
+                  || attackingEntity.usesWeaponBays()
+                  || isAirToGroundClusterAttack(entityTarget)) {
                 // if we added a line to the phase report for calc hits, remove
                 // it now
                 while (vPhaseReport.size() > id) {
@@ -1141,6 +1142,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
                     hits = 0;
                 }
                 nCluster = aeroResults[1];
+                if (!bMissed && appliesAttackValueInGroups(nCluster)) {
+                    report = new Report(3391);
+                    report.subject = subjectId;
+                    report.add(hits);
+                    vPhaseReport.addElement(report);
+                }
             }
 
             // We have to adjust the reports on a miss, so they line up
@@ -2091,6 +2098,37 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected boolean usesClusterTable() {
         return false;
+    }
+
+    /**
+     * An airborne aerospace unit's cluster weapon fired at a ground unit applies its Attack Value in groups, in place
+     * of a roll on the Cluster Hits Table (TW pp. 244-245). Conventional infantry are left out, since attacks on them
+     * use the Non-Infantry Weapon Damage Against Infantry Table instead (TW p. 215).
+     *
+     * @param entityTarget the targeted unit, or {@code null} if the target is not a unit
+     *
+     * @return {@code true} if this attack's damage should be resolved by {@link #calcAeroDamage}
+     */
+    private boolean isAirToGroundClusterAttack(Entity entityTarget) {
+        return (entityTarget != null)
+              && !entityTarget.isConventionalInfantry()
+              && usesClusterTable()
+              && weaponAttackAction.isAirToGround(game);
+    }
+
+    /**
+     * Whether {@link #calcAeroDamage} applied the Attack Value in groups instead of rolling for hits. This happens for
+     * cluster weapons fired by aerospace units that are not capital fighters, with Aero Sanity off. No hit count is
+     * rolled in that case, so the hit report shows the Attack Value.
+     *
+     * @param nCluster the cluster size returned by {@link #calcAeroDamage}
+     *
+     * @return {@code true} if the damage was the Attack Value applied in groups
+     */
+    protected boolean appliesAttackValueInGroups(int nCluster) {
+        return !game.getOptions().booleanOption(OptionsConstants.ADVANCED_AERO_RULES_AERO_SANITY)
+              && !attackingEntity.isCapitalFighter()
+              && (nCluster > 1);
     }
 
     /**

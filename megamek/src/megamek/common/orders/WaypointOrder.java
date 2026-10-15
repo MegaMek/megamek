@@ -64,7 +64,12 @@ public final class WaypointOrder implements Serializable {
     /** A waypoint the unit passes through, facing as the bot decides. */
     public static final WaypointOrder PASS_THROUGH = new WaypointOrder(UnitOrders.FACING_AUTO, 0);
 
-    /** The letter codes for the facings 0-5, as a route order writes them. */
+    /**
+     * The letter codes for the facings 0-5, as a route order writes them. These are command syntax, not display text,
+     * so they stay out of the resource bundle: a player types them in {@code /unitOrder} and saved games store routes
+     * in this form, and a translated code would leave a route written in one language unreadable in another. The
+     * Move Order editor shows facings by their translated names.
+     */
     private static final List<String> FACING_CODES = List.of("N", "NE", "SE", "S", "SW", "NW");
 
     /** The code for a facing left to the bot. */

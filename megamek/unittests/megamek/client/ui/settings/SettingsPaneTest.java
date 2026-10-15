@@ -52,9 +52,25 @@ import javax.swing.JPanel;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class SettingsPaneTest {
+    private boolean originalExpansionPreference;
+
+    @BeforeEach
+    void setExpansionPreference() {
+        originalExpansionPreference = GUIPreferences.getInstance().getExpandOptionSections();
+        GUIPreferences.getInstance().setExpandOptionSections(true);
+    }
+
+    @AfterEach
+    void restoreExpansionPreference() {
+        GUIPreferences.getInstance().setExpandOptionSections(originalExpansionPreference);
+    }
+
     private static final SettingsNavigationText NAVIGATION_TEXT = new SettingsNavigationText(
           "Filter", "Filter settings", "No matches", "%d matches", "Expand", "Collapse");
     private static final SettingsTextProvider PAGE_TEXT = SettingsTextProvider.fromResourceBundle(
@@ -88,6 +104,63 @@ class SettingsPaneTest {
 
             assertEquals(1, firstBuilds.get());
             assertEquals(1, secondBuilds.get());
+        });
+    }
+
+    @Test
+    void changedPreferenceRefreshesCachedPagesAndPreservesExceptions() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute normal = new SettingsRoute("normal", List.of("Normal"));
+            SettingsRoute forced = new SettingsRoute("forced", List.of("Forced"));
+            SettingsRoute single = new SettingsRoute("single", List.of("Single"));
+            SettingsPagePanel normalPage = SettingsPagePanel.builder("Normal", PAGE_TEXT, "header", null)
+                  .literalSection("Alpha", null, new JPanel())
+                  .literalSection("Beta", null, new JPanel())
+                  .build();
+            SettingsPagePanel forcedPage = SettingsPagePanel.builder("Forced", PAGE_TEXT, "header", null)
+                  .sectionsExpandedByDefault(true)
+                  .literalSection("Alpha", null, new JPanel())
+                  .literalSection("Beta", null, new JPanel())
+                  .build();
+            SettingsPagePanel singlePage = page("Single", null);
+            SettingsPane pane = new SettingsPane(List.of(normal, forced, single), Map.of(
+                  "normal", () -> normalPage, "forced", () -> forcedPage, "single", () -> singlePage),
+                  NAVIGATION_TEXT);
+            normalPage.collapseAllSections();
+            pane.refreshSectionExpansionDefaults();
+            assertEquals(List.of(false, false), normalPage.getSectionExpansionState());
+
+            pane.selectRoute(forced);
+            pane.selectRoute(single);
+            GUIPreferences.getInstance().setExpandOptionSections(false);
+            pane.refreshSectionExpansionDefaults();
+            assertEquals(List.of(false, false), normalPage.getSectionExpansionState());
+            assertEquals(List.of(true, true), forcedPage.getSectionExpansionState());
+            assertEquals(List.of(true), singlePage.getSectionExpansionState());
+
+            GUIPreferences.getInstance().setExpandOptionSections(true);
+            pane.selectRoute(normal);
+            assertEquals(List.of(true, true), normalPage.getSectionExpansionState());
+        });
+    }
+
+    @Test
+    void changedPreferenceReplacesSearchSnapshotWithoutHidingMatches() throws Exception {
+        runOnEdt(() -> {
+            SettingsRoute route = new SettingsRoute("page", List.of("Page"));
+            SettingsPagePanel page = SettingsPagePanel.builder("Test", PAGE_TEXT, "header", null)
+                  .literalSection("Alpha", null, new JLabel("Alpha option"))
+                  .literalSection("Beta", null, new JLabel("Needle option"))
+                  .build();
+            SettingsPane pane = new SettingsPane(List.of(route), Map.of("page", () -> page), NAVIGATION_TEXT);
+            pane.setFilterText("needle");
+
+            GUIPreferences.getInstance().setExpandOptionSections(false);
+            pane.refreshSectionExpansionDefaults();
+            assertEquals(List.of(false, true), page.getSectionExpansionState());
+
+            pane.setFilterText("");
+            assertEquals(List.of(false, false), page.getSectionExpansionState());
         });
     }
 

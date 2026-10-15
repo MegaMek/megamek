@@ -8,6 +8,18 @@ ext.suiteDataRules = new groovy.json.JsonSlurper().parse(sharedRules)
 // schedules a data producer, nor does it inspect the local staged data.
 def suiteMode = rootProject.findProperty('suiteReleaseVersion') != null
 ext.suiteDataFromPin = suiteMode && !rootProject.hasProperty('suiteArchiveFile')
+if (suiteDataFromPin) {
+    def clearScripts = tasks.register('clearSuiteStartScripts', Delete) {
+        delete tasks.named('startScripts').get().outputDir
+    }
+    tasks.named('startScripts') {
+        enabled = false
+        dependsOn 'createStartScripts'
+    }
+    tasks.matching { it.name == 'createStartScripts' }.configureEach {
+        dependsOn clearScripts
+    }
+}
 ext.suiteDataRoot = layout.buildDirectory.dir('suite/pinned-mm-data').get().asFile
 ext.suiteGeneratedRoot = suiteDataFromPin
         ? new File(suiteDataRoot, 'generated/data')

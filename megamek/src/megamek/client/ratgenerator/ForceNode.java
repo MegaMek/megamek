@@ -109,6 +109,13 @@ public class ForceNode extends RulesetNode {
                         }
                         break;
                     case "unitType":
+                        if (fd.isInfantryClassApplied()) {
+                            // The player asked for one kind of conventional infantry, so the rule that turns some
+                            // infantry companies into battle armor does not apply.
+                            logger.debug("[ForceGen][InfantryClass] {} (faction={}): unit type roll skipped; {}"
+                                  + " infantry requested", echelonName, fd.getFaction(), fd.getInfantryClass());
+                            break;
+                        }
                         if (fd.getUnitType() == null
                               || rule.predicates.containsKey("ifUnitType")) {
                             valueNode = rule.selectOption(fd, true);
@@ -139,6 +146,12 @@ public class ForceNode extends RulesetNode {
                         }
                         break;
                     case "motive":
+                        if (fd.isInfantryClassApplied()) {
+                            // The requested class already decides how the platoons move.
+                            logger.debug("[ForceGen][InfantryClass] {} (faction={}): motive roll skipped; {}"
+                                  + " infantry requested", echelonName, fd.getFaction(), fd.getInfantryClass());
+                            break;
+                        }
                         valueNode = rule.selectOption(fd, true);
                         if (valueNode == null) {
                             break;
@@ -279,6 +292,9 @@ public class ForceNode extends RulesetNode {
                     ArrayList<ForceDescriptor> subs = n.generateSubForces(fd, true);
                     if (subs != null) {
                         for (ForceDescriptor sub : subs) {
+                            // Attached support (field guns, artillery, engineers) keeps its own picks: the
+                            // infantry class the player asked for covers the line platoons only.
+                            sub.setInfantryClass(null);
                             fd.addAttached(sub);
                         }
                     }

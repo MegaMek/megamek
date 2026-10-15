@@ -1723,12 +1723,7 @@ public abstract class Entity extends TurnOrdered
      */
     private void addEquipmentTechAdvancement(CompositeTechLevel techLevel) {
         for (Mounted<?> mounted : getEquipment()) {
-            // ProtoMek EI is built-in per IO:AE p.69 -- only count toward tech level
-            // in Full Tracking mode (Off and Pilot Only = Standard tech)
-            if (isProtoMek()
-                && (mounted.getType() instanceof MiscType)
-                && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
-                && !isNeuralInterfaceFullTracking()) {
+            if (isIgnoredForTechLevel(mounted)) {
                 continue;
             }
 
@@ -1738,6 +1733,25 @@ public abstract class Entity extends TurnOrdered
                                        Messages.getString("CompositeTechLevel.component.armoredComponent"));
             }
         }
+    }
+
+    /**
+     * Whether a mounted item is left out of this unit's tech level. Both the unit's composite tech level and the unit
+     * validator ask this, so the two cannot disagree about the same item.
+     *
+     * <p>A ProtoMek's EI Interface is built in (IO:AE p.69) and only counts in Full Tracking mode, where the unit
+     * becomes Experimental. Under Off and Pilot Abilities Only, and with no game attached, it is left out and the
+     * ProtoMek keeps the tech level its other equipment gives it.</p>
+     *
+     * @param mounted the mounted item to check
+     *
+     * @return {@code true} if the item does not count toward this unit's tech level
+     */
+    public boolean isIgnoredForTechLevel(Mounted<?> mounted) {
+        return isProtoMek()
+              && (mounted.getType() instanceof MiscType)
+              && mounted.getType().hasFlag(MiscType.F_EI_INTERFACE)
+              && !isNeuralInterfaceFullTracking();
     }
 
     /**
@@ -3326,6 +3340,20 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isAirborneAeroOnGroundMap() {
         return isAero() && isAirborne() && (game != null) && game.isOnGroundMap(this);
+    }
+
+    /**
+     * Alternate convenience function to support doing a check for airborne aero on a ground map that is not
+     * yet deployed. So just check the aero, game, and board location.
+     *
+     * @param includeDeploymentStep Only true during walk on deployment
+     * @return True if this is an airborne aircraft on a ground map.
+     */
+    public boolean isAirborneAeroOnGroundMap(boolean includeDeploymentStep) {
+        if (!includeDeploymentStep) {
+            return isAirborneAeroOnGroundMap();
+        }
+        return isAero() && (game != null) && game.isOnGroundMap(this.getBoardLocation());
     }
 
     /**
@@ -5009,12 +5037,14 @@ public abstract class Entity extends TurnOrdered
                                 boolean rearMounted,
                                 int nAmmo)
             throws LocationFullException {
-        if ((mounted instanceof AmmoMounted) && (nAmmo > 1)) {
+        if ((mounted instanceof AmmoMounted ammoMounted) && (nAmmo > 1)) {
             mounted.setByShot(true);
             mounted.setShotsLeft(nAmmo);
             mounted.setOriginalShots(nAmmo);
-            double tonnage = Math.max(1, nAmmo / ((AmmoMounted) mounted).getType().getShots()) * mounted.getTonnage();
-            ((AmmoMounted) mounted).setAmmoCapacity(tonnage);
+            // Large craft round the mass of their ammunition up to the nearest ton, whatever the number of rounds
+            int shotsPerTon = ammoMounted.getType().getShots();
+            double tonnage = Math.ceil((double) nAmmo / shotsPerTon) * mounted.getTonnage();
+            ammoMounted.setAmmoCapacity(tonnage);
         }
 
         addEquipment(mounted, loc, rearMounted);
@@ -7031,7 +7061,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MechWarriors, vehicle
+     * Returns whether this entity has Triple-Core Processor aimed shot capability. Per IO pg 81, MekWarriors, vehicle
      * commanders, and fighter pilots with TCP and VDNI/BVDNI may execute aimed shots as if equipped with a Targeting
      * Computer.
      *
@@ -7047,7 +7077,7 @@ public abstract class Entity extends TurnOrdered
         if (!hasTCP || !hasVdni) {
             return false;
         }
-        // Only MechWarriors, vehicle commanders, and fighter pilots qualify
+        // Only MekWarriors, vehicle commanders, and fighter pilots qualify
         // Use isFighter() to include both Aerospace and Conventional Fighters per IO pg 81
         return isMek() || isCombatVehicle() || isFighter();
     }
@@ -17442,7 +17472,7 @@ public abstract class Entity extends TurnOrdered
             int range;
 
             if (isAirborne()) {
-                int rangeMultiplier = type.isCapital() ? 2 : 1;
+                int rangeMultiplier = type.usesCapitalRangeBrackets() ? 2 : 1;
                 rangeMultiplier *= isAirborneAeroOnGroundMap() ? 8 : 1;
 
                 range = WeaponType.AIRBORNE_WEAPON_RANGES[type.getMaxRange(weapon)] * rangeMultiplier;

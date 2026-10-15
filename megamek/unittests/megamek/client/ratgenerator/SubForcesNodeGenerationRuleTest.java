@@ -182,6 +182,33 @@ class SubForcesNodeGenerationRuleTest {
     }
 
     /**
+     * A Clan Star whose block declares no rule, over Points whose own block asks for a matched pair. The Star must
+     * not read its Points' rule as its own: before the fix it did, shared one model across all five Points, and each
+     * Point's two units then held two models and could come out mismatched (#9200).
+     */
+    @Test
+    void aChildsOwnBlockRuleIsNotReadAsItsParentsBlockRule() throws Exception {
+        ForceDescriptor star = new ForceDescriptor();
+        List<ForceDescriptor> points = blockFromXml("""
+              <subforces><subforce num="5">2</subforce></subforces>""")
+              .generateSubForces(star, false);
+        SubForcesNode matchedPair = blockFromXml("""
+              <subforces generate="model"><subforce num="2">1</subforce></subforces>""");
+        List<ForceDescriptor> units = new ArrayList<>();
+        for (ForceDescriptor point : points) {
+            units.addAll(matchedPair.generateSubForces(point, false));
+        }
+
+        ForceDescriptor.FormationSplit starSplit = ForceDescriptor.splitForFormation(points);
+
+        assertTrue(starSplit.sharedUnitBlocks().isEmpty(),
+              "the Star's block declared no rule, so its Points are not one shared-unit block");
+        points.forEach(point -> assertNull(point.getBlockGenerationRule()));
+        units.forEach(unit -> assertEquals("model", unit.getBlockGenerationRule(),
+              "each Point's own block still makes its two units a matched pair"));
+    }
+
+    /**
      * Where every block asks for a shared unit there is nothing left to make a formation from. That is
      * a node whose one block carries the rule, which has always meant "build the formation and pin its
      * pick", so the split reports no members and the caller keeps doing that.

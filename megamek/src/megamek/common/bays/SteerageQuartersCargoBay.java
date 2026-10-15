@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 - Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -69,6 +69,18 @@ public final class SteerageQuartersCargoBay extends Bay {
         this.minDoors = 0;
         this.doors = doors;
         currentDoors = doors;
+    }
+
+    /**
+     * Create a space for the given tonnage of steerage quarters, with the bay number it was given in the unit file.
+     *
+     * @param weight    The weight (in tons) of the quarters.
+     * @param doors     The number of doors.
+     * @param bayNumber The bay's number, which identifies it among the unit's bays.
+     */
+    public SteerageQuartersCargoBay(double weight, int doors, int bayNumber) {
+        this(weight, doors);
+        this.bayNumber = bayNumber;
     }
 
     /**

@@ -43,12 +43,12 @@ import java.util.function.Consumer;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.MenuScroller;
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.force.Force;
 import megamek.common.game.Game;

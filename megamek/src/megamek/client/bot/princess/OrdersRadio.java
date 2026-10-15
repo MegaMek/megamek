@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.force.Force;
 import megamek.common.force.ForceNames;
 import megamek.common.units.Entity;

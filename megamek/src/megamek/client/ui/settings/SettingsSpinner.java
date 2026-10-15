@@ -45,7 +45,7 @@ import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /** A localized numeric spinner for settings forms. */
 public class SettingsSpinner extends JSpinner implements SettingsHelpProvider {

@@ -39,10 +39,10 @@ import java.util.function.BiPredicate;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.Terrains;

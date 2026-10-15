@@ -40,9 +40,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 public class SoundManager implements AudioService {

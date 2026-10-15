@@ -32,7 +32,7 @@
  */
 package megamek.common;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Targetable;

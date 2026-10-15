@@ -50,8 +50,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.IGame;
 import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;

@@ -54,15 +54,15 @@ import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.util.SpringUtilities;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.units.Entity;
-import megamek.common.interfaces.ForceAssignable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.annotations.Nullable;
+import megamek.common.interfaces.ForceAssignable;
+import megamek.common.units.Entity;
 
 public class ASStatsTablePanel implements ActionListener {
 

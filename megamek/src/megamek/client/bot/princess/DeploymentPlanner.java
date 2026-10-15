@@ -44,7 +44,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.force.Force;

@@ -36,8 +36,8 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 
 /**

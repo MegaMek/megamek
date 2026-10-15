@@ -53,12 +53,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.interfaces.IStartingPositions;
 import megamek.logging.MMLogger;
 

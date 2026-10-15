@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.orders.FightState;

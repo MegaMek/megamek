@@ -52,6 +52,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
@@ -61,7 +62,6 @@ import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 
 /**

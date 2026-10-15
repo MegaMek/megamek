@@ -66,6 +66,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLDocument;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.FluffImageTooltip;
 import megamek.client.ui.Messages;
 import megamek.client.ui.entityreadout.EntityReadout;
@@ -75,7 +76,6 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.Configuration;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.templates.TROView;
 import megamek.common.units.Entity;

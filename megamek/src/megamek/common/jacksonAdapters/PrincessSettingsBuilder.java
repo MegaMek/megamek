@@ -40,11 +40,11 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.CardinalEdge;
 import megamek.client.bot.princess.CombatPosture;
 import megamek.client.bot.princess.PrincessException;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**

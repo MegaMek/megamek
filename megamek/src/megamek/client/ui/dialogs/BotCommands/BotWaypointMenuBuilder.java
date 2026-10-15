@@ -41,11 +41,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 
+import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.BotCommands.BotOrdersMenuBuilder.OrderGroup;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.orders.PhaseLine;

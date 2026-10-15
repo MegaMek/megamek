@@ -38,12 +38,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
-import megamek.common.units.Entity;
-import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
+import megamek.common.units.Entity;
 
 /**
  * The EntityImagePanel displays the Entity's Image using the provided camouflage.

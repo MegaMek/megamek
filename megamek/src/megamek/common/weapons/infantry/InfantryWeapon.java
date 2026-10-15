@@ -40,10 +40,10 @@ import java.io.Serial;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;

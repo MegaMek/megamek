@@ -45,8 +45,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;

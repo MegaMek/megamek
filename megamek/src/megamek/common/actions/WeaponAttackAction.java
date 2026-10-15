@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
@@ -54,7 +55,6 @@ import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
 import megamek.common.actions.compute.ComputeTargetToHitMods;
 import megamek.common.actions.compute.ComputeTerrainMods;
 import megamek.common.actions.compute.ComputeToHit;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.CrossBoardAttackHelper;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;

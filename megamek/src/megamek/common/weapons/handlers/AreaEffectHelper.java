@@ -44,11 +44,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

@@ -35,10 +35,10 @@ package megamek.testUtilities;
 
 import java.io.File;
 
-import megamek.common.units.Entity;
+import jakarta.annotation.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.loaders.MekFileParser;
-import megamek.common.annotations.Nullable;
+import megamek.common.units.Entity;
 
 public class MMTestUtilities {
     private static final String TEST_RESOURCES_DIR = "testresources/";

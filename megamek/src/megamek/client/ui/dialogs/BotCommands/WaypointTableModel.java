@@ -36,9 +36,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.OffBoardDirection;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.orders.ContactRule;
 import megamek.common.orders.FormationOrder;

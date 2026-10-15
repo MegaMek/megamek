@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
@@ -45,7 +46,6 @@ import megamek.client.ui.panels.phaseDisplay.PointblankShotDisplay;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.RangeType;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.Coords;

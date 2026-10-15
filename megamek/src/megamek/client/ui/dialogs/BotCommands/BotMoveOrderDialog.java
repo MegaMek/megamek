@@ -70,6 +70,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.SuiteConstants;
 import megamek.client.bot.princess.RoutePlanner;
@@ -81,7 +82,6 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.force.Force;
 import megamek.common.orders.FormationOrder;

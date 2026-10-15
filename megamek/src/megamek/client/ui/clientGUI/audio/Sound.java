@@ -36,7 +36,7 @@ package megamek.client.ui.clientGUI.audio;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Contains a sound Clip to allow for managing playback

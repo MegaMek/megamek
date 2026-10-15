@@ -38,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.enums.Faction;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;

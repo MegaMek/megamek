@@ -32,7 +32,7 @@
  */
 package megamek.common.battlefieldSupport;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * The rules category of a Battlefield Support Asset. This is NOT printed on the Asset card, but it must be recorded

@@ -33,7 +33,7 @@
 
 package megamek.common.options;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * One Campaign Operations Special Pilot Ability in the {@link SpaCatalog}: its implementation status, CamOps page,

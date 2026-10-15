@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.FontHandler;
-import megamek.common.annotations.Nullable;
 
 /**
  * FontDisplay is a display wrapper around a Font, primarily to be used in ComboBoxes. This is largely for performance

@@ -35,11 +35,11 @@ package megamek.client.ui.clientGUI.boardview;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.options.IOption;

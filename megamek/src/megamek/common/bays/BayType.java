@@ -35,8 +35,8 @@ package megamek.common.bays;
 
 import java.util.function.Predicate;
 
+import jakarta.annotation.Nullable;
 import megamek.common.TechAdvancement;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentMessages;
 import megamek.common.interfaces.ITechnology;

@@ -40,10 +40,10 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.strategicBattleSystems.SBFFormation;

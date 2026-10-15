@@ -47,9 +47,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ratgenerator.FactionRecord;
-import megamek.common.annotations.Nullable;
 
 /**
  * This is a Faction class that unifies MHQ's Faction and the RATGenerator's FactionRecord and makes it available to all

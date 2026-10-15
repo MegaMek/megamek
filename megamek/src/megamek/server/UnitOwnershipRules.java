@@ -32,8 +32,8 @@
  */
 package megamek.server;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**

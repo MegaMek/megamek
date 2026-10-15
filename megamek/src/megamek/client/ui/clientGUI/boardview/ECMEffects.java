@@ -40,10 +40,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.ECMInfo;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 
 /**
  * This class contains a collection of <code>ECMInfo</code> instances that all effect a particular location.

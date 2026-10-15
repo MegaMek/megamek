@@ -34,11 +34,11 @@ package megamek.common.compute;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.INarcPod;
 import megamek.common.game.Game;

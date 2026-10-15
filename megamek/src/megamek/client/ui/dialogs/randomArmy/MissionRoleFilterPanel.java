@@ -41,10 +41,10 @@ import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ratgenerator.MissionRole;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.UnitType;
 
 /**

@@ -38,7 +38,12 @@ import static megamek.client.ui.panels.phaseDisplay.lobby.LobbyUtility.isValidSt
 import static megamek.client.ui.util.UIUtil.teamColor;
 import static megamek.client.ui.util.UIUtil.uiYellow;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.Serial;
@@ -57,6 +62,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
@@ -84,7 +90,6 @@ import megamek.client.ui.util.UIUtil.TipTextField;
 import megamek.common.OffBoardDirection;
 import megamek.common.Player;
 import megamek.common.Team;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.containers.MunitionTree;

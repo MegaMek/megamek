@@ -36,11 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.panels.abstractPanels.abstractIconChooserPanel;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.trees.CamoChooserTree;
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Camouflage;
 import megamek.common.util.fileUtils.AbstractDirectory;

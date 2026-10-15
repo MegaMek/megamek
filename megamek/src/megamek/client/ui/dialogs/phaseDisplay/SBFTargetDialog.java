@@ -40,6 +40,7 @@ import javax.swing.JLabel;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionListener;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
 import megamek.client.ui.dialogs.abstractDialogs.AbstractDialog;
@@ -47,7 +48,6 @@ import megamek.client.ui.sbf.SBFTargetingToHitDisplay;
 import megamek.client.ui.sbf.SBFUnitAttackSelector;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.game.InGameObject;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;

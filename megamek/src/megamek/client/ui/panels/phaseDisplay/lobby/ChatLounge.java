@@ -91,6 +91,7 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.SuiteConstants;
@@ -140,7 +141,6 @@ import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.Configuration;
 import megamek.common.Player;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.autoResolve.converter.MMSetupForces;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;

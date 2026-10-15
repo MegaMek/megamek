@@ -35,7 +35,7 @@ package megamek.common.equipment;
 import java.io.Serial;
 import java.io.Serializable;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
 

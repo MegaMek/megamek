@@ -35,7 +35,7 @@ package megamek.client.ui.clientGUI.calculationReport;
 import java.util.Locale;
 import javax.swing.JComponent;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This represents a report for any typical MegaMek suite calculation such as BV, cost or AS conversion. It assumes that

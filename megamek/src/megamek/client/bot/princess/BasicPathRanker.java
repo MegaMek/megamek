@@ -39,6 +39,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.coverage.Builder;
@@ -48,7 +49,6 @@ import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.analysis.DamageProfile;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;

@@ -32,10 +32,11 @@
  */
 package megamek.client.bot.princess;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import megamek.client.bot.Messages;
 import megamek.common.annotations.Nullable;
@@ -115,8 +116,19 @@ public class OrdersRadio {
 
     private static final MMLogger LOGGER = MMLogger.create(OrdersRadio.class);
 
-    private static final List<String> NUMBER_WORDS = List.of("One", "Two", "Three", "Four", "Five", "Six", "Seven",
-          "Eight", "Nine", "Ten", "Eleven", "Twelve");
+    private static final List<String> NUMBER_WORDS = List.of(
+          Messages.getString("Princess.radio.numberWords").split(","));
+
+    // the words that end a force's name ("Command Lance"), dropped from a unit's callsign ("Command One")
+    private static final Pattern FORCE_NAME_ENDING = forceNameEnding();
+
+    private static Pattern forceNameEnding() {
+        List<String> quotedWords = new ArrayList<>();
+        for (String word : Messages.getString("Princess.radio.callsign.forceWords").split(",")) {
+            quotedWords.add(Pattern.quote(word));
+        }
+        return Pattern.compile("\\s+(" + String.join("|", quotedWords) + ")$", Pattern.CASE_INSENSITIVE);
+    }
 
     /** How the replies sound. */
     public enum RadioVoice {
@@ -143,8 +155,6 @@ public class OrdersRadio {
         /** Always the ComStar voice. */
         COMSTAR
     }
-
-    private static final List<String> COMSTAR_NAMES = List.of("comstar", "word of blake", "com guard", "wob");
 
     private final Princess owner;
     private RadioSetting setting = RadioSetting.AUTO;
@@ -190,24 +200,11 @@ public class OrdersRadio {
         if (chosenVoice != null) {
             return chosenVoice;
         }
-        String botName = owner.getName().toLowerCase(Locale.ROOT);
-        for (String comstarName : COMSTAR_NAMES) {
-            if (botName.contains(comstarName)) {
-                return RadioVoice.COMSTAR;
-            }
-        }
-        if (botName.startsWith("clan ") || botName.contains(" clan ")) {
-            return RadioVoice.CLAN;
-        }
-        int clanUnits = 0;
-        int allUnits = 0;
-        for (Entity entity : owner.getEntitiesOwned()) {
-            allUnits++;
-            if (entity.isClan()) {
-                clanUnits++;
-            }
-        }
-        return ((allUnits > 0) && ((clanUnits * 2) > allUnits)) ? RadioVoice.CLAN : RadioVoice.INNER_SPHERE;
+        return switch (ForceNames.styleFor(owner.getName(), owner.getEntitiesOwned())) {
+            case CLAN -> RadioVoice.CLAN;
+            case COMSTAR -> RadioVoice.COMSTAR;
+            case INNER_SPHERE -> RadioVoice.INNER_SPHERE;
+        };
     }
 
     /**
@@ -306,13 +303,10 @@ public class OrdersRadio {
         int place = lance.entityIndex(entity);
         String placeWord = ((place >= 0) && (place < NUMBER_WORDS.size())) ? NUMBER_WORDS.get(place)
               : String.valueOf(place + 1);
-        if (voice == RadioVoice.CLAN) {
-            return lanceName + ", Point " + placeWord;
-        }
-        if (voice == RadioVoice.COMSTAR) {
-            return lanceName + ", Adept " + placeWord;
-        }
-        String base = lanceName.replaceAll("(?i)\\s+(lance|company|star|binary|level ii)$", "");
-        return base + ' ' + placeWord;
+        return switch (voice) {
+            case CLAN, COMSTAR -> Messages.getString("Princess.radio.callsign." + voice.name(), lanceName, placeWord);
+            case INNER_SPHERE, PLAIN -> Messages.getString("Princess.radio.callsign.INNER_SPHERE",
+                  FORCE_NAME_ENDING.matcher(lanceName).replaceAll(""), placeWord);
+        };
     }
 }

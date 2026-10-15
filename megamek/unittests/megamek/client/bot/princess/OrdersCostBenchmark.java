@@ -32,6 +32,8 @@
  */
 package megamek.client.bot.princess;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -121,6 +123,7 @@ class OrdersCostBenchmark {
         game.setPhase(GamePhase.MOVEMENT);
         UnitOrdersFollower follower = princess.getUnitOrdersFollower();
         UnitBehavior behavior = princess.getUnitBehaviorTracker();
+        assertNotNull(measured, "the unit to measure was set up");
         Coords end = measured.getPosition().translated(0, 2);
 
         // warm up the route fields and the JIT

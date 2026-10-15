@@ -60,7 +60,6 @@ public class PreferencesNode {
         this.elements = new HashMap<>();
         setInitialValues(new HashMap<>());
         setInitialized(false);
-        setFinalized(false);
     }
     // endregion Constructors
 
@@ -89,10 +88,20 @@ public class PreferencesNode {
         this.initialized = initialized;
     }
 
+    /**
+     * @return whether {@link #getFinalValues()} has been called
+     *
+     * @deprecated nothing reads this since {@link #getFinalValues()} may be called more than once
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public boolean isFinalized() {
         return finalized;
     }
 
+    /**
+     * @deprecated nothing reads this since {@link #getFinalValues()} may be called more than once
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void setFinalized(final boolean finalized) {
         this.finalized = finalized;
     }
@@ -149,7 +158,6 @@ public class PreferencesNode {
      * @throws Exception if an element cannot give its value
      */
     public Map<String, String> getFinalValues() throws Exception {
-        setFinalized(true);
         final Map<String, String> finalValues = new HashMap<>(getElements().size());
 
         // Use the values we had stored from initialization

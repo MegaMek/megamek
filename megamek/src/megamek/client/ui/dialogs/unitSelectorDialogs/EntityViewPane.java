@@ -33,7 +33,6 @@
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
 import java.util.function.ToDoubleFunction;
-
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;

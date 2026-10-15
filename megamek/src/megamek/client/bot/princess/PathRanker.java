@@ -311,7 +311,7 @@ public abstract class PathRanker implements IPathRanker {
               bestPath.getReason());
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
+    List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
           double fallTolerance) {
         if (startingPathList.isEmpty()) {
             // Nothing to validate here, might as well return the empty list
@@ -326,7 +326,9 @@ public abstract class PathRanker implements IPathRanker {
               : closestTarget.getPosition().distance(mover.getPosition());
         boolean hasNoEnemyAvailable = (closestTarget == null);
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
-        boolean inRange = maxRange >= startingTargetDistance;
+        // Artillery can fire indirectly from well beyond its direct-fire reach, so a gun out there is still in range
+        int engagementRange = ArtilleryReach.engagementRange(game, mover, maxRange);
+        boolean inRange = engagementRange >= startingTargetDistance;
 
         boolean needToUnjamRAC = mover.canUnjamRAC();
         int walkMP = mover.getWalkMP();
@@ -361,7 +363,7 @@ public abstract class PathRanker implements IPathRanker {
             // point here
             if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
                 Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
+                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, engagementRange,
                       inRange);
                 if (!validation) {
                     logger.trace("Invalid range to target.");

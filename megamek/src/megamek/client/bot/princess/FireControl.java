@@ -3303,6 +3303,14 @@ public class FireControl {
                 continue;
             }
 
+            // Artillery ranges are in map sheets; from the board a gun fires directly at 7 to 17 hexes
+            if (!shooter.isAirborne() && ArtilleryReach.isDirectFireArtillery(weapon)) {
+                if (ArtilleryReach.isInDirectFireRange(range)) {
+                    maxDamage += Math.max(0, weaponType.getRackSize());
+                }
+                continue;
+            }
+
             // Remember the best bracket for this weapon/set of ammo.
             int bestBracket = RangeType.RANGE_OUT;
 

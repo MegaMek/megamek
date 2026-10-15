@@ -221,7 +221,6 @@ public class Princess extends BotClient {
 
     // Carries out the orders players give the bot's units. Reach it through getUnitOrdersFollower().
     private UnitOrdersFollower unitOrdersFollower;
-    private final EnemyDeploymentZone enemyDeploymentZone = new EnemyDeploymentZone();
 
     // Reports on the units' orders, by radio or plainly. Reach it through getOrdersRadio().
     private OrdersRadio ordersRadio;
@@ -1473,7 +1472,8 @@ public class Princess extends BotClient {
     }
 
     /**
-     * The middle of the enemy's deployment zones on a board: the average of every hex an enemy player may deploy in.
+     * The middle of the enemy's deployment zones on a board: the average of the middles of the zones the enemy players
+     * deploy in.
      * The bot faces the units it deploys this way, toward where the enemy will come from, and lays its formations out
      * facing it.
      *
@@ -1482,7 +1482,7 @@ public class Princess extends BotClient {
      * @return the hex, or empty when no enemy player with units is known
      */
     public Optional<Coords> getEnemyDeploymentCenter(@Nullable Board board) {
-        return enemyDeploymentZone.center(getGame(), board, getLocalPlayer());
+        return EnemyDeploymentZone.center(getGame(), board, getLocalPlayer());
     }
 
     /**

@@ -166,9 +166,10 @@ public final class RoutePlanner {
         if ((startCost == WaypointDistanceField.UNREACHABLE) || (startCost == 0)) {
             return points;
         }
+        LineCosts lineCosts = new LineCosts(mover, board, styleCost);
         Coords anchor = from;
         while ((field.costFrom(anchor) > 0) && (points.size() <= MOST_TURNING_POINTS)) {
-            Coords next = bestStraight(mover, field, anchor, board, styleCost);
+            Coords next = bestStraight(field, anchor, board, lineCosts);
             if (next == null) {
                 // no straight line makes headway: take the next hex of the cheapest way and look again from there
                 List<Coords> way = cheapestWay(field, anchor, board);
@@ -202,8 +203,7 @@ public final class RoutePlanner {
      *
      * @return the hex, or {@code null} when no straight line from the anchor makes headway
      */
-    private static Coords bestStraight(Entity mover, WaypointDistanceField field, Coords anchor, Board board,
-          Map<Coords, Integer> styleCost) {
+    private static Coords bestStraight(WaypointDistanceField field, Coords anchor, Board board, LineCosts lineCosts) {
         int anchorCost = field.costFrom(anchor);
         Coords best = null;
         int bestScore = Integer.MAX_VALUE;
@@ -213,16 +213,17 @@ public final class RoutePlanner {
                 Coords candidate = new Coords(column, row);
                 int cost = field.costFrom(candidate);
                 int distance = anchor.distance(candidate);
+                int mostLineCost = anchorCost - cost + STRAIGHT_LINE_ALLOWANCE;
                 // a line is never cheaper than a movement point a hex, so a hex further off than the saving is out
                 if ((cost == WaypointDistanceField.UNREACHABLE) || (cost >= anchorCost) || (distance == 0)
-                      || (distance > (anchorCost - cost + STRAIGHT_LINE_ALLOWANCE))) {
+                      || (distance > mostLineCost)) {
                     continue;
                 }
-                int[] line = lineCostAndWalls(mover, anchor, candidate, board, styleCost);
+                int[] line = lineCosts.costAndWalls(anchor, candidate, mostLineCost);
+                if (line[0] == WaypointDistanceField.UNREACHABLE) {
+                    continue;
+                }
                 int overrun = line[0] - (anchorCost - cost);
-                if ((line[0] == WaypointDistanceField.UNREACHABLE) || (overrun > STRAIGHT_LINE_ALLOWANCE)) {
-                    continue;
-                }
                 int score = cost + (OVERRUN_WEIGHT * Math.max(0, overrun)) + (WALL_WEIGHT * line[1]);
                 if ((score < bestScore) || ((score == bestScore) && (distance > bestDistance))) {
                     best = candidate;
@@ -235,38 +236,75 @@ public final class RoutePlanner {
     }
 
     /**
-     * @return the movement points to drive the straight line between two hexes, or
-     *       {@link WaypointDistanceField#UNREACHABLE}; and how many of its hexes run along ground the unit cannot
-     *       step onto
+     * What the straight lines tried while one way is planned cost. The lines tried from a turning point cross the same
+     * hexes many times over, so each step's cost and each hex's wall check is worked out once and remembered.
      */
-    private static int[] lineCostAndWalls(Entity mover, Coords start, Coords end, Board board,
-          Map<Coords, Integer> styleCost) {
-        List<Coords> line = Coords.intervening(start, end);
-        int lineCost = 0;
-        int walls = 0;
-        for (int index = 1; index < line.size(); index++) {
-            int step = WaypointDistanceField.stepCost(mover, board, line.get(index - 1), line.get(index));
-            if (step == WaypointDistanceField.UNREACHABLE) {
-                return new int[] { WaypointDistanceField.UNREACHABLE, 0 };
-            }
-            // a straight line over open ground counts what the style puts on it, or the plan would cut across it
-            lineCost += step + styleCost.getOrDefault(line.get(index), 0);
-            if (isAlongWall(mover, line.get(index), board)) {
-                walls++;
-            }
-        }
-        return new int[] { lineCost, walls };
-    }
+    private static final class LineCosts {
 
-    private static boolean isAlongWall(Entity mover, Coords hex, Board board) {
-        for (int direction = 0; direction < DIRECTIONS; direction++) {
-            Coords neighbor = hex.translated(direction);
-            if (board.contains(neighbor)
-                  && (WaypointDistanceField.stepCost(mover, board, hex, neighbor) == WaypointDistanceField.UNREACHABLE)) {
-                return true;
-            }
+        private final Entity mover;
+        private final Board board;
+        private final Map<Coords, Integer> styleCost;
+        private final Map<Step, Integer> stepCosts = new HashMap<>();
+        private final Map<Coords, Boolean> wallHexes = new HashMap<>();
+
+        /** One step between neighbouring hexes. */
+        private record Step(Coords from, Coords into) {}
+
+        /**
+         * @param mover     the unit; its movement type decides what each step costs
+         * @param board     its board
+         * @param styleCost what each hex counts extra by the route's style
+         */
+        LineCosts(Entity mover, Board board, Map<Coords, Integer> styleCost) {
+            this.mover = mover;
+            this.board = board;
+            this.styleCost = styleCost;
         }
-        return false;
+
+        /**
+         * @param mostLineCost the most the line may cost; costing stops once it is passed
+         *
+         * @return the movement points to drive the straight line between two hexes, or
+         *       {@link WaypointDistanceField#UNREACHABLE} when the unit cannot drive it or it costs more than
+         *       {@code mostLineCost}; and how many of its hexes run along ground the unit cannot step onto
+         */
+        int[] costAndWalls(Coords start, Coords end, int mostLineCost) {
+            List<Coords> line = Coords.intervening(start, end);
+            int lineCost = 0;
+            int walls = 0;
+            for (int index = 1; index < line.size(); index++) {
+                int step = stepCost(line.get(index - 1), line.get(index));
+                if (step == WaypointDistanceField.UNREACHABLE) {
+                    return new int[] { WaypointDistanceField.UNREACHABLE, 0 };
+                }
+                // a straight line over open ground counts what the style puts on it, or the plan would cut across it
+                lineCost += step + styleCost.getOrDefault(line.get(index), 0);
+                if (lineCost > mostLineCost) {
+                    return new int[] { WaypointDistanceField.UNREACHABLE, 0 };
+                }
+                if (isAlongWall(line.get(index))) {
+                    walls++;
+                }
+            }
+            return new int[] { lineCost, walls };
+        }
+
+        private int stepCost(Coords from, Coords into) {
+            return stepCosts.computeIfAbsent(new Step(from, into),
+                  step -> WaypointDistanceField.stepCost(mover, board, from, into));
+        }
+
+        private boolean isAlongWall(Coords hex) {
+            return wallHexes.computeIfAbsent(hex, wallHex -> {
+                for (int direction = 0; direction < DIRECTIONS; direction++) {
+                    Coords neighbor = hex.translated(direction);
+                    if (board.contains(neighbor) && (stepCost(hex, neighbor) == WaypointDistanceField.UNREACHABLE)) {
+                        return true;
+                    }
+                }
+                return false;
+            });
+        }
     }
 
     /**

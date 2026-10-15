@@ -36,8 +36,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import megamek.common.annotations.Nullable;
+import megamek.common.internationalization.I18n;
 import megamek.common.units.Entity;
 
 /**
@@ -57,31 +59,27 @@ public final class ForceNames {
         COMSTAR
     }
 
-    private static final List<String> INNER_SPHERE_NAMES = List.of("Command Lance", "Battle Lance", "Fire Lance",
-          "Striker Lance", "Recon Lance", "Assault Lance", "Pursuit Lance", "Support Lance", "Alpha Lance",
-          "Bravo Lance", "Charlie Lance", "Delta Lance", "Alpha Company", "Bravo Company", "Charlie Company");
+    private static final List<String> INNER_SPHERE_NAMES = namesFor("ForceNames.suggestions.INNER_SPHERE");
 
-    private static final List<String> CLAN_NAMES = List.of("Command Star", "Battle Star", "Striker Star", "Alpha Star",
-          "Beta Star", "Gamma Star", "Delta Star", "Epsilon Star", "Command Trinary", "Alpha Trinary", "Beta Trinary",
-          "Command Binary");
+    private static final List<String> CLAN_NAMES = namesFor("ForceNames.suggestions.CLAN");
 
-    private static final List<String> COMSTAR_NAMES = List.of("Command Level II", "Level II Alpha", "Level II Beta",
-          "Level II Gamma", "Level II Delta", "Level II Epsilon", "Level III Alpha", "Level III Beta");
+    private static final List<String> COMSTAR_NAMES = namesFor("ForceNames.suggestions.COMSTAR");
 
-    // the callsign names given, in order, to a side's forces that have no usable name of their own
-    private static final List<String> PHONETIC = List.of("Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot",
-          "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec",
-          "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-Ray", "Yankee", "Zulu");
+    // the callsign names given, in order, to a side's forces that have no usable name of their own; a Star or a Level
+    // II takes the nav point names
+    private static final List<String> PHONETIC = namesFor("ForceNames.callsignNames");
 
-    private static final List<String> GREEK = List.of("Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta",
-          "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon",
-          "Phi", "Chi", "Psi", "Omega");
+    private static final List<String> GREEK = namesFor("NavPoint.names");
 
     // names that say nothing about the force, so the radio calls it by a callsign name instead
-    private static final Set<String> GENERIC_NAMES = Set.of("force", "new force", "lance", "star", "company",
-          "unnamed", "level ii");
+    private static final Set<String> GENERIC_NAMES = Set.copyOf(namesFor("ForceNames.genericNames"));
 
-    private static final List<String> COMSTAR_OWNER_NAMES = List.of("comstar", "word of blake", "com guard", "wob");
+    // a generic name with a number after it ("Force 2") says nothing either
+    private static final String NUMBERED_GENERIC_NAME = I18n.getText("ForceNames.numberedGenericName");
+
+    private static final List<String> COMSTAR_OWNER_NAMES = namesFor("ForceNames.comstarOwnerNames");
+
+    private static final String CLAN_OWNER_WORD = I18n.getText("ForceNames.clanOwnerWord");
 
     private ForceNames() {}
 
@@ -112,7 +110,7 @@ public final class ForceNames {
                 return Style.COMSTAR;
             }
         }
-        if (name.startsWith("clan ") || name.contains(" clan ")) {
+        if (name.startsWith(CLAN_OWNER_WORD + ' ') || name.contains(' ' + CLAN_OWNER_WORD + ' ')) {
             return Style.CLAN;
         }
         int clanUnits = 0;
@@ -137,7 +135,7 @@ public final class ForceNames {
         }
         String name = forceName.trim().toLowerCase(Locale.ROOT);
         return GENERIC_NAMES.contains(name) || ((ownerName != null) && name.equalsIgnoreCase(ownerName.trim()))
-              || name.matches("force \\d+");
+              || name.matches(Pattern.quote(NUMBERED_GENERIC_NAME) + " \\d+");
     }
 
     /**
@@ -149,10 +147,17 @@ public final class ForceNames {
      */
     public static String callsignName(int index, Style style) {
         int safeIndex = Math.max(0, index);
-        return switch (style) {
-            case CLAN -> GREEK.get(safeIndex % GREEK.size()) + " Star";
-            case COMSTAR -> "Level II " + GREEK.get(safeIndex % GREEK.size());
-            case INNER_SPHERE -> PHONETIC.get(safeIndex % PHONETIC.size()) + " Lance";
+        String name = switch (style) {
+            case CLAN, COMSTAR -> GREEK.get(safeIndex % GREEK.size());
+            case INNER_SPHERE -> PHONETIC.get(safeIndex % PHONETIC.size());
         };
+        return I18n.getFormattedText("ForceNames.callsign." + style.name(), name);
+    }
+
+    /**
+     * @return the comma-separated names a resource key holds
+     */
+    private static List<String> namesFor(String key) {
+        return List.of(I18n.getText(key).split(","));
     }
 }

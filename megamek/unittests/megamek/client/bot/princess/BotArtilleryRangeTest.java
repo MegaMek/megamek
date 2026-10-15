@@ -146,6 +146,16 @@ class BotArtilleryRangeTest {
     }
 
     @Test
+    @DisplayName("a gun still counts as a threat when choosing targets, though it cannot fire at 1 hex")
+    void artilleryKeepsItsTargetThreatWeight() throws Exception {
+        Tank battery = createTank(0, new Coords(5, 5));
+        mountArtillery(battery, ARROW_FOUR, ARROW_FOUR_AMMO);
+
+        assertEquals(20, new FireControl(princess).calcTargetPotentialDamage(battery), 0.001,
+              "the threat weight measures what the target could deal, and an Arrow IV deals 20 from 7 to 17 hexes");
+    }
+
+    @Test
     @DisplayName("a Long Tom can take part in the fight from its full indirect range")
     void longTomEngagementRangeIsItsIndirectRange() throws Exception {
         Tank battery = createTank(0, new Coords(5, 5));

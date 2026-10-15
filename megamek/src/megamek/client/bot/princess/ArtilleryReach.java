@@ -101,6 +101,27 @@ public final class ArtilleryReach {
     }
 
     /**
+     * The damage the unit's working direct-fire artillery could deal, ignoring range and to-hit. Each gun counts its
+     * rack size, the same value {@link FireControl#getMaxDamageAtRange} uses for it at 7 to 17 hexes.
+     *
+     * @param entity the unit
+     *
+     * @return the summed rack size of the unit's working direct-fire artillery, or 0 if it is airborne
+     */
+    public static double directFireArtilleryDamage(Entity entity) {
+        if (entity.isAirborne()) {
+            return 0;
+        }
+        double damage = 0;
+        for (WeaponMounted weapon : entity.getWeaponList()) {
+            if (!weapon.isCrippled() && isDirectFireArtillery(weapon)) {
+                damage += Math.max(0, weapon.getType().getRackSize());
+            }
+        }
+        return damage;
+    }
+
+    /**
      * The furthest the unit can attack this turn, in hexes. This matches {@link Entity#getMaxWeaponRange(boolean)}
      * except that direct-fire artillery counts as {@link #DIRECT_FIRE_MAXIMUM_RANGE} rather than its range in map
      * sheets. Airborne units and attacks on airborne targets use the entity's own answer unchanged.

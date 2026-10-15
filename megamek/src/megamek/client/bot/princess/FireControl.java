@@ -1723,12 +1723,14 @@ public class FireControl {
      * Calculates the potential damage that the target could theoretically deliver as a measure of its potential
      * "threat" to any allied unit on the board, thus prioritizing highly damaging enemies over less damaging ones. For
      * now, this works by simply getting the max damage of the target at range = 1 while ignoring to-hit, heat, etc.
+     * Direct-fire artillery cannot fire at 1 hex, so its damage is added separately: a gun is still a threat to
+     * everything 7 to 17 hexes away.
      */
-    private double calcTargetPotentialDamage(final Targetable target) {
+    double calcTargetPotentialDamage(final Targetable target) {
         if (!(target instanceof Entity entity)) {
             return 0;
         }
-        return getMaxDamageAtRange(entity, 1, false, false);
+        return getMaxDamageAtRange(entity, 1, false, false) + ArtilleryReach.directFireArtilleryDamage(entity);
     }
 
     /**

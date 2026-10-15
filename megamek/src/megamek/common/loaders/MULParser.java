@@ -843,9 +843,15 @@ public class MULParser {
         if (!StringUtility.isNullOrBlank(unitFileUUID)) {
             MekSummary ms = MekSummaryCache.getInstance().getByUnitFileUUID(unitFileUUID);
             if (ms != null) {
+                MekSummary namedSummary = chassis.isBlank() ? null : findSummaryByName(chassis, model, assetForm);
                 if (!summaryMatchesEntityForm(ms, assetForm)) {
                     warning.append("Unit UUID ").append(unitFileUUID)
                           .append(" does not identify a Battlefield Support Asset.\n");
+                } else if (nameIdentifiesOtherUnit(ms, namedSummary)) {
+                    // Older custom unit files (such as MekHQ refits) could share their UUID with the design they were
+                    // made from. When the saved name identifies a different unit than the UUID does, trust the name.
+                    LOGGER.info("Unit UUID {} identifies {}, but the entry is named {}; loading it by name.",
+                          unitFileUUID, ms.getName(), namedSummary.getName());
                 } else {
                     try {
                         return new MekFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
@@ -883,21 +889,7 @@ public class MULParser {
             warning.append("Could not find chassis for Entity.\n");
         } else {
             // Try to find the entity.
-            StringBuilder key = new StringBuilder(chassis);
-            MekSummary ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
-                  : MekSummaryCache.getInstance().getMek(key.toString());
-            if (!StringUtility.isNullOrBlank(model)) {
-                key.append(" ").append(model);
-                ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
-                      : MekSummaryCache.getInstance().getMek(key.toString());
-                // That didn't work. Try swapping model and chassis.
-                if (ms == null) {
-                    key = new StringBuilder(model);
-                    key.append(" ").append(chassis);
-                    ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
-                          : MekSummaryCache.getInstance().getMek(key.toString());
-                }
-            }
+            MekSummary ms = findSummaryByName(chassis, model, assetForm);
             // We should have found the mek.
             if (ms == null) {
                 warning.append("Could not find Entity with chassis: ").append(chassis);
@@ -923,6 +915,61 @@ public class MULParser {
 
     static boolean summaryMatchesEntityForm(MekSummary summary, boolean assetForm) {
         return !assetForm || summary.isBattlefieldSupportAsset();
+    }
+
+    /**
+     * Looks a unit up in the cache by chassis and model, trying the chassis alone, then chassis and model, then model
+     * and chassis swapped.
+     *
+     * @param chassis   the unit chassis
+     * @param model     the unit model, or {@code null}
+     * @param assetForm whether to look in the Battlefield Support Asset name index
+     *
+     * @return the matching summary, or {@code null} if none was found
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private static @Nullable MekSummary findSummaryByName(String chassis, @Nullable String model, boolean assetForm) {
+        StringBuilder key = new StringBuilder(chassis);
+        MekSummary ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+              : MekSummaryCache.getInstance().getMek(key.toString());
+        if (!StringUtility.isNullOrBlank(model)) {
+            key.append(" ").append(model);
+            ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                  : MekSummaryCache.getInstance().getMek(key.toString());
+            // That didn't work. Try swapping model and chassis.
+            if (ms == null) {
+                key = new StringBuilder(model);
+                key.append(" ").append(chassis);
+                ms = assetForm ? MekSummaryCache.getInstance().getAsset(key.toString())
+                      : MekSummaryCache.getInstance().getMek(key.toString());
+            }
+        }
+        return ms;
+    }
+
+    /**
+     * Whether a MUL entry's chassis and model identify a different unit file than its unit-file UUID does. The UUID
+     * normally wins, so a unit renamed since the MUL was written still loads; but when the saved name matches some
+     * other unit file, the UUID is a stale or shared one (for example a custom refit that kept its source design's
+     * UUID) and the named unit is the one the MUL meant.
+     *
+     * @param uuidSummary  the summary found by unit-file UUID
+     * @param namedSummary the summary found by chassis and model, or {@code null} if the name matches nothing
+     *
+     * @return {@code true} if the name lookup found a different unit file than the UUID lookup
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    static boolean nameIdentifiesOtherUnit(MekSummary uuidSummary, @Nullable MekSummary namedSummary) {
+        // An asset shares its name with its base unit, so for an asset the name never outranks the UUID
+        if ((namedSummary == null) || uuidSummary.isBattlefieldSupportAsset()) {
+            return false;
+        }
+        return !Objects.equals(uuidSummary.getSourceFile(), namedSummary.getSourceFile())
+              || !Objects.equals(uuidSummary.getEntryName(), namedSummary.getEntryName());
     }
 
     /**

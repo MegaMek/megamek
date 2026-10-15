@@ -49,12 +49,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.SourceBook;
 import megamek.common.SourceBooks;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;

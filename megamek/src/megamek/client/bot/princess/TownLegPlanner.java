@@ -39,8 +39,8 @@ import java.util.Map;
 import java.util.function.ToIntBiFunction;
 import java.util.function.ToIntFunction;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.WeaponMounted;

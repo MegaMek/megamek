@@ -1721,7 +1721,7 @@ public class TeamLoadOutGenerator {
             Vector<AmmoType> sameAmmoTypes = AmmoType.getMunitionsFor(ammoBin.getType().getAmmoType());
             AmmoType standardRound = getStandardRound(ammoBin.getType(),
                   (sameAmmoTypes == null) ? List.of() : sameAmmoTypes);
-            String standardRoundName = ("".equals(standardRound.getBaseName())) ?
+            String standardRoundName = standardRound.getBaseName().isEmpty() ?
                   standardRound.getShortName() :
                   standardRound.getBaseName();
 
@@ -2135,7 +2135,7 @@ public class TeamLoadOutGenerator {
                 loadable.add(munitionName);
             }
         }
-        return loadable.isEmpty() ? "Standard" : loadable.get(new Random().nextInt(loadable.size()));
+        return loadable.isEmpty() ? "Standard" : loadable.get(Compute.randomInt(loadable.size()));
     }
     // endregion iterativelyLoadAmmo
 

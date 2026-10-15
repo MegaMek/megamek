@@ -231,6 +231,24 @@ class PlanTests(unittest.TestCase):
                 release.gh_get(endpoint, runner)
         self.assertEqual(len(calls), count)
 
+    def test_release_inventory_does_not_read_source_heads(self):
+        calls = []
+
+        def getter(endpoint):
+            calls.append(endpoint)
+            if "/tags?" in endpoint:
+                return [{"name": "v0.51.01"}]
+            if "/releases?" in endpoint:
+                return [{"id": 1, "tag_name": "v0.51.01", "draft": False, "assets": []}]
+            self.fail(endpoint)
+
+        inventory = release.release_inventory(getter)
+        self.assertEqual(set(inventory), {"tags", "releases"})
+        for repo in release.REPOS.values():
+            self.assertEqual(inventory["tags"][repo], ["v0.51.01"])
+            self.assertEqual(inventory["releases"][repo], ["v0.51.01"])
+        self.assertEqual(len(calls), 6)
+
     def test_cli_never_reports_success_even_for_a_valid_candidate(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "input.json"

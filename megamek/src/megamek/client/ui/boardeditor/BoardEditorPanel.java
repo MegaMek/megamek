@@ -56,6 +56,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -68,6 +70,7 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListenerAdapter;
 import megamek.client.ui.Messages;
+import megamek.client.ui.boardeditor.BoardValidationDialog.ReportLine;
 import megamek.client.ui.clientGUI.BoardFileFilter;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.CommonMenuBar;
@@ -98,7 +101,10 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.FixedYPanel;
 import megamek.common.Configuration;
 import megamek.common.Hex;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
+import megamek.common.board.BoardConnectivityCheck;
+import megamek.common.board.BoardIssue;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.loaders.MapSettings;
@@ -151,6 +157,8 @@ public class BoardEditorPanel extends JPanel
     // The active hex "brush"
     private HexCanvas canHex;
     Hex curHex = new Hex();
+    private BoardValidationDialog validationDialog;
+    private static final Pattern HEX_ERROR_HEADER = Pattern.compile("Errors in hex (\\d+):");
 
     // Easy terrain access buttons
     private final List<ScalingIconButton> terrainButtons = new ArrayList<>();
@@ -1859,38 +1867,91 @@ public class BoardEditorPanel extends JPanel
 
     /**
      * Performs board validation. When showPositiveResult is true, the result of the validation will be shown in a
-     * dialog. Otherwise, only a negative result (the board has errors) will be shown.
+     * dialog. Otherwise, only a negative result (the board has errors) will be shown. Roads and bridges that do not
+     * join up count as errors here, as with the strict board validator; bridge notes are listed but are not errors.
      */
     private void validateBoard(boolean showPositiveResult) {
-        List<String> errors = new ArrayList<>();
-        board.isValid(errors);
-        if ((!errors.isEmpty()) || showPositiveResult) {
-            showBoardValidationReport(errors);
+        List<String> hexErrors = new ArrayList<>();
+        board.isValid(hexErrors);
+        List<BoardIssue> problems = BoardConnectivityCheck.findProblems(board);
+        List<BoardIssue> notes = BoardConnectivityCheck.findNotes(board);
+        boolean hasErrors = !hexErrors.isEmpty() || !problems.isEmpty();
+        if (hasErrors || showPositiveResult) {
+            showBoardValidationReport(hexErrors, problems, notes);
         }
     }
 
     /**
-     * Shows a board validation report dialog, reporting either the contents of errBuff or that the board has no
-     * errors.
+     * Shows the validation result. Errors and notes go in a report the editor stays usable beside, where clicking a
+     * line takes the editor to its hex; a board with neither gets a plain confirmation.
      */
-    private void showBoardValidationReport(List<String> errors) {
-        ignoreHotKeys = true;
-        if ((errors != null) && !errors.isEmpty()) {
-            String title = Messages.getString("BoardEditor.invalidBoard.title");
-            String msg = Messages.getString("BoardEditor.invalidBoard.report");
-            msg += String.join("\n", errors);
-            JTextArea textArea = new JTextArea(msg);
-            JScrollPane scrollPane = new JScrollPane(textArea);
-            textArea.setLineWrap(true);
-            textArea.setWrapStyleWord(true);
-            scrollPane.setPreferredSize(new Dimension(getWidth(), getHeight() / 2));
-            JOptionPane.showMessageDialog(frame, scrollPane, title, JOptionPane.ERROR_MESSAGE);
-        } else {
+    private void showBoardValidationReport(List<String> hexErrors, List<BoardIssue> problems, List<BoardIssue> notes) {
+        if (validationDialog != null) {
+            validationDialog.dispose();
+            validationDialog = null;
+        }
+        boolean hasErrors = !hexErrors.isEmpty() || !problems.isEmpty();
+        if (!hasErrors && notes.isEmpty()) {
+            ignoreHotKeys = true;
             String title = Messages.getString("BoardEditor.validBoard.title");
             String msg = Messages.getString("BoardEditor.validBoard.report");
             JOptionPane.showMessageDialog(frame, msg, title, JOptionPane.INFORMATION_MESSAGE);
+            ignoreHotKeys = false;
+            return;
         }
-        ignoreHotKeys = false;
+
+        List<ReportLine> lines = new ArrayList<>();
+        // The per-hex errors come as a "Errors in hex 0101:" line followed by that hex's errors
+        Coords currentHex = null;
+        for (String error : hexErrors) {
+            Coords headerHex = hexFromErrorHeader(error);
+            if (headerHex != null) {
+                currentHex = headerHex;
+            }
+            lines.add(new ReportLine(error, currentHex, null));
+        }
+        for (BoardIssue problem : problems) {
+            lines.add(new ReportLine(problem.message(), problem.coords(), problem.fix()));
+        }
+        if (!notes.isEmpty()) {
+            lines.add(new ReportLine("", null, null));
+            lines.add(new ReportLine(Messages.getString("BoardEditor.validation.notesHeading"), null, null));
+            for (BoardIssue note : notes) {
+                lines.add(new ReportLine(note.message(), note.coords(), note.fix()));
+            }
+        }
+        String heading = Messages.getString(hasErrors ? "BoardEditor.validation.problemsHeading"
+              : "BoardEditor.validBoardWithNotes.report");
+        validationDialog = new BoardValidationDialog(frame, heading, lines, this::goToHex);
+        validationDialog.setVisible(true);
+    }
+
+    /**
+     * @return the hex named by a "Errors in hex 0101:" line, or {@code null} for any other line. A board number
+     *       with an odd number of digits cannot be split into column and row, so it gives {@code null} too.
+     */
+    private static @Nullable Coords hexFromErrorHeader(String line) {
+        Matcher matcher = HEX_ERROR_HEADER.matcher(line);
+        if (!matcher.matches()) {
+            return null;
+        }
+        String digits = matcher.group(1);
+        if ((digits.length() % 2) != 0) {
+            return null;
+        }
+        int half = digits.length() / 2;
+        return new Coords(Integer.parseInt(digits.substring(0, half)) - 1,
+              Integer.parseInt(digits.substring(half)) - 1);
+    }
+
+    /** Centres the map on a hex and selects it, as if the user had clicked it. */
+    private void goToHex(Coords coords) {
+        if (!board.contains(coords)) {
+            return;
+        }
+        bv.centerOnHex(coords);
+        bv.cursor(coords);
+        setCurrentHex(board.getHex(coords));
     }
 
     //

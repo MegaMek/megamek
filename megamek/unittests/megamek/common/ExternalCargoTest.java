@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -117,6 +117,20 @@ public class ExternalCargoTest {
             externalCargo.setGame(mockGame);
 
             assertEquals(TEST_WEIGHT, externalCargo.getUnused());
+        }
+
+        /**
+         * MekHQ asks for transport capacity before an entity has been given a game; a lift hoist must still report
+         * its space rather than throwing.
+         *
+         * @author Illiani
+         * @since 0.51.01
+         */
+        @Test
+        void liftHoistGetUnusedWithoutGameTest() {
+            LiftHoist liftHoist = new LiftHoist(mockLiftHoist, 55);
+
+            assertEquals(TEST_WEIGHT, liftHoist.getUnused());
         }
 
         @ParameterizedTest

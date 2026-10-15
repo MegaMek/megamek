@@ -96,6 +96,26 @@ class HeatMapTest {
     }
 
     @Test
+    void getHotSpotsListsTheHottestPositionFirst() {
+        HeatMap heatMap = new HeatMap(TEAM_ID);
+
+        // One column, so hex distance is the row difference. The 3000 BV unit at row 0 is the hottest spot and the
+        // 200 BV unit at row 20 the coolest; the middle one sits between them.
+        Entity hottest = mockTrackedEntity(1, new Coords(0, 0), 3000, 1);
+        Entity middle = mockTrackedEntity(2, new Coords(0, 10), 1000, 1);
+        Entity coolest = mockTrackedEntity(3, new Coords(0, 20), 200, 1);
+        heatMap.updateTrackers(List.of(coolest, middle, hottest));
+
+        assertEquals(List.of(new Coords(0, 0), new Coords(0, 10), new Coords(0, 20)), heatMap.getHotSpots(),
+              "hot-spots must be listed by descending rating");
+    }
+
+    @Test
+    void getHotSpotsReturnsNullWhenThereIsNoActivity() {
+        assertNull(new HeatMap(TEAM_ID).getHotSpots());
+    }
+
+    @Test
     void getHotSpotReturnsNullWhenThereIsNoActivity() {
         HeatMap heatMap = new HeatMap(TEAM_ID);
         assertNull(heatMap.getHotSpot(new Coords(0, 0), false),

@@ -41,6 +41,7 @@ import megamek.common.Messages;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.enums.ProstheticEnhancementType;
@@ -55,6 +56,7 @@ import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Infantry;
 import megamek.common.units.InfantryMount;
+import megamek.common.units.Targetable;
 import megamek.common.weapons.DamageType;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.logging.MMLogger;
@@ -271,6 +273,8 @@ public class InfantryWeaponHandler extends WeaponHandler {
         if (weaponType.hasFlag(WeaponType.F_INF_NONPENETRATING)) {
             damageType = DamageType.NONPENETRATING;
         }
+        // A non-penetrating attack does nothing to an armored target, so there is no damage figure to report
+        boolean stoppedByArmor = isStoppedByArmor(target);
         Report r = new Report(3325);
         r.subject = subjectId;
         if (attackingEntity instanceof Infantry) {
@@ -280,8 +284,12 @@ public class InfantryWeaponHandler extends WeaponHandler {
             r.add("");
             r.add("");
         }
-        r.add(toHit.getTableDesc() + ", causing " + damageDealt
-              + " damage.");
+        if (stoppedByArmor) {
+            r.add(toHit.getTableDesc() + ".");
+        } else {
+            r.add(toHit.getTableDesc() + ", causing " + damageDealt
+                  + " damage.");
+        }
         r.newlines = 0;
         vPhaseReport.addElement(r);
 
@@ -294,10 +302,10 @@ public class InfantryWeaponHandler extends WeaponHandler {
               - tailDamageDealt
               - heavyBurstDamageDealt
               - mountBurstDamageDealt;
-        boolean hasTsm = tsmDamageDealt > 0;
-        boolean hasProsthetic = prostheticDamageDealt > 0;
-        boolean hasExtraneous = extraneousDamageDealt > 0;
-        boolean hasTail = tailDamageDealt > 0;
+        boolean hasTsm = !stoppedByArmor && (tsmDamageDealt > 0);
+        boolean hasProsthetic = !stoppedByArmor && (prostheticDamageDealt > 0);
+        boolean hasExtraneous = !stoppedByArmor && (extraneousDamageDealt > 0);
+        boolean hasTail = !stoppedByArmor && (tailDamageDealt > 0);
 
         if (hasTsm || hasProsthetic || hasExtraneous || hasTail) {
             // Build combined enhancement names for reporting
@@ -376,6 +384,38 @@ public class InfantryWeaponHandler extends WeaponHandler {
             return 1;
         }
         return damageDealt;
+    }
+
+    /**
+     * Reports a non-penetrating attack on an armored target once, rather than once for every damage grouping. Such an
+     * attack does no damage to anything but a conventional infantry platoon, which is where
+     * {@link megamek.server.totalWarfare.TWDamageManager} applies it.
+     */
+    @Override
+    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, IBuilding bldg, int hits,
+          int nCluster, int bldgAbsorbs) {
+        if (isStoppedByArmor(entityTarget)) {
+            if (firstHit) {
+                Report report = new Report(6051);
+                report.subject = entityTarget.getId();
+                report.indent(2);
+                vPhaseReport.addElement(report);
+            }
+            return;
+        }
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster, bldgAbsorbs);
+    }
+
+    /**
+     * @param attackTarget the target of this attack
+     *
+     * @return {@code true} if this is a non-penetrating attack on a unit that is not a conventional infantry platoon,
+     *       so it does no damage
+     */
+    protected boolean isStoppedByArmor(@Nullable Targetable attackTarget) {
+        return (damageType == DamageType.NONPENETRATING)
+              && (attackTarget instanceof Entity)
+              && !(attackTarget instanceof ConvInfantry);
     }
 
     // we need to figure out AV damage to aerospace for AA weapons

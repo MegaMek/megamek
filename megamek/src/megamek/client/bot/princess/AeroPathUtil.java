@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2017-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -173,8 +173,10 @@ public class AeroPathUtil {
           int upperBound) {
         Collection<MovePath> paths = new ArrayList<>();
 
-        // sanity check: if we've already done something else with the path, there's no acceleration to be done
-        if (startingPath.length() > 0) {
+        // sanity check: only an empty path, or one holding just the walk-on DEPLOY step, can still change velocity
+        int pathLength = startingPath.length();
+        boolean onlyDeployment = (pathLength == 1) && (startingPath.getLastStep().getType() == MoveStepType.DEPLOY);
+        if ((pathLength > 0) && !onlyDeployment) {
             return paths;
         }
 

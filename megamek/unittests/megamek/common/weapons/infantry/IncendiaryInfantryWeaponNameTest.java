@@ -34,13 +34,15 @@
 package megamek.common.weapons.infantry;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 
 import megamek.common.equipment.EquipmentType;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,9 +59,9 @@ import org.junit.jupiter.params.provider.MethodSource;
  * still refer to them.</p>
  *
  * <p>The SRM launchers that carry real Inferno ammo are handled differently, because the errata deletes those rows
- * rather than renaming them. The light and heavy versions had no users at all and are withdrawn. The two-shot
- * version stays registered and keeps its name: a stock unit mounts it, and player-built units and saved games may
- * too. Unlike the incendiary weapons, which only convert damage to heat, it carries true Inferno munitions.</p>
+ * rather than renaming them: an SRM platoon declares Inferno munitions before the battle instead. The Inferno
+ * launchers are withdrawn, and their names load as the matching plain SRM launcher so old unit files, MULs and saved
+ * games still load.</p>
  */
 class IncendiaryInfantryWeaponNameTest {
 
@@ -106,28 +108,51 @@ class IncendiaryInfantryWeaponNameTest {
         assertEquals(errataName, byOldName.getName(), "The weapon should display its errata name");
     }
 
-    @Test
-    @DisplayName("The two-shot Inferno SRM launcher stays registered and keeps its name")
-    void infernoSrmLauncherIsNotRenamed() {
-        EquipmentType launcher = EquipmentType.get("InfantryStandardSRMInferno");
+    private static Stream<Arguments> withdrawnInfernoSrmLaunchers() {
+        return Stream.of(
+              Arguments.of("InfantrySRMLightInferno", "InfantrySRMLight"),
+              Arguments.of("SRM Launcher (Light) - Inferno", "InfantrySRMLight"),
+              Arguments.of("Light SRM (Inferno)", "InfantrySRMLight"),
+              Arguments.of("InfantryStandardSRMInferno", "InfantryStandardSRM"),
+              Arguments.of("SRM Launcher (Std, Two-Shot) - Inferno", "InfantryStandardSRM"),
+              Arguments.of("Infantry2ShotSRMInferno", "InfantryStandardSRM"),
+              Arguments.of("Infantry Two-Shot SRM Launcher (Inferno)", "InfantryStandardSRM"),
+              Arguments.of("InfantryHeavySRMInferno", "InfantryHeavySRM"),
+              Arguments.of("SRM Launcher (Heavy) w/ Inferno", "InfantryHeavySRM"),
+              Arguments.of("Infantry Heavy SRM Launcher (Inferno)", "InfantryHeavySRM"),
+              Arguments.of("SRM Launcher (Hvy, One-Shot) w/ Inferno", "InfantryHeavySRM"));
+    }
 
-        assertNotNull(launcher, "A stock unit mounts this launcher, so withdrawing it would break unit files");
-        // Pinned to the exact display name rather than to a substring: the test's whole claim is that this
-        // launcher is NOT renamed, and a substring check would sail through a partial rename that happened to
-        // keep the word Inferno in it.
-        assertEquals("SRM Launcher (Std, Two-Shot) - Inferno", launcher.getName(),
-              "This launcher carries true Inferno munitions and is not part of the incendiary rename");
+    @ParameterizedTest(name = "{0} -> {1}")
+    @MethodSource("withdrawnInfernoSrmLaunchers")
+    @DisplayName("A withdrawn Inferno SRM launcher name loads as the plain launcher and is recognised as Inferno")
+    void withdrawnInfernoSrmNameLoadsAsPlainLauncher(String withdrawnName, String plainInternalName) {
+        EquipmentType byWithdrawnName = EquipmentType.get(withdrawnName);
+        EquipmentType plainLauncher = EquipmentType.get(plainInternalName);
+
+        assertNotNull(plainLauncher, "The plain launcher should be registered: " + plainInternalName);
+        assertSame(plainLauncher, byWithdrawnName,
+              "Old unit files and saves name \"" + withdrawnName + "\", which must load as the plain launcher");
+        assertTrue(WithdrawnInfernoSrmLaunchers.isWithdrawnName(withdrawnName),
+              "A unit file naming \"" + withdrawnName + "\" was built to carry Inferno munitions");
+        assertFalse(WithdrawnInfernoSrmLaunchers.isWithdrawnName(plainLauncher.getName()),
+              "The plain launcher's display name must not declare Inferno");
+        assertFalse(WithdrawnInfernoSrmLaunchers.isWithdrawnName(plainInternalName),
+              "The plain launcher's internal name must not declare Inferno");
     }
 
     @Test
-    @DisplayName("The unused Inferno SRM launchers are withdrawn per the errata")
-    void unusedInfernoSrmLaunchersAreNotRegistered() {
-        String[] withdrawnLaunchers = { "InfantryHeavySRMInferno", "InfantrySRMLightInferno" };
-
-        for (String internalName : withdrawnLaunchers) {
-            assertNull(EquipmentType.get(internalName),
-                  "The errata deletes this row and no unit file mounts it, so it should no longer be "
-                        + "registered: " + internalName);
+    @DisplayName("Plain SRM launchers no longer offer small support vehicles an Inferno ammo split")
+    void plainSrmLaunchersHaveNoInfernoAmmo() {
+        // The withdrawn Inferno variants resolve to the plain launcher itself, so the Inferno variant lookup must
+        // not mistake the launcher for its own Inferno version. A weapon that still has a real Inferno variant keeps
+        // the split.
+        for (String internalName : new String[] { "InfantrySRMLight", "InfantryStandardSRM", "InfantryHeavySRM" }) {
+            InfantryWeapon launcher = (InfantryWeapon) EquipmentType.get(internalName);
+            assertFalse(launcher.hasInfernoAmmo(), "The errata deletes Inferno SRM ammo: " + internalName);
         }
+        InfantryWeapon recoillessRifle = (InfantryWeapon) EquipmentType.get("InfantryLRR");
+        assertNotNull(recoillessRifle, "The light recoilless rifle should be registered");
+        assertTrue(recoillessRifle.hasInfernoAmmo(), "Weapons with a real incendiary variant keep the ammo split");
     }
 }

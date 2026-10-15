@@ -135,7 +135,6 @@ public class CommonSettingsPane extends JPanel {
               "CommonSettingsDialog.title", icon)
             .header(new SettingsHeaderPanel(page.pageName(), page.path().getLast(), icon))
             .showDetailsPanel(page.sections().stream().anyMatch(section -> containsHelpText(section.content())))
-            .sectionsExpandedByDefault(page.sections().size() == 1)
             .standardContentWidth();
 
         for (OptionSection section : page.sections()) {

@@ -1122,6 +1122,14 @@ public class EntityListFile {
                     output.write("\" " + MULParser.ATTR_INF_SPEC + "=\"");
                     output.write(infantry.getSpecializations() + "");
                 }
+                // Inferno or standard SRM munitions are declared before the battle (TW p. 143), so the choice is
+                // not part of the design and must be saved with the unit.
+                if (infantry.hasSrmLauncher()) {
+                    output.write("\" " + MULParser.ATTR_SRM_MUNITION + "=\"");
+                    output.write(infantry.isInfernoSrmsDeclared()
+                          ? MULParser.VALUE_SRM_MUNITION_INFERNO
+                          : MULParser.VALUE_SRM_MUNITION_STANDARD);
+                }
                 // Disposable Weapon (TO:AuE p.116, Corrected Sixth Printing): not part of the cached design, so
                 // persist it (and whether the platoon has fired it this scenario) so it round-trips through MUL/save
                 // games and to MekHQ.

@@ -50,6 +50,8 @@ import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.Hex;
 import megamek.common.board.Board;
+import megamek.common.board.BoardConnectivityCheck;
+import megamek.common.board.BoardIssue;
 import megamek.common.board.Coords;
 import megamek.common.units.Terrain;
 import megamek.common.units.Terrains;
@@ -145,6 +147,20 @@ public class BoardEditorTooltip implements BoardViewTooltipProvider {
                   .append(Messages.getString("BoardView1.invalidHex")).append("<BR>")
                   .append(String.join("<BR>", errors))
                   .append("</p>");
+        }
+
+        // Roads and bridges that do not join up, each with a recommended fix
+        List<BoardIssue> issues = BoardConnectivityCheck.findIssuesAt(board, coords);
+        if (!issues.isEmpty()) {
+            result.append(paragraphHTMLOpen(padding))
+                  .append(UIUtil.fontHTML(GUIP.getWarningColor())).append(UIUtil.WARNING_SIGN).append("</FONT>")
+                  .append(Messages.getString("BoardView1.roadBridgeIssues"));
+            for (BoardIssue issue : issues) {
+                result.append("<BR>").append(issue.message()).append("<BR>")
+                      .append(colorHTML(Messages.getString("BoardView1.recommendedFix") + issue.fix(),
+                            GUIP.getToolTipLightFGColor()));
+            }
+            result.append("</p>");
         }
 
         result.append("</FONT></FONT>");

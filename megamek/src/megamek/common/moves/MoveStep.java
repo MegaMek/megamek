@@ -676,22 +676,24 @@ public class MoveStep implements Serializable {
                 int subDepth = Math.max(depth, building);
 
                 switch (entity.getMovementMode()) {
-                    // WiGE ends the jump at 1 elevation
-                    case WIGE -> setElevation(ceiling + 1);
-                    // Hover ends the jump above the water
-                    case HOVER -> setElevation(ceiling);
+                    // TO:AUE p.162: a jumping WiGE vehicle returns to its standard one elevation above the
+                    // terrain it comes down on. Land-Air Meks and glider ProtoMeks also move as WiGEs but follow
+                    // their own rules.
+                    case WIGE -> setElevation(isWiGEVehicle(entity) ? subDepth + 1 : ceiling + 1);
                     default -> setElevation(subDepth);
                 }
             }
             // Handle bridge elevation for jumping
             if (hex.containsTerrain(Terrains.BRIDGE)) {
                 int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                // A jumping WiGE vehicle comes down one elevation above the bridge deck (TO:AUE p.162)
+                int onBridgeElevation = isWiGEVehicle(entity) ? bridgeElev + 1 : bridgeElev;
                 if (climbMode() && (maxElevation >= bridgeElev)) {
                     // Climb mode ON - go onto bridge if reachable
-                    setElevation(Math.max(getElevation(), bridgeElev));
+                    setElevation(Math.max(getElevation(), onBridgeElevation));
                 } else if (!entity.isElevationValid(getElevation(), hex)) {
                     // Can't fit under bridge - force onto bridge (TO:AR 115)
-                    setElevation(bridgeElev);
+                    setElevation(onBridgeElevation);
                 }
             }
         } else {
@@ -2277,7 +2279,8 @@ public class MoveStep implements Serializable {
             !isHullDown() &&
             !((entity instanceof ProtoMek) &&
               (entity.getInternal(ProtoMek.LOC_LEG) == IArmorState.ARMOR_DESTROYED)) &&
-            (!entity.isStuck() || entity.canUnstickByJumping())) {
+            (!entity.isStuck() || entity.canUnstickByJumping()) &&
+            !isGroundedWiGEVehicle(entity)) {
 
             movementType = EntityMovementType.MOVE_JUMP;
         }
@@ -3443,8 +3446,8 @@ public class MoveStep implements Serializable {
                 boolean isOnIceSurface = destHex.containsTerrain(Terrains.ICE)
                                          && (nDestEl == destHex.getLevel());
                 if (inWaterColumn && !isOnIceSurface && (waterDepth > 0) && !isAmphibious) {
-                    // "To be considered underwater, a unit must be completely submerged... 'Mechs must be in at
-                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a Mek
+                    // "To be considered underwater, a unit must be completely submerged... 'Meks must be in at
+                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a 'Mek
                     // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
                     // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
                     boolean isFullySubmerged = (entity instanceof Mek)
@@ -3614,6 +3617,26 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * TO:AUE p.162: a WiGE vehicle may fire its jump jets only while airborne, never on a turn it takes off or lands.
+     * Land-Air Meks and glider ProtoMeks also move as WiGEs but follow their own rules.
+     *
+     * @param entity the unit to check
+     *
+     * @return {@code true} if the unit is a WiGE vehicle on the ground, which may not jump
+     */
+    public static boolean isGroundedWiGEVehicle(Entity entity) {
+        return isWiGEVehicle(entity) && !entity.isAirborneVTOLorWIGE();
+    }
+
+    /**
+     * @return {@code true} if the unit is a WiGE vehicle. Land-Air Meks and glider ProtoMeks also move as WiGEs but
+     *       are not vehicles.
+     */
+    private static boolean isWiGEVehicle(Entity entity) {
+        return (entity instanceof Tank) && entity.getMovementMode().isWiGE();
+    }
+
+    /**
      * Is movement possible from a previous position to this one?
      * <p>
      * This function does not comment on whether an overall movement path is possible, just whether the <em>current</em>
@@ -3677,6 +3700,17 @@ public class MoveStep implements Serializable {
         // If you want to flee, and you can flee, flee.
         if ((type == MoveStepType.FLEE) && entity.canFlee(dest)) {
             return true;
+        }
+
+        // TO:AUE p.162: a vehicle may not jump into terrain its motive type forbids. The return below skips the
+        // prohibited-terrain check further down, so run it here for a jumping vehicle. As there, a vehicle landing on a
+        // bridge deck is on the bridge, not in the terrain below it (TO:AR p.115).
+        if (isJumping() && (entity instanceof Tank)) {
+            boolean isInProhibitedTerrain = entity.isLocationProhibited(dest, boardId, elevation);
+            boolean isOnBridge = isOnBridgeDeck(destHex, elevation);
+            if (isInProhibitedTerrain && !isOnBridge) {
+                terrainInvalid = true;
+            }
         }
 
         // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!

@@ -45,6 +45,7 @@ import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
+import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
@@ -79,6 +80,20 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
      */
     public BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump,
           BoardClusterTracker clusterTracker) {
+        return findPathToCoords(entity, destinationCoords, jump, false, clusterTracker);
+    }
+
+    /**
+     * Uses an A* search to find the "optimal" path to the destination coordinates. Ignores move cost and makes note of
+     * hexes that need to be cleared for the path to be viable.
+     *
+     * @param includeDeploymentStep {@code true} to start the path with a {@code DEPLOY} step, for a unit that walks on
+     *                              to the board during the movement phase
+     *
+     * @return the path, or {@code null} if the unit cannot reach any destination
+     */
+    public @Nullable BulldozerMovePath findPathToCoords(Entity entity, Set<Coords> destinationCoords, boolean jump,
+          boolean includeDeploymentStep, BoardClusterTracker clusterTracker) {
         BulldozerMovePath startPath = new BulldozerMovePath(entity.getGame(), entity);
 
         // if we're calculating a jump path and the entity has jump mp and can jump,
@@ -99,6 +114,11 @@ public class DestructionAwareDestinationPathfinder extends BoardEdgePathFinder {
             } else {
                 startPath.addStep(MoveStepType.CLIMB_MODE_ON);
             }
+        }
+
+        // Walk-on deployment: without this step the server treats the path as a skipped turn
+        if (includeDeploymentStep) {
+            startPath.addStep(MoveStepType.DEPLOY);
         }
 
         // a grounded WiGE has only 1 MP on the ground, so take off first when it can

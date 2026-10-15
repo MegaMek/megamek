@@ -1,7 +1,7 @@
 /*
   Copyright (C) 2000-2004 Ben Mazur (bmazur@sev.org)
  * Copyright (C) 2013 Nicholas Walczak (walczak@cs.umn.edu)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -44,6 +44,8 @@ import java.util.List;
 
 import megamek.common.Configuration;
 import megamek.common.board.Board;
+import megamek.common.board.BoardConnectivityCheck;
+import megamek.common.board.BoardIssue;
 import megamek.logging.MMLogger;
 
 /**
@@ -54,7 +56,10 @@ import megamek.logging.MMLogger;
 public class BoardsValidator {
 
     private int numBoardErrors = 0;
+    private int numBoardConnectivityProblems = 0;
+    private int numBoardsWithNotes = 0;
     private boolean isVerbose;
+    private boolean isStrict;
 
     private static final MMLogger LOGGER = MMLogger.create(BoardsValidator.class);
 
@@ -66,6 +71,16 @@ public class BoardsValidator {
      */
     public void setIsVerbose(boolean verbose) {
         isVerbose = verbose;
+    }
+
+    /**
+     * Sets whether roads and bridges that do not join up count as errors. By default they are reported as warnings, so
+     * the many older boards that have them still pass.
+     *
+     * @param strict {@code true} to fail validation on road and bridge problems
+     */
+    public void setIsStrict(boolean strict) {
+        isStrict = strict;
     }
 
     /**
@@ -137,13 +152,56 @@ public class BoardsValidator {
                     LOGGER.error(errorMessage);
                 }
             }
+
+            reportConnectivityProblems(boardFile, BoardConnectivityCheck.findProblems(board));
+            reportNotes(boardFile, BoardConnectivityCheck.findNotes(board));
         }
+    }
+
+    private void reportConnectivityProblems(File boardFile, List<BoardIssue> problems) {
+        if (problems.isEmpty()) {
+            return;
+        }
+        numBoardConnectivityProblems++;
+        String problemList = joinMessages(problems);
+        if (isStrict) {
+            numBoardErrors++;
+            LOGGER.error("Roads or bridges do not join up on board: {}{}{}", boardFile, System.lineSeparator(),
+                  problemList);
+        } else {
+            LOGGER.warn("Roads or bridges do not join up on board: {}{}{}", boardFile, System.lineSeparator(),
+                  problemList);
+        }
+    }
+
+    /**
+     * Lists bridge ends that play correctly but are worth a look: one level off their road, or on solid ground with no
+     * road. They are never errors, even with --strict.
+     */
+    private void reportNotes(File boardFile, List<BoardIssue> notes) {
+        if (notes.isEmpty()) {
+            return;
+        }
+        numBoardsWithNotes++;
+        if (isVerbose) {
+            LOGGER.info("Note: bridge ends worth a look on board: {}{}{}", boardFile, System.lineSeparator(),
+                  joinMessages(notes));
+        }
+    }
+
+    private static String joinMessages(List<BoardIssue> issues) {
+        List<String> messages = new ArrayList<>();
+        for (BoardIssue issue : issues) {
+            messages.add(issue.message() + ". Fix: " + issue.fix());
+        }
+        return String.join(System.lineSeparator(), messages);
     }
 
     /**
      * Usage: java -cp MegaMek.jar megamek.utilities.BoardsValidator [OPTIONS] [paths]
      * <p>
-     * -q, --quiet  Only print invalid file names.<br /> -?, -h, --help    Show this message and quit.
+     * -q, --quiet  Only print invalid file names.<br /> -s, --strict  Count roads and bridges that do not join up as
+     * errors.<br /> -?, -h, --help    Show this message and quit.
      * <p>
      * Examples:
      * <p>
@@ -163,18 +221,19 @@ public class BoardsValidator {
         if (parsedArgs.showHelp()) {
             String helpOutput = """
                   Usage: java -cp MegaMek.jar megamek.utilities.BoardsValidator [OPTIONS] [paths]
-                  
+
                       -q, --quiet       Only print invalid file names.
+                      -s, --strict      Count roads and bridges that do not join up as errors.
                       -?, -h, --help    Show this message and quit.
-                  
+
                   Examples:
-                  
+
                   Validate every board in the ./data subdirectory of the current working directory:
                       > java -cp MegaMek.jar megamek.utilities.BoardsValidator
-                  
+
                   Validate a given board:
                       > java -cp MegaMek.jar megamek.utilities.BoardsValidator SomeFile.board
-                  
+
                   Validate a directory of boards:
                       > java -cp MegaMek.jar megamek.utilities.BoardsValidator SomeFiles
                   """;
@@ -184,6 +243,7 @@ public class BoardsValidator {
         }
 
         validator.setIsVerbose(!parsedArgs.isQuiet());
+        validator.setIsStrict(parsedArgs.isStrict());
         List<String> paths = parsedArgs.paths();
 
         try {
@@ -202,6 +262,10 @@ public class BoardsValidator {
 
             String statusMessage = String.format("Found %d boards with errors.", validator.numBoardErrors);
             LOGGER.info(statusMessage);
+            LOGGER.info("Found {} boards with roads or bridges that do not join up{}.",
+                  validator.numBoardConnectivityProblems, validator.isStrict ? " (counted as errors)" : "");
+            LOGGER.info("Found {} boards with bridge notes (not errors).",
+                  validator.numBoardsWithNotes);
             java.lang.System.exit(validator.numBoardErrors > 0 ? 1 : 0);
         } catch (IOException ioException) {
             LOGGER.error(ioException, "IO Exception Occurred {}", ioException.getMessage());
@@ -234,6 +298,7 @@ public class BoardsValidator {
     private static class Args {
         private boolean showHelp = false;
         private boolean isQuiet;
+        private boolean isStrict;
         private final List<String> paths = new ArrayList<>();
 
         public Args(String[] args) {
@@ -242,6 +307,8 @@ public class BoardsValidator {
                     showHelp = true;
                 } else if ("-q".equals(arg) || "--quiet".equals(arg)) {
                     isQuiet = true;
+                } else if ("-s".equals(arg) || "--strict".equals(arg)) {
+                    isStrict = true;
                 } else {
                     paths.add(arg);
                 }
@@ -254,6 +321,10 @@ public class BoardsValidator {
 
         boolean isQuiet() {
             return isQuiet;
+        }
+
+        boolean isStrict() {
+            return isStrict;
         }
 
         List<String> paths() {

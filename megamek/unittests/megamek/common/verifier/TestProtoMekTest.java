@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2018-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,11 +42,15 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 
+import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.equipment.Engine;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.game.Game;
+import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
@@ -422,5 +426,42 @@ public class TestProtoMekTest {
         assertEquals(test.getCountHeatSinks(), laser.getType().getHeat());
         eqList.add(Mounted.createMounted(mockProtoMek, EquipmentType.get("CLUltraAC5")));
         assertEquals(test.getCountHeatSinks(), laser.getType().getHeat());
+    }
+
+    /**
+     * A Clan Level 3 ultraheavy ProtoMek dated 3072 with its built-in EI Interface listed, like the Boggart and
+     * Sprite from Wars of Reaving. The ultraheavy chassis dates from 3075, which sends the validator into its
+     * item-by-item tech check.
+     */
+    private ProtoMek createUltraheavyProtoMekWithEiInterface() throws Exception {
+        ProtoMek protoMek = new ProtoMek();
+        protoMek.setWeight(13.0);
+        protoMek.setYear(3072);
+        protoMek.setTechLevel(TechConstants.T_CLAN_ADVANCED);
+        protoMek.addEquipment(EquipmentType.get(EquipmentTypeLookup.EI_INTERFACE), ProtoMek.LOC_BODY);
+        protoMek.recalculateTechAdvancement();
+        return protoMek;
+    }
+
+    @Test
+    public void testBuiltInEiInterfaceDoesNotMakeProtoMekIllegalWithoutGame() throws Exception {
+        ProtoMek protoMek = createUltraheavyProtoMekWithEiInterface();
+        TestProtoMek test = new TestProtoMek(protoMek, option, null);
+        StringBuffer buff = new StringBuffer();
+
+        assertFalse(test.hasIllegalTechLevels(buff, TechConstants.T_CLAN_UNOFFICIAL), buff.toString());
+    }
+
+    @Test
+    public void testBuiltInEiInterfaceCountsUnderFullTracking() throws Exception {
+        ProtoMek protoMek = createUltraheavyProtoMekWithEiInterface();
+        Game game = new Game();
+        game.getOptions().getOption(OptionsConstants.ADVANCED_NEURAL_INTERFACE_MODE)
+              .setValue(OptionsConstants.NEURAL_INTERFACE_MODE_FULL_TRACKING);
+        protoMek.setGame(game);
+        protoMek.setGameOptions();
+
+        assertFalse(protoMek.isIgnoredForTechLevel(protoMek.getMisc().get(0)));
+        assertEquals(SimpleTechLevel.EXPERIMENTAL, protoMek.getStaticTechLevel());
     }
 }

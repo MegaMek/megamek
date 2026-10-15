@@ -1179,6 +1179,10 @@ public class BLKFile {
                 if (infantry.getDisposableWeapon() != null){
                     blk.writeBlockData("disposableWeapon", infantry.getDisposableWeapon().getInternalName());
                 }
+                // Standard is the default, so only an Inferno declaration needs writing (TW p. 143)
+                if (infantry.firesInfernoSrms()) {
+                    blk.writeBlockData(BLKInfantryFile.SRM_MUNITION, BLKInfantryFile.SRM_MUNITION_INFERNO);
+                }
                 if (infantry.getCustomArmorName() != null) {
                     blk.writeBlockData("armor_name", infantry.getCustomArmorName());
                 }
@@ -1682,31 +1686,39 @@ public class BLKFile {
                             break;
                         case "crewquarters":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            e.addTransporter(new CrewQuartersCargoBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
                             break;
                         case "steeragequarters":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            e.addTransporter(new SteerageQuartersCargoBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
                             break;
                         case "2ndclassquarters":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            e.addTransporter(new SecondClassQuartersCargoBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
                             break;
                         case "1stclassquarters":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(), pbi.getDoors()), isPod);
+                            e.addTransporter(new FirstClassQuartersCargoBay(pbi.getSize(),
+                                  pbi.getDoors(),
+                                  pbi.getBayNumber()), isPod);
                             break;
                         case "pillionseats":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new PillionSeatCargoBay(pbi.getSize()), isPod);
+                            e.addTransporter(new PillionSeatCargoBay(pbi.getSize(), pbi.getBayNumber()), isPod);
                             break;
                         case "standardseats":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new StandardSeatCargoBay(pbi.getSize()), isPod);
+                            e.addTransporter(new StandardSeatCargoBay(pbi.getSize(), pbi.getBayNumber()), isPod);
                             break;
                         case "ejectionseats":
                             pbi = new ParsedBayInfo(numbers, usedBayNumbers);
-                            e.addTransporter(new EjectionSeatCargoBay(pbi.getSize()), isPod);
+                            e.addTransporter(new EjectionSeatCargoBay(pbi.getSize(), pbi.getBayNumber()), isPod);
                             break;
                         case "dockingcollar":
                             // Add values for collars so they can be parsed and assigned a 'bay' number

@@ -480,11 +480,11 @@ public class ArtilleryBayWeaponDistantFireHandler extends AmmoBayWeaponHandler {
 
             if (!bMissed) {
                 // If we hit, only one effect will stack in the target hex
-                gameManager.deliverArtilleryFlare(targetPos, radius);
+                gameManager.deliverArtilleryFlare(targetPos, target.getBoardId(), radius);
             } else {
                 // Deliver a round to each target hex
                 for (Coords c : targets) {
-                    gameManager.deliverArtilleryFlare(c, radius);
+                    gameManager.deliverArtilleryFlare(c, target.getBoardId(), radius);
                 }
             }
             return false;

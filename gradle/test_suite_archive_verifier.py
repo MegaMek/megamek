@@ -8,6 +8,7 @@ import gzip
 import io
 import os
 from pathlib import Path
+import shutil
 import struct
 import subprocess
 import tarfile
@@ -127,8 +128,9 @@ class SuiteArchiveTests(unittest.TestCase):
         with tarfile.open(path, "w:gz", format=format) as archive:
             for name, content in (files or self.entries(product)).items():
                 entry = tarfile.TarInfo(f"{product}-{VERSIONS[product]}/{name}")
-                entry.size = len(content)
-                archive.addfile(entry, io.BytesIO(content))
+                entry.type = tarfile.DIRTYPE if content is None else tarfile.REGTYPE
+                entry.size = 0 if content is None else len(content)
+                archive.addfile(entry, None if content is None else io.BytesIO(content))
         self.archives[product] = path
         return path
 
@@ -166,6 +168,121 @@ class SuiteArchiveTests(unittest.TestCase):
                     self.check(product, external=True, older_successors=True)
                     self.assertTrue(all(call.args[0][0] == "git" for call in
                                         runner.call_args_list))
+
+    def test_portable_namespace_rejects_aliases_and_invalid_components(self):
+        cases = (
+            {"bin/MegaMek": b"upper", "bin/megamek": b"lower"},
+            {"docs/caf\u00e9.txt": b"one", "docs/cafe\u0301.txt": b"two"},
+            {"Docs/first": b"one", "docs/second": b"two"},
+            {"tool": b"file", "tool/child": b"child"},
+            {"tool/child": b"child", "tool": b"file"},
+            {"Bin": None, "bin/child": b"child"},
+            *({name: b"invalid"} for name in (
+                "docs/CON.txt", "docs/aux", "docs/file.", "docs/file ",
+                "docs/a:b", "docs/.MM-Launcher/state", "docs/" + "x" * 600,
+                "docs/" + "\U0001f600" * 260)),
+        )
+        for product in verifier.PRODUCTS:
+            for extra in cases:
+                with self.subTest(product=product, paths=list(extra)):
+                    files = self.entries(product)
+                    files.update(extra)
+                    self.write(product, files)
+                    with self.assertRaisesRegex(verifier.VerificationError,
+                                                "archive path|archive parent collision"):
+                        self.check(product, external=True)
+            self.write(product)
+
+    def test_explicit_directories_can_follow_implicit_parents(self):
+        for product in verifier.PRODUCTS:
+            with self.subTest(product=product):
+                files = self.entries(product)
+                files.update({"docs/caf\u00e9.txt": b"document", "docs": None, "": None})
+                self.write(product, files)
+                self.check(product, external=True)
+
+    def test_portable_raw_name_limit_counts_utf16_and_directory_slash(self):
+        prefix = "docs/" + "segment/" * 50
+        for product in verifier.PRODUCTS:
+            root = f"{product}-{VERSIONS[product]}/"
+            for archive_format in (tarfile.PAX_FORMAT, tarfile.GNU_FORMAT):
+                for directory in (False, True):
+                    suffix = "/" if directory else ""
+                    for character in ("a", "\U0001f600"):
+                        character_units = len(character.encode("utf-16-le")) // 2
+                        for units in (512, 513):
+                            with self.subTest(product=product, format=archive_format,
+                                              directory=directory, character=character, units=units):
+                                remaining = units - len((root + prefix + suffix).encode("utf-16-le")) // 2
+                                count, remainder = divmod(remaining, character_units)
+                                name = prefix + character * count + "a" * remainder + suffix
+                                self.assertEqual(units, len((root + name).encode("utf-16-le")) // 2)
+                                files = self.entries(product)
+                                files[name] = None if directory else b"portable boundary"
+                                archive = self.write(product, files, format=archive_format)
+                                if units == 512:
+                                    self.check(product, external=True)
+                                else:
+                                    with self.assertRaisesRegex(verifier.VerificationError,
+                                                                "non-portable archive path length"):
+                                        self.check(product, external=True)
+                                    properties, _, _, temporary = verifier.scan(
+                                        archive, product, VERSIONS[product], portable=False)
+                                    try:
+                                        self.assertEqual(VERSIONS[product], properties["version"])
+                                    finally:
+                                        temporary.cleanup()
+            self.write(product)
+
+    def test_suite_scripts_replace_stale_default_aliases_for_all_products(self):
+        root = self.base / "scripts-build"
+        (root / "gradle").mkdir(parents=True)
+        shared = Path(__file__).resolve().parent
+        shutil.copyfile(shared / "suite_data_rules.json", root / "gradle/suite_data_rules.json")
+        (root / "settings.gradle").write_text(
+            "rootProject.name = 'MegaMekRoot'\ninclude 'megamek', 'megameklab', 'MekHQ'\n")
+        adapter = str(shared / "suite_archive_adapter.gradle").replace("\\", "\\\\").replace("'", "\\'")
+        for product, project in (("MegaMek", "megamek"), ("MegaMekLab", "megameklab"),
+                                 ("MekHQ", "MekHQ")):
+            folder = root / project
+            folder.mkdir()
+            script = (
+                "plugins { id 'application' }\n"
+                "application { mainClass = 'Fixture' }\n"
+                f"apply from: '{adapter}'\n"
+                "tasks.register('createStartScripts', CreateStartScripts) {\n"
+                f"    applicationName = '{product}'\n"
+                "    mainClass = application.mainClass\n"
+                "    outputDir = startScripts.outputDir\n"
+                "    classpath = jar.outputs.files\n"
+                "}\n")
+            if product == "MekHQ":
+                script += (
+                    "distributions.main.contents {\n"
+                    "    from('../megamek/build/scripts') { into 'bin' }\n"
+                    "    from('../megameklab/build/scripts') { into 'bin' }\n"
+                    "}\n"
+                    "tasks.named('installDist') {\n"
+                    "    dependsOn ':megamek:startScripts', ':megameklab:startScripts'\n"
+                    "}\n")
+            (folder / "build.gradle").write_text(script)
+        wrapper = shared.parent / ("gradlew.bat" if os.name == "nt" else "gradlew")
+        for task, flags in (("startScripts", []), ("installDist", ["-PsuiteReleaseVersion=0.51.01"])):
+            command = [str(wrapper), "-p", str(root), "--offline", "--no-daemon",
+                       "--console=plain", *flags,
+                       *(f":{project}:{task}" for project in ("megamek", "megameklab", "MekHQ"))]
+            result = subprocess.run(command, cwd=root, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            if task == "startScripts":
+                for project in ("megamek", "megameklab", "MekHQ"):
+                    names = {path.name for path in (root / project / "build/scripts").iterdir()}
+                    self.assertEqual(names, {project, project + ".bat"})
+        for product, project in (("MegaMek", "megamek"), ("MegaMekLab", "megameklab"),
+                                 ("MekHQ", "MekHQ")):
+            bin_dir = root / project / "build/install" / project / "bin"
+            included = verifier.PRODUCTS if product == "MekHQ" else (product,)
+            self.assertEqual({path.name for path in bin_dir.iterdir()},
+                             {name for member in included for name in (member, member + ".bat")})
 
     def test_external_gradle_adapters_have_no_producer_tasks(self):
         worktrees = Path(__file__).resolve().parents[2]

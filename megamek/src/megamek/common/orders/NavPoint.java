@@ -34,6 +34,8 @@ package megamek.common.orders;
 
 import java.util.List;
 
+import megamek.common.internationalization.I18n;
+
 /**
  * The names a route's waypoints go by on the radio and on the map: Nav Point Alpha, Beta, Gamma and on through the
  * Greek alphabet, so they never read like a lance's name (Alpha, Bravo, Charlie Lance). "Charlie Lance, proceeding to
@@ -44,9 +46,8 @@ public final class NavPoint {
     /** A waypoint with no name: one from a save made before waypoints had them, or one added by a typed order. */
     public static final int UNNAMED = 0;
 
-    private static final List<String> NAMES = List.of("Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta",
-          "Theta", "Iota", "Kappa", "Lambda", "Mu", "Nu", "Xi", "Omicron", "Pi", "Rho", "Sigma", "Tau", "Upsilon",
-          "Phi", "Chi", "Psi", "Omega");
+    /** The names in the order they are given, from the resource bundle. */
+    private static final List<String> NAMES = List.of(I18n.getText("NavPoint.names").split(","));
 
     private NavPoint() {}
 
@@ -59,6 +60,6 @@ public final class NavPoint {
         int index = Math.max(0, navNumber - 1);
         String name = NAMES.get(index % NAMES.size());
         int round = (index / NAMES.size()) + 1;
-        return (round == 1) ? name : name + ' ' + round;
+        return (round == 1) ? name : I18n.getFormattedText("NavPoint.numberedName", name, round);
     }
 }

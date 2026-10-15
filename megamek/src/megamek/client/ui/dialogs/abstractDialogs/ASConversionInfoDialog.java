@@ -150,4 +150,3 @@ public class ASConversionInfoDialog extends AbstractDialog {
         dispose();
     }
 }
-

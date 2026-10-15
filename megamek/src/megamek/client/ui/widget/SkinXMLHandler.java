@@ -75,16 +75,16 @@ public class SkinXMLHandler {
               <?xml version="1.0" encoding="UTF-8"?>
               <!--
                 This is the a skin for Megamek
-              
+
                 New skins can be created by specifying UI_Element tags
-              
+
                 The defaultElement UI_Element specifies the default border to be used by UI
                   components
-              
+
                 The defaultButton UI_Element specifies the default border and background
                  images to use for Megamek buttons.  The first image is the base default
                  image and the second image is the pressed image
-              
+
                 NOTE: All locations should be in data/images/widgets
               -->
               <skin xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

@@ -89,7 +89,7 @@ public abstract class StreakLRMWeapon extends LRMWeapon {
     }
 
     @Override
-    // Streak LRMs could end up with an Indirect mode as a result of this game option selection. Overriding to 
+    // Streak LRMs could end up with an Indirect mode as a result of this game option selection. Overriding to
     // prevent this. Bug report #7618
     public void adaptToGameOptions(IGameOptions gameOptions) {
         super.adaptToGameOptions(gameOptions);

@@ -121,7 +121,7 @@ public class CoreRulesMovement extends RulesMovement {
     }
 
     /**
-     * {@inheritDoc}    
+     * {@inheritDoc}
      * Do we add leg damage together, yes. Core p.98
      */
     @Override
@@ -136,13 +136,13 @@ public class CoreRulesMovement extends RulesMovement {
     @Override
     public boolean reduceMaxElevation(Mek mek) {
         if (mek.atLeastOneBadLeg()) {
-            if (mek instanceof QuadMek) { 
+            if (mek instanceof QuadMek) {
                  if (mek.countBadLegs() >= 3) {
                     return true;
                  } else {
                      return false;
                  }
-            } 
+            }
             return false;
         }
         if (mek.hasHipCrit()) {
@@ -157,7 +157,7 @@ public class CoreRulesMovement extends RulesMovement {
      */
     @Override
     public boolean isMoveIntoWaterDangerous(EntityMovementType movementType, EntityMovementMode movementMode) {
-        if ((movementType == EntityMovementType.MOVE_RUN || movementType == EntityMovementType.MOVE_SPRINT) 
+        if ((movementType == EntityMovementType.MOVE_RUN || movementType == EntityMovementType.MOVE_SPRINT)
               && !cannotRunInWater(movementMode,false)) {
             return true;
         }
@@ -180,7 +180,7 @@ public class CoreRulesMovement extends RulesMovement {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Core rules p.114
      */
     @Override
@@ -197,7 +197,7 @@ public class CoreRulesMovement extends RulesMovement {
         }
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      * No MP cost for domino displacement. Core p.114

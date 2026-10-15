@@ -87,13 +87,13 @@ public abstract class RulesMovement {
     public abstract boolean cumulativeLegDamage(boolean b);
 
     /**
-     * Does 0 MP cause immobile? 
+     * Does 0 MP cause immobile?
      *
      * @param walkMP the walking movement points
      * @return true if 0 MP causes immobile status
      */
     public boolean checkMPZeroCauseImmobile(int walkMP) {
-        return (walkMP == 0); 
+        return (walkMP == 0);
     }
 
     /**
@@ -102,7 +102,7 @@ public abstract class RulesMovement {
      * @param badLegs the number of damaged legs
      * @param walkMP the walking movement points
      * @param runMP the running movement points
-     * @param isQuad is the unit a quad             
+     * @param isQuad is the unit a quad
      * @return the effective running movement points
      */
     public abstract int getMekRunMP(int badLegs, int walkMP, int runMP, boolean isQuad);
@@ -126,7 +126,7 @@ public abstract class RulesMovement {
 
     /**
      * What are the criteria to allow for domino effect changes
-     * 
+     *
      * @param direction The direction the violation is coming from
      * @param entity the entity causing the domino effect
      * @param stepForward potential step forwards
@@ -145,8 +145,8 @@ public abstract class RulesMovement {
 
     /**
      * This is a helper for dominoEffectMovementCriteria. It returns true if you can move in that direction
-     * 
-     * @param direction direction of source of domino 
+     *
+     * @param direction direction of source of domino
      * @param entity entity being displaced
      * @param movePath the movePath of the step
      * @param forwards is it forwards or backwards
@@ -157,7 +157,7 @@ public abstract class RulesMovement {
 
     /**
      * Do we change the accidental fall elevation?
-     * 
+     *
      * @param fallElevation height of the fall
      * @param hitHeight height of the unit hit
      * @return the modified height for damage

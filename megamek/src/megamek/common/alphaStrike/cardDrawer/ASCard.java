@@ -46,6 +46,7 @@ import java.time.LocalDate;
 import java.util.Locale;
 import javax.swing.ImageIcon;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.StringDrawer;
@@ -54,7 +55,6 @@ import megamek.common.Configuration;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASDamageVector;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.common.util.fileUtils.MegaMekFile;
 

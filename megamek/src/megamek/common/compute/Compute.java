@@ -39,10 +39,10 @@ import static java.lang.Math.min;
 
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.common.*;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;

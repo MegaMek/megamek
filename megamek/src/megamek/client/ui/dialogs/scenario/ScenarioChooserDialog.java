@@ -57,6 +57,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.MatteBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import jakarta.annotation.Nullable;
 import megamek.SuiteConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.ButtonEsc;
@@ -66,7 +67,6 @@ import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.dialogs.buttonDialogs.CommonSettingsDialog;
 import megamek.client.ui.util.ClickableLabel;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.scenario.Scenario;
 import megamek.common.scenario.ScenarioLoader;

@@ -39,10 +39,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
 import megamek.common.HitData;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.compute.damage.CritAssignment.AeroFighterCrit;
 import megamek.common.compute.damage.CritAssignment.AeroFighterCritKind;

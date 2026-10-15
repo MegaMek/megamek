@@ -35,7 +35,7 @@ package megamek.client.ratgenerator;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

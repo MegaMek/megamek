@@ -41,7 +41,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Era;
 import megamek.common.enums.Faction;

@@ -69,6 +69,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 import javax.swing.filechooser.FileFilter;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.MegaMek;
 import megamek.SuiteConstants;
@@ -117,7 +118,6 @@ import megamek.codeUtilities.StringUtility;
 import megamek.common.Configuration;
 import megamek.common.KeyBindParser;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.SensorChoiceHandler;
 import megamek.common.game.Game;

@@ -36,10 +36,10 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.tooltip.UnitToolTip;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 
 /**

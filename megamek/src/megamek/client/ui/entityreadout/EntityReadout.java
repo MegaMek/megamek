@@ -35,8 +35,8 @@ package megamek.client.ui.entityreadout;
 
 import java.util.Collection;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.GunEmplacement;
@@ -45,7 +45,6 @@ import megamek.common.units.Aero;
 import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.FighterSquadron;
-import megamek.common.units.Infantry;
 import megamek.common.units.Mek;
 import megamek.common.units.ProtoMek;
 import megamek.common.units.Tank;

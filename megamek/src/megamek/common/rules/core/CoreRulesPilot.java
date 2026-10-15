@@ -35,9 +35,9 @@ package megamek.common.rules.core;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
 import megamek.common.TargetRollModifier;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.GamePhase;
 import megamek.common.game.Game;

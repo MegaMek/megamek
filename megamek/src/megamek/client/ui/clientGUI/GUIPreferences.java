@@ -33,20 +33,26 @@
  */
 package megamek.client.ui.clientGUI;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
-import javax.swing.*;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.SensorFamily;
 import megamek.common.preference.IPreferenceStore;

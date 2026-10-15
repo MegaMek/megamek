@@ -41,13 +41,13 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
 import megamek.common.MPCalculationSetting;
 import megamek.common.TechConstants;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;

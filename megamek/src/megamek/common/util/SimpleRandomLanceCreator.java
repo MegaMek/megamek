@@ -33,13 +33,6 @@
 
 package megamek.common.util;
 
-import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
-import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
-import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.annotations.Nullable;
-import megamek.common.loaders.MekSummary;
-import megamek.common.loaders.MekSummaryCache;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +40,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
+
+import jakarta.annotation.Nullable;
+import megamek.client.ui.dialogs.advancedsearch.ASAdvancedSearchPanel;
+import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
+import megamek.common.alphaStrike.AlphaStrikeElement;
+import megamek.common.loaders.MekSummary;
+import megamek.common.loaders.MekSummaryCache;
 
 /**
  * A simple random lance creator similar to MM's random army "BV" tab, but generalized to allow creating forces of

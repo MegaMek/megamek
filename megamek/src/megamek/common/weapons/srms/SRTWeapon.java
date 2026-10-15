@@ -41,10 +41,10 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;

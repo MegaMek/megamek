@@ -43,11 +43,11 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.bays.CrewQuartersCargoBay;
 import megamek.common.bays.FirstClassQuartersCargoBay;

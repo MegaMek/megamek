@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.common.RangeType;
 import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
@@ -42,7 +43,6 @@ import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Era;

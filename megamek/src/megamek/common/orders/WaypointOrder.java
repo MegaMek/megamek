@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.annotations.Nullable;
 
 /**
  * What a unit does at one waypoint of its route: the way it faces on arrival, whether and how long it holds there

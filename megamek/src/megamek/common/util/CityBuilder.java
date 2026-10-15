@@ -39,8 +39,8 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

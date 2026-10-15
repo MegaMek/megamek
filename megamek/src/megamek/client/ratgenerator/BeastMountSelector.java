@@ -34,7 +34,7 @@ package megamek.client.ratgenerator;
 
 import java.util.ArrayList;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.UnitType;
 import megamek.logging.MMLogger;

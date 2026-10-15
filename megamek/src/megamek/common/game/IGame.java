@@ -43,10 +43,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.Player;
 import megamek.common.Team;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;

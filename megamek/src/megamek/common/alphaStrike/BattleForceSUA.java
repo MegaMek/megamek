@@ -40,8 +40,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.annotations.Nullable;
 
 /**
  * This enum contains AlphaStrike, BattleForce and (some - WIP) Strategic BattleForce Special Unit Abilities (SUAs) and

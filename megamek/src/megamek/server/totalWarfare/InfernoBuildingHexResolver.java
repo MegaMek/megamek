@@ -34,8 +34,8 @@ package megamek.server.totalWarfare;
 
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.rolls.Roll;
 import megamek.common.units.Entity;

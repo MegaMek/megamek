@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This class represents a collection of Strategic BattleForce sheets. It implements {@link Printable} and can be

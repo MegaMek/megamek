@@ -116,6 +116,9 @@ public class BLKConvFighterFile extends BLKFile implements IMekLoader {
             throw new EntityLoadingException("Could not find SafeThrust block.");
         }
         int engineRating = (dataFile.getDataAsInt("SafeThrust")[0]) * (int) a.getWeight();
+        if (engineRating > 400) {
+            engineFlags |= Engine.LARGE_ENGINE;
+        }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("armor_type")) {

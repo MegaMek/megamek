@@ -936,14 +936,6 @@ public class Engine implements Serializable, ITechnology {
           .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
-    private static final TechAdvancement INDUSTRIAL_FISSION_TA = new TechAdvancement(TechBase.ALL)
-          .setAdvancement(2470, 2882, 3079)
-          .setTechRating(TechRating.D)
-          .setPrototypeFactions(Faction.TH)
-          .setProductionFactions(Faction.TC)
-          .setAvailability(AvailabilityValue.E, AvailabilityValue.E, AvailabilityValue.D, AvailabilityValue.D)
-          .setStaticTechLevel(SimpleTechLevel.STANDARD);
-
     private static final TechAdvancement FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
           .setAdvancement(2300, 2470, 3078)
           .setApproximate(true)
@@ -952,15 +944,6 @@ public class Engine implements Serializable, ITechnology {
           .setProductionFactions(Faction.TH)
           .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
           .setStaticTechLevel(SimpleTechLevel.ADVANCED);
-
-    private static final TechAdvancement INDUSTRIAL_FUEL_CELL_TA = new TechAdvancement(TechBase.ALL)
-          .setAdvancement(2300, 2470, 3078)
-          .setApproximate(true)
-          .setTechRating(TechRating.D)
-          .setPrototypeFactions(Faction.TA)
-          .setProductionFactions(Faction.TH)
-          .setAvailability(AvailabilityValue.C, AvailabilityValue.D, AvailabilityValue.D, AvailabilityValue.C)
-          .setStaticTechLevel(SimpleTechLevel.STANDARD);
 
     private static final TechAdvancement SUPPORT_STEAM_TA = new TechAdvancement(TechBase.ALL)
           .setAdvancement(DATE_PS, DATE_PS, DATE_PS)
@@ -1072,10 +1055,8 @@ public class Engine implements Serializable, ITechnology {
                     }
                 }
             case FUEL_CELL:
-                if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                if (hasFlag(SUPPORT_VEE_ENGINE) || hasFlag(INDUSTRIAL_ENGINE)) {
                     return SUPPORT_FUEL_CELL_TA;
-                } else if (hasFlag(INDUSTRIAL_ENGINE)) {
-                    return INDUSTRIAL_FUEL_CELL_TA;
                 } else {
                     return FUEL_CELL_TA;
                 }
@@ -1088,10 +1069,8 @@ public class Engine implements Serializable, ITechnology {
             case COMPACT_ENGINE:
                 return COMPACT_FUSION_TA;
             case FISSION:
-                if (hasFlag(SUPPORT_VEE_ENGINE)) {
+                if (hasFlag(SUPPORT_VEE_ENGINE) || hasFlag(INDUSTRIAL_ENGINE)) {
                     return SUPPORT_FISSION_TA;
-                } else if (hasFlag(INDUSTRIAL_ENGINE)) {
-                    return INDUSTRIAL_FISSION_TA;
                 } else {
                     return FISSION_TA;
                 }

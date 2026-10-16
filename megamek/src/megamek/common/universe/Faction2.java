@@ -72,7 +72,7 @@ import megamek.client.ratgenerator.FactionRecord;
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
 @JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
-                     "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
+                     "tags", "color", "logo", "logoChanges", "icon", "iconChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
                      "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
                      "aresConventionsSignatory", "subunits" })
@@ -94,6 +94,8 @@ public class Faction2 {
     private final Color color = Color.LIGHT_GRAY;
     private String logo;
     private final NavigableMap<Integer, String> logoChanges = new TreeMap<>();
+    private String icon;
+    private final NavigableMap<Integer, String> iconChanges = new TreeMap<>();
     private String background;
     private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
@@ -290,6 +292,28 @@ public class Faction2 {
 
     public NavigableMap<Integer, String> getLogoChanges() {
         return logoChanges;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    /**
+     * Returns the file name of the faction's icon for the given year, honoring any era-based
+     * {@link #getIconChanges() icon changes}. Falls back to the base {@link #getIcon() icon} when no change applies
+     * for the year. Icon files are found in {@code data/images/universe/factions/}.
+     *
+     * @param year the game year to resolve the icon for
+     *
+     * @return the era-appropriate icon file name, or the base icon when none applies
+     */
+    public String getIcon(int year) {
+        final Map.Entry<Integer, String> iconByYear = iconChanges.floorEntry(year);
+        return (iconByYear == null) ? icon : iconByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getIconChanges() {
+        return iconChanges;
     }
 
     public int[] getEraMods() {

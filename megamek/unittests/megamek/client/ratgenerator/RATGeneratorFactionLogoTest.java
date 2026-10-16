@@ -34,41 +34,162 @@ package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.common.universe.Faction2;
+import megamek.common.universe.Factions2;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.MockedStatic;
 
 class RATGeneratorFactionLogoTest {
+    private static final String DIRECTORY = "data/images/universe/factions/";
+
+    private final Map<String, Faction2> factionData = new HashMap<>();
+    private MockedStatic<Factions2> factionsMock;
+
+    @BeforeEach
+    void setUp() throws IOException {
+        Factions2 factions = mock(Factions2.class);
+        when(factions.getFaction(anyString())).thenAnswer(invocation ->
+              Optional.ofNullable(factionData.get(invocation.getArgument(0, String.class))));
+        factionsMock = mockStatic(Factions2.class);
+        factionsMock.when(Factions2::getInstance).thenReturn(factions);
+
+        registerFaction("""
+              key: FS
+              name: Federated Suns
+              icon: logo_federated_suns.png
+              """);
+        registerFaction("""
+              key: CGB
+              name: Clan Ghost Bear
+              tags: [CLAN]
+              icon: logo_clan_ghost_bear.png
+              iconChanges:
+                3060: logo_rasalhague_dominion.png
+              """);
+        registerFaction("""
+              key: CDS
+              name: Clan Sea Fox
+              tags: [CLAN]
+              icon: logo_clan_sea_fox.png
+              iconChanges:
+                2984: logo_clan_diamond_sharks.png
+                3100: logo_clan_sea_fox.png
+              """);
+        registerFaction("""
+              key: FS.DAV
+              name: Davion Guards
+              """);
+        registerFaction("""
+              key: FS.DAV.1st
+              name: 1st Davion Guards
+              """);
+        registerFaction("""
+              key: FS.CRG
+              name: Crucis Lancers
+              icon: logo_crucis_lancers.png
+              """);
+        registerFaction("""
+              key: FS.CRG.1st
+              name: 1st Crucis Lancers
+              """);
+        registerFaction("""
+              key: CGB.FRR
+              name: Ghost Bear Rasalhague Galaxy
+              """);
+        registerFaction("""
+              key: CLANLESS.GC
+              name: Iconless Clan Command
+              tags: [CLAN]
+              """);
+        registerFaction("""
+              key: CLANLESS
+              name: Iconless Clan
+              tags: [CLAN]
+              """);
+        registerFaction("""
+              key: MINORLESS
+              name: Iconless Minor
+              tags: [MINOR]
+              icon: '  '
+              """);
+    }
+
+    @AfterEach
+    void tearDown() {
+        factionsMock.close();
+    }
+
     @ParameterizedTest
     @CsvSource({
           "3025, FS, logo_federated_suns",
           "3059, CGB, logo_clan_ghost_bear",
           "3060, CGB, logo_rasalhague_dominion",
-          "2984, CDS, logo_clan_sea_fox",
-          "2985, CDS, logo_clan_diamond_sharks",
+          "2983, CDS, logo_clan_sea_fox",
+          "2984, CDS, logo_clan_diamond_sharks",
           "3099, CDS, logo_clan_diamond_sharks",
-          "3100, CDS, logo_clan_sea_fox",
-          "3025, CGS, logo_clan_goliath_scorpion",
-          "3150, SE, logo_clan_goliath_scorpion",
-          "3080, CEI, logo_escorpion_imperio",
-          "3025, MERC, logo_mercenaries",
-          "3025, IND, logo_security_forces",
-          "3025, PIR, logo_pirates",
-          "3025, PSI, logo_pirates",
-          "3150, MBA, logo_clan_sea_fox",
-          "3025, MRB, logo_comstar",
-          "2785, SLIE, logo_star_league"
+          "3100, CDS, logo_clan_sea_fox"
     })
-    void builtInLogoMappingsAndHistoricalTransitionsRemainUnchanged(int year, String code, String image) {
-        String expected = "data/images/universe/factions/" + image + ".png";
+    void iconFromFactionDataHonorsYearChanges(int year, String code, String image) {
+        String expected = DIRECTORY + image + ".png";
 
         assertEquals(expected, RATGenerator.getCanonicalFactionLogoAddress(year, code));
         assertEquals(expected, RATGenerator.getFactionLogoAddress(year, code));
     }
 
+    @ParameterizedTest
+    @CsvSource({
+          "3025, FS.DAV, logo_federated_suns",
+          "3025, FS.DAV.1st, logo_federated_suns",
+          "3025, FS.CRG, logo_crucis_lancers",
+          "3025, FS.CRG.1st, logo_crucis_lancers",
+          "3059, CGB.FRR, logo_clan_ghost_bear",
+          "3060, CGB.FRR, logo_rasalhague_dominion"
+    })
+    void commandWithoutIconInheritsFromParent(int year, String code, String image) {
+        assertEquals(DIRECTORY + image + ".png", RATGenerator.getCanonicalFactionLogoAddress(year, code));
+    }
+
     @Test
-    void unmappedFactionHasNoDedicatedArtwork() {
+    void commandWithoutIconInAnyParentFallsBackToGenericLogo() {
+        assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "CLANLESS.GC"));
+        assertEquals(DIRECTORY + "logo_clan_generic.png", RATGenerator.getFactionLogoAddress(3025, "CLANLESS.GC"));
+    }
+
+    @Test
+    void factionWithoutIconHasNoDedicatedArtwork() {
+        assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "CLANLESS"));
+        assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "MINORLESS"));
+    }
+
+    @Test
+    void factionWithoutIconFallsBackToGenericLogo() {
+        assertEquals(DIRECTORY + "logo_clan_generic.png", RATGenerator.getFactionLogoAddress(3025, "CLANLESS"));
+        assertEquals(DIRECTORY + "logo_mercenaries.png", RATGenerator.getFactionLogoAddress(3025, "MINORLESS"));
+    }
+
+    @Test
+    void unknownFactionHasNoDedicatedArtwork() {
         assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "CUSTOM"));
+    }
+
+    private void registerFaction(String yaml) throws IOException {
+        Faction2 faction = new ObjectMapper(new YAMLFactory()).readValue(yaml, Faction2.class);
+        factionData.put(faction.getKey(), faction);
     }
 }

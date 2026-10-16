@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
+import java.util.function.ToDoubleFunction;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
@@ -214,6 +215,20 @@ public class EntityViewPane extends EnhancedTabbedPane {
         bfsCardPanel.setAsset(assetEntity);
         linkedBfsCardPanel.setAsset(assetEntity);
         analysisPanel.setEntity(standaloneAsset ? null : entity);
+    }
+
+    /**
+     * Sets how the Summary tab prices the units it shows, for a host application that prices units differently from
+     * their construction cost (such as MekHQ). The Technical Readout tab keeps the construction cost, as a published
+     * TRO would.
+     *
+     * @param costProvider gives the cost to show for a unit, in C-bills, or {@code null} to show the unit's own cost
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setCostProvider(@Nullable ToDoubleFunction<Entity> costProvider) {
+        summaryPanel.setCostProvider(costProvider);
     }
 
     /**

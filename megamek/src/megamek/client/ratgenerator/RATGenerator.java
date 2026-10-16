@@ -2060,7 +2060,8 @@ public class RATGenerator {
         return (fRec == null) || fRec.isInEra(era);
     }
 
-    private static final String FACTION_LOGO_DIRECTORY = "data/images/universe/factions/";
+    /** The directory holding the faction icons named by each faction's {@link Faction2#getIcon(int) icon}. */
+    public static final String FACTION_LOGO_DIRECTORY = "data/images/universe/factions/";
     private static final String FACTION_LOGO_FILE_TYPE = ".png";
 
     /**

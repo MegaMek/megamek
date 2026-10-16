@@ -35,7 +35,7 @@ package megamek.common.battlefieldSupport;
 import java.io.Serializable;
 import java.util.Optional;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A single Special ability on a Battlefield Support Asset, stored as an abbreviated code plus an optional parameter

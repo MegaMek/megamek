@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,25 +30,29 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
+package megamek.client.ui.preferences;
 
-package megamek.common.annotations;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Target;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * When used on a method, this annotation denotes that the method may return a null value. As a result, consumers of
- * that value should be prepared to handle nulls.
- * <br>
- * <br>
- * When used on a parameter, this annotation denotes that the parameter may contain a null value. As a result, any
- * overriding methods need ot be able to handle nulls.
- */
-@Target({ ElementType.METHOD, ElementType.PARAMETER })
-@Documented
-@Inherited
-public @interface Nullable {
+import org.junit.jupiter.api.Test;
 
+class PreferencesNodeTest {
+
+    @Test
+    void theValuesCanBeGatheredForMoreThanOneSave() throws Exception {
+        // a dialog that saves the preferences when it closes must not stop the save on exit from writing them
+        PreferencesNode node = new PreferencesNode(PreferencesNodeTest.class);
+        Map<String, String> stored = new HashMap<>();
+        stored.put("BotMoveOrderDialog", "1200|480|100|80|false");
+        node.initialize(stored);
+
+        Map<String, String> firstSave = node.getFinalValues();
+        Map<String, String> secondSave = node.getFinalValues();
+
+        assertEquals(stored, firstSave);
+        assertEquals(firstSave, secondSave);
+    }
 }

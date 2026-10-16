@@ -42,7 +42,7 @@ import java.util.Base64;
 import java.util.Objects;
 import javax.imageio.ImageIO;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.logging.MMLogger;
 

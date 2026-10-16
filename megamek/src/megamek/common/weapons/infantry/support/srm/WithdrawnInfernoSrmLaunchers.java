@@ -35,7 +35,7 @@ package megamek.common.weapons.infantry.support.srm;
 import java.util.List;
 import java.util.Locale;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Names of the conventional infantry Inferno SRM launchers withdrawn by the TechManual pp. 350-352 errata.

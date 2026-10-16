@@ -32,6 +32,7 @@
  */
 package megamek.client.ui.clientGUI.boardview.spriteHandler.sbf;
 
+import jakarta.annotation.Nullable;
 import megamek.client.SBFClient;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -39,7 +40,6 @@ import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.client.ui.clientGUI.boardview.sprite.sbf.SBFFormationSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.sbf.SBFPlaceHolderSprite;
 import megamek.client.ui.clientGUI.boardview.spriteHandler.BoardViewSpriteHandler;
-import megamek.common.annotations.Nullable;
 import megamek.common.event.GameEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFGame;

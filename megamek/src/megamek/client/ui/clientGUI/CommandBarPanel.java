@@ -37,6 +37,7 @@ import java.awt.BorderLayout;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.BugReportMessages;
 import megamek.client.ui.Messages;
@@ -45,7 +46,6 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.HazardButton;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**

@@ -34,7 +34,7 @@ package megamek.common.battlefieldSupport;
 
 import java.io.Serializable;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * The Short/Medium/Long range of a Battlefield Support Asset, in hexes. The Asset card shows this as

@@ -38,10 +38,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;

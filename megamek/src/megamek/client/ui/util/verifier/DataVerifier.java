@@ -33,7 +33,7 @@
  */
 package megamek.client.ui.util.verifier;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Interface for a data verification object. Implementing classes should evaluate the value passed into the

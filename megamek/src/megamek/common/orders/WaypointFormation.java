@@ -37,8 +37,8 @@ import java.io.Serializable;
 import java.util.Locale;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.annotations.Nullable;
 
 /**
  * The formation a group of units travels in on one leg of its route: the leg that ends at the waypoint this is set on.

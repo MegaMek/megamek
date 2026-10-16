@@ -51,6 +51,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPInputStream;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.bot.AIType;
 import megamek.client.generator.skillGenerators.AbstractSkillGenerator;
@@ -69,7 +70,6 @@ import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
 import megamek.common.TemporaryECMField;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;

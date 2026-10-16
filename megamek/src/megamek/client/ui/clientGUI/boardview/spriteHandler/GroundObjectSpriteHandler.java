@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -48,7 +49,6 @@ import megamek.client.ui.clientGUI.boardview.sprite.HexFlagSprite;
 import megamek.client.ui.clientGUI.boardview.sprite.Sprite;
 import megamek.common.Player;
 import megamek.common.actions.ScanAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;

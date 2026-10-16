@@ -32,9 +32,9 @@
  */
 package megamek.client.ratgenerator;
 
+import jakarta.annotation.Nullable;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.Gender;
 import megamek.common.enums.SkillLevel;

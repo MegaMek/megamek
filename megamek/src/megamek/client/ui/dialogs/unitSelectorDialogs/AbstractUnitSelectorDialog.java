@@ -67,6 +67,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -76,7 +77,6 @@ import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
 import megamek.client.ui.models.XTableColumnModel;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleValue.BVCalculator;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.internationalization.I18n;

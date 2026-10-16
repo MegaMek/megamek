@@ -32,7 +32,7 @@
  */
 package megamek.common.enums;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A Manei Domini rank, and the cybernetic allowance that comes with it.

@@ -38,9 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;

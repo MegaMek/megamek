@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.annotation.Nonnull;
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Represents a location (i.e. Coords) on the game board of a specific ID. With a game having multiple maps, this class

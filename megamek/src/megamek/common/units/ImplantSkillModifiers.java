@@ -35,8 +35,8 @@ package megamek.common.units;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 
 /**

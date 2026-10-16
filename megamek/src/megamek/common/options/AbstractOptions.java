@@ -44,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Parent class for options settings

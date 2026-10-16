@@ -36,6 +36,7 @@ package megamek.common.units;
 
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
@@ -43,7 +44,6 @@ import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;

@@ -38,9 +38,9 @@ import static megamek.client.bot.princess.FiringPlanCalculationParameters.Firing
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.EntityState;
 import megamek.client.bot.princess.FiringPlanCalculationParameters;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;

@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import freemarker.template.Template;
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.templates.TemplateConfiguration;
 import megamek.logging.MMLogger;
 

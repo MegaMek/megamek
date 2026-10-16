@@ -37,6 +37,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.baseComponents.MenuButton;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
@@ -46,7 +47,6 @@ import megamek.client.ui.util.ViewFormatting;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.conversion.ASConverter;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.templates.TROView;
 import megamek.common.ui.EnhancedTabbedPane;

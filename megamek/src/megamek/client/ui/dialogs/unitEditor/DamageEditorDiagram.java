@@ -32,15 +32,26 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.io.Serial;
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JSplitPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.dialogs.unitDisplay.ArmorPanel;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Aero;
 import megamek.common.units.Entity;
 

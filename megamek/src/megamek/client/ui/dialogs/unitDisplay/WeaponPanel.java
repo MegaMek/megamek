@@ -32,7 +32,13 @@
  */
 package megamek.client.ui.dialogs.unitDisplay;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
@@ -46,6 +52,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.event.MekDisplayEvent;
 import megamek.client.ui.GBC;
@@ -66,7 +73,6 @@ import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.ArtilleryRange;

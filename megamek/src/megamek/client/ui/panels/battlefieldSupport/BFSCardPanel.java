@@ -32,8 +32,8 @@
  */
 package megamek.client.ui.panels.battlefieldSupport;
 
-import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -51,8 +51,8 @@ import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.cardDrawer.BattlefieldSupportCard;
 import megamek.common.battlefieldSupport.cardDrawer.BattlefieldSupportCard.ColorMode;

@@ -38,12 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.common.ECMInfo;
 import megamek.common.LosEffects;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentActivation;
 import megamek.common.game.Game;
-import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
 import megamek.common.units.Targetable;
 

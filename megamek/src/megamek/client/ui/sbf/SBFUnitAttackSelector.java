@@ -43,8 +43,8 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionListener;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.tooltip.SBFInGameObjectTooltip;
-import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 

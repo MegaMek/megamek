@@ -40,10 +40,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import jakarta.xml.bind.annotation.XmlElement;
 import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.IdealHex;
-import megamek.common.annotations.Nullable;
 
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x values are a half-hex down. Directions

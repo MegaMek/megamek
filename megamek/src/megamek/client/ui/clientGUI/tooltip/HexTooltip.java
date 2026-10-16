@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -55,7 +56,6 @@ import megamek.common.Hex;
 import megamek.common.IndustrialElevator;
 import megamek.common.Player;
 import megamek.common.ReportMessages;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;

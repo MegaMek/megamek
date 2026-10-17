@@ -108,6 +108,9 @@ public class BLKVTOLFile extends BLKFile implements IMekLoader {
         if ((engineRating % 5) > 0) {
             engineRating += (5 - (engineRating % 5));
         }
+        if (engineRating > 400) {
+            engineFlags |= Engine.LARGE_ENGINE;
+        }
         t.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
         t.setOriginalWalkMP(dataFile.getDataAsInt("cruiseMP")[0]);
 

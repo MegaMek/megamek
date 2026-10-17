@@ -4379,13 +4379,15 @@ public class Princess extends BotClient {
      * (and possibly others) to know about all the possible incoming Homing or IF attacks that could take advantage of
      * their TAGs, for later calculations.
      * <p>
+     * Supporters always come from the shooter's own side: our units when we fire the TAG, the visible enemy units when
+     * we estimate an enemy's TAG shot at us.</p>
+     * <p>
      * Steps are: 1. All relevant guidable attacks (within range of the target) are added to a list. 1a. All Homing
      * Weapons landing this turn are added to the list. 1b. All IF-capable, Semi-Guided, and Homing weapons that have
-     * not yet fired but _could_ are added as well. Supporters always come from the shooter's own side: our units when
-     * we fire the TAG, the visible enemy units when we estimate an enemy's TAG shot at us. 2. Each attacker-target
-     * location pair's expected homing/indirect fire damage is cached for later re-use. 3. During the Indirect phase,
-     * when TAG attacks are announced, relevant units can use this info to decide whether they want to TAG or reserve
-     * their activation for actual attacks. 4. All info is cleared at the start of the next turn.
+     * not yet fired but _could_ are added as well. 2. Each attacker-target location pair's expected homing/indirect
+     * fire damage is cached for later re-use. 3. During the Indirect phase, when TAG attacks are announced, relevant
+     * units can use this info to decide whether they want to TAG or reserve their activation for actual attacks. 4. All
+     * info is cleared at the start of the next turn.
      */
     public List<WeaponMounted> computeGuidedWeapons(Entity entityToFire, Coords location) {
         // Key cached entries to firing entity _and_ coordinates, as each shooter may have different targets and weapons

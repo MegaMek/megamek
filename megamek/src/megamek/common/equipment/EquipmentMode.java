@@ -38,7 +38,7 @@ package megamek.common.equipment;
 import java.util.Hashtable;
 import java.util.Objects;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.weapons.Weapon;
 
 /**

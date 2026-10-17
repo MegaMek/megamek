@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.common.RangeType;
 import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
@@ -42,7 +43,6 @@ import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Era;
@@ -2481,6 +2481,30 @@ public class AmmoType extends EquipmentType {
               !ammoType.hasFlag(AmmoTypeFlag.F_BATTLEARMOR));
     }
 
+    /**
+     * Battle armor and ProtoMeks may only fire the special missile munitions Total Warfare lists for them: Inferno,
+     * Multi-Purpose and Torpedo rounds, plus Standard (TW p.229; forum ruling
+     * https://www.battletech.com/forums/index.php/topic,91104). Artemis-capable rounds are excluded: ProtoMeks may not
+     * install Artemis IV (TechManual p.207). Ammo for other weapons is not limited by this rule.
+     *
+     * @param ammoType the ammo to check
+     *
+     * @return {@code true} if a battle armor squad or ProtoMek may load this ammo
+     */
+    public static boolean isAllowedForBattleArmorAndProtoMeks(AmmoType ammoType) {
+        if (!EnumSet.of(AmmoTypeEnum.SRM, AmmoTypeEnum.LRM, AmmoTypeEnum.SRM_IMP, AmmoTypeEnum.LRM_IMP)
+              .contains(ammoType.getAmmoType())) {
+            return true;
+        }
+        return BATTLE_ARMOR_AND_PROTOMEK_MISSILE_MUNITIONS.containsAll(ammoType.getMunitionType());
+    }
+
+    private static final EnumSet<Munitions> BATTLE_ARMOR_AND_PROTOMEK_MISSILE_MUNITIONS = EnumSet.of(
+          Munitions.M_STANDARD,
+          Munitions.M_INFERNO,
+          Munitions.M_MULTI_PURPOSE,
+          Munitions.M_TORPEDO);
+
     public static void initializeTypes() {
         // Save copies of the SRM and LRM ammo to use to create munitions.
         ArrayList<AmmoType> srmAmmos = new ArrayList<>();
@@ -3712,6 +3736,11 @@ public class AmmoType extends EquipmentType {
 
             // For MML, only create incendiary variants of LRM-mode ammo
             if (type == AmmoTypeEnum.MML && !ammo.hasFlag(F_MML_LRM)) {
+                continue;
+            }
+
+            // Battle armor LRMs may only fire the munitions TW p.229 lists; Incendiary is not one (TO:AUE p.179)
+            if (ammo.hasFlag(F_BATTLEARMOR)) {
                 continue;
             }
 

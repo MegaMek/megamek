@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.LosEffects;
 import megamek.common.OffBoardDirection;
@@ -45,7 +46,6 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.TargetRollModifier;
 import megamek.common.actions.ScanAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

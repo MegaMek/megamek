@@ -36,8 +36,8 @@ package megamek.common.equipment;
 import java.io.Serial;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.moves.MoveStep;
 import megamek.common.units.Entity;

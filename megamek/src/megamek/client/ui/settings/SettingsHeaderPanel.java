@@ -42,8 +42,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 
 /** Header content for a settings page, using caller-resolved text and an optional caller-supplied icon. */
 public class SettingsHeaderPanel extends JPanel {

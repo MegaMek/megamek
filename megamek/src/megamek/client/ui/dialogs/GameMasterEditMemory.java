@@ -36,7 +36,7 @@ package megamek.client.ui.dialogs;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 
 /**

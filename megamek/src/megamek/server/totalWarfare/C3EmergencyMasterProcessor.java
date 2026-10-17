@@ -36,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.ComputeECM;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;

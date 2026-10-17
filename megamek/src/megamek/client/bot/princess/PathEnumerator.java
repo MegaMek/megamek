@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,13 +45,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.princess.geometry.ConvexBoardArea;
 import megamek.client.bot.princess.geometry.CoordFacingCombo;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
@@ -449,7 +450,16 @@ public class PathEnumerator {
                       true);
                 break;
             case MoveToDestination:
-                getOwner().getUnitBehaviorTracker().getWaypointForEntity(mover).ifPresent(destinations::add);
+                // The hex the unit's moves are scored against: a formation unit's slot rather than its route's next
+                // waypoint. Aiming the long-range path at the waypoint while ranking by the slot left the unit no
+                // move that went to its slot (HammerGS's playtest, 2026-09-26).
+                Optional<Coords> activeWaypoint = getOwner().getUnitBehaviorTracker()
+                      .getActiveWaypoint(mover, getOwner());
+                if (activeWaypoint.isPresent()) {
+                    destinations.add(activeWaypoint.get());
+                    logger.debug("[BotOrders] {} (ID {}): long-range path toward {}", mover.getDisplayName(),
+                          mover.getId(), activeWaypoint.get().getBoardNum());
+                }
                 if (destinations.isEmpty()) {
                     destinations = getOwner().getClusterTracker()
                           .getDestinationCoords(mover, getOwner().getHomeEdge(mover), true);

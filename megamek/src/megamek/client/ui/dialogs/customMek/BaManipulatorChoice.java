@@ -47,9 +47,9 @@ import java.util.Vector;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;

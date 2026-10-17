@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -48,7 +49,6 @@ import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
 import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.ScanAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

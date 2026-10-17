@@ -34,7 +34,7 @@ package megamek.client.ui.settings;
 
 import javax.swing.JComponent;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /** Allows section content to expose an enabled state and a small control in its collapsed header. */
 public interface SectionHeaderControlProvider {

@@ -48,6 +48,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
+import jakarta.annotation.Nullable;
 import megamek.client.SBFClient;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.boardview.BoardView;
@@ -69,7 +70,6 @@ import megamek.client.ui.panels.phaseDisplay.SBFReportDisplay;
 import megamek.client.ui.panels.phaseDisplay.StatusBarPhaseDisplay;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.widget.SBFReportPanel;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameListener;

@@ -52,11 +52,11 @@ import java.util.Iterator;
 import java.util.Objects;
 import javax.swing.ImageIcon;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.PlayerColour;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.common.equipment.GunEmplacement;

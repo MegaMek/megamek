@@ -38,8 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.common.RecordingCompositeTechLevel.ComponentTechRecord;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.Faction;
 import megamek.common.interfaces.ITechnology;
 import megamek.common.units.Entity;

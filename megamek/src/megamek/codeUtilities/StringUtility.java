@@ -33,7 +33,7 @@
 
 package megamek.codeUtilities;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 public class StringUtility {
     /**

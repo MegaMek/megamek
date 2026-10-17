@@ -40,12 +40,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.LosEffects;
 import megamek.common.Messages;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.equipment.INarcPod;

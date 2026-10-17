@@ -38,9 +38,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ResourceBundle;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
 

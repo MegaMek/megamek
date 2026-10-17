@@ -37,7 +37,7 @@ import static megamek.client.ui.util.FlatLafStyleBuilder.setFontScaling;
 
 import javax.swing.JTextField;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /** A localized, consistently styled text field for settings forms. */
 public class SettingsTextField extends JTextField implements SettingsHelpProvider {

@@ -37,7 +37,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -48,14 +51,23 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.Vector;
+import java.util.concurrent.atomic.AtomicReference;
 
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
+import megamek.common.OffBoardDirection;
 import megamek.common.board.Coords;
 import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
+import megamek.common.moves.MoveStep;
+import megamek.common.orders.OrderPriority;
+import megamek.common.orders.UnitOrderAction;
+import megamek.common.orders.UnitOrders;
 import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
+import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -77,6 +89,9 @@ class UnitBehaviorOrdersTest {
         BoardClusterTracker clusterTracker = mock(BoardClusterTracker.class);
         doReturn(clusterTracker).when(princess).getClusterTracker();
         doReturn(true).when(princess).getForcedWithdrawal();
+        // the bot sends its order changes to the server as chat commands; there is no server here
+        doNothing().when(princess).sendChat(anyString());
+        doNothing().when(princess).sendChat(anyString(), any(Level.class));
         // every edge and hex is reachable unless a test says otherwise
         when(clusterTracker.getDestinationCoords(any(Entity.class), any(CardinalEdge.class), anyBoolean()))
               .thenReturn(Set.of(new Coords(0, 0)));
@@ -98,6 +113,15 @@ class UnitBehaviorOrdersTest {
         when(unit.getForcedWithdrawalOrder()).thenReturn(order);
         when(unit.getGame()).thenReturn(game);
         when(unit.getBoardId()).thenReturn(0);
+        when(unit.getPosition()).thenReturn(new Coords(10, 20));
+        when(unit.getMovementMode()).thenReturn(EntityMovementMode.BIPED);
+        // orders live on the unit, so the mock keeps them the way a real unit would
+        AtomicReference<UnitOrders> orders = new AtomicReference<>(UnitOrders.NONE);
+        when(unit.getUnitOrders()).thenAnswer(invocation -> orders.get());
+        doAnswer(invocation -> {
+            orders.set(invocation.getArgument(0));
+            return null;
+        }).when(unit).setUnitOrders(any());
         return unit;
     }
 
@@ -133,7 +157,7 @@ class UnitBehaviorOrdersTest {
 
         assertEquals(BehaviorType.ForcedWithdrawal,
               princess.getUnitBehaviorTracker().getBehaviorType(ordered, princess));
-        assertFalse(princess.getUnitBehaviorTracker().isFollowingWaypointOverWithdrawal(ordered, princess));
+        assertFalse(princess.getUnitBehaviorTracker().isFollowingOrdersOverWithdrawal(ordered, princess));
     }
 
     @Test
@@ -200,5 +224,194 @@ class UnitBehaviorOrdersTest {
         assertEquals(nearWaypoint.distance(southWaypoint) - Princess.DISTANCE_TO_WAYPOINT, nearDistance);
         assertTrue(nearDistance < farDistance);
         assertEquals(0, ranker.distanceToDestination(healthy, new Coords(10, 29), 0, game));
+    }
+
+    private static void giveEdgeOrder(Entity unit, UnitOrderAction action, OffBoardDirection edge) {
+        unit.setUnitOrders(action.apply(unit.getUnitOrders(), List.of(), edge, UnitOrders.FACING_AUTO,
+              UnitOrders.FACING_AUTO, null, 4));
+    }
+
+    @Test
+    void anEdgeOrderSendsEvenACrippledUnitToThatEdge() {
+        Entity crippled = unit(146, true, ForcedWithdrawalOrder.BOT_RULES);
+        giveEdgeOrder(crippled, UnitOrderAction.MOVE_TO_EDGE, OffBoardDirection.NORTH);
+
+        assertEquals(BehaviorType.MoveToDestination,
+              princess.getUnitBehaviorTracker().getBehaviorType(crippled, princess));
+        assertEquals(CardinalEdge.NORTH, princess.getHomeEdge(crippled));
+        assertTrue(princess.getUnitBehaviorTracker().isFollowingOrdersOverWithdrawal(crippled, princess));
+    }
+
+    @Test
+    void aGamemastersWithdrawOrderBeatsAnEdgeOrder() {
+        Entity ordered = unit(146, false, ForcedWithdrawalOrder.WITHDRAW);
+        giveEdgeOrder(ordered, UnitOrderAction.EXIT_BY_EDGE, OffBoardDirection.NORTH);
+
+        assertEquals(BehaviorType.ForcedWithdrawal,
+              princess.getUnitBehaviorTracker().getBehaviorType(ordered, princess));
+        assertEquals(CardinalEdge.SOUTH, princess.getHomeEdge(ordered));
+    }
+
+    @Test
+    void aUnitOrderedToAnEdgeToHoldThereNeverLeavesTheBoard() {
+        Entity healthy = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        giveEdgeOrder(healthy, UnitOrderAction.MOVE_TO_EDGE, OffBoardDirection.NORTH);
+
+        assertFalse(princess.mustFleeBoard(healthy));
+    }
+
+    @Test
+    void anEdgeOrderBeatsTheBotWideFleeOrder() {
+        orderFleeNorth();
+        Entity healthy = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        giveEdgeOrder(healthy, UnitOrderAction.MOVE_TO_EDGE, OffBoardDirection.EAST);
+
+        assertEquals(CardinalEdge.EAST, princess.getHomeEdge(healthy));
+    }
+
+    @Test
+    void pauseAndStopHoldTheUnit() {
+        princess.getGame().setCurrentRound(6);
+        Entity paused = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        paused.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withPaused(true));
+        Entity stoppedLastRound = unit(148, false, ForcedWithdrawalOrder.BOT_RULES);
+        stoppedLastRound.setUnitOrders(UnitOrders.stoppedInRound(princess.getGame().getCurrentRound() - 1));
+        Entity stoppedThisRound = unit(149, false, ForcedWithdrawalOrder.BOT_RULES);
+        stoppedThisRound.setUnitOrders(UnitOrders.stoppedInRound(princess.getGame().getCurrentRound()));
+
+        assertTrue(princess.getUnitOrdersFollower().isHolding(paused));
+        assertFalse(princess.getUnitOrdersFollower().isHolding(stoppedLastRound));
+        assertTrue(princess.getUnitOrdersFollower().isHolding(stoppedThisRound));
+    }
+
+    @Test
+    void anImperativeRoutePullsHarder() {
+        Entity normal = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        normal.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        Entity imperative = unit(148, false, ForcedWithdrawalOrder.BOT_RULES);
+        imperative.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT))
+              .withPriority(OrderPriority.IMPERATIVE));
+
+        assertEquals(1.0, princess.getUnitOrdersFollower().routeWeight(normal));
+        assertEquals(UnitOrdersFollower.IMPERATIVE_ROUTE_WEIGHT,
+              princess.getUnitOrdersFollower().routeWeight(imperative));
+    }
+
+    @Test
+    void anOrderedFacingStandsWhileTheThreatIsInItsFrontArc() {
+        // The three cases from the design: Atlas ordered to face NE (1) at 1508.
+        Coords position = new Coords(14, 7);
+        int northEast = 1;
+        Coords threatToTheNorth = new Coords(14, 2);
+        Coords threatToTheSouthWest = new Coords(10, 10);
+
+        assertEquals(northEast, OrderedFacing.facingThatStands(northEast, position, null));
+        assertEquals(northEast, OrderedFacing.facingThatStands(northEast, position, threatToTheNorth));
+        assertEquals(UnitOrders.FACING_AUTO,
+              OrderedFacing.facingThatStands(northEast, position, threatToTheSouthWest));
+    }
+
+    @Test
+    void theStoppedFacingAppliesOnlyAtTheLastWaypoint() {
+        Entity healthy = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        healthy.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)).withFacings(0, 1));
+
+        assertEquals(0, princess.getUnitOrdersFollower().orderedFacing(healthy, new Coords(14, 20)));
+        assertEquals(1, princess.getUnitOrdersFollower().orderedFacing(healthy, new Coords(14, 2)));
+    }
+
+    @Test
+    void aUnitAtTheEndOfItsRouteHoldsUntilAnEnemyComesInRange() {
+        Entity healthy = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        healthy.setUnitOrders(UnitOrders.NONE.withRoute(List.of(new Coords(10, 21))));
+        doReturn(15).when(princess).getMaxWeaponRange(healthy);
+        doReturn(List.of()).when(princess).getEnemyEntities();
+
+        assertTrue(princess.getUnitOrdersFollower().isHolding(healthy));
+
+        Entity jenner = mock(Entity.class);
+        when(jenner.getPosition()).thenReturn(new Coords(10, 26));
+        when(jenner.getBoardId()).thenReturn(0);
+        doReturn(List.of(jenner)).when(princess).getEnemyEntities();
+
+        assertFalse(princess.getUnitOrdersFollower().isHolding(healthy));
+        assertEquals(BehaviorType.Engaged, princess.getUnitBehaviorTracker().getBehaviorType(healthy, princess));
+    }
+
+    @Test
+    void aRoutesPriorityDecidesHowMuchDamageCounts() {
+        Entity normal = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        normal.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT)));
+        Entity imperative = unit(148, false, ForcedWithdrawalOrder.BOT_RULES);
+        imperative.setUnitOrders(UnitOrders.NONE.withRoute(List.of(NORTH_WAYPOINT))
+              .withPriority(OrderPriority.IMPERATIVE));
+        Entity noOrders = unit(149, false, ForcedWithdrawalOrder.BOT_RULES);
+
+        assertEquals(UnitOrdersFollower.NORMAL_ROUTE_DAMAGE_WEIGHT,
+              princess.getUnitOrdersFollower().damageWeight(normal));
+        assertEquals(UnitOrdersFollower.IMPERATIVE_DAMAGE_WEIGHT,
+              princess.getUnitOrdersFollower().damageWeight(imperative));
+        assertEquals(1.0, princess.getUnitOrdersFollower().damageWeight(noOrders));
+    }
+
+    @Test
+    void aFleeOrderGivesEveryUnitAnExitOrderInPlaceOfItsRoute() {
+        Entity routed = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        routed.setUnitOrders(UnitOrders.NONE.withRoute(List.of(new Coords(5, 30))));
+        doReturn(List.of(routed)).when(princess).getEntitiesOwned();
+
+        princess.getUnitOrdersFollower().orderAllToExit(CardinalEdge.NORTH);
+
+        assertFalse(routed.getUnitOrders().hasRoute());
+        assertEquals(CardinalEdge.NORTH, princess.getHomeEdge(routed));
+        assertTrue(princess.getUnitOrdersFollower().isOrderedToExit(routed));
+    }
+
+    private PathRanker plainRanker() {
+        return new PathRanker(princess) {
+            @Override
+            protected RankedPath rankPath(MovePath path, Game game, int maxRange, double fallTolerance,
+                  List<Entity> enemies, Coords friendsCoords) {
+                return null;
+            }
+
+            @Override
+            public double distanceToClosestEnemy(Entity entity, Coords position, Game game) {
+                return 0;
+            }
+        };
+    }
+
+    @Test
+    void reachingAWaypointWithMoreToComeIsScoredByTheWayStillToGo() {
+        // HammerGS's playtest: every hex near waypoint 1 scored as "arrived", so the Wraith looped past it to burn MP.
+        Entity wraith = unit(147, false, ForcedWithdrawalOrder.BOT_RULES);
+        wraith.setUnitOrders(UnitOrders.NONE.withRoute(List.of(new Coords(10, 10), new Coords(10, 2))));
+        PathRanker ranker = plainRanker();
+        Game game = mock(Game.class);
+
+        int atFirstWaypoint = ranker.distanceToDestination(wraith, new Coords(10, 11), 0, game);
+        int onTowardTheSecond = ranker.distanceToDestination(wraith, new Coords(10, 8), 0, game);
+        int shortOfTheFirst = ranker.distanceToDestination(wraith, new Coords(10, 20), 0, game);
+
+        assertEquals(9, atFirstWaypoint);
+        assertTrue(onTowardTheSecond < atFirstWaypoint);
+        assertTrue(atFirstWaypoint < shortOfTheFirst);
+    }
+
+    @Test
+    void aLoopThatDoublesBackIsCounted() {
+        MovePath loop = mock(MovePath.class);
+        when(loop.getStartCoords()).thenReturn(new Coords(10, 10));
+        Vector<MoveStep> steps = new Vector<>();
+        for (Coords position : List.of(new Coords(10, 9), new Coords(10, 8), new Coords(10, 9),
+              new Coords(10, 10))) {
+            MoveStep step = mock(MoveStep.class);
+            when(step.getPosition()).thenReturn(position);
+            steps.add(step);
+        }
+        when(loop.getStepVector()).thenReturn(steps);
+
+        assertEquals(2, UnitOrdersFollower.backtrackSteps(loop, new Coords(10, 2)));
     }
 }

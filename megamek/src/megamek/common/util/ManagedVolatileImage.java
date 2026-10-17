@@ -87,7 +87,7 @@ public class ManagedVolatileImage {
             volatileImage.flush();
         }
         volatileImage = gc.createCompatibleVolatileImage(width, height, transparency);
-        LOGGER.info("Created volatile image {}x{} on screen {}", width, height, gc.getDevice().getIDstring());
+        LOGGER.debug("Created volatile image {}x{} on screen {}", width, height, gc.getDevice().getIDstring());
         renderToVolatileImage();
     }
 
@@ -128,7 +128,7 @@ public class ManagedVolatileImage {
      */
     public VolatileImage getImage(GraphicsConfiguration target) {
         if ((target != null) && isScreen(target) && (target.getDevice() != gc.getDevice())) {
-            LOGGER.info("Volatile image {}x{} moved from screen {} to screen {}; recreating it",
+            LOGGER.debug("Volatile image {}x{} moved from screen {} to screen {}; recreating it",
                   width, height, gc.getDevice().getIDstring(), target.getDevice().getIDstring());
             gc = target;
             createVolatileImage();
@@ -136,11 +136,11 @@ public class ManagedVolatileImage {
         do {
             int validation = volatileImage.validate(gc);
             if (validation == VolatileImage.IMAGE_INCOMPATIBLE) {
-                LOGGER.info("Volatile image {}x{} is incompatible with screen {}; recreating it",
+                LOGGER.debug("Volatile image {}x{} is incompatible with screen {}; recreating it",
                       width, height, gc.getDevice().getIDstring());
                 createVolatileImage();
             } else if (validation == VolatileImage.IMAGE_RESTORED || volatileImage.contentsLost()) {
-                LOGGER.info("Volatile image {}x{} lost its contents on screen {}; redrawing it",
+                LOGGER.debug("Volatile image {}x{} lost its contents on screen {}; redrawing it",
                       width, height, gc.getDevice().getIDstring());
                 renderToVolatileImage();
             }

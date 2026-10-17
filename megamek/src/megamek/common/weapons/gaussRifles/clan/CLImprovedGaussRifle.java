@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -68,7 +68,7 @@ public class CLImprovedGaussRifle extends GaussWeapon {
         name = "Improved Gauss Rifle";
         setInternalName("Improved Gauss Rifle");
         addLookupName("CLIMPGaussRifle");
-        sortingName = "Gauss Imp";
+        sortingName = "Gauss Imp C";
         heat = 1;
         damage = 15;
         ammoType = AmmoType.AmmoTypeEnum.GAUSS_IMP;

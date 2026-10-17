@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.AbstractAction;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.MegaMekGUI;
 import megamek.client.ui.clientGUI.SBFClientGUI;
 import megamek.client.ui.util.KeyCommandBind;
@@ -45,10 +46,9 @@ import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
-import megamek.common.units.Entity;
-import megamek.common.annotations.Nullable;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.strategicBattleSystems.SBFFormation;
+import megamek.common.units.Entity;
 
 public abstract class SBFActionPhaseDisplay extends StatusBarPhaseDisplay {
 

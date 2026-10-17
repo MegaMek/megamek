@@ -32,8 +32,8 @@
  */
 package megamek.common.rules.tacops;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.ComputeECM;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.rules.RulesScanning;

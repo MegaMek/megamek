@@ -45,6 +45,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -54,7 +55,6 @@ import megamek.client.ui.clientGUI.UnitRecipients;
 import megamek.client.ui.dialogs.UnitLoadingDialog;
 import megamek.common.Player;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.enums.Gender;
 import megamek.common.loaders.MekSummaryCache;

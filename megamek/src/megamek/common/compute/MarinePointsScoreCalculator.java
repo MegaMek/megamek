@@ -35,7 +35,7 @@ package megamek.common.compute;
 
 import java.util.EnumSet;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.MiscType;

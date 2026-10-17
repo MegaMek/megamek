@@ -35,9 +35,9 @@ package megamek.client.bot.princess;
 import java.util.Comparator;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.units.Entity;
-import megamek.common.annotations.Nullable;
 
 /**
  * Calculates the median coordinate of enemy units for tactical decision-making.

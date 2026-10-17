@@ -34,10 +34,10 @@ package megamek.common.units;
 
 import java.util.Optional;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

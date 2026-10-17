@@ -41,13 +41,13 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.sbf.SelectDirection;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SBFFullGameReport;
 import megamek.common.Team;
 import megamek.common.alphaStrike.AlphaStrikeElement;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.enums.GamePhase;

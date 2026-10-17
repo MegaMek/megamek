@@ -37,7 +37,7 @@ import java.awt.Image;
 import java.io.File;
 import java.util.Objects;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.util.ImageUtil;
 
 /**

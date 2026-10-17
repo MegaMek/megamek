@@ -35,10 +35,10 @@ package megamek.common.commandLine;
 
 import java.io.File;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import megamek.server.Server;
 

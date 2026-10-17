@@ -40,7 +40,7 @@ import static megamek.codeUtilities.MathUtility.clampUlp1;
 import java.util.List;
 import java.util.TreeSet;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;

@@ -33,8 +33,8 @@
 
 package megamek.common.units;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.Engine;
 

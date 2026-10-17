@@ -38,7 +38,7 @@ import java.util.Objects;
 import javax.swing.JComponent;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This builder class is used to assign fonts and font styles to JComponents in the Swing GUI using FlatLaf's typography

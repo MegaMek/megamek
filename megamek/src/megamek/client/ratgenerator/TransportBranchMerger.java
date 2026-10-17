@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.ToIntFunction;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
 import megamek.common.units.UnitType;

@@ -44,11 +44,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.ECCMComparator;
 import megamek.common.ECMComparator;
 import megamek.common.ECMInfo;
 import megamek.common.TemporaryECMField;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.equipment.INarcPod;

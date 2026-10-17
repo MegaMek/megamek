@@ -38,8 +38,8 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 

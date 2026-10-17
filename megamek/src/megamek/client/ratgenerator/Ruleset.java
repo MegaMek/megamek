@@ -46,9 +46,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 
+import jakarta.annotation.Nullable;
 import megamek.client.generator.RandomNameGenerator;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.EntityWeightClass;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;

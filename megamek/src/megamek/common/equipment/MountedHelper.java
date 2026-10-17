@@ -33,7 +33,7 @@
 
 package megamek.common.equipment;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * Helper methods for Mounted to clean up checks like "is this an Artemis IV".

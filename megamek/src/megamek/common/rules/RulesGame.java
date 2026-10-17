@@ -33,9 +33,9 @@ package megamek.common.rules;
  */
 
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;

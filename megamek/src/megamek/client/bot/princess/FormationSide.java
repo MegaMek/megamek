@@ -34,8 +34,8 @@ package megamek.client.bot.princess;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.Terrains;

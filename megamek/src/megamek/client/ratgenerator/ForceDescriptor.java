@@ -35,8 +35,8 @@ package megamek.client.ratgenerator;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.MekFileParser;

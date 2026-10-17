@@ -37,6 +37,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.coverage.Builder;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
@@ -56,7 +57,6 @@ import megamek.common.actions.SpotAction;
 import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
-import megamek.common.annotations.Nullable;
 import megamek.common.annotations.StaticWrapper;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;

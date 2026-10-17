@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
@@ -49,11 +49,6 @@ import megamek.common.units.ConvFighter;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.weapons.ppc.PPCWeapon;
-import megamek.common.weapons.prototypes.innerSphere.ISERLaserLargePrototype;
-import megamek.common.weapons.prototypes.innerSphere.ISPulseLaserLargePrototype;
-import megamek.common.weapons.prototypes.innerSphere.ISPulseLaserMediumPrototype;
-import megamek.common.weapons.prototypes.innerSphere.ISPulseLaserMediumRecovered;
-import megamek.common.weapons.prototypes.innerSphere.ISPulseLaserSmallPrototype;
 
 public abstract class HeatTrackingBVCalculator extends BVCalculator {
 

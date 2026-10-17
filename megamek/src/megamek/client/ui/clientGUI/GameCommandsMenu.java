@@ -38,12 +38,12 @@ import java.util.List;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.client.ui.dialogs.ClientCommandDialog;
 import megamek.client.ui.dialogs.GameMasterPlayerSetupDialog;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.options.OptionsConstants;
 import megamek.logging.MMLogger;
 import megamek.server.commands.KickCommand;

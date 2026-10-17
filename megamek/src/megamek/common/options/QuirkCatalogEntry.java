@@ -33,7 +33,7 @@
 
 package megamek.common.options;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * One real quirk option in the {@link QuirkCatalog}: how completely MegaMek implements it and where its rule is

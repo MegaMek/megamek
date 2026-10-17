@@ -35,7 +35,7 @@ package megamek.client.bot.princess;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * What a bot remembers about one infantry vs. infantry action (TO:AR p. 169) from round to round: the page for that

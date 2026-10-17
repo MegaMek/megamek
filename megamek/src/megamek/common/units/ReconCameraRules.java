@@ -35,6 +35,7 @@ package megamek.common.units;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
@@ -42,7 +43,6 @@ import megamek.common.Player;
 import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.compute.ComputeEnvironmentalToHitMods;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

@@ -58,6 +58,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 
+import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
 import megamek.client.ui.GBC;
 import megamek.client.ui.Messages;
@@ -73,7 +74,6 @@ import megamek.client.ui.widget.SkinSpecification;
 import megamek.client.ui.widget.SkinXMLHandler;
 import megamek.common.KeyBindParser;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.interfaces.PlayerTurn;

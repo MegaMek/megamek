@@ -32,13 +32,16 @@
  */
 package megamek.client.ui.dialogs.unitEditor;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.compute.damage.CritAssignment;
 import megamek.common.compute.damage.PreExistingDamageApplier;
 import megamek.common.compute.damage.PreExistingDamageLevel;

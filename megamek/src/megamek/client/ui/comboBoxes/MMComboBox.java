@@ -38,7 +38,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * MMBuMMComboBox is an extension of JComboBox that overrides the constructors for JComboBox, albeit with the addition

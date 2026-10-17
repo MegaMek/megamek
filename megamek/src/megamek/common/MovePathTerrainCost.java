@@ -32,8 +32,8 @@
  */
 package megamek.common;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.MinefieldUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.pathfinder.MovementType;
 import megamek.common.units.Terrains;

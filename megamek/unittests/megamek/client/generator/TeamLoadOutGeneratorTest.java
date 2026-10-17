@@ -59,12 +59,16 @@ import megamek.common.Player;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
 import megamek.common.TechConstants;
+import megamek.common.battleArmor.BattleArmor;
 import megamek.common.containers.MunitionTree;
+import megamek.common.enums.TechBase;
+import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.AmmoTypeFlag;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.game.Game;
@@ -77,12 +81,14 @@ import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.Entity;
 import megamek.common.units.Mek;
+import megamek.common.units.ProtoMek;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class TeamLoadOutGeneratorTest {
@@ -91,7 +97,7 @@ class TeamLoadOutGeneratorTest {
     static ClientGUI cg = mock(ClientGUI.class);
     static Client client = mock(Client.class);
     static Game game = new Game();
-    
+
     static Team team = new Team(0);
     static Player player = new Player(0, "Test");
     static AmmoType mockLRM15AmmoType = (AmmoType) EquipmentType.get("IS LRM 15 Ammo");
@@ -114,7 +120,7 @@ class TeamLoadOutGeneratorTest {
     void setUp() {
         when(cg.getClient()).thenReturn(client);
         when(cg.getClient().getGame()).thenReturn(game);
-        
+
         when(mockGameOptions.booleanOption(eq(OptionsConstants.ALLOWED_NO_CLAN_PHYSICAL))).thenReturn(false);
         when(mockGameOptions.stringOption(OptionsConstants.ALLOWED_TECH_LEVEL)).thenReturn("Experimental");
         when(mockGameOptions.booleanOption(OptionsConstants.ALLOWED_ERA_BASED)).thenReturn(true);
@@ -1081,4 +1087,342 @@ class TeamLoadOutGeneratorTest {
         assertEquals(5.0, mwc.getLrmWeights().get("Dead-Fire"));
         assertEquals(0.0, mwc.getSrmWeights().get("Inferno"));
     }
+
+    // region Battle armor bins (#9162, #9225)
+
+    static List<String> srmMunitionNames() {
+        return MunitionTree.SRM_MUNITION_NAMES;
+    }
+
+    private static Crew createCrew(String crewName) {
+        Crew mockCrew = mock(Crew.class);
+        PilotOptions pilotOptions = new PilotOptions();
+        when(mockCrew.getName(anyInt())).thenCallRealMethod();
+        when(mockCrew.getNames()).thenReturn(new String[] { crewName });
+        when(mockCrew.getOptions()).thenReturn(pilotOptions);
+        return mockCrew;
+    }
+
+    private static BattleArmor createBattleArmor(String chassis, String model, boolean isClan) {
+        BattleArmor battleArmor = new BattleArmor();
+        battleArmor.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        battleArmor.setSquadSize(4);
+        battleArmor.setChassis(chassis);
+        battleArmor.setModel(model);
+        battleArmor.setTechLevel(isClan ? TechConstants.T_CLAN_TW : TechConstants.T_IS_TW_NON_BOX);
+        battleArmor.setCrew(createCrew("Trooper"));
+        return battleArmor;
+    }
+
+    /**
+     * Adds an ammo bin the way the unit file loader does: a fixed number of shots set at construction.
+     */
+    private static AmmoMounted addAmmoBin(Entity entity, String ammoInternalName, int location, int shots)
+          throws LocationFullException {
+        AmmoMounted bin = (AmmoMounted) entity.addEquipment(EquipmentType.get(ammoInternalName), location);
+        bin.setShotsLeft(shots);
+        bin.setOriginalShots(shots);
+        return bin;
+    }
+
+    /**
+     * Requests every SRM munition name the Autoconfig and Randomize tools can use, one at a time, for an IS battle
+     * armor SRM 4 bin. Whatever is requested, the bin must keep an IS battle armor round from the Total Warfare p.229
+     * list and the four shots it was built with.
+     */
+    @ParameterizedTest
+    @MethodSource("srmMunitionNames")
+    void testBattleArmorSrmBinOnlyTakesBattleArmorRounds(String munitionName) throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        BattleArmor battleArmor = createBattleArmor("IS Standard Battle Armor", "(SRM)", false);
+        AmmoMounted bin = addAmmoBin(battleArmor, "BA-SRM4 Ammo", BattleArmor.LOC_SQUAD, 4);
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("IS Standard Battle Armor", "(SRM)", "any", "SRM-4", munitionName);
+        HashMap<String, Object> availabilityMap = generator.generateValidMunitionsForFactionAndEra("IS");
+        generator.reconfigureEntity(battleArmor, munitionTree, availabilityMap);
+
+        AmmoType loaded = bin.getType();
+        assertTrue(loaded.hasFlag(AmmoTypeFlag.F_BATTLEARMOR),
+              munitionName + " loaded a non-battle armor round: " + loaded.getInternalName());
+        assertTrue(EnumSet.of(Munitions.M_STANDARD, Munitions.M_INFERNO).containsAll(loaded.getMunitionType()),
+              munitionName + " loaded " + loaded.getInternalName());
+        assertNotEquals(TechBase.CLAN, loaded.getTechBase(), munitionName + " loaded a Clan round on IS armor");
+        assertEquals(4, bin.getBaseShotsLeft(), munitionName + " changed the bin's shots");
+    }
+
+    @Test
+    void testBattleArmorSrmBinLoadsBattleArmorInfernoThenStandard() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        BattleArmor battleArmor = createBattleArmor("IS Standard Battle Armor", "(SRM)", false);
+        AmmoMounted bin = addAmmoBin(battleArmor, "BA-SRM4 Ammo", BattleArmor.LOC_SQUAD, 4);
+        HashMap<String, Object> availabilityMap = generator.generateValidMunitionsForFactionAndEra("IS");
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("IS Standard Battle Armor", "(SRM)", "any", "SRM-4", "Inferno");
+        generator.reconfigureEntity(battleArmor, munitionTree, availabilityMap);
+        assertEquals("BA-SRM4 Ammo Inferno", bin.getType().getInternalName());
+        assertEquals(4, bin.getBaseShotsLeft());
+
+        munitionTree.insertImperative("IS Standard Battle Armor", "(SRM)", "any", "SRM-4", "Standard");
+        generator.reconfigureEntity(battleArmor, munitionTree, availabilityMap);
+        assertEquals("BA-SRM4 Ammo", bin.getType().getInternalName());
+        assertEquals(4, bin.getBaseShotsLeft());
+    }
+
+    @Test
+    void testClanBattleArmorSrmBinLoadsClanBattleArmorInferno() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        BattleArmor battleArmor = createBattleArmor("Elemental Battle Armor", "(SRM)", true);
+        AmmoMounted bin = addAmmoBin(battleArmor, "BA-SRM4 Ammo", BattleArmor.LOC_SQUAD, 4);
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("Elemental Battle Armor", "(SRM)", "any", "SRM-4", "Inferno");
+        generator.reconfigureEntity(battleArmor, munitionTree, generator.generateValidMunitionsForFactionAndEra("CLAN"));
+
+        assertEquals("BA-SRM4 Ammo (Clan) Inferno", bin.getType().getInternalName());
+        assertEquals(4, bin.getBaseShotsLeft());
+    }
+
+    /**
+     * A pirate force's partly filled bins must stay within the shots a battle armor bin was built with, not the one
+     * shot a battle armor round reports.
+     */
+    @Test
+    void testBattleArmorBinFillRatioUsesConstructionShots() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        BattleArmor battleArmor = createBattleArmor("IS Standard Battle Armor", "(SRM)", false);
+        AmmoMounted bin = addAmmoBin(battleArmor, "BA-SRM4 Ammo", BattleArmor.LOC_SQUAD, 4);
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("IS Standard Battle Armor", "(SRM)", "any", "SRM-4", "Standard");
+        generator.reconfigureEntity(battleArmor, munitionTree, generator.generateValidMunitionsForFactionAndEra("IS"), 0.5f);
+
+        assertEquals(2, bin.getBaseShotsLeft());
+    }
+
+    /**
+     * Randomize must roll among the rounds the bin can load. For an IS battle armor SRM bin that is Standard or
+     * Inferno, so both appear over repeated rolls instead of the bin almost always keeping Standard.
+     */
+    @Test
+    void testRandomizeBattleArmorSrmBinRollsAmongLoadableRounds() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        HashMap<String, Object> availabilityMap = TeamLoadOutGenerator.createUnlimitedAllMunitionsMap();
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("any", "any", "any", "SRM", "Random");
+
+        int standardCount = 0;
+        int infernoCount = 0;
+        for (int roll = 0; roll < 200; roll++) {
+            BattleArmor battleArmor = createBattleArmor("IS Standard Battle Armor", "(SRM)", false);
+            AmmoMounted bin = addAmmoBin(battleArmor, "BA-SRM4 Ammo", BattleArmor.LOC_SQUAD, 4);
+            generator.reconfigureEntity(battleArmor, munitionTree, availabilityMap);
+
+            String loaded = bin.getType().getInternalName();
+            assertTrue(loaded.equals("BA-SRM4 Ammo") || loaded.equals("BA-SRM4 Ammo Inferno"), loaded);
+            assertEquals(4, bin.getBaseShotsLeft());
+            standardCount += loaded.equals("BA-SRM4 Ammo") ? 1 : 0;
+            infernoCount += loaded.equals("BA-SRM4 Ammo Inferno") ? 1 : 0;
+        }
+        // An even roll gives about 100 of each; picking from every SRM munition name gave Inferno about 20 times.
+        // The rolls are unseeded, so a fair roll falls below 60 on either side only about once in 160 million runs.
+        assertTrue((standardCount >= 60) && (infernoCount >= 60),
+              "Standard " + standardCount + ", Inferno " + infernoCount);
+    }
+
+    /**
+     * Without "Truly Random", Randomize only picks damaging munitions; utility rounds such as Smoke are skipped.
+     */
+    @Test
+    void testRandomizeSkipsUtilityMunitionsUnlessTrulyRandom() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        HashMap<String, Object> availabilityMap = TeamLoadOutGenerator.createUnlimitedAllMunitionsMap();
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("any", "any", "any", "SRM", "Random");
+
+        for (int roll = 0; roll < 100; roll++) {
+            Mek mek = createMek("Catapult", "CPLT-C1", "J. Robert Hoppenheimer");
+            Mounted<?> bin = mek.addEquipment(mockSRM6AmmoType, Mek.LOC_LEFT_TORSO);
+            generator.reconfigureEntity(mek, munitionTree, availabilityMap);
+
+            AmmoType loaded = (AmmoType) bin.getType();
+            for (String utilityMunition : TeamLoadOutGenerator.UTILITY_MUNITIONS) {
+                assertFalse(loaded.getName().contains(utilityMunition), loaded.getName());
+            }
+        }
+    }
+
+    // endregion Battle armor bins
+
+    // region Clan bins (#9228)
+
+    private Mek createClanMek() {
+        Mek clanMek = createMek("Timber Wolf", "Prime", "Natasha Kerensky");
+        clanMek.setTechLevel(TechConstants.T_CLAN_TW);
+        return clanMek;
+    }
+
+    @Test
+    void testClanMekSrmLrmAndAtmBinsTakeClanMunitions() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        Mek clanMek = createClanMek();
+        AmmoMounted srmBin = (AmmoMounted) clanMek.addEquipment(EquipmentType.get("Clan Ammo SRM-6"),
+              Mek.LOC_LEFT_TORSO);
+        AmmoMounted lrmBin = (AmmoMounted) clanMek.addEquipment(EquipmentType.get("Clan Ammo LRM-10"),
+              Mek.LOC_RIGHT_TORSO);
+        AmmoMounted atmBin = (AmmoMounted) clanMek.addEquipment(EquipmentType.get("Clan Ammo ATM-6"),
+              Mek.LOC_CENTER_TORSO);
+        // This checks that the bins can find their Clan rounds; faction availability is not under test
+        HashMap<String, Object> availabilityMap = TeamLoadOutGenerator.createUnlimitedAllMunitionsMap();
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "SRM-6", "Inferno");
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "LRM-10", "Heat-Seeking");
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "ATM-6", "HE");
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+
+        assertTrue(srmBin.getType().getMunitionType().contains(Munitions.M_INFERNO), srmBin.getType().getName());
+        assertTrue(lrmBin.getType().getMunitionType().contains(Munitions.M_HEAT_SEEKING),
+              lrmBin.getType().getName());
+        assertTrue(atmBin.getType().getMunitionType().contains(Munitions.M_HIGH_EXPLOSIVE),
+              atmBin.getType().getName());
+        for (AmmoMounted bin : List.of(srmBin, lrmBin, atmBin)) {
+            assertEquals(TechBase.CLAN, bin.getType().getTechBase(), bin.getType().getInternalName());
+        }
+
+        // Standard puts the Clan standard rounds back
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "SRM-6", "Standard");
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "LRM-10", "Standard");
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "ATM-6", "Standard");
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+        assertEquals("Clan Ammo SRM-6", srmBin.getType().getInternalName());
+        assertEquals("Clan Ammo LRM-10", lrmBin.getType().getInternalName());
+        assertEquals("Clan Ammo ATM-6", atmBin.getType().getInternalName());
+    }
+
+    /**
+     * ProtoMeks mount ordinary Clan ammo but carry only the shots set at construction, which is how the lobby's
+     * munition dialog already treats them.
+     */
+    @Test
+    void testProtoMekBinKeepsConstructionShots() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        ProtoMek protoMek = new ProtoMek();
+        protoMek.setChassis("Centaur");
+        protoMek.setModel("2");
+        protoMek.setTechLevel(TechConstants.T_CLAN_TW);
+        protoMek.setCrew(createCrew("Pilot"));
+        AmmoMounted bin = addAmmoBin(protoMek, "Clan Ammo SRM-2", ProtoMek.LOC_BODY, 10);
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("Centaur", "2", "any", "SRM-2", "Inferno");
+        generator.reconfigureEntity(protoMek, munitionTree, generator.generateValidMunitionsForFactionAndEra("CLAN"));
+
+        assertTrue(bin.getType().getMunitionType().contains(Munitions.M_INFERNO), bin.getType().getName());
+        assertEquals(10, bin.getBaseShotsLeft());
+    }
+
+    /**
+     * ATM ammo is general Clan tech by 3151, so every Clan faction that can field ATM launchers gets all three ATM
+     * rounds. iATM ammo must not decide ATM availability (#9228).
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "Clan", "CWF", "CJF", "RD" })
+    void testAtmAmmoAvailableToClanFactions(String faction) {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        HashMap<String, Integer> atmEntries =
+              (HashMap<String, Integer>) generator.generateValidMunitionsForFactionAndEra(faction).get("ATM");
+
+        for (String munitionName : List.of("Standard", "HE", "ER")) {
+            assertTrue(atmEntries.getOrDefault(munitionName, 0) > 0, faction + " has no ATM " + munitionName);
+        }
+    }
+
+    /**
+     * ProtoMeks fire BattleMek missile ammo but may only load the munitions Total Warfare lists for them (forum ruling
+     * topic 91104), and keep the shots set at construction.
+     */
+    @ParameterizedTest
+    @MethodSource("srmMunitionNames")
+    void testProtoMekSrmBinOnlyTakesTotalWarfareMunitions(String munitionName) throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        ProtoMek protoMek = new ProtoMek();
+        protoMek.setChassis("Centaur");
+        protoMek.setModel("2");
+        protoMek.setTechLevel(TechConstants.T_CLAN_TW);
+        protoMek.setCrew(createCrew("Pilot"));
+        AmmoMounted bin = addAmmoBin(protoMek, "Clan Ammo SRM-2", ProtoMek.LOC_BODY, 10);
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("Centaur", "2", "any", "SRM-2", munitionName);
+        generator.reconfigureEntity(protoMek, munitionTree, TeamLoadOutGenerator.createUnlimitedAllMunitionsMap());
+
+        assertTrue(AmmoType.isAllowedForBattleArmorAndProtoMeks(bin.getType()),
+              munitionName + " loaded " + bin.getType().getInternalName());
+        assertEquals(10, bin.getBaseShotsLeft(), munitionName + " changed the bin's shots");
+    }
+
+    @Test
+    void testClanMekIatmBinTakesIatmRounds() throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        Mek clanMek = createClanMek();
+        AmmoMounted bin = (AmmoMounted) clanMek.addEquipment(EquipmentType.get("Clan Ammo iATM-6"),
+              Mek.LOC_LEFT_TORSO);
+        HashMap<String, Object> availabilityMap = TeamLoadOutGenerator.createUnlimitedAllMunitionsMap();
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "iATM-6", "IIW");
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+        assertEquals("Clan Ammo iATM-6 IIW", bin.getType().getInternalName());
+
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "iATM-6", "HE");
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+        assertEquals("Clan Ammo iATM-6 HE", bin.getType().getInternalName());
+
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "iATM-6", "Standard");
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+        assertEquals("Clan Ammo iATM-6", bin.getType().getInternalName());
+    }
+
+    /**
+     * iATM uses the three ATM rounds plus its own Improved Inferno and Improved Magnetic Pulse rounds. Improved Magnetic
+     * Pulse went extinct in 3080; Improved Inferno did not.
+     */
+    @Test
+    void testIatmRoundsAvailableToClanCoyoteIn3151() {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        HashMap<String, Integer> iatmEntries =
+              (HashMap<String, Integer>) generator.generateValidMunitionsForFactionAndEra("CCY").get("iATM");
+
+        for (String munitionName : List.of("Standard", "HE", "ER", "IIW")) {
+            assertTrue(iatmEntries.getOrDefault(munitionName, 0) > 0, "Clan Coyote has no iATM " + munitionName);
+        }
+        assertEquals(0, iatmEntries.getOrDefault("IMP", 0), "iATM IMP is extinct by 3151");
+    }
+
+    /**
+     * Clan Dead-Fire and Tandem-Charge rounds are unofficial. At an Experimental tech level the lobby's munition dialog
+     * does not offer them, so autoconfig must not load them either; an official round such as Inferno still loads.
+     */
+    @ParameterizedTest
+    @ValueSource(strings = { "Dead-Fire", "Tandem-Charge" })
+    void testClanMekSkipsUnofficialMunitions(String munitionName) throws LocationFullException {
+        TeamLoadOutGenerator generator = new TeamLoadOutGenerator(game);
+        Mek clanMek = createClanMek();
+        AmmoMounted bin = (AmmoMounted) clanMek.addEquipment(EquipmentType.get("Clan Ammo SRM-6"),
+              Mek.LOC_LEFT_TORSO);
+        HashMap<String, Object> availabilityMap = TeamLoadOutGenerator.createUnlimitedAllMunitionsMap();
+
+        MunitionTree munitionTree = new MunitionTree();
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "SRM-6", munitionName);
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+        assertEquals("Clan Ammo SRM-6", bin.getType().getInternalName(), munitionName + " was loaded");
+
+        munitionTree.insertImperative("Timber Wolf", "Prime", "any", "SRM-6", "Inferno");
+        generator.reconfigureEntity(clanMek, munitionTree, availabilityMap);
+        assertTrue(bin.getType().getMunitionType().contains(Munitions.M_INFERNO), bin.getType().getName());
+    }
+
+    // endregion Clan bins
 }

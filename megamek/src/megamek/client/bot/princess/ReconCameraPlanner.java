@@ -34,8 +34,8 @@ package megamek.client.bot.princess;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.actions.ReconCameraSpotAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;

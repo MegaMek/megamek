@@ -39,7 +39,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 public class ColourSelectorButton extends JButton {
     //region Variable Declarations

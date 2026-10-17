@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -43,17 +43,18 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.ForceDescriptor;
 import megamek.client.ui.dialogs.unitSelectorDialogs.AbstractUnitSelectorDialog;
 import megamek.common.SimpleTechLevel;
 import megamek.common.Team;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.containers.MunitionTree;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
+import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;
@@ -87,6 +88,8 @@ public class TeamLoadOutGenerator {
     // region Constants
     // YAML file contains munition weights, override values, prohibited ammo types, and various settings
     public static final String LOAD_OUT_SETTINGS_PATH = "mmconf" + File.separator + "munitionLoadoutSettings.yaml";
+    // Clan munitions are named "(Clan) Inferno" etc.; the availability map uses the plain munition name
+    private static final String CLAN_MUTATOR_PREFIX = "(Clan) ";
     public static LinkedHashMap<String, Object> weightMap = new LinkedHashMap<>();
 
     static {
@@ -925,7 +928,10 @@ public class TeamLoadOutGenerator {
           boolean allowNukes) {
         int count = 0;
 
-        String techBase = faction.isClan() ? "CL" : "IS";
+        // Judge the ammo on its own tech base: a bin only ever takes rounds of its own tech base, so a faction that
+        // fields a Clan launcher (e.g. the Rasalhague Dominion) has access to that launcher's Clan rounds.
+        boolean isClanAmmo = (exemplar.getTechBase() == TechBase.ALL) ? faction.isClan() : exemplar.isClan();
+        String techBase = isClanAmmo ? "CL" : "IS";
         // Is the ammo even legal for this combination of faction, era, tech level?
         if (checkLegality(exemplar, faction.getCodeMM(), techBase, allowMixed, year, legalLevel, eraBased,
               showExtinct, allowNukes)) {
@@ -933,7 +939,7 @@ public class TeamLoadOutGenerator {
 
             // Simpler tech is more common; give more bins for common munitions than for rare
             TechAdvancement techAdvancement = exemplar.getTechAdvancement();
-            AvailabilityValue techAvailability = exemplar.calcYearAvailability(year, faction.isClan(), faction);
+            AvailabilityValue techAvailability = exemplar.calcYearAvailability(year, isClanAmmo, faction);
             int taMultiplier =
                   castPropertyInt("Defaults.Factors.techRatingFactor", 1) * (6 - techAdvancement.getTechRating()
                         .getIndex());
@@ -1708,24 +1714,28 @@ public class TeamLoadOutGenerator {
           float binFillRatio) {
         // Create map of bin counts in unit by type
         HashMap<String, List<AmmoMounted>> binLists = new HashMap<>();
-        String techBase = (entity.isClan()) ? "CL" : "IS";
 
         // Populate map with _valid_, _available_ ammo
         for (AmmoMounted ammoBin : entity.getAmmo()) {
-            AmmoType aType = ammoBin.getType();
-            String sName = ("".equals(aType.getBaseName())) ? ammoBin.getType().getShortName() : aType.getBaseName();
+            // Group by the launcher's standard round, so an ATM HE bin is still an "ATM 6" bin
+            Vector<AmmoType> sameAmmoTypes = AmmoType.getMunitionsFor(ammoBin.getType().getAmmoType());
+            AmmoType standardRound = getStandardRound(ammoBin.getType(),
+                  (sameAmmoTypes == null) ? List.of() : sameAmmoTypes);
+            String standardRoundName = standardRound.getBaseName().isEmpty() ?
+                  standardRound.getShortName() :
+                  standardRound.getBaseName();
 
             // Store the actual bins under their types
             // This should probably allow for clan munitions, and use lowercasing
-            if (!binLists.containsKey(sName)) {
-                binLists.put(sName, new ArrayList<>());
+            if (!binLists.containsKey(standardRoundName)) {
+                binLists.put(standardRoundName, new ArrayList<>());
             }
-            binLists.get(sName).add(ammoBin);
+            binLists.get(standardRoundName).add(ammoBin);
         }
 
         // Iterate over each type and fill it with the requested ammo (as much as possible)
         for (String binName : binLists.keySet()) {
-            iterativelyLoadAmmo(entity, mt, availMap, binLists.get(binName), binName, techBase);
+            iterativelyLoadAmmo(entity, mt, availMap, binLists.get(binName), binName);
         }
 
         // Apply requested fill ratio to all final bin loadouts (between max fill and 0)
@@ -1741,7 +1751,7 @@ public class TeamLoadOutGenerator {
     protected void clampAmmoShots(Entity entity, float binFillRatio) {
         if (binFillRatio < 1.0f) {
             for (Mounted<AmmoType> ammo : entity.getAmmo()) {
-                int maxShots = ammo.getType().getShots();
+                int maxShots = hasConstructionShots(entity) ? ammo.getOriginalShots() : ammo.getType().getShots();
                 ammo.setShotsLeft(Math.min(maxShots, (int) Math.max(0, Math.ceil(binFillRatio * maxShots))));
             }
         }
@@ -1780,16 +1790,16 @@ public class TeamLoadOutGenerator {
      *                 tech level, advancement, etc.
      * @param binList  List of actual mounted ammo bins matching this type
      * @param binName  String bin type we are loading now
-     * @param techBase "CL" or "IS"
      */
     private void iterativelyLoadAmmo(Entity e, MunitionTree mt, HashMap<String, Object> availMap,
-          List<AmmoMounted> binList, String binName, String techBase) {
+          List<AmmoMounted> binList, String binName) {
         // Copy counts that we will update, otherwise mt entry gets edited permanently.
         HashMap<String, Integer> counts = new HashMap<>(mt.getCountsOfAmmunitionForKey(e.getFullChassis(),
               e.getModel(),
               e.getCrew().getName(0),
               binName));
         List<String> priorities = mt.getPriorityList(e.getFullChassis(), e.getModel(), e.getCrew().getName(0), binName);
+        logger.info("Munition autoconfig: {} {} bins, requested in order: {}", e.getDisplayName(), binName, priorities);
         // Track default type for filling in unfilled bins
         AmmoType defaultType = null;
         int defaultIdx = 0;
@@ -1806,59 +1816,34 @@ public class TeamLoadOutGenerator {
             // If "Random", choose a random ammo type. Availability will be checked later.
             // If not trueRandom, only select from munitions that deal damage
 
-            String lookup;
-            boolean random = priorities.get(i).contains("Random");
-            String binType = (random) ? getRandomBin(binName, trueRandom) : priorities.get(i);
-            String subType = (binType.contains(" w/")) ? binType.substring(0, binType.indexOf(" w/")) : null;
             Mounted<AmmoType> bin = binList.getFirst();
-            AmmoType desired;
-            HashMap<String, Integer> availInts = new HashMap<>();
-            boolean available = false;
 
-            // Load matching AmmoType
-            if (binType.toLowerCase().contains("standard")) {
-                lookup = "Standard";
-                desired = (AmmoType) EquipmentType.get(techBase + " " + binName + " " + "Ammo");
-                if (desired == null) {
-                    // Some ammo, like AC/XX ammo, is named funny
-                    desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName);
-                }
-                if (desired == null) {
-                    // Incendiary ammo contains an additional sub-type string
-                    desired = (AmmoType) EquipmentType.get(techBase + " Ammo " + binName + subType);
-                }
-
-            } else {
-                // Get available munitions
-                Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(bin.getType().getAmmoType());
-                if (vAllTypes == null) {
-                    continue;
-                }
-
-                // Make sure the desired munition type is available and valid
-                desired = vAllTypes.stream()
-                      .filter(m -> m.getInternalName().startsWith(techBase) &&
-                            m.getBaseName().contains(binName) &&
-                            m.getName().contains(binType) &&
-                            (subType == null || m.getName().contains(subType)))
-                      .findFirst()
-                      .orElse(null);
-                // The availability list will use mutator names without weapon type / rack size values;
-                // use that if available, or just the bin type name if not.
-                lookup = (desired != null && desired.getMutatorName() != null && !desired.getMutatorName().isEmpty()) ?
-                      desired.getMutatorName() : binType;
+            // Get available munitions
+            Vector<AmmoType> allRounds = AmmoType.getMunitionsFor(bin.getType().getAmmoType());
+            if (allRounds == null) {
+                continue;
             }
+
+            boolean random = priorities.get(i).contains("Random");
+            String binType = (random) ?
+                  getRandomLoadableMunition(e, binName, bin.getType(), allRounds, availMap) :
+                  priorities.get(i);
+
+            // Load matching AmmoType. Rounds are found from the bin's own standard round rather than built names, so
+            // a battle armor bin only takes battle armor rounds (TW p.229) and Clan bins find Clan rounds.
+            AmmoType desired = resolveRequestedRound(e, binType, bin.getType(), allRounds);
+            String lookup = getAvailabilityKey(desired, binType);
 
             // Does the lookup to see how many bins of the munition are available, and _if_
             // bins are available, remove one.
-            for (String key : availMap.keySet()) {
-                if (binName.contains(key)) {
-                    availInts = (HashMap<String, Integer>) availMap.getOrDefault(key, null);
-                    available = (desired != null) && (availInts != null) && availInts.containsKey(lookup) &&
-                          availInts.get(lookup) > 0;
-                    break;
-                }
-            }
+            HashMap<String, Integer> availableCounts = getAvailabilityFor(binName, availMap);
+            boolean available = (desired != null)
+                  && (availableCounts != null)
+                  && (availableCounts.getOrDefault(lookup, 0) > 0);
+
+            logger.debug("Munition autoconfig: {} {} bin: {} requested -> {}", e.getDisplayName(), binName, binType,
+                  (desired == null) ? "no round this bin can load" :
+                        desired.getInternalName() + (available ? "" : " (not available)"));
 
             if (desired == null || !available) {
                 // Couldn't find a bin, move on to the next priority.
@@ -1893,11 +1878,11 @@ public class TeamLoadOutGenerator {
                         break;
                     }
                     // Apply ammo change
-                    binList.getFirst().changeAmmoType(desired);
+                    loadBin(e, binList.getFirst(), desired);
 
                     // Decrement available ammo bins and update availability
-                    availInts.put(lookup, availInts.get(lookup) - 1);
-                    available = availInts.get(lookup) > 0;
+                    availableCounts.put(lookup, availableCounts.get(lookup) - 1);
+                    available = availableCounts.get(lookup) > 0;
 
                     // Decrement count and remove bin from list
                     counts.put(binType, counts.get(binType) - 1);
@@ -1912,32 +1897,245 @@ public class TeamLoadOutGenerator {
 
         if (!(defaultType == null || binList.isEmpty())) {
             for (AmmoMounted bin : binList) {
-                bin.changeAmmoType(defaultType);
+                loadBin(e, bin, defaultType);
             }
         }
     }
 
     /**
-     * Select a random munition type that is a valid damaging ammo (for "random") or truly random valid ammo (for true
-     * random) for the bin type. IE "fléchette" is
+     * @param entity a unit carrying ammo
      *
-     * @param binName    Name of the Bin
-     * @param trueRandom If it needs to be a random type of ammo.
-     *
-     * @return A random munition type.
+     * @return {@code true} if the unit's bins hold a set number of shots chosen at construction rather than a full ton
      */
-    private static String getRandomBin(String binName, boolean trueRandom) {
-        String result = "";
-        for (String typeName : TYPE_LIST) {
-            if ((trueRandom || !UTILITY_MUNITIONS.contains(typeName)) &&
-                  (binName.toLowerCase().contains(typeName.toLowerCase()) ||
-                        typeName.toLowerCase().contains(binName.toLowerCase()))) {
-                List<String> tList = TYPE_MAP.get(typeName);
-                result = tList.get(new Random().nextInt(tList.size()));
-                break;
+    private static boolean hasConstructionShots(Entity entity) {
+        return entity.isBattleArmor() || entity.isProtoMek();
+    }
+
+    /**
+     * Loads a munition into an ammo bin. Battle armor and ProtoMeks carry a set number of shots chosen at
+     * construction, so their bins keep that count instead of taking the new munition's shots per ton (as the lobby's
+     * munition dialog does).
+     *
+     * @param entity   the unit that owns the bin
+     * @param bin      the ammo bin to load
+     * @param munition the munition to load into it
+     */
+    private static void loadBin(Entity entity, AmmoMounted bin, AmmoType munition) {
+        bin.changeAmmoType(munition);
+        if (hasConstructionShots(entity) && (bin.getOriginalShots() > 0)) {
+            bin.setShotsLeft(bin.getOriginalShots());
+        }
+        logger.info("Munition autoconfig: {} loaded {} ({} shots)", entity.getDisplayName(), munition.getName(),
+              bin.getBaseShotsLeft());
+    }
+
+    /**
+     * @param ammoType   a standard round, one of its munitions, or a sibling round such as ATM HE
+     * @param candidates all ammo of the same ammo type
+     *
+     * @return the standard round for the launcher the given ammo is loaded in
+     */
+    private static AmmoType getStandardRound(AmmoType ammoType, List<AmmoType> candidates) {
+        if (ammoType.getBaseAmmo() != null) {
+            return ammoType.getBaseAmmo();
+        }
+        if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+            return ammoType;
+        }
+        for (AmmoType candidate : candidates) {
+            if (isSiblingRound(candidate, ammoType)
+                  && candidate.getMunitionType().contains(AmmoType.Munitions.M_STANDARD)) {
+                return candidate;
             }
         }
-        return result;
+        return ammoType;
+    }
+
+    /**
+     * ATM and iATM rounds such as HE and ER are separate rounds rather than munitions built on the standard round.
+     *
+     * @param candidate a possible round for the launcher
+     * @param round     a round the launcher already takes
+     *
+     * @return {@code true} if both are rounds of their own for the same launcher and size
+     */
+    private static boolean isSiblingRound(AmmoType candidate, AmmoType round) {
+        return (candidate.getBaseAmmo() == null)
+              && (candidate.getAmmoType() == round.getAmmoType())
+              && (candidate.getRackSize() == round.getRackSize())
+              && (candidate.hasFlag(AmmoType.F_BATTLEARMOR) == round.hasFlag(AmmoType.F_BATTLEARMOR))
+              && (candidate.getTechBase() == round.getTechBase());
+    }
+
+    /**
+     * Finds the munition matching a requested munition name. Only munitions built on the bin's own standard round, or
+     * sibling rounds such as ATM HE, qualify, so a battle armor SRM 4 bin never picks up a BattleMek SRM 4 munition and
+     * a Clan SRM 6 bin finds the Clan SRM 6 munitions.
+     *
+     * @param entity       the unit that owns the bin
+     * @param candidates   all ammo of the bin's ammo type
+     * @param binAmmoType  the ammo currently in the bin
+     * @param munitionName the requested munition name, e.g. "Inferno"
+     * @param subType      the munition name before " w/", or {@code null}
+     *
+     * @return the matching munition, or {@code null} if there is none
+     */
+    private @Nullable AmmoType findMunition(Entity entity, List<AmmoType> candidates, AmmoType binAmmoType,
+          String munitionName, @Nullable String subType) {
+        // Battle armor and ProtoMeks may only fire the missile munitions Total Warfare lists for them
+        boolean isBattleArmorOrProtoMek = entity.isBattleArmor() || entity.isProtoMek();
+        AmmoType standardRound = getStandardRound(binAmmoType, candidates);
+        TechBase binTechBase = standardRound.getTechBase();
+        if (binTechBase == TechBase.ALL) {
+            // Battle armor SRM rounds serve both tech bases and carry an IS and a Clan version of each munition
+            binTechBase = entity.isClan() ? TechBase.CLAN : TechBase.IS;
+        }
+        for (AmmoType candidate : candidates) {
+            // The round itself must be allowed in this game, as the lobby's munition dialog checks it; e.g. the
+            // unofficial Clan Tandem-Charge round is not allowed at Experimental
+            if (!isLegalInThisGame(candidate, entity)) {
+                continue;
+            }
+            boolean matchesTechBase = (candidate.getTechBase() == TechBase.ALL)
+                  || (candidate.getTechBase() == binTechBase);
+            boolean isMunition = (candidate.getBaseAmmo() == standardRound)
+                  && candidate.getName().contains(munitionName)
+                  && ((subType == null) || candidate.getName().contains(subType));
+            // Sibling round names put the munition first ("High-Explosive ATM/6 Ammo"); the short name ends with it
+            boolean isSibling = (candidate != standardRound)
+                  && isSiblingRound(candidate, standardRound)
+                  && candidate.getShortName().endsWith(" " + munitionName);
+            boolean isAllowedForUnit = !isBattleArmorOrProtoMek
+                  || AmmoType.isAllowedForBattleArmorAndProtoMeks(candidate);
+            if (matchesTechBase && isAllowedForUnit && (isMunition || isSibling)) {
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Applies the same tech level, year and tech base test the lobby's munition dialog uses, so autoconfig never loads
+     * a round the player could not choose by hand.
+     *
+     * @param round  the round to check
+     * @param entity the unit that would load it
+     *
+     * @return {@code true} if the round is allowed in this game for this unit
+     */
+    private boolean isLegalInThisGame(AmmoType round, Entity entity) {
+        if (eraBasedTechLevel) {
+            return round.isLegal(allowedYear, legalLevel, entity.isClan(), entity.isMixedTech(), showExtinct);
+        }
+        boolean allowMixedAmmo = entity.isMixedTech()
+              || gameOptions.booleanOption(OptionsConstants.ALLOWED_ALL_AMMO_MIXED_TECH);
+        boolean canUseInnerSphereAmmo = allowMixedAmmo || !entity.isClan();
+        boolean canUseClanAmmo = allowMixedAmmo || entity.isClan();
+        boolean isClanAccessible = round.isClan() || round.isMixedTech();
+        boolean isInnerSphereAccessible = !round.isClan() || round.isMixedTech();
+        boolean canUseRound = (canUseInnerSphereAmmo && isInnerSphereAccessible)
+              || (canUseClanAmmo && isClanAccessible);
+        return (round.getStaticTechLevel().ordinal() <= legalLevel.ordinal()) && canUseRound;
+    }
+
+    /**
+     * @param binName a bin name such as "SRM 4" or "iATM 6"
+     *
+     * @return the {@link #TYPE_LIST} entry for the bin; the longest match wins, so "iATM 6" is iATM rather than ATM
+     */
+    private static @Nullable String getWeaponTypeName(String binName) {
+        String lowerBinName = binName.toLowerCase();
+        String bestMatch = null;
+        for (String typeName : TYPE_LIST) {
+            String lowerTypeName = typeName.toLowerCase();
+            boolean matches = lowerBinName.contains(lowerTypeName) || lowerTypeName.contains(lowerBinName);
+            if (matches && ((bestMatch == null) || (typeName.length() > bestMatch.length()))) {
+                bestMatch = typeName;
+            }
+        }
+        return bestMatch;
+    }
+
+    /**
+     * @param binName  a bin name such as "SRM 4"
+     * @param availMap munition availability by weapon type
+     *
+     * @return the munition availability counts for the bin's weapon type, or {@code null} if there are none
+     */
+    @SuppressWarnings("unchecked")
+    private static @Nullable HashMap<String, Integer> getAvailabilityFor(String binName,
+          HashMap<String, Object> availMap) {
+        String typeName = getWeaponTypeName(binName);
+        return (typeName == null) ? null : (HashMap<String, Integer>) availMap.get(typeName);
+    }
+
+    /**
+     * Finds the round a bin should load for a requested munition name.
+     *
+     * @param entity       the unit that owns the bin
+     * @param munitionName the requested munition name, e.g. "Standard", "Inferno" or "Semi-Guided w/ Incendiary"
+     * @param binAmmoType  the ammo currently in the bin
+     * @param candidates   all ammo of the bin's ammo type
+     *
+     * @return the round to load, or {@code null} if the bin cannot load the requested munition
+     */
+    private @Nullable AmmoType resolveRequestedRound(Entity entity, String munitionName, AmmoType binAmmoType,
+          List<AmmoType> candidates) {
+        if (munitionName.toLowerCase().contains("standard")) {
+            return getStandardRound(binAmmoType, candidates);
+        }
+        String subType = munitionName.contains(" w/") ? munitionName.substring(0, munitionName.indexOf(" w/")) : null;
+        return findMunition(entity, candidates, binAmmoType, munitionName, subType);
+    }
+
+    /**
+     * The availability list uses mutator names without weapon type / rack size values or the "(Clan) " prefix.
+     *
+     * @param round        the round found for the request, or {@code null}
+     * @param munitionName the requested munition name
+     *
+     * @return the availability list key for the round
+     */
+    private static String getAvailabilityKey(@Nullable AmmoType round, String munitionName) {
+        if (munitionName.toLowerCase().contains("standard")) {
+            return "Standard";
+        }
+        if ((round != null) && (round.getMutatorName() != null) && !round.getMutatorName().isEmpty()) {
+            return round.getMutatorName().replace(CLAN_MUTATOR_PREFIX, "");
+        }
+        return munitionName;
+    }
+
+    /**
+     * Picks a random munition the bin can actually load and that is still available. Unless "Truly Random" is set,
+     * only damaging munitions are considered (utility rounds such as Smoke are skipped).
+     *
+     * @param entity      the unit that owns the bin
+     * @param binName     the bin name, e.g. "SRM 4"
+     * @param binAmmoType the ammo currently in the bin
+     * @param candidates  all ammo of the bin's ammo type
+     * @param availMap    munition availability by weapon type
+     *
+     * @return a munition name to request; "Standard" if nothing else can be loaded
+     */
+    private String getRandomLoadableMunition(Entity entity, String binName, AmmoType binAmmoType,
+          List<AmmoType> candidates, HashMap<String, Object> availMap) {
+        String typeName = getWeaponTypeName(binName);
+        HashMap<String, Integer> availableCounts = getAvailabilityFor(binName, availMap);
+        if ((typeName == null) || (availableCounts == null)) {
+            return "Standard";
+        }
+        List<String> loadable = new ArrayList<>();
+        for (String munitionName : TYPE_MAP.get(typeName)) {
+            if (!trueRandom && UTILITY_MUNITIONS.contains(munitionName)) {
+                continue;
+            }
+            AmmoType round = resolveRequestedRound(entity, munitionName, binAmmoType, candidates);
+            if ((round != null) && (availableCounts.getOrDefault(getAvailabilityKey(round, munitionName), 0) > 0)) {
+                loadable.add(munitionName);
+            }
+        }
+        return loadable.isEmpty() ? "Standard" : loadable.get(Compute.randomInt(loadable.size()));
     }
     // endregion iterativelyLoadAmmo
 

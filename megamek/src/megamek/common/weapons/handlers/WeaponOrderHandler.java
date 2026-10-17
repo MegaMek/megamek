@@ -47,8 +47,8 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.parsers.DocumentBuilder;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.util.fileUtils.MegaMekFile;
 import megamek.logging.MMLogger;

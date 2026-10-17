@@ -34,7 +34,7 @@
 
 package megamek.common.net.marshalling;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 public class PacketMarshallerFactory {
     private static final PacketMarshallerFactory instance = new PacketMarshallerFactory();

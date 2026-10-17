@@ -34,8 +34,8 @@ package megamek.client.ui.boardeditor;
 
 import java.util.Objects;
 
+import jakarta.annotation.Nonnull;
 import megamek.common.units.Terrains;
-import org.jspecify.annotations.NonNull;
 
 /**
  * Class to make terrains in JComboBoxes easier. This enables keeping the terrain type int separate from the name that
@@ -45,7 +45,7 @@ import org.jspecify.annotations.NonNull;
  */
 record TerrainHelper(int terrainType) implements Comparable<TerrainHelper> {
     @Override
-    @NonNull
+    @Nonnull
     public String toString() {
         return Terrains.getEditorName(terrainType);
     }

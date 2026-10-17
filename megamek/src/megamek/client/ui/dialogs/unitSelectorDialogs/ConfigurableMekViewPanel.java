@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -42,6 +42,7 @@ import java.awt.datatransfer.StringSelection;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
+import java.util.function.ToDoubleFunction;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JButton;
@@ -52,6 +53,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
@@ -61,7 +63,6 @@ import megamek.client.ui.entityreadout.ReadoutSections;
 import megamek.client.ui.util.FontHandler;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.ViewFormatting;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 
 /**
@@ -80,6 +81,7 @@ public class ConfigurableMekViewPanel extends JPanel {
     private final JComboBox<SectionFormat> sectionsChooser = new JComboBox<>();
     private int mulId;
     private Entity entity;
+    private @Nullable ToDoubleFunction<Entity> costProvider;
     private final JComponent menuPanel;
 
     enum SectionFormat {
@@ -168,18 +170,50 @@ public class ConfigurableMekViewPanel extends JPanel {
         updateReadout();
     }
 
+    /**
+     * Sets how the readout prices the units it shows, for a host application that prices units differently from their
+     * construction cost (such as MekHQ). The readout is refreshed so the new price shows at once.
+     *
+     * @param costProvider gives the cost to show for a unit, in C-bills, or {@code null} to show the unit's own cost
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    public void setCostProvider(@Nullable ToDoubleFunction<Entity> costProvider) {
+        this.costProvider = costProvider;
+        updateReadout();
+    }
+
     /** Set the card to use a newly selected font. */
     private void updateFont() {
         if (entity != null) {
             String selectedItem = (String) fontChooser.getSelectedItem();
             if ((selectedItem == null) || selectedItem.isBlank()) {
-                entityReadoutPanel.showEntity(entity, MMConstants.FONT_SANS_SERIF);
+                entityReadoutPanel.showEntity(entity, createReadout(entity.isUncrewed()), MMConstants.FONT_SANS_SERIF);
                 GUIPreferences.getInstance().setSummaryFont("");
             } else {
-                entityReadoutPanel.showEntity(entity, selectedItem);
+                entityReadoutPanel.showEntity(entity, createReadout(entity.isUncrewed()), selectedItem);
                 GUIPreferences.getInstance().setSummaryFont(selectedItem);
             }
         }
+    }
+
+    /**
+     * Creates the readout for the shown unit, priced by the {@link #setCostProvider cost provider} when there is one.
+     *
+     * @param ignorePilotBV whether the readout's BV leaves out the pilot's skill
+     *
+     * @return the readout
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    private EntityReadout createReadout(boolean ignorePilotBV) {
+        EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost(), ignorePilotBV);
+        if (costProvider != null) {
+            readout.setCostOverride(costProvider.applyAsDouble(entity));
+        }
+        return readout;
     }
 
     private boolean detail() {
@@ -200,7 +234,7 @@ public class ConfigurableMekViewPanel extends JPanel {
 
     private void copyToClipboard(ViewFormatting formatting) {
         if (entity != null) {
-            EntityReadout readout = EntityReadout.createReadout(entity, detail(), alternateCost());
+            EntityReadout readout = createReadout(entity.getCrew() != null);
             StringSelection stringSelection = new StringSelection(readout.getReadout(null,
                   formatting,
                   getSelectedSections()));
@@ -211,7 +245,7 @@ public class ConfigurableMekViewPanel extends JPanel {
 
     private void updateReadout() {
         if (entity != null) {
-            entityReadoutPanel.showEntity(entity, detail(), alternateCost(), !pilotBV(entity),
+            entityReadoutPanel.showEntity(entity, createReadout(!pilotBV(entity)),
                   GUIPreferences.getInstance().getSummaryFont(), getSelectedSections());
         } else {
             entityReadoutPanel.reset();

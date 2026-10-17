@@ -52,8 +52,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.loaders.MekSummary;

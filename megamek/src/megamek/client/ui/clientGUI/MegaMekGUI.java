@@ -568,6 +568,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         frame.pack();
         // center window in screen
         frame.setLocationRelativeTo(null);
+        LOGGER.debug("Main menu built at GUI scale {}: frame {}x{}, splash {}x{}, button {}x{}",
+              GUIPreferences.getInstance().getGUIScale(),
+              frame.getWidth(), frame.getHeight(),
+              splashPanel.getWidth(), splashPanel.getHeight(),
+              hostB.getWidth(), hostB.getHeight());
     }
 
     /**
@@ -1824,6 +1829,11 @@ public class MegaMekGUI implements IPreferenceChangeListener {
                 break;
             case GUIPreferences.GUI_SCALE:
                 updateGuiScaling();
+                // The menu's button and splash sizes are fixed when it is built, so rebuild it at the new scale
+                if (frame != null) {
+                    showMainMenu();
+                    frame.repaint();
+                }
                 break;
         }
     }

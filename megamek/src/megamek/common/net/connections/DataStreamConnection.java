@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2005 - Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2005-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2005-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -126,12 +126,14 @@ public class DataStreamConnection extends AbstractConnection {
     }
 
     /**
-     * override flush to flush the data stream after flushing packet queue
+     * Flushes the data stream after sending the packet queue. A failure is reported to the caller, which closes the
+     * connection once this connection's lock is released.
      */
     @Override
-    public synchronized void flush() {
-        // Sends all queued packets
-        super.flush();
+    protected boolean sendQueuedPackets() {
+        if (!super.sendQueuedPackets()) {
+            return false;
+        }
         try {
             // Flush the output stream, to ensure all packets are sent
             if (out != null) {
@@ -140,14 +142,14 @@ public class DataStreamConnection extends AbstractConnection {
                 }
             }
         } catch (SocketException ignored) {
-            // close this connection, because it's broken. This can happen if the connection is closed while being
-            // written to, and it's not a big deal, since the connection is being broken anyway
-            close();
-        } catch (IOException ex) {
-            LOGGER.error("", ex);
-            // close this connection, because it's broken
-            close();
+            // The connection is broken. This can happen if the connection is closed while being written to, and
+            // it's not a big deal, since the connection is being broken anyway
+            return false;
+        } catch (IOException ioException) {
+            LOGGER.error("", ioException);
+            return false;
         }
+        return true;
     }
 
     @Override

@@ -35,6 +35,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
@@ -44,7 +45,6 @@ import megamek.common.Player;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;

@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.MekTileset.MekEntry;
@@ -57,7 +58,6 @@ import megamek.client.ui.util.RotateFilter;
 import megamek.common.Configuration;
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.equipment.Minefield;
 import megamek.common.game.Game;

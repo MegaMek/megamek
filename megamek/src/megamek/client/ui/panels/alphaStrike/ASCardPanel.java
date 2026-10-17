@@ -38,9 +38,9 @@ import java.awt.Graphics;
 import java.awt.Image;
 import javax.swing.JComponent;
 
+import jakarta.annotation.Nullable;
 import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.cardDrawer.ASCard;
-import megamek.common.annotations.Nullable;
 
 /**
  * This is a JComponent that displays only an AlphaStrike unit card. It supports setting a font and scale for the card

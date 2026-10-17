@@ -41,11 +41,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.AeroPathUtil;
 import megamek.common.BulldozerMovePath;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;

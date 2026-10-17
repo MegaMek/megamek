@@ -51,6 +51,7 @@ import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.buttons.MMToggleButton;
@@ -58,7 +59,6 @@ import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.comboBoxes.MMComboBox;
 import megamek.client.ui.widget.RawImagePanel;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 import megamek.common.units.TrainLayout;
 import megamek.logging.MMLogger;

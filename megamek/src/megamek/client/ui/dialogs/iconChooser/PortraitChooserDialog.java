@@ -34,7 +34,7 @@ package megamek.client.ui.dialogs.iconChooser;
 
 import javax.swing.JFrame;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 

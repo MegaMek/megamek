@@ -48,6 +48,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.WrapLayout;
@@ -59,7 +60,6 @@ import megamek.common.alphaStrike.ASCardDisplayable;
 import megamek.common.alphaStrike.ASStatsExporter;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.alphaStrike.cardDrawer.ASCardPrinter;
-import megamek.common.annotations.Nullable;
 
 /**
  * This is a JPanel that displays an AlphaStrike unit card and elements to configure the display of the card and allow

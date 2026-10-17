@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.HitData;
 import megamek.common.MPCalculationSetting;
@@ -47,7 +48,6 @@ import megamek.common.Report;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.enums.AimingMode;
 import megamek.common.enums.AvailabilityValue;

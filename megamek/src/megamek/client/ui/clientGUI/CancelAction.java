@@ -37,8 +37,8 @@ import java.awt.event.ActionEvent;
 import java.io.Serial;
 import javax.swing.AbstractAction;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**

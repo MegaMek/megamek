@@ -34,8 +34,8 @@ package megamek.client.ui.settings;
 
 import static megamek.client.ui.WrapLayout.wordWrap;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.buttons.MMButton;
-import megamek.common.annotations.Nullable;
 
 /** A localized settings action that explicitly contributes contextual help. */
 public class SettingsButton extends MMButton implements SettingsHelpProvider {

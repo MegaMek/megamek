@@ -37,8 +37,8 @@ import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.fo
 
 import java.util.EnumSet;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;

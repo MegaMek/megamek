@@ -32,8 +32,8 @@
  */
 package megamek.common.units;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 

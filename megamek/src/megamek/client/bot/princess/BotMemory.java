@@ -41,10 +41,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.FightMemory.OddsRecord;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.UnitMemory.MoveRecord;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.logging.MMLogger;

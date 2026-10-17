@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2003-2004 Ben Mazur (bmazur@sev.org).
- * Copyright (C) 2011-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2011-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -67,6 +67,7 @@ public final class InsulatedCargoBay extends Bay {
         weight = space / 0.87;
         currentSpace = space;
         this.doors = doors;
+        currentDoors = doors;
         this.bayNumber = bayNumber;
     }
 

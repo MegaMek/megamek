@@ -49,6 +49,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.Client;
 import megamek.client.ui.BugReportMessages;
@@ -56,7 +57,6 @@ import megamek.client.ui.CopySystemDataAction;
 import megamek.client.ui.PackageBugReportAction;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.widget.HazardStripeBorder;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.IssueReportUrl;
 
 public class BugReportDialog {

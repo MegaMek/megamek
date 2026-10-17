@@ -67,6 +67,7 @@ import javax.swing.table.TableRowSorter;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.extras.components.FlatTriStateCheckBox;
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
@@ -76,7 +77,6 @@ import megamek.client.ui.dialogs.advancedsearch.AdvancedSearchDialog;
 import megamek.client.ui.dialogs.advancedsearch.MekSearchFilter;
 import megamek.client.ui.models.XTableColumnModel;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleValue.BVCalculator;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.internationalization.I18n;
@@ -896,6 +896,23 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
     protected void configureUnitSelectionScope() {}
 
     /**
+     * Gets the price the unit table shows for a unit. MegaMek shows the construction cost; a host application that
+     * prices units differently (such as MekHQ with its unit price multipliers or Battle Value-based pricing) overrides
+     * this so the table shows what the unit will actually cost. Called for every visible row and on every sort, so
+     * overrides must price from the summary alone rather than loading the unit.
+     *
+     * @param summary the unit to price
+     *
+     * @return the price to display, in C-bills
+     *
+     * @author Illiani
+     * @since 0.51.01
+     */
+    protected long getDisplayedPrice(MekSummary summary) {
+        return summary.getCost();
+    }
+
+    /**
      * @return the selected entity (required for MekHQ/MegaMek overrides)
      */
     protected Entity refreshUnitView() {
@@ -1455,7 +1472,7 @@ public abstract class AbstractUnitSelectorDialog extends JDialog implements Runn
             } else if (col == COL_YEAR) {
                 return ms.getYear();
             } else if (col == COL_COST) {
-                return ms.getCost();
+                return getDisplayedPrice(ms);
             } else if (col == COL_LEVEL) {
                 return ms.getLevel();
             } else if (col == COL_VTL) {

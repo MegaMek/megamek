@@ -35,8 +35,8 @@ package megamek.common.units;
 
 import java.awt.Image;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.FluffImageHelper;
-import megamek.common.annotations.Nullable;
 
 /**
  * This interface represents any physical object that can find itself on the battlefield, including units of any sort

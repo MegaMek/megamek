@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.*;
 
+import jakarta.annotation.Nullable;
 import megamek.MegaMek;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
@@ -65,12 +66,13 @@ import megamek.client.ui.preferences.JWindowPreference;
 import megamek.client.ui.preferences.PreferencesNode;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.damage.PreExistingDamageApplier;
 import megamek.common.compute.damage.PreExistingDamageLevel;
 import megamek.common.enums.ForcedWithdrawalOrder;
 import megamek.common.equipment.Mounted;
-import megamek.common.units.*;
+import megamek.common.units.DamageEditApplier;
+import megamek.common.units.DamageEditSpec;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 
 /**

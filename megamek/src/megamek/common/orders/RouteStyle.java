@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2000-2011 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2014-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -31,25 +30,32 @@
  * <https://www.xbox.com/en-US/developers/rules> and it is not endorsed by or
  * affiliated with Microsoft.
  */
-
-package megamek.common.annotations;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Target;
+package megamek.common.orders;
 
 /**
- * When used on a method, this annotation denotes that the method may return a null value. As a result, consumers of
- * that value should be prepared to handle nulls.
- * <br>
- * <br>
- * When used on a parameter, this annotation denotes that the parameter may contain a null value. As a result, any
- * overriding methods need ot be able to handle nulls.
+ * How the bot plans a lance's way to a waypoint: the fastest way, or one that keeps to ground giving a defensive
+ * to-hit modifier - woods, jungle, buildings, the lee of a hill - while still moving far enough each turn for a good
+ * movement modifier (HammerGS, 2026-10-03: "the objective isn't to hide but get the best TMM modifiers").
  */
-@Target({ ElementType.METHOD, ElementType.PARAMETER })
-@Documented
-@Inherited
-public @interface Nullable {
+public enum RouteStyle {
+    /** The fewest movement points. */
+    FASTEST(0),
+    /** Some way round for better ground. */
+    BALANCED(1),
+    /** Well round for better ground. */
+    COVERED(2);
 
+    private final int exposedHexCost;
+
+    RouteStyle(int exposedHexCost) {
+        this.exposedHexCost = exposedHexCost;
+    }
+
+    /**
+     * @return the movement points a hex with no defensive modifier counts extra on the way, so the planned way keeps
+     *       to better ground; open ground is marked up, never ruled out, so the lance keeps its speed
+     */
+    public int getExposedHexCost() {
+        return exposedHexCost;
+    }
 }

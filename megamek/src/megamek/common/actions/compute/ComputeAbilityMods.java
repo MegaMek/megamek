@@ -40,10 +40,10 @@ import static megamek.common.units.Terrains.ROUGH;
 import static megamek.common.units.Terrains.RUBBLE;
 import static megamek.common.units.Terrains.SWAMP;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.Hex;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;

@@ -37,7 +37,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * How a control point is fought over and what it is worth: the scoring scheme of an {@link ObjectiveMarker}.

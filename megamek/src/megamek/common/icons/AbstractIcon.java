@@ -44,7 +44,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.swing.ImageIcon;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.util.ImageUtil;
 import megamek.utilities.xml.MMXMLUtility;
 import org.w3c.dom.Node;

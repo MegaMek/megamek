@@ -36,10 +36,10 @@ package megamek.common.verifier;
 
 import static megamek.client.ui.clientGUI.calculationReport.CalculationReport.formatForReport;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.DummyCalculationReport;
 import megamek.client.ui.clientGUI.calculationReport.TextCalculationReport;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;

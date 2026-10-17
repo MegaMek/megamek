@@ -37,8 +37,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**

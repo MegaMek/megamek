@@ -44,12 +44,12 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;

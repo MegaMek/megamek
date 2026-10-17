@@ -35,7 +35,7 @@ package megamek.common.units;
 
 import java.io.Serial;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
 import megamek.common.game.Game;

@@ -34,10 +34,10 @@ package megamek.client.ui.dialogs.iconChooser;
 
 import javax.swing.JFrame;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.panels.abstractPanels.abstractIconChooserPanel;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.trees.PortraitChooserTree;
-import megamek.common.annotations.Nullable;
 import megamek.common.icons.AbstractIcon;
 import megamek.common.icons.Portrait;
 import megamek.common.util.fileUtils.AbstractDirectory;

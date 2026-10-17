@@ -46,6 +46,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.Configuration;
 import megamek.common.Hex;
@@ -54,7 +55,6 @@ import megamek.common.Inferno;
 import megamek.common.InfernoTracker;
 import megamek.common.Player;
 import megamek.common.SpecialHexDisplay;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.BasementType;
 import megamek.common.equipment.FuelTank;
 import megamek.common.event.board.BoardEvent;

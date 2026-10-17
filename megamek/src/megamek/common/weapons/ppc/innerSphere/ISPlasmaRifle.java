@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -66,6 +66,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
     public ISPlasmaRifle() {
         name = "Plasma Rifle";
         setInternalName("ISPlasmaRifle");
+        sortingName = "Plasma Rifle C";
         heat = 10;
         damage = 10;
         rackSize = 1;

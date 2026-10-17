@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -70,7 +70,7 @@ public class ISImpHGaussRifle extends GaussWeapon {
         shortName = "Imp. Heavy Gauss Rifle";
         setInternalName("ISImprovedHeavyGaussRifle");
         addLookupName("IS Improved Heavy Gauss Rifle");
-        sortingName = "Gauss IMP D";
+        sortingName = "Gauss Imp D";
         heat = 2;
         damage = 22;
         ammoType = AmmoType.AmmoTypeEnum.IGAUSS_HEAVY;

@@ -64,6 +64,7 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
     public ISHeavyPlasmaRifle() {
         name = "Heavy Plasma Rifle";
         setInternalName("ISHeavyPlasmaRifle");
+        sortingName = "Plasma Rifle D";
         heat = 12;
         damage = 12;
         rackSize = 3;

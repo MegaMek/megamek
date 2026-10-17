@@ -64,6 +64,7 @@ public class ISLightPlasmaRifle extends AmmoWeapon {
     public ISLightPlasmaRifle() {
         name = "Light Plasma Rifle";
         setInternalName("ISLightPlasmaRifle");
+        sortingName = "Plasma Rifle B";
         heat = 4;
         damage = 4;
         rackSize = 4;

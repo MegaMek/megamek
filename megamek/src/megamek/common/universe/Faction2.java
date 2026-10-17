@@ -39,6 +39,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -71,8 +72,10 @@ import megamek.client.ratgenerator.FactionRecord;
  * avoid repetition.
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
+// Faction logos were replaced by icons; older faction files (e.g. in a user dir) may still contain them
+@JsonIgnoreProperties({ "logo", "logoChanges" })
 @JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
-                     "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
+                     "tags", "color", "icon", "iconChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
                      "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
                      "aresConventionsSignatory", "subunits" })
@@ -92,8 +95,8 @@ public class Faction2 {
     private String successor;
     private final Set<FactionTag> tags = new HashSet<>();
     private final Color color = Color.LIGHT_GRAY;
-    private String logo;
-    private final NavigableMap<Integer, String> logoChanges = new TreeMap<>();
+    private String icon;
+    private final NavigableMap<Integer, String> iconChanges = new TreeMap<>();
     private String background;
     private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
@@ -269,27 +272,26 @@ public class Faction2 {
         return backgroundChanges;
     }
 
-    public String getLogo() {
-        return logo;
+    public String getIcon() {
+        return icon;
     }
 
     /**
-     * Returns the faction's logo image path for the given year, honoring any era-based
-     * {@link #getLogoChanges() logo changes}. Falls back to the base {@link #getLogo() logo} when no change applies
-     * for the year. Used to keep a consolidated rename lineage (for example Clan Goliath Scorpion becoming the
-     * Escorpion Imperio in 3080) visually era-correct after its faction files are merged into one.
+     * Returns the file name of the faction's icon for the given year, honoring any era-based
+     * {@link #getIconChanges() icon changes}. Falls back to the base {@link #getIcon() icon} when no change applies
+     * for the year. Icon files are found in {@code data/images/universe/factions/}.
      *
-     * @param year the game year to resolve the logo for
+     * @param year the game year to resolve the icon for
      *
-     * @return the era-appropriate logo image path, or the base logo when none applies
+     * @return the era-appropriate icon file name, or the base icon when none applies
      */
-    public String getLogo(int year) {
-        final Map.Entry<Integer, String> logoByYear = logoChanges.floorEntry(year);
-        return (logoByYear == null) ? logo : logoByYear.getValue();
+    public String getIcon(int year) {
+        final Map.Entry<Integer, String> iconByYear = iconChanges.floorEntry(year);
+        return (iconByYear == null) ? icon : iconByYear.getValue();
     }
 
-    public NavigableMap<Integer, String> getLogoChanges() {
-        return logoChanges;
+    public NavigableMap<Integer, String> getIconChanges() {
+        return iconChanges;
     }
 
     public int[] getEraMods() {

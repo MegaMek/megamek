@@ -292,4 +292,55 @@ class DirectArtilleryToHitGuessTest {
         assertTrue(thumperPlan(game, units[0], units[1]).getExpectedFriendlyDamage() > 0,
               "the Thumper's own Wasp stands next to the target, inside the blast");
     }
+
+    /**
+     * The shot needs 8, so a miss scatters 1 to 6 hexes. A Wasp 4 hexes beyond the target is outside the blast at the
+     * aimed hex but where a miss by 3 to 5 lands.
+     */
+    private static final Coords FRIEND_IN_SCATTER_RANGE = TARGET_AT_TWELVE_HEXES.translated(3, 4);
+
+    /** Beyond the longest scatter (6 hexes) plus the blast around it. */
+    private static final Coords FRIEND_BEYOND_SCATTER_RANGE = TARGET_AT_TWELVE_HEXES.translated(3, 10);
+
+    /** Our own shot, with the real to-hit roll, as the bot builds it when it decides what to fire. */
+    private static WeaponFireInfo ownShot(Game game, Entity thumper, Entity target) {
+        WeaponMounted thumperGun = firstWeaponWithFlag(thumper, WeaponType.F_ARTILLERY);
+        return new WeaponFireInfo(thumper, target, thumperGun, thumperGun.getLinkedAmmo(), game, false,
+              princessFor(game));
+    }
+
+    @Test
+    void ownShotCountsAFriendWhereAMissCanScatter() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+        place(game, LASER_MEK, 3, 2, FRIEND_IN_SCATTER_RANGE, 0);
+
+        WeaponFireInfo shot = ownShot(game, units[0], units[1]);
+
+        assertEquals(8, shot.getToHit().getValue(), shot.getToHit().getDesc());
+        assertEquals(0, shot.getMaxFriendlyDamage(), 0.0001, "the Wasp is outside the blast at the aimed hex");
+        assertTrue(shot.getExpectedScatterFriendlyDamage() > 0, "a miss by 3 to 5 lands on or next to the Wasp");
+        FiringPlan plan = new FiringPlan(units[1]);
+        plan.add(shot);
+        assertTrue(plan.getExpectedFriendlyDamage() > 0, "the firing decision must see the risk to the Wasp");
+    }
+
+    @Test
+    void guessedShotLeavesTheScatterOut() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+        place(game, LASER_MEK, 3, 2, FRIEND_IN_SCATTER_RANGE, 0);
+
+        assertEquals(0, thumperPlan(game, units[0], units[1]).getExpectedFriendlyDamage(), 0.0001,
+              "path ranking and enemy estimates use guesses and do not shape a blast for every missed roll");
+    }
+
+    @Test
+    void ownShotIgnoresAFriendBeyondTheLongestScatter() {
+        Game game = game();
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+        place(game, LASER_MEK, 3, 2, FRIEND_BEYOND_SCATTER_RANGE, 0);
+
+        assertEquals(0, ownShot(game, units[0], units[1]).getExpectedScatterFriendlyDamage(), 0.0001);
+    }
 }

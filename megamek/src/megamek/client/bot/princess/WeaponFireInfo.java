@@ -53,8 +53,10 @@ import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.compute.scatter.Scatter;
 import megamek.common.enums.GamePhase;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
@@ -93,6 +95,9 @@ public class WeaponFireInfo {
     private static final NumberFormat LOG_PER = NumberFormat.getPercentInstance();
     private static final NumberFormat LOG_DEC = DecimalFormat.getInstance();
     private static final double[] ZERO_DAMAGE = { 0.0, 0.0, 0.0 };
+    /** The number of ways two dice can roll each total, indexed by the total. */
+    private static final int[] WAYS_TO_ROLL_ON_TWO_DICE = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+    private static final double TWO_DICE_OUTCOMES = 36.0;
 
     private WeaponAttackAction action;
     private Entity shooter;
@@ -104,6 +109,7 @@ public class WeaponFireInfo {
     private double maxDamage;
     private double maxFriendlyDamage = 0;
     private double maxBuildingDamage = 0;
+    private double expectedScatterFriendlyDamage = 0;
     private double damageOnHit;
     private int damageDirection = -1; // direction damage is coming from relative to target
     private ToHitData toHit = null;
@@ -298,6 +304,14 @@ public class WeaponFireInfo {
 
     double getMaxBuildingDamage() {
         return maxBuildingDamage;
+    }
+
+    /**
+     * @return the friendly damage expected from this shot missing and scattering, already weighted by the chance of
+     *       each missed roll; only set for our own direct artillery shots, otherwise 0
+     */
+    double getExpectedScatterFriendlyDamage() {
+        return expectedScatterFriendlyDamage;
     }
 
     double getProbabilityToHit() {
@@ -869,6 +883,71 @@ public class WeaponFireInfo {
     }
 
     /**
+     * @return {@code true} if this is a firing-phase artillery shot, which scatters when it misses
+     */
+    private boolean isDirectArtilleryShot() {
+        AmmoMounted ammo = (preferredAmmo != null) ? preferredAmmo : weapon.getLinkedAmmo();
+        return DirectArtilleryToHitGuess.appliesTo(weapon.getType(), ammo, getShooter(), target, game);
+    }
+
+    /**
+     * Estimates the damage this artillery shot would do to friendly units if it misses. The engine moves a missed
+     * shell one hex for each point it missed by, less {@link Scatter#SPA_SCATTER_REDUCTION} hexes for an Oblique
+     * Artilleryman, in one of six directions ({@code ArtilleryWeaponDistantFireHandler}). Every missed roll is
+     * weighted by its chance on two dice and every direction counts one sixth. With the Advanced Scatter option the
+     * engine rolls the distance instead; that is estimated with the standard rule. A shell that lands off the board
+     * does no harm.
+     *
+     * <p>Example: a shot needing 10 that rolls 3 lands 7 hexes away, so a friendly Warhammer 7 hexes behind the
+     * target is at risk on that roll.</p>
+     *
+     * @param toHitNumber the roll the shot needs
+     *
+     * @return the expected friendly damage from misses
+     */
+    double computeScatterFriendlyDamage(final int toHitNumber) {
+        AmmoMounted ammo = (preferredAmmo != null) ? preferredAmmo : weapon.getLinkedAmmo();
+        Coords center = target.getPosition();
+        // 2 or less never misses (this includes automatic hits); more than 12 is never fired
+        if ((ammo == null) || (center == null) || (toHitNumber <= 2) || (toHitNumber > 12)) {
+            return 0;
+        }
+        Board board = game.getBoard(target);
+        int scatterReduction = getShooter().hasAbility(OptionsConstants.GUNNERY_OBLIQUE_ARTILLERY)
+              ? Scatter.SPA_SCATTER_REDUCTION : 0;
+        double expectedDamage = 0;
+        for (int roll = 2; roll < toHitNumber; roll++) {
+            double rollChance = WAYS_TO_ROLL_ON_TWO_DICE[roll] / TWO_DICE_OUTCOMES;
+            int scatterDistance = Math.max(toHitNumber - roll - scatterReduction, 0);
+            if (scatterDistance == 0) {
+                expectedDamage += rollChance * friendlyBlastDamageAt(board, ammo, center);
+                continue;
+            }
+            for (int direction = 0; direction < 6; direction++) {
+                Coords landing = center.translated(direction, scatterDistance);
+                expectedDamage += (rollChance / 6) * friendlyBlastDamageAt(board, ammo, landing);
+            }
+        }
+        return expectedDamage;
+    }
+
+    /**
+     * @return the damage a shell landing on the given hex would do to friendly units, 0 if the hex is off the board
+     */
+    private double friendlyBlastDamageAt(final Board board, final AmmoMounted ammo, final Coords landing) {
+        if (!board.contains(landing)) {
+            return 0;
+        }
+        Hex landingHex = board.getHex(landing);
+        if (landingHex == null) {
+            return 0;
+        }
+        HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo.getType(), landing,
+              landingHex.getLevel(), true, false, false, game, false);
+        return computeBlastDamage(getShooter(), blastShape)[1];
+    }
+
+    /**
      * Adds up the damage a blast does to enemy units, friendly units and buildings.
      *
      * @param shooter    The unit making the attack; units on its team count as friendly.
@@ -1011,6 +1090,11 @@ public class WeaponFireInfo {
 
         setMaxDamage(computeExpectedDamage());
         setDamageOnHit(getMaxDamage());
+        // Only for our own firing decision: a missed direct artillery shot scatters, and it can land on our units.
+        // Path ranking and enemy estimates use guesses and skip this, as it shapes a blast for every missed roll.
+        expectedScatterFriendlyDamage = (!guess && isDirectArtilleryShot())
+              ? computeScatterFriendlyDamage(getToHit().getValue())
+              : 0;
 
         if (debugEnabled) {
             msg.append("\n\tHeat: ").append(getHeat());

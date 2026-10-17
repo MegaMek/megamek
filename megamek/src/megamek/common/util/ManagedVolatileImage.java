@@ -35,6 +35,7 @@ package megamek.common.util;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -121,11 +122,12 @@ public class ManagedVolatileImage {
      * show whatever that device has at the same spot, such as its font cache, so the image is recreated whenever the
      * target screen changes.</p>
      *
-     * @param target the configuration of the screen being drawn on, usually
-     *               {@link Graphics2D#getDeviceConfiguration()}; {@code null} keeps the current screen
+     * @param target the configuration of the screen being drawn on, usually the window's
+     *               {@link java.awt.Component#getGraphicsConfiguration()}; {@code null} or an offscreen buffer
+     *               keeps the current screen
      */
     public VolatileImage getImage(GraphicsConfiguration target) {
-        if ((target != null) && (target.getDevice() != gc.getDevice())) {
+        if ((target != null) && isScreen(target) && (target.getDevice() != gc.getDevice())) {
             LOGGER.info("Volatile image {}x{} moved from screen {} to screen {}; recreating it",
                   width, height, gc.getDevice().getIDstring(), target.getDevice().getIDstring());
             gc = target;
@@ -144,6 +146,14 @@ public class ManagedVolatileImage {
             }
         } while (volatileImage.contentsLost());
         return volatileImage;
+    }
+
+    /**
+     * Swing may paint into an offscreen buffer first, whose configuration is not a monitor; only a real screen
+     * should move the image.
+     */
+    private static boolean isScreen(GraphicsConfiguration configuration) {
+        return configuration.getDevice().getType() == GraphicsDevice.TYPE_RASTER_SCREEN;
     }
 
     public void flush() {

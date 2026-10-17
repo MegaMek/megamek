@@ -97,7 +97,7 @@ public class RawImagePanel extends JComponent {
             try {
                 // Enable high-quality rendering
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-                g2d.drawImage(cachedImage.getImage(g2d.getDeviceConfiguration()), 0, 0, null);
+                g2d.drawImage(cachedImage.getImage(getGraphicsConfiguration()), 0, 0, null);
             } finally {
                 g2d.dispose();
             }

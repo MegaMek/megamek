@@ -343,7 +343,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
         if (medalImage == null) {
             return targetMedalWidth; // Skip drawing if medalImage is not initialized
         }
-        VolatileImage image = medalImage.getImage(g2d.getDeviceConfiguration());
+        VolatileImage image = medalImage.getImage(frame.getGraphicsConfiguration());
         if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double medalHeightScalePercent = 0.15; // Medal height as 15% of panel height
             int originalMedalWidth = image.getWidth(null);
@@ -378,7 +378,7 @@ public class MegaMekGUI implements IPreferenceChangeListener {
      */
     private @Nullable Rectangle drawLogo(Graphics2D g2d, int panelWidth, int panelHeight, int targetMedalWidth,
           int padding) {
-        VolatileImage image = logoImage.getImage(g2d.getDeviceConfiguration());
+        VolatileImage image = logoImage.getImage(frame.getGraphicsConfiguration());
         if (image.getWidth(null) > 0 && image.getHeight(null) > 0) {
             double logoWidthScalePercent = 0.25; // Logo width as 25% of panel width
 

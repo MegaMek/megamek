@@ -1214,7 +1214,7 @@ class TeamLoadOutGeneratorTest {
 
         int standardCount = 0;
         int infernoCount = 0;
-        for (int roll = 0; roll < 40; roll++) {
+        for (int roll = 0; roll < 200; roll++) {
             BattleArmor battleArmor = createBattleArmor("IS Standard Battle Armor", "(SRM)", false);
             AmmoMounted bin = addAmmoBin(battleArmor, "BA-SRM4 Ammo", BattleArmor.LOC_SQUAD, 4);
             generator.reconfigureEntity(battleArmor, munitionTree, availabilityMap);
@@ -1225,8 +1225,9 @@ class TeamLoadOutGeneratorTest {
             standardCount += loaded.equals("BA-SRM4 Ammo") ? 1 : 0;
             infernoCount += loaded.equals("BA-SRM4 Ammo Inferno") ? 1 : 0;
         }
-        // An even roll gives about 20 of each; picking from every SRM munition name gave Inferno about 4 times
-        assertTrue((standardCount >= 10) && (infernoCount >= 10),
+        // An even roll gives about 100 of each; picking from every SRM munition name gave Inferno about 20 times.
+        // The rolls are unseeded, so a fair roll falls below 60 on either side only about once in 160 million runs.
+        assertTrue((standardCount >= 60) && (infernoCount >= 60),
               "Standard " + standardCount + ", Inferno " + infernoCount);
     }
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2000-2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2015-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2015-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -405,16 +405,16 @@ public class TestSupportVehicle extends TestEntity {
     public enum SVEngine implements ITechnologyDelegator {
         STEAM(Engine.STEAM, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.NAVAL, SVType.RAIL)),
         COMBUSTION(Engine.COMBUSTION_ENGINE, SVType.allBut(SVType.SATELLITE)),
+        EXTERNAL(Engine.EXTERNAL, EnumSet.of(SVType.RAIL), true),
         BATTERY(Engine.BATTERY, true),
         FUEL_CELL(Engine.FUEL_CELL, true),
         SOLAR(Engine.SOLAR,
               EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.AIRSHIP, SVType.FIXED_WING, SVType.NAVAL, SVType.WIGE,
                     SVType.SATELLITE),
               true),
+        MAGLEV(Engine.MAGLEV, EnumSet.of(SVType.RAIL)),
         FISSION(Engine.FISSION),
         FUSION(Engine.NORMAL_ENGINE),
-        MAGLEV(Engine.MAGLEV, EnumSet.of(SVType.RAIL)),
-        EXTERNAL(Engine.EXTERNAL, EnumSet.of(SVType.RAIL), true),
         NONE(Engine.NONE, EnumSet.of(SVType.WHEELED, SVType.TRACKED, SVType.RAIL), false);
 
         // The engine type constant used to create a new {@link Engine}.

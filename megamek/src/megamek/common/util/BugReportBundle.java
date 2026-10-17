@@ -149,10 +149,10 @@ public class BugReportBundle {
     private final File logDirectory;
     private final File gameReportDirectory;
     private final File autosaveDirectory;
-    private final File saveGameFile;
-    private final File gameSummaryDirectory;
+    private final @Nullable File saveGameFile;
+    private final @Nullable File gameSummaryDirectory;
     private final String systemInformation;
-    private final String gameLogFileName;
+    private final @Nullable String gameLogFileName;
 
     /**
      * The outcome of writing a bug report archive.
@@ -316,9 +316,9 @@ public class BugReportBundle {
             }
         }
 
-        // 6. The current game's minimap images last: they show the board at each phase, but the save already holds
-        // the same game, so they go before any log does. The named PNGs come newest first, so the cap drops the
-        // oldest rounds; the GIF holds the same frames without phase names, so it is dropped first of all.
+        // 6. The current game's minimap images last, so the cap drops them before any log: they show the board at
+        // each phase, but the save already holds the same game. The named PNGs come newest first, so the cap drops
+        // the oldest rounds; the GIF holds the same frames without phase names, so it is dropped first of all.
         if ((gameSummaryDirectory != null) && gameSummaryDirectory.isDirectory()) {
             String entryPrefix = GAME_SUMMARY_ENTRY_PREFIX + gameSummaryDirectory.getName() + "/";
             for (File frame : gameSummaryFilesNewestFirst(GAME_SUMMARY_FRAME_EXTENSION)) {

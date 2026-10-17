@@ -226,6 +226,25 @@ class BugReportBundleTest {
     }
 
     @Test
+    void collectsOnlyTheNewestGameDatasetAfterTheCombatReport() throws IOException {
+        File olderDataset = writeLog("game_actions_0.tsv", "moves and attacks");
+        File newerDataset = writeLog("game_actions_1.tsv", "moves and attacks");
+        assertTrue(olderDataset.setLastModified(1_000_000L), "test fixture: could not set a modification time");
+        assertTrue(newerDataset.setLastModified(2_000_000L), "test fixture: could not set a modification time");
+        // Other tab-separated files, such as benchmark results, are not part of a bug report.
+        writeLog("ai_match_results_2026-09-25_23-52-10_game1_orders.tsv", "benchmark rows");
+        writeLog(GAME_LOG_FILE_NAME, "round reports");
+        writeLog("megamek_1.log.gz", "rolled engine log");
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "logs/" + GAME_LOG_FILE_NAME,
+              "logs/game_actions_1.tsv",
+              "logs/megamek_1.log.gz"), entryNamesOf(archiveFile));
+    }
+
+    @Test
     void readsCombatReportsFromTheRelocatedReportDirectory() throws IOException {
         // The player moved the combat reports elsewhere; Log4j still writes the text logs to the usual folder.
         File reportDirectory = temporaryDirectory.resolve("reports").toFile();

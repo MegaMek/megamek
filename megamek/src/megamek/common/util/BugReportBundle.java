@@ -114,6 +114,15 @@ public class BugReportBundle {
                 .flatMap(List::stream)
                 .toList();
 
+    /**
+     * The name the server's game dataset log starts with, followed by a game counter or a timestamp. Written to the
+     * combat-report directory, one file per game, only when the dataset logging preference is on.
+     *
+     * @see megamek.common.game.GameDatasetLogger
+     */
+    private static final String GAME_DATASET_BASE_NAME = "game_actions";
+    private static final String GAME_DATASET_EXTENSION = ".tsv";
+
     private static final String LOG_EXTENSION = ".log";
     private static final String ROLLED_LOG_EXTENSION = ".log.gz";
     private static final int COPY_BUFFER_SIZE = 8192;
@@ -251,7 +260,11 @@ public class BugReportBundle {
         newestGameLog().ifPresent(gameLog -> candidates.add(
               new CandidateFile(gameLog, LOG_ENTRY_PREFIX + gameLog.getName())));
 
-        // 4. Rolled archives last, newest first: useful when the interesting event scrolled out of the live log,
+        // 4. The newest game dataset log, for the same reason. It exists only when dataset logging is switched on.
+        newestGameDataset().ifPresent(dataset -> candidates.add(
+              new CandidateFile(dataset, LOG_ENTRY_PREFIX + dataset.getName())));
+
+        // 5. Rolled archives last, newest first: useful when the interesting event scrolled out of the live log,
         // but the first thing worth dropping when space runs short.
         if (hasLogDirectory) {
             for (File rolledLog : rolledLogsNewestFirst()) {
@@ -288,12 +301,38 @@ public class BugReportBundle {
         int extensionIndex = gameLogFileName.lastIndexOf('.');
         String baseName = (extensionIndex > 0) ? gameLogFileName.substring(0, extensionIndex) : gameLogFileName;
 
-        File[] gameLogs = gameReportDirectory.listFiles(file -> file.isFile() && file.getName().startsWith(baseName));
-        if ((gameLogs == null) || (gameLogs.length == 0)) {
+        return newestReport(baseName, "");
+    }
+
+    /**
+     * Finds the most recently written game dataset log. It records every move and attack of a game as tab-separated
+     * rows, so it can show what a bot did turn by turn when the save alone cannot.
+     *
+     * @return the newest dataset log, or empty when dataset logging was never switched on
+     */
+    private Optional<File> newestGameDataset() {
+        return newestReport(GAME_DATASET_BASE_NAME + "_", GAME_DATASET_EXTENSION);
+    }
+
+    /**
+     * Finds the most recently modified non-empty file in the combat-report directory with the given name prefix and
+     * suffix.
+     *
+     * @param prefix the name the file must start with
+     * @param suffix the name the file must end with, or an empty string for any
+     *
+     * @return the newest match, or empty when there is none
+     */
+    private Optional<File> newestReport(String prefix, String suffix) {
+        File[] reports = gameReportDirectory.listFiles(file -> file.isFile()
+              && (file.length() > 0)
+              && file.getName().startsWith(prefix)
+              && file.getName().endsWith(suffix));
+        if ((reports == null) || (reports.length == 0)) {
             return Optional.empty();
         }
 
-        return Arrays.stream(gameLogs).max(Comparator.comparingLong(File::lastModified));
+        return Arrays.stream(reports).max(Comparator.comparingLong(File::lastModified));
     }
 
     /**

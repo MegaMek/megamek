@@ -79,7 +79,7 @@ class BugReportBundleTest {
 
     @Test
     void emptyLogDirectoryStillProducesAnArchiveWithSystemInformation() throws IOException {
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
 
         BugReportBundle.BundleResult result = bundle.writeTo(archiveFile);
 
@@ -91,7 +91,8 @@ class BugReportBundleTest {
     @Test
     void missingLogDirectoryIsToleratedRatherThanFailing() throws IOException {
         File absentDirectory = temporaryDirectory.resolve("no-such-directory").toFile();
-        BugReportBundle bundle = new BugReportBundle(absentDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = new BugReportBundle(absentDirectory, absentDirectory, null, SYSTEM_INFORMATION,
+              GAME_LOG_FILE_NAME);
 
         bundle.writeTo(archiveFile);
 
@@ -108,7 +109,7 @@ class BugReportBundleTest {
             writeLog("Bot_Clan Jade Falcon OpFor_%d.mul".formatted(index), "unit list");
         }
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
         bundle.writeTo(archiveFile);
 
         List<String> entryNames = entryNamesOf(archiveFile);
@@ -128,7 +129,7 @@ class BugReportBundleTest {
         assertTrue(middleReport.setLastModified(2_000_000L), "test fixture: could not set a modification time");
         assertTrue(newestReport.setLastModified(3_000_000L), "test fixture: could not set a modification time");
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
         bundle.writeTo(archiveFile);
 
         List<String> combatReports = entryNamesOf(archiveFile).stream()
@@ -143,7 +144,7 @@ class BugReportBundleTest {
         Files.writeString(saveGame.toPath(), "serialized game");
         writeLog("megamek.log", "engine log");
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, saveGame, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(saveGame);
         bundle.writeTo(archiveFile);
 
         List<String> entryNames = entryNamesOf(archiveFile);
@@ -159,7 +160,7 @@ class BugReportBundleTest {
         File oversizedLog = new File(logDirectory, "princess.log");
         setFileLength(oversizedLog, BugReportBundle.MAX_ARCHIVE_BYTES + 1);
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
         BugReportBundle.BundleResult result = bundle.writeTo(archiveFile);
 
         assertTrue(result.hasSkippedEntries());
@@ -168,6 +169,87 @@ class BugReportBundleTest {
         assertTrue(entryNamesOf(archiveFile).contains("logs/megamek.log"),
               "the smaller logs should still be collected");
         assertTrue(result.totalBytes() < BugReportBundle.MAX_ARCHIVE_BYTES);
+    }
+
+    @Test
+    void collectsEverySuiteLogInPriorityOrder() throws IOException {
+        // Written out of order, so the test proves the archive order comes from the manifest, not from the disk.
+        writeLog("megameklab.log", "lab log");
+        writeLog("bot_path_ranker.log", "path scores");
+        writeLog("princess.log", "bot log");
+        writeLog("unified_log.log", "unified log");
+        writeLog("mekhq.log", "campaign log");
+        writeLog("megamek.log", "engine log");
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "logs/megamek.log",
+              "logs/mekhq.log",
+              "logs/unified_log.log",
+              "logs/princess.log",
+              "logs/bot_path_ranker.log",
+              "logs/megameklab.log"), entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void skipsTheEmptyLogsOfProgramsThatDidNotRun() throws IOException {
+        // MegaMek's own log configuration declares the MekHQ and MegaMekLab logs but routes nothing to them, so a
+        // standalone MegaMek leaves both files present and empty.
+        writeLog("megamek.log", "engine log");
+        writeLog("mekhq.log", "");
+        writeLog("megameklab.log", "");
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+              entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void collectsRolledLogsForEveryCollectedLogAndNothingElse() throws IOException {
+        writeLog("megamek_1.log.gz", "rolled engine log");
+        writeLog("mekhq_1.log.gz", "rolled campaign log");
+        writeLog("princess_1.log.gz", "rolled bot log");
+        writeLog("megameklab_1.log.gz", "rolled lab log");
+        writeLog("forcegen_1.log.gz", "an unrelated archive");
+
+        newBundle(null).writeTo(archiveFile);
+
+        List<String> entryNames = entryNamesOf(archiveFile);
+        assertTrue(entryNames.contains("logs/megamek_1.log.gz"), entryNames.toString());
+        assertTrue(entryNames.contains("logs/mekhq_1.log.gz"), entryNames.toString());
+        assertTrue(entryNames.contains("logs/princess_1.log.gz"), entryNames.toString());
+        assertTrue(entryNames.contains("logs/megameklab_1.log.gz"), entryNames.toString());
+        assertFalse(entryNames.contains("logs/forcegen_1.log.gz"),
+              "an archive that is not a rolled suite log should be left out: " + entryNames);
+    }
+
+    @Test
+    void readsCombatReportsFromTheRelocatedReportDirectory() throws IOException {
+        // The player moved the combat reports elsewhere; Log4j still writes the text logs to the usual folder.
+        File reportDirectory = temporaryDirectory.resolve("reports").toFile();
+        assertTrue(reportDirectory.mkdirs(), "test fixture: could not create the report directory");
+        Files.writeString(new File(reportDirectory, GAME_LOG_FILE_NAME).toPath(), "round reports");
+        writeLog("megamek.log", "engine log");
+
+        new BugReportBundle(logDirectory, reportDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME)
+              .writeTo(archiveFile);
+
+        List<String> entryNames = entryNamesOf(archiveFile);
+        assertTrue(entryNames.contains("logs/megamek.log"),
+              "the text logs should still be collected from the log directory: " + entryNames);
+        assertTrue(entryNames.contains("logs/" + GAME_LOG_FILE_NAME),
+              "the combat report should be found in the report directory: " + entryNames);
+    }
+
+    /**
+     * @param saveGame the save to include, or {@code null} for none
+     *
+     * @return a bundle reading both the text logs and the combat reports from the test's log directory
+     */
+    private BugReportBundle newBundle(File saveGame) {
+        return new BugReportBundle(logDirectory, logDirectory, saveGame, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
     }
 
     /**

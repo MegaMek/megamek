@@ -62,6 +62,11 @@ import megamek.logging.MMLogger;
  * too large to attach, while a naive {@code *.log} filter would miss the combat report, which is usually the single
  * most useful artifact in a MegaMek bug report.</p>
  *
+ * <p>The text logs and the combat reports can live in different directories. Log4j always writes the text logs to
+ * {@value #TEXT_LOG_DIRECTORY} under the working directory, as set in {@code mmconf/log4j2.xml}, while the combat
+ * reports follow the player's log directory preference. The two are the same folder unless the player has relocated
+ * the reports.</p>
+ *
  * <p>The archive is capped at {@link #MAX_ARCHIVE_BYTES}. Candidates are added in priority order and any that would
  * push the total past the cap are skipped and named in the returned {@link BundleResult}, so the caller can tell the
  * player exactly what was left out instead of silently truncating.</p>
@@ -82,24 +87,39 @@ public class BugReportBundle {
     /** Archive sub-directory holding the collected logs, matching the layout MekHQ's bug report bundle uses. */
     private static final String LOG_ENTRY_PREFIX = "logs/";
 
-    /** Log basenames always worth collecting, most important first. */
-    private static final List<String> ESSENTIAL_LOG_BASE_NAMES = List.of("megamek", "unified_log");
-
-    /** Log basenames collected only when a bot actually ran, most important first. */
-    private static final List<String> BOT_LOG_BASE_NAMES = List.of("princess", "bot_path_ranker");
+    /**
+     * The directory Log4j writes the text logs to, relative to the working directory. Both MegaMek's and MekHQ's
+     * {@code mmconf/log4j2.xml} use it, so it holds MekHQ's logs too when MegaMek runs inside MekHQ.
+     */
+    public static final String TEXT_LOG_DIRECTORY = "logs";
 
     /**
-     * Every basename this bundle collects. Precomputed because the rolled-log filter is applied once per file in the
-     * log directory, which can hold thousands.
+     * Log basenames always worth collecting, most important first. {@code mekhq.log} holds the campaign side of a
+     * game launched from MekHQ; when MegaMek runs on its own the file is empty and is skipped.
+     */
+    private static final List<String> ESSENTIAL_LOG_BASE_NAMES = List.of("megamek", "mekhq", "unified_log");
+
+    /** Log basenames written only when a bot ran, most important first. */
+    private static final List<String> BOT_LOG_BASE_NAMES = List.of("princess", "bot_path_ranker");
+
+    /** Log basenames from the other suite programs, rarely part of a game's story, so collected last. */
+    private static final List<String> COMPANION_LOG_BASE_NAMES = List.of("megameklab");
+
+    /**
+     * Every basename this bundle collects, in priority order. Precomputed because the rolled-log filter is applied
+     * once per file in the log directory, which can hold thousands.
      */
     private static final List<String> ALL_LOG_BASE_NAMES =
-          Stream.concat(ESSENTIAL_LOG_BASE_NAMES.stream(), BOT_LOG_BASE_NAMES.stream()).toList();
+          Stream.of(ESSENTIAL_LOG_BASE_NAMES, BOT_LOG_BASE_NAMES, COMPANION_LOG_BASE_NAMES)
+                .flatMap(List::stream)
+                .toList();
 
     private static final String LOG_EXTENSION = ".log";
     private static final String ROLLED_LOG_EXTENSION = ".log.gz";
     private static final int COPY_BUFFER_SIZE = 8192;
 
     private final File logDirectory;
+    private final File gameReportDirectory;
     private final File saveGameFile;
     private final String systemInformation;
     private final String gameLogFileName;
@@ -125,19 +145,21 @@ public class BugReportBundle {
     /**
      * Creates a bundle description. Nothing is read from disk until {@link #writeTo(File)} is called.
      *
-     * @param logDirectory      the directory holding MegaMek's logs; read from
-     *                          {@code ClientPreferences.getLogDirectory()} rather than assumed, because players can
-     *                          relocate it. A directory that does not exist is tolerated and yields a logs-free
-     *                          archive.
-     * @param saveGameFile      the saved game to place at the archive root, or {@code null} when no game was running
-     *                          (the main-menu and startup-crash cases)
-     * @param systemInformation the version, OS and Java details to write to {@value #SYSTEM_INFO_ENTRY_NAME}
-     * @param gameLogFileName   the configured combat-report filename, normally {@code gamelog.html}, used to find the
-     *                          newest matching report; or {@code null} to collect no combat report
+     * @param logDirectory        the directory holding the text logs, normally {@value #TEXT_LOG_DIRECTORY}. A
+     *                            directory that does not exist is tolerated and yields a logs-free archive.
+     * @param gameReportDirectory the directory holding the combat reports; read from
+     *                            {@code ClientPreferences.getLogDirectory()} rather than assumed, because players can
+     *                            relocate it
+     * @param saveGameFile        the saved game to place at the archive root, or {@code null} when no game was
+     *                            running (the main-menu and startup-crash cases)
+     * @param systemInformation   the version, OS and Java details to write to {@value #SYSTEM_INFO_ENTRY_NAME}
+     * @param gameLogFileName     the configured combat-report filename, normally {@code gamelog.html}, used to find
+     *                            the newest matching report; or {@code null} to collect no combat report
      */
-    public BugReportBundle(File logDirectory, @Nullable File saveGameFile, String systemInformation,
-          @Nullable String gameLogFileName) {
+    public BugReportBundle(File logDirectory, File gameReportDirectory, @Nullable File saveGameFile,
+          String systemInformation, @Nullable String gameLogFileName) {
         this.logDirectory = logDirectory;
+        this.gameReportDirectory = gameReportDirectory;
         this.saveGameFile = saveGameFile;
         this.systemInformation = systemInformation;
         this.gameLogFileName = gameLogFileName;
@@ -210,18 +232,18 @@ public class BugReportBundle {
             candidates.add(new CandidateFile(saveGameFile, saveGameFile.getName()));
         }
 
-        if (!logDirectory.isDirectory()) {
-            LOGGER.warn("[BugReport] Log directory {} does not exist; the archive will contain no logs",
+        boolean hasLogDirectory = logDirectory.isDirectory();
+        if (!hasLogDirectory) {
+            LOGGER.warn("[BugReport] Log directory {} does not exist; the archive will contain no text logs",
                   logDirectory.getPath());
-            return candidates;
         }
 
-        // 2. The current logs, which carry the gate decisions explaining why a feature did or did not fire.
-        for (String baseName : ESSENTIAL_LOG_BASE_NAMES) {
-            addIfPresent(candidates, new File(logDirectory, baseName + LOG_EXTENSION));
-        }
-        for (String baseName : BOT_LOG_BASE_NAMES) {
-            addIfPresent(candidates, new File(logDirectory, baseName + LOG_EXTENSION));
+        // 2. The current logs, which carry the gate decisions explaining why a feature did or did not fire. Files
+        // the running program never writes to are left empty by Log4j and skipped here.
+        if (hasLogDirectory) {
+            for (String baseName : ALL_LOG_BASE_NAMES) {
+                addIfPresent(candidates, new File(logDirectory, baseName + LOG_EXTENSION));
+            }
         }
 
         // 3. The newest combat report only. These run to several megabytes each and a busy log directory holds
@@ -231,10 +253,14 @@ public class BugReportBundle {
 
         // 4. Rolled archives last, newest first: useful when the interesting event scrolled out of the live log,
         // but the first thing worth dropping when space runs short.
-        for (File rolledLog : rolledLogsNewestFirst()) {
-            candidates.add(new CandidateFile(rolledLog, LOG_ENTRY_PREFIX + rolledLog.getName()));
+        if (hasLogDirectory) {
+            for (File rolledLog : rolledLogsNewestFirst()) {
+                candidates.add(new CandidateFile(rolledLog, LOG_ENTRY_PREFIX + rolledLog.getName()));
+            }
         }
 
+        LOGGER.info("[BugReport] Collecting text logs from {} and combat reports from {}: {} candidate file(s)",
+              logDirectory.getPath(), gameReportDirectory.getPath(), candidates.size());
         return candidates;
     }
 
@@ -262,7 +288,7 @@ public class BugReportBundle {
         int extensionIndex = gameLogFileName.lastIndexOf('.');
         String baseName = (extensionIndex > 0) ? gameLogFileName.substring(0, extensionIndex) : gameLogFileName;
 
-        File[] gameLogs = logDirectory.listFiles(file -> file.isFile() && file.getName().startsWith(baseName));
+        File[] gameLogs = gameReportDirectory.listFiles(file -> file.isFile() && file.getName().startsWith(baseName));
         if ((gameLogs == null) || (gameLogs.length == 0)) {
             return Optional.empty();
         }

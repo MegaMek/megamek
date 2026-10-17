@@ -246,11 +246,12 @@ public class PackageBugReportAction extends AbstractAction {
      */
     private void buildArchive(File archiveFile, @Nullable File saveGameFile, @Nullable String cautionNotice) {
         ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
-        File logDirectory = new File(clientPreferences.getLogDirectory());
+        File logDirectory = new File(BugReportBundle.TEXT_LOG_DIRECTORY);
+        File gameReportDirectory = new File(clientPreferences.getLogDirectory());
         String systemInformation = MegaMek.getUnderlyingInformation(MegaMek.getOriginProject(),
               MMConstants.PROJECT_NAME);
-        BugReportBundle bundle = new BugReportBundle(logDirectory, saveGameFile, systemInformation,
-              clientPreferences.getGameLogFilename());
+        BugReportBundle bundle = new BugReportBundle(logDirectory, gameReportDirectory, saveGameFile,
+              systemInformation, clientPreferences.getGameLogFilename());
 
         new SwingWorker<BugReportBundle.BundleResult, Void>() {
             @Override

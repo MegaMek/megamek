@@ -38,8 +38,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.IntUnaryOperator;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.compute.MarinePointsBreakdown;
 import megamek.common.compute.MarinePointsScoreCalculator;

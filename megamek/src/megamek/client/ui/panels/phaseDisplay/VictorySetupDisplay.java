@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -48,7 +49,6 @@ import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
 import megamek.client.ui.widget.MegaMekButton;
 import megamek.client.ui.widget.SkinSpecification;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;

@@ -47,7 +47,7 @@ import static megamek.common.alphaStrike.BattleForceSUA.*;
 
 import java.util.Map;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This class contains static helper methods for AlphaStrike

@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.settings;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /** Implemented by settings controls that retain unwrapped text for the sticky details panel. */
 public interface SettingsHelpProvider {

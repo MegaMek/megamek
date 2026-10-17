@@ -37,7 +37,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Objects;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A resolved marker shown beside a setting and explained in its legend.

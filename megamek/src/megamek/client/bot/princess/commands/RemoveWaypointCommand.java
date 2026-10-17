@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -36,8 +36,8 @@ import java.util.List;
 import java.util.Optional;
 
 import megamek.client.bot.princess.Princess;
-import megamek.common.units.Entity;
 import megamek.common.Messages;
+import megamek.common.units.Entity;
 import megamek.server.commands.arguments.Argument;
 import megamek.server.commands.arguments.Arguments;
 import megamek.server.commands.arguments.BooleanArgument;
@@ -77,7 +77,7 @@ public class RemoveWaypointCommand implements ChatCommand {
         }
         // tailWaypoint is the last waypoint in the list, the last is what was added recently
         // so this works as an undo
-        princess.getUnitBehaviorTracker().removeTailWaypoint(unitOpt.get());
+        princess.getUnitBehaviorTracker().removeTailWaypoint(unitOpt.get(), princess);
         if (!quietArgument.getValue()) {
             princess.sendChat(Messages.getString("Princess.command.removeWaypoint.success",
                   unitOpt.get().getDisplayName()));

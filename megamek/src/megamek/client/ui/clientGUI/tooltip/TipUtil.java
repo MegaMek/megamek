@@ -37,9 +37,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.function.Function;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.ProstheticEnhancementType;
 import megamek.common.options.IOption;
 import megamek.common.options.IOptionGroup;

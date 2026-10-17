@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * One Bloodname House: a single genetic legacy descending from one founder.

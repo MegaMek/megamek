@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.BehaviorSettings;
 import megamek.common.Hex;
 import megamek.common.Player;
@@ -57,7 +58,6 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EnemyArtilleryInbound;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardDimensions;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;

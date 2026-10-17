@@ -32,10 +32,10 @@
  */
 package megamek.client.bot.princess;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.RangeType;
 import megamek.common.TargetRollModifier;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;

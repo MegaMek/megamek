@@ -35,7 +35,7 @@ package megamek.common.universe;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A faction-specific rank table loaded from {@code data/universe/ranks.xml}. The index of each entry in {@link #ranks}

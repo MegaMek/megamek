@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,10 +38,10 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -65,26 +65,27 @@ public class CLGaussRifle extends GaussWeapon {
     public CLGaussRifle() {
         super();
 
-        this.name = "Gauss Rifle";
-        this.setInternalName("CLGaussRifle");
-        this.addLookupName("Clan Gauss Rifle");
-        this.heat = 1;
-        this.damage = 15;
-        this.ammoType = AmmoType.AmmoTypeEnum.GAUSS;
-        this.minimumRange = 2;
-        this.shortRange = 7;
-        this.mediumRange = 15;
-        this.longRange = 22;
-        this.extremeRange = 33;
-        this.tonnage = 12.0;
-        this.criticalSlots = 6;
-        this.bv = 320;
-        this.cost = 300000;
-        this.shortAV = 15;
-        this.medAV = 15;
-        this.longAV = 15;
-        this.maxRange = RANGE_LONG;
-        this.explosionDamage = 20;
+        name = "Gauss Rifle";
+        setInternalName("CLGaussRifle");
+        addLookupName("Clan Gauss Rifle");
+        sortingName = "Gauss C";
+        heat = 1;
+        damage = 15;
+        ammoType = AmmoType.AmmoTypeEnum.GAUSS;
+        minimumRange = 2;
+        shortRange = 7;
+        mediumRange = 15;
+        longRange = 22;
+        extremeRange = 33;
+        tonnage = 12.0;
+        criticalSlots = 6;
+        bv = 320;
+        cost = 300000;
+        shortAV = 15;
+        medAV = 15;
+        longAV = 15;
+        maxRange = RANGE_LONG;
+        explosionDamage = 20;
         rulesRefs = rulesRefs(
               rulesRef(SourceBookCode.TM, 219),
               rulesRef(SourceBookCode.BMM, 99),

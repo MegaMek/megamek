@@ -42,11 +42,11 @@ import java.awt.Image;
 import java.awt.RenderingHints;
 import javax.swing.ImageIcon;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.tileset.HexTileset;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.game.Game;
 import megamek.common.units.CraneOperation;

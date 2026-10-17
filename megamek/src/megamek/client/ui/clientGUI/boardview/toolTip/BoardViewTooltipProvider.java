@@ -35,9 +35,9 @@ package megamek.client.ui.clientGUI.boardview.toolTip;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.common.board.Coords;
-import megamek.common.annotations.Nullable;
 
 /**
  * This interface is implemented by classes that can be added to a BoardView to provide the tooltip contents for the

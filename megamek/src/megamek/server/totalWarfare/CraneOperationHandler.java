@@ -35,8 +35,8 @@ package megamek.server.totalWarfare;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.board.Coords;
 import megamek.common.units.CraneOperation;

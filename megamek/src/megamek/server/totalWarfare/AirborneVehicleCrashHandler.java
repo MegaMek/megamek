@@ -38,12 +38,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.ChargeAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.HitDamageType;
@@ -53,16 +53,7 @@ import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.Roll;
-import megamek.common.units.Dropship;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.IBuilding;
-import megamek.common.units.Infantry;
-import megamek.common.units.LargeSupportTank;
-import megamek.common.units.PilotSPAHelper;
-import megamek.common.units.Tank;
-import megamek.common.units.Terrains;
-import megamek.common.units.VTOL;
+import megamek.common.units.*;
 
 /**
  * Resolves crashes, forced landings and crash explosions of airborne VTOL and WiGE vehicles (TW pp.54-56, 68, 196-199).

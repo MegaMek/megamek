@@ -34,7 +34,7 @@ package megamek.common.battlefieldSupport;
 
 import java.io.Serializable;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * The damage of a Battlefield Support Asset, stored as a tuple of the damage applied per grouping ({@code perHit}) and

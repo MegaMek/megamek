@@ -139,6 +139,9 @@ public class BLKAeroSpaceFighterFile extends BLKFile implements IMekLoader {
                 engineRating = engineRating - (engineRating % 5) + 5;
             }
         }
+        if (engineRating > 400) {
+            engineFlags |= Engine.LARGE_ENGINE;
+        }
         a.setEngine(new Engine(engineRating, BLKFile.translateEngineCode(engineCode), engineFlags));
 
         boolean patchworkArmor = false;

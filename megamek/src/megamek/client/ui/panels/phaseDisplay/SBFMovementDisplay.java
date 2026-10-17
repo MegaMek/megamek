@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.SBFClientGUI;
@@ -49,7 +50,6 @@ import megamek.client.ui.dialogs.phaseDisplay.SBFJumpChoiceDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.widget.MegaMekButton;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
 import megamek.common.event.GameTurnChangeEvent;

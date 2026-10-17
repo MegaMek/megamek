@@ -53,6 +53,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
 
+import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
 import megamek.client.Client;
 import megamek.client.bot.princess.BehaviorSettings;
@@ -67,7 +68,6 @@ import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.GhostTargetAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -99,22 +99,19 @@ import megamek.common.pathfinder.BoardClusterTracker;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.turns.SpecificEntityTurn;
-import megamek.common.units.Entity;
-import megamek.common.units.EntityListFile;
-import megamek.common.units.EntityMovementMode;
-import megamek.common.units.IBuilding;
-import megamek.common.units.Infantry;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.Terrains;
-import megamek.common.units.TrainLayout;
-import megamek.common.units.VTOL;
+import megamek.common.units.*;
 import megamek.common.util.BoardUtilities;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 
 public abstract class BotClient extends Client {
     private final static MMLogger LOGGER = MMLogger.create(BotClient.class);
+    /**
+     * Traces each step a bot takes before it clicks Done on the end-of-round and initiative reports. Named outside
+     * {@code megamek.client.bot} so the lines reach megamek.log under both the MegaMek and the MekHQ logging setup;
+     * MekHQ only lets errors through from the bot package.
+     */
+    private static final MMLogger DONE_LEDGER_LOGGER = MMLogger.create("megamek.feature.BotDoneLedger");
 
     public static final int BOT_TURN_RETRY_COUNT = 3;
 
@@ -734,17 +731,29 @@ public abstract class BotClient extends Client {
                     // the other three concealment systems, Nova CEWS and the radical heat sink. The end
                     // phase is the right moment because the turn's heat has been resolved by then, so
                     // each unit is being judged on the heat it actually finished the turn carrying.
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} heat equipment - start", getName(), phase);
                     heatEquipmentManager.manageOwnedUnits();
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} heat equipment - finished", getName(), phase);
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} end of turn processing - start", getName(), phase);
                     endOfTurnProcessing();
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} end of turn processing - finished", getName(),
+                          phase);
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
                 case INITIATIVE_REPORT:
                     // Let bots use Tactical Genius
-                    if (decideToRerollInitiative()) {
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - start", getName(),
+                          phase);
+                    boolean rerollInitiative = decideToRerollInitiative();
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - finished, reroll={}",
+                          getName(), phase, rerollInitiative);
+                    if (rerollInitiative) {
                         rerolledInitiative = true;
                         sendRerollInitiativeRequest();
                     }
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: sending done for {}", getName(), phase);
                     sendDone(true);
+                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: done sent for {}", getName(), phase);
                     break;
                 case TARGETING_REPORT:
                 case MOVEMENT_REPORT:
@@ -771,6 +780,8 @@ public abstract class BotClient extends Client {
             }
         } catch (Throwable t) {
             LOGGER.error(t, "changePhase");
+            DONE_LEDGER_LOGGER.error("[DoneLedger] {}: changePhase for {} threw: {}", getName(),
+                  phase, t.toString());
         }
     }
 

@@ -33,7 +33,7 @@
 
 package megamek.client.bot.princess;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.Minefield;
 import megamek.common.moves.MovePath;

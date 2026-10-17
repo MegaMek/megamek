@@ -319,6 +319,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     }
 
     /**
+     * Whether an air-to-ground attack on this target is resolved with the Non-Infantry Weapon Damage Against Infantry
+     * Table rather than the attack value. Attacks on conventional infantry always use that table (TW p. 215), including
+     * aerospace attacks (TW pp. 244-245). Fighter squadrons are left on the attack value path, since the ground
+     * resolution counts only one of their grouped weapons.
+     *
+     * @return {@code true} if the infantry damage from {@link #calcDamagePerHit()} should be kept
+     */
+    private boolean usesInfantryDamageTable() {
+        return target.isConventionalInfantry() && !attackingEntity.isCapitalFighter();
+    }
+
+    /**
      * Calculate the attack value based on range
      *
      * @return an <code>int</code> representing the attack value at that range.
@@ -862,8 +874,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calculateNumCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (attackingEntity.isSpaceborne() || weaponAttackAction.isAirToAir(game) || weaponAttackAction.isAirToGround(
-              game)) {
+        if (attackingEntity.isSpaceborne() || weaponAttackAction.isAirToAir(game)
+              || (weaponAttackAction.isAirToGround(game) && !usesInfantryDamageTable())) {
             // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);

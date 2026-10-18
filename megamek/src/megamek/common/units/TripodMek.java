@@ -143,7 +143,6 @@ public class TripodMek extends MekWithArms {
         int centerLegActuators = 0;
 
         boolean bCumulativeLegDamage = true;
-        boolean minimumLegRule = false;
         if (game != null) {
             bCumulativeLegDamage = Game.rulesManager.getRulesMovement().cumulativeLegDamage(gameOptions()
                   .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));

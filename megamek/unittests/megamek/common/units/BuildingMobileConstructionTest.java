@@ -132,6 +132,27 @@ class BuildingMobileConstructionTest {
         assertTrue(issues(mobile).stream().anyMatch(issue -> issue.startsWith("Industrial elevators")));
     }
 
+    @Test void shorterMobileHexCarriesAndCostsOnlyItsOwnLevels() {
+        var mobile = mobile();
+        double fullHeightCost = mobile.getCost(null, true);
+        double fullHeightCapacity = BuildingConstruction.capacityInHex(mobile, EAST);
+        mobile.getInternalBuilding().setHeight(2, EAST);
+        assertEquals(fullHeightCapacity / 2, BuildingConstruction.capacityInHex(mobile, EAST), 1e-9);
+        assertEquals(fullHeightCapacity, BuildingConstruction.capacityInHex(mobile, CubeCoords.ZERO), 1e-9);
+        assertTrue(mobile.getCost(null, true) < fullHeightCost, "a two-level hex must not pay for four levels");
+    }
+
+    @Test void heavyWeaponLimitUsesTheHexsOwnHeight() throws Exception {
+        // Fortress CF 40: 40 x 4 levels / 10 = 16 tons of heavy weapons in a full-height hex, 8 tons in a two-level one
+        var mobile = mobile();
+        for (int count = 0; count < 2; count++) {
+            mobile.addEquipment(EquipmentType.get("ISLargeLaser"), 4);
+        }
+        assertFalse(issues(mobile).stream().anyMatch(issue -> issue.contains("heavy weapons exceed")));
+        mobile.getInternalBuilding().setHeight(2, EAST);
+        assertTrue(issues(mobile).stream().anyMatch(issue -> issue.contains("heavy weapons exceed the 8.0 ton limit")));
+    }
+
     @Test void concentratedFuelFollowsRotationAndDoesNotReappearWhenItsHexIsDeleted() {
         var mobile = mobile();
         mobile.setOperatingRange(100);

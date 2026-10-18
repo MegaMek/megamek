@@ -3424,6 +3424,12 @@ public class Compute {
         int targetId = target.getId();
         Coords position = target.getPosition();
 
+        // A wall segment is its own target: its position may be the hex outside the wall, and the building hex's
+        // CF and armor are not the segment's.
+        if (target instanceof WallTarget wallTarget) {
+            WallRules.Segment segment = wallTarget.segment(game);
+            return (segment == null) ? 0 : segment.cf() + segment.armor();
+        }
         // First, handle buildings versus entities, since they are handled differently.
         if (Targetable.isBuildingType(targetType)) {
             // Buildings are a simple sum of their current CF and armor values.

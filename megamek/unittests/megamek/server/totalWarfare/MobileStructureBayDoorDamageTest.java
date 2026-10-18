@@ -249,6 +249,40 @@ class MobileStructureBayDoorDamageTest {
         assertTrue(MobileStructureCargoRules.loadableUnits(f.mobile(), projected).contains(f.first()));
     }
 
+    private BattleArmor battleArmor(Fixture f, int id) {
+        var armor = new BattleArmor();
+        armor.setTechLevel(TechConstants.T_IS_TW_NON_BOX);
+        armor.setChassisType(BattleArmor.CHASSIS_TYPE_BIPED);
+        armor.setSquadSize(4);
+        armor.autoSetInternal();
+        armor.setOriginalWalkMP(1);
+        armor.setMovementMode(EntityMovementMode.INF_LEG);
+        armor.setId(id);
+        armor.setOwner(f.mobile().getOwner());
+        f.manager().getGame().addEntity(armor);
+        f.mobile().load(armor, false, 9);
+        armor.setTransportId(f.mobile().getId());
+        armor.setLoadedThisTurn(false);
+        return armor;
+    }
+
+    @Test void infantryAreNotLimitedByDoorsAlreadyUsedThisTurn() {
+        var f = fixture(IBuilding.FORTRESS, 1, List.of(NORTH));
+        var bay = new BattleArmorBay(2, 1, 9, false, false);
+        f.mobile().addTransporter(bay);
+        f.mobile().getDesign().getBayDoors().add(new BuildingDesign.BayDoor(9,
+              new BuildingDesign.Position(CubeCoords.ZERO, 0), 3));
+        var first = battleArmor(f, 4);
+        var second = battleArmor(f, 5);
+        assertTrue(bay.unload(first));
+        assertFalse(MobileStructureCargoRules.exits(f.mobile(), second).isEmpty(),
+              "infantry are restricted only by adjacency (TW pp. 223 - 225)");
+        assertFalse(MobileStructureCargoRules.exits(f.mobile(), f.second()).isEmpty());
+        assertTrue(f.bay().unload(f.first()));
+        assertTrue(MobileStructureCargoRules.exits(f.mobile(), f.second()).isEmpty(),
+              "a Mek still needs a door that has not been used this turn");
+    }
+
     @Test void mainlineCountOnlyBayDamageDoesNotCreateAnAuthoredDoor() {
         var f = fixture(IBuilding.FORTRESS, 2, List.of());
         assertTrue(BuildingBayDoors.damage(f.mobile(), f.bay(), null));

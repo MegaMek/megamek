@@ -175,8 +175,8 @@ public final class BuildingConstruction {
         if (hasNoInterior(building)) {
             return 0;
         }
-        int height = building instanceof MobileStructure ? building.getInternalBuilding().getBuildingHeight()
-              : building.getInternalBuilding().getHeight(hex);
+        // A mobile structure's hex can be shorter than the structure (hex_heights); only its own levels carry load
+        int height = building.getInternalBuilding().getHeight(hex);
         double capacity = building.getInternalBuilding().getPhaseCF(hex) * building.getConstructionCFScale() * height;
         if (building.getBldgClass() == IBuilding.HANGAR) {
             capacity = Math.min(capacity * 3, (building instanceof MobileStructure ? 300 : 600) * Math.ceil(height / 4.0));

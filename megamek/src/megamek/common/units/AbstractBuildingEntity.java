@@ -36,8 +36,8 @@ package megamek.common.units;
 
 import java.util.*;
 
-import megamek.client.bot.princess.FireControl;
 import jakarta.annotation.Nullable;
+import megamek.client.bot.princess.FireControl;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;

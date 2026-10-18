@@ -34,6 +34,7 @@
 package megamek.common.cost;
 
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
+import megamek.common.board.CubeCoords;
 import megamek.common.enums.BuildingType;
 import megamek.common.units.AbstractBuildingEntity;
 import megamek.common.units.BuildingConstruction;
@@ -58,8 +59,11 @@ public final class BuildingCostCalculator {
         double structureCost = 0;
         int height = building.getInternalBuilding().getBuildingHeight();
         for (int hex = 0; hex < building.getInternalBuilding().getOriginalCoordsList().size(); hex++) {
-            structureCost += rate * building.getOInternal(hex * height) * height
-                  * BuildingConstruction.segmentsInHex(building, building.getInternalBuilding().getOriginalCoordsList().get(hex));
+            CubeCoords hexCoords = building.getInternalBuilding().getOriginalCoordsList().get(hex);
+            // A mobile structure's hex can be shorter than the structure (hex_heights); it pays only for its own levels
+            int hexHeight = building.getInternalBuilding().getHeight(hexCoords);
+            structureCost += rate * building.getOInternal(hex * height) * hexHeight
+                  * BuildingConstruction.segmentsInHex(building, hexCoords);
         }
         double armorCost = building.getArmorWeight() * (building.isClan() ? 15000 : 10000);
         structureCost *= BuildingConstruction.structureMultiplier(building);

@@ -131,6 +131,7 @@ public class TripodMek extends MekWithArms {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
+        int baseWalkMP = mp;
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
@@ -179,6 +180,7 @@ public class TripodMek extends MekWithArms {
             // leg damage effects
             if (legsDestroyed > 0) {
                 mp = (legsDestroyed == 1) ? 1 : 0;
+                baseWalkMP = mp;
             }
 
             if (mp > 0) {
@@ -189,13 +191,12 @@ public class TripodMek extends MekWithArms {
             }
             if (legsDestroyed < 2 && mp <= 0) {
                 mp = Game.rulesManager.getRulesUnits().getMinimumMP(mp);
-                minimumLegRule = true;
             }
         }
         if (!mpCalculationSetting.ignoreShield() && hasShield()) {
             int reduceMPbyShield = getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) + getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
             reduceMPbyShield = Game.rulesManager.getRulesMovement().reduceMovementWithShields(reduceMPbyShield,
-                  (minimumLegRule) ? mp : getOriginalWalkMP());
+                  baseWalkMP);
             mp -= reduceMPbyShield;
         }
 

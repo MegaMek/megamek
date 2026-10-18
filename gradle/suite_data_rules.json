@@ -1,0 +1,14 @@
+{
+  "MegaMek": {
+    "images": ["camo", "fluff", "hexes", "misc", "portraits", "temp", "units", "universe", "widgets"],
+    "loose": ["css/**/*.*", "forcegenerator/**/*.*", "mapgen/**/*.*", "mapsetup/**/*.*", "names/**/*.*", "scenarios/**/*.*", "sounds/**/*.*", "sourcebooks/*.*", "universe/eras.xml", "universe/ranks.xml", "universe/commands/**/*.*", "universe/factions/**/*.*"]
+  },
+  "MegaMekLab": {
+    "images": ["fluff", "misc", "recordsheets", "units", "universe", "widgets"],
+    "loose": ["forcegenerator/**/*.*", "names/**/*.*", "sourcebooks/*.*", "universe/eras.xml", "universe/ranks.xml", "universe/commands/**/*.*", "universe/factions/**/*.*"]
+  },
+  "MekHQ": {
+    "images": ["**/*"],
+    "loose": ["**/*.*"]
+  }
+}

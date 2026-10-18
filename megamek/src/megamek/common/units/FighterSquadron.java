@@ -619,7 +619,7 @@ public class FighterSquadron extends AeroSpaceFighter {
                     // Add weapon if bomb type requires one
                     if (requiresWeapon(bombType)) {
                         try {
-                            EquipmentType weaponType = EquipmentType.get(bombType.getWeaponName());
+                            EquipmentType weaponType = EquipmentType.get(bombType.getWeaponName(), getTechBase());
                             if (weaponType != null) {
                                 addBomb(weaponType, LOC_NOSE);
                             }

@@ -193,8 +193,8 @@ public class PunchAttackAction extends PhysicalAttackAction {
             return "Target elevation not in range";
         }
 
-        // Prone 'Mechs can only be punched if they are one level higher than the attacker
-        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        // Prone 'Meks can only be punched if they are one level higher than the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Meks
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
             int attackerLevel = attHex.getLevel() + ae.getElevation();
             if (targetElevation != attackerLevel + 1) {

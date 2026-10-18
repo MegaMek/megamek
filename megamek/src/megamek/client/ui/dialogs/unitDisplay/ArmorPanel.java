@@ -34,11 +34,12 @@ package megamek.client.ui.dialogs.unitDisplay;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.util.HashSet;
-import java.util.Set;
 import java.io.Serial;
 import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.widget.BackGroundDrawer;
 import megamek.client.ui.widget.mapset.*;
 import megamek.client.ui.widget.picmap.LocationSelectListener;
@@ -47,7 +48,6 @@ import megamek.common.CriticalSlot;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.HandheldWeapon;
-import megamek.common.annotations.Nullable;
 import megamek.common.game.Game;
 import megamek.common.units.*;
 import megamek.logging.MMLogger;

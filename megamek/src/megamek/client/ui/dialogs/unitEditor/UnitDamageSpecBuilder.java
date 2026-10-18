@@ -33,10 +33,12 @@
 package megamek.client.ui.dialogs.unitEditor;
 
 import java.util.Map;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JSpinner;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.buttons.StateToggleButton;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.units.DamageEditSpec;
 import megamek.common.units.Entity;

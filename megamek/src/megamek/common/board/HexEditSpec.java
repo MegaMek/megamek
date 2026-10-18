@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A Game Master's edit of the board: which hexes to change, and what each of them should hold afterwards.

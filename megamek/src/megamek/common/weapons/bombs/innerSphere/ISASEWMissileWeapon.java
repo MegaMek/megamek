@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2008-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2008-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -38,10 +38,10 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -50,15 +50,15 @@ import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.weapons.bombs.CapitalRangeBombMissileWeapon;
 import megamek.common.weapons.handlers.ASEWMissileWeaponHandler;
 import megamek.common.weapons.handlers.AttackHandler;
-import megamek.common.weapons.missiles.thunderbolt.ThunderboltWeapon;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
  * @author Jay Lawson
  */
-public class ISASEWMissileWeapon extends ThunderboltWeapon {
+public class ISASEWMissileWeapon extends CapitalRangeBombMissileWeapon {
 
     /**
      *

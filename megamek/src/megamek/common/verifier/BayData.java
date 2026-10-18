@@ -37,8 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiFunction;
 
+import jakarta.annotation.Nullable;
 import megamek.common.TechAdvancement;
-import megamek.common.annotations.Nullable;
 import megamek.common.bays.*;
 import megamek.common.units.DropShuttleBay;
 import megamek.common.units.Entity;

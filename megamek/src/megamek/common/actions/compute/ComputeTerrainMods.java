@@ -44,13 +44,13 @@ import static megamek.common.ToHitData.SIDE_RIGHT;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.PartialCover;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeECM;
 import megamek.common.compute.ComputeSideTable;

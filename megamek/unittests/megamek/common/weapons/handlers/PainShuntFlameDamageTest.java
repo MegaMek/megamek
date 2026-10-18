@@ -37,10 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Vector;
-
 import megamek.common.Player;
-import megamek.common.Report;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;

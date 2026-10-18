@@ -36,7 +36,6 @@ package megamek.common.planetaryConditions;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import megamek.common.Messages;
 
 /**

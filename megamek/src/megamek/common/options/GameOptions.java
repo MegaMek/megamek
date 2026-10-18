@@ -43,6 +43,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 import javax.xml.namespace.QName;
 
+import jakarta.annotation.Nullable;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.Marshaller;
@@ -52,7 +53,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.NeuralInterfaceMode;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;
@@ -217,6 +217,7 @@ public class GameOptions extends BasicGameOptions {
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_DIRECT_BLOW, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BURST, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HEAT, false);
+        addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_AVOIDING_SHUTDOWN, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_PARTIAL_COVER, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_BA_CRITICAL_SLOTS, false);
         addOption(advancedCombat, OptionsConstants.ADVANCED_COMBAT_TAC_OPS_HOT_LOAD, false);

@@ -37,8 +37,8 @@ import java.io.Serial;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.exceptions.LocationFullException;

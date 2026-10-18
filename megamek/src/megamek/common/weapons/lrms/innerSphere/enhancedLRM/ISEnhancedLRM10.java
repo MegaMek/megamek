@@ -36,8 +36,8 @@ package megamek.common.weapons.lrms.innerSphere.enhancedLRM;
 
 import java.io.Serial;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -83,7 +83,7 @@ public class ISEnhancedLRM10 extends EnhancedLRMWeapon {
               rulesRef(SourceBookCode.BMM, 102),
               rulesRef(SourceBookCode.CORE, 186)
         );
-        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS        
+        //Tech Progression tweaked to combine IntOps with TRO Prototypes/3145 NTNU RS
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.C, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3058, DATE_NONE, 3082).setPrototypeFactions(Faction.FS)

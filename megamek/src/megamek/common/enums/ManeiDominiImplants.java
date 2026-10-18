@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.options.IOption;
 import megamek.common.options.OptionsConstants;
 import megamek.common.options.PilotOptions;
@@ -215,6 +215,13 @@ public final class ManeiDominiImplants {
           OptionsConstants.MD_PL_GLIDER, OptionsConstants.MD_PL_FLIGHT);
 
     /**
+     * Implants that cannot be fitted together. Neither replaces the other, but taking one rules the other out. The
+     * triple-strength myomer implant is incompatible with prosthetic leg MASC (<i>A Time of War Companion</i>, p. 182).
+     */
+    private static final Map<String, String> INCOMPATIBLE_WITH = Map.of(
+          OptionsConstants.MD_TSM_IMPLANT, OptionsConstants.MD_PL_MASC);
+
+    /**
      * Implants that reach the unit through a neural interface and do nothing without one. The
      * multi-modal sensory implants need it to sync with the unit's sensors; the triple-core processor
      * says outright that it requires a VDNI or a buffered VDNI.
@@ -364,7 +371,8 @@ public final class ManeiDominiImplants {
             ImplantEntry entry = available.remove((int) (Math.random() * available.size()));
             String option = entry.optionChoices()
                                   .get((int) (Math.random() * entry.optionChoices().size()));
-            if (isRuledOutBySupersession(option, issued)) {
+            if (isRuledOutByPairing(option, issued, SUPERSEDED_BY)
+                  || isRuledOutByPairing(option, issued, INCOMPATIBLE_WITH)) {
                 continue;
             }
             issued.add(option);
@@ -372,14 +380,16 @@ public final class ManeiDominiImplants {
     }
 
     /**
-     * @return {@code true} if this option is the lesser or greater half of a pair already issued
+     * @param pairs implants that rule each other out, in either direction
+     *
+     * @return {@code true} if this option is either half of a pair whose other half is already issued
      */
-    private static boolean isRuledOutBySupersession(String option, List<String> issued) {
-        String supersedes = SUPERSEDED_BY.get(option);
-        if ((supersedes != null) && issued.contains(supersedes)) {
+    private static boolean isRuledOutByPairing(String option, List<String> issued, Map<String, String> pairs) {
+        String pairedWith = pairs.get(option);
+        if ((pairedWith != null) && issued.contains(pairedWith)) {
             return true;
         }
-        return SUPERSEDED_BY.entrySet()
+        return pairs.entrySet()
                      .stream()
                      .anyMatch(pair -> pair.getValue().equals(option) && issued.contains(pair.getKey()));
     }

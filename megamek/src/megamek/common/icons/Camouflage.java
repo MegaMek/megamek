@@ -42,9 +42,9 @@ import java.io.PrintWriter;
 import java.io.Serial;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.PlayerColour;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.OverlayStyle;
 import megamek.common.battlefieldSupport.StripeDirection;
 import megamek.logging.MMLogger;

@@ -54,6 +54,7 @@ import java.util.Locale;
 import java.util.Map;
 import javax.swing.ImageIcon;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.tileset.MekTileset;
@@ -61,7 +62,6 @@ import megamek.client.ui.util.FluffImageHelper;
 import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BFSDamage;
 import megamek.common.battlefieldSupport.BattlefieldSupportAsset;
 import megamek.common.util.ImageUtil;

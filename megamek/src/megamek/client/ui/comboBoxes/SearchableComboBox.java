@@ -60,9 +60,9 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 import javax.swing.plaf.basic.ComboPopup;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 
 /**
  * A combo box that can be searched by typing. The user can still open the list and pick an entry with the mouse or

@@ -48,9 +48,9 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
 import megamek.common.game.Game;
+import megamek.common.util.SerializationHelper;
 import megamek.server.victory.VictoryPointTracker.Recipient;
 import megamek.server.victory.VictoryPointTracker.VictoryPointAward;
-import megamek.common.util.SerializationHelper;
 import org.junit.jupiter.api.Test;
 
 class VictoryPointTrackerTest {

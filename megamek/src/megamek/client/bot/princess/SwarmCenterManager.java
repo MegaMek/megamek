@@ -35,7 +35,7 @@ package megamek.client.bot.princess;
 import java.util.List;
 import java.util.Vector;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;

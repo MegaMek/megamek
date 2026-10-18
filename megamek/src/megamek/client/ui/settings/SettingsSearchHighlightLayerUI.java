@@ -53,8 +53,8 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.AbstractButton;
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JLayer;
@@ -65,11 +65,11 @@ import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.LayerUI;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Position;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Position;
 
 /** Paints settings search matches without changing component text or layout. */
 final class SettingsSearchHighlightLayerUI extends LayerUI<JScrollPane> {

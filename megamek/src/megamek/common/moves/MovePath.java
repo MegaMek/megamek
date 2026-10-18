@@ -37,9 +37,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.ManeuverType;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -1889,6 +1889,30 @@ public class MovePath implements Cloneable,
         } else {
             return getEntity().isAirborneVTOLorWIGE();
         }
+    }
+
+    /**
+     * Returns whether this path lands a WiGE vehicle in a hex it cannot land in, so that it crashes (TW p.55). That is
+     * the first landing step (Down to the ground), or else the automatic landing at the end of movement after moving
+     * fewer than 5 hexes. A WiGE may only land in clear, paved or water hexes. Land-Air Meks and glider ProtoMeks use
+     * their own landing rules and are never counted.
+     *
+     * @return {@code true} if the WiGE vehicle crashes when it lands
+     */
+    public boolean landsWiGEVehicleWhereItCrashes() {
+        if (!(getEntity() instanceof Tank wige) || (wige.getMovementMode() != EntityMovementMode.WIGE)) {
+            return false;
+        }
+        for (MoveStep step : steps) {
+            if ((step.getType() == MoveStepType.DOWN) && (step.getClearance() == 0)) {
+                return !wige.canLandIn(getGame().getBoard(step.getBoardId()).getHex(step.getPosition()));
+            }
+        }
+        Coords landingCoords = getFinalCoords();
+        if ((landingCoords != null) && automaticWiGELanding(true)) {
+            return !wige.canLandIn(getGame().getBoard(getFinalBoardId()).getHex(landingCoords));
+        }
+        return false;
     }
 
     /**

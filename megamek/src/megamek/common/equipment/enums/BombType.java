@@ -42,8 +42,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.TechConstants;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -51,7 +51,6 @@ import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.EquipmentType;
-import megamek.common.equipment.WeaponType;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 
@@ -76,7 +75,8 @@ public class BombType extends AmmoType {
         ALAMO(14, "Alamo Missile", "AlamoMissile Ammo", "AlamoMissile", true, 10, false, false, false),
         FAE_SMALL(15, "Fuel-Air Bomb (small)", "FABombSmall Ammo", null, true, 1, false, true, false),
         FAE_LARGE(16, "Fuel-Air Bomb (large)", "FABombLarge Ammo", null, true, 2, false, true, false),
-        RLP(17, "Prototype Rocket", "RL-P 10 Ammo (Bomb)", "BombRLP", true, 1, false, false, false);
+        RLP(17, "Prototype Rocket", "RL-P 10 Ammo (Bomb)", "BombRLP", true, 1, false, false, false),
+        RECON_CAMERA(18, "Recon Camera Pod", "ReconCameraPod", "BombReconCamera", true, 1, false, false, false);
 
         private static final Map<Integer, BombTypeEnum> INDEX_LOOKUP = new HashMap<>();
         private static final Map<String, BombTypeEnum> INTERNAL_NAME_LOOKUP = new HashMap<>();
@@ -267,6 +267,7 @@ public class BombType extends AmmoType {
         EquipmentType.addType(BombType.createRocketBomb());
         EquipmentType.addType(BombType.createPrototypeRocketBomb());
         EquipmentType.addType(BombType.createTAGBomb());
+        EquipmentType.addType(BombType.createReconCameraPod());
         //        EquipmentType.addType(BombType.createCLTAGBomb());
         EquipmentType.addType(BombType.createAAAMissileBomb());
         //        EquipmentType.addType(BombType.createCLAAAMissileBomb());
@@ -319,6 +320,7 @@ public class BombType extends AmmoType {
             case FAE_SMALL -> createSmallFuelAirBomb();
             case FAE_LARGE -> createLargeFuelAirBomb();
             case RLP -> createPrototypeRocketBomb();
+            case RECON_CAMERA -> createReconCameraPod();
             default -> null;
         };
     }
@@ -757,6 +759,37 @@ public class BombType extends AmmoType {
               .setPrototypeFactions(Faction.TH)
               .setProductionFactions(Faction.TH)
               .setReintroductionFactions(Faction.FW);
+
+        return bomb;
+    }
+
+    /**
+     * A Recon Camera carried on an external hardpoint, taking the space of one bomb (TO:AUE p.150). The camera it gives
+     * the fighter is the {@code BombReconCamera} equipment; the pod itself does no damage.
+     */
+    private static BombType createReconCameraPod() {
+        BombType bomb = new BombType();
+
+        bomb.name = "Recon Camera Pod";
+        bomb.shortName = "ReconCameraPod";
+        bomb.setInternalName(BombTypeEnum.RECON_CAMERA.getInternalName());
+        bomb.damagePerShot = 0;
+        bomb.flags = bomb.flags.or(AmmoType.F_OTHER_BOMB);
+        bomb.rackSize = 1;
+        bomb.ammoType = AmmoTypeEnum.BOMB;
+        bomb.bombType = BombTypeEnum.RECON_CAMERA;
+        bomb.shots = 1;
+        bomb.bv = 0;
+        bomb.cost = 10000;
+        bomb.rulesRefs = rulesRefs(SourceBookCode.TO_AUE, 150);
+        bomb.techAdvancement.setTechBase(TechBase.ALL)
+              .setTechRating(TechRating.C)
+              .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
+              .setISAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setISApproximate(false, false, false, false, false)
+              .setClanAdvancement(DATE_PS, DATE_PS, DATE_NONE, DATE_NONE, DATE_NONE)
+              .setClanApproximate(false, false, false, false, false)
+              .setStaticTechLevel(SimpleTechLevel.ADVANCED);
 
         return bomb;
     }

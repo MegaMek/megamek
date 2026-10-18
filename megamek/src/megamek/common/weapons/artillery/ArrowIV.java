@@ -38,10 +38,10 @@ import static megamek.common.game.IGame.LOGGER;
 
 import java.io.Serial;
 
+import jakarta.annotation.Nullable;
 import megamek.common.SourceBookCode;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;
@@ -70,7 +70,7 @@ public abstract class ArrowIV extends ArtilleryWeapon {
         super();
 
         name = "Arrow IV";
-        // This class should not set the internal name! 
+        // This class should not set the internal name!
         // The exposed Arrow IV is in CLArrowIV and ISArrowIV
         heat = 10;
         rackSize = 20;

@@ -42,7 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.ListResourceBundle;
-import java.util.ResourceBundle;
 import javax.swing.SpinnerNumberModel;
 
 import org.junit.jupiter.api.Test;

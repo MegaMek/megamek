@@ -26,7 +26,7 @@
 
     <module name="RegexpSingleline">
         <property name="id" value="ForbiddenWords" />
-        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks|BattleMech Manual)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|'Mechs)\b.*$" />
+        <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks|BattleMech Manual)).*\b(?i)(mechs?|mechwarriors?|battlemechs?|aerotech|protomechs?|'mechs?|`Mechs?|TripodMechs?|BipedMechs?|QuadMechs?|LandAirMechs?|OmniMechs?)\b.*$" />
         <property name="ignoreCase" value="true" />
         <property name="message" value="Forbidden word found" />
         <property name="severity" value="error" />
@@ -44,10 +44,19 @@
 
         <module name="RegexpSinglelineJava">
             <property name="id" value="ForbiddenWords" />
-            <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks|BattleMech Manual)).*\b(?i)(mech|mechwarrior|battlemech|aerotech|protomech|'mech|`Mech|TripodMech|BipedMech|QuadMech|LandAirMech|OmniMech|'Mechs)\b.*$" />
+            <property name="format" value="^(?!.*(bg\.battletech|MechWarrior Copyright|MechWarrior, BattleMech, `Mech and AeroTech are registered trademarks|BattleMech Manual)).*\b(?i)(mechs?|mechwarriors?|battlemechs?|aerotech|protomechs?|'mechs?|`Mechs?|TripodMechs?|BipedMechs?|QuadMechs?|LandAirMechs?|OmniMechs?)\b.*$" />
             <property name="ignoreCase" value="true" />
             <property name="ignoreComments" value="false" />
             <property name="message" value="Forbidden word found" />
+            <property name="severity" value="error" />
+        </module>
+
+        <!-- Nullability annotations must be jakarta.annotation.Nullable and jakarta.annotation.Nonnull -->
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="JakartaNullability" />
+            <property name="format" value="^\s*import\s+(?!jakarta\.annotation\.)[\w.]+\.(Nullable|NonNull|Nonnull|NotNull)\s*;|@(?!jakarta\.annotation\.)[a-z]\w*(\.\w+)*\.(Nullable|NonNull|Nonnull|NotNull)\b|@NonNull\b" />
+            <property name="ignoreComments" value="true" />
+            <property name="message" value="Use jakarta.annotation.Nullable or jakarta.annotation.Nonnull for nullability annotations" />
             <property name="severity" value="error" />
         </module>
     </module>

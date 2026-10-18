@@ -40,6 +40,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Board;
@@ -51,9 +52,8 @@ import megamek.common.options.OptionsConstants;
 import megamek.common.planetaryConditions.Atmosphere;
 import megamek.common.planetaryConditions.AtmosphericTaint;
 import megamek.common.units.BipedMek;
-import megamek.common.units.Entity;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.CrewArmorKitRules;
+import megamek.common.units.Entity;
 import megamek.common.units.Mek;
 import megamek.common.units.Tank;
 import megamek.utils.BoardLoader;

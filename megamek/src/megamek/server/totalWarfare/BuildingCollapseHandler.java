@@ -69,6 +69,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
     private final Set<IBuilding> subsurfaceCascades = new HashSet<>();
     private final Set<IBuilding> resolvingBridgeSpans = new HashSet<>();
 
+    /**
+     * A WiGE flying over a building collapses the building hex when its tonnage times this factor exceeds the hex's
+     * current CF (TW p.55).
+     */
+    static final double WIGE_FLYOVER_LOAD_FACTOR = 0.25;
+
     BuildingCollapseHandler(TWGameManager gameManager) {
         super(gameManager);
         expandedCollapse = new ExpandedBuildingCollapseHandler(gameManager, this);
@@ -133,7 +139,6 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         // look for a collapse.
         boolean collapse = false;
         boolean basementCollapse = false;
-        boolean topFloorCollapse = false;
 
         if (checkBecauseOfDamage && (currentCF <= 0)) {
             collapse = true;
@@ -164,10 +169,6 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             // at index (numFloors).
             // if bridge is present, bridge will be numFloors+1
             double[] loads = new double[numLoads + 1];
-            // WiGEs flying over the building are also tracked, but can only collapse the
-            // top floor
-            // and only count 25% of their tonnage.
-            double wigeLoad = 0;
             // track all units that might fall into the basement
             Vector<Entity> basement = new Vector<>();
 
@@ -185,10 +186,9 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                           || entity.isAirborneVTOLorWIGE() && entity.getMovementMode() != EntityMovementMode.WIGE) {
                         continue;
                     }
-                    // WiGEs can collapse the top floor of a building by flying over it.
+                    // WiGEs can collapse a building hex by flying over it.
                     final int entityElev = BuildingElevation.floor(bldg, entity.getPosition(), entity.getElevation());
-                    final boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
-                          entityElev == numFloors + 1;
+                    final boolean wigeFlyover = isWiGEFlyingOver(entity, entityElev, numFloors);
 
                     if (entityElev != bridgeEl && !wigeFlyover) {
                         // Ignore entities not *inside* the building
@@ -225,24 +225,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     if (floor == bridgeEl) {
                         floor = numLoads;
                     }
-                    // Entities on the roof fall to the previous top floor/new roof
-                    if (topFloorCollapse && floor == numFloors) {
-                        floor--;
-                    }
 
                     if (wigeFlyover) {
-                        wigeLoad += load;
-                        if (wigeLoad > loadCapacity * 4) {
-                            topFloorCollapse = true;
-                            // There are bridges with 0 elevation, so the numFloors is 0, meaning that
-                            // loads[numFloors-1] would cause an out-of-bounds exception.
-                            // which is why there are so many checks and safeguards in the next few lines.
-                            if (numFloors < loads.length) {
-                                if (numFloors > 0) {
-                                    loads[numFloors - 1] += loads[numFloors];
-                                }
-                                loads[numFloors] = 0;
-                            }
+                        // TW p.55: the WiGE collapses the building hex if its own tonnage x 0.25 exceeds the
+                        // current CF. The whole hex comes down, not just the roof (Xotl, 2017-11-05).
+                        if (load * WIGE_FLYOVER_LOAD_FACTOR > loadCapacity) {
+                            collapse = true;
                         }
                     } else {
                         loads[floor] += load;
@@ -281,28 +269,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             r.add(bldg.getName());
             vPhaseReport.add(r);
 
-            collapseBuilding(bldg, positionMap, coords, false, vPhaseReport);
-        } else if (topFloorCollapse) {
-            Report r = new Report(2376, Report.PUBLIC);
-            r.add(bldg.getName());
-            vPhaseReport.add(r);
-
-            collapseBuilding(bldg, positionMap, coords, false, true, vPhaseReport);
+            collapseBuilding(bldg, positionMap, coords, vPhaseReport);
         }
 
         // Return true if the building collapsed.
-        return collapse || topFloorCollapse;
+        return collapse;
 
-    }
-
-    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
-          Vector<Report> vPhaseReport) {
-        collapseBuilding(bldg, positionMap, coords, true, false, vPhaseReport);
-    }
-
-    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
-          boolean collapseAll, Vector<Report> vPhaseReport) {
-        collapseBuilding(bldg, positionMap, coords, collapseAll, false, vPhaseReport);
     }
 
     /**
@@ -405,12 +377,20 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
      * @param positionMap a Hashtable that maps the Coords positions or each unit in the game to a Vector of Entity's at
      *                    that position. This value should not be null.
      * @param coords      The Coords of the building hex that has collapsed
-     * @param collapseAll A boolean indicating whether this collapse of a hex should be able to collapse the whole
-     *                    building
-     * @param topFloor    A boolean indicating that only the top floor collapses (from a WiGE flying over the top).
      */
     void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
-          boolean collapseAll, boolean topFloor, Vector<Report> vPhaseReport) {
+          Vector<Report> vPhaseReport) {
+        collapseBuilding(bldg, positionMap, coords, true, vPhaseReport);
+    }
+
+    /**
+     * Collapse a building hex, as {@link #collapseBuilding(IBuilding, Map, Coords, Vector)}.
+     *
+     * @param collapseAll {@code false} when the caller is already collapsing the rest of the structure itself, so this
+     *                    hex must not trigger the whole-building collapse again
+     */
+    void collapseBuilding(IBuilding bldg, Map<BoardLocation, List<Entity>> positionMap, Coords coords,
+          boolean collapseAll, Vector<Report> vPhaseReport) {
         if (!bldg.isIn(coords)) {
             return;
         }
@@ -449,19 +429,11 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
 
             // Now collapse the building in this hex, so entities fall to
             // the ground
-            if (topFloor && numFloors > 1) {
-                curHex.removeTerrain(Terrains.BLDG_ELEV);
-                if (physicalBase + numFloors - 1 > 0) {
-                    curHex.addTerrain(new Terrain(Terrains.BLDG_ELEV, physicalBase + numFloors - 1));
-                }
-                gameManager.sendChangedHex(coords, bldg.getBoardId());
-            } else {
-                bldg.setCurrentCF(0, coords);
-                bldg.setPhaseCF(0, coords);
-                gameManager.send(createCollapseBuildingPacket(coords, bldg));
-                getGame().getBoard(bldg.getBoardId()).collapseBuilding(bldg, coords);
-                disableIndustrialElevatorAt(coords, bldg);
-            }
+            bldg.setCurrentCF(0, coords);
+            bldg.setPhaseCF(0, coords);
+            gameManager.send(createCollapseBuildingPacket(coords, bldg));
+            getGame().getBoard(bldg.getBoardId()).collapseBuilding(bldg, coords);
+            disableIndustrialElevatorAt(coords, bldg);
 
             // Sort in elevation order
             vector.sort(Comparator.comparingInt(Entity::getElevation));
@@ -478,27 +450,22 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                 }
 
                 if (bldg.equals(entity) && entity instanceof AbstractBuildingEntity buildingEntity) {
-                    int numFloorsToCollappse = topFloor ? 1 : numFloors;
-                    buildingEntity.collapseFloorsOnHex(coords, numFloorsToCollappse);
+                    buildingEntity.collapseFloorsOnHex(coords, numFloors);
                     gameManager.entityUpdate(entity.getId());
                     continue;
                 }
-                if (entity.isAirborne() || entity.isAirborneVTOLorWIGE()) {
+                int floor = entity.getElevation() - physicalBase;
+                // A WiGE flying just over the roof is handled below: it drops down to fly over the rubble.
+                boolean isFlyingOverRoof = isWiGEFlyingOver(entity, floor, numFloors);
+                if (!isFlyingOverRoof && (entity.isAirborne() || entity.isAirborneVTOLorWIGE())) {
                     continue;
                 }
-
-                int floor = entity.getElevation() - physicalBase;
                 boolean subsurface = bldg instanceof AbstractBuildingEntity authored
                       && authored.getDesign().getSite() != BuildingDesign.Site.SURFACE;
                 // A different structure at this XY coordinate is not an occupant of the collapsing volume.
                 if (entity instanceof IBuilding || floor < 0 && (physicalBase != 0
                       || getGame().getBoard(bldg.getBoardId()).getBuildingsAt(coords).stream()
                             .anyMatch(other -> other != bldg && BuildingElevation.contains(other, coords, entity.getElevation())))) {
-                    continue;
-                }
-                // If only the top floor collapses, we only care about units on the top level
-                // or on the roof.
-                if (topFloor && floor < numFloors - 1) {
                     continue;
                 }
                 // units trapped in a basement under a collapsing building are
@@ -515,8 +482,12 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     continue;
                 }
 
-                // Ignore units above the building / bridge.
+                // Ignore units above the building / bridge, except that a WiGE flying just over the roof drops
+                // down to fly over the rubble.
                 if (floor > numFloors) {
+                    if (isWiGEFlyingOver(entity, floor, numFloors)) {
+                        dropWiGEOverRubble(entity, coords, bldg.getBoardId(), vPhaseReport);
+                    }
                     continue;
                 }
 
@@ -588,7 +559,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
                     } else {
                         // doEntityFallsInto normally measures from the terrain bed/roof. Adjust that datum to this
                         // volume's surviving floor, so a negative elevation does not increase the fall distance.
-                        int landing = topFloor ? physicalBase + numFloors - 1 : physicalBase;
+                        int landing = physicalBase;
                         int reduction = fallReduction(curHex, entity.getElevation(), landing);
                         vPhaseReport.addAll(gameManager.doEntityFallsInto(entity, entity.getElevation(), coords, coords,
                               psr, true, reduction));
@@ -626,9 +597,7 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
             }
             gameManager.entityUpdate(mobile.getId());
         }
-        expandedCollapse.collapsed(collapseSnapshot,
-              topFloor && collapseSnapshot != null ? Set.of(collapseSnapshot.height() - 1) : Set.of(),
-              !topFloor || !bldg.isIn(coords), vPhaseReport);
+        expandedCollapse.collapsed(collapseSnapshot, Set.of(), true, vPhaseReport);
         if (bldg.getBldgClass() == IBuilding.BRIDGE) {
             collapseDisconnectedBridgeSpans(bldg, vPhaseReport);
         } else if (collapseAll && !(bldg instanceof MobileStructure)
@@ -637,6 +606,53 @@ public class BuildingCollapseHandler extends AbstractTWRuleHandler {
         } else if (bldg instanceof MobileStructure mobile && mobile.isSplit()) {
             vPhaseReport.addAll(gameManager.destroyEntity(mobile, "structure split by destroyed hexes"));
         }
+    }
+
+    /**
+     * @param entity    the unit in the building hex
+     * @param numFloors the height of the building hex in levels
+     *
+     * @return {@code true} if the unit is moving in WiGE mode one level above the roof, i.e. flying over the building
+     *       (TW p.55). This includes a LAM in AirMek mode, which moves like a WiGE (IO:AE p.104).
+     */
+    static boolean isWiGEFlyingOver(Entity entity, int numFloors) {
+        return isWiGEFlyingOver(entity, entity.getElevation(), numFloors);
+    }
+
+    /**
+     * As {@link #isWiGEFlyingOver(Entity, int)}, for a structure that does not stand on the ground.
+     *
+     * @param entity            the unit in the building hex
+     * @param elevationAboveBase the unit's elevation measured from the base of the building in this hex
+     * @param numFloors         the height of the building hex in levels
+     *
+     * @return {@code true} if the unit is moving in WiGE mode one level above the roof
+     */
+    static boolean isWiGEFlyingOver(Entity entity, int elevationAboveBase, int numFloors) {
+        return (entity.getMovementMode() == EntityMovementMode.WIGE) && (elevationAboveBase == numFloors + 1);
+    }
+
+    /**
+     * Drops a WiGE that was flying over a building hex that has just collapsed. An airborne WiGE flies one elevation
+     * above the ground (TW p.55), so it carries on one level above the rubble (Xotl, 2017-11-05). The hex must already
+     * be collapsed.
+     *
+     * @param entity       the WiGE flying over the collapsed hex
+     * @param coords       the collapsed hex
+     * @param boardId      the board of the collapsed hex
+     * @param vPhaseReport the reports to add to
+     */
+    private void dropWiGEOverRubble(Entity entity, Coords coords, int boardId, Vector<Report> vPhaseReport) {
+        Hex collapsedHex = getGame().getBoard(boardId).getHex(coords);
+        int newElevation = collapsedHex.maxTerrainFeatureElevation(false) + 1;
+        LOGGER.info("[WiGEFlyover] {} drops from elevation {} to {} over the collapsed building at {}",
+              entity.getDisplayName(), entity.getElevation(), newElevation, coords);
+        entity.setElevation(newElevation);
+        Report report = new Report(2379);
+        report.subject = entity.getId();
+        report.addDesc(entity);
+        vPhaseReport.add(report);
+        gameManager.entityUpdate(entity.getId());
     }
 
     /**

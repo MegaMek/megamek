@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2004, 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -39,9 +39,9 @@ import static megamek.common.game.IGame.LOGGER;
 import java.io.Serial;
 import java.io.Serializable;
 
+import jakarta.annotation.Nullable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -74,13 +74,6 @@ public abstract class Weapon extends WeaponType implements Serializable {
     //Mode text tokens
     public static final String MODE_FLAMER_DAMAGE = "Damage";
     public static final String MODE_FLAMER_HEAT = "Heat";
-
-    /**
-     * Conventional infantry SRM launchers loaded with true Inferno munitions fire either inferno missiles or
-     * ordinary SRM damage (TW p. 143). Incendiary weapons use {@link #MODE_FLAMER_HEAT} instead, which only
-     * converts damage to heat.
-     */
-    public static final String MODE_INFERNO = "Inferno";
 
     public static final String MODE_AMS_ON = "On";
     public static final String MODE_AMS_OFF = "Off";

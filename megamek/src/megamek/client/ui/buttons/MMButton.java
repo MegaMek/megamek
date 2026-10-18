@@ -38,7 +38,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * MMButton is an extension of JButton that overrides the constructors for JButton, albeit with the addition of the name

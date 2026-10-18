@@ -40,9 +40,9 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.GUIPreferences;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 public class SoundManager implements AudioService {
@@ -102,6 +102,32 @@ public class SoundManager implements AudioService {
                 if (!GUIP.getSoundMuteOthersTurn()) {
                     sound = sounds.get(2);
                 }
+                break;
+        }
+
+        if (sound != null) {
+            sound.play();
+        }
+    }
+
+    /**
+     * Starts playback of a sound if it has been loaded, with no mutes.
+     *
+     * @param id - SoundType enum indicating which sound to play
+     */
+    @Override
+    public void playSoundNoMute(SoundType id) {
+        Sound sound = null;
+
+        switch (id) {
+            case BING_CHAT:
+                sound = sounds.getFirst();
+                break;
+            case BING_MY_TURN:
+                sound = sounds.get(1);
+                break;
+            case BING_OTHERS_TURN:
+                sound = sounds.get(2);
                 break;
         }
 

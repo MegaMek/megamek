@@ -430,7 +430,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
             } else {
                 radius = 1;
             }
-            gameManager.deliverArtilleryFlare(finalPos, radius);
+            gameManager.deliverArtilleryFlare(finalPos, target.getBoardId(), radius);
             return false;
         }
         if (ammoType.getMunitionType().contains(Munitions.M_DAVY_CROCKETT_M)) {

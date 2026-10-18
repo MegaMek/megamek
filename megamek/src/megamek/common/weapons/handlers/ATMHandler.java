@@ -143,6 +143,11 @@ public class ATMHandler extends MissileWeaponHandler {
             }
         } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_EXTENDED_RANGE)) {
             av = (int) Math.ceil(weaponType.getRoundMedAV() / 2.0);
+        } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_IATM_IMP)) {
+            // IMP: 1 damage per missile and the HE range (IO p. 67), so half the standard value at short range only
+            if (range == WeaponType.RANGE_SHORT) {
+                av = (int) Math.ceil(weaponType.getRoundShortAV() / 2.0);
+            }
         } else {
             if (range == WeaponType.RANGE_SHORT) {
                 av = weaponType.getRoundShortAV();

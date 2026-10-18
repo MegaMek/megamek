@@ -45,6 +45,7 @@ import java.util.stream.Collectors;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -64,7 +65,6 @@ import megamek.common.HexTarget;
 import megamek.common.LosEffects;
 import megamek.common.Player;
 import megamek.common.actions.ScanAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.equipment.BridgeLayerLogic;

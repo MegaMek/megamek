@@ -361,20 +361,6 @@ public class MtfFile implements IMekLoader {
             setTechLevel(mek);
             boolean chassisIsFrankenMek = chassisConfig.contains("FrankenMek");
             mek.setWeight(Integer.parseInt(tonnage.substring(5)));
-
-            int engineFlags = 0;
-            if ((mek.isClan() && !mek.isMixedTech())
-                  || (mek.isMixedTech() && mek.isClan() && !mek.itemOppositeTech(engine))
-                  || (mek.isMixedTech() && !mek.isClan() && mek.itemOppositeTech(engine))) {
-                engineFlags = Engine.CLAN_ENGINE;
-            }
-            if (mek.isSuperHeavy()) {
-                engineFlags |= Engine.SUPERHEAVY_ENGINE;
-            }
-
-            int engineRating = Integer.parseInt(engine.substring(engine.indexOf(":") + 1, engine.indexOf(" ")));
-            mek.setEngine(new Engine(engineRating, Engine.getEngineTypeByString(engine), engineFlags));
-
             mek.setOriginalJumpMP(Integer.parseInt(jumpMP.substring(8)));
 
             boolean dblSinks = heatSinks.contains(HS_DOUBLE);
@@ -397,6 +383,25 @@ public class MtfFile implements IMekLoader {
             } else {
                 mek.setStructureType(EquipmentType.T_STRUCTURE_STANDARD);
             }
+
+            int engineFlags = 0;
+            if ((mek.isClan() && !mek.isMixedTech())
+                  || (mek.isMixedTech() && mek.isClan() && !mek.itemOppositeTech(engine))
+                  || (mek.isMixedTech() && !mek.isClan() && mek.itemOppositeTech(engine))) {
+                engineFlags |= Engine.CLAN_ENGINE;
+            }
+            if (mek.isSuperHeavy()) {
+                engineFlags |= Engine.SUPERHEAVY_ENGINE;
+            }
+            if (mek.isIndustrial()) {
+                engineFlags |= Engine.INDUSTRIAL_ENGINE;
+            }
+            int engineRating = Integer.parseInt(engine.substring(engine.indexOf(":") + 1, engine.indexOf(" ")));
+            if (engineRating > 400) {
+                engineFlags |= Engine.LARGE_ENGINE;
+            }
+            mek.setEngine(new Engine(engineRating, Engine.getEngineTypeByString(engine), engineFlags));
+
             if (chassisIsFrankenMek) {
                 mek.setFrankenMek(true);
             }

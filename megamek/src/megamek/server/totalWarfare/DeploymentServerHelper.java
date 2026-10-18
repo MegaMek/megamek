@@ -38,7 +38,6 @@ import java.util.Vector;
 
 import megamek.common.Hex;
 import megamek.common.OffBoardDirection;
-import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.BuildingType;
@@ -188,10 +187,6 @@ public class DeploymentServerHelper {
 
         }
 
-        boolean wigeFlyover = entity.getMovementMode() == EntityMovementMode.WIGE &&
-                              hex.containsTerrain(Terrains.BLDG_ELEV) &&
-                              entity.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV);
-
         // when first entering a building, we need to roll what type
         // of basement it has
         IBuilding bldg = gameManager.getGame()
@@ -208,12 +203,8 @@ public class DeploymentServerHelper {
             }
             boolean collapse = gameManager.checkBuildingCollapseWhileMoving(bldg, entity, entity.getPosition());
             if (collapse) {
+                // A WiGE deployed flying over the building is dropped over the rubble by the collapse (TW p.55)
                 gameManager.addAffectedBldg(bldg, true);
-                if (wigeFlyover) {
-                    // If the building is collapsed by a WiGE flying over it, the WiGE drops one
-                    // level of elevation.
-                    entity.setElevation(entity.getElevation() - 1);
-                }
             }
         }
 
@@ -251,11 +242,36 @@ public class DeploymentServerHelper {
                          entity.getDisplayName());
         }
 
+        clearHiddenIfAirborne(entity);
+
         entity.setDone(setDone);
         entity.setDeployed(true);
         gameManager.entityUpdate(entity.getId());
 
         deployTowedTrailers(entity);
+    }
+
+    /**
+     * An airborne unit cannot be hidden; only one grounded at the start of the scenario can (TW errata v12.0, p.260,
+     * Airborne Units). The lobby lets a VTOL or WiGE be set hidden because it may still deploy landed, so the check
+     * can only be made here, once its deployment elevation is known. A hidden unit that deploys in the air deploys
+     * visible. This is the authoritative check: it also catches a unit that a client, a bot or a loaded file sent
+     * hidden.
+     *
+     * @param entity the unit that has just been placed at its deployment position and elevation
+     */
+    static void clearHiddenIfAirborne(Entity entity) {
+        if (!entity.isHidden()) {
+            return;
+        }
+        if (entity.canHide()) {
+            LOGGER.debug("[Hidden] {}: deployed hidden at elevation {}", entity.getDisplayName(),
+                  entity.getElevation());
+        } else {
+            entity.setHidden(false);
+            LOGGER.debug("[Hidden] {}: deployed airborne (elevation {}, altitude {}), so it is not hidden",
+                  entity.getDisplayName(), entity.getElevation(), entity.getAltitude());
+        }
     }
 
     /**
@@ -360,16 +376,12 @@ public class DeploymentServerHelper {
         if (tractor.getAllTowedUnits().isEmpty()) {
             return true;
         }
-        Game game = gameManager.getGame();
-
-        Board board = game.getBoard(boardId);
-        for (Coords trainHex : TrainLayout.deploymentFootprint(game, tractor, coords, facing)) {
-            if (!game.hasBoardLocation(trainHex, boardId) || !board.isLegalDeployment(trainHex,
-                                                                                      tractor)) {
-                LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
-                            + "deployment hex", tractor.getDisplayName(), coords, facing, trainHex);
-                return false;
-            }
+        Coords illegalHex = TrainLayout.firstIllegalDeploymentHex(gameManager.getGame(), tractor, coords, boardId,
+              facing);
+        if (illegalHex != null) {
+            LOGGER.warn("[Train] rejected deployment of {} at {} facing {}: trailer hex {} is not a legal "
+                        + "deployment hex", tractor.getDisplayName(), coords, facing, illegalHex);
+            return false;
         }
         return true;
     }

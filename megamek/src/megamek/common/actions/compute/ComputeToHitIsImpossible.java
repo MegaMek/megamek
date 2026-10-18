@@ -38,6 +38,7 @@ import java.util.EnumSet;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
@@ -48,7 +49,6 @@ import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -704,6 +704,11 @@ class ComputeToHitIsImpossible {
         // Rules seem to allow multiple TAG attempts but not TAG + any other attacks
         if (attacker.isAirborne() && !isTAG && attacker.usedTag()) {
             return Messages.getString("WeaponAttackAction.AeroCantTAGAndShoot");
+        }
+
+        // An airborne unit that used its Recon Camera this turn makes no other attack (TO:AUE p.150)
+        if (ReconCameraRules.forbidsOtherAttacks(attacker)) {
+            return Messages.getString("ReconCamera.noOtherAttacks");
         }
 
         // Hull Down

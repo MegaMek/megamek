@@ -48,19 +48,18 @@ import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
-import javax.swing.UIManager;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
-import megamek.client.ratgenerator.FormationMix;
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.FormationMixPreview;
 import megamek.client.ratgenerator.FormationType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 
 /**
  * Lets the player ask for more of one kind of lance and less of another.

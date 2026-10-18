@@ -34,8 +34,8 @@ package megamek.common.rules;
 
 import java.util.Locale;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;
 import megamek.common.rolls.TargetRoll;

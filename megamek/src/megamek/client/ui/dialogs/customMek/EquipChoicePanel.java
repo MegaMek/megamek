@@ -33,7 +33,10 @@
  */
 package megamek.client.ui.dialogs.customMek;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -43,10 +46,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
-import javax.swing.*;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import com.formdev.flatlaf.FlatClientProperties;
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.GBC2;
 import megamek.client.ui.Messages;
@@ -57,7 +69,6 @@ import megamek.client.ui.util.StringDrawer;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.AmmoTypeFlag;
@@ -99,6 +110,7 @@ public class EquipChoicePanel extends JPanel {
     private BaManipulatorChoice panBaManipulators;
     private final ArrayList<RapidFireMGChoice> m_vMGs = new ArrayList<>();
     private VRTChoice panVRT;
+    private InfantrySrmMunitionChoice panInfantrySrmMunitions;
     private final ArrayList<MineChoice> m_vMines = new ArrayList<>();
     private final JCheckBox chAutoEject = new JCheckBox(Messages.getString("CustomMekDialog.labAutoEject"));
     private final JCheckBox chCondEjectAmmo = new JCheckBox(Messages.getString(
@@ -259,6 +271,11 @@ public class EquipChoicePanel extends JPanel {
             if (clientgui != null) {
                 setupWeaponAmmoChoice(gbc);
             }
+        }
+
+        // An SRM platoon declares standard or Inferno munitions before the battle (TW p. 143)
+        if ((entity instanceof ConvInfantry convInfantry) && convInfantry.hasSrmLauncher()) {
+            setupInfantrySrmMunitions(convInfantry, gbc);
         }
 
         if (entity.isBomber()) {
@@ -738,6 +755,11 @@ public class EquipChoicePanel extends JPanel {
                     continue;
                 }
 
+                // ProtoMeks fire BattleMek missile ammo but only the munitions Total Warfare lists for them
+                if (entity.isProtoMek() && !AmmoType.isAllowedForBattleArmorAndProtoMeks(atCheck)) {
+                    continue;
+                }
+
                 // Battle Armor ammo can't be selected at all. All other ammo types need to match on rack size and tech.
                 if (bTechMatch &&
                       (atCheck.getRackSize() == at.getRackSize()) &&
@@ -826,6 +848,17 @@ public class EquipChoicePanel extends JPanel {
         panVRT = new VRTChoice(entity, this, gbc);
     }
 
+    /**
+     * Sets up the munition declaration for a conventional infantry platoon's SRM launchers. It gets its own Carried
+     * Munitions heading unless the platoon already has one for its field gun ammo.
+     */
+    private void setupInfantrySrmMunitions(ConvInfantry convInfantry, GBC2 gbc) {
+        if (!shouldSetupMunitions(convInfantry)) {
+            add(new SectionTitleLabel(Messages.getString("CustomMekDialog.MunitionsPanelTitle")), gbc.fullLine());
+        }
+        panInfantrySrmMunitions = new InfantrySrmMunitionChoice(convInfantry, this, gbc);
+    }
+
     private void setupMines(GBC2 gbc) {
         String minesTitle = Messages.getString("CustomMekDialog.mineSection");
         JComponent title = new SectionTitleLabel(minesTitle);
@@ -877,6 +910,9 @@ public class EquipChoicePanel extends JPanel {
     private void disableMunitionEditing() {
         for (MunitionChoice mVMunition : m_vMunitions) {
             mVMunition.setEnabled(false);
+        }
+        if (panInfantrySrmMunitions != null) {
+            panInfantrySrmMunitions.setEnabled(false);
         }
     }
 
@@ -952,6 +988,9 @@ public class EquipChoicePanel extends JPanel {
         }
         if (smallSvMunitionsChoice != null) {
             smallSvMunitionsChoice.apply();
+        }
+        if (panInfantrySrmMunitions != null) {
+            panInfantrySrmMunitions.applyChoice();
         }
         if (bayMunitionsChoicePanel != null) {
             bayMunitionsChoicePanel.apply();

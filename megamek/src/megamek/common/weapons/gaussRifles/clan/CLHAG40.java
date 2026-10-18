@@ -36,8 +36,8 @@ package megamek.common.weapons.gaussRifles.clan;
 
 import java.io.Serial;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
@@ -81,7 +81,7 @@ public class CLHAG40 extends HAGWeapon {
               rulesRef(SourceBookCode.TW, 304)
         );
         flags = flags.andNot(F_PROTO_WEAPON);
-        //Jan 22 - Errata issued by CGL (Greekfire) for HAGs        
+        //Jan 22 - Errata issued by CGL (Greekfire) for HAGs
         techAdvancement.setTechBase(TechBase.CLAN)
               .setTechRating(TechRating.F)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.F, AvailabilityValue.E, AvailabilityValue.D)

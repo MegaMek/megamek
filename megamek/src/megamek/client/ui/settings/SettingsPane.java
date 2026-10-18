@@ -35,6 +35,7 @@ package megamek.client.ui.settings;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.HierarchyEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -47,8 +48,9 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
+import jakarta.annotation.Nullable;
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 
 /**
@@ -69,6 +71,7 @@ public class SettingsPane extends JPanel {
     private boolean searchIndexInProgress;
     private boolean searchIndexComplete;
     private int searchIndexGeneration;
+    private boolean sectionsExpandedByDefault = GUIPreferences.getInstance().getExpandOptionSections();
 
     public SettingsPane(List<SettingsRoute> routes, Map<String, Supplier<Component>> pageFactories,
             SettingsNavigationText navigationText) {
@@ -93,6 +96,11 @@ public class SettingsPane extends JPanel {
         splitPane.setResizeWeight(0.0);
         splitPane.setDividerLocation(UIUtil.scaleForGUI(SettingsNavigationPanel.DEFAULT_NAVIGATION_WIDTH));
         add(splitPane, BorderLayout.CENTER);
+        addHierarchyListener(event -> {
+            if ((event.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && isShowing()) {
+                refreshSectionExpansionDefaults();
+            }
+        });
         navigationPanel.selectRoute(initialRoute);
     }
 
@@ -107,6 +115,37 @@ public class SettingsPane extends JPanel {
     public boolean selectRoute(SettingsRoute route) {
         navigationPanel.selectRoute(route);
         return showRoute(route);
+    }
+
+    public boolean selectRouteAndExpand(String routeId) {
+        SettingsRoute route = routes.stream()
+                                    .filter(r -> r.getId().equals(routeId))
+                                    .findFirst()
+                                    .orElse(null);
+        if (route == null) {
+            return false;
+        }
+
+        if (!selectRoute(route)) {
+            return false;
+        }
+
+        Component page = pageCache.get(route.getId());
+        SettingsPagePanel pagePanel =
+                SettingsContentHost.findPagePanel(page);
+        if (pagePanel != null) {
+            pagePanel.expandAllSections();
+        }
+
+        return true;
+    }
+
+    public boolean selectRoute(String routeId) {
+        return routes.stream()
+                     .filter(route -> route.getId().equals(routeId))
+                     .findFirst()
+                     .map(this::selectRoute)
+                     .orElse(false);
     }
 
     public void focusSearchField() {
@@ -134,12 +173,33 @@ public class SettingsPane extends JPanel {
         contentHost.refreshHelpBindings();
     }
 
+    /** Applies a changed client default to cached pages without disturbing unchanged manual expansion choices. */
+    public void refreshSectionExpansionDefaults() {
+        boolean expanded = GUIPreferences.getInstance().getExpandOptionSections();
+        if (expanded == sectionsExpandedByDefault) {
+            return;
+        }
+        sectionsExpandedByDefault = expanded;
+        for (Component page : pageCache.values()) {
+            SettingsPagePanel pagePanel = SettingsContentHost.findPagePanel(page);
+            if (pagePanel != null) {
+                pagePanel.resetSectionExpansionToDefault();
+            }
+        }
+        expansionStateBeforeFilter.clear();
+        Component currentPage = pageCache.get(currentRoute.getId());
+        if (currentPage != null) {
+            applyFilterExpansion(currentRoute, currentPage, navigationPanel.getActiveFilter());
+        }
+    }
+
     private void selectedNavigationTarget(SettingsRoute route) {
         showRoute(route);
         contentHost.resetScrollPosition();
     }
 
     private boolean showRoute(SettingsRoute route) {
+        refreshSectionExpansionDefaults();
         SettingsRoute effectiveRoute = defaultPageRoute(route);
         Component page = getPage(effectiveRoute);
         if (page == null) {

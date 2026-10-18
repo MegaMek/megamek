@@ -49,9 +49,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.loaders.BLKFile;
 import megamek.common.loaders.EntitySavingException;
 import megamek.common.loaders.MekSummary;

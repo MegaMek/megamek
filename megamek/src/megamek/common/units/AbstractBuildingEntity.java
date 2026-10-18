@@ -37,6 +37,7 @@ package megamek.common.units;
 import java.util.*;
 
 import megamek.client.bot.princess.FireControl;
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.CriticalSlot;
 import megamek.common.Hex;
@@ -47,7 +48,6 @@ import megamek.common.Report;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -1220,8 +1220,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
      */
     private void setArmorForRelativeCoords(int armor, @Nullable CubeCoords relativeCoords) {
         if (relativeCoords == null) {
+            // getShortNameRaw() rather than getShortName() on purpose: this can run during construction, before the
+            // chassis is set, and getShortName() would cache the resulting "null" name (see Entity#setChassis).
             logger.debug("[BuildingDamage] {}: armor set to {} ignored, that location is not part of a hex yet",
-                  getShortName(), armor);
+                  getShortNameRaw(), armor);
             return;
         }
 
@@ -1253,8 +1255,10 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
     private void setConstructionFactorForRelativeCoords(int constructionFactor,
           @Nullable CubeCoords relativeCoords) {
         if (relativeCoords == null) {
+            // getShortNameRaw() rather than getShortName() on purpose: this can run during construction, before the
+            // chassis is set, and getShortName() would cache the resulting "null" name (see Entity#setChassis).
             logger.debug("[BuildingDamage] {}: Construction Factor set to {} ignored, that location is not part of"
-                  + " a hex yet", getShortName(), constructionFactor);
+                  + " a hex yet", getShortNameRaw(), constructionFactor);
             return;
         }
 

@@ -39,8 +39,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.Compute;
 import megamek.common.equipment.MiscType;
 import megamek.common.game.Game;
@@ -49,6 +49,7 @@ import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.EnvironmentalSealingRules;
+import megamek.common.units.IAero;
 import megamek.common.units.Tank;
 import megamek.common.units.Terrains;
 import megamek.common.units.VTOL;
@@ -182,6 +183,15 @@ public record AllowedDeploymentHelper(Entity entity, Coords coords, Board board,
 
     private List<ElevationOption> allowedAeroAltitudes() {
         List<ElevationOption> result = new ArrayList<>();
+
+        if (!entity.wasNeverDeployed() && entity instanceof IAero aeroReturning) {
+            int exitAlt = aeroReturning.getExitAltitude();
+            if (exitAlt > 0) {
+                // Aerospace returning from a fly out must deploy at its exit altitude.
+                result.add(new ElevationOption(exitAlt, ALTITUDE));
+                return result;
+            }
+        }
         if (board.isGround()) {
             result.add(new ElevationOption(0, ON_GROUND));
         }

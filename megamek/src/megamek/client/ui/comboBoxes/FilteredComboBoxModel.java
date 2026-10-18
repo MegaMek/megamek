@@ -40,7 +40,7 @@ import java.util.function.Function;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A combo box model that keeps the full list of items but only shows the ones whose display text contains the

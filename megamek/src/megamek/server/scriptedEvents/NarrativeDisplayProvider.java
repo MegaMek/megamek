@@ -35,7 +35,7 @@ package megamek.server.scriptedEvents;
 
 import java.awt.Image;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * This interface is implemented by scripted event objects that show a story or informative messages in a dialog. This

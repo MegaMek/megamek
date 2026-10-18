@@ -42,11 +42,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import megamek.common.Messages;
 import megamek.common.equipment.Engine;
-import megamek.common.game.Game;
-import megamek.common.equipment.HandheldWeapon;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.EquipmentTypeLookup;
+import megamek.common.equipment.HandheldWeapon;
 import megamek.common.exceptions.LocationFullException;
+import megamek.common.game.Game;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

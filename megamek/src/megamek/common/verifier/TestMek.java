@@ -46,12 +46,12 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
 import megamek.common.MPCalculationSetting;
 import megamek.common.Messages;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.interfaces.ITechManager;

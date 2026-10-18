@@ -44,7 +44,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A class that provides scrolling capabilities to a long menu dropdown or popup menu. A number of items can optionally

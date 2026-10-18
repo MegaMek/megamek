@@ -36,10 +36,10 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.actions.ArtilleryAttackAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType.Munitions;

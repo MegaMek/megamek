@@ -2194,8 +2194,8 @@ public class LandAirMek extends BipedMek implements IAero, IBomber {
         if (getConversionMode() == CONV_MODE_FIGHTER) {
             boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
                   game.getPlanetaryConditions().getLight().isDayOrDusk();
+            // a Recon Camera spots through its own roll instead (ReconCameraRules, TO:AUE p.150)
             return !isAirborne() ||
-                  hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
                   hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
                   hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
                   hiresLighted;

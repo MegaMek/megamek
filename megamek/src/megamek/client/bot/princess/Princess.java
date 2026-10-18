@@ -1138,9 +1138,10 @@ public class Princess extends BotClient {
     /**
      * @param phase the phase about to start
      *
-     * @return {@code true} if the TAG estimates must be cleared before this phase. The Targeting phase clears them in
-     *       {@link #initTargeting()}, but the server skips that phase in any round where no unit has artillery, so
-     *       Movement and Firing, which run every round, clear them too, and so does Offboard, where TAG fires.
+     * @return {@code true} if {@link #changePhase(GamePhase)} must clear the TAG estimates before this phase starts:
+     *       Movement and Firing, which run every round, and Offboard, where TAG fires. {@code false} for Targeting,
+     *       which clears them itself in {@link #initTargeting()}; the server skips that phase in any round where no
+     *       unit has artillery, which is why the other three clear them too.
      */
     static boolean isTagEstimateResetPhase(GamePhase phase) {
         return switch (phase) {

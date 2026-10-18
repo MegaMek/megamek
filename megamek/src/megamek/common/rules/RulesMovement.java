@@ -194,11 +194,11 @@ public abstract class RulesMovement {
      * Shields can reduce the MP to effectively 0
      *
      * @param reduceMPbyShield what the shield reduction is
-     * @param originalWalkMP   what the original walk mp was
+     * @param baseMP   what the original walk mp was
      *
      * @return what the reduction should be
      */
-    public int reduceMovementWithShields(int reduceMPbyShield, int originalWalkMP) {
+    public int reduceMovementWithShields(int reduceMPbyShield, int baseMP) {
         return reduceMPbyShield;
     }
 }

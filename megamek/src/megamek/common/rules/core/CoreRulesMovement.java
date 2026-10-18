@@ -284,12 +284,12 @@ public class CoreRulesMovement extends RulesMovement {
      * Core rules max mp reduction by shield is to 1 movement.
      *
      * @param reduceMPbyShield what the shield reduction is
-     * @param originalWalkMP   what the original walk mp was
+     * @param baseMP   what the original walk mp was
      *
      * @return the reduction amount.
      */
     @Override
-    public int reduceMovementWithShields(int reduceMPbyShield, int originalWalkMP) {
-        return Math.min(reduceMPbyShield, Math.max(0, originalWalkMP - 1));
+    public int reduceMovementWithShields(int reduceMPbyShield, int baseMP) {
+        return Math.min(reduceMPbyShield, Math.max(0, baseMP - 1));
     }
 }

@@ -41,6 +41,7 @@ import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.Entity;
+import megamek.common.weapons.bayWeapons.BayWeapon;
 
 /**
  * Artillery reach in hexes, as the bots need it.
@@ -55,7 +56,9 @@ import megamek.common.units.Entity;
  *     away it can stand and still be in the fight ({@link #engagementRange}).</li>
  * </ul>
  *
- * <p>Air-Defense Arrow and cruise missiles are not direct-fire artillery and keep their existing handling.</p>
+ * <p>Air-Defense Arrow and cruise missiles are not direct-fire artillery and keep their existing handling. So do
+ * artillery bays on DropShips and Small Craft: a bay's range is not a map-sheet range, and its ammo sits on the bay's
+ * member weapons rather than the bay itself.</p>
  */
 public final class ArtilleryReach {
 
@@ -80,11 +83,11 @@ public final class ArtilleryReach {
     /**
      * @param weapon the weapon to check
      *
-     * @return {@code true} if the weapon can make indirect artillery attacks: an artillery weapon not loaded with
-     *       Air-Defense Arrow ammunition, which only engages airborne targets
+     * @return {@code true} if the weapon can make indirect artillery attacks: an artillery weapon, not a weapon bay,
+     *       not loaded with Air-Defense Arrow ammunition, which only engages airborne targets
      */
     private static boolean isIndirectFireArtillery(WeaponMounted weapon) {
-        if (!weapon.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+        if (!weapon.getType().hasFlag(WeaponType.F_ARTILLERY) || (weapon.getType() instanceof BayWeapon)) {
             return false;
         }
         AmmoMounted linkedAmmo = weapon.getLinkedAmmo();

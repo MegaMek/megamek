@@ -33,6 +33,7 @@
 package megamek.client.bot.princess;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -49,8 +50,10 @@ import megamek.common.Player;
 import megamek.common.board.Coords;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.EquipmentType;
+import megamek.common.equipment.EquipmentTypeLookup;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
+import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
@@ -163,6 +166,21 @@ class BotArtilleryRangeTest {
 
         assertEquals(510, ArtilleryReach.engagementRange(game, battery, 17),
               "a Long Tom is rated at 30 map sheets, which is 510 hexes");
+    }
+
+    @Test
+    @DisplayName("an artillery bay keeps its old reading, not 20 map sheets read as 340 hexes")
+    void artilleryBayIsNotReadAsMapSheets() {
+        WeaponMounted artilleryBay = mock(WeaponMounted.class);
+        when(artilleryBay.getType()).thenReturn((WeaponType) EquipmentType.get(EquipmentTypeLookup.ARTILLERY_BAY));
+        when(artilleryBay.isReady()).thenReturn(true);
+        Entity dropShip = mock(Entity.class);
+        when(dropShip.getWeaponList()).thenReturn(List.of(artilleryBay));
+
+        assertFalse(ArtilleryReach.isDirectFireArtillery(artilleryBay),
+              "a bay's range of 20 is not a map-sheet range; bays are left for a follow-up");
+        assertEquals(17, ArtilleryReach.engagementRange(game, dropShip, 17),
+              "a bay must not stretch the unit's engagement range");
     }
 
     @Test

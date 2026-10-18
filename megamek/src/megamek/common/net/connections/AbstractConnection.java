@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -226,14 +226,23 @@ public abstract class AbstractConnection {
         zipData = compress;
     }
 
-    /** Adds a packet to the send queue to be sent on a separate thread. */
-    public synchronized void send(Packet packet) {
-        try {
-            sendQueue.addPacket(new SendPacket(packet, this));
-            // Send right now
-            flush();
-        } catch (Exception e) {
-            LOGGER.error("Failed to send packet {}", packet, e);
+    /**
+     * Adds a packet to the send queue and sends it right away. If sending fails, the connection is closed after this
+     * connection's lock is released, so the disconnect listeners never run while holding it (issue #8668).
+     */
+    public void send(Packet packet) {
+        boolean sent;
+        synchronized (this) {
+            try {
+                sendQueue.addPacket(new SendPacket(packet, this));
+            } catch (Exception exception) {
+                LOGGER.error("Failed to send packet {}", packet, exception);
+                return;
+            }
+            sent = sendQueuedPackets();
+        }
+        if (!sent) {
+            close();
         }
     }
 
@@ -329,25 +338,46 @@ public abstract class AbstractConnection {
     }
 
     /**
-     * Send all queued packets. This method is synchronized since it deals with the non-thread-safe send queue.
+     * Send all queued packets. If sending fails, the connection is closed after this connection's lock is released.
+     * Closing fires the disconnect listeners, and the server's listener takes the server and game locks; firing it
+     * while still holding this connection's lock lets a second thread that holds one of those locks and broadcasts to
+     * this connection deadlock against us (issue #8668).
      */
-    public synchronized void flush() {
+    public void flush() {
+        boolean sent;
+        synchronized (this) {
+            sent = sendQueuedPackets();
+        }
+        if (!sent) {
+            close();
+        }
+    }
+
+    /**
+     * Sends every queued packet. The caller must hold this connection's lock, since the send queue is not thread-safe.
+     * This method must not close the connection itself; it reports the failure so the caller can close once the lock
+     * is released.
+     *
+     * @return {@code false} if sending failed and the connection should be closed, {@code true} otherwise
+     */
+    protected boolean sendQueuedPackets() {
         SendPacket packet = null;
         try {
             while ((packet = sendQueue.getPacket()) != null) {
                 processPacket(packet);
             }
-        } catch (Exception ex) {
+        } catch (Exception exception) {
             if (packet == null) {
-                LOGGER.error(ex, "{} had an error sending a null packet", getConnectionTypeText());
+                LOGGER.error(exception, "{} had an error sending a null packet", getConnectionTypeText());
             } else {
-                LOGGER.error(ex,
+                LOGGER.error(exception,
                       "{} had an error sending command {}",
                       getConnectionTypeText(),
                       packet.getCommand().name());
             }
-            close();
+            return false;
         }
+        return true;
     }
 
     /** Processes a received packet. */

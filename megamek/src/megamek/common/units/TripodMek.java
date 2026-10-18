@@ -190,9 +190,11 @@ public class TripodMek extends MekWithArms {
                 mp = Game.rulesManager.getRulesUnits().getMinimumMP(mp);
             }
         }
-        if (hasShield()) {
-            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
-            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
+        if (!mpCalculationSetting.ignoreShield() && hasShield()) {
+            int reduceMPbyShield = getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE) + getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
+            reduceMPbyShield = Game.rulesManager.getRulesMovement().reduceMovementWithShields(reduceMPbyShield,
+                  getOriginalWalkMP());
+            mp -= reduceMPbyShield;
         }
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {

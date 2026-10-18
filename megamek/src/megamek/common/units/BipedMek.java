@@ -150,8 +150,11 @@ public class BipedMek extends MekWithArms {
         }
 
         if (!mpCalculationSetting.ignoreShield() && hasShield()) {
-            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
-            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
+            int reduceMPbyShield = getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE)
+                    + getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
+            reduceMPbyShield = Game.rulesManager.getRulesMovement().reduceMovementWithShields(reduceMPbyShield,
+                    getOriginalWalkMP());
+            mp -= reduceMPbyShield;
         }
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {

@@ -103,6 +103,7 @@ public class BipedMek extends MekWithArms {
         int actuatorHits = 0;
 
         boolean bCumulativeLegDamage = true;
+        boolean minimumLegRule = false;
         if (game != null) {
             bCumulativeLegDamage = Game.rulesManager.getRulesMovement().cumulativeLegDamage(gameOptions()
                   .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_LEG_DAMAGE));
@@ -146,6 +147,7 @@ public class BipedMek extends MekWithArms {
             }
             if (legsDestroyed < 2 && mp <= 0) {
                 mp = Game.rulesManager.getRulesUnits().getMinimumMP(mp);
+                minimumLegRule = true;
             }
         }
 
@@ -153,7 +155,7 @@ public class BipedMek extends MekWithArms {
             int reduceMPbyShield = getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE)
                     + getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
             reduceMPbyShield = Game.rulesManager.getRulesMovement().reduceMovementWithShields(reduceMPbyShield,
-                    getOriginalWalkMP());
+                  (minimumLegRule) ? mp : getOriginalWalkMP());
             mp -= reduceMPbyShield;
         }
 

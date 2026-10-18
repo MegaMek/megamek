@@ -290,10 +290,6 @@ public class CoreRulesMovement extends RulesMovement {
      */
     @Override
     public int reduceMovementWithShields(int reduceMPbyShield, int originalWalkMP) {
-        if (reduceMPbyShield >= originalWalkMP) {
-            return originalWalkMP - 1;
-        }
-
-        return reduceMPbyShield;
+        return Math.min(reduceMPbyShield, Math.max(0, originalWalkMP - 1));
     }
 }

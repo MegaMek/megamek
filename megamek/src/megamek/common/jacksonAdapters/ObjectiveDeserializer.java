@@ -56,6 +56,7 @@ import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
  *     controlRadius: 1
  *   - name: MacGuffin
  *     at: [ 20, 12 ]
+ *     scheme: raid
  *     variants: [ fragile, mobile ]
  * </PRE>
  *
@@ -63,7 +64,8 @@ import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
  * default 0), {@code vp} (victory point value, default 1), {@code destructible} (objectives are destructible by
  * default per the Objectives rules; set {@code false} when the mission states that objectives cannot be destroyed)
  * and {@code variants} (any of {@code potential}, {@code false}, {@code fragile}, {@code mobile}) are optional.
- * Potential and False Objectives cannot be combined (RAW).
+ * Potential and False Objectives cannot be combined (RAW), a Scan point cannot be Potential and only a Raid point can be
+ * Mobile (see {@link ObjectiveMarker#canBePotential} and {@link ObjectiveMarker#canBeMobile}).
  */
 public final class ObjectiveDeserializer {
 
@@ -136,10 +138,7 @@ public final class ObjectiveDeserializer {
             marker.setScanRevealsNote(node.get(SCAN_REVEALS).asText());
         }
         parseVariants(marker, node);
-        if (marker.isPotential() && marker.isFalseObjective()) {
-            throw new IllegalArgumentException("Objective " + marker.generalName()
-                  + ": Potential Objectives cannot be used in conjunction with False Objectives");
-        }
+        checkVariantsFitTheScheme(marker);
 
         return new ObjectiveInfo(marker, readPosition(marker, node));
     }
@@ -189,6 +188,29 @@ public final class ObjectiveDeserializer {
      *
      * @throws IllegalArgumentException on an unknown scheme or counting mode
      */
+    /**
+     * Rejects a combination of variants, or of a variant and the scoring scheme, that the rules forbid. The editor and
+     * the server apply the same rules from {@link ObjectiveMarker}, so a scenario cannot set up a point that could not
+     * be made in Victory Setup.
+     *
+     * @param marker the parsed objective, its scheme and variants already read
+     */
+    private static void checkVariantsFitTheScheme(ObjectiveMarker marker) {
+        if (marker.hasPotentialAndFalseVariants()) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": Potential Objectives cannot be used in conjunction with False Objectives");
+        }
+        ObjectiveScoringScheme.SchemePreset preset = marker.getScoringScheme().getPreset();
+        if (marker.isPotential() && !ObjectiveMarker.canBePotential(preset)) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": a Scan point cannot be a Potential Objective - the scan that confirms it also reads it");
+        }
+        if (marker.isMobile() && !ObjectiveMarker.canBeMobile(preset)) {
+            throw new IllegalArgumentException("Objective " + marker.generalName()
+                  + ": only a Raid point can be a Mobile Objective, not a " + preset + " point");
+        }
+    }
+
     private static void parseScheme(ObjectiveMarker marker, JsonNode node) {
         if (!node.has(SCHEME)) {
             return;

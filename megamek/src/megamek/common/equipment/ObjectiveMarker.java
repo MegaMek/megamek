@@ -233,6 +233,42 @@ public class ObjectiveMarker extends GroundObject {
         this.falseObjective = falseObjective;
     }
 
+    /**
+     * Potential and False Objectives cannot be used together (RAW): a candidate waiting to be confirmed by a scan is
+     * not also a decoy. The scenario reader, the properties editor and the server all ask this one question, so a
+     * marker the editor would refuse is refused everywhere.
+     *
+     * @return {@code true} if this marker is flagged both Potential and False
+     */
+    public boolean hasPotentialAndFalseVariants() {
+        return potential && falseObjective;
+    }
+
+    /**
+     * A Scan point cannot be Potential: it is already read with sensors, so the one scan that would confirm it would
+     * also read it, and the flag would add nothing.
+     *
+     * @param preset the point's scoring scheme
+     *
+     * @return {@code true} if a point with this scheme may be Potential
+     */
+    public static boolean canBePotential(ObjectiveScoringScheme.SchemePreset preset) {
+        return preset != ObjectiveScoringScheme.SchemePreset.SCAN;
+    }
+
+    /**
+     * Only a Raid point can be Mobile. The other held schemes are won by a zone on the map, and scoring only reads
+     * objectives lying on the ground, so a zone carried off in a Mek's hand would stop scoring altogether. Raid asks who
+     * has the objective when the game ends, which a carried objective answers.
+     *
+     * @param preset the point's scoring scheme
+     *
+     * @return {@code true} if a point with this scheme may be Mobile
+     */
+    public static boolean canBeMobile(ObjectiveScoringScheme.SchemePreset preset) {
+        return preset == ObjectiveScoringScheme.SchemePreset.RAID;
+    }
+
     /** @return {@code true} if this is a Fragile Objective that risks destruction on qualifying events */
     public boolean isFragile() {
         return fragile;

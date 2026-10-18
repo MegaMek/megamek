@@ -1092,6 +1092,46 @@ public class Princess extends BotClient {
         return targets;
     }
 
+    /**
+     * Returns how keenly this bot goes for one of its priority targets, from 1 (shoot first) to 5. Enemy convoy units
+     * are always 1, so a convoy is hit before anything a player put on the list; other units read their priority from
+     * the behavior settings, 3 when none was chosen.
+     *
+     * @param unitId the ID of a unit in {@link #getPriorityUnitTargets()}
+     *
+     * @return the target priority, 1 to 5
+     */
+    public int getTargetPriority(int unitId) {
+        if (getUnitOrdersFollower().enemyConvoyUnitIds().contains(unitId)) {
+            return BehaviorSettings.HIGHEST_TARGET_PRIORITY;
+        }
+        return getBehaviorSettings().getTargetPriority(unitId);
+    }
+
+    /**
+     * Logs which unit a shooter chose to fire at, and whether it is one of this bot's priority targets, so a playtest
+     * or headless log can answer "did the bot really shoot its priority targets first". Silent while the bot has no
+     * priority targets, so ordinary games are not flooded.
+     *
+     * @param shooter the unit firing
+     * @param plan    the firing plan it chose
+     */
+    private void logPriorityTargetChoice(Entity shooter, FiringPlan plan) {
+        Set<Integer> priorityTargets = getPriorityUnitTargets();
+        Targetable target = plan.getTarget();
+        if (priorityTargets.isEmpty() || (target == null)) {
+            return;
+        }
+        if (priorityTargets.contains(target.getId())) {
+            LOGGER.info("[PriorityTargets] {} (ID {}) fires at priority target {} (ID {}), target priority {}",
+                  shooter.getDisplayName(), shooter.getId(), target.getDisplayName(), target.getId(),
+                  getTargetPriority(target.getId()));
+        } else {
+            LOGGER.info("[PriorityTargets] {} (ID {}) fires at {} (ID {}), not a priority target",
+                  shooter.getDisplayName(), shooter.getId(), target.getDisplayName(), target.getId());
+        }
+    }
+
     public Targetable getAppropriateTarget(Coords strategicTarget) {
         return getAppropriateTarget(strategicTarget, IGame.DEFAULT_BOARD_ID);
     }
@@ -1813,6 +1853,7 @@ public class Princess extends BotClient {
                     LOGGER.debug("{} - Detailed Best Firing Plan: {}",
                           shooter.getDisplayName(),
                           plan.getDebugDescription(true));
+                    logPriorityTargetChoice(shooter, plan);
 
                     // Consider making an aimed shot if the target is shut down or the attacker has
                     // a targeting computer. Alternatively, consider using the called shots optional

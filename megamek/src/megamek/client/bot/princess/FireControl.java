@@ -119,7 +119,15 @@ public class FireControl {
     static final double COMMANDER_UTILITY = 0.5;
     static final double SUB_COMMANDER_UTILITY = 0.25;
     static final double STRATEGIC_TARGET_UTILITY = 0.5;
+    /** The fire bonus for a priority target at the default target priority, 3. */
     static final double PRIORITY_TARGET_UTILITY = 0.25;
+    /** How much each step of target priority away from 3 adds or takes off the bonus: 2 is +35%, 5 is +5%. */
+    static final double PRIORITY_TARGET_UTILITY_STEP = 0.10;
+    /**
+     * How far priority 1 sits above the enemy-commander bonus. A player marking a unit "shoot this first" outranks the
+     * bot's own preference for the enemy commander, C3 master or initiative leader (user decision, #9174).
+     */
+    static final double PRIORITY_ONE_MARGIN_OVER_COMMANDER = 0.05;
 
     static final String TH_WOODS = "woods";
     static final String TH_SMOKE = "smoke";
@@ -1619,9 +1627,22 @@ public class FireControl {
 
         final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
-            return PRIORITY_TARGET_UTILITY;
+            return priorityTargetUtility(owner.getTargetPriority(id));
         }
         return 0;
+    }
+
+    /**
+     * @param targetPriority how keenly the bot goes for the target, 1 (shoot first) to 5
+     *
+     * @return the fire bonus for that target priority: 0.55, 0.35, 0.25, 0.15 or 0.05
+     */
+    static double priorityTargetUtility(int targetPriority) {
+        if (targetPriority <= BehaviorSettings.HIGHEST_TARGET_PRIORITY) {
+            return COMMANDER_UTILITY + PRIORITY_ONE_MARGIN_OVER_COMMANDER;
+        }
+        int stepsKeenerThanDefault = BehaviorSettings.DEFAULT_TARGET_PRIORITY - targetPriority;
+        return PRIORITY_TARGET_UTILITY + (stepsKeenerThanDefault * PRIORITY_TARGET_UTILITY_STEP);
     }
 
     protected double calcCivilianTargetDisutility(final Targetable target) {

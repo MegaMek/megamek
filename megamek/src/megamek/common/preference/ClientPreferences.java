@@ -80,6 +80,12 @@ public class ClientPreferences extends PreferenceStoreProxy {
     public static final String DATA_LOGGING = "GameDatasetLogging";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
+    /**
+     * Whether the lobby unit list shows unit IDs. Separate from {@link #SHOW_UNIT_ID}, which also adds the ID to every
+     * unit name in reports, the game log and tooltips: players need the IDs in the lobby to set bot targets (#9173),
+     * without every report changing.
+     */
+    public static final String LOBBY_SHOW_UNIT_ID = "LobbyShowUnitId";
     public static final String USE_CASPAR = "UseCASPAR";
     public static final String UNIT_START_CHAR = "UnitStartChar";
     public static final String DEFAULT_AUTO_EJECT_DISABLED = "DefaultAutoejectDisabled";
@@ -169,6 +175,7 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setDefault(SHOW_AUTO_RESOLVE_PANEL, false);
         store.setDefault(STAMP_FILENAMES, false);
         store.setDefault(USE_CASPAR, false);
+        store.setDefault(LOBBY_SHOW_UNIT_ID, true);
         store.setDefault(FAVORITE_PRINCESS_BEHAVIOR_SETTING, DEFAULT_BEHAVIOR_DESCRIPTION);
         store.setDefault(LAST_SCENARIO, "");
 
@@ -294,6 +301,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
+     * @return {@code true} when the lobby unit list shows unit IDs, which is the default
+     */
+    public boolean getLobbyShowUnitId() {
+        return store.getBoolean(LOBBY_SHOW_UNIT_ID);
+    }
+
+    /**
      * @return {@code true} if the experimental CASPAR bot is offered as a selectable AI. This is a hidden
      *       option: it is not shown in any settings UI and defaults to {@code false}; enable it by hand-adding
      *       {@code <UseCASPAR>true</UseCASPAR>} to clientsettings.xml.
@@ -399,6 +413,13 @@ public class ClientPreferences extends PreferenceStoreProxy {
 
     public void setShowUnitId(boolean state) {
         store.setValue(SHOW_UNIT_ID, state);
+    }
+
+    /**
+     * @param state {@code true} to show unit IDs in the lobby unit list
+     */
+    public void setLobbyShowUnitId(boolean state) {
+        store.setValue(LOBBY_SHOW_UNIT_ID, state);
     }
 
     public void setUnitStartChar(char c) {

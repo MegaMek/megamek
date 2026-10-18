@@ -26126,67 +26126,67 @@ public class TWGameManager extends AbstractGameManager {
      * to the player" set r.player to that player's id and set r.type to Report.PLAYER to mark a message as visible to
      * all, set r.type to Report.PUBLIC
      *
-     * @param r         the Report to filter
-     * @param p         the Player that we are going to send the filtered report to
+     * @param report         the Report to filter
+     * @param player         the Player that we are going to send the filtered report to
      * @param omitCheck boolean indicating that this report happened in the past, so we no longer have access to the
      *                  Player
      *
      * @return a new Report, which has possibly been obscured
      */
-    private Report filterReport(Report r, Player p, boolean omitCheck) {
-        if ((r.subject == Entity.NONE) && (r.type != Report.PLAYER) && (r.type != Report.PUBLIC)) {
+    private Report filterReport(Report report, Player player, boolean omitCheck) {
+        if ((report.subject == Entity.NONE) && (report.type != Report.PLAYER) && (report.type != Report.PUBLIC)) {
             // Reports that don't have a subject should be public.
             LOGGER.info("Attempting to filter a Report object that is not public yet but has no subject. messageId: {}",
-                  r.messageId);
-            return r;
+                  report.messageId);
+            return report;
         }
-        if ((r.type == Report.PUBLIC) || ((p == null) && !omitCheck)) {
-            return r;
+        if ((report.type == Report.PUBLIC) || ((player == null) && !omitCheck)) {
+            return report;
         }
-        Entity entity = game.getEntity(r.subject);
+        Entity entity = game.getEntity(report.subject);
         if (entity == null) {
-            entity = game.getOutOfGameEntity(r.subject);
+            entity = game.getOutOfGameEntity(report.subject);
         }
         Player owner = null;
         if (entity != null) {
             owner = entity.getOwner();
             // off board (Artillery) units get treated as public messages
             if (entity.isOffBoard()) {
-                return r;
+                return report;
             }
         }
 
-        if ((r.type != Report.PLAYER) && !omitCheck && ((entity == null) || (owner == null))) {
+        if ((report.type != Report.PLAYER) && !omitCheck && ((entity == null) || (owner == null))) {
             LOGGER.error(
                   "Attempting to filter a report object that is not public but has a subject ({}) with owner ({}).\n\tmessageId: {}",
                   entity,
                   owner,
-                  r.messageId);
-            return r;
+                  report.messageId);
+            return report;
         }
 
         boolean shouldObscure = omitCheck ||
-              ((entity != null) && !entity.hasSeenEntity(p)) ||
-              ((r.type == Report.PLAYER) && (p.getId() != r.player));
+              ((entity != null) && !entity.hasSeenEntity(player)) ||
+              ((report.type == Report.PLAYER) && (player.getId() != report.player));
         // If suppressing double-blind messages, don't send this report at all.
         if (game.getOptions().booleanOption(OptionsConstants.ADVANCED_SUPPRESS_ALL_DB_MESSAGES) && shouldObscure) {
             // Mark the original report to indicate it was filtered
-            if (p != null) {
-                r.addObscuredRecipient(p.getName());
+            if (player != null) {
+                report.addObscuredRecipient(player.getName());
             }
             return null;
         }
-        Report copy = new Report(r);
+        Report copy = new Report(report);
         // Otherwise, obscure data in the report
-        for (int j = 0; j < copy.dataCount(); j++) {
+        for (int dataField = 0; dataField < copy.dataCount(); dataField++) {
             if (shouldObscure) {
                 // This report should be obscured
-                if (r.isValueObscured(j)) {
-                    copy.hideData(j);
+                if (report.isValueObscured(dataField)) {
+                    copy.hideData(dataField);
                     // Mark the original report to indicate which players
                     // received an obscured version of it.
-                    if (p != null) {
-                        r.addObscuredRecipient(p.getName());
+                    if (player != null) {
+                        report.addObscuredRecipient(player.getName());
                     }
                 }
             }
@@ -32631,87 +32631,91 @@ public class TWGameManager extends AbstractGameManager {
      * @return Vector           reports (caller is responsible for displaying)
      */
     private Vector<Report> handleAttacks(boolean pointblankShot) {
-        Report r;
+        Report report;
         int lastAttackerId = -1;
         Vector<AttackHandler> currentAttacks, keptAttacks;
         currentAttacks = game.getAttacksVector();
         keptAttacks = new Vector<>();
         Vector<Report> handleAttackReports = new Vector<>();
         // first, do any TAGs, so homing arty will have TAG
-        for (AttackHandler ah : currentAttacks) {
-            if (!(ah instanceof TAGHandler)) {
+        for (AttackHandler attackHandler : currentAttacks) {
+            if (!(attackHandler instanceof TAGHandler)) {
                 continue;
             }
 
-            if (ah.cares(game.getPhase())) {
-                int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
-                      && ah.producesReportThisPhase(game.getPhase())) {
-                    // report who is firing
-                    if (pointblankShot) {
-                        r = new Report(3102);
+            if (attackHandler.cares(game.getPhase())) {
+                int attackerId = attackHandler.getAttackerId();
+                if ((attackerId != lastAttackerId) && !attackHandler.announcedEntityFiring()) {
+                    if (attackHandler.producesReportThisPhase(game.getPhase())) {
+                        // report who is firing
+                        if (pointblankShot) {
+                            report = new Report(3102);
+                        } else {
+                            report = new Report(3100);
+                        }
+                        report.subject = attackerId;
+                        report.addDesc(attackHandler.getAttacker());
+                        handleAttackReports.addElement(report);
+                        attackHandler.setAnnouncedEntityFiring(true);
+                        lastAttackerId = attackerId;
                     } else {
-                        r = new Report(3100);
+                        report = new Report(3103);
+                        handleAttackReports.addElement(report);
                     }
-                    r.subject = aId;
-                    r.addDesc(ah.getAttacker());
-                    handleAttackReports.addElement(r);
-                    ah.setAnnouncedEntityFiring(true);
-                    lastAttackerId = aId;
                 }
-                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                boolean keep = attackHandler.handle(game.getPhase(), handleAttackReports);
                 if (keep) {
-                    keptAttacks.add(ah);
+                    keptAttacks.add(attackHandler);
                 }
                 Report.addNewline(handleAttackReports);
             }
         }
 
         // now resolve everything but TAG
-        for (AttackHandler ah : currentAttacks) {
-            if (ah instanceof TAGHandler) {
+        for (AttackHandler attackHandler : currentAttacks) {
+            if (attackHandler instanceof TAGHandler) {
                 continue;
             }
-            if (ah.cares(game.getPhase())) {
-                int aId = ah.getAttackerId();
-                if ((aId != lastAttackerId) && !ah.announcedEntityFiring()
-                      && ah.producesReportThisPhase(game.getPhase())) {
+            if (attackHandler.cares(game.getPhase())) {
+                int attackerId = attackHandler.getAttackerId();
+                if ((attackerId != lastAttackerId) && !attackHandler.announcedEntityFiring()
+                      && attackHandler.producesReportThisPhase(game.getPhase())) {
                     // if this is a new attacker then resolve any standard-to-cap damage from previous
-                    handleAttackReports.addAll(checkFatalThresholds(aId, lastAttackerId));
+                    handleAttackReports.addAll(checkFatalThresholds(attackerId, lastAttackerId));
                     // report who is firing
                     if (pointblankShot) {
-                        r = new Report(3102);
-                    } else if (ah.isStrafing()) {
-                        r = new Report(3101);
+                        report = new Report(3102);
+                    } else if (attackHandler.isStrafing()) {
+                        report = new Report(3101);
                     } else {
-                        r = new Report(3100);
+                        report = new Report(3100);
                     }
-                    r.subject = aId;
-                    r.addDesc(ah.getAttacker());
-                    handleAttackReports.addElement(r);
-                    ah.setAnnouncedEntityFiring(true);
-                    lastAttackerId = aId;
+                    report.subject = attackerId;
+                    report.addDesc(attackHandler.getAttacker());
+                    handleAttackReports.addElement(report);
+                    attackHandler.setAnnouncedEntityFiring(true);
+                    lastAttackerId = attackerId;
                 }
-                if (ah.getAttacker() != ah.getWeaponAttackAction().getEntity(game)) {
+                if (attackHandler.getAttacker() != attackHandler.getWeaponAttackAction().getEntity(game)) {
                     Report hhwUsedReport = new Report(3112);
-                    hhwUsedReport.subject = ah.getWeaponAttackAction().getEntityId();
-                    hhwUsedReport.addDesc(ah.getWeaponAttackAction().getEntity(game));
+                    hhwUsedReport.subject = attackHandler.getWeaponAttackAction().getEntityId();
+                    hhwUsedReport.addDesc(attackHandler.getWeaponAttackAction().getEntity(game));
                     handleAttackReports.addElement(hhwUsedReport);
                 }
                 // An on-deck infantry unit that fires breaks the idle streak needed to convert to dug in. TO:AR p.106.
-                if (ah.getAttacker() instanceof Infantry firingInfantry && firingInfantry.isHitTheDeck()) {
+                if (attackHandler.getAttacker() instanceof Infantry firingInfantry && firingInfantry.isHitTheDeck()) {
                     firingInfantry.setFiredWhileOnDeck(true);
                 }
-                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                boolean keep = attackHandler.handle(game.getPhase(), handleAttackReports);
                 if (keep) {
-                    keptAttacks.add(ah);
+                    keptAttacks.add(attackHandler);
                 }
                 // In a flammable atmosphere every weapon attack on a non-water hex risks setting it alight,
                 // whether the shot hit or missed (TO:AR p.54).
-                new TaintedAtmosphereHandler(this).checkAccidentalWeaponFire(ah, handleAttackReports);
+                new TaintedAtmosphereHandler(this).checkAccidentalWeaponFire(attackHandler, handleAttackReports);
                 Report.addNewline(handleAttackReports);
             } else {
-                keptAttacks.add(ah);
+                keptAttacks.add(attackHandler);
             }
         }
 
@@ -32722,11 +32726,11 @@ public class TWGameManager extends AbstractGameManager {
         // BA VDNI/BVDNI immunity feedback - print at end of all attacks (IO pg 71)
         for (Entity entity : game.getEntitiesVector()) {
             if (entity.baVDNINeedsFeedbackMessage) {
-                r = new Report(3586);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.indent(2);
-                handleAttackReports.addElement(r);
+                report = new Report(3586);
+                report.subject = entity.getId();
+                report.addDesc(entity);
+                report.indent(2);
+                handleAttackReports.addElement(report);
                 entity.baVDNINeedsFeedbackMessage = false;
                 entity.reportedVDNIFeedbackThisPhase = true;
             }

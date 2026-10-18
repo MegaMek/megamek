@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -176,7 +176,7 @@ public class EnemyTracker {
                   id -> new EnemyProfile(enemy));
 
             var averageDamagePotential = Stream.of(
-                        FireControl.getMaxDamageAtRange(enemy, enemy.getMaxWeaponRange(), false, false),
+                        FireControl.getMaxDamageAtRange(enemy, getOwner().getMaxWeaponRange(enemy), false, false),
                         FireControl.getMaxDamageAtRange(enemy, 1, false, false))
                   .mapToDouble(d -> d)
                   .average()

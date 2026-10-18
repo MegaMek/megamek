@@ -471,11 +471,12 @@ public class Princess extends BotClient {
      * @param airborneTarget Whether the potential target is in the air, only relevant for aircraft shooting at other
      *                       aircraft on ground maps.
      *
-     * @return maximum weapon range for the given entity. Cached version of entity.getMaxWeaponRange()
+     * @return maximum weapon range for the given entity, in hexes, with direct-fire artillery counted at its 17-hex
+     *       reach rather than its range in map sheets. Cached version of {@link ArtilleryReach#maxWeaponRange}.
      */
     public int getMaxWeaponRange(Entity entity, boolean airborneTarget) {
         return getFireControlState().getWeaponRanges(airborneTarget)
-              .computeIfAbsent(entity.getId(), ent -> entity.getMaxWeaponRange(airborneTarget));
+              .computeIfAbsent(entity.getId(), ent -> ArtilleryReach.maxWeaponRange(entity, airborneTarget));
     }
 
     public void setFallBack(final boolean fallBack, final String reason) {

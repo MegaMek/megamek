@@ -1165,6 +1165,18 @@ public final class UIUtil {
             updateHint();
         }
 
+        /**
+         * Returns what the player typed. While the box is empty and unfocused it holds the hint as its text, so
+         * {@link #getText()} returns the hint then; a search or an ID list must not read the hint as input.
+         *
+         * @return the typed text, or an empty string while only the hint is showing
+         */
+        public String getEnteredText() {
+            String text = getText();
+            boolean isShowingHint = (hintText != null) && text.equals(hintText);
+            return isShowingHint ? "" : text;
+        }
+
         private void updateHint() {
             if (getText().isEmpty()) {
                 setText(hintText);

@@ -129,7 +129,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
      * no longer quietly adds fewer units than the player meant.
      */
     private void updatePreview() {
-        UnitIdListParser.Result result = UnitIdListParser.parse(unitIDField.getText());
+        UnitIdListParser.Result result = UnitIdListParser.parse(unitIDField.getEnteredText());
         StringBuilder preview = new StringBuilder("<HTML><CENTER>");
         if (result.unitIds().isEmpty()) {
             preview.append(Messages.getString("BotConfigDialog.unitIdPreviewNone"));
@@ -175,7 +175,7 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
      * @return the IDs entered; may be empty but never {@code null}
      */
     public Set<Integer> getSelectedIDs() {
-        UnitIdListParser.Result result = UnitIdListParser.parse(unitIDField.getText());
+        UnitIdListParser.Result result = UnitIdListParser.parse(unitIDField.getEnteredText());
         if (!result.isFullyRead()) {
             LOGGER.debug("[PriorityTargets] ignored unreadable unit ID entries {}", result.unreadableEntries());
         }

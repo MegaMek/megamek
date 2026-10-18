@@ -850,7 +850,7 @@ public class WeaponFireInfo {
                       game, false
                 );
 
-                double[] bombDamage = computeBlastDamage(shooter, blastShape);
+                double[] bombDamage = computeBlastDamage(shooter, targetHex.getBoardId(), blastShape);
                 damage += bombDamage[0];
                 friendlyDamage += bombDamage[1];
                 buildingDamage += bombDamage[2];
@@ -879,7 +879,7 @@ public class WeaponFireInfo {
         }
         HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo.getType(), center,
               centerHex.getLevel(), true, false, false, game, false);
-        return computeBlastDamage(getShooter(), blastShape);
+        return computeBlastDamage(getShooter(), target.getBoardId(), blastShape);
     }
 
     /**
@@ -944,19 +944,21 @@ public class WeaponFireInfo {
         }
         HashMap<Map.Entry<Integer, Coords>, Integer> blastShape = AreaEffectHelper.shapeBlast(ammo.getType(), landing,
               landingHex.getLevel(), true, false, false, game, false);
-        return computeBlastDamage(getShooter(), blastShape)[1];
+        return computeBlastDamage(getShooter(), target.getBoardId(), blastShape)[1];
     }
 
     /**
      * Adds up the damage a blast does to enemy units, friendly units and buildings.
      *
      * @param shooter    The unit making the attack; units on its team count as friendly.
+     * @param boardId    The board the blast lands on; hexes and units are looked up on this board only.
      * @param blastShape The blast: (absolute level, hex) to damage, highest damage first.
      *
      * @return The expected damage to enemies, to friendly units and to buildings, in that order.
      */
-    private double[] computeBlastDamage(final Entity shooter,
+    private double[] computeBlastDamage(final Entity shooter, final int boardId,
           final Map<Map.Entry<Integer, Coords>, Integer> blastShape) {
+        Board board = game.getBoard(boardId);
         double damage = 0D, friendlyDamage = 0D, buildingDamage = 0D;
         // Entries for blast shape are: (absolute level: Coords) : damage
         // e.g. the center of an HE bomb to level 4 of a building on a level 2 hex at (1,3) is:
@@ -964,7 +966,7 @@ public class WeaponFireInfo {
         List<Entity> hitVictims = new ArrayList<>();
         for (Map.Entry<Integer, Coords> entry : blastShape.keySet()) {
             Coords coords = entry.getValue();
-            Hex hex = game.getBoard().getHex(coords);
+            Hex hex = board.getHex(coords);
             // Currently, bombs off board are not supported.
             if (hex == null) {
                 continue;
@@ -978,7 +980,7 @@ public class WeaponFireInfo {
             // Record damage to enemy and friendly units
             // Entities can only be hit once per hex they occupy; blastShape assures we record
             // highest damage first.
-            for (final Entity currentVictim : game.getEntitiesVector(coords)) {
+            for (final Entity currentVictim : game.getEntitiesVector(coords, boardId)) {
                 // Skip airborne, already-blasted, and hidden entities in calcs
                 if (currentVictim.isAirborne()
                       || hitVictims.contains(currentVictim)

@@ -336,6 +336,22 @@ class DirectArtilleryToHitGuessTest {
     }
 
     @Test
+    void ownShotIgnoresAFriendOnAnotherBoard() {
+        Game game = game();
+        Hex[] hexes = new Hex[BOARD_SIZE * BOARD_SIZE];
+        for (int index = 0; index < hexes.length; index++) {
+            hexes[index] = new Hex();
+        }
+        game.setBoard(1, new Board(BOARD_SIZE, BOARD_SIZE, hexes));
+        Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);
+        Entity friendOnOtherBoard = place(game, LASER_MEK, 3, 2, FRIEND_IN_SCATTER_RANGE, 0);
+        friendOnOtherBoard.setBoardId(1);
+
+        assertEquals(0, ownShot(game, units[0], units[1]).getExpectedScatterFriendlyDamage(), 0.0001,
+              "the Wasp stands on the same hex number of a different board, out of the shell's reach");
+    }
+
+    @Test
     void ownShotIgnoresAFriendBeyondTheLongestScatter() {
         Game game = game();
         Entity[] units = thumperAndRunningTarget(game, TARGET_AT_TWELVE_HEXES);

@@ -58,6 +58,7 @@ import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.TipTextField;
 import megamek.common.util.UnitIdListParser;
 import megamek.logging.MMLogger;
+import org.apache.commons.text.StringEscapeUtils;
 
 /** A dialog for entering one or more entity IDs that are to be used as strategic targets by Princess. */
 public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
@@ -142,8 +143,9 @@ public class BotConfigTargetUnitDialog extends AbstractButtonDialog {
         if (!result.isFullyRead()) {
             preview.append("<BR>")
                   .append(UIUtil.fontHTML(GUIPreferences.getInstance().getWarningColor()))
+                  // typed text goes into an HTML label: escape it so a stray < or & is shown, not interpreted
                   .append(Messages.getString("BotConfigDialog.unitIdUnreadable",
-                        String.join(", ", result.unreadableEntries())))
+                        StringEscapeUtils.escapeHtml4(String.join(", ", result.unreadableEntries()))))
                   .append("</FONT>");
         }
         previewLabel.setText(preview.toString());

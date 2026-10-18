@@ -1140,6 +1140,12 @@ public final class UIUtil {
 
         String hintText;
 
+        /**
+         * Set only while the box holds its own hint as text. Comparing the text with the hint instead would mistake a
+         * player who typed exactly the hint, which for an example such as "3-7, 10" is a sensible thing to type.
+         */
+        private boolean isShowingHint = false;
+
         public TipTextField(int n) {
             super(n);
         }
@@ -1172,14 +1178,13 @@ public final class UIUtil {
          * @return the typed text, or an empty string while only the hint is showing
          */
         public String getEnteredText() {
-            String text = getText();
-            boolean isShowingHint = (hintText != null) && text.equals(hintText);
-            return isShowingHint ? "" : text;
+            return isShowingHint ? "" : getText();
         }
 
         private void updateHint() {
             if (getText().isEmpty()) {
                 setText(hintText);
+                isShowingHint = true;
                 setForeground(uiGray());
                 setCaretPosition(0);
             }
@@ -1187,6 +1192,7 @@ public final class UIUtil {
 
         @Override
         public void setText(String t) {
+            isShowingHint = false;
             if ((t != null) && !t.isBlank()) {
                 setForeground(null);
             }
@@ -1201,7 +1207,7 @@ public final class UIUtil {
 
             @Override
             public void focusGained(FocusEvent e) {
-                if (getText().equals(hintText)) {
+                if (isShowingHint) {
                     setText("");
                 }
                 setForeground(null);

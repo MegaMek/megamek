@@ -116,7 +116,7 @@ class PrincessGuidedWeaponsTest {
     }
 
     @Test
-    void ownTagShotCountsOurLrmAndNotTheEnemys() {
+    void ownTagShotCountsOurLrmAndNotTheEnemyLrm() {
         List<WeaponMounted> supportingWeapons = princess.computeGuidedWeapons(botTagger,
               enemyTagger.getPosition());
 

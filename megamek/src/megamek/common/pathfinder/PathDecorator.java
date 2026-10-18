@@ -87,8 +87,9 @@ public class PathDecorator {
         // jumping to move paths are pretty easy to clip
         // there are two interesting MP amounts - current jump MP and jump MP without "bonus" for low gravity.
         Set<Integer> desiredMPs = new HashSet<>();
-        desiredMPs.add(source.getCachedEntityState().getJumpMP());
-        desiredMPs.add(source.getCachedEntityState().getJumpMPNoGravity());
+        int jumpLimit = source.getCachedEntityState().getJumpMPNoGravity();
+        desiredMPs.add(capForLowGravity(source, source.getCachedEntityState().getJumpMP(), jumpLimit));
+        desiredMPs.add(jumpLimit);
 
         for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
@@ -130,12 +131,14 @@ public class PathDecorator {
         clippedSource.clipToPossible();
 
         Set<Integer> desiredMPs = new HashSet<>();
-        desiredMPs.add(source.getCachedEntityState().getSprintMP());
-        desiredMPs.add(source.getCachedEntityState().getSprintMPWithoutMASC());
-        desiredMPs.add(source.getCachedEntityState().getRunMP());
-        desiredMPs.add(source.getCachedEntityState().getRunMPWithoutMASC());
-        desiredMPs.add(source.getCachedEntityState().getRunMPNoGravity());
-        desiredMPs.add(source.getCachedEntityState().getWalkMP());
+        CachedEntityState state = source.getCachedEntityState();
+        int groundLimit = state.getRunMPNoGravity();
+        desiredMPs.add(capForLowGravity(source, state.getSprintMP(), groundLimit));
+        desiredMPs.add(capForLowGravity(source, state.getSprintMPWithoutMASC(), groundLimit));
+        desiredMPs.add(capForLowGravity(source, state.getRunMP(), groundLimit));
+        desiredMPs.add(capForLowGravity(source, state.getRunMPWithoutMASC(), groundLimit));
+        desiredMPs.add(groundLimit);
+        desiredMPs.add(capForLowGravity(source, state.getWalkMP(), groundLimit));
 
         for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
@@ -156,6 +159,24 @@ public class PathDecorator {
         }
 
         return retVal;
+    }
+
+    /**
+     * Low gravity multiplies MP: a Mek with 6 walk MP has 150 at 0.04 g, and a path search that size never finishes
+     * (issue #9265). Below 1 g the bot plans only up to the gravity-free limit, as the base path search already does;
+     * at 1 g and above the MP is returned unchanged.
+     *
+     * @param source the path whose game sets the gravity
+     * @param mp     the MP the unit has in this gravity
+     * @param limit  the most MP the unit has without the low gravity bonus
+     *
+     * @return {@code mp}, or {@code limit} when the gravity is low and {@code mp} is larger
+     */
+    static int capForLowGravity(MovePath source, int mp, int limit) {
+        if (source.getGame().getPlanetaryConditions().getGravity() >= 1.0f) {
+            return mp;
+        }
+        return Math.min(mp, limit);
     }
 
     /**

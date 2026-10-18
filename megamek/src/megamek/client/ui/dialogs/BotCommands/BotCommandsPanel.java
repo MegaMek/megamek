@@ -285,7 +285,8 @@ public class BotCommandsPanel extends JPanel {
         int round = client.getGame().getCurrentRound();
         if (!isAfterDeployment(newPhase, round)) {
             if (newPhase.isInitiativeReport() || (newPhase == GamePhase.DEPLOYMENT)) {
-                LOGGER.info("[BotOrders] start pause waits in {} (round {}): the bots deploy first", newPhase, round);
+                LOGGER.info("[BotOrders] no start pause yet in {} (round {}): whether to pause is decided after "
+                      + "deployment; the game is not paused", newPhase, round);
             }
             return;
         }

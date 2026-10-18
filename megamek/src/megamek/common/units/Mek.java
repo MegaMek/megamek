@@ -3377,6 +3377,16 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         return Collections.unmodifiableSet(clanCaseOptOutLocations);
     }
 
+    /**
+     * Zero-slot Clan CASE can be left out of an MTF only where every loader regenerates it: a Clan chassis with Clan
+     * internal structure (TM p. 210 / errata v8 p. 18). A Clan chassis built with IS structure, such as IS Endo Steel,
+     * must keep its Clan CASE as explicit equipment.
+     */
+    private boolean isClanCaseRegenerated(int location) {
+        return isClan() && TechConstants.isClan(isFrankenMek()
+              ? getFrankenMekStructureTechLevel(location) : getStructureTechLevel());
+    }
+
     @Override
     public void addClanCase() {
         if (!isClan() && !hasClanCaseEquipped()) {
@@ -5359,7 +5369,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         }
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getNumCriticalSlots() == 0)
-                  && !(isClan() && mounted.getType().hasFlag(MiscType.F_CASE))
+                  && !(mounted.getType().hasFlag(MiscType.F_CASE) && isClanCaseRegenerated(mounted.getLocation()))
                   && !EquipmentType.isArmorType(mounted.getType())
                   && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())

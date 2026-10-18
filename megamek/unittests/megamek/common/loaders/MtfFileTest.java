@@ -382,6 +382,21 @@ class MtfFileTest {
     }
 
     @Test
+    void explicitClanCaseOnNonClanStructureRoundTrips() throws Exception {
+        Mek mek = new BipedMek();
+        mek.setTechLevel(TechConstants.T_CLAN_TW);
+        mek.setMixedTech(true);
+        mek.setStructureTechLevel(TechConstants.T_IS_TW_NON_BOX);
+        mek.addEquipment(EquipmentType.get(EquipmentTypeLookup.CLAN_CASE), Mek.LOC_LEFT_TORSO);
+
+        assertTrue(mek.getMtf().contains(MtfFile.NO_CRIT + EquipmentTypeLookup.CLAN_CASE + ":LT\n"));
+        assertTrue(toMtfFile(mek).getEntity().locationHasCase(Mek.LOC_LEFT_TORSO));
+
+        mek.setStructureTechLevel(TechConstants.T_CLAN_TW);
+        assertFalse(mek.getMtf().contains(MtfFile.NO_CRIT + EquipmentTypeLookup.CLAN_CASE));
+    }
+
+    @Test
     void originalBuildYearIsNotWrittenWhenItMatchesYear() {
         Mek mek = new BipedMek();
         mek.setYear(3050);

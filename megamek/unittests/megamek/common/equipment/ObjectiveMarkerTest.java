@@ -124,6 +124,40 @@ class ObjectiveMarkerTest {
     }
 
     @Test
+    void testOnlyPotentialTogetherWithFalseIsAForbiddenCombination() {
+        ObjectiveMarker marker = new ObjectiveMarker();
+        marker.setFragile(true);
+        marker.setMobile(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "Fragile and Mobile combine with anything");
+
+        marker.setPotential(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "Potential alone is allowed");
+
+        marker.setPotential(false);
+        marker.setFalseObjective(true);
+        assertFalse(marker.hasPotentialAndFalseVariants(), "False alone is allowed");
+
+        marker.setPotential(true);
+        assertTrue(marker.hasPotentialAndFalseVariants());
+    }
+
+    @Test
+    void testEveryHeldSchemeButNotScanCanBePotential() {
+        for (ObjectiveScoringScheme.SchemePreset preset : ObjectiveScoringScheme.SchemePreset.values()) {
+            boolean isScan = preset == ObjectiveScoringScheme.SchemePreset.SCAN;
+            assertEquals(!isScan, ObjectiveMarker.canBePotential(preset), preset.name());
+        }
+    }
+
+    @Test
+    void testOnlyARaidPointCanBeMobile() {
+        for (ObjectiveScoringScheme.SchemePreset preset : ObjectiveScoringScheme.SchemePreset.values()) {
+            boolean isRaid = preset == ObjectiveScoringScheme.SchemePreset.RAID;
+            assertEquals(isRaid, ObjectiveMarker.canBeMobile(preset), preset.name());
+        }
+    }
+
+    @Test
     void testAnyDamageDestroys() {
         ObjectiveMarker marker = new ObjectiveMarker();
 

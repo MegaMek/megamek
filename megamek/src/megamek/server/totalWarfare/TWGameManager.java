@@ -10112,6 +10112,7 @@ public class TWGameManager extends AbstractGameManager {
             return;
         }
         Map<Coords, List<ICarryable>> groundObjects = packet.getCoordsWithGroundObjectListMap(0);
+        new ObjectivePlacementHandler(this).checkReceivedVariants(groundObjects, connectionId);
         getGame().setGroundObjects(groundObjects);
 
         // make sure to update the other clients with the new ground objects data structure

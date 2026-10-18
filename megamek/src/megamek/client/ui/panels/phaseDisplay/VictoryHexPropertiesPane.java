@@ -33,6 +33,7 @@
 package megamek.client.ui.panels.phaseDisplay;
 
 import java.awt.Component;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -63,6 +64,7 @@ import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.equipment.ObjectiveScoringScheme.HoldCounting;
 import megamek.common.equipment.ObjectiveScoringScheme.ScanPayout;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
+import megamek.logging.MMLogger;
 
 /**
  * The properties editor of a control point: control radius, victory point value and the scoring scheme with its
@@ -71,6 +73,9 @@ import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
  * game.
  */
 public final class VictoryHexPropertiesPane {
+
+    /** Feature logger for the victory hex designation diagnostics; enabled via the log4j2.xml VictoryHex block. */
+    private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
 
     /** What the user chose in the properties pane. */
     public enum Result {
@@ -158,6 +163,7 @@ public final class VictoryHexPropertiesPane {
         JTextField revealsField = new JTextField(marker.getScanRevealsNote(), REVEALS_COLUMNS);
         revealsField.setToolTipText(Messages.getString("VictoryHex.scanReveals.tooltip"));
         JLabel revealsLabel = new JLabel(Messages.getString("VictoryHex.scanReveals"));
+        VariantChecks variantChecks = VariantChecks.forMarker(marker, schemeCombo);
 
         JLabel thresholdLabel = new JLabel();
         JLabel rateLabel = new JLabel();
@@ -203,7 +209,8 @@ public final class VictoryHexPropertiesPane {
         addRow(propertiesPanel, 8, startingControlLabel, startingControlCombo);
         addRow(propertiesPanel, 9, radiusLabel, radiusSpinner);
         addRow(propertiesPanel, 10, new JLabel(Messages.getString("VictoryHex.victoryPoints")), victoryPointSpinner);
-        pinRowsToTheTop(propertiesPanel, 11);
+        addRow(propertiesPanel, 11, new JLabel(Messages.getString("VictoryHex.variants")), variantChecks.panel());
+        pinRowsToTheTop(propertiesPanel, 12);
 
         JPanel editorPanel = new JPanel();
         editorPanel.setLayout(new BoxLayout(editorPanel, BoxLayout.PAGE_AXIS));
@@ -221,6 +228,8 @@ public final class VictoryHexPropertiesPane {
             return Result.REMOVED;
         }
         if (result != 0) {
+            VICTORY_HEX_LOGGER.info("[VictoryHex] {} editor closed without saving - nothing changed",
+                  marker.generalName());
             return Result.CANCELLED;
         }
         // a scan point has no control to keep or to start with, whatever the hidden rows still say
@@ -252,7 +261,111 @@ public final class VictoryHexPropertiesPane {
         scheme.setThreshold((Integer) thresholdSpinner.getValue());
         scheme.setRatePerTurn((Integer) rateSpinner.getValue());
         scheme.setHoldCounting((HoldCounting) countingCombo.getSelectedItem());
+        variantChecks.applyTo(marker);
+        VICTORY_HEX_LOGGER.info("[VictoryHex] {} saved: potential {}, false {}, fragile {}, mobile {}",
+              marker.generalName(), marker.isPotential(), marker.isFalseObjective(), marker.isFragile(),
+              marker.isMobile());
         return Result.SAVED;
+    }
+
+    /**
+     * The four objective variant tick boxes, kept to the rules {@link ObjectiveMarker} sets: Potential and False cannot
+     * be combined, a Scan point cannot be Potential, and only a Raid point can be Mobile. A box the rules rule out is
+     * greyed, and its tooltip says why.
+     *
+     * @param potential      a candidate that must be confirmed by a scan before it can score
+     * @param falseObjective a decoy
+     * @param fragile        at risk of destruction when its hex takes damage
+     * @param mobile         can be picked up and carried
+     * @param schemeCombo    the pane's scoring scheme selector, which decides whether Potential and Mobile are allowed
+     */
+    private record VariantChecks(JCheckBox potential, JCheckBox falseObjective, JCheckBox fragile,
+          JCheckBox mobile, JComboBox<SchemePreset> schemeCombo) {
+
+        /**
+         * @param marker      the point being edited
+         * @param schemeCombo the pane's scoring scheme selector
+         *
+         * @return the tick boxes, set from the marker and wired to follow the variant rules as the boxes and the
+         *       scheme change
+         */
+        static VariantChecks forMarker(ObjectiveMarker marker, JComboBox<SchemePreset> schemeCombo) {
+            VariantChecks checks = new VariantChecks(variantCheckbox("potential", marker.isPotential()),
+                  variantCheckbox("false", marker.isFalseObjective()),
+                  variantCheckbox("fragile", marker.isFragile()),
+                  variantCheckbox("mobile", marker.isMobile()),
+                  schemeCombo);
+            checks.potential().addActionListener(event -> checks.refreshRules());
+            checks.falseObjective().addActionListener(event -> checks.refreshRules());
+            schemeCombo.addActionListener(event -> checks.refreshRules());
+            checks.refreshRules();
+            return checks;
+        }
+
+        private static JCheckBox variantCheckbox(String variant, boolean isSelected) {
+            JCheckBox checkbox = new JCheckBox(Messages.getString("VictoryHex.variant." + variant), isSelected);
+            checkbox.setToolTipText(Messages.getString("VictoryHex.variant." + variant + ".tooltip"));
+            return checkbox;
+        }
+
+        /**
+         * Applies the variant rules to the boxes. A box the selected scheme rules out is unticked and greyed, since a
+         * greyed tick would still read as set. Between Potential and False, whichever is unticked greys while the
+         * other is ticked; a ticked box is never greyed by that rule, so a marker that somehow arrives with both can
+         * still be corrected here.
+         */
+        void refreshRules() {
+            SchemePreset preset = (SchemePreset) schemeCombo.getSelectedItem();
+            boolean isPotentialAllowed = (preset != null) && ObjectiveMarker.canBePotential(preset);
+            boolean isMobileAllowed = (preset != null) && ObjectiveMarker.canBeMobile(preset);
+            if (!isPotentialAllowed) {
+                potential.setSelected(false);
+            }
+            if (!isMobileAllowed) {
+                mobile.setSelected(false);
+            }
+            boolean isPotentialBlockedByFalse = !potential.isSelected() && falseObjective.isSelected();
+            boolean isFalseBlockedByPotential = !falseObjective.isSelected() && potential.isSelected();
+
+            potential.setEnabled(isPotentialAllowed && !isPotentialBlockedByFalse);
+            String potentialTooltipKey = "VictoryHex.variant.potential.tooltip";
+            if (!isPotentialAllowed) {
+                potentialTooltipKey = "VictoryHex.variant.potential.notOnScan";
+            } else if (isPotentialBlockedByFalse) {
+                potentialTooltipKey = "VictoryHex.variant.potential.blocked";
+            }
+            potential.setToolTipText(Messages.getString(potentialTooltipKey));
+
+            falseObjective.setEnabled(!isFalseBlockedByPotential);
+            falseObjective.setToolTipText(Messages.getString(isFalseBlockedByPotential
+                  ? "VictoryHex.variant.false.blocked" : "VictoryHex.variant.false.tooltip"));
+
+            mobile.setEnabled(isMobileAllowed);
+            mobile.setToolTipText(Messages.getString(isMobileAllowed
+                  ? "VictoryHex.variant.mobile.tooltip" : "VictoryHex.variant.mobile.raidOnly"));
+        }
+
+        /** @return the four boxes side by side, for the properties grid */
+        JPanel panel() {
+            JPanel result = new JPanel(new FlowLayout(FlowLayout.LEADING, UIUtil.scaleForGUI(4), 0));
+            result.add(potential);
+            result.add(falseObjective);
+            result.add(fragile);
+            result.add(mobile);
+            return result;
+        }
+
+        /**
+         * Writes the ticks to the marker, through the same setters the scenario reader uses.
+         *
+         * @param marker the point being edited
+         */
+        void applyTo(ObjectiveMarker marker) {
+            marker.setPotential(potential.isSelected());
+            marker.setFalseObjective(falseObjective.isSelected());
+            marker.setFragile(fragile.isSelected());
+            marker.setMobile(mobile.isSelected());
+        }
     }
 
 

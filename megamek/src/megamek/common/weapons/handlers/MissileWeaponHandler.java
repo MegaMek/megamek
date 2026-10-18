@@ -319,6 +319,19 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     }
 
     /**
+     * Whether an air-to-ground attack on this target is resolved with the Non-Infantry Weapon Damage Against Infantry
+     * Table rather than the attack value. Attacks on conventional infantry use that table (TW p. 215), including
+     * aerospace attacks (TW pp. 244-245). Capital-scale fighters (fighter squadrons, or every fighter when the StratOps
+     * capital fighter option is on) stay on the attack value path instead: it groups their identical weapons, while the
+     * ground resolution counts only one of them. With a single weapon that path already keeps the infantry damage.
+     *
+     * @return {@code true} if the infantry damage from {@link #calcDamagePerHit()} should be kept
+     */
+    private boolean usesInfantryDamageTable() {
+        return target.isConventionalInfantry() && !attackingEntity.isCapitalFighter();
+    }
+
+    /**
      * Calculate the attack value based on range
      *
      * @return an <code>int</code> representing the attack value at that range.
@@ -862,8 +875,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int nCluster = calculateNumCluster();
         int id = vPhaseReport.size();
         int hits;
-        if (attackingEntity.isSpaceborne() || weaponAttackAction.isAirToAir(game) || weaponAttackAction.isAirToGround(
-              game)) {
+        if (attackingEntity.isSpaceborne() || weaponAttackAction.isAirToAir(game)
+              || (weaponAttackAction.isAirToGround(game) && !usesInfantryDamageTable())) {
             // Ensures single AMS state is properly updated
             getAMSHitsMod(new Vector<>());
             int[] aeroResults = calcAeroDamage(entityTarget, vPhaseReport);

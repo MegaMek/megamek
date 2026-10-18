@@ -805,17 +805,19 @@ public class CLIATMHandler extends ATMHandler {
             // different
             // ways
             int hits = 1;
-            if (!(target.isAirborne())) {
+            boolean countsWarheads = countsImprovedMagneticPulseWarheads(entityTarget);
+            if (!(target.isAirborne()) || countsWarheads) {
                 hits = calcHits(vPhaseReport);
             }
             int nCluster = calculateNumCluster();
 
             // Now I need to adjust this for attacks on aerospace because they use
             // attack values and different rules
-            if (target.isAirborne() || game.getBoard().isSpace()) {
+            if ((target.isAirborne() || game.getBoard().isSpace()) && !countsWarheads) {
                 // this will work differently for cluster and non-cluster
                 // weapons, and differently for capital fighter/fighter
                 // squadrons
+                attackValue = calcAttackValue();
                 nCluster = calculateNumClusterAero(entityTarget);
                 if (nCluster > 1) {
                     bSalvo = true;
@@ -978,6 +980,24 @@ public class CLIATMHandler extends ATMHandler {
         } else {
             return super.handle(phase, vPhaseReport);
         }
+    }
+
+    /**
+     * Whether an IMP attack counts the warheads that strike, even against an airborne or space target. Each IMP missile
+     * inflicts 1 point of damage and the interference effects are counted per 3 missiles that strike, fighters
+     * included (IO p. 67). An iATM fired directly hits with every missile, so the total matches the average damage
+     * TW uses for aerospace attack values. Capital-scale targets and capital-scale attackers keep the attack value
+     * resolution; IMP has no additional effect on large craft.
+     *
+     * @param entityTarget the unit being attacked, may be {@code null}
+     *
+     * @return {@code true} if the attack is resolved by counting IMP warheads
+     */
+    private boolean countsImprovedMagneticPulseWarheads(@Nullable Entity entityTarget) {
+        if (attackingEntity.isCapitalFighter()) {
+            return false;
+        }
+        return (entityTarget == null) || !entityTarget.isCapitalScale();
     }
 
     /**

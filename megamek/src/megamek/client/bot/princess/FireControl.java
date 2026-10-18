@@ -958,6 +958,14 @@ public class FireControl {
         if (waterFire.blocked() != null) {
             return new ToHitData(waterFire.blocked());
         }
+        // A firing-phase artillery shot has rules of its own: no range brackets, no target modifiers, and no need
+        // for line of sight.
+        if (DirectArtilleryToHitGuess.appliesTo(weaponType, firingAmmo, shooter, target, game)) {
+            return DirectArtilleryToHitGuess.guess(game, shooter, target, weapon, (AmmoMounted) firingAmmo, distance,
+                  getAttackerMovementModifier(game, shooter.getId(), shooterState.getMovementType()),
+                  getDamageWeaponMods(shooter, weapon),
+                  getLosEffects(game, shooter, target, shooterState.getPosition(), targetState.getPosition(), false));
+        }
         final int[] weaponRanges = (waterFire.underwaterRanges() != null)
               ? waterFire.underwaterRanges()
               : weaponType.getRanges(weapon, ammo);

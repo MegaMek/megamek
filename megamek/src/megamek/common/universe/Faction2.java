@@ -72,7 +72,7 @@ import megamek.client.ratgenerator.FactionRecord;
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
 @JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
-                     "tags", "color", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
+                     "tags", "color", "icon", "iconChanges", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
                      "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
                      "aresConventionsSignatory", "subunits" })
@@ -92,8 +92,16 @@ public class Faction2 {
     private String successor;
     private final Set<FactionTag> tags = new HashSet<>();
     private final Color color = Color.LIGHT_GRAY;
-    private String logo;
-    private final NavigableMap<Integer, String> logoChanges = new TreeMap<>();
+    private String icon;
+    private final NavigableMap<Integer, String> iconChanges = new TreeMap<>();
+
+    // Faction logos were replaced by icons; older faction files (e.g. in a user dir) may still contain them
+    @JsonProperty("logo")
+    private String legacyLogo;
+
+    @JsonProperty("logoChanges")
+    private final NavigableMap<Integer, String> legacyLogoChanges = new TreeMap<>();
+
     private String background;
     private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
@@ -269,27 +277,41 @@ public class Faction2 {
         return backgroundChanges;
     }
 
-    public String getLogo() {
-        return logo;
+    public String getIcon() {
+        return icon;
     }
 
     /**
-     * Returns the faction's logo image path for the given year, honoring any era-based
-     * {@link #getLogoChanges() logo changes}. Falls back to the base {@link #getLogo() logo} when no change applies
-     * for the year. Used to keep a consolidated rename lineage (for example Clan Goliath Scorpion becoming the
-     * Escorpion Imperio in 3080) visually era-correct after its faction files are merged into one.
+     * Returns the file name of the faction's icon for the given year, honoring any era-based
+     * {@link #getIconChanges() icon changes}. Falls back to the base {@link #getIcon() icon} when no change applies
+     * for the year. Icon files are found in {@code data/images/universe/factions/}.
+     *
+     * @param year the game year to resolve the icon for
+     *
+     * @return the era-appropriate icon file name, or the base icon when none applies
+     */
+    public String getIcon(int year) {
+        final Map.Entry<Integer, String> iconByYear = iconChanges.floorEntry(year);
+        return (iconByYear == null) ? icon : iconByYear.getValue();
+    }
+
+    public NavigableMap<Integer, String> getIconChanges() {
+        return iconChanges;
+    }
+
+    /**
+     * Returns the faction's legacy logo for the given year, honoring any era-based logo changes. Legacy logos predate
+     * {@link #getIcon(int) icons} and are only read so that older faction files (e.g. custom factions in a user dir)
+     * keep working. Unlike icons, they are paths relative to MekHQ's formation icon logo directory
+     * ({@code data/images/force/Pieces/Logos/}).
      *
      * @param year the game year to resolve the logo for
      *
-     * @return the era-appropriate logo image path, or the base logo when none applies
+     * @return the era-appropriate legacy logo path, or {@code null} if the faction has none
      */
-    public String getLogo(int year) {
-        final Map.Entry<Integer, String> logoByYear = logoChanges.floorEntry(year);
-        return (logoByYear == null) ? logo : logoByYear.getValue();
-    }
-
-    public NavigableMap<Integer, String> getLogoChanges() {
-        return logoChanges;
+    public @Nullable String getLegacyLogo(int year) {
+        final Map.Entry<Integer, String> logoByYear = legacyLogoChanges.floorEntry(year);
+        return (logoByYear == null) ? legacyLogo : logoByYear.getValue();
     }
 
     public int[] getEraMods() {

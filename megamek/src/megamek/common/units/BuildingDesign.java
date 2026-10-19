@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.IntUnaryOperator;
 import java.util.function.UnaryOperator;
 
 import megamek.common.bays.Bay;
@@ -280,7 +281,7 @@ public class BuildingDesign implements Serializable {
     }
 
     /** Keep authored placements attached to physical hexes when the footprint is edited or transformed. */
-    public void remap(UnaryOperator<Position> transform, java.util.function.IntUnaryOperator facing) {
+    public void remap(UnaryOperator<Position> transform, IntUnaryOperator facing) {
         Position template2 = portalHex2 == null ? null : transform.apply(new Position(portalHex2, 0));
         Position template3 = portalHex3 == null ? null : transform.apply(new Position(portalHex3, 0));
         portalHex2 = template2 == null ? null : template2.hex();
@@ -289,13 +290,7 @@ public class BuildingDesign implements Serializable {
         wallSides.forEach((hex, mask) -> {
             Position target = transform.apply(new Position(hex, 0));
             if (target != null) {
-                int transformed = 0;
-                for (int side = 0; side < 6; side++) {
-                    if ((mask & (1 << side)) != 0) {
-                        transformed |= 1 << facing.applyAsInt(side);
-                    }
-                }
-                sides.put(target.hex(), transformed);
+                sides.put(target.hex(), remapSideMask(mask, facing));
             }
         });
         wallSides.clear();
@@ -314,24 +309,7 @@ public class BuildingDesign implements Serializable {
         BuildingDoors.normalize(doors);
         getBayDoors().replaceAll(door -> new BayDoor(door.bayNumber(), transform.apply(door.position()), facing.applyAsInt(door.facing())));
         getBayDoors().removeIf(door -> door.position() == null);
-        elevators.replaceAll(lift -> {
-            Map<Integer, Integer> exits = new HashMap<>();
-            CubeCoords hex = null;
-            for (var entry : lift.exits().entrySet()) {
-                Position position = transform.apply(new Position(lift.hex(), entry.getKey()));
-                if (position != null) {
-                    hex = position.hex();
-                    int mask = 0;
-                    for (int side = 0; side < 6; side++) {
-                        if ((entry.getValue() & (1 << side)) != 0) {
-                            mask |= 1 << facing.applyAsInt(side);
-                        }
-                    }
-                    exits.put(position.level(), mask);
-                }
-            }
-            return new Elevator(hex, lift.capacity(), exits);
-        });
+        elevators.replaceAll(lift -> remapElevator(lift, transform, facing));
         elevators.removeIf(lift -> lift.hex() == null || lift.exits().size() < 2);
         equipmentSpace.replaceAll((mount, positions) -> positions.stream().map(transform)
               .filter(java.util.Objects::nonNull).toList());
@@ -340,6 +318,34 @@ public class BuildingDesign implements Serializable {
               .map(space -> new Space(transform.apply(space.position()), space.tons()))
               .filter(space -> space.position() != null).toList());
         baySpace.values().removeIf(List::isEmpty);
+    }
+
+    /**
+     * Moves an elevator with the footprint. Each stop is transformed on its own; stops that leave the footprint are
+     * dropped. The returned elevator's hex is {@code null} when no stop survived, so the caller can discard it.
+     */
+    private static Elevator remapElevator(Elevator lift, UnaryOperator<Position> transform, IntUnaryOperator facing) {
+        Map<Integer, Integer> exits = new HashMap<>();
+        CubeCoords hex = null;
+        for (Map.Entry<Integer, Integer> entry : lift.exits().entrySet()) {
+            Position position = transform.apply(new Position(lift.hex(), entry.getKey()));
+            if (position != null) {
+                hex = position.hex();
+                exits.put(position.level(), remapSideMask(entry.getValue(), facing));
+            }
+        }
+        return new Elevator(hex, lift.capacity(), exits);
+    }
+
+    /** Rotates or mirrors a six-bit hexside mask (bit {@code n} = side {@code n}) through the given facing mapping. */
+    private static int remapSideMask(int mask, IntUnaryOperator facing) {
+        int transformed = 0;
+        for (int side = 0; side < 6; side++) {
+            if ((mask & (1 << side)) != 0) {
+                transformed |= 1 << facing.applyAsInt(side);
+            }
+        }
+        return transformed;
     }
 
     public void removeDeletedComponents(AbstractBuildingEntity entity) {

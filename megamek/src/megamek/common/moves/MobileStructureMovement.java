@@ -237,11 +237,18 @@ public final class MobileStructureMovement {
             int startBase = MobileStructureAirMovement.absoluteBase(unit, from, fromElevation);
             int endBase = MobileStructureAirMovement.absoluteBase(unit, to, toElevation);
             // Spheroid small craft cannot taxi; landing and liftoff are separate actions (TW pp.87–88).
-            if (!game.getBoard(unit).isGround() || startBase <= MobileStructureAirMovement.landingSurface(unit, oldFootprint)
-                  || Math.abs(endBase - startBase) > 1
-                  || (!from.equals(to) && !turning && startBase != endBase)
-                  || endBase <= MobileStructureAirMovement.landingSurface(unit, footprint)
-                  || footprint.stream().noneMatch(c -> game.getBoard(unit).contains(c))) {
+            boolean isOffGroundMap = !game.getBoard(unit).isGround();
+            if (isOffGroundMap) {
+                return PROHIBITED;
+            }
+            boolean startsOnTheSurface = startBase <= MobileStructureAirMovement.landingSurface(unit, oldFootprint);
+            boolean changesAltitudeByMoreThanOne = Math.abs(endBase - startBase) > 1;
+            boolean isStraightMove = !from.equals(to) && !turning;
+            boolean changesAltitudeWhileMovingStraight = isStraightMove && (startBase != endBase);
+            boolean endsOnTheSurface = endBase <= MobileStructureAirMovement.landingSurface(unit, footprint);
+            boolean endsEntirelyOffBoard = !hasAnyHexOnBoard(game, unit, footprint);
+            if (startsOnTheSurface || changesAltitudeByMoreThanOne
+                  || changesAltitudeWhileMovingStraight || endsOnTheSurface || endsEntirelyOffBoard) {
                 return PROHIBITED;
             }
             if (startBase != endBase) {
@@ -322,6 +329,17 @@ public final class MobileStructureMovement {
             return PROHIBITED;
         }
         return turning ? unit.getMaximumMPQuarters() : maximum * 4;
+    }
+
+    /** @return {@code true} when at least one hex of the footprint lies on the unit's board */
+    private static boolean hasAnyHexOnBoard(Game game, MobileStructure unit, List<Coords> footprint) {
+        Board board = game.getBoard(unit);
+        for (Coords coords : footprint) {
+            if (board.contains(coords)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Off-board portions continue the level at the nearest map edge (TO:AUE p.35). */

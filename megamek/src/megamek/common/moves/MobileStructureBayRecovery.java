@@ -35,6 +35,7 @@ package megamek.common.moves;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.bays.AbstractSmallCraftASFBay;
 import megamek.common.board.Coords;
 import megamek.common.units.BuildingBayDoors;
@@ -51,15 +52,15 @@ public final class MobileStructureBayRecovery {
 
     public static Entry entry(MobileStructure carrier, Entity unit, Coords position, int boardId,
           int facing, int velocity, int altitude) {
-        if (carrier.getGame() == null || carrier.getBoardId() != boardId || position == null
-              || !carrier.getGame().getBoard(boardId).contains(position)
-              || !MobileStructureAirMovement.isAirborne(carrier) || !carrier.isDone()
-              || carrier.isDestroyed() || carrier.isDoomed() || !carrier.isActive()
-              || !(unit instanceof IAero aero) || aero.isOutControlTotal() || unit.isDestroyed() || unit.isDoomed()
-              || !unit.isActive() || !(unit.isFighter() || unit.isSmallCraft())
-              || !unit.isLoadableThisTurn() || unit.getTransportId() != Entity.NONE
-              || unit.getOwner() == null || carrier.getOwner() == null || unit.isEnemyOf(carrier)
-              || facing != carrier.getFacing() || velocity != carrier.delta_distance / 16 || altitude <= 0) {
+        boolean isPositionOnCarrierBoard = isOnCarrierBoard(carrier, position, boardId);
+        boolean isCarrierAbleToRecover = isCarrierAbleToRecover(carrier);
+        boolean isUnitRecoverable = isRecoverableCraft(unit);
+        boolean isUnitFriendly = isFriendlyTo(unit, carrier);
+        boolean matchesCarrierFacing = facing == carrier.getFacing();
+        boolean matchesCarrierVelocity = velocity == carrier.delta_distance / 16;
+        boolean isAboveGround = altitude > 0;
+        if (!isPositionOnCarrierBoard ||!isCarrierAbleToRecover || !isUnitRecoverable || !isUnitFriendly
+              || !matchesCarrierFacing || !matchesCarrierVelocity || !isAboveGround) {
             return null;
         }
         for (var transporter : carrier.getTransportBays()) {
@@ -85,6 +86,46 @@ public final class MobileStructureBayRecovery {
             }
         }
         return null;
+    }
+
+    /** @return {@code true} when the position is on the board the carrier is on */
+    private static boolean isOnCarrierBoard(MobileStructure carrier, @Nullable Coords position, int boardId) {
+        if (carrier.getGame() == null || position == null) {
+            return false;
+        }
+        if (carrier.getBoardId() != boardId) {
+            return false;
+        }
+        return carrier.getGame().getBoard(boardId).contains(position);
+    }
+
+    /** @return {@code true} when the carrier is airborne, has finished moving and is still operational */
+    private static boolean isCarrierAbleToRecover(MobileStructure carrier) {
+        boolean isAirborne = MobileStructureAirMovement.isAirborne(carrier);
+        boolean hasFinishedMoving = carrier.isDone();
+        boolean isOperational = !carrier.isDestroyed() && !carrier.isDoomed() && carrier.isActive();
+        return isAirborne && hasFinishedMoving && isOperational;
+    }
+
+    /** @return {@code true} when the unit is a controlled, operational fighter or small craft free to be loaded */
+    private static boolean isRecoverableCraft(Entity unit) {
+        if (!(unit instanceof IAero aero)) {
+            return false;
+        }
+        boolean isInControl = !aero.isOutControlTotal();
+        boolean isOperational = !unit.isDestroyed() && !unit.isDoomed() && unit.isActive();
+        boolean isFighterOrSmallCraft = unit.isFighter() || unit.isSmallCraft();
+        boolean isLoadableThisTurn = unit.isLoadableThisTurn();
+        boolean isNotAlreadyCarried = unit.getTransportId() == Entity.NONE;
+        return isInControl && isOperational && isFighterOrSmallCraft && isLoadableThisTurn && isNotAlreadyCarried;
+    }
+
+    /** @return {@code true} when both units have owners and the unit is not an enemy of the carrier */
+    private static boolean isFriendlyTo(Entity unit, MobileStructure carrier) {
+        if (unit.getOwner() == null || carrier.getOwner() == null) {
+            return false;
+        }
+        return !unit.isEnemyOf(carrier);
     }
 
     /** Used by the recovery command and its chooser; multihex carriers need not occupy this hex with their origin. */

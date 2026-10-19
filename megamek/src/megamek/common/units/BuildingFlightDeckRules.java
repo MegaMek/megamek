@@ -49,6 +49,11 @@ import megamek.common.game.Game;
 
 /** Placed flight decks/helipads and their exposed aircraft, TO:AUE pp.37,124–125. */
 public final class BuildingFlightDeckRules {
+    /** Heaviest unit, in tons, a helipad can carry (TO:AUE pp.124-125). */
+    private static final double HELIPAD_CAPACITY_TONS = 200;
+    /** Tons of unit weight a landing deck can carry for each hex it covers (TO:AUE pp.124-125). */
+    private static final double LANDING_DECK_CAPACITY_TONS_PER_HEX = 1000.0;
+
     private BuildingFlightDeckRules() { }
 
     public record Occupant(int entityId, CubeCoords hex, int landedRound) implements Serializable { }
@@ -69,8 +74,10 @@ public final class BuildingFlightDeckRules {
             return ((BuildingEquipmentType) mount.getType()).getFacility() == BuildingEquipmentType.Facility.LANDING_DECK;
         }
         public double capacity() {
-            if (!landingDeck()) { return 200; }
-            return 1000.0 * hexes.size();
+            if (!landingDeck()) {
+                return HELIPAD_CAPACITY_TONS;
+            }
+            return LANDING_DECK_CAPACITY_TONS_PER_HEX * hexes.size();
         }
         public boolean available() {
             if (landingDeck()) {

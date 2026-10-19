@@ -38,7 +38,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.common.bays.Bay;
 import megamek.common.bays.LiquidCargoBay;
 import megamek.common.board.CubeCoords;
@@ -133,30 +135,51 @@ public final class BuildingConstruction {
 
     /** Endpoints are the furthest connected hexes. Intermediate deck heights follow TO:AR p. 115's unrounded slope. */
     public static BridgeSpan bridgeSpan(List<CubeCoords> hexes) {
-        var occupied = new HashSet<>(hexes);
+        Set<CubeCoords> occupied = new HashSet<>(hexes);
         BridgeSpan result = null;
-        for (var start : hexes) {
-            Map<CubeCoords, Integer> distances = new HashMap<>();
-            var pending = new ArrayList<CubeCoords>();
-            distances.put(start, 0);
-            pending.add(start);
-            for (int index = 0; index < pending.size(); index++) {
-                var hex = pending.get(index);
-                for (var neighbor : hex.neighbors()) {
-                    if (occupied.contains(neighbor) && !distances.containsKey(neighbor)) {
-                        distances.put(neighbor, distances.get(hex) + 1);
-                        pending.add(neighbor);
-                    }
-                }
-            }
+        for (CubeCoords start : hexes) {
+            Map<CubeCoords, Integer> distances = distancesFrom(start, occupied);
             if (distances.size() != hexes.size()) {
                 return null;
             }
-            for (var end : hexes) {
-                int distance = distances.get(end);
-                if (result == null || distance > result.length()) {
-                    result = new BridgeSpan(start, end, distances, distance);
+            result = longestSpanFrom(start, hexes, distances, result);
+        }
+        return result;
+    }
+
+    /**
+     * Breadth-first walk over the occupied hexes, returning each reachable hex's step distance from {@code start}.
+     * Hexes that cannot be reached through occupied neighbours are absent from the result.
+     */
+    private static Map<CubeCoords, Integer> distancesFrom(CubeCoords start, Set<CubeCoords> occupied) {
+        Map<CubeCoords, Integer> distances = new HashMap<>();
+        List<CubeCoords> pending = new ArrayList<>();
+        distances.put(start, 0);
+        pending.add(start);
+        for (int index = 0; index < pending.size(); index++) {
+            CubeCoords hex = pending.get(index);
+            int neighborDistance = distances.get(hex) + 1;
+            for (CubeCoords neighbor : hex.neighbors()) {
+                if (occupied.contains(neighbor) && !distances.containsKey(neighbor)) {
+                    distances.put(neighbor, neighborDistance);
+                    pending.add(neighbor);
                 }
+            }
+        }
+        return distances;
+    }
+
+    /**
+     * Returns the longest span starting at {@code start}, or {@code currentLongest} when no end hex is strictly
+     * further than it. Ends are checked in footprint order so ties keep the earliest span found.
+     */
+    private static BridgeSpan longestSpanFrom(CubeCoords start, List<CubeCoords> hexes,
+          Map<CubeCoords, Integer> distances, @Nullable BridgeSpan currentLongest) {
+        BridgeSpan result = currentLongest;
+        for (CubeCoords end : hexes) {
+            int distance = distances.get(end);
+            if ((result == null) || (distance > result.length())) {
+                result = new BridgeSpan(start, end, distances, distance);
             }
         }
         return result;

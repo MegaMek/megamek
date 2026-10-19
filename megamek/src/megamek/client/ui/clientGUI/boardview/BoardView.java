@@ -44,6 +44,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -2555,22 +2556,23 @@ public final class BoardView extends AbstractBoardView
 
     /** Authored walls occupy actual hexsides; an ordinary whole-hex building tile would misrepresent open sides. */
     private void drawWallSegments(Graphics2D graphics) {
-        Graphics2D g = (Graphics2D) graphics.create();
-        double[] x = { .25, .75, 1, .75, .25, 0 };
-        double[] y = { 0, 0, .5, 1, 1, .5 };
-        for (var segment : megamek.common.units.WallRules.segments(game, boardId)) {
-            Point point = getHexLocation(segment.hex());
-            int side = segment.side();
-            int next = (side + 1) % 6;
-            g.setColor(segment.fence() ? new Color(50, 100, 50) : new Color(85, 50, 30));
-            g.setStroke(segment.fence() ? new BasicStroke((float) (2 * scale), BasicStroke.CAP_BUTT,
+        Graphics2D wallGraphics = (Graphics2D) graphics.create();
+        double[] cornerFractionsX = { .25, .75, 1, .75, .25, 0 };
+        double[] cornerFractionsY = { 0, 0, .5, 1, 1, .5 };
+        for (WallRules.Segment segment : WallRules.segments(game, boardId)) {
+            Point hexLocation = getHexLocation(segment.hex());
+            int startCorner = segment.side();
+            int endCorner = (startCorner + 1) % 6;
+            wallGraphics.setColor(segment.fence() ? new Color(50, 100, 50) : new Color(85, 50, 30));
+            wallGraphics.setStroke(segment.fence() ? new BasicStroke((float) (2 * scale), BasicStroke.CAP_BUTT,
                   BasicStroke.JOIN_MITER, 10, new float[] { (float) (5 * scale), (float) (3 * scale) }, 0)
                   : new BasicStroke((float) (4 * scale), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
-            g.draw(new java.awt.geom.Line2D.Double(point.x + HEX_W * scale * x[side],
-                  point.y + HEX_H * scale * y[side], point.x + HEX_W * scale * x[next],
-                  point.y + HEX_H * scale * y[next]));
+            wallGraphics.draw(new Line2D.Double(hexLocation.x + HEX_W * scale * cornerFractionsX[startCorner],
+                  hexLocation.y + HEX_H * scale * cornerFractionsY[startCorner],
+                  hexLocation.x + HEX_W * scale * cornerFractionsX[endCorner],
+                  hexLocation.y + HEX_H * scale * cornerFractionsY[endCorner]));
         }
-        g.dispose();
+        wallGraphics.dispose();
     }
 
     /**

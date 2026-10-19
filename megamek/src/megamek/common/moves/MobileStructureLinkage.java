@@ -36,13 +36,17 @@ import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
 import megamek.common.equipment.BuildingEquipmentType;
+import megamek.common.equipment.Mounted;
+import megamek.common.units.BuildingElevation;
 import megamek.common.units.MobileStructure;
 
 /** TO:AUE pp.79–81: independent modules joined at paired outer-hex linkages move as one structure. */
@@ -61,29 +65,74 @@ public final class MobileStructureLinkage {
     }
 
     private static boolean hasPort(MobileStructure unit, CubeCoords hex) {
-        return unit.getInternalBuilding().getCoordsList().contains(hex)
-              && unit.getInternalBuilding().getCurrentCF(hex) > 0
-              && hex.neighbors().stream().anyMatch(h -> !unit.getInternalBuilding().getCoordsList().contains(h))
-              && unit.getEquipmentInHex(hex).stream().anyMatch(m -> !m.isDestroyed() && !m.isMissing() && !m.isBreached()
-                    && m.getType() instanceof BuildingEquipmentType facility
-                    && facility.getFacility() == BuildingEquipmentType.Facility.MODULAR_LINKAGE);
+        List<CubeCoords> hullHexes = unit.getInternalBuilding().getCoordsList();
+        if (!hullHexes.contains(hex)) {
+            return false;
+        }
+        boolean isHexStanding = unit.getInternalBuilding().getCurrentCF(hex) > 0;
+        boolean isOuterHex = hasNeighborOutsideHull(hex, hullHexes);
+        boolean hasWorkingLinkage = hasWorkingModularLinkage(unit, hex);
+        return isHexStanding && isOuterHex && hasWorkingLinkage;
     }
 
-    private static boolean compatible(MobileStructure a, MobileStructure b) {
-        return a != b && a.getId() != b.getId() && a.getOwnerId() == b.getOwnerId()
-              && a.getBoardId() == b.getBoardId() && a.getPosition() != null && b.getPosition() != null
-              && !a.isDestroyed() && !a.isDoomed() && !b.isDestroyed() && !b.isDoomed()
-              && a.getMovementMode() == b.getMovementMode() && a.getMaximumMPQuarters() == b.getMaximumMPQuarters()
-              && a.getPowerSystem() == b.getPowerSystem()
-              && (MobileStructureAirMovement.isAir(a)
-                    ? MobileStructureAirMovement.absoluteBase(a, a.getPosition(), a.getElevation())
-                          == MobileStructureAirMovement.absoluteBase(b, b.getPosition(), b.getElevation())
-                    : a.getElevation() == b.getElevation());
+    /** @return {@code true} when at least one neighbor of the hex is not part of the hull */
+    private static boolean hasNeighborOutsideHull(CubeCoords hex, List<CubeCoords> hullHexes) {
+        for (CubeCoords neighbor : hex.neighbors()) {
+            if (!hullHexes.contains(neighbor)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private static boolean mates(MobileStructure a, CubeCoords hex, MobileStructure b, CubeCoords otherHex) {
-        return compatible(a, b) && hasPort(a, hex) && hasPort(b, otherHex)
-              && a.relativeToBoard(hex).distance(b.relativeToBoard(otherHex)) == 1;
+    /** @return {@code true} when the hex mounts a Modular Linkage that is not destroyed, missing or breached */
+    private static boolean hasWorkingModularLinkage(MobileStructure unit, CubeCoords hex) {
+        for (Mounted<?> mounted : unit.getEquipmentInHex(hex)) {
+            boolean isWorking = !mounted.isDestroyed() && !mounted.isMissing() && !mounted.isBreached();
+            boolean isModularLinkage = (mounted.getType() instanceof BuildingEquipmentType facility)
+                  && (facility.getFacility() == BuildingEquipmentType.Facility.MODULAR_LINKAGE);
+            if (isWorking && isModularLinkage) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean compatible(MobileStructure module, MobileStructure otherModule) {
+        boolean isDifferentModule = (module != otherModule) && (module.getId() != otherModule.getId());
+        boolean hasSameOwner = module.getOwnerId() == otherModule.getOwnerId();
+        boolean isOnSameBoard = module.getBoardId() == otherModule.getBoardId();
+        boolean areBothDeployed = (module.getPosition() != null) && (otherModule.getPosition() != null);
+        if (!isDifferentModule || !hasSameOwner || !isOnSameBoard || !areBothDeployed) {
+            return false;
+        }
+        boolean areBothIntact = isIntact(module) && isIntact(otherModule);
+        boolean hasSameMovementMode = module.getMovementMode() == otherModule.getMovementMode();
+        boolean hasSameMaximumMP = module.getMaximumMPQuarters() == otherModule.getMaximumMPQuarters();
+        boolean hasSamePowerSystem = module.getPowerSystem() == otherModule.getPowerSystem();
+        boolean isAtSameHeight = isAtSameHeight(module, otherModule);
+        return areBothIntact && hasSameMovementMode && hasSameMaximumMP && hasSamePowerSystem && isAtSameHeight;
+    }
+
+    private static boolean isIntact(MobileStructure module) {
+        return !module.isDestroyed() && !module.isDoomed();
+    }
+
+    /** Air modules compare their absolute base level; all others compare their elevation. */
+    private static boolean isAtSameHeight(MobileStructure module, MobileStructure otherModule) {
+        if (MobileStructureAirMovement.isAir(module)) {
+            int moduleBase = MobileStructureAirMovement.absoluteBase(module, module.getPosition(), module.getElevation());
+            int otherModuleBase = MobileStructureAirMovement.absoluteBase(otherModule, otherModule.getPosition(),
+                  otherModule.getElevation());
+            return moduleBase == otherModuleBase;
+        }
+        return module.getElevation() == otherModule.getElevation();
+    }
+
+    private static boolean mates(MobileStructure module, CubeCoords hex, MobileStructure otherModule,
+          CubeCoords otherHex) {
+        return compatible(module, otherModule) && hasPort(module, hex) && hasPort(otherModule, otherHex)
+              && module.relativeToBoard(hex).distance(otherModule.relativeToBoard(otherHex)) == 1;
     }
 
     private static boolean active(MobileStructure owner, Link link) {
@@ -92,33 +141,54 @@ public final class MobileStructureLinkage {
     }
 
     /** Check physical contact when making a new connection; existing groups supply their shared support plane. */
-    private static boolean overlaps(MobileStructure a, CubeCoords hex, MobileStructure b, CubeCoords otherHex) {
-        Coords aCoords = a.relativeToBoard(hex), bCoords = b.relativeToBoard(otherHex);
-        return megamek.common.units.BuildingElevation.altitude(a.getGame(), a, aCoords, 0)
-              < megamek.common.units.BuildingElevation.altitude(b.getGame(), b, bCoords, b.getHeight(bCoords))
-              && megamek.common.units.BuildingElevation.altitude(b.getGame(), b, bCoords, 0)
-                    < megamek.common.units.BuildingElevation.altitude(a.getGame(), a, aCoords, a.getHeight(aCoords));
+    private static boolean overlaps(MobileStructure module, CubeCoords hex, MobileStructure otherModule,
+          CubeCoords otherHex) {
+        Coords moduleCoords = module.relativeToBoard(hex);
+        Coords otherModuleCoords = otherModule.relativeToBoard(otherHex);
+        int moduleBottom = BuildingElevation.altitude(module.getGame(), module, moduleCoords, 0);
+        int moduleTop = BuildingElevation.altitude(module.getGame(), module, moduleCoords,
+              module.getHeight(moduleCoords));
+        int otherModuleBottom = BuildingElevation.altitude(otherModule.getGame(), otherModule, otherModuleCoords, 0);
+        int otherModuleTop = BuildingElevation.altitude(otherModule.getGame(), otherModule, otherModuleCoords,
+              otherModule.getHeight(otherModuleCoords));
+        boolean startsBelowOtherTop = moduleBottom < otherModuleTop;
+        boolean otherStartsBelowTop = otherModuleBottom < moduleTop;
+        return startsBelowOtherTop && otherStartsBelowTop;
     }
 
     public static List<MobileStructure> group(MobileStructure unit) {
-        var all = modules(unit);
+        Map<Integer, List<MobileStructure>> linkedModulesById = activeLinksById(modules(unit));
         Set<MobileStructure> found = new HashSet<>();
-        var pending = new ArrayDeque<MobileStructure>();
+        ArrayDeque<MobileStructure> pending = new ArrayDeque<>();
         pending.add(unit);
         while (!pending.isEmpty()) {
             MobileStructure current = pending.removeFirst();
-            if (!found.add(current)) {
-                continue;
-            }
-            for (var owner : all) {
-                for (var link : owner.getModuleLinks()) {
-                    if (active(owner, link) && (owner == current || link.otherId() == current.getId())) {
-                        pending.add(owner == current ? (MobileStructure) current.getGame().getEntity(link.otherId()) : owner);
-                    }
-                }
+            if (found.add(current)) {
+                pending.addAll(linkedModulesById.getOrDefault(current.getId(), List.of()));
             }
         }
         return found.stream().sorted(Comparator.comparingInt(MobileStructure::getId)).toList();
+    }
+
+    /**
+     * Builds, once per {@link #group(MobileStructure)} call, the modules each module is joined to by an active link, in
+     * both directions, so the group search looks each module up instead of rescanning every link of every module.
+     *
+     * @return the directly linked modules, keyed by the ID of the module they are linked to
+     */
+    private static Map<Integer, List<MobileStructure>> activeLinksById(List<MobileStructure> allModules) {
+        Map<Integer, List<MobileStructure>> linkedModulesById = new HashMap<>();
+        for (MobileStructure owner : allModules) {
+            for (Link link : owner.getModuleLinks()) {
+                if (!active(owner, link)) {
+                    continue;
+                }
+                MobileStructure other = (MobileStructure) owner.getGame().getEntity(link.otherId());
+                linkedModulesById.computeIfAbsent(owner.getId(), id -> new ArrayList<>()).add(other);
+                linkedModulesById.computeIfAbsent(link.otherId(), id -> new ArrayList<>()).add(owner);
+            }
+        }
+        return linkedModulesById;
     }
 
     /** Direct partners, rather than the whole transitive group, can be detached from this module. */

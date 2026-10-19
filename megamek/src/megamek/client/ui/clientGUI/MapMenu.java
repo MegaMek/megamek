@@ -40,8 +40,10 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.function.BiConsumer;
@@ -97,6 +99,7 @@ import megamek.common.compute.TurretFacing;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.*;
 import megamek.common.game.Game;
+import megamek.common.moves.MovePath;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
 import megamek.common.units.*;
@@ -107,6 +110,9 @@ import megamek.logging.MMLogger;
  */
 public class MapMenu extends JPopupMenu {
     private final static MMLogger logger = MMLogger.create(MapMenu.class);
+    /** Message keys for the six board directions a building door can face, indexed by facing. */
+    private static final String[] DOOR_FACING_KEYS = { "MapMenu.doorFacing.N", "MapMenu.doorFacing.NE",
+          "MapMenu.doorFacing.SE", "MapMenu.doorFacing.S", "MapMenu.doorFacing.SW", "MapMenu.doorFacing.NW" };
 
     private final Coords coords;
     Game game;
@@ -224,63 +230,117 @@ public class MapMenu extends JPopupMenu {
     }
 
     static JMenu buildingDoorsMenu(Game game, Board board, Coords coords, Client client) {
-        JMenu menu = new JMenu("Building doors");
+        JMenu menu = new JMenu(Messages.getString("MapMenu.buildingDoors"));
         if (!game.getPhase().isEnd()) {
             return menu;
         }
-        String[] directions = { "N", "NE", "SE", "S", "SW", "NW" };
         for (IBuilding candidate : board.getBuildingsAt(coords)) {
-            if (!(candidate instanceof AbstractBuildingEntity building)) { continue; }
-            var doors = building.getDesign().getDoors();
-            var shown = new HashSet<BuildingDesign.Door>();
-            for (int index = 0; index < doors.size(); index++) {
-                var door = doors.get(index);
-                int floor = BuildingElevation.currentFloor(building, door.position().hex(), door.position().level());
-                if (!building.relativeToBoard(door.position().hex()).equals(coords) || floor < 0 || shown.contains(door)) {
-                    continue;
-                }
-                boolean open = building.getBuildingRuntimeState().isDoorOpen(door);
-                var opening = BuildingDoors.opening(doors, door);
-                shown.addAll(opening);
-                String facing = opening.stream().mapToInt(segment -> (segment.facing() + building.getFacing()) % 6)
-                      .distinct().sorted().mapToObj(side -> directions[side]).collect(java.util.stream.Collectors.joining("/"));
-                int elevation = BuildingElevation.base(building, coords) + floor;
-                JMenuItem item = new JMenuItem((open ? "Close " : "Open ") + facing + (opening.size() > 1 ? " large door: " : " door: ")
-                      + building.getShortName() + ", Level " + (elevation == 0 ? "G" : elevation));
-                item.setEnabled(building.getBuildingRuntimeState().canChangeDoor(building, door, client.getLocalPlayer()));
-                int doorIndex = index;
-                item.addActionListener(event -> client.sendBuildingDoor(building.getId(), doorIndex, !open));
-                menu.add(item);
+            if (candidate instanceof AbstractBuildingEntity building) {
+                addBuildingDoorItems(menu, building, coords, client);
             }
         }
         return menu;
     }
 
+    /**
+     * Adds one open/close item per door opening of the building that lies in the given hex. Linked door segments
+     * form one large opening and get a single item.
+     */
+    private static void addBuildingDoorItems(JMenu menu, AbstractBuildingEntity building, Coords coords,
+          Client client) {
+        List<BuildingDesign.Door> doors = building.getDesign().getDoors();
+        Map<BuildingDesign.Door, List<BuildingDesign.Door>> openingsByDoor = mapOpeningsByDoor(doors);
+        Set<BuildingDesign.Door> shownDoors = new HashSet<>();
+        for (int doorIndex = 0; doorIndex < doors.size(); doorIndex++) {
+            BuildingDesign.Door door = doors.get(doorIndex);
+            int floor = BuildingElevation.currentFloor(building, door.position().hex(), door.position().level());
+            boolean isInThisHex = building.relativeToBoard(door.position().hex()).equals(coords);
+            if (!isInThisHex || (floor < 0) || shownDoors.contains(door)) {
+                continue;
+            }
+            boolean isOpen = building.getBuildingRuntimeState().isDoorOpen(door);
+            List<BuildingDesign.Door> opening = openingsByDoor.getOrDefault(door, List.of(door));
+            shownDoors.addAll(opening);
+            int elevation = BuildingElevation.base(building, coords) + floor;
+            String levelText = (elevation == 0) ? Messages.getString("MapMenu.groundLevel")
+                  : String.valueOf(elevation);
+            String itemText = Messages.getString(doorMenuItemKey(isOpen, opening.size() > 1),
+                  formatOpeningFacing(opening, building.getFacing()), building.getShortName(), levelText);
+            JMenuItem item = new JMenuItem(itemText);
+            item.setEnabled(building.getBuildingRuntimeState().canChangeDoor(building, door, client.getLocalPlayer()));
+            int selectedDoorIndex = doorIndex;
+            item.addActionListener(event -> client.sendBuildingDoor(building.getId(), selectedDoorIndex, !isOpen));
+            menu.add(item);
+        }
+    }
+
+    /**
+     * Builds the door-to-opening lookup once per building, so each door finds its linked opening without regrouping
+     * all doors again. Doors that are not part of a linked group are absent and form an opening on their own.
+     */
+    private static Map<BuildingDesign.Door, List<BuildingDesign.Door>> mapOpeningsByDoor(
+          List<BuildingDesign.Door> doors) {
+        Map<BuildingDesign.Door, List<BuildingDesign.Door>> openingsByDoor = new HashMap<>();
+        for (List<BuildingDesign.Door> group : BuildingDoors.groups(doors)) {
+            for (BuildingDesign.Door groupDoor : group) {
+                openingsByDoor.putIfAbsent(groupDoor, group);
+            }
+        }
+        return openingsByDoor;
+    }
+
+    /** @return the board directions an opening faces, in N to NW order without duplicates, e.g. "N/NE" */
+    private static String formatOpeningFacing(List<BuildingDesign.Door> opening, int buildingFacing) {
+        boolean[] isFacingSide = new boolean[DOOR_FACING_KEYS.length];
+        for (BuildingDesign.Door segment : opening) {
+            isFacingSide[(segment.facing() + buildingFacing) % 6] = true;
+        }
+        StringJoiner facingText = new StringJoiner("/");
+        for (int side = 0; side < isFacingSide.length; side++) {
+            if (isFacingSide[side]) {
+                facingText.add(Messages.getString(DOOR_FACING_KEYS[side]));
+            }
+        }
+        return facingText.toString();
+    }
+
+    private static String doorMenuItemKey(boolean isOpen, boolean isLargeOpening) {
+        if (isLargeOpening) {
+            return isOpen ? "MapMenu.closeLargeDoor" : "MapMenu.openLargeDoor";
+        }
+        return isOpen ? "MapMenu.closeDoor" : "MapMenu.openDoor";
+    }
+
     private JMenu createWallMovementMenu() {
-        JMenu menu = new JMenu("Wall position");
+        JMenu menu = new JMenu(Messages.getString("MapMenu.wallPosition"));
         if (!(currentPanel instanceof MovementDisplay movement) || myEntity == null
               || movement.getPlannedMovement() == null) {
             return menu;
         }
-        var path = movement.getPlannedMovement();
+        MovePath path = movement.getPlannedMovement();
         if (!coords.equals(path.getFinalCoords())) {
             return menu;
         }
-        for (var segment : megamek.common.units.WallRules.beside(game, board.getBoardId(), coords)) {
-            var target = segment.target(coords);
-            var stepTypes = path.isJumping() ? java.util.List.of(MoveStepType.WALL_LAND)
-                  : java.util.List.of(MoveStepType.WALL_ASCEND, MoveStepType.WALL_DESCEND);
-            for (var stepType : stepTypes) {
-                var candidate = path.clone().addStep(stepType, target);
-                JMenuItem item = new JMenuItem((stepType == MoveStepType.WALL_LAND ? "Land on "
-                      : stepType == MoveStepType.WALL_ASCEND ? "Climb up " : "Climb down ")
-                      + target.getDisplayName());
+        for (WallRules.Segment segment : WallRules.beside(game, board.getBoardId(), coords)) {
+            WallTarget target = segment.target(coords);
+            List<MoveStepType> stepTypes = path.isJumping() ? List.of(MoveStepType.WALL_LAND)
+                  : List.of(MoveStepType.WALL_ASCEND, MoveStepType.WALL_DESCEND);
+            for (MoveStepType stepType : stepTypes) {
+                MovePath candidate = path.clone().addStep(stepType, target);
+                JMenuItem item = new JMenuItem(Messages.getString(wallStepKey(stepType), target.getDisplayName()));
                 item.setEnabled(candidate.getLastStep().getMovementType(false) != EntityMovementType.MOVE_ILLEGAL);
                 item.addActionListener(event -> movement.planWallStep(stepType, target));
                 menu.add(item);
             }
         }
         return menu;
+    }
+
+    private static String wallStepKey(MoveStepType stepType) {
+        if (stepType == MoveStepType.WALL_LAND) {
+            return "MapMenu.wallLand";
+        }
+        return (stepType == MoveStepType.WALL_ASCEND) ? "MapMenu.wallClimbUp" : "MapMenu.wallClimbDown";
     }
 
     private void addIfNotEmptyWithSeparator(JMenu subMenu) {
@@ -327,7 +387,7 @@ public class MapMenu extends JPopupMenu {
     private static String getTargetCode(Targetable t) {
         return switch (t) {
             case Entity ignored -> "E|" + t.getId();
-            case megamek.common.units.WallTarget wall -> "W|" + wall.getTargetType() + "|" + wall.getId();
+            case WallTarget wall -> "W|" + wall.getTargetType() + "|" + wall.getId();
             case BuildingTarget ignored ->
                   "B|" + t.getPosition().getX() + "|" + t.getPosition().getY() + "|" + t.getTargetType();
             case MinefieldTarget ignored -> "M|" + t.getPosition().getX() + "|" + t.getPosition().getY();
@@ -1548,7 +1608,7 @@ public class MapMenu extends JPopupMenu {
             }
         }
 
-        for (var segment : megamek.common.units.WallRules.beside(game, board.getBoardId(), coords)) {
+        for (WallRules.Segment segment : WallRules.beside(game, board.getBoardId(), coords)) {
             menu.add(targetMenuItem(segment.target(myEntity.getPosition())));
         }
         Hex h = board.getHex(coords);
@@ -1687,7 +1747,7 @@ public class MapMenu extends JPopupMenu {
             return game.getEntity(Integer.parseInt(target.nextToken()));
         }
         if (type.equals("W")) {
-            var wall = (megamek.common.units.WallTarget) game.getTarget(Integer.parseInt(target.nextToken()),
+            WallTarget wall = (WallTarget) game.getTarget(Integer.parseInt(target.nextToken()),
                   Integer.parseInt(target.nextToken()));
             return wall == null ? null : wall.viewFrom(myEntity.getPosition());
         }

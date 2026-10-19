@@ -118,6 +118,7 @@ import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
 import megamek.common.moves.BuildingRoofEntry;
 import megamek.common.moves.ClimbingHelper;
+import megamek.common.moves.MobileStructureAirMovement;
 import megamek.common.moves.MobileStructureMovement;
 import megamek.common.moves.MountPathHelper;
 import megamek.common.moves.MovePath;
@@ -3893,20 +3894,47 @@ public class MovementDisplay extends ActionPhaseDisplay {
         boolean atDeckAltitude = false;
         if (selectedEntity.isAirborne()) {
             int landingBoardId = game.isOnGroundMap(selectedEntity) ? selectedEntity.getBoardId() : groundMapAtAtmosphericHex();
-            atDeckAltitude = game.getEntitiesVector().stream()
-                  .filter(megamek.common.units.AbstractBuildingEntity.class::isInstance)
-                  .map(megamek.common.units.AbstractBuildingEntity.class::cast)
-                  .filter(building -> building.getBoardId() == landingBoardId)
-                  .flatMap(building -> megamek.common.units.BuildingFlightDeckRules.decks(building).stream())
-                  .filter(deck -> !game.isOnGroundMap(selectedEntity) || deck.hexes().contains(selectedEntity.getPosition()))
-                  .anyMatch(deck -> deck.hexes().stream().anyMatch(coords ->
-                        megamek.common.moves.MobileStructureAirMovement.aerospaceAltitude(deck.carrier(), coords,
-                              deck.carrier().getHeight(coords)) == selectedEntity.getAltitude()));
+            atDeckAltitude = isAtFlightDeckAltitude(selectedEntity, landingBoardId);
         }
         if (selectedEntity.isAirborne() && (altitudeAboveTerrain(selectedEntity) == 1 || atDeckAltitude)) {
             setLandEnabled(aero.canLandHorizontally());
             setVLandEnabled(aero.canLandVertically());
         }
+    }
+
+    /**
+     * @param selectedEntity the airborne unit that may land
+     * @param landingBoardId the board the selected airborne unit would land on
+     *
+     * @return {@code true} if the selected unit flies at the altitude of a building flight deck on the landing board.
+     *       On a ground map the unit must also be over one of that deck's hexes.
+     */
+    private boolean isAtFlightDeckAltitude(Entity selectedEntity, int landingBoardId) {
+        boolean isOnGroundMap = game.isOnGroundMap(selectedEntity);
+        for (Entity entity : game.getEntitiesVector()) {
+            if (!(entity instanceof AbstractBuildingEntity building) || (building.getBoardId() != landingBoardId)) {
+                continue;
+            }
+            for (BuildingFlightDeckRules.Deck deck : BuildingFlightDeckRules.decks(building)) {
+                boolean isOverThisDeck = !isOnGroundMap || deck.hexes().contains(selectedEntity.getPosition());
+                if (isOverThisDeck && isDeckAtAltitude(deck, selectedEntity.getAltitude())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** @return {@code true} if any hex of the flight deck lies at the given aerospace altitude */
+    private static boolean isDeckAtAltitude(BuildingFlightDeckRules.Deck deck, int altitude) {
+        for (Coords deckHex : deck.hexes()) {
+            int deckAltitude = MobileStructureAirMovement.aerospaceAltitude(deck.carrier(), deckHex,
+                  deck.carrier().getHeight(deckHex));
+            if (deckAltitude == altitude) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private int altitudeAboveTerrain(Entity aero) {
@@ -8505,15 +8533,24 @@ public class MovementDisplay extends ActionPhaseDisplay {
                 entity = stranded.elementAt(index);
                 transport = game.getEntity(entity.getTransportId());
                 if (transport instanceof MobileStructure mobile) {
-                    Coords destination = chooseUnloadPosition(mobile, MobileStructureCargoRules.exits(mobile, entity).stream()
-                          .map(MobileStructureCargoRules.Exit::position).toList());
-                    if (destination == null) { continue; }
+                    List<Coords> exitPositions = new ArrayList<>();
+                    for (MobileStructureCargoRules.Exit exit : MobileStructureCargoRules.exits(mobile, entity)) {
+                        exitPositions.add(exit.position());
+                    }
+                    Coords destination = chooseUnloadPosition(mobile, exitPositions);
+                    if (destination == null) {
+                        continue;
+                    }
                     exits.put(entity.getId(), destination);
                 }
                 chosenIds.add(entity.getId());
             }
         }
-        clientgui.getClient().sendUnloadStranded(chosenIds.stream().mapToInt(Integer::intValue).toArray(), exits);
+        int[] chosenIdArray = new int[chosenIds.size()];
+        for (int index = 0; index < chosenIdArray.length; index++) {
+            chosenIdArray[index] = chosenIds.get(index);
+        }
+        clientgui.getClient().sendUnloadStranded(chosenIdArray, exits);
     }
 
     // board view listener

@@ -180,15 +180,6 @@ public final class ObjectiveDeserializer {
     }
 
     /**
-     * Reads the objective's scoring scheme: {@code scheme:} names the preset ({@code standard}, {@code raid},
-     * {@code hold}, {@code defend} or {@code capture}), and the scheme's numbers use the same names the setup
-     * pane shows - {@code turns:} and {@code counting:} for Hold, {@code grip:} and {@code drain:} for Defend,
-     * {@code points:} and {@code rate:} for Capture. Without a {@code scheme:} key the marker keeps the
-     * Standard scheme.
-     *
-     * @throws IllegalArgumentException on an unknown scheme or counting mode
-     */
-    /**
      * Rejects a combination of variants, or of a variant and the scoring scheme, that the rules forbid. The editor and
      * the server apply the same rules from {@link ObjectiveMarker}, so a scenario cannot set up a point that could not
      * be made in Victory Setup.
@@ -211,6 +202,15 @@ public final class ObjectiveDeserializer {
         }
     }
 
+    /**
+     * Reads the objective's scoring scheme: {@code scheme:} names the preset ({@code standard}, {@code raid},
+     * {@code hold}, {@code defend} or {@code capture}), and the scheme's numbers use the same names the setup
+     * pane shows - {@code turns:} and {@code counting:} for Hold, {@code grip:} and {@code drain:} for Defend,
+     * {@code points:} and {@code rate:} for Capture. Without a {@code scheme:} key the marker keeps the
+     * Standard scheme.
+     *
+     * @throws IllegalArgumentException on an unknown scheme or counting mode
+     */
     private static void parseScheme(ObjectiveMarker marker, JsonNode node) {
         if (!node.has(SCHEME)) {
             return;

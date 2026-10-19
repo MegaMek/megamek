@@ -2200,7 +2200,7 @@ public class ChatLounge extends AbstractPhaseDisplay
                 removeBot();
 
             } else if (ev.getSource().equals(butShowUnitID)) {
-                PreferenceManager.getClientPreferences().setShowUnitId(butShowUnitID.isSelected());
+                PreferenceManager.getClientPreferences().setLobbyShowUnitId(butShowUnitID.isSelected());
                 mekModel.refreshCells();
                 repaint();
 
@@ -3641,7 +3641,7 @@ public class ChatLounge extends AbstractPhaseDisplay
     @Override
     public void preferenceChange(PreferenceChangeEvent e) {
         switch (e.getName()) {
-            case ClientPreferences.SHOW_UNIT_ID:
+            case ClientPreferences.LOBBY_SHOW_UNIT_ID:
                 setButUnitIDState();
                 mekModel.refreshCells();
                 refreshTree();
@@ -3658,10 +3658,10 @@ public class ChatLounge extends AbstractPhaseDisplay
         }
     }
 
-    /** Silently adapts the state of the "Show IDs" button to the Client preferences. */
+    /** Silently adapts the state of the "Show IDs" button to the lobby preference. */
     private void setButUnitIDState() {
         butShowUnitID.removeActionListener(lobbyListener);
-        butShowUnitID.setSelected(PreferenceManager.getClientPreferences().getShowUnitId());
+        butShowUnitID.setSelected(PreferenceManager.getClientPreferences().getLobbyShowUnitId());
         butShowUnitID.addActionListener(lobbyListener);
     }
 

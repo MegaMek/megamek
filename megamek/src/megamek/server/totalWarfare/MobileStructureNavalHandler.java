@@ -39,9 +39,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.battleArmor.BattleArmor;
+import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.enums.MoveStepType;
@@ -332,36 +334,66 @@ final class MobileStructureNavalHandler extends AbstractTWRuleHandler {
     /** Standing Meks check footing at turn end after the Movement Phase's descent (AUE p.28). */
     void endTurn() {
         for (Entity entity : List.copyOf(getGame().getEntitiesVector())) {
-            if (!(entity instanceof MobileStructure mobile)
-                  || !mobile.getNavalState().checkFootingThisRound(getGame().getRoundCount())) { continue; }
-            for (Coords coords : List.copyOf(mobile.getCoordsList())) {
-                int roof = BuildingElevation.roof(mobile, coords);
-                for (Entity rider : List.copyOf(getGame().getEntitiesVector(coords, mobile.getBoardId()))) {
-                    if (!(rider instanceof Mek) || rider.isProne() || rider.isAirborne() || rider.getElevation() != roof) { continue; }
-                    var reports = new Vector<Report>();
-                    var psr = rider.getBasePilotingRoll();
-                    if (gameManager.doSkillCheckWhileMoving(rider, roof, coords, coords, psr, false, reports) > 0) {
-                        if (roof >= 0) {
-                            reports.addAll(gameManager.doEntityFall(rider, coords, 0, Compute.d6(), psr, false, false));
-                            rider.setElevation(roof);
-                        } else {
-                            List<Coords> exits = new ArrayList<>(coords.allAdjacent());
-                            var board = getGame().getBoard(mobile);
-                            var footprint = MobileStructureLinkage.group(mobile).stream()
-                                  .flatMap(member -> member.getCoordsList().stream()).toList();
-                            exits.removeIf(hex -> !board.contains(hex) || footprint.contains(hex)
-                                  || board.getHex(hex).containsTerrain(Terrains.IMPASSABLE)
-                                  || board.getHex(hex).getLevel() - board.getHex(coords).getLevel()
-                                        - board.getHex(hex).depth() > roof
-                                  || board.getBuildingsAt(hex).stream().anyMatch(building ->
-                                        BuildingElevation.contains(building, hex, roof)));
-                            Coords destination = exits.isEmpty() ? null : exits.get(Compute.randomInt(exits.size()));
-                            fallFromLostDeck(rider, roof, destination, reports);
-                        }
-                    }
-                    addReport(reports);
+            if (!(entity instanceof MobileStructure mobile)) {
+                continue;
+            }
+            if (mobile.getNavalState().checkFootingThisRound(getGame().getRoundCount())) {
+                checkDeckFooting(mobile);
+            }
+        }
+    }
+
+    /** Every standing Mek on the structure's roof checks its footing. */
+    private void checkDeckFooting(MobileStructure mobile) {
+        for (Coords coords : List.copyOf(mobile.getCoordsList())) {
+            int roof = BuildingElevation.roof(mobile, coords);
+            for (Entity rider : List.copyOf(getGame().getEntitiesVector(coords, mobile.getBoardId()))) {
+                if (isStandingMekOnRoof(rider, roof)) {
+                    checkRiderFooting(mobile, coords, roof, rider);
                 }
             }
         }
+    }
+
+    private static boolean isStandingMekOnRoof(Entity rider, int roof) {
+        boolean isMek = rider instanceof Mek;
+        boolean isStanding = !rider.isProne() && !rider.isAirborne();
+        boolean isOnRoof = rider.getElevation() == roof;
+        return isMek && isStanding && isOnRoof;
+    }
+
+    /** A failed check knocks the Mek down on a raised roof, or off a submerged deck into a random adjacent hex. */
+    private void checkRiderFooting(MobileStructure mobile, Coords coords, int roof, Entity rider) {
+        Vector<Report> reports = new Vector<>();
+        PilotingRollData pilotingRoll = rider.getBasePilotingRoll();
+        if (gameManager.doSkillCheckWhileMoving(rider, roof, coords, coords, pilotingRoll, false, reports) > 0) {
+            if (roof >= 0) {
+                reports.addAll(gameManager.doEntityFall(rider, coords, 0, Compute.d6(), pilotingRoll, false, false));
+                rider.setElevation(roof);
+            } else {
+                fallFromLostDeck(rider, roof, randomDeckExit(mobile, coords, roof), reports);
+            }
+        }
+        addReport(reports);
+    }
+
+    /**
+     * @return a random adjacent on-board hex outside the structure that the Mek can step down into from the roof, or
+     *       {@code null} when there is none
+     */
+    private @Nullable Coords randomDeckExit(MobileStructure mobile, Coords coords, int roof) {
+        List<Coords> exits = new ArrayList<>(coords.allAdjacent());
+        Board board = getGame().getBoard(mobile);
+        Set<Coords> footprint = new HashSet<>();
+        for (MobileStructure member : MobileStructureLinkage.group(mobile)) {
+            footprint.addAll(member.getCoordsList());
+        }
+        exits.removeIf(hex -> !board.contains(hex) || footprint.contains(hex)
+              || board.getHex(hex).containsTerrain(Terrains.IMPASSABLE)
+              || board.getHex(hex).getLevel() - board.getHex(coords).getLevel()
+                    - board.getHex(hex).depth() > roof
+              || board.getBuildingsAt(hex).stream().anyMatch(building ->
+                    BuildingElevation.contains(building, hex, roof)));
+        return exits.isEmpty() ? null : exits.get(Compute.randomInt(exits.size()));
     }
 }

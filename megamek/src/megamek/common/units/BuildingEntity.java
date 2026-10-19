@@ -34,7 +34,6 @@
 
 package megamek.common.units;
 
-
 import megamek.common.MPCalculationSetting;
 import megamek.common.SimpleTechLevel;
 import megamek.common.TechAdvancement;
@@ -55,15 +54,6 @@ import megamek.common.equipment.enums.StructureEngine;
  */
 public class BuildingEntity extends AbstractBuildingEntity {
 
-
-
-
-
-
-
-
-
-
     public BuildingEntity(BuildingType type, int bldgClass) {
         super(type, bldgClass);
     }
@@ -80,10 +70,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
     public int height() {
         return BuildingConstruction.baseLevel(this) + getInternalBuilding().getBuildingHeight() - 1;
     }
-
-
-
-
 
     @Override
     public boolean isImmobile() {
@@ -140,10 +126,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
     public String getMovementAbbr(EntityMovementType movementType) {
         return "!";
     }
-
-
-
-
 
     /**
      * Calculates a "generic" Battle Value that is based on the average of all units of this type and tonnage. The
@@ -223,22 +205,6 @@ public class BuildingEntity extends AbstractBuildingEntity {
 
         return effectivePower >= powerNeeded;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     /**
      * Places a demolition charge on this building (TO:AUE p.152). Demolition charges anchor to an absolute board hex,

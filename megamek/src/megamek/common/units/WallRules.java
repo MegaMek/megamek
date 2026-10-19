@@ -36,7 +36,9 @@ package megamek.common.units;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import megamek.common.Hex;
@@ -99,17 +101,23 @@ public final class WallRules {
             }
             building.getWallSegmentState().initialize(building);
             for (CubeCoords hex : building.getInternalBuilding().getOriginalCoordsList()) {
-                for (int side = 0; side < 6; side++) {
-                    if ((building.getDesign().wallSides(hex) & (1 << side)) != 0) {
-                        Segment segment = new Segment(building, hex, side);
-                        if (segment.cf() > 0) {
-                            segments.add(segment);
-                        }
-                    }
-                }
+                addStandingSegments(segments, building, hex);
             }
         }
         return segments;
+    }
+
+    /** Adds the authored segments of one hex that still have CF, in side order. */
+    private static void addStandingSegments(List<Segment> segments, AbstractBuildingEntity building, CubeCoords hex) {
+        int wallSides = building.getDesign().wallSides(hex);
+        for (int side = 0; side < 6; side++) {
+            if ((wallSides & (1 << side)) != 0) {
+                Segment segment = new Segment(building, hex, side);
+                if (segment.cf() > 0) {
+                    segments.add(segment);
+                }
+            }
+        }
     }
 
     public static List<Segment> at(Game game, int boardId, Coords hex, int side) {
@@ -123,17 +131,48 @@ public final class WallRules {
 
     /** One physical edge has one owner, including the same edge authored from its opposite hex. */
     public static boolean hasOverlappingSegment(AbstractBuildingEntity building, Coords origin, int facing, int boardId) {
-        var layout = building.computeLayoutForPositionAndFacing(origin, facing);
-        for (var cell : layout.entrySet()) {
-            for (int side = 0; side < 6; side++) {
-                if ((building.getDesign().wallSides(cell.getKey()) & (1 << side)) != 0
-                      && at(building.getGame(), boardId, cell.getValue(), Math.floorMod(side + facing, 6)).stream()
-                            .anyMatch(segment -> segment.building() != building)) {
-                    return true;
-                }
+        Map<CubeCoords, Coords> layout = building.computeLayoutForPositionAndFacing(origin, facing);
+        List<WallEdge> placedEdges = new ArrayList<>();
+        for (Map.Entry<CubeCoords, Coords> cell : layout.entrySet()) {
+            addAuthoredEdges(placedEdges, building.getDesign().wallSides(cell.getKey()), cell.getValue(), facing);
+        }
+        if (placedEdges.isEmpty()) {
+            return false;
+        }
+        Set<WallEdge> edgesOwnedByOthers = edgesOwnedByOtherBuildings(building, boardId);
+        for (WallEdge edge : placedEdges) {
+            if (edgesOwnedByOthers.contains(edge)) {
+                return true;
             }
         }
         return false;
+    }
+
+    /** One hexside on the board, named from one of its two hexes. */
+    private record WallEdge(Coords hex, int side) { }
+
+    /** Adds the board edges a hex's authored wall sides would occupy when the structure faces {@code facing}. */
+    private static void addAuthoredEdges(List<WallEdge> edges, int wallSides, Coords boardHex, int facing) {
+        for (int side = 0; side < 6; side++) {
+            if ((wallSides & (1 << side)) != 0) {
+                edges.add(new WallEdge(boardHex, Math.floorMod(side + facing, 6)));
+            }
+        }
+    }
+
+    /**
+     * Every edge held by a standing segment of another building on the board, named from both of its hexes so a
+     * single lookup matches the same edge authored from either side.
+     */
+    private static Set<WallEdge> edgesOwnedByOtherBuildings(AbstractBuildingEntity building, int boardId) {
+        Set<WallEdge> edges = new HashSet<>();
+        for (Segment segment : segments(building.getGame(), boardId)) {
+            if (segment.building() != building) {
+                edges.add(new WallEdge(segment.hex(), segment.side()));
+                edges.add(new WallEdge(segment.otherHex(), (segment.side() + 3) % 6));
+            }
+        }
+        return edges;
     }
 
     /** Includes every surviving segment touched by a moving structure's newly occupied footprint. */

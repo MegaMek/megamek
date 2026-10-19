@@ -2349,9 +2349,19 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
         return !isTurretJammed(repaired) || isTurretMounted(firing);
     }
 
+    /** Returns {@code true} when a repair already accepted this turn silences the given weapon. */
+    private boolean isBlockedByAcceptedRepair(WeaponMounted weapon) {
+        for (int repairedWeaponId : repairedBuildingWeapons()) {
+            WeaponMounted repaired = getWeapon(repairedWeaponId);
+            if ((repaired != null) && repairBlocksWeapon(repaired, weapon)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isWeaponBlockedByRepair(WeaponMounted weapon) {
-        if (repairedBuildingWeapons().stream().map(this::getWeapon)
-              .filter(Objects::nonNull).anyMatch(repaired -> repairBlocksWeapon(repaired, weapon))) {
+        if (isBlockedByAcceptedRepair(weapon)) {
             return true;
         }
         return getGame() != null && getGame().getActionsVector().stream()
@@ -2365,9 +2375,9 @@ public abstract class AbstractBuildingEntity extends Entity implements IBuilding
 
     /** Called by the server once per accepted repair; repeat declarations cannot clear a second malfunction. */
     public boolean repairBuildingWeapon(WeaponMounted weapon) {
-        if (!getJammedWeapons().contains(weapon) || isGunnersStunned(weapon.getLocation())
-              || repairedBuildingWeapons().stream().map(this::getWeapon).filter(Objects::nonNull)
-                    .anyMatch(repaired -> repairBlocksWeapon(repaired, weapon))) {
+        boolean isJammed = getJammedWeapons().contains(weapon);
+        boolean areGunnersStunned = isGunnersStunned(weapon.getLocation());
+        if (!isJammed || areGunnersStunned || isBlockedByAcceptedRepair(weapon)) {
             return false;
         }
         repairedBuildingWeapons().add(getEquipmentNum(weapon));

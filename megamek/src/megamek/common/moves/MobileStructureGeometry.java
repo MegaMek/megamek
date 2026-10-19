@@ -36,6 +36,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Area;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -91,41 +92,58 @@ public final class MobileStructureGeometry {
         Point2D.Double center = point(from.toCube().add(MobileStructureLinkage.rotate(pivot, facing)));
         double angle = Math.floorMod(newFacing - facing, 6) == 1 ? Math.PI / 3 : -Math.PI / 3;
         List<Contact> result = new ArrayList<>();
-        for (var entry : start.entrySet()) {
-            Point2D.Double source = point(entry.getValue().toCube());
-            Area swept = sweep(source, center, angle);
-            var bounds = swept.getBounds2D();
-            int qMin = (int) Math.floor(bounds.getMinX() / 1.5) - 1;
-            int qMax = (int) Math.ceil(bounds.getMaxX() / 1.5) + 1;
-            for (int q = qMin; q <= qMax; q++) {
-                int rMin = (int) Math.floor(bounds.getMinY() / Math.sqrt(3) - q / 2.0) - 1;
-                int rMax = (int) Math.ceil(bounds.getMaxY() / Math.sqrt(3) - q / 2.0) + 1;
-                for (int r = rMin; r <= rMax; r++) {
-                    Coords candidate = new CubeCoords(q, r, -q - r).toOffset();
-                    if (candidate.equals(entry.getValue())) {
-                        continue;
-                    }
-                    Area cell = hex(point(candidate.toCube()), .999999);
-                    if (!intersects(swept, cell)) {
-                        continue;
-                    }
-                    // Find first contact with the continuous sweep, rather than testing a few rotated templates.
-                    double lo = 0;
-                    double hi = 1;
-                    for (int n = 0; n < 16; n++) {
-                        double mid = (lo + hi) / 2;
-                        if (intersects(sweep(source, center, angle * mid), cell)) {
-                            hi = mid;
-                        } else {
-                            lo = mid;
-                        }
-                    }
-                    result.add(new Contact(entry.getKey(), candidate, hi));
-                }
-            }
+        for (Map.Entry<CubeCoords, Coords> layoutEntry : start.entrySet()) {
+            addSweptContacts(result, layoutEntry.getKey(), layoutEntry.getValue(), center, angle);
         }
         result.sort(Comparator.comparingDouble(Contact::time));
         return result;
+    }
+
+    /**
+     * Adds a contact for every board hex the given footprint hex sweeps across while pivoting, apart from the hex it
+     * starts in. The candidates are the hexes inside the bounding box of the swept area.
+     */
+    private static void addSweptContacts(List<Contact> result, CubeCoords localHex, Coords startHex,
+          Point2D.Double center, double angle) {
+        Point2D.Double source = point(startHex.toCube());
+        Area swept = sweep(source, center, angle);
+        Rectangle2D bounds = swept.getBounds2D();
+        int qMinimum = (int) Math.floor(bounds.getMinX() / 1.5) - 1;
+        int qMaximum = (int) Math.ceil(bounds.getMaxX() / 1.5) + 1;
+        for (int q = qMinimum; q <= qMaximum; q++) {
+            int rMinimum = (int) Math.floor(bounds.getMinY() / Math.sqrt(3) - q / 2.0) - 1;
+            int rMaximum = (int) Math.ceil(bounds.getMaxY() / Math.sqrt(3) - q / 2.0) + 1;
+            for (int r = rMinimum; r <= rMaximum; r++) {
+                Coords candidate = new CubeCoords(q, r, -q - r).toOffset();
+                if (candidate.equals(startHex)) {
+                    continue;
+                }
+                Area cell = hex(point(candidate.toCube()), .999999);
+                if (!intersects(swept, cell)) {
+                    continue;
+                }
+                result.add(new Contact(localHex, candidate, firstContactTime(source, center, angle, cell)));
+            }
+        }
+    }
+
+    /**
+     * Finds the first contact with the continuous sweep, rather than testing a few rotated templates.
+     *
+     * @return the fraction of the pivot, from 0 to 1, at which the sweep first touches the cell
+     */
+    private static double firstContactTime(Point2D.Double source, Point2D.Double center, double angle, Area cell) {
+        double lowerBound = 0;
+        double upperBound = 1;
+        for (int iteration = 0; iteration < 16; iteration++) {
+            double middle = (lowerBound + upperBound) / 2;
+            if (intersects(sweep(source, center, angle * middle), cell)) {
+                upperBound = middle;
+            } else {
+                lowerBound = middle;
+            }
+        }
+        return upperBound;
     }
 
     private static boolean intersects(Area a, Area b) {

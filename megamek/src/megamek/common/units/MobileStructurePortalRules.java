@@ -37,6 +37,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.board.Coords;
 import megamek.common.board.CubeCoords;
@@ -245,8 +246,17 @@ public final class MobileStructurePortalRules {
         }
         return false;
     }
-    /** Local surface-relative elevation of an authorized underground passage's floor, or null outside it. */
-    public static Integer supportElevation(MobileStructure unit, Coords coords) {
+
+    /**
+     * Local surface-relative elevation of an authorized underground passage's floor.
+     *
+     * @param unit   the mobile structure looking for support
+     * @param coords the hex to check, or {@code null}
+     *
+     * @return the passage floor's elevation, or {@code null} when the unit has no game or is itself a portal,
+     *       {@code coords} is {@code null}, or the hex lies outside any authorized passage
+     */
+    public static @Nullable Integer supportElevation(MobileStructure unit, @Nullable Coords coords) {
         if (unit.getGame() == null || coords == null || isPortal(unit)) {
             return null;
         }

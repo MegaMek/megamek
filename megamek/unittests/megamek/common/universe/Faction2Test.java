@@ -35,6 +35,7 @@ package megamek.common.universe;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -160,7 +161,7 @@ class Faction2Test {
     }
 
     @Test
-    void legacyLogoFieldsAreIgnored() throws IOException {
+    void legacyLogoFieldsAreReadSeparatelyFromIcons() throws IOException {
         Faction2 faction = new ObjectMapper(new YAMLFactory()).readValue("""
               key: OLD
               name: Old Faction
@@ -171,5 +172,14 @@ class Faction2Test {
               """, Faction2.class);
 
         assertEquals("logo_aurigan_coalition.png", faction.getIcon(3080));
+        assertEquals("Periphery/Aurigan Coalition.png", faction.getLegacyLogo(3079));
+        assertEquals("Periphery/Aurigan Directorate.png", faction.getLegacyLogo(3080));
+    }
+
+    @Test
+    void factionWithoutLegacyLogoHasNone() {
+        Faction2 mergedFaction = getTestFactions2().getFaction("MRG").orElseThrow();
+
+        assertNull(mergedFaction.getLegacyLogo(3080));
     }
 }

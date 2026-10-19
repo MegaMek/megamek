@@ -34,23 +34,32 @@ package megamek.client.ratgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.universe.Faction2;
 import megamek.common.universe.Factions2;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
@@ -58,8 +67,12 @@ import org.mockito.MockedStatic;
 class RATGeneratorFactionLogoTest {
     private static final String DIRECTORY = "data/images/universe/factions/";
 
+    @TempDir
+    Path userDirectory;
+
     private final Map<String, Faction2> factionData = new HashMap<>();
     private MockedStatic<Factions2> factionsMock;
+    private MockedStatic<PreferenceManager> preferencesMock;
 
     @BeforeEach
     void setUp() throws IOException {
@@ -68,6 +81,10 @@ class RATGeneratorFactionLogoTest {
               Optional.ofNullable(factionData.get(invocation.getArgument(0, String.class))));
         factionsMock = mockStatic(Factions2.class);
         factionsMock.when(Factions2::getInstance).thenReturn(factions);
+        ClientPreferences preferences = mock(ClientPreferences.class);
+        when(preferences.getUserDir()).thenReturn(userDirectory.toString());
+        preferencesMock = mockStatic(PreferenceManager.class);
+        preferencesMock.when(PreferenceManager::getClientPreferences).thenReturn(preferences);
 
         registerFaction("""
               key: FS
@@ -132,6 +149,7 @@ class RATGeneratorFactionLogoTest {
 
     @AfterEach
     void tearDown() {
+        preferencesMock.close();
         factionsMock.close();
     }
 
@@ -186,6 +204,34 @@ class RATGeneratorFactionLogoTest {
     @Test
     void unknownFactionHasNoDedicatedArtwork() {
         assertNull(RATGenerator.getCanonicalFactionLogoAddress(3025, "CUSTOM"));
+    }
+
+    @Test
+    void userDirectoryIconTakesPrecedence() throws IOException {
+        Path userIcon = writeUserImage("logo_crucis_lancers.png");
+
+        assertEquals(userIcon.toFile(), RATGenerator.getFactionLogoFile(3025, "FS.CRG.1st"));
+    }
+
+    @Test
+    void missingIconFallsBackToGenericLogo() {
+        // logo_crucis_lancers.png is neither installed nor in the user directory
+        assertEquals(new File(DIRECTORY + "logo_mercenaries.png"), RATGenerator.getFactionLogoFile(3025, "FS.CRG"));
+    }
+
+    @Test
+    void userDirectoryGenericLogoTakesPrecedence() throws IOException {
+        Path userGenericLogo = writeUserImage("logo_clan_generic.png");
+
+        assertEquals(userGenericLogo.toFile(), RATGenerator.getFactionLogoFile(3025, "CLANLESS"));
+        assertEquals(userGenericLogo.toFile(), RATGenerator.getGenericFactionLogoFile("CLANLESS"));
+    }
+
+    private Path writeUserImage(String fileName) throws IOException {
+        Path path = userDirectory.resolve(DIRECTORY).resolve(fileName);
+        Files.createDirectories(path.getParent());
+        assertTrue(ImageIO.write(new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB), "png", path.toFile()));
+        return path;
     }
 
     private void registerFaction(String yaml) throws IOException {

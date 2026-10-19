@@ -58,6 +58,7 @@ import megamek.common.Configuration;
 import megamek.common.enums.Faction;
 import megamek.common.loaders.MekSummary;
 import megamek.common.loaders.MekSummaryCache;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.UnitType;
 import megamek.common.universe.Faction2;
@@ -2067,7 +2068,7 @@ public class RATGenerator {
     /**
      * Returns the logo ImageIcon for a specific faction and game year.
      *
-     * <p>The logo file is resolved by {@link #getFactionLogoAddress(int, String)} and tinted with
+     * <p>The logo file is resolved by {@link #getFactionLogoFile(int, String)} and tinted with
      * {@code tintColor}.</p>
      *
      * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
@@ -2077,15 +2078,69 @@ public class RATGenerator {
      * @return an {@link ImageIcon} for the specified faction, or {@code null} if the logo file does not exist
      */
     public static @Nullable ImageIcon getFactionLogo(int gameYear, String factionCode, Color tintColor) {
-        final String filename = getFactionLogoAddress(gameYear, factionCode);
-        File file = new File(filename);
-        if (file.exists()) {
-            ImageIcon icon = new ImageIcon(filename);
+        File file = getFactionLogoFile(gameYear, factionCode);
+        if (file.isFile()) {
+            ImageIcon icon = new ImageIcon(file.getPath());
             icon = addTintToImageIcon(icon.getImage(), tintColor);
             return icon;
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns the file holding a faction's logo for the given year. A logo in the user directory takes precedence over
+     * the installed one, so custom factions in the user directory can bring their own icons and installed icons can be
+     * replaced. When the faction's dedicated logo is found in neither place, the generic logo of
+     * {@link #getGenericFactionLogoFile(String)} is used.
+     *
+     * @param gameYear    the year in the game context, potentially affecting logo selection for some factions
+     * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     *
+     * @return the faction's logo file; it does not exist if neither the dedicated nor the generic logo was found
+     */
+    public static File getFactionLogoFile(int gameYear, String factionCode) {
+        String canonicalAddress = getCanonicalFactionLogoAddress(gameYear, factionCode);
+        if (canonicalAddress != null) {
+            File file = findFactionLogoFile(canonicalAddress);
+            if (file != null) {
+                return file;
+            }
+            LOGGER.warn("Could not find the faction icon {} of {}, using the generic logo", canonicalAddress,
+                  factionCode);
+        }
+        return getGenericFactionLogoFile(factionCode);
+    }
+
+    /**
+     * Returns the file holding the generic logo used for factions without a dedicated one: the generic Clan logo for
+     * Clan factions, or the mercenary logo otherwise. A logo in the user directory takes precedence over the installed
+     * one.
+     *
+     * @param factionCode the code identifying the faction (e.g., "FS" for Federated Suns)
+     *
+     * @return the generic logo file; it does not exist if the logo was found in neither place
+     */
+    public static File getGenericFactionLogoFile(String factionCode) {
+        String genericAddress = getGenericFactionLogoAddress(factionCode);
+        File file = findFactionLogoFile(genericAddress);
+        return (file == null) ? new File(genericAddress) : file;
+    }
+
+    /**
+     * @return the logo file at the given relative address in the user directory if it exists there, else the
+     *       installed one if that exists, else {@code null}
+     */
+    private static @Nullable File findFactionLogoFile(String address) {
+        String userDir = PreferenceManager.getClientPreferences().getUserDir();
+        if ((userDir != null) && !userDir.isBlank()) {
+            File userFile = new File(userDir, address);
+            if (userFile.isFile()) {
+                return userFile;
+            }
+        }
+        File file = new File(address);
+        return file.isFile() ? file : null;
     }
 
     /**
@@ -2101,9 +2156,10 @@ public class RATGenerator {
      */
     public static String getFactionLogoAddress(int gameYear, String factionCode) {
         String canonicalAddress = getCanonicalFactionLogoAddress(gameYear, factionCode);
-        if (canonicalAddress != null) {
-            return canonicalAddress;
-        }
+        return (canonicalAddress == null) ? getGenericFactionLogoAddress(factionCode) : canonicalAddress;
+    }
+
+    private static String getGenericFactionLogoAddress(String factionCode) {
         boolean isClan = Factions2.getInstance().getFaction(factionCode)
                                .map(Faction2::isClan)
                                .orElseGet(() -> Faction.fromAbbr(factionCode).isClan());

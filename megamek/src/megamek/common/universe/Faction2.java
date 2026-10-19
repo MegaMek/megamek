@@ -39,7 +39,6 @@ import java.util.*;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -72,10 +71,8 @@ import megamek.client.ratgenerator.FactionRecord;
  * avoid repetition.
  */
 @SuppressWarnings("unused") // Class fields are assigned when factions are loaded from YAML files
-// Faction logos were replaced by icons; older faction files (e.g. in a user dir) may still contain them
-@JsonIgnoreProperties({ "logo", "logoChanges" })
 @JsonPropertyOrder({ "key", "name", "sucsCodes", "nameChanges", "aliases", "capital", "capitalChanges", "yearsActive", "successor",
-                     "tags", "color", "icon", "iconChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
+                     "tags", "color", "icon", "iconChanges", "logo", "logoChanges", "background", "backgroundChanges", "camos", "camosChanges", "nameGenerator", "eraMods",
                      "ratingLevels", "fallBackFactions", "preInvasionHonorRating", "postInvasionHonorRating",
                      "formationBaseSize", "formationGrouping", "rankSystem", "factionLeaders", "usesMercenaries",
                      "aresConventionsSignatory", "subunits" })
@@ -97,6 +94,14 @@ public class Faction2 {
     private final Color color = Color.LIGHT_GRAY;
     private String icon;
     private final NavigableMap<Integer, String> iconChanges = new TreeMap<>();
+
+    // Faction logos were replaced by icons; older faction files (e.g. in a user dir) may still contain them
+    @JsonProperty("logo")
+    private String legacyLogo;
+
+    @JsonProperty("logoChanges")
+    private final NavigableMap<Integer, String> legacyLogoChanges = new TreeMap<>();
+
     private String background;
     private final NavigableMap<Integer, String> backgroundChanges = new TreeMap<>();
 
@@ -292,6 +297,21 @@ public class Faction2 {
 
     public NavigableMap<Integer, String> getIconChanges() {
         return iconChanges;
+    }
+
+    /**
+     * Returns the faction's legacy logo for the given year, honoring any era-based logo changes. Legacy logos predate
+     * {@link #getIcon(int) icons} and are only read so that older faction files (e.g. custom factions in a user dir)
+     * keep working. Unlike icons, they are paths relative to MekHQ's formation icon logo directory
+     * ({@code data/images/force/Pieces/Logos/}).
+     *
+     * @param year the game year to resolve the logo for
+     *
+     * @return the era-appropriate legacy logo path, or {@code null} if the faction has none
+     */
+    public @Nullable String getLegacyLogo(int year) {
+        final Map.Entry<Integer, String> logoByYear = legacyLogoChanges.floorEntry(year);
+        return (logoByYear == null) ? legacyLogo : logoByYear.getValue();
     }
 
     public int[] getEraMods() {

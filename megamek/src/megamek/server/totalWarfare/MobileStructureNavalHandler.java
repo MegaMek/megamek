@@ -310,7 +310,8 @@ final class MobileStructureNavalHandler extends AbstractTWRuleHandler {
         } else if (rider instanceof Infantry) {
             reports.addAll(gameManager.damageEntity(rider, new HitData(megamek.common.units.ConvInfantry.LOC_INFANTRY), 5));
         } else if (vtol && rider instanceof Tank tank) {
-            reports.addAll(gameManager.crashVTOLorWiGE(tank, false, false, 1, source, elevation, Compute.d6() % 4));
+            reports.addAll(new AirborneVehicleCrashHandler(gameManager).crashVTOLorWiGE(tank, false, false, 1, source,
+                  elevation, Compute.d6() % 4));
         } else if (vtol && rider.isAero()) {
             reports.addAll(gameManager.processCrash(rider, 1, source));
         } else {

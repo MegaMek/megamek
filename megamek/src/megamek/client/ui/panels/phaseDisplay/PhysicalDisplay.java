@@ -48,6 +48,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -65,7 +66,6 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -664,6 +664,7 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
             String title = Messages.getString("HonorNag.title");
             String body = dishonorWarning;
             if (checkNagForDishonor(title, body)) {
+                takeBackDeclinedAttack();
                 return true;
             }
             // Player accepted; remember it so the rest of this turn isn't re-warned before the bot's report arrives.
@@ -671,6 +672,18 @@ public class PhysicalDisplay extends AttackPhaseDisplay {
         }
 
         return currentEntity() == null;
+    }
+
+    /**
+     * Undoes an attack the player declined at the honor warning. Declaring an attack greys out every button before the
+     * warning appears, so the attack is cleared and Done and Next are switched back on; otherwise the player is left
+     * with the attack still queued and nothing to click.
+     */
+    private void takeBackDeclinedAttack() {
+        logger.debug("[HonorNag] Player declined the honor warning; clearing the declared attack");
+        clear();
+        setNextEnabled(true);
+        butDone.setEnabled(true);
     }
 
     @Override

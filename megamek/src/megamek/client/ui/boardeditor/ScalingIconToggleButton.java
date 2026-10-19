@@ -37,8 +37,8 @@ import java.util.Objects;
 import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.ImageUtil;
 
 /**

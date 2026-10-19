@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -55,7 +55,8 @@ public enum MoveCommand implements StatusBarPhaseDisplay.PhaseCommand {
               MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_INF | MovementDisplay.CMD_PROTOMEK),
     MOVE_BACK_UP("moveBackUp",
                  MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK | MovementDisplay.CMD_VTOL | MovementDisplay.CMD_PROTOMEK),
-    MOVE_GET_UP("moveGetUp", MovementDisplay.CMD_MEK),
+    // A LAM in AirMek mode that crashes lands prone and stands up as a Mek (IO:AE p.108), issue #9046
+    MOVE_GET_UP("moveGetUp", MovementDisplay.CMD_MEK | MovementDisplay.CMD_AIR_MEK),
     MOVE_FORWARD_INI("moveForwardIni", MovementDisplay.CMD_ALL),
     MOVE_CHARGE("moveCharge", MovementDisplay.CMD_MEK | MovementDisplay.CMD_TANK),
     MOVE_DFA("moveDFA", MovementDisplay.CMD_MEK),

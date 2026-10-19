@@ -1444,7 +1444,7 @@ public class CustomMekDialog extends AbstractButtonDialog
         }
 
         chHidden.removeActionListener(this);
-        boolean enableHidden = !(entity instanceof Dropship) && !entity.isAirborne() && !entity.isAirborneVTOLorWIGE();
+        boolean enableHidden = entity.canHide();
         labHidden.setEnabled(enableHidden);
         chHidden.setEnabled(enableHidden);
         chHidden.addActionListener(this);

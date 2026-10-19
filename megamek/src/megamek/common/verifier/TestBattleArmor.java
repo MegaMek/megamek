@@ -41,8 +41,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.ArmorType;

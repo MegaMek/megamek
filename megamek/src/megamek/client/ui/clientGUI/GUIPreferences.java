@@ -48,11 +48,11 @@ import java.util.StringJoiner;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.LabelDisplayStyle;
 import megamek.client.ui.util.PlayerColour;
 import megamek.common.Configuration;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.WeaponSortOrder;
 import megamek.common.equipment.SensorFamily;
 import megamek.common.preference.IPreferenceStore;
@@ -167,6 +167,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String PLAYERS_REMAINING_TO_SHOW = "PlayersRemainingToShow";
     public static final String BUTTONS_PER_ROW = "ButtonsPerRow";
     public static final String DOCK_ON_LEFT = "DockOnLeft";
+    public static final String EXPAND_OPTION_SECTIONS = "ExpandOptionSections";
     public static final String DOCK_MULTIPLE_ON_Y_AXIS = "DockMultipleOnYAxis";
     public static final String USE_CAMO_OVERLAY = "UseCamoOverlay";
 
@@ -424,6 +425,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SOUND_MUTE_CHAT = "SoundMuteChat";
     public static final String SOUND_MUTE_MY_TURN = "SoundMuteMyTurn";
     public static final String SOUND_MUTE_OTHERS_TURN = "SoundMuteOthersTurn";
+    public static final String SOUND_PROMPT_SUPPRESS = "SoundPrompt";
     public static final String TOOLTIP_DELAY = "TooltipDelay";
     public static final String TOOLTIP_DISMISS_DELAY = "TooltipDismissDelay";
     public static final String TOOLTIP_DIST_SUPPRESSION = "TooltipDistSuppression";
@@ -481,6 +483,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String SUMMARY_FONT = "SummaryCardFont";
 
     public static final String BOT_COMMANDS_ENABLED = "BotCommandsEnabled";
+    public static final String BOT_COMMANDS_PAUSE_AT_START = "BotCommandsPauseAtStart";
     public static final String BOT_COMMANDS_LOCATION = "BotCommandsLocation";
     public static final String BOT_COMMANDS_POS_X = "BotCommandsPosX";
     public static final String BOT_COMMANDS_POS_Y = "BotCommandsPosY";
@@ -696,6 +699,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BUTTONS_PER_ROW, 12);
 
         setDefault(DOCK_ON_LEFT, true);
+        store.setDefault(EXPAND_OPTION_SECTIONS, true);
         setDefault(DOCK_MULTIPLE_ON_Y_AXIS, true);
         setDefault(USE_CAMO_OVERLAY, true);
 
@@ -734,6 +738,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_AUTO_DISPLAY_NON_REPORT_PHASE, 2);
         store.setDefault(BOT_COMMANDS_ENABLED, true);
+        store.setDefault(BOT_COMMANDS_PAUSE_AT_START, true);
         store.setDefault(FORCE_DISPLAY_SIZE_HEIGHT, 500);
         store.setDefault(FORCE_DISPLAY_SIZE_WIDTH, 300);
         store.setDefault(FORCE_DISPLAY_BTN_ID, true);
@@ -960,6 +965,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setDefault(SOUND_MUTE_CHAT, true);
         store.setDefault(SOUND_MUTE_MY_TURN, false);
         store.setDefault(SOUND_MUTE_OTHERS_TURN, true);
+        store.setDefault(SOUND_PROMPT_SUPPRESS, false);
 
         store.setDefault(TOOLTIP_DELAY, 1000);
         store.setDefault(TOOLTIP_DISMISS_DELAY, -1);
@@ -2812,6 +2818,24 @@ public class GUIPreferences extends PreferenceStoreProxy {
         store.setValue(SOUND_MUTE_MY_TURN, state);
     }
 
+    /**
+     * Should we prompt for turn sounds?
+     *
+     * @param state enable or disable prompting
+     */
+    public void setSoundPromptSuppress(boolean state) {
+        store.setValue(SOUND_PROMPT_SUPPRESS, state);
+    }
+
+    /**
+     * Are we prompting?
+     *
+     * @return the value of SOUND_PROMPT
+     */
+    public boolean getSoundPromptSuppress() {
+        return store.getBoolean(SOUND_PROMPT_SUPPRESS);
+    }
+
     public void setSoundMuteOthersTurn(boolean state) {
         store.setValue(SOUND_MUTE_OTHERS_TURN, state);
     }
@@ -3471,6 +3495,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
         return getBoolean(DOCK_ON_LEFT);
     }
 
+    public boolean getExpandOptionSections() {
+        return getBoolean(EXPAND_OPTION_SECTIONS);
+    }
+
     public boolean getDockMultipleOnYAxis() {
         return getBoolean(DOCK_MULTIPLE_ON_Y_AXIS);
     }
@@ -3485,6 +3513,21 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public boolean getBotCommandsEnabled() {
         return getBoolean(BOT_COMMANDS_ENABLED);
+    }
+
+    /**
+     * @return {@code true} if a game only bots have units in, watched by a player, starts paused so the player can
+     *       give the bots orders first
+     */
+    public boolean getBotCommandsPauseAtStart() {
+        return getBoolean(BOT_COMMANDS_PAUSE_AT_START);
+    }
+
+    /**
+     * @param state {@code true} to start a watched bots-only game paused
+     */
+    public void setBotCommandsPauseAtStart(boolean state) {
+        store.setValue(BOT_COMMANDS_PAUSE_AT_START, state);
     }
 
     /**
@@ -3778,6 +3821,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     public void setDockOnLeft(Boolean state) {
         store.setValue(DOCK_ON_LEFT, state);
+    }
+
+    public void setExpandOptionSections(boolean expanded) {
+        store.setValue(EXPAND_OPTION_SECTIONS, expanded);
     }
 
     public void setDockMultipleOnYAxis(Boolean state) {

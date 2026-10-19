@@ -34,7 +34,7 @@ package megamek.common.rules.totalwarfare;
  */
 
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
@@ -59,7 +59,7 @@ public class TWRulesMovement extends RulesMovement {
     }
 
     /**
-     * Can a unit use run / flank MP in water. Vehicles and mechs cannot
+     * Can a unit use run / flank MP in water. Vehicles and 'Meks cannot
      *
      * @param movementMode the movement mode of the unit
      * @param amphibious   true if the unit is amphibious

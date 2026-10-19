@@ -32,7 +32,7 @@
  */
 package megamek.client.ratgenerator;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * What a player chose when they generated a force: the faction and command it was rolled for, the

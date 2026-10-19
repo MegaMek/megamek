@@ -39,6 +39,7 @@ import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;
 import megamek.common.pathfinder.CachedEntityState;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.QuadVee;
 
 /**
@@ -64,7 +65,13 @@ class ConvertModeStep implements PhasePass {
         } else {
             moveStep.setMp(0);
         }
-        moveStep.setMovementMode(entity.nextConversionMode(prev.getMovementMode()));
+        EntityMovementMode newMode = entity.nextConversionMode(prev.getMovementMode());
+        moveStep.setMovementMode(newMode);
+        // For WiGE movement, climb mode means Keep Elevation (+2 MP per hex, TW p.55). A LAM that converts to
+        // AirMek starts it off, as a WiGE does at the start of its movement (see ClimbingHelper.getDefaultClimbMode).
+        if (newMode == EntityMovementMode.WIGE) {
+            moveStep.setClimbMode(false);
+        }
         return PhasePassResult.BREAK;
     }
 }

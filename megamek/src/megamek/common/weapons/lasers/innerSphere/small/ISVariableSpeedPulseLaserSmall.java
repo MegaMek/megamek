@@ -36,8 +36,8 @@ package megamek.common.weapons.lasers.innerSphere.small;
 
 import java.io.Serial;
 
-import megamek.common.SourceBookCode;
 import megamek.common.SimpleTechLevel;
+import megamek.common.SourceBookCode;
 import megamek.common.alphaStrike.AlphaStrikeElement;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Faction;
@@ -86,7 +86,7 @@ public class ISVariableSpeedPulseLaserSmall extends VariableSpeedPulseLaserWeapo
               rulesRef(SourceBookCode.BMM, 101),
               rulesRef(SourceBookCode.CORE, 185)
         );
-        //Nov 22 - CGL requested we move to Standard for Simple Tech Level 
+        //Nov 22 - CGL requested we move to Standard for Simple Tech Level
         techAdvancement.setTechBase(TechBase.IS).setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.E, AvailabilityValue.D)
               .setISAdvancement(3070, 3072, 3080).setPrototypeFactions(Faction.FW, Faction.WB)

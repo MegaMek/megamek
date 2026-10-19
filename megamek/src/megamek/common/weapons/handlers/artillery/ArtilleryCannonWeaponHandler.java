@@ -241,7 +241,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                 } else {
                     radius = 1;
                 }
-                gameManager.deliverArtilleryFlare(targetPos, radius);
+                gameManager.deliverArtilleryFlare(targetPos, target.getBoardId(), radius);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_DAVY_CROCKETT_M)) {
                 gameManager.drawNukeHitOnBoard(targetPos);

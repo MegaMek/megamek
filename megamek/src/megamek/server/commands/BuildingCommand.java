@@ -35,8 +35,8 @@ package megamek.server.commands;
 
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.BasementType;
 import megamek.server.Server;

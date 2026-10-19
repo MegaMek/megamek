@@ -238,15 +238,14 @@ class ConnectionDisconnectLockTest {
 
         @Override
         protected int getSendBufferSize() {
-            // Keep complete test packets buffered so the failure happens in DataStreamConnection.flush.
+            // Keep complete test packets buffered so the failure happens when the output stream is flushed.
             return 65536;
         }
 
         @Override
-        public void flush() {
-            if (flushEnabled) {
-                super.flush();
-            }
+        protected boolean sendQueuedPackets() {
+            // Both send and flush drain the queue here; while disabled, packets stay queued.
+            return !flushEnabled || super.sendQueuedPackets();
         }
     }
 
@@ -270,15 +269,14 @@ class ConnectionDisconnectLockTest {
 
         @Override
         protected void processPacket(SendPacket packet) {
-            // sendNow swallows writer errors; fail processing itself to reach AbstractConnection.flush's catch.
+            // sendNow swallows writer errors; fail processing itself to reach the queue drain's catch.
             throw new IllegalStateException("Failed test packet processor");
         }
 
         @Override
-        public void flush() {
-            if (flushEnabled) {
-                super.flush();
-            }
+        protected boolean sendQueuedPackets() {
+            // Both send and flush drain the queue here; while disabled, packets stay queued.
+            return !flushEnabled || super.sendQueuedPackets();
         }
     }
 }

@@ -49,10 +49,10 @@ import javax.swing.JToggleButton;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.border.EmptyBorder;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.units.Entity;
-import megamek.common.annotations.Nullable;
 
 /** A dialog to display the cost calculation for a given entity. */
 public class CostDisplayDialog extends AbstractDialog {

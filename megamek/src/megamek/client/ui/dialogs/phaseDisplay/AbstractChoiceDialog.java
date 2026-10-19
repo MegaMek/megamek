@@ -46,10 +46,10 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.dialogs.buttonDialogs.AbstractButtonDialog;
 import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 
 /**
  * A modal dialog for presenting options as buttons. Can do single or multi-selection. Subclasses should define methods

@@ -45,11 +45,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -404,6 +404,22 @@ public class AreaEffectHelper {
     }
 
     /**
+     * Returns whether artillery flak can damage this unit. Flak hits "airborne ground units (VTOL Vehicles, WiGEs and
+     * units expending VTOL MPs such as infantry) as well as airborne aerospace units" (TO:AR p.153). A LAM in AirMek
+     * mode flies as a WiGE, so it counts. A ground unit making an atmospheric drop is at altitude and is attacked like an
+     * airborne unit, so it counts too. Whether the unit is at the elevation the flak burst at is checked separately.
+     *
+     * @param entity the unit caught in the flak burst
+     *
+     * @return {@code true} if flak can damage the unit
+     */
+    static boolean isFlakTarget(Entity entity) {
+        boolean isVtol = (entity instanceof VTOL) || (entity.getMovementMode() == EntityMovementMode.VTOL);
+        boolean isAirborneGroundUnit = entity.isAirborneVTOLorWIGE();
+        return isVtol || isAirborneGroundUnit || entity.isAero() || entity.isDropping();
+    }
+
+    /**
      * Worker function that does artillery damage to an entity. Extracted from Server.artilleryDamageHex()
      *
      * @param entity         The entity to damage
@@ -479,10 +495,9 @@ public class AreaEffectHelper {
         // Flak should only hit VTOLs or similar craft.
         // Correct elevation/altitude checks should happen elsewhere
         if (flak) {
-            // Check: is entity not a VTOL in flight or an ASF
-            if (!((entity instanceof VTOL)
-                  || (entity.getMovementMode() == EntityMovementMode.VTOL)
-                  || entity.isAero())) {
+            if (!isFlakTarget(entity)) {
+                logger.debug("[Flak] {}: not an airborne ground or aerospace unit, flak does no damage",
+                      entity.getShortName());
                 return;
             }
             // "Altitude" here is either true Altitude (Aerospace) or objective levels from 0;

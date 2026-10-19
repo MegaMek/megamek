@@ -137,8 +137,14 @@ public final class MobileStructureCargoRules {
             return List.of();
         }
         Bay bay = carrier.getBay(passenger);
-        if (bay == null || BuildingBayDoors.usableDoors(carrier, bay, pose.position(), pose.facing())
-              <= bay.getNumberUnloadedThisTurn()) {
+        if (bay == null) {
+            return List.of();
+        }
+        // Infantry is not limited by the doors already used this turn (TW pp. 223 - 225), as in InfantryBay and
+        // CargoBay, but still needs a usable door to leave by.
+        boolean isLimitedByDoorsUsedThisTurn = !(passenger instanceof Infantry);
+        int doorsUsedThisTurn = isLimitedByDoorsUsedThisTurn ? bay.getNumberUnloadedThisTurn() : 0;
+        if (BuildingBayDoors.usableDoors(carrier, bay, pose.position(), pose.facing()) <= doorsUsedThisTurn) {
             return List.of();
         }
         var board = carrier.getGame().getBoard(carrier);

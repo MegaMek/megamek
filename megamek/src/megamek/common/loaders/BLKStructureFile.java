@@ -191,6 +191,9 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
                 be.initializeArmor(armor, loc);
 
                 String equipmentBlockName = be.getConstructionLocationName(loc);
+                if (isAboveHexHeight(be, coords, floor, equipmentBlockName)) {
+                    continue;
+                }
                 loadEquipment(be, equipmentBlockName, loc);
             }
         }
@@ -205,6 +208,29 @@ public class BLKStructureFile extends BLKFile implements IMekLoader {
 
 
         return be;
+    }
+
+    /**
+     * A mobile structure hex can be shorter than the structure (hex_heights). Its locations still exist for every level
+     * of the structure, but the levels above the hex are not part of it and cannot hold equipment.
+     *
+     * @param building           the building being loaded
+     * @param hex                the hex of the location
+     * @param floor              the level of the location within the structure
+     * @param equipmentBlockName the name of the location's equipment block
+     *
+     * @return {@code true} if this level is above the hex's own height, so its equipment must not be loaded
+     */
+    private boolean isAboveHexHeight(AbstractBuildingEntity building, CubeCoords hex, int floor,
+          String equipmentBlockName) {
+        if (floor < building.getInternalBuilding().getHeight(hex)) {
+            return false;
+        }
+        if (dataFile.exists(equipmentBlockName)) {
+            LOGGER.warn("[BuildingLoad] {}: equipment block {} ignored - level {} is above this hex's height of {}",
+                  building.getShortName(), equipmentBlockName, floor, building.getInternalBuilding().getHeight(hex));
+        }
+        return true;
     }
 
     /**

@@ -32,30 +32,20 @@
  */
 package megamek.client.ui.dialogs.unitSelectorDialogs;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
-import java.awt.TexturePaint;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.JPanel;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.common.analysis.DamageProfile;
 import megamek.common.analysis.DamageProfile.ArcSummary;
-import megamek.common.annotations.Nullable;
 import megamek.common.units.Entity;
 
 /**

@@ -46,11 +46,11 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.converters.collections.CollectionConverter;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
 import megamek.common.RulesRef;
 import megamek.common.SourceBookCode;
 import megamek.common.TargetRollModifier;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;
@@ -76,6 +76,10 @@ import megamek.common.units.IBuilding;
 import megamek.common.units.InfantryMount;
 import megamek.common.units.Mek;
 import megamek.common.weapons.handlers.AttackHandler;
+import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMHeavyWeapon;
+import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMLightWeapon;
+import megamek.common.weapons.infantry.support.srm.InfantrySupportSRMStandardWeapon;
+import megamek.common.weapons.infantry.support.srm.WithdrawnInfernoSrmLaunchers;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryCondition;
 import megamek.server.victory.VictoryPointTracker;
@@ -182,6 +186,14 @@ public class SerializationHelper {
         // they are explicitly omitted to keep those saves loading.
         xStream.omitField(Mek.class, "sinksOn");
         xStream.omitField(Mek.class, "sinksOnNextRound");
+
+        // The conventional infantry Inferno SRM launchers were withdrawn by the TechManual pp. 350-352 errata. A
+        // platoon serializes its weapons inline, so older saves still name the deleted classes. Read them as the
+        // plain launchers; ConvInfantry.restore() then swaps in the registered weapon and keeps the platoon on
+        // Inferno munitions.
+        xStream.alias(WithdrawnInfernoSrmLaunchers.STANDARD_LAUNCHER_CLASS, InfantrySupportSRMStandardWeapon.class);
+        xStream.alias(WithdrawnInfernoSrmLaunchers.LIGHT_LAUNCHER_CLASS, InfantrySupportSRMLightWeapon.class);
+        xStream.alias(WithdrawnInfernoSrmLaunchers.HEAVY_LAUNCHER_CLASS, InfantrySupportSRMHeavyWeapon.class);
         xStream.aliasField("pendingCharges", Game.class, "pendingDisplacementAttacks");
         xStream.aliasField("pilotRolls", Game.class, "pilotingRolls");
 

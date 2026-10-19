@@ -34,20 +34,20 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import megamek.codeUtilities.MathUtility;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
+import javax.swing.*;
+
 import megamek.client.ratgenerator.GenerationContext;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.CloseAction;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.models.UnitTableModel;
 import megamek.client.ui.util.UIUtil;
+import megamek.codeUtilities.MathUtility;
 import megamek.common.loaders.MekSummary;
 import megamek.common.options.GameOptions;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
 
 /**
  * This class is the framework for the random army dialog that is most prominently used in MM's lobby. Subclasses of it

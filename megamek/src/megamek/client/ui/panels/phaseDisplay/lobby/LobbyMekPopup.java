@@ -44,6 +44,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,10 @@ import javax.swing.KeyStroke;
 
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
+import megamek.client.ui.dialogs.BotCommands.BotFormationsMenuBuilder;
+import megamek.client.ui.dialogs.BotCommands.BotOrderFacingDialog;
 import megamek.client.ui.dialogs.iconChooser.CamoChooserDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.tileset.EntityImage;
 import megamek.client.ui.tileset.MMStaticDirectoryManager;
 import megamek.client.ui.util.MenuScroller;
@@ -78,7 +82,10 @@ import megamek.common.game.Game;
 import megamek.common.icons.Camouflage;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.UnitOrderAction;
+import megamek.common.orders.UnitOrders;
 import megamek.common.preference.PreferenceManager;
+import megamek.common.rules.SettableHeat;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityWeightClass;
@@ -87,6 +94,7 @@ import megamek.common.units.Jumpship;
 import megamek.common.units.ProtoMek;
 import megamek.common.util.C3Util;
 import megamek.logging.MMLogger;
+import megamek.server.commands.UnitOrderCommand;
 
 /**
  * Creates the Lobby Mek right-click pop-up menu for both the sortable table and the force tree.
@@ -165,6 +173,11 @@ class LobbyMekPopup {
     private static final String NO_INFO = "|-1";
 
     static final String LMP_UNLOAD_ALL_FROM_BAY = "UNLOADALLFROMBAY";
+
+    /** Heat values listed directly in the heat menu; higher values sit in its "More heat" submenu. */
+    private static final int HEAT_WITHOUT_SUBMENU = 10;
+    /** How many heat values each group of the "More heat" submenu holds. */
+    private static final int HEAT_GROUP_SIZE = 10;
 
     static ScalingPopup getPopup(List<Entity> entities, List<Force> forces, ActionListener listener,
           ChatLounge lobby) {
@@ -323,6 +336,10 @@ class LobbyMekPopup {
 
         popup.add(c3Menu(hasJoinedEntities, joinedEntities, clientGui, listener));
         popup.add(forceMenu(lobby, entities, forces, listener));
+        if (lobby.isForceView() && (forces.size() == 1)) {
+            addBotFormationMenu(popup, lobby, forces.getFirst());
+        }
+        addBotFacingItem(popup, clientGui, joinedEntities);
 
         popup.add(ScalingPopup.spacer());
         popup.add(menuItem("View AlphaStrike Stats", LMP_ALPHA_STRIKE + NO_INFO + seIds, true, listener));
@@ -341,6 +358,74 @@ class LobbyMekPopup {
               !entities.isEmpty() || !forces.isEmpty(), listener, KeyEvent.VK_D));
 
         return popup;
+    }
+
+    /**
+     * Adds the Formation and Role menus for a lance with a bot's units in it, so they start the game in formation and
+     * knowing their job. Only the bot's units are ordered; a player's own units in the lance are left alone.
+     */
+    private static void addBotFormationMenu(ScalingPopup popup, ChatLounge lobby, Force force) {
+        // decided by who owns the units, not the force: a lance a player builds and then hands to a bot still belongs
+        // to the player, and a lance may mix the player's units with the bot's (HammerGS, 2026-10-02)
+        Player owner = null;
+        List<Integer> unitIds = new ArrayList<>();
+        for (int unitId : force.getEntities()) {
+            Entity unit = lobby.game().getEntity(unitId);
+            if ((unit == null) || (unit.getOwner() == null) || !unit.getOwner().isBot()) {
+                continue;
+            }
+            if (owner == null) {
+                owner = unit.getOwner();
+            }
+            if (unit.getOwner().getId() == owner.getId()) {
+                unitIds.add(unitId);
+            }
+        }
+        if (owner == null) {
+            logger.info("[BotOrders] lobby menus for {}: no Formation or Role, none of its own units is a bot's",
+                  force.getName());
+            return;
+        }
+        logger.info("[BotOrders] lobby menus for {}: Formation and Role for {} unit(s) of {} ({} in the lance)",
+              force.getName(), unitIds.size(), owner.getName(), force.getEntities().size());
+        popup.add(BotFormationsMenuBuilder.lobbyFormationMenu(lobby.getClientGUI().getClient(), force, unitIds));
+        popup.add(BotFormationsMenuBuilder.lobbyRoleMenu(lobby.getClientGUI().getClient(),
+              lobby.getClientGUI().getFrame(), lobby.game(), owner, force, unitIds));
+    }
+
+    /**
+     * Adds a Bot facing item for units owned by a bot. It opens the turret-style facing dialog: the "when stopped"
+     * facing is the one each unit deploys in and holds whenever it stops, the "while moving" one it keeps on the move.
+     * Auto leaves the choice to the bot, which deploys facing the enemy's deployment zone.
+     */
+    private static void addBotFacingItem(ScalingPopup popup, ClientGUI clientGui, Collection<Entity> selectedUnits) {
+        if (selectedUnits.isEmpty()) {
+            return;
+        }
+        List<Entity> units = new ArrayList<>(selectedUnits);
+        units.sort(Comparator.comparingInt(Entity::getId));
+        for (Entity unit : units) {
+            if ((unit.getOwner() == null) || !unit.getOwner().isBot()) {
+                return;
+            }
+        }
+        JMenuItem item = new JMenuItem(Messages.getString("BotCommandPanel.Orders.lobbyFacing"));
+        item.addActionListener(event -> {
+            UnitOrders firstOrders = units.getFirst().getUnitOrders();
+            BotOrderFacingDialog dialog = new BotOrderFacingDialog(clientGui.getFrame(), clientGui, units.getFirst(),
+                  firstOrders.getFacingWhileMoving(), firstOrders.getFacingWhenStopped());
+            if (dialog.showDialog() != DialogResult.CONFIRMED) {
+                return;
+            }
+            for (Entity unit : units) {
+                clientGui.getClient().sendChat(UnitOrderCommand.commandText(unit.getId(), UnitOrderAction.FACING,
+                      UnitOrderCommand.FACING_WHILE_MOVING + '=' + dialog.getFacingWhileMoving(),
+                      UnitOrderCommand.FACING_WHEN_STOPPED + '=' + dialog.getFacingWhenStopped()));
+            }
+            logger.info("[BotOrders] lobby facing: moving {}, stopped {} for {} unit(s)",
+                  dialog.getFacingWhileMoving(), dialog.getFacingWhenStopped(), units.size());
+        });
+        popup.add(item);
     }
 
     /**
@@ -598,6 +683,43 @@ class LobbyMekPopup {
     }
 
     /**
+     * Returns the "Heat at start" submenu. It reaches the top of the heat scale in play plus the dissipation of the
+     * selected unit that sinks the most, since the first Heat Phase takes the dissipation off before it checks heat
+     * effects (see {@link SettableHeat}). Heat past 10 is grouped by tens so the long range stays easy to scan.
+     *
+     * @param game     the game in the lobby
+     * @param listener the popup's listener
+     * @param entities the selected units, which all get the chosen heat
+     * @param eIds     the selected units' command token
+     *
+     * @return the submenu
+     */
+    private static JMenu heatMenu(Game game, ActionListener listener, Collection<Entity> entities, String eIds) {
+        int maximumHeat = SettableHeat.maximum(game, entities);
+        JMenu heatMenu = new JMenu(Messages.getString("ChatLounge.heat.menu"));
+        heatMenu.add(menuItem(Messages.getString("ChatLounge.heat.none"), LMP_HEAT + "|0" + eIds, true, listener));
+        for (int heat = 1; heat <= HEAT_WITHOUT_SUBMENU; heat++) {
+            heatMenu.add(heatItem(heat, eIds, listener));
+        }
+        JMenu moreHeatMenu = new JMenu(Messages.getString("ChatLounge.heat.more"));
+        for (int groupStart = HEAT_WITHOUT_SUBMENU + 1; groupStart <= maximumHeat; groupStart += HEAT_GROUP_SIZE) {
+            int groupEnd = Math.min(groupStart + HEAT_GROUP_SIZE - 1, maximumHeat);
+            JMenu groupMenu = new JMenu(Messages.getString("ChatLounge.heat.range", groupStart, groupEnd));
+            for (int heat = groupStart; heat <= groupEnd; heat++) {
+                groupMenu.add(heatItem(heat, eIds, listener));
+            }
+            moreHeatMenu.add(groupMenu);
+        }
+        heatMenu.add(moreHeatMenu);
+        return heatMenu;
+    }
+
+    private static JMenuItem heatItem(int heat, String eIds, ActionListener listener) {
+        return menuItem(Messages.getString("ChatLounge.heat.value", heat), LMP_HEAT + "|" + heat + eIds, true,
+              listener);
+    }
+
+    /**
      * Returns true when the loader can load all the given entities (under lobby conditions).
      */
     private static boolean canLoadAll(Entity loader, Collection<Entity> entities) {
@@ -665,18 +787,7 @@ class LobbyMekPopup {
             }
             menu.add(ScalingPopup.spacer());
 
-            // Heat
-            JMenu heatMenu = new JMenu("Heat at start");
-            heatMenu.add(menuItem("No heat", LMP_HEAT + "|0" + eIds, true, listener));
-            for (int i = 1; i < 11; i++) {
-                heatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, true, listener));
-            }
-            JMenu subHeatMenu = new JMenu("More heat");
-            for (int i = 11; i < 41; i++) {
-                subHeatMenu.add(menuItem("Heat " + i, LMP_HEAT + "|" + i + eIds, true, listener));
-            }
-            heatMenu.add(subHeatMenu);
-            menu.add(heatMenu);
+            menu.add(heatMenu(clientGui.getClient().getGame(), listener, entities, eIds));
             menu.add(ScalingPopup.spacer());
 
             // Late deployment

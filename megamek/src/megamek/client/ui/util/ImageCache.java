@@ -37,7 +37,7 @@ package megamek.client.ui.util;
 
 import java.util.Hashtable;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * An ImageCache that keeps a Hashtable of mapped keys and values.

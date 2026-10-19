@@ -32,10 +32,10 @@ package megamek.common.rules;
  * affiliated with Microsoft.
  */
 
+import jakarta.annotation.Nullable;
 import megamek.common.HitData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.equipment.Mounted;
 import megamek.common.game.Game;

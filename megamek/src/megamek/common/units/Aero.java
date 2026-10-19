@@ -2697,12 +2697,12 @@ public abstract class Aero extends Entity implements IAero, IBomber, ActiveHeatS
     @Override
     public boolean canSpot() {
         // per a recent ruling on the official forums, aero units can't spot
-        // for indirect LRM fire, unless they have a recon cam, an infrared or
-        // hyperspace imager, or a high-res imager and it's not night
+        // for indirect LRM fire, unless they have an infrared or hyperspectral
+        // imager, or a high-res imager and it's not night. A Recon Camera spots
+        // through its own roll instead (ReconCameraRules, TO:AUE p.150)
         boolean hiresLighted = hasWorkingMisc(MiscType.F_HIRES_IMAGER) &&
               game.getPlanetaryConditions().getLight().isDayOrDusk();
         return !isAirborne() ||
-              hasWorkingMisc(MiscType.F_RECON_CAMERA) ||
               hasWorkingMisc(MiscType.F_INFRARED_IMAGER) ||
               hasWorkingMisc(MiscType.F_HYPERSPECTRAL_IMAGER) ||
               hiresLighted;

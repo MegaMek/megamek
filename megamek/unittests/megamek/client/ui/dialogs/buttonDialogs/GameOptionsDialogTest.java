@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
-import java.lang.reflect.InvocationTargetException;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;

@@ -39,6 +39,7 @@ import static megamek.common.bays.Bay.UNSET_BAY;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.panels.phaseDisplay.MovementDisplay;
@@ -58,7 +59,6 @@ import megamek.common.actions.ClearMinefieldAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.UnjamAction;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.bays.Bay;
 import megamek.common.board.Board;
@@ -307,8 +307,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
     }
 
     void processMovement() {
-        // Do the deployment first, if using Walk-on-deployment. avoids future issues
-        if (md.contains(MoveStepType.DEPLOY) && Game.rulesManager.getRulesGame().isWalkOnDeployment()) {
+        // Do the deployment first, avoids future issues
+        // Since the step DEPLOY is only used by WoD, just process if it has it.
+        if (md.contains(MoveStepType.DEPLOY)) {
             DeploymentServerHelper deploymentProcess = new DeploymentServerHelper(gameManager);
             // We don't set done in a walk on deployment
             boolean setDone = false;
@@ -467,7 +468,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
             // Check if the FORWARDS step goes to a lower hex (3+ levels down)
             // Entity must not have moved (target must be adjacent to starting position)
             MoveStep lastStep = md.getLastStep();
-            if (lastStep != null) {
+            if (lastStep != null && entity.getPosition() != null) {
                 Coords targetPos = lastStep.getPosition();
                 boolean entityAtStart = entity.getPosition().distance(targetPos) == 1;
                 if (entityAtStart && ClimbingHelper.isAtEdge(entity, targetPos, getGame())) {
@@ -1537,18 +1538,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(report);
                         addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
                     } else {
-                        // Swarming infantry take a 3d6 point hit.
-                        // ASSUMPTION : damage should not be doubled.
-                        report = new Report(2140);
-                        report.subject = entity.getId();
-                        report.indent();
-                        report.addDesc(swarmer);
-                        report.add("3d6");
-                        addReport(report);
-                        addReport(gameManager.damageEntity(swarmer,
-                                                           swarmer.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                                                   ToHitData.SIDE_FRONT),
-                                                           Compute.d6(3)));
+                        // Conventional infantry take 3D6; battle armor take damage on each trooper (TW p.222)
+                        addReport(new SwarmShakeOffHandler(gameManager).damageDislodgedSwarmer(entity, swarmer,
+                              SwarmShakeOffHandler.vehicleShakeOffDamagePerTrooper(entity)));
                         addNewLines();
                         swarmer.setPosition(curPos);
                     }
@@ -1780,18 +1772,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             addReport(report);
                             addReport(gameManager.destroyEntity(swarmer, "a watery grave", false));
                         } else {
-                            // Swarming infantry take a 3d6 point hit.
-                            // ASSUMPTION : damage should not be doubled.
-                            report = new Report(2140);
-                            report.subject = entity.getId();
-                            report.indent();
-                            report.addDesc(swarmer);
-                            report.add("3d6");
-                            addReport(report);
-                            addReport(gameManager.damageEntity(swarmer,
-                                                               swarmer.rollHitLocation(ToHitData.HIT_NORMAL,
-                                                                                       ToHitData.SIDE_FRONT),
-                                                               Compute.d6(3)));
+                            // Conventional infantry take 3D6; each battle armor trooper takes 1 per Jump MP used
+                            // (TW p.222)
+                            addReport(new SwarmShakeOffHandler(gameManager).damageDislodgedSwarmer(entity, swarmer,
+                                  entity.mpUsed));
                             addNewLines();
                             swarmer.setPosition(curPos);
                         }
@@ -1819,6 +1803,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                 gameManager.getMainPhaseReport()
                            .addAll(gameManager.vehicleMotiveDamage((Tank) entity, modifier, false, -1, true));
                 Report.addNewline(gameManager.getMainPhaseReport());
+                if (entity.getMovementMode() == EntityMovementMode.WIGE) {
+                    // TO:AUE p.162: the jump ends one elevation above the terrain, still airborne
+                    logger.info("WiGE jump ends: entity={}, hex={}, elevation={}, airborne={}",
+                          entity.getDisplayName(), curPos, entity.getElevation(), entity.isAirborneVTOLorWIGE());
+                }
             }
 
             // Jump exhaust can set a flammable atmosphere alight at both ends of the jump (TO:AR p.54).
@@ -1953,7 +1942,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(report);
                     }
 
-                    if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    if (entity instanceof Tank landingWiGE) {
+                        // TW p.55: a WiGE vehicle lands only in a clear, paved or water hex and crashes anywhere else
+                        if (gameManager.resolveWiGELanding(landingWiGE, elevation, entity.delta_distance)) {
+                            entity.setElevation(0);
+                        }
+                    } else if (hex.containsTerrain(Terrains.BLDG_ELEV)) {
+                        // Land-Air Meks and glider ProtoMeks use Mek terrain rules and may land on a roof
                         IBuilding bldg = getGame().getBoard(curBoardId).getBuildingAt(entity.getPosition());
                         entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
                         gameManager.addAffectedBldg(bldg,
@@ -1966,21 +1961,13 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.addDesc(entity);
                         report.subject = entity.getId();
                         addReport(report);
-
-                        if (entity instanceof Tank tankEntity) {
-                            addReport(gameManager.crashVTOLorWiGE(tankEntity));
-                        }
                     } else {
                         entity.setElevation(0);
                     }
 
-                    // Check for stacking violations in the target hex
-                    Entity violation = Compute.stackingViolation(getGame(),
-                                                                 entity,
-                                                                 entity.getPosition(),
-                                                                 null,
-                                                                 entity.climbMode(),
-                                                                 false);
+                    // Check for stacking violations in the target hex; a WiGE destroyed by its landing has none
+                    Entity violation = entity.isDoomed() ? null : Compute.stackingViolation(getGame(), entity,
+                          entity.getPosition(), null, entity.climbMode(), false);
                     if (violation != null) {
                         PilotingRollData prd = new PilotingRollData(violation.getId(), 2, "fallen on");
                         if (violation instanceof Dropship) {
@@ -2109,8 +2096,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                     FighterSquadron fighterSquadron = new FighterSquadron();
                     fighterSquadron.setDeployed(true);
                     fighterSquadron.setId(getGame().getNextEntityId());
-                    fighterSquadron.setCurrentVelocity(((Aero) loader).getCurrentVelocity());
-                    fighterSquadron.setNextVelocity(((Aero) loader).getNextVelocity());
+                    fighterSquadron.setCurrentVelocity(((IAero) loader).getCurrentVelocity());
+                    fighterSquadron.setNextVelocity(((IAero) loader).getNextVelocity());
                     fighterSquadron.setVectors(loader.getVectors());
                     fighterSquadron.setFacing(loader.getFacing());
                     fighterSquadron.setOwner(entity.getOwner());
@@ -2319,6 +2306,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
 
             // Check for hidden units point-blank shots
             if (getGame().getOptions().booleanOption(OptionsConstants.ADVANCED_HIDDEN_UNITS)) {
+                boolean overflight = Compute.isNonAerospaceOverflight(this.entity, step, md.isEndStep(step));
                 for (Entity hiddenEntity : hiddenEnemies) {
                     int dist = hiddenEntity.getPosition().distance(step.getPosition());
                     // Checking for same hex and stacking violation; do _not_ ignore hidden units here.
@@ -2392,7 +2380,9 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // Potential point-blank shot when not causing stacking violation, but only in some situations:
                         // 1. mover is a ground unit and moves adjacent to / into the hidden unit's hex;
                         // 2. mover is Aerospace and hidden unit is within detection range of its flight path
-                        //    (with or without Active Probe).
+                        //    (with or without Active Probe);
+                        // 3. mover is a VTOL or WiGE in flight: as a ground unit, except that flying over the hidden
+                        //    unit's hex without ending the move there reveals nothing (TW errata v12.0, p.260).
                         // and the revealed hidden unit has not already made a pointblank shot this turn.
                         //
                         // The ground case deliberately does not wait for the end of the move. TW: a hidden unit
@@ -2400,7 +2390,7 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         // its move after the attack" if it has MP left - which can only happen part way through a
                         // move. Requiring the mover to stop meant walking past a hidden unit did nothing at all.
                     } else if (!hiddenEntity.madePointblankShot()
-                          && Compute.revealsHiddenUnitForPointblankShot(this.entity, dist)) {
+                          && Compute.revealsHiddenUnitForPointblankShot(this.entity, dist, overflight)) {
                         // Hidden unit should always be revealed as the PBS trigger _is_ getting revealed.
                         hiddenEntity.setHidden(false);
 
@@ -2432,6 +2422,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         report.subject = this.entity.getId();
                         report.add(hiddenEntity.getPosition().getBoardNum());
                         gameManager.getMainPhaseReport().addElement(report);
+                    } else if (overflight && (dist == 0)) {
+                        logger.debug("[Hidden] {} flies over hidden {} at {} without revealing it (TW p.260)",
+                                     this.entity.getShortName(),
+                                     hiddenEntity.getShortName(),
+                                     step.getPosition().getBoardNum());
                     }
                 }
             }
@@ -2459,6 +2454,17 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         addReport(gameManager.landAirMek((LandAirMek) entity, step.getPosition(), elevation, distance));
                     } else if (entity instanceof ProtoMek) {
                         addReport(gameManager.landGliderPM((ProtoMek) entity, step.getPosition(), elevation, distance));
+                    } else if (entity instanceof Tank landingWiGE) {
+                        // TW p.55: a WiGE vehicle lands only in a clear, paved or water hex and crashes anywhere else
+                        landingWiGE.setPosition(step.getPosition());
+                        landingWiGE.setFacing(step.getFacing());
+                        landingWiGE.delta_distance = distance;
+                        if (!gameManager.resolveWiGELanding(landingWiGE, elevation, distance)) {
+                            // the crash ends its movement where it came down
+                            curPos = landingWiGE.getPosition();
+                            curFacing = landingWiGE.getFacing();
+                            break;
+                        }
                     }
                     // landing always ends movement whether successful or not
                 }
@@ -3772,6 +3778,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                         int elev;
                         int sideslipDistance;
                         int skidDirection;
+                        // distance already counts the hex this step was about to enter
+                        int hexesEnteredBeforeSlip;
                         Coords start;
                         if (step.getType() == MoveStepType.LATERAL_LEFT
                             || step.getType() == MoveStepType.LATERAL_RIGHT
@@ -3783,10 +3791,12 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             sideslipDistance = 1;
                             skidDirection = lastPos.direction(curPos);
                             start = curPos;
+                            hexesEnteredBeforeSlip = distance;
                         } else {
                             elev = (prevStep == null) ? curElevation : prevStep.getElevation();
-                            // maximum distance is hexes moved / 2
-                            sideslipDistance = Math.min(moF, distance / 2);
+                            hexesEnteredBeforeSlip = distance - 1;
+                            sideslipDistance = AirborneVehicleCrashHandler.sideslipDistanceCap(moF,
+                                  hexesEnteredBeforeSlip);
                             skidDirection = prevFacing;
                             start = lastPos;
                         }
@@ -3798,6 +3808,10 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             report.add(sideslipDistance);
                             addReport(report);
 
+                            // Charges and crash damage during the sideslip use the hexes moved before it, and a WiGE
+                            // needs MP left to avoid a fall (TW p.68)
+                            entity.delta_distance = hexesEnteredBeforeSlip;
+                            entity.mpUsed = mpUsed;
                             if (gameManager.processSkid(entity,
                                                         start,
                                                         elev,
@@ -3807,6 +3821,8 @@ class MovePathHandler extends AbstractTWRuleHandler {
                                                         lastStepMoveType)) {
                                 return;
                             }
+                            // Sideslipped hexes count toward the target movement modifier (TW p.67)
+                            distance = hexesEnteredBeforeSlip + start.distance(entity.getPosition());
 
                             if (!entity.isDestroyed() && !entity.isDoomed() && (mpUsed < entity.getRunMP())) {
                                 fellDuringMovement = true; // No, but it should
@@ -4821,16 +4837,11 @@ class MovePathHandler extends AbstractTWRuleHandler {
                             Terrains.BRIDGE_ELEV) && curElevation > curHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     boolean collapse = gameManager.checkBuildingCollapseWhileMoving(bldg, entity, curPos);
                     gameManager.addAffectedBldg(bldg, collapse);
-                    // If the building is collapsed by a WiGE flying over it, the WiGE drops one
-                    // level of elevation.
-                    // This could invalidate the remainder of the movement path, so we will send it
-                    // back to the client.
+                    // If the building collapses under a WiGE flying over it, the collapse drops the WiGE to one
+                    // level above the rubble (TW p.55). This could invalidate the remainder of the movement path,
+                    // so we will send it back to the client.
                     if (collapse && wigeFlyingOver) {
-                        curElevation--;
-                        report = new Report(2378);
-                        report.subject = entity.getId();
-                        report.addDesc(entity);
-                        addReport(report);
+                        curElevation = entity.getElevation();
                         continueTurnFromLevelDrop = true;
                         entity.setPosition(curPos);
                         entity.setFacing(curFacing);

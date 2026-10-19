@@ -33,10 +33,10 @@
 
 package megamek.client.ui.clientGUI.boardview.spriteHandler;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.AbstractClientGUI;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.sprite.sbf.SBFStepSprite;
-import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFMovePath;
 import megamek.common.strategicBattleSystems.SBFMoveStep;
 

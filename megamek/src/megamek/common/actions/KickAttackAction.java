@@ -276,8 +276,8 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
-        // Prone 'Mechs can only be kicked if they are at the same level as the attacker
-        // See BMM 7th Printing, Physical Attacks and Prone 'Mechs
+        // Prone 'Meks can only be kicked if they are at the same level as the attacker
+        // See BMM 7th Printing, Physical Attacks and Prone 'Meks
         if ((target instanceof Entity) && ((Entity) target).isProne()) {
             if (targetElevation != attackerElevation) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE,

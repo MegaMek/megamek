@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2016-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,8 +35,8 @@ package megamek.client.ratgenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.MathUtility;
-import megamek.common.annotations.Nullable;
 import megamek.logging.MMLogger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -203,6 +203,7 @@ public class SubForcesNode extends RulesetNode {
         }
         for (ForceDescriptor sub : subs) {
             sub.setGenerationRule(rule);
+            sub.setBlockGenerationRule(rule);
         }
         LOGGER.debug("[ForceGen][GenRule] block of {} child(ren) under '{}' generates by '{}'",
               subs.size(), forceDescriptor.getName(), rule);

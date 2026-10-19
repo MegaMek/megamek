@@ -39,9 +39,9 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.enums.DialogResult;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.EquipmentActivation;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.units.Entity;

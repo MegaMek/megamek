@@ -32,7 +32,7 @@
  */
 package megamek.client.ui.clientGUI;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * How the client handles recording the combat-summary GIF of the minimap. Recording costs CPU for the whole game

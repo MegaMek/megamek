@@ -37,8 +37,8 @@ import static megamek.client.ui.clientGUI.ClientGUI.CG_FILE_EXTENSION_MUL;
 
 import java.io.File;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.GamePhase;
 import megamek.common.event.GameVictoryEvent;
 import megamek.common.preference.ClientPreferences;

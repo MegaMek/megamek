@@ -45,6 +45,7 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
 
+import jakarta.annotation.Nullable;
 import megamek.client.generator.RandomCallsignGenerator;
 import megamek.client.generator.RandomGenderGenerator;
 import megamek.client.generator.RandomNameGenerator;
@@ -53,7 +54,6 @@ import megamek.client.ui.Messages;
 import megamek.client.ui.comboBoxes.SearchableComboBox;
 import megamek.client.ui.dialogs.iconChooser.PortraitChooserDialog;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.Gender;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.MiscType;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2023-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -32,15 +32,21 @@
  */
 package megamek.common.loaders;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Vector;
 
 import megamek.common.bays.BattleArmorBay;
 import megamek.common.bays.Bay;
+import megamek.common.bays.CrewQuartersCargoBay;
+import megamek.common.bays.FirstClassQuartersCargoBay;
 import megamek.common.equipment.EquipmentType;
 import megamek.common.units.Dropship;
 import megamek.common.units.Entity;
@@ -154,6 +160,26 @@ class BLKDropshipFileTest {
         assertFalse(mixedTech);
         assertTrue(ClanBACorrect);
         assertFalse(ISBAExists);
+    }
+
+    @Test
+    void quartersKeepTheirOwnBayNumbers() throws Exception {
+        // the unit file leaves both quarters' numbers unset, so they take the lowest free numbers (2 and 3) and the
+        // two later BA bays that asked for 2 and 3 move to 4 and 5; every bay still ends up with its own number
+        Dropship dropship = loadDropshipFromString(newFormatDSWithMixedBA);
+
+        Set<Integer> bayNumbers = new HashSet<>();
+        for (Bay bay : dropship.getTransportBays()) {
+            bayNumbers.add(bay.getBayNumber());
+        }
+        assertEquals(5, bayNumbers.size(), "Every bay has its own number");
+
+        for (Bay bay : dropship.getTransportBays()) {
+            boolean isQuarters = (bay instanceof FirstClassQuartersCargoBay) || (bay instanceof CrewQuartersCargoBay);
+            if (isQuarters) {
+                assertSame(bay, dropship.getBayById(bay.getBayNumber()));
+            }
+        }
     }
 
     // region DS definitions

@@ -37,11 +37,11 @@ package megamek.common.actions;
 import java.io.Serial;
 import java.util.ListIterator;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.common.CriticalSlot;
 import megamek.common.Player;
 import megamek.common.ToHitData;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.ui.Messages;
 import megamek.common.ECMInfo;
@@ -61,6 +62,7 @@ import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.BombLoadout;
 import megamek.common.equipment.INarcPod;
+import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.game.Game;
@@ -193,6 +195,23 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
     public int getWeaponId() {
         return weaponId;
+    }
+
+    /**
+     * Returns the weapon this attack fires, looked up on the unit that owns it. A handheld weapon is its own unit, so
+     * a shot from one carried by a Mek belongs to the handheld weapon; its weapon number means nothing on the Mek.
+     *
+     * @param game The current {@link Game}
+     *
+     * @return the firing weapon, or {@code null} if the firing unit cannot be found
+     */
+    public @Nullable Mounted<?> getWeapon(Game game) {
+        Entity weaponEntity = getEntity(game);
+        if (weaponEntity == null) {
+            LOGGER.warn("Unit {} firing weapon {} not found", getEntityId(), getWeaponId());
+            return null;
+        }
+        return weaponEntity.getEquipment(getWeaponId());
     }
 
     public int getAmmoId() {

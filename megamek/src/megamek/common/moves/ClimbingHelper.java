@@ -32,12 +32,14 @@
  */
 package megamek.common.moves;
 
+import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.common.Hex;
 import megamek.common.Messages;
 import megamek.common.board.Coords;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.game.Game;
 import megamek.common.units.Entity;
+import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Mek;
 import megamek.common.units.Terrains;
 
@@ -76,6 +78,21 @@ public final class ClimbingHelper {
 
     private ClimbingHelper() {
         // Utility class - no instantiation
+    }
+
+    /**
+     * The climb mode a unit starts each movement with. For WiGE movement, climb mode means Keep Elevation, which
+     * costs +2 MP per hex entered while flying higher than one level above the terrain (TW p.55). A WiGE follows the
+     * terrain unless the player chooses to hold its altitude, so it always starts with climb mode off; every other
+     * unit uses the player's Default Climb Mode setting.
+     *
+     * @param entity the unit about to move
+     *
+     * @return {@code true} if the unit should start its movement in climb mode
+     */
+    public static boolean getDefaultClimbMode(Entity entity) {
+        return (entity.getMovementMode() != EntityMovementMode.WIGE)
+              && GUIPreferences.getInstance().getMoveDefaultClimbMode();
     }
 
     /**

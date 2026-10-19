@@ -204,6 +204,19 @@ class WallSegmentRulesTest {
     }
 
     @Test
+    void wallSegmentTotalHitPointsAreTheSegmentsOwnFromEitherSide() {
+        var manager = manager(IBuilding.WALL, 2, 5, 9);
+        var game = manager.getGame();
+        manager.damageWall(north(game), 8, false);
+        // Seen from outside, the target sits in the hex beyond the wall, which holds no building
+        var outside = north(game).target(ORIGIN.translated(0, 2));
+        assertEquals(ORIGIN.translated(0), outside.getPosition());
+        assertEquals(37, Compute.getTargetTotalHP(game, outside));
+        var south = WallRules.at(game, 0, ORIGIN, 3).getFirst().target(null);
+        assertEquals(45, Compute.getTargetTotalHP(game, south));
+    }
+
+    @Test
     void sightLineTestsTheEdgeInsteadOfTheWholeHex() {
         var manager = manager(IBuilding.WALL, 2, 0, 1);
         var game = manager.getGame();

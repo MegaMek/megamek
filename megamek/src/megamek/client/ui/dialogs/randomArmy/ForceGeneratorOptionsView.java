@@ -32,7 +32,14 @@
  */
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -50,6 +57,7 @@ import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -59,18 +67,19 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ratgenerator.*;
 import megamek.client.ratgenerator.Ruleset.ProgressListener;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.UIUtil;
 import megamek.codeUtilities.MathUtility;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rules.totalwarfare.TWRulesManager;
+import megamek.common.units.ConvInfantry;
 import megamek.common.units.Entity;
 import megamek.common.units.EntityListFile;
 import megamek.common.units.EntityWeightClass;
@@ -116,6 +125,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private JComboBox<String> cbExperience;
     private JComboBox<Integer> cbWeightClass;
+    // Shown in Target Weight's place when the unit type is conventional infantry, which has no weight class
+    private JComboBox<InfantryClass> cbInfantryClass;
+    private JLabel lblWeightClass;
     private JCheckBox chkDetachments;
     private JPanel panGenerateOptions;
 
@@ -354,7 +366,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         constraints.gridx = 2;
         constraints.gridy = row;
-        add(describedLabel("ForceGeneratorDialog.weight"), constraints);
+        lblWeightClass = describedLabel("ForceGeneratorDialog.weight");
+        add(lblWeightClass, constraints);
         cbWeightClass = new JComboBox<>();
         cbWeightClass.setRenderer(new CBRenderer<Integer>(Messages.getString("ForceGeneratorDialog.random"),
               EntityWeightClass::getClassName));
@@ -364,10 +377,23 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_HEAVY);
         cbWeightClass.addItem(EntityWeightClass.WEIGHT_ASSAULT);
         constraints.gridx = 3;
-        constraints.gridy = row++;
+        constraints.gridy = row;
         add(cbWeightClass, constraints);
         cbWeightClass.setToolTipText(Messages.getString("ForceGeneratorDialog.weight.tooltip"));
         cbWeightClass.addActionListener(this);
+        // Same cell as Target Weight: only one of the two is visible, depending on the unit type
+        cbInfantryClass = new JComboBox<>();
+        cbInfantryClass.setRenderer(new CBRenderer<InfantryClass>(Messages.getString("ForceGeneratorDialog.random"),
+              InfantryClass::getDisplayName));
+        cbInfantryClass.addItem(null);
+        for (InfantryClass infantryClass : InfantryClass.values()) {
+            cbInfantryClass.addItem(infantryClass);
+        }
+        cbInfantryClass.setToolTipText(Messages.getString("ForceGeneratorDialog.infantryClass.tooltip"));
+        cbInfantryClass.setVisible(false);
+        add(cbInfantryClass, constraints);
+        cbInfantryClass.addActionListener(this);
+        row++;
 
         constraints.gridx = 0;
         constraints.gridy = row;
@@ -520,6 +546,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /** The role filters as one row of the description form: a label, then the boxes for the unit type shown. */
     private int addMissionRoleFilters(GridBagConstraints constraints, int startRow) {
         int row = startRow;
+        // The section above leaves a full-width span behind. Inherited here, it stretched this label across the
+        // filter boxes, where it sat on top of them and took their clicks.
+        constraints.gridwidth = 1;
         constraints.gridx = 0;
         constraints.gridy = row;
         lblMissionRoles = describedLabel("ForceGeneratorDialog.missionRoles");
@@ -1070,6 +1099,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         // away from the user's UI selection across consecutive runs.
         Object selectedWeight = cbWeightClass.getSelectedItem();
         fd.setWeightClass(selectedWeight instanceof Integer ? (Integer) selectedWeight : null);
+        fd.setInfantryClass(selectedInfantryClass());
         fd.setAttachments(chkDetachments.isSelected());
         panMissionRoleFilters.applyTo(fd, forceDesc.getUnitType());
 
@@ -1103,6 +1133,132 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     private static String unitTypeLabel(@Nullable Integer unitType) {
         return (unitType == null) ? Messages.getString("ForceGeneratorDialog.combined")
               : UnitType.getTypeDisplayableName(unitType);
+    }
+
+    /**
+     * One line describing a generated force for the log: what was asked for, the weight its units average out to (the
+     * generator recalculates each formation's weight from its units, so this is not the roll), and what each
+     * direct sub-force holds, by unit type and by unit name. Lets a tester read the outcome of a roll without opening
+     * the tree.
+     *
+     * <p>Example: {@code CJF 3150 FL Battle Armor 'Battle Armor Trinary' weight asked=Random by units=Heavy; 3
+     * sub-force(s): [Nova (Heavy): Battle Armor=5, Mek=5 - Elemental Battle Armor [Laser](Sqd5)=5, Timber Wolf
+     * Prime=5] ...; totals Battle Armor=15, Mek=5}</p>
+     *
+     * @param generated            the generated root
+     * @param requestedWeightClass the weight class on the panel when Generate was pressed, or {@code null} for Random
+     *
+     * @return the summary line
+     */
+    static String describeGeneratedForce(ForceDescriptor generated, @Nullable Integer requestedWeightClass) {
+        return describeGeneratedForce(generated, requestedWeightClass,
+              platoon -> (platoon.getEntity() == null) ? null : infantryClassOf(platoon.getEntity()));
+    }
+
+    /**
+     * As {@link #describeGeneratedForce(ForceDescriptor, Integer)}, reading each infantry platoon's class through
+     * {@code classOf}. The game reads it from the generated unit; a test can supply its own.
+     *
+     * @param generated            the generated root
+     * @param requestedWeightClass the weight class asked for, or {@code null} for Random
+     * @param classOf              the infantry class of a generated platoon, or {@code null} when it has none
+     *
+     * @return the summary line
+     */
+    static String describeGeneratedForce(ForceDescriptor generated, @Nullable Integer requestedWeightClass,
+          Function<ForceDescriptor, InfantryClass> classOf) {
+        StringBuilder line = new StringBuilder();
+        line.append(generated.getFaction()).append(' ').append(generated.getYear()).append(' ')
+              .append(generated.getRating()).append(' ').append(unitTypeLabel(generated.getUnitType()))
+              .append(" '").append(generated.parseName()).append("' weight asked=")
+              .append(weightClassLabel(requestedWeightClass)).append(" by units=")
+              .append(formationWeightLabel(generated, classOf));
+        List<ForceDescriptor> subForces = generated.getSubForces();
+        line.append("; ").append(subForces.size()).append(" sub-force(s):");
+        Map<String, Integer> totals = new TreeMap<>();
+        for (ForceDescriptor subForce : subForces) {
+            Map<String, Integer> counts = new TreeMap<>();
+            Map<String, Integer> unitNames = new TreeMap<>();
+            countUnits(subForce, counts, unitNames);
+            line.append(" [").append(subForce.parseName()).append(" (")
+                  .append(formationWeightLabel(subForce, classOf)).append("): ").append(formatCounts(counts));
+            if (!unitNames.isEmpty()) {
+                line.append(" - ").append(formatCounts(unitNames));
+            }
+            line.append(']');
+            for (Map.Entry<String, Integer> count : counts.entrySet()) {
+                totals.merge(count.getKey(), count.getValue(), Integer::sum);
+            }
+        }
+        line.append("; totals ").append(formatCounts(totals));
+        return line.toString();
+    }
+
+    private static void countUnits(ForceDescriptor node, Map<String, Integer> counts,
+          Map<String, Integer> unitNames) {
+        if (node.isElement() && node.getSubForces().isEmpty()) {
+            counts.merge(unitTypeLabel(node.getUnitType()), 1, Integer::sum);
+            String unitName = node.getModelName();
+            if ((unitName != null) && !unitName.isBlank()) {
+                unitNames.merge(unitName, 1, Integer::sum);
+            }
+        }
+        for (ForceDescriptor subForce : node.getSubForces()) {
+            countUnits(subForce, counts, unitNames);
+        }
+        for (ForceDescriptor attached : node.getAttached()) {
+            countUnits(attached, counts, unitNames);
+        }
+    }
+
+    private static String formatCounts(Map<String, Integer> counts) {
+        if (counts.isEmpty()) {
+            return "no units";
+        }
+        StringBuilder formatted = new StringBuilder();
+        for (Map.Entry<String, Integer> count : counts.entrySet()) {
+            if (!formatted.isEmpty()) {
+                formatted.append(", ");
+            }
+            formatted.append(count.getKey()).append('=').append(count.getValue());
+        }
+        return formatted.toString();
+    }
+
+    /**
+     * A formation's weight for the log. Conventional infantry has no weight class: its platoons differ by how they move,
+     * so an infantry formation reports its platoons' classes instead, for example "Light (Foot)=3, Motorized=2". It says
+     * "n/a" when no platoon's class is known.
+     */
+    private static String formationWeightLabel(ForceDescriptor formation, Function<ForceDescriptor, InfantryClass> classOf) {
+        Integer unitType = formation.getUnitType();
+        if ((unitType != null) && (unitType == UnitType.INFANTRY)) {
+            Map<String, Integer> classes = new TreeMap<>();
+            countInfantryClasses(formation, classes, classOf);
+            return classes.isEmpty() ? "n/a" : formatCounts(classes);
+        }
+        return (formation.getWeightClass() == null) ? "no weight"
+              : EntityWeightClass.getClassName(formation.getWeightClass());
+    }
+
+    private static void countInfantryClasses(ForceDescriptor node, Map<String, Integer> classes,
+          Function<ForceDescriptor, InfantryClass> classOf) {
+        if (node.isElement() && node.getSubForces().isEmpty()) {
+            InfantryClass infantryClass = classOf.apply(node);
+            if (infantryClass != null) {
+                classes.merge(infantryClass.getDisplayName(), 1, Integer::sum);
+            }
+        }
+        for (ForceDescriptor subForce : node.getSubForces()) {
+            countInfantryClasses(subForce, classes, classOf);
+        }
+        for (ForceDescriptor attached : node.getAttached()) {
+            countInfantryClasses(attached, classes, classOf);
+        }
+    }
+
+    private static String weightClassLabel(@Nullable Integer weightClass) {
+        return (weightClass == null) ? "Random" : EntityWeightClass.getClassName(weightClass);
     }
 
     private void generateForce() {
@@ -1197,7 +1353,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     /**
      * Walks the generated force tree, buckets each entity into (unit type, weight class), and rebuilds the summary
      * table. Weight-class codes 0-1 collapse into Light and 4-5 into Assault to keep the table to a clean four
-     * columns.
+     * columns. Conventional infantry has no weight class (the engine reports every platoon as Light), so its row
+     * shows a dash in the weight columns and only its count in Total, rather than filling the Light column. It is
+     * split into one row per infantry class instead, such as "Infantry (Jump)".
      * <p>For Battle Armor each entity represents one Squad/Point (5 Clan Elementals, 4-5 IS), so cells show
      * "N (M)" where N is the squad count and M is the total trooper count. Other unit types show plain N.</p>
      *
@@ -1213,13 +1371,16 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         ArrayList<Entity> entities = new ArrayList<>();
         force.addAllEntities(entities);
-        // Per (unitType, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only).
-        Map<Integer, int[][]> counts = new TreeMap<>();
+        // Per (row, weightClassColumn): [0]=squad/entity count, [1]=trooper count (BA only). A row is a unit type,
+        // or for conventional infantry a unit type and class. Column NO_WEIGHT_COLUMN holds units with no weight class.
+        Map<SummaryRowKey, int[][]> counts = new TreeMap<>();
         for (Entity entity : entities) {
             int unitType = entity.getUnitType();
             int weightClass = entity.getWeightClass();
             int column;
-            if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
+            if (hasNoWeightClass(unitType)) {
+                column = NO_WEIGHT_COLUMN;
+            } else if (weightClass <= EntityWeightClass.WEIGHT_LIGHT) {
                 column = 0;
             } else if (weightClass == EntityWeightClass.WEIGHT_MEDIUM) {
                 column = 1;
@@ -1228,7 +1389,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             } else {
                 column = 3;
             }
-            int[][] row = counts.computeIfAbsent(unitType, k -> new int[4][2]);
+            SummaryRowKey rowKey = new SummaryRowKey(unitType, infantryClassOf(entity));
+            int[][] row = counts.computeIfAbsent(rowKey, newRowKey -> new int[NO_WEIGHT_COLUMN + 1][2]);
             row[column][0]++;
             if (entity instanceof BattleArmor ba) {
                 row[column][1] += ba.getShootingStrength();
@@ -1241,20 +1403,29 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         boolean asPercent = (echelon != null) && (echelon >= LARGE_ECHELON_PERCENT_THRESHOLD);
         // Column totals count units (squads for Battle Armor) so the bottom row adds up across types.
         int[] columnTotals = new int[4];
-        for (Map.Entry<Integer, int[][]> entry : counts.entrySet()) {
+        int grandTotal = 0;
+        for (Map.Entry<SummaryRowKey, int[][]> entry : counts.entrySet()) {
             int[][] row = entry.getValue();
-            boolean isBA = (entry.getKey() == UnitType.BATTLE_ARMOR);
-            int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0];
-            int typeTroopers = row[0][1] + row[1][1] + row[2][1] + row[3][1];
+            SummaryRowKey rowKey = entry.getKey();
+            boolean isBA = (rowKey.unitType() == UnitType.BATTLE_ARMOR);
+            int typeTotal = row[0][0] + row[1][0] + row[2][0] + row[3][0] + row[NO_WEIGHT_COLUMN][0];
+            int typeTroopers = row[0][1] + row[1][1] + row[2][1] + row[3][1] + row[NO_WEIGHT_COLUMN][1];
             for (int column = 0; column < 4; column++) {
                 columnTotals[column] += row[column][0];
             }
+            grandTotal += typeTotal;
             // The Total column is always the plain count, even when the weight cells show percentages: the
             // percentages say how the type is spread, the total says how many there are.
             String rowTotal = formatSummaryCell(new int[] { typeTotal, typeTroopers }, isBA);
-            if (asPercent) {
+            if (hasNoWeightClass(rowKey.unitType())) {
                 summaryModel.addRow(new Object[] {
-                      UnitType.getTypeDisplayableName(entry.getKey()),
+                      rowKey.label(),
+                      NO_WEIGHT_CELL, NO_WEIGHT_CELL, NO_WEIGHT_CELL, NO_WEIGHT_CELL,
+                      rowTotal
+                });
+            } else if (asPercent) {
+                summaryModel.addRow(new Object[] {
+                      rowKey.label(),
                       formatSummaryPercent(row[0][0], typeTotal),
                       formatSummaryPercent(row[1][0], typeTotal),
                       formatSummaryPercent(row[2][0], typeTotal),
@@ -1263,7 +1434,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 });
             } else {
                 summaryModel.addRow(new Object[] {
-                      UnitType.getTypeDisplayableName(entry.getKey()),
+                      rowKey.label(),
                       formatSummaryCell(row[0], isBA),
                       formatSummaryCell(row[1], isBA),
                       formatSummaryCell(row[2], isBA),
@@ -1279,13 +1450,64 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                   String.valueOf(columnTotals[1]),
                   String.valueOf(columnTotals[2]),
                   String.valueOf(columnTotals[3]),
-                  String.valueOf(columnTotals[0] + columnTotals[1] + columnTotals[2] + columnTotals[3])
+                  // Every unit, including those with no weight class, so the corner still matches the rows above
+                  String.valueOf(grandTotal)
             });
+        }
+    }
+
+    /**
+     * Conventional infantry has no weight class: the engine reports every platoon as Light whatever it carries, so
+     * counting it under Light would make a Heavy infantry force look as if it ignored its weight.
+     */
+    private static boolean hasNoWeightClass(int unitType) {
+        return unitType == UnitType.INFANTRY;
+    }
+
+    /**
+     * @return the class of a conventional infantry platoon, or {@code null} for any other unit or a platoon whose
+     *       movement no class covers
+     */
+    private static @Nullable InfantryClass infantryClassOf(Entity entity) {
+        if (entity instanceof ConvInfantry platoon) {
+            return InfantryClass.classify(platoon.getMovementMode(), platoon.isMounted());
+        }
+        return null;
+    }
+
+    /**
+     * One row of the summary table: a unit type, split by class for conventional infantry. Rows sort by unit type,
+     * then infantry class in its declared order, with an unclassified row first.
+     *
+     * @param unitType      the unit type
+     * @param infantryClass the infantry class, or {@code null} for other unit types and unclassified platoons
+     */
+    record SummaryRowKey(int unitType, @Nullable InfantryClass infantryClass) implements Comparable<SummaryRowKey> {
+        private static final Comparator<SummaryRowKey> ORDER = Comparator.comparingInt(SummaryRowKey::unitType)
+              .thenComparing(SummaryRowKey::infantryClass, Comparator.nullsFirst(Comparator.naturalOrder()));
+
+        @Override
+        public int compareTo(SummaryRowKey other) {
+            return ORDER.compare(this, other);
+        }
+
+        /**
+         * @return the row label, e.g. "Mek" or "Infantry (Jump)"
+         */
+        String label() {
+            String unitTypeName = UnitType.getTypeDisplayableName(unitType);
+            return (infantryClass == null) ? unitTypeName : unitTypeName + " (" + infantryClass.getDisplayName() + ")";
         }
     }
 
     /** Echelon level at or above which the composition summary switches from counts to percentages. */
     private static final int LARGE_ECHELON_PERCENT_THRESHOLD = 7;
+
+    /** Summary column, after the four weight columns, for units that have no weight class. Never displayed. */
+    private static final int NO_WEIGHT_COLUMN = 4;
+
+    /** Shown in the weight columns of a unit type that has no weight class. */
+    private static final String NO_WEIGHT_CELL = "-";
 
     /**
      * Formats a summary-table cell as a whole-number percentage of the unit type's total, e.g. "43%". An empty bucket
@@ -1331,9 +1553,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         FactionRecord oldFaction = (FactionRecord) cbFaction.getSelectedItem();
         cbFaction.removeActionListener(this);
         cbFaction.removeAllItems();
-        List<FactionRecord> activePoliticalFactions = RATGenerator.getInstance().getFactionList().stream()
-              .filter(fr -> !fr.getKey().contains(".") && fr.isActiveInYear(currentYear))
-              .sorted(Comparator.comparing(fr -> fr.getName(currentYear))).toList();
+        List<FactionRecord> activePoliticalFactions = new ArrayList<>();
+        List<String> withoutMenus = new ArrayList<>();
+        for (FactionRecord factionRecord : RATGenerator.getInstance().getFactionList()) {
+            if (factionRecord.getKey().contains(".") || !factionRecord.isActiveInYear(currentYear)) {
+                continue;
+            }
+            // A faction whose rules offer no unit types could only ever show empty menus, so it is left out until
+            // someone gives it rules (the Malthus Confederation and Vesper Marches have no published organization).
+            TOCNode menus = Ruleset.findTOCNode(Ruleset.findRuleset(factionRecord.getKey()));
+            if ((menus != null) && menus.offersUnitTypes(factionRecord.getKey(), currentYear)) {
+                activePoliticalFactions.add(factionRecord);
+            } else {
+                withoutMenus.add(factionRecord.getKey());
+            }
+        }
+        activePoliticalFactions.sort(Comparator.comparing(fr -> fr.getName(currentYear)));
+        logger.info("[ForceGen][Factions] year={} lists {}; left out, no menus: {}", currentYear,
+              activePoliticalFactions.size(), withoutMenus.isEmpty() ? "none" : withoutMenus);
         ((DefaultComboBoxModel<FactionRecord>) cbFaction.getModel()).addAll(activePoliticalFactions);
         cbFaction.setSelectedItem(oldFaction);
         if (cbFaction.getSelectedItem() == null ||
@@ -1378,6 +1615,47 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         cbSubFaction.addActionListener(this);
     }
 
+    /**
+     * The unit types the menu should offer: those the faction's unit tables can fill, plus the blank combined-arms
+     * entry, which draws on every type. Example: Clan Wolf in 3150 has no ProtoMeks in its tables, so ProtoMek is left
+     * out rather than offered and then generated as an empty formation.
+     *
+     * <p>When no type has any units at all, the tables are not loaded yet rather than empty, so the menu is kept as the
+     * ruleset lists it.</p>
+     *
+     * @param offeredTypes the unit types the ruleset lists, in menu order; {@code null} is combined arms
+     * @param hasUnits     whether the faction's tables hold any units of a type in the current year
+     *
+     * @return the unit types to offer, in the same order
+     */
+    static List<Integer> unitTypesWithUnits(List<Integer> offeredTypes, Predicate<Integer> hasUnits) {
+        List<Integer> stocked = new ArrayList<>();
+        boolean anyStocked = false;
+        for (Integer unitType : offeredTypes) {
+            if (unitType == null) {
+                stocked.add(null);
+            } else if (hasUnits.test(unitType)) {
+                stocked.add(unitType);
+                anyStocked = true;
+            }
+        }
+        return anyStocked ? stocked : offeredTypes;
+    }
+
+    /**
+     * Whether the selected faction's unit tables hold any units of a type in the current year, regardless of rating.
+     * Answers {@code true} when that cannot be known yet, so a type is never hidden for want of loaded data.
+     */
+    private boolean factionHasUnitsOfType(int unitType) {
+        FactionRecord factionRecord = RATGenerator.getInstance().getFaction(forceDesc.getFaction());
+        if ((factionRecord == null) || !RATGenerator.getInstance().isInitialized()) {
+            return true;
+        }
+        UnitTable table = UnitTable.findTable(factionRecord, unitType, forceDesc.getYear(), null, new ArrayList<>(),
+              ModelRecord.NETWORK_NONE, new ArrayList<>(), new ArrayList<>(), 0);
+        return table.getNumEntries() > 0;
+    }
+
     private void refreshUnitTypes() {
         logger.debug("refreshUnitTypes: fdFaction={}", forceDesc.getFaction());
         cbUnitType.removeActionListener(this);
@@ -1391,18 +1669,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         if (tocNode != null) {
             ValueNode n = tocNode.findUnitTypes(forceDesc);
             if (n != null) {
+                List<Integer> offeredTypes = new ArrayList<>();
                 for (String unitType : n.getContent().split(",")) {
-                    if (unitType.equals("null")) {
-                        cbUnitType.addItem(null);
-                        if (currentType == null) {
-                            hasCurrent = true;
-                        }
-                    } else {
-                        int unitTypeCode = AbstractUnitRecord.parseUnitType(unitType);
-                        cbUnitType.addItem(unitTypeCode);
-                        if ((currentType != null) && (currentType == unitTypeCode)) {
-                            hasCurrent = true;
-                        }
+                    offeredTypes.add(unitType.equals("null") ? null : AbstractUnitRecord.parseUnitType(unitType));
+                }
+                List<Integer> stockedTypes = unitTypesWithUnits(offeredTypes, this::factionHasUnitsOfType);
+                List<String> leftOut = new ArrayList<>();
+                for (Integer unitType : offeredTypes) {
+                    if (!stockedTypes.contains(unitType)) {
+                        leftOut.add(unitTypeLabel(unitType));
+                    }
+                }
+                logger.info("[ForceGen][UnitTypes] faction={} year={} offers {}; left out, no units in the tables: {}",
+                      forceDesc.getFaction(), forceDesc.getYear(), stockedTypes.size(),
+                      leftOut.isEmpty() ? "none" : leftOut);
+                for (Integer unitType : stockedTypes) {
+                    cbUnitType.addItem(unitType);
+                    if (Objects.equals(currentType, unitType)) {
+                        hasCurrent = true;
                     }
                 }
             } else {
@@ -1426,7 +1710,90 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
         }
         refreshFormations();
         refreshFighterComplementEnabled();
+        refreshWeightClassEnabled();
         cbUnitType.addActionListener(this);
+    }
+
+    /**
+     * Greys out Target Weight for unit types whose units are never picked by weight class. VTOLs and conventional
+     * fighters draw from one table whatever the weight says, so offering Heavy or Assault only promises something the
+     * roll ignores. The selection goes back to Random so a greyed-out "Assault" is not left showing; a ruleset that
+     * varies a formation by weight still rolls one itself.
+     */
+    private void refreshWeightClassEnabled() {
+        if (cbWeightClass == null) {
+            return;
+        }
+        if (refreshInfantryClassShown()) {
+            return;
+        }
+        boolean weightPicksUnits = !ignoresWeightClass(forceDesc.getUnitType());
+        cbWeightClass.setEnabled(weightPicksUnits);
+        cbWeightClass.setToolTipText(Messages.getString(weightPicksUnits
+              ? "ForceGeneratorDialog.weight.tooltip"
+              : "ForceGeneratorDialog.weight.ignored.tooltip"));
+        if (!weightPicksUnits && (cbWeightClass.getSelectedItem() != null)) {
+            // Index 0 is the Random entry. Fires the weight listener, which clears the descriptor's weight too.
+            cbWeightClass.setSelectedIndex(0);
+        }
+        if (!weightPicksUnits) {
+            logger.debug("[ForceGen][Weight] Target Weight greyed out: unit type {} is not picked by weight class",
+                  unitTypeLabel(forceDesc.getUnitType()));
+        }
+    }
+
+    /**
+     * Shows Infantry Class in Target Weight's place for conventional infantry, and Target Weight for everything else.
+     * The one hidden is reset, so a choice the player can no longer see does not reach the force: a hidden "Heavy"
+     * would still steer the infantry rules, and a hidden "Jump" would restrict a Mek force's attached infantry.
+     *
+     * @return {@code true} when Infantry Class is showing, so Target Weight needs no further handling
+     */
+    private boolean refreshInfantryClassShown() {
+        if (cbInfantryClass == null) {
+            return false;
+        }
+        Integer unitType = forceDesc.getUnitType();
+        boolean isInfantry = (unitType != null) && (unitType == UnitType.INFANTRY);
+        cbWeightClass.setVisible(!isInfantry);
+        cbInfantryClass.setVisible(isInfantry);
+        lblWeightClass.setText(Messages.getString(isInfantry
+              ? "ForceGeneratorDialog.infantryClass"
+              : "ForceGeneratorDialog.weight"));
+        lblWeightClass.setToolTipText(Messages.getString(isInfantry
+              ? "ForceGeneratorDialog.infantryClass.tooltip"
+              : "ForceGeneratorDialog.weight.tooltip"));
+        if (isInfantry) {
+            cbWeightClass.setEnabled(true);
+            if (cbWeightClass.getSelectedItem() != null) {
+                // Index 0 is the Random entry. Fires the weight listener, which clears the descriptor's weight too.
+                cbWeightClass.setSelectedIndex(0);
+            }
+        } else if (cbInfantryClass.getSelectedItem() != null) {
+            // Index 0 is the Random entry. Fires the class listener, which clears the descriptor's class too.
+            cbInfantryClass.setSelectedIndex(0);
+        }
+        return isInfantry;
+    }
+
+    /**
+     * @return the infantry class picked in the dropdown, or {@code null} for Random or when the unit type is not
+     *       conventional infantry
+     */
+    private @Nullable InfantryClass selectedInfantryClass() {
+        Integer unitType = forceDesc.getUnitType();
+        boolean isInfantry = (unitType != null) && (unitType == UnitType.INFANTRY);
+        if (!isInfantry || (cbInfantryClass == null)) {
+            return null;
+        }
+        return (InfantryClass) cbInfantryClass.getSelectedItem();
+    }
+
+    private static boolean ignoresWeightClass(@Nullable Integer unitType) {
+        if (unitType == null) {
+            return false;
+        }
+        return (unitType == UnitType.VTOL) || (unitType == UnitType.CONV_FIGHTER);
     }
 
     /**
@@ -1508,6 +1875,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             ValueNode n = tocNode.findEchelons(forceDesc);
             if (n != null) {
                 formationDisplayNames.clear();
+                List<String> offeredSizes = new ArrayList<>();
                 for (String formation : n.getContent().split(",")) {
                     Ruleset rs = ruleset;
                     ForceNode fn;
@@ -1525,17 +1893,23 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                     } while (fn == null && rs != null);
                     String formName = (fn != null) ? fn.getEchelonName() : formation;
                     if (formation.endsWith("+")) {
-                        formName = Messages.getString("ForceGeneratorDialog.reinforced") + formName;
+                        // A pattern rather than a prefix, so each language sets its own spacing and word order.
+                        formName = Messages.getString("ForceGeneratorDialog.reinforced", formName);
                     }
                     if (formation.endsWith("-")) {
-                        formName = Messages.getString("ForceGeneratorDialog.understrength") + formName;
+                        formName = Messages.getString("ForceGeneratorDialog.understrength", formName);
                     }
                     formationDisplayNames.put(formation, formName);
+                    offeredSizes.add(formName + " (" + formation + ")");
                     cbFormation.addItem(formation);
                     if (currentFormation != null && currentFormation.equals(formation)) {
                         hasCurrent = true;
                     }
                 }
+                // The sizes as the player sees them, so a missing, duplicated or unnamed size shows in the log.
+                logger.info("[ForceGen][Sizes] faction={} year={} unitType={} offers {}", forceDesc.getFaction(),
+                      forceDesc.getYear(), unitTypeLabel((Integer) cbUnitType.getSelectedItem()),
+                      offeredSizes);
             }
         } else {
             logger.warn("No echelon node found.");
@@ -1570,6 +1944,24 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         refreshRatings();
         cbFormation.addActionListener(this);
+    }
+
+    /**
+     * The rating the picker and the force should both take. The ruleset's default is used when it is offered;
+     * otherwise the first offered rating, because the combo cannot show a rating it does not list and the force would
+     * be generated at a rating the player never saw. Example: Clan Wolf defaults to Front Line, but its infantry is
+     * offered only Garrison and Solahma, so Garrison is used.
+     *
+     * @param offeredRatings the rating codes in the picker, in order
+     * @param defaultRating  the ruleset's default rating, or {@code null}
+     *
+     * @return the rating to select, or {@code null} when nothing is offered and there is no default
+     */
+    static @Nullable String ratingToSelect(List<String> offeredRatings, @Nullable String defaultRating) {
+        if (offeredRatings.isEmpty() || offeredRatings.contains(defaultRating)) {
+            return defaultRating;
+        }
+        return offeredRatings.getFirst();
     }
 
     private void refreshRatings() {
@@ -1615,6 +2007,15 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             logger.warn("Ruleset for {} offers ratings but declares no default; selecting {}",
                   forceDesc.getFaction(), rating);
         }
+        List<String> offeredRatings = new ArrayList<>();
+        for (int index = 0; index < cbRating.getItemCount(); index++) {
+            offeredRatings.add(cbRating.getItemAt(index));
+        }
+        String defaultRating = rating;
+        rating = ratingToSelect(offeredRatings, defaultRating);
+        logger.info("[ForceGen][Rating] faction={} unitType={} offers {} default={} using={}",
+              forceDesc.getFaction(), unitTypeLabel(forceDesc.getUnitType()), offeredRatings, defaultRating,
+              rating);
         if (rating != null) {
             cbRating.setSelectedItem(rating);
             forceDesc.setRating(rating);
@@ -1668,22 +2069,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
     }
 
     private TOCNode findTOCNode() {
-        Ruleset rs = Ruleset.findRuleset(forceDesc);
-        if (rs == null) {
-            return null;
-        }
-        TOCNode toc;
-        do {
-            toc = rs.getTOCNode();
-            if (toc == null) {
-                if (rs.getParent() == null) {
-                    rs = null;
-                } else {
-                    rs = Ruleset.findRuleset(rs.getParent());
-                }
-            }
-        } while (rs != null && toc == null);
-        return toc;
+        return Ruleset.findTOCNode(Ruleset.findRuleset(forceDesc));
     }
 
     @Override
@@ -1712,6 +2098,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             forceDesc.setUnitType((Integer) cbUnitType.getSelectedItem());
             refreshFormations();
             refreshFighterComplementEnabled();
+            refreshWeightClassEnabled();
         } else if (ev.getSource() == cbFormation) {
             String echelon = (String) cbFormation.getSelectedItem();
             if (echelon != null) {
@@ -1733,6 +2120,9 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
             if (cbFlags.getSelectedItem() != null) {
                 forceDesc.getFlags().add((String) cbFlags.getSelectedItem());
             }
+        } else if (ev.getSource() == cbInfantryClass) {
+            forceDesc.setInfantryClass(selectedInfantryClass());
+            logger.info("[ForceGen][InfantryClass] infantry class picked: {}", forceDesc.getInfantryClass());
         } else if (ev.getSource() == cbWeightClass) {
             // Use getSelectedItem() so the stored value is the actual EntityWeightClass
             // constant rather than the dropdown index. Index-and-value match today (1..4)
@@ -2162,6 +2552,8 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
     private class GenerateTask extends SwingWorker<ForceDescriptor, Double> implements ProgressListener {
         private final ForceDescriptor fd;
+        // Generation rolls a weight class into the descriptor, so the one the player asked for is kept for the log.
+        private final Integer requestedWeightClass;
 
         private final Object progressLock = new Object();
         private double progress = 0;
@@ -2169,6 +2561,7 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
 
         GenerateTask(ForceDescriptor fd) {
             this.fd = fd;
+            requestedWeightClass = fd.getWeightClass();
         }
 
         @Override
@@ -2196,10 +2589,23 @@ public class ForceGeneratorOptionsView extends JPanel implements FocusListener, 
                 // roll's dropdown changes rewrite an already-generated (and possibly accumulated) root.
                 // Keep the generated force independent.
                 ForceDescriptor generated = get();
+                if (!generated.hasLineUnits()) {
+                    // Every slot came up empty, so there is nothing to show but, at most, the support attached to
+                    // it. Say so rather than presenting a blank force.
+                    logger.info("[ForceGen] no units could be generated for faction={} year={} unitType={} echelon={};"
+                                + " insufficient data, no force produced", fd.getFaction(), fd.getYear(),
+                          fd.getUnitType(), fd.getEchelon());
+                    JOptionPane.showMessageDialog(ForceGeneratorOptionsView.this,
+                          Messages.getString("ForceGeneratorDialog.insufficientData.text"),
+                          Messages.getString("ForceGeneratorDialog.insufficientData.title"),
+                          JOptionPane.INFORMATION_MESSAGE);
+                    return;
+                }
                 logger.info("[ForceGen] generated root id={} name='{}' unitType={} echelon={} weight={} subForces={}",
                       System.identityHashCode(generated), generated.getName(), generated.getUnitType(),
                       generated.getEchelon(), generated.getWeightClass(),
                       generated.getSubForces() == null ? 0 : generated.getSubForces().size());
+                logger.info("[ForceGen][Result] {}", describeGeneratedForce(generated, requestedWeightClass));
                 updateSummaryTable(generated);
                 forceGenerated = true;
                 refreshInlineFormationMixEditor();

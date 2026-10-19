@@ -37,6 +37,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.tooltip.EntityActionLog;
@@ -45,7 +46,7 @@ import megamek.common.actions.DirectionalMountFacingAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.TorsoTwistAction;
-import megamek.common.annotations.Nullable;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.compute.TurretFacing;
 import megamek.common.equipment.MiscType;
 import megamek.common.equipment.Mounted;
@@ -121,6 +122,38 @@ public abstract class AttackPhaseDisplay extends ActionPhaseDisplay {
     protected void addAttack(EntityAction entityAction) {
         attacks.add(entityAction);
         updateDonePanel();
+    }
+
+    /**
+     * Makes the weapon of a cancelled attack available to fire again. The weapon is looked up on the unit that fired
+     * it, which for a carried handheld weapon is the handheld weapon rather than the selected unit (issue #9048).
+     *
+     * @param weaponAttackAction the attack being cancelled
+     */
+    protected void markWeaponUnfired(WeaponAttackAction weaponAttackAction) {
+        Mounted<?> weapon = weaponAttackAction.getWeapon(game);
+        if (weapon == null) {
+            LOGGER.warn("[CancelAttack] weapon {} of unit {} not found; it stays marked as fired",
+                  weaponAttackAction.getWeaponId(), weaponAttackAction.getEntityId());
+            return;
+        }
+        weapon.setUsedThisRound(false);
+    }
+
+    /**
+     * Removes a cancelled attack fired by a weapon the selected unit carries, such as a handheld weapon, from the game
+     * and the board. Those attacks are filed under the carried weapon rather than the selected unit, so clearing the
+     * selected unit's attacks does not reach them. Attacks by the selected unit's own weapons are left alone.
+     *
+     * @param weaponAttackAction the attack being cancelled
+     */
+    protected void removeCarriedWeaponAttack(WeaponAttackAction weaponAttackAction) {
+        if (weaponAttackAction.getEntityId() == currentEntity) {
+            return;
+        }
+        game.removeAction(weaponAttackAction);
+        Entity carriedWeapon = weaponAttackAction.getEntity(game);
+        clientgui.onAllBoardViews(boardView -> boardView.removeAttacksFor(carriedWeapon));
     }
 
     // --- Directional Torso Mount and turret rotation controls (BMM p.83; issues #1040, #6518) ---

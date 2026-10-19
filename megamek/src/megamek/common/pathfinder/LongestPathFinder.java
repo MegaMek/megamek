@@ -42,8 +42,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.MinefieldUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.game.Game;

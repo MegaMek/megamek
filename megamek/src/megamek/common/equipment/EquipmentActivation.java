@@ -36,7 +36,7 @@ package megamek.common.equipment;
 import java.util.ArrayList;
 import java.util.List;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 import megamek.common.equipment.enums.MiscTypeFlag;
 import megamek.common.units.Entity;
 

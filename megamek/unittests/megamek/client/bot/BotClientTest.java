@@ -110,10 +110,6 @@ class BotClientTest {
         }
 
         @Override
-        protected void calculateInfantryVsInfantryCombatTurn() {
-        }
-
-        @Override
         protected MovePath continueMovementFor(Entity entity) {
             unitMovesAsked++;
             return null;

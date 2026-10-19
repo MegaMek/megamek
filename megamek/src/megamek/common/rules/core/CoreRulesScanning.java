@@ -32,8 +32,8 @@
  */
 package megamek.common.rules.core;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.ComputeECM;
 import megamek.common.equipment.MiscMounted;
 import megamek.common.equipment.MiscType;

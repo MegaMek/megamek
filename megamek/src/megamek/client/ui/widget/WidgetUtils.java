@@ -38,10 +38,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.widget.picmap.PMSimpleLabel;
 import megamek.client.ui.widget.picmap.PMSimplePolygonArea;
 import megamek.client.ui.widget.picmap.PMValueLabel;
-import megamek.common.annotations.Nullable;
 
 public class WidgetUtils {
     public static void setAreaColor(PMSimplePolygonArea ha, PMValueLabel l,

@@ -80,4 +80,3 @@ public class ISNailAndRivetGun extends NailRivetGunWeapon {
               .setProductionFactions(Faction.FW);
     }
 }
-

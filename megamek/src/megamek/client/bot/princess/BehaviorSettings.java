@@ -38,8 +38,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.codeUtilities.StringUtility;
-import megamek.common.annotations.Nullable;
 import megamek.common.util.StringUtil;
 import megamek.logging.MMLogger;
 import megamek.utilities.xml.MMXMLUtility;

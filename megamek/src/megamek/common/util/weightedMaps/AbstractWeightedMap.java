@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 public abstract class AbstractWeightedMap<K extends Number, T> extends TreeMap<K, T> {
     //region Variable Declarations

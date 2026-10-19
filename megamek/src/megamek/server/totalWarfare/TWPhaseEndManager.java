@@ -48,6 +48,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
 
     /** Feature logger for the objectives diagnostics; enabled via the log4j2.xml VictoryHex block. */
     private static final MMLogger VICTORY_HEX_LOGGER = MMLogger.create("megamek.feature.VictoryHex");
+    private static final MMLogger LOGGER = MMLogger.create(TWPhaseEndManager.class);
 
     void managePhase() {
         switch (gameManager.getGame().getPhase()) {
@@ -76,6 +77,9 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 // code for the one path that needs it. The phase END does run; it is what moves the
                 // game on. Markers themselves arrive with the scenario file; what this pass adds is the
                 // scenario's starting victory points and the warning that nothing can end the game.
+                // scenario units placed with at: skip deployment, which is where a building is written into
+                // its hexes; without this the building fights as a unit on what the map shows as open ground
+                new ScenarioBuildingPlacementHandler(gameManager).placePreDeployedBuildings();
                 gameManager.placeLobbyObjectives();
                 // deliberately not cleared afterwards: nothing reports again until the first initiative
                 // report, so these lines have to survive in the phase report until then. Clearing here
@@ -140,6 +144,8 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 break;
             case MOVEMENT:
                 gameManager.detectHiddenUnits();
+                // Recon Cameras flown in Reveal mode (TO:AUE p.150)
+                new ReconCameraHandler(gameManager).revealHiddenUnits();
                 ServerHelper.detectMinefields(gameManager.getGame(), gameManager.getMainPhaseReport(), gameManager);
                 gameManager.updateSpacecraftDetection();
                 gameManager.detectSpacecraft();
@@ -199,6 +205,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.resolveScheduledOrbitalBombardments();
                 gameManager.applyBuildingDamage();
                 gameManager.checkForPSRFromDamage();
+                gameManager.resolveUnJams();
                 gameManager.cleanupDestroyedNarcPods();
                 gameManager.addReport(gameManager.resolvePilotingRolls());
                 gameManager.addReport(gameManager.resolveCrewConsciousness());
@@ -217,6 +224,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.sendGroundObjectUpdate();
                 // For bomb markers
                 gameManager.sendSpecialHexDisplayPackets();
+                sendFlares();
                 break;
             case FIRING_REPORT:
                 gameManager.changePhase(GamePhase.PHYSICAL);
@@ -282,6 +290,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                 gameManager.sendSpecialHexDisplayPackets();
                 gameManager.getGame().getPlayersList()
                       .forEach(player -> gameManager.send(player.getId(), gameManager.createArtilleryPacket(player)));
+                sendFlares();
                 break;
             case OFFBOARD:
                 // write Offboard Attack Phase header
@@ -314,6 +323,7 @@ record TWPhaseEndManager(TWGameManager gameManager) {
                     gameManager.sendReport();
                     gameManager.changePhase(GamePhase.PRE_FIRING);
                 }
+                sendFlares();
                 break;
             case OFFBOARD_REPORT:
                 gameManager.sendSpecialHexDisplayPackets();
@@ -429,5 +439,16 @@ record TWPhaseEndManager(TWGameManager gameManager) {
         } else {
             gameManager.changePhase(GamePhase.SET_ARTILLERY_AUTO_HIT_HEXES);
         }
+    }
+
+    /**
+     * Sends the flares to the players after an attack phase. An illumination round lights from the turn it arrives
+     * (TO:AR p.152), so its flare must reach the players now, for this turn's to-hit numbers and the board, not only
+     * in the End phase.
+     */
+    private void sendFlares() {
+        LOGGER.debug("[Illumination] sending {} flares after the {} phase", gameManager.getGame().getFlares().size(),
+              gameManager.getGame().getPhase());
+        gameManager.send(gameManager.createFlarePacket());
     }
 }

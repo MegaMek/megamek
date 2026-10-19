@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2020-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -45,6 +45,7 @@ import megamek.common.board.Coords;
 import megamek.common.enums.MoveStepType;
 import megamek.common.moves.MovePath;
 import megamek.common.pathfinder.LongestPathFinder.MovePathMinefieldAvoidanceMinMPMaxDistanceComparator;
+import megamek.common.units.Entity;
 import megamek.common.units.EntityMovementMode;
 import megamek.common.units.Terrains;
 
@@ -86,8 +87,9 @@ public class PathDecorator {
         // jumping to move paths are pretty easy to clip
         // there are two interesting MP amounts - current jump MP and jump MP without "bonus" for low gravity.
         Set<Integer> desiredMPs = new HashSet<>();
-        desiredMPs.add(source.getCachedEntityState().getJumpMP());
-        desiredMPs.add(source.getCachedEntityState().getJumpMPNoGravity());
+        int jumpLimit = source.getCachedEntityState().getJumpMPNoGravity();
+        desiredMPs.add(capForLowGravity(source, source.getCachedEntityState().getJumpMP(), jumpLimit));
+        desiredMPs.add(jumpLimit);
 
         for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
@@ -129,12 +131,14 @@ public class PathDecorator {
         clippedSource.clipToPossible();
 
         Set<Integer> desiredMPs = new HashSet<>();
-        desiredMPs.add(source.getCachedEntityState().getSprintMP());
-        desiredMPs.add(source.getCachedEntityState().getSprintMPWithoutMASC());
-        desiredMPs.add(source.getCachedEntityState().getRunMP());
-        desiredMPs.add(source.getCachedEntityState().getRunMPWithoutMASC());
-        desiredMPs.add(source.getCachedEntityState().getRunMPNoGravity());
-        desiredMPs.add(source.getCachedEntityState().getWalkMP());
+        CachedEntityState state = source.getCachedEntityState();
+        int groundLimit = state.getRunMPNoGravity();
+        desiredMPs.add(capForLowGravity(source, state.getSprintMP(), groundLimit));
+        desiredMPs.add(capForLowGravity(source, state.getSprintMPWithoutMASC(), groundLimit));
+        desiredMPs.add(capForLowGravity(source, state.getRunMP(), groundLimit));
+        desiredMPs.add(capForLowGravity(source, state.getRunMPWithoutMASC(), groundLimit));
+        desiredMPs.add(groundLimit);
+        desiredMPs.add(capForLowGravity(source, state.getWalkMP(), groundLimit));
 
         for (int desiredMP : desiredMPs) {
             List<MovePath> clippedPaths = clipToDesiredMP(clippedSource, desiredMP);
@@ -158,6 +162,24 @@ public class PathDecorator {
     }
 
     /**
+     * Low gravity multiplies MP: a Mek with 6 walk MP has 150 at 0.04 g, and a path search that size never finishes
+     * (issue #9265). Below 1 g the bot plans only up to the gravity-free limit, as the base path search already does;
+     * at 1 g and above the MP is returned unchanged.
+     *
+     * @param source the path whose game sets the gravity
+     * @param mp     the MP the unit has in this gravity
+     * @param limit  the most MP the unit has without the low gravity bonus
+     *
+     * @return {@code mp}, or {@code limit} when the gravity is low and {@code mp} is larger
+     */
+    static int capForLowGravity(MovePath source, int mp, int limit) {
+        if (source.getGame().getPlanetaryConditions().getGravity() >= 1.0f) {
+            return mp;
+        }
+        return Math.min(mp, limit);
+    }
+
+    /**
      * Clips the given path until it only uses the desired MP or less.
      */
     public static List<MovePath> clipToDesiredMP(MovePath source, int desiredMP) {
@@ -178,6 +200,29 @@ public class PathDecorator {
         lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
         lpf.run(source);
         return new ArrayList<>(lpf.getLongestComputedPaths());
+    }
+
+    /**
+     * Adds a takeoff to a path for a grounded WiGE. A WiGE on the ground has only 1 MP, so a path that never takes off
+     * leaves it crawling one hex a turn. Taking off is an UP step that must be the first step; it costs a WiGE vehicle
+     * 5 MP (TW p.55).
+     *
+     * @param path a path with no movement steps yet (a climb mode step is allowed)
+     *
+     * @return {@code true} if a legal takeoff was added; {@code false} if the unit is not a grounded WiGE or cannot take
+     *       off, in which case the path is left unchanged
+     */
+    public static boolean addWiGETakeoff(MovePath path) {
+        Entity entity = path.getEntity();
+        if ((entity.getMovementMode() != EntityMovementMode.WIGE) || entity.isAirborneVTOLorWIGE()) {
+            return false;
+        }
+        path.addStep(MoveStepType.UP);
+        if (!path.isMoveLegal()) {
+            path.removeLastStep();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -211,9 +256,9 @@ public class PathDecorator {
         int destElevation = absHeight - destHex.getLevel();
         int safeElevation = destHex.maxTerrainFeatureElevation(false);
 
-        // Add as many UP steps as MP will allow, until able to move forward 
+        // Add as many UP steps as MP will allow, until able to move forward
         while (destElevation <= safeElevation) {
-            // Do not go up if the unit can go forward before rising above the 
+            // Do not go up if the unit can go forward before rising above the
             // maximum terrain elevation, e.g. under a bridge
             // VTOLs shouldn't land in this way, however.
             boolean noLanding = (destElevation >= 1);

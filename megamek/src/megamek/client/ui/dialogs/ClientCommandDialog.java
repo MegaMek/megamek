@@ -33,19 +33,19 @@
 package megamek.client.ui.dialogs;
 
 import java.awt.GridBagConstraints;
-import java.awt.Insets;
 import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.swing.*;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.FlatLafStyleBuilder;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Coords;
 import megamek.server.commands.ClientServerCommand;
 import megamek.server.commands.arguments.*;

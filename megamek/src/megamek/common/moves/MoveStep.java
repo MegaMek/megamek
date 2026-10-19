@@ -44,12 +44,12 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.IndustrialElevator;
 import megamek.common.LosEffects;
 import megamek.common.ManeuverType;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
@@ -698,22 +698,24 @@ public class MoveStep implements Serializable {
                 int subDepth = Math.max(depth, building);
 
                 switch (entity.getMovementMode()) {
-                    // WiGE ends the jump at 1 elevation
-                    case WIGE -> setElevation(ceiling + 1);
-                    // Hover ends the jump above the water
-                    case HOVER -> setElevation(ceiling);
+                    // TO:AUE p.162: a jumping WiGE vehicle returns to its standard one elevation above the
+                    // terrain it comes down on. Land-Air Meks and glider ProtoMeks also move as WiGEs but follow
+                    // their own rules.
+                    case WIGE -> setElevation(isWiGEVehicle(entity) ? subDepth + 1 : ceiling + 1);
                     default -> setElevation(subDepth);
                 }
             }
             // Handle bridge elevation for jumping
             if (hex.containsTerrain(Terrains.BRIDGE)) {
                 int bridgeElev = hex.terrainLevel(Terrains.BRIDGE_ELEV);
+                // A jumping WiGE vehicle comes down one elevation above the bridge deck (TO:AUE p.162)
+                int onBridgeElevation = isWiGEVehicle(entity) ? bridgeElev + 1 : bridgeElev;
                 if (climbMode() && (maxElevation >= bridgeElev)) {
                     // Climb mode ON - go onto bridge if reachable
-                    setElevation(Math.max(getElevation(), bridgeElev));
+                    setElevation(Math.max(getElevation(), onBridgeElevation));
                 } else if (!entity.isElevationValid(getElevation(), hex)) {
                     // Can't fit under bridge - force onto bridge (TO:AR 115)
-                    setElevation(bridgeElev);
+                    setElevation(onBridgeElevation);
                 }
             }
         } else {
@@ -836,13 +838,15 @@ public class MoveStep implements Serializable {
             }
         }
 
-        // WiGEs get bonus MP for each string of three consecutive hexes they descend.
+        // WiGEs get bonus MP for each string of three consecutive hexes they descend. Measure the unit's own
+        // altitude: a WiGE holding its altitude (Keep Elevation) over lower terrain is not descending.
         if (entity.getMovementMode() == EntityMovementMode.WIGE &&
             getClearance() > 0 &&
             game.getOptions().booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_VEHICLE_ADVANCED_MANEUVERS)) {
 
-            if (game.getBoard(boardId).getHex(getPosition()).ceiling() <
-                game.getBoard(boardId).getHex(prev.getPosition()).ceiling()) {
+            int altitude = game.getBoard(boardId).getHex(getPosition()).getLevel() + getElevation();
+            int previousAltitude = game.getBoard(boardId).getHex(prev.getPosition()).getLevel() + prev.getElevation();
+            if (altitude < previousAltitude) {
                 nWigeDescent = prev.getNWigeDescent() + 1;
                 if (nWigeDescent >= 3) {
                     wigeBonus++;
@@ -2418,7 +2422,8 @@ public class MoveStep implements Serializable {
             !isHullDown() &&
             !((entity instanceof ProtoMek) &&
               (entity.getInternal(ProtoMek.LOC_LEG) == IArmorState.ARMOR_DESTROYED)) &&
-            (!entity.isStuck() || entity.canUnstickByJumping())) {
+            (!entity.isStuck() || entity.canUnstickByJumping()) &&
+            !isGroundedWiGEVehicle(entity)) {
 
             movementType = EntityMovementType.MOVE_JUMP;
         }
@@ -2911,21 +2916,22 @@ public class MoveStep implements Serializable {
                 // or into stacking violation.
                 Targetable target = getTarget(game);
                 if (target instanceof Entity other) {
+                    // Only jump and VTOL infantry may leave a VTOL or WiGE that has not landed, in its own hex; jump
+                    // infantry land on the ground or roof, VTOL infantry stay at its elevation (TW p.225, errata
+                    // v12.0)
+                    int unloadElevation = getElevation();
+                    Hex carrierHex = game.getBoard(boardId).getHex(curPos);
+                    if (AirborneDismountRules.isCarrierAirborne(entity, carrierHex, getElevation())) {
+                        boolean leavesCarrierHex = (getTargetPosition() != null) && !getTargetPosition().equals(curPos);
+                        if (leavesCarrierHex
+                              || !AirborneDismountRules.canDismountFromAirborneCarrier(game, entity, other)) {
+                            movementType = EntityMovementType.MOVE_ILLEGAL;
+                        }
+                        unloadElevation = AirborneDismountRules.dismountElevation(other, carrierHex, getElevation());
+                    }
                     // Change the destination hex if an unload dialog box set it elsewhere
                     if (getTargetPosition() != null) {
                         curPos = getTargetPosition();
-                    }
-                    // Infantry with jump capability or glider wings dismounting from VTOLs
-                    // land at ground level, not VTOL elevation (TW p.31, IO:AE p.79)
-                    int unloadElevation = getElevation();
-                    if (entity instanceof VTOL && other.isInfantry()) {
-                        Infantry inf = (Infantry) other;
-                        if (inf.getJumpMP() > 0 || inf.canExitVTOLWithGliderWings()) {
-                            Hex destHex = game.getBoard(boardId).getHex(curPos);
-                            if (destHex != null) {
-                                unloadElevation = destHex.getLevel();
-                            }
-                        }
                     }
                     if ((Compute.stackingViolation(game, other, curPos, entity, climbMode, true) != null) ||
                         other.isLocationProhibited(curPos, unloadElevation)) {
@@ -3585,8 +3591,8 @@ public class MoveStep implements Serializable {
                 boolean isOnIceSurface = destHex.containsTerrain(Terrains.ICE)
                                          && (nDestEl == destHex.getLevel());
                 if (inWaterColumn && !isOnIceSurface && (waterDepth > 0) && !isAmphibious) {
-                    // "To be considered underwater, a unit must be completely submerged... 'Mechs must be in at
-                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a Mek
+                    // "To be considered underwater, a unit must be completely submerged... 'Meks must be in at
+                    // least Depth 2 water, or at least Depth 1 if prone" (TW p.56). Everything shorter than a 'Mek
                     // is already completely under in Depth 1, so it pays the underwater cost there. Anything only
                     // partly submerged is wading, and pays the lower Depth 1 cost from the Movement Costs Table.
                     boolean isFullySubmerged = (entity instanceof Mek)
@@ -3772,6 +3778,26 @@ public class MoveStep implements Serializable {
     }
 
     /**
+     * TO:AUE p.162: a WiGE vehicle may fire its jump jets only while airborne, never on a turn it takes off or lands.
+     * Land-Air Meks and glider ProtoMeks also move as WiGEs but follow their own rules.
+     *
+     * @param entity the unit to check
+     *
+     * @return {@code true} if the unit is a WiGE vehicle on the ground, which may not jump
+     */
+    public static boolean isGroundedWiGEVehicle(Entity entity) {
+        return isWiGEVehicle(entity) && !entity.isAirborneVTOLorWIGE();
+    }
+
+    /**
+     * @return {@code true} if the unit is a WiGE vehicle. Land-Air Meks and glider ProtoMeks also move as WiGEs but
+     *       are not vehicles.
+     */
+    private static boolean isWiGEVehicle(Entity entity) {
+        return (entity instanceof Tank) && entity.getMovementMode().isWiGE();
+    }
+
+    /**
      * Is movement possible from a previous position to this one?
      * <p>
      * This function does not comment on whether an overall movement path is possible, just whether the <em>current</em>
@@ -3864,6 +3890,17 @@ public class MoveStep implements Serializable {
         // If you want to flee, and you can flee, flee.
         if ((type == MoveStepType.FLEE) && entity.canFlee(dest)) {
             return true;
+        }
+
+        // TO:AUE p.162: a vehicle may not jump into terrain its motive type forbids. The return below skips the
+        // prohibited-terrain check further down, so run it here for a jumping vehicle. As there, a vehicle landing on a
+        // bridge deck is on the bridge, not in the terrain below it (TO:AR p.115).
+        if (isJumping() && (entity instanceof Tank)) {
+            boolean isInProhibitedTerrain = entity.isLocationProhibited(dest, boardId, elevation);
+            boolean isOnBridge = isOnBridgeDeck(destHex, elevation);
+            if (isInProhibitedTerrain && !isOnBridge) {
+                terrainInvalid = true;
+            }
         }
 
         // Motive hit has immobilized CV, but it still wants to (and can) jump: okay!
@@ -4146,6 +4183,11 @@ public class MoveStep implements Serializable {
                                  elevationDown);
                 }
             }
+        }
+
+        // Airborne WiGE steps are MOVE_VTOL_*, so the elevation change check above is skipped for them
+        if (isAirborneWiGERiseTooHigh(src, srcHex, srcEl, srcAlt, dest, destHex)) {
+            return false;
         }
 
         // Sheer Cliffs, TO p.39
@@ -4560,6 +4602,45 @@ public class MoveStep implements Serializable {
 
     public int getElevation() {
         return elevation;
+    }
+
+    /**
+     * TW p.55: a WiGE may enter a hex one level higher than its current hex, never two or more. A WiGE holding its
+     * altitude over lower hexes (TW p.56 example) is measured from that altitude rather than from the ground below it,
+     * so its altitude may rise by at most one level per hex entered. Building roofs count as the surface (see
+     * {@link Entity#calcElevation}). Grounded WiGEs, jumps and steps within one hex are not checked here.
+     *
+     * @param src     the hex the step starts in
+     * @param srcHex  the hex at {@code src}
+     * @param srcEl   the unit's elevation in the source hex
+     * @param srcAlt  the unit's absolute altitude in the source hex (hex level plus elevation)
+     * @param dest    the hex the step enters
+     * @param destHex the hex at {@code dest}
+     *
+     * @return {@code true} if this step would lift an airborne WiGE more than one level
+     */
+    private boolean isAirborneWiGERiseTooHigh(Coords src, Hex srcHex, int srcEl, int srcAlt, Coords dest,
+          Hex destHex) {
+        if ((movementMode != EntityMovementMode.WIGE) || (movementType == EntityMovementType.MOVE_JUMP)
+              || src.equals(dest)) {
+            return false;
+        }
+        int sourceClearance = srcEl;
+        if (srcHex.containsTerrain(Terrains.BLDG_ELEV)) {
+            sourceClearance -= srcHex.terrainLevel(Terrains.BLDG_ELEV);
+        }
+        if (sourceClearance <= 0) {
+            return false;
+        }
+        // Use the step elevation rather than isMovementPossible's destAlt, which is clamped to the floor of
+        // building hexes in some climb mode cases
+        int altitudeRise = (elevation + destHex.getLevel()) - srcAlt;
+        if (altitudeRise > 1) {
+            LOGGER.debug("isValidStep: airborne WiGE {} cannot rise {} levels into {}",
+                  getEntity().getDisplayName(), altitudeRise, dest);
+            return true;
+        }
+        return false;
     }
 
     /**

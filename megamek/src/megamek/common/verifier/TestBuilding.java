@@ -406,9 +406,11 @@ public class TestBuilding extends TestEntity {
                   && !(m.getType() instanceof InfantryWeapon) && !BuildingConstruction.isCapital(m.getType())
                   && m.getTonnage() >= (entity instanceof MobileStructure ? .5 : .25))
                   .mapToDouble(m -> BuildingConstruction.equipmentWeightInHex(entity, m, hex)).sum();
+            // The limit is per hex, so a hex shorter than the structure gets the allowance for its own levels only
+            int hexHeight = structure.getHeight(hex);
             double weaponLimit = classification == IBuilding.GUN_EMPLACEMENT ? Math.floor(cf / 3.0)
-                  : classification == IBuilding.FORTRESS ? cf * height / 10.0
-                        : classification == IBuilding.CASTLE_BRIAN ? cf * height : 0;
+                  : classification == IBuilding.FORTRESS ? cf * hexHeight / 10.0
+                        : classification == IBuilding.CASTLE_BRIAN ? cf * hexHeight : 0;
             if (heavyWeapons > weaponLimit + .00001) {
                 issues.add("Hex " + (index + 1) + ": heavy weapons exceed the " + weaponLimit + " ton limit.");
             }

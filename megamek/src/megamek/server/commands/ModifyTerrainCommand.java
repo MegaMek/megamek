@@ -45,7 +45,6 @@ import megamek.server.commands.arguments.CoordXArgument;
 import megamek.server.commands.arguments.CoordYArgument;
 import megamek.server.commands.arguments.EnumArgument;
 import megamek.server.commands.arguments.IntegerArgument;
-import megamek.server.totalWarfare.HexEditHandler;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**

@@ -50,8 +50,8 @@ import megamek.server.totalWarfare.TWGameManager;
  *
  * <p>TW p. 143: "An SRM infantry platoon that hits its target does so with a number of inferno missiles equal to
  * its Damage Value after rolling on the Cluster Hits Table, divided by 2 (round fractions down)." The missiles are
- * delivered instead of the platoon's ordinary damage, not in addition to it, which is why the launcher offers
- * Inferno and Damage as alternative firing modes.</p>
+ * delivered instead of the platoon's ordinary damage, not in addition to it. The platoon declares Inferno or
+ * standard munitions before the battle; see {@link megamek.common.units.ConvInfantry#firesInfernoSrms()}.</p>
  *
  * <p>This is what separates a real Inferno SRM from the incendiary support weapons renamed by the TechManual
  * pp. 350-352 errata. An incendiary weapon in Heat mode only converts its damage to heat, and so does nothing to a

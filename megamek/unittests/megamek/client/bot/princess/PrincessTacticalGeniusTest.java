@@ -155,16 +155,48 @@ class PrincessTacticalGeniusTest {
     }
 
     @Test
-    void rerollOddsIncludeTheTeamBonus() {
-        // Losing 3 to 7. Plain 2d6 beats 7 on 8+, 15 in 36; with a +2 bonus it beats 7 on 6+, 26 in 36.
-        assertEquals(15.0 / 36.0, Princess.probabilityOfMajorityWinOnReroll(0, List.of(7)), 1e-9);
-        assertEquals(26.0 / 36.0, Princess.probabilityOfMajorityWinOnReroll(2, List.of(7)), 1e-9);
-        assertFalse(Princess.shouldRerollInitiative(3, 0, List.of(7)));
-        assertTrue(Princess.shouldRerollInitiative(3, 2, List.of(7)));
+    void theExpectedScoreIncludesTheTeamBonus() {
+        // Against a 7, plain 2d6 wins 15 times in 36, ties 6 and loses 15: an even 0. With a +2 bonus it wins on 6+
+        // (26 in 36), ties on a 5 (4) and loses on 4 or less (6): (26 - 6) / 36.
+        assertEquals(0.0, Princess.expectedScoreOnReroll(0, List.of(7)), 1e-9);
+        assertEquals(20.0 / 36.0, Princess.expectedScoreOnReroll(2, List.of(7)), 1e-9);
+    }
+
+    @Test
+    void alwaysRerollsALossAgainstOneEnemyEvenWithPoorOdds() {
+        // Losing 8 to 11, a fresh 2d6 only wins on a 12. That is still better than a certain loss, and the reroll
+        // costs nothing, so she takes it. The old rule kept this loss because the odds were under one half.
+        assertTrue(Princess.shouldRerollInitiative(8, 0, List.of(11)));
+    }
+
+    @Test
+    void doesNotRerollWhenNoFreshRollCouldEvenTie() {
+        // Against a 13, no 2d6 result without a bonus can win or tie, so a reroll cannot do better than now.
+        assertFalse(Princess.shouldRerollInitiative(2, 0, List.of(13)));
     }
 
     @Test
     void doesNotRerollATie() {
+        // Tied 7 against 7: a reroll is as likely to lose as to win, which is no better than the tie.
         assertFalse(Princess.shouldRerollInitiative(7, 0, List.of(7)));
+    }
+
+    @Test
+    void doesNotRerollAMajorityWinThatARerollWouldRisk() {
+        // A 9 beats a 4 and a 5 and loses to a 10: a score of 1. A fresh roll averages 20 / 36, so she keeps it.
+        assertFalse(Princess.shouldRerollInitiative(9, 0, List.of(4, 5, 10)));
+    }
+
+    @Test
+    void rerollsASplitThatARerollIsLikelyToImprove() {
+        // An 8 beats a 3 and loses to a 9: a score of 0. A fresh roll averages 12 / 36, so she rerolls.
+        assertTrue(Princess.shouldRerollInitiative(8, 0, List.of(3, 9)));
+    }
+
+    @Test
+    void doesNotRerollWhenTheExpectedScoreOnlyMatchesTheCurrentOne() {
+        // An 11 beats a 2 and loses to a 12: a score of 0. A fresh roll also averages exactly 0.
+        assertEquals(0.0, Princess.expectedScoreOnReroll(0, List.of(2, 12)), 1e-9);
+        assertFalse(Princess.shouldRerollInitiative(11, 0, List.of(2, 12)));
     }
 }

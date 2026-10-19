@@ -122,8 +122,10 @@ import org.apache.logging.log4j.Level;
 
 public class Princess extends BotClient {
     private static final MMLogger LOGGER = MMLogger.create(Princess.class);
-    /** Only spend Tactical Genius when a reroll is at least as likely as not to win the majority. */
-    private static final double TACTICAL_GENIUS_REROLL_THRESHOLD = 0.5;
+    /** The number of ways two dice can fall. */
+    private static final int OUTCOMES_ON_2D6 = 36;
+    /** The number of ways to roll each total on 2d6, indexed by the total. */
+    private static final int[] WAYS_TO_ROLL_ON_2D6 = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
     private static final char PLUS = '+';
     private static final char MINUS = '-';
 
@@ -5693,8 +5695,10 @@ public class Princess extends BotClient {
      * holding an enemy player. Each player's own roll only orders the players within a team and says nothing about
      * who won.</p>
      *
-     * <p>Princess will only reroll if her team is currently losing more initiative comparisons than winning, and if
-     * the probability that a fresh roll (plus her team's bonus) wins the majority meets the threshold.</p>
+     * <p>Princess scores her team's roll as the enemy teams it beats minus the enemy teams that beat it. A reroll costs
+     * her nothing but the roll she has, so she rerolls whenever the score she can expect from a fresh 2d6 (plus her
+     * team's bonus) is higher than the score she has now. Against a single enemy that means a lost initiative is
+     * always rerolled, unless no fresh roll could even tie.</p>
      *
      * <p>Under individual initiative every unit rolls on its own, so there is no single team roll to judge and
      * Princess does not reroll.</p>
@@ -5734,9 +5738,10 @@ public class Princess extends BotClient {
 
         boolean reroll = shouldRerollInitiative(myRoll, myBonus, enemyRolls);
         LOGGER.info("[TacticalGenius] {}: team total {} (bonus {}) vs enemy team totals {}: wins={} losses={} "
-                    + "odds={} reroll={}",
+                    + "score={} expected score on reroll={} reroll={}",
               getName(), myRoll, myBonus, enemyRolls, countWins(myRoll, enemyRolls),
-              countLosses(myRoll, enemyRolls), probabilityOfMajorityWinOnReroll(myBonus, enemyRolls), reroll);
+              countLosses(myRoll, enemyRolls), initiativeScore(myRoll, enemyRolls),
+              expectedScoreOnReroll(myBonus, enemyRolls), reroll);
         return reroll;
     }
 
@@ -5747,16 +5752,21 @@ public class Princess extends BotClient {
      * @param myBonus    the bonus that will be added to a rerolled 2d6
      * @param enemyRolls the initiative totals of the enemy teams
      *
-     * @return {@code true} only if Princess is losing more comparisons than she wins, and a reroll is at least as
-     *       likely as not to win the majority
+     * @return {@code true} only if the score Princess can expect from a reroll is higher than her current score
      */
     static boolean shouldRerollInitiative(int myRoll, int myBonus, List<Integer> enemyRolls) {
-        // We're only interested in rerolling if we're actually losing overall.
-        if (countWins(myRoll, enemyRolls) >= countLosses(myRoll, enemyRolls)) {
-            return false;
-        }
+        // Compare in whole numbers (36ths) so an exactly equal expectation is never mistaken for a gain
+        return totalScoreOverAllRerolls(myBonus, enemyRolls) > (initiativeScore(myRoll, enemyRolls) * OUTCOMES_ON_2D6);
+    }
 
-        return probabilityOfMajorityWinOnReroll(myBonus, enemyRolls) >= TACTICAL_GENIUS_REROLL_THRESHOLD;
+    /**
+     * @param myRoll     an initiative total
+     * @param enemyRolls the initiative totals of the enemy teams
+     *
+     * @return the number of enemy teams the roll beats minus the number that beat it; a tie counts as neither
+     */
+    static int initiativeScore(int myRoll, List<Integer> enemyRolls) {
+        return countWins(myRoll, enemyRolls) - countLosses(myRoll, enemyRolls);
     }
 
     /**
@@ -5825,34 +5835,26 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Calculates the probability that rerolling 2d6 initiative, plus the team's bonus, will beat more enemy rolls
-     * than it loses to.
-     *
-     * <p>Uses the standard 2d6 probability distribution to determine favorable outcomes, where a favorable outcome
-     * is defined as winning more initiative comparisons than losing.</p>
+     * Calculates the score Princess can expect if she rerolls: the average of {@link #initiativeScore} over every 2d6
+     * result, weighted by how likely each result is, with her team's bonus added to the dice.
      *
      * @param myBonus    the bonus added to the rerolled dice
-     * @param enemyRolls the list of enemy initiative totals to compare against
+     * @param enemyRolls the initiative totals of the enemy teams
      *
-     * @return the probability (0.0 to 1.0) that a reroll will improve the net initiative outcome
+     * @return the expected score after a reroll, from minus the number of enemy teams to plus that number
      */
-    static double probabilityOfMajorityWinOnReroll(int myBonus, List<Integer> enemyRolls) {
-        // Number of ways to roll each total on 2d6
-        int[] ways = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+    static double expectedScoreOnReroll(int myBonus, List<Integer> enemyRolls) {
+        return (double) totalScoreOverAllRerolls(myBonus, enemyRolls) / OUTCOMES_ON_2D6;
+    }
 
-        int favorableOutcomes = 0;
-        int totalOutcomes = 36;
-
+    /**
+     * @return the sum of {@link #initiativeScore} over all 36 ways two dice can fall, with the bonus added
+     */
+    private static int totalScoreOverAllRerolls(int myBonus, List<Integer> enemyRolls) {
+        int totalScore = 0;
         for (int dice = 2; dice <= 12; dice++) {
-            int myRoll = dice + myBonus;
-            int wins = countWins(myRoll, enemyRolls);
-            int losses = countLosses(myRoll, enemyRolls);
-
-            if (wins > losses) {
-                favorableOutcomes += ways[dice];
-            }
+            totalScore += WAYS_TO_ROLL_ON_2D6[dice] * initiativeScore(dice + myBonus, enemyRolls);
         }
-
-        return (double) favorableOutcomes / totalOutcomes;
+        return totalScore;
     }
 }

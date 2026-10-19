@@ -1040,9 +1040,6 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 setPlayerDone(player, getGame().getEntitiesOwnedBy(player) <= 0);
-                // A client joining mid-round missed the team rolls sent when the round started. They must arrive
-                // before the phase change, which is when a bot decides on a Tactical Genius reroll.
-                send(connectionId, packetHelper.createTeamInitiativePacket());
                 send(connectionId, packetHelper.createPhaseChangePacket());
             }
 

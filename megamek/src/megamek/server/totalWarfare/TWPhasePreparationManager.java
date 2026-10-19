@@ -302,6 +302,7 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
             case INITIATIVE_REPORT:
                 gameManager.autoSave();
                 // We need to send out player updates so everyone knows what their initiative is!
+                gameManager.shareTeamInitiativeWithPlayers();
                 gameManager.transmitAllPlayerUpdates();
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:

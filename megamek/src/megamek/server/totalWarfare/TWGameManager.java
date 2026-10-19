@@ -1920,6 +1920,8 @@ public class TWGameManager extends AbstractGameManager {
         if (game.getNoOfInitiativeRerollRequests() > 0) {
             resetActivePlayersDone();
             game.rollInitAndResolveTies();
+            shareTeamInitiativeWithPlayers();
+            transmitAllPlayerUpdates();
 
             determineTurnOrder(GamePhase.INITIATIVE);
             clearReports();
@@ -2988,6 +2990,18 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         transmitAllPlayerUpdates();
+    }
+
+    /**
+     * Copies each team's initiative roll onto its players. Teams are not sent to clients, so without this a client only
+     * knows each player's roll within their team, not the roll that orders the teams.
+     */
+    void shareTeamInitiativeWithPlayers() {
+        for (Team team : game.getTeams()) {
+            for (Player player : team.players()) {
+                player.setTeamInitiative(team.getInitiative());
+            }
+        }
     }
 
     private Vector<GameTurn> initGameTurnsWithStranded(TurnVectors team_order) {

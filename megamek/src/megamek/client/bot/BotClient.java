@@ -741,15 +741,18 @@ public abstract class BotClient extends Client {
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
                 case INITIATIVE_REPORT:
-                    // Let bots use Tactical Genius
-                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - start", getName(),
-                          phase);
-                    boolean rerollInitiative = decideToRerollInitiative();
-                    DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - finished, reroll={}",
-                          getName(), phase, rerollInitiative);
-                    if (rerollInitiative) {
-                        rerolledInitiative = true;
-                        sendRerollInitiativeRequest();
+                    // Let bots use Tactical Genius; the server only accepts rerolls in the initiative report, not
+                    // in the end report that falls through to here
+                    if (phase.isInitiativeReport()) {
+                        DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - start", getName(),
+                              phase);
+                        boolean rerollInitiative = decideToRerollInitiative();
+                        DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - finished, reroll={}",
+                              getName(), phase, rerollInitiative);
+                        if (rerollInitiative) {
+                            rerolledInitiative = true;
+                            sendRerollInitiativeRequest();
+                        }
                     }
                     DONE_LEDGER_LOGGER.info("[DoneLedger] {}: sending done for {}", getName(), phase);
                     sendDone(true);
@@ -1646,16 +1649,17 @@ public abstract class BotClient extends Client {
         Player me = getLocalPlayer();
         if (game.hasTacticalGenius(me)) {
             if (!rerolledInitiative) {
-                InitiativeRoll myRoll = me.getInitiative();
+                // Compare team rolls: they order the round and are what Tactical Genius rerolls. A player's own
+                // initiative only orders the players within a team.
+                InitiativeRoll myRoll = me.getTeamInitiative();
                 InitiativeRoll otherRoll;
                 List<Player> others = game.getPlayersList()
                       .stream()
                       .filter(p -> p != me && p.isEnemyOf(me))
                       .toList();
                 for (Player other : others) {
-                    otherRoll = other.getInitiative();
-                    if (otherRoll.size() > 0 &&
-                          myRoll.getRoll(myRoll.size() - 1) < otherRoll.getRoll(otherRoll.size() - 1)) {
+                    otherRoll = other.getTeamInitiative();
+                    if ((myRoll.size() > 0) && (otherRoll.size() > 0) && (myRoll.compareTo(otherRoll) < 0)) {
                         return true;
                     }
                 }

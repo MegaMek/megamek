@@ -177,6 +177,15 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     }
 
     /**
+     * @param index The roll index
+     *
+     * @return The total bonus that was added to the dice for the roll at the given index
+     */
+    public int getBonus(int index) {
+        return bonuses.elementAt(index).total();
+    }
+
+    /**
      * Two initiative rolls are equal if they match, roll by roll
      */
     @Override

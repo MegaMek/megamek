@@ -128,6 +128,11 @@ public final class Player extends TurnOrdered {
     private int startingVictoryPoints = 0;
     private int streakCompensationBonus = 0;
 
+    // The initiative roll of this player's team. Teams only exist on the server, so the server copies their roll here
+    // to let clients (e.g. bots deciding on Tactical Genius) see the roll that actually orders the round. May be null
+    // when loaded from an older save.
+    private InitiativeRoll teamInitiative = new InitiativeRoll();
+
     private Camouflage camouflage = new Camouflage(Camouflage.COLOUR_CAMOUFLAGE, PlayerColour.BLUE.name());
     private PlayerColour colour = PlayerColour.BLUE;
 
@@ -1147,8 +1152,30 @@ public final class Player extends TurnOrdered {
         copy.admitsDefeat = admitsDefeat;
 
         copy.setInitiative(new InitiativeRoll(getInitiative()));
+        copy.teamInitiative = new InitiativeRoll(getTeamInitiative());
 
         return copy;
+    }
+
+    /**
+     * @return The initiative roll of this player's team, as last shared by the server. This is the roll that decides
+     *       the turn order between teams; {@link #getInitiative()} only orders the players within a team. Empty when no
+     *       team roll has been shared yet, e.g. with individual initiative.
+     */
+    public InitiativeRoll getTeamInitiative() {
+        if (teamInitiative == null) {
+            teamInitiative = new InitiativeRoll();
+        }
+        return teamInitiative;
+    }
+
+    /**
+     * Sets the initiative roll of this player's team. Used by the server to share the team roll with clients.
+     *
+     * @param teamInitiative The team's initiative roll; a copy is stored
+     */
+    public void setTeamInitiative(InitiativeRoll teamInitiative) {
+        this.teamInitiative = (teamInitiative == null) ? new InitiativeRoll() : new InitiativeRoll(teamInitiative);
     }
 
     /**

@@ -99,4 +99,23 @@ class ClientPreferencesUserDirTest {
 
         assertEquals("/home/player/saved", store.getString(ClientPreferences.USER_DIR));
     }
+
+    @Test
+    void filesystemRootsKeepTheirSeparator() {
+        assertEquals("/", ClientPreferences.stripTrailingSeparators("/"));
+        assertEquals("/", ClientPreferences.stripTrailingSeparators("//"));
+        assertEquals("C:\\", ClientPreferences.stripTrailingSeparators("C:\\"));
+        assertEquals("C:\\", ClientPreferences.stripTrailingSeparators("C:\\\\"));
+        assertEquals("D:/", ClientPreferences.stripTrailingSeparators("D:/"));
+        assertEquals("C:\\Games", ClientPreferences.stripTrailingSeparators("C:\\Games\\"));
+    }
+
+    @Test
+    void rootOverrideIsUsedAsIs() {
+        System.setProperty(ClientPreferences.USER_DIR_PROPERTY, "/");
+        assertEquals("/", preferences.getUserDir());
+
+        System.setProperty(ClientPreferences.USER_DIR_PROPERTY, "C:\\");
+        assertEquals("C:\\", preferences.getUserDir());
+    }
 }

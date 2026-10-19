@@ -537,7 +537,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash. When the
+     * @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash unless it
+     *       is a filesystem root such as {@code /} or {@code C:\}. When the
      *       {@link #USER_DIR_PROPERTY} system property is set (for example by the MegaMek Launcher), it takes precedence
      *       over the saved preference for this run.
      */
@@ -547,8 +548,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @return True when the user directory comes from the {@link #USER_DIR_PROPERTY} system property for this run, so
-     *       the saved preference is not in effect.
+     * @return {@code true} when the user directory comes from the {@link #USER_DIR_PROPERTY} system property for this
+     *       run, so the saved preference is not in effect; {@code false} otherwise
      */
     public boolean isUserDirOverridden() {
         return userDirOverride() != null;
@@ -571,11 +572,18 @@ public class ClientPreferences extends PreferenceStoreProxy {
         return stripTrailingSeparators(value.strip());
     }
 
-    private static String stripTrailingSeparators(String directory) {
-        while (!directory.isBlank() && (directory.endsWith("/") || directory.endsWith("\\"))) {
+    static String stripTrailingSeparators(String directory) {
+        while (!directory.isBlank() && (directory.endsWith("/") || directory.endsWith("\\"))
+              && !isFilesystemRoot(directory)) {
             directory = directory.substring(0, directory.length() - 1);
         }
         return directory;
+    }
+
+    /** Roots keep their separator: {@code /} and {@code C:\} differ from an empty or drive-relative path. */
+    private static boolean isFilesystemRoot(String directory) {
+        return directory.equals("/") || directory.equals("\\")
+              || directory.matches("[A-Za-z]:[/\\\\]");
     }
 
     public String getMmlPath() {

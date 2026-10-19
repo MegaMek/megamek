@@ -92,6 +92,7 @@ import megamek.common.game.Game;
 import megamek.common.game.GameDatasetLogger;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.interfaces.ForceAssignable;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.interfaces.ILocationExposureStatus;
@@ -1040,6 +1041,9 @@ public class TWGameManager extends AbstractGameManager {
                 }
 
                 setPlayerDone(player, getGame().getEntitiesOwnedBy(player) <= 0);
+                // A client joining mid-round missed the team rolls sent when the round started. They must arrive
+                // before the phase change, which is when a bot decides on a Tactical Genius reroll.
+                send(connectionId, createTeamInitiativePacket());
                 send(connectionId, packetHelper.createPhaseChangePacket());
             }
 
@@ -1924,6 +1928,7 @@ public class TWGameManager extends AbstractGameManager {
             determineTurnOrder(GamePhase.INITIATIVE);
             clearReports();
             writeInitiativeReport(true);
+            sendTeamInitiative();
             sendReport(true);
             return; // don't end the phase yet, players need to see new report
         }
@@ -2988,6 +2993,28 @@ public class TWGameManager extends AbstractGameManager {
         }
 
         transmitAllPlayerUpdates();
+    }
+
+    /**
+     * Sends every team's initiative roll to all clients, keyed by player id. A player update only carries the
+     * player's roll for ordering within their team; the team roll that decides who wins initiative is not in it. Bots
+     * need the team roll to judge whether a Tactical Genius reroll is worth spending.
+     */
+    void sendTeamInitiative() {
+        send(createTeamInitiativePacket());
+    }
+
+    /**
+     * @return a {@link PacketCommand#TEAM_INITIATIVE} packet holding every team's initiative roll, keyed by player id
+     */
+    private Packet createTeamInitiativePacket() {
+        HashMap<Integer, InitiativeRoll> teamRollsByPlayerId = new HashMap<>();
+        for (Team team : game.getTeams()) {
+            for (Player player : team.players()) {
+                teamRollsByPlayerId.put(player.getId(), new InitiativeRoll(team.getInitiative()));
+            }
+        }
+        return new Packet(PacketCommand.TEAM_INITIATIVE, teamRollsByPlayerId);
     }
 
     private Vector<GameTurn> initGameTurnsWithStranded(TurnVectors team_order) {

@@ -741,10 +741,11 @@ public abstract class BotClient extends Client {
                     // intentional fallthrough: all reports must click "done", otherwise the game
                     // never moves on.
                 case INITIATIVE_REPORT:
-                    // Let bots use Tactical Genius
+                    // Let bots use Tactical Genius. END_REPORT falls through to here, but the server only accepts a
+                    // reroll in the Initiative Report phase, so only decide then.
                     DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - start", getName(),
                           phase);
-                    boolean rerollInitiative = decideToRerollInitiative();
+                    boolean rerollInitiative = phase.isInitiativeReport() && decideToRerollInitiative();
                     DONE_LEDGER_LOGGER.info("[DoneLedger] {}: {} initiative reroll decision - finished, reroll={}",
                           getName(), phase, rerollInitiative);
                     if (rerollInitiative) {

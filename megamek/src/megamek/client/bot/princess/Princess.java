@@ -5687,58 +5687,101 @@ public class Princess extends BotClient {
     /**
      * Determines whether Princess should reroll initiative using the Tactical Genius special ability.
      *
-     * <p>The decision is based on:</p>
+     * <p>Initiative is won or lost by team rolls, so this compares Princess' team roll with the roll of every team
+     * holding an enemy player. Each player's own roll only orders the players within a team and says nothing about
+     * who won.</p>
      *
-     * <ul>
-     *   <li>Whether Tactical Genius is available to the player</li>
-     *   <li>Whether it has already been used this round</li>
-     *   <li>The probability that rerolling will improve the net initiative outcome against enemies</li>
-     * </ul>
+     * <p>Princess will only reroll if her team is currently losing more initiative comparisons than winning, and if
+     * the probability that a fresh roll (plus her team's bonus) wins the majority meets the threshold.</p>
      *
-     * <p>Princess will only reroll if currently losing more initiative comparisons than winning, and if the
-     * probability of improvement exceeds the configured threshold.</p>
+     * <p>Under individual initiative every unit rolls on its own, so there is no single team roll to judge and
+     * Princess does not reroll.</p>
      *
      * @return {@code true} if Tactical Genius should be used to reroll initiative
      */
     @Override
     protected boolean decideToRerollInitiative() {
         Player me = getLocalPlayer();
+        final Game currentGame = getGame();
 
-        if (!game.hasTacticalGenius(me) || rerolledInitiative) {
+        if (!currentGame.hasTacticalGenius(me) || rerolledInitiative) {
             return false;
         }
 
-        int myRoll = getLastInitiativeRoll(me);
-        List<Integer> enemyRolls = game.getPlayersList().stream()
-              .filter(p -> p != me && p.isEnemyOf(me))
-              .map(this::getLastInitiativeRoll)
-              .sorted()
-              .toList();
-
-        int winsNow = countWins(myRoll, enemyRolls);
-        int lossesNow = countLosses(myRoll, enemyRolls);
-
-        // We're only interested in rerolling if we're actually losing overall.
-        if (winsNow >= lossesNow) {
+        if (currentGame.getOptions().booleanOption(OptionsConstants.RPG_INDIVIDUAL_INITIATIVE)) {
+            LOGGER.info("[TacticalGenius] {}: individual initiative is on, no team roll to reroll", getName());
             return false;
         }
 
-        double pMajority = probabilityOfMajorityWinOnReroll(enemyRolls);
+        Team myTeam = currentGame.getTeamForPlayer(me);
+        if ((myTeam == null) || (myTeam.getInitiative().size() == 0)) {
+            LOGGER.info("[TacticalGenius] {}: no team initiative roll known, not rerolling", getName());
+            return false;
+        }
 
-        // Threshold can be tweaked; 0.5 = only reroll if it's more likely than not to help.
-        double THRESHOLD = 0.5;
-        return pMajority >= THRESHOLD;
+        InitiativeRoll myTeamRoll = myTeam.getInitiative();
+        int lastIndex = myTeamRoll.size() - 1;
+        int myRoll = myTeamRoll.getRoll(lastIndex);
+        int myBonus = myTeamRoll.getBonus(lastIndex);
+        List<Integer> enemyRolls = new ArrayList<>();
+        for (Team team : currentGame.getTeams()) {
+            if (!team.equals(myTeam) && isEnemyTeam(team, me) && (team.getInitiative().size() > 0)) {
+                enemyRolls.add(getLastInitiativeRoll(team.getInitiative()));
+            }
+        }
+
+        boolean reroll = shouldRerollInitiative(myRoll, myBonus, enemyRolls);
+        LOGGER.info("[TacticalGenius] {}: team total {} (bonus {}) vs enemy team totals {}: wins={} losses={} "
+                    + "odds={} reroll={}",
+              getName(), myRoll, myBonus, enemyRolls, countWins(myRoll, enemyRolls),
+              countLosses(myRoll, enemyRolls), probabilityOfMajorityWinOnReroll(myBonus, enemyRolls), reroll);
+        return reroll;
     }
 
     /**
-     * Retrieves the most recent initiative roll for the specified player.
+     * Decides whether a Tactical Genius reroll is worth spending, given the team initiative totals.
      *
-     * @param player the player whose initiative roll to retrieve
+     * @param myRoll     Princess' current team initiative total (dice plus bonus)
+     * @param myBonus    the bonus that will be added to a rerolled 2d6
+     * @param enemyRolls the initiative totals of the enemy teams
      *
-     * @return the player's last initiative roll value, or {@code 0} if no roll exists
+     * @return {@code true} only if Princess is losing more comparisons than she wins, and a reroll is at least as
+     *       likely as not to win the majority
      */
-    private int getLastInitiativeRoll(Player player) {
-        InitiativeRoll roll = player.getInitiative();
+    static boolean shouldRerollInitiative(int myRoll, int myBonus, List<Integer> enemyRolls) {
+        // We're only interested in rerolling if we're actually losing overall.
+        if (countWins(myRoll, enemyRolls) >= countLosses(myRoll, enemyRolls)) {
+            return false;
+        }
+
+        // Threshold can be tweaked; 0.5 = only reroll if it's more likely than not to help.
+        double threshold = 0.5;
+        return probabilityOfMajorityWinOnReroll(myBonus, enemyRolls) >= threshold;
+    }
+
+    /**
+     * @return {@code true} if any player on the team is an enemy of the given player
+     */
+    private static boolean isEnemyTeam(Team team, Player me) {
+        if (team.isObserverTeam()) {
+            return false;
+        }
+        for (Player player : team.players()) {
+            if (player.isEnemyOf(me)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Retrieves the most recent total of an initiative roll sequence.
+     *
+     * @param roll the initiative roll sequence
+     *
+     * @return the last roll's total, or {@code 0} if no roll exists
+     */
+    private static int getLastInitiativeRoll(InitiativeRoll roll) {
         if (roll == null || roll.size() == 0) {
             return 0;
         }
@@ -5753,7 +5796,7 @@ public class Princess extends BotClient {
      *
      * @return the number of enemy rolls that are lower than myRoll
      */
-    private int countWins(int myRoll, List<Integer> enemyRolls) {
+    static int countWins(int myRoll, List<Integer> enemyRolls) {
         int wins = 0;
         for (int roll : enemyRolls) {
             if (myRoll > roll) {
@@ -5771,7 +5814,7 @@ public class Princess extends BotClient {
      *
      * @return the number of enemy rolls that are higher than myRoll
      */
-    private int countLosses(int myRoll, List<Integer> enemyRolls) {
+    static int countLosses(int myRoll, List<Integer> enemyRolls) {
         int losses = 0;
         for (int roll : enemyRolls) {
             if (myRoll < roll) {
@@ -5782,28 +5825,31 @@ public class Princess extends BotClient {
     }
 
     /**
-     * Calculates the probability that rerolling 2d6 initiative will result in beating more enemy rolls than lose to.
+     * Calculates the probability that rerolling 2d6 initiative, plus the team's bonus, will beat more enemy rolls
+     * than it loses to.
      *
      * <p>Uses the standard 2d6 probability distribution to determine favorable outcomes, where a favorable outcome
      * is defined as winning more initiative comparisons than losing.</p>
      *
-     * @param enemyRolls the list of enemy initiative rolls to compare against
+     * @param myBonus    the bonus added to the rerolled dice
+     * @param enemyRolls the list of enemy initiative totals to compare against
      *
      * @return the probability (0.0 to 1.0) that a reroll will improve the net initiative outcome
      */
-    private double probabilityOfMajorityWinOnReroll(List<Integer> enemyRolls) {
+    static double probabilityOfMajorityWinOnReroll(int myBonus, List<Integer> enemyRolls) {
         // Number of ways to roll each total on 2d6
         int[] ways = { 0, 0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
 
         int favorableOutcomes = 0;
         int totalOutcomes = 36;
 
-        for (int myRoll = 2; myRoll <= 12; myRoll++) {
+        for (int dice = 2; dice <= 12; dice++) {
+            int myRoll = dice + myBonus;
             int wins = countWins(myRoll, enemyRolls);
             int losses = countLosses(myRoll, enemyRolls);
 
             if (wins > losses) {
-                favorableOutcomes += ways[myRoll];
+                favorableOutcomes += ways[dice];
             }
         }
 

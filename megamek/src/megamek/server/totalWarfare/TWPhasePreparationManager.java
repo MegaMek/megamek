@@ -303,6 +303,8 @@ public record TWPhasePreparationManager(TWGameManager gameManager) {
                 gameManager.autoSave();
                 // We need to send out player updates so everyone knows what their initiative is!
                 gameManager.transmitAllPlayerUpdates();
+                // Player updates carry only the order within each team; the team rolls decide who won.
+                gameManager.sendTeamInitiative();
             case TARGETING_REPORT:
             case MOVEMENT_REPORT:
             case OFFBOARD_REPORT:

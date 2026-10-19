@@ -43,6 +43,8 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
+
 import megamek.MMConstants;
 import megamek.common.Configuration;
 import megamek.common.moves.MovePath;
@@ -564,7 +566,11 @@ public class ClientPreferences extends PreferenceStoreProxy {
         store.setValue(USER_DIR, userDir);
     }
 
-    static String userDirOverride() {
+    /**
+     * @return the user directory set by the {@link #USER_DIR_PROPERTY} system property for this run, or {@code null}
+     *       when the property is not set or blank
+     */
+    static @Nullable String userDirOverride() {
         String value = System.getProperty(USER_DIR_PROPERTY);
         if ((value == null) || value.isBlank()) {
             return null;

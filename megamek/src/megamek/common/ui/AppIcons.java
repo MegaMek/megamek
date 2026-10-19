@@ -35,23 +35,23 @@ public final class AppIcons {
     private AppIcons() {}
 
     /**
-     * Sets the icon images of the given frame. Kept so that clients compiled against the original {@code JFrame}
-     * signature continue to link; delegates to {@link #apply(Window, String)}.
+     * Sets the icon images of the given frame.
      *
      * @param frame   the frame to set the icons on
      * @param appName the icon file prefix, e.g. "megameklab" or "mekhq"
      */
     public static void apply(JFrame frame, String appName) {
-        apply((Window) frame, appName);
+        applyToWindow(frame, appName);
     }
 
     /**
-     * Sets the icon images of the given window (frame or dialog).
+     * Sets the icon images of the given window, such as a dialog. Separately named rather than an overload of
+     * {@link #apply(JFrame, String)} so that the method called never depends on the static type of the argument.
      *
      * @param window  the window to set the icons on
      * @param appName the icon file prefix, e.g. "megameklab" or "mekhq"
      */
-    public static void apply(Window window, String appName) {
+    public static void applyToWindow(Window window, String appName) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         List<Image> icons = new ArrayList<>();
         for (int size : SIZES) {

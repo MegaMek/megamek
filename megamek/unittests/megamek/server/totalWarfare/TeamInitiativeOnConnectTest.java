@@ -107,6 +107,7 @@ class TeamInitiativeOnConnectTest {
         int teamRolls = indexOf(PacketCommand.TEAM_INITIATIVE);
         int phaseChange = indexOf(PacketCommand.PHASE_CHANGE);
         assertTrue(teamRolls >= 0, "team rolls were not sent");
+        assertTrue(phaseChange >= 0, "phase change was not sent");
         assertTrue(teamRolls < phaseChange, "team rolls must arrive before the phase change");
 
         Map<?, ?> teamRollsByPlayerId = (Map<?, ?>) packetsToJoiningClient.get(teamRolls).getObject(0);

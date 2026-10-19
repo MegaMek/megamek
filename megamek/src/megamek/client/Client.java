@@ -1495,17 +1495,6 @@ public class Client extends AbstractClient {
     }
 
     /**
-     * Receives a bot's honor report and records it: which players it considers dishonored, and which of its units are
-     * withdrawing under Forced Withdrawal. The first time an enemy bot marks the local player dishonored, shows the
-     * player a toast so they know the bot's units will no longer show theirs mercy.
-     *
-     * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
-     * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
-     * disabled that nag, or who was dishonored by a bot command such as blood-feud, is still told here.</p>
-     *
-     * @param packet the received {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} packet
-     */
-    /**
      * Stores each team's initiative roll on this client's copy of the team. The server sends it in the Initiative
      * Report phase because a player update only carries the player's roll for ordering within their own team, while
      * the team roll is the one that decides who won. {@code Game.setupTeams} carries a team's roll over when the teams
@@ -1529,6 +1518,17 @@ public class Client extends AbstractClient {
         }
     }
 
+    /**
+     * Receives a bot's honor report and records it: which players it considers dishonored, and which of its units are
+     * withdrawing under Forced Withdrawal. The first time an enemy bot marks the local player dishonored, shows the
+     * player a toast so they know the bot's units will no longer show theirs mercy.
+     *
+     * <p>The notice is skipped when the player had already been flagged for this bot, so a player who confirmed the
+     * pre-attack nag (which optimistically records the dishonor) does not get a redundant second notice. A player who
+     * disabled that nag, or who was dishonored by a bot command such as blood-feud, is still told here.</p>
+     *
+     * @param packet the received {@link megamek.common.net.enums.PacketCommand#PRINCESS_DISHONORED} packet
+     */
     protected void receivePrincessDishonored(Packet packet) throws InvalidPacketDataException {
         int botPlayerId = packet.getIntValue(0);
         if (!(packet.getObject(1) instanceof BotHonorReport report)) {

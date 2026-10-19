@@ -80,10 +80,10 @@ import megamek.server.victory.VictoryPointTracker.ScanRecord;
  * scanner's own side placed, or an enemy unit while the Sensor Check mission is on, banks a reading on the
  * scanning unit; anything else reports nothing of interest, so a player cannot tell a hidden objective from an
  * empty hex by the answer alone. The one public exception is an objective candidate (a Potential objective): any
- * side's successful scan of its hex confirms it for everyone. A reading is worth nothing until the unit that carries it leaves over its home
- * edge on the exit turn or later: then a Scan point pays its value to the owner once, and every enemy-unit reading
- * pays one point. A unit that leaves earlier, or is destroyed or captured, loses its readings, which is the whole
- * of the defender's counterplay.</p>
+ * side's successful scan of its hex confirms it for everyone. A reading is worth nothing until the unit that carries
+ * it leaves over its home edge on the exit turn or later: then a Scan point pays its value to the owner once, and
+ * every enemy-unit reading pays one point. A unit that leaves earlier, or is destroyed or captured, loses its
+ * readings, which is the whole of the defender's counterplay.</p>
  */
 class ObjectiveScanHandler extends AbstractTWRuleHandler {
 

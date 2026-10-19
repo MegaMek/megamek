@@ -199,6 +199,28 @@ class ObjectiveVariantPacketTest {
     }
 
     @Test
+    void testACandidateSentAlreadyConfirmedBeforeTheGameIsUnconfirmed() {
+        ObjectiveMarker marker = markerWith(true, false);
+        marker.setConfirmed(true);
+
+        sendVictorySetupTurn(marker);
+
+        ObjectiveMarker stored = storedMarker();
+        assertTrue(stored.isPotential(), "still a candidate");
+        assertFalse(stored.isConfirmed(), "only a scan confirms it, and none can have happened yet");
+    }
+
+    @Test
+    void testAGameMasterEditKeepsAConfirmationAScanMade() {
+        ObjectiveMarker marker = markerWith(true, false);
+        marker.setConfirmed(true);
+
+        sendGameMasterEdit(marker);
+
+        assertTrue(storedMarker().isConfirmed(), "an in-game edit may carry a real confirmation");
+    }
+
+    @Test
     void testAGameMasterEditWithPotentialAloneArrivesUntouched() {
         sendGameMasterEdit(markerWith(true, false));
 

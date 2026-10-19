@@ -53,8 +53,9 @@ public final class ScanMission {
 
     /**
      * Scanning is in play when objectives are on and there is something a scan could read: a Scan point on the
-     * board, or the Sensor Check mission, in which enemy units are the targets. Without either, a scan can only ever
-     * find nothing of interest, so no turn is spent on it.
+     * board, an objective candidate (a Potential objective) still waiting to be confirmed, or the Sensor Check
+     * mission, in which enemy units are the targets. Without any of these, a scan can only ever find nothing of
+     * interest, so no turn is spent on it.
      *
      * @param game the game, or {@code null} off-game
      *
@@ -69,9 +70,12 @@ public final class ScanMission {
         }
         for (List<ICarryable> hexObjects : game.getGroundObjects().values()) {
             for (ICarryable groundObject : hexObjects) {
-                boolean isScanPoint = (groundObject instanceof ObjectiveMarker marker)
-                      && (marker.getScoringScheme().getPreset() == SchemePreset.SCAN);
-                if (isScanPoint) {
+                if (!(groundObject instanceof ObjectiveMarker marker)) {
+                    continue;
+                }
+                boolean isScanPoint = marker.getScoringScheme().getPreset() == SchemePreset.SCAN;
+                boolean isOpenCandidate = marker.isPotential() && !marker.isConfirmed() && !marker.isDestroyed();
+                if (isScanPoint || isOpenCandidate) {
                     return true;
                 }
             }

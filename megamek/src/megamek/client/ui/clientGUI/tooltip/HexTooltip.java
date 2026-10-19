@@ -619,6 +619,11 @@ public final class HexTooltip {
             description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.progress",
                   progress));
         }
+        // whether a Potential point still needs its scan is public: both sides can see a candidate on the map
+        if (marker.isPotential()) {
+            description.append("<BR>&nbsp;").append(Messages.getString(marker.isConfirmed()
+                  ? "VictoryHex.tooltip.candidateConfirmed" : "VictoryHex.tooltip.candidate"));
+        }
         description.append("<BR>&nbsp;").append(VictoryHexPropertiesPane.describeScheme(scheme));
         return description.toString();
     }

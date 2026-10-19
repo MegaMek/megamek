@@ -17,9 +17,9 @@ package megamek.common.ui;
 
 import java.awt.Image;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
 
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -34,18 +34,18 @@ public final class AppIcons {
     private AppIcons() {}
 
     /**
-     * Sets the icon images of the given frame.
+     * Sets the icon images of the given window (frame or dialog).
      *
-     * @param frame   the frame to set the icons on
+     * @param window  the window to set the icons on
      * @param appName the icon file prefix, e.g. "megameklab" or "mekhq"
      */
-    public static void apply(JFrame frame, String appName) {
+    public static void apply(Window window, String appName) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         List<Image> icons = new ArrayList<>();
         for (int size : SIZES) {
             String fileName = "%s-icon-%dx%d.png".formatted(appName, size, size);
             icons.add(toolkit.getImage(new MegaMekFile(Configuration.miscImagesDir(), fileName).toString()));
         }
-        frame.setIconImages(icons);
+        window.setIconImages(icons);
     }
 }

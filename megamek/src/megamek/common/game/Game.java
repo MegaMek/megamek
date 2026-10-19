@@ -3793,10 +3793,10 @@ public final class Game extends AbstractGame implements Serializable,
     }
 
     /**
-     * Removes an industrial elevator from the game.
+     * Removes an industrial elevator shaft from the game. Other shafts at the same location are kept.
      *
-     * @param location The location of the elevator to remove
-     * @return The removed elevator, or {@code null} if none was found
+     * @param elevator The elevator shaft to remove
+     * @return {@code true} if the elevator was found and removed, {@code false} otherwise
      */
     public boolean removeIndustrialElevator(IndustrialElevator elevator) {
         boolean[] removed = { false };

@@ -122,6 +122,8 @@ import org.apache.logging.log4j.Level;
 
 public class Princess extends BotClient {
     private static final MMLogger LOGGER = MMLogger.create(Princess.class);
+    /** Only spend Tactical Genius when a reroll is at least as likely as not to win the majority. */
+    private static final double TACTICAL_GENIUS_REROLL_THRESHOLD = 0.5;
     private static final char PLUS = '+';
     private static final char MINUS = '-';
 
@@ -5754,20 +5756,18 @@ public class Princess extends BotClient {
             return false;
         }
 
-        // Threshold can be tweaked; 0.5 = only reroll if it's more likely than not to help.
-        double threshold = 0.5;
-        return probabilityOfMajorityWinOnReroll(myBonus, enemyRolls) >= threshold;
+        return probabilityOfMajorityWinOnReroll(myBonus, enemyRolls) >= TACTICAL_GENIUS_REROLL_THRESHOLD;
     }
 
     /**
      * @return {@code true} if any player on the team is an enemy of the given player
      */
-    private static boolean isEnemyTeam(Team team, Player me) {
+    private static boolean isEnemyTeam(Team team, Player localPlayer) {
         if (team.isObserverTeam()) {
             return false;
         }
         for (Player player : team.players()) {
-            if (player.isEnemyOf(me)) {
+            if (player.isEnemyOf(localPlayer)) {
                 return true;
             }
         }

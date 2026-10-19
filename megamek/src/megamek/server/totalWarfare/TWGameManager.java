@@ -26177,16 +26177,25 @@ public class TWGameManager extends AbstractGameManager {
             return null;
         }
         Report copy = new Report(report);
-        // Otherwise, obscure data in the report
-        for (int dataField = 0; dataField < copy.dataCount(); dataField++) {
-            if (shouldObscure) {
-                // This report should be obscured
-                if (report.isValueObscured(dataField)) {
-                    copy.hideData(dataField);
-                    // Mark the original report to indicate which players
-                    // received an obscured version of it.
-                    if (player != null) {
-                        report.addObscuredRecipient(player.getName());
+
+        // If we are obscuring, change out the message. This clears the fields
+        if (shouldObscure && (copy.messageId == 3100 || copy.messageId == 3101 || copy.messageId == 3102)) {
+            copy.setMessageId(3103, null);
+            if (player != null) {
+                report.addObscuredRecipient(player.getName());
+            }
+        } else {
+            // Otherwise, obscure data in the report
+            for (int dataField = 0; dataField < copy.dataCount(); dataField++) {
+                if (shouldObscure) {
+                    // This report should be obscured
+                    if (report.isValueObscured(dataField)) {
+                        copy.hideData(dataField);
+                        // Mark the original report to indicate which players
+                        // received an obscured version of it.
+                        if (player != null) {
+                            report.addObscuredRecipient(player.getName());
+                        }
                     }
                 }
             }
@@ -32645,23 +32654,19 @@ public class TWGameManager extends AbstractGameManager {
 
             if (attackHandler.cares(game.getPhase())) {
                 int attackerId = attackHandler.getAttackerId();
-                if ((attackerId != lastAttackerId) && !attackHandler.announcedEntityFiring()) {
-                    if (attackHandler.producesReportThisPhase(game.getPhase())) {
-                        // report who is firing
-                        if (pointblankShot) {
-                            report = new Report(3102);
-                        } else {
-                            report = new Report(3100);
-                        }
-                        report.subject = attackerId;
-                        report.addDesc(attackHandler.getAttacker());
-                        handleAttackReports.addElement(report);
-                        attackHandler.setAnnouncedEntityFiring(true);
-                        lastAttackerId = attackerId;
+                if ((attackerId != lastAttackerId) && !attackHandler.announcedEntityFiring() &&
+                    attackHandler.producesReportThisPhase(game.getPhase())) {
+                    // report who is firing
+                    if (pointblankShot) {
+                        report = new Report(3102);
                     } else {
-                        report = new Report(3103);
-                        handleAttackReports.addElement(report);
+                        report = new Report(3100);
                     }
+                    report.subject = attackerId;
+                    report.addDesc(attackHandler.getAttacker());
+                    handleAttackReports.addElement(report);
+                    attackHandler.setAnnouncedEntityFiring(true);
+                    lastAttackerId = attackerId;
                 }
                 boolean keep = attackHandler.handle(game.getPhase(), handleAttackReports);
                 if (keep) {
@@ -32670,6 +32675,7 @@ public class TWGameManager extends AbstractGameManager {
                 Report.addNewline(handleAttackReports);
             }
         }
+
 
         // now resolve everything but TAG
         for (AttackHandler attackHandler : currentAttacks) {

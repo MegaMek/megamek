@@ -3384,7 +3384,9 @@ public class FireControl {
      * read back after a game.
      */
     private void logTargetScore(Entity shooter, Targetable enemy, FiringPlan plan, boolean priorityTarget) {
-        if (plan == null) {
+        // called for every enemy each shooter weighs; skip the formatting and the threat and overkill sums when the
+        // line would not be written anyway
+        if ((plan == null) || !LOGGER.isInfoEnabled()) {
             return;
         }
         LOGGER.info("[FireScore] {} -> {}: score {}, expected damage {}, kill chance {}, threat x{}, overkill {}, {}",

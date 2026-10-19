@@ -254,14 +254,7 @@ public class BotTargetPickerPanel extends JPanel {
     }
 
     private List<Candidate> shownCandidates() {
-        String search = searchField.getEnteredText();
-        List<Candidate> shown = new ArrayList<>();
-        for (Candidate candidate : candidates) {
-            if (PriorityTargetChoices.matchesSearch(candidate, search)) {
-                shown.add(candidate);
-            }
-        }
-        return shown;
+        return PriorityTargetChoices.matchingSearch(candidates, searchField.getEnteredText());
     }
 
     /**

@@ -158,15 +158,40 @@ public final class PriorityTargetChoices {
      * @return {@code true} when the unit should be shown
      */
     public static boolean matchesSearch(Candidate candidate, String search) {
+        return !matchingSearch(List.of(candidate), search).isEmpty();
+    }
+
+    /**
+     * The candidates that match what the player typed, by the rules of {@link #matchesSearch}. The search is read
+     * once for the whole list, so an ID list is parsed once rather than once per unit.
+     *
+     * @param candidates the units to filter, in display order
+     * @param search     the typed text; blank matches everything
+     *
+     * @return the matching units, in the same order
+     */
+    public static List<Candidate> matchingSearch(List<Candidate> candidates, String search) {
         String trimmed = search.trim();
         if (trimmed.isEmpty()) {
-            return true;
+            return new ArrayList<>(candidates);
         }
+        List<Candidate> matches = new ArrayList<>();
         if (isIdSearch(trimmed)) {
             Set<Integer> unitIds = UnitIdListParser.parse(trimmed).unitIds();
-            return unitIds.contains(candidate.unitId());
+            for (Candidate candidate : candidates) {
+                if (unitIds.contains(candidate.unitId())) {
+                    matches.add(candidate);
+                }
+            }
+            return matches;
         }
-        return candidate.unitName().toLowerCase(Locale.ROOT).contains(trimmed.toLowerCase(Locale.ROOT));
+        String lowerCaseSearch = trimmed.toLowerCase(Locale.ROOT);
+        for (Candidate candidate : candidates) {
+            if (candidate.unitName().toLowerCase(Locale.ROOT).contains(lowerCaseSearch)) {
+                matches.add(candidate);
+            }
+        }
+        return matches;
     }
 
     /**
@@ -175,8 +200,17 @@ public final class PriorityTargetChoices {
      * @return {@code true} when the text is an ID list rather than a name
      */
     public static boolean isIdSearch(String search) {
-        return !search.isEmpty() && search.chars().allMatch(character -> Character.isDigit(character) || (character == ',') || (character == '-')
-              || Character.isWhitespace(character));
+        return !search.isEmpty() && search.chars().allMatch(PriorityTargetChoices::isIdListCharacter);
+    }
+
+    /**
+     * @param character one character of the search text
+     *
+     * @return {@code true} for a character an ID list such as {@code 3-7, 10} is made of
+     */
+    private static boolean isIdListCharacter(int character) {
+        boolean isSeparator = (character == ',') || (character == '-');
+        return Character.isDigit(character) || isSeparator || Character.isWhitespace(character);
     }
 
     private static String unitName(Entity unit) {

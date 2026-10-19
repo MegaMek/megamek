@@ -180,6 +180,10 @@ class PriorityTargetChoicesTest {
         assertTrue(PriorityTargetChoices.matchesSearch(find(candidates, 9), "3-9"));
         assertTrue(PriorityTargetChoices.matchesSearch(find(candidates, 11), "0, 11"));
         assertFalse(PriorityTargetChoices.matchesSearch(find(candidates, 11), "3-9"));
+        List<Integer> matchedIds = PriorityTargetChoices.matchingSearch(candidates, "3-9").stream()
+              .map(Candidate::unitId)
+              .toList();
+        assertEquals(List.of(9, 3, 4), matchedIds, "the whole list filtered against one parsed ID list, in order");
     }
     @Test
     void inAThreeWayBattleBothOtherSidesAreTargetsAndTeammatesAreNot() {

@@ -84,6 +84,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.AmmoType;
+import megamek.common.equipment.BombMounted;
 import megamek.common.equipment.EquipmentMode;
 import megamek.common.equipment.GunEmplacement;
 import megamek.common.equipment.Mounted;
@@ -471,11 +472,12 @@ public class Princess extends BotClient {
      * @param airborneTarget Whether the potential target is in the air, only relevant for aircraft shooting at other
      *                       aircraft on ground maps.
      *
-     * @return maximum weapon range for the given entity. Cached version of entity.getMaxWeaponRange()
+     * @return maximum weapon range for the given entity, in hexes, with direct-fire artillery counted at its 17-hex
+     *       reach rather than its range in map sheets. Cached version of {@link ArtilleryReach#maxWeaponRange}.
      */
     public int getMaxWeaponRange(Entity entity, boolean airborneTarget) {
         return getFireControlState().getWeaponRanges(airborneTarget)
-              .computeIfAbsent(entity.getId(), ent -> entity.getMaxWeaponRange(airborneTarget));
+              .computeIfAbsent(entity.getId(), ent -> ArtilleryReach.maxWeaponRange(entity, airborneTarget));
     }
 
     public void setFallBack(final boolean fallBack, final String reason) {
@@ -1118,11 +1120,36 @@ public class Princess extends BotClient {
 
     @Override
     protected void initTargeting() {
-        // Reset incoming guided weapon lists for each friendly unit.
-        // Reset planned TAG expected utility map
+        resetTagEstimateCaches(GamePhase.TARGETING);
+        getArtilleryTargetingControl().initializeForTargetingPhase();
+    }
+
+    /**
+     * Clears the per-phase TAG estimates: the incoming guided weapon lists and the planned TAG utility per target.
+     * Both are filled while ranking moves and planning fire, from positions that only hold for the current phase.
+     *
+     * @param phase the phase about to start, for the log line
+     */
+    private void resetTagEstimateCaches(GamePhase phase) {
+        LOGGER.debug("[TagEstimates] Clearing {} guided weapon lists and {} planned TAG utilities before the {} phase",
+              incomingGuidablesMap.size(), teamTagTargetsMap.size(), phase);
         incomingGuidablesMap.clear();
         teamTagTargetsMap.clear();
-        getArtilleryTargetingControl().initializeForTargetingPhase();
+    }
+
+    /**
+     * @param phase the phase about to start
+     *
+     * @return {@code true} if {@link #changePhase(GamePhase)} must clear the TAG estimates before this phase starts:
+     *       Movement and Firing, which run every round, and Offboard, where TAG fires. {@code false} for Targeting,
+     *       which clears them itself in {@link #initTargeting()}; the server skips that phase in any round where no
+     *       unit has artillery, which is why the other three clear them too.
+     */
+    static boolean isTagEstimateResetPhase(GamePhase phase) {
+        return switch (phase) {
+            case MOVEMENT, OFFBOARD, FIRING -> true;
+            default -> false;
+        };
     }
 
     @Override
@@ -4378,12 +4405,15 @@ public class Princess extends BotClient {
      * (and possibly others) to know about all the possible incoming Homing or IF attacks that could take advantage of
      * their TAGs, for later calculations.
      * <p>
+     * Supporters always come from the shooter's own side: our units when we fire the TAG, the visible enemy units when
+     * we estimate an enemy's TAG shot at us.</p>
+     * <p>
      * Steps are: 1. All relevant guidable attacks (within range of the target) are added to a list. 1a. All Homing
      * Weapons landing this turn are added to the list. 1b. All IF-capable, Semi-Guided, and Homing weapons that have
      * not yet fired but _could_ are added as well. 2. Each attacker-target location pair's expected homing/indirect
      * fire damage is cached for later re-use. 3. During the Indirect phase, when TAG attacks are announced, relevant
      * units can use this info to decide whether they want to TAG or reserve their activation for actual attacks. 4. All
-     * info is cleared at the start of the next turn.
+     * info is cleared at the start of each Targeting, Movement, Offboard and Firing phase.
      */
     public List<WeaponMounted> computeGuidedWeapons(Entity entityToFire, Coords location) {
         // Key cached entries to firing entity _and_ coordinates, as each shooter may have different targets and weapons
@@ -4409,30 +4439,30 @@ public class Princess extends BotClient {
             }
         }
 
-        // Next find all friendly Homing-weapon-havers, Indirect-Firers, and LG-Bombers within range.
-        for (Entity f : new HashSet<>(getEntitiesOwned())) {
-            if (f.equals(entityToFire)) {
-                continue; // This entity's weapons should not be considered for this calculation
+        // Next find the Homing-weapon-havers, Indirect-Firers, and LG-Bombers within range on the shooter's own side:
+        // our units when one of ours is the shooter, the visible enemy units when we estimate an enemy's TAG shot.
+        for (Entity supporter : new HashSet<>(getShootersSide(entityToFire))) {
+            if (supporter.equals(entityToFire) || supporter.isEnemyOf(entityToFire)) {
+                continue; // Neither the shooter's own weapons nor a hostile unit's weapons support this TAG
             }
             Set<WeaponMounted> candidateWeapons = new HashSet<>();
-            Coords fLoc = f.getPosition();
+            Coords supporterPosition = supporter.getPosition();
 
-            for (WeaponMounted m : f.getTotalWeaponList()) {
+            for (WeaponMounted weapon : supporter.getTotalWeaponList()) {
                 // Ignore weapons outside of viable long range; does not apply to bombs.
-                if (fLoc.distance(location) > m.getType().getLongRange() + f.getRunMP() && !m.isGroundBomb()) {
+                if (supporterPosition.distance(location) > weapon.getType().getLongRange() + supporter.getRunMP()
+                      && !weapon.isGroundBomb()) {
                     continue;
                 }
-                if (m.getType().hasIndirectFire() && !f.isAero()) {
+                if (weapon.getType().hasIndirectFire() && !supporter.isAero()) {
                     // Only care about ground IF weapons.
-                    candidateWeapons.add(m);
-                } else if (m.getLinked() != null && m.getLinked().isHomingAmmoInHomingMode()) {
-                    candidateWeapons.add(m);
-                } else if (m.isGroundBomb()) {
+                    candidateWeapons.add(weapon);
+                } else if (weapon.getLinked() != null && weapon.getLinked().isHomingAmmoInHomingMode()) {
+                    candidateWeapons.add(weapon);
+                } else if (weapon.isGroundBomb()) {
                     // Only care about Laser-Guided bombs here; Homing Arrow IV handled separately.
-                    if (((IBomber) f).getBombs()
-                          .stream()
-                          .anyMatch(b -> (b.getType()).getBombType() == BombTypeEnum.LG)) {
-                        candidateWeapons.add(m);
+                    if (hasLaserGuidedBomb((IBomber) supporter)) {
+                        candidateWeapons.add(weapon);
                     }
                 }
             }
@@ -4445,8 +4475,43 @@ public class Princess extends BotClient {
         return friendlyGuidedWeapons;
     }
 
+    /**
+     * Returns the units that could follow up a TAG shot by the given shooter: our own units when the shooter is one
+     * of ours or an ally's, and the visible enemy units when the shooter is an enemy whose TAG shot at us we are
+     * estimating.
+     *
+     * @param shooter the unit firing the TAG
+     *
+     * @return the candidate supporting units on the shooter's side, possibly including the shooter itself
+     */
+    private List<Entity> getShootersSide(Entity shooter) {
+        Player shooterOwner = shooter.getOwner();
+        if ((shooterOwner != null) && shooterOwner.isEnemyOf(getLocalPlayer())) {
+            return getEnemyEntities();
+        }
+        return getEntitiesOwned();
+    }
+
+    /**
+     * @param bomber the bomb-carrying unit
+     *
+     * @return {@code true} if any of the unit's bombs is a laser-guided bomb
+     */
+    private static boolean hasLaserGuidedBomb(IBomber bomber) {
+        for (BombMounted bomb : bomber.getBombs()) {
+            if (bomb.getType().getBombType() == BombTypeEnum.LG) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void changePhase(GamePhase phase) {
+        // Before the phase's own setup runs, so nothing it computes is built on last phase's estimates.
+        if (isTagEstimateResetPhase(phase)) {
+            resetTagEstimateCaches(phase);
+        }
         super.changePhase(phase);
         if (phase.isLounge()) {
             getForcedWithdrawalTracker().forgetWithdrawingUnits();

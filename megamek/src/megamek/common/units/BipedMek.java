@@ -98,6 +98,7 @@ public class BipedMek extends MekWithArms {
     @Override
     public int getWalkMP(MPCalculationSetting mpCalculationSetting) {
         int mp = getOriginalWalkMP();
+        int baseWalkMP = mp;
         int legsDestroyed = 0;
         int hipHits = 0;
         int actuatorHits = 0;
@@ -136,6 +137,7 @@ public class BipedMek extends MekWithArms {
             // leg damage effects
             if (legsDestroyed > 0) {
                 mp = (legsDestroyed == 1) ? 1 : 0;
+                baseWalkMP = mp;
             }
 
             if (mp > 0) {
@@ -150,8 +152,11 @@ public class BipedMek extends MekWithArms {
         }
 
         if (!mpCalculationSetting.ignoreShield() && hasShield()) {
-            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE);
-            mp -= getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
+            int reduceMPbyShield = getNumberOfShields(MiscTypeFlag.S_SHIELD_LARGE)
+                    + getNumberOfShields(MiscTypeFlag.S_SHIELD_MEDIUM);
+            reduceMPbyShield = Game.rulesManager.getRulesMovement().reduceMovementWithShields(reduceMPbyShield,
+                  baseWalkMP);
+            mp -= reduceMPbyShield;
         }
 
         if (!mpCalculationSetting.ignoreModularArmor() && hasModularArmor()) {

@@ -958,6 +958,14 @@ public class FireControl {
         if (waterFire.blocked() != null) {
             return new ToHitData(waterFire.blocked());
         }
+        // A firing-phase artillery shot has rules of its own: no range brackets, no target modifiers, and no need
+        // for line of sight.
+        if (DirectArtilleryToHitGuess.appliesTo(weaponType, firingAmmo, shooter, target, game)) {
+            return DirectArtilleryToHitGuess.guess(game, shooter, target, weapon, (AmmoMounted) firingAmmo, distance,
+                  getAttackerMovementModifier(game, shooter.getId(), shooterState.getMovementType()),
+                  getDamageWeaponMods(shooter, weapon),
+                  getLosEffects(game, shooter, target, shooterState.getPosition(), targetState.getPosition(), false));
+        }
         final int[] weaponRanges = (waterFire.underwaterRanges() != null)
               ? waterFire.underwaterRanges()
               : weaponType.getRanges(weapon, ammo);
@@ -1723,12 +1731,14 @@ public class FireControl {
      * Calculates the potential damage that the target could theoretically deliver as a measure of its potential
      * "threat" to any allied unit on the board, thus prioritizing highly damaging enemies over less damaging ones. For
      * now, this works by simply getting the max damage of the target at range = 1 while ignoring to-hit, heat, etc.
+     * Direct-fire artillery cannot fire at 1 hex, so its damage is added separately: a gun is still a threat to
+     * everything 7 to 17 hexes away.
      */
-    private double calcTargetPotentialDamage(final Targetable target) {
+    double calcTargetPotentialDamage(final Targetable target) {
         if (!(target instanceof Entity entity)) {
             return 0;
         }
-        return getMaxDamageAtRange(entity, 1, false, false);
+        return getMaxDamageAtRange(entity, 1, false, false) + ArtilleryReach.directFireArtilleryDamage(entity);
     }
 
     /**
@@ -3300,6 +3310,14 @@ public class FireControl {
 
             // if the weapon has been disabled or is out of ammo, don't count it
             if (weapon.isCrippled()) {
+                continue;
+            }
+
+            // Artillery ranges are in map sheets; from the board a gun fires directly at 7 to 17 hexes
+            if (!shooter.isAirborne() && ArtilleryReach.isDirectFireArtillery(weapon)) {
+                if (ArtilleryReach.isInDirectFireRange(range)) {
+                    maxDamage += Math.max(0, weaponType.getRackSize());
+                }
                 continue;
             }
 

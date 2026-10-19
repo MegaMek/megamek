@@ -189,4 +189,16 @@ public abstract class RulesMovement {
      * @return int, the elevation above the underlying terrain the attacker should be at
      */
     public abstract int getDFAElevation(Game game, int attackerId, int targetId, MoveStep step);
+
+    /**
+     * Shields can reduce the MP to effectively 0
+     *
+     * @param reduceMPbyShield what the shield reduction is
+     * @param baseMP   what the original walk mp was
+     *
+     * @return what the reduction should be
+     */
+    public int reduceMovementWithShields(int reduceMPbyShield, int baseMP) {
+        return reduceMPbyShield;
+    }
 }

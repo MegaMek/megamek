@@ -577,7 +577,8 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
-        // If they don't have LoS, they can't do damage.
+        // If they don't have LoS, they can't do damage - unless they carry artillery, which can fire in the
+        // firing phase without it. The firing plan below then drops every weapon that does need line of sight.
         final LosEffects losEffects = LosEffects.calculateLOS(game,
               enemy,
               path.getEntity(),
@@ -585,7 +586,7 @@ public class BasicPathRanker extends PathRanker {
               targetState.getPosition(),
               false);
 
-        if (!losEffects.canSee()) {
+        if (!losEffects.canSee() && !DirectArtilleryToHitGuess.canFireWithoutLineOfSight(enemy)) {
             return 0;
         }
 

@@ -259,6 +259,23 @@ class ManeiDominiImplantsTest {
     }
 
     /**
+     * The triple-strength myomer implant is incompatible with prosthetic leg MASC, so a warrior gets
+     * one or the other.
+     */
+    @ParameterizedTest
+    @EnumSource(ManeiDominiAugmentationRank.class)
+    void tripleStrengthMyomerAndLegMascAreNeverBothIssued(ManeiDominiAugmentationRank maneiDominiRank) {
+        for (AugmentedUnitType fightsOnFoot : BOTH_AUDIENCES) {
+            for (int draw = 0; draw < DRAWS; draw++) {
+                List<String> issued = ManeiDominiImplants.selectFor(maneiDominiRank, fightsOnFoot, WORD_OF_BLAKE);
+                assertFalse(issued.contains(OptionsConstants.MD_TSM_IMPLANT)
+                            && issued.contains(OptionsConstants.MD_PL_MASC),
+                      "both triple-strength myomer and leg MASC issued: " + issued);
+            }
+        }
+    }
+
+    /**
      * The limb prosthetics the chart does not list are placed at level 3 by inference, and serve only
      * a warrior fighting on foot.
      */

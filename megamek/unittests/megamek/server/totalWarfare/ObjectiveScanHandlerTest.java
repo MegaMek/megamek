@@ -755,6 +755,49 @@ class ObjectiveScanHandlerTest {
         assertFalse(plainPoint.isPotential());
     }
 
+    @Test
+    void testAScanExposesAnEnemyDecoy() {
+        ObjectiveMarker decoy = candidateOf(bob, ObjectiveScoringScheme.standard());
+        decoy.setPotential(false);
+        decoy.setFalseObjective(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        verify(game).removeGroundObject(POINT_HEX, decoy);
+        verify(gameManager).sendGroundObjectUpdate();
+        assertTrue(reportIds().contains(ObjectiveDecoyHandler.REPORT_DECOY_SCANNED));
+        assertFalse(reportIds().contains(ObjectiveScanHandler.REPORT_NOTHING_OF_INTEREST));
+    }
+
+    @Test
+    void testScanningYourOwnDecoyScanPointExposesItAndBanksNothing() {
+        ObjectiveMarker decoy = scanPointOf(alice, ScanPayout.ON_EXIT);
+        decoy.setFalseObjective(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+
+        handler.resolveScans();
+
+        verify(game).removeGroundObject(POINT_HEX, decoy);
+        assertTrue(scout.getBankedScans().isEmpty(), "a decoy gives no reading");
+    }
+
+    @Test
+    void testAFailedScanLeavesTheDecoyHidden() {
+        ObjectiveMarker decoy = candidateOf(bob, ObjectiveScoringScheme.standard());
+        decoy.setPotential(false);
+        decoy.setFalseObjective(true);
+        BipedMek scout = mekOf(alice, SCANNER_HEX);
+        orderScan(scout, POINT_HEX);
+        handler.nextRoll = 2;
+
+        handler.resolveScans();
+
+        verify(game, never()).removeGroundObject(POINT_HEX, decoy);
+    }
+
     /** A Potential objective of the given owner and scheme at the point hex, not yet confirmed. */
     private ObjectiveMarker candidateOf(Player owner, ObjectiveScoringScheme scheme) {
         ObjectiveMarker marker = new ObjectiveMarker();

@@ -327,6 +327,24 @@ class VictoryPointVictoryTest {
         assertEquals(3, (int) result.getTeamScore(1));
     }
 
+    @Test
+    void testADecoyRaidPointPaysNothingAtGameEnd() {
+        enableObjectiveScoring();
+        ObjectiveMarker decoy = new ObjectiveMarker();
+        decoy.setName("Raid Point");
+        decoy.setVictoryPointValue(3);
+        decoy.setScoringScheme(ObjectiveScoringScheme.raid());
+        decoy.setFalseObjective(true);
+        decoy.setController(1, ObjectiveMarker.NO_CONTROLLER);
+        game.placeGroundObject(new megamek.common.board.Coords(2, 2), decoy);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(0, VictoryPointTracker.getTracker(game).getTeamVictoryPoints(1), "a decoy never pays");
+        assertTrue(result.getReports().stream()
+              .anyMatch(report -> report.messageId == VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
     // --- Part 4: mid-game enders (sudden death and the victory point thresholds) ---
 
     @Test

@@ -35,7 +35,6 @@ package megamek.common.equipment;
 import java.util.List;
 
 import jakarta.annotation.Nullable;
-import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rules.RulesScanning;
@@ -52,10 +51,10 @@ public final class ScanMission {
     private ScanMission() {}
 
     /**
-     * Scanning is in play when objectives are on and there is something a scan could read: a Scan point on the
-     * board, an objective candidate (a Potential objective) still waiting to be confirmed, or the Sensor Check
-     * mission, in which enemy units are the targets. Without any of these, a scan can only ever find nothing of
-     * interest, so no turn is spent on it.
+     * Scanning is in play when objectives are on and there is something a scan could be aimed at: any objective on
+     * the board, or the Sensor Check mission, in which enemy units are the targets. Any objective counts, not only
+     * the ones a scan can read, because a decoy (a False objective) must be scannable without the Scan order's
+     * appearance telling the other side that a decoy exists. Without either, no turn is spent on scanning.
      *
      * @param game the game, or {@code null} off-game
      *
@@ -70,12 +69,7 @@ public final class ScanMission {
         }
         for (List<ICarryable> hexObjects : game.getGroundObjects().values()) {
             for (ICarryable groundObject : hexObjects) {
-                if (!(groundObject instanceof ObjectiveMarker marker)) {
-                    continue;
-                }
-                boolean isScanPoint = marker.getScoringScheme().getPreset() == SchemePreset.SCAN;
-                boolean isOpenCandidate = marker.isPotential() && !marker.isConfirmed() && !marker.isDestroyed();
-                if (isScanPoint || isOpenCandidate) {
+                if ((groundObject instanceof ObjectiveMarker marker) && !marker.isDestroyed()) {
                     return true;
                 }
             }

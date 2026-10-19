@@ -39,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -594,6 +595,92 @@ class ObjectiveResolutionHandlerTest {
 
         VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
         assertEquals(0, tracker.getTeamVictoryPoints(1));
+    }
+
+    // --- decoys (False objectives) ---
+
+    @Test
+    void testADecoyHoldPointIsExposedInsteadOfSecured() {
+        Coords decoyPosition = new Coords(4, 4);
+        PlacedObjective decoy = objectiveAt(decoyPosition, 0, teamTwoPlayer);
+        decoy.marker().setScoringScheme(ObjectiveScoringScheme.hold(1, HoldCounting.CONSECUTIVE));
+        decoy.marker().setVictoryPointValue(3);
+        decoy.marker().setFalseObjective(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(decoyPosition, new ArrayList<>(List.of(decoy.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(groundUnit(teamOnePlayer, decoyPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1), "a decoy never pays");
+        assertFalse(tracker.isPointDecided(), "so sudden death cannot end the game on it");
+        verify(game).removeGroundObject(decoyPosition, decoy.marker());
+        assertTrue(reportIds().contains(VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    @Test
+    void testADecoyThatWouldPayAStandardPointIsExposed() {
+        // Team 1 holds its own point and the enemy decoy. Counting the decoy as an enemy point would pay 1 VP,
+        // so the decoy is exposed and the real score, 0, stands
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords decoyPosition = new Coords(4, 2);
+        Coords enemyPosition = new Coords(12, 12);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 0, teamOnePlayer);
+        PlacedObjective decoy = objectiveAt(decoyPosition, 0, teamTwoPlayer);
+        decoy.marker().setFalseObjective(true);
+        PlacedObjective enemyObjective = objectiveAt(enemyPosition, 0, teamTwoPlayer);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(decoyPosition, new ArrayList<>(List.of(decoy.marker())));
+        groundObjects.put(enemyPosition, new ArrayList<>(List.of(enemyObjective.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(
+              groundUnit(teamOnePlayer, friendlyPosition),
+              groundUnit(teamOnePlayer, decoyPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(0, tracker.getTeamVictoryPoints(1));
+        verify(game).removeGroundObject(decoyPosition, decoy.marker());
+    }
+
+    @Test
+    void testADecoyThatOnlyCostsPointsStaysHidden() {
+        // Team 1 holds both real points but not the decoy. As seen, it holds 2 of 3 points and scores 1; the real
+        // count would be all points and 2. The decoy only cost a point, as a real one would, so it stays hidden
+        Coords friendlyPosition = new Coords(2, 2);
+        Coords enemyPosition = new Coords(4, 2);
+        Coords decoyPosition = new Coords(12, 12);
+        PlacedObjective friendlyObjective = objectiveAt(friendlyPosition, 0, teamOnePlayer);
+        PlacedObjective enemyObjective = objectiveAt(enemyPosition, 0, teamTwoPlayer);
+        PlacedObjective decoy = objectiveAt(decoyPosition, 0, teamTwoPlayer);
+        decoy.marker().setFalseObjective(true);
+        Map<Coords, List<ICarryable>> groundObjects = new HashMap<>();
+        groundObjects.put(friendlyPosition, new ArrayList<>(List.of(friendlyObjective.marker())));
+        groundObjects.put(enemyPosition, new ArrayList<>(List.of(enemyObjective.marker())));
+        groundObjects.put(decoyPosition, new ArrayList<>(List.of(decoy.marker())));
+        when(game.getGroundObjects()).thenReturn(groundObjects);
+        List<Entity> entities = List.of(
+              groundUnit(teamOnePlayer, friendlyPosition),
+              groundUnit(teamOnePlayer, enemyPosition));
+        when(game.getEntitiesVector()).thenReturn(entities);
+
+        handler.resolveObjectives();
+
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertEquals(1, tracker.getTeamVictoryPoints(1), "the score a real third point would have allowed");
+        verify(game, never()).removeGroundObject(decoyPosition, decoy.marker());
+    }
+
+    private List<Integer> reportIds() {
+        ArgumentCaptor<Report> reports = ArgumentCaptor.forClass(Report.class);
+        verify(gameManager, atLeastOnce()).addReport(reports.capture());
+        return reports.getAllValues().stream().map(report -> report.messageId).toList();
     }
 
     @Test

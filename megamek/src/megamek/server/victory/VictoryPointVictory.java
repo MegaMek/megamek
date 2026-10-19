@@ -41,6 +41,7 @@ import java.util.Map;
 import jakarta.annotation.Nullable;
 import megamek.common.Player;
 import megamek.common.Report;
+import megamek.common.board.Coords;
 import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
@@ -75,6 +76,8 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     private static final int REPORT_SUDDEN_DEATH = 7143;
     private static final int REPORT_WIN_THRESHOLD_REACHED = 7144;
     private static final int REPORT_VICTORY_LEVEL = 7146;
+    /** A decoy (a False objective) reached the moment it would have paid; shared with the control resolution. */
+    public static final int REPORT_DECOY_AT_PAYOUT = 7145;
 
     @Override
     public VictoryResult checkVictory(Game game, Map<String, Object> context) {
@@ -190,7 +193,10 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         if ((tracker == null) || !tracker.hasAnyScore()) {
             if (victoryPointScoringEnabled) {
                 LOGGER.info("[VP] Game ends with no victory points scored by any side; the game is a draw");
-                return VictoryResult.drawResult();
+                // keep the end-of-game lines, such as a Raid decoy exposed, even though nobody scored
+                VictoryResult draw = VictoryResult.drawResult();
+                draw.addReports(endScoringReports);
+                return draw;
             }
             LOGGER.debug("[VP] No victory points were scored and VP scoring is not enabled; not applicable");
             return VictoryResult.noResult();
@@ -211,10 +217,19 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
             return endScoringReports;
         }
         tracker.setEndScoringDone(true);
-        for (List<ICarryable> groundObjects : game.getGroundObjects().values()) {
-            for (ICarryable groundObject : groundObjects) {
+        for (Map.Entry<Coords, List<ICarryable>> hexObjects : game.getGroundObjects().entrySet()) {
+            for (ICarryable groundObject : hexObjects.getValue()) {
                 if (!(groundObject instanceof ObjectiveMarker marker) || marker.isDestroyed()
                       || (marker.getScoringScheme().getPreset() != SchemePreset.RAID)) {
+                    continue;
+                }
+                if (marker.isFalseObjective()) {
+                    // a decoy is exposed at the moment it would pay, which for a Raid point is now
+                    LOGGER.info("[VP] Raid point {} is a decoy - nobody scores it", marker.generalName());
+                    Report decoyReport = new Report(REPORT_DECOY_AT_PAYOUT, Report.PUBLIC);
+                    decoyReport.add(marker.generalName());
+                    decoyReport.add(hexObjects.getKey().getBoardNum());
+                    endScoringReports.add(decoyReport);
                     continue;
                 }
                 boolean isControlled = (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER)

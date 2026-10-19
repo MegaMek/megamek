@@ -79,11 +79,11 @@ import megamek.server.victory.VictoryPointTracker.ScanRecord;
  * sensor check under whichever scanning rules the game has in force. On a success the handler looks at what is there: a Scan point the
  * scanner's own side placed, or an enemy unit while the Sensor Check mission is on, banks a reading on the
  * scanning unit; anything else reports nothing of interest, so a player cannot tell a hidden objective from an
- * empty hex by the answer alone. The one public exception is an objective candidate (a Potential objective): any
- * side's successful scan of its hex confirms it for everyone. A reading is worth nothing until the unit that carries
- * it leaves over its home edge on the exit turn or later: then a Scan point pays its value to the owner once, and
- * every enemy-unit reading pays one point. A unit that leaves earlier, or is destroyed or captured, loses its
- * readings, which is the whole of the defender's counterplay.</p>
+ * empty hex by the answer alone. The public exceptions are an objective candidate (a Potential objective), which any
+ * side's successful scan confirms for everyone, and a decoy (a False objective), which it exposes and removes. A
+ * reading is worth nothing until the unit that carries it leaves over its home edge on the exit turn or later: then
+ * a Scan point pays its value to the owner once, and every enemy-unit reading pays one point. A unit that leaves
+ * earlier, or is destroyed or captured, loses its readings, which is the whole of the defender's counterplay.</p>
  */
 class ObjectiveScanHandler extends AbstractTWRuleHandler {
 
@@ -324,6 +324,9 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
      */
     private void bankWhatIsThere(Entity scanner, Targetable target, String targetName) {
         int round = getGame().getCurrentRound();
+        if (exposeDecoyAt(scanner, target)) {
+            return;
+        }
         boolean isCandidateConfirmed = confirmCandidateAt(scanner, target);
         ObjectiveMarker scanPoint = scanPointOwnedBySideAt(scanner, target.getPosition());
         if (scanPoint != null) {
@@ -608,6 +611,33 @@ class ObjectiveScanHandler extends AbstractTWRuleHandler {
             }
         }
         return null;
+    }
+
+    /**
+     * Exposes a decoy (a False objective) at the scanned hex. Any side's successful scan exposes it, and nothing else
+     * is read there: a decoy that is also its own side's Scan point gives no reading.
+     *
+     * @param scanner the unit whose scan succeeded
+     * @param target  what it scanned
+     *
+     * @return {@code true} when a decoy was exposed
+     */
+    private boolean exposeDecoyAt(Entity scanner, Targetable target) {
+        Coords position = target.getPosition();
+        for (ICarryable groundObject : getGame().getGroundObjects(position)) {
+            if (!(groundObject instanceof ObjectiveMarker marker)) {
+                continue;
+            }
+            if (marker.isFalseObjective() && !marker.isDestroyed()) {
+                LOGGER.info("[Scan] {} scanned the decoy {} at {}", scanner.getShortName(), marker.generalName(),
+                      position.getBoardNum());
+                new ObjectiveDecoyHandler(gameManager).exposeDecoy(marker, position,
+                      ObjectiveDecoyHandler.REPORT_DECOY_SCANNED);
+                logScan(scanner, target, marker.generalName(), ScanOutcome.SUCCEEDED, false, 0);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

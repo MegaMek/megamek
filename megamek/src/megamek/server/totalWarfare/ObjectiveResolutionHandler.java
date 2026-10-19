@@ -391,6 +391,15 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      */
     private void decidePoint(PlacedObjective objective, Side decidingSide, VictoryPointTracker tracker,
           int reportId) {
+        if (objective.marker().isFalseObjective()) {
+            // the moment a decoy would pay is the moment it is exposed: nobody scores, and it does not count as a
+            // decided point, so sudden death does not end the game on a decoy
+            LOGGER.info("[Objective] {} would be decided by {}, but it is a decoy", objective.marker().generalName(),
+                  displayName(decidingSide));
+            new ObjectiveDecoyHandler(gameManager).exposeDecoy(objective.marker(), objective.position(),
+                  ObjectiveDecoyHandler.REPORT_DECOY_AT_PAYOUT);
+            return;
+        }
         ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
         scheme.setSecuredBy(decidingSide.isTeam() ? decidingSide.id() : ObjectiveScoringScheme.NO_SIDE,
               decidingSide.isTeam() ? ObjectiveScoringScheme.NO_SIDE : decidingSide.id());
@@ -454,11 +463,7 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
                   + "confirmed by a scan", marker.generalName(), objective.position());
             return false;
         }
-        if (marker.isFalseObjective()) {
-            LOGGER.debug("[Objective] {} at {} is flagged as a False Objective, but the variant is not used with "
-                        + "a running VP score - the flag has no effect",
-                  marker.generalName(), objective.position());
-        }
+        // a decoy (a False objective) is resolved like any other point, so it looks real until it would pay
         return true;
     }
 
@@ -636,39 +641,88 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
 
-        int totalObjectives = resolvedObjectives.size();
+        List<ResolvedObjective> realObjectives = new ArrayList<>();
+        for (ResolvedObjective resolvedObjective : resolvedObjectives) {
+            if (!resolvedObjective.placed().marker().isFalseObjective()) {
+                realObjectives.add(resolvedObjective);
+            }
+        }
         for (Side side : controllers) {
-            int controlledFriendly = 0;
-            int controlledEnemy = 0;
-            for (ResolvedObjective resolvedObjective : resolvedObjectives) {
-                if (!side.equals(resolvedObjective.controller())) {
-                    continue;
-                }
-                // An objective with an unknown owner is not friendly to anyone and counts as enemy
-                if (side.equals(resolvedObjective.owningSide())) {
-                    controlledFriendly++;
-                } else {
-                    controlledEnemy++;
-                }
+            PairingScore asSeen = pairingScore(side, resolvedObjectives);
+            PairingScore truth = pairingScore(side, realObjectives);
+            // a decoy looks real until it would pay. If counting the decoys gives this side more than the real
+            // points alone, the decoys it holds are what would pay, so they are exposed and the real score
+            // stands. A decoy that only costs points, such as one that keeps a side from holding every point,
+            // stays hidden, as a real point would have cost the same
+            if (asSeen.points() > truth.points()) {
+                exposeDecoysHeldBy(side, resolvedObjectives);
             }
-
-            int points = 0;
-            String reason = "";
-            if ((controlledFriendly + controlledEnemy == totalObjectives) && (totalObjectives > 1)) {
-                points = 2;
-                reason = "controls all " + totalObjectives + " objectives";
-            } else if ((controlledFriendly >= 1) && (controlledEnemy >= 1)) {
-                points = 1;
-                reason = "controls " + controlledFriendly + " friendly and " + controlledEnemy
-                      + " enemy objective(s)";
-            }
-
-            if (points > 0) {
-                awardVictoryPoints(side, points, reason, tracker);
+            PairingScore awarded = (asSeen.points() > truth.points()) ? truth : asSeen;
+            if (awarded.points() > 0) {
+                awardVictoryPoints(side, awarded.points(), awarded.reason(), tracker);
             } else {
-                LOGGER.debug("[Objective] {} controls friendly: {}, enemy: {} objective(s) - standard control "
-                            + "scoring requires at least one of each, no victory points awarded",
-                      displayName(side), controlledFriendly, controlledEnemy);
+                LOGGER.debug("[Objective] {} - standard control scoring requires at least one friendly and one "
+                      + "enemy objective, no victory points awarded", displayName(side));
+            }
+        }
+    }
+
+    /**
+     * One side's standard pairing score over a set of points.
+     *
+     * @param points the victory points, 0, 1 or 2
+     * @param reason why, for the tally's history
+     */
+    private record PairingScore(int points, String reason) {}
+
+    /**
+     * @param side       the scoring side
+     * @param objectives the Standard points to count
+     *
+     * @return 2 for holding every point (with more than one), 1 for holding at least one friendly and one enemy
+     *       point, 0 otherwise
+     */
+    private static PairingScore pairingScore(Side side, List<ResolvedObjective> objectives) {
+        int controlledFriendly = 0;
+        int controlledEnemy = 0;
+        for (ResolvedObjective resolvedObjective : objectives) {
+            if (!side.equals(resolvedObjective.controller())) {
+                continue;
+            }
+            // An objective with an unknown owner is not friendly to anyone and counts as enemy
+            if (side.equals(resolvedObjective.owningSide())) {
+                controlledFriendly++;
+            } else {
+                controlledEnemy++;
+            }
+        }
+        int totalObjectives = objectives.size();
+        boolean holdsEveryPoint = (controlledFriendly + controlledEnemy == totalObjectives) && (totalObjectives > 1);
+        if (holdsEveryPoint) {
+            return new PairingScore(2, "controls all " + totalObjectives + " objectives");
+        }
+        if ((controlledFriendly >= 1) && (controlledEnemy >= 1)) {
+            return new PairingScore(1, "controls " + controlledFriendly + " friendly and " + controlledEnemy
+                  + " enemy objective(s)");
+        }
+        return new PairingScore(0, "");
+    }
+
+    /**
+     * Exposes every decoy the side holds among the Standard points, because counting them would have paid it.
+     *
+     * @param side       the side that would have scored from them
+     * @param objectives this End Phase's resolved Standard points
+     */
+    private void exposeDecoysHeldBy(Side side, List<ResolvedObjective> objectives) {
+        for (ResolvedObjective resolvedObjective : objectives) {
+            PlacedObjective placed = resolvedObjective.placed();
+            boolean isHeldDecoy = placed.marker().isFalseObjective() && side.equals(resolvedObjective.controller());
+            if (isHeldDecoy) {
+                LOGGER.info("[Objective] {} would score for {} from {}, but it is a decoy", displayName(side),
+                      placed.marker().generalName(), placed.position());
+                new ObjectiveDecoyHandler(gameManager).exposeDecoy(placed.marker(), placed.position(),
+                      ObjectiveDecoyHandler.REPORT_DECOY_AT_PAYOUT);
             }
         }
     }

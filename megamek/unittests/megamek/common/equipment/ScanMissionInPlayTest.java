@@ -43,8 +43,8 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Whether the game offers the Scan order at all. Client and server both ask this one question: the client to show
- * the Scan option and give units a turn in the pre-End declarations phase, the server to accept the order. A
- * candidate that needs confirming has to count, or the scan that confirms it can never be ordered.
+ * the Scan option and give units a turn in the pre-End declarations phase, the server to accept the order. Any
+ * objective counts, so a decoy can be scanned without the Scan order's appearance revealing that one exists.
  */
 class ScanMissionInPlayTest {
 
@@ -66,9 +66,21 @@ class ScanMissionInPlayTest {
     }
 
     @Test
-    void testAPlainPointGivesNothingToScan() {
+    void testAnyPointIsSomethingToScan() {
         placePoint();
 
+        assertTrue(ScanMission.isInPlay(game), "a plain point might be a decoy, so it can be scanned");
+    }
+
+    @Test
+    void testADestroyedPointLeavesNothingToScan() {
+        placePoint().setDestroyed(true);
+
+        assertFalse(ScanMission.isInPlay(game));
+    }
+
+    @Test
+    void testNoPointsAndNoSensorCheckLeavesNothingToScan() {
         assertFalse(ScanMission.isInPlay(game));
     }
 
@@ -87,12 +99,12 @@ class ScanMissionInPlayTest {
     }
 
     @Test
-    void testAConfirmedCandidateLeavesNothingToScan() {
+    void testAConfirmedCandidateIsStillSomethingToScan() {
         ObjectiveMarker candidate = placePoint();
         candidate.setPotential(true);
         candidate.setConfirmed(true);
 
-        assertFalse(ScanMission.isInPlay(game), "once confirmed, scanning it again would find nothing");
+        assertTrue(ScanMission.isInPlay(game), "every point stays scannable, so nothing can be read from it");
     }
 
     @Test

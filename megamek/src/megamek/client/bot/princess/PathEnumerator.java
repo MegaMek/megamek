@@ -326,9 +326,11 @@ public class PathEnumerator {
                 lpf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(lpf.getLongestComputedPaths());
 
-                // add walking moves
+                // add walking moves; capped at the gravity-free walk MP like the running moves above, since low
+                // gravity multiplies MP (6 walk MP is 150 at 0.04 g) and the search never finishes (issue #9265)
+                int maxBackwardsMove = Math.min(mover.getWalkMP(), mover.getWalkMP(MPCalculationSetting.NO_GRAVITY));
                 lpf = LongestPathFinder.newInstanceOfLongestPath(
-                      mover.getWalkMP(), MoveStepType.BACKWARDS, getGame());
+                      maxBackwardsMove, MoveStepType.BACKWARDS, getGame());
                 lpf.setComparator(new MovePathMinefieldAvoidanceMinMPMaxDistanceComparator());
                 lpf.run(createDeploymentAwarePath(mover, wayPoint, includeDeploymentStep, false));
                 paths.addAll(lpf.getLongestComputedPaths());

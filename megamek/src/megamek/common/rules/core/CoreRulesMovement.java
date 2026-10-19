@@ -279,4 +279,17 @@ public class CoreRulesMovement extends RulesMovement {
             return (dfaEntityElevation - dfaEntityHexElevation);
         }
     }
+
+    /**
+     * Core rules max mp reduction by shield is to 1 movement.
+     *
+     * @param reduceMPbyShield what the shield reduction is
+     * @param baseMP   what the original walk mp was
+     *
+     * @return the reduction amount.
+     */
+    @Override
+    public int reduceMovementWithShields(int reduceMPbyShield, int baseMP) {
+        return Math.min(reduceMPbyShield, Math.max(0, baseMP - 1));
+    }
 }

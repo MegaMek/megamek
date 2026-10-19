@@ -29625,7 +29625,7 @@ public class TWGameManager extends AbstractGameManager {
                 if (caa.getTargetType() == Targetable.TYPE_ENTITY &&
                       ((Entity) caa.getTarget(game)).canFall() &&
                       caa.getClub().getType().hasFlag(MiscTypeFlag.S_CLUB)) {
-                    Game.rulesManager.getRulesPSR().clubImpact(game, attackingEntity);
+                    Game.rulesManager.getRulesPSR().clubImpact(game, (Entity) caa.getTarget(game));
                 }
             }
             case DfaAttackAction daa -> {

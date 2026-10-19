@@ -35,6 +35,7 @@ package megamek.common.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -63,11 +64,13 @@ class BugReportBundleTest {
 
     private static final String SYSTEM_INFORMATION = "Starting MegaMek v0.51.01\n    Java Version: 21.0.5\n";
     private static final String GAME_LOG_FILE_NAME = "gamelog.html";
+    private static final String GAME_UUID = "2302b00d-a18c-4932-8199-d43616755dd5";
 
     @TempDir
     private Path temporaryDirectory;
 
     private File logDirectory;
+    private File saveDirectory;
     private File archiveFile;
 
     @BeforeEach
@@ -75,11 +78,13 @@ class BugReportBundleTest {
         logDirectory = temporaryDirectory.resolve("logs").toFile();
         assertTrue(logDirectory.mkdirs(), "test fixture: could not create the log directory");
         archiveFile = temporaryDirectory.resolve("bug-report.zip").toFile();
+        saveDirectory = temporaryDirectory.resolve("savegames").toFile();
+        assertTrue(saveDirectory.mkdirs(), "test fixture: could not create the save directory");
     }
 
     @Test
     void emptyLogDirectoryStillProducesAnArchiveWithSystemInformation() throws IOException {
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
 
         BugReportBundle.BundleResult result = bundle.writeTo(archiveFile);
 
@@ -91,7 +96,8 @@ class BugReportBundleTest {
     @Test
     void missingLogDirectoryIsToleratedRatherThanFailing() throws IOException {
         File absentDirectory = temporaryDirectory.resolve("no-such-directory").toFile();
-        BugReportBundle bundle = new BugReportBundle(absentDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = new BugReportBundle(new BugReportBundle.Sources(absentDirectory,
+              absentDirectory, absentDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME, null));
 
         bundle.writeTo(archiveFile);
 
@@ -108,7 +114,7 @@ class BugReportBundleTest {
             writeLog("Bot_Clan Jade Falcon OpFor_%d.mul".formatted(index), "unit list");
         }
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
         bundle.writeTo(archiveFile);
 
         List<String> entryNames = entryNamesOf(archiveFile);
@@ -128,7 +134,7 @@ class BugReportBundleTest {
         assertTrue(middleReport.setLastModified(2_000_000L), "test fixture: could not set a modification time");
         assertTrue(newestReport.setLastModified(3_000_000L), "test fixture: could not set a modification time");
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
         bundle.writeTo(archiveFile);
 
         List<String> combatReports = entryNamesOf(archiveFile).stream()
@@ -143,7 +149,7 @@ class BugReportBundleTest {
         Files.writeString(saveGame.toPath(), "serialized game");
         writeLog("megamek.log", "engine log");
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, saveGame, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(saveGame);
         bundle.writeTo(archiveFile);
 
         List<String> entryNames = entryNamesOf(archiveFile);
@@ -159,7 +165,7 @@ class BugReportBundleTest {
         File oversizedLog = new File(logDirectory, "princess.log");
         setFileLength(oversizedLog, BugReportBundle.MAX_ARCHIVE_BYTES + 1);
 
-        BugReportBundle bundle = new BugReportBundle(logDirectory, null, SYSTEM_INFORMATION, GAME_LOG_FILE_NAME);
+        BugReportBundle bundle = newBundle(null);
         BugReportBundle.BundleResult result = bundle.writeTo(archiveFile);
 
         assertTrue(result.hasSkippedEntries());
@@ -168,6 +174,235 @@ class BugReportBundleTest {
         assertTrue(entryNamesOf(archiveFile).contains("logs/megamek.log"),
               "the smaller logs should still be collected");
         assertTrue(result.totalBytes() < BugReportBundle.MAX_ARCHIVE_BYTES);
+    }
+
+    @Test
+    void collectsEverySuiteLogInPriorityOrder() throws IOException {
+        // Written out of order, so the test proves the archive order comes from the manifest, not from the disk.
+        writeLog("megameklab.log", "lab log");
+        writeLog("bot_path_ranker.log", "path scores");
+        writeLog("princess.log", "bot log");
+        writeLog("unified_log.log", "unified log");
+        writeLog("mekhq.log", "campaign log");
+        writeLog("megamek.log", "engine log");
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "logs/megamek.log",
+              "logs/mekhq.log",
+              "logs/unified_log.log",
+              "logs/princess.log",
+              "logs/bot_path_ranker.log",
+              "logs/megameklab.log"), entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void skipsTheEmptyLogsOfProgramsThatDidNotRun() throws IOException {
+        // MegaMek's own log configuration declares the MekHQ and MegaMekLab logs but routes nothing to them, so a
+        // standalone MegaMek leaves both files present and empty.
+        writeLog("megamek.log", "engine log");
+        writeLog("mekhq.log", "");
+        writeLog("megameklab.log", "");
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+              entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void collectsRolledLogsForEveryCollectedLogAndNothingElse() throws IOException {
+        writeLog("megamek_1.log.gz", "rolled engine log");
+        writeLog("mekhq_1.log.gz", "rolled campaign log");
+        writeLog("princess_1.log.gz", "rolled bot log");
+        writeLog("megameklab_1.log.gz", "rolled lab log");
+        writeLog("forcegen_1.log.gz", "an unrelated archive");
+
+        newBundle(null).writeTo(archiveFile);
+
+        List<String> entryNames = entryNamesOf(archiveFile);
+        assertTrue(entryNames.contains("logs/megamek_1.log.gz"), entryNames.toString());
+        assertTrue(entryNames.contains("logs/mekhq_1.log.gz"), entryNames.toString());
+        assertTrue(entryNames.contains("logs/princess_1.log.gz"), entryNames.toString());
+        assertTrue(entryNames.contains("logs/megameklab_1.log.gz"), entryNames.toString());
+        assertFalse(entryNames.contains("logs/forcegen_1.log.gz"),
+              "an archive that is not a rolled suite log should be left out: " + entryNames);
+    }
+
+    @Test
+    void collectsOnlyTheNewestGameDatasetAfterTheCombatReport() throws IOException {
+        File olderDataset = writeLog("game_actions_0.tsv", "moves and attacks");
+        File newerDataset = writeLog("game_actions_1.tsv", "moves and attacks");
+        assertTrue(olderDataset.setLastModified(1_000_000L), "test fixture: could not set a modification time");
+        assertTrue(newerDataset.setLastModified(2_000_000L), "test fixture: could not set a modification time");
+        // Other tab-separated files, such as benchmark results, are not part of a bug report.
+        writeLog("ai_match_results_2026-09-25_23-52-10_game1_orders.tsv", "benchmark rows");
+        writeLog(GAME_LOG_FILE_NAME, "round reports");
+        writeLog("megamek_1.log.gz", "rolled engine log");
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "logs/" + GAME_LOG_FILE_NAME,
+              "logs/game_actions_1.tsv",
+              "logs/megamek_1.log.gz"), entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void collectsTheGamesMinimapImagesAfterEveryLogNewestFrameFirst() throws IOException {
+        File gameDirectory = gameSummaryDirectory();
+        File oldestFrame = writeFile(gameDirectory, "round_1_12_MOVEMENT.png", 1_000_000L);
+        File newestFrame = writeFile(gameDirectory, "round_2_9_TARGETING.png", 3_000_000L);
+        File recording = writeFile(gameDirectory, GAME_UUID + ".gif", 2_000_000L);
+        writeLog("megamek.log", "engine log");
+        writeLog("megamek_1.log.gz", "rolled engine log");
+
+        newBundle(null, gameDirectory).writeTo(archiveFile);
+
+        String prefix = "logs/gameSummaries/minimap/" + GAME_UUID + "/";
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "logs/megamek.log",
+              "logs/megamek_1.log.gz",
+              prefix + newestFrame.getName(),
+              prefix + oldestFrame.getName(),
+              prefix + recording.getName()), entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void skipsAGameWithNoMinimapImages() throws IOException {
+        // Both minimap options are off, so the game never got a folder.
+        writeLog("megamek.log", "engine log");
+        File absentGameDirectory = new File(logDirectory, "gameSummaries/minimap/" + GAME_UUID);
+
+        newBundle(null, absentGameDirectory).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME, "logs/megamek.log"),
+              entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void dropsTheRecordingAndOldestFramesBeforeAnyLog() throws IOException {
+        File gameDirectory = gameSummaryDirectory();
+        File oldestFrame = writeFile(gameDirectory, "round_1_12_MOVEMENT.png", 1_000_000L);
+        File newestFrame = writeFile(gameDirectory, "round_9_18_FIRING.png", 3_000_000L);
+        File recording = new File(gameDirectory, GAME_UUID + ".gif");
+        setFileLength(oldestFrame, BugReportBundle.MAX_ARCHIVE_BYTES / 2);
+        setFileLength(recording, BugReportBundle.MAX_ARCHIVE_BYTES / 2);
+        assertTrue(oldestFrame.setLastModified(1_000_000L), "test fixture: could not set a modification time");
+        writeLog("megamek.log", "engine log");
+
+        BugReportBundle.BundleResult result = newBundle(null, gameDirectory).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "logs/megamek.log",
+              "logs/gameSummaries/minimap/" + GAME_UUID + "/" + newestFrame.getName(),
+              "logs/gameSummaries/minimap/" + GAME_UUID + "/" + oldestFrame.getName()), entryNamesOf(archiveFile));
+        assertEquals(List.of(recording.getName()), result.skippedEntries());
+    }
+
+    @Test
+    void findsTheNewestGameFolderWhenNoGameIsRunning() throws IOException {
+        File minimapDirectory = new File(logDirectory, "gameSummaries/minimap");
+        File olderGame = new File(minimapDirectory, "older-game");
+        File newerGame = new File(minimapDirectory, "newer-game");
+        assertTrue(olderGame.mkdirs() && newerGame.mkdirs(), "test fixture: could not create the game folders");
+        assertTrue(olderGame.setLastModified(1_000_000L), "test fixture: could not set a modification time");
+        assertTrue(newerGame.setLastModified(2_000_000L), "test fixture: could not set a modification time");
+
+        assertEquals(newerGame, BugReportBundle.newestGameSummaryDirectory(minimapDirectory));
+        assertNull(BugReportBundle.newestGameSummaryDirectory(new File(logDirectory, "no-such-directory")));
+    }
+
+    @Test
+    void collectsTheNewestAutosaveRightAfterTheSave() throws IOException {
+        File saveGame = temporaryDirectory.resolve("savegame.sav.gz").toFile();
+        Files.writeString(saveGame.toPath(), "serialized game");
+        writeFile(saveDirectory, "autosave.sav.gz", 1_000_000L);
+        File newestAutosave = writeFile(saveDirectory, "Round-3-autosave2026-10-17_11-05-00.sav.gz", 2_000_000L);
+        // A player's own save in the same folder is not an autosave.
+        writeFile(saveDirectory, "my-campaign-battle.sav.gz", 3_000_000L);
+        writeLog("megamek.log", "engine log");
+
+        newBundle(saveGame).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "savegame.sav.gz",
+              "battle-autosave/" + newestAutosave.getName(),
+              "logs/megamek.log"), entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void collectsTheAutosaveWhenNoGameIsRunning() throws IOException {
+        writeFile(saveDirectory, "autosave2026-10-17_11-05-00.sav.gz", 1_000_000L);
+
+        newBundle(null).writeTo(archiveFile);
+
+        assertEquals(List.of(BugReportBundle.SYSTEM_INFO_ENTRY_NAME,
+              "battle-autosave/autosave2026-10-17_11-05-00.sav.gz"), entryNamesOf(archiveFile));
+    }
+
+    @Test
+    void readsCombatReportsFromTheRelocatedReportDirectory() throws IOException {
+        // The player moved the combat reports elsewhere; Log4j still writes the text logs to the usual folder.
+        File reportDirectory = temporaryDirectory.resolve("reports").toFile();
+        assertTrue(reportDirectory.mkdirs(), "test fixture: could not create the report directory");
+        Files.writeString(new File(reportDirectory, GAME_LOG_FILE_NAME).toPath(), "round reports");
+        writeLog("megamek.log", "engine log");
+
+        new BugReportBundle(new BugReportBundle.Sources(logDirectory, reportDirectory, saveDirectory, null,
+              SYSTEM_INFORMATION, GAME_LOG_FILE_NAME, null)).writeTo(archiveFile);
+
+        List<String> entryNames = entryNamesOf(archiveFile);
+        assertTrue(entryNames.contains("logs/megamek.log"),
+              "the text logs should still be collected from the log directory: " + entryNames);
+        assertTrue(entryNames.contains("logs/" + GAME_LOG_FILE_NAME),
+              "the combat report should be found in the report directory: " + entryNames);
+    }
+
+    /**
+     * @param saveGame the save to include, or {@code null} for none
+     *
+     * @return a bundle reading both the text logs and the combat reports from the test's log directory
+     */
+    private BugReportBundle newBundle(File saveGame) {
+        return newBundle(saveGame, null);
+    }
+
+    /**
+     * @param saveGame             the save to include, or {@code null} for none
+     * @param gameSummaryDirectory the game's minimap image folder, or {@code null} for none
+     *
+     * @return a bundle reading both the text logs and the combat reports from the test's log directory
+     */
+    private BugReportBundle newBundle(File saveGame, File gameSummaryDirectory) {
+        return new BugReportBundle(new BugReportBundle.Sources(logDirectory, logDirectory, saveDirectory, saveGame,
+              SYSTEM_INFORMATION, GAME_LOG_FILE_NAME, gameSummaryDirectory));
+    }
+
+    /**
+     * @return the current game's minimap image folder, laid out as the recorder lays it out
+     */
+    private File gameSummaryDirectory() {
+        File gameDirectory = new File(logDirectory, "gameSummaries/minimap/" + GAME_UUID);
+        assertTrue(gameDirectory.mkdirs(), "test fixture: could not create the game summary folder");
+        return gameDirectory;
+    }
+
+    /**
+     * Creates a small file with a set modification time.
+     *
+     * @param directory    the folder to create it in
+     * @param fileName     the name to give it
+     * @param lastModified the modification time to set
+     *
+     * @return the created file
+     */
+    private static File writeFile(File directory, String fileName, long lastModified) throws IOException {
+        File file = new File(directory, fileName);
+        Files.writeString(file.toPath(), "image bytes", StandardCharsets.UTF_8);
+        assertTrue(file.setLastModified(lastModified), "test fixture: could not set a modification time");
+        return file;
     }
 
     /**

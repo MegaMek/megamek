@@ -35,10 +35,10 @@ package megamek.client.ui.dialogs.advancedsearch;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Messages;
 import megamek.common.SourceBookCode;
 import megamek.common.SourceBooks;
-import megamek.common.annotations.Nullable;
 import megamek.common.loaders.MekSummary;
 import megamek.common.units.Entity;
 import megamek.common.util.StringUtil;

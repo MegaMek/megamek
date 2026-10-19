@@ -34,7 +34,7 @@ package megamek.client.ui.settings;
 
 import java.util.Collection;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 final class SettingsControlSupport {
     static final int DEFAULT_TOOLTIP_WRAP_SIZE = 100;

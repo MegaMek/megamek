@@ -51,20 +51,22 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.BotLogger;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.ui.Messages;
 import megamek.client.ui.SharedUtility;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
+import megamek.common.enums.MoveStepType;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.units.EjectedCrew;
 import megamek.common.units.Entity;
 import megamek.common.units.IBuilding;
 import megamek.common.units.Targetable;
@@ -309,7 +311,7 @@ public abstract class PathRanker implements IPathRanker {
               bestPath.getReason());
     }
 
-    private List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
+    List<MovePath> validatePaths(List<MovePath> startingPathList, Game game, int maxRange,
           double fallTolerance) {
         if (startingPathList.isEmpty()) {
             // Nothing to validate here, might as well return the empty list
@@ -324,9 +326,10 @@ public abstract class PathRanker implements IPathRanker {
               : closestTarget.getPosition().distance(mover.getPosition());
         boolean hasNoEnemyAvailable = (closestTarget == null);
         List<MovePath> returnPaths = new ArrayList<>(startingPathList.size());
-        boolean inRange = maxRange >= startingTargetDistance;
+        // Artillery can fire indirectly from well beyond its direct-fire reach, so a gun out there is still in range
+        int engagementRange = ArtilleryReach.engagementRange(game, mover, maxRange);
+        boolean inRange = engagementRange >= startingTargetDistance;
 
-        boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap();
         boolean needToUnjamRAC = mover.canUnjamRAC();
         int walkMP = mover.getWalkMP();
 
@@ -335,6 +338,9 @@ public abstract class PathRanker implements IPathRanker {
             if ((path == null) || !path.isMoveLegal()) {
                 continue;
             }
+
+            // If there is deployment steps, we validate this differently
+            boolean isAirborneAeroOnGroundMap = mover.isAirborneAeroOnGroundMap(path.contains(MoveStepType.DEPLOY));
 
             logger.trace("Validating path {}", path);
             // if we are an aero unit on the ground map, we want to discard paths that keep
@@ -357,7 +363,7 @@ public abstract class PathRanker implements IPathRanker {
             // point here
             if (!isAirborneAeroOnGroundMap && !getOwner().wantsToFallBack(mover) && !hasNoEnemyAvailable) {
                 Targetable closestToEnd = findClosestEnemy(mover, finalCoords, game);
-                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, maxRange,
+                var validation = validRange(finalCoords, closestToEnd, startingTargetDistance, engagementRange,
                       inRange);
                 if (!validation) {
                     logger.trace("Invalid range to target.");
@@ -432,6 +438,8 @@ public abstract class PathRanker implements IPathRanker {
           boolean includeStrategicTargets, int minDistance) {
         int range = Integer.MAX_VALUE;
         Targetable closest = null;
+        int crewRange = Integer.MAX_VALUE;
+        Entity closestCrew = null;
         List<Entity> enemies = getOwner().getEnemyEntities();
         var ignoredTargets = owner.getBehaviorSettings().getIgnoredUnitTargets();
         var priorityTargets = getOwner().getBehaviorSettings().getPriorityUnitTargets();
@@ -464,7 +472,23 @@ public abstract class PathRanker implements IPathRanker {
             // allowance.
             int distance = position.distance(enemy.getPosition());
             int adjustedDistance = distance + unmovedDistanceModifier;
-            if ((adjustedDistance < range) && (distance >= minDistance)) {
+            if (distance < minDistance) {
+                continue;
+            }
+
+            // Ejected crews are a fallback only, unless ordered to hunt them. They are no threat and fire control
+            // already scores them as poor targets, so letting one count as the closest enemy pulls whole lances away
+            // from the fight to surround it (#9194). But a force reduced to ejected crews has not lost, so with no
+            // other enemy left the nearest crew is still returned, and the bot keeps advancing.
+            if ((enemy instanceof EjectedCrew) && !priorityTargets.contains(enemy.getId())) {
+                if (adjustedDistance < crewRange) {
+                    crewRange = adjustedDistance;
+                    closestCrew = enemy;
+                }
+                continue;
+            }
+
+            if (adjustedDistance < range) {
                 range = adjustedDistance;
                 closest = enemy;
             }
@@ -481,6 +505,11 @@ public abstract class PathRanker implements IPathRanker {
             }
         }
 
+        if ((closest == null) && (closestCrew != null)) {
+            logger.trace("findClosestEnemy: only ejected crews left, using {} for {}", closestCrew.getDisplayName(),
+                  me.getDisplayName());
+            return closestCrew;
+        }
         return closest;
     }
 
@@ -730,21 +759,69 @@ public abstract class PathRanker implements IPathRanker {
      * the home edge, which is NORTH when no edge is set, so a waypoint anywhere else was pulled toward the north edge.
      *
      * <p>Anywhere within {@link Princess#DISTANCE_TO_WAYPOINT} of the waypoint counts as arrived, matching the point at
-     * which the bot moves on to the next waypoint.</p>
+     * which the bot moves on to the next waypoint. Further out, the distance is the movement points to the waypoint by
+     * the cheapest route the unit can take ({@link WaypointDistanceField}), so a unit behind a lake or in a dead-end
+     * street prefers the way round over the shore facing the waypoint (issue #7615). A unit on the ground heading for
+     * its home edge is measured the same way, to the nearest hex of the edge. Where no route is known, the
+     * straight-line distance stands in.</p>
      *
      * @param movingUnit the unit on the mission
      * @param position   the position to measure from
      * @param boardId    the board of that position
      * @param game       the game
      *
-     * @return the distance in hexes; {@code 0} means the unit has arrived
+     * @return the distance; {@code 0} means the unit has arrived
      */
     protected int distanceToDestination(Entity movingUnit, Coords position, int boardId, Game game) {
         Optional<Coords> waypoint = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner());
         if (waypoint.isPresent() && (boardId == movingUnit.getBoardId())) {
-            return Math.max(0, position.distance(waypoint.get()) - Princess.DISTANCE_TO_WAYPOINT);
+            // Score the way still to go along the whole route, not just to the next waypoint. Otherwise every hex
+            // near a waypoint scores as "arrived", and a unit with movement to spare runs a loop past it to bank
+            // defence rather than heading on to the next one (HammerGS's playtest, 2026-09-26).
+            List<Coords> route = movingUnit.getUnitOrders().getRoute();
+            Coords target = waypoint.get();
+            boolean isRouteHead = !route.isEmpty() && route.get(0).equals(target);
+            // a waypoint set to hold is the whole goal until the unit stands on it: scoring the leg beyond it would
+            // pull the unit past the hex it has to stop on
+            boolean isHeadingForHold = getOwner().getUnitOrdersFollower().isHeadingForHold(movingUnit);
+            Coords nextWaypoint = (isRouteHead && (route.size() > 1) && !isHeadingForHold) ? route.get(1) : null;
+            // a formation slot, a waypoint set to hold and a formation leader's last waypoint count as reached only on
+            // the hex; any other waypoint within DISTANCE_TO_WAYPOINT
+            int arrivalRadius = getOwner().getUnitOrdersFollower().arrivalRadius(movingUnit);
+            boolean hasArrived = position.distance(target) <= arrivalRadius;
+            if (nextWaypoint != null) {
+                if (hasArrived) {
+                    return costToward(movingUnit, nextWaypoint, position, 0);
+                }
+                return costToward(movingUnit, target, position, arrivalRadius)
+                      + costToward(movingUnit, nextWaypoint, target, 0);
+            }
+            return hasArrived ? 0 : costToward(movingUnit, target, position, arrivalRadius);
         }
-        return distanceToHomeEdge(position, boardId, getOwner().getHomeEdge(movingUnit), game);
+        CardinalEdge homeEdge = getOwner().getHomeEdge(movingUnit);
+        // A unit on the ground heading for an edge is scored by the way it can really go. By rows to the edge alone,
+        // every first step round a lake scores worse than standing still, and the unit freezes on the shore
+        // (HammerGS's playtest, 2026-09-26). Airborne units keep the straight line.
+        boolean isOnGround = !movingUnit.isAirborne() && !movingUnit.isAirborneVTOLorWIGE();
+        if (isOnGround && (boardId == movingUnit.getBoardId())) {
+            int edgeCost = getOwner().getUnitOrdersFollower().edgeCostFrom(movingUnit, homeEdge, position);
+            if (edgeCost != WaypointDistanceField.UNREACHABLE) {
+                return edgeCost;
+            }
+        }
+        return distanceToHomeEdge(position, boardId, homeEdge, game);
+    }
+
+    /**
+     * @return the movement points from the position to the target by the cheapest route, or the straight-line
+     *       distance less the arrival radius where no route is known
+     */
+    private int costToward(Entity movingUnit, Coords target, Coords position, int arrivalRadius) {
+        int routeCost = getOwner().getUnitOrdersFollower().routeCostFrom(movingUnit, target, position);
+        if (routeCost == WaypointDistanceField.UNREACHABLE) {
+            return Math.max(0, position.distance(target) - arrivalRadius);
+        }
+        return routeCost;
     }
 
     private boolean validRange(Coords finalCoords, Targetable target, int startingTargetDistance,

@@ -55,12 +55,12 @@ import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
 
 import io.sentry.Sentry;
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.ButtonOrderPreferences;
 import megamek.client.ui.clientGUI.MegaMekGUI;
 import megamek.client.ui.dialogs.MMAboutDialog;
 import megamek.client.ui.preferences.SuitePreferences;
 import megamek.client.ui.util.FontHandler;
-import megamek.common.annotations.Nullable;
 import megamek.common.commandLine.AbstractCommandLineParser;
 import megamek.common.commandLine.ClientServerCommandLineParser;
 import megamek.common.commandLine.MegaMekCommandLineFlag;

@@ -35,8 +35,8 @@ package megamek.server.scriptedEvents;
 
 import java.awt.Image;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Base64Image;
-import megamek.common.annotations.Nullable;
 import megamek.common.net.enums.PacketCommand;
 import megamek.common.net.packets.Packet;
 import megamek.server.IGameManager;

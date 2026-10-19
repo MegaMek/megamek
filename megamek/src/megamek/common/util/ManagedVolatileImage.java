@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -35,22 +35,27 @@ package megamek.common.util;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.image.VolatileImage;
 
+import megamek.logging.MMLogger;
+
 /**
  * A wrapper around VolatileImage that handles validation and recreation automatically.
  */
 public class ManagedVolatileImage {
+    private static final MMLogger LOGGER = MMLogger.create(ManagedVolatileImage.class);
+
     private VolatileImage volatileImage;
     private final Image sourceImage;
     private final int width;
     private final int height;
     private final int transparency;
-    private final GraphicsConfiguration gc;
+    private GraphicsConfiguration gc;
 
     @Deprecated(since = "0.51.0", forRemoval = true)
     public ManagedVolatileImage(Image sourceImage) {
@@ -82,6 +87,7 @@ public class ManagedVolatileImage {
             volatileImage.flush();
         }
         volatileImage = gc.createCompatibleVolatileImage(width, height, transparency);
+        LOGGER.debug("Created volatile image {}x{} on screen {}", width, height, gc.getDevice().getIDstring());
         renderToVolatileImage();
     }
 
@@ -101,18 +107,53 @@ public class ManagedVolatileImage {
     }
 
     /**
-     * Gets the VolatileImage, ensuring it's valid.
+     * Gets the VolatileImage, ensuring it's valid for the screen it was last created on. Prefer
+     * {@link #getImage(GraphicsConfiguration)} when painting, so the image follows a window that moves to another
+     * monitor.
      */
     public VolatileImage getImage() {
+        return getImage(gc);
+    }
+
+    /**
+     * Gets the VolatileImage, ensuring it's valid for the screen it is about to be drawn on.
+     *
+     * <p>A volatile image lives in the memory of one graphics device. Drawing it on another monitor's device can
+     * show whatever that device has at the same spot, such as its font cache, so the image is recreated whenever the
+     * target screen changes.</p>
+     *
+     * @param target the configuration of the screen being drawn on, usually the window's
+     *               {@link java.awt.Component#getGraphicsConfiguration()}; {@code null} or an offscreen buffer
+     *               keeps the current screen
+     */
+    public VolatileImage getImage(GraphicsConfiguration target) {
+        if ((target != null) && isScreen(target) && (target.getDevice() != gc.getDevice())) {
+            LOGGER.debug("Volatile image {}x{} moved from screen {} to screen {}; recreating it",
+                  width, height, gc.getDevice().getIDstring(), target.getDevice().getIDstring());
+            gc = target;
+            createVolatileImage();
+        }
         do {
             int validation = volatileImage.validate(gc);
             if (validation == VolatileImage.IMAGE_INCOMPATIBLE) {
+                LOGGER.debug("Volatile image {}x{} is incompatible with screen {}; recreating it",
+                      width, height, gc.getDevice().getIDstring());
                 createVolatileImage();
             } else if (validation == VolatileImage.IMAGE_RESTORED || volatileImage.contentsLost()) {
+                LOGGER.debug("Volatile image {}x{} lost its contents on screen {}; redrawing it",
+                      width, height, gc.getDevice().getIDstring());
                 renderToVolatileImage();
             }
         } while (volatileImage.contentsLost());
         return volatileImage;
+    }
+
+    /**
+     * Swing may paint into an offscreen buffer first, whose configuration is not a monitor; only a real screen
+     * should move the image.
+     */
+    private static boolean isScreen(GraphicsConfiguration configuration) {
+        return configuration.getDevice().getType() == GraphicsDevice.TYPE_RASTER_SCREEN;
     }
 
     public void flush() {

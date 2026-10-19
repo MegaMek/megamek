@@ -43,12 +43,12 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.util.UIUtil;
 import megamek.client.ui.util.UIUtil.TipList;
 import megamek.client.ui.util.UIUtil.TipTextField;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.units.IBuilding;

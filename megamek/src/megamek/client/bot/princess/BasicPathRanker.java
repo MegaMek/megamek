@@ -39,6 +39,7 @@ import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.Messages;
 import megamek.client.bot.princess.UnitBehavior.BehaviorType;
 import megamek.client.bot.princess.coverage.Builder;
@@ -48,7 +49,6 @@ import megamek.client.bot.princess.geometry.HexLine;
 import megamek.common.Hex;
 import megamek.common.LosEffects;
 import megamek.common.analysis.DamageProfile;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
@@ -61,6 +61,7 @@ import megamek.common.game.Game;
 import megamek.common.moves.MovePath;
 import megamek.common.moves.MoveStep;
 import megamek.common.options.OptionsConstants;
+import megamek.common.orders.UnitOrders;
 import megamek.common.planetaryConditions.PlanetaryConditions;
 import megamek.common.rolls.PilotingRollData;
 import megamek.common.rolls.TargetRoll;
@@ -94,6 +95,8 @@ import megamek.logging.MMLogger;
 public class BasicPathRanker extends PathRanker {
     private final static MMLogger logger = MMLogger.create(BasicPathRanker.class);
     public static final int FACING_MOD_MULTIPLIER = 50;
+    /** A player's ordered facing counts double the bot's own facing preference, so it wins most close calls. */
+    public static final int ORDERED_FACING_MOD_MULTIPLIER = 2 * FACING_MOD_MULTIPLIER;
 
     // this is a value used to indicate how much we value the unit being at its destination
     private final int ARRIVED_AT_DESTINATION_FACTOR = 250;
@@ -488,16 +491,27 @@ public class BasicPathRanker extends PathRanker {
         return postureByBoard.get(boardId);
     }
 
-    /** The positions of the given units that are deployed on the given board; the rest have no say. */
+    /**
+     * The positions of the given units that are deployed on the given board; the rest have no say. Ejected crews
+     * are left out too while any other unit is there: a pilot is not part of either force's line, and one ejecting
+     * beside the bot's force would otherwise read as the enemy suddenly closing in (#9194). A side reduced to
+     * ejected crews has not lost, so their positions are used when they are all that is left.
+     */
     static List<Coords> deployedPositions(List<Entity> units, int boardId) {
         List<Coords> positions = new ArrayList<>(units.size());
+        List<Coords> crewPositions = new ArrayList<>();
         for (Entity unit : units) {
             Coords position = unit.getPosition();
-            if ((position != null) && unit.isDeployed() && (unit.getBoardId() == boardId)) {
+            if ((position == null) || !unit.isDeployed() || (unit.getBoardId() != boardId)) {
+                continue;
+            }
+            if (unit instanceof EjectedCrew) {
+                crewPositions.add(position);
+            } else {
                 positions.add(position);
             }
         }
-        return positions;
+        return positions.isEmpty() ? crewPositions : positions;
     }
 
     /**
@@ -563,7 +577,8 @@ public class BasicPathRanker extends PathRanker {
             return 0;
         }
 
-        // If they don't have LoS, they can't do damage.
+        // If they don't have LoS, they can't do damage - unless they carry artillery, which can fire in the
+        // firing phase without it. The firing plan below then drops every weapon that does need line of sight.
         final LosEffects losEffects = LosEffects.calculateLOS(game,
               enemy,
               path.getEntity(),
@@ -571,7 +586,7 @@ public class BasicPathRanker extends PathRanker {
               targetState.getPosition(),
               false);
 
-        if (!losEffects.canSee()) {
+        if (!losEffects.canSee() && !DirectArtilleryToHitGuess.canFireWithoutLineOfSight(enemy)) {
             return 0;
         }
 
@@ -1138,6 +1153,13 @@ public class BasicPathRanker extends PathRanker {
      */
     private Coords rankingPassClusterAnchor;
 
+    /**
+     * The number of enemy hot-spots for the current ranking pass, computed on first use per pass and reset in
+     * {@link #rankPaths(List, Game, int, double, List, List)}; {@code -1} until then. Building the hot-spot list rates
+     * and sorts every recorded position, and every candidate path asked for it twice.
+     */
+    private int rankingPassEnemyHotSpotCount = -1;
+
     @Override
     public TreeSet<RankedPath> rankPaths(List<MovePath> movePaths, Game game, int maxRange, double fallTolerance,
           List<Entity> enemies, List<Entity> friends) {
@@ -1148,7 +1170,18 @@ public class BasicPathRanker extends PathRanker {
         rankingPassBattleValueCache.clear();
         rankingPassClusterAnchor = highestBvClusterPosition(enemies);
         rankingPassSpotterPriority = null;
+        rankingPassEnemyHotSpotCount = -1;
         return super.rankPaths(movePaths, game, maxRange, fallTolerance, enemies, friends);
+    }
+
+    /**
+     * @return the number of enemy hot-spots, computed once per ranking pass
+     */
+    int getRankingPassEnemyHotSpotCount() {
+        if (rankingPassEnemyHotSpotCount < 0) {
+            rankingPassEnemyHotSpotCount = getOwner().getEnemyHotSpots().size();
+        }
+        return rankingPassEnemyHotSpotCount;
     }
 
     /**
@@ -1634,6 +1667,22 @@ public class BasicPathRanker extends PathRanker {
     protected double calculateFacingMod(Entity movingUnit, Game game, final MovePath path,
           @Nullable Coords enemyMedianPosition, @Nullable Coords closestEnemyPosition,
           boolean squareUpOnClosestEnemy) {
+        // A player's ordered facing replaces the bot's own point to face while the fire it expects - the closest
+        // enemy when squaring up, else the enemy median - still falls in the ordered facing's front arc.
+        Coords expectedThreat = (squareUpOnClosestEnemy || (enemyMedianPosition == null))
+              ? closestEnemyPosition : enemyMedianPosition;
+        int orderedFacing = getOwner().getUnitOrdersFollower().facingThatStandsFor(movingUnit,
+              getOwner().getUnitOrdersFollower().orderedFacing(movingUnit, path.getFinalCoords()),
+              path.getFinalCoords(), expectedThreat);
+        if (orderedFacing != UnitOrders.FACING_AUTO) {
+            // a unit stopping may leave the last sides to a torso twist or turret, free in the fire phase; one on its
+            // way faces the route with its legs
+            int orderedFacingDiff = Math.max(0, OrderedFacing.sidesApart(path.getFinalFacing(), orderedFacing)
+                  - getOwner().getUnitOrdersFollower().twistAllowance(movingUnit, path.getFinalCoords()));
+            logger.trace("facing mod [ordered facing {}, {} sides off beyond twist]", orderedFacing,
+                  orderedFacingDiff);
+            return ORDERED_FACING_MOD_MULTIPLIER * orderedFacingDiff;
+        }
         int facingDiff = facingDiffCalculator.getFacingDiff(movingUnit,
               path,
               game.getBoard(movingUnit).getCenter(),
@@ -1672,12 +1721,28 @@ public class BasicPathRanker extends PathRanker {
         if (behaviorType == BehaviorType.ForcedWithdrawal || behaviorType == BehaviorType.MoveToDestination) {
             int newDistanceToHome = distanceToDestination(movingUnit, path.getFinalCoords(), path.getFinalBoardId(),
                   game);
+            // in a town, a move ending in cover wins a close call over one ending in the open
+            int coverDiscount = getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+                  path.getFinalCoords());
+            if (newDistanceToHome > coverDiscount) {
+                newDistanceToHome -= coverDiscount;
+            }
             double selfPreservation = getOwner().getBehaviorSettings().getSelfPreservationValue();
             double selfPreservationMod;
 
+            // an Imperative route pulls harder than anything else the unit weighs (issue #7615)
+            double routeWeight = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit, getOwner())
+                  .isPresent() ? getOwner().getUnitOrdersFollower().routeWeight(movingUnit) : 1.0;
+
+            // a unit on a route gets its movement bonus going forward, not in a loop that doubles back past it
+            Optional<Coords> routeTarget = getOwner().getUnitBehaviorTracker().getActiveWaypoint(movingUnit,
+                  getOwner());
+            int backtrackSteps = routeTarget.map(target -> UnitOrdersFollower.backtrackSteps(path, target))
+                  .orElse(0);
+
             // normally, we favor being closer to the edge we're trying to get to
             if (newDistanceToHome > 0) {
-                selfPreservationMod = newDistanceToHome * selfPreservation;
+                selfPreservationMod = (newDistanceToHome + backtrackSteps) * selfPreservation * routeWeight;
                 // if this path gets us to the edge, we value it considerably more than we do
                 // paths that don't get us there
             } else {
@@ -1902,6 +1967,8 @@ public class BasicPathRanker extends PathRanker {
         }
 
         scores.put("ignoreDamageOutput", getOwner().getBehaviorSettings().isIgnoreDamageOutput() ? 1.0 : 0.0);
+        // a unit on a player's route weighs the damage by the route's priority: Normal takes cover, Imperative pushes on
+        expectedDamageTaken *= getOwner().getUnitOrdersFollower().damageWeight(movingUnit);
         scores.put("damageExpectedTotal", expectedDamageTaken);
         scores.put("myAttackFiring", damageEstimate.firingDamage);
         scores.put("myAttackPhysical", damageEstimate.physicalDamage);
@@ -2010,7 +2077,7 @@ public class BasicPathRanker extends PathRanker {
         // A holding artillery tube does not chase movement TMM - staying put is the point - so skip the reward.
         double movementMod = holdingArtilleryInPlace ? 0.0
               : calculateMovementMod(pathCopy, game, enemies, movementModFormula);
-        scores.put("enemyHotSpotCount", (double) getOwner().getEnemyHotSpots().size());
+        scores.put("enemyHotSpotCount", (double) getRankingPassEnemyHotSpotCount());
         scores.put("selfPreservationValue", getOwner().getBehaviorSettings().getSelfPreservationValue());
         scores.put("selfPreservationIndex", (double) getOwner().getBehaviorSettings().getSelfPreservationIndex());
         scores.put("movementMod", movementMod);
@@ -2047,6 +2114,9 @@ public class BasicPathRanker extends PathRanker {
         scores.put("finalFacing", (double) pathCopy.getFinalFacing());
         scores.put("facingDiff", facingMod / FACING_MOD_MULTIPLIER);
         scores.put("facingMod", facingMod);
+        // in a town: the movement points a move ending in cover counted as saving (0 elsewhere)
+        scores.put("townCover", (double) getOwner().getUnitOrdersFollower().townCoverDiscount(movingUnit,
+              pathCopy.getFinalCoords()));
 
         var formula = new StringBuilder(256);
         var crowdingToleranceFormula = new StringBuilder(64);
@@ -2378,7 +2448,7 @@ public class BasicPathRanker extends PathRanker {
      */
     protected double calculateMovementMod(MovePath pathCopy, Game game, List<Entity> enemies, StringBuilder formula) {
         var favorHigherTMM = getOwner().getBehaviorSettings().getFavorHigherTMM();
-        boolean noEnemiesInSight = enemies.isEmpty() && getOwner().getEnemyHotSpots().isEmpty();
+        boolean noEnemiesInSight = enemies.isEmpty() && (getRankingPassEnemyHotSpotCount() == 0);
         boolean disabledFavorHigherTMM = favorHigherTMM == 0;
         if (noEnemiesInSight || !disabledFavorHigherTMM) {
             var tmm = Compute.getTargetMovementModifier(pathCopy.getHexesMoved(),

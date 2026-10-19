@@ -37,7 +37,7 @@ import java.awt.Dimension;
 import java.awt.FontMetrics;
 import javax.swing.JToggleButton;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * A {@link JToggleButton} that works as an on/off switch and always tells the reader where things stand: it names

@@ -46,12 +46,12 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SpringLayout;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.calculationReport.FlexibleCalculationReport;
 import megamek.client.ui.dialogs.abstractDialogs.ASConversionInfoDialog;
 import megamek.client.ui.panels.alphaStrike.ASStatsTablePanel;
 import megamek.client.ui.util.SpringUtilities;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.strategicBattleSystems.SBFFormation;
 import megamek.common.strategicBattleSystems.SBFUnit;
 

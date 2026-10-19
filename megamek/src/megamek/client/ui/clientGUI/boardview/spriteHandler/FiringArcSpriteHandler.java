@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2024-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.clientGUI.boardview.sprite.FieldOfFireSprite;
@@ -45,7 +46,6 @@ import megamek.client.ui.panels.phaseDisplay.PointblankShotDisplay;
 import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.RangeType;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardHelper;
 import megamek.common.board.Coords;
@@ -506,7 +506,7 @@ public class FiringArcSpriteHandler extends BoardViewSpriteHandler implements IP
                 maxRange = weaponType.getMaxRange(weapon, ammoMounted);
 
                 // set the standard ranges, depending on capital or no
-                int rangeMultiplier = weaponType.isCapital() ? 2 : 1;
+                int rangeMultiplier = weaponType.usesCapitalRangeBrackets() ? 2 : 1;
                 if (game.getBoard(firingEntity).isGround()) {
                     rangeMultiplier *= 8;
                 }

@@ -43,11 +43,11 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.SuiteConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.calculationReport.CalculationReport;
 import megamek.common.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmorHandles;
 import megamek.common.battleArmor.ProtoMekClampMount;
 import megamek.common.board.Coords;
@@ -2087,8 +2087,8 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
 
         /*
          CO:213
-         Jump jet performance depends on the weight class of the FrankenMech.
-         Smaller jump jets can be retained on larger ’Mechs, but their performance is reduced and fractional
+         Jump jet performance depends on the weight class of the FrankenMek.
+         Smaller jump jets can be retained on larger ’Meks, but their performance is reduced and fractional
          Jumping MPs are dropped, meaning two half-ton jump jets are required to give the same performance
          as a 1-ton jump jet while four half-ton jump jets would be required to match a 2-ton jump jet.
         */
@@ -3375,6 +3375,16 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
      */
     public Set<Integer> getClanCaseOptOutLocations() {
         return Collections.unmodifiableSet(clanCaseOptOutLocations);
+    }
+
+    /**
+     * Zero-slot Clan CASE can be left out of an MTF only where every loader regenerates it: a Clan chassis with Clan
+     * internal structure (TM p. 210 / errata v8 p. 18). A Clan chassis built with IS structure, such as IS Endo Steel,
+     * must keep its Clan CASE as explicit equipment.
+     */
+    private boolean isClanCaseRegenerated(int location) {
+        return isClan() && TechConstants.isClan(isFrankenMek()
+              ? getFrankenMekStructureTechLevel(location) : getStructureTechLevel());
     }
 
     @Override
@@ -5359,7 +5369,7 @@ public abstract class Mek extends Entity implements Fortifiable, RubbleClearer, 
         }
         for (Mounted<?> mounted : getMisc()) {
             if ((mounted.getNumCriticalSlots() == 0)
-                  && !(isClan() && mounted.getType().hasFlag(MiscType.F_CASE))
+                  && !(mounted.getType().hasFlag(MiscType.F_CASE) && isClanCaseRegenerated(mounted.getLocation()))
                   && !EquipmentType.isArmorType(mounted.getType())
                   && !EquipmentType.isStructureType(mounted.getType())) {
                 sb.append(MtfFile.NO_CRIT).append(mounted.getType().getInternalName())

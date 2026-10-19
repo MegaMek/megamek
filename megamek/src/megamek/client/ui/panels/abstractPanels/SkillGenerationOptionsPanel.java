@@ -46,13 +46,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.client.generator.enums.SkillGeneratorMethod;
 import megamek.client.generator.enums.SkillGeneratorType;
 import megamek.client.ui.buttons.MMToggleButton;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.comboBoxes.MMComboBox;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.SkillLevel;
 
 public class SkillGenerationOptionsPanel extends AbstractPanel {

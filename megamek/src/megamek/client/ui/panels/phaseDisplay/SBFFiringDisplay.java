@@ -43,6 +43,7 @@ import java.util.function.Predicate;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.SBFClientGUI;
@@ -52,7 +53,6 @@ import megamek.client.ui.widget.MegaMekButton;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.sbf.SBFStandardUnitAttack;
 import megamek.common.alphaStrike.ASRange;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.BoardLocation;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.game.InGameObject;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2025-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -97,7 +97,7 @@ public class RawImagePanel extends JComponent {
             try {
                 // Enable high-quality rendering
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-                g2d.drawImage(cachedImage.getImage(), 0, 0, null);
+                g2d.drawImage(cachedImage.getImage(getGraphicsConfiguration()), 0, 0, null);
             } finally {
                 g2d.dispose();
             }

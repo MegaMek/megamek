@@ -48,9 +48,9 @@ import javax.swing.JTextPane;
 import javax.swing.text.html.HTMLEditorKit;
 import javax.swing.text.html.StyleSheet;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.clientGUI.GUIPreferences;
 import megamek.client.ui.util.UIUtil;
-import megamek.common.annotations.Nullable;
 import megamek.common.interfaces.ReportEntry;
 import megamek.common.rolls.Roll;
 import megamek.common.rolls.TargetRoll;

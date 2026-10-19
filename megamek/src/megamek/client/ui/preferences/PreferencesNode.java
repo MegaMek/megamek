@@ -60,7 +60,6 @@ public class PreferencesNode {
         this.elements = new HashMap<>();
         setInitialValues(new HashMap<>());
         setInitialized(false);
-        setFinalized(false);
     }
     // endregion Constructors
 
@@ -89,10 +88,20 @@ public class PreferencesNode {
         this.initialized = initialized;
     }
 
+    /**
+     * @return whether {@link #getFinalValues()} has been called
+     *
+     * @deprecated nothing reads this since {@link #getFinalValues()} may be called more than once
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public boolean isFinalized() {
         return finalized;
     }
 
+    /**
+     * @deprecated nothing reads this since {@link #getFinalValues()} may be called more than once
+     */
+    @Deprecated(since = "0.51.01", forRemoval = true)
     public void setFinalized(final boolean finalized) {
         this.finalized = finalized;
     }
@@ -140,18 +149,15 @@ public class PreferencesNode {
     }
 
     /**
-     * This method should only be called once.
+     * Gathers the values to save. It may be called more than once, so the preferences can be saved while the program
+     * runs (for example when a dialog closes) and again on exit; a second call used to throw, which left the exit save
+     * with nothing written for any window.
      *
      * @return the final values of all the elements managed by this node.
      *
-     * @throws Exception if this method is called a second time
+     * @throws Exception if an element cannot give its value
      */
     public Map<String, String> getFinalValues() throws Exception {
-        if (isFinalized()) {
-            throw new Exception();
-        }
-
-        setFinalized(true);
         final Map<String, String> finalValues = new HashMap<>(getElements().size());
 
         // Use the values we had stored from initialization

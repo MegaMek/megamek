@@ -36,10 +36,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.annotation.Nullable;
 import megamek.client.bot.princess.FightMemory.OddsRecord;
 import megamek.common.InfantryActionDeclaration;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.compute.InfantryActionStrengths;
 import megamek.common.game.Game;
 import megamek.common.units.AbstractBuildingEntity;

@@ -37,9 +37,9 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.common.Hex;
 import megamek.common.ManeuverType;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.BoardLocation;
 import megamek.common.board.Coords;

@@ -35,6 +35,7 @@ package megamek.common.equipment;
 
 import java.util.*;
 
+import jakarta.annotation.Nullable;
 import megamek.common.RangeType;
 import megamek.common.RulesRef;
 import megamek.common.SimpleTechLevel;
@@ -42,7 +43,6 @@ import megamek.common.SourceBookCode;
 import megamek.common.TechAdvancement;
 import megamek.common.TechAdvancement.AdvancementPhase;
 import megamek.common.TechConstants;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.enums.AvailabilityValue;
 import megamek.common.enums.Era;
@@ -50,9 +50,12 @@ import megamek.common.enums.Faction;
 import megamek.common.enums.TechBase;
 import megamek.common.enums.TechRating;
 import megamek.common.equipment.enums.AmmoTypeFlag;
+import megamek.common.game.Game;
 import megamek.common.options.GameOptions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.rolls.TargetRoll;
+import megamek.common.rules.RulesAmmo;
+import megamek.common.rules.core.CoreRulesAmmo;
 import megamek.common.weapons.Weapon;
 import megamek.logging.MMLogger;
 import org.apache.commons.lang3.ArrayUtils;
@@ -2478,6 +2481,30 @@ public class AmmoType extends EquipmentType {
               !ammoType.hasFlag(AmmoTypeFlag.F_BATTLEARMOR));
     }
 
+    /**
+     * Battle armor and ProtoMeks may only fire the special missile munitions Total Warfare lists for them: Inferno,
+     * Multi-Purpose and Torpedo rounds, plus Standard (TW p.229; forum ruling
+     * https://www.battletech.com/forums/index.php/topic,91104). Artemis-capable rounds are excluded: ProtoMeks may not
+     * install Artemis IV (TechManual p.207). Ammo for other weapons is not limited by this rule.
+     *
+     * @param ammoType the ammo to check
+     *
+     * @return {@code true} if a battle armor squad or ProtoMek may load this ammo
+     */
+    public static boolean isAllowedForBattleArmorAndProtoMeks(AmmoType ammoType) {
+        if (!EnumSet.of(AmmoTypeEnum.SRM, AmmoTypeEnum.LRM, AmmoTypeEnum.SRM_IMP, AmmoTypeEnum.LRM_IMP)
+              .contains(ammoType.getAmmoType())) {
+            return true;
+        }
+        return BATTLE_ARMOR_AND_PROTOMEK_MISSILE_MUNITIONS.containsAll(ammoType.getMunitionType());
+    }
+
+    private static final EnumSet<Munitions> BATTLE_ARMOR_AND_PROTOMEK_MISSILE_MUNITIONS = EnumSet.of(
+          Munitions.M_STANDARD,
+          Munitions.M_INFERNO,
+          Munitions.M_MULTI_PURPOSE,
+          Munitions.M_TORPEDO);
+
     public static void initializeTypes() {
         // Save copies of the SRM and LRM ammo to use to create munitions.
         ArrayList<AmmoType> srmAmmos = new ArrayList<>();
@@ -3709,6 +3736,11 @@ public class AmmoType extends EquipmentType {
 
             // For MML, only create incendiary variants of LRM-mode ammo
             if (type == AmmoTypeEnum.MML && !ammo.hasFlag(F_MML_LRM)) {
+                continue;
+            }
+
+            // Battle armor LRMs may only fire the munitions TW p.229 lists; Incendiary is not one (TO:AUE p.179)
+            if (ammo.hasFlag(F_BATTLEARMOR)) {
                 continue;
             }
 
@@ -10305,7 +10337,13 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
+
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -10329,7 +10367,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 1500;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -10353,7 +10396,12 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 2000;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 229);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 229),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.ALL)
               .setTechRating(TechRating.B)
               .setAvailability(AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B, AvailabilityValue.B)
@@ -15213,7 +15261,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -15237,7 +15290,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -15261,7 +15319,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -15285,7 +15348,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -15309,7 +15377,12 @@ public class AmmoType extends EquipmentType {
         ammo.flags = ammo.flags.or(F_BATTLEARMOR);
         ammo.shots = 1;
         ammo.bv = 0;
-        ammo.rulesRefs = rulesRefs(SourceBookCode.TM, 261);
+        ammo.rulesRefs = rulesRefs(
+              rulesRef(SourceBookCode.TM, 261),
+              rulesRef(SourceBookCode.BMM, 103),
+              rulesRef(SourceBookCode.CORE, 186),
+              rulesRef(SourceBookCode.TW, 303)
+        );
         ammo.techAdvancement.setTechBase(TechBase.IS)
               .setTechRating(TechRating.E)
               .setAvailability(AvailabilityValue.X, AvailabilityValue.X, AvailabilityValue.B, AvailabilityValue.B)
@@ -16164,6 +16237,11 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    public void updateBV() {
+        double ammoBVAdjusted = Game.rulesManager.getRulesAmmo().getAmmoBVAdjusted(this);
+        this.bv = Math.round(ammoBVAdjusted * 1000.0) / 1000.0;
+    }
+
     // Generic infantry ammo, stats are determined by the weapon it's linked to
     private static AmmoType createInfantryAmmo() {
         AmmoType ammo = new AmmoType();
@@ -16556,13 +16634,13 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.THUMPER) ||
                   (munition.getAmmoType() == AmmoTypeEnum.THUMPER_CANNON)) &&
                   munition.getMunitionType().contains(Munitions.M_FAE)) {
-                bv *= 1.4;
                 cost *= 3;
             }
 
             if ((munition.getAmmoType() == AmmoTypeEnum.AC) ||
                   (munition.getAmmoType() == AmmoTypeEnum.LAC) ||
-                  (munition.getAmmoType() == AmmoTypeEnum.PAC)) {
+                (munition.getAmmoType() == AmmoTypeEnum.PAC) ||
+                (munition.getAmmoType() == AmmoTypeEnum.AC_ROTARY)) {
                 if (munition.getMunitionType().contains(Munitions.M_ARMOR_PIERCING)) {
                     cost *= 4;
                 } else if ((munition.getMunitionType().contains(Munitions.M_FLECHETTE)) ||
@@ -16570,14 +16648,12 @@ public class AmmoType extends EquipmentType {
                     cost *= 1.5;
                 } else if (munition.getMunitionType().contains(Munitions.M_TRACER)) {
                     cost *= 1.5;
-                    bv *= 1.25;
                 } else if (munition.getMunitionType().contains(Munitions.M_INCENDIARY_AC)) {
                     cost *= 2;
                 } else if (munition.getMunitionType().contains(Munitions.M_PRECISION)) {
                     cost *= 6;
                 } else if (munition.getMunitionType().contains(Munitions.M_CASELESS)) {
                     cost *= 1.5;
-                    bv *= 2.0;
                 }
             }
 
@@ -16588,7 +16664,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_AX_HEAD))) {
                 cost *= 0.5;
-                bv *= 2;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16599,7 +16674,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_SMOKE_WARHEAD))) {
                 cost *= 0.5;
-                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16627,7 +16701,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.TBOLT_20)) &&
                   (munition.getMunitionType().contains(Munitions.M_SEMIGUIDED))) {
                 cost *= 3;
-                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16636,7 +16709,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_SWARM))) {
                 cost *= 2;
-                bv *= 1;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16645,7 +16717,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_SWARM_I))) {
                 cost *= 3;
-                bv *= 1.2;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16657,8 +16728,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.TBOLT_20)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER))) {
                 cost *= 2;
-                // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
-                bv = base.rackSize * munition.shots / 5.0 * 4;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16667,8 +16736,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER_AUGMENTED))) {
                 cost *= 4;
-                // TO:AUE, pp.185,197,198: Half the rack size on 7 hexes; standard mines
-                bv = Math.ceil(base.rackSize / 2.0) * 7 * munition.shots / 5.0 * 4;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16677,8 +16744,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER_INFERNO))) {
                 cost *= 1;
-                // TO:AUE, pp.185,197,198
-                bv = base.rackSize * munition.shots;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16687,8 +16752,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER_VIBRABOMB))) {
                 cost *= 2.5;
-                // TO:AUE, pp.185,197,198
-                bv = base.rackSize * munition.shots;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16697,8 +16760,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_THUNDER_ACTIVE))) {
                 cost *= 3;
-                // TO:AUE, pp.185,197,198
-                bv = base.rackSize * munition.shots / 5.0 * 6;
             }
 
             if (munition.getMunitionType().contains(Munitions.M_HOMING)) {
@@ -16710,12 +16771,6 @@ public class AmmoType extends EquipmentType {
 
             if (munition.getMunitionType().contains(Munitions.M_FASCAM)) {
                 cost *= 1.5;
-                // TO:AR, p.152 and TO:AUE, pp.197,198
-                int rackSize = base.getRackSize();
-                if (munition.getAmmoType() == AmmoTypeEnum.ARROW_IV) {
-                    rackSize = munition.isClan() ? 30 : 20;
-                }
-                bv = rackSize * munition.shots / 5.0 * 4;
             }
 
             if (munition.getMunitionType().contains(Munitions.M_INFERNO_IV)) {
@@ -16724,7 +16779,6 @@ public class AmmoType extends EquipmentType {
 
             if (munition.getMunitionType().contains(Munitions.M_VIBRABOMB_IV)) {
                 // TO:AR 152 and TO:AUE 197,198
-                bv = 20 * munition.shots;
                 cost *= 2;
             }
 
@@ -16793,7 +16847,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP)) &&
                   ((munition.getMunitionType().contains(Munitions.M_TANDEM_CHARGE)))) {
                 cost *= 5;
-                bv *= 2.0;
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.LRM) ||
@@ -16805,68 +16858,10 @@ public class AmmoType extends EquipmentType {
                   ((munition.getMunitionType().contains(Munitions.M_HEAT_SEEKING)) ||
                         (munition.getMunitionType().contains(Munitions.M_FOLLOW_THE_LEADER)))) {
                 cost *= 2;
-                bv *= 1.5;
             }
 
             if (munition.getMunitionType().contains(Munitions.M_DEAD_FIRE)) {
                 cost *= 0.6;
-                if (munition.getAmmoType() == AmmoTypeEnum.MML) {
-                    if (base.rackSize == 3) {
-                        bv = 6;
-                    } else if (base.rackSize == 5) {
-                        bv = base.hasFlag(F_MML_LRM) ? 9 : 8;
-                    } else if (base.rackSize == 7) {
-                        bv = base.hasFlag(F_MML_LRM) ? 12 : 11;
-                    } else if (base.rackSize == 9) {
-                        bv = base.hasFlag(F_MML_LRM) ? 17 : 15;
-                    }
-                } else {
-                    if (base.rackSize == 2) {
-                        bv = 4;
-                    } else if (base.rackSize == 4) {
-                        bv = 7;
-                    } else if (base.rackSize == 5) {
-                        bv = 9;
-                    } else if (base.rackSize == 6) {
-                        bv = 10;
-                    } else if (base.rackSize == 10) {
-                        bv = 17;
-                    } else if (base.rackSize == 15) {
-                        bv = 26;
-                    } else if (base.rackSize == 20) {
-                        bv = 35;
-                    }
-                }
-            }
-
-            if (munition.getMunitionType().contains(Munitions.M_LISTEN_KILL)) {
-                if (munition.getAmmoType() == AmmoTypeEnum.MML) {
-                    if (base.rackSize == 3) {
-                        bv = base.hasFlag(F_MML_LRM) ? 9 : 4;
-                    } else if (base.rackSize == 5) {
-                        bv = base.hasFlag(F_MML_LRM) ? 15 : 7;
-                    } else if (base.rackSize == 7) {
-                        bv = base.hasFlag(F_MML_LRM) ? 21 : 10;
-                    } else if (base.rackSize == 9) {
-                        bv = base.hasFlag(F_MML_LRM) ? 27 : 13;
-                    }
-                } else {
-                    if (base.rackSize == 2) {
-                        bv = 6;
-                    } else if (base.rackSize == 4) {
-                        bv = 12;
-                    } else if (base.rackSize == 6) {
-                        bv = 18;
-                    } else if (base.rackSize == 5) {
-                        bv = 7;
-                    } else if (base.rackSize == 10) {
-                        bv = 14;
-                    } else if (base.rackSize == 15) {
-                        bv = 21;
-                    } else if (base.rackSize == 20) {
-                        bv = 28;
-                    }
-                }
             }
 
             if (((munition.getAmmoType() == AmmoTypeEnum.VEHICLE_FLAMER) ||
@@ -16883,7 +16878,6 @@ public class AmmoType extends EquipmentType {
                   (munition.getAmmoType() == AmmoTypeEnum.SRM_IMP) ||
                   (munition.getAmmoType() == AmmoTypeEnum.NLRM)) &&
                   (munition.getMunitionType().contains(Munitions.M_ARAD))) {
-                bv *= 1.3;
                 cost *= 3.0;
             }
 
@@ -16897,6 +16891,16 @@ public class AmmoType extends EquipmentType {
                   (munition.getMunitionType().contains(Munitions.M_MAGNETIC_PULSE))) {
                 cost *= 5;
             }
+
+            // Check for the right BV modifier based on rules
+            if (Game.rulesManager != null) {
+                bv = Game.rulesManager.getRulesAmmo().getAmmoBVAdjusted(munition);
+            } else {
+                // Fallback in case there is no rulesManager, make a core RulesAmmo
+                RulesAmmo rulesAmmo = new CoreRulesAmmo();
+                bv = rulesAmmo.getAmmoBVAdjusted(munition);
+            }
+
             // Account for floating point imprecision
             munition.bv = Math.round(bv * 1000.0) / 1000.0;
             munition.cost = Math.round(cost * 1000.0) / 1000.0;

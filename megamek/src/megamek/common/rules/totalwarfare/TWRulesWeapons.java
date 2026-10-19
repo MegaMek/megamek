@@ -34,9 +34,9 @@ package megamek.common.rules.totalwarfare;
 
 import java.util.Vector;
 
+import jakarta.annotation.Nullable;
 import megamek.common.CriticalSlot;
 import megamek.common.Report;
-import megamek.common.annotations.Nullable;
 import megamek.common.equipment.Mounted;
 import megamek.common.equipment.WeaponMounted;
 import megamek.common.rules.RulesWeapons;

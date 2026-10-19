@@ -133,4 +133,24 @@ public class CoreRulesAmmo extends RulesAmmo {
         }
         return 0;
     }
+
+    /**
+     * {@inheritDoc}
+     * Core has no special ammo BVs. This is as per Core Rules Errata v0.1
+     *
+     * @param munition AmmoType of the item being considered
+     * @return Call the super for any ammos not in core
+     */
+    @Override
+    public double getAmmoBVAdjusted(final AmmoType munition) {
+        if (munition == null) {
+            return 0;
+        }
+        // If there is no base munition, no need to check this
+        if (munition.getBaseAmmo() == null) {
+            return munition.getBaseBV();
+        }
+
+        return super.getAmmoBVAdjusted(munition);
+    }
 }

@@ -33,7 +33,7 @@
 
 package megamek.common.units;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.EnumMap;
@@ -42,8 +42,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Base64Image;
-import megamek.common.annotations.Nullable;
 
 /**
  * Tracks fluff details for entities.

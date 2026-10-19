@@ -33,7 +33,7 @@
 
 package megamek.common.options;
 
-import megamek.common.annotations.Nullable;
+import jakarta.annotation.Nullable;
 
 /**
  * How completely MegaMek implements a quirk, per the audit of the quirk tables in Campaign Operations (2024 Rev 5th

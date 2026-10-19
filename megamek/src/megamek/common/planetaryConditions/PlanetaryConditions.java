@@ -42,22 +42,12 @@ import java.util.List;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import jakarta.annotation.Nullable;
 import megamek.common.Messages;
-import megamek.common.annotations.Nullable;
 import megamek.common.battleArmor.BattleArmor;
 import megamek.common.compute.Compute;
 import megamek.common.game.Game;
-import megamek.common.units.ConvInfantry;
-import megamek.common.units.CrewArmorKitRules;
-import megamek.common.units.Dropship;
-import megamek.common.units.Entity;
-import megamek.common.units.EnvironmentalSealingRules;
-import megamek.common.units.Infantry;
-import megamek.common.units.Jumpship;
-import megamek.common.units.Mek;
-import megamek.common.units.ProtoMek;
-import megamek.common.units.Tank;
-import megamek.common.units.VTOL;
+import megamek.common.units.*;
 
 
 /**

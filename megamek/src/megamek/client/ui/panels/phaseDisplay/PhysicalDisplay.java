@@ -48,6 +48,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import javax.swing.JOptionPane;
 
+import jakarta.annotation.Nullable;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
@@ -65,7 +66,6 @@ import megamek.common.Hex;
 import megamek.common.HexTarget;
 import megamek.common.ToHitData;
 import megamek.common.actions.*;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Messages;
 import megamek.client.ui.clientGUI.ClientGUI;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
@@ -46,7 +47,6 @@ import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.panels.phaseDisplay.DeploymentDisplay.DeploymentPosition;
 import megamek.common.Hex;
 import megamek.common.Player;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.AllowedDeploymentHelper;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;

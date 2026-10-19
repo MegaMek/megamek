@@ -49,12 +49,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.client.ui.Messages;
 import megamek.client.ui.util.ViewFormatting;
 import megamek.common.SourceBook;
 import megamek.common.SourceBooks;
-import megamek.common.annotations.Nullable;
 import megamek.common.enums.TechBase;
 import megamek.common.equipment.AmmoMounted;
 import megamek.common.equipment.ArmorType;
@@ -102,6 +102,7 @@ class GeneralEntityReadout implements EntityReadout {
     protected final boolean ignorePilotBV;
 
     private boolean initialized = false;
+    private @Nullable Double costOverride = null;
 
     private final NumberFormat costFormatter;
     private final DecimalFormat dFormatter;
@@ -325,10 +326,20 @@ class GeneralEntityReadout implements EntityReadout {
         return entity.hasRole() ? new LabeledLine("Role", entity.getRole().toString()) : new EmptyElement();
     }
 
+    @Override
+    public void setCostOverride(@Nullable Double cost) {
+        costOverride = cost;
+    }
+
     protected ViewElement createCostElement() {
-        double cost = (useAlternateCost && entity.getAlternateCost() > 0)
-              ? entity.getAlternateCost()
-              : entity.getCost(false);
+        double cost;
+        if (costOverride != null) {
+            cost = costOverride;
+        } else {
+            cost = (useAlternateCost && entity.getAlternateCost() > 0)
+                  ? entity.getAlternateCost()
+                  : entity.getCost(false);
+        }
         return new LabeledLine(Messages.getString("MekView.Cost"), costFormatter.format(cost) + " C-bills");
     }
 

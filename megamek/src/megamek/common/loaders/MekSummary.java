@@ -33,7 +33,7 @@
  */
 package megamek.common.loaders;
 
-import java.awt.*;
+import java.awt.Image;
 import java.io.File;
 import java.io.Serial;
 import java.io.Serializable;
@@ -47,6 +47,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
+import jakarta.annotation.Nullable;
 import megamek.client.ui.Base64Image;
 import megamek.codeUtilities.StringUtility;
 import megamek.common.SourceBookCode;
@@ -59,7 +60,6 @@ import megamek.common.alphaStrike.ASSpecialAbilityCollector;
 import megamek.common.alphaStrike.ASUnitType;
 import megamek.common.alphaStrike.AlphaStrikeHelper;
 import megamek.common.alphaStrike.BattleForceSUA;
-import megamek.common.annotations.Nullable;
 import megamek.common.battlefieldSupport.BFSAssetType;
 import megamek.common.battlefieldSupport.BFSDamage;
 import megamek.common.battlefieldSupport.BFSRange;

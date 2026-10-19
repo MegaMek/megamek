@@ -38,10 +38,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import jakarta.annotation.Nullable;
 import megamek.client.Client;
 import megamek.common.Hex;
 import megamek.common.MPCalculationSetting;
-import megamek.common.annotations.Nullable;
 import megamek.common.board.Board;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
@@ -595,7 +595,7 @@ public class SharedUtility {
 
             firstStep = false;
         }
-        
+
         // running with destroyed hip or gyro needs a check
         rollTarget = entity.checkRunningWithDamage(overallMoveType, md.getHexesMoved());
         checkNag(rollTarget, nagReport, psrList);

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
- * Copyright (C) 2007-2025 The MegaMek Team. All Rights Reserved.
+ * Copyright (C) 2007-2026 The MegaMek Team. All Rights Reserved.
  *
  * This file is part of MegaMek.
  *
@@ -61,6 +61,7 @@ public class CLPlasmaRifle extends PlasmaMFUKWeapon {
         addLookupName("CL Plasma Rifle");
         addLookupName("CLPlasmaRifle");
         addLookupName("MFUKCLPlasmaRifle");
+        sortingName = "Plasma Rifle C";
         heat = 15;
         damage = 10;
         rackSize = 1;

@@ -44,7 +44,6 @@ import java.util.Locale;
 import java.util.Objects;
 
 import jakarta.annotation.Nullable;
-
 import megamek.MMConstants;
 import megamek.common.Configuration;
 import megamek.common.moves.MovePath;

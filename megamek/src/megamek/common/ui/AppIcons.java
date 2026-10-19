@@ -20,6 +20,7 @@ import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 
 import megamek.common.Configuration;
 import megamek.common.util.fileUtils.MegaMekFile;
@@ -32,6 +33,17 @@ public final class AppIcons {
     private static final int[] SIZES = { 16, 32, 48, 256 };
 
     private AppIcons() {}
+
+    /**
+     * Sets the icon images of the given frame. Kept so that clients compiled against the original {@code JFrame}
+     * signature continue to link; delegates to {@link #apply(Window, String)}.
+     *
+     * @param frame   the frame to set the icons on
+     * @param appName the icon file prefix, e.g. "megameklab" or "mekhq"
+     */
+    public static void apply(JFrame frame, String appName) {
+        apply((Window) frame, appName);
+    }
 
     /**
      * Sets the icon images of the given window (frame or dialog).

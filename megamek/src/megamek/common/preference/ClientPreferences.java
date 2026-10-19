@@ -43,6 +43,7 @@ import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Objects;
 
+import jakarta.annotation.Nullable;
 import megamek.MMConstants;
 import megamek.common.Configuration;
 import megamek.common.moves.MovePath;
@@ -127,6 +128,8 @@ public class ClientPreferences extends PreferenceStoreProxy {
      * A user-specified directory, typically outside the MM directory, where content may be loaded from.
      */
     public static final String USER_DIR = "UserDir";
+    /** System property that overrides {@link #USER_DIR} for one run without changing the saved preference. */
+    public static final String USER_DIR_PROPERTY = "megamek.userDir";
 
     public static final String MML_PATH = "MmlPath";
 
@@ -556,18 +559,57 @@ public class ClientPreferences extends PreferenceStoreProxy {
     }
 
     /**
-     * @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash.
+     * @return The absolute user directory path (usually outside of MM). Does not end in a slash or backslash unless it
+     *       is a filesystem root such as {@code /} or {@code C:\}. When the
+     *       {@link #USER_DIR_PROPERTY} system property is set (for example by the MegaMek Launcher), it takes precedence
+     *       over the saved preference for this run.
      */
     public String getUserDir() {
-        return store.getString(USER_DIR);
+        String override = userDirOverride();
+        return (override != null) ? override : store.getString(USER_DIR);
+    }
+
+    /**
+     * @return {@code true} when the user directory comes from the {@link #USER_DIR_PROPERTY} system property for this
+     *       run, so the saved preference is not in effect; {@code false} otherwise
+     */
+    public boolean isUserDirOverridden() {
+        return userDirOverride() != null;
     }
 
     public void setUserDir(String userDir) {
-        // remove directory separators at the end
-        while (!userDir.isBlank() && (userDir.endsWith("/") || userDir.endsWith("\\"))) {
-            userDir = userDir.substring(0, userDir.length() - 1);
+        userDir = stripTrailingSeparators(userDir);
+        // Never persist the launch-time override as the user's own saved preference
+        if (userDir.equals(userDirOverride())) {
+            return;
         }
         store.setValue(USER_DIR, userDir);
+    }
+
+    /**
+     * @return the user directory set by the {@link #USER_DIR_PROPERTY} system property for this run, or {@code null}
+     *       when the property is not set or blank
+     */
+    static @Nullable String userDirOverride() {
+        String value = System.getProperty(USER_DIR_PROPERTY);
+        if ((value == null) || value.isBlank()) {
+            return null;
+        }
+        return stripTrailingSeparators(value.strip());
+    }
+
+    static String stripTrailingSeparators(String directory) {
+        while (!directory.isBlank() && (directory.endsWith("/") || directory.endsWith("\\"))
+              && !isFilesystemRoot(directory)) {
+            directory = directory.substring(0, directory.length() - 1);
+        }
+        return directory;
+    }
+
+    /** Roots keep their separator: {@code /} and {@code C:\} differ from an empty or drive-relative path. */
+    private static boolean isFilesystemRoot(String directory) {
+        return directory.equals("/") || directory.equals("\\")
+              || directory.matches("[A-Za-z]:[/\\\\]");
     }
 
     public String getMmlPath() {

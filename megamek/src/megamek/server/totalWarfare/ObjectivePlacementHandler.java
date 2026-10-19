@@ -198,8 +198,10 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
      * Checks the control points a player sends (the end of their Victory Setup turn, or a Deploy Minefields
      * placement) and logs what the server stores. Any variant the rules forbid is dropped (see
      * {@link #dropForbiddenVariants}): the properties editor never offers one, so this only catches an out-of-date or
-     * altered client, but the stored board must still never hold a combination the rules forbid. The one summary line (every point, where it is and its variants) lets a
-     * playtest compare what was ticked in the editor with what the server kept.
+     * altered client, but the stored board must still never hold a combination the rules forbid. For the same reason a
+     * candidate arriving already confirmed loses the confirmation (see {@link #clearPreGameConfirmation}). The one
+     * summary line (every point, where it is and its variants) lets a playtest compare what was ticked in the editor
+     * with what the server kept.
      *
      * @param groundObjects the ground objects the player sent
      * @param connectionId  the sending connection, for the log
@@ -212,6 +214,7 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
             for (ICarryable groundObject : hexObjects.getValue()) {
                 if (groundObject instanceof ObjectiveMarker marker) {
                     dropForbiddenVariants(marker, hexObjects.getKey(), senderName);
+                    clearPreGameConfirmation(marker, hexObjects.getKey(), senderName);
                     storedPoints.add(marker.generalName() + " at " + hexObjects.getKey().getBoardNum()
                           + " (variants: " + describeVariants(marker) + ")");
                 }
@@ -219,6 +222,26 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         }
         VICTORY_HEX_LOGGER.info("[Objective] Ground objects from {} in the {} phase: {} control point(s) stored {}",
               senderName, getGame().getPhase(), storedPoints.size(), storedPoints);
+    }
+
+    /**
+     * Clears the confirmation of a candidate a player sent before the game began. This packet is only accepted in the
+     * Victory Setup and Deploy Minefields phases, before any scan can have happened, and neither the editor nor the
+     * scenario reader ever confirms a candidate, so a confirmed one here comes from an out-of-date or altered client.
+     * Kept, it would score without the scan that is the point of a Potential objective. A game master's in-game edit
+     * is not checked: it may carry a candidate a scan really did confirm.
+     *
+     * @param marker     the marker a client sent
+     * @param position   where it is, for the log
+     * @param senderName who sent it, for the log
+     */
+    private static void clearPreGameConfirmation(ObjectiveMarker marker, Coords position, String senderName) {
+        if (!marker.isConfirmed()) {
+            return;
+        }
+        marker.setConfirmed(false);
+        VICTORY_HEX_LOGGER.warn("[Objective] {} at {} from {} arrived confirmed before the game began, which only a "
+              + "scan can do - the confirmation was cleared", marker.generalName(), position.getBoardNum(), senderName);
     }
 
     /**

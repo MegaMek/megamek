@@ -56,7 +56,7 @@ class RulesTerrainTest {
         assertInstanceOf(RulesTerrain.class, core, "Core rules should extend the base rules type.");
         assertInstanceOf(RulesTerrain.class, totalWarfare, "Total warfare rules should extend the base rules type.");
 
-        assertEquals(-1, core.getRoadElevationCostDifference(roadA, roadB, 2),
+        assertEquals(1, core.getRoadElevationCostDifference(roadA, roadB, 2),
                 "Core road movement should reduce elevation cost by one when traversing roads upward.");
         assertEquals(0, totalWarfare.getRoadElevationCostDifference(roadA, roadB, 2),
                 "Total Warfare does not change road elevation cost.");

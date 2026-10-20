@@ -96,6 +96,7 @@ class ReturningAeroControlTest {
         AeroSpaceFighter fighter = new AeroSpaceFighter();
         fighter.setOwner(player);
         game.addEntity(fighter);
+        fighter.setDeployed(true);
         fighter.setOutControlHeat(true);
 
         fighter.newRound(2);

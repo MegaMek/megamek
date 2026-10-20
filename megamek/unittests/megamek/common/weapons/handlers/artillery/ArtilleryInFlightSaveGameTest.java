@@ -136,17 +136,17 @@ class ArtilleryInFlightSaveGameTest {
 
     private static Mek createMek(Game game, Player owner, Coords position) {
         Mek mek = new BipedMek();
-        mek.setGame(game);
         mek.setChassis("Test");
         mek.setModel(owner.getName());
         Crew crew = new Crew(CrewType.SINGLE);
         crew.setName(owner.getName() + " Pilot", 0);
         mek.setCrew(crew);
         mek.setId(game.getNextEntityId());
-        game.addEntity(mek);
         mek.setOwner(owner);
         mek.setDeployed(true);
         mek.setPosition(position);
+        // Added last, once fully built: addEntity attaches the game and indexes the position
+        game.addEntity(mek);
         return mek;
     }
 }

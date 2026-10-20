@@ -2308,10 +2308,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
             typeName = weaponType.getInternalName();
         }
 
-        if (attackingEntity != null) {
+        if ((attackingEntity != null) && (attackingEntity.getGame() != game)) {
             attackingEntity.setGame(game);
         }
-        if ((weaponEntity != null) && (weaponEntity != attackingEntity)) {
+        if ((weaponEntity != null) && (weaponEntity.getGame() != game)) {
             weaponEntity.setGame(game);
         }
     }

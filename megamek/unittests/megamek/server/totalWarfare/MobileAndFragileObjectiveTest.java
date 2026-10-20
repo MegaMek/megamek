@@ -429,6 +429,7 @@ class MobileAndFragileObjectiveTest {
         handler.destroyObjectivesInCollapsedHex(CARRIER_HEX, 0);
         handler.destroyObjectivesInCollapsedHex(CARRIER_HEX, 0);
 
+        assertTrue(point.isDestroyed());
         assertEquals(1, reportIds().stream()
               .filter(reportId -> reportId == ObjectiveDestructionHandler.REPORT_OBJECTIVE_DESTROYED)
               .count());

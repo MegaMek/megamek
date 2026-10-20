@@ -2292,7 +2292,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * Restores the equipment from the name
+     * Restores the equipment from the name, and reattaches the game to this handler's own copies of the attacking and
+     * weapon entities. A saved handler (such as an artillery shell still in flight) stores those copies separately
+     * from the game's units, so after a load they have no game and no owner until this runs.
      */
     public void restore() {
         if (typeName == null) {
@@ -2304,6 +2306,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
             LOGGER.error("Could not restore equipment type \"{}\"", typeName);
         } else {
             typeName = weaponType.getInternalName();
+        }
+
+        if ((attackingEntity != null) && (attackingEntity.getGame() != game)) {
+            attackingEntity.setGame(game);
+        }
+        if ((weaponEntity != null) && (weaponEntity.getGame() != game)) {
+            weaponEntity.setGame(game);
         }
     }
 

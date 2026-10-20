@@ -6491,6 +6491,9 @@ public class TWGameManager extends AbstractGameManager {
         // return, re-deploy then
         // fly off again instantly.
         aero.setOutControl(false);
+        // A failed heat control roll this round only takes effect next round, so clear it too or the unit is
+        // put back out of control while off the board, where it never gets a recovery roll.
+        aero.setOutControlHeat(false);
 
         return r;
     }

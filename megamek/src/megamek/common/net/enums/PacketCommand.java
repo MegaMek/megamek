@@ -308,7 +308,13 @@ public enum PacketCommand {
      */
     SCAN_DESIGNATION,
     /** A unit's withdrawal of the scan it ordered this turn, before the End Phase resolves it; carries its id. */
-    ENTITY_SCAN_WITHDRAW;
+    ENTITY_SCAN_WITHDRAW,
+    /**
+     * A Server to Client packet carrying every team's initiative roll, as a map from player id to the roll of that
+     * player's team. Team rolls decide who wins initiative but are not part of a player update, so without this a
+     * client only knows each player's roll for ordering within their own team.
+     */
+    TEAM_INITIATIVE;
     //endregion Enum Declarations
 
     //region Boolean Comparison Methods

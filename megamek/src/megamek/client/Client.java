@@ -68,6 +68,7 @@ import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.TagInfo;
+import megamek.common.Team;
 import megamek.common.TemporaryECMField;
 import megamek.common.actions.*;
 import megamek.common.board.Board;
@@ -98,6 +99,7 @@ import megamek.common.game.ForcedWithdrawalReports;
 import megamek.common.game.Game;
 import megamek.common.game.GameTurn;
 import megamek.common.game.IGame;
+import megamek.common.game.InitiativeRoll;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.loaders.MapSettings;
 import megamek.common.moves.MovePath;
@@ -1170,6 +1172,9 @@ public class Client extends AbstractClient {
                     // dishonor warning can be suppressed once a bot already holds a grudge.
                     receivePrincessDishonored(packet);
                     break;
+                case TEAM_INITIATIVE:
+                    receiveTeamInitiative(packet);
+                    break;
                 case ENTITY_UPDATE:
                     receiveEntityUpdate(packet);
                     break;
@@ -1486,6 +1491,30 @@ public class Client extends AbstractClient {
         } catch (InvalidPacketDataException e) {
             LOGGER.error("Invalid packet data:", e);
             return false;
+        }
+    }
+
+    /**
+     * Stores each team's initiative roll on this client's copy of the team. The server sends it in the Initiative
+     * Report phase because a player update only carries the player's roll for ordering within their own team, while
+     * the team roll is the one that decides who won. {@code Game.setupTeams} carries a team's roll over when the teams
+     * are rebuilt by later player updates.
+     *
+     * @param packet the received {@link megamek.common.net.enums.PacketCommand#TEAM_INITIATIVE} packet: a map from
+     *               player id to the initiative roll of that player's team
+     */
+    protected void receiveTeamInitiative(Packet packet) throws InvalidPacketDataException {
+        if (!(packet.getObject(0) instanceof Map<?, ?> teamRollsByPlayerId)) {
+            throw new InvalidPacketDataException("Map", packet.getObject(0), 0);
+        }
+        for (Map.Entry<?, ?> entry : teamRollsByPlayerId.entrySet()) {
+            if ((entry.getKey() instanceof Integer playerId) && (entry.getValue() instanceof InitiativeRoll teamRoll)) {
+                Player player = game.getPlayer(playerId);
+                Team team = (player == null) ? null : game.getTeamForPlayer(player);
+                if (team != null) {
+                    team.setInitiative(new InitiativeRoll(teamRoll));
+                }
+            }
         }
     }
 

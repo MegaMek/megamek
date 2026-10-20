@@ -35,10 +35,12 @@ package megamek.server.victory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
 import jakarta.annotation.Nullable;
+import megamek.client.ui.Messages;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.board.Coords;
@@ -46,7 +48,9 @@ import megamek.common.equipment.ICarryable;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.scriptedEvents.TriggeredEvent;
 
@@ -73,6 +77,9 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
     private static final int REPORT_VICTORY_POINT_TOTAL = 7115;
     private static final int REPORT_VICTORY_POINTS_TIED = 7116;
     private static final int REPORT_RAID_OBJECTIVE_SCORED = 7131;
+    private static final int REPORT_RAID_CARRIED_OFF = 7174;
+    private static final int REPORT_DECOY_CARRIED_OFF = 7175;
+    private static final int REPORT_RAID_CARRIED = 7176;
     private static final int REPORT_SUDDEN_DEATH = 7143;
     private static final int REPORT_WIN_THRESHOLD_REACHED = 7144;
     private static final int REPORT_VICTORY_LEVEL = 7146;
@@ -206,8 +213,8 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
 
     /**
      * Objective Raid end-scoring, once when the game ends: every point using the {@code RAID} scheme awards its
-     * victory point value to its controller per the last End Phase control resolution. Uncontrolled or destroyed
-     * points award nothing.
+     * victory point value to its controller per the last End Phase control resolution, and a carried one to its
+     * carrier's side (see {@link #awardCarriedRaidPoints}). Uncontrolled or destroyed points award nothing.
      *
      * @return the end-scoring reports, shown with the victory result
      */
@@ -244,7 +251,7 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
                 if (marker.getControllingTeam() != ObjectiveMarker.NO_CONTROLLER) {
                     tracker.awardToTeam(marker.getControllingTeam(), points, game.getCurrentRound(),
                           "Raid: controls " + marker.generalName());
-                    sideName = "Team " + marker.getControllingTeam();
+                    sideName = teamName(marker.getControllingTeam());
                 } else {
                     tracker.awardToPlayer(marker.getControllingPlayerId(), points, game.getCurrentRound(),
                           "Raid: controls " + marker.generalName());
@@ -259,7 +266,84 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
                       marker.generalName(), points);
             }
         }
+        awardCarriedRaidPoints(game, tracker, endScoringReports);
         return endScoringReports;
+    }
+
+    /**
+     * A carried Raid point pays its carrier's side. A Mek still on the board carrying one holds it when the game ends
+     * (RAW: carrying an objective controls it), and one that fled the battlefield with it took it off the field
+     * (RAW: an objective carried out through a legal departure edge counts as taken off the field). Fleeing is only
+     * allowed through a legal edge, so every unit that fled qualifies.
+     */
+    private void awardCarriedRaidPoints(Game game, VictoryPointTracker tracker, List<Report> endScoringReports) {
+        for (Entity carrier : game.getEntitiesVector()) {
+            if (carrier.getPosition() != null) {
+                for (ObjectiveMarker marker : carriedRaidPoints(carrier)) {
+                    awardCarriedRaidPoint(game, tracker, carrier, marker, false, endScoringReports);
+                }
+            }
+        }
+        for (Enumeration<Entity> retreated = game.getRetreatedEntities(); retreated.hasMoreElements(); ) {
+            Entity carrier = retreated.nextElement();
+            if (carrier.getRemovalCondition() == IEntityRemovalConditions.REMOVE_IN_RETREAT) {
+                for (ObjectiveMarker marker : carriedRaidPoints(carrier)) {
+                    awardCarriedRaidPoint(game, tracker, carrier, marker, true, endScoringReports);
+                }
+            }
+        }
+    }
+
+    /** @return the intact Raid points the unit is carrying */
+    private static List<ObjectiveMarker> carriedRaidPoints(Entity carrier) {
+        List<ObjectiveMarker> raidPoints = new ArrayList<>();
+        for (ICarryable carriedObject : carrier.getDistinctCarriedObjects()) {
+            if ((carriedObject instanceof ObjectiveMarker marker) && !marker.isDestroyed()
+                  && (marker.getScoringScheme().getPreset() == SchemePreset.RAID)) {
+                raidPoints.add(marker);
+            }
+        }
+        return raidPoints;
+    }
+
+    private void awardCarriedRaidPoint(Game game, VictoryPointTracker tracker, Entity carrier, ObjectiveMarker marker,
+          boolean isCarriedOff, List<Report> endScoringReports) {
+        if (marker.isFalseObjective()) {
+            // a decoy is exposed at the moment it would pay, which for a Raid point is now
+            LOGGER.info("[VP] Raid point {} carried by {} is a decoy - nobody scores it", marker.generalName(),
+                  carrier.getShortName());
+            Report decoyReport = new Report(isCarriedOff ? REPORT_DECOY_CARRIED_OFF : REPORT_DECOY_AT_PAYOUT,
+                  Report.PUBLIC);
+            decoyReport.add(marker.generalName());
+            if (!isCarriedOff) {
+                decoyReport.add(carrier.getPosition().getBoardNum());
+            }
+            endScoringReports.add(decoyReport);
+            return;
+        }
+        Player owner = carrier.getOwner();
+        if (owner == null) {
+            LOGGER.warn("[VP] Raid point {} is carried by {}, which has no owner - nobody scores it",
+                  marker.generalName(), carrier.getShortName());
+            return;
+        }
+        int points = marker.getVictoryPointValue();
+        String reason = "Raid: carries " + marker.generalName();
+        String sideName;
+        if (owner.getTeam() != Player.TEAM_NONE) {
+            tracker.awardToTeam(owner.getTeam(), points, game.getCurrentRound(), reason);
+            sideName = teamName(owner.getTeam());
+        } else {
+            tracker.awardToPlayer(owner.getId(), points, game.getCurrentRound(), reason);
+            sideName = owner.getName();
+        }
+        Report report = new Report(isCarriedOff ? REPORT_RAID_CARRIED_OFF : REPORT_RAID_CARRIED, Report.PUBLIC);
+        report.add(sideName);
+        report.add(marker.generalName());
+        report.add(points);
+        endScoringReports.add(report);
+        LOGGER.info("[VP] Raid: {} {} {} at mission end (+{} VP)", sideName,
+              isCarriedOff ? "carried off the field" : "carries", marker.generalName(), points);
     }
 
     private VictoryResult buildResult(Game game, VictoryPointTracker tracker, List<Report> endScoringReports) {
@@ -273,7 +357,7 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         for (int teamId : tracker.getScoringTeams()) {
             int points = tracker.getTeamVictoryPoints(teamId);
             result.setTeamScore(teamId, points);
-            result.addReport(victoryPointReport("Team " + teamId, points));
+            result.addReport(victoryPointReport(teamName(teamId), points));
         }
 
         if (result.isDraw()) {
@@ -301,7 +385,7 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
               ? tracker.getTeamVictoryPoints(result.getWinningTeam())
               : tracker.getPlayerVictoryPoints(result.getWinningPlayer());
         String winnerName = (result.getWinningTeam() != Player.TEAM_NONE)
-              ? "Team " + result.getWinningTeam()
+              ? teamName(result.getWinningTeam())
               : playerDisplayName(game, result.getWinningPlayer());
         for (VictoryPointLevel level : levels) {
             if (winnerPoints <= level.getUpTo()) {
@@ -317,6 +401,11 @@ public class VictoryPointVictory implements VictoryCondition, Serializable {
         }
         LOGGER.warn("[VP] The winner's total of {} is above every victory level bound - no level declared; "
               + "give the last level no upTo bound to catch every total", winnerPoints);
+    }
+
+    /** @return the team as a player reads it in the report */
+    private static String teamName(int teamId) {
+        return Messages.getString("ObjectiveScan.teamName", teamId);
     }
 
     private String playerDisplayName(Game game, int playerId) {

@@ -3700,6 +3700,11 @@ public abstract class Entity extends TurnOrdered
                 isHullDown())) {
             return false;
         }
+        // RAW (Mobile Objectives): only a Mek can pick up an objective, and only one at a time; the server
+        // refuses the rest as well
+        if ((carryable instanceof ObjectiveMarker) && !ObjectiveMarker.canCarryAnother(this)) {
+            return false;
+        }
         boolean canPickupWithArms = carryable.getTonnage() <= maxGroundObjectTonnage();
         boolean canPickupWithLiftHoist = false;
 

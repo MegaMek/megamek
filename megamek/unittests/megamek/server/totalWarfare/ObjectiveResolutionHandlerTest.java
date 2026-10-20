@@ -44,6 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -106,6 +107,7 @@ class ObjectiveResolutionHandlerTest {
         when(game.getOptions()).thenReturn(gameOptions);
         when(game.getVictoryContext()).thenReturn(new HashMap<>());
         when(game.getCurrentRound()).thenReturn(3);
+        when(game.getRetreatedEntities()).thenReturn(Collections.emptyEnumeration());
     }
 
     private PlacedObjective objectiveAt(Coords position, int controlRadius, Player owner) {
@@ -1046,5 +1048,137 @@ class ObjectiveResolutionHandlerTest {
         verify(gameManager, atLeastOnce()).addReport(reports.capture());
         assertFalse(reports.getAllValues().stream().anyMatch(report -> report.messageId == 7149),
               "no totals line when there is nothing to total");
+    }
+
+    // --- carried and destroyed points ---
+
+    @Test
+    void testACarriedObjectiveIsControlledByItsCarrierWhateverSurroundsIt() {
+        ObjectiveMarker flag = new ObjectiveMarker();
+        flag.setName("Flag");
+        flag.setOwnerId(teamTwoPlayer.getId());
+        flag.setScoringScheme(ObjectiveScoringScheme.raid());
+        flag.setMobile(true);
+        Coords carrierHex = new Coords(5, 5);
+        Entity carrier = groundUnit(teamOnePlayer, carrierHex);
+        when(carrier.getDistinctCarriedObjects()).thenReturn(List.of(flag));
+        when(game.getGroundObjects()).thenReturn(new HashMap<>());
+        Entity firstEnemy = groundUnit(teamTwoPlayer, carrierHex);
+        Entity secondEnemy = groundUnit(teamTwoPlayer, carrierHex);
+
+        resolveWith(carrier, firstEnemy, secondEnemy);
+
+        assertEquals(1, flag.getControllingTeam(), "RAW: a Mek carrying an objective controls it");
+    }
+
+    @Test
+    void testADestroyedCapturePointCountsAsCapturedByTheSideAttackingIt() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(3, 1), teamTwoPlayer, position);
+        objective.marker().setVictoryPointValue(2);
+        objective.marker().getScoringScheme().setCaptureProgress(1, ObjectiveScoringScheme.NO_SIDE, 2);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        assertTrue(objective.marker().getScoringScheme().isDecided());
+        assertEquals(1, objective.marker().getScoringScheme().getSecuredTeam());
+        assertEquals(2, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(1));
+        assertTrue(reportIds().contains(ObjectiveResolutionHandler.REPORT_DESTROYED_POINT_TAKEN));
+    }
+
+    @Test
+    void testWreckingYourOwnCapturePointBeforeAnyProgressStillHandsItToTheEnemy() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.capture(3, 1), teamTwoPlayer, position);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        assertEquals(1, objective.marker().getScoringScheme().getSecuredTeam(), "no scorched-earth denial");
+    }
+
+    @Test
+    void testADestroyedDefendPointFallsToTheOnlyEnemyEvenWithNobodyThere() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        assertEquals(2, objective.marker().getScoringScheme().getSecuredTeam());
+        assertEquals(1, VictoryPointTracker.findTracker(game.getVictoryContext()).getTeamVictoryPoints(2));
+    }
+
+    @Test
+    void testADestroyedDefendPointFallsToTheEnemyWithTheMostUnitsInTheZone() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        Player teamThreePlayer = playThreeSides();
+        Entity raider = groundUnit(teamThreePlayer, position);
+
+        resolveWith(raider);
+
+        assertEquals(3, objective.marker().getScoringScheme().getSecuredTeam());
+    }
+
+    @Test
+    void testWithSeveralEnemiesAndNoLeaderNobodyTakesADestroyedPointYet() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        playThreeSides();
+
+        resolveWith();
+
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    @Test
+    void testADestroyedHoldPointScoresForNobody() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.hold(1, HoldCounting.CONSECUTIVE),
+              teamOnePlayer, position);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith(groundUnit(teamTwoPlayer, position));
+
+        assertFalse(objective.marker().getScoringScheme().isDecided());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    @Test
+    void testADestroyedDecoyDefendPointIsExposedAndPaysNobody() {
+        Coords position = new Coords(5, 5);
+        PlacedObjective objective = schemePoint(ObjectiveScoringScheme.defend(3, 1), teamOnePlayer, position);
+        objective.marker().setFalseObjective(true);
+        objective.marker().setDestroyed(true);
+        playTwoSides();
+
+        resolveWith();
+
+        verify(game).removeGroundObject(position, objective.marker());
+        VictoryPointTracker tracker = VictoryPointTracker.findTracker(game.getVictoryContext());
+        assertTrue((tracker == null) || !tracker.hasAnyScore());
+    }
+
+    private void playTwoSides() {
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer));
+    }
+
+    private Player playThreeSides() {
+        Player teamThreePlayer = new Player(2, "Craig");
+        teamThreePlayer.setTeam(3);
+        when(game.getPlayer(2)).thenReturn(teamThreePlayer);
+        when(game.getPlayersList()).thenReturn(List.of(teamOnePlayer, teamTwoPlayer, teamThreePlayer));
+        return teamThreePlayer;
     }
 }

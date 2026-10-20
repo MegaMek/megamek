@@ -610,6 +610,9 @@ public final class HexTooltip {
             description.append(" &mdash; ").append(Messages.getString("VictoryHex.tooltip.placedBy",
                   owner.getName()));
         }
+        if (marker.isDestroyed()) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.destroyed"));
+        }
         description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.heldBy",
               currentHolder(marker, game)));
         description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.worth",
@@ -623,6 +626,13 @@ public final class HexTooltip {
         if (marker.isPotential()) {
             description.append("<BR>&nbsp;").append(Messages.getString(marker.isConfirmed()
                   ? "VictoryHex.tooltip.candidateConfirmed" : "VictoryHex.tooltip.candidate"));
+        }
+        // whether a point can be carried or broken is part of what it is, so both sides are told
+        if (marker.isMobile()) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.mobile"));
+        }
+        if (marker.isFragile()) {
+            description.append("<BR>&nbsp;").append(Messages.getString("VictoryHex.tooltip.fragile"));
         }
         description.append("<BR>&nbsp;").append(VictoryHexPropertiesPane.describeScheme(scheme));
         return description.toString();

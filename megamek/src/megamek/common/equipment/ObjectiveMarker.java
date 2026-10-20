@@ -420,17 +420,47 @@ public class ObjectiveMarker extends GroundObject {
 
     // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
     /**
+     * The one rule the client's pickup option and the server's pickup step share: only a Mek carries an objective,
+     * and only one at a time (RAW: "one per 'Mech"). A Mek with two free hands could otherwise lift two, since an
+     * objective weighs nothing.
+     *
+     * @param unit the unit that would pick up an objective
+     *
+     * @return {@code true} if the unit may pick one up
+     */
+    public static boolean canCarryAnother(Entity unit) {
+        if (!(unit instanceof Mek)) {
+            return false;
+        }
+        for (ICarryable carriedObject : unit.getDistinctCarriedObjects()) {
+            if (carriedObject instanceof ObjectiveMarker) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // CHECKSTYLE IGNORE ForbiddenWords FOR 4 LINES - verbatim quote from the printed Objectives rules
+    /**
      * Only Meks can pick up Mobile Objectives (RAW: "any standing mobile 'Mech with at least one functional hand
-     * actuator or claw"); pickup attempts by other unit types are refused here as the server-side gate.
+     * actuator or claw"), one at a time, and only an intact Mobile one; other pickup attempts are refused here as
+     * the server-side gate.
      */
     @Override
     public void processPickupStep(MoveStep step, Integer cargoPickupLocation, TWGameManager gameManager,
           Entity entityPickingUpTarget, EntityMovementType overallMoveType) {
-        if (!(entityPickingUpTarget instanceof Mek)) {
-            LOGGER.debug("[Objective] {} cannot pick up {}: only Meks can carry Mobile Objectives",
+        // the server's move-step handling checks only weight, and a flag weighs nothing
+        if (!canBePickedUp(false)) {
+            LOGGER.info("[Objective] {} cannot pick up {}: it is {}", entityPickingUpTarget.getShortName(),
+                  generalName(), destroyed ? "destroyed" : "not a Mobile objective");
+            return;
+        }
+        if (!canCarryAnother(entityPickingUpTarget)) {
+            LOGGER.info("[Objective] {} cannot pick up {}: only a Mek can carry an objective, and only one at a time",
                   entityPickingUpTarget.getShortName(), generalName());
             return;
         }
+        LOGGER.info("[Objective] {} picks up {}", entityPickingUpTarget.getShortName(), generalName());
         super.processPickupStep(step, cargoPickupLocation, gameManager, entityPickingUpTarget, overallMoveType);
     }
 

@@ -35,6 +35,10 @@ package megamek.common.units;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import megamek.common.preference.ClientPreferences;
+import megamek.common.preference.PreferenceManager;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -43,6 +47,21 @@ import org.junit.jupiter.api.Test;
  * #1.
  */
 class EntityDuplicateMarkerTest {
+
+    private boolean savedShowUnitId;
+
+    /** The "show unit ID" client setting replaces the "#N" suffix, so pin it off whatever the local settings say. */
+    @BeforeEach
+    void hideUnitIds() {
+        ClientPreferences clientPreferences = PreferenceManager.getClientPreferences();
+        savedShowUnitId = clientPreferences.getShowUnitId();
+        clientPreferences.setShowUnitId(false);
+    }
+
+    @AfterEach
+    void restoreShowUnitId() {
+        PreferenceManager.getClientPreferences().setShowUnitId(savedShowUnitId);
+    }
 
     private static Entity createUnit() {
         BipedMek mek = new BipedMek();

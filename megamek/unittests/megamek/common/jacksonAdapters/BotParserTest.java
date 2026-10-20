@@ -35,8 +35,11 @@ package megamek.common.jacksonAdapters;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
+import java.util.Set;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import megamek.client.bot.AIType;
+import megamek.client.bot.princess.BehaviorSettings;
 import org.junit.jupiter.api.Test;
 
 class BotParserTest {
@@ -62,5 +65,25 @@ class BotParserTest {
     @Test
     void unknownAiKeyFallsBackToPrincess() throws Exception {
         assertEquals(AIType.PRINCESS, parse("ai: nonsense").aiType());
+    }
+
+    @Test
+    void readsPriorityTargetsWithAndWithoutAPriority() throws Exception {
+        String yaml = String.join("\n",
+              "priorityTargets:",
+              "- unit: 9",
+              "  priority: 1",
+              "- unit: 11");
+
+        BehaviorSettings settings = parse(yaml).behaviorSettings();
+
+        assertEquals(Set.of(9, 11), settings.getPriorityUnitTargets());
+        assertEquals(1, settings.getTargetPriority(9));
+        assertEquals(BehaviorSettings.DEFAULT_TARGET_PRIORITY, settings.getTargetPriority(11));
+    }
+
+    @Test
+    void scenariosWithoutPriorityTargetsStillHaveNone() throws Exception {
+        assertEquals(Set.of(), parse("name: TestBot").behaviorSettings().getPriorityUnitTargets());
     }
 }

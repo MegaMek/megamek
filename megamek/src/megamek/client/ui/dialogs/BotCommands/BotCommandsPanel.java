@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -57,6 +58,7 @@ import jakarta.annotation.Nullable;
 import megamek.client.AbstractClient;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.ArtilleryOrder;
 import megamek.client.bot.princess.ArtilleryCommandAndControl.SpecialAmmo;
+import megamek.client.bot.princess.BehaviorSettings;
 import megamek.client.bot.princess.BehaviorSettingsFactory;
 import megamek.client.bot.princess.ChatCommands;
 import megamek.client.bot.princess.CombatPosture;
@@ -67,6 +69,8 @@ import megamek.client.ui.clientGUI.audio.AudioService;
 import megamek.client.ui.clientGUI.audio.SoundType;
 import megamek.client.ui.clientGUI.boardview.BoardView;
 import megamek.client.ui.clientGUI.boardview.overlay.ToastLevel;
+import megamek.client.ui.dialogs.buttonDialogs.BotTargetPickerDialog;
+import megamek.client.ui.enums.DialogResult;
 import megamek.client.ui.util.KeyCommandBind;
 import megamek.client.ui.util.MegaMekController;
 import megamek.client.ui.util.MenuScroller;
@@ -82,6 +86,7 @@ import megamek.common.equipment.WeaponMounted;
 import megamek.common.equipment.WeaponType;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.game.Game;
 import megamek.common.game.IGame;
 import megamek.common.game.InGameObject;
 import megamek.common.options.OptionsConstants;
@@ -926,7 +931,7 @@ public class BotCommandsPanel extends JPanel {
      */
     private JPopupMenu createTargetsPopup() {
         return createBotFirstPopup((botMenu, botPlayer) -> {
-            addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
+            addPriorityTargetItem(botMenu, botPlayer);
             addEnemyUnitMenu(botMenu, botPlayer, "TagTargetMenu", this::setTagTarget);
             addStrategicTargetItem(botMenu, botPlayer);
             addEnemyPlayerMenu(botMenu, botPlayer, "BloodFeud", ChatCommands.BLOOD_FEUD,
@@ -938,6 +943,62 @@ public class BotCommandsPanel extends JPanel {
             addBotAction(botMenu, botPlayer, "IgnoreTurrets", this::ignoreTurrets);
             addBotAction(botMenu, botPlayer, "ClearIgnoredTargets", this::clearIgnoredTargetsOrder);
         });
+    }
+
+    /**
+     * Adds the item that opens the priority target picker for a bot. Without a client window to open it from, falls
+     * back to the plain list of enemy units, which adds a target at the default priority.
+     *
+     * @param botMenu   the bot submenu to add the item to
+     * @param botPlayer the bot the orders go to
+     */
+    private void addPriorityTargetItem(JMenu botMenu, Player botPlayer) {
+        if (clientGUI == null) {
+            addEnemyUnitMenu(botMenu, botPlayer, "PriorityTargetMenu", this::setPriorityTarget);
+            return;
+        }
+        JMenuItem pickerItem = new JMenuItem(Messages.getString("BotCommandPanel.PriorityTargetPicker.title"));
+        pickerItem.setToolTipText(Messages.getString("BotCommandPanel.PriorityTargetPicker.tooltip"));
+        pickerItem.addActionListener(event -> pickPriorityTargets(botPlayer));
+        botMenu.add(pickerItem);
+    }
+
+    /**
+     * Opens the priority target picker for a running bot and sends one priority order for each unit that is new or
+     * whose target priority changed. Units already on the bot list cannot be unticked here, since the bot takes no
+     * order to drop one.
+     *
+     * @param botPlayer the bot the orders go to
+     */
+    private void pickPriorityTargets(Player botPlayer) {
+        Game game = clientGUI.getClient().getGame();
+        Map<Integer, Integer> currentPriorities = new HashMap<>();
+        // the server sends every bot's settings when a client connects; before that the map can still be missing
+        Map<String, BehaviorSettings> allBotSettings = game.getBotSettings();
+        BehaviorSettings knownSettings = (allBotSettings == null) ? null : allBotSettings.get(botPlayer.getName());
+        if (knownSettings != null) {
+            for (int unitId : knownSettings.getPriorityUnitTargets()) {
+                currentPriorities.put(unitId, knownSettings.getTargetPriority(unitId));
+            }
+        }
+        var picker = new BotTargetPickerDialog(clientGUI.getFrame(), game, botPlayer,
+              currentPriorities, currentPriorities.keySet());
+        picker.setVisible(true);
+        if (picker.getResult() != DialogResult.CONFIRMED) {
+            return;
+        }
+        int ordersSent = 0;
+        for (Map.Entry<Integer, Integer> picked : picker.getPickedPriorities().entrySet()) {
+            boolean isUnchanged = picked.getValue().equals(currentPriorities.get(picked.getKey()));
+            if (!isUnchanged) {
+                sendChatCommand(botPlayer, ChatCommands.PRIORITIZE, picked.getKey() + " " + picked.getValue());
+                ordersSent++;
+            }
+        }
+        LOGGER.debug("[PriorityTargets] sent {} priority target order(s) to {}", ordersSent, botPlayer.getName());
+        if (ordersSent > 0) {
+            acknowledgeOrder(botPlayer, Messages.getString("BotCommandPanel.toast.priorityTargets", ordersSent));
+        }
     }
 
     private void setTagTarget(PlayerInGameObject playerInGameObject) {

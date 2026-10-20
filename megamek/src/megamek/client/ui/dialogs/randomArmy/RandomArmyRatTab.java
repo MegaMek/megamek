@@ -34,13 +34,19 @@
 
 package megamek.client.ui.dialogs.randomArmy;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import javax.swing.*;
+import javax.swing.Box;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -124,8 +130,7 @@ class RandomArmyRatTab extends JPanel implements RandomArmyTab, TreeSelectionLis
     }
 
     private void updateRATs() {
-        Iterator<String> rats = rug.getRatList();
-        if (rats == null) {
+        if (!rug.isInitialized()) {
             return;
         }
 

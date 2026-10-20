@@ -53,6 +53,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -85,13 +87,17 @@ public class RandomUnitGenerator implements Serializable {
     private static final long serialVersionUID = 5765118329881301375L;
 
     // The RATs are stored in a hashmap of string vectors. The keys are the RAT names and the vectors just contain
-    // the unit names listed a number of times equal to the frequency
-    private final Map<String, RatEntry> rats = new HashMap<>();
+    // the unit names listed a number of times equal to the frequency. The loader thread builds a separate map and
+    // swaps it in once loading is finished, so readers never see a partially loaded set of RATs.
+    private volatile Map<String, RatEntry> rats = new HashMap<>();
     private static RandomUnitGenerator rug;
     private static boolean interrupted = false;
     private Thread loader;
-    private boolean initialized;
+    private volatile boolean initialized;
     private boolean initializing;
+
+    private static final long LOADING_TIMEOUT_SECONDS = 5;
+    private volatile CountDownLatch loadingFinished = new CountDownLatch(0);
 
     private final ArrayList<ActionListener> listeners;
 
@@ -114,7 +120,8 @@ public class RandomUnitGenerator implements Serializable {
         public Vector<RatTreeNode> children;
     }
 
-    private RatTreeNode ratTree;
+    private static final String RAT_TREE_ROOT_NAME = "Random Assignment Tables";
+    private volatile RatTreeNode ratTree = new RatTreeNode(RAT_TREE_ROOT_NAME);
 
     private String chosenRAT;
 
@@ -123,29 +130,47 @@ public class RandomUnitGenerator implements Serializable {
         listeners = new ArrayList<>();
     }
 
-    protected void initRatTree() {
-        ratTree = new RatTreeNode("Random Assignment Tables");
+    public synchronized void populateUnits() {
+        try {
+            // Give the MSC some time to initialize
+            MekSummaryCache msc = MekSummaryCache.getInstance();
+            long waitLimit = java.lang.System.currentTimeMillis() + 3000; /* 3 seconds */
+            while (!interrupted && !msc.isInitialized() && waitLimit > java.lang.System.currentTimeMillis()) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException ignored) {
+                    // Ignore
+                }
+            }
+
+            Map<String, RatEntry> loadedRats = new HashMap<>();
+            RatTreeNode loadedRatTree = new RatTreeNode(RAT_TREE_ROOT_NAME);
+            loadRatsFromDirectory(Configuration.armyTablesDir(), msc, loadedRatTree, loadedRats);
+            cleanupNode(loadedRatTree);
+            if (!interrupted) {
+                ratTree = loadedRatTree;
+                rats = loadedRats;
+                initialized = true;
+                // Release waiting readers before notifying listeners, as a listener may itself read the RATs
+                loadingFinished.countDown();
+                notifyListenersOfInitialization();
+            }
+        } finally {
+            loadingFinished.countDown();
+        }
     }
 
-    public synchronized void populateUnits() {
-        initRatTree();
-
-        // Give the MSC some time to initialize
-        MekSummaryCache msc = MekSummaryCache.getInstance();
-        long waitLimit = java.lang.System.currentTimeMillis() + 3000; /* 3 seconds */
-        while (!interrupted && !msc.isInitialized() && waitLimit > java.lang.System.currentTimeMillis()) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException ignored) {
-                // Ignore
+    /**
+     * Waits for the RATs to finish loading, for up to {@link #LOADING_TIMEOUT_SECONDS} seconds. Returns immediately if
+     * the RATs are already loaded, or if loading was never started.
+     */
+    public void awaitInitialization() {
+        try {
+            if (!loadingFinished.await(LOADING_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
+                LOGGER.warn("RATs did not finish loading within {} seconds", LOADING_TIMEOUT_SECONDS);
             }
-        }
-
-        loadRatsFromDirectory(Configuration.armyTablesDir(), msc);
-        cleanupNode(ratTree);
-        if (!interrupted) {
-            rug.initialized = true;
-            rug.notifyListenersOfInitialization();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 
@@ -168,7 +193,8 @@ public class RandomUnitGenerator implements Serializable {
         rats.put(ratName, ratEntry);
     }
 
-    private void readRat(InputStream is, RatTreeNode node, String fileName, MekSummaryCache msc) throws IOException {
+    private void readRat(InputStream is, RatTreeNode node, String fileName, MekSummaryCache msc,
+          Map<String, RatEntry> loadedRats) throws IOException {
         try (InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
               BufferedReader reader = new BufferedReader(isr)) {
             int lineNumber = 0;
@@ -230,7 +256,7 @@ public class RandomUnitGenerator implements Serializable {
                 for (int i = 0; i < re.getWeights().size(); i++) {
                     re.getWeights().set(i, re.getWeights().get(i) / totalWeight);
                 }
-                rats.put(key, re);
+                loadedRats.put(key, re);
                 if (node != null) {
                     node.children.add(new RatTreeNode(key));
                 }
@@ -269,11 +295,8 @@ public class RandomUnitGenerator implements Serializable {
         Collections.sort(node.children);
     }
 
-    private void loadRatsFromDirectory(File dir, MekSummaryCache msc) {
-        loadRatsFromDirectory(dir, msc, ratTree);
-    }
-
-    private void loadRatsFromDirectory(File dir, MekSummaryCache msc, RatTreeNode node) {
+    private void loadRatsFromDirectory(File dir, MekSummaryCache msc, RatTreeNode node,
+          Map<String, RatEntry> loadedRats) {
         if (interrupted) {
             return;
         }
@@ -299,7 +322,7 @@ public class RandomUnitGenerator implements Serializable {
                 RatTreeNode newNode = getNodeByPath(node, ratFile.getName() + "/");
 
                 // recursion is fun
-                loadRatsFromDirectory(ratFile, msc, newNode);
+                loadRatsFromDirectory(ratFile, msc, newNode, loadedRats);
 
                 // Prune empty nodes (this removes the "Unofficial" placeholder)
                 if (newNode.children.isEmpty()) {
@@ -318,7 +341,7 @@ public class RandomUnitGenerator implements Serializable {
                         if (!entry.isDirectory() && entryName.toLowerCase(Locale.ROOT).endsWith(".txt")) {
                             RatTreeNode subNode = getNodeByPath(node, entryName);
                             try (InputStream zis = zipFile.getInputStream(entry)) {
-                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc);
+                                readRat(zis, subNode, ratFile.getName() + ":" + entryName, msc, loadedRats);
                             }
                         }
                     }
@@ -332,7 +355,7 @@ public class RandomUnitGenerator implements Serializable {
             }
 
             try (InputStream ratInputStream = new FileInputStream(ratFile)) {
-                readRat(ratInputStream, node, ratFile.getName(), msc);
+                readRat(ratInputStream, node, ratFile.getName(), msc, loadedRats);
             } catch (Exception ex) {
                 LOGGER.error(ex, "Unable to load {}", ratFile.getName());
             }
@@ -361,19 +384,6 @@ public class RandomUnitGenerator implements Serializable {
         ArrayList<MekSummary> units = new ArrayList<>();
 
         try {
-            int retryCount = 0;
-
-            // give the RATs a few seconds to load
-            while (!initialized && (retryCount < 5)) {
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception ignored) {
-
-                }
-
-                retryCount++;
-            }
-
             Map<String, RatEntry> ratMap = getRatMap();
             if (ratMap != null) {
                 RatEntry re = ratMap.get(ratName);
@@ -443,6 +453,7 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public Map<String, RatEntry> getRatMap() {
+        awaitInitialization();
         return new HashMap<>(rats);
     }
 
@@ -455,6 +466,7 @@ public class RandomUnitGenerator implements Serializable {
     }
 
     public Iterator<String> getRatList() {
+        awaitInitialization();
         return rats.keySet().iterator();
     }
 
@@ -470,6 +482,7 @@ public class RandomUnitGenerator implements Serializable {
         if (!rug.initialized && !rug.initializing) {
             rug.initializing = true;
             interrupted = false;
+            rug.loadingFinished = new CountDownLatch(1);
             rug.loader = new Thread(() -> {
                 long start = java.lang.System.currentTimeMillis();
                 rug.populateUnits();

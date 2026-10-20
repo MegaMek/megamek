@@ -343,6 +343,7 @@ public class Precognition implements Runnable {
                 case SEND_TOAST:
                 case UPDATE_CUT_HEXES:
                 case SYNC_TEMPORARY_ECM_FIELDS:
+                case TEAM_INITIATIVE:
                     LOGGER.debug("Intentionally ignoring PacketCommand: {}", c.command().name());
                     break;
                 default:

@@ -11936,6 +11936,12 @@ public class TWGameManager extends AbstractGameManager {
             return false;
         }
 
+        // a heat-causing weapon hitting the hex risks a Fragile objective there, whether or not the hex catches fire
+        if (bHotGun || bInferno) {
+            new ObjectiveDestructionHandler(this).checkFragileObjectivesInHex(c, boardId,
+                  ObjectiveDestructionHandler.FragileRisk.HEAT_WEAPON);
+        }
+
         // Ignore if fire is not enabled as a game option
         if (!game.getOptions().booleanOption(OptionsConstants.ADVANCED_COMBAT_TAC_OPS_START_FIRE)) {
             return false;
@@ -16529,6 +16535,14 @@ public class TWGameManager extends AbstractGameManager {
      */
     void resolveScans() {
         new ObjectiveScanHandler(this).resolveScans();
+    }
+
+    /**
+     * The forced-drop rolls for units that took damage this phase while carrying a Mobile objective. Delegates to
+     * {@link ObjectiveCarryHandler} so the objectives rules do not add to this already very large class.
+     */
+    void resolveForcedObjectiveDrops() {
+        new ObjectiveCarryHandler(this).resolveForcedObjectiveDrops();
     }
 
     /**
@@ -24448,7 +24462,11 @@ public class TWGameManager extends AbstractGameManager {
                 } else {
                     entity.dropCarriedObject(cargo, false);
                     if (game.getBoard().contains(coords)) {
-                        game.placeGroundObject(coords, cargo);
+                        if (cargo instanceof ObjectiveMarker objectiveMarker) {
+                            new ObjectiveCarryHandler(this).placeDroppedObjective(entity, coords, objectiveMarker);
+                        } else {
+                            game.placeGroundObject(coords, cargo);
+                        }
                         cargoDropped = true;
                     }
                 }
@@ -32251,6 +32269,11 @@ public class TWGameManager extends AbstractGameManager {
             }
         }
 
+        // area-effect damage in the hex risks a Fragile objective there; an air burst against flyers does not
+        if (!flak) {
+            new ObjectiveDestructionHandler(this).checkFragileObjectivesInHex(coords, boardId,
+                  ObjectiveDestructionHandler.FragileRisk.AREA_EFFECT);
+        }
         return alreadyHit;
     }
 
@@ -32983,6 +33006,10 @@ public class TWGameManager extends AbstractGameManager {
     boolean damageCargo(boolean isFlying, Entity entity, ICarryable cargo) {
         if (cargo.isInvulnerable()) {
             return false;
+        }
+        if (cargo instanceof ObjectiveMarker objectiveMarker) {
+            // an objective is never wrecked by a drop; only a Fragile one risks destruction
+            return new ObjectiveCarryHandler(this).resolveDropDamage(entity, objectiveMarker);
         }
 
         boolean cargoDestroyed = false;

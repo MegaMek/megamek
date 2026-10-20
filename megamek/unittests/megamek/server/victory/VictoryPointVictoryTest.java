@@ -46,10 +46,12 @@ import megamek.common.board.Coords;
 import megamek.common.equipment.ObjectiveMarker;
 import megamek.common.equipment.ObjectiveScoringScheme;
 import megamek.common.game.Game;
+import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.options.OptionsConstants;
 import megamek.common.units.BipedMek;
 import megamek.common.units.Crew;
 import megamek.common.units.CrewType;
+import megamek.common.units.Mek;
 import megamek.server.scriptedEvents.GameEndTriggeredEvent;
 import megamek.server.trigger.SpecificRoundEndTrigger;
 import org.junit.jupiter.api.BeforeEach;
@@ -325,6 +327,81 @@ class VictoryPointVictoryTest {
 
         assertTrue(result.isVictory());
         assertEquals(3, (int) result.getTeamScore(1));
+    }
+
+    @Test
+    void testACarriedRaidPointPaysItsCarriersSideAtGameEnd() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(1));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(1), "RAW: carrying an objective controls it");
+        assertTrue(result.getReports().stream().anyMatch(report -> report.messageId == 7176));
+    }
+
+    @Test
+    void testARaidPointCarriedOffTheBattlefieldPaysTheSideThatTookIt() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertEquals(3, (int) result.getTeamScore(2), "RAW: carried out through a legal edge, it is taken off the field");
+        assertTrue(result.getReports().stream().anyMatch(report -> report.messageId == 7174));
+    }
+
+    @Test
+    void testARaidPointLostWithADestroyedCarrierThatNeverDroppedItPaysNobody() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(2));
+        carrier.pickupCarryableObject(carriedRaidPoint(), Mek.LOC_RIGHT_ARM);
+        game.removeEntity(carrier.getId(), IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw(), "only fleeing takes a point off the field; a wreck does not");
+    }
+
+    @Test
+    void testACarriedDecoyRaidPointPaysNothing() {
+        enableObjectiveScoring();
+        BipedMek carrier = carrierOf(playerOn(1));
+        ObjectiveMarker decoy = carriedRaidPoint();
+        decoy.setFalseObjective(true);
+        carrier.pickupCarryableObject(decoy, Mek.LOC_RIGHT_ARM);
+
+        VictoryResult result = victoryPointVictory.checkAtGameEnd(game, game.getVictoryContext());
+
+        assertTrue(result.isDraw());
+        assertTrue(result.getReports().stream()
+              .anyMatch(report -> report.messageId == VictoryPointVictory.REPORT_DECOY_AT_PAYOUT));
+    }
+
+    private ObjectiveMarker carriedRaidPoint() {
+        ObjectiveMarker raidPoint = new ObjectiveMarker();
+        raidPoint.setName("Data Core");
+        raidPoint.setVictoryPointValue(3);
+        raidPoint.setScoringScheme(ObjectiveScoringScheme.raid());
+        raidPoint.setMobile(true);
+        return raidPoint;
+    }
+
+    private BipedMek carrierOf(Player owner) {
+        BipedMek mek = new BipedMek();
+        mek.setGame(game);
+        mek.setId(nextEntityId++);
+        mek.setChassis("Carrier");
+        mek.setModel("C-" + mek.getId());
+        mek.setCrew(new Crew(CrewType.SINGLE));
+        mek.setOwner(owner);
+        mek.setPosition(new Coords(4, 4));
+        mek.setDeployed(true);
+        game.addEntity(mek);
+        return mek;
     }
 
     @Test

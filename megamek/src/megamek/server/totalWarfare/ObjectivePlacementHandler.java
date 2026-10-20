@@ -48,6 +48,7 @@ import megamek.common.equipment.ObjectiveScoringScheme.SchemePreset;
 import megamek.common.event.GameToastEvent;
 import megamek.common.net.packets.Packet;
 import megamek.common.options.OptionsConstants;
+import megamek.common.units.Entity;
 import megamek.logging.MMLogger;
 import megamek.server.victory.VictoryPointTracker;
 import megamek.server.victory.VictoryPointVictory;
@@ -313,32 +314,56 @@ class ObjectivePlacementHandler extends AbstractTWRuleHandler {
         int returnedCount = 0;
         for (Map.Entry<Coords, List<ICarryable>> hexObjects : getGame().getGroundObjects().entrySet()) {
             for (ICarryable groundObject : hexObjects.getValue()) {
-                if (!(groundObject instanceof ObjectiveMarker marker)) {
+                if ((groundObject instanceof ObjectiveMarker marker) && returnToLobby(marker, hexObjects.getKey())) {
+                    returnedCount++;
+                }
+            }
+        }
+        // a Mobile objective still in a Mek's hand would otherwise start the next game in it
+        for (Entity carrier : getGame().getEntitiesVector()) {
+            for (ICarryable carriedObject : List.copyOf(carrier.getDistinctCarriedObjects())) {
+                if (!(carriedObject instanceof ObjectiveMarker marker)) {
                     continue;
                 }
-                Player owner = getGame().getPlayer(marker.getOwnerId());
-                if (owner == null) {
-                    VICTORY_HEX_LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
-                          + "to the lobby", marker.generalName(), hexObjects.getKey(), marker.getOwnerId());
-                    continue;
+                carrier.dropCarriedObject(marker, false);
+                if ((carrier.getPosition() != null) && returnToLobby(marker, carrier.getPosition())) {
+                    returnedCount++;
                 }
-                marker.setLobbyPosition(hexObjects.getKey());
-                // a fresh game starts with fresh counters - the setup values on the scheme remain - and
-                // with nobody holding the point. The controller lives on the marker, not the scheme, and
-                // it was being carried across the reset: a lobby save then preserved it, and the next
-                // game began with the zone already "held" before anyone had stood in it
-                marker.getScoringScheme().resetState();
-                marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
-                owner.getGroundObjectsToPlace().add(marker);
-                returnedCount++;
-                VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
-                      marker.generalName(), hexObjects.getKey(), owner);
             }
         }
         if (returnedCount > 0) {
             VICTORY_HEX_LOGGER.info("[Objective] Returned {} objective marker(s) to the lobby on the game reset",
                   returnedCount);
         }
+    }
+
+    /**
+     * Puts one marker back in its owner's lobby designations, as it stood at the given hex, with the state of the
+     * game it leaves cleared.
+     *
+     * @return {@code true} if it was returned; {@code false} when its owner has left the game
+     */
+    private boolean returnToLobby(ObjectiveMarker marker, Coords position) {
+        Player owner = getGame().getPlayer(marker.getOwnerId());
+        if (owner == null) {
+            VICTORY_HEX_LOGGER.warn("[Objective] {} at {} has no owner (player ID {}) - dropped on the reset "
+                  + "to the lobby", marker.generalName(), position, marker.getOwnerId());
+            return false;
+        }
+        marker.setLobbyPosition(position);
+        // a fresh game starts with fresh counters - the setup values on the scheme remain - and
+        // with nobody holding the point. The controller lives on the marker, not the scheme, and
+        // it was being carried across the reset: a lobby save then preserved it, and the next
+        // game began with the zone already "held" before anyone had stood in it
+        marker.getScoringScheme().resetState();
+        marker.setController(ObjectiveMarker.NO_CONTROLLER, ObjectiveMarker.NO_CONTROLLER);
+        // the same goes for a point destroyed in the game being left: the next game gets it whole
+        marker.setDestroyed(false);
+        marker.setDestructionProcessed(false);
+        owner.getGroundObjectsToPlace().add(marker);
+        VICTORY_HEX_LOGGER.debug("[Objective] Returned {} at {} to the lobby designations of {}",
+              marker.generalName(), position, owner);
+        return true;
     }
 
     /**

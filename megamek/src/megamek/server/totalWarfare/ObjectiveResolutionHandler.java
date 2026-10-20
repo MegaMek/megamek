@@ -69,8 +69,10 @@ import megamek.server.victory.VictoryPointTracker;
  *
  * <P>Scoring (standard control mission, played with four counters, two per side): each End Phase a side receives 1 VP
  * for controlling at least one friendly and at least one enemy objective, and 2 VP for controlling all objectives on
- * the board. Other mission scoring rules (Objective Raid, Sensor Check) resolve in later parts of the Objectives
- * series, as do the objective variants and objective destruction.</P>
+ * the board. The other schemes (Raid, Hold, Defend, Capture) carry their own counters, and Scan points are read by the
+ * scan pass. A carried Mobile objective is controlled by its carrier; a destroyed Defend or Capture point counts as
+ * taken by its attacker. Carrying and destruction themselves live in {@link ObjectiveCarryHandler} and
+ * {@link ObjectiveDestructionHandler}.</P>
  *
  * <P>Sides are teams; a player without a team forms its own side.</P>
  */
@@ -107,6 +109,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     private static final int REPORT_HOLD_STILL_REQUIRED = 7140;
     private static final int REPORT_HOLD_BROKEN = 7141;
     private static final int REPORT_CAPTURE_PUSHED_BACK = 7142;
+    /** "Control point X at Y was destroyed - it counts as taken by Z!" */
+    static final int REPORT_DESTROYED_POINT_TAKEN = 7173;
 
     /**
      * A scoring side. Normally this is a team; a player that is not on any team forms its own side.
@@ -117,12 +121,18 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     record Side(boolean isTeam, int id) {}
 
     /**
-     * An objective marker together with its board position: the key of the game's ground object map.
+     * An objective marker together with its board position: the key of the game's ground object map, or the hex of
+     * the unit carrying it (a Mobile objective).
      *
      * @param position The board position of the marker
      * @param marker   The objective marker
+     * @param carrier  The unit carrying it, or {@code null} when it lies on the ground
      */
-    record PlacedObjective(Coords position, ObjectiveMarker marker) {}
+    record PlacedObjective(Coords position, ObjectiveMarker marker, @Nullable Entity carrier) {
+        PlacedObjective(Coords position, ObjectiveMarker marker) {
+            this(position, marker, null);
+        }
+    }
 
     /**
      * The control resolution of one objective for one End Phase.
@@ -144,6 +154,10 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
      * markers can be placed without opting into objective scoring.
      */
     void resolveObjectives() {
+        // carrying and destruction are physical: a carrier drops its objective, and fire burns a Fragile one,
+        // whether or not objectives score in this game. Both come before control, so this turn's pay sees them
+        new ObjectiveCarryHandler(gameManager).resolveEndPhaseDrops();
+        new ObjectiveDestructionHandler(gameManager).checkFragileObjectivesOnFire();
         List<PlacedObjective> allObjectives = findAllObjectives();
         if (allObjectives.isEmpty()) {
             return;
@@ -159,7 +173,13 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         List<PlacedObjective> activeObjectives = allObjectives.stream()
               .filter(this::isScorableObjective)
               .toList();
-        if (activeObjectives.isEmpty()) {
+        List<PlacedObjective> destroyedPointsToSettle = new ArrayList<>();
+        for (PlacedObjective objective : allObjectives) {
+            if (isDestroyedPointToSettle(objective)) {
+                destroyedPointsToSettle.add(objective);
+            }
+        }
+        if (activeObjectives.isEmpty() && destroyedPointsToSettle.isEmpty()) {
             LOGGER.debug("[Objective] No scorable objectives - no control resolution");
             return;
         }
@@ -170,15 +190,27 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
 
         List<Entity> entities = getGame().getEntitiesVector();
         VictoryPointTracker tracker = VictoryPointTracker.getTracker(getGame());
+        for (PlacedObjective objective : destroyedPointsToSettle) {
+            settleDestroyedPoint(objective, entities, tracker);
+        }
         List<ResolvedObjective> standardObjectives = new ArrayList<>();
         for (PlacedObjective objective : activeObjectives) {
-            Map<Side, Integer> presenceBySide = countEligiblePresence(objective, entities);
-            Side controller = leadingSide(objective, presenceBySide);
-            boolean contested = (controller == null) && !presenceBySide.isEmpty();
+            Side controller;
+            boolean contested = false;
             boolean isHeldWithoutPresence = false;
-            if (presenceBySide.isEmpty()) {
-                controller = retainedHolder(objective, controller);
-                isHeldWithoutPresence = controller != null;
+            if (objective.carrier() != null) {
+                // RAW (Mobile Objectives): a Mek carrying an objective automatically controls it
+                controller = sideOfPlayer(objective.carrier().getOwner());
+                LOGGER.debug("[Objective] {} is carried by {} - its side controls it",
+                      objective.marker().generalName(), objective.carrier().getShortName());
+            } else {
+                Map<Side, Integer> presenceBySide = countEligiblePresence(objective, entities);
+                controller = leadingSide(objective, presenceBySide);
+                contested = (controller == null) && !presenceBySide.isEmpty();
+                if (presenceBySide.isEmpty()) {
+                    controller = retainedHolder(objective, controller);
+                    isHeldWithoutPresence = controller != null;
+                }
             }
             Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
             storeControllerOnMarker(objective.marker(), controller);
@@ -386,6 +418,101 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
     }
 
     /**
+     * @return {@code true} for a destroyed Defend or Capture point that nobody has taken yet. Those two schemes pay
+     *       only the side attacking the point, so if destruction simply ended them, a defender could deny the attacker
+     *       by wrecking its own point; instead a destroyed one counts as taken by the attacker
+     */
+    private boolean isDestroyedPointToSettle(PlacedObjective objective) {
+        ObjectiveMarker marker = objective.marker();
+        ObjectiveScoringScheme.SchemePreset preset = marker.getScoringScheme().getPreset();
+        boolean isAttackerScheme = (preset == ObjectiveScoringScheme.SchemePreset.DEFEND)
+              || (preset == ObjectiveScoringScheme.SchemePreset.CAPTURE);
+        boolean isUnconfirmedCandidate = marker.isPotential() && !marker.isConfirmed();
+        return marker.isDestroyed() && isAttackerScheme && !isUnconfirmedCandidate
+              && !marker.getScoringScheme().isDecided();
+    }
+
+    /**
+     * Settles a destroyed Defend or Capture point: it counts as taken by the side attacking it (decided by the user
+     * 2026-10-19). The attacker is the enemy of the owner with the most capture progress (Capture) or the most units
+     * in the zone (Defend), or, without a clear leader, the only enemy side in the game. With several enemies and no
+     * leader, nobody takes it yet, and the next End Phase looks again.
+     */
+    private void settleDestroyedPoint(PlacedObjective objective, List<Entity> entities, VictoryPointTracker tracker) {
+        Side owningSide = sideOfPlayerId(objective.marker().getOwnerId());
+        Set<Side> enemySides = enemySidesOf(owningSide);
+        Side taker = leadingAttacker(objective, owningSide, enemySides, entities);
+        if ((taker == null) && (enemySides.size() == 1)) {
+            taker = enemySides.iterator().next();
+        }
+        if (taker == null) {
+            LOGGER.debug("[Objective] {} at {} was destroyed, but no single enemy side leads the attack on it among "
+                  + "{} - nobody takes it yet", objective.marker().generalName(), objective.position(), enemySides);
+            return;
+        }
+        LOGGER.info("[Objective] {} at {} was destroyed - it counts as taken by {}", objective.marker().generalName(),
+              objective.position(), displayName(taker));
+        decidePoint(objective, taker, tracker, REPORT_DESTROYED_POINT_TAKEN);
+    }
+
+    /**
+     * @return the enemy side clearly leading the attack on the point: the most capture progress on a Capture point,
+     *       the most eligible units in the zone of a Defend point; {@code null} when nobody leads
+     */
+    private @Nullable Side leadingAttacker(PlacedObjective objective, @Nullable Side owningSide, Set<Side> enemySides,
+          List<Entity> entities) {
+        ObjectiveScoringScheme scheme = objective.marker().getScoringScheme();
+        Map<Side, Integer> leadBySide = new HashMap<>();
+        if (scheme.getPreset() == ObjectiveScoringScheme.SchemePreset.CAPTURE) {
+            for (Side side : enemySides) {
+                int progress = scheme.getCaptureProgress(side.isTeam() ? side.id() : ObjectiveScoringScheme.NO_SIDE,
+                      side.isTeam() ? ObjectiveScoringScheme.NO_SIDE : side.id());
+                if (progress > 0) {
+                    leadBySide.put(side, progress);
+                }
+            }
+        } else {
+            leadBySide.putAll(countEligiblePresence(objective, entities));
+            if (owningSide != null) {
+                leadBySide.remove(owningSide);
+            }
+        }
+        return uniqueLeader(leadBySide);
+    }
+
+    /** @return the side with the strictly highest value, or {@code null} when the map is empty or the top is tied */
+    private static @Nullable Side uniqueLeader(Map<Side, Integer> valueBySide) {
+        Side leader = null;
+        int highestValue = 0;
+        boolean isTied = false;
+        for (Map.Entry<Side, Integer> valueEntry : valueBySide.entrySet()) {
+            if (valueEntry.getValue() > highestValue) {
+                leader = valueEntry.getKey();
+                highestValue = valueEntry.getValue();
+                isTied = false;
+            } else if (valueEntry.getValue() == highestValue) {
+                isTied = true;
+            }
+        }
+        return isTied ? null : leader;
+    }
+
+    /** @return every side in the game other than the given one; observers and game masters are not sides */
+    private Set<Side> enemySidesOf(@Nullable Side owningSide) {
+        Set<Side> enemySides = new LinkedHashSet<>();
+        for (Player player : getGame().getPlayersList()) {
+            if (player.isObserver() || player.isGameMaster()) {
+                continue;
+            }
+            Side side = sideOfPlayer(player);
+            if ((side != null) && !side.equals(owningSide)) {
+                enemySides.add(side);
+            }
+        }
+        return enemySides;
+    }
+
+    /**
      * Marks a counter-driven point decided by the given side, awards the point's victory point value to it once,
      * and reports the state change.
      */
@@ -481,7 +608,8 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return;
         }
         for (PlacedObjective objective : findAllObjectives()) {
-            if (objective.marker().isDestroyed()) {
+            // a carried objective has no zone to walk into: its carrier controls it
+            if (objective.marker().isDestroyed() || (objective.carrier() != null)) {
                 continue;
             }
             int radius = objective.marker().getControlRadius();
@@ -498,13 +626,23 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
         }
     }
 
-    /** @return All objective markers placed on the ground, including destroyed ones, with their map positions */
+    /**
+     * @return All objective markers, including destroyed ones: those on the ground with their map positions, and
+     *       carried Mobile objectives at their carrier's position
+     */
     private List<PlacedObjective> findAllObjectives() {
         List<PlacedObjective> objectives = new ArrayList<>();
         for (Map.Entry<Coords, List<ICarryable>> groundObjectEntry : getGame().getGroundObjects().entrySet()) {
             for (ICarryable groundObject : groundObjectEntry.getValue()) {
                 if (groundObject instanceof ObjectiveMarker marker) {
                     objectives.add(new PlacedObjective(groundObjectEntry.getKey(), marker));
+                }
+            }
+        }
+        for (Entity carrier : getGame().getEntitiesVector()) {
+            for (ICarryable carriedObject : carrier.getDistinctCarriedObjects()) {
+                if ((carriedObject instanceof ObjectiveMarker marker) && (carrier.getPosition() != null)) {
+                    objectives.add(new PlacedObjective(carrier.getPosition(), marker, carrier));
                 }
             }
         }
@@ -888,18 +1026,22 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             if (!nameAlreadySaysWhere) {
                 report.add(boardNumber);
             }
-            report.add(standingHolder(marker));
+            report.add(standingHolder(objective));
             report.add(standingProgress(marker));
             addReport(report);
         }
     }
 
     /**
-     * @param marker the objective marker to describe
+     * @param objective the objective to describe
      *
      * @return who holds this point right now, in words a player reads rather than an id
      */
-    private String standingHolder(ObjectiveMarker marker) {
+    private String standingHolder(PlacedObjective objective) {
+        ObjectiveMarker marker = objective.marker();
+        if (objective.carrier() != null) {
+            return Messages.getString("VictoryHex.standing.carried", objective.carrier().getDisplayName());
+        }
         ObjectiveScoringScheme scheme = marker.getScoringScheme();
         boolean isScanPoint = scheme.getPreset() == ObjectiveScoringScheme.SchemePreset.SCAN;
         if (scheme.isDecided()) {
@@ -911,6 +1053,9 @@ class ObjectiveResolutionHandler extends AbstractTWRuleHandler {
             return isScanPoint
                   ? Messages.getString(scannedKeyFor(scheme.getScanPayout()), securedBy)
                   : Messages.getString("VictoryHex.standing.secured", securedBy);
+        }
+        if (marker.isDestroyed()) {
+            return Messages.getString("VictoryHex.standing.destroyed");
         }
         if (isScanPoint) {
             // A scan point is read, not held: who is standing in it says nothing about it. Only a point that

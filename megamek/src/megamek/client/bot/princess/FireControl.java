@@ -62,6 +62,7 @@ import megamek.common.battleArmor.BattleArmor;
 import megamek.common.board.Coords;
 import megamek.common.compute.Compute;
 import megamek.common.compute.ComputeArc;
+import megamek.common.enums.GamePhase;
 import megamek.common.enums.VariableRangeTargetingMode;
 import megamek.common.equipment.*;
 import megamek.common.equipment.enums.BombType;
@@ -119,7 +120,17 @@ public class FireControl {
     static final double COMMANDER_UTILITY = 0.5;
     static final double SUB_COMMANDER_UTILITY = 0.25;
     static final double STRATEGIC_TARGET_UTILITY = 0.5;
+    /** The fire bonus for a priority target at the default target priority, 3. */
     static final double PRIORITY_TARGET_UTILITY = 0.25;
+    /** How much each step of target priority away from 3 adds or takes off the bonus: 2 is +35%, 5 is +5%. */
+    static final double PRIORITY_TARGET_UTILITY_STEP = 0.10;
+    /**
+     * How far priority 1 sits above the enemy-commander bonus. A player marking a unit "shoot this first" outranks the
+     * bot's own preference for the enemy commander, C3 master or initiative leader (user decision, #9174).
+     */
+    static final double PRIORITY_ONE_MARGIN_OVER_COMMANDER = 0.05;
+    /** What {@link #calcDamageAllocationUtility} returns for a target already expected to be destroyed. */
+    private static final double ALREADY_DESTROYED_OVERKILL = 100;
 
     static final String TH_WOODS = "woods";
     static final String TH_SMOKE = "smoke";
@@ -273,6 +284,11 @@ public class FireControl {
     }
 
     protected final Princess owner;
+
+    // The most dangerous enemy's threat multiplier, worked out once per round and phase
+    private int threatCacheRound = -1;
+    private GamePhase threatCachePhase;
+    private double highestThreatCache = 1.0;
 
     /**
      * Constructor
@@ -1586,9 +1602,8 @@ public class FireControl {
         utility += KILL_UTILITY * firingPlan.getKillProbability();
         // Multiply the combined damage/crit/kill utility for a target by a log-scaled
         // factor based on the target's damage potential.
-        utility *= calcTargetPotentialDamageMultiplier(firingPlan.getTarget());
-        utility += TARGET_HP_FRACTION_DEALT_UTILITY
-              * calcDamageAllocationUtility(firingPlan.getTarget(), expectedDamage);
+        utility *= calcThreatMultiplier(firingPlan.getTarget());
+        utility += TARGET_HP_FRACTION_DEALT_UTILITY * calcOverkillFraction(firingPlan.getTarget(), expectedDamage);
         utility -= firingPlan.getExpectedFriendlyDamage();
         utility -= calcCivilianTargetDisutility(firingPlan.getTarget());
         utility *= modifier;
@@ -1619,9 +1634,79 @@ public class FireControl {
 
         final int id = target.getId();
         if (owner.getPriorityUnitTargets().contains(id)) {
-            return PRIORITY_TARGET_UTILITY;
+            return priorityTargetUtility(owner.getTargetPriority(id));
         }
         return 0;
+    }
+
+    /**
+     * The threat factor an attack's score is multiplied by. A unit that can deal more damage is a bigger threat and a
+     * better target. A priority target counts as at least as big a threat as the most dangerous enemy on the board,
+     * so an unarmed truck in a convoy is not passed over for the armed escort beside it.
+     *
+     * @param target The target of the attack
+     *
+     * @return The multiplier, 1 for a target that deals no damage
+     */
+    double calcThreatMultiplier(final Targetable target) {
+        double ownThreat = calcTargetPotentialDamageMultiplier(target);
+        if (!isPriorityUnitTarget(target)) {
+            return ownThreat;
+        }
+        return Math.max(ownThreat, highestEnemyThreatMultiplier());
+    }
+
+    /**
+     * The share of the target's total HP the attack is expected to deal, which costs the attack score points when it
+     * is half or more (overkill), and 100 when the target is already expected to be destroyed. A priority target is
+     * meant to be destroyed, so it pays no overkill cost until damage already assigned to it is enough to destroy it.
+     *
+     * @param target         The target of the attack
+     * @param expectedDamage The damage the attack is expected to deal
+     *
+     * @return The overkill fraction used as a penalty
+     */
+    double calcOverkillFraction(final Targetable target, final double expectedDamage) {
+        double overkillFraction = calcDamageAllocationUtility(target, expectedDamage);
+        if (isPriorityUnitTarget(target) && (overkillFraction < ALREADY_DESTROYED_OVERKILL)) {
+            return 0;
+        }
+        return overkillFraction;
+    }
+
+    private boolean isPriorityUnitTarget(final Targetable target) {
+        return (target instanceof Entity) && owner.getPriorityUnitTargets().contains(target.getId());
+    }
+
+    /**
+     * @return The threat multiplier of the most dangerous enemy on the board, worked out once per round and phase
+     */
+    private double highestEnemyThreatMultiplier() {
+        Game game = owner.getGame();
+        if ((game.getRoundCount() == threatCacheRound) && (game.getPhase() == threatCachePhase)) {
+            return highestThreatCache;
+        }
+        double highestThreat = 1.0;
+        for (Entity enemy : owner.getEnemyEntities()) {
+            highestThreat = Math.max(highestThreat, calcTargetPotentialDamageMultiplier(enemy));
+        }
+        threatCacheRound = game.getRoundCount();
+        threatCachePhase = game.getPhase();
+        highestThreatCache = highestThreat;
+        return highestThreat;
+    }
+
+    /**
+     * @param targetPriority how keenly the bot goes for the target, 1 (shoot first) to 5
+     *
+     * @return the fire bonus for that target priority: 0.55, 0.35, 0.25, 0.15 or 0.05
+     */
+    static double priorityTargetUtility(int targetPriority) {
+        if (targetPriority <= BehaviorSettings.HIGHEST_TARGET_PRIORITY) {
+            return COMMANDER_UTILITY + PRIORITY_ONE_MARGIN_OVER_COMMANDER;
+        }
+        int stepsKeenerThanDefault = BehaviorSettings.DEFAULT_TARGET_PRIORITY - targetPriority;
+        return PRIORITY_TARGET_UTILITY + (stepsKeenerThanDefault * PRIORITY_TARGET_UTILITY_STEP);
     }
 
     protected double calcCivilianTargetDisutility(final Targetable target) {
@@ -1703,7 +1788,7 @@ public class FireControl {
         // Do not shoot at units we already expect to deal more than their total HP of
         // damage to!
         if (1.0 <= previousDamageFraction) {
-            return 100;
+            return ALREADY_DESTROYED_OVERKILL;
 
             // In cases that are not generally overkill (less than 50% of the target's total
             // HP in damage), target as normal (don't want to spread damage in these cases).
@@ -3277,6 +3362,7 @@ public class FireControl {
                   enemy,
                   ammoConservation);
             final FiringPlan plan = determineBestFiringPlan(parameters);
+            logTargetScore(shooter, enemy, plan, priorityTarget);
 
             if ((bestPlan == null)
                   || (plan.getUtility() > bestPlan.getUtility())) {
@@ -3284,8 +3370,33 @@ public class FireControl {
             }
         }
 
+        if (bestPlan != null) {
+            LOGGER.info("[FireScore] {} chooses {} (score {})", shooter.getDisplayName(),
+                  (bestPlan.getTarget() == null) ? "no target" : bestPlan.getTarget().getDisplayName(),
+                  String.format("%.1f", bestPlan.getUtility()));
+        }
         // Return the best overall plan.
         return bestPlan;
+    }
+
+    /**
+     * Logs the score of the best attack on one target, and the parts that set it, so the choice between targets can be
+     * read back after a game.
+     */
+    private void logTargetScore(Entity shooter, Targetable enemy, FiringPlan plan, boolean priorityTarget) {
+        // called for every enemy each shooter weighs; skip the formatting and the threat and overkill sums when the
+        // line would not be written anyway
+        if ((plan == null) || !LOGGER.isInfoEnabled()) {
+            return;
+        }
+        LOGGER.info("[FireScore] {} -> {}: score {}, expected damage {}, kill chance {}, threat x{}, overkill {}, {}",
+              shooter.getDisplayName(), enemy.getDisplayName(),
+              String.format("%.1f", plan.getUtility()),
+              String.format("%.1f", plan.getExpectedDamage()),
+              String.format("%.2f", plan.getKillProbability()),
+              String.format("%.2f", calcThreatMultiplier(enemy)),
+              String.format("%.2f", calcOverkillFraction(enemy, plan.getExpectedDamage())),
+              priorityTarget ? "priority " + owner.getTargetPriority(enemy.getId()) : "not a priority target");
     }
 
     /**

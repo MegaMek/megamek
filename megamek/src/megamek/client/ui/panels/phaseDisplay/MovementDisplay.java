@@ -3436,7 +3436,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
 
     private synchronized void updateProneButtons() {
         final Entity currentEntity = currentEntity();
-        if (currentEntity == null) {
+        if (currentEntity == null || !currentEntity().isDeployed()) {
             setGetUpEnabled(false);
             setGoProneEnabled(false);
             setHullDownEnabled(false);
@@ -3444,12 +3444,11 @@ public class MovementDisplay extends ActionPhaseDisplay {
         }
 
         boolean isMek = currentEntity instanceof Mek;
-
-        if (cmd.getFinalProne()) {
+        if ((cmd != null) && cmd.getFinalProne()) {
             setGetUpEnabled(!currentEntity.isImmobile() && !currentEntity.isStuck());
             setGoProneEnabled(false);
             setHullDownEnabled(true);
-        } else if (cmd.getFinalHullDown()) {
+        } else if ((cmd != null) && cmd.getFinalHullDown()) {
             if (isMek) {
                 setGetUpEnabled(!currentEntity.isImmobile()
                                 && !currentEntity.isStuck()
@@ -3472,7 +3471,7 @@ public class MovementDisplay extends ActionPhaseDisplay {
             } else {
                 // So that the vehicle can move and go hull-down, we have to check if it's moved into a fortified
                 // position
-                if (cmd.getLastStep() != null) {
+                if ((cmd != null) && cmd.getLastStep() != null) {
                     boolean hullDownEnabled = game
                             .getOptions()
                             .booleanOption(OptionsConstants.ADVANCED_GROUND_MOVEMENT_TAC_OPS_HULL_DOWN);

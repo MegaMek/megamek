@@ -6491,6 +6491,9 @@ public class TWGameManager extends AbstractGameManager {
         // return, re-deploy then
         // fly off again instantly.
         aero.setOutControl(false);
+        // A failed heat control roll this round only takes effect next round, so clear it too or the unit is
+        // put back out of control while off the board, where it never gets a recovery roll.
+        aero.setOutControlHeat(false);
 
         return r;
     }
@@ -26382,6 +26385,9 @@ public class TWGameManager extends AbstractGameManager {
 
             // Remove any carried pilot IDs (does not apply to other carried entities)
             entity.resetPickedUpMekWarriors();
+
+            // A unit joining this game has not left it yet, whatever happened to it in an earlier battle
+            entity.clearBattleOutcome();
 
             // If we're adding a ProtoMek, calculate its unit number.
             if (entity instanceof ProtoMek) {

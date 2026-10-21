@@ -3548,12 +3548,13 @@ public class MoveStep implements Serializable {
                 // non-flying Infantry and ground vehicles are charged double.
                 deltaElevation *= 2;
             }
-            int elevationCost = Game.rulesManager.getRulesTerrain().getRoadElevationCostDifference(srcHex, destHex,
+            int elevationCostReduction = Game.rulesManager.getRulesTerrain()
+                                                          .getRoadElevationCostDifference(srcHex, destHex,
                                                                                                    deltaElevation);
             if (entity.hasAbility(OptionsConstants.PILOT_TM_MOUNTAINEER)) {
-                mp += Math.max(0, deltaElevation - 1 - elevationCost);
+                mp += Math.max(0, deltaElevation - 1 - elevationCostReduction);
             } else {
-                mp += Math.max(0, deltaElevation - elevationCost);
+                mp += Math.max(0, deltaElevation - elevationCostReduction);
             }
         }
 

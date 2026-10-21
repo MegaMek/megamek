@@ -116,6 +116,6 @@ public class ISHeavyPlasmaRifle extends AmmoWeapon {
 
     @Override
     public int getAlphaStrikeHeatDamage(int rangeband) {
-        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 5 : 0;
+        return (rangeband <= AlphaStrikeElement.RANGE_BAND_MEDIUM) ? 7 : 0;
     }
 }

@@ -553,8 +553,8 @@ public class AvailabilityPanel {
         if (record != null) {
             for (String factionCode : record.getIncludedFactions()) {
                 List<Object> rowData = new ArrayList<>();
-                String baseAbbr = factionCode.split("\\.")[0];
-                ImageIcon factionIcon = RATGenerator.getFactionLogo(0, baseAbbr, Color.WHITE);
+                // Use the full code: a command may have its own icon, and one without inherits its parent's
+                ImageIcon factionIcon = RATGenerator.getFactionLogo(0, factionCode, Color.WHITE);
                 if (factionIcon != null) {
                     factionIcon = new ImageIcon(ImageUtil.getScaledImage(factionIcon.getImage(), ICON_SIZE, ICON_SIZE));
                 }

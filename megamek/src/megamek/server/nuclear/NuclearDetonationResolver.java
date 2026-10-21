@@ -53,6 +53,9 @@ import megamek.server.totalWarfare.TWGameManager;
  * secondary effects (IO:AE pp. 164-166).
  */
 public class NuclearDetonationResolver {
+    /** Nuclear blast damage is applied in 5-point clusters (IO:AE p.165). */
+    private static final int BLAST_CLUSTER_SIZE = 5;
+
     private final TWGameManager gameManager;
     private final Game game;
 
@@ -65,17 +68,13 @@ public class NuclearDetonationResolver {
     }
 
     /**
-     * explode a nuke
+     * Resolves a ground burst.
      *
-     * @param position        the position that will be hit by the nuke
-     * @param baseDamage      the base damage from the blast
-     * @param degradation     how fast the blast's power degrades
-     * @param secondaryRadius the secondary blast radius
-     * @param craterDepth     the depth of the crater created by the blast
-     * @param vDesc           a vector that contains the output report
+     * @param position the Ground Zero hex
+     * @param profile  the detonation's damage, radii and crater depth
+     * @param vDesc    a vector that contains the output report
      */
-    public void resolve(Coords position, int baseDamage, int degradation, int secondaryRadius, int craterDepth,
-          Vector<Report> vDesc) {
+    public void resolve(Coords position, NuclearBlastProfile profile, Vector<Report> vDesc) {
         // Just in case.
         if (vDesc == null) {
             vDesc = new Vector<>();
@@ -90,9 +89,10 @@ public class NuclearDetonationResolver {
         r.add(position.getBoardNum(), true);
         vDesc.add(r);
 
-        int curDepth = craterDepth;
-        int range = 0;
-        while (range < (2 * craterDepth)) {
+        int craterRadius = profile.craterRadius();
+        for (int range = 0; range < craterRadius; range++) {
+            // The crater is 1 level shallower for every 2 hexes from Ground Zero (IO:AE p.164).
+            int curDepth = profile.craterDepthAt(range);
             // Get the set of hexes at this range.
             List<Coords> hexSet = position.allAtDistance(range);
 
@@ -118,15 +118,6 @@ public class NuclearDetonationResolver {
 
                 gameManager.sendChangedHex(myHexCoords);
             }
-
-            // Lastly, if the next distance is a multiple of 2...
-            // The crater depth goes down one.
-            if ((range > 0) && ((range % 2) == 0)) {
-                curDepth--;
-            }
-
-            // Now that the hexes are dealt with, increment the distance.
-            range++;
         }
 
         // This is technically part of cratering, but...
@@ -139,7 +130,7 @@ public class NuclearDetonationResolver {
             }
 
             // If it's too far away for this...
-            if (position.distance(entity.getPosition()) >= range) {
+            if (position.distance(entity.getPosition()) >= craterRadius) {
                 continue;
             }
 
@@ -158,7 +149,8 @@ public class NuclearDetonationResolver {
         Vector<Report> tmpV = new Vector<>();
         Vector<Integer> blastedUnitsVec = new Vector<>();
 
-        gameManager.doExplosion(baseDamage, degradation, true, position, true, tmpV, blastedUnitsVec, -1, false);
+        gameManager.doExplosion(profile.blastDamageByDistance(), true, position, 0, true, tmpV, blastedUnitsVec,
+              BLAST_CLUSTER_SIZE, Entity.NONE, false, false);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 
@@ -208,71 +200,61 @@ public class NuclearDetonationResolver {
 
         // Next, for whatever's left, do terrain effects
         // such as clearing, roughing, and boiling off water.
-        boolean damageFlag = true;
-        int damageAtRange = baseDamage - (degradation * range);
-        if (damageAtRange > 0) {
-            for (int x = range; damageFlag; x++) {
-                // Damage terrain as necessary.
-                // Get all the hexes, and then iterate through them.
-                List<Coords> hexSet = position.allAtDistance(x);
+        // Each ring takes the blast damage for its own distance from Ground Zero (IO:AE p.165).
+        for (int x = craterRadius; profile.damageAt(x) >= NuclearBlastProfile.MINIMUM_TERRAIN_DAMAGE; x++) {
+            int damageAtRange = profile.damageAt(x);
+            // Damage terrain as necessary.
+            // Get all the hexes, and then iterate through them.
+            List<Coords> hexSet = position.allAtDistance(x);
 
-                // Iterate through the hexes.
-                for (Coords myHexCoords : hexSet) {
-                    // ignore out of bounds coordinates
-                    if (!game.getBoard().contains(myHexCoords)) {
-                        continue;
-                    }
-
-                    Hex myHex = game.getBoard().getHex(myHexCoords);
-
-                    // For each 3000 damage, water level is reduced by 1.
-                    if ((damageAtRange >= 3000) && (myHex.containsTerrain(Terrains.WATER))) {
-                        int numCleared = damageAtRange / 3000;
-                        int oldLevel = myHex.terrainLevel(Terrains.WATER);
-                        myHex.removeTerrain(Terrains.WATER);
-                        if (oldLevel > numCleared) {
-                            myHex.setLevel(myHex.getLevel() - numCleared);
-                            myHex.addTerrain(new Terrain(Terrains.WATER, oldLevel - numCleared));
-                        } else {
-                            myHex.setLevel(myHex.getLevel() - oldLevel);
-                        }
-                    }
-
-                    // ANY non-water hex that takes 200 becomes rough.
-                    if ((damageAtRange >= 200) && (!myHex.containsTerrain(Terrains.WATER))) {
-                        myHex.removeAllTerrains();
-                        myHex.clearExits();
-                        myHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
-                    } else if ((damageAtRange >= 20) &&
-                          ((myHex.containsTerrain(Terrains.WOODS)) ||
-                                (myHex.containsTerrain(Terrains.JUNGLE)))) {
-                        // Each 20 clears woods by 1 level.
-                        int numCleared = damageAtRange / 20;
-                        int terrainType = (myHex.containsTerrain(Terrains.WOODS) ? Terrains.WOODS : Terrains.JUNGLE);
-                        int oldLevel = myHex.terrainLevel(terrainType);
-                        int oldEl = myHex.terrainLevel(Terrains.FOLIAGE_ELEV);
-                        myHex.removeTerrain(terrainType);
-                        if (oldLevel > numCleared) {
-                            myHex.addTerrain(new Terrain(terrainType, oldLevel - numCleared));
-                            if (oldEl != 1) {
-                                myHex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV,
-                                      oldLevel - numCleared == 3 ? 3 : 2));
-                            }
-                        } else {
-                            myHex.removeTerrain(Terrains.FOLIAGE_ELEV);
-                        }
-                    }
-
-                    gameManager.sendChangedHex(myHexCoords);
+            // Iterate through the hexes.
+            for (Coords myHexCoords : hexSet) {
+                // ignore out of bounds coordinates
+                if (!game.getBoard().contains(myHexCoords)) {
+                    continue;
                 }
 
-                // Initialize for the next iteration.
-                damageAtRange = baseDamage - ((degradation * x) + 1);
+                Hex myHex = game.getBoard().getHex(myHexCoords);
 
-                // If the damage is less than 20, it has no terrain effect.
-                if (damageAtRange < 20) {
-                    damageFlag = false;
+                // For each 3000 damage, water level is reduced by 1.
+                if ((damageAtRange >= 3000) && (myHex.containsTerrain(Terrains.WATER))) {
+                    int numCleared = damageAtRange / 3000;
+                    int oldLevel = myHex.terrainLevel(Terrains.WATER);
+                    myHex.removeTerrain(Terrains.WATER);
+                    if (oldLevel > numCleared) {
+                        myHex.setLevel(myHex.getLevel() - numCleared);
+                        myHex.addTerrain(new Terrain(Terrains.WATER, oldLevel - numCleared));
+                    } else {
+                        myHex.setLevel(myHex.getLevel() - oldLevel);
+                    }
                 }
+
+                // ANY non-water hex that takes 200 becomes rough.
+                if ((damageAtRange >= 200) && (!myHex.containsTerrain(Terrains.WATER))) {
+                    myHex.removeAllTerrains();
+                    myHex.clearExits();
+                    myHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                } else if ((damageAtRange >= 20) &&
+                      ((myHex.containsTerrain(Terrains.WOODS)) ||
+                            (myHex.containsTerrain(Terrains.JUNGLE)))) {
+                    // Each 20 clears woods by 1 level.
+                    int numCleared = damageAtRange / 20;
+                    int terrainType = (myHex.containsTerrain(Terrains.WOODS) ? Terrains.WOODS : Terrains.JUNGLE);
+                    int oldLevel = myHex.terrainLevel(terrainType);
+                    int oldEl = myHex.terrainLevel(Terrains.FOLIAGE_ELEV);
+                    myHex.removeTerrain(terrainType);
+                    if (oldLevel > numCleared) {
+                        myHex.addTerrain(new Terrain(terrainType, oldLevel - numCleared));
+                        if (oldEl != 1) {
+                            myHex.addTerrain(new Terrain(Terrains.FOLIAGE_ELEV,
+                                  oldLevel - numCleared == 3 ? 3 : 2));
+                        }
+                    } else {
+                        myHex.removeTerrain(Terrains.FOLIAGE_ELEV);
+                    }
+                }
+
+                gameManager.sendChangedHex(myHexCoords);
             }
         }
 
@@ -290,7 +272,7 @@ public class NuclearDetonationResolver {
             }
 
             // If it's too far away for this...
-            if (position.distance(entity.getPosition()) > secondaryRadius) {
+            if (position.distance(entity.getPosition()) > profile.secondaryRadius()) {
                 continue;
             }
 

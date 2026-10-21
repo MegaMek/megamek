@@ -59,6 +59,7 @@ import megamek.common.equipment.EquipmentType;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.game.Game;
 import megamek.common.interfaces.IEntityRemovalConditions;
 import megamek.common.planetaryConditions.Atmosphere;
@@ -69,6 +70,7 @@ import megamek.common.units.*;
 import megamek.common.weapons.DamageType;
 import megamek.logging.MMLogger;
 import megamek.server.ServerHelper;
+import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.totalWarfare.TWGameManager;
 
 /**
@@ -82,8 +84,6 @@ public class AreaEffectHelper {
     // maps equipment name to blast radius index for fuel-air ordnance
     private static Map<String, Integer> fuelAirBlastRadiusIndex;
     private static final int[] fuelAirDamage = { 5, 10, 20, 30 };
-
-    private static Map<Integer, NukeStats> nukeStats;
 
     /**
      * Worker function that initializes blast radius data for fuel-air explosives of various types.
@@ -103,46 +103,6 @@ public class AreaEffectHelper {
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.SNIPER_CANNON, 2);
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.LONG_TOM_CANNON, 3);
         addFuelAirBlastRadiusIndex(AmmoTypeEnum.LONG_TOM, 3);
-    }
-
-    /**
-     * Worker function that initializes data for NUCLEAR WEAPONS
-     */
-    private static void initializeNukeStats() {
-        nukeStats = new HashMap<>();
-
-        NukeStats nukeEntry = new NukeStats();
-        nukeEntry.baseDamage = 100;
-        nukeEntry.degradation = 5;
-        nukeEntry.secondaryRadius = 40;
-        nukeEntry.craterDepth = 0;
-
-        nukeStats.put(0, nukeEntry);
-        nukeStats.put(1, nukeEntry);
-
-        nukeEntry = new NukeStats();
-        nukeEntry.baseDamage = 1000;
-        nukeEntry.degradation = 23;
-        nukeEntry.secondaryRadius = 86;
-        nukeEntry.craterDepth = 1;
-
-        nukeStats.put(2, nukeEntry);
-
-        nukeEntry = new NukeStats();
-        nukeEntry.baseDamage = 10000;
-        nukeEntry.degradation = 109;
-        nukeEntry.secondaryRadius = 184;
-        nukeEntry.craterDepth = 3;
-
-        nukeStats.put(3, nukeEntry);
-
-        nukeEntry = new NukeStats();
-        nukeEntry.baseDamage = 100000;
-        nukeEntry.degradation = 505;
-        nukeEntry.secondaryRadius = 396;
-        nukeEntry.craterDepth = 5;
-
-        nukeStats.put(4, nukeEntry);
     }
 
     /**
@@ -875,21 +835,14 @@ public class AreaEffectHelper {
     /**
      * Abbreviated nuclear explosion logic when the weapon is targeted at a single off-board entity.
      */
-    public static void doNuclearExplosion(Entity entity, Coords coords, int nukeType, Vector<Report> vPhaseReport,
-          TWGameManager gameManager) {
+    public static void doNuclearExplosion(Entity entity, Coords coords, NuclearWeaponType nukeType,
+          Vector<Report> vPhaseReport, TWGameManager gameManager) {
 
         // this +1 is necessary because the drawNuke method subtracts 1 from them
         int[] nukeArgs = { coords.getX() + 1, coords.getY() + 1 };
         gameManager.drawNukeHitOnBoard(nukeArgs);
 
-        NukeStats nukeStats = getNukeStats(nukeType);
-
-        if (nukeStats == null) {
-            Report r = new Report(9998);
-            r.add(nukeType);
-            vPhaseReport.add(r);
-            return;
-        }
+        NuclearBlastProfile profile = NuclearBlastProfile.groundBurst(nukeType);
 
         Report r = new Report(1215, Report.PUBLIC);
 
@@ -897,8 +850,7 @@ public class AreaEffectHelper {
         r.add("offboard");
         vPhaseReport.add(r);
 
-        // crater radius is crater depth x2 as per Server.doNuclearExplosion
-        int craterRadius = nukeStats.craterDepth * 2;
+        int craterRadius = profile.craterRadius();
         int blastDistance = entity.getPosition().distance(coords);
 
         // if the entity is in the crater radius, bye
@@ -911,8 +863,8 @@ public class AreaEffectHelper {
         }
 
         // calculate the damage to the entity based on the range to the nuke
-        int damageToEntity = nukeStats.baseDamage - (blastDistance * nukeStats.degradation);
-        if (damageToEntity < 0) {
+        int damageToEntity = profile.damageAt(blastDistance);
+        if (damageToEntity <= 0) {
             return;
         } else {
             applyExplosionClusterDamageToEntity(entity, damageToEntity, 5, coords, vPhaseReport, gameManager);
@@ -923,7 +875,7 @@ public class AreaEffectHelper {
         // radius
         // Since the effects are unit-dependent, we'll just define it in the
         // entity.
-        if (!entity.isDestroyed() && (blastDistance <= nukeStats.secondaryRadius)) {
+        if (!entity.isDestroyed() && (blastDistance <= profile.secondaryRadius())) {
             gameManager.applySecondaryNuclearEffects(entity, coords, vPhaseReport);
         }
 
@@ -975,22 +927,6 @@ public class AreaEffectHelper {
             }
             damage -= cluster;
         }
-    }
-
-    /**
-     * Helper function that retrieves the stat block for a particular type of nuke, or null if such a type is not
-     * defined.
-     */
-    public static NukeStats getNukeStats(int nukeType) {
-        if (nukeStats == null) {
-            initializeNukeStats();
-        }
-
-        if (nukeStats.containsKey(nukeType)) {
-            return nukeStats.get(nukeType);
-        }
-
-        return null;
     }
 
     /**

@@ -61,6 +61,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.Minefield;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -442,7 +443,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
                 AreaEffectHelper.doNuclearExplosion((Entity) artilleryAttackAction.getTarget(game),
                       finalPos,
-                      1,
+                      NuclearWeaponType.DAVY_CROCKETT_M,
                       vPhaseReport,
                       gameManager);
             } else {
@@ -452,7 +453,7 @@ public class ArtilleryWeaponDistantFireHandler extends AmmoWeaponHandler {
                             new NukeDetonatedAction(attackingEntity.getId(),
                                   attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
-                gameManager.doNuclearExplosion(finalPos, 1, vPhaseReport);
+                gameManager.doNuclearExplosion(finalPos, NuclearWeaponType.DAVY_CROCKETT_M, vPhaseReport);
             }
             return false;
         }

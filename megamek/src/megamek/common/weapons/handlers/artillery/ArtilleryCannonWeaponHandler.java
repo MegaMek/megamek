@@ -52,6 +52,7 @@ import megamek.common.enums.GamePhase;
 import megamek.common.equipment.AmmoType;
 import megamek.common.equipment.Minefield;
 import megamek.common.equipment.Mounted;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.event.player.GamePlayerStrategicActionEvent;
 import megamek.common.game.Game;
 import megamek.common.loaders.EntityLoadingException;
@@ -250,7 +251,7 @@ public class ArtilleryCannonWeaponHandler extends AmmoWeaponHandler {
                             new NukeDetonatedAction(attackingEntity.getId(),
                                   attackingEntity.getOwnerId(),
                                   AmmoType.Munitions.M_DAVY_CROCKETT_M)));
-                gameManager.doNuclearExplosion(targetPos, 1, vPhaseReport);
+                gameManager.doNuclearExplosion(targetPos, NuclearWeaponType.DAVY_CROCKETT_M, vPhaseReport);
                 return false;
             } else if (ammoType.getMunitionType().contains(AmmoType.Munitions.M_FASCAM)) {
                 gameManager.deliverFASCAMMinefield(targetPos, attackingEntity.getOwner().getId(),

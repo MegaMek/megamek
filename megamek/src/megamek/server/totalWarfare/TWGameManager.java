@@ -83,6 +83,7 @@ import megamek.common.equipment.AmmoType.Munitions;
 import megamek.common.equipment.enums.BombType;
 import megamek.common.equipment.enums.BombType.BombTypeEnum;
 import megamek.common.equipment.enums.MiscTypeFlag;
+import megamek.common.equipment.enums.NuclearWeaponType;
 import megamek.common.event.GameToastEvent;
 import megamek.common.exceptions.LocationFullException;
 import megamek.common.force.Force;
@@ -140,7 +141,6 @@ import megamek.common.weapons.autoCannons.ACWeapon;
 import megamek.common.weapons.handlers.AreaEffectHelper;
 import megamek.common.weapons.handlers.AttackHandler;
 import megamek.common.weapons.handlers.DamageFalloff;
-import megamek.common.weapons.handlers.NukeStats;
 import megamek.common.weapons.handlers.TAGHandler;
 import megamek.common.weapons.handlers.WeaponHandler;
 import megamek.common.weapons.handlers.artillery.ArtilleryBayWeaponDistantHomingHandler;
@@ -150,6 +150,7 @@ import megamek.logging.MMLogger;
 import megamek.server.*;
 import megamek.server.UnitOwnershipRules.OwnershipVerdict;
 import megamek.server.commands.*;
+import megamek.server.nuclear.NuclearBlastProfile;
 import megamek.server.nuclear.NuclearDetonationResolver;
 import megamek.server.props.OrbitalBombardment;
 import megamek.server.victory.VictoryResult;
@@ -20238,8 +20239,9 @@ public class TWGameManager extends AbstractGameManager {
     void resolveScheduledNukes() {
         for (int[] nuke : scheduledNukes) {
             drawNukeHitOnBoard(nuke);
-            if (nuke.length == 3) {
-                doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), nuke[2], mainPhaseReport);
+            if ((nuke.length == 3) && (nuke[2] >= 0) && (nuke[2] < NuclearWeaponType.values().length)) {
+                doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1), NuclearWeaponType.values()[nuke[2]],
+                      mainPhaseReport);
             }
             if (nuke.length == 6) {
                 doNuclearExplosion(new Coords(nuke[0] - 1, nuke[1] - 1),
@@ -20345,20 +20347,8 @@ public class TWGameManager extends AbstractGameManager {
      * @param nukeType the type of nuke
      * @param vDesc    a vector that contains the output report
      */
-    public void doNuclearExplosion(Coords position, int nukeType, Vector<Report> vDesc) {
-        NukeStats nukeStats = AreaEffectHelper.getNukeStats(nukeType);
-
-        if (nukeStats == null) {
-            LOGGER.error("Illegal nuke not listed in HS:3070");
-            return;
-        }
-
-        doNuclearExplosion(position,
-              nukeStats.baseDamage,
-              nukeStats.degradation,
-              nukeStats.secondaryRadius,
-              nukeStats.craterDepth,
-              vDesc);
+    public void doNuclearExplosion(Coords position, NuclearWeaponType nukeType, Vector<Report> vDesc) {
+        new NuclearDetonationResolver(this).resolve(position, NuclearBlastProfile.groundBurst(nukeType), vDesc);
     }
 
     /**
@@ -20397,7 +20387,8 @@ public class TWGameManager extends AbstractGameManager {
      */
     public void doNuclearExplosion(Coords position, int baseDamage, int degradation, int secondaryRadius,
           int craterDepth, Vector<Report> vDesc) {
-        new NuclearDetonationResolver(this).resolve(position, baseDamage, degradation, secondaryRadius, craterDepth,
+        new NuclearDetonationResolver(this).resolve(position,
+              NuclearBlastProfile.custom(baseDamage, degradation, secondaryRadius, craterDepth),
               vDesc);
     }
 

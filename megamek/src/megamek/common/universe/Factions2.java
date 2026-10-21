@@ -193,18 +193,19 @@ public final class Factions2 {
         }
         registerAliases();
         LOGGER.info("Loaded a total of {} factions and commands", factions.size());
-        warnAboutFactionsWithoutIcons();
+        logFactionsWithoutIcons();
     }
 
     /**
-     * Warns about factions that name a MekHQ logo ({@code logo:}) but no icon ({@code icon:}). MegaMek never shows the
-     * MekHQ logo, so without this warning such a faction silently gets the generic logo. This is typical of a custom
-     * faction written for MekHQ before icons existed.
+     * Logs the factions that name a MekHQ logo ({@code logo:}) but no icon ({@code icon:}). MegaMek never shows the
+     * MekHQ logo, so such a faction silently gets the generic logo. This is typical of a custom faction written for
+     * MekHQ before icons existed. Logged at debug level, so it is off unless this class's logger is switched on in
+     * {@code mmconf/log4j2.xml}.
      */
-    private void warnAboutFactionsWithoutIcons() {
+    private void logFactionsWithoutIcons() {
         List<String> factionCodes = findFactionsWithLegacyLogoOnly(factions.values());
         if (!factionCodes.isEmpty()) {
-            LOGGER.warn("[FactionIcon] These factions have a logo: line but no icon: line, so MegaMek shows the " +
+            LOGGER.debug("[FactionIcon] These factions have a logo: line but no icon: line, so MegaMek shows the " +
                         "generic logo for them: {}. The logo: line is only used by MekHQ. To show their own logo in " +
                         "MegaMek, add an icon: line naming an image in data/images/universe/factions/",
                   String.join(", ", factionCodes));

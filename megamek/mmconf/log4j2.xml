@@ -373,6 +373,17 @@
               <AppenderRef ref="MegaMekLog" />
           </Logger>
         -->
+        <!--
+          Faction logo diagnostics, silent by default (parent "megamek" logger at info). Uncomment to log, when
+          faction data loads, every faction that has a MekHQ logo: line but no icon: line, as one [FactionIcon]
+          line. MegaMek only shows the icon: line, so those factions get the generic logo - the usual cause when a
+          custom faction's logo does not appear. Also logs each retired faction code's alias ([FactionAlias]).
+          Then grep logs/megamek.log for "[FactionIcon]".
+
+          <Logger name="megamek.common.universe.Factions2" level="debug" additivity="false">
+              <AppenderRef ref="MegaMekLog" />
+          </Logger>
+        -->
         <Logger name="megamek" level="info" additivity="false">
             <AppenderRef ref="${env:mm.profile:-null}" />
             <AppenderRef ref="UnifiedLog" />

@@ -13898,7 +13898,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLImprovedAC2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Improved Autocannon/2 Ammo";
+        ammo.name = "Improved AC/2 Ammo";
         ammo.shortName = "iAC/2 Ammo";
         ammo.setInternalName("CLIMPAmmoAC2");
         ammo.damagePerShot = 1;
@@ -13921,7 +13921,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLImprovedAC5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Improved Autocannon/5 Ammo";
+        ammo.name = "Improved AC/5 Ammo";
         ammo.shortName = "iAC/5 Ammo";
         ammo.setInternalName("CLIMPAmmoAC5");
         ammo.damagePerShot = 1;
@@ -13944,7 +13944,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLImprovedAC10Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Improved Autocannon/10 Ammo";
+        ammo.name = "Improved AC/10 Ammo";
         ammo.shortName = "iAC/10 Ammo";
         ammo.setInternalName("CLIMPAmmoAC10");
         ammo.damagePerShot = 1;
@@ -13967,7 +13967,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLImprovedAC20Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.name = "Improved Autocannon/20 Ammo";
+        ammo.name = "Improved AC/20 Ammo";
         ammo.shortName = "iAC/20 Ammo";
         ammo.setInternalName("CLIMPAmmoAC20");
         ammo.damagePerShot = 1;
